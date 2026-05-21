@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" width="1200" height="630">
+  <rect width="1200" height="630" fill="#0D0D12"/>
+  <rect x="60" y="60" width="1080" height="510" rx="20" fill="#16161D" stroke="#2A2A35" stroke-width="2"/>
+  <text x="600" y="240" font-family="'Space Grotesk', sans-serif" font-size="72" font-weight="700" fill="#F5F5F0" text-anchor="middle">HSKKit</text>
+  <text x="600" y="320" font-family="'DM Sans', sans-serif" font-size="32" fill="#8A8A93" text-anchor="middle">Practice HSK 1 in 10 Minutes a Day</text>
+  <rect x="420" y="380" width="360" height="56" rx="8" fill="#F4A261"/>
+  <text x="600" y="418" font-family="'DM Sans', sans-serif" font-size="20" font-weight="600" fill="#0D0D12" text-anchor="middle">Start Practicing — Free</text>
+  <text x="600" y="520" font-family="'DM Sans', sans-serif" font-size="16" fill="#5A5A63" text-anchor="middle">Daily HSK Practice Toolkit for Chinese Learners</text>
+</svg>
