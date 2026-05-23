@@ -195,6 +195,14 @@ export default function HSK2PracticeTestPage() {
             <a href="/hsk-1-practice-test">Open HSK 1 practice</a>
           </article>
           <article className="card">
+            <h3>HSK 3 vocabulary</h3>
+            <p>
+              Move into HSK 3 words when HSK 2 sample tests show that the
+              beginner-plus foundation is becoming reliable.
+            </p>
+            <a href="/hsk-3-vocabulary">Open HSK 3 vocabulary</a>
+          </article>
+          <article className="card">
             <h3>HSK level test</h3>
             <p>
               Use a broader self-check when you are unsure whether HSK 2 is the
@@ -245,6 +253,7 @@ export default function HSK2PracticeTestPage() {
       <footer className="footer">
         <a href="/">Back to home</a>
         <a href="/hsk-2-vocabulary">HSK 2 vocabulary</a>
+        <a href="/hsk-3-vocabulary">HSK 3 vocabulary</a>
         <a href="/hsk-level-test">HSK level test</a>
         <a href="/hsk-levels">HSK levels guide</a>
       </footer>

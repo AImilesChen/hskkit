@@ -169,6 +169,14 @@ export default function HSK2VocabularyPage() {
             <a href="/hsk-2-practice-test">Open HSK 2 practice test</a>
           </article>
           <article className="card">
+            <h3>HSK 3 vocabulary</h3>
+            <p>
+              Continue into HSK 3 words when HSK 2 vocabulary feels familiar
+              inside short sentences and practice tasks.
+            </p>
+            <a href="/hsk-3-vocabulary">Open HSK 3 vocabulary</a>
+          </article>
+          <article className="card">
             <h3>HSK levels guide</h3>
             <p>
               Compare HSK levels when you want to see how HSK 2 fits into the
@@ -219,6 +227,7 @@ export default function HSK2VocabularyPage() {
         <a href="/">Back to home</a>
         <a href="/hsk-1-vocabulary">HSK 1 vocabulary</a>
         <a href="/hsk-2-practice-test">HSK 2 practice test</a>
+        <a href="/hsk-3-vocabulary">HSK 3 vocabulary</a>
         <a href="/hsk-level-test">HSK level test</a>
         <a href="/hsk-levels">HSK levels guide</a>
       </footer>
