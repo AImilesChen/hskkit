@@ -216,6 +216,14 @@ export default function HSKLevelsPage() {
             <a href="/hsk-4-vocabulary">Open HSK 4 vocabulary</a>
           </article>
           <article className="card">
+            <h3>Practice HSK 4</h3>
+            <p>
+              Use HSK 4 mock test guidance when vocabulary, listening, reading,
+              and pacing need a more intermediate check.
+            </p>
+            <a href="/hsk-4-practice-test">Open HSK 4 practice test</a>
+          </article>
+          <article className="card">
             <h3>Read about HSK 3.0</h3>
             <p>
               For newer HSK framework questions and transition context, use the

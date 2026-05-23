@@ -92,8 +92,8 @@ export default function HSK4VocabularyPage() {
           organize your HSK 4 word list after HSK 3 starts to feel manageable.
         </p>
         <div className="actions">
-          <a className="button primary" href="/hsk-3-practice-test">
-            Review HSK 3 practice
+          <a className="button primary" href="/hsk-4-practice-test">
+            Try HSK 4 practice
           </a>
           <a className="button secondary" href="/hsk-level-test">
             Check your level
@@ -232,6 +232,14 @@ export default function HSK4VocabularyPage() {
             <a href="/hsk-level-test">Open HSK level test</a>
           </article>
           <article className="card">
+            <h3>HSK 4 practice test</h3>
+            <p>
+              Use HSK 4 sample test guidance when you want to see whether these
+              words hold up inside longer listening and reading tasks.
+            </p>
+            <a href="/hsk-4-practice-test">Open HSK 4 practice test</a>
+          </article>
+          <article className="card">
             <h3>New HSK 3.0 guide</h3>
             <p>
               Check newer framework context before assuming every HSK 4 word
@@ -275,6 +283,7 @@ export default function HSK4VocabularyPage() {
         <a href="/">Back to home</a>
         <a href="/hsk-3-vocabulary">HSK 3 vocabulary</a>
         <a href="/hsk-3-practice-test">HSK 3 practice</a>
+        <a href="/hsk-4-practice-test">HSK 4 practice</a>
         <a href="/hsk-level-test">HSK level test</a>
         <a href="/hsk-levels">HSK levels guide</a>
       </footer>
