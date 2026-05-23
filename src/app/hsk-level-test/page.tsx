@@ -52,6 +52,13 @@ const confidenceSteps = [
     label: "Try HSK 1 practice",
   },
   {
+    title: "Ready for HSK 2",
+    detail:
+      "Use HSK 2 vocabulary and practice test guidance when HSK 1 questions feel manageable but longer beginner phrases still need work.",
+    href: "/hsk-2-practice-test",
+    label: "Try HSK 2 practice",
+  },
+  {
     title: "Planning ahead",
     detail:
       "Read the HSK levels guide when you want to compare the wider study path.",
@@ -183,6 +190,14 @@ export default function HSKLevelTestPage() {
             <a href="/hsk-1-practice-test">Open practice guide</a>
           </article>
           <article className="card">
+            <h3>HSK 2 practice test</h3>
+            <p>
+              Try HSK 2 sample test guidance when HSK 1 is manageable and you
+              want a more useful next challenge.
+            </p>
+            <a href="/hsk-2-practice-test">Open HSK 2 practice test</a>
+          </article>
+          <article className="card">
             <h3>HSK levels guide</h3>
             <p>
               Compare the wider HSK path after you have a rough sense of your
@@ -233,6 +248,7 @@ export default function HSKLevelTestPage() {
         <a href="/">Back to home</a>
         <a href="/hsk-1-vocabulary">HSK 1 vocabulary</a>
         <a href="/hsk-1-practice-test">HSK 1 practice</a>
+        <a href="/hsk-2-practice-test">HSK 2 practice</a>
         <a href="/hsk-levels">HSK levels guide</a>
       </footer>
     </main>

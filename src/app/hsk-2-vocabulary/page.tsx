@@ -56,8 +56,8 @@ export default function HSK2VocabularyPage() {
           HSK 1 review.
         </p>
         <div className="actions">
-          <a className="button primary" href="/hsk-1-practice-test">
-            Review HSK 1 practice
+          <a className="button primary" href="/hsk-2-practice-test">
+            Try HSK 2 practice
           </a>
           <a className="button secondary" href="/hsk-level-test">
             Check your level
@@ -161,6 +161,14 @@ export default function HSK2VocabularyPage() {
             <a href="/hsk-level-test">Open HSK level test</a>
           </article>
           <article className="card">
+            <h3>HSK 2 practice test</h3>
+            <p>
+              Try HSK 2 sample test guidance when you want to see whether these
+              words stay clear inside short listening and reading tasks.
+            </p>
+            <a href="/hsk-2-practice-test">Open HSK 2 practice test</a>
+          </article>
+          <article className="card">
             <h3>HSK levels guide</h3>
             <p>
               Compare HSK levels when you want to see how HSK 2 fits into the
@@ -210,6 +218,7 @@ export default function HSK2VocabularyPage() {
       <footer className="footer">
         <a href="/">Back to home</a>
         <a href="/hsk-1-vocabulary">HSK 1 vocabulary</a>
+        <a href="/hsk-2-practice-test">HSK 2 practice test</a>
         <a href="/hsk-level-test">HSK level test</a>
         <a href="/hsk-levels">HSK levels guide</a>
       </footer>

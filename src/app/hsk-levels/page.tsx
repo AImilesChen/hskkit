@@ -184,6 +184,14 @@ export default function HSKLevelsPage() {
             <a href="/hsk-2-vocabulary">Open HSK 2 vocabulary</a>
           </article>
           <article className="card">
+            <h3>Practice HSK 2</h3>
+            <p>
+              Use a practice test guide when you want HSK 2 mock test structure,
+              sample-test methods, and mistake review advice.
+            </p>
+            <a href="/hsk-2-practice-test">Open HSK 2 practice test</a>
+          </article>
+          <article className="card">
             <h3>Read about HSK 3.0</h3>
             <p>
               For newer HSK framework questions and transition context, use the

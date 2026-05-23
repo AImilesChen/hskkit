@@ -7,6 +7,7 @@ export default function sitemap() {
     "/hsk-1-vocabulary",
     "/hsk-1-practice-test",
     "/hsk-2-vocabulary",
+    "/hsk-2-practice-test",
     "/new-hsk-3-0",
     "/privacy-policy",
     "/terms-of-service",
