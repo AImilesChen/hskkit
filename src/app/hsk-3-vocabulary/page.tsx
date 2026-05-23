@@ -92,8 +92,8 @@ export default function HSK3VocabularyPage() {
           word list and bridge the gap after HSK 2.
         </p>
         <div className="actions">
-          <a className="button primary" href="/hsk-2-practice-test">
-            Review HSK 2 practice
+          <a className="button primary" href="/hsk-3-practice-test">
+            Try HSK 3 practice
           </a>
           <a className="button secondary" href="/hsk-level-test">
             Check your level
@@ -232,6 +232,14 @@ export default function HSK3VocabularyPage() {
             <a href="/hsk-level-test">Open HSK level test</a>
           </article>
           <article className="card">
+            <h3>HSK 3 practice test</h3>
+            <p>
+              Use HSK 3 sample test guidance when you want to see whether new
+              words work inside longer listening and reading tasks.
+            </p>
+            <a href="/hsk-3-practice-test">Open HSK 3 practice test</a>
+          </article>
+          <article className="card">
             <h3>New HSK 3.0 guide</h3>
             <p>
               Read the framework guide before assuming every HSK 3 resource uses
@@ -275,6 +283,7 @@ export default function HSK3VocabularyPage() {
         <a href="/">Back to home</a>
         <a href="/hsk-2-vocabulary">HSK 2 vocabulary</a>
         <a href="/hsk-2-practice-test">HSK 2 practice</a>
+        <a href="/hsk-3-practice-test">HSK 3 practice</a>
         <a href="/hsk-level-test">HSK level test</a>
         <a href="/hsk-levels">HSK levels guide</a>
       </footer>

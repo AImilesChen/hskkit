@@ -66,6 +66,13 @@ const confidenceSteps = [
     label: "Study HSK 3 vocabulary",
   },
   {
+    title: "Testing HSK 3 readiness",
+    detail:
+      "Use an HSK 3 practice test guide when vocabulary study needs a realistic listening and reading check.",
+    href: "/hsk-3-practice-test",
+    label: "Try HSK 3 practice",
+  },
+  {
     title: "Planning ahead",
     detail:
       "Read the HSK levels guide when you want to compare the wider study path.",
@@ -213,6 +220,14 @@ export default function HSKLevelTestPage() {
             <a href="/hsk-3-vocabulary">Open HSK 3 vocabulary</a>
           </article>
           <article className="card">
+            <h3>HSK 3 practice test</h3>
+            <p>
+              Use HSK 3 sample test guidance when you need to check vocabulary,
+              listening, reading, and pacing together.
+            </p>
+            <a href="/hsk-3-practice-test">Open HSK 3 practice test</a>
+          </article>
+          <article className="card">
             <h3>HSK levels guide</h3>
             <p>
               Compare the wider HSK path after you have a rough sense of your
@@ -265,6 +280,7 @@ export default function HSKLevelTestPage() {
         <a href="/hsk-1-practice-test">HSK 1 practice</a>
         <a href="/hsk-2-practice-test">HSK 2 practice</a>
         <a href="/hsk-3-vocabulary">HSK 3 vocabulary</a>
+        <a href="/hsk-3-practice-test">HSK 3 practice</a>
         <a href="/hsk-levels">HSK levels guide</a>
       </footer>
     </main>

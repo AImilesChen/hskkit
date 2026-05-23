@@ -203,6 +203,14 @@ export default function HSK2PracticeTestPage() {
             <a href="/hsk-3-vocabulary">Open HSK 3 vocabulary</a>
           </article>
           <article className="card">
+            <h3>HSK 3 practice test</h3>
+            <p>
+              Try HSK 3 mock test guidance after HSK 2 sample tests feel
+              manageable and longer context becomes the next challenge.
+            </p>
+            <a href="/hsk-3-practice-test">Open HSK 3 practice test</a>
+          </article>
+          <article className="card">
             <h3>HSK level test</h3>
             <p>
               Use a broader self-check when you are unsure whether HSK 2 is the
@@ -254,6 +262,7 @@ export default function HSK2PracticeTestPage() {
         <a href="/">Back to home</a>
         <a href="/hsk-2-vocabulary">HSK 2 vocabulary</a>
         <a href="/hsk-3-vocabulary">HSK 3 vocabulary</a>
+        <a href="/hsk-3-practice-test">HSK 3 practice</a>
         <a href="/hsk-level-test">HSK level test</a>
         <a href="/hsk-levels">HSK levels guide</a>
       </footer>

@@ -180,6 +180,14 @@ export default function NewHSK30Page() {
             <a href="/hsk-3-vocabulary">Open HSK 3 vocabulary</a>
           </article>
           <article className="card">
+            <h3>HSK 3 practice test</h3>
+            <p>
+              Use HSK 3 mock test guidance as practice support while still
+              checking which framework or resource your goal uses.
+            </p>
+            <a href="/hsk-3-practice-test">Open HSK 3 practice test</a>
+          </article>
+          <article className="card">
             <h3>HSK levels guide</h3>
             <p>
               Compare the wider level path when you need a simple study map for
@@ -224,6 +232,7 @@ export default function NewHSK30Page() {
         <a href="/hsk-level-test">HSK level test</a>
         <a href="/hsk-1-vocabulary">HSK 1 vocabulary</a>
         <a href="/hsk-3-vocabulary">HSK 3 vocabulary</a>
+        <a href="/hsk-3-practice-test">HSK 3 practice</a>
         <a href="/hsk-levels">HSK levels guide</a>
       </footer>
     </main>

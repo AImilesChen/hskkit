@@ -200,6 +200,14 @@ export default function HSKLevelsPage() {
             <a href="/hsk-3-vocabulary">Open HSK 3 vocabulary</a>
           </article>
           <article className="card">
+            <h3>Practice HSK 3</h3>
+            <p>
+              Try HSK 3 mock test guidance when vocabulary, reading, and
+              listening need a more realistic practice check.
+            </p>
+            <a href="/hsk-3-practice-test">Open HSK 3 practice test</a>
+          </article>
+          <article className="card">
             <h3>Read about HSK 3.0</h3>
             <p>
               For newer HSK framework questions and transition context, use the
