@@ -176,6 +176,14 @@ export default function HSKLevelsPage() {
             <a href="/hsk-1-vocabulary">Open HSK 1 vocabulary</a>
           </article>
           <article className="card">
+            <h3>Grow into HSK 2</h3>
+            <p>
+              Move into beginner-plus vocabulary when HSK 1 words feel familiar
+              and short phrases are easier to follow.
+            </p>
+            <a href="/hsk-2-vocabulary">Open HSK 2 vocabulary</a>
+          </article>
+          <article className="card">
             <h3>Read about HSK 3.0</h3>
             <p>
               For newer HSK framework questions and transition context, use the
