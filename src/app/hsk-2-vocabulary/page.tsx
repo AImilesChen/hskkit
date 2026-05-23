@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import SiteFooter from "../site-footer";
 
 export const metadata: Metadata = {
   title: "HSK 2 Vocabulary Guide | HSKKit",
@@ -222,15 +223,7 @@ export default function HSK2VocabularyPage() {
           </p>
         </details>
       </section>
-
-      <footer className="footer">
-        <a href="/">Back to home</a>
-        <a href="/hsk-1-vocabulary">HSK 1 vocabulary</a>
-        <a href="/hsk-2-practice-test">HSK 2 practice test</a>
-        <a href="/hsk-3-vocabulary">HSK 3 vocabulary</a>
-        <a href="/hsk-level-test">HSK level test</a>
-        <a href="/hsk-levels">HSK levels guide</a>
-      </footer>
+      <SiteFooter />
     </main>
   );
 }

@@ -1,14 +1,18 @@
-const features = [
-  { title: "AI Worksheets", text: "Generate targeted HSK practice sheets for vocabulary, grammar, and reading drills." },
-  { title: "Graded Reading", text: "Create short Chinese readings matched to learner level and study goals." },
-  { title: "Flashcards", text: "Review core HSK vocabulary with clean, focused flashcard practice." }
-];
+import SiteFooter from "./site-footer";
 
-const limits = [
-  "Free: 1 worksheet/day, reading 2 of 5, first 30 flashcards",
-  "Pro: $5.99/month or $49/year",
-  "Pro includes 500 AI credits/month, reset monthly with no rollover",
-  "AI costs: worksheet 2 credits, reading 20 credits, flashcards 5 credits"
+const features = [
+  {
+    title: "Level Guides",
+    text: "Compare HSK levels and choose a practical next step for your current study stage.",
+  },
+  {
+    title: "Vocabulary Pages",
+    text: "Review sample Chinese words, pinyin, meanings, topic groups, and transition tips.",
+  },
+  {
+    title: "Practice Test Guides",
+    text: "Use sample-test guidance to plan listening, reading, pacing, and mistake review.",
+  },
 ];
 
 export default function HomePage() {
@@ -19,24 +23,35 @@ export default function HomePage() {
           <strong>HSKKit</strong>
           <div>
             <a href="#features">Features</a>
-            <a href="#pricing">Pricing</a>
+            <a href="/hsk-levels">Levels</a>
+            <a href="/hsk-level-test">Level test</a>
             <a href="/privacy-policy">Privacy</a>
           </div>
         </nav>
         <div className="heroContent">
-          <p className="eyebrow">AI-powered Chinese learning tools</p>
-          <h1>Practice smarter for HSK with worksheets, readings, and flashcards.</h1>
-          <p className="subtitle">HSKKit helps Chinese learners generate focused practice materials in minutes, so every study session has a clear next step.</p>
+          <p className="eyebrow">HSK study guides for Chinese learners</p>
+          <h1>
+            Plan focused HSK vocabulary and practice without guessing your next
+            step.
+          </h1>
+          <p className="subtitle">
+            HSKKit helps Chinese learners compare levels, review vocabulary, and
+            use practice-test guidance to make each study session clearer.
+          </p>
           <div className="actions">
-            <a className="button primary" href="#pricing">View pricing</a>
-            <a className="button secondary" href="mailto:support@hskkit.com">Contact support</a>
+            <a className="button primary" href="/hsk-level-test">
+              Start with level test
+            </a>
+            <a className="button secondary" href="/hsk-levels">
+              Compare HSK levels
+            </a>
           </div>
         </div>
       </section>
 
       <section id="features" className="section">
-        <p className="eyebrow">P1 toolkit</p>
-        <h2>Start with the study tools learners actually use.</h2>
+        <p className="eyebrow">Study path</p>
+        <h2>Start with the pages learners actually need.</h2>
         <div className="grid">
           {features.map((item) => (
             <article className="card" key={item.title}>
@@ -47,33 +62,50 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section id="pricing" className="section pricing">
-        <p className="eyebrow">Simple pricing</p>
-        <h2>Free to try. Pro for serious practice.</h2>
-        <ul>
-          {limits.map((item) => <li key={item}>{item}</li>)}
-        </ul>
-        <p className="note">Payments planned via PayPal in USD. Refund window: 7 days. Failed payment grace period: 3 days.</p>
+      <section className="section pricing">
+        <p className="eyebrow">Popular starting points</p>
+        <h2>Choose a focused HSK page.</h2>
+        <div className="grid">
+          <article className="card">
+            <h3>HSK level test</h3>
+            <p>Use a self-check guide when you need a rough starting point.</p>
+            <a href="/hsk-level-test">Open level test</a>
+          </article>
+          <article className="card">
+            <h3>HSK vocabulary</h3>
+            <p>
+              Review vocabulary guides from beginner foundations into advanced
+              reading.
+            </p>
+            <a href="/hsk-1-vocabulary">Start vocabulary</a>
+          </article>
+          <article className="card">
+            <h3>Practice test guides</h3>
+            <p>
+              Prepare for sample tests and mock tests with clearer review
+              habits.
+            </p>
+            <a href="/hsk-1-practice-test">Start practice</a>
+          </article>
+        </div>
       </section>
 
       <section className="section faq">
         <h2>FAQ</h2>
         <details open>
           <summary>Who is HSKKit for?</summary>
-          <p>English-speaking learners preparing for HSK or building practical Mandarin study habits.</p>
+          <p>
+            English-speaking learners preparing for HSK or building practical
+            Mandarin study habits.
+          </p>
         </details>
         <details>
-          <summary>Is the AI output a replacement for a teacher?</summary>
-          <p>No. HSKKit creates practice materials. Learners should still verify important explanations with teachers or trusted learning resources.</p>
+          <summary>Is HSKKit connected to HSK test organizers?</summary>
+          <p>No. HSKKit is an independent study guide site for learners.</p>
         </details>
       </section>
 
-      <footer className="footer">
-        <span>© 2026 HSKKit</span>
-        <a href="/terms-of-service">Terms</a>
-        <a href="/privacy-policy">Privacy</a>
-        <a href="mailto:support@hskkit.com">support@hskkit.com</a>
-      </footer>
+      <SiteFooter />
     </main>
   );
 }
