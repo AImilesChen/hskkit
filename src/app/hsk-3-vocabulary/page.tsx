@@ -240,6 +240,14 @@ export default function HSK3VocabularyPage() {
             <a href="/hsk-3-practice-test">Open HSK 3 practice test</a>
           </article>
           <article className="card">
+            <h3>HSK 4 vocabulary</h3>
+            <p>
+              Continue into HSK 4 words when HSK 3 vocabulary feels reliable
+              inside longer reading and practice tasks.
+            </p>
+            <a href="/hsk-4-vocabulary">Open HSK 4 vocabulary</a>
+          </article>
+          <article className="card">
             <h3>New HSK 3.0 guide</h3>
             <p>
               Read the framework guide before assuming every HSK 3 resource uses
@@ -284,6 +292,7 @@ export default function HSK3VocabularyPage() {
         <a href="/hsk-2-vocabulary">HSK 2 vocabulary</a>
         <a href="/hsk-2-practice-test">HSK 2 practice</a>
         <a href="/hsk-3-practice-test">HSK 3 practice</a>
+        <a href="/hsk-4-vocabulary">HSK 4 vocabulary</a>
         <a href="/hsk-level-test">HSK level test</a>
         <a href="/hsk-levels">HSK levels guide</a>
       </footer>
