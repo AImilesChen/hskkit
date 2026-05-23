@@ -1,8 +1,18 @@
 export default function sitemap() {
   const baseUrl = "https://hskkit.com";
-  return [
-    { url: baseUrl, lastModified: new Date() },
-    { url: `${baseUrl}/privacy-policy`, lastModified: new Date() },
-    { url: `${baseUrl}/terms-of-service`, lastModified: new Date() },
+  const routes = [
+    "",
+    "/hsk-levels",
+    "/hsk-level-test",
+    "/hsk-1-vocabulary",
+    "/hsk-1-practice-test",
+    "/new-hsk-3-0",
+    "/privacy-policy",
+    "/terms-of-service",
   ];
+
+  return routes.map((route) => ({
+    url: `${baseUrl}${route}`,
+    lastModified: new Date(),
+  }));
 }
