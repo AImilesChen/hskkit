@@ -224,6 +224,14 @@ export default function HSKLevelsPage() {
             <a href="/hsk-4-practice-test">Open HSK 4 practice test</a>
           </article>
           <article className="card">
+            <h3>Build HSK 5 vocabulary</h3>
+            <p>
+              Move into HSK 5 words when HSK 4 practice is manageable and
+              advanced reading needs broader word coverage.
+            </p>
+            <a href="/hsk-5-vocabulary">Open HSK 5 vocabulary</a>
+          </article>
+          <article className="card">
             <h3>Read about HSK 3.0</h3>
             <p>
               For newer HSK framework questions and transition context, use the

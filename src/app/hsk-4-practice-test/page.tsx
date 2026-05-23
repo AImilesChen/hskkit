@@ -233,6 +233,14 @@ export default function HSK4PracticeTestPage() {
             <a href="/hsk-3-practice-test">Open HSK 3 practice test</a>
           </article>
           <article className="card">
+            <h3>HSK 5 vocabulary</h3>
+            <p>
+              Start HSK 5 vocabulary when HSK 4 mock test review shows that
+              advanced word coverage is the next useful challenge.
+            </p>
+            <a href="/hsk-5-vocabulary">Open HSK 5 vocabulary</a>
+          </article>
+          <article className="card">
             <h3>HSK level test</h3>
             <p>
               Use a broader self-check when you are unsure whether to review
@@ -284,6 +292,7 @@ export default function HSK4PracticeTestPage() {
         <a href="/">Back to home</a>
         <a href="/hsk-4-vocabulary">HSK 4 vocabulary</a>
         <a href="/hsk-3-practice-test">HSK 3 practice</a>
+        <a href="/hsk-5-vocabulary">HSK 5 vocabulary</a>
         <a href="/hsk-level-test">HSK level test</a>
         <a href="/hsk-levels">HSK levels guide</a>
       </footer>

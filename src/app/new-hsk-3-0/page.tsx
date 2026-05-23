@@ -204,6 +204,14 @@ export default function NewHSK30Page() {
             <a href="/hsk-4-practice-test">Open HSK 4 practice test</a>
           </article>
           <article className="card">
+            <h3>HSK 5 vocabulary</h3>
+            <p>
+              Review HSK 5 word-list guidance while checking which framework,
+              course, or exam resource your goal follows.
+            </p>
+            <a href="/hsk-5-vocabulary">Open HSK 5 vocabulary</a>
+          </article>
+          <article className="card">
             <h3>HSK levels guide</h3>
             <p>
               Compare the wider level path when you need a simple study map for
@@ -251,6 +259,7 @@ export default function NewHSK30Page() {
         <a href="/hsk-3-practice-test">HSK 3 practice</a>
         <a href="/hsk-4-vocabulary">HSK 4 vocabulary</a>
         <a href="/hsk-4-practice-test">HSK 4 practice</a>
+        <a href="/hsk-5-vocabulary">HSK 5 vocabulary</a>
         <a href="/hsk-levels">HSK levels guide</a>
       </footer>
     </main>

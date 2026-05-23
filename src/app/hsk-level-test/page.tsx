@@ -87,6 +87,13 @@ const confidenceSteps = [
     label: "Try HSK 4 practice",
   },
   {
+    title: "Moving toward HSK 5",
+    detail:
+      "Start HSK 5 vocabulary when HSK 4 practice is manageable and advanced reading needs more abstract word coverage.",
+    href: "/hsk-5-vocabulary",
+    label: "Study HSK 5 vocabulary",
+  },
+  {
     title: "Planning ahead",
     detail:
       "Read the HSK levels guide when you want to compare the wider study path.",
@@ -258,6 +265,14 @@ export default function HSKLevelTestPage() {
             <a href="/hsk-4-practice-test">Open HSK 4 practice test</a>
           </article>
           <article className="card">
+            <h3>HSK 5 vocabulary</h3>
+            <p>
+              Move into HSK 5 words when HSK 4 practice is manageable and
+              advanced reading needs broader vocabulary.
+            </p>
+            <a href="/hsk-5-vocabulary">Open HSK 5 vocabulary</a>
+          </article>
+          <article className="card">
             <h3>HSK levels guide</h3>
             <p>
               Compare the wider HSK path after you have a rough sense of your
@@ -313,6 +328,7 @@ export default function HSKLevelTestPage() {
         <a href="/hsk-3-practice-test">HSK 3 practice</a>
         <a href="/hsk-4-vocabulary">HSK 4 vocabulary</a>
         <a href="/hsk-4-practice-test">HSK 4 practice</a>
+        <a href="/hsk-5-vocabulary">HSK 5 vocabulary</a>
         <a href="/hsk-levels">HSK levels guide</a>
       </footer>
     </main>
