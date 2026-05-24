@@ -10,3 +10,11 @@ dist
 .wrangler
 .dev.vars
 tsconfig.tsbuildinfo
+
+# OpenNext
+.open-next
+
+# wrangler files
+.wrangler
+.dev.vars*
+!.dev.vars.example
