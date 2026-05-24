@@ -3,12 +3,16 @@ const disclaimer =
 
 export default function SiteFooter() {
   return (
-    <footer className="footer">
-      <span>© 2026 HSKKit</span>
-      <a href="/privacy-policy">Privacy</a>
-      <a href="/terms-of-service">Terms</a>
-      <a href="mailto:support@hskkit.com">support@hskkit.com</a>
-      <p className="footerDisclaimer">{disclaimer}</p>
+    <footer className="site-footer">
+      <div className="site-footer-inner">
+        <div className="site-footer-links">
+          <a href="/privacy-policy">Privacy</a>
+          <a href="/terms-of-service">Terms</a>
+          <a href="mailto:support@hskkit.com">support@hskkit.com</a>
+        </div>
+        <p className="site-footer-copy">© 2026 HSKKit</p>
+        <p className="site-footer-disclaimer">{disclaimer}</p>
+      </div>
     </footer>
   );
 }

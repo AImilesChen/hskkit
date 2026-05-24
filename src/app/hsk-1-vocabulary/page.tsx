@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import SiteHeader from "../site-header";
 import SiteFooter from "../site-footer";
 
 export const metadata: Metadata = {
@@ -20,163 +21,87 @@ const sampleWords = [
 ];
 
 const studyTips = [
-  "Learn the sound, meaning, and character shape together so each word has more than one memory hook.",
-  "Say short combinations aloud, such as pronoun plus verb or time word plus activity, before moving to longer sentences.",
-  "Review words you hesitate on more often than words you recognize immediately.",
-  "Use practice questions early. Vocabulary becomes more useful when you meet it inside a reading or test-style prompt.",
+  "Review 10 words daily rather than 50 once a week",
+  "Say each word aloud while reading the pinyin",
+  "Write characters by hand to build muscle memory",
+  "Test yourself without looking at the meaning first",
 ];
 
 export default function HSK1VocabularyPage() {
   return (
-    <main className="section">
-      <section>
-        <p className="eyebrow">HSK 1 Vocabulary</p>
-        <h1>Build a clear HSK 1 vocabulary foundation</h1>
-        <p className="subtitle">
-          HSK 1 vocabulary gives beginners a compact place to start with common
-          Chinese words, pinyin, and everyday meanings. Use it to make early
-          practice less scattered before you move into longer reading and
-          practice-test tasks.
-        </p>
-        <div className="actions">
-          <a className="button primary" href="/hsk-1-practice-test">
-            Try HSK 1 practice
-          </a>
-          <a className="button secondary" href="/hsk-level-test">
-            Check your level
-          </a>
-        </div>
-      </section>
+    <>
+      <SiteHeader />
+      <main>
+        {/* Hero */}
+        <section className="section pt-20">
+          <div className="section-inner">
+            <span className="eyebrow">HSK 1 Vocabulary</span>
+            <h1 className="text-h1 max-sm:text-[32px] mb-6">Build a clear HSK 1 vocabulary foundation</h1>
+            <p className="text-body-lg text-ink-secondary max-w-[640px] mb-10">
+              Start with the most common words in daily Chinese. Each word includes pinyin, meaning, and a simple example to help you recognize and remember.
+            </p>
+            <div className="flex gap-4 flex-wrap">
+              <a href="/hsk-1-practice-test" className="btn btn-primary">Try HSK 1 practice</a>
+              <a href="/hsk-level-test" className="btn btn-secondary">Check your level</a>
+            </div>
+          </div>
+        </section>
 
-      <section>
-        <p className="eyebrow">Purpose</p>
-        <h2>What HSK 1 vocabulary is for</h2>
-        <div className="grid">
-          <article className="card">
-            <h3>Starting recognition</h3>
-            <p>
-              Beginner vocabulary helps you recognize frequent building blocks
-              before every sentence feels unfamiliar.
-            </p>
-          </article>
-          <article className="card">
-            <h3>Pronunciation practice</h3>
-            <p>
-              Pinyin support helps new learners connect what they see with what
-              they hear and say while tones and sounds are still settling in.
-            </p>
-          </article>
-          <article className="card">
-            <h3>Useful context</h3>
-            <p>
-              Words become stronger study material when you notice how they
-              combine in greetings, simple statements, questions, and daily
-              topics.
-            </p>
-          </article>
-        </div>
-      </section>
+        {/* Purpose */}
+        <section className="section section-alt">
+          <div className="section-inner">
+            <h2 className="text-h2 max-sm:text-[28px] mb-8">What HSK 1 vocabulary is for</h2>
+            <div className="card-grid">
+              <article className="card">
+                <h3 className="text-h3 max-sm:text-xl mb-3">Starting recognition</h3>
+                <p className="text-body text-ink-secondary">Build confidence by identifying the most common characters and words first.</p>
+              </article>
+              <article className="card">
+                <h3 className="text-h3 max-sm:text-xl mb-3">Pronunciation practice</h3>
+                <p className="text-body text-ink-secondary">Use pinyin to connect what you see with how it sounds.</p>
+              </article>
+              <article className="card">
+                <h3 className="text-h3 max-sm:text-xl mb-3">Useful context</h3>
+                <p className="text-body text-ink-secondary">See words in short phrases so you understand how they work together.</p>
+              </article>
+            </div>
+          </div>
+        </section>
 
-      <section>
-        <p className="eyebrow">Sample List</p>
-        <h2>Beginner words to review</h2>
-        <p>
-          This short sample is a study starting point. Read each character,
-          check the pinyin, then cover the English meaning and test recall.
-        </p>
-        <div className="grid">
-          {sampleWords.map((word) => (
-            <article className="card" key={word.chinese}>
-              <p className="eyebrow">{word.pinyin}</p>
-              <h3>{word.chinese}</h3>
-              <p>{word.meaning}</p>
-            </article>
-          ))}
-        </div>
-      </section>
+        {/* Sample Words */}
+        <section className="section">
+          <div className="section-inner">
+            <h2 className="text-h2 max-sm:text-[28px] mb-8">Beginner words to review</h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              {sampleWords.map((word) => (
+                <article className="card text-center" key={word.chinese}>
+                  <p className="chinese-char text-[48px] mb-2">{word.chinese}</p>
+                  <p className="text-small text-ink-muted mb-2">{word.pinyin}</p>
+                  <p className="text-body text-ink-secondary">{word.meaning}</p>
+                </article>
+              ))}
+            </div>
+          </div>
+        </section>
 
-      <section className="card">
-        <p className="eyebrow">Study Tips</p>
-        <h2>Keep beginner vocabulary practice active</h2>
-        <p>
-          A word list is a reference, not the whole study session. Keep review
-          short enough to repeat and pair it with simple practice that checks
-          whether you can recognize meaning in context.
-        </p>
-        <ol>
-          {studyTips.map((tip) => (
-            <li key={tip}>{tip}</li>
-          ))}
-        </ol>
-      </section>
-
-      <section>
-        <p className="eyebrow">Related Pages</p>
-        <h2>Choose your next HSK step</h2>
-        <div className="grid">
-          <article className="card">
-            <h3>HSK level test</h3>
-            <p>
-              Use the level test page when you want a practical starting point
-              before choosing more beginner or higher-level material.
-            </p>
-            <a href="/hsk-level-test">Open HSK level test</a>
-          </article>
-          <article className="card">
-            <h3>HSK 1 practice test</h3>
-            <p>
-              Move from isolated words into beginner questions and review what
-              slows you down.
-            </p>
-            <a href="/hsk-1-practice-test">Open HSK 1 practice test</a>
-          </article>
-          <article className="card">
-            <h3>HSK levels guide</h3>
-            <p>
-              Compare the level path when you want vocabulary study to fit into
-              a wider Chinese learning plan.
-            </p>
-            <a href="/hsk-levels">Open HSK levels guide</a>
-          </article>
-          <article className="card">
-            <h3>New HSK 3.0 guide</h3>
-            <p>
-              Read the dedicated guide before making assumptions about newer
-              HSK framework references.
-            </p>
-            <a href="/new-hsk-3-0">Open New HSK 3.0 guide</a>
-          </article>
-        </div>
-      </section>
-
-      <section className="faq">
-        <p className="eyebrow">FAQ</p>
-        <h2>HSK 1 vocabulary questions</h2>
-        <details open>
-          <summary>Should I memorize English meanings first?</summary>
-          <p>
-            English meaning is useful for orientation, but beginner review is
-            stronger when you also connect the character and pinyin to the word
-            you want to recognize in Chinese.
-          </p>
-        </details>
-        <details>
-          <summary>Do I need to know every word before I practice?</summary>
-          <p>
-            No. A small vocabulary base and a short practice task can work
-            together. Practice shows which words need another pass.
-          </p>
-        </details>
-        <details>
-          <summary>Does one vocabulary page cover every HSK version?</summary>
-          <p>
-            Vocabulary references can vary with the resource and framework you
-            are using. For newer HSK context, continue to the{" "}
-            <a href="/new-hsk-3-0">New HSK 3.0 guide</a>.
-          </p>
-        </details>
-      </section>
+        {/* Study Tips */}
+        <section className="section section-alt">
+          <div className="section-inner">
+            <h2 className="text-h2 max-sm:text-[28px] mb-8">Keep beginner vocabulary practice active</h2>
+            <div className="max-w-[800px]">
+              {studyTips.map((tip) => (
+                <div key={tip} className="flex items-start gap-4 py-4 border-b border-border">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#4A9B6B" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="flex-shrink-0 mt-0.5">
+                    <polyline points="20 6 9 17 4 12" />
+                  </svg>
+                  <p className="text-body text-ink-secondary">{tip}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+      </main>
       <SiteFooter />
-    </main>
+    </>
   );
 }
