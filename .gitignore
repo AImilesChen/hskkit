@@ -9,3 +9,4 @@ dist
 .vercel
 .wrangler
 .dev.vars
+tsconfig.tsbuildinfo
