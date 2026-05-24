@@ -3,6 +3,7 @@
 
 export const GA_ID = process.env.NEXT_PUBLIC_GA_ID || "";
 export const CLARITY_ID = process.env.NEXT_PUBLIC_CLARITY_ID || "";
+export const AHREFS_ID = process.env.NEXT_PUBLIC_AHREFS_ID || "";
 
 /**
  * Track a custom event. Safe to call before analytics loads.

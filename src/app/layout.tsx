@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Script from "next/script";
 import "./globals.css";
-import { GA_ID, CLARITY_ID } from "@/lib/analytics";
+import { GA_ID, CLARITY_ID, AHREFS_ID } from "@/lib/analytics";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://hskkit.com"),
@@ -55,6 +55,14 @@ export default function RootLayout({
             })(window, document, "clarity", "script", "${CLARITY_ID}");
           `}
         </Script>
+      )}
+      {AHREFS_ID && (
+        <Script
+          async
+          src={`https://analytics.ahrefs.com/analytics.js`}
+          data-key={AHREFS_ID}
+          strategy="afterInteractive"
+        />
       )}
     </html>
   );
