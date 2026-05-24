@@ -62,7 +62,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section className="section pricing">
+      <section className="section popular">
         <p className="eyebrow">Popular starting points</p>
         <h2>Choose a focused HSK page.</h2>
         <div className="grid">
