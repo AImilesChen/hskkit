@@ -5,21 +5,30 @@ import { GA_ID, CLARITY_ID, AHREFS_ID } from "@/lib/analytics";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://hskkit.com"),
-  title: "HSKKit | HSK Study Guides and Practice Resources",
+  title: "HSKKit | Free HSK Vocabulary, Practice Tests & Level Guides",
   description:
-    "Explore HSK vocabulary, practice test, level guide, and Chinese learning resources for practical study planning.",
+    "Free HSK study guides with vocabulary lists, sample tests, and level-by-level roadmaps. Start with a quick self-check and know what to study next.",
   alternates: {
     canonical: "https://hskkit.com",
   },
   openGraph: {
-    title: "HSKKit | HSK Study Guides",
+    title: "Prepare for Your HSK Exam with Free Study Guides & Practice Tests",
     description:
-      "Practical HSK vocabulary, practice test, and level guide resources for Chinese learners.",
+      "Free HSK vocabulary lists, sample tests, and level guides for Chinese learners. Take the self-check and start studying today.",
     url: "https://hskkit.com",
     siteName: "HSKKit",
     type: "website",
+    images: [{
+      url: "/og-image.png",
+      width: 1200,
+      height: 630,
+      alt: "HSKKit - Free HSK Study Guides",
+    }],
   },
-  twitter: { card: "summary_large_image" },
+  twitter: { 
+    card: "summary_large_image",
+    images: ["/og-image.png"],
+  },
 };
 
 export default function RootLayout({
