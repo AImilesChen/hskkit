@@ -1,161 +1,328 @@
-import type { Metadata } from "next";
-import SiteHeader from "../site-header";
-import SiteFooter from "../site-footer";
+"use client";
 
-export const metadata: Metadata = {
-  title: "HSK Level Test Guide | HSKKit",
-  description:
-    "Estimate your starting HSK study level with beginner self-check questions, a readiness checklist, and practical next steps.",
-  alternates: {
-    canonical: "https://hskkit.com/hsk-level-test",
+import { useState } from "react";
+import Link from "next/link";
+import Script from "next/script";
+
+/* ────────── 8-question self-check ────────── */
+const questions = [
+  {
+    q: "What does 你好 mean?",
+    options: ["Goodbye", "Hello", "Thank you", "Sorry"],
+    correct: 1, // Hello
+    level: 1,
   },
+  {
+    q: "Which word means 'water'?",
+    options: ["火 (huǒ)", "水 (shuǐ)", "木 (mù)", "土 (tǔ)"],
+    correct: 1,
+    level: 1,
+  },
+  {
+    q: "Choose the correct sentence: 'I like to drink tea.'",
+    options: [
+      "我喜欢喝茶。",
+      "我不喜欢吃茶。",
+      "我喜欢吃茶。",
+      "我不喜欢喝茶。",
+    ],
+    correct: 0,
+    level: 2,
+  },
+  {
+    q: "What does 昨天 mean?",
+    options: ["Today", "Tomorrow", "Yesterday", "Next week"],
+    correct: 2,
+    level: 2,
+  },
+  {
+    q: "Which sentence means 'He has been to Beijing before'?",
+    options: [
+      "他没去过北京。",
+      "他去过北京。",
+      "他要去北京。",
+      "他在北京。",
+    ],
+    correct: 1,
+    level: 3,
+  },
+  {
+    q: "What does 方便 mean in this sentence: '你什么时候方便?'",
+    options: ["Convenient / available", "Convenient store", "Direction", "Method"],
+    correct: 0,
+    level: 3,
+  },
+  {
+    q: "Choose the word that means 'to postpone / delay':",
+    options: ["提前 (tíqián)", "推迟 (tuīchí)", "准时 (zhǔnshí)", "按时 (ànshí)"],
+    correct: 1,
+    level: 4,
+  },
+  {
+    q: "What does 尽管 mean?",
+    options: ["Because", "Although / despite", "Therefore", "However"],
+    correct: 1,
+    level: 4,
+  },
+];
+
+/* ────────── Results data ────────── */
+const resultCards = [
+  {
+    maxScore: 2,
+    level: "HSK 1",
+    title: "Start with HSK 1",
+    desc: "You recognize some basic words, but building a solid foundation will help you progress faster.",
+    href: "/hsk-1-vocabulary",
+    label: "Study HSK 1 Vocabulary",
+  },
+  {
+    maxScore: 4,
+    level: "HSK 2",
+    title: "Build on HSK 2",
+    desc: "You know beginner basics. Time to expand into elementary sentences and daily topics.",
+    href: "/hsk-2-vocabulary",
+    label: "Study HSK 2 Vocabulary",
+  },
+  {
+    maxScore: 6,
+    level: "HSK 3",
+    title: "Move into HSK 3",
+    desc: "You handle elementary Chinese well. Intermediate vocabulary and longer texts are your next step.",
+    href: "/hsk-3-vocabulary",
+    label: "Study HSK 3 Vocabulary",
+  },
+  {
+    maxScore: 8,
+    level: "HSK 4+",
+    title: "Challenge HSK 4–5",
+    desc: "You have a strong intermediate base. Advanced vocabulary and complex reading await.",
+    href: "/hsk-4-vocabulary",
+    label: "Study HSK 4 Vocabulary",
+  },
+];
+
+/* ────────── FAQ Schema ────────── */
+const faqSchema = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: [
+    {
+      "@type": "Question",
+      name: "Is this an official HSK placement test?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "No. This is a self-assessment tool for estimating a useful starting point. Use official or exam-specific resources when you need formal testing information.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "What if my skills do not match one level neatly?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "That is common. Vocabulary recognition, listening comfort, reading speed, and test familiarity can develop at different rates.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "Should a complete beginner begin with HSK 1?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "HSK 1 material is a practical starting place for a new learner who wants beginner vocabulary and short practice before comparing higher levels.",
+      },
+    },
+  ],
 };
 
-const selfCheckQuestions = [
-  { prompt: "Can you recognize a basic greeting such as 你好 without pausing?", lookFor: "A confident yes suggests your first beginner vocabulary is becoming familiar." },
-  { prompt: "Can you connect a simple word you see with its pinyin and meaning?", lookFor: "If one layer is missing, vocabulary review may help before harder practice." },
-  { prompt: "Can you follow a short beginner sentence when the key words are familiar?", lookFor: "This checks whether word recognition is starting to work inside context." },
-  { prompt: "Can you notice what caused a missed practice answer?", lookFor: "Separating a missing word from rushed reading gives a clearer next step." },
-];
-
-const readinessChecklist = [
-  "I can recognize 50+ common words",
-  "I can read short sentences with familiar vocabulary",
-  "I can understand basic questions in context",
-  "I can identify why I missed a practice question",
-];
-
-const confidenceSteps = [
-  { title: "Low confidence", detail: "Start with HSK 1 vocabulary and build a small base of words, pinyin, and meanings.", href: "/hsk-1-vocabulary", label: "Start with vocabulary" },
-  { title: "Some confidence", detail: "Try HSK 1 practice so familiar words appear inside short prompts and choices.", href: "/hsk-1-practice-test", label: "Try HSK 1 practice" },
-  { title: "Ready for HSK 2", detail: "Use HSK 2 vocabulary and practice test guidance when HSK 1 questions feel manageable but longer beginner phrases still need work.", href: "/hsk-2-practice-test", label: "Try HSK 2 practice" },
-  { title: "Moving toward HSK 3", detail: "Start HSK 3 vocabulary when HSK 2 practice feels manageable and longer sentences need more word coverage.", href: "/hsk-3-vocabulary", label: "Study HSK 3 vocabulary" },
-  { title: "Testing HSK 3 readiness", detail: "Use an HSK 3 practice test guide when vocabulary study needs a realistic listening and reading check.", href: "/hsk-3-practice-test", label: "Try HSK 3 practice" },
-  { title: "Moving toward HSK 4", detail: "Start HSK 4 vocabulary when HSK 3 practice is manageable and intermediate reading needs more abstract word coverage.", href: "/hsk-4-vocabulary", label: "Study HSK 4 vocabulary" },
-  { title: "Testing HSK 4 readiness", detail: "Use an HSK 4 practice test guide when intermediate vocabulary needs a realistic listening, reading, and pacing check.", href: "/hsk-4-practice-test", label: "Try HSK 4 practice" },
-  { title: "Moving toward HSK 5", detail: "Start HSK 5 vocabulary when HSK 4 practice is manageable and advanced reading needs more abstract word coverage.", href: "/hsk-5-vocabulary", label: "Study HSK 5 vocabulary" },
-  { title: "Planning ahead", detail: "Read the HSK levels guide when you want to compare the wider study path.", href: "/hsk-levels", label: "Read HSK levels guide" },
-  { title: "Framework questions", detail: "Use the New HSK 3.0 guide for separate context on newer HSK references.", href: "/new-hsk-3-0", label: "Read New HSK 3.0 guide" },
-];
-
 export default function HSKLevelTestPage() {
+  const [started, setStarted] = useState(false);
+  const [current, setCurrent] = useState(0);
+  const [answers, setAnswers] = useState<number[]>([]);
+  const [showResult, setShowResult] = useState(false);
+
+  const handleAnswer = (idx: number) => {
+    const next = [...answers, idx];
+    setAnswers(next);
+    if (next.length >= questions.length) {
+      setShowResult(true);
+    } else {
+      setCurrent(current + 1);
+    }
+  };
+
+  const correctCount = answers.filter((a, i) => a === questions[i].correct).length;
+
+  const resultCard = resultCards.find((r) => correctCount <= r.maxScore) || resultCards[resultCards.length - 1];
+
+  const progress = Math.round(((answers.length) / questions.length) * 100);
+
   return (
     <>
-      <SiteHeader />
-      <main>
-        {/* Hero */}
-        <section className="section pt-20">
-          <div className="section-inner">
-            <span className="eyebrow">HSK Level Test Guide</span>
-            <h1 className="text-h1 max-sm:text-[32px] mb-6">Estimate your HSK starting point with a simple self-check</h1>
-            <p className="text-body-lg text-ink-secondary max-w-[640px] mb-10">
-              This page is a study guide, not an official placement test. Use it to judge your beginner confidence, choose a next page, and turn uncertainty into a short review plan.
-            </p>
-            <div className="flex gap-4 flex-wrap">
-              <a href="/hsk-1-vocabulary" className="btn btn-primary">Start with HSK 1 vocabulary</a>
-              <a href="/hsk-levels" className="btn btn-secondary">Compare HSK levels</a>
-            </div>
-          </div>
-        </section>
+      <Script id="faq-schema" type="application/ld+json" strategy="beforeInteractive">
+        {JSON.stringify(faqSchema)}
+      </Script>
 
-        {/* How to Estimate */}
-        <section className="section section-alt">
-          <div className="section-inner">
-            <span className="eyebrow">Estimate</span>
-            <h2 className="text-h2 max-sm:text-[28px] mb-8">How a beginner can estimate their level</h2>
-            <div className="card-grid">
-              <article className="card">
-                <h3 className="text-h3 max-sm:text-xl mb-3">Check recognition</h3>
-                <p className="text-body text-ink-secondary">Begin with what you can identify without heavy guessing: common words, simple greetings, and short beginner patterns.</p>
-              </article>
-              <article className="card">
-                <h3 className="text-h3 max-sm:text-xl mb-3">Test context</h3>
-                <p className="text-body text-ink-secondary">Try reading short sentences where you know most words. Can you follow the meaning?</p>
-              </article>
-              <article className="card">
-                <h3 className="text-h3 max-sm:text-xl mb-3">Choose a next step</h3>
-                <p className="text-body text-ink-secondary">Use your results to pick a vocabulary or practice page that matches your current level.</p>
-              </article>
-            </div>
+      {/* ─── Nav ─── */}
+      <nav className="sticky top-0 z-[100] bg-white/95 backdrop-blur-[12px] border-b border-[#F1F5F9]">
+        <div className="max-w-[1200px] mx-auto px-8 h-16 flex items-center justify-between max-sm:px-4">
+          <Link href="/" className="text-[22px] font-bold text-[#0F172A] tracking-tight no-underline">
+            HSK<span className="text-[#2563EB]">Kit</span>
+          </Link>
+          <div className="hidden md:flex items-center gap-8">
+            <Link href="/hsk-level-test" className="text-sm font-medium text-[#334155] no-underline hover:text-[#0F172A]">Level Check</Link>
+            <Link href="/hsk-1-vocabulary" className="text-sm font-medium text-[#334155] no-underline hover:text-[#0F172A]">Vocabulary</Link>
+            <Link href="/hsk-1-practice-test" className="text-sm font-medium text-[#334155] no-underline hover:text-[#0F172A]">Practice</Link>
+            <Link href="/" className="text-sm font-medium text-[#334155] no-underline hover:text-[#0F172A]">Home</Link>
           </div>
-        </section>
+        </div>
+      </nav>
 
-        {/* Self-Check Questions */}
-        <section className="section">
-          <div className="section-inner">
-            <h2 className="text-h2 max-sm:text-[28px] mb-8">Static questions to ask yourself</h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-              {selfCheckQuestions.map((q) => (
-                <article className="card" key={q.prompt}>
-                  <p className="chinese-char text-chinese-display mb-2">{q.prompt.match(/[\u4e00-\u9fff]+/)?.[0] || "?"}</p>
-                  <h3 className="text-h4 mb-3">{q.prompt}</h3>
-                  <p className="text-body text-ink-secondary">{q.lookFor}</p>
-                </article>
-              ))}
+      <main className="min-h-[60vh]">
+        {/* ─── Intro ─── */}
+        {!started && !showResult && (
+          <section className="py-20 max-sm:py-12">
+            <div className="max-w-[720px] mx-auto px-8 text-center max-sm:px-4">
+              <h1 className="text-[48px] font-bold leading-[1.1] tracking-tight text-[#0F172A] mb-5 max-sm:text-[32px]">
+                Quick HSK Level Check
+              </h1>
+              <p className="text-lg leading-relaxed text-[#64748B] mb-8">
+                8 short questions. No timer. Get a suggested HSK level and a personalized next step.
+              </p>
+              <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                <button
+                  onClick={() => setStarted(true)}
+                  className="inline-flex items-center justify-center gap-2 bg-[#2563EB] text-white px-8 py-4 rounded-full text-lg font-semibold border-none cursor-pointer transition-all duration-200 shadow-[0_1px_2px_rgba(0,0,0,0.04)] hover:bg-[#1D4ED8] hover:shadow-[0_4px_12px_rgba(0,0,0,0.06)] active:scale-[0.98]"
+                >
+                  Start the Level Check
+                </button>
+                <Link
+                  href="/hsk-levels"
+                  className="inline-flex items-center justify-center gap-2 bg-transparent text-[#2563EB] px-8 py-4 rounded-full text-lg font-semibold no-underline border-[1.5px] border-[#2563EB] transition-all duration-200 hover:bg-[#EFF6FF]"
+                >
+                  Compare HSK Levels
+                </Link>
+              </div>
+              <p className="text-[13px] font-medium text-[#64748B] mt-6">
+                This is a self-assessment tool, not an official HSK test.
+              </p>
             </div>
-          </div>
-        </section>
+          </section>
+        )}
 
-        {/* Readiness Checklist */}
-        <section className="section section-alt">
-          <div className="section-inner">
-            <h2 className="text-h2 max-sm:text-[28px] mb-8">A simple level-readiness checklist</h2>
-            <div className="max-w-[800px]">
-              {readinessChecklist.map((item) => (
-                <div key={item} className="flex items-start gap-4 py-4 border-b border-border">
-                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#4A9B6B" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="flex-shrink-0 mt-0.5">
-                    <polyline points="20 6 9 17 4 12" />
-                  </svg>
-                  <p className="text-body text-ink-secondary">{item}</p>
+        {/* ─── Quiz ─── */}
+        {started && !showResult && (
+          <section className="py-16 max-sm:py-10">
+            <div className="max-w-[640px] mx-auto px-8 max-sm:px-4">
+              {/* Progress */}
+              <div className="mb-8">
+                <div className="flex justify-between text-sm font-medium text-[#64748B] mb-2">
+                  <span>Question {current + 1} of {questions.length}</span>
+                  <span>{progress}%</span>
                 </div>
-              ))}
-            </div>
-          </div>
-        </section>
+                <div className="w-full h-2 bg-[#E2E8F0] rounded-full overflow-hidden">
+                  <div
+                    className="h-full bg-[#2563EB] rounded-full transition-all duration-300"
+                    style={{ width: `${progress}%` }}
+                  />
+                </div>
+              </div>
 
-        {/* Choose by Confidence */}
-        <section className="section">
-          <div className="section-inner">
-            <h2 className="text-h2 max-sm:text-[28px] mb-8">Choose the next page by confidence</h2>
-            <div className="card-grid">
-              {confidenceSteps.map((step) => (
-                <article className="card" key={step.title}>
-                  <h3 className="text-h3 max-sm:text-xl mb-3">{step.title}</h3>
-                  <p className="text-body text-ink-secondary mb-4">{step.detail}</p>
-                  <a href={step.href} className="btn-ghost">{step.label}</a>
-                </article>
-              ))}
-            </div>
-          </div>
-        </section>
+              <h2 className="text-[24px] font-semibold leading-snug text-[#0F172A] mb-6">
+                {questions[current].q}
+              </h2>
 
-        {/* FAQ */}
-        <section className="section section-alt">
-          <div className="section-inner">
-            <h2 className="text-h2 max-sm:text-[28px] text-center mb-12">HSK level self-check questions</h2>
-            <div className="faq-list">
-              <FaqItem question="Is this an official HSK placement test?" answer="No. This is a static study guide for estimating a useful starting point. Use official or exam-specific resources when you need formal testing information." defaultOpen />
-              <FaqItem question="What if my skills do not match one level neatly?" answer="That is common. Vocabulary recognition, listening comfort, reading speed, and test familiarity can develop at different rates." />
-              <FaqItem question="Should a complete beginner begin with HSK 1?" answer="HSK 1 material is a practical starting place for a new learner who wants beginner vocabulary and short practice before comparing higher levels." />
+              <div className="flex flex-col gap-3">
+                {questions[current].options.map((opt, i) => (
+                  <button
+                    key={i}
+                    onClick={() => handleAnswer(i)}
+                    className="w-full text-left px-6 py-4 bg-white border border-[#E2E8F0] rounded-xl text-base font-medium text-[#334155] cursor-pointer transition-all duration-200 hover:border-[#2563EB] hover:bg-[#EFF6FF] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2563EB] focus-visible:ring-offset-2"
+                  >
+                    {opt}
+                  </button>
+                ))}
+              </div>
             </div>
-          </div>
-        </section>
+          </section>
+        )}
+
+        {/* ─── Result ─── */}
+        {showResult && (
+          <section className="py-20 max-sm:py-12">
+            <div className="max-w-[640px] mx-auto px-8 text-center max-sm:px-4">
+              <div className="text-[64px] font-bold text-[#2563EB] mb-2">{correctCount}/{questions.length}</div>
+              <p className="text-lg text-[#64748B] mb-8">questions correct</p>
+
+              <div className="bg-white border border-[#E2E8F0] rounded-2xl p-8 shadow-[0_4px_12px_rgba(0,0,0,0.06)] mb-8 text-left">
+                <div className="text-sm font-semibold text-[#2563EB] uppercase tracking-wider mb-2">
+                  Suggested Level
+                </div>
+                <h2 className="text-[32px] font-bold text-[#0F172A] mb-3">{resultCard.title}</h2>
+                <p className="text-base leading-relaxed text-[#334155] mb-6">{resultCard.desc}</p>
+                <Link
+                  href={resultCard.href}
+                  className="inline-flex items-center gap-2 bg-[#2563EB] text-white px-6 py-3 rounded-full text-base font-semibold no-underline transition-all duration-200 shadow-[0_1px_2px_rgba(0,0,0,0.04)] hover:bg-[#1D4ED8] hover:shadow-[0_4px_12px_rgba(0,0,0,0.06)]"
+                >
+                  {resultCard.label}
+                </Link>
+              </div>
+
+              <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                <button
+                  onClick={() => {
+                    setStarted(false);
+                    setCurrent(0);
+                    setAnswers([]);
+                    setShowResult(false);
+                  }}
+                  className="inline-flex items-center justify-center gap-2 bg-transparent text-[#2563EB] px-6 py-3 rounded-full text-base font-semibold border-[1.5px] border-[#2563EB] cursor-pointer transition-all duration-200 hover:bg-[#EFF6FF]"
+                >
+                  Retake the Level Check
+                </button>
+                <Link
+                  href="/hsk-1-practice-test"
+                  className="inline-flex items-center justify-center gap-2 bg-[#0F172A] text-white px-6 py-3 rounded-full text-base font-semibold no-underline transition-all duration-200 hover:bg-[#1e293b]"
+                >
+                  Try Sample Practice Questions
+                </Link>
+              </div>
+            </div>
+          </section>
+        )}
+
+        {/* ─── FAQ ─── */}
+        {!showResult && (
+          <section className="py-16 bg-[#F8FAFC] max-sm:py-10">
+            <div className="max-w-[800px] mx-auto px-8 max-sm:px-4">
+              <h2 className="text-[28px] font-bold text-[#0F172A] text-center mb-8">Common Questions</h2>
+              <div className="bg-white border border-[#E2E8F0] rounded-2xl shadow-[0_4px_12px_rgba(0,0,0,0.06)] overflow-hidden">
+                {faqSchema.mainEntity.map((faq: any, i: number) => (
+                  <details key={i} className="border-b border-[#E2E8F0] last:border-b-0">
+                    <summary className="flex items-center justify-between px-6 py-5 text-base font-semibold text-[#0F172A] cursor-pointer list-none hover:bg-[#F8FAFC]">
+                      <span>{faq.name}</span>
+                      <svg width="20" height="20" viewBox="0 0 24 24" stroke="#64748B" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round">
+                        <polyline points="6 9 12 15 18 9" />
+                      </svg>
+                    </summary>
+                    <div className="px-6 pb-5 text-base leading-relaxed text-[#334155]">
+                      {faq.acceptedAnswer.text}
+                    </div>
+                  </details>
+                ))}
+              </div>
+            </div>
+          </section>
+        )}
       </main>
-      <SiteFooter />
-    </>
-  );
-}
 
-function FaqItem({ question, answer, defaultOpen = false }: { question: string; answer: string; defaultOpen?: boolean }) {
-  return (
-    <details className="faq-item" open={defaultOpen}>
-      <summary className="faq-question list-none">
-        <span>{question}</span>
-        <svg className="faq-chevron" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <path d="m6 9 6 6 6-6" />
-        </svg>
-      </summary>
-      <div className="faq-answer">{answer}</div>
-    </details>
+      {/* ─── Footer ─── */}
+      <footer className="py-10 border-t border-[#E2E8F0] text-center">
+        <div className="max-w-[1200px] mx-auto px-8 max-sm:px-4">
+          <p className="text-[13px] text-[#64748B]">
+            © 2026 HSKKit. Independent study tool. Not affiliated with HSK test organizers.
+          </p>
+        </div>
+      </footer>
+    </>
   );
 }

@@ -3,9 +3,9 @@ import SiteHeader from "../site-header";
 import SiteFooter from "../site-footer";
 
 export const metadata: Metadata = {
-  title: "HSK 1 Practice Test Guide | HSKKit",
+  title: "HSK 1 Sample Practice Questions | HSKKit",
   description:
-    "Prepare for beginner HSK 1 practice with sample questions, review tips, and a simple learning path for vocabulary and mistakes.",
+    "Review sample HSK 1 practice questions with answer keys, review tips, and a simple learning path for beginner vocabulary and common mistakes.",
   alternates: {
     canonical: "https://hskkit.com/hsk-1-practice-test",
   },
@@ -53,8 +53,8 @@ export default function HSK1PracticeTestPage() {
         {/* Hero */}
         <section className="section pt-20">
           <div className="section-inner">
-            <span className="eyebrow">HSK 1 Practice Test</span>
-            <h1 className="text-h1 max-sm:text-[32px] mb-6">Practice HSK 1 questions with a beginner plan</h1>
+            <span className="eyebrow">HSK 1 Sample Practice Questions</span>
+            <h1 className="text-h1 max-sm:text-[32px] mb-6">Review HSK 1 sample questions with a beginner plan</h1>
             <p className="text-body-lg text-ink-secondary max-w-[640px] mb-10">
               HSK 1 practice helps turn beginner vocabulary into decisions you can make inside short prompts. Start small, notice what you miss, and use each question to choose the next review step.
             </p>

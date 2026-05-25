@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import SiteFooter from "../site-footer";
 
 export const metadata: Metadata = {
-  title: "HSK 2 Practice Test Guide | HSKKit",
+  title: "HSK 2 Sample Practice Questions | HSKKit",
   description:
     "Prepare for an HSK 2 practice test, mock test, or sample test with structure notes, study methods, common mistakes, and next steps.",
   alternates: {
@@ -88,7 +88,7 @@ export default function HSK2PracticeTestPage() {
   return (
     <main className="section">
       <section>
-        <p className="eyebrow">HSK 2 Practice Test</p>
+        <p className="eyebrow">HSK 2 Sample Practice Questions</p>
         <h1>Prepare for an HSK 2 practice test with a clear review plan</h1>
         <p className="subtitle">
           An HSK 2 practice test, mock test, or sample test helps you check

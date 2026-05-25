@@ -511,10 +511,10 @@ export default function HomePage() {
                   label: "Start HSK 1 Vocabulary",
                 },
                 {
-                  title: "HSK 1 Practice Test",
+                  title: "HSK 1 Sample Practice Questions",
                   text: "Sample questions with answer keys. Test what you've learned and find your weak spots.",
                   href: "/hsk-1-practice-test",
-                  label: "Try HSK 1 Practice",
+                  label: "Try Sample Practice Questions",
                 },
               ].map((card) => (
                 <div
