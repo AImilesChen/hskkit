@@ -5,6 +5,9 @@ import SiteFooter from "../site-footer";
 export const metadata: Metadata = {
   title: "Privacy Policy | HSKKit",
   description: "How HSKKit handles privacy for the current study guide website.",
+  alternates: {
+    canonical: "https://hskkit.com/privacy-policy",
+  },
 };
 
 export default function PrivacyPolicyPage() {

@@ -6,6 +6,9 @@ export const metadata: Metadata = {
   title: "HSK 1 Practice Test Guide | HSKKit",
   description:
     "Prepare for beginner HSK 1 practice with sample questions, review tips, and a simple learning path for vocabulary and mistakes.",
+  alternates: {
+    canonical: "https://hskkit.com/hsk-1-practice-test",
+  },
 };
 
 const sampleQuestions = [

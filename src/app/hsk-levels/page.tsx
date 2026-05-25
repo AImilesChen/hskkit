@@ -6,6 +6,9 @@ export const metadata: Metadata = {
   title: "HSK Levels Explained | HSKKit",
   description:
     "Compare HSK 1 to HSK 6 and find a practical beginner path for Chinese vocabulary, practice tests, and level checking.",
+  alternates: {
+    canonical: "https://hskkit.com/hsk-levels",
+  },
 };
 
 const levels = [

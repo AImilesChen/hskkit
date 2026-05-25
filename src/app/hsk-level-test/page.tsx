@@ -6,6 +6,9 @@ export const metadata: Metadata = {
   title: "HSK Level Test Guide | HSKKit",
   description:
     "Estimate your starting HSK study level with beginner self-check questions, a readiness checklist, and practical next steps.",
+  alternates: {
+    canonical: "https://hskkit.com/hsk-level-test",
+  },
 };
 
 const selfCheckQuestions = [

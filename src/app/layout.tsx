@@ -9,7 +9,7 @@ export const metadata: Metadata = {
   description:
     "Explore HSK vocabulary, practice test, level guide, and Chinese learning resources for practical study planning.",
   alternates: {
-    canonical: "/",
+    canonical: "https://hskkit.com",
   },
   openGraph: {
     title: "HSKKit | HSK Study Guides",

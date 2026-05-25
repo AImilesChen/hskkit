@@ -5,6 +5,9 @@ export const metadata: Metadata = {
   title: "HSK 4 Practice Test Guide | HSKKit",
   description:
     "Prepare for an HSK 4 practice test, mock test, or sample test with structure notes, study methods, HSK 3 transition challenges, and review tips.",
+  alternates: {
+    canonical: "https://hskkit.com/hsk-4-practice-test",
+  },
 };
 
 const examSections = [

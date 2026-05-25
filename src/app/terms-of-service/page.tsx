@@ -5,6 +5,9 @@ import SiteFooter from "../site-footer";
 export const metadata: Metadata = {
   title: "Terms of Service | HSKKit",
   description: "Terms for using the current HSKKit study guide website.",
+  alternates: {
+    canonical: "https://hskkit.com/terms-of-service",
+  },
 };
 
 export default function TermsPage() {

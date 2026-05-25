@@ -6,6 +6,9 @@ export const metadata: Metadata = {
   title: "HSK 1 Vocabulary Guide | HSKKit",
   description:
     "Learn what HSK 1 vocabulary supports, review beginner Chinese sample words with pinyin and English meanings, and plan your next practice step.",
+  alternates: {
+    canonical: "https://hskkit.com/hsk-1-vocabulary",
+  },
 };
 
 const sampleWords = [

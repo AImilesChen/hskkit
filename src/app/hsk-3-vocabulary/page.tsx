@@ -5,6 +5,9 @@ export const metadata: Metadata = {
   title: "HSK 3 Vocabulary Guide | HSKKit",
   description:
     "Study HSK 3 vocabulary, HSK 3 word list themes, sample Chinese words, transition tips from HSK 2, readiness checks, and next steps.",
+  alternates: {
+    canonical: "https://hskkit.com/hsk-3-vocabulary",
+  },
 };
 
 const sampleWords = [
