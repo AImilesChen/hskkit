@@ -57,7 +57,7 @@ export default function PrivacyPolicyPage() {
           <section className="mb-8">
             <h2 className="text-h3 mb-4">Your Rights</h2>
             <p className="text-body text-ink-secondary mb-4">
-              You have the right to access, correct, or delete your personal information. Since we do not store user accounts, most requests relate to analytics data.
+              You have the right to access, correct, or delete your personal information. Since we do not store user accounts, most requests relate to support emails or standard security/access logs.
             </p>
           </section>
 
