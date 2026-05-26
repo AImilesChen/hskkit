@@ -43,7 +43,7 @@ export default function PrivacyPolicyPage() {
           <section className="mb-8">
             <h2 className="text-h3 mb-4">Cookies and Tracking</h2>
             <p className="text-body text-ink-secondary mb-4">
-              We use analytics tools (Google Analytics, Microsoft Clarity, Ahrefs) to understand how visitors use our site. These tools use cookies and similar technologies. You can control cookies through your browser settings.
+              We do not use cookie-based analytics in the current version. If analytics are added in the future, they will use privacy-first, cookieless approaches such as Plausible. You can control cookies through your browser settings.
             </p>
           </section>
 
