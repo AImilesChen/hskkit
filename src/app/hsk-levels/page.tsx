@@ -12,12 +12,12 @@ export const metadata: Metadata = {
 };
 
 const levels = [
-  { level: "HSK 1", stage: "First steps", overview: "A starting point for learners building recognition of essential words, short phrases, and very simple everyday exchanges.", practice: "Focus on pronunciation, pinyin support, basic characters, and quick recall of beginner vocabulary.", color: "#4A9B6B" },
-  { level: "HSK 2", stage: "Early routine", overview: "Extends beginner study into more familiar daily situations and a wider set of sentence patterns.", practice: "Review common question forms, time and quantity expressions, and short listening or reading tasks.", color: "#5BA88A" },
-  { level: "HSK 3", stage: "Developing independence", overview: "Moves beyond survival phrases toward handling a broader range of personal, study, travel, and daily-life topics.", practice: "Strengthen grammar control, read longer passages carefully, and notice gaps that slow comprehension.", color: "#D4A03E" },
-  { level: "HSK 4", stage: "Broader communication", overview: "Represents a more capable intermediate stage with more connected language and less reliance on isolated phrases.", practice: "Work on speed, context clues, longer answers, and vocabulary review across related topics.", color: "#D4634E" },
-  { level: "HSK 5", stage: "Advanced study", overview: "Requires comfort with richer vocabulary, denser reading, and more sustained understanding across topics.", practice: "Use longer texts and audio to test comprehension, then review unfamiliar words in context.", color: "#B85440" },
-  { level: "HSK 6", stage: "High proficiency", overview: "Targets learners working with complex language, nuanced meaning, and demanding comprehension tasks.", practice: "Prioritize accuracy under pressure, careful reading, and active review of weak areas.", color: "#8B3A3A" },
+  { level: 1, stage: "First steps", overview: "A starting point for learners building recognition of essential words, short phrases, and very simple everyday exchanges.", practice: "Focus on pronunciation, pinyin support, basic characters, and quick recall of beginner vocabulary.", color: "#4A9B6B" },
+  { level: 2, stage: "Early routine", overview: "Extends beginner study into more familiar daily situations and a wider set of sentence patterns.", practice: "Review common question forms, time and quantity expressions, and short listening or reading tasks.", color: "#5BA88A" },
+  { level: 3, stage: "Developing independence", overview: "Moves beyond survival phrases toward handling a broader range of personal, study, travel, and daily-life topics.", practice: "Strengthen grammar control, read longer passages carefully, and notice gaps that slow comprehension.", color: "#D4A03E" },
+  { level: 4, stage: "Broader communication", overview: "Represents a more capable intermediate stage with more connected language and less reliance on isolated phrases.", practice: "Work on speed, context clues, longer answers, and vocabulary review across related topics.", color: "#D4634E" },
+  { level: 5, stage: "Advanced study", overview: "Requires comfort with richer vocabulary, denser reading, and more sustained understanding across topics.", practice: "Use longer texts and audio to test comprehension, then review unfamiliar words in context.", color: "#B85440" },
+  { level: 6, stage: "High proficiency", overview: "Advanced comprehension and nuanced reading. Not available yet.", practice: "Prioritize accuracy under pressure, careful reading, and active review of weak areas.", color: "#8B3A3A", planned: true },
 ];
 
 const beginnerSteps = [
@@ -88,12 +88,7 @@ export default function HSKLevelsPage() {
             <h2 className="text-h2 max-sm:text-[28px] mb-8">HSK 1 to HSK 6 at a glance</h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {levels.map((item) => (
-                <article key={item.level} className="card border-l-4" style={{ borderLeftColor: item.color }}>
-                  <span className="eyebrow text-xs">{item.stage}</span>
-                  <h3 className="text-h3 max-sm:text-xl mb-3">{item.level}</h3>
-                  <p className="text-body text-ink-secondary mb-4">{item.overview}</p>
-                  <p className="text-small text-ink-muted bg-primary-light px-3 py-2 rounded-md">{item.practice}</p>
-                </article>
+                <LevelCard key={item.level} item={item} />
               ))}
             </div>
           </div>
@@ -144,6 +139,53 @@ export default function HSKLevelsPage() {
       </main>
       <SiteFooter />
     </>
+  );
+}
+
+function LevelCard({ item }: { item: typeof levels[0] }) {
+  if (item.planned) {
+    return (
+      <a
+        href="/hsk-6-vocabulary"
+        className="block bg-white border border-[#E2E8F0] rounded-2xl p-6 shadow-[0_1px_2px_rgba(0,0,0,0.04)] opacity-60 transition-none"
+      >
+        <div className="flex items-center gap-3 mb-3">
+          <div className="w-10 h-10 rounded-full bg-[#E2E8F0] text-[#64748B] flex items-center justify-center text-base font-bold">
+            {item.level}
+          </div>
+          <div className="text-lg font-bold text-[#64748B]">HSK 6</div>
+          <span className="ml-auto inline-block text-[11px] font-semibold text-[#F59E0B] bg-[#FEF3C7] px-2.5 py-0.5 rounded-full">
+            Planned
+          </span>
+        </div>
+        <p className="text-sm text-[#64748B] leading-relaxed mb-4 min-h-[42px]">{item.overview}</p>
+        <span className="inline-flex items-center gap-1.5 text-sm font-semibold text-[#64748B]">
+          Check Back Later
+        </span>
+      </a>
+    );
+  }
+
+  return (
+    <a
+      href={`/hsk-${item.level}-vocabulary`}
+      className="block bg-white border border-[#E2E8F0] rounded-2xl p-6 shadow-[0_1px_2px_rgba(0,0,0,0.04)] transition-all duration-200 hover:shadow-[0_4px_12px_rgba(0,0,0,0.06)] hover:border-[#DBEAFE]"
+    >
+      <div className="flex items-center gap-3 mb-3">
+        <div
+          className="w-10 h-10 rounded-full flex items-center justify-center text-base font-bold text-white"
+          style={{ backgroundColor: item.color }}
+        >
+          {item.level}
+        </div>
+        <div className="text-lg font-bold text-[#0F172A]">HSK {item.level}</div>
+      </div>
+      <p className="text-sm text-[#64748B] leading-relaxed mb-4 min-h-[42px]">{item.overview}</p>
+      <span className="inline-flex items-center gap-1.5 text-sm font-semibold text-[#2563EB]">
+        Open HSK {item.level} Vocabulary
+        <span className="text-base">→</span>
+      </span>
+    </a>
   );
 }
 

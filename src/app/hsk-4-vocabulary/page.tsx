@@ -1,5 +1,8 @@
 import type { Metadata } from "next";
+import SiteHeader from "../site-header";
 import SiteFooter from "../site-footer";
+import InfoBanner from "../components/info-banner";
+import LearningPath from "../components/learning-path";
 
 export const metadata: Metadata = {
   title: "HSK 4 Vocabulary Guide | HSKKit",
@@ -85,212 +88,156 @@ const readinessChecks = [
 
 export default function HSK4VocabularyPage() {
   return (
-    <main className="section">
-      <section>
-        <p className="eyebrow">HSK 4 Vocabulary</p>
-        <h1>Build an HSK 4 vocabulary plan for intermediate Chinese</h1>
-        <p className="subtitle">
-          HSK 4 vocabulary expands from beginner-intermediate topics into more
-          abstract Chinese words for opinions, work, responsibility,
-          relationships, problem solving, and longer reading. Use this guide to
-          organize your HSK 4 word list after HSK 3 starts to feel manageable.
-        </p>
-        <div className="actions">
-          <a className="button primary" href="/hsk-4-practice-test">
-            Try HSK 4 practice
-          </a>
-          <a className="button secondary" href="/hsk-level-test">
-            Check your level
-          </a>
-        </div>
-      </section>
+    <>
+      <SiteHeader />
+      <main>
+        <section className="section pt-20">
+          <div className="section-inner">
+            <span className="eyebrow">HSK 4 Vocabulary</span>
+            <h1 className="text-h1 max-sm:text-[32px] mb-6">
+              Build an HSK 4 vocabulary plan for intermediate Chinese
+            </h1>
+            <InfoBanner level={4} />
+            <p className="text-body-lg text-ink-secondary max-w-[640px] mb-10">
+              HSK 4 vocabulary expands from beginner-intermediate topics into more
+              abstract Chinese words for opinions, work, responsibility,
+              relationships, problem solving, and longer reading. Use this guide to
+              organize your HSK 4 word list after HSK 3 starts to feel manageable.
+            </p>
+            <div className="flex gap-4 flex-wrap">
+              <a href="/hsk-4-practice-test" className="btn btn-primary">
+                Try HSK 4 practice
+              </a>
+              <a href="/hsk-level-test" className="btn btn-secondary">
+                Check your level
+              </a>
+            </div>
+          </div>
+        </section>
 
-      <section>
-        <p className="eyebrow">Purpose</p>
-        <h2>What HSK 4 vocabulary is for</h2>
-        <div className="grid">
-          <article className="card">
-            <h3>Richer expression</h3>
-            <p>
-              HSK 4 words help learners explain opinions, causes, decisions,
-              problems, and relationships with more precision.
-            </p>
-          </article>
-          <article className="card">
-            <h3>Longer context</h3>
-            <p>
-              Vocabulary appears inside fuller reading and listening contexts,
-              so study should include sentences and short passages.
-            </p>
-          </article>
-          <article className="card">
-            <h3>Intermediate review habits</h3>
-            <p>
-              At HSK 4, the best word list is not only bigger. It is organized
-              by topic, usage, similarity, and mistake patterns.
-            </p>
-          </article>
-        </div>
-      </section>
+        <section className="section section-alt">
+          <div className="section-inner">
+            <h2 className="text-h2 max-sm:text-[28px] mb-8">
+              What HSK 4 vocabulary is for
+            </h2>
+            <div className="card-grid">
+              <article className="card">
+                <h3 className="text-h3 max-sm:text-xl mb-3">Richer expression</h3>
+                <p className="text-body text-ink-secondary">
+                  HSK 4 words help learners explain opinions, causes, decisions,
+                  problems, and relationships with more precision.
+                </p>
+              </article>
+              <article className="card">
+                <h3 className="text-h3 max-sm:text-xl mb-3">Longer context</h3>
+                <p className="text-body text-ink-secondary">
+                  Vocabulary appears inside fuller reading and listening contexts,
+                  so study should include sentences and short passages.
+                </p>
+              </article>
+              <article className="card">
+                <h3 className="text-h3 max-sm:text-xl mb-3">Intermediate review habits</h3>
+                <p className="text-body text-ink-secondary">
+                  At HSK 4, the best word list is not only bigger. It is organized
+                  by topic, usage, similarity, and mistake patterns.
+                </p>
+              </article>
+            </div>
+          </div>
+        </section>
 
-      <section>
-        <p className="eyebrow">Sample List</p>
-        <h2>HSK 4 Chinese words to review</h2>
-        <p>
-          This sample is a study orientation, not a complete official
-          vocabulary list. Use it to notice the more abstract and context-heavy
-          feel of HSK 4 words.
-        </p>
-        <div className="grid">
-          {sampleWords.map((word) => (
-            <article className="card" key={word.chinese}>
-              <p className="eyebrow">{word.pinyin}</p>
-              <h3>{word.chinese}</h3>
-              <p>{word.meaning}</p>
-            </article>
-          ))}
-        </div>
-      </section>
+        <section className="section">
+          <div className="section-inner">
+            <h2 className="text-h2 max-sm:text-[28px] mb-8">
+              HSK 4 Chinese words to review
+            </h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              {sampleWords.map((word) => (
+                <article className="card text-center" key={word.chinese}>
+                  <p className="chinese-char text-[48px] mb-2">{word.chinese}</p>
+                  <p className="text-small text-ink-muted mb-2">{word.pinyin}</p>
+                  <p className="text-body text-ink-secondary">{word.meaning}</p>
+                </article>
+              ))}
+            </div>
+          </div>
+        </section>
 
-      <section>
-        <p className="eyebrow">Categories</p>
-        <h2>How to group an HSK 4 word list</h2>
-        <div className="grid">
-          {categories.map((category) => (
-            <article className="card" key={category.title}>
-              <h3>{category.title}</h3>
-              <p>{category.detail}</p>
-            </article>
-          ))}
-        </div>
-      </section>
+        <section className="section section-alt">
+          <div className="section-inner">
+            <h2 className="text-h2 max-sm:text-[28px] mb-8">
+              How to group an HSK 4 word list
+            </h2>
+            <div className="card-grid">
+              {categories.map((category) => (
+                <article className="card" key={category.title}>
+                  <h3 className="text-h3 max-sm:text-xl mb-3">{category.title}</h3>
+                  <p className="text-body text-ink-secondary">{category.detail}</p>
+                </article>
+              ))}
+            </div>
+          </div>
+        </section>
 
-      <section className="card">
-        <p className="eyebrow">Study Tips</p>
-        <h2>Make HSK 4 vocabulary easier to use</h2>
-        <p>
-          HSK 4 study becomes easier when words are reviewed with topic,
-          sentence context, common combinations, and mistake evidence.
-        </p>
-        <ol>
-          {studyTips.map((tip) => (
-            <li key={tip}>{tip}</li>
-          ))}
-        </ol>
-      </section>
+        <section className="section">
+          <div className="section-inner">
+            <h2 className="text-h2 max-sm:text-[28px] mb-8">
+              Make HSK 4 vocabulary easier to use
+            </h2>
+            <div className="max-w-[800px]">
+              {studyTips.map((tip) => (
+                <div key={tip} className="flex items-start gap-4 py-4 border-b border-border">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#D4634E" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="flex-shrink-0 mt-0.5">
+                    <polyline points="20 6 9 17 4 12" />
+                  </svg>
+                  <p className="text-body text-ink-secondary">{tip}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
 
-      <section>
-        <p className="eyebrow">Transition</p>
-        <h2>What gets harder from HSK 3 to HSK 4</h2>
-        <div className="grid">
-          {transitionChallenges.map((challenge) => (
-            <article className="card" key={challenge.title}>
-              <h3>{challenge.title}</h3>
-              <p>{challenge.detail}</p>
-            </article>
-          ))}
-        </div>
-      </section>
+        <section className="section section-alt">
+          <div className="section-inner">
+            <h2 className="text-h2 max-sm:text-[28px] mb-8">
+              What gets harder from HSK 3 to HSK 4
+            </h2>
+            <div className="card-grid">
+              {transitionChallenges.map((challenge) => (
+                <article className="card" key={challenge.title}>
+                  <h3 className="text-h3 max-sm:text-xl mb-3">{challenge.title}</h3>
+                  <p className="text-body text-ink-secondary">{challenge.detail}</p>
+                </article>
+              ))}
+            </div>
+          </div>
+        </section>
 
-      <section className="card">
-        <p className="eyebrow">Readiness</p>
-        <h2>Signs you are ready for HSK 4 vocabulary</h2>
-        <p>
-          You do not need perfect HSK 3 performance before starting HSK 4, but
-          you should be ready to learn words through context instead of only
-          isolated recall.
-        </p>
-        <ul>
-          {readinessChecks.map((check) => (
-            <li key={check}>{check}</li>
-          ))}
-        </ul>
-      </section>
+        <section className="section">
+          <div className="section-inner">
+            <h2 className="text-h2 max-sm:text-[28px] mb-8">
+              Signs you are ready for HSK 4 vocabulary
+            </h2>
+            <div className="max-w-[800px]">
+              {readinessChecks.map((check) => (
+                <div key={check} className="flex items-start gap-4 py-4 border-b border-border">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#D4634E" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="flex-shrink-0 mt-0.5">
+                    <polyline points="20 6 9 17 4 12" />
+                  </svg>
+                  <p className="text-body text-ink-secondary">{check}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
 
-      <section>
-        <p className="eyebrow">Related Pages</p>
-        <h2>Choose the next HSK study step</h2>
-        <div className="grid">
-          <article className="card">
-            <h3>HSK 3 vocabulary</h3>
-            <p>
-              Review HSK 3 words first if longer beginner-intermediate reading
-              still feels slow.
-            </p>
-            <a href="/hsk-3-vocabulary">Open HSK 3 vocabulary</a>
-          </article>
-          <article className="card">
-            <h3>HSK 3 practice test</h3>
-            <p>
-              Use HSK 3 practice guidance to check whether your foundation is
-              ready for the HSK 4 vocabulary load.
-            </p>
-            <a href="/hsk-3-practice-test">Open HSK 3 practice test</a>
-          </article>
-          <article className="card">
-            <h3>HSK level test</h3>
-            <p>
-              Use a self-check page when you are unsure whether to review HSK 3
-              or begin HSK 4 vocabulary.
-            </p>
-            <a href="/hsk-level-test">Open HSK level test</a>
-          </article>
-          <article className="card">
-            <h3>HSK 4 practice test</h3>
-            <p>
-              Use HSK 4 sample test guidance when you want to see whether these
-              words hold up inside longer listening and reading tasks.
-            </p>
-            <a href="/hsk-4-practice-test">Open HSK 4 practice test</a>
-          </article>
-          <article className="card">
-            <h3>HSK 5 vocabulary</h3>
-            <p>
-              Continue into HSK 5 words when HSK 4 vocabulary feels reliable in
-              passages and practice review.
-            </p>
-            <a href="/hsk-5-vocabulary">Open HSK 5 vocabulary</a>
-          </article>
-          <article className="card">
-            <h3>New HSK 3.0 guide</h3>
-            <p>
-              Check newer framework context before assuming every HSK 4 word
-              list or level label follows the same boundary.
-            </p>
-            <a href="/new-hsk-3-0">Open New HSK 3.0 guide</a>
-          </article>
-        </div>
-      </section>
-
-      <section className="faq">
-        <p className="eyebrow">FAQ</p>
-        <h2>HSK 4 vocabulary questions</h2>
-        <details open>
-          <summary>Is this a complete HSK 4 word list?</summary>
-          <p>
-            No. This is a learner-facing guide with sample words, categories,
-            and study advice. Use your course or exam resource when you need a
-            specific required list.
-          </p>
-        </details>
-        <details>
-          <summary>When should I start HSK 4 vocabulary?</summary>
-          <p>
-            Start when HSK 3 vocabulary and practice tasks are mostly
-            manageable, and you are ready for more abstract words and longer
-            context.
-          </p>
-        </details>
-        <details>
-          <summary>Why does HSK 4 vocabulary feel difficult?</summary>
-          <p>
-            HSK 4 adds more abstract meaning, similar word choices, and longer
-            contexts. The challenge is learning how words behave in sentences,
-            not only recognizing them alone.
-          </p>
-        </details>
-      </section>
+        <section className="section section-alt">
+          <div className="section-inner">
+            <LearningPath level={4} />
+          </div>
+        </section>
+      </main>
       <SiteFooter />
-    </main>
+    </>
   );
 }

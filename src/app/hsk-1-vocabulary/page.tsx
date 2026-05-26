@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import SiteHeader from "../site-header";
 import SiteFooter from "../site-footer";
+import InfoBanner from "../components/info-banner";
+import LearningPath from "../components/learning-path";
 
 export const metadata: Metadata = {
   title: "HSK 1 Vocabulary Guide | HSKKit",
@@ -40,6 +42,7 @@ export default function HSK1VocabularyPage() {
           <div className="section-inner">
             <span className="eyebrow">HSK 1 Vocabulary</span>
             <h1 className="text-h1 max-sm:text-[32px] mb-6">Build a clear HSK 1 vocabulary foundation</h1>
+            <InfoBanner level={1} />
             <p className="text-body-lg text-ink-secondary max-w-[640px] mb-10">
               Start with the most common words in daily Chinese. Each word includes pinyin, meaning, and a simple example to help you recognize and remember.
             </p>
@@ -101,6 +104,13 @@ export default function HSK1VocabularyPage() {
                 </div>
               ))}
             </div>
+          </div>
+        </section>
+
+        {/* Learning Path */}
+        <section className="section">
+          <div className="section-inner">
+            <LearningPath level={1} />
           </div>
         </section>
       </main>

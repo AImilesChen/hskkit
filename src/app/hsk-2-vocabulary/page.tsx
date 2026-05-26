@@ -1,5 +1,8 @@
 import type { Metadata } from "next";
+import SiteHeader from "../site-header";
 import SiteFooter from "../site-footer";
+import InfoBanner from "../components/info-banner";
+import LearningPath from "../components/learning-path";
 
 export const metadata: Metadata = {
   title: "HSK 2 Vocabulary Guide | HSKKit",
@@ -49,184 +52,122 @@ const readinessSigns = [
 
 export default function HSK2VocabularyPage() {
   return (
-    <main className="section">
-      <section>
-        <p className="eyebrow">HSK 2 Vocabulary</p>
-        <h1>Grow your HSK 2 vocabulary after the beginner foundation</h1>
-        <p className="subtitle">
-          HSK 2 vocabulary helps learners move from isolated beginner words
-          toward more useful daily phrases, simple opinions, time expressions,
-          and short explanations. Use this guide as a practical bridge after
-          HSK 1 review.
-        </p>
-        <div className="actions">
-          <a className="button primary" href="/hsk-2-practice-test">
-            Try HSK 2 practice
-          </a>
-          <a className="button secondary" href="/hsk-level-test">
-            Check your level
-          </a>
-        </div>
-      </section>
+    <>
+      <SiteHeader />
+      <main>
+        <section className="section pt-20">
+          <div className="section-inner">
+            <span className="eyebrow">HSK 2 Vocabulary</span>
+            <h1 className="text-h1 max-sm:text-[32px] mb-6">
+              Grow your HSK 2 vocabulary after the beginner foundation
+            </h1>
+            <InfoBanner level={2} />
+            <p className="text-body-lg text-ink-secondary max-w-[640px] mb-10">
+              HSK 2 vocabulary helps learners move from isolated beginner words
+              toward more useful daily phrases, simple opinions, time expressions,
+              and short explanations. Use this guide as a practical bridge after
+              HSK 1 review.
+            </p>
+            <div className="flex gap-4 flex-wrap">
+              <a href="/hsk-2-practice-test" className="btn btn-primary">
+                Try HSK 2 practice
+              </a>
+              <a href="/hsk-level-test" className="btn btn-secondary">
+                Check your level
+              </a>
+            </div>
+          </div>
+        </section>
 
-      <section>
-        <p className="eyebrow">Purpose</p>
-        <h2>What HSK 2 vocabulary adds</h2>
-        <div className="grid">
-          <article className="card">
-            <h3>More daily topics</h3>
-            <p>
-              HSK 2 study expands the beginner base into school, work, family,
-              shopping, time, plans, and simple personal preferences.
-            </p>
-          </article>
-          <article className="card">
-            <h3>Longer recognition</h3>
-            <p>
-              New words often appear inside slightly longer phrases, so review
-              should include short sentence practice instead of only flashcards.
-            </p>
-          </article>
-          <article className="card">
-            <h3>Better review choices</h3>
-            <p>
-              When HSK 2 feels hard, the answer is not always more words. Some
-              learners need stronger HSK 1 recall or calmer reading habits.
-            </p>
-          </article>
-        </div>
-      </section>
+        <section className="section section-alt">
+          <div className="section-inner">
+            <h2 className="text-h2 max-sm:text-[28px] mb-8">
+              What HSK 2 vocabulary adds
+            </h2>
+            <div className="card-grid">
+              <article className="card">
+                <h3 className="text-h3 max-sm:text-xl mb-3">More daily topics</h3>
+                <p className="text-body text-ink-secondary">
+                  HSK 2 study expands the beginner base into school, work, family,
+                  shopping, time, plans, and simple personal preferences.
+                </p>
+              </article>
+              <article className="card">
+                <h3 className="text-h3 max-sm:text-xl mb-3">Longer recognition</h3>
+                <p className="text-body text-ink-secondary">
+                  New words often appear inside slightly longer phrases, so review
+                  should include short sentence practice instead of only flashcards.
+                </p>
+              </article>
+              <article className="card">
+                <h3 className="text-h3 max-sm:text-xl mb-3">Better review choices</h3>
+                <p className="text-body text-ink-secondary">
+                  When HSK 2 feels hard, the answer is not always more words. Some
+                  learners need stronger HSK 1 recall or calmer reading habits.
+                </p>
+              </article>
+            </div>
+          </div>
+        </section>
 
-      <section>
-        <p className="eyebrow">Sample List</p>
-        <h2>Beginner-plus words to review</h2>
-        <p>
-          This sample is for study orientation. Read the Chinese first, check
-          the pinyin, then cover the English meaning and test recall in a short
-          phrase.
-        </p>
-        <div className="grid">
-          {sampleWords.map((word) => (
-            <article className="card" key={word.chinese}>
-              <p className="eyebrow">{word.pinyin}</p>
-              <h3>{word.chinese}</h3>
-              <p>{word.meaning}</p>
-            </article>
-          ))}
-        </div>
-      </section>
+        <section className="section">
+          <div className="section-inner">
+            <h2 className="text-h2 max-sm:text-[28px] mb-8">
+              Beginner-plus words to review
+            </h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              {sampleWords.map((word) => (
+                <article className="card text-center" key={word.chinese}>
+                  <p className="chinese-char text-[48px] mb-2">{word.chinese}</p>
+                  <p className="text-small text-ink-muted mb-2">{word.pinyin}</p>
+                  <p className="text-body text-ink-secondary">{word.meaning}</p>
+                </article>
+              ))}
+            </div>
+          </div>
+        </section>
 
-      <section className="card">
-        <p className="eyebrow">Study Moves</p>
-        <h2>Make HSK 2 vocabulary easier to keep</h2>
-        <p>
-          HSK 2 words become more useful when you connect them to a topic, a
-          sentence pattern, and a real review decision. Keep the loop small
-          enough to repeat.
-        </p>
-        <ol>
-          {studyMoves.map((move) => (
-            <li key={move}>{move}</li>
-          ))}
-        </ol>
-      </section>
+        <section className="section section-alt">
+          <div className="section-inner">
+            <h2 className="text-h2 max-sm:text-[28px] mb-8">
+              Make HSK 2 vocabulary easier to keep
+            </h2>
+            <div className="max-w-[800px]">
+              {studyMoves.map((tip) => (
+                <div key={tip} className="flex items-start gap-4 py-4 border-b border-border">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#5BA88A" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="flex-shrink-0 mt-0.5">
+                    <polyline points="20 6 9 17 4 12" />
+                  </svg>
+                  <p className="text-body text-ink-secondary">{tip}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
 
-      <section>
-        <p className="eyebrow">Readiness</p>
-        <h2>Signs you are ready to add HSK 2 words</h2>
-        <div className="grid">
-          {readinessSigns.map((sign) => (
-            <article className="card" key={sign.title}>
-              <h3>{sign.title}</h3>
-              <p>{sign.detail}</p>
-            </article>
-          ))}
-        </div>
-      </section>
+        <section className="section">
+          <div className="section-inner">
+            <h2 className="text-h2 max-sm:text-[28px] mb-8">
+              Signs you are ready to add HSK 2 words
+            </h2>
+            <div className="card-grid">
+              {readinessSigns.map((sign) => (
+                <article className="card" key={sign.title}>
+                  <h3 className="text-h3 max-sm:text-xl mb-3">{sign.title}</h3>
+                  <p className="text-body text-ink-secondary">{sign.detail}</p>
+                </article>
+              ))}
+            </div>
+          </div>
+        </section>
 
-      <section>
-        <p className="eyebrow">Related Pages</p>
-        <h2>Keep the study path connected</h2>
-        <div className="grid">
-          <article className="card">
-            <h3>HSK 1 vocabulary</h3>
-            <p>
-              Return to HSK 1 words when the beginner base still slows down
-              reading or practice questions.
-            </p>
-            <a href="/hsk-1-vocabulary">Open HSK 1 vocabulary</a>
-          </article>
-          <article className="card">
-            <h3>HSK level test</h3>
-            <p>
-              Use a self-check guide when you are unsure whether to review HSK
-              1 or continue into HSK 2 material.
-            </p>
-            <a href="/hsk-level-test">Open HSK level test</a>
-          </article>
-          <article className="card">
-            <h3>HSK 2 practice test</h3>
-            <p>
-              Try HSK 2 sample test guidance when you want to see whether these
-              words stay clear inside short listening and reading tasks.
-            </p>
-            <a href="/hsk-2-practice-test">Open HSK 2 practice test</a>
-          </article>
-          <article className="card">
-            <h3>HSK 3 vocabulary</h3>
-            <p>
-              Continue into HSK 3 words when HSK 2 vocabulary feels familiar
-              inside short sentences and practice tasks.
-            </p>
-            <a href="/hsk-3-vocabulary">Open HSK 3 vocabulary</a>
-          </article>
-          <article className="card">
-            <h3>HSK levels guide</h3>
-            <p>
-              Compare HSK levels when you want to see how HSK 2 fits into the
-              wider Chinese learning path.
-            </p>
-            <a href="/hsk-levels">Open HSK levels guide</a>
-          </article>
-          <article className="card">
-            <h3>New HSK 3.0 guide</h3>
-            <p>
-              Check newer HSK framework context before assuming every resource
-              uses the same vocabulary labels.
-            </p>
-            <a href="/new-hsk-3-0">Open New HSK 3.0 guide</a>
-          </article>
-        </div>
-      </section>
-
-      <section className="faq">
-        <p className="eyebrow">FAQ</p>
-        <h2>HSK 2 vocabulary questions</h2>
-        <details open>
-          <summary>When should I start HSK 2 vocabulary?</summary>
-          <p>
-            Start when common HSK 1 words and simple sentence patterns feel
-            familiar enough that you can read short prompts without stopping at
-            every word.
-          </p>
-        </details>
-        <details>
-          <summary>Should I memorize HSK 2 words as a raw list?</summary>
-          <p>
-            A list is useful for coverage, but retention improves when each word
-            is reviewed in a short phrase, topic group, or practice question.
-          </p>
-        </details>
-        <details>
-          <summary>Does this page replace an official vocabulary list?</summary>
-          <p>
-            No. It is a learner-facing study guide with sample words and review
-            advice. Check the course or exam resource you use when you need a
-            specific required list.
-          </p>
-        </details>
-      </section>
+        <section className="section section-alt">
+          <div className="section-inner">
+            <LearningPath level={2} />
+          </div>
+        </section>
+      </main>
       <SiteFooter />
-    </main>
+    </>
   );
 }

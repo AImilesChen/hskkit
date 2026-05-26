@@ -1,5 +1,8 @@
 import type { Metadata } from "next";
+import SiteHeader from "../site-header";
 import SiteFooter from "../site-footer";
+import InfoBanner from "../components/info-banner";
+import LearningPath from "../components/learning-path";
 
 export const metadata: Metadata = {
   title: "HSK 3 Vocabulary Guide | HSKKit",
@@ -85,212 +88,156 @@ const readinessChecks = [
 
 export default function HSK3VocabularyPage() {
   return (
-    <main className="section">
-      <section>
-        <p className="eyebrow">HSK 3 Vocabulary</p>
-        <h1>Build an HSK 3 vocabulary plan for stronger Chinese reading</h1>
-        <p className="subtitle">
-          HSK 3 vocabulary moves beyond beginner phrases into more connected
-          Chinese words for study, work, decisions, opinions, daily problems,
-          and longer sentence meaning. Use this guide to organize your HSK 3
-          word list and bridge the gap after HSK 2.
-        </p>
-        <div className="actions">
-          <a className="button primary" href="/hsk-3-practice-test">
-            Try HSK 3 practice
-          </a>
-          <a className="button secondary" href="/hsk-level-test">
-            Check your level
-          </a>
-        </div>
-      </section>
+    <>
+      <SiteHeader />
+      <main>
+        <section className="section pt-20">
+          <div className="section-inner">
+            <span className="eyebrow">HSK 3 Vocabulary</span>
+            <h1 className="text-h1 max-sm:text-[32px] mb-6">
+              Build an HSK 3 vocabulary plan for stronger Chinese reading
+            </h1>
+            <InfoBanner level={3} />
+            <p className="text-body-lg text-ink-secondary max-w-[640px] mb-10">
+              HSK 3 vocabulary moves beyond beginner phrases into more connected
+              Chinese words for study, work, decisions, opinions, daily problems,
+              and longer sentence meaning. Use this guide to organize your HSK 3
+              word list and bridge the gap after HSK 2.
+            </p>
+            <div className="flex gap-4 flex-wrap">
+              <a href="/hsk-3-practice-test" className="btn btn-primary">
+                Try HSK 3 practice
+              </a>
+              <a href="/hsk-level-test" className="btn btn-secondary">
+                Check your level
+              </a>
+            </div>
+          </div>
+        </section>
 
-      <section>
-        <p className="eyebrow">Purpose</p>
-        <h2>What HSK 3 vocabulary is for</h2>
-        <div className="grid">
-          <article className="card">
-            <h3>Connected meaning</h3>
-            <p>
-              HSK 3 words help you understand longer sentences where people
-              explain plans, reasons, comparisons, and everyday situations.
-            </p>
-          </article>
-          <article className="card">
-            <h3>Intermediate bridge</h3>
-            <p>
-              This level starts to feel less like isolated beginner survival
-              language and more like practical communication across topics.
-            </p>
-          </article>
-          <article className="card">
-            <h3>Better review evidence</h3>
-            <p>
-              The most useful HSK 3 study comes from noticing which words fail
-              in context, then reviewing those words with short examples.
-            </p>
-          </article>
-        </div>
-      </section>
+        <section className="section section-alt">
+          <div className="section-inner">
+            <h2 className="text-h2 max-sm:text-[28px] mb-8">
+              What HSK 3 vocabulary is for
+            </h2>
+            <div className="card-grid">
+              <article className="card">
+                <h3 className="text-h3 max-sm:text-xl mb-3">Connected meaning</h3>
+                <p className="text-body text-ink-secondary">
+                  HSK 3 words help you understand longer sentences where people
+                  explain plans, reasons, comparisons, and everyday situations.
+                </p>
+              </article>
+              <article className="card">
+                <h3 className="text-h3 max-sm:text-xl mb-3">Intermediate bridge</h3>
+                <p className="text-body text-ink-secondary">
+                  This level starts to feel less like isolated beginner survival
+                  language and more like practical communication across topics.
+                </p>
+              </article>
+              <article className="card">
+                <h3 className="text-h3 max-sm:text-xl mb-3">Better review evidence</h3>
+                <p className="text-body text-ink-secondary">
+                  The most useful HSK 3 study comes from noticing which words fail
+                  in context, then reviewing those words with short examples.
+                </p>
+              </article>
+            </div>
+          </div>
+        </section>
 
-      <section>
-        <p className="eyebrow">Sample List</p>
-        <h2>HSK 3 Chinese words to review</h2>
-        <p>
-          This sample is not a complete official vocabulary list. Use it to see
-          the kind of words that often make HSK 3 reading feel more connected
-          than HSK 2.
-        </p>
-        <div className="grid">
-          {sampleWords.map((word) => (
-            <article className="card" key={word.chinese}>
-              <p className="eyebrow">{word.pinyin}</p>
-              <h3>{word.chinese}</h3>
-              <p>{word.meaning}</p>
-            </article>
-          ))}
-        </div>
-      </section>
+        <section className="section">
+          <div className="section-inner">
+            <h2 className="text-h2 max-sm:text-[28px] mb-8">
+              HSK 3 Chinese words to review
+            </h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              {sampleWords.map((word) => (
+                <article className="card text-center" key={word.chinese}>
+                  <p className="chinese-char text-[48px] mb-2">{word.chinese}</p>
+                  <p className="text-small text-ink-muted mb-2">{word.pinyin}</p>
+                  <p className="text-body text-ink-secondary">{word.meaning}</p>
+                </article>
+              ))}
+            </div>
+          </div>
+        </section>
 
-      <section>
-        <p className="eyebrow">Categories</p>
-        <h2>How to group an HSK 3 word list</h2>
-        <div className="grid">
-          {categories.map((category) => (
-            <article className="card" key={category.title}>
-              <h3>{category.title}</h3>
-              <p>{category.detail}</p>
-            </article>
-          ))}
-        </div>
-      </section>
+        <section className="section section-alt">
+          <div className="section-inner">
+            <h2 className="text-h2 max-sm:text-[28px] mb-8">
+              How to group an HSK 3 word list
+            </h2>
+            <div className="card-grid">
+              {categories.map((category) => (
+                <article className="card" key={category.title}>
+                  <h3 className="text-h3 max-sm:text-xl mb-3">{category.title}</h3>
+                  <p className="text-body text-ink-secondary">{category.detail}</p>
+                </article>
+              ))}
+            </div>
+          </div>
+        </section>
 
-      <section className="card">
-        <p className="eyebrow">Study Tips</p>
-        <h2>Make HSK 3 vocabulary easier to remember</h2>
-        <p>
-          HSK 3 vocabulary study works best when every word is tied to a topic,
-          a short sentence, and a review decision after practice.
-        </p>
-        <ol>
-          {studyTips.map((tip) => (
-            <li key={tip}>{tip}</li>
-          ))}
-        </ol>
-      </section>
+        <section className="section">
+          <div className="section-inner">
+            <h2 className="text-h2 max-sm:text-[28px] mb-8">
+              Make HSK 3 vocabulary easier to remember
+            </h2>
+            <div className="max-w-[800px]">
+              {studyTips.map((tip) => (
+                <div key={tip} className="flex items-start gap-4 py-4 border-b border-border">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#D4A03E" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="flex-shrink-0 mt-0.5">
+                    <polyline points="20 6 9 17 4 12" />
+                  </svg>
+                  <p className="text-body text-ink-secondary">{tip}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
 
-      <section>
-        <p className="eyebrow">Transition</p>
-        <h2>What gets harder from HSK 2 to HSK 3</h2>
-        <div className="grid">
-          {transitionChallenges.map((challenge) => (
-            <article className="card" key={challenge.title}>
-              <h3>{challenge.title}</h3>
-              <p>{challenge.detail}</p>
-            </article>
-          ))}
-        </div>
-      </section>
+        <section className="section section-alt">
+          <div className="section-inner">
+            <h2 className="text-h2 max-sm:text-[28px] mb-8">
+              What gets harder from HSK 2 to HSK 3
+            </h2>
+            <div className="card-grid">
+              {transitionChallenges.map((challenge) => (
+                <article className="card" key={challenge.title}>
+                  <h3 className="text-h3 max-sm:text-xl mb-3">{challenge.title}</h3>
+                  <p className="text-body text-ink-secondary">{challenge.detail}</p>
+                </article>
+              ))}
+            </div>
+          </div>
+        </section>
 
-      <section className="card">
-        <p className="eyebrow">Readiness</p>
-        <h2>Signs you are ready for HSK 3 vocabulary</h2>
-        <p>
-          You do not need perfect HSK 2 performance before starting HSK 3, but
-          the foundation should be strong enough that new words do not overwhelm
-          every practice session.
-        </p>
-        <ul>
-          {readinessChecks.map((check) => (
-            <li key={check}>{check}</li>
-          ))}
-        </ul>
-      </section>
+        <section className="section">
+          <div className="section-inner">
+            <h2 className="text-h2 max-sm:text-[28px] mb-8">
+              Signs you are ready for HSK 3 vocabulary
+            </h2>
+            <div className="max-w-[800px]">
+              {readinessChecks.map((check) => (
+                <div key={check} className="flex items-start gap-4 py-4 border-b border-border">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#D4A03E" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="flex-shrink-0 mt-0.5">
+                    <polyline points="20 6 9 17 4 12" />
+                  </svg>
+                  <p className="text-body text-ink-secondary">{check}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
 
-      <section>
-        <p className="eyebrow">Related Pages</p>
-        <h2>Choose the next HSK study step</h2>
-        <div className="grid">
-          <article className="card">
-            <h3>HSK 2 vocabulary</h3>
-            <p>
-              Review HSK 2 words first if common beginner-plus vocabulary still
-              slows down reading.
-            </p>
-            <a href="/hsk-2-vocabulary">Open HSK 2 vocabulary</a>
-          </article>
-          <article className="card">
-            <h3>HSK 2 practice test</h3>
-            <p>
-              Use HSK 2 sample test guidance to check whether you are ready to
-              make HSK 3 vocabulary your main focus.
-            </p>
-            <a href="/hsk-2-practice-test">Open HSK 2 practice test</a>
-          </article>
-          <article className="card">
-            <h3>HSK level test</h3>
-            <p>
-              Use a self-check page when you are unsure whether HSK 2 review or
-              HSK 3 vocabulary should come next.
-            </p>
-            <a href="/hsk-level-test">Open HSK level test</a>
-          </article>
-          <article className="card">
-            <h3>HSK 3 practice test</h3>
-            <p>
-              Use HSK 3 sample test guidance when you want to see whether new
-              words work inside longer listening and reading tasks.
-            </p>
-            <a href="/hsk-3-practice-test">Open HSK 3 practice test</a>
-          </article>
-          <article className="card">
-            <h3>HSK 4 vocabulary</h3>
-            <p>
-              Continue into HSK 4 words when HSK 3 vocabulary feels reliable
-              inside longer reading and practice tasks.
-            </p>
-            <a href="/hsk-4-vocabulary">Open HSK 4 vocabulary</a>
-          </article>
-          <article className="card">
-            <h3>New HSK 3.0 guide</h3>
-            <p>
-              Read the framework guide before assuming every HSK 3 resource uses
-              the same level labels or word list boundaries.
-            </p>
-            <a href="/new-hsk-3-0">Open New HSK 3.0 guide</a>
-          </article>
-        </div>
-      </section>
-
-      <section className="faq">
-        <p className="eyebrow">FAQ</p>
-        <h2>HSK 3 vocabulary questions</h2>
-        <details open>
-          <summary>Is this a complete HSK 3 word list?</summary>
-          <p>
-            No. This is a learner-facing guide with sample words, categories,
-            and study advice. Use the course or exam resource you follow when
-            you need a specific required list.
-          </p>
-        </details>
-        <details>
-          <summary>When should I start HSK 3 vocabulary?</summary>
-          <p>
-            Start when HSK 2 words and short practice questions are mostly
-            manageable, and you are ready to read longer beginner-intermediate
-            sentences with more detail.
-          </p>
-        </details>
-        <details>
-          <summary>Why does HSK 3 feel harder than HSK 2?</summary>
-          <p>
-            HSK 3 adds more abstract words, longer context, and more connected
-            meaning. The challenge is not just more vocabulary, but using words
-            inside fuller sentences.
-          </p>
-        </details>
-      </section>
+        <section className="section section-alt">
+          <div className="section-inner">
+            <LearningPath level={3} />
+          </div>
+        </section>
+      </main>
       <SiteFooter />
-    </main>
+    </>
   );
 }

@@ -3,6 +3,8 @@
 import { useState } from "react";
 import Link from "next/link";
 import Script from "next/script";
+import SiteHeader from "./site-header";
+import SiteFooter from "./site-footer";
 
 /* ────────── FAQ data ────────── */
 const faqs = [
@@ -105,8 +107,6 @@ function FaqAccordion() {
 
 /* ────────── Page ────────── */
 export default function HomePage() {
-  const [mobileOpen, setMobileOpen] = useState(false);
-
   return (
     <>
       {/* FAQ Schema */}
@@ -114,84 +114,7 @@ export default function HomePage() {
         {JSON.stringify(faqSchema)}
       </Script>
 
-      {/* ─── Navigation ─── */}
-      <nav className="sticky top-0 z-[100] bg-white/95 backdrop-blur-[12px] border-b border-[#F1F5F9]">
-        <div className="max-w-[1200px] mx-auto px-8 h-16 flex items-center justify-between max-sm:px-4">
-          <Link href="/" className="text-[22px] font-bold text-[#0F172A] tracking-tight no-underline">
-            HSK<span className="text-[#2563EB]">Kit</span>
-          </Link>
-
-          {/* Desktop */}
-          <div className="hidden md:flex items-center gap-8">
-            <Link href="/hsk-level-test" className="text-sm font-medium text-[#334155] no-underline transition-colors duration-150 hover:text-[#0F172A]">
-              Level Check
-            </Link>
-            <Link href="/hsk-1-vocabulary" className="text-sm font-medium text-[#334155] no-underline transition-colors duration-150 hover:text-[#0F172A]">
-              Vocabulary
-            </Link>
-            <Link href="/hsk-1-practice-test" className="text-sm font-medium text-[#334155] no-underline transition-colors duration-150 hover:text-[#0F172A]">
-              Practice
-            </Link>
-            <Link href="#faq" className="text-sm font-medium text-[#334155] no-underline transition-colors duration-150 hover:text-[#0F172A]">
-              FAQ
-            </Link>
-            <Link
-              href="/hsk-level-test"
-              className="inline-flex items-center gap-2 bg-[#2563EB] text-white px-5 py-2.5 rounded-full text-sm font-semibold no-underline transition-all duration-200 shadow-[0_1px_2px_rgba(0,0,0,0.04)] hover:bg-[#1D4ED8] hover:shadow-[0_4px_12px_rgba(0,0,0,0.06)]"
-            >
-              Take the Level Check
-            </Link>
-          </div>
-
-          {/* Mobile hamburger */}
-          <button
-            className="md:hidden bg-none border-none cursor-pointer p-2"
-            onClick={() => setMobileOpen(!mobileOpen)}
-            aria-label="Menu"
-            aria-expanded={mobileOpen}
-          >
-            <svg viewBox="0 0 24 24" width="24" height="24" stroke="#0F172A" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round">
-              {mobileOpen ? (
-                <>
-                  <line x1="18" y1="6" x2="6" y2="18" />
-                  <line x1="6" y1="6" x2="18" y2="18" />
-                </>
-              ) : (
-                <>
-                  <line x1="3" y1="6" x2="21" y2="6" />
-                  <line x1="3" y1="12" x2="21" y2="12" />
-                  <line x1="3" y1="18" x2="21" y2="18" />
-                </>
-              )}
-            </svg>
-          </button>
-        </div>
-
-        {/* Mobile menu */}
-        {mobileOpen && (
-          <div className="md:hidden absolute top-16 left-0 right-0 bg-white border-b border-[#E2E8F0] px-6 py-6 flex flex-col gap-4 shadow-[0_12px_32px_rgba(0,0,0,0.08)]">
-            <Link href="/hsk-level-test" className="text-base font-medium text-[#334155] no-underline py-2" onClick={() => setMobileOpen(false)}>
-              Level Check
-            </Link>
-            <Link href="/hsk-1-vocabulary" className="text-base font-medium text-[#334155] no-underline py-2" onClick={() => setMobileOpen(false)}>
-              Vocabulary
-            </Link>
-            <Link href="/hsk-1-practice-test" className="text-base font-medium text-[#334155] no-underline py-2" onClick={() => setMobileOpen(false)}>
-              Practice
-            </Link>
-            <Link href="#faq" className="text-base font-medium text-[#334155] no-underline py-2" onClick={() => setMobileOpen(false)}>
-              FAQ
-            </Link>
-            <Link
-              href="/hsk-level-test"
-              className="inline-flex items-center justify-center bg-[#2563EB] text-white px-5 py-3 rounded-full text-base font-semibold no-underline mt-2"
-              onClick={() => setMobileOpen(false)}
-            >
-              Take the Level Check
-            </Link>
-          </div>
-        )}
-      </nav>
+      <SiteHeader />
 
       <main>
         {/* ═════ BLOCK 1: HERO ═════ */}
@@ -599,11 +522,7 @@ export default function HomePage() {
       </main>
 
       {/* ═════ FOOTER ═════ */}
-      <footer className="py-10 border-t border-[#E2E8F0] text-center">
-        <div className="max-w-[1200px] mx-auto px-8 max-sm:px-4">
-          <p className="text-[13px] text-[#64748B]">© 2026 HSKKit. Independent study tool. Not affiliated with HSK test organizers.</p>
-        </div>
-      </footer>
+      <SiteFooter />
     </>
   );
 }

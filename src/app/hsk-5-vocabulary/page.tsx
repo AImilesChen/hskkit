@@ -1,5 +1,8 @@
 import type { Metadata } from "next";
+import SiteHeader from "../site-header";
 import SiteFooter from "../site-footer";
+import InfoBanner from "../components/info-banner";
+import LearningPath from "../components/learning-path";
 
 export const metadata: Metadata = {
   title: "HSK 5 Vocabulary Guide | HSKKit",
@@ -7,6 +10,10 @@ export const metadata: Metadata = {
     "Study HSK 5 vocabulary, HSK 5 word list themes, advanced Chinese words, transition challenges from HSK 4, readiness checks, and review advice.",
   alternates: {
     canonical: "https://hskkit.com/hsk-5-vocabulary",
+  },
+  robots: {
+    index: true,
+    follow: true,
   },
 };
 
@@ -85,196 +92,156 @@ const readinessChecks = [
 
 export default function HSK5VocabularyPage() {
   return (
-    <main className="section">
-      <section>
-        <p className="eyebrow">HSK 5 Vocabulary</p>
-        <h1>Build an HSK 5 vocabulary plan for advanced Chinese reading</h1>
-        <p className="subtitle">
-          HSK 5 vocabulary expands into advanced Chinese words for viewpoints,
-          society, work, resources, attitudes, complex situations, and longer
-          reading. Use this guide to organize your HSK 5 word list after HSK 4
-          material starts to feel manageable.
-        </p>
-        <div className="actions">
-          <a className="button primary" href="/hsk-4-practice-test">
-            Review HSK 4 practice
-          </a>
-          <a className="button secondary" href="/hsk-level-test">
-            Check your level
-          </a>
-        </div>
-      </section>
-
-      <section>
-        <p className="eyebrow">Purpose</p>
-        <h2>What HSK 5 vocabulary is for</h2>
-        <div className="grid">
-          <article className="card">
-            <h3>Advanced reading</h3>
-            <p>
-              HSK 5 words support longer reading where meaning depends on main
-              idea, detail, writer attitude, and paragraph connection.
+    <>
+      <SiteHeader />
+      <main>
+        <section className="section pt-20">
+          <div className="section-inner">
+            <span className="eyebrow">HSK 5 Vocabulary</span>
+            <h1 className="text-h1 max-sm:text-[32px] mb-6">
+              Build an HSK 5 vocabulary plan for advanced Chinese reading
+            </h1>
+            <InfoBanner level={5} />
+            <p className="text-body-lg text-ink-secondary max-w-[640px] mb-10">
+              HSK 5 vocabulary expands into advanced Chinese words for viewpoints,
+              society, work, resources, attitudes, complex situations, and longer
+              reading. Use this guide to organize your HSK 5 word list after HSK 4
+              material starts to feel manageable.
             </p>
-          </article>
-          <article className="card">
-            <h3>More abstract expression</h3>
-            <p>
-              Vocabulary shifts toward ideas, viewpoints, social topics,
-              responsibility, development, and more nuanced explanation.
-            </p>
-          </article>
-          <article className="card">
-            <h3>Sharper word choice</h3>
-            <p>
-              At HSK 5, learners need to notice usage, collocation, register,
-              and similar words instead of relying on one English meaning.
-            </p>
-          </article>
-        </div>
-      </section>
+            <div className="flex gap-4 flex-wrap">
+              <a href="/hsk-4-practice-test" className="btn btn-primary">
+                Review HSK 4 practice
+              </a>
+              <a href="/hsk-level-test" className="btn btn-secondary">
+                Check your level
+              </a>
+            </div>
+          </div>
+        </section>
 
-      <section>
-        <p className="eyebrow">Sample List</p>
-        <h2>HSK 5 Chinese words to review</h2>
-        <p>
-          This sample is a study orientation, not a complete official
-          vocabulary list. Use it to notice the abstract and passage-dependent
-          feel of HSK 5 words.
-        </p>
-        <div className="grid">
-          {sampleWords.map((word) => (
-            <article className="card" key={word.chinese}>
-              <p className="eyebrow">{word.pinyin}</p>
-              <h3>{word.chinese}</h3>
-              <p>{word.meaning}</p>
-            </article>
-          ))}
-        </div>
-      </section>
+        <section className="section section-alt">
+          <div className="section-inner">
+            <h2 className="text-h2 max-sm:text-[28px] mb-8">
+              What HSK 5 vocabulary is for
+            </h2>
+            <div className="card-grid">
+              <article className="card">
+                <h3 className="text-h3 max-sm:text-xl mb-3">Advanced reading</h3>
+                <p className="text-body text-ink-secondary">
+                  HSK 5 words support longer reading where meaning depends on main
+                  idea, detail, writer attitude, and paragraph connection.
+                </p>
+              </article>
+              <article className="card">
+                <h3 className="text-h3 max-sm:text-xl mb-3">More abstract expression</h3>
+                <p className="text-body text-ink-secondary">
+                  Vocabulary shifts toward ideas, viewpoints, social topics,
+                  responsibility, development, and more nuanced explanation.
+                </p>
+              </article>
+              <article className="card">
+                <h3 className="text-h3 max-sm:text-xl mb-3">Sharper word choice</h3>
+                <p className="text-body text-ink-secondary">
+                  At HSK 5, learners need to notice usage, collocation, register,
+                  and similar words instead of relying on one English meaning.
+                </p>
+              </article>
+            </div>
+          </div>
+        </section>
 
-      <section>
-        <p className="eyebrow">Categories</p>
-        <h2>How to group an HSK 5 word list</h2>
-        <div className="grid">
-          {categories.map((category) => (
-            <article className="card" key={category.title}>
-              <h3>{category.title}</h3>
-              <p>{category.detail}</p>
-            </article>
-          ))}
-        </div>
-      </section>
+        <section className="section">
+          <div className="section-inner">
+            <h2 className="text-h2 max-sm:text-[28px] mb-8">
+              HSK 5 Chinese words to review
+            </h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              {sampleWords.map((word) => (
+                <article className="card text-center" key={word.chinese}>
+                  <p className="chinese-char text-[48px] mb-2">{word.chinese}</p>
+                  <p className="text-small text-ink-muted mb-2">{word.pinyin}</p>
+                  <p className="text-body text-ink-secondary">{word.meaning}</p>
+                </article>
+              ))}
+            </div>
+          </div>
+        </section>
 
-      <section className="card">
-        <p className="eyebrow">Study Tips</p>
-        <h2>Make HSK 5 vocabulary easier to use</h2>
-        <p>
-          HSK 5 vocabulary study works best when words are reviewed through
-          topic, collocation, passage context, and repeated mistake patterns.
-        </p>
-        <ol>
-          {studyTips.map((tip) => (
-            <li key={tip}>{tip}</li>
-          ))}
-        </ol>
-      </section>
+        <section className="section section-alt">
+          <div className="section-inner">
+            <h2 className="text-h2 max-sm:text-[28px] mb-8">
+              How to group an HSK 5 word list
+            </h2>
+            <div className="card-grid">
+              {categories.map((category) => (
+                <article className="card" key={category.title}>
+                  <h3 className="text-h3 max-sm:text-xl mb-3">{category.title}</h3>
+                  <p className="text-body text-ink-secondary">{category.detail}</p>
+                </article>
+              ))}
+            </div>
+          </div>
+        </section>
 
-      <section>
-        <p className="eyebrow">Transition</p>
-        <h2>What gets harder from HSK 4 to HSK 5</h2>
-        <div className="grid">
-          {transitionChallenges.map((challenge) => (
-            <article className="card" key={challenge.title}>
-              <h3>{challenge.title}</h3>
-              <p>{challenge.detail}</p>
-            </article>
-          ))}
-        </div>
-      </section>
+        <section className="section">
+          <div className="section-inner">
+            <h2 className="text-h2 max-sm:text-[28px] mb-8">
+              Make HSK 5 vocabulary easier to use
+            </h2>
+            <div className="max-w-[800px]">
+              {studyTips.map((tip) => (
+                <div key={tip} className="flex items-start gap-4 py-4 border-b border-border">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#B85440" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="flex-shrink-0 mt-0.5">
+                    <polyline points="20 6 9 17 4 12" />
+                  </svg>
+                  <p className="text-body text-ink-secondary">{tip}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
 
-      <section className="card">
-        <p className="eyebrow">Readiness</p>
-        <h2>Signs you are ready for HSK 5 vocabulary</h2>
-        <p>
-          You do not need perfect HSK 4 performance before starting HSK 5, but
-          you should be ready for more abstract vocabulary and passage-level
-          review.
-        </p>
-        <ul>
-          {readinessChecks.map((check) => (
-            <li key={check}>{check}</li>
-          ))}
-        </ul>
-      </section>
+        <section className="section section-alt">
+          <div className="section-inner">
+            <h2 className="text-h2 max-sm:text-[28px] mb-8">
+              What gets harder from HSK 4 to HSK 5
+            </h2>
+            <div className="card-grid">
+              {transitionChallenges.map((challenge) => (
+                <article className="card" key={challenge.title}>
+                  <h3 className="text-h3 max-sm:text-xl mb-3">{challenge.title}</h3>
+                  <p className="text-body text-ink-secondary">{challenge.detail}</p>
+                </article>
+              ))}
+            </div>
+          </div>
+        </section>
 
-      <section>
-        <p className="eyebrow">Related Pages</p>
-        <h2>Choose the next HSK study step</h2>
-        <div className="grid">
-          <article className="card">
-            <h3>HSK 4 vocabulary</h3>
-            <p>
-              Review HSK 4 words first if intermediate reading still feels slow
-              or similar words are hard to separate.
-            </p>
-            <a href="/hsk-4-vocabulary">Open HSK 4 vocabulary</a>
-          </article>
-          <article className="card">
-            <h3>HSK 4 practice test</h3>
-            <p>
-              Use HSK 4 practice guidance to check whether your foundation is
-              ready for the HSK 5 vocabulary load.
-            </p>
-            <a href="/hsk-4-practice-test">Open HSK 4 practice test</a>
-          </article>
-          <article className="card">
-            <h3>HSK level test</h3>
-            <p>
-              Use a self-check page when you are unsure whether to review HSK 4
-              or begin HSK 5 vocabulary.
-            </p>
-            <a href="/hsk-level-test">Open HSK level test</a>
-          </article>
-          <article className="card">
-            <h3>New HSK 3.0 guide</h3>
-            <p>
-              Check newer framework context before assuming every HSK 5 word
-              list or level label follows the same boundary.
-            </p>
-            <a href="/new-hsk-3-0">Open New HSK 3.0 guide</a>
-          </article>
-        </div>
-      </section>
+        <section className="section">
+          <div className="section-inner">
+            <h2 className="text-h2 max-sm:text-[28px] mb-8">
+              Signs you are ready for HSK 5 vocabulary
+            </h2>
+            <div className="max-w-[800px]">
+              {readinessChecks.map((check) => (
+                <div key={check} className="flex items-start gap-4 py-4 border-b border-border">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#B85440" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="flex-shrink-0 mt-0.5">
+                    <polyline points="20 6 9 17 4 12" />
+                  </svg>
+                  <p className="text-body text-ink-secondary">{check}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
 
-      <section className="faq">
-        <p className="eyebrow">FAQ</p>
-        <h2>HSK 5 vocabulary questions</h2>
-        <details open>
-          <summary>Is this a complete HSK 5 word list?</summary>
-          <p>
-            No. This is a learner-facing guide with sample words, categories,
-            and study advice. Use your course or exam resource when you need a
-            specific required list.
-          </p>
-        </details>
-        <details>
-          <summary>When should I start HSK 5 vocabulary?</summary>
-          <p>
-            Start when HSK 4 vocabulary and practice tasks are mostly
-            manageable, and you are ready for more abstract words, longer
-            passages, and similar-word review.
-          </p>
-        </details>
-        <details>
-          <summary>Why does HSK 5 vocabulary feel difficult?</summary>
-          <p>
-            HSK 5 words are often abstract, context-dependent, and close to
-            other words in meaning. The challenge is using them accurately in
-            passages, not only recognizing them alone.
-          </p>
-        </details>
-      </section>
+        <section className="section section-alt">
+          <div className="section-inner">
+            <LearningPath level={5} />
+          </div>
+        </section>
+      </main>
       <SiteFooter />
-    </main>
+    </>
   );
 }

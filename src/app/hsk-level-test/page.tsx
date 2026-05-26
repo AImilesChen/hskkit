@@ -3,6 +3,8 @@
 import { useState } from "react";
 import Link from "next/link";
 import Script from "next/script";
+import SiteHeader from "../site-header";
+import SiteFooter from "../site-footer";
 
 /* ────────── 8-question self-check ────────── */
 const questions = [
@@ -163,19 +165,7 @@ export default function HSKLevelTestPage() {
       </Script>
 
       {/* ─── Nav ─── */}
-      <nav className="sticky top-0 z-[100] bg-white/95 backdrop-blur-[12px] border-b border-[#F1F5F9]">
-        <div className="max-w-[1200px] mx-auto px-8 h-16 flex items-center justify-between max-sm:px-4">
-          <Link href="/" className="text-[22px] font-bold text-[#0F172A] tracking-tight no-underline">
-            HSK<span className="text-[#2563EB]">Kit</span>
-          </Link>
-          <div className="hidden md:flex items-center gap-8">
-            <Link href="/hsk-level-test" className="text-sm font-medium text-[#334155] no-underline hover:text-[#0F172A]">Level Check</Link>
-            <Link href="/hsk-1-vocabulary" className="text-sm font-medium text-[#334155] no-underline hover:text-[#0F172A]">Vocabulary</Link>
-            <Link href="/hsk-1-practice-test" className="text-sm font-medium text-[#334155] no-underline hover:text-[#0F172A]">Practice</Link>
-            <Link href="/" className="text-sm font-medium text-[#334155] no-underline hover:text-[#0F172A]">Home</Link>
-          </div>
-        </div>
-      </nav>
+      <SiteHeader />
 
       <main className="min-h-[60vh]">
         {/* ─── Intro ─── */}
@@ -316,13 +306,7 @@ export default function HSKLevelTestPage() {
       </main>
 
       {/* ─── Footer ─── */}
-      <footer className="py-10 border-t border-[#E2E8F0] text-center">
-        <div className="max-w-[1200px] mx-auto px-8 max-sm:px-4">
-          <p className="text-[13px] text-[#64748B]">
-            © 2026 HSKKit. Independent study tool. Not affiliated with HSK test organizers.
-          </p>
-        </div>
-      </footer>
+      <SiteFooter />
     </>
   );
 }
