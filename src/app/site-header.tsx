@@ -144,6 +144,18 @@ export default function SiteHeader() {
     setOpenAccordion((prev) => (prev === id ? null : id));
   }
 
+  // Close mobile menu when resizing to desktop
+  useEffect(() => {
+    function handleResize() {
+      if (window.innerWidth >= 768 && mobileOpen) {
+        setMobileOpen(false);
+        setOpenAccordion(null);
+      }
+    }
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, [mobileOpen]);
+
   function closeMobile() {
     setMobileOpen(false);
     setOpenAccordion(null);
