@@ -2,6 +2,13 @@
 
 import { useState, useCallback, useMemo } from "react";
 import Link from "next/link";
+import {
+  QuestionTitle,
+  OptionButton,
+  FeedbackBox,
+  ReviewCard,
+  getOptionDisplayMode,
+} from "./question-display";
 
 interface Question {
   id: string;
@@ -95,6 +102,10 @@ export default function PracticeTest({
   }, [allQuestions, sampleCount]);
 
   const isCorrect = answers[currentIndex] === currentQuestion?.correct_answer;
+  const optionMode = getOptionDisplayMode(
+    currentQuestion?.type || "",
+    currentQuestion?.level || level
+  );
 
   if (showResult) {
     const accuracy = Math.round((correctCount / total) * 100);
@@ -169,24 +180,12 @@ export default function PracticeTest({
             </h3>
             <div className="flex flex-col gap-4">
               {wrongQuestions.map((q) => (
-                <div
+                <ReviewCard
                   key={q.id}
-                  className="bg-white border border-[#E2E8F0] rounded-xl p-6 shadow-[0_2px_8px_rgba(0,0,0,0.04)]"
-                >
-                  <p className="text-sm font-semibold text-[#EF4444] mb-2">
-                    Question {q.index + 1} · Your answer: {q.userAnswer}
-                  </p>
-                  <p className="text-base font-medium text-[#0F172A] mb-2">
-                    {q.question_cn}
-                  </p>
-                  <p className="text-sm text-[#64748B] mb-3">{q.question_en}</p>
-                  <div className="bg-[#F0FDF4] border border-[#86EFAC] rounded-lg px-4 py-3 mb-2">
-                    <p className="text-sm font-medium text-[#166534]">
-                      Correct: {q.correct_answer}) {q.options[q.correct_answer]}
-                    </p>
-                  </div>
-                  <p className="text-sm text-[#334155]">{q.explanation}</p>
-                </div>
+                  q={q}
+                  userAnswer={q.userAnswer}
+                  index={q.index}
+                />
               ))}
             </div>
           </div>
@@ -218,67 +217,34 @@ export default function PracticeTest({
         <p className="text-sm font-semibold text-[#2563EB] uppercase tracking-wider mb-2">
           HSK {level} · {currentQuestion.type}
         </p>
-        <h2 className="text-[24px] font-semibold leading-snug text-[#0F172A] mb-2">
-          {currentQuestion.question_cn}
-        </h2>
-        <p className="text-base text-[#64748B]">{currentQuestion.question_en}</p>
+        <QuestionTitle
+          questionCn={currentQuestion.question_cn}
+          questionEn={currentQuestion.question_en}
+        />
       </div>
 
       {/* Options */}
       <div className="flex flex-col gap-3 mb-6">
-        {LETTERS.map((letter) => {
-          const isSelected = answers[currentIndex] === letter;
-          const isCorrectAnswer = currentQuestion.correct_answer === letter;
-          const hasChecked = checked[currentIndex];
-
-          let btnClass =
-            "w-full text-left px-6 py-4 bg-white border border-[#E2E8F0] rounded-xl text-base font-medium text-[#334155] cursor-pointer transition-all duration-200 hover:border-[#2563EB] hover:bg-[#EFF6FF]";
-
-          if (hasChecked) {
-            if (isCorrectAnswer) {
-              btnClass =
-                "w-full text-left px-6 py-4 bg-[#F0FDF4] border-2 border-[#22C55E] rounded-xl text-base font-semibold text-[#166534] cursor-default";
-            } else if (isSelected) {
-              btnClass =
-                "w-full text-left px-6 py-4 bg-[#FEF2F2] border-2 border-[#EF4444] rounded-xl text-base font-semibold text-[#991B1B] cursor-default";
-            } else {
-              btnClass =
-                "w-full text-left px-6 py-4 bg-white border border-[#E2E8F0] rounded-xl text-base font-medium text-[#94A3B8] cursor-default opacity-70";
-            }
-          }
-
-          return (
-            <button
-              key={letter}
-              onClick={() => handleAnswer(letter)}
-              disabled={hasChecked}
-              className={btnClass}
-            >
-              <span className="inline-block w-8 font-bold">{letter})</span>
-              {currentQuestion.options[letter]}
-            </button>
-          );
-        })}
+        {LETTERS.map((letter) => (
+          <OptionButton
+            key={letter}
+            letter={letter}
+            rawOption={currentQuestion.options[letter]}
+            mode={optionMode}
+            isSelected={answers[currentIndex] === letter}
+            isCorrectAnswer={currentQuestion.correct_answer === letter}
+            hasChecked={!!checked[currentIndex]}
+            onClick={() => handleAnswer(letter)}
+          />
+        ))}
       </div>
 
       {/* Feedback */}
       {checked[currentIndex] && (
-        <div
-          className={`rounded-xl px-6 py-4 mb-6 ${
-            isCorrect
-              ? "bg-[#F0FDF4] border border-[#86EFAC]"
-              : "bg-[#FEF2F2] border border-[#FECACA]"
-          }`}
-        >
-          <p
-            className={`text-base font-semibold mb-1 ${
-              isCorrect ? "text-[#166534]" : "text-[#991B1B]"
-            }`}
-          >
-            {isCorrect ? "Correct!" : "Incorrect"}
-          </p>
-          <p className="text-sm text-[#334155]">{currentQuestion.explanation}</p>
-        </div>
+        <FeedbackBox
+          isCorrect={isCorrect}
+          rawExplanation={currentQuestion.explanation}
+        />
       )}
 
       {/* Navigation */}

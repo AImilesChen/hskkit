@@ -1,9 +1,8 @@
 import type { Metadata } from "next";
-import { readFileSync } from "fs";
-import { join } from "path";
 import SiteHeader from "../site-header";
 import SiteFooter from "../site-footer";
 import LevelTest from "../components/level-test";
+import questions from "../../lib/data/level_test.json";
 
 export const metadata: Metadata = {
   title: "HSK Level Test | HSKKit",
@@ -14,15 +13,7 @@ export const metadata: Metadata = {
   },
 };
 
-function loadQuestions() {
-  const path = join(process.cwd(), "docs", "content", "questions", "level_test.json");
-  const raw = readFileSync(path, "utf-8");
-  return JSON.parse(raw);
-}
-
 export default function HSKLevelTestPage() {
-  const questions = loadQuestions();
-
   return (
     <>
       <SiteHeader />

@@ -1,9 +1,8 @@
 import type { Metadata } from "next";
-import { readFileSync } from "fs";
-import { join } from "path";
 import SiteHeader from "../site-header";
 import SiteFooter from "../site-footer";
 import PracticeTest from "../components/practice-test";
+import questions from "../../lib/data/hsk5.json";
 
 export const metadata: Metadata = {
   title: "HSK 5 Practice Test | HSKKit",
@@ -14,15 +13,7 @@ export const metadata: Metadata = {
   },
 };
 
-function loadQuestions() {
-  const path = join(process.cwd(), "docs", "content", "questions", "hsk5.json");
-  const raw = readFileSync(path, "utf-8");
-  return JSON.parse(raw);
-}
-
 export default function HSK5PracticeTestPage() {
-  const questions = loadQuestions();
-
   return (
     <>
       <SiteHeader />

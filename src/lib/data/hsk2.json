@@ -1,0 +1,533 @@
+[
+  {
+    "id": "hsk2_001",
+    "level": 2,
+    "type": "listening",
+    "question_cn": "你周末一般做什么？",
+    "question_en": "What do you usually do on weekends?",
+    "options": {
+      "A": "我周末一般在家看书。(I usually read books at home on weekends.)",
+      "B": "我周末去公司上班。(I go to work at the company on weekends.)",
+      "C": "我周末起得很早。(I get up very early on weekends.)",
+      "D": "我周末不吃饭。(I don't eat on weekends.)"
+    },
+    "correct_answer": "A",
+    "explanation": "'一般做什么'询问日常习惯，A回答日常活动。B是工作（周末通常不上班），C是时间描述，D不符合常理。"
+  },
+  {
+    "id": "hsk2_002",
+    "level": 2,
+    "type": "listening",
+    "question_cn": "你怎么不接电话？",
+    "question_en": "Why didn't you answer the phone?",
+    "options": {
+      "A": "我没听见。(I didn't hear it.)",
+      "B": "我不喜欢电话。(I don't like phones.)",
+      "C": "电话坏了。(The phone is broken.)",
+      "D": "我在打电话。(I was on the phone.)"
+    },
+    "correct_answer": "A",
+    "explanation": "'怎么不'询问原因，A解释没听见（合理原因）。B是偏好，C是设备问题（可能但不如A常见），D逻辑矛盾（在打电话应该能接）。"
+  },
+  {
+    "id": "hsk2_003",
+    "level": 2,
+    "type": "listening",
+    "question_cn": "这件衣服怎么样？",
+    "question_en": "How is this piece of clothing?",
+    "options": {
+      "A": "这件衣服太贵了。(This clothing is too expensive.)",
+      "B": "这件衣服是红色的。(This clothing is red.)",
+      "C": "这件衣服很大。(This clothing is very big.)",
+      "D": "这件衣服是棉的。(This clothing is made of cotton.)"
+    },
+    "correct_answer": "A",
+    "explanation": "'怎么样'询问综合评价，A是评价（太贵）。B、C、D都是客观描述，不是综合感受。"
+  },
+  {
+    "id": "hsk2_004",
+    "level": 2,
+    "type": "listening",
+    "question_cn": "你最近身体好吗？",
+    "question_en": "Have you been well recently?",
+    "options": {
+      "A": "最近有点感冒。(I've had a slight cold recently.)",
+      "B": "我最近很忙。(I've been very busy recently.)",
+      "C": "我最近在学习。(I've been studying recently.)",
+      "D": "我最近在旅行。(I've been traveling recently.)"
+    },
+    "correct_answer": "A",
+    "explanation": "'身体好吗'询问健康状况，A回答健康状态（感冒）。B、C、D都是活动/状态，不涉及身体。"
+  },
+  {
+    "id": "hsk2_005",
+    "level": 2,
+    "type": "listening",
+    "question_cn": "你觉得这部电影怎么样？",
+    "question_en": "What do you think of this movie?",
+    "options": {
+      "A": "我觉得很好看。(I think it's very good.)",
+      "B": "电影很长。(The movie is very long.)",
+      "C": "电影是美国的。(The movie is American.)",
+      "D": "我昨天看的。(I watched it yesterday.)"
+    },
+    "correct_answer": "A",
+    "explanation": "'觉得……怎么样'询问主观评价，A是主观感受。B、C是客观描述，D回答时间，均不匹配。"
+  },
+  {
+    "id": "hsk2_006",
+    "level": 2,
+    "type": "listening",
+    "question_cn": "你打算假期去哪儿旅行？",
+    "question_en": "Where do you plan to travel during the holiday?",
+    "options": {
+      "A": "我打算去云南。(I plan to go to Yunnan.)",
+      "B": "我假期有很多作业。(I have a lot of homework during the holiday.)",
+      "C": "我喜欢旅行。(I like traveling.)",
+      "D": "假期有七天。(The holiday is seven days long.)"
+    },
+    "correct_answer": "A",
+    "explanation": "'打算去哪儿'询问计划目的地，A回答地点。B说作业，C说喜好，D说时长，均不匹配。"
+  },
+  {
+    "id": "hsk2_007",
+    "level": 2,
+    "type": "listening",
+    "question_cn": "你能帮我一下吗？",
+    "question_en": "Can you help me?",
+    "options": {
+      "A": "当然可以，什么事？(Of course, what is it?)",
+      "B": "我不能去。(I can't go.)",
+      "C": "我很忙。(I am very busy.)",
+      "D": "你要做什么？(What do you want to do?)"
+    },
+    "correct_answer": "A",
+    "explanation": "'能帮我吗'请求帮助，A是积极回应。B答非所问，C是拒绝（但不够礼貌），D反问未表态。"
+  },
+  {
+    "id": "hsk2_008",
+    "level": 2,
+    "type": "listening",
+    "question_cn": "你习惯这里的生活吗？",
+    "question_en": "Are you used to the life here?",
+    "options": {
+      "A": "慢慢习惯了。(Slowly getting used to it.)",
+      "B": "这里的生活很好。(The life here is very good.)",
+      "C": "我喜欢这里。(I like it here.)",
+      "D": "我在这里工作。(I work here.)"
+    },
+    "correct_answer": "A",
+    "explanation": "'习惯……吗'询问适应情况，A直接回答适应程度。B评价生活，C表达喜好，D说工作，均不匹配。"
+  },
+  {
+    "id": "hsk2_009",
+    "level": 2,
+    "type": "listening",
+    "question_cn": "你为什么学汉语？",
+    "question_en": "Why do you study Chinese?",
+    "options": {
+      "A": "因为我对中国文化很感兴趣。(Because I am very interested in Chinese culture.)",
+      "B": "汉语很难。(Chinese is very difficult.)",
+      "C": "我在中国工作。(I work in China.)",
+      "D": "我学了三年。(I have studied for three years.)"
+    },
+    "correct_answer": "A",
+    "explanation": "'为什么'询问原因，A用'因为'回答原因。B是评价，C是背景，D是时长，均不匹配。"
+  },
+  {
+    "id": "hsk2_010",
+    "level": 2,
+    "type": "listening",
+    "question_cn": "你更喜欢冬天还是夏天？",
+    "question_en": "Do you prefer winter or summer?",
+    "options": {
+      "A": "我更喜欢夏天。(I prefer summer.)",
+      "B": "夏天很热。(Summer is very hot.)",
+      "C": "冬天可以滑雪。(You can ski in winter.)",
+      "D": "两个季节都好。(Both seasons are good.)"
+    },
+    "correct_answer": "A",
+    "explanation": "'A还是B'选择疑问句，A明确选择。B、C是描述，D未明确选择，均不符合要求。"
+  },
+  {
+    "id": "hsk2_011",
+    "level": 2,
+    "type": "listening",
+    "question_cn": "你的手机怎么了？",
+    "question_en": "What happened to your phone?",
+    "options": {
+      "A": "屏幕摔坏了。(The screen is broken from a fall.)",
+      "B": "手机是黑色的。(The phone is black.)",
+      "C": "手机很新。(The phone is very new.)",
+      "D": "我买了手机。(I bought a phone.)"
+    },
+    "correct_answer": "A",
+    "explanation": "'怎么了'询问问题/故障，A回答故障（屏幕坏了）。B说颜色，C说新旧，D说购买，均不匹配。"
+  },
+  {
+    "id": "hsk2_012",
+    "level": 2,
+    "type": "listening",
+    "question_cn": "你明天有空吗？",
+    "question_en": "Are you free tomorrow?",
+    "options": {
+      "A": "明天下午有空。(I am free tomorrow afternoon.)",
+      "B": "明天是星期三。(Tomorrow is Wednesday.)",
+      "C": "明天我要上班。(I have to work tomorrow.)",
+      "D": "明天天气很好。(The weather is nice tomorrow.)"
+    },
+    "correct_answer": "A",
+    "explanation": "'有空吗'询问是否有时间，A直接回答有空。B回答日期，C说上班（暗示没空但不够直接），D说天气，均不匹配。"
+  },
+  {
+    "id": "hsk2_013",
+    "level": 2,
+    "type": "grammar",
+    "question_cn": "我______去过北京。",
+    "question_en": "I ______ been to Beijing.",
+    "options": {
+      "A": "已经(already)",
+      "B": "正在(currently)",
+      "C": "常常(often)",
+      "D": "一起(together)"
+    },
+    "correct_answer": "A",
+    "explanation": "'已经……过'表示经历完成，'我已经去过'=I have already been to。'正在'表现在进行，'常常'表频率，'一起'表伴随，均不与'过'搭配。"
+  },
+  {
+    "id": "hsk2_014",
+    "level": 2,
+    "type": "grammar",
+    "question_cn": "他______在图书馆学习。",
+    "question_en": "He ______ studying in the library.",
+    "options": {
+      "A": "正在(is currently)",
+      "B": "已经(already)",
+      "C": "一起(together)",
+      "D": "非常(very)"
+    },
+    "correct_answer": "A",
+    "explanation": "'正在+动词'表现在进行时。'已经'表完成，'一起'表伴随，'非常'是程度副词，均不表现在进行。"
+  },
+  {
+    "id": "hsk2_015",
+    "level": 2,
+    "type": "grammar",
+    "question_cn": "这个房间比那个房间______。",
+    "question_en": "This room is ______ than that room.",
+    "options": {
+      "A": "大(bigger)",
+      "B": "很大(very big)",
+      "C": "最大(biggest)",
+      "D": "不大(not big)"
+    },
+    "correct_answer": "A",
+    "explanation": "'比'是比较句标志，后面用形容词原形。'很大'无比较，'最大'是最高级，'不大'是否定，均不与'比'搭配。"
+  },
+  {
+    "id": "hsk2_016",
+    "level": 2,
+    "type": "grammar",
+    "question_cn": "我______他高。",
+    "question_en": "I am tall ______ him.",
+    "options": {
+      "A": "比(than)",
+      "B": "和(and)",
+      "C": "对(to)",
+      "D": "从(from)"
+    },
+    "correct_answer": "A",
+    "explanation": "'A比B+形容词'是比较句结构。'和'表并列，'对'表对象，'从'表起点，均不表比较。"
+  },
+  {
+    "id": "hsk2_017",
+    "level": 2,
+    "type": "grammar",
+    "question_cn": "______天气太热了，我们______去游泳吧。",
+    "question_en": "______ the weather is too hot, let's ______ go swimming.",
+    "options": {
+      "A": "因为……所以……(because...so...)",
+      "B": "虽然……但是……(although...but...)",
+      "C": "如果……就……(if...then...)",
+      "D": "不但……而且……(not only...but also...)"
+    },
+    "correct_answer": "A",
+    "explanation": "前句是原因（天气热），后句是结果（去游泳），用'因为……所以……'。B表转折，C表假设，D表递进，均不匹配。"
+  },
+  {
+    "id": "hsk2_018",
+    "level": 2,
+    "type": "grammar",
+    "question_cn": "我______会做饭。",
+    "question_en": "I ______ can cook.",
+    "options": {
+      "A": "还(also/still)",
+      "B": "很(very)",
+      "C": "太(too)",
+      "D": "多(many)"
+    },
+    "correct_answer": "A",
+    "explanation": "'还'表示附加能力，'我还会做饭'=I can also cook。'很'、'太'、'多'均不修饰'会'表附加。"
+  },
+  {
+    "id": "hsk2_019",
+    "level": 2,
+    "type": "grammar",
+    "question_cn": "你______把窗户关上吗？",
+    "question_en": "Could you ______ close the window?",
+    "options": {
+      "A": "可以(can/could (polite))",
+      "B": "会(can (ability))",
+      "C": "能(can (capability))",
+      "D": "要(want)"
+    },
+    "correct_answer": "A",
+    "explanation": "请求他人做某事用'可以……吗'最礼貌自然。'会'表能力，'能'表可能性，'要'表意愿，均不如A适合请求。"
+  },
+  {
+    "id": "hsk2_020",
+    "level": 2,
+    "type": "grammar",
+    "question_cn": "他每天都______运动。",
+    "question_en": "He exercises ______ every day.",
+    "options": {
+      "A": "坚持(persists in)",
+      "B": "继续(continues)",
+      "C": "保持(maintains)",
+      "D": "保留(keeps/reserves)"
+    },
+    "correct_answer": "A",
+    "explanation": "'坚持'强调持续做某事（常接动词），'坚持运动'=persist in exercising。'继续'表接着做，'保持'常接状态，'保留'表留存，均不匹配。"
+  },
+  {
+    "id": "hsk2_021",
+    "level": 2,
+    "type": "grammar",
+    "question_cn": "______你努力，______能成功。",
+    "question_en": "______ you work hard, ______ you can succeed.",
+    "options": {
+      "A": "只要……就……(as long as...then...)",
+      "B": "因为……所以……(because...so...)",
+      "C": "虽然……但是……(although...but...)",
+      "D": "不但……而且……(not only...but also...)"
+    },
+    "correct_answer": "A",
+    "explanation": "前句是条件（努力），后句是结果（成功），用'只要……就……'表条件关系。B表因果，C表转折，D表递进，均不匹配。"
+  },
+  {
+    "id": "hsk2_022",
+    "level": 2,
+    "type": "grammar",
+    "question_cn": "我______看见他了。",
+    "question_en": "I ______ saw him.",
+    "options": {
+      "A": "刚才(just now)",
+      "B": "现在(now)",
+      "C": "常常(often)",
+      "D": "一起(together)"
+    },
+    "correct_answer": "A",
+    "explanation": "'刚才'表示刚刚发生，与过去时搭配。'现在'表现在，'常常'表频率，'一起'表伴随，均不与过去时搭配。"
+  },
+  {
+    "id": "hsk2_023",
+    "level": 2,
+    "type": "grammar",
+    "question_cn": "这件衣服______我穿太大了。",
+    "question_en": "This piece of clothing, ______ I wear it, is too big.",
+    "options": {
+      "A": "对……来说(for...)",
+      "B": "给……(give...)",
+      "C": "向……(toward...)",
+      "D": "从……(from...)"
+    },
+    "correct_answer": "A",
+    "explanation": "'对……来说'表示'对于某人'，'对我来说'=for me。'给'表给予，'向'表方向，'从'表起点，均不匹配。"
+  },
+  {
+    "id": "hsk2_024",
+    "level": 2,
+    "type": "grammar",
+    "question_cn": "他______汉语说得很好。",
+    "question_en": "He speaks Chinese ______ very well.",
+    "options": {
+      "A": "的((emphasis structure))",
+      "B": "地(adverbial particle)",
+      "C": "得(complement particle)",
+      "D": "了(completed)"
+    },
+    "correct_answer": "C",
+    "explanation": "'得'用于动词和补语之间，'说得很好'中'很好'是'说'的补语。'的'表修饰，'地'表状语，'了'表完成，均不匹配。"
+  },
+  {
+    "id": "hsk2_025",
+    "level": 2,
+    "type": "vocabulary",
+    "question_cn": "'方便'的反义词是什么？",
+    "question_en": "What is the opposite of '方便' (fāngbiàn / convenient)?",
+    "options": {
+      "A": "Troublesome",
+      "B": "Easy",
+      "C": "Simple",
+      "D": "Fast"
+    },
+    "correct_answer": "A",
+    "explanation": "A表示做事麻烦、不方便，是'方便'的反义。B表示事情容易做。C表示事情简单不复杂。D表示速度快。"
+  },
+  {
+    "id": "hsk2_026",
+    "level": 2,
+    "type": "vocabulary",
+    "question_cn": "'打扫'是什么意思？",
+    "question_en": "What does '打扫' (dǎsǎo) mean?",
+    "options": {
+      "A": "Clean",
+      "B": "Cook",
+      "C": "Wash",
+      "D": "Fix"
+    },
+    "correct_answer": "A",
+    "explanation": "A表示清理、扫除灰尘和垃圾。B表示烹饪食物。C表示用水清洗。D表示修理损坏的东西。"
+  },
+  {
+    "id": "hsk2_027",
+    "level": 2,
+    "type": "vocabulary",
+    "question_cn": "'热情'形容什么样的人？",
+    "question_en": "What kind of person does '热情' (rèqíng) describe?",
+    "options": {
+      "A": "Enthusiastic",
+      "B": "Shy",
+      "C": "Quiet",
+      "D": "Lazy"
+    },
+    "correct_answer": "A",
+    "explanation": "A形容人对事物充满热情和积极性。B形容人害羞、不敢表达自己。C形容人安静、不爱说话。D形容人懒惰、不爱劳动。"
+  },
+  {
+    "id": "hsk2_028",
+    "level": 2,
+    "type": "vocabulary",
+    "question_cn": "'请假'是什么意思？",
+    "question_en": "What does '请假' (qǐngjià) mean?",
+    "options": {
+      "A": "Ask for leave",
+      "B": "Take a vacation",
+      "C": "Rest",
+      "D": "Quit"
+    },
+    "correct_answer": "A",
+    "explanation": "A表示向上级或老师请求暂时离开。B表示去外地度假休息。C表示停止工作休息。D表示辞去工作不再做。"
+  },
+  {
+    "id": "hsk2_029",
+    "level": 2,
+    "type": "vocabulary",
+    "question_cn": "'提高'和'降低'是什么关系？",
+    "question_en": "What is the relationship between '提高' (tígāo) and '降低' (jiàngdī)?",
+    "options": {
+      "A": "Antonyms",
+      "B": "Synonyms",
+      "C": "Near-synonyms",
+      "D": "No relationship"
+    },
+    "correct_answer": "A",
+    "explanation": "A表示方向相反，'提高'是向上，'降低'是向下。B表示意思相近。C表示意思有点接近。D表示没有关联。"
+  },
+  {
+    "id": "hsk2_030",
+    "level": 2,
+    "type": "vocabulary",
+    "question_cn": "'担心'是什么意思？",
+    "question_en": "What does '担心' (dānxīn) mean?",
+    "options": {
+      "A": "Worry",
+      "B": "Hope",
+      "C": "Believe",
+      "D": "Forget"
+    },
+    "correct_answer": "A",
+    "explanation": "A表示心里不安、不放心。B表示对未来的美好期望。C表示对某人或某事有信心。D表示不记得某事。"
+  },
+  {
+    "id": "hsk2_031",
+    "level": 2,
+    "type": "vocabulary",
+    "question_cn": "'习惯'作为动词是什么意思？",
+    "question_en": "What does '习惯' (xíguàn) mean as a verb?",
+    "options": {
+      "A": "Be used to",
+      "B": "Like",
+      "C": "Need",
+      "D": "Try"
+    },
+    "correct_answer": "A",
+    "explanation": "A表示逐渐适应并养成某种行为方式。B表示对某事物有好感。C表示必须拥有某物。D表示试着做某事。"
+  },
+  {
+    "id": "hsk2_032",
+    "level": 2,
+    "type": "vocabulary",
+    "question_cn": "'准备'是什么意思？",
+    "question_en": "What does '准备' (zhǔnbèi) mean?",
+    "options": {
+      "A": "Prepare",
+      "B": "Finish",
+      "C": "Start",
+      "D": "Stop"
+    },
+    "correct_answer": "A",
+    "explanation": "A表示事先安排好或做好某事。B表示事情已经完成。C表示事情开始进行。D表示事情停止不做。"
+  },
+  {
+    "id": "hsk2_033",
+    "level": 2,
+    "type": "reading",
+    "passage_cn": "小明每天早上七点起床，然后吃早饭。他喜欢喝牛奶，吃面包。吃完早饭，他去学校上课。",
+    "passage_en": "Xiaoming gets up at 7 every morning, then eats breakfast. He likes to drink milk and eat bread. After breakfast, he goes to school for class.",
+    "question_cn": "小明早上喜欢喝什么？",
+    "question_en": "What does Xiaoming like to drink in the morning?",
+    "options": {
+      "A": "牛奶",
+      "B": "咖啡",
+      "C": "茶",
+      "D": "果汁"
+    },
+    "correct_answer": "A",
+    "explanation": "文中明确说'他喜欢喝牛奶'。B、C、D文中均未提及。"
+  },
+  {
+    "id": "hsk2_034",
+    "level": 2,
+    "type": "reading",
+    "passage_cn": "李小姐在一家医院工作。她每天很忙，但是很喜欢自己的工作。她觉得帮助病人是一件很有意义的事情。",
+    "passage_en": "Miss Li works at a hospital. She is very busy every day, but she likes her job very much. She thinks helping patients is very meaningful.",
+    "question_cn": "李小姐在哪里工作？",
+    "question_en": "Where does Miss Li work?",
+    "options": {
+      "A": "在医院",
+      "B": "在学校",
+      "C": "在公司",
+      "D": "在银行"
+    },
+    "correct_answer": "A",
+    "explanation": "文中第一句'在一家医院工作'明确说明。B、C、D均与原文不符。"
+  },
+  {
+    "id": "hsk2_035",
+    "level": 2,
+    "type": "reading",
+    "passage_cn": "昨天是我的生日，朋友们来我家玩。妈妈做了很多好吃的菜。我们唱歌、跳舞，玩得很开心。",
+    "passage_en": "Yesterday was my birthday. Friends came to my home to play. Mom cooked a lot of delicious food. We sang, danced, and had a great time.",
+    "question_cn": "昨天是什么日子？",
+    "question_en": "What day was yesterday?",
+    "options": {
+      "A": "我的生日",
+      "B": "国庆节",
+      "C": "新年",
+      "D": "周末"
+    },
+    "correct_answer": "A",
+    "explanation": "文中第一句'昨天是我的生日'。B、C、D文中均未提及。"
+  }
+]

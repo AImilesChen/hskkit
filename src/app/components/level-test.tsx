@@ -2,6 +2,13 @@
 
 import { useState, useCallback, useMemo } from "react";
 import Link from "next/link";
+import {
+  QuestionTitle,
+  OptionButton,
+  FeedbackBox,
+  ReviewCard,
+  getOptionDisplayMode,
+} from "./question-display";
 
 interface LevelQuestion {
   id: string;
@@ -32,7 +39,6 @@ function shuffleArray<T>(array: T[]): T[] {
 }
 
 function pickQuestions(all: LevelQuestion[]): LevelQuestion[] {
-  // Pick 8 questions: 1-2 from each level (1-6), weighted toward lower levels
   const byLevel: Record<number, LevelQuestion[]> = {};
   all.forEach((q) => {
     if (!byLevel[q.level]) byLevel[q.level] = [];
@@ -40,7 +46,6 @@ function pickQuestions(all: LevelQuestion[]): LevelQuestion[] {
   });
 
   const picked: LevelQuestion[] = [];
-  // Levels 1-4: 2 each, Levels 5-6: 1 each (adjust if not enough)
   const distribution = [2, 2, 2, 2, 1, 1];
   for (let i = 0; i < 6; i++) {
     const level = i + 1;
@@ -49,7 +54,6 @@ function pickQuestions(all: LevelQuestion[]): LevelQuestion[] {
     picked.push(...shuffleArray(pool).slice(0, count));
   }
 
-  // If we still don't have 8, fill with remaining random questions
   if (picked.length < 8) {
     const remaining = shuffleArray(
       all.filter((q) => !picked.includes(q))
@@ -64,7 +68,6 @@ function getRecommendedLevel(
   questions: LevelQuestion[],
   answers: Record<number, string>
 ): { level: number; label: string; desc: string; href: string; vocabLabel: string } {
-  // Score per level
   const levelScores: Record<number, { correct: number; total: number }> = {};
   questions.forEach((q, i) => {
     if (!levelScores[q.level]) levelScores[q.level] = { correct: 0, total: 0 };
@@ -74,7 +77,6 @@ function getRecommendedLevel(
     }
   });
 
-  // Find highest level where accuracy >= 60%
   let recommended = 1;
   for (let l = 1; l <= 6; l++) {
     const s = levelScores[l];
@@ -182,6 +184,10 @@ export default function LevelTest({
 
   const isCorrect =
     answers[currentIndex] === currentQuestion?.correct_answer;
+  const optionMode = getOptionDisplayMode(
+    currentQuestion?.type || "",
+    currentQuestion?.level || 1
+  );
 
   if (!started) {
     return (
@@ -262,24 +268,12 @@ export default function LevelTest({
             </h3>
             <div className="flex flex-col gap-4">
               {wrongQuestions.map((q) => (
-                <div
+                <ReviewCard
                   key={q.id}
-                  className="bg-white border border-[#E2E8F0] rounded-xl p-6 shadow-[0_2px_8px_rgba(0,0,0,0.04)]"
-                >
-                  <p className="text-sm font-semibold text-[#EF4444] mb-2">
-                    Question {q.index + 1} · HSK {q.level} · Your answer: {q.userAnswer}
-                  </p>
-                  <p className="text-base font-medium text-[#0F172A] mb-2">
-                    {q.question_cn}
-                  </p>
-                  <p className="text-sm text-[#64748B] mb-3">{q.question_en}</p>
-                  <div className="bg-[#F0FDF4] border border-[#86EFAC] rounded-lg px-4 py-3 mb-2">
-                    <p className="text-sm font-medium text-[#166534]">
-                      Correct: {q.correct_answer}) {q.options[q.correct_answer]}
-                    </p>
-                  </div>
-                  <p className="text-sm text-[#334155]">{q.explanation}</p>
-                </div>
+                  q={q}
+                  userAnswer={q.userAnswer}
+                  index={q.index}
+                />
               ))}
             </div>
           </div>
@@ -326,67 +320,34 @@ export default function LevelTest({
         <p className="text-sm font-semibold text-[#2563EB] uppercase tracking-wider mb-2">
           HSK {currentQuestion.level} · {currentQuestion.type}
         </p>
-        <h2 className="text-[24px] font-semibold leading-snug text-[#0F172A] mb-2">
-          {currentQuestion.question_cn}
-        </h2>
-        <p className="text-base text-[#64748B]">{currentQuestion.question_en}</p>
+        <QuestionTitle
+          questionCn={currentQuestion.question_cn}
+          questionEn={currentQuestion.question_en}
+        />
       </div>
 
       {/* Options */}
       <div className="flex flex-col gap-3 mb-6">
-        {LETTERS.map((letter) => {
-          const isSelected = answers[currentIndex] === letter;
-          const isCorrectAnswer = currentQuestion.correct_answer === letter;
-          const hasChecked = checked[currentIndex];
-
-          let btnClass =
-            "w-full text-left px-6 py-4 bg-white border border-[#E2E8F0] rounded-xl text-base font-medium text-[#334155] cursor-pointer transition-all duration-200 hover:border-[#2563EB] hover:bg-[#EFF6FF]";
-
-          if (hasChecked) {
-            if (isCorrectAnswer) {
-              btnClass =
-                "w-full text-left px-6 py-4 bg-[#F0FDF4] border-2 border-[#22C55E] rounded-xl text-base font-semibold text-[#166534] cursor-default";
-            } else if (isSelected) {
-              btnClass =
-                "w-full text-left px-6 py-4 bg-[#FEF2F2] border-2 border-[#EF4444] rounded-xl text-base font-semibold text-[#991B1B] cursor-default";
-            } else {
-              btnClass =
-                "w-full text-left px-6 py-4 bg-white border border-[#E2E8F0] rounded-xl text-base font-medium text-[#94A3B8] cursor-default opacity-70";
-            }
-          }
-
-          return (
-            <button
-              key={letter}
-              onClick={() => handleAnswer(letter)}
-              disabled={hasChecked}
-              className={btnClass}
-            >
-              <span className="inline-block w-8 font-bold">{letter})</span>
-              {currentQuestion.options[letter]}
-            </button>
-          );
-        })}
+        {LETTERS.map((letter) => (
+          <OptionButton
+            key={letter}
+            letter={letter}
+            rawOption={currentQuestion.options[letter]}
+            mode={optionMode}
+            isSelected={answers[currentIndex] === letter}
+            isCorrectAnswer={currentQuestion.correct_answer === letter}
+            hasChecked={!!checked[currentIndex]}
+            onClick={() => handleAnswer(letter)}
+          />
+        ))}
       </div>
 
       {/* Feedback */}
       {checked[currentIndex] && (
-        <div
-          className={`rounded-xl px-6 py-4 mb-6 ${
-            isCorrect
-              ? "bg-[#F0FDF4] border border-[#86EFAC]"
-              : "bg-[#FEF2F2] border border-[#FECACA]"
-          }`}
-        >
-          <p
-            className={`text-base font-semibold mb-1 ${
-              isCorrect ? "text-[#166534]" : "text-[#991B1B]"
-            }`}
-          >
-            {isCorrect ? "Correct!" : "Incorrect"}
-          </p>
-          <p className="text-sm text-[#334155]">{currentQuestion.explanation}</p>
-        </div>
+        <FeedbackBox
+          isCorrect={isCorrect}
+          rawExplanation={currentQuestion.explanation}
+        />
       )}
 
       {/* Navigation */}
