@@ -1,0 +1,537 @@
+[
+  {
+    "id": "hsk5_001",
+    "level": 5,
+    "type": "listening",
+    "question_cn": "有人认为传统文化正在消失，你同意这种观点吗？",
+    "question_en": "Some people believe traditional culture is disappearing. Do you agree with this view?",
+    "options": {
+      "A": "我不完全同意。虽然一些传统习俗在淡化，但传统文化也在以新的形式传承，比如通过短视频、文创产品等方式吸引了更多年轻人。 / I don't completely agree. While some traditional customs are fading, traditional culture is also being passed down in new forms, such as through short videos and cultural creative products that attract more young people.",
+      "B": "传统文化很重要。 / Traditional culture is very important.",
+      "C": "现在很多年轻人不喜欢传统文化。 / Many young people nowadays don't like traditional culture.",
+      "D": "政府应该保护传统文化。 / The government should protect traditional culture."
+    },
+    "correct_answer": "A",
+    "explanation": "'你同意吗'要求给出明确立场+论证，A给出辩证观点（不完全同意+理由+例证）。B、C、D都是简单陈述，未回应'是否同意'的问题。"
+  },
+  {
+    "id": "hsk5_002",
+    "level": 5,
+    "type": "listening",
+    "question_cn": "你怎么看待'内卷'这个现象？",
+    "question_en": "What do you think of the phenomenon of 'involution' (intense internal competition)?",
+    "options": {
+      "A": "'内卷'反映了社会资源分配不均和竞争过度的问题。要解决这个问题，需要个人调整心态，也需要社会创造更多元的发展路径。 / 'Involution' reflects problems of uneven resource distribution and excessive competition. Solving it requires both individuals adjusting their mindset and society creating more diverse development paths.",
+      "B": "现在很多人都很努力。 / Many people work very hard nowadays.",
+      "C": "竞争是社会发展的动力。 / Competition is the driving force of social development.",
+      "D": "我们应该避免竞争。 / We should avoid competition."
+    },
+    "correct_answer": "A",
+    "explanation": "'怎么看待'要求分析+观点，A给出定义+原因分析+解决方案（多层次）。B是描述，C、D是片面观点，均不构成完整分析。"
+  },
+  {
+    "id": "hsk5_003",
+    "level": 5,
+    "type": "listening",
+    "question_cn": "如果你可以回到过去，你最想改变什么？",
+    "question_en": "If you could go back in time, what would you most want to change?",
+    "options": {
+      "A": "如果可以回到过去，我希望能在大学时期多学习一些实用的技能，而不是只关注考试成绩。 / If I could go back, I wish I had learned more practical skills in college instead of only focusing on exam scores.",
+      "B": "我不想改变什么。 / I don't want to change anything.",
+      "C": "过去的事情已经过去了。 / The past is in the past.",
+      "D": "未来更重要。 / The future is more important."
+    },
+    "correct_answer": "A",
+    "explanation": "'如果……最想'是假设句，要求给出具体+有深度的回答，A给出具体时期+具体改变+反思。B、C、D回避问题或转移话题，均不匹配。"
+  },
+  {
+    "id": "hsk5_004",
+    "level": 5,
+    "type": "listening",
+    "question_cn": "有人认为金钱是衡量成功的唯一标准，你怎么看？",
+    "question_en": "Some people think money is the only measure of success. What do you think?",
+    "options": {
+      "A": "我不同意这种观点。成功应该是多维度的，包括个人成长、对社会的贡献、家庭幸福等。金钱只是其中一个方面，如果为了赚钱而牺牲了健康和亲情，那不能算是真正的成功。 / I disagree. Success should be multi-dimensional, including personal growth, contribution to society, and family happiness. Money is just one aspect. If you sacrifice health and family for money, that's not real success.",
+      "B": "赚钱确实很重要。 / Making money is indeed very important.",
+      "C": "每个人对成功的定义不同。 / Everyone has a different definition of success.",
+      "D": "有钱人的生活更好。 / Rich people's lives are better."
+    },
+    "correct_answer": "A",
+    "explanation": "'你怎么看'要求明确立场+论证，A明确反对+多维度论证+反面假设。B是部分认同，C是中立回避，D是片面观点，均不如A完整有力。"
+  },
+  {
+    "id": "hsk5_005",
+    "level": 5,
+    "type": "listening",
+    "question_cn": "你怎么理解'读万卷书，行万里路'这句话？",
+    "question_en": "How do you understand the saying 'Read ten thousand books, travel ten thousand miles'?",
+    "options": {
+      "A": "我认为这句话强调了理论知识和实践经验同样重要。读书可以获取知识，但真正的理解和智慧还需要通过亲身经历和实践来获得。两者相辅相成，缺一不可。 / I think this emphasizes that theoretical knowledge and practical experience are equally important. Reading gives knowledge, but true understanding and wisdom require personal experience and practice. They complement each other.",
+      "B": "读书很重要。 / Reading is very important.",
+      "C": "旅行可以开阔眼界。 / Travel broadens horizons.",
+      "D": "古人很有智慧。 / Ancient people were very wise."
+    },
+    "correct_answer": "A",
+    "explanation": "'怎么理解'要求解释深层含义，A给出完整解读（两者并重+互补关系）。B、C只强调一方面，D是感叹，均不构成完整理解。"
+  },
+  {
+    "id": "hsk5_006",
+    "level": 5,
+    "type": "listening",
+    "question_cn": "你认为社交媒体对人际关系的影响是积极的还是消极的？",
+    "question_en": "Do you think the impact of social media on interpersonal relationships is positive or negative?",
+    "options": {
+      "A": "我认为是双面的。积极方面，它让人们更容易保持联系；消极方面，它也可能导致表面化的交往，减少面对面的深度沟通。关键在于我们如何使用它。 / I think it's double-edged. Positively, it makes it easier to stay connected; negatively, it may lead to superficial interactions and reduce face-to-face deep communication. The key is how we use it.",
+      "B": "社交媒体很方便。 / Social media is very convenient.",
+      "C": "人们花在手机上的时间太多了。 / People spend too much time on their phones.",
+      "D": "社交媒体改变了我们的生活。 / Social media has changed our lives."
+    },
+    "correct_answer": "A",
+    "explanation": "'积极的还是消极的'要求明确判断+分析，A给出辩证判断（双面）+具体分析+结论。B只说好处，C只说坏处，D是中立描述，均不匹配。"
+  },
+  {
+    "id": "hsk5_007",
+    "level": 5,
+    "type": "listening",
+    "question_cn": "你觉得一个人应该为了理想放弃稳定的工作吗？",
+    "question_en": "Do you think a person should give up a stable job for their ideals?",
+    "options": {
+      "A": "这取决于个人的情况和准备程度。如果有足够的积蓄和清晰的计划，追求理想是值得鼓励的；但如果毫无准备就贸然辞职，可能会带来不必要的风险。 / It depends on the individual's situation and preparation. If you have sufficient savings and a clear plan, pursuing ideals is encouraged; but quitting without preparation may bring unnecessary risks.",
+      "B": "理想很重要。 / Ideals are very important.",
+      "C": "稳定的工作很难得。 / A stable job is hard to come by.",
+      "D": "年轻人应该勇敢追梦。 / Young people should bravely pursue their dreams."
+    },
+    "correct_answer": "A",
+    "explanation": "'应该……吗'要求给出判断+条件/理由，A给出条件判断（取决于情况+两种情形分析）。B、C、D都是片面观点，未完整回答问题。"
+  },
+  {
+    "id": "hsk5_008",
+    "level": 5,
+    "type": "listening",
+    "question_cn": "你怎么看待'躺平'这种生活态度？",
+    "question_en": "What do you think of the 'lying flat' lifestyle attitude?",
+    "options": {
+      "A": "我理解'躺平'是对过度竞争的一种反抗，但如果所有人都选择躺平，社会就会失去活力。我认为更健康的态度是在努力与放松之间找到平衡。 / I understand 'lying flat' as resistance to excessive competition, but if everyone chose it, society would lose vitality. I think a healthier attitude is finding balance between effort and relaxation.",
+      "B": "躺平很舒服。 / Lying flat is very comfortable.",
+      "C": "年轻人不应该躺平。 / Young people shouldn't lie flat.",
+      "D": "躺平是一种选择。 / Lying flat is a choice."
+    },
+    "correct_answer": "A",
+    "explanation": "'怎么看待'要求分析+观点，A给出理解（共情）+批判（社会层面）+建议（平衡）。B是感受，C是简单否定，D是中立描述，均不构成完整分析。"
+  },
+  {
+    "id": "hsk5_009",
+    "level": 5,
+    "type": "listening",
+    "question_cn": "你认为未来十年最重要的技术突破会是什么？",
+    "question_en": "What do you think will be the most important technological breakthrough in the next decade?",
+    "options": {
+      "A": "我认为人工智能和生物技术的结合将带来最大的变革，特别是在医疗领域，可能会实现疾病的早期预防和个性化治疗。 / I think the combination of AI and biotechnology will bring the greatest changes, especially in healthcare, potentially achieving early disease prevention and personalized treatment.",
+      "B": "技术发展得很快。 / Technology is developing very fast.",
+      "C": "5G网络很重要。 / 5G networks are very important.",
+      "D": "未来很难预测。 / The future is hard to predict."
+    },
+    "correct_answer": "A",
+    "explanation": "'最重要的技术突破'要求给出具体预测+理由，A给出具体领域（AI+生物技术）+应用场景（医疗）+具体影响。B是描述，C是举例，D回避问题，均不匹配。"
+  },
+  {
+    "id": "hsk5_010",
+    "level": 5,
+    "type": "listening",
+    "question_cn": "你觉得学习外语最好的环境是在国内还是去国外？",
+    "question_en": "Do you think the best environment for learning a foreign language is at home or abroad?",
+    "options": {
+      "A": "各有利弊。在国外有语言环境，进步快，但成本高；在国内成本低，但缺乏真实语境。我认为最好的方式是先在国内打好基础，再到国外深造。 / Both have pros and cons. Abroad offers language environment and faster progress but high costs; at home costs less but lacks real context. I think the best way is to build a foundation at home first, then go abroad for advanced study.",
+      "B": "去国外学得快。 / You learn faster abroad.",
+      "C": "在国内也可以学好。 / You can also learn well at home.",
+      "D": "看个人经济条件。 / It depends on personal financial conditions."
+    },
+    "correct_answer": "A",
+    "explanation": "'最好的环境'要求比较+判断，A给出双方利弊+综合方案。B、C只强调一方，D只考虑经济因素，均不完整。"
+  },
+  {
+    "id": "hsk5_011",
+    "level": 5,
+    "type": "grammar",
+    "question_cn": "他______不聪明，______非常勤奋，所以成绩一直很好。",
+    "question_en": "He ______ not smart, ______ very diligent, so his grades have always been good.",
+    "options": {
+      "A": "固然……但…… / admittedly...but...",
+      "B": "不但……而且…… / not only...but also...",
+      "C": "因为……所以…… / because...so...",
+      "D": "如果……就…… / if...then..."
+    },
+    "correct_answer": "A",
+    "explanation": "'固然……但……'是书面语转折结构，'固然不聪明，但很勤奋'=admittedly not smart, but very diligent。B表递进，C表因果，D表假设，均不匹配。"
+  },
+  {
+    "id": "hsk5_012",
+    "level": 5,
+    "type": "grammar",
+    "question_cn": "______你多么努力，______不能违反规则。",
+    "question_en": "______ hard you try, you ______ cannot break the rules.",
+    "options": {
+      "A": "无论……都…… / no matter...all...",
+      "B": "不但……而且…… / not only...but also...",
+      "C": "虽然……但是…… / although...but...",
+      "D": "因为……所以…… / because...so..."
+    },
+    "correct_answer": "A",
+    "explanation": "'无论……都……'表无条件，'无论多么努力都不能违反'=no matter how hard you try, you cannot break。B表递进，C表转折，D表因果，均不匹配。"
+  },
+  {
+    "id": "hsk5_013",
+    "level": 5,
+    "type": "grammar",
+    "question_cn": "他______说得______，______大家并不相信。",
+    "question_en": "He ______ spoke ______, ______ nobody believed him.",
+    "options": {
+      "A": "尽管……很好……但…… / despite...well...but...",
+      "B": "不但……好……而且…… / not only...well...but also...",
+      "C": "因为……好……所以…… / because...well...so...",
+      "D": "如果……好……就…… / if...well...then..."
+    },
+    "correct_answer": "A",
+    "explanation": "前句'说得好'和后句'不相信'形成转折，用'尽管……但……'。B表递进，C表因果，D表假设，均不匹配。"
+  },
+  {
+    "id": "hsk5_014",
+    "level": 5,
+    "type": "grammar",
+    "question_cn": "这件事______你做主，我______插手了。",
+    "question_en": "This matter, ______ you decide. I ______ interfere anymore.",
+    "options": {
+      "A": "由……不再…… / up to...no longer...",
+      "B": "不但……而且…… / not only...but also...",
+      "C": "虽然……但是…… / although...but...",
+      "D": "因为……所以…… / because...so..."
+    },
+    "correct_answer": "A",
+    "explanation": "'由……做主'是固定搭配，'我不再插手'表示不再干预。B、C、D均不构成此语义。"
+  },
+  {
+    "id": "hsk5_015",
+    "level": 5,
+    "type": "grammar",
+    "question_cn": "他______再聪明，______不可能一个人完成这么大的项目。",
+    "question_en": "______ smart he is, ______ impossible for him to complete such a big project alone.",
+    "options": {
+      "A": "就算……也…… / even if...also...",
+      "B": "不但……而且…… / not only...but also...",
+      "C": "虽然……但是…… / although...but...",
+      "D": "因为……所以…… / because...so..."
+    },
+    "correct_answer": "A",
+    "explanation": "'就算……也……'表让步假设，'就算再聪明也不可能'=even if he's smart, it's impossible。B表递进，C表转折，D表因果，均不匹配。"
+  },
+  {
+    "id": "hsk5_016",
+    "level": 5,
+    "type": "grammar",
+    "question_cn": "______他的帮助，我不可能按时完成任务。",
+    "question_en": "______ his help, I couldn't have completed the task on time.",
+    "options": {
+      "A": "要不是 / if it weren't for",
+      "B": "因为 / because",
+      "C": "虽然 / although",
+      "D": "不但 / not only"
+    },
+    "correct_answer": "A",
+    "explanation": "'要不是'用于虚拟语气，表示'如果没有……'，'要不是他的帮助'=if it weren't for his help。B表真实因果，C表转折，D表递进，均不匹配虚拟语气。"
+  },
+  {
+    "id": "hsk5_017",
+    "level": 5,
+    "type": "grammar",
+    "question_cn": "这个问题______讨论，______越复杂。",
+    "question_en": "The more this issue ______ discussed, ______ more complicated it gets.",
+    "options": {
+      "A": "越……越…… / the more...the more...",
+      "B": "不但……而且…… / not only...but also...",
+      "C": "虽然……但是…… / although...but...",
+      "D": "因为……所以…… / because...so..."
+    },
+    "correct_answer": "A",
+    "explanation": "'越……越……'表示程度随条件变化，'越讨论越复杂'=the more it's discussed, the more complicated it gets。B表递进，C表转折，D表因果，均不匹配。"
+  },
+  {
+    "id": "hsk5_018",
+    "level": 5,
+    "type": "grammar",
+    "question_cn": "他______答应了我的请求，______又反悔了。",
+    "question_en": "He ______ promised my request, ______ went back on his word.",
+    "options": {
+      "A": "明明……却…… / obviously...yet...",
+      "B": "不但……而且…… / not only...but also...",
+      "C": "因为……所以…… / because...so...",
+      "D": "如果……就…… / if...then..."
+    },
+    "correct_answer": "A",
+    "explanation": "'明明……却……'表示事实与预期相反，'明明答应了却反悔'=obviously promised yet went back。B表递进，C表因果，D表假设，均不匹配。"
+  },
+  {
+    "id": "hsk5_019",
+    "level": 5,
+    "type": "grammar",
+    "question_cn": "______你来得正好，我们______开始吧。",
+    "question_en": "______ you came just in time, let's ______ start.",
+    "options": {
+      "A": "既然……就…… / since...then...",
+      "B": "不但……而且…… / not only...but also...",
+      "C": "虽然……但是…… / although...but...",
+      "D": "如果……就…… / if...then..."
+    },
+    "correct_answer": "A",
+    "explanation": "'既然……就……'表示前提条件，'既然你来了就开始'=since you're here, let's start。B表递进，C表转折，D表假设，均不匹配。"
+  },
+  {
+    "id": "hsk5_020",
+    "level": 5,
+    "type": "grammar",
+    "question_cn": "他______说得再好听，我______不会相信他。",
+    "question_en": "______ nicely he speaks, I ______ won't believe him.",
+    "options": {
+      "A": "不管……都…… / no matter...all...",
+      "B": "不但……而且…… / not only...but also...",
+      "C": "虽然……但是…… / although...but...",
+      "D": "因为……所以…… / because...so..."
+    },
+    "correct_answer": "A",
+    "explanation": "'不管……都……'表无条件，'不管说得再好听都不会相信'=no matter how nicely he speaks, I won't believe。B表递进，C表转折，D表因果，均不匹配。"
+  },
+  {
+    "id": "hsk5_021",
+    "level": 5,
+    "type": "grammar",
+    "question_cn": "这件事______你______我，谁也改变不了结果。",
+    "question_en": "This matter, ______ you ______ me, nobody can change the result.",
+    "options": {
+      "A": "不是……就是…… / either...or...",
+      "B": "不管……还是…… / whether...or...",
+      "C": "虽然……但是…… / although...but...",
+      "D": "不但……而且…… / not only...but also..."
+    },
+    "correct_answer": "B",
+    "explanation": "'不管……还是……'表无条件列举，'不管你还是我都改变不了'=whether you or me, nobody can change。A表选择，C表转折，D表递进，均不匹配。"
+  },
+  {
+    "id": "hsk5_022",
+    "level": 5,
+    "type": "grammar",
+    "question_cn": "他______把话说完，大家______明白他的意思了。",
+    "question_en": "______ he finished speaking, everyone ______ understood his meaning.",
+    "options": {
+      "A": "一……就…… / as soon as...then...",
+      "B": "不但……而且…… / not only...but also...",
+      "C": "虽然……但是…… / although...but...",
+      "D": "因为……所以…… / because...so..."
+    },
+    "correct_answer": "A",
+    "explanation": "'一……就……'表示两个动作紧接发生，'一说完就明白'=as soon as he finished, everyone understood。B表递进，C表转折，D表因果，均不匹配。"
+  },
+  {
+    "id": "hsk5_023",
+    "level": 5,
+    "type": "vocabulary",
+    "question_cn": "'妥协'是什么意思？",
+    "question_en": "What does '妥协' (tuǒxié) mean?",
+    "options": {
+      "A": "Compromise / 妥协",
+      "B": "Insist / 坚持",
+      "C": "Refuse / 拒绝",
+      "D": "Attack / 攻击"
+    },
+    "correct_answer": "A",
+    "explanation": "'妥协'意为compromise/reach a settlement。B是坚持（反义词），C是拒绝，D是攻击。"
+  },
+  {
+    "id": "hsk5_024",
+    "level": 5,
+    "type": "vocabulary",
+    "question_cn": "'主观'和'客观'是什么关系？",
+    "question_en": "What is the relationship between '主观' (zhǔguān) and '客观' (kèguān)?",
+    "options": {
+      "A": "反义词 / Antonyms",
+      "B": "同义词 / Synonyms",
+      "C": "近义词 / Near-synonyms",
+      "D": "没有关系 / No relationship"
+    },
+    "correct_answer": "A",
+    "explanation": "'主观'(subjective)和'客观'(objective)是反义词。"
+  },
+  {
+    "id": "hsk5_025",
+    "level": 5,
+    "type": "vocabulary",
+    "question_cn": "'趋势'是什么意思？",
+    "question_en": "What does '趋势' (qūshì) mean?",
+    "options": {
+      "A": "Trend/Tendency / 趋势",
+      "B": "Reason / 原因",
+      "C": "Result / 结果",
+      "D": "Problem / 问题"
+    },
+    "correct_answer": "A",
+    "explanation": "'趋势'意为trend/tendency。B是原因，C是结果，D是问题。"
+  },
+  {
+    "id": "hsk5_026",
+    "level": 5,
+    "type": "vocabulary",
+    "question_cn": "'宏观'和'微观'的区别是什么？",
+    "question_en": "What is the difference between '宏观' (hóngguān) and '微观' (wēiguān)?",
+    "options": {
+      "A": "'宏观'指整体/大范围，'微观'指局部/小范围 / '宏观' refers to the whole/large scale; '微观' to the part/small scale",
+      "B": "意思一样 / They mean the same",
+      "C": "'宏观'是形容词，'微观'是名词 / '宏观' is an adjective, '微观' is a noun",
+      "D": "'宏观'用于经济，'微观'用于生物 / '宏观' is for economics, '微观' for biology"
+    },
+    "correct_answer": "A",
+    "explanation": "'宏观'指从整体/大范围看，'微观'指从局部/小范围看。B错误，C错误（两者都是形容词），D过于局限（虽然常见搭配如此，但不是本质区别）。"
+  },
+  {
+    "id": "hsk5_027",
+    "level": 5,
+    "type": "vocabulary",
+    "question_cn": "'谨慎'是什么意思？",
+    "question_en": "What does '谨慎' (jǐnshèn) mean?",
+    "options": {
+      "A": "Cautious/Prudent / 谨慎",
+      "B": "Brave / 勇敢",
+      "C": "Careless / 粗心",
+      "D": "Quick / 迅速"
+    },
+    "correct_answer": "A",
+    "explanation": "'谨慎'意为cautious/prudent。B是勇敢，C是粗心（反义词），D是迅速。"
+  },
+  {
+    "id": "hsk5_028",
+    "level": 5,
+    "type": "vocabulary",
+    "question_cn": "'本质'是什么意思？",
+    "question_en": "What does '本质' (běnzhì) mean?",
+    "options": {
+      "A": "Essence/Nature / 本质",
+      "B": "Appearance / 外表",
+      "C": "Method / 方法",
+      "D": "Process / 过程"
+    },
+    "correct_answer": "A",
+    "explanation": "'本质'意为essence/nature。B是外表（反义词），C是方法，D是过程。"
+  },
+  {
+    "id": "hsk5_029",
+    "level": 5,
+    "type": "vocabulary",
+    "question_cn": "'固然'在句子中起什么作用？",
+    "question_en": "What function does '固然' (gùrán) serve in a sentence?",
+    "options": {
+      "A": "表示承认某个事实，引出转折 / Acknowledges a fact, leading to a contrast",
+      "B": "表示原因 / Indicates reason",
+      "C": "表示结果 / Indicates result",
+      "D": "表示时间 / Indicates time"
+    },
+    "correct_answer": "A",
+    "explanation": "'固然'表示承认某个事实（常与'但/却'连用），'固然好，但太贵'=admittedly good, but too expensive。B、C、D均不是'固然'的功能。"
+  },
+  {
+    "id": "hsk5_030",
+    "level": 5,
+    "type": "vocabulary",
+    "question_cn": "'呼吁'是什么意思？",
+    "question_en": "What does '呼吁' (hūyù) mean?",
+    "options": {
+      "A": "Appeal/Call for / 呼吁",
+      "B": "Shout / 喊叫",
+      "C": "Order / 命令",
+      "D": "Suggest / 建议"
+    },
+    "correct_answer": "A",
+    "explanation": "'呼吁'意为appeal/call for（公开请求）。B是喊叫，C是命令，D是建议。"
+  },
+  {
+    "id": "hsk5_031",
+    "level": 5,
+    "type": "reading",
+    "passage_cn": "在信息爆炸的时代，人们每天都被海量的信息包围。然而，信息越多，人们的注意力反而越分散。研究表明，现代人的平均注意力持续时间已经从2000年的12秒下降到了现在的8秒。这种现象被称为'注意力经济'的副作用。为了争夺用户的注意力，各种媒体平台不断推出更具刺激性的内容，形成了恶性循环。专家指出，要打破这个循环，需要个人培养深度阅读的习惯，同时也需要平台承担更多社会责任。",
+    "passage_en": "In the era of information explosion, people are surrounded by massive amounts of information every day. However, the more information there is, the more scattered people's attention becomes. Research shows that the average attention span of modern people has dropped from 12 seconds in 2000 to 8 seconds now. This phenomenon is called a side effect of the 'attention economy.' To compete for users' attention, various media platforms continuously release more stimulating content, creating a vicious cycle. Experts point out that to break this cycle, individuals need to cultivate deep reading habits, and platforms need to take more social responsibility.",
+    "question_cn": "根据文章，注意力持续时间下降的原因是什么？",
+    "question_en": "According to the article, what is the cause of the decline in attention span?",
+    "options": {
+      "A": "信息爆炸和媒体平台争夺注意力 / Information explosion and media platforms competing for attention",
+      "B": "人们不喜欢阅读 / People don't like reading",
+      "C": "手机功能太少 / Phones have too few functions",
+      "D": "专家建议减少使用媒体 / Experts recommend reducing media use"
+    },
+    "correct_answer": "A",
+    "explanation": "文中提到'信息爆炸的时代'和'各种媒体平台不断推出更具刺激性的内容'是原因。B文中未提，C与事实相反，D是解决方案不是原因。"
+  },
+  {
+    "id": "hsk5_032",
+    "level": 5,
+    "type": "reading",
+    "passage_cn": "中国古代的科举制度是世界上最早的文官考试制度。它始于隋朝，完善于唐朝，一直延续到清朝末年。科举制度打破了贵族对官职的垄断，使得出身贫寒但有才华的人也有机会进入仕途。然而，科举制度也存在明显的弊端。考试内容过于注重儒家经典，忽视了自然科学和实用技术，这在一定程度上阻碍了中国近代科技的发展。1905年，清政府正式宣布废除科举制度。",
+    "passage_en": "China's ancient imperial examination system was the earliest civil service examination system in the world. It began in the Sui Dynasty, was perfected in the Tang Dynasty, and continued until the late Qing Dynasty. The imperial examination system broke the monopoly of nobles on official positions, giving talented people from poor families a chance to enter government. However, the system also had obvious drawbacks. The examination content overly emphasized Confucian classics while neglecting natural sciences and practical technology, which to some extent hindered the development of modern science and technology in China. In 1905, the Qing government officially announced the abolition of the imperial examination system.",
+    "question_cn": "根据文章，科举制度的主要弊端是什么？",
+    "question_en": "According to the article, what was the main drawback of the imperial examination system?",
+    "options": {
+      "A": "过于注重儒家经典，忽视自然科学和实用技术 / Overly emphasized Confucian classics, neglected natural sciences and practical technology",
+      "B": "只有贵族才能参加 / Only nobles could participate",
+      "C": "考试太难了 / The exams were too difficult",
+      "D": "存在时间太短 / It existed for too short a time"
+    },
+    "correct_answer": "A",
+    "explanation": "文中明确说'考试内容过于注重儒家经典，忽视了自然科学和实用技术'。B与原文（打破贵族垄断）矛盾，C、D文中未提及。"
+  },
+  {
+    "id": "hsk5_033",
+    "level": 5,
+    "type": "reading",
+    "passage_cn": "近年来，'极简主义'生活方式在年轻人中越来越流行。极简主义者认为，拥有更少的物品可以带来更多的自由和幸福。他们主张只保留真正需要和喜欢的东西，减少不必要的消费。这种生活方式不仅有助于环保，还能让人从物质的束缚中解脱出来，把更多的时间和精力投入到真正重要的事情上。当然，极简主义并不意味着要过苦行僧式的生活，而是找到物质与精神之间的平衡点。",
+    "passage_en": "In recent years, the 'minimalist' lifestyle has become increasingly popular among young people. Minimalists believe that owning fewer things can bring more freedom and happiness. They advocate keeping only what is truly needed and liked, reducing unnecessary consumption. This lifestyle not only helps the environment but also frees people from material constraints, allowing more time and energy to be invested in truly important things. Of course, minimalism doesn't mean living like an ascetic, but finding a balance between material and spiritual life.",
+    "question_cn": "根据文章，极简主义生活方式的核心是什么？",
+    "question_en": "According to the article, what is the core of the minimalist lifestyle?",
+    "options": {
+      "A": "找到物质与精神之间的平衡 / Finding a balance between material and spiritual life",
+      "B": "过苦行僧式的生活 / Living like an ascetic",
+      "C": "不买任何东西 / Not buying anything",
+      "D": "只关注环保 / Only focusing on environmental protection"
+    },
+    "correct_answer": "A",
+    "explanation": "文中最后一句明确说'找到物质与精神之间的平衡点'。B与原文（不意味着苦行僧）矛盾，C过于极端，D只是其中一个方面。"
+  },
+  {
+    "id": "hsk5_034",
+    "level": 5,
+    "type": "reading",
+    "passage_cn": "人工智能技术的发展引发了关于就业市场的广泛讨论。一方面，AI确实会替代一些重复性高、规则明确的工作，比如数据录入、客服等岗位。另一方面，AI也会创造出许多新的职业机会，比如AI训练师、数据标注员、算法伦理专家等。历史经验表明，每一次技术革命虽然会淘汰一些旧职业，但最终会创造更多的新岗位。关键在于劳动者能否及时更新自己的技能，适应新的就业环境。",
+    "passage_en": "The development of AI technology has triggered widespread discussion about the job market. On one hand, AI will indeed replace some highly repetitive, rule-based jobs such as data entry and customer service positions. On the other hand, AI will also create many new career opportunities, such as AI trainers, data annotators, and algorithm ethics experts. Historical experience shows that every technological revolution, while eliminating some old occupations, ultimately creates more new jobs. The key is whether workers can update their skills in time to adapt to the new employment environment.",
+    "question_cn": "根据文章，面对AI带来的就业变化，劳动者应该怎么做？",
+    "question_en": "According to the article, what should workers do in response to AI-driven employment changes?",
+    "options": {
+      "A": "及时更新技能，适应新的就业环境 / Update skills in time to adapt to the new employment environment",
+      "B": "避免使用AI技术 / Avoid using AI technology",
+      "C": "转行做AI训练师 / Switch to becoming an AI trainer",
+      "D": "等待政府出台保护政策 / Wait for the government to introduce protective policies"
+    },
+    "correct_answer": "A",
+    "explanation": "文中最后一句'关键在于劳动者能否及时更新自己的技能，适应新的就业环境'。B、C、D文中均未提及。"
+  },
+  {
+    "id": "hsk5_035",
+    "level": 5,
+    "type": "reading",
+    "passage_cn": "中国古代哲学家庄子有一个著名的故事：庄周梦蝶。故事说，庄子梦见自己变成了一只蝴蝶，在花丛中自由自在地飞舞，感到非常快乐。醒来后，他发现自己还是庄子。于是他开始思考：到底是庄子梦见自己变成了蝴蝶，还是蝴蝶梦见自己变成了庄子？这个故事探讨了现实与梦境、自我与外物之间的界限，体现了中国古代哲学中对主体与客体关系的深刻思考。",
+    "passage_en": "The ancient Chinese philosopher Zhuangzi has a famous story: Zhuang Zhou Dreams of Being a Butterfly. The story says that Zhuangzi dreamed he became a butterfly, flying freely among flowers and feeling very happy. When he woke up, he found he was still Zhuangzi. Then he began to wonder: did Zhuangzi dream of becoming a butterfly, or did the butterfly dream of becoming Zhuangzi? This story explores the boundary between reality and dreams, self and external things, reflecting profound Chinese philosophical thinking about the relationship between subject and object.",
+    "question_cn": "根据文章，'庄周梦蝶'这个故事主要探讨了什么？",
+    "question_en": "According to the article, what does the story 'Zhuang Zhou Dreams of Being a Butterfly' mainly explore?",
+    "options": {
+      "A": "现实与梦境、自我与外物之间的界限 / The boundary between reality and dreams, self and external things",
+      "B": "蝴蝶的生活习性 / The habits of butterflies",
+      "C": "庄子的生平经历 / Zhuangzi's life experiences",
+      "D": "中国古代的文学成就 / Ancient Chinese literary achievements"
+    },
+    "correct_answer": "A",
+    "explanation": "文中明确说'探讨了现实与梦境、自我与外物之间的界限'。B、C、D均与原文主旨不符。"
+  }
+]

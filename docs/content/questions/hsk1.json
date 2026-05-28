@@ -1,0 +1,752 @@
+[
+  {
+    "id": "hsk1_001",
+    "level": 1,
+    "type": "listening",
+    "question_cn": "你好吗？",
+    "question_en": "How are you?",
+    "options": {
+      "A": "我很好，谢谢。 / I'm fine, thank you.",
+      "B": "我是学生。 / I am a student.",
+      "C": "我叫李明。 / My name is Li Ming.",
+      "D": "我二十岁。 / I am 20 years old."
+    },
+    "correct_answer": "A",
+    "explanation": "'你好吗'是问候语，标准回应是'我很好，谢谢'。B回答身份，C回答名字，D回答年龄，均不匹配。"
+  },
+  {
+    "id": "hsk1_002",
+    "level": 1,
+    "type": "listening",
+    "question_cn": "你叫什么名字？",
+    "question_en": "What is your name?",
+    "options": {
+      "A": "我很好。 / I'm fine.",
+      "B": "我叫王芳。 / My name is Wang Fang.",
+      "C": "我是中国人。 / I am Chinese.",
+      "D": "我学习汉语。 / I study Chinese."
+    },
+    "correct_answer": "B",
+    "explanation": "'叫什么名字'询问姓名，B直接回答名字。A回应问候，C回答国籍，D回答行为，均不匹配。"
+  },
+  {
+    "id": "hsk1_003",
+    "level": 1,
+    "type": "listening",
+    "question_cn": "你是老师吗？",
+    "question_en": "Are you a teacher?",
+    "options": {
+      "A": "是的，我是老师。 / Yes, I am a teacher.",
+      "B": "我不老师。 / I no teacher. (ungrammatical)",
+      "C": "我是学生。 / I am a student.",
+      "D": "我喜欢老师。 / I like teachers."
+    },
+    "correct_answer": "A",
+    "explanation": "'是……吗'是一般疑问句，肯定回答用'是的'。C是否定含义的回答（我是学生=不是老师），B语法错误，D答非所问。"
+  },
+  {
+    "id": "hsk1_004",
+    "level": 1,
+    "type": "listening",
+    "question_cn": "你今年多大？",
+    "question_en": "How old are you this year?",
+    "options": {
+      "A": "我今年十八岁了。 / I am 18 years old this year.",
+      "B": "我今年上大学。 / I go to university this year.",
+      "C": "我今年是学生。 / I am a student this year.",
+      "D": "我今年很好。 / I am very good this year."
+    },
+    "correct_answer": "A",
+    "explanation": "'多大'询问年龄，A回答岁数。B回答事件，C回答身份，D回应问候，均不匹配。"
+  },
+  {
+    "id": "hsk1_005",
+    "level": 1,
+    "type": "listening",
+    "question_cn": "你喜欢吃什么？",
+    "question_en": "What do you like to eat?",
+    "options": {
+      "A": "我喜欢吃苹果。 / I like to eat apples.",
+      "B": "我喜欢看电影。 / I like watching movies.",
+      "C": "我喜欢学习。 / I like studying.",
+      "D": "我喜欢唱歌。 / I like singing."
+    },
+    "correct_answer": "A",
+    "explanation": "'吃什么'询问食物偏好，A回答食物（苹果）。B、C、D都是非食物的爱好，答非所问。"
+  },
+  {
+    "id": "hsk1_006",
+    "level": 1,
+    "type": "listening",
+    "question_cn": "现在几点？",
+    "question_en": "What time is it now?",
+    "options": {
+      "A": "现在是早上。 / It's morning now.",
+      "B": "现在三点半。 / It's 3:30 now.",
+      "C": "今天是星期一。 / Today is Monday.",
+      "D": "现在是春天。 / It's spring now."
+    },
+    "correct_answer": "B",
+    "explanation": "'几点'询问具体时间，B回答三点半。A回答时段，C回答日期，D回答季节，均不匹配。"
+  },
+  {
+    "id": "hsk1_007",
+    "level": 1,
+    "type": "listening",
+    "question_cn": "你家住在哪里？",
+    "question_en": "Where does your family live?",
+    "options": {
+      "A": "我家住在北京。 / My family lives in Beijing.",
+      "B": "我家有三个人。 / There are three people in my family.",
+      "C": "我家很大。 / My house is very big.",
+      "D": "我喜欢我家。 / I like my home."
+    },
+    "correct_answer": "A",
+    "explanation": "'在哪里'询问地点，A回答城市（北京）。B回答人数，C描述房子，D表达情感，均不匹配。"
+  },
+  {
+    "id": "hsk1_008",
+    "level": 1,
+    "type": "listening",
+    "question_cn": "你会说英语吗？",
+    "question_en": "Can you speak English?",
+    "options": {
+      "A": "我会说一点儿。 / I can speak a little.",
+      "B": "我喜欢英语。 / I like English.",
+      "C": "我是英国人。 / I am British.",
+      "D": "我学习英语。 / I study English."
+    },
+    "correct_answer": "A",
+    "explanation": "'会……吗'询问能力，A直接回答能力程度。B表达喜好，C回答国籍，D回答行为，均不匹配。"
+  },
+  {
+    "id": "hsk1_009",
+    "level": 1,
+    "type": "listening",
+    "question_cn": "这个多少钱？",
+    "question_en": "How much is this?",
+    "options": {
+      "A": "这个很好看。 / This looks very nice.",
+      "B": "这个二十块钱。 / This is 20 yuan.",
+      "C": "这个是红色的。 / This is red.",
+      "D": "这个很重。 / This is very heavy."
+    },
+    "correct_answer": "B",
+    "explanation": "'多少钱'询问价格，B回答具体金额。A评价外观，C说颜色，D说重量，均不匹配。"
+  },
+  {
+    "id": "hsk1_010",
+    "level": 1,
+    "type": "listening",
+    "question_cn": "你今天去哪儿？",
+    "question_en": "Where are you going today?",
+    "options": {
+      "A": "我今天去学校。 / I am going to school today.",
+      "B": "我今天很高兴。 / I am very happy today.",
+      "C": "我今天很忙。 / I am very busy today.",
+      "D": "我今天不吃饭。 / I am not eating today."
+    },
+    "correct_answer": "A",
+    "explanation": "'去哪儿'询问目的地，A回答地点（学校）。B表达情绪，C描述状态，D说行为，均不匹配。"
+  },
+  {
+    "id": "hsk1_011",
+    "level": 1,
+    "type": "listening",
+    "question_cn": "你爸爸做什么工作？",
+    "question_en": "What does your father do?",
+    "options": {
+      "A": "我爸爸是医生。 / My father is a doctor.",
+      "B": "我爸爸五十岁。 / My father is 50 years old.",
+      "C": "我爸爸在家。 / My father is at home.",
+      "D": "我爸爸很好。 / My father is very well."
+    },
+    "correct_answer": "A",
+    "explanation": "'做什么工作'询问职业，A回答职业（医生）。B回答年龄，C回答地点，D回应问候，均不匹配。"
+  },
+  {
+    "id": "hsk1_012",
+    "level": 1,
+    "type": "listening",
+    "question_cn": "你喜欢猫还是狗？",
+    "question_en": "Do you like cats or dogs?",
+    "options": {
+      "A": "我喜欢猫。 / I like cats.",
+      "B": "猫和狗都很可爱。 / Cats and dogs are both cute.",
+      "C": "我不喜欢动物。 / I don't like animals.",
+      "D": "我家有猫。 / My family has a cat."
+    },
+    "correct_answer": "A",
+    "explanation": "'A还是B'是选择疑问句，需要明确选择其一。A直接选择猫。B是评价，C是否定，D是陈述事实，均未直接回答选择。"
+  },
+  {
+    "id": "hsk1_013",
+    "level": 1,
+    "type": "listening",
+    "question_cn": "你什么时候去学校？",
+    "question_en": "When do you go to school?",
+    "options": {
+      "A": "我八点去学校。 / I go to school at 8 o'clock.",
+      "B": "我去学校学习。 / I go to school to study.",
+      "C": "我去学校坐公交车。 / I take the bus to school.",
+      "D": "学校离我家很近。 / The school is close to my home."
+    },
+    "correct_answer": "A",
+    "explanation": "'什么时候'询问时间，A回答具体时间（八点）。B回答目的，C回答方式，D描述距离，均不匹配。"
+  },
+  {
+    "id": "hsk1_014",
+    "level": 1,
+    "type": "listening",
+    "question_cn": "你有几个兄弟姐妹？",
+    "question_en": "How many siblings do you have?",
+    "options": {
+      "A": "我有一个哥哥。 / I have an older brother.",
+      "B": "我哥哥很高。 / My older brother is very tall.",
+      "C": "我和哥哥很好。 / My brother and I are very close.",
+      "D": "哥哥喜欢运动。 / My brother likes sports."
+    },
+    "correct_answer": "A",
+    "explanation": "'几个'询问数量，A回答数量（一个哥哥）。B描述外貌，C描述关系，D说爱好，均不匹配。"
+  },
+  {
+    "id": "hsk1_015",
+    "level": 1,
+    "type": "listening",
+    "question_cn": "今天天气怎么样？",
+    "question_en": "How is the weather today?",
+    "options": {
+      "A": "今天天气很好。 / The weather is very nice today.",
+      "B": "今天是星期一。 / Today is Monday.",
+      "C": "今天我很忙。 / I am very busy today.",
+      "D": "今天我去公园。 / I am going to the park today."
+    },
+    "correct_answer": "A",
+    "explanation": "'天气怎么样'询问天气状况，A直接描述天气。B回答日期，C说个人状态，D说计划，均不匹配。"
+  },
+  {
+    "id": "hsk1_016",
+    "level": 1,
+    "type": "listening",
+    "question_cn": "你想喝什么？",
+    "question_en": "What would you like to drink?",
+    "options": {
+      "A": "我想喝水。 / I want to drink water.",
+      "B": "我想吃饭。 / I want to eat rice.",
+      "C": "我想睡觉。 / I want to sleep.",
+      "D": "我想看书。 / I want to read books."
+    },
+    "correct_answer": "A",
+    "explanation": "'喝什么'询问饮品，A回答水（饮品）。B是食物，C是行为，D是活动，均不匹配。"
+  },
+  {
+    "id": "hsk1_017",
+    "level": 1,
+    "type": "listening",
+    "question_cn": "你的电话号码是多少？",
+    "question_en": "What is your phone number?",
+    "options": {
+      "A": "我的电话是红色的。 / My phone is red.",
+      "B": "我的电话是13800138000。 / My phone number is 13800138000.",
+      "C": "我喜欢打电话。 / I like making phone calls.",
+      "D": "我的电话坏了。 / My phone is broken."
+    },
+    "correct_answer": "B",
+    "explanation": "'电话号码是多少'询问号码，B回答具体数字。A说颜色，C说喜好，D说状态，均不匹配。"
+  },
+  {
+    "id": "hsk1_018",
+    "level": 1,
+    "type": "listening",
+    "question_cn": "你怎么去学校？",
+    "question_en": "How do you go to school?",
+    "options": {
+      "A": "我坐公交车去学校。 / I take the bus to school.",
+      "B": "我去学校学习汉语。 / I go to school to study Chinese.",
+      "C": "学校很大。 / The school is very big.",
+      "D": "我喜欢学校。 / I like school."
+    },
+    "correct_answer": "A",
+    "explanation": "'怎么去'询问交通方式，A回答坐公交车。B回答目的，C描述学校，D表达喜好，均不匹配。"
+  },
+  {
+    "id": "hsk1_019",
+    "level": 1,
+    "type": "listening",
+    "question_cn": "你妈妈在家吗？",
+    "question_en": "Is your mother at home?",
+    "options": {
+      "A": "我妈妈不在家。 / My mother is not at home.",
+      "B": "我妈妈做饭。 / My mother cooks.",
+      "C": "我妈妈很好。 / My mother is very well.",
+      "D": "我妈妈是老师。 / My mother is a teacher."
+    },
+    "correct_answer": "A",
+    "explanation": "'在……吗'询问是否在某处，A直接回答在不在家。B说行为，C回应问候，D说职业，均不匹配。"
+  },
+  {
+    "id": "hsk1_020",
+    "level": 1,
+    "type": "listening",
+    "question_cn": "这个苹果怎么样？",
+    "question_en": "How is this apple?",
+    "options": {
+      "A": "这个苹果很甜。 / This apple is very sweet.",
+      "B": "这个苹果五块钱。 / This apple is 5 yuan.",
+      "C": "这个苹果是红色的。 / This apple is red.",
+      "D": "这个苹果很大。 / This apple is very big."
+    },
+    "correct_answer": "A",
+    "explanation": "'怎么样'询问评价/感受，A回答味道（甜）。B回答价格，C说颜色，D说大小，均不是对品质的评价。"
+  },
+  {
+    "id": "hsk1_021",
+    "level": 1,
+    "type": "grammar",
+    "question_cn": "我是______学生。",
+    "question_en": "I am ______ student.",
+    "options": {
+      "A": "个 / a (measure word)",
+      "B": "的 / possessive particle",
+      "C": "了 / completed action particle",
+      "D": "在 / at"
+    },
+    "correct_answer": "A",
+    "explanation": "名词'学生'前需要量词，'个'是通用量词。'的'表所属，'了'表完成，'在'表位置，均不适用。"
+  },
+  {
+    "id": "hsk1_022",
+    "level": 1,
+    "type": "grammar",
+    "question_cn": "我______中国人。",
+    "question_en": "I ______ Chinese.",
+    "options": {
+      "A": "是 / am",
+      "B": "有 / have",
+      "C": "在 / at",
+      "D": "去 / go"
+    },
+    "correct_answer": "A",
+    "explanation": "'是'用于连接主语和表语（身份/属性）。'有'表拥有，'在'表位置，'去'表动作，均不匹配。"
+  },
+  {
+    "id": "hsk1_023",
+    "level": 1,
+    "type": "grammar",
+    "question_cn": "你______什么名字？",
+    "question_en": "You ______ what name?",
+    "options": {
+      "A": "叫 / are called",
+      "B": "是 / are",
+      "C": "有 / have",
+      "D": "做 / do"
+    },
+    "correct_answer": "A",
+    "explanation": "'叫什么名字'是固定搭配，'叫'意为'被称为'。虽然B语法上可通，但'你是什么名字'不自然，A是标准表达。"
+  },
+  {
+    "id": "hsk1_024",
+    "level": 1,
+    "type": "grammar",
+    "question_cn": "我______一本书。",
+    "question_en": "I ______ one book.",
+    "options": {
+      "A": "有 / have",
+      "B": "是 / am",
+      "C": "在 / at",
+      "D": "会 / can"
+    },
+    "correct_answer": "A",
+    "explanation": "'有'表拥有，'我有一本书'意为'I have a book'。'是'表判断，'在'表位置，'会'表能力，均不匹配。"
+  },
+  {
+    "id": "hsk1_025",
+    "level": 1,
+    "type": "grammar",
+    "question_cn": "他______医生。",
+    "question_en": "He ______ a doctor.",
+    "options": {
+      "A": "是 / is",
+      "B": "有 / has",
+      "C": "在 / is at",
+      "D": "去 / goes"
+    },
+    "correct_answer": "A",
+    "explanation": "描述职业用'是+职业'结构。'有'表拥有，'在'表位置，'去'表动作，均不用于表达职业。"
+  },
+  {
+    "id": "hsk1_026",
+    "level": 1,
+    "type": "grammar",
+    "question_cn": "我______北京。",
+    "question_en": "I ______ Beijing.",
+    "options": {
+      "A": "在 / am in",
+      "B": "是 / am",
+      "C": "有 / have",
+      "D": "去 / go to"
+    },
+    "correct_answer": "A",
+    "explanation": "'在+地点'表示在某地。'是北京'意为'是 Beijing 这个城市'（语义不通），'有北京'不通，'去北京'需要语境支持。"
+  },
+  {
+    "id": "hsk1_027",
+    "level": 1,
+    "type": "grammar",
+    "question_cn": "你______吗？",
+    "question_en": "Are you ______?",
+    "options": {
+      "A": "好 / well",
+      "B": "很 / very",
+      "C": "的 / possessive",
+      "D": "了 / completed"
+    },
+    "correct_answer": "A",
+    "explanation": "'好吗'是完整疑问结构。'很吗'不通，'的吗'用于陈述句变疑问，'了吗'用于完成态，但均不如A自然。"
+  },
+  {
+    "id": "hsk1_028",
+    "level": 1,
+    "type": "grammar",
+    "question_cn": "我______吃饭了。",
+    "question_en": "I ______ ate. (completed action)",
+    "options": {
+      "A": "了 / le (completed action marker)",
+      "B": "的 / de (possessive)",
+      "C": "在 / zai (progressive)",
+      "D": "会 / hui (can)"
+    },
+    "correct_answer": "A",
+    "explanation": "'了'放在动词后表示动作完成。'我吃饭了'=I have eaten. '的'、'在'、'会'均不表示完成态。"
+  },
+  {
+    "id": "hsk1_029",
+    "level": 1,
+    "type": "grammar",
+    "question_cn": "______是星期一。",
+    "question_en": "______ is Monday.",
+    "options": {
+      "A": "今天 / Today",
+      "B": "现在 / Now",
+      "C": "这儿 / Here",
+      "D": "这个 / This"
+    },
+    "correct_answer": "A",
+    "explanation": "'今天'指日期，与'星期一'搭配。'现在'指时刻，'这儿'指地点，'这个'指事物，均不与星期搭配。"
+  },
+  {
+    "id": "hsk1_030",
+    "level": 1,
+    "type": "grammar",
+    "question_cn": "我______喜欢汉语。",
+    "question_en": "I ______ like Chinese.",
+    "options": {
+      "A": "很 / very",
+      "B": "是 / am",
+      "C": "的 / possessive",
+      "D": "了 / completed"
+    },
+    "correct_answer": "A",
+    "explanation": "'很'是程度副词，修饰'喜欢'表示'很喜欢'。'是喜欢'不通，'的喜欢'不通，'了喜欢'不通。"
+  },
+  {
+    "id": "hsk1_031",
+    "level": 1,
+    "type": "grammar",
+    "question_cn": "你______学生吗？",
+    "question_en": "Are you ______ student?",
+    "options": {
+      "A": "是 / a",
+      "B": "有 / have",
+      "C": "在 / at",
+      "D": "会 / can"
+    },
+    "correct_answer": "A",
+    "explanation": "'是……吗'构成判断疑问句。'有学生吗'意为'有学生吗'（主语缺失），'在学生吗'不通，'会学生吗'不通。"
+  },
+  {
+    "id": "hsk1_032",
+    "level": 1,
+    "type": "grammar",
+    "question_cn": "她______很漂亮。",
+    "question_en": "She ______ very beautiful.",
+    "options": {
+      "A": "长得 / looks",
+      "B": "是 / is",
+      "C": "有 / has",
+      "D": "做 / does"
+    },
+    "correct_answer": "A",
+    "explanation": "'长得'表示外貌，'长得漂亮'=looks beautiful。'是漂亮'不自然，'有漂亮'不通，'做漂亮'不通。"
+  },
+  {
+    "id": "hsk1_033",
+    "level": 1,
+    "type": "grammar",
+    "question_cn": "我______家______学校很近。",
+    "question_en": "My home ______ school is very close.",
+    "options": {
+      "A": "从……到…… / from...to...",
+      "B": "在……里…… / in...",
+      "C": "离…… / from/distance",
+      "D": "对…… / to..."
+    },
+    "correct_answer": "C",
+    "explanation": "'离'表示距离，'我家离学校很近'=My home is close to school。'从……到'表范围，'在……里'表位置，'对'表对象，均不匹配。"
+  },
+  {
+    "id": "hsk1_034",
+    "level": 1,
+    "type": "grammar",
+    "question_cn": "______你爸爸？",
+    "question_en": "______ is your father?",
+    "options": {
+      "A": "谁 / Who",
+      "B": "什么 / What",
+      "C": "哪儿 / Where",
+      "D": "怎么 / How"
+    },
+    "correct_answer": "A",
+    "explanation": "'谁'询问人。'什么'询问事物，'哪儿'询问地点，'怎么'询问方式，均不匹配。"
+  },
+  {
+    "id": "hsk1_035",
+    "level": 1,
+    "type": "grammar",
+    "question_cn": "我______中国人，______美国人。",
+    "question_en": "I ______ Chinese, ______ American.",
+    "options": {
+      "A": "是……不是…… / am...not...",
+      "B": "有……没有…… / have...don't have...",
+      "C": "在……不在…… / am...not at...",
+      "D": "会……不会…… / can...cannot..."
+    },
+    "correct_answer": "A",
+    "explanation": "'是……不是……'构成肯定否定并列。'是中国人，不是美国人'=I am Chinese, not American。其他选项语义不通。"
+  },
+  {
+    "id": "hsk1_036",
+    "level": 1,
+    "type": "vocabulary",
+    "question_cn": "'苹果'是什么意思？",
+    "question_en": "What does '苹果' (píngguǒ) mean?",
+    "options": {
+      "A": "Apple / 苹果",
+      "B": "Banana / 香蕉",
+      "C": "Orange / 橙子",
+      "D": "Grape / 葡萄"
+    },
+    "correct_answer": "A",
+    "explanation": "'苹果'对应英文apple。B是香蕉(xiāngjiāo)，C是橙子(chéngzi)，D是葡萄(pútáo)。"
+  },
+  {
+    "id": "hsk1_037",
+    "level": 1,
+    "type": "vocabulary",
+    "question_cn": "'医生'是什么职业？",
+    "question_en": "What profession is '医生' (yīshēng)?",
+    "options": {
+      "A": "Doctor / 医生",
+      "B": "Teacher / 老师",
+      "C": "Student / 学生",
+      "D": "Worker / 工人"
+    },
+    "correct_answer": "A",
+    "explanation": "'医生'意为doctor。B是老师(lǎoshī)，C是学生(xuésheng)，D是工人(gōngrén)。"
+  },
+  {
+    "id": "hsk1_038",
+    "level": 1,
+    "type": "vocabulary",
+    "question_cn": "'早上'是一天中的什么时候？",
+    "question_en": "What time of day is '早上' (zǎoshang)?",
+    "options": {
+      "A": "Morning / 早上",
+      "B": "Afternoon / 下午",
+      "C": "Evening / 晚上",
+      "D": "Night / 夜里"
+    },
+    "correct_answer": "A",
+    "explanation": "'早上'指早晨(约6-9点)。B是下午(xiàwǔ)，C是晚上(wǎnshang)，D是夜里(yèlǐ)。"
+  },
+  {
+    "id": "hsk1_039",
+    "level": 1,
+    "type": "vocabulary",
+    "question_cn": "'水'是什么？",
+    "question_en": "What is '水' (shuǐ)?",
+    "options": {
+      "A": "Water / 水",
+      "B": "Tea / 茶",
+      "C": "Coffee / 咖啡",
+      "D": "Juice / 果汁"
+    },
+    "correct_answer": "A",
+    "explanation": "'水'就是water。B是茶(chá)，C是咖啡(kāfēi)，D是果汁(guǒzhī)。"
+  },
+  {
+    "id": "hsk1_040",
+    "level": 1,
+    "type": "vocabulary",
+    "question_cn": "'学校'是什么地方？",
+    "question_en": "What kind of place is '学校' (xuéxiào)?",
+    "options": {
+      "A": "School / 学校",
+      "B": "Hospital / 医院",
+      "C": "Restaurant / 饭店",
+      "D": "Park / 公园"
+    },
+    "correct_answer": "A",
+    "explanation": "'学校'是school。B是医院(yīyuàn)，C是饭店(fàndiàn)，D是公园(gōngyuán)。"
+  },
+  {
+    "id": "hsk1_041",
+    "level": 1,
+    "type": "vocabulary",
+    "question_cn": "'爸爸'是谁？",
+    "question_en": "Who is '爸爸' (bàba)?",
+    "options": {
+      "A": "Father / 爸爸",
+      "B": "Mother / 妈妈",
+      "C": "Brother / 哥哥",
+      "D": "Sister / 姐姐"
+    },
+    "correct_answer": "A",
+    "explanation": "'爸爸'是father。B是妈妈(māma)，C是哥哥(gēge)，D是姐姐(jiějie)。"
+  },
+  {
+    "id": "hsk1_042",
+    "level": 1,
+    "type": "vocabulary",
+    "question_cn": "'猫'是什么动物？",
+    "question_en": "What animal is '猫' (māo)?",
+    "options": {
+      "A": "Cat / 猫",
+      "B": "Dog / 狗",
+      "C": "Bird / 鸟",
+      "D": "Fish / 鱼"
+    },
+    "correct_answer": "A",
+    "explanation": "'猫'是cat。B是狗(gǒu)，C是鸟(niǎo)，D是鱼(yú)。"
+  },
+  {
+    "id": "hsk1_043",
+    "level": 1,
+    "type": "vocabulary",
+    "question_cn": "'红色'是什么颜色？",
+    "question_en": "What color is '红色' (hóngsè)?",
+    "options": {
+      "A": "Red / 红色",
+      "B": "Blue / 蓝色",
+      "C": "Green / 绿色",
+      "D": "Yellow / 黄色"
+    },
+    "correct_answer": "A",
+    "explanation": "'红色'是red。B是蓝色(lánsè)，C是绿色(lǜsè)，D是黄色(huángsè)。"
+  },
+  {
+    "id": "hsk1_044",
+    "level": 1,
+    "type": "vocabulary",
+    "question_cn": "'大'的反义词是什么？",
+    "question_en": "What is the opposite of '大' (dà / big)?",
+    "options": {
+      "A": "小 / xiǎo (small)",
+      "B": "多 / duō (many)",
+      "C": "好 / hǎo (good)",
+      "D": "高 / gāo (tall)"
+    },
+    "correct_answer": "A",
+    "explanation": "'大'(big)的反义词是'小'(small)。B是多的反义词是少，C是坏的反义词，D是矮的反义词。"
+  },
+  {
+    "id": "hsk1_045",
+    "level": 1,
+    "type": "vocabulary",
+    "question_cn": "'高兴'是什么意思？",
+    "question_en": "What does '高兴' (gāoxìng) mean?",
+    "options": {
+      "A": "Happy / 高兴",
+      "B": "Sad / 难过",
+      "C": "Angry / 生气",
+      "D": "Tired / 累"
+    },
+    "correct_answer": "A",
+    "explanation": "'高兴'意为happy/glad。B是难过(nánguò)，C是生气(shēngqì)，D是累(lèi)。"
+  },
+  {
+    "id": "hsk1_046",
+    "level": 1,
+    "type": "vocabulary",
+    "question_cn": "'看书'是什么意思？",
+    "question_en": "What does '看书' (kànshū) mean?",
+    "options": {
+      "A": "Read books / 看书",
+      "B": "Watch TV / 看电视",
+      "C": "Listen to music / 听音乐",
+      "D": "Write letters / 写信"
+    },
+    "correct_answer": "A",
+    "explanation": "'看'意为read/watch，'书'是book，'看书'=read books。B是看电视，C是听音乐，D是写信。"
+  },
+  {
+    "id": "hsk1_047",
+    "level": 1,
+    "type": "vocabulary",
+    "question_cn": "'吃饭'是什么意思？",
+    "question_en": "What does '吃饭' (chīfàn) mean?",
+    "options": {
+      "A": "Eat (a meal) / 吃饭",
+      "B": "Drink water / 喝水",
+      "C": "Cook / 做饭",
+      "D": "Buy food / 买饭"
+    },
+    "correct_answer": "A",
+    "explanation": "'吃'是eat，'饭'是rice/meal，'吃饭'=eat/have a meal。B是喝水，C是做饭，D是买饭。"
+  },
+  {
+    "id": "hsk1_048",
+    "level": 1,
+    "type": "vocabulary",
+    "question_cn": "'飞机'是什么交通工具？",
+    "question_en": "What vehicle is '飞机' (fēijī)?",
+    "options": {
+      "A": "Airplane / 飞机",
+      "B": "Train / 火车",
+      "C": "Bus / 公共汽车",
+      "D": "Car / 汽车"
+    },
+    "correct_answer": "A",
+    "explanation": "'飞机'是airplane。B是火车(huǒchē)，C是公共汽车(gōnggòngqìchē)，D是汽车(qìchē)。"
+  },
+  {
+    "id": "hsk1_049",
+    "level": 1,
+    "type": "vocabulary",
+    "question_cn": "'朋友'是什么意思？",
+    "question_en": "What does '朋友' (péngyou) mean?",
+    "options": {
+      "A": "Friend / 朋友",
+      "B": "Family / 家人",
+      "C": "Classmate / 同学",
+      "D": "Teacher / 老师"
+    },
+    "correct_answer": "A",
+    "explanation": "'朋友'是friend。B是家人，C是同学(tóngxué)，D是老师。注意：同学和朋友有重叠但不等同。"
+  },
+  {
+    "id": "hsk1_050",
+    "level": 1,
+    "type": "vocabulary",
+    "question_cn": "'谢谢'用在什么时候？",
+    "question_en": "When do you use '谢谢' (xièxie / thank you)?",
+    "options": {
+      "A": "When expressing gratitude / 表达感谢时",
+      "B": "When greeting someone / 打招呼时",
+      "C": "When saying goodbye / 道别时",
+      "D": "When apologizing / 道歉时"
+    },
+    "correct_answer": "A",
+    "explanation": "'谢谢'用于表达感谢。B用'你好'，C用'再见'，D用'对不起'。"
+  }
+]

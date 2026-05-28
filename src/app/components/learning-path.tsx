@@ -17,11 +17,11 @@ const steps = [
     linkLabel: (level: number) =>
       level <= 4
         ? `Try HSK ${level} Sample Questions`
-        : "Review HSK 5 Vocabulary",
+        : "Next: HSK 6 Vocabulary →",
     linkHref: (level: number) =>
       level <= 4
         ? `/hsk-${level}-practice-test`
-        : `/hsk-5-vocabulary`,
+        : `/hsk-6-practice-test`,
   },
   {
     title: "Ready for More?",
@@ -30,11 +30,11 @@ const steps = [
     linkLabel: (level: number) =>
       level < 5
         ? `Move to HSK ${level + 1} Vocabulary`
-        : null,
+        : "Next: HSK 6 Practice Test →",
     linkHref: (level: number) =>
       level < 5
         ? `/hsk-${level + 1}-vocabulary`
-        : null,
+        : "/hsk-6-practice-test",
   },
   {
     title: "Go Back If Needed",

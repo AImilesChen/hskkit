@@ -1,0 +1,55 @@
+{
+  "project": "HSKKit",
+  "version": "1.0",
+  "description": "HSK 1-5 Practice Test 题库 + HSK Level Test 水平自测题库",
+  "files": {
+    "hsk1.json": {
+      "level": 1,
+      "count": 50,
+      "description": "HSK 1 基础题库（≥50题，每次抽10-15题）"
+    },
+    "hsk2.json": {
+      "level": 2,
+      "count": 35,
+      "description": "HSK 2 基础题库（≥30题）"
+    },
+    "hsk3.json": {
+      "level": 3,
+      "count": 35,
+      "description": "HSK 3 基础题库（≥30题）"
+    },
+    "hsk4.json": {
+      "level": 4,
+      "count": 36,
+      "description": "HSK 4 基础题库（≥30题）"
+    },
+    "hsk5.json": {
+      "level": 5,
+      "count": 35,
+      "description": "HSK 5 基础题库（≥30题）"
+    },
+    "level_test.json": {
+      "level": "1-6",
+      "count": 18,
+      "description": "HSK Level Test 水平自测题库（覆盖HSK 1-6，≥15题）"
+    }
+  },
+  "total_questions": 209,
+  "question_schema": {
+    "id": "题目唯一标识",
+    "level": "HSK级别 (1-6)",
+    "type": "题型: listening/grammar/vocabulary/reading",
+    "question_cn": "题目（中文）",
+    "question_en": "题目（英文翻译）",
+    "options": {
+      "A": "选项A（中英对照）",
+      "B": "选项B",
+      "C": "选项C",
+      "D": "选项D"
+    },
+    "correct_answer": "正确答案 (A/B/C/D)",
+    "explanation": "解析说明（为什么对/为什么错）",
+    "passage_cn": "【阅读理解题特有】文章（中文）",
+    "passage_en": "【阅读理解题特有】文章（英文翻译）"
+  }
+}

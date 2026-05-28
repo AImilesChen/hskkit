@@ -1,0 +1,280 @@
+[
+  {
+    "id": "level_001",
+    "level": 1,
+    "type": "listening",
+    "question_cn": "你好吗？",
+    "question_en": "How are you?",
+    "options": {
+      "A": "我很好，谢谢。 / I'm fine, thank you.",
+      "B": "我叫李明。 / My name is Li Ming.",
+      "C": "我是学生。 / I am a student.",
+      "D": "我二十岁。 / I am 20 years old."
+    },
+    "correct_answer": "A",
+    "explanation": "'你好吗'是问候语，标准回应是'我很好，谢谢'。B回答名字，C回答身份，D回答年龄。"
+  },
+  {
+    "id": "level_002",
+    "level": 1,
+    "type": "vocabulary",
+    "question_cn": "'水'是什么？",
+    "question_en": "What is '水' (shuǐ)?",
+    "options": {
+      "A": "Water / 水",
+      "B": "Tea / 茶",
+      "C": "Coffee / 咖啡",
+      "D": "Juice / 果汁"
+    },
+    "correct_answer": "A",
+    "explanation": "'水'就是water。B是茶，C是咖啡，D是果汁。"
+  },
+  {
+    "id": "level_003",
+    "level": 1,
+    "type": "grammar",
+    "question_cn": "我______中国人。",
+    "question_en": "I ______ Chinese.",
+    "options": {
+      "A": "是 / am",
+      "B": "有 / have",
+      "C": "在 / at",
+      "D": "去 / go"
+    },
+    "correct_answer": "A",
+    "explanation": "'是'用于连接主语和表语（身份/属性）。'有'表拥有，'在'表位置，'去'表动作，均不匹配。"
+  },
+  {
+    "id": "level_004",
+    "level": 2,
+    "type": "grammar",
+    "question_cn": "他______在图书馆学习。",
+    "question_en": "He ______ studying in the library.",
+    "options": {
+      "A": "正在 / is currently",
+      "B": "已经 / already",
+      "C": "一起 / together",
+      "D": "非常 / very"
+    },
+    "correct_answer": "A",
+    "explanation": "'正在+动词'表现在进行时。'已经'表完成，'一起'表伴随，'非常'是程度副词。"
+  },
+  {
+    "id": "level_005",
+    "level": 2,
+    "type": "listening",
+    "question_cn": "你觉得这部电影怎么样？",
+    "question_en": "What do you think of this movie?",
+    "options": {
+      "A": "我觉得很好看。 / I think it's very good.",
+      "B": "电影很长。 / The movie is very long.",
+      "C": "电影是美国的。 / The movie is American.",
+      "D": "我昨天看的。 / I watched it yesterday."
+    },
+    "correct_answer": "A",
+    "explanation": "'觉得……怎么样'询问主观评价，A是主观感受。B、C是客观描述，D回答时间。"
+  },
+  {
+    "id": "level_006",
+    "level": 2,
+    "type": "vocabulary",
+    "question_cn": "'浪费'的反义词是什么？",
+    "question_en": "What is the opposite of '浪费' (làngfèi / waste)?",
+    "options": {
+      "A": "节约 / jiéyuē (save)",
+      "B": "使用 / shǐyòng (use)",
+      "C": "需要 / xūyào (need)",
+      "D": "花费 / huāfèi (spend)"
+    },
+    "correct_answer": "A",
+    "explanation": "'浪费'(waste)的反义词是'节约'(save)。B、C、D均不是反义关系。"
+  },
+  {
+    "id": "level_007",
+    "level": 3,
+    "type": "grammar",
+    "question_cn": "______天气太热了，我们______去游泳吧。",
+    "question_en": "______ the weather is too hot, let's ______ go swimming.",
+    "options": {
+      "A": "因为……所以…… / because...so...",
+      "B": "虽然……但是…… / although...but...",
+      "C": "如果……就…… / if...then...",
+      "D": "不但……而且…… / not only...but also..."
+    },
+    "correct_answer": "A",
+    "explanation": "前句是原因（天气热），后句是结果（去游泳），用'因为……所以……'。B表转折，C表假设，D表递进。"
+  },
+  {
+    "id": "level_008",
+    "level": 3,
+    "type": "reading",
+    "passage_cn": "近年来，越来越多的人选择骑自行车上班。一方面，骑自行车可以锻炼身体；另一方面，也是一种环保的出行方式。不过，下雨天骑车就不太方便了。",
+    "passage_en": "In recent years, more and more people choose to ride bicycles to work. On one hand, cycling can exercise the body; on the other hand, it's also an environmentally friendly way to travel. However, riding in the rain is not very convenient.",
+    "question_cn": "骑自行车上班有什么好处？",
+    "question_en": "What are the benefits of cycling to work?",
+    "options": {
+      "A": "锻炼身体且环保 / Exercise and environmentally friendly",
+      "B": "速度很快 / Very fast",
+      "C": "不受天气影响 / Not affected by weather",
+      "D": "比开车便宜 / Cheaper than driving"
+    },
+    "correct_answer": "A",
+    "explanation": "文中提到'一方面可以锻炼身体，另一方面也是环保的出行方式'。B未提，C与'下雨天不方便'矛盾，D未提。"
+  },
+  {
+    "id": "level_009",
+    "level": 3,
+    "type": "vocabulary",
+    "question_cn": "'熟悉'的反义词是什么？",
+    "question_en": "What is the opposite of '熟悉' (shúxī / familiar)?",
+    "options": {
+      "A": "陌生 / mòshēng (strange/unfamiliar)",
+      "B": "清楚 / qīngchǔ (clear)",
+      "C": "明白 / míngbai (understand)",
+      "D": "了解 / liǎojiě (understand)"
+    },
+    "correct_answer": "A",
+    "explanation": "'熟悉'(familiar)的反义词是'陌生'(strange/unfamiliar)。B、C、D都是近义词。"
+  },
+  {
+    "id": "level_010",
+    "level": 4,
+    "type": "grammar",
+    "question_cn": "______遇到多大的困难，他______不会放弃。",
+    "question_en": "______ great difficulties he encounters, he ______ won't give up.",
+    "options": {
+      "A": "无论……都…… / no matter...all...",
+      "B": "虽然……但是…… / although...but...",
+      "C": "因为……所以…… / because...so...",
+      "D": "如果……就…… / if...then..."
+    },
+    "correct_answer": "A",
+    "explanation": "'无论……都……'表无条件，'无论多大困难都不会放弃'=no matter what difficulties。B表转折，C表因果，D表假设。"
+  },
+  {
+    "id": "level_011",
+    "level": 4,
+    "type": "listening",
+    "question_cn": "你怎么看待现在的年轻人越来越依赖手机这个现象？",
+    "question_en": "What do you think of young people being increasingly dependent on mobile phones?",
+    "options": {
+      "A": "这确实是个问题，但手机也给生活带来便利，关键是要有自制力。 / It's a problem, but phones also bring convenience. The key is self-control.",
+      "B": "年轻人就是喜欢玩手机。 / Young people just like playing with phones.",
+      "C": "手机功能越来越多了。 / Phones have more and more functions.",
+      "D": "我也经常用手机。 / I also use my phone often."
+    },
+    "correct_answer": "A",
+    "explanation": "'怎么看待'要求给出观点/分析，A是辩证分析。B是简单描述，C是客观事实，D是个人行为。"
+  },
+  {
+    "id": "level_012",
+    "level": 4,
+    "type": "reading",
+    "passage_cn": "随着科技的发展，人们的生活方式发生了巨大的变化。以前，人们需要亲自去商店买东西，现在只需要在手机上点几下，商品就能送到家。不过，这种便利也带来了一些问题。比如，很多人因为长时间坐着不动，身体越来越差。此外，过度依赖网络购物也让一些传统的实体店面临倒闭的风险。",
+    "passage_en": "With the development of technology, people's lifestyles have changed dramatically. Previously, people needed to go to stores in person; now they just tap on their phones and products are delivered. However, this convenience has also brought problems. For example, many people's health is deteriorating from sitting still too long. Additionally, over-reliance on online shopping has put some physical stores at risk of closing.",
+    "question_cn": "根据文章，网络购物带来了什么问题？",
+    "question_en": "According to the article, what problems has online shopping brought?",
+    "options": {
+      "A": "人们身体变差，实体店面临倒闭 / People's health deteriorating, physical stores facing closure",
+      "B": "商品价格变贵了 / Product prices have increased",
+      "C": "送货速度变慢了 / Delivery speed has slowed down",
+      "D": "人们不愿意用手机了 / People are unwilling to use phones"
+    },
+    "correct_answer": "A",
+    "explanation": "文中提到两个问题：'身体越来越差'和'实体店面临倒闭的风险'。B、C、D文中均未提及。"
+  },
+  {
+    "id": "level_013",
+    "level": 5,
+    "type": "listening",
+    "question_cn": "有人认为传统文化正在消失，你同意这种观点吗？",
+    "question_en": "Some people believe traditional culture is disappearing. Do you agree?",
+    "options": {
+      "A": "我不完全同意。传统文化在以新的形式传承，比如通过短视频、文创产品等。 / I don't completely agree. Traditional culture is being passed down in new forms.",
+      "B": "传统文化很重要。 / Traditional culture is very important.",
+      "C": "很多年轻人不喜欢传统文化。 / Many young people don't like traditional culture.",
+      "D": "政府应该保护传统文化。 / The government should protect traditional culture."
+    },
+    "correct_answer": "A",
+    "explanation": "'你同意吗'要求明确立场+论证，A给出辩证观点。B、C、D都是简单陈述，未回应'是否同意'。"
+  },
+  {
+    "id": "level_014",
+    "level": 5,
+    "type": "vocabulary",
+    "question_cn": "'趋势'是什么意思？",
+    "question_en": "What does '趋势' (qūshì) mean?",
+    "options": {
+      "A": "Trend/Tendency / 趋势",
+      "B": "Reason / 原因",
+      "C": "Result / 结果",
+      "D": "Problem / 问题"
+    },
+    "correct_answer": "A",
+    "explanation": "'趋势'意为trend/tendency。B是原因，C是结果，D是问题。"
+  },
+  {
+    "id": "level_015",
+    "level": 5,
+    "type": "reading",
+    "passage_cn": "近年来，'极简主义'生活方式在年轻人中越来越流行。极简主义者认为，拥有更少的物品可以带来更多的自由和幸福。他们主张只保留真正需要和喜欢的东西，减少不必要的消费。这种生活方式不仅有助于环保，还能让人从物质的束缚中解脱出来。当然，极简主义并不意味着要过苦行僧式的生活，而是找到物质与精神之间的平衡点。",
+    "passage_en": "In recent years, the 'minimalist' lifestyle has become popular among young people. Minimalists believe owning fewer things brings more freedom and happiness. They advocate keeping only what is truly needed, reducing unnecessary consumption. This lifestyle helps the environment and frees people from material constraints. Of course, minimalism doesn't mean living like an ascetic, but finding a balance between material and spiritual life.",
+    "question_cn": "根据文章，极简主义生活方式的核心是什么？",
+    "question_en": "According to the article, what is the core of the minimalist lifestyle?",
+    "options": {
+      "A": "找到物质与精神之间的平衡 / Finding a balance between material and spiritual life",
+      "B": "过苦行僧式的生活 / Living like an ascetic",
+      "C": "不买任何东西 / Not buying anything",
+      "D": "只关注环保 / Only focusing on environmental protection"
+    },
+    "correct_answer": "A",
+    "explanation": "文中最后一句明确说'找到物质与精神之间的平衡点'。B与原文矛盾，C过于极端，D只是其中一个方面。"
+  },
+  {
+    "id": "level_016",
+    "level": 6,
+    "type": "grammar",
+    "question_cn": "他______答应了我的请求，______又反悔了。",
+    "question_en": "He ______ promised my request, ______ went back on his word.",
+    "options": {
+      "A": "明明……却…… / obviously...yet...",
+      "B": "不但……而且…… / not only...but also...",
+      "C": "因为……所以…… / because...so...",
+      "D": "如果……就…… / if...then..."
+    },
+    "correct_answer": "A",
+    "explanation": "'明明……却……'表示事实与预期相反，'明明答应了却反悔'=obviously promised yet went back。B表递进，C表因果，D表假设。"
+  },
+  {
+    "id": "level_017",
+    "level": 6,
+    "type": "vocabulary",
+    "question_cn": "'宏观'和'微观'的区别是什么？",
+    "question_en": "What is the difference between '宏观' (hóngguān) and '微观' (wēiguān)?",
+    "options": {
+      "A": "'宏观'指整体/大范围，'微观'指局部/小范围 / '宏观' refers to the whole/large scale; '微观' to the part/small scale",
+      "B": "意思一样 / They mean the same",
+      "C": "'宏观'是形容词，'微观'是名词 / '宏观' is an adjective, '微观' is a noun",
+      "D": "'宏观'用于经济，'微观'用于生物 / '宏观' is for economics, '微观' for biology"
+    },
+    "correct_answer": "A",
+    "explanation": "'宏观'指从整体/大范围看，'微观'指从局部/小范围看。B错误，C错误，D过于局限。"
+  },
+  {
+    "id": "level_018",
+    "level": 6,
+    "type": "reading",
+    "passage_cn": "中国古代哲学家庄子有一个著名的故事：庄周梦蝶。故事说，庄子梦见自己变成了一只蝴蝶，在花丛中自由自在地飞舞，感到非常快乐。醒来后，他发现自己还是庄子。于是他开始思考：到底是庄子梦见自己变成了蝴蝶，还是蝴蝶梦见自己变成了庄子？这个故事探讨了现实与梦境、自我与外物之间的界限，体现了中国古代哲学中对主体与客体关系的深刻思考。",
+    "passage_en": "The ancient Chinese philosopher Zhuangzi has a famous story: Zhuang Zhou Dreams of Being a Butterfly. The story says that Zhuangzi dreamed he became a butterfly, flying freely among flowers and feeling very happy. When he woke up, he found he was still Zhuangzi. Then he began to wonder: did Zhuangzi dream of becoming a butterfly, or did the butterfly dream of becoming Zhuangzi? This story explores the boundary between reality and dreams, self and external things, reflecting profound Chinese philosophical thinking about the relationship between subject and object.",
+    "question_cn": "'庄周梦蝶'体现了中国古代哲学对什么问题的思考？",
+    "question_en": "What philosophical question does 'Zhuang Zhou Dreams of Being a Butterfly' reflect?",
+    "options": {
+      "A": "主体与客体的关系 / The relationship between subject and object",
+      "B": "蝴蝶的生活习性 / The habits of butterflies",
+      "C": "梦境的科学解释 / Scientific explanation of dreams",
+      "D": "庄子的文学风格 / Zhuangzi's literary style"
+    },
+    "correct_answer": "A",
+    "explanation": "文中最后一句'体现了中国古代哲学中对主体与客体关系的深刻思考'。B、C、D均与原文主旨不符。"
+  }
+]

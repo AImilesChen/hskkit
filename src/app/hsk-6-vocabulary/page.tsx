@@ -50,10 +50,10 @@ export default function HSK6VocabularyPage() {
             </p>
             <div className="flex flex-col gap-3 items-center">
               <a
-                href="/hsk-5-vocabulary"
+                href="/hsk-6-practice-test"
                 className="inline-flex items-center gap-2 bg-[#2563EB] text-white px-6 py-3 rounded-full text-[15px] font-semibold no-underline hover:bg-[#1D4ED8] transition-colors"
               >
-                Review HSK 5 Vocabulary →
+                Next: HSK 6 Practice Test →
               </a>
               <a
                 href="/hsk-level-test"

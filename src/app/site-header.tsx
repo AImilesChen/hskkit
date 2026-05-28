@@ -147,7 +147,7 @@ export default function SiteHeader() {
   // Close mobile menu when resizing to desktop
   useEffect(() => {
     function handleResize() {
-      if (window.innerWidth >= 768 && mobileOpen) {
+      if (window.innerWidth >= 850 && mobileOpen) {
         setMobileOpen(false);
         setOpenAccordion(null);
       }
@@ -172,7 +172,7 @@ export default function SiteHeader() {
         </Link>
 
         {/* Desktop nav */}
-        <div className="hidden md:flex items-center gap-1 desktop-dropdown-trigger">
+        <div className="hidden [@media(min-width:850px)]:flex items-center gap-1 desktop-dropdown-trigger">
           <DesktopDropdown
             label="Vocabulary"
             items={vocabLevels}
@@ -205,7 +205,7 @@ export default function SiteHeader() {
 
         {/* Mobile toggle */}
         <button
-          className="md:hidden bg-none border-none cursor-pointer p-2"
+          className="[@media(min-width:850px)]:hidden bg-none border-none cursor-pointer p-2"
           onClick={() => setMobileOpen(!mobileOpen)}
           aria-label="Menu"
           aria-expanded={mobileOpen}
@@ -238,7 +238,7 @@ export default function SiteHeader() {
 
       {/* Mobile nav overlay */}
       {mobileOpen && (
-        <div className="md:hidden fixed inset-0 top-16 bg-white z-[99] overflow-y-auto">
+        <div className="[@media(min-width:850px)]:hidden fixed inset-0 top-16 bg-white z-[99] overflow-y-auto">
           <div className="px-6 py-4 flex flex-col">
             {/* Vocabulary Accordion */}
             <button
