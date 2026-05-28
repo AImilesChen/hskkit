@@ -533,5 +533,236 @@
     },
     "correct_answer": "A",
     "explanation": "文中明确说'探讨了现实与梦境、自我与外物之间的界限'。B、C、D均与原文主旨不符。"
+  },
+  {
+    "id": "hsk5_036",
+    "level": 5,
+    "type": "listening",
+    "question_cn": "你怎么看待人工智能在医疗领域的应用？",
+    "question_en": "Nǐ zěnme kàndài réngōng zhìnéng zài yīliáo lǐngyù de yìngyòng? (What do you think of AI applications in the medical field?)",
+    "options": {
+      "A": "我认为AI在医疗领域有很大潜力，可以提高诊断效率，但也需要解决数据隐私和伦理问题。",
+      "B": "AI技术发展得很快。",
+      "C": "医生不喜欢AI。",
+      "D": "AI可以取代所有医生。"
+    },
+    "correct_answer": "A",
+    "explanation": "'怎么看待'要求分析观点，A给出全面分析（潜力+问题）。B是描述，C是片面观点，D是极端观点，均不匹配。 / 'What do you think of' requires analytical opinion; A gives a comprehensive analysis. B is description, C is one-sided, D is extreme."
+  },
+  {
+    "id": "hsk5_037",
+    "level": 5,
+    "type": "listening",
+    "question_cn": "你认为教育的本质是什么？",
+    "question_en": "Nǐ rènwéi jiàoyù de běnzhì shì shénme? (What do you think is the essence of education?)",
+    "options": {
+      "A": "我认为教育的本质不仅是传授知识，更重要的是培养独立思考能力和健全的人格。",
+      "B": "教育是为了找到好工作。",
+      "C": "教育就是考试。",
+      "D": "教育可以改变一个人的命运。"
+    },
+    "correct_answer": "A",
+    "explanation": "'本质是什么'要求深层思考，A给出多维度本质分析。B是功利观点，C是片面理解，D是影响，均不匹配。 / 'What is the essence' requires deep thinking; A gives multi-dimensional analysis. B is utilitarian, C is one-sided, D is about impact."
+  },
+  {
+    "id": "hsk5_038",
+    "level": 5,
+    "type": "listening",
+    "question_cn": "你怎么理解'知足常乐'这句话？",
+    "question_en": "Nǐ zěnme lǐjiě 'zhīzú chánglè' zhè jù huà? (How do you understand the saying 'contentment brings happiness'?)",
+    "options": {
+      "A": "我认为这句话是说，人应该珍惜已经拥有的，不要过分追求更多，这样才能保持内心的平静和快乐。",
+      "B": "知足就是不努力。",
+      "C": "快乐很重要。",
+      "D": "这句话是古人说的。"
+    },
+    "correct_answer": "A",
+    "explanation": "'怎么理解'要求解释含义，A准确解释谚语深层含义。B是误解，C是感叹，D是背景，均不匹配。 / 'How do you understand' requires explaining meaning; A accurately explains the deep meaning. B is misunderstanding, C is exclamation, D is background."
+  },
+  {
+    "id": "hsk5_039",
+    "level": 5,
+    "type": "listening",
+    "question_cn": "你觉得全球化对本地文化的影响是利大于弊还是弊大于利？",
+    "question_en": "Nǐ juéde quánqiúhuà duì běndì wénhuà de yǐngxiǎng shì lì dà yú bì háishì bì dà yú lì? (Do you think globalization's impact on local culture has more advantages or disadvantages?)",
+    "options": {
+      "A": "我认为是双面的。全球化带来了文化交流，但也可能导致本地文化被同化，关键在于如何保护和传承本土文化。",
+      "B": "全球化让经济更发展了。",
+      "C": "本地文化比外来文化更好。",
+      "D": "全球化不可避免。"
+    },
+    "correct_answer": "A",
+    "explanation": "'利大于弊还是弊大于利'要求明确判断+分析，A给出辩证判断。B只说经济，C是片面观点，D是中立描述，均不匹配。 / 'More advantages or disadvantages' requires clear judgment with analysis; A gives a balanced judgment. B only mentions economy, C is one-sided, D is neutral description."
+  },
+  {
+    "id": "hsk5_040",
+    "level": 5,
+    "type": "grammar",
+    "question_cn": "他______不聪明，______非常勤奋，所以进步很快。",
+    "question_en": "Tā ______ bù cōngmíng, ______ fēicháng qínfèn, suǒyǐ jìnbù hěn kuài. (He ______ not smart, ______ very hardworking, so he improves quickly.)",
+    "options": {
+      "A": "固然……但……",
+      "B": "不但……而且……",
+      "C": "因为……所以……",
+      "D": "如果……就……"
+    },
+    "correct_answer": "A",
+    "explanation": "'固然……但……'是书面语转折结构。B表递进，C表因果，D表假设，均不匹配。 / 'Admittedly...but' is a written contrast structure. B indicates progression, C indicates cause-effect, D indicates hypothesis."
+  },
+  {
+    "id": "hsk5_041",
+    "level": 5,
+    "type": "grammar",
+    "question_cn": "______你多么努力，______不能违反规则。",
+    "question_en": "______ nǐ duōme nǔlì, ______ bù néng wéifǎn guīzé. (______ hard you try, you ______ cannot break the rules.)",
+    "options": {
+      "A": "无论……都……",
+      "B": "不但……而且……",
+      "C": "虽然……但是……",
+      "D": "因为……所以……"
+    },
+    "correct_answer": "A",
+    "explanation": "'无论……都……'表无条件。B表递进，C表转折，D表因果，均不匹配。 / 'No matter...all' indicates unconditional. B indicates progression, C indicates contrast, D indicates cause-effect."
+  },
+  {
+    "id": "hsk5_042",
+    "level": 5,
+    "type": "grammar",
+    "question_cn": "他______说得再好听，我______不会相信他。",
+    "question_en": "Tā ______ shuō de zài hǎotīng, wǒ ______ bù huì xiāngxìn tā. (______ nicely he speaks, I ______ won't believe him.)",
+    "options": {
+      "A": "不管……都……",
+      "B": "不但……而且……",
+      "C": "虽然……但是……",
+      "D": "因为……所以……"
+    },
+    "correct_answer": "A",
+    "explanation": "'不管……都……'表无条件。B表递进，C表转折，D表因果，均不匹配。 / 'No matter...all' indicates unconditional. B indicates progression, C indicates contrast, D indicates cause-effect."
+  },
+  {
+    "id": "hsk5_043",
+    "level": 5,
+    "type": "grammar",
+    "question_cn": "______你来得正好，我们______开始吧。",
+    "question_en": "______ nǐ lái de zhènghǎo, wǒmen ______ kāishǐ ba. (______ you came just in time, let's ______ start.)",
+    "options": {
+      "A": "既然……就……",
+      "B": "不但……而且……",
+      "C": "虽然……但是……",
+      "D": "如果……就……"
+    },
+    "correct_answer": "A",
+    "explanation": "'既然……就……'表示前提条件。B表递进，C表转折，D表假设，均不匹配。 / 'Since...then' indicates a premise. B indicates progression, C indicates contrast, D indicates hypothesis."
+  },
+  {
+    "id": "hsk5_044",
+    "level": 5,
+    "type": "grammar",
+    "question_cn": "他______把话说完，大家______明白他的意思了。",
+    "question_en": "Tā ______ bǎ huà shuō wán, dàjiā ______ míngbai tā de yìsi le. (______ he finished speaking, everyone ______ understood his meaning.)",
+    "options": {
+      "A": "一……就……",
+      "B": "不但……而且……",
+      "C": "虽然……但是……",
+      "D": "因为……所以……"
+    },
+    "correct_answer": "A",
+    "explanation": "'一……就……'表示两个动作紧接发生。B表递进，C表转折，D表因果，均不匹配。 / 'As soon as...then' indicates two actions in immediate succession. B indicates progression, C indicates contrast, D indicates cause-effect."
+  },
+  {
+    "id": "hsk5_045",
+    "level": 5,
+    "type": "vocabulary",
+    "question_cn": "'创新'是什么意思？",
+    "question_en": "'Chuàngxīn' shì shénme yìsi? (What does 'chuàngxīn' mean?)",
+    "options": {
+      "A": "Innovation",
+      "B": "Imitation",
+      "C": "Tradition",
+      "D": "Conservation"
+    },
+    "correct_answer": "A",
+    "explanation": "A表示创造新的事物或方法。B表示模仿复制。C表示传统继承。D表示保护保存。 / A means creating new things or methods. B means imitation. C means tradition. D means conservation."
+  },
+  {
+    "id": "hsk5_046",
+    "level": 5,
+    "type": "vocabulary",
+    "question_cn": "'积累'和'消耗'是什么关系？",
+    "question_en": "'Jīlěi' hé 'xiāohào' shì shénme guānxi? (What is the relationship between 'jīlěi' and 'xiāohào'?)",
+    "options": {
+      "A": "Antonyms",
+      "B": "Synonyms",
+      "C": "Near-synonyms",
+      "D": "No relationship"
+    },
+    "correct_answer": "A",
+    "explanation": "A表示意义相反，'积累'是逐渐增加，'消耗'是逐渐减少。B表示意思相同。C表示意思接近。D表示没有关联。 / A indicates opposite meaning; 'jīlěi' means to accumulate, 'xiāohào' means to consume. B means same meaning, C means similar meaning, D means no relation."
+  },
+  {
+    "id": "hsk5_047",
+    "level": 5,
+    "type": "vocabulary",
+    "question_cn": "'批判'是什么意思？",
+    "question_en": "'Pīpàn' shì shénme yìsi? (What does 'pīpàn' mean?)",
+    "options": {
+      "A": "Criticize/ Critique",
+      "B": "Praise",
+      "C": "Ignore",
+      "D": "Accept"
+    },
+    "correct_answer": "A",
+    "explanation": "A表示对事物进行分析评论，指出缺点或错误。B表示赞扬。C表示不理睬。D表示接受认可。 / A means analyzing and commenting on something, pointing out flaws or errors. B means praise. C means ignore. D means accept."
+  },
+  {
+    "id": "hsk5_048",
+    "level": 5,
+    "type": "reading",
+    "passage_cn": "现代社会的快节奏生活让很多人感到焦虑。人们总是担心错过什么，于是不断刷新手机，追求更高的效率。然而，心理学家发现，适当的'慢生活'反而有助于提高创造力和幸福感。北欧一些国家提倡的工作与生活平衡模式，正在成为全球关注的焦点。",
+    "passage_en": "The fast-paced modern life makes many people anxious. People always worry about missing out, so they constantly refresh their phones and pursue higher efficiency. However, psychologists have found that appropriate 'slow living' actually helps improve creativity and happiness. The work-life balance model promoted by some Nordic countries is becoming a global focus.",
+    "question_cn": "为什么心理学家提倡'慢生活'？",
+    "question_en": "Wèishénme xīnlǐxuéjiā tíchàng 'màn shēnghuó'? (Why do psychologists advocate 'slow living'?)",
+    "options": {
+      "A": "因为适当的慢生活有助于提高创造力和幸福感",
+      "B": "因为快节奏生活让人更健康",
+      "C": "因为慢生活可以赚更多钱",
+      "D": "因为北欧国家要求这样做"
+    },
+    "correct_answer": "A",
+    "explanation": "文中明确说'适当的慢生活反而有助于提高创造力和幸福感'。B与原文（焦虑）矛盾，C、D文中未提及。 / The text explicitly states appropriate slow living helps improve creativity and happiness. B contradicts the text (anxiety), C, D are not mentioned."
+  },
+  {
+    "id": "hsk5_049",
+    "level": 5,
+    "type": "reading",
+    "passage_cn": "语言不仅是交流的工具，更是文化的载体。每一种语言都蕴含着独特的思维方式和世界观。当一种语言消失时，与之相关的文化记忆和传统知识也会随之流失。目前全球每两周就有一种语言消失，语言多样性保护已成为紧迫的文化议题。",
+    "passage_en": "Language is not only a tool for communication but also a carrier of culture. Every language contains unique ways of thinking and worldviews. When a language disappears, the cultural memory and traditional knowledge associated with it are also lost. Currently, a language disappears every two weeks globally, and language diversity protection has become an urgent cultural issue.",
+    "question_cn": "为什么语言多样性保护很重要？",
+    "question_en": "Wèishénme yǔyán duōyàng xìng bǎohù hěn zhòngyào? (Why is language diversity protection important?)",
+    "options": {
+      "A": "因为语言消失会导致相关文化记忆和传统知识流失",
+      "B": "因为语言越多，交流越方便",
+      "C": "因为学习多种语言可以赚更多钱",
+      "D": "因为政府要求保护语言"
+    },
+    "correct_answer": "A",
+    "explanation": "文中明确说'当一种语言消失时，与之相关的文化记忆和传统知识也会随之流失'。B、C、D文中均未提及。 / The text explicitly states when a language disappears, cultural memory and traditional knowledge are lost. B, C, D are not mentioned."
+  },
+  {
+    "id": "hsk5_050",
+    "level": 5,
+    "type": "reading",
+    "passage_cn": "城市绿化不仅美化了环境，还对居民的心理健康有积极影响。研究表明，居住在绿化率高的社区的人，压力水平明显低于居住在钢筋水泥环境中的人。树木和花草能够吸收噪音、净化空气，还能提供让人放松的自然景观。因此，越来越多的城市开始重视'口袋公园'的建设。",
+    "passage_en": "Urban greening not only beautifies the environment but also positively affects residents' mental health. Research shows that people living in communities with high green coverage have significantly lower stress levels than those living in concrete environments. Trees and plants can absorb noise, purify air, and provide relaxing natural scenery. Therefore, more and more cities are paying attention to building 'pocket parks.'",
+    "question_cn": "城市绿化对居民有什么好处？",
+    "question_en": "Chéngshì lǜhuà duì jūmín yǒu shénme hǎochu? (What benefits does urban greening bring to residents?)",
+    "options": {
+      "A": "降低压力水平，吸收噪音，净化空气",
+      "B": "让房价更高",
+      "C": "增加就业机会",
+      "D": "减少人口流动"
+    },
+    "correct_answer": "A",
+    "explanation": "文中提到'压力水平明显低于'、'吸收噪音、净化空气'、'提供让人放松的自然景观'。B、C、D文中均未提及。 / The text mentions lower stress levels, absorbing noise, purifying air, and providing relaxing scenery. B, C, D are not mentioned."
   }
 ]

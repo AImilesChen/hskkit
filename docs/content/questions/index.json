@@ -10,22 +10,22 @@
     },
     "hsk2.json": {
       "level": 2,
-      "count": 35,
+      "count": 50,
       "description": "HSK 2 基础题库（≥30题）"
     },
     "hsk3.json": {
       "level": 3,
-      "count": 35,
+      "count": 50,
       "description": "HSK 3 基础题库（≥30题）"
     },
     "hsk4.json": {
       "level": 4,
-      "count": 36,
+      "count": 50,
       "description": "HSK 4 基础题库（≥30题）"
     },
     "hsk5.json": {
       "level": 5,
-      "count": 35,
+      "count": 50,
       "description": "HSK 5 基础题库（≥30题）"
     },
     "level_test.json": {
@@ -34,7 +34,7 @@
       "description": "HSK Level Test 水平自测题库（覆盖HSK 1-6，≥15题）"
     }
   },
-  "total_questions": 209,
+  "total_questions": 268,
   "question_schema": {
     "id": "题目唯一标识",
     "level": "HSK级别 (1-6)",

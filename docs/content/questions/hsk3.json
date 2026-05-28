@@ -533,5 +533,236 @@
     },
     "correct_answer": "A",
     "explanation": "文中最后一句'因为时间不够，他没有去成丽江古城'。B、C、D文中均未提及。"
+  },
+  {
+    "id": "hsk3_036",
+    "level": 3,
+    "type": "listening",
+    "question_cn": "你觉得这家公司怎么样？",
+    "question_en": "Nǐ juéde zhè jiā gōngsī zěnme yàng? (What do you think of this company?)",
+    "options": {
+      "A": "公司环境不错，同事也很好相处，就是加班有点多。",
+      "B": "这家公司成立五年了。",
+      "C": "公司离我家很近。",
+      "D": "我在公司做销售工作。"
+    },
+    "correct_answer": "A",
+    "explanation": "'觉得……怎么样'询问综合评价，A给出优缺点分析。B回答历史，C回答距离，D回答职位，均不匹配。 / 'What do you think of' asks for comprehensive evaluation; A gives pros and cons. B is history, C is distance, D is position."
+  },
+  {
+    "id": "hsk3_037",
+    "level": 3,
+    "type": "listening",
+    "question_cn": "你平时怎么缓解压力？",
+    "question_en": "Nǐ píngshí zěnme huǎnjiě yālì? (How do you usually relieve stress?)",
+    "options": {
+      "A": "我一般会听音乐或者出去散步。",
+      "B": "我的工作压力很大。",
+      "C": "压力对身体不好。",
+      "D": "我不喜欢有压力。"
+    },
+    "correct_answer": "A",
+    "explanation": "'怎么缓解'询问方法，A回答具体做法。B描述现状，C说影响，D说喜好，均不匹配。 / 'How do you relieve' asks for methods; A answers with specific actions. B describes the situation, C is about effects, D is about preference."
+  },
+  {
+    "id": "hsk3_038",
+    "level": 3,
+    "type": "listening",
+    "question_cn": "你觉得网购和实体店购物哪个更好？",
+    "question_en": "Nǐ juéde wǎnggòu hé shítǐdiàn gòuwù nǎge gèng hǎo? (Which is better, online shopping or in-store shopping?)",
+    "options": {
+      "A": "各有优缺点，网购方便但看不到实物，实体店能试穿但花时间。",
+      "B": "网购比较便宜。",
+      "C": "实体店的服务态度更好。",
+      "D": "我经常在实体店买东西。"
+    },
+    "correct_answer": "A",
+    "explanation": "'哪个更好'要求比较并给出判断，A给出全面比较。B、C只强调一方面，D说习惯，均不匹配。 / 'Which is better' requires comparison and judgment; A gives a comprehensive comparison. B, C only emphasize one side, D is about habit."
+  },
+  {
+    "id": "hsk3_039",
+    "level": 3,
+    "type": "listening",
+    "question_cn": "你为什么想学画画？",
+    "question_en": "Nǐ wèishénme xiǎng xué huàhuà? (Why do you want to learn painting?)",
+    "options": {
+      "A": "因为我觉得画画能让人放松心情，也可以培养审美能力。",
+      "B": "画画是一门艺术。",
+      "C": "我从小就喜欢颜色。",
+      "D": "我的老师画画很好。"
+    },
+    "correct_answer": "A",
+    "explanation": "'为什么'询问原因，A用'因为'给出两个理由。B是定义，C是背景，D是他人情况，均不匹配。 / 'Why' asks for reasons; A gives two reasons with 'because.' B is a definition, C is background, D is about someone else."
+  },
+  {
+    "id": "hsk3_040",
+    "level": 3,
+    "type": "grammar",
+    "question_cn": "他______说______笑，看起来很轻松。",
+    "question_en": "Tā ______ shuō ______ xiào, kàn qǐlái hěn qīngsōng. (He ______ talks ______ laughs, looking very relaxed.)",
+    "options": {
+      "A": "一边……一边……",
+      "B": "不但……而且……",
+      "C": "因为……所以……",
+      "D": "虽然……但是……"
+    },
+    "correct_answer": "A",
+    "explanation": "'一边……一边……'表示两个动作同时进行。B表递进，C表因果，D表转折，均不匹配。 / 'While...while' indicates two actions happening simultaneously. B indicates progression, C indicates cause-effect, D indicates contrast."
+  },
+  {
+    "id": "hsk3_041",
+    "level": 3,
+    "type": "grammar",
+    "question_cn": "______你努力，也不一定能成功。",
+    "question_en": "______ nǐ nǔlì, yě bù yídìng néng chénggōng. (______ you work hard, you may not necessarily succeed.)",
+    "options": {
+      "A": "即使",
+      "B": "因为",
+      "C": "只要",
+      "D": "不但"
+    },
+    "correct_answer": "A",
+    "explanation": "'即使……也……'表让步，'即使努力也不一定能成功'=even if you work hard, you may not succeed。B表因果，C表条件，D表递进，均不匹配。 / 'Even if...also' indicates concession. B indicates cause-effect, C indicates condition, D indicates progression."
+  },
+  {
+    "id": "hsk3_042",
+    "level": 3,
+    "type": "grammar",
+    "question_cn": "这个问题______讨论过好几次了。",
+    "question_en": "Zhège wèntí ______ tǎolùn guò hǎo jǐ cì le. (This issue ______ been discussed several times already.)",
+    "options": {
+      "A": "已经",
+      "B": "正在",
+      "C": "总是",
+      "D": "马上"
+    },
+    "correct_answer": "A",
+    "explanation": "'已经……过'表示经历完成。'正在'表现在进行，'总是'表频率，'马上'表将来，均不匹配。 / 'Already...before' indicates completed experience. 'Currently' indicates present continuous, 'always' indicates frequency, 'immediately' indicates future."
+  },
+  {
+    "id": "hsk3_043",
+    "level": 3,
+    "type": "grammar",
+    "question_cn": "他写字写______很整齐。",
+    "question_en": "Tā xiě zì xiě ______ hěn zhěngqí. (He writes characters ______ very neatly.)",
+    "options": {
+      "A": "得",
+      "B": "的",
+      "C": "地",
+      "D": "了"
+    },
+    "correct_answer": "A",
+    "explanation": "'得'用于动词和补语之间，'写得很整齐'中'很整齐'是补语。'的'表修饰，'地'表状语，'了'表完成，均不匹配。 / 'De' is used between verb and complement. 'De' (possessive) indicates modification, 'de' (adverbial) indicates manner, 'le' indicates completion."
+  },
+  {
+    "id": "hsk3_044",
+    "level": 3,
+    "type": "grammar",
+    "question_cn": "______他生病了，______没来上课。",
+    "question_en": "______ tā shēngbìng le, ______ méi lái shàngkè. (______ he was sick, ______ he didn't come to class.)",
+    "options": {
+      "A": "因为……所以……",
+      "B": "虽然……但是……",
+      "C": "如果……就……",
+      "D": "不但……而且……"
+    },
+    "correct_answer": "A",
+    "explanation": "前句是原因（生病），后句是结果（没来上课），用'因为……所以……'。B表转折，C表假设，D表递进，均不匹配。 / First clause is cause (sick), second is effect (didn't come), so 'because...so' is used. B indicates contrast, C indicates hypothesis, D indicates progression."
+  },
+  {
+    "id": "hsk3_045",
+    "level": 3,
+    "type": "vocabulary",
+    "question_cn": "'鼓励'是什么意思？",
+    "question_en": "'Gǔlì' shì shénme yìsi? (What does 'gǔlì' mean?)",
+    "options": {
+      "A": "Encourage",
+      "B": "Criticize",
+      "C": "Ignore",
+      "D": "Punish"
+    },
+    "correct_answer": "A",
+    "explanation": "A表示给予支持和信心，让人更有动力。B表示批评指责。C表示不理睬。D表示处罚。 / A means giving support and confidence to motivate. B means to criticize. C means to ignore. D means to punish."
+  },
+  {
+    "id": "hsk3_046",
+    "level": 3,
+    "type": "vocabulary",
+    "question_cn": "'遵守'和'违反'是什么关系？",
+    "question_en": "'Zūnshǒu' hé 'wéifǎn' shì shénme guānxi? (What is the relationship between 'zūnshǒu' and 'wéifǎn'?)",
+    "options": {
+      "A": "Antonyms",
+      "B": "Synonyms",
+      "C": "Near-synonyms",
+      "D": "No relationship"
+    },
+    "correct_answer": "A",
+    "explanation": "A表示意义相反，'遵守'是依照执行，'违反'是不遵守。B表示意思相同。C表示意思接近。D表示没有关联。 / A indicates opposite meaning; 'zūnshǒu' means to follow, 'wéifǎn' means to violate. B means same meaning, C means similar meaning, D means no relation."
+  },
+  {
+    "id": "hsk3_047",
+    "level": 3,
+    "type": "vocabulary",
+    "question_cn": "'失望'是什么意思？",
+    "question_en": "'Shīwàng' shì shénme yìsi? (What does 'shīwàng' mean?)",
+    "options": {
+      "A": "Disappointed",
+      "B": "Excited",
+      "C": "Surprised",
+      "D": "Satisfied"
+    },
+    "correct_answer": "A",
+    "explanation": "A表示希望没有实现，感到沮丧。B表示兴奋激动。C表示出乎意料。D表示满足满意。 / A means hope was not fulfilled, feeling frustrated. B means excited. C means surprised. D means satisfied."
+  },
+  {
+    "id": "hsk3_048",
+    "level": 3,
+    "type": "reading",
+    "passage_cn": "张明是一名程序员，他每天工作十个小时。虽然工资不错，但他觉得生活缺少乐趣。最近他开始学习摄影，周末会去公园拍照。他说，摄影让他发现了生活中的美。",
+    "passage_en": "Zhāng Míng is a programmer who works ten hours a day. Although his salary is good, he feels life lacks fun. Recently he started learning photography and goes to the park on weekends to take photos. He says photography helps him discover the beauty in life.",
+    "question_cn": "张明为什么开始学习摄影？",
+    "question_en": "Zhāng Míng wèishénme kāishǐ xuéxí shèyǐng? (Why did Zhang Ming start learning photography?)",
+    "options": {
+      "A": "因为他觉得生活缺少乐趣",
+      "B": "因为他的工作需要",
+      "C": "因为他想赚钱",
+      "D": "因为他朋友是摄影师"
+    },
+    "correct_answer": "A",
+    "explanation": "文中说'他觉得生活缺少乐趣'，然后'开始学习摄影'。B、C、D文中均未提及。 / The text says he felt life lacked fun, then started learning photography. B, C, D are not mentioned."
+  },
+  {
+    "id": "hsk3_049",
+    "level": 3,
+    "type": "reading",
+    "passage_cn": "随着城市的发展，越来越多的高楼大厦出现了。这些建筑让城市看起来更现代化，但也带来了一些问题。比如，老房子被拆掉，很多人失去了原来的家。此外，高楼太多也让城市的通风变差了。",
+    "passage_en": "With urban development, more and more high-rise buildings have appeared. These buildings make the city look more modern, but they also bring problems. For example, old houses are demolished and many people lose their original homes. Additionally, too many tall buildings worsen the city's ventilation.",
+    "question_cn": "高楼大厦带来了什么问题？",
+    "question_en": "Gāolóu dàshà dàilái le shénme wèntí? (What problems have high-rise buildings brought?)",
+    "options": {
+      "A": "老房子被拆，城市通风变差",
+      "B": "城市人口减少了",
+      "C": "房价下降了",
+      "D": "交通变得更方便了"
+    },
+    "correct_answer": "A",
+    "explanation": "文中提到两个问题：'老房子被拆掉'和'通风变差了'。B、C、D文中均未提及或与原文矛盾。 / The text mentions two problems: old houses demolished and ventilation worsened. B, C, D are not mentioned or contradict the text."
+  },
+  {
+    "id": "hsk3_050",
+    "level": 3,
+    "type": "reading",
+    "passage_cn": "刘奶奶今年八十岁了，她每天早上都去公园打太极拳。她说，这个习惯已经坚持了二十年。太极拳让她的身体很灵活，也很少生病。她还认识了很多一起锻炼的朋友。",
+    "passage_en": "Grandma Liu is eighty years old this year. She goes to the park to practice Tai Chi every morning. She says she has kept this habit for twenty years. Tai Chi keeps her body flexible and she rarely gets sick. She has also made many friends who exercise together.",
+    "question_cn": "刘奶奶为什么喜欢打太极拳？",
+    "question_en": "Liú nǎinai wèishénme xǐhuan dǎ Tàijíquán? (Why does Grandma Liu like practicing Tai Chi?)",
+    "options": {
+      "A": "因为太极拳让她身体灵活，很少生病",
+      "B": "因为她年轻时是武术老师",
+      "C": "因为公园离家很近",
+      "D": "因为她想参加比赛"
+    },
+    "correct_answer": "A",
+    "explanation": "文中明确说'太极拳让她的身体很灵活，也很少生病'。B、C、D文中均未提及。 / The text explicitly states Tai Chi keeps her flexible and she rarely gets sick. B, C, D are not mentioned."
   }
 ]

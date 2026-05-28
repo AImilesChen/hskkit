@@ -529,5 +529,234 @@
     },
     "correct_answer": "A",
     "explanation": "文中第一句'昨天是我的生日'。B、C、D文中均未提及。"
+  },
+  {
+    "id": "hsk2_036",
+    "level": 2,
+    "type": "listening",
+    "question_cn": "你平时怎么锻炼身体？",
+    "question_en": "Nǐ píngshí zěnme duànliàn shēntǐ? (How do you usually exercise?)",
+    "options": {
+      "A": "我每天早上跑步。(I go running every morning.)",
+      "B": "我喜欢吃水果。(I like eating fruit.)",
+      "C": "我家离公司很近。(My home is close to the company.)",
+      "D": "我周末不上班。(I don't work on weekends.)"
+    },
+    "correct_answer": "A",
+    "explanation": "'怎么锻炼身体'询问运动方式，A回答跑步。B说饮食，C说距离，D说工作，均不匹配。 / 'How do you exercise' asks about exercise methods; A answers running. B is about diet, C about distance, D about work."
+  },
+  {
+    "id": "hsk2_037",
+    "level": 2,
+    "type": "listening",
+    "question_cn": "你最喜欢的季节是哪个？",
+    "question_en": "Nǐ zuì xǐhuan de jìjié shì nǎge? (Which season do you like best?)",
+    "options": {
+      "A": "我最喜欢春天，天气很舒服。(I like spring best; the weather is very comfortable.)",
+      "B": "春天有很多花。(There are many flowers in spring.)",
+      "C": "春天在三月份。(Spring is in March.)",
+      "D": "春天比冬天暖和。(Spring is warmer than winter.)"
+    },
+    "correct_answer": "A",
+    "explanation": "'最喜欢哪个'要求明确选择并说明原因，A直接选择并给出理由。B、C、D都是描述，未明确回答'最喜欢'。 / 'Which do you like best' requires a clear choice with reasons; A directly chooses and gives a reason. B, C, D are descriptions without a clear choice."
+  },
+  {
+    "id": "hsk2_038",
+    "level": 2,
+    "type": "listening",
+    "question_cn": "你的电脑怎么了？",
+    "question_en": "Nǐ de diànnǎo zěnme le? (What happened to your computer?)",
+    "options": {
+      "A": "开不了机了，可能是电池坏了。(It won't turn on; maybe the battery is broken.)",
+      "B": "我的电脑是黑色的。(My computer is black.)",
+      "C": "我刚买了这台电脑。(I just bought this computer.)",
+      "D": "电脑放在桌子上。(The computer is on the table.)"
+    },
+    "correct_answer": "A",
+    "explanation": "'怎么了'询问故障，A回答具体问题（开不了机）。B说颜色，C说购买，D说位置，均不匹配。 / 'What happened' asks about a problem; A answers with a specific issue. B is color, C is purchase, D is location."
+  },
+  {
+    "id": "hsk2_039",
+    "level": 2,
+    "type": "listening",
+    "question_cn": "你觉得学开车难吗？",
+    "question_en": "Nǐ juéde xué kāichē nán ma? (Do you think learning to drive is difficult?)",
+    "options": {
+      "A": "刚开始有点难，现在熟练了。(It was a bit hard at first, but now I'm skilled.)",
+      "B": "开车需要考驾照。(Driving requires a license.)",
+      "C": "我喜欢开车。(I like driving.)",
+      "D": "开车比骑自行车快。(Driving is faster than cycling.)"
+    },
+    "correct_answer": "A",
+    "explanation": "'难吗'询问难度感受，A直接回答难度变化。B说要求，C说喜好，D说比较，均不匹配。 / 'Is it difficult' asks about difficulty; A directly answers about the change in difficulty. B is about requirements, C about preference, D about comparison."
+  },
+  {
+    "id": "hsk2_040",
+    "level": 2,
+    "type": "listening",
+    "question_cn": "你平时几点睡觉？",
+    "question_en": "Nǐ píngshí jǐ diǎn shuìjiào? (What time do you usually go to bed?)",
+    "options": {
+      "A": "我一般十一点左右睡觉。(I usually go to bed around eleven.)",
+      "B": "我睡眠质量很好。(My sleep quality is very good.)",
+      "C": "我晚上不喝咖啡。(I don't drink coffee at night.)",
+      "D": "我早上七点起床。(I get up at seven in the morning.)"
+    },
+    "correct_answer": "A",
+    "explanation": "'几点睡觉'询问时间，A回答具体时间。B说质量，C说饮食，D说起床时间，均不匹配。 / 'What time do you go to bed' asks for time; A answers with a specific time. B is about quality, C about diet, D about wake-up time."
+  },
+  {
+    "id": "hsk2_041",
+    "level": 2,
+    "type": "grammar",
+    "question_cn": "我______想喝一杯咖啡。",
+    "question_en": "Wǒ ______ xiǎng hē yì bēi kāfēi. (I ______ want to drink a cup of coffee.)",
+    "options": {
+      "A": "现在(just now)",
+      "B": "已经(already)",
+      "C": "常常(often)",
+      "D": "一起(together)"
+    },
+    "correct_answer": "A",
+    "explanation": "'现在'表示此刻，'现在想喝'=want to drink right now。'已经'表完成，'常常'表频率，'一起'表伴随，均不匹配。 / 'Now' indicates the present moment. 'Already' indicates completion, 'often' indicates frequency, 'together' indicates accompaniment."
+  },
+  {
+    "id": "hsk2_042",
+    "level": 2,
+    "type": "grammar",
+    "question_cn": "他______汉语，______英语。",
+    "question_en": "Tā ______ Hànyǔ, ______ Yīngyǔ. (He ______ Chinese, ______ English.)",
+    "options": {
+      "A": "不但……而且……(not only...but also...)",
+      "B": "虽然……但是……(although...but...)",
+      "C": "因为……所以……(because...so...)",
+      "D": "如果……就……(if...then...)"
+    },
+    "correct_answer": "A",
+    "explanation": "'不但……而且……'表递进，'不但会汉语而且会英语'=not only speaks Chinese but also English。B表转折，C表因果，D表假设，均不匹配。 / 'Not only...but also' indicates progression. B indicates contrast, C indicates cause-effect, D indicates hypothesis."
+  },
+  {
+    "id": "hsk2_043",
+    "level": 2,
+    "type": "grammar",
+    "question_cn": "______下雨，我们就不去了。",
+    "question_en": "______ xiàyǔ, wǒmen jiù bù qù le. (______ it rains, we won't go.)",
+    "options": {
+      "A": "如果(if)",
+      "B": "因为(because)",
+      "C": "虽然(although)",
+      "D": "不但(not only)"
+    },
+    "correct_answer": "A",
+    "explanation": "'如果……就……'表假设，'如果下雨就不去'=if it rains, we won't go。'因为'表因果，'虽然'表转折，'不但'表递进，均不匹配。 / 'If...then' indicates hypothesis. 'Because' indicates cause-effect, 'although' indicates contrast, 'not only' indicates progression."
+  },
+  {
+    "id": "hsk2_044",
+    "level": 2,
+    "type": "grammar",
+    "question_cn": "这个房间______干净______明亮。",
+    "question_en": "Zhège fángjiān ______ gānjìng ______ míngliàng. (This room is ______ clean ______ bright.)",
+    "options": {
+      "A": "又……又……(both...and...)",
+      "B": "虽然……但是……(although...but...)",
+      "C": "因为……所以……(because...so...)",
+      "D": "如果……就……(if...then...)"
+    },
+    "correct_answer": "A",
+    "explanation": "'又……又……'表并列，'又干净又明亮'=both clean and bright。B表转折，C表因果，D表假设，均不匹配。 / 'Both...and' indicates parallelism. B indicates contrast, C indicates cause-effect, D indicates hypothesis."
+  },
+  {
+    "id": "hsk2_045",
+    "level": 2,
+    "type": "grammar",
+    "question_cn": "你______去过长城吗？",
+    "question_en": "Nǐ ______ qùguò Chángchéng ma? (Have you ______ been to the Great Wall?)",
+    "options": {
+      "A": "曾经(ever)",
+      "B": "正在(currently)",
+      "C": "常常(often)",
+      "D": "一起(together)"
+    },
+    "correct_answer": "A",
+    "explanation": "'曾经……过'表示过去的经历，'曾经去过'=have ever been to。'正在'表现在进行，'常常'表现在习惯，'一起'表伴随，均不匹配。 / 'Ever...before' indicates past experience. 'Currently' indicates present continuous, 'often' indicates present habit, 'together' indicates accompaniment."
+  },
+  {
+    "id": "hsk2_046",
+    "level": 2,
+    "type": "vocabulary",
+    "question_cn": "'安静'是什么意思？",
+    "question_en": "'Ānjìng' shì shénme yìsi? (What does 'ānjìng' mean?)",
+    "options": {
+      "A": "Quiet",
+      "B": "Noisy",
+      "C": "Happy",
+      "D": "Sad"
+    },
+    "correct_answer": "A",
+    "explanation": "A表示没有声音、不吵闹。B表示声音大、吵闹（反义词）。C表示开心。D表示难过。 / A means without sound, not noisy. B means loud, noisy (antonym). C means happy. D means sad."
+  },
+  {
+    "id": "hsk2_047",
+    "level": 2,
+    "type": "vocabulary",
+    "question_cn": "'忘记'的反义词是什么？",
+    "question_en": "'Wàngjì' de fǎnyìcí shì shénme? (What is the opposite of 'wàngjì' / forget?)",
+    "options": {
+      "A": "Remember",
+      "B": "Lose",
+      "C": "Find",
+      "D": "Leave"
+    },
+    "correct_answer": "A",
+    "explanation": "A表示记得、没有忘掉，是'忘记'的反义词。B表示丢失。C表示找到。D表示离开。 / A means to remember, not forget (antonym). B means to lose. C means to find. D means to leave."
+  },
+  {
+    "id": "hsk2_048",
+    "level": 2,
+    "type": "vocabulary",
+    "question_cn": "'超市'是什么地方？",
+    "question_en": "'Chāoshì' shì shénme dìfang? (What kind of place is 'chāoshì'?)",
+    "options": {
+      "A": "Supermarket",
+      "B": "Hospital",
+      "C": "School",
+      "D": "Park"
+    },
+    "correct_answer": "A",
+    "explanation": "A表示售卖各种商品的大型商店。B表示看病的地方。C表示学习的地方。D表示休闲娱乐的地方。 / A is a large store selling various goods. B is for medical treatment. C is for studying. D is for recreation."
+  },
+  {
+    "id": "hsk2_049",
+    "level": 2,
+    "type": "reading",
+    "passage_cn": "小李每天早上六点起床，先跑步半小时，然后回家洗澡、吃早饭。八点他去公司上班。他说，早起运动让他一天都很有精神。",
+    "passage_en": "Xiǎo Lǐ gets up at six every morning, runs for half an hour first, then goes home to shower and eat breakfast. At eight he goes to work. He says that exercising early makes him energetic all day.",
+    "question_cn": "小李早上先做什么？",
+    "question_en": "Xiǎo Lǐ zǎoshang xiān zuò shénme? (What does Xiao Li do first in the morning?)",
+    "options": {
+      "A": "跑步",
+      "B": "洗澡",
+      "C": "吃早饭",
+      "D": "去上班"
+    },
+    "correct_answer": "A",
+    "explanation": "文中说'先跑步半小时'，所以跑步是第一件事。B、C、D都是跑步之后做的事。 / The text says 'runs for half an hour first,' so running is the first thing. B, C, D are done after running."
+  },
+  {
+    "id": "hsk2_050",
+    "level": 2,
+    "type": "reading",
+    "passage_cn": "王老师的家离学校很远，她每天坐地铁上班，需要一个小时。虽然路上时间很长，但是她觉得地铁比公交车快，也比开车省钱。",
+    "passage_en": "Teacher Wang's home is far from school. She takes the subway to work every day, which takes an hour. Although the commute is long, she thinks the subway is faster than the bus and cheaper than driving.",
+    "question_cn": "王老师为什么坐地铁上班？",
+    "question_en": "Wáng lǎoshī wèishénme zuò dìtiě shàngbān? (Why does Teacher Wang take the subway to work?)",
+    "options": {
+      "A": "因为地铁比公交车快，也比开车省钱",
+      "B": "因为她家离地铁站很近",
+      "C": "因为她不会开车",
+      "D": "因为地铁很空，有座位"
+    },
+    "correct_answer": "A",
+    "explanation": "文中明确说'她觉得地铁比公交车快，也比开车省钱'。B、C、D文中均未提及。 / The text explicitly states she thinks the subway is faster than the bus and cheaper than driving. B, C, D are not mentioned."
   }
 ]
