@@ -6,12 +6,12 @@
     "question_cn": "你好吗？",
     "question_en": "How are you?",
     "options": {
-      "A": "我很好，谢谢。(I'm fine, thank you.)",
-      "B": "我是学生。(I am a student.)",
+      "A": "我是学生。(I am a student.)",
+      "B": "我很好，谢谢。(I'm fine, thank you.)",
       "C": "我叫李明。(My name is Li Ming.)",
       "D": "我二十岁。(I am 20 years old.)"
     },
-    "correct_answer": "A",
+    "correct_answer": "B",
     "explanation": "'你好吗'是问候语，标准回应是'我很好，谢谢'。B回答身份，C回答名字，D回答年龄，均不匹配。"
   },
   {
@@ -36,12 +36,12 @@
     "question_cn": "你是老师吗？",
     "question_en": "Are you a teacher?",
     "options": {
-      "A": "是的，我是老师。(Yes, I am a teacher.)",
-      "B": "我不老师。(I no teacher. (ungrammatical))",
+      "A": "我不老师。(I no teacher. (ungrammatical))",
+      "B": "是的，我是老师。(Yes, I am a teacher.)",
       "C": "我是学生。(I am a student.)",
       "D": "我喜欢老师。(I like teachers.)"
     },
-    "correct_answer": "A",
+    "correct_answer": "B",
     "explanation": "'是……吗'是一般疑问句，肯定回答用'是的'。C是否定含义的回答（我是学生=不是老师），B语法错误，D答非所问。"
   },
   {
@@ -82,11 +82,11 @@
     "question_en": "What time is it now?",
     "options": {
       "A": "现在是早上。(It's morning now.)",
-      "B": "现在三点半。(It's 3:30 now.)",
+      "B": "现在是春天。(It's spring now.)",
       "C": "今天是星期一。(Today is Monday.)",
-      "D": "现在是春天。(It's spring now.)"
+      "D": "现在三点半。(It's 3:30 now.)"
     },
-    "correct_answer": "B",
+    "correct_answer": "D",
     "explanation": "'几点'询问具体时间，B回答三点半。A回答时段，C回答日期，D回答季节，均不匹配。"
   },
   {
@@ -96,12 +96,12 @@
     "question_cn": "你家住在哪里？",
     "question_en": "Where does your family live?",
     "options": {
-      "A": "我家住在北京。(My family lives in Beijing.)",
+      "A": "我家很大。(My house is very big.)",
       "B": "我家有三个人。(There are three people in my family.)",
-      "C": "我家很大。(My house is very big.)",
+      "C": "我家住在北京。(My family lives in Beijing.)",
       "D": "我喜欢我家。(I like my home.)"
     },
-    "correct_answer": "A",
+    "correct_answer": "C",
     "explanation": "'在哪里'询问地点，A回答城市（北京）。B回答人数，C描述房子，D表达情感，均不匹配。"
   },
   {
@@ -127,11 +127,11 @@
     "question_en": "How much is this?",
     "options": {
       "A": "这个很好看。(This looks very nice.)",
-      "B": "这个二十块钱。(This is 20 yuan.)",
-      "C": "这个是红色的。(This is red.)",
+      "B": "这个是红色的。(This is red.)",
+      "C": "这个二十块钱。(This is 20 yuan.)",
       "D": "这个很重。(This is very heavy.)"
     },
-    "correct_answer": "B",
+    "correct_answer": "C",
     "explanation": "'多少钱'询问价格，B回答具体金额。A评价外观，C说颜色，D说重量，均不匹配。"
   },
   {
@@ -141,12 +141,12 @@
     "question_cn": "你今天去哪儿？",
     "question_en": "Where are you going today?",
     "options": {
-      "A": "我今天去学校。(I am going to school today.)",
-      "B": "我今天很高兴。(I am very happy today.)",
+      "A": "我今天很高兴。(I am very happy today.)",
+      "B": "我今天去学校。(I am going to school today.)",
       "C": "我今天很忙。(I am very busy today.)",
       "D": "我今天不吃饭。(I am not eating today.)"
     },
-    "correct_answer": "A",
+    "correct_answer": "B",
     "explanation": "'去哪儿'询问目的地，A回答地点（学校）。B表达情绪，C描述状态，D说行为，均不匹配。"
   },
   {
@@ -156,12 +156,12 @@
     "question_cn": "你爸爸做什么工作？",
     "question_en": "What does your father do?",
     "options": {
-      "A": "我爸爸是医生。(My father is a doctor.)",
+      "A": "我爸爸在家。(My father is at home.)",
       "B": "我爸爸五十岁。(My father is 50 years old.)",
-      "C": "我爸爸在家。(My father is at home.)",
+      "C": "我爸爸是医生。(My father is a doctor.)",
       "D": "我爸爸很好。(My father is very well.)"
     },
-    "correct_answer": "A",
+    "correct_answer": "C",
     "explanation": "'做什么工作'询问职业，A回答职业（医生）。B回答年龄，C回答地点，D回应问候，均不匹配。"
   },
   {
@@ -171,12 +171,12 @@
     "question_cn": "你喜欢猫还是狗？",
     "question_en": "Do you like cats or dogs?",
     "options": {
-      "A": "我喜欢猫。(I like cats.)",
-      "B": "猫和狗都很可爱。(Cats and dogs are both cute.)",
+      "A": "猫和狗都很可爱。(Cats and dogs are both cute.)",
+      "B": "我喜欢猫。(I like cats.)",
       "C": "我不喜欢动物。(I don't like animals.)",
       "D": "我家有猫。(My family has a cat.)"
     },
-    "correct_answer": "A",
+    "correct_answer": "B",
     "explanation": "'A还是B'是选择疑问句，需要明确选择其一。A直接选择猫。B是评价，C是否定，D是陈述事实，均未直接回答选择。"
   },
   {
@@ -216,12 +216,12 @@
     "question_cn": "今天天气怎么样？",
     "question_en": "How is the weather today?",
     "options": {
-      "A": "今天天气很好。(The weather is very nice today.)",
+      "A": "今天我去公园。(I am going to the park today.)",
       "B": "今天是星期一。(Today is Monday.)",
       "C": "今天我很忙。(I am very busy today.)",
-      "D": "今天我去公园。(I am going to the park today.)"
+      "D": "今天天气很好。(The weather is very nice today.)"
     },
-    "correct_answer": "A",
+    "correct_answer": "D",
     "explanation": "'天气怎么样'询问天气状况，A直接描述天气。B回答日期，C说个人状态，D说计划，均不匹配。"
   },
   {
@@ -231,12 +231,12 @@
     "question_cn": "你想喝什么？",
     "question_en": "What would you like to drink?",
     "options": {
-      "A": "我想喝水。(I want to drink water.)",
+      "A": "我想看书。(I want to read books.)",
       "B": "我想吃饭。(I want to eat rice.)",
       "C": "我想睡觉。(I want to sleep.)",
-      "D": "我想看书。(I want to read books.)"
+      "D": "我想喝水。(I want to drink water.)"
     },
-    "correct_answer": "A",
+    "correct_answer": "D",
     "explanation": "'喝什么'询问饮品，A回答水（饮品）。B是食物，C是行为，D是活动，均不匹配。"
   },
   {
@@ -246,12 +246,12 @@
     "question_cn": "你的电话号码是多少？",
     "question_en": "What is your phone number?",
     "options": {
-      "A": "我的电话是红色的。(My phone is red.)",
-      "B": "我的电话是13800138000。(My phone number is 13800138000.)",
+      "A": "我的电话是13800138000。(My phone number is 13800138000.)",
+      "B": "我的电话是红色的。(My phone is red.)",
       "C": "我喜欢打电话。(I like making phone calls.)",
       "D": "我的电话坏了。(My phone is broken.)"
     },
-    "correct_answer": "B",
+    "correct_answer": "A",
     "explanation": "'电话号码是多少'询问号码，B回答具体数字。A说颜色，C说喜好，D说状态，均不匹配。"
   },
   {
@@ -261,12 +261,12 @@
     "question_cn": "你怎么去学校？",
     "question_en": "How do you go to school?",
     "options": {
-      "A": "我坐公交车去学校。(I take the bus to school.)",
-      "B": "我去学校学习汉语。(I go to school to study Chinese.)",
+      "A": "我去学校学习汉语。(I go to school to study Chinese.)",
+      "B": "我坐公交车去学校。(I take the bus to school.)",
       "C": "学校很大。(The school is very big.)",
       "D": "我喜欢学校。(I like school.)"
     },
-    "correct_answer": "A",
+    "correct_answer": "B",
     "explanation": "'怎么去'询问交通方式，A回答坐公交车。B回答目的，C描述学校，D表达喜好，均不匹配。"
   },
   {
@@ -276,12 +276,12 @@
     "question_cn": "你妈妈在家吗？",
     "question_en": "Is your mother at home?",
     "options": {
-      "A": "我妈妈不在家。(My mother is not at home.)",
+      "A": "我妈妈很好。(My mother is very well.)",
       "B": "我妈妈做饭。(My mother cooks.)",
-      "C": "我妈妈很好。(My mother is very well.)",
+      "C": "我妈妈不在家。(My mother is not at home.)",
       "D": "我妈妈是老师。(My mother is a teacher.)"
     },
-    "correct_answer": "A",
+    "correct_answer": "C",
     "explanation": "'在……吗'询问是否在某处，A直接回答在不在家。B说行为，C回应问候，D说职业，均不匹配。"
   },
   {
@@ -306,12 +306,12 @@
     "question_cn": "我是______学生。",
     "question_en": "I am ______ student.",
     "options": {
-      "A": "个(a (measure word))",
+      "A": "在(at)",
       "B": "的(possessive particle)",
       "C": "了(completed action particle)",
-      "D": "在(at)"
+      "D": "个(a (measure word))"
     },
-    "correct_answer": "A",
+    "correct_answer": "D",
     "explanation": "名词'学生'前需要量词，'个'是通用量词。'的'表所属，'了'表完成，'在'表位置，均不适用。"
   },
   {
@@ -321,12 +321,12 @@
     "question_cn": "我______中国人。",
     "question_en": "I ______ Chinese.",
     "options": {
-      "A": "是(am)",
-      "B": "有(have)",
+      "A": "有(have)",
+      "B": "是(am)",
       "C": "在(at)",
       "D": "去(go)"
     },
-    "correct_answer": "A",
+    "correct_answer": "B",
     "explanation": "'是'用于连接主语和表语（身份/属性）。'有'表拥有，'在'表位置，'去'表动作，均不匹配。"
   },
   {
@@ -336,12 +336,12 @@
     "question_cn": "你______什么名字？",
     "question_en": "You ______ what name?",
     "options": {
-      "A": "叫(are called)",
+      "A": "有(have)",
       "B": "是(are)",
-      "C": "有(have)",
+      "C": "叫(are called)",
       "D": "做(do)"
     },
-    "correct_answer": "A",
+    "correct_answer": "C",
     "explanation": "'叫什么名字'是固定搭配，'叫'意为'被称为'。虽然B语法上可通，但'你是什么名字'不自然，A是标准表达。"
   },
   {
@@ -351,12 +351,12 @@
     "question_cn": "我______一本书。",
     "question_en": "I ______ one book.",
     "options": {
-      "A": "有(have)",
+      "A": "会(can)",
       "B": "是(am)",
       "C": "在(at)",
-      "D": "会(can)"
+      "D": "有(have)"
     },
-    "correct_answer": "A",
+    "correct_answer": "D",
     "explanation": "'有'表拥有，'我有一本书'意为'I have a book'。'是'表判断，'在'表位置，'会'表能力，均不匹配。"
   },
   {
@@ -366,12 +366,12 @@
     "question_cn": "他______医生。",
     "question_en": "He ______ a doctor.",
     "options": {
-      "A": "是(is)",
+      "A": "去(goes)",
       "B": "有(has)",
       "C": "在(is at)",
-      "D": "去(goes)"
+      "D": "是(is)"
     },
-    "correct_answer": "A",
+    "correct_answer": "D",
     "explanation": "描述职业用'是+职业'结构。'有'表拥有，'在'表位置，'去'表动作，均不用于表达职业。"
   },
   {
@@ -381,12 +381,12 @@
     "question_cn": "我______北京。",
     "question_en": "I ______ Beijing.",
     "options": {
-      "A": "在(am in)",
+      "A": "有(have)",
       "B": "是(am)",
-      "C": "有(have)",
+      "C": "在(am in)",
       "D": "去(go to)"
     },
-    "correct_answer": "A",
+    "correct_answer": "C",
     "explanation": "'在+地点'表示在某地。'是北京'意为'是 Beijing 这个城市'（语义不通），'有北京'不通，'去北京'需要语境支持。"
   },
   {
@@ -396,12 +396,12 @@
     "question_cn": "你______吗？",
     "question_en": "Are you ______?",
     "options": {
-      "A": "好(well)",
+      "A": "的(possessive)",
       "B": "很(very)",
-      "C": "的(possessive)",
+      "C": "好(well)",
       "D": "了(completed)"
     },
-    "correct_answer": "A",
+    "correct_answer": "C",
     "explanation": "'好吗'是完整疑问结构。'很吗'不通，'的吗'用于陈述句变疑问，'了吗'用于完成态，但均不如A自然。"
   },
   {
@@ -411,12 +411,12 @@
     "question_cn": "我______吃饭了。",
     "question_en": "I ______ ate. (completed action)",
     "options": {
-      "A": "了(le (completed action marker))",
-      "B": "的(de (possessive))",
+      "A": "的(de (possessive))",
+      "B": "了(le (completed action marker))",
       "C": "在(zai (progressive))",
       "D": "会(hui (can))"
     },
-    "correct_answer": "A",
+    "correct_answer": "B",
     "explanation": "'了'放在动词后表示动作完成。'我吃饭了'=I have eaten. '的'、'在'、'会'均不表示完成态。"
   },
   {
@@ -426,12 +426,12 @@
     "question_cn": "______是星期一。",
     "question_en": "______ is Monday.",
     "options": {
-      "A": "今天(Today)",
-      "B": "现在(Now)",
+      "A": "现在(Now)",
+      "B": "今天(Today)",
       "C": "这儿(Here)",
       "D": "这个(This)"
     },
-    "correct_answer": "A",
+    "correct_answer": "B",
     "explanation": "'今天'指日期，与'星期一'搭配。'现在'指时刻，'这儿'指地点，'这个'指事物，均不与星期搭配。"
   },
   {
@@ -441,12 +441,12 @@
     "question_cn": "我______喜欢汉语。",
     "question_en": "I ______ like Chinese.",
     "options": {
-      "A": "很(very)",
+      "A": "了(completed)",
       "B": "是(am)",
       "C": "的(possessive)",
-      "D": "了(completed)"
+      "D": "很(very)"
     },
-    "correct_answer": "A",
+    "correct_answer": "D",
     "explanation": "'很'是程度副词，修饰'喜欢'表示'很喜欢'。'是喜欢'不通，'的喜欢'不通，'了喜欢'不通。"
   },
   {
@@ -456,12 +456,12 @@
     "question_cn": "你______学生吗？",
     "question_en": "Are you ______ student?",
     "options": {
-      "A": "是(a)",
+      "A": "会(can)",
       "B": "有(have)",
       "C": "在(at)",
-      "D": "会(can)"
+      "D": "是(a)"
     },
-    "correct_answer": "A",
+    "correct_answer": "D",
     "explanation": "'是……吗'构成判断疑问句。'有学生吗'意为'有学生吗'（主语缺失），'在学生吗'不通，'会学生吗'不通。"
   },
   {
@@ -471,12 +471,12 @@
     "question_cn": "她______很漂亮。",
     "question_en": "She ______ very beautiful.",
     "options": {
-      "A": "长得(looks)",
+      "A": "有(has)",
       "B": "是(is)",
-      "C": "有(has)",
+      "C": "长得(looks)",
       "D": "做(does)"
     },
-    "correct_answer": "A",
+    "correct_answer": "C",
     "explanation": "'长得'表示外貌，'长得漂亮'=looks beautiful。'是漂亮'不自然，'有漂亮'不通，'做漂亮'不通。"
   },
   {
@@ -501,12 +501,12 @@
     "question_cn": "______你爸爸？",
     "question_en": "______ is your father?",
     "options": {
-      "A": "谁(Who)",
+      "A": "怎么(How)",
       "B": "什么(What)",
       "C": "哪儿(Where)",
-      "D": "怎么(How)"
+      "D": "谁(Who)"
     },
-    "correct_answer": "A",
+    "correct_answer": "D",
     "explanation": "'谁'询问人。'什么'询问事物，'哪儿'询问地点，'怎么'询问方式，均不匹配。"
   },
   {
@@ -516,12 +516,12 @@
     "question_cn": "我______中国人，______美国人。",
     "question_en": "I ______ Chinese, ______ American.",
     "options": {
-      "A": "是……不是……(am...not...)",
-      "B": "有……没有……(have...don't have...)",
+      "A": "有……没有……(have...don't have...)",
+      "B": "是……不是……(am...not...)",
       "C": "在……不在……(am...not at...)",
       "D": "会……不会……(can...cannot...)"
     },
-    "correct_answer": "A",
+    "correct_answer": "B",
     "explanation": "'是……不是……'构成肯定否定并列。'是中国人，不是美国人'=I am Chinese, not American。其他选项语义不通。"
   },
   {
@@ -531,12 +531,12 @@
     "question_cn": "'苹果'是什么意思？",
     "question_en": "What does '苹果' (píngguǒ) mean?",
     "options": {
-      "A": "Apple",
+      "A": "Grape",
       "B": "Banana",
       "C": "Orange",
-      "D": "Grape"
+      "D": "Apple"
     },
-    "correct_answer": "A",
+    "correct_answer": "D",
     "explanation": "A是常见的水果名称。B是另一种黄色弯曲的水果。C是柑橘类水果。D是成串生长的小水果。"
   },
   {
@@ -546,12 +546,12 @@
     "question_cn": "'医生'是什么职业？",
     "question_en": "What profession is '医生' (yīshēng)?",
     "options": {
-      "A": "Doctor",
+      "A": "Worker",
       "B": "Teacher",
       "C": "Student",
-      "D": "Worker"
+      "D": "Doctor"
     },
-    "correct_answer": "A",
+    "correct_answer": "D",
     "explanation": "A是治病救人的职业。B是在学校教书的人。C是在校学习的人。D是在工厂劳动的人。"
   },
   {
@@ -576,12 +576,12 @@
     "question_cn": "'水'是什么？",
     "question_en": "What is '水' (shuǐ)?",
     "options": {
-      "A": "Water",
+      "A": "Coffee",
       "B": "Tea",
-      "C": "Coffee",
+      "C": "Water",
       "D": "Juice"
     },
-    "correct_answer": "A",
+    "correct_answer": "C",
     "explanation": "A是最常见的无色透明饮品。B是用茶叶冲泡的饮品。C是用咖啡豆制作的饮品。D是用水果榨取的饮品。"
   },
   {
@@ -591,12 +591,12 @@
     "question_cn": "'学校'是什么地方？",
     "question_en": "What kind of place is '学校' (xuéxiào)?",
     "options": {
-      "A": "School",
+      "A": "Restaurant",
       "B": "Hospital",
-      "C": "Restaurant",
+      "C": "School",
       "D": "Park"
     },
-    "correct_answer": "A",
+    "correct_answer": "C",
     "explanation": "A是学生学习的地方。B是病人看病的地方。C是人们吃饭的地方。D是人们休闲娱乐的地方。"
   },
   {
@@ -621,12 +621,12 @@
     "question_cn": "'猫'是什么动物？",
     "question_en": "What animal is '猫' (māo)?",
     "options": {
-      "A": "Cat",
+      "A": "Bird",
       "B": "Dog",
-      "C": "Bird",
+      "C": "Cat",
       "D": "Fish"
     },
-    "correct_answer": "A",
+    "correct_answer": "C",
     "explanation": "A是一种常见的家养宠物，会抓老鼠。B是人类最忠诚的家养宠物。C是会飞的动物。D是生活在水中的动物。"
   },
   {
@@ -666,12 +666,12 @@
     "question_cn": "'高兴'是什么意思？",
     "question_en": "What does '高兴' (gāoxìng) mean?",
     "options": {
-      "A": "Happy",
-      "B": "Sad",
+      "A": "Sad",
+      "B": "Happy",
       "C": "Angry",
       "D": "Tired"
     },
-    "correct_answer": "A",
+    "correct_answer": "B",
     "explanation": "A表示心情愉悦、快乐。B表示心情悲伤。C表示心情愤怒。D表示身体疲倦。"
   },
   {
@@ -681,12 +681,12 @@
     "question_cn": "'看书'是什么意思？",
     "question_en": "What does '看书' (kànshū) mean?",
     "options": {
-      "A": "Read books",
-      "B": "Watch TV",
+      "A": "Watch TV",
+      "B": "Read books",
       "C": "Listen to music",
       "D": "Write letters"
     },
-    "correct_answer": "A",
+    "correct_answer": "B",
     "explanation": "A表示阅读书籍的行为。B表示观看电视节目的行为。C表示用耳朵欣赏音乐。D表示用笔写字或写信。"
   },
   {
@@ -696,12 +696,12 @@
     "question_cn": "'吃饭'是什么意思？",
     "question_en": "What does '吃饭' (chīfàn) mean?",
     "options": {
-      "A": "Eat (a meal)",
-      "B": "Drink water",
+      "A": "Drink water",
+      "B": "Eat (a meal)",
       "C": "Cook",
       "D": "Buy food"
     },
-    "correct_answer": "A",
+    "correct_answer": "B",
     "explanation": "A表示进食的行为，通常指吃正餐。B表示饮用液体。C表示睡眠休息。D表示购买食物。"
   },
   {
@@ -741,12 +741,12 @@
     "question_cn": "'谢谢'用在什么时候？",
     "question_en": "When do you use '谢谢' (xièxie / thank you)?",
     "options": {
-      "A": "When expressing gratitude",
+      "A": "When apologizing",
       "B": "When greeting someone",
       "C": "When saying goodbye",
-      "D": "When apologizing"
+      "D": "When expressing gratitude"
     },
-    "correct_answer": "A",
+    "correct_answer": "D",
     "explanation": "A用于对别人表示感谢的场合。B用于见面打招呼。C用于告别时。D用于向别人道歉。"
   }
 ]

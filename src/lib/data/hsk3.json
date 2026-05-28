@@ -6,12 +6,12 @@
     "question_cn": "你觉得这份新工作怎么样？",
     "question_en": "What do you think of this new job?",
     "options": {
-      "A": "虽然工资不高，但是能学到很多东西。",
-      "B": "这份工作是上个月开始的。",
+      "A": "这份工作是上个月开始的。",
+      "B": "虽然工资不高，但是能学到很多东西。",
       "C": "我的同事都很友好。",
       "D": "我每天工作八个小时。"
     },
-    "correct_answer": "A",
+    "correct_answer": "B",
     "explanation": "'觉得……怎么样'询问主观评价，A是综合评价（让步转折）。B回答时间，C描述同事，D说时长，均不是对工作的整体评价。"
   },
   {
@@ -21,12 +21,12 @@
     "question_cn": "你怎么看待网络购物？",
     "question_en": "What do you think of online shopping?",
     "options": {
-      "A": "我觉得既方便又省钱。",
-      "B": "我经常在网上买东西。",
+      "A": "我经常在网上买东西。",
+      "B": "我觉得既方便又省钱。",
       "C": "网上购物很流行。",
       "D": "网上有很多商店。"
     },
-    "correct_answer": "A",
+    "correct_answer": "B",
     "explanation": "'怎么看待'询问观点/评价，A是主观评价。B是行为描述，C是客观陈述，D是事实描述，均不匹配。"
   },
   {
@@ -51,12 +51,12 @@
     "question_cn": "听说你要出国读书了？",
     "question_en": "I heard you're going abroad to study?",
     "options": {
-      "A": "是啊，下个月就走。",
-      "B": "我还没决定呢。",
+      "A": "我还没决定呢。",
+      "B": "是啊，下个月就走。",
       "C": "出国读书要花很多钱。",
       "D": "我已经毕业了。"
     },
-    "correct_answer": "A",
+    "correct_answer": "B",
     "explanation": "'听说……'是确认信息的句式，A直接确认并补充信息。B是否认（与'听说'语境矛盾），C是评论，D转移话题，均不匹配。"
   },
   {
@@ -66,12 +66,12 @@
     "question_cn": "这道题你是怎么做出来的？",
     "question_en": "How did you solve this problem?",
     "options": {
-      "A": "我是用计算器算的。",
-      "B": "这道题很难。",
+      "A": "这道题很难。",
+      "B": "我是用计算器算的。",
       "C": "我做了十分钟。",
       "D": "这道题我做对了。"
     },
-    "correct_answer": "A",
+    "correct_answer": "B",
     "explanation": "'怎么做出来的'询问方法/方式，A回答具体方法（用计算器）。B是评价，C是时间，D是结果，均不匹配。"
   },
   {
@@ -81,12 +81,12 @@
     "question_cn": "你觉得学汉语最难的是什么？",
     "question_en": "What do you think is the hardest part of learning Chinese?",
     "options": {
-      "A": "我觉得汉字最难记。",
-      "B": "汉语有四声。",
+      "A": "汉语有四声。",
+      "B": "我觉得汉字最难记。",
       "C": "我学了一年汉语。",
       "D": "汉语在世界上使用的人很多。"
     },
-    "correct_answer": "A",
+    "correct_answer": "B",
     "explanation": "'最难的是什么'询问主观感受，A是主观判断。B是客观事实，C是时长，D是背景信息，均不匹配。"
   },
   {
@@ -111,12 +111,12 @@
     "question_cn": "你比较喜欢吃中餐还是西餐？",
     "question_en": "Do you prefer Chinese food or Western food?",
     "options": {
-      "A": "我比较喜欢吃中餐。",
+      "A": "中餐比较便宜。",
       "B": "中餐和西餐都不错。",
-      "C": "中餐比较便宜。",
+      "C": "我比较喜欢吃中餐。",
       "D": "西餐比较好吃。"
     },
-    "correct_answer": "A",
+    "correct_answer": "C",
     "explanation": "'比较……还是……'要求明确选择，A直接选择。B未明确选择，C、D是评价但未回答自己的选择。"
   },
   {
@@ -126,12 +126,12 @@
     "question_cn": "你打算怎么处理这个问题？",
     "question_en": "How do you plan to handle this problem?",
     "options": {
-      "A": "我想先跟经理商量一下。",
-      "B": "这个问题很严重。",
+      "A": "这个问题很严重。",
+      "B": "我想先跟经理商量一下。",
       "C": "我已经发现问题了。",
       "D": "这个问题很难解决。"
     },
-    "correct_answer": "A",
+    "correct_answer": "B",
     "explanation": "'怎么处理'询问解决方案，A回答具体做法。B、C、D都是描述/评价，不涉及处理方法。"
   },
   {
@@ -156,12 +156,12 @@
     "question_cn": "他______把作业做完，______去睡觉。",
     "question_en": "He ______ finish his homework ______ go to sleep.",
     "options": {
-      "A": "一……就……",
+      "A": "虽然……但是……",
       "B": "不但……而且……",
-      "C": "虽然……但是……",
+      "C": "一……就……",
       "D": "因为……所以……"
     },
-    "correct_answer": "A",
+    "correct_answer": "C",
     "explanation": "'一……就……'表示两个动作紧接发生，'一做完就去睡觉'=as soon as he finishes, he goes to sleep。B表递进，C表转折，D表因果，均不匹配。"
   },
   {
@@ -171,12 +171,12 @@
     "question_cn": "______你努力，也不一定能成功。",
     "question_en": "______ you work hard, you may not necessarily succeed.",
     "options": {
-      "A": "即使",
-      "B": "因为",
+      "A": "因为",
+      "B": "即使",
       "C": "只要",
       "D": "不但"
     },
-    "correct_answer": "A",
+    "correct_answer": "B",
     "explanation": "'即使……也……'表让步，'即使努力也不一定能成功'=even if you work hard, you may not succeed。B表因果，C表条件（与'不一定'矛盾），D表递进，均不匹配。"
   },
   {
@@ -186,12 +186,12 @@
     "question_cn": "这个问题______讨论过好几次了。",
     "question_en": "This issue ______ been discussed several times already.",
     "options": {
-      "A": "已经",
+      "A": "总是",
       "B": "正在",
-      "C": "总是",
+      "C": "已经",
       "D": "马上"
     },
-    "correct_answer": "A",
+    "correct_answer": "C",
     "explanation": "'已经……过'表示经历完成，'已经讨论过好几次'=has already been discussed several times。'正在'表现在进行，'总是'表频率，'马上'表将来，均不匹配。"
   },
   {
@@ -201,12 +201,12 @@
     "question_cn": "他______说______笑，看起来很轻松。",
     "question_en": "He ______ talks ______ laughs, looking very relaxed.",
     "options": {
-      "A": "一边……一边……",
+      "A": "虽然……但是……",
       "B": "不但……而且……",
       "C": "因为……所以……",
-      "D": "虽然……但是……"
+      "D": "一边……一边……"
     },
-    "correct_answer": "A",
+    "correct_answer": "D",
     "explanation": "'一边……一边……'表示两个动作同时进行，'一边说一边笑'=talking and laughing at the same time。B表递进，C表因果，D表转折，均不匹配。"
   },
   {
@@ -216,12 +216,12 @@
     "question_cn": "这部电影______有趣，______让人感动。",
     "question_en": "This movie ______ interesting, ______ moving.",
     "options": {
-      "A": "不但……而且……",
+      "A": "如果……就……",
       "B": "虽然……但是……",
       "C": "因为……所以……",
-      "D": "如果……就……"
+      "D": "不但……而且……"
     },
-    "correct_answer": "A",
+    "correct_answer": "D",
     "explanation": "'不但……而且……'表递进，'不但有趣而且感人'=not only interesting but also moving。B表转折，C表因果，D表假设，均不匹配。"
   },
   {
@@ -231,12 +231,12 @@
     "question_cn": "你______把这件事告诉他？",
     "question_en": "Why ______ you tell him about this?",
     "options": {
-      "A": "为什么",
+      "A": "什么",
       "B": "怎么",
-      "C": "什么",
+      "C": "为什么",
       "D": "哪儿"
     },
-    "correct_answer": "A",
+    "correct_answer": "C",
     "explanation": "句末有问号，且语境是询问原因，'为什么'最合适。'怎么'问方式，'什么'问事物，'哪儿'问地点，均不匹配。"
   },
   {
@@ -261,12 +261,12 @@
     "question_cn": "______他生病了，______没来上课。",
     "question_en": "______ he was sick, ______ he didn't come to class.",
     "options": {
-      "A": "因为……所以……",
+      "A": "不但……而且……",
       "B": "虽然……但是……",
       "C": "如果……就……",
-      "D": "不但……而且……"
+      "D": "因为……所以……"
     },
-    "correct_answer": "A",
+    "correct_answer": "D",
     "explanation": "前句是原因（生病），后句是结果（没来上课），用'因为……所以……'。B表转折，C表假设，D表递进，均不匹配。"
   },
   {
@@ -276,12 +276,12 @@
     "question_cn": "他______比我高，______比我壮。",
     "question_en": "He ______ is taller than me, ______ is stronger than me.",
     "options": {
-      "A": "不但……而且……",
+      "A": "如果……就……",
       "B": "虽然……但是……",
       "C": "因为……所以……",
-      "D": "如果……就……"
+      "D": "不但……而且……"
     },
-    "correct_answer": "A",
+    "correct_answer": "D",
     "explanation": "两个比较句并列递进，'不但比我高，而且比我壮'=not only taller but also stronger。B表转折，C表因果，D表假设，均不匹配。"
   },
   {
@@ -306,12 +306,12 @@
     "question_cn": "他把书______桌子上。",
     "question_en": "He put the book ______ the table.",
     "options": {
-      "A": "放在",
+      "A": "躺在",
       "B": "坐在",
       "C": "站在",
-      "D": "躺在"
+      "D": "放在"
     },
-    "correct_answer": "A",
+    "correct_answer": "D",
     "explanation": "'放'是放置物品的动作，'放在桌子上'=put on the table。B、C、D的主语通常是人或动物，不用于书。"
   },
   {
@@ -321,12 +321,12 @@
     "question_cn": "这个问题______他来说很容易。",
     "question_en": "This problem is easy ______ him.",
     "options": {
-      "A": "对",
+      "A": "向",
       "B": "给",
-      "C": "向",
+      "C": "对",
       "D": "从"
     },
-    "correct_answer": "A",
+    "correct_answer": "C",
     "explanation": "'对……来说'是固定结构，表示'对于某人'。'对他来说很容易'=is easy for him。'给'、'向'、'从'均不匹配。"
   },
   {
@@ -366,12 +366,12 @@
     "question_cn": "'熟悉'的反义词是什么？",
     "question_en": "What is the opposite of '熟悉' (shúxī / familiar)?",
     "options": {
-      "A": "Strange/Unfamiliar",
-      "B": "Clear",
+      "A": "Clear",
+      "B": "Strange/Unfamiliar",
       "C": "Understand",
       "D": "Know well"
     },
-    "correct_answer": "A",
+    "correct_answer": "B",
     "explanation": "A表示不认识、不了解，是'熟悉'的反义。B表示看得清楚。C表示理解明白。D表示对情况知道得很清楚。"
   },
   {
@@ -396,12 +396,12 @@
     "question_cn": "'鼓掌'是什么意思？",
     "question_en": "What does '鼓掌' (gǔzhǎng) mean?",
     "options": {
-      "A": "Clap hands",
+      "A": "Hug",
       "B": "Wave",
       "C": "Shake hands",
-      "D": "Hug"
+      "D": "Clap hands"
     },
-    "correct_answer": "A",
+    "correct_answer": "D",
     "explanation": "A表示用双手拍击发出声音，表示欢迎或赞赏。B表示挥动手臂打招呼。C表示两人伸手相握。D表示两人拥抱。"
   },
   {
@@ -411,12 +411,12 @@
     "question_cn": "'参加'和'参与'的区别是什么？",
     "question_en": "What is the difference between '参加' (cānjiā) and '参与' (cānyù)?",
     "options": {
-      "A": "The first is for specific events; the second is for abstract matters",
+      "A": "The first is written; the second is spoken",
       "B": "They mean exactly the same",
-      "C": "The first is written; the second is spoken",
+      "C": "The first is for specific events; the second is for abstract matters",
       "D": "The first is a verb; the second is a noun"
     },
-    "correct_answer": "A",
+    "correct_answer": "C",
     "explanation": "A表示'参加'多用于具体活动如会议，'参与'多用于抽象事务如决策。B表示两者意思完全一样。C表示一个是书面语一个是口语。D表示一个是动词一个是名词。"
   },
   {
@@ -475,12 +475,12 @@
     "question_cn": "骑自行车上班有什么好处？",
     "question_en": "What are the benefits of cycling to work?",
     "options": {
-      "A": "锻炼身体且环保",
+      "A": "比开车便宜",
       "B": "速度很快",
       "C": "不受天气影响",
-      "D": "比开车便宜"
+      "D": "锻炼身体且环保"
     },
-    "correct_answer": "A",
+    "correct_answer": "D",
     "explanation": "文中提到'一方面可以锻炼身体，另一方面也是环保的出行方式'。B文中未提，C与文中'下雨天不太方便'矛盾，D文中未提。"
   },
   {
@@ -492,12 +492,12 @@
     "question_cn": "张阿姨什么时候开始学画画的？",
     "question_en": "When did Aunt Zhang start learning to paint?",
     "options": {
-      "A": "退休后",
+      "A": "上大学时",
       "B": "年轻时",
-      "C": "上大学时",
+      "C": "退休后",
       "D": "工作不忙时"
     },
-    "correct_answer": "A",
+    "correct_answer": "C",
     "explanation": "文中第一句'退休后，开始学习画画'。B、C、D均与原文不符。"
   },
   {
@@ -509,12 +509,12 @@
     "question_cn": "专家为什么建议每30分钟休息一下？",
     "question_en": "Why do experts recommend taking a break every 30 minutes?",
     "options": {
-      "A": "因为长时间看手机对眼睛不好。",
+      "A": "因为休息可以提高阅读效率。",
       "B": "因为手机电池不够用。",
       "C": "因为电子书内容太多。",
-      "D": "因为休息可以提高阅读效率。"
+      "D": "因为长时间看手机对眼睛不好。"
     },
-    "correct_answer": "A",
+    "correct_answer": "D",
     "explanation": "文中明确说'长时间看手机对眼睛不好。所以，专家建议每看30分钟就休息一下'。B、C、D文中均未提及。"
   },
   {
@@ -526,12 +526,12 @@
     "question_cn": "李华为什么没去丽江古城？",
     "question_en": "Why didn't Li Hua visit Lijiang Ancient Town?",
     "options": {
-      "A": "因为时间不够。",
+      "A": "因为他不喜欢古城。",
       "B": "因为古城门票太贵。",
-      "C": "因为他不喜欢古城。",
+      "C": "因为时间不够。",
       "D": "因为古城太远了。"
     },
-    "correct_answer": "A",
+    "correct_answer": "C",
     "explanation": "文中最后一句'因为时间不够，他没有去成丽江古城'。B、C、D文中均未提及。"
   },
   {
@@ -541,12 +541,12 @@
     "question_cn": "你觉得这家公司怎么样？",
     "question_en": "Nǐ juéde zhè jiā gōngsī zěnme yàng? (What do you think of this company?)",
     "options": {
-      "A": "公司环境不错，同事也很好相处，就是加班有点多。",
+      "A": "公司离我家很近。",
       "B": "这家公司成立五年了。",
-      "C": "公司离我家很近。",
+      "C": "公司环境不错，同事也很好相处，就是加班有点多。",
       "D": "我在公司做销售工作。"
     },
-    "correct_answer": "A",
+    "correct_answer": "C",
     "explanation": "'觉得……怎么样'询问综合评价，A给出优缺点分析。B回答历史，C回答距离，D回答职位，均不匹配。 / 'What do you think of' asks for comprehensive evaluation; A gives pros and cons. B is history, C is distance, D is position."
   },
   {
@@ -556,12 +556,12 @@
     "question_cn": "你平时怎么缓解压力？",
     "question_en": "Nǐ píngshí zěnme huǎnjiě yālì? (How do you usually relieve stress?)",
     "options": {
-      "A": "我一般会听音乐或者出去散步。",
-      "B": "我的工作压力很大。",
+      "A": "我的工作压力很大。",
+      "B": "我一般会听音乐或者出去散步。",
       "C": "压力对身体不好。",
       "D": "我不喜欢有压力。"
     },
-    "correct_answer": "A",
+    "correct_answer": "B",
     "explanation": "'怎么缓解'询问方法，A回答具体做法。B描述现状，C说影响，D说喜好，均不匹配。 / 'How do you relieve' asks for methods; A answers with specific actions. B describes the situation, C is about effects, D is about preference."
   },
   {
@@ -586,12 +586,12 @@
     "question_cn": "你为什么想学画画？",
     "question_en": "Nǐ wèishénme xiǎng xué huàhuà? (Why do you want to learn painting?)",
     "options": {
-      "A": "因为我觉得画画能让人放松心情，也可以培养审美能力。",
-      "B": "画画是一门艺术。",
+      "A": "画画是一门艺术。",
+      "B": "因为我觉得画画能让人放松心情，也可以培养审美能力。",
       "C": "我从小就喜欢颜色。",
       "D": "我的老师画画很好。"
     },
-    "correct_answer": "A",
+    "correct_answer": "B",
     "explanation": "'为什么'询问原因，A用'因为'给出两个理由。B是定义，C是背景，D是他人情况，均不匹配。 / 'Why' asks for reasons; A gives two reasons with 'because.' B is a definition, C is background, D is about someone else."
   },
   {
@@ -616,12 +616,12 @@
     "question_cn": "______你努力，也不一定能成功。",
     "question_en": "______ nǐ nǔlì, yě bù yídìng néng chénggōng. (______ you work hard, you may not necessarily succeed.)",
     "options": {
-      "A": "即使",
+      "A": "只要",
       "B": "因为",
-      "C": "只要",
+      "C": "即使",
       "D": "不但"
     },
-    "correct_answer": "A",
+    "correct_answer": "C",
     "explanation": "'即使……也……'表让步，'即使努力也不一定能成功'=even if you work hard, you may not succeed。B表因果，C表条件，D表递进，均不匹配。 / 'Even if...also' indicates concession. B indicates cause-effect, C indicates condition, D indicates progression."
   },
   {
@@ -631,12 +631,12 @@
     "question_cn": "这个问题______讨论过好几次了。",
     "question_en": "Zhège wèntí ______ tǎolùn guò hǎo jǐ cì le. (This issue ______ been discussed several times already.)",
     "options": {
-      "A": "已经",
+      "A": "马上",
       "B": "正在",
       "C": "总是",
-      "D": "马上"
+      "D": "已经"
     },
-    "correct_answer": "A",
+    "correct_answer": "D",
     "explanation": "'已经……过'表示经历完成。'正在'表现在进行，'总是'表频率，'马上'表将来，均不匹配。 / 'Already...before' indicates completed experience. 'Currently' indicates present continuous, 'always' indicates frequency, 'immediately' indicates future."
   },
   {
@@ -646,12 +646,12 @@
     "question_cn": "他写字写______很整齐。",
     "question_en": "Tā xiě zì xiě ______ hěn zhěngqí. (He writes characters ______ very neatly.)",
     "options": {
-      "A": "得",
-      "B": "的",
+      "A": "的",
+      "B": "得",
       "C": "地",
       "D": "了"
     },
-    "correct_answer": "A",
+    "correct_answer": "B",
     "explanation": "'得'用于动词和补语之间，'写得很整齐'中'很整齐'是补语。'的'表修饰，'地'表状语，'了'表完成，均不匹配。 / 'De' is used between verb and complement. 'De' (possessive) indicates modification, 'de' (adverbial) indicates manner, 'le' indicates completion."
   },
   {
@@ -661,12 +661,12 @@
     "question_cn": "______他生病了，______没来上课。",
     "question_en": "______ tā shēngbìng le, ______ méi lái shàngkè. (______ he was sick, ______ he didn't come to class.)",
     "options": {
-      "A": "因为……所以……",
+      "A": "如果……就……",
       "B": "虽然……但是……",
-      "C": "如果……就……",
+      "C": "因为……所以……",
       "D": "不但……而且……"
     },
-    "correct_answer": "A",
+    "correct_answer": "C",
     "explanation": "前句是原因（生病），后句是结果（没来上课），用'因为……所以……'。B表转折，C表假设，D表递进，均不匹配。 / First clause is cause (sick), second is effect (didn't come), so 'because...so' is used. B indicates contrast, C indicates hypothesis, D indicates progression."
   },
   {
@@ -676,12 +676,12 @@
     "question_cn": "'鼓励'是什么意思？",
     "question_en": "'Gǔlì' shì shénme yìsi? (What does 'gǔlì' mean?)",
     "options": {
-      "A": "Encourage",
+      "A": "Punish",
       "B": "Criticize",
       "C": "Ignore",
-      "D": "Punish"
+      "D": "Encourage"
     },
-    "correct_answer": "A",
+    "correct_answer": "D",
     "explanation": "A表示给予支持和信心，让人更有动力。B表示批评指责。C表示不理睬。D表示处罚。 / A means giving support and confidence to motivate. B means to criticize. C means to ignore. D means to punish."
   },
   {
@@ -691,12 +691,12 @@
     "question_cn": "'遵守'和'违反'是什么关系？",
     "question_en": "'Zūnshǒu' hé 'wéifǎn' shì shénme guānxi? (What is the relationship between 'zūnshǒu' and 'wéifǎn'?)",
     "options": {
-      "A": "Antonyms",
+      "A": "No relationship",
       "B": "Synonyms",
       "C": "Near-synonyms",
-      "D": "No relationship"
+      "D": "Antonyms"
     },
-    "correct_answer": "A",
+    "correct_answer": "D",
     "explanation": "A表示意义相反，'遵守'是依照执行，'违反'是不遵守。B表示意思相同。C表示意思接近。D表示没有关联。 / A indicates opposite meaning; 'zūnshǒu' means to follow, 'wéifǎn' means to violate. B means same meaning, C means similar meaning, D means no relation."
   },
   {
@@ -706,12 +706,12 @@
     "question_cn": "'失望'是什么意思？",
     "question_en": "'Shīwàng' shì shénme yìsi? (What does 'shīwàng' mean?)",
     "options": {
-      "A": "Disappointed",
-      "B": "Excited",
+      "A": "Excited",
+      "B": "Disappointed",
       "C": "Surprised",
       "D": "Satisfied"
     },
-    "correct_answer": "A",
+    "correct_answer": "B",
     "explanation": "A表示希望没有实现，感到沮丧。B表示兴奋激动。C表示出乎意料。D表示满足满意。 / A means hope was not fulfilled, feeling frustrated. B means excited. C means surprised. D means satisfied."
   },
   {
@@ -723,12 +723,12 @@
     "question_cn": "张明为什么开始学习摄影？",
     "question_en": "Zhāng Míng wèishénme kāishǐ xuéxí shèyǐng? (Why did Zhang Ming start learning photography?)",
     "options": {
-      "A": "因为他觉得生活缺少乐趣",
+      "A": "因为他朋友是摄影师",
       "B": "因为他的工作需要",
       "C": "因为他想赚钱",
-      "D": "因为他朋友是摄影师"
+      "D": "因为他觉得生活缺少乐趣"
     },
-    "correct_answer": "A",
+    "correct_answer": "D",
     "explanation": "文中说'他觉得生活缺少乐趣'，然后'开始学习摄影'。B、C、D文中均未提及。 / The text says he felt life lacked fun, then started learning photography. B, C, D are not mentioned."
   },
   {
@@ -740,12 +740,12 @@
     "question_cn": "高楼大厦带来了什么问题？",
     "question_en": "Gāolóu dàshà dàilái le shénme wèntí? (What problems have high-rise buildings brought?)",
     "options": {
-      "A": "老房子被拆，城市通风变差",
+      "A": "房价下降了",
       "B": "城市人口减少了",
-      "C": "房价下降了",
+      "C": "老房子被拆，城市通风变差",
       "D": "交通变得更方便了"
     },
-    "correct_answer": "A",
+    "correct_answer": "C",
     "explanation": "文中提到两个问题：'老房子被拆掉'和'通风变差了'。B、C、D文中均未提及或与原文矛盾。 / The text mentions two problems: old houses demolished and ventilation worsened. B, C, D are not mentioned or contradict the text."
   },
   {
@@ -757,12 +757,12 @@
     "question_cn": "刘奶奶为什么喜欢打太极拳？",
     "question_en": "Liú nǎinai wèishénme xǐhuan dǎ Tàijíquán? (Why does Grandma Liu like practicing Tai Chi?)",
     "options": {
-      "A": "因为太极拳让她身体灵活，很少生病",
-      "B": "因为她年轻时是武术老师",
+      "A": "因为她年轻时是武术老师",
+      "B": "因为太极拳让她身体灵活，很少生病",
       "C": "因为公园离家很近",
       "D": "因为她想参加比赛"
     },
-    "correct_answer": "A",
+    "correct_answer": "B",
     "explanation": "文中明确说'太极拳让她的身体很灵活，也很少生病'。B、C、D文中均未提及。 / The text explicitly states Tai Chi keeps her flexible and she rarely gets sick. B, C, D are not mentioned."
   }
 ]

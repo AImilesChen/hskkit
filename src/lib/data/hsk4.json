@@ -6,12 +6,12 @@
     "question_cn": "你怎么看待现在的年轻人越来越依赖手机这个现象？",
     "question_en": "What do you think of the phenomenon that young people are increasingly dependent on mobile phones?",
     "options": {
-      "A": "这确实是个问题，但手机也确实给生活带来了很多便利，关键是要有自制力。",
+      "A": "我也经常用手机。",
       "B": "年轻人就是喜欢玩手机。",
       "C": "手机功能越来越多了。",
-      "D": "我也经常用手机。"
+      "D": "这确实是个问题，但手机也确实给生活带来了很多便利，关键是要有自制力。"
     },
-    "correct_answer": "A",
+    "correct_answer": "D",
     "explanation": "'怎么看待'要求给出观点/分析，A是辩证分析（问题+便利+建议）。B是简单描述，C是客观事实，D是个人行为，均不构成观点分析。"
   },
   {
@@ -21,12 +21,12 @@
     "question_cn": "如果让你选择，你更愿意在大城市生活还是在小城市生活？",
     "question_en": "If you had to choose, would you prefer to live in a big city or a small city?",
     "options": {
-      "A": "我更喜欢小城市，虽然机会少一些，但是生活压力没那么大，环境也更好。",
+      "A": "小城市比较安静。",
       "B": "大城市有很多工作机会。",
-      "C": "小城市比较安静。",
+      "C": "我更喜欢小城市，虽然机会少一些，但是生活压力没那么大，环境也更好。",
       "D": "这要看个人情况。"
     },
-    "correct_answer": "A",
+    "correct_answer": "C",
     "explanation": "'更愿意……还是……'要求明确选择并给出理由，A明确选择小城市并给出充分理由（让步+优势）。B、C只描述一方面，D回避选择，均不符合要求。"
   },
   {
@@ -51,12 +51,12 @@
     "question_cn": "你最近在看什么书？能给我推荐一本吗？",
     "question_en": "What book have you been reading recently? Can you recommend one?",
     "options": {
-      "A": "我最近在看《活着》，写得非常感人，强烈推荐你也看看。",
-      "B": "我最近在看书。",
+      "A": "我最近在看书。",
+      "B": "我最近在看《活着》，写得非常感人，强烈推荐你也看看。",
       "C": "我喜欢看小说。",
       "D": "书店有很多好书。"
     },
-    "correct_answer": "A",
+    "correct_answer": "B",
     "explanation": "问题要求具体书名+推荐，A给出具体书名+评价+推荐。B太笼统，C是偏好，D转移话题，均不匹配。"
   },
   {
@@ -66,12 +66,12 @@
     "question_cn": "听说你辞职了，是找到更好的工作了吗？",
     "question_en": "I heard you resigned. Did you find a better job?",
     "options": {
-      "A": "还没有，我想先休息一段时间，好好想想以后的方向。",
+      "A": "原来的工作太累了。",
       "B": "是的，新工作工资更高。",
-      "C": "原来的工作太累了。",
+      "C": "还没有，我想先休息一段时间，好好想想以后的方向。",
       "D": "很多人都辞职了。"
     },
-    "correct_answer": "A",
+    "correct_answer": "C",
     "explanation": "问题是'找到更好的工作了吗'，A直接回答（还没有）并补充计划。B与'还没有'矛盾，C是原因但未回答是否找到，D转移话题。"
   },
   {
@@ -81,12 +81,12 @@
     "question_cn": "你怎么理解'失败是成功之母'这句话？",
     "question_en": "How do you understand the saying 'Failure is the mother of success'?",
     "options": {
-      "A": "我觉得这句话是说，我们从失败中能学到很多经验，这些经验会帮助我们以后取得成功。",
-      "B": "失败让人很难过。",
+      "A": "失败让人很难过。",
+      "B": "我觉得这句话是说，我们从失败中能学到很多经验，这些经验会帮助我们以后取得成功。",
       "C": "成功的人都有过失败的经历。",
       "D": "我们应该避免失败。"
     },
-    "correct_answer": "A",
+    "correct_answer": "B",
     "explanation": "'怎么理解'要求解释含义，A准确解释谚语含义（失败→经验→成功）。B只说情绪，C是推论，D是建议，均不是对谚语本身的理解。"
   },
   {
@@ -96,12 +96,12 @@
     "question_cn": "你认为学习一门外语最重要的因素是什么？",
     "question_en": "What do you think is the most important factor in learning a foreign language?",
     "options": {
-      "A": "我认为最重要的是坚持，语言学习是一个长期的过程，不能三天打鱼两天晒网。",
-      "B": "需要一个好的老师。",
+      "A": "需要一个好的老师。",
+      "B": "我认为最重要的是坚持，语言学习是一个长期的过程，不能三天打鱼两天晒网。",
       "C": "要有语言环境。",
       "D": "要多背单词。"
     },
-    "correct_answer": "A",
+    "correct_answer": "B",
     "explanation": "'最重要的因素'要求给出核心观点，A给出核心因素（坚持）并解释原因。B、C、D都是重要因素，但A更全面地阐述了'最重要'的标准。"
   },
   {
@@ -111,12 +111,12 @@
     "question_cn": "你如何看待人工智能对未来就业的影响？",
     "question_en": "What do you think about the impact of AI on future employment?",
     "options": {
-      "A": "我觉得人工智能会取代一些重复性的工作，但同时也会创造很多新的就业机会，关键是人们要不断学习新技能。",
+      "A": "未来的工作会很难找。",
       "B": "人工智能发展得很快。",
       "C": "很多人担心失业。",
-      "D": "未来的工作会很难找。"
+      "D": "我觉得人工智能会取代一些重复性的工作，但同时也会创造很多新的就业机会，关键是人们要不断学习新技能。"
     },
-    "correct_answer": "A",
+    "correct_answer": "D",
     "explanation": "'如何看待'要求分析观点，A是辩证分析（取代+创造+建议）。B是描述，C是现象，D是悲观预测，均不构成完整分析。"
   },
   {
@@ -126,12 +126,12 @@
     "question_cn": "如果你中了彩票，你会怎么花这笔钱？",
     "question_en": "If you won the lottery, how would you spend the money?",
     "options": {
-      "A": "我可能会先买一套房子，然后把剩下的钱存起来，留一部分做投资。",
+      "A": "我会把钱捐出去。",
       "B": "我会买很多奢侈品。",
-      "C": "我会把钱捐出去。",
+      "C": "我可能会先买一套房子，然后把剩下的钱存起来，留一部分做投资。",
       "D": "我不知道。"
     },
-    "correct_answer": "A",
+    "correct_answer": "C",
     "explanation": "'如果……会怎么'是假设句，要求给出具体计划，A给出合理分配方案。B、C是可能的选择但过于极端，D回避问题，均不如A完整合理。"
   },
   {
@@ -141,12 +141,12 @@
     "question_cn": "你觉得现在的教育制度有哪些需要改进的地方？",
     "question_en": "What aspects of the current education system do you think need improvement?",
     "options": {
-      "A": "我觉得应该更注重培养学生的创造力和实践能力，而不只是考试成绩。",
-      "B": "现在的教育制度很好。",
+      "A": "现在的教育制度很好。",
+      "B": "我觉得应该更注重培养学生的创造力和实践能力，而不只是考试成绩。",
       "C": "学生压力太大了。",
       "D": "考试太多了。"
     },
-    "correct_answer": "A",
+    "correct_answer": "B",
     "explanation": "'哪些需要改进'要求指出问题+改进方向，A指出问题（只重成绩）+改进方向（创造力+实践能力）。B否认有问题，C、D只指出问题未提改进方向。"
   },
   {
@@ -156,12 +156,12 @@
     "question_cn": "你为什么决定学汉语？",
     "question_en": "Why did you decide to learn Chinese?",
     "options": {
-      "A": "主要是因为我对中国文化很感兴趣，而且我觉得汉语将来会很有用。",
-      "B": "汉语是世界上使用人数最多的语言。",
+      "A": "汉语是世界上使用人数最多的语言。",
+      "B": "主要是因为我对中国文化很感兴趣，而且我觉得汉语将来会很有用。",
       "C": "我的老师建议我学。",
       "D": "学习汉语很有意思。"
     },
-    "correct_answer": "A",
+    "correct_answer": "B",
     "explanation": "'为什么决定'要求给出决定的原因，A给出两个明确原因（兴趣+实用）。B是背景信息，C是外部原因，D是感受，均不如A完整地解释了'决定'的动机。"
   },
   {
@@ -186,12 +186,12 @@
     "question_cn": "______遇到多大的困难，他______不会放弃。",
     "question_en": "______ great difficulties he encounters, he ______ won't give up.",
     "options": {
-      "A": "无论……都……",
-      "B": "虽然……但是……",
+      "A": "虽然……但是……",
+      "B": "无论……都……",
       "C": "因为……所以……",
       "D": "如果……就……"
     },
-    "correct_answer": "A",
+    "correct_answer": "B",
     "explanation": "'无论……都……'表无条件，'无论多大困难都不会放弃'=no matter what difficulties, he won't give up。B表转折，C表因果，D表假设，均不匹配。"
   },
   {
@@ -201,12 +201,12 @@
     "question_cn": "这个问题______他解释，______越听越糊涂。",
     "question_en": "The more he explained this problem, ______ more confused people got.",
     "options": {
-      "A": "越……越……",
+      "A": "虽然……但是……",
       "B": "不但……而且……",
-      "C": "虽然……但是……",
+      "C": "越……越……",
       "D": "因为……所以……"
     },
-    "correct_answer": "A",
+    "correct_answer": "C",
     "explanation": "'越……越……'表示程度随条件变化，'越解释越糊涂'=the more he explained, the more confused。B表递进，C表转折，D表因果，均不匹配。"
   },
   {
@@ -216,12 +216,12 @@
     "question_cn": "他______聪明，______不肯努力，所以成绩一直不好。",
     "question_en": "He ______ smart, ______ unwilling to work hard, so his grades have always been poor.",
     "options": {
-      "A": "尽管……却……",
+      "A": "如果……就……",
       "B": "不但……而且……",
       "C": "因为……所以……",
-      "D": "如果……就……"
+      "D": "尽管……却……"
     },
-    "correct_answer": "A",
+    "correct_answer": "D",
     "explanation": "前句'聪明'和后句'不肯努力'形成转折，'尽管……却……'表转折（书面语）。B表递进，C表因果，D表假设，均不匹配。"
   },
   {
@@ -246,12 +246,12 @@
     "question_cn": "他______说完了，大家______鼓起掌来。",
     "question_en": "______ he finished speaking, everyone ______ started applauding.",
     "options": {
-      "A": "刚……就……",
+      "A": "虽然……但是……",
       "B": "不但……而且……",
-      "C": "虽然……但是……",
+      "C": "刚……就……",
       "D": "因为……所以……"
     },
-    "correct_answer": "A",
+    "correct_answer": "C",
     "explanation": "'刚……就……'表示两个动作紧接发生，'刚说完就鼓掌'=as soon as he finished, everyone applauded。B表递进，C表转折，D表因果，均不匹配。"
   },
   {
@@ -261,12 +261,12 @@
     "question_cn": "______你同意不同意，这件事______要做了。",
     "question_en": "______ you agree or not, this matter ______ must be done.",
     "options": {
-      "A": "不管……都……",
+      "A": "虽然……但是……",
       "B": "不但……而且……",
-      "C": "虽然……但是……",
+      "C": "不管……都……",
       "D": "如果……就……"
     },
-    "correct_answer": "A",
+    "correct_answer": "C",
     "explanation": "'不管……都……'表无条件，'不管你同意不同意都要做'=regardless of whether you agree or not, it must be done。B表递进，C表转折，D表假设，均不匹配。"
   },
   {
@@ -276,12 +276,12 @@
     "question_cn": "他______累得______说不出话来。",
     "question_en": "He was ______ tired ______ he couldn't speak.",
     "options": {
-      "A": "得……连……都……",
+      "A": "非常……但是……",
       "B": "很……所以……",
       "C": "太……了……",
-      "D": "非常……但是……"
+      "D": "得……连……都……"
     },
-    "correct_answer": "A",
+    "correct_answer": "D",
     "explanation": "'得……连……都……'是程度补语结构，'累得连话都说不出来'=so tired that he couldn't even speak。B、C、D均不构成此结构。"
   },
   {
@@ -291,12 +291,12 @@
     "question_cn": "这件事______你______我，都解决不了。",
     "question_en": "This matter, ______ you ______ me, neither can solve it.",
     "options": {
-      "A": "不是……就是……",
-      "B": "不管……还是……",
+      "A": "不管……还是……",
+      "B": "不是……就是……",
       "C": "虽然……但是……",
       "D": "不但……而且……"
     },
-    "correct_answer": "B",
+    "correct_answer": "A",
     "explanation": "'不管……还是……'表无条件列举，'不管你还是我都解决不了'=neither you nor I can solve it。A表选择，C表转折，D表递进，均不匹配。"
   },
   {
@@ -306,12 +306,12 @@
     "question_cn": "他______不聪明，______非常努力，所以进步很快。",
     "question_en": "He ______ not smart, ______ very hardworking, so he improves quickly.",
     "options": {
-      "A": "虽然……但是……",
-      "B": "不但……而且……",
+      "A": "不但……而且……",
+      "B": "虽然……但是……",
       "C": "因为……所以……",
       "D": "如果……就……"
     },
-    "correct_answer": "A",
+    "correct_answer": "B",
     "explanation": "前句'不聪明'和后句'努力'形成转折，用'虽然……但是……'。B表递进，C表因果，D表假设，均不匹配。"
   },
   {
@@ -321,12 +321,12 @@
     "question_cn": "______你早告诉我，我就不会白跑一趟了。",
     "question_en": "______ you had told me earlier, I wouldn't have made a wasted trip.",
     "options": {
-      "A": "要是",
+      "A": "虽然",
       "B": "因为",
-      "C": "虽然",
+      "C": "要是",
       "D": "不但"
     },
-    "correct_answer": "A",
+    "correct_answer": "C",
     "explanation": "'要是……就……'表假设（常与过去事实相反），'要是你早告诉我就不会白跑'=if you had told me earlier...B表因果，C表转折，D表递进，均不匹配。"
   },
   {
@@ -366,12 +366,12 @@
     "question_cn": "'推迟'和'提前'是什么关系？",
     "question_en": "What is the relationship between '推迟' (tuīchí) and '提前' (tíqián)?",
     "options": {
-      "A": "Antonyms",
+      "A": "Near-synonyms",
       "B": "Synonyms",
-      "C": "Near-synonyms",
+      "C": "Antonyms",
       "D": "No relationship"
     },
-    "correct_answer": "A",
+    "correct_answer": "C",
     "explanation": "A表示方向相反，'推迟'是延后，'提前'是往前。B表示意思相同。C表示意思接近。D表示没有关系。"
   },
   {
@@ -381,12 +381,12 @@
     "question_cn": "'考虑'是什么意思？",
     "question_en": "What does '考虑' (kǎolǜ) mean?",
     "options": {
-      "A": "Consider/Think over",
-      "B": "Decide",
+      "A": "Decide",
+      "B": "Consider/Think over",
       "C": "Forget",
       "D": "Agree"
     },
-    "correct_answer": "A",
+    "correct_answer": "B",
     "explanation": "A表示仔细思考后再做决定。B表示已经做出选择。C表示不再记得某事。D表示同意别人的意见。"
   },
   {
@@ -396,12 +396,12 @@
     "question_cn": "'经验'和'经历'的区别是什么？",
     "question_en": "What is the difference between '经验' (jīngyàn) and '经历' (jīnglì)?",
     "options": {
-      "A": "The first is knowledge from practice; the second is things one has gone through",
+      "A": "The first is a verb; the second is a noun",
       "B": "They mean exactly the same",
-      "C": "The first is a verb; the second is a noun",
+      "C": "The first is knowledge from practice; the second is things one has gone through",
       "D": "The first is for work; the second is for life"
     },
-    "correct_answer": "A",
+    "correct_answer": "C",
     "explanation": "A表示'经验'是从实践中获得的知识，'经历'是亲身做过的事。B表示两者意思完全一样。C表示一个是形容词一个是名词。D表示一个用于经济一个用于生活。"
   },
   {
@@ -411,12 +411,12 @@
     "question_cn": "'恐怕'是什么意思？",
     "question_en": "What does '恐怕' (kǒngpà) mean?",
     "options": {
-      "A": "I'm afraid",
+      "A": "Angry",
       "B": "Certainly",
       "C": "Happy",
-      "D": "Angry"
+      "D": "I'm afraid"
     },
-    "correct_answer": "A",
+    "correct_answer": "D",
     "explanation": "A表示担心或推测某事可能发生。B表示非常确定。C表示心情愉快。D表示生气发怒。"
   },
   {
@@ -441,12 +441,12 @@
     "question_cn": "'其实'在句子中起什么作用？",
     "question_en": "What function does '其实' (qíshí) serve in a sentence?",
     "options": {
-      "A": "Introduces the real situation (contrast)",
+      "A": "Indicates time",
       "B": "Indicates reason",
       "C": "Indicates result",
-      "D": "Indicates time"
+      "D": "Introduces the real situation (contrast)"
     },
-    "correct_answer": "A",
+    "correct_answer": "D",
     "explanation": "A表示转折，引出一个与表面不同的事实。B表示原因。C表示结果。D表示时间。"
   },
   {
@@ -456,12 +456,12 @@
     "question_cn": "'商量'是什么意思？",
     "question_en": "What does '商量' (shāngliang) mean?",
     "options": {
-      "A": "Discuss/Consult",
-      "B": "Decide",
+      "A": "Decide",
+      "B": "Discuss/Consult",
       "C": "Argue",
       "D": "Announce"
     },
-    "correct_answer": "A",
+    "correct_answer": "B",
     "explanation": "A表示与人讨论、交换意见。B表示做出最终决定。C表示与人争论不休。D表示公开告诉大家。"
   },
   {
@@ -473,12 +473,12 @@
     "question_cn": "根据文章，网络购物带来了什么问题？",
     "question_en": "According to the article, what problems has online shopping brought?",
     "options": {
-      "A": "人们身体变差，实体店面临倒闭",
-      "B": "商品价格变贵了",
+      "A": "商品价格变贵了",
+      "B": "人们身体变差，实体店面临倒闭",
       "C": "送货速度变慢了",
       "D": "人们不愿意用手机了"
     },
-    "correct_answer": "A",
+    "correct_answer": "B",
     "explanation": "文中提到两个问题：'很多人因为长时间坐着不动，身体越来越差'和'一些传统的实体店面临倒闭的风险'。B、C、D文中均未提及。"
   },
   {
@@ -490,12 +490,12 @@
     "question_cn": "根据文章，现在越来越多的年轻人春节时选择做什么？",
     "question_en": "According to the article, what do more and more young people choose to do during Spring Festival now?",
     "options": {
-      "A": "出去旅游",
+      "A": "给孩子压岁钱",
       "B": "回家团聚",
       "C": "看春晚",
-      "D": "给孩子压岁钱"
+      "D": "出去旅游"
     },
-    "correct_answer": "A",
+    "correct_answer": "D",
     "explanation": "文中最后一句'越来越多的年轻人选择春节期间出去旅游'。B、C、D是传统做法，不是年轻人现在的新选择。"
   },
   {
@@ -507,12 +507,12 @@
     "question_cn": "心理学家认为拖延的主要原因是什么？",
     "question_en": "What do psychologists believe is the main cause of procrastination?",
     "options": {
-      "A": "对任务的恐惧或追求完美",
+      "A": "任务太多",
       "B": "懒惰",
-      "C": "任务太多",
+      "C": "对任务的恐惧或追求完美",
       "D": "时间不够"
     },
-    "correct_answer": "A",
+    "correct_answer": "C",
     "explanation": "文中明确说'拖延并不是因为懒惰，而是因为对任务的恐惧或者追求完美'。B是常见误解（文中否定），C、D文中未提及。"
   },
   {
@@ -524,12 +524,12 @@
     "question_cn": "根据文章，共享经济存在哪些问题？",
     "question_en": "According to the article, what problems does the sharing economy have?",
     "options": {
-      "A": "单车被随意丢弃，个人信息可能被泄露",
+      "A": "城市环境变好了",
       "B": "价格太贵",
       "C": "使用的人太少",
-      "D": "城市环境变好了"
+      "D": "单车被随意丢弃，个人信息可能被泄露"
     },
-    "correct_answer": "A",
+    "correct_answer": "D",
     "explanation": "文中提到两个问题：'有些共享单车被随意丢弃'和'担心自己的个人信息……被泄露'。B、C、D文中均未提及或与原文矛盾。"
   },
   {
@@ -541,12 +541,12 @@
     "question_cn": "根据文章，新能源普及面临的主要困难是什么？",
     "question_en": "According to the article, what is the main difficulty in popularizing new energy?",
     "options": {
-      "A": "成本较高，能源储存也是难题",
-      "B": "污染太严重",
+      "A": "污染太严重",
+      "B": "成本较高，能源储存也是难题",
       "C": "国家不重视",
       "D": "能源已经够用了"
     },
-    "correct_answer": "A",
+    "correct_answer": "B",
     "explanation": "文中提到两个困难：'成本还比较高'和'如何有效地储存这些能源也是一个亟待解决的难题'。B与原文（减少污染）矛盾，C与原文（重视）矛盾，D与原文（缓解短缺）矛盾。"
   },
   {
@@ -586,12 +586,12 @@
     "question_cn": "你觉得旅游的意义是什么？",
     "question_en": "Nǐ juéde lǚyóu de yìyì shì shénme? (What do you think is the meaning of travel?)",
     "options": {
-      "A": "旅游不仅能让人放松，还能开阔眼界，了解不同的文化和生活方式。",
+      "A": "我喜欢去海边旅游。",
       "B": "旅游可以拍很多照片。",
       "C": "旅游需要花很多钱。",
-      "D": "我喜欢去海边旅游。"
+      "D": "旅游不仅能让人放松，还能开阔眼界，了解不同的文化和生活方式。"
     },
-    "correct_answer": "A",
+    "correct_answer": "D",
     "explanation": "'意义是什么'要求深层分析，A给出多维度意义。B是行为，C是成本，D是偏好，均不匹配。 / 'What is the meaning' requires deep analysis; A gives multi-dimensional meaning. B is behavior, C is cost, D is preference."
   },
   {
@@ -601,12 +601,12 @@
     "question_cn": "你怎么评价现在的快餐文化？",
     "question_en": "Nǐ zěnme píngjià xiànzài de kuàicān wénhuà? (How do you evaluate fast food culture today?)",
     "options": {
-      "A": "快餐确实方便快捷，但长期食用对健康不好，应该适度消费。",
-      "B": "快餐很好吃。",
+      "A": "快餐很好吃。",
+      "B": "快餐确实方便快捷，但长期食用对健康不好，应该适度消费。",
       "C": "快餐店越来越多。",
       "D": "我不喜欢快餐。"
     },
-    "correct_answer": "A",
+    "correct_answer": "B",
     "explanation": "'怎么评价'要求给出评价+理由，A给出辩证评价。B是感受，C是现象，D是偏好，均不匹配。 / 'How do you evaluate' requires evaluation with reasons; A gives a balanced evaluation. B is feeling, C is phenomenon, D is preference."
   },
   {
@@ -616,12 +616,12 @@
     "question_cn": "他______不聪明，______非常努力，所以成绩一直很好。",
     "question_en": "Tā ______ bù cōngmíng, ______ fēicháng nǔlì, suǒyǐ chéngjì yìzhí hěn hǎo. (He ______ not smart, ______ very hardworking, so his grades have always been good.)",
     "options": {
-      "A": "虽然……但是……",
+      "A": "如果……就……",
       "B": "不但……而且……",
       "C": "因为……所以……",
-      "D": "如果……就……"
+      "D": "虽然……但是……"
     },
-    "correct_answer": "A",
+    "correct_answer": "D",
     "explanation": "前句'不聪明'和后句'努力'形成转折，用'虽然……但是……'。B表递进，C表因果，D表假设，均不匹配。 / 'Not smart' and 'hardworking' form a contrast, so 'although...but' is used. B indicates progression, C indicates cause-effect, D indicates hypothesis."
   },
   {
@@ -646,12 +646,12 @@
     "question_cn": "这个问题______讨论，______越复杂。",
     "question_en": "Zhège wèntí ______ tǎolùn, ______ yuè fùzá. (The more this issue ______ discussed, ______ more complicated it gets.)",
     "options": {
-      "A": "越……越……",
+      "A": "因为……所以……",
       "B": "不但……而且……",
       "C": "虽然……但是……",
-      "D": "因为……所以……"
+      "D": "越……越……"
     },
-    "correct_answer": "A",
+    "correct_answer": "D",
     "explanation": "'越……越……'表示程度随条件变化。B表递进，C表转折，D表因果，均不匹配。 / 'The more...the more' indicates degree changes with conditions. B indicates progression, C indicates contrast, D indicates cause-effect."
   },
   {
@@ -676,12 +676,12 @@
     "question_cn": "______你同意不同意，这件事______要做了。",
     "question_en": "______ nǐ tóngyì bù tóngyì, zhè jiàn shì ______ yào zuò le. (______ you agree or not, this matter ______ must be done.)",
     "options": {
-      "A": "不管……都……",
+      "A": "虽然……但是……",
       "B": "不但……而且……",
-      "C": "虽然……但是……",
+      "C": "不管……都……",
       "D": "如果……就……"
     },
-    "correct_answer": "A",
+    "correct_answer": "C",
     "explanation": "'不管……都……'表无条件。B表递进，C表转折，D表假设，均不匹配。 / 'Regardless...all' indicates unconditional. B indicates progression, C indicates contrast, D indicates hypothesis."
   },
   {
@@ -691,12 +691,12 @@
     "question_cn": "'现象'是什么意思？",
     "question_en": "'Xiànxiàng' shì shénme yìsi? (What does 'xiànxiàng' mean?)",
     "options": {
-      "A": "Phenomenon",
-      "B": "Reason",
+      "A": "Reason",
+      "B": "Phenomenon",
       "C": "Method",
       "D": "Result"
     },
-    "correct_answer": "A",
+    "correct_answer": "B",
     "explanation": "A表示事物表现出来的、能被观察到的样子或情况。B表示原因。C表示方法。D表示结果。 / A means the observable appearance or situation of something. B means reason. C means method. D means result."
   },
   {
@@ -706,12 +706,12 @@
     "question_cn": "'坚持'和'放弃'是什么关系？",
     "question_en": "'Jiānchí' hé 'fàngqì' shì shénme guānxi? (What is the relationship between 'jiānchí' and 'fàngqì'?)",
     "options": {
-      "A": "Antonyms",
+      "A": "No relationship",
       "B": "Synonyms",
       "C": "Near-synonyms",
-      "D": "No relationship"
+      "D": "Antonyms"
     },
-    "correct_answer": "A",
+    "correct_answer": "D",
     "explanation": "A表示意义相反，'坚持'是继续做，'放弃'是停止做。B表示意思相同。C表示意思接近。D表示没有关联。 / A indicates opposite meaning; 'jiānchí' means to persist, 'fàngqì' means to give up. B means same meaning, C means similar meaning, D means no relation."
   },
   {
@@ -738,12 +738,12 @@
     "question_cn": "为什么一些读者仍然偏爱纸质书？",
     "question_en": "Wèishénme yìxiē dúzhě réngrán piān'ài zhǐzhì shū? (Why do some readers still prefer paper books?)",
     "options": {
-      "A": "因为他们认为纸质书阅读体验更好，对眼睛更友好",
+      "A": "因为纸质书方便携带",
       "B": "因为纸质书更便宜",
-      "C": "因为纸质书方便携带",
+      "C": "因为他们认为纸质书阅读体验更好，对眼睛更友好",
       "D": "因为纸质书种类更多"
     },
-    "correct_answer": "A",
+    "correct_answer": "C",
     "explanation": "文中明确说'他们认为纸质书的阅读体验更好，对眼睛也更友好'。B、C是电子书的优点，D文中未提及。 / The text explicitly states they believe paper books offer a better reading experience and are more eye-friendly. B, C are advantages of e-books, D is not mentioned."
   },
   {
