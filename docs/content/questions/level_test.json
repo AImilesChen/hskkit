@@ -6,12 +6,12 @@
     "question_cn": "你好吗？",
     "question_en": "How are you?",
     "options": {
-      "A": "我很好，谢谢。 / I'm fine, thank you.",
-      "B": "我叫李明。 / My name is Li Ming.",
+      "A": "我叫李明。 / My name is Li Ming.",
+      "B": "我很好，谢谢。 / I'm fine, thank you.",
       "C": "我是学生。 / I am a student.",
       "D": "我二十岁。 / I am 20 years old."
     },
-    "correct_answer": "A",
+    "correct_answer": "B",
     "explanation": "'你好吗'是问候语，标准回应是'我很好，谢谢'。B回答名字，C回答身份，D回答年龄。"
   },
   {
@@ -21,12 +21,12 @@
     "question_cn": "'水'是什么？",
     "question_en": "What is '水' (shuǐ)?",
     "options": {
-      "A": "Water / 水",
+      "A": "Coffee / 咖啡",
       "B": "Tea / 茶",
-      "C": "Coffee / 咖啡",
+      "C": "Water / 水",
       "D": "Juice / 果汁"
     },
-    "correct_answer": "A",
+    "correct_answer": "C",
     "explanation": "'水'就是water。B是茶，C是咖啡，D是果汁。"
   },
   {
@@ -36,12 +36,12 @@
     "question_cn": "我______中国人。",
     "question_en": "I ______ Chinese.",
     "options": {
-      "A": "是 / am",
+      "A": "在 / at",
       "B": "有 / have",
-      "C": "在 / at",
+      "C": "是 / am",
       "D": "去 / go"
     },
-    "correct_answer": "A",
+    "correct_answer": "C",
     "explanation": "'是'用于连接主语和表语（身份/属性）。'有'表拥有，'在'表位置，'去'表动作，均不匹配。"
   },
   {
@@ -51,12 +51,12 @@
     "question_cn": "他______在图书馆学习。",
     "question_en": "He ______ studying in the library.",
     "options": {
-      "A": "正在 / is currently",
-      "B": "已经 / already",
+      "A": "已经 / already",
+      "B": "正在 / is currently",
       "C": "一起 / together",
       "D": "非常 / very"
     },
-    "correct_answer": "A",
+    "correct_answer": "B",
     "explanation": "'正在+动词'表现在进行时。'已经'表完成，'一起'表伴随，'非常'是程度副词。"
   },
   {
@@ -96,12 +96,12 @@
     "question_cn": "______天气太热了，我们______去游泳吧。",
     "question_en": "______ the weather is too hot, let's ______ go swimming.",
     "options": {
-      "A": "因为……所以…… / because...so...",
+      "A": "如果……就…… / if...then...",
       "B": "虽然……但是…… / although...but...",
-      "C": "如果……就…… / if...then...",
+      "C": "因为……所以…… / because...so...",
       "D": "不但……而且…… / not only...but also..."
     },
-    "correct_answer": "A",
+    "correct_answer": "C",
     "explanation": "前句是原因（天气热），后句是结果（去游泳），用'因为……所以……'。B表转折，C表假设，D表递进。"
   },
   {
@@ -128,12 +128,12 @@
     "question_cn": "'熟悉'的反义词是什么？",
     "question_en": "What is the opposite of '熟悉' (shúxī / familiar)?",
     "options": {
-      "A": "陌生 / mòshēng (strange/unfamiliar)",
+      "A": "了解 / liǎojiě (understand)",
       "B": "清楚 / qīngchǔ (clear)",
       "C": "明白 / míngbai (understand)",
-      "D": "了解 / liǎojiě (understand)"
+      "D": "陌生 / mòshēng (strange/unfamiliar)"
     },
-    "correct_answer": "A",
+    "correct_answer": "D",
     "explanation": "'熟悉'(familiar)的反义词是'陌生'(strange/unfamiliar)。B、C、D都是近义词。"
   },
   {
@@ -143,12 +143,12 @@
     "question_cn": "______遇到多大的困难，他______不会放弃。",
     "question_en": "______ great difficulties he encounters, he ______ won't give up.",
     "options": {
-      "A": "无论……都…… / no matter...all...",
-      "B": "虽然……但是…… / although...but...",
+      "A": "虽然……但是…… / although...but...",
+      "B": "无论……都…… / no matter...all...",
       "C": "因为……所以…… / because...so...",
       "D": "如果……就…… / if...then..."
     },
-    "correct_answer": "A",
+    "correct_answer": "B",
     "explanation": "'无论……都……'表无条件，'无论多大困难都不会放弃'=no matter what difficulties。B表转折，C表因果，D表假设。"
   },
   {
@@ -175,12 +175,12 @@
     "question_cn": "根据文章，网络购物带来了什么问题？",
     "question_en": "According to the article, what problems has online shopping brought?",
     "options": {
-      "A": "人们身体变差，实体店面临倒闭 / People's health deteriorating, physical stores facing closure",
+      "A": "人们不愿意用手机了 / People are unwilling to use phones",
       "B": "商品价格变贵了 / Product prices have increased",
       "C": "送货速度变慢了 / Delivery speed has slowed down",
-      "D": "人们不愿意用手机了 / People are unwilling to use phones"
+      "D": "人们身体变差，实体店面临倒闭 / People's health deteriorating, physical stores facing closure"
     },
-    "correct_answer": "A",
+    "correct_answer": "D",
     "explanation": "文中提到两个问题：'身体越来越差'和'实体店面临倒闭的风险'。B、C、D文中均未提及。"
   },
   {
@@ -190,12 +190,12 @@
     "question_cn": "有人认为传统文化正在消失，你同意这种观点吗？",
     "question_en": "Some people believe traditional culture is disappearing. Do you agree?",
     "options": {
-      "A": "我不完全同意。传统文化在以新的形式传承，比如通过短视频、文创产品等。 / I don't completely agree. Traditional culture is being passed down in new forms.",
-      "B": "传统文化很重要。 / Traditional culture is very important.",
+      "A": "传统文化很重要。 / Traditional culture is very important.",
+      "B": "我不完全同意。传统文化在以新的形式传承，比如通过短视频、文创产品等。 / I don't completely agree. Traditional culture is being passed down in new forms.",
       "C": "很多年轻人不喜欢传统文化。 / Many young people don't like traditional culture.",
       "D": "政府应该保护传统文化。 / The government should protect traditional culture."
     },
-    "correct_answer": "A",
+    "correct_answer": "B",
     "explanation": "'你同意吗'要求明确立场+论证，A给出辩证观点。B、C、D都是简单陈述，未回应'是否同意'。"
   },
   {
@@ -205,12 +205,12 @@
     "question_cn": "'趋势'是什么意思？",
     "question_en": "What does '趋势' (qūshì) mean?",
     "options": {
-      "A": "Trend/Tendency / 趋势",
+      "A": "Problem / 问题",
       "B": "Reason / 原因",
       "C": "Result / 结果",
-      "D": "Problem / 问题"
+      "D": "Trend/Tendency / 趋势"
     },
-    "correct_answer": "A",
+    "correct_answer": "D",
     "explanation": "'趋势'意为trend/tendency。B是原因，C是结果，D是问题。"
   },
   {
@@ -222,12 +222,12 @@
     "question_cn": "根据文章，极简主义生活方式的核心是什么？",
     "question_en": "According to the article, what is the core of the minimalist lifestyle?",
     "options": {
-      "A": "找到物质与精神之间的平衡 / Finding a balance between material and spiritual life",
+      "A": "只关注环保 / Only focusing on environmental protection",
       "B": "过苦行僧式的生活 / Living like an ascetic",
       "C": "不买任何东西 / Not buying anything",
-      "D": "只关注环保 / Only focusing on environmental protection"
+      "D": "找到物质与精神之间的平衡 / Finding a balance between material and spiritual life"
     },
-    "correct_answer": "A",
+    "correct_answer": "D",
     "explanation": "文中最后一句明确说'找到物质与精神之间的平衡点'。B与原文矛盾，C过于极端，D只是其中一个方面。"
   },
   {
@@ -237,12 +237,12 @@
     "question_cn": "他______答应了我的请求，______又反悔了。",
     "question_en": "He ______ promised my request, ______ went back on his word.",
     "options": {
-      "A": "明明……却…… / obviously...yet...",
-      "B": "不但……而且…… / not only...but also...",
+      "A": "不但……而且…… / not only...but also...",
+      "B": "明明……却…… / obviously...yet...",
       "C": "因为……所以…… / because...so...",
       "D": "如果……就…… / if...then..."
     },
-    "correct_answer": "A",
+    "correct_answer": "B",
     "explanation": "'明明……却……'表示事实与预期相反，'明明答应了却反悔'=obviously promised yet went back。B表递进，C表因果，D表假设。"
   },
   {
@@ -269,12 +269,12 @@
     "question_cn": "'庄周梦蝶'体现了中国古代哲学对什么问题的思考？",
     "question_en": "What philosophical question does 'Zhuang Zhou Dreams of Being a Butterfly' reflect?",
     "options": {
-      "A": "主体与客体的关系 / The relationship between subject and object",
+      "A": "梦境的科学解释 / Scientific explanation of dreams",
       "B": "蝴蝶的生活习性 / The habits of butterflies",
-      "C": "梦境的科学解释 / Scientific explanation of dreams",
+      "C": "主体与客体的关系 / The relationship between subject and object",
       "D": "庄子的文学风格 / Zhuangzi's literary style"
     },
-    "correct_answer": "A",
+    "correct_answer": "C",
     "explanation": "文中最后一句'体现了中国古代哲学中对主体与客体关系的深刻思考'。B、C、D均与原文主旨不符。"
   }
 ]

@@ -6,12 +6,12 @@
     "question_cn": "你周末一般做什么？",
     "question_en": "What do you usually do on weekends?",
     "options": {
-      "A": "我周末一般在家看书。(I usually read books at home on weekends.)",
+      "A": "我周末不吃饭。(I don't eat on weekends.)",
       "B": "我周末去公司上班。(I go to work at the company on weekends.)",
       "C": "我周末起得很早。(I get up very early on weekends.)",
-      "D": "我周末不吃饭。(I don't eat on weekends.)"
+      "D": "我周末一般在家看书。(I usually read books at home on weekends.)"
     },
-    "correct_answer": "A",
+    "correct_answer": "D",
     "explanation": "'一般做什么'询问日常习惯，A回答日常活动。B是工作（周末通常不上班），C是时间描述，D不符合常理。"
   },
   {
@@ -21,12 +21,12 @@
     "question_cn": "你怎么不接电话？",
     "question_en": "Why didn't you answer the phone?",
     "options": {
-      "A": "我没听见。(I didn't hear it.)",
+      "A": "我在打电话。(I was on the phone.)",
       "B": "我不喜欢电话。(I don't like phones.)",
       "C": "电话坏了。(The phone is broken.)",
-      "D": "我在打电话。(I was on the phone.)"
+      "D": "我没听见。(I didn't hear it.)"
     },
-    "correct_answer": "A",
+    "correct_answer": "D",
     "explanation": "'怎么不'询问原因，A解释没听见（合理原因）。B是偏好，C是设备问题（可能但不如A常见），D逻辑矛盾（在打电话应该能接）。"
   },
   {
@@ -36,12 +36,12 @@
     "question_cn": "这件衣服怎么样？",
     "question_en": "How is this piece of clothing?",
     "options": {
-      "A": "这件衣服太贵了。(This clothing is too expensive.)",
-      "B": "这件衣服是红色的。(This clothing is red.)",
+      "A": "这件衣服是红色的。(This clothing is red.)",
+      "B": "这件衣服太贵了。(This clothing is too expensive.)",
       "C": "这件衣服很大。(This clothing is very big.)",
       "D": "这件衣服是棉的。(This clothing is made of cotton.)"
     },
-    "correct_answer": "A",
+    "correct_answer": "B",
     "explanation": "'怎么样'询问综合评价，A是评价（太贵）。B、C、D都是客观描述，不是综合感受。"
   },
   {
@@ -66,12 +66,12 @@
     "question_cn": "你觉得这部电影怎么样？",
     "question_en": "What do you think of this movie?",
     "options": {
-      "A": "我觉得很好看。(I think it's very good.)",
-      "B": "电影很长。(The movie is very long.)",
+      "A": "电影很长。(The movie is very long.)",
+      "B": "我觉得很好看。(I think it's very good.)",
       "C": "电影是美国的。(The movie is American.)",
       "D": "我昨天看的。(I watched it yesterday.)"
     },
-    "correct_answer": "A",
+    "correct_answer": "B",
     "explanation": "'觉得……怎么样'询问主观评价，A是主观感受。B、C是客观描述，D回答时间，均不匹配。"
   },
   {
@@ -81,12 +81,12 @@
     "question_cn": "你打算假期去哪儿旅行？",
     "question_en": "Where do you plan to travel during the holiday?",
     "options": {
-      "A": "我打算去云南。(I plan to go to Yunnan.)",
+      "A": "我喜欢旅行。(I like traveling.)",
       "B": "我假期有很多作业。(I have a lot of homework during the holiday.)",
-      "C": "我喜欢旅行。(I like traveling.)",
+      "C": "我打算去云南。(I plan to go to Yunnan.)",
       "D": "假期有七天。(The holiday is seven days long.)"
     },
-    "correct_answer": "A",
+    "correct_answer": "C",
     "explanation": "'打算去哪儿'询问计划目的地，A回答地点。B说作业，C说喜好，D说时长，均不匹配。"
   },
   {
@@ -126,12 +126,12 @@
     "question_cn": "你为什么学汉语？",
     "question_en": "Why do you study Chinese?",
     "options": {
-      "A": "因为我对中国文化很感兴趣。(Because I am very interested in Chinese culture.)",
-      "B": "汉语很难。(Chinese is very difficult.)",
+      "A": "汉语很难。(Chinese is very difficult.)",
+      "B": "因为我对中国文化很感兴趣。(Because I am very interested in Chinese culture.)",
       "C": "我在中国工作。(I work in China.)",
       "D": "我学了三年。(I have studied for three years.)"
     },
-    "correct_answer": "A",
+    "correct_answer": "B",
     "explanation": "'为什么'询问原因，A用'因为'回答原因。B是评价，C是背景，D是时长，均不匹配。"
   },
   {
@@ -156,12 +156,12 @@
     "question_cn": "你的手机怎么了？",
     "question_en": "What happened to your phone?",
     "options": {
-      "A": "屏幕摔坏了。(The screen is broken from a fall.)",
+      "A": "手机很新。(The phone is very new.)",
       "B": "手机是黑色的。(The phone is black.)",
-      "C": "手机很新。(The phone is very new.)",
+      "C": "屏幕摔坏了。(The screen is broken from a fall.)",
       "D": "我买了手机。(I bought a phone.)"
     },
-    "correct_answer": "A",
+    "correct_answer": "C",
     "explanation": "'怎么了'询问问题/故障，A回答故障（屏幕坏了）。B说颜色，C说新旧，D说购买，均不匹配。"
   },
   {
@@ -186,12 +186,12 @@
     "question_cn": "我______去过北京。",
     "question_en": "I ______ been to Beijing.",
     "options": {
-      "A": "已经(already)",
+      "A": "一起(together)",
       "B": "正在(currently)",
       "C": "常常(often)",
-      "D": "一起(together)"
+      "D": "已经(already)"
     },
-    "correct_answer": "A",
+    "correct_answer": "D",
     "explanation": "'已经……过'表示经历完成，'我已经去过'=I have already been to。'正在'表现在进行，'常常'表频率，'一起'表伴随，均不与'过'搭配。"
   },
   {
@@ -201,12 +201,12 @@
     "question_cn": "他______在图书馆学习。",
     "question_en": "He ______ studying in the library.",
     "options": {
-      "A": "正在(is currently)",
-      "B": "已经(already)",
+      "A": "已经(already)",
+      "B": "正在(is currently)",
       "C": "一起(together)",
       "D": "非常(very)"
     },
-    "correct_answer": "A",
+    "correct_answer": "B",
     "explanation": "'正在+动词'表现在进行时。'已经'表完成，'一起'表伴随，'非常'是程度副词，均不表现在进行。"
   },
   {
@@ -216,12 +216,12 @@
     "question_cn": "这个房间比那个房间______。",
     "question_en": "This room is ______ than that room.",
     "options": {
-      "A": "大(bigger)",
-      "B": "很大(very big)",
+      "A": "很大(very big)",
+      "B": "大(bigger)",
       "C": "最大(biggest)",
       "D": "不大(not big)"
     },
-    "correct_answer": "A",
+    "correct_answer": "B",
     "explanation": "'比'是比较句标志，后面用形容词原形。'很大'无比较，'最大'是最高级，'不大'是否定，均不与'比'搭配。"
   },
   {
@@ -231,12 +231,12 @@
     "question_cn": "我______他高。",
     "question_en": "I am tall ______ him.",
     "options": {
-      "A": "比(than)",
+      "A": "从(from)",
       "B": "和(and)",
       "C": "对(to)",
-      "D": "从(from)"
+      "D": "比(than)"
     },
-    "correct_answer": "A",
+    "correct_answer": "D",
     "explanation": "'A比B+形容词'是比较句结构。'和'表并列，'对'表对象，'从'表起点，均不表比较。"
   },
   {
@@ -246,12 +246,12 @@
     "question_cn": "______天气太热了，我们______去游泳吧。",
     "question_en": "______ the weather is too hot, let's ______ go swimming.",
     "options": {
-      "A": "因为……所以……(because...so...)",
+      "A": "不但……而且……(not only...but also...)",
       "B": "虽然……但是……(although...but...)",
       "C": "如果……就……(if...then...)",
-      "D": "不但……而且……(not only...but also...)"
+      "D": "因为……所以……(because...so...)"
     },
-    "correct_answer": "A",
+    "correct_answer": "D",
     "explanation": "前句是原因（天气热），后句是结果（去游泳），用'因为……所以……'。B表转折，C表假设，D表递进，均不匹配。"
   },
   {
@@ -261,12 +261,12 @@
     "question_cn": "我______会做饭。",
     "question_en": "I ______ can cook.",
     "options": {
-      "A": "还(also/still)",
-      "B": "很(very)",
+      "A": "很(very)",
+      "B": "还(also/still)",
       "C": "太(too)",
       "D": "多(many)"
     },
-    "correct_answer": "A",
+    "correct_answer": "B",
     "explanation": "'还'表示附加能力，'我还会做饭'=I can also cook。'很'、'太'、'多'均不修饰'会'表附加。"
   },
   {
@@ -276,12 +276,12 @@
     "question_cn": "你______把窗户关上吗？",
     "question_en": "Could you ______ close the window?",
     "options": {
-      "A": "可以(can/could (polite))",
-      "B": "会(can (ability))",
+      "A": "会(can (ability))",
+      "B": "可以(can/could (polite))",
       "C": "能(can (capability))",
       "D": "要(want)"
     },
-    "correct_answer": "A",
+    "correct_answer": "B",
     "explanation": "请求他人做某事用'可以……吗'最礼貌自然。'会'表能力，'能'表可能性，'要'表意愿，均不如A适合请求。"
   },
   {
@@ -291,12 +291,12 @@
     "question_cn": "他每天都______运动。",
     "question_en": "He exercises ______ every day.",
     "options": {
-      "A": "坚持(persists in)",
+      "A": "保持(maintains)",
       "B": "继续(continues)",
-      "C": "保持(maintains)",
+      "C": "坚持(persists in)",
       "D": "保留(keeps/reserves)"
     },
-    "correct_answer": "A",
+    "correct_answer": "C",
     "explanation": "'坚持'强调持续做某事（常接动词），'坚持运动'=persist in exercising。'继续'表接着做，'保持'常接状态，'保留'表留存，均不匹配。"
   },
   {
@@ -306,12 +306,12 @@
     "question_cn": "______你努力，______能成功。",
     "question_en": "______ you work hard, ______ you can succeed.",
     "options": {
-      "A": "只要……就……(as long as...then...)",
+      "A": "虽然……但是……(although...but...)",
       "B": "因为……所以……(because...so...)",
-      "C": "虽然……但是……(although...but...)",
+      "C": "只要……就……(as long as...then...)",
       "D": "不但……而且……(not only...but also...)"
     },
-    "correct_answer": "A",
+    "correct_answer": "C",
     "explanation": "前句是条件（努力），后句是结果（成功），用'只要……就……'表条件关系。B表因果，C表转折，D表递进，均不匹配。"
   },
   {
@@ -321,12 +321,12 @@
     "question_cn": "我______看见他了。",
     "question_en": "I ______ saw him.",
     "options": {
-      "A": "刚才(just now)",
-      "B": "现在(now)",
+      "A": "现在(now)",
+      "B": "刚才(just now)",
       "C": "常常(often)",
       "D": "一起(together)"
     },
-    "correct_answer": "A",
+    "correct_answer": "B",
     "explanation": "'刚才'表示刚刚发生，与过去时搭配。'现在'表现在，'常常'表频率，'一起'表伴随，均不与过去时搭配。"
   },
   {
@@ -336,12 +336,12 @@
     "question_cn": "这件衣服______我穿太大了。",
     "question_en": "This piece of clothing, ______ I wear it, is too big.",
     "options": {
-      "A": "对……来说(for...)",
+      "A": "向……(toward...)",
       "B": "给……(give...)",
-      "C": "向……(toward...)",
+      "C": "对……来说(for...)",
       "D": "从……(from...)"
     },
-    "correct_answer": "A",
+    "correct_answer": "C",
     "explanation": "'对……来说'表示'对于某人'，'对我来说'=for me。'给'表给予，'向'表方向，'从'表起点，均不匹配。"
   },
   {
@@ -366,12 +366,12 @@
     "question_cn": "'方便'的反义词是什么？",
     "question_en": "What is the opposite of '方便' (fāngbiàn / convenient)?",
     "options": {
-      "A": "Troublesome",
+      "A": "Simple",
       "B": "Easy",
-      "C": "Simple",
+      "C": "Troublesome",
       "D": "Fast"
     },
-    "correct_answer": "A",
+    "correct_answer": "C",
     "explanation": "A表示做事麻烦、不方便，是'方便'的反义。B表示事情容易做。C表示事情简单不复杂。D表示速度快。"
   },
   {
@@ -381,12 +381,12 @@
     "question_cn": "'打扫'是什么意思？",
     "question_en": "What does '打扫' (dǎsǎo) mean?",
     "options": {
-      "A": "Clean",
+      "A": "Fix",
       "B": "Cook",
       "C": "Wash",
-      "D": "Fix"
+      "D": "Clean"
     },
-    "correct_answer": "A",
+    "correct_answer": "D",
     "explanation": "A表示清理、扫除灰尘和垃圾。B表示烹饪食物。C表示用水清洗。D表示修理损坏的东西。"
   },
   {
@@ -411,12 +411,12 @@
     "question_cn": "'请假'是什么意思？",
     "question_en": "What does '请假' (qǐngjià) mean?",
     "options": {
-      "A": "Ask for leave",
+      "A": "Rest",
       "B": "Take a vacation",
-      "C": "Rest",
+      "C": "Ask for leave",
       "D": "Quit"
     },
-    "correct_answer": "A",
+    "correct_answer": "C",
     "explanation": "A表示向上级或老师请求暂时离开。B表示去外地度假休息。C表示停止工作休息。D表示辞去工作不再做。"
   },
   {
@@ -426,12 +426,12 @@
     "question_cn": "'提高'和'降低'是什么关系？",
     "question_en": "What is the relationship between '提高' (tígāo) and '降低' (jiàngdī)?",
     "options": {
-      "A": "Antonyms",
-      "B": "Synonyms",
+      "A": "Synonyms",
+      "B": "Antonyms",
       "C": "Near-synonyms",
       "D": "No relationship"
     },
-    "correct_answer": "A",
+    "correct_answer": "B",
     "explanation": "A表示方向相反，'提高'是向上，'降低'是向下。B表示意思相近。C表示意思有点接近。D表示没有关联。"
   },
   {
@@ -441,12 +441,12 @@
     "question_cn": "'担心'是什么意思？",
     "question_en": "What does '担心' (dānxīn) mean?",
     "options": {
-      "A": "Worry",
+      "A": "Believe",
       "B": "Hope",
-      "C": "Believe",
+      "C": "Worry",
       "D": "Forget"
     },
-    "correct_answer": "A",
+    "correct_answer": "C",
     "explanation": "A表示心里不安、不放心。B表示对未来的美好期望。C表示对某人或某事有信心。D表示不记得某事。"
   },
   {
@@ -471,12 +471,12 @@
     "question_cn": "'准备'是什么意思？",
     "question_en": "What does '准备' (zhǔnbèi) mean?",
     "options": {
-      "A": "Prepare",
+      "A": "Stop",
       "B": "Finish",
       "C": "Start",
-      "D": "Stop"
+      "D": "Prepare"
     },
-    "correct_answer": "A",
+    "correct_answer": "D",
     "explanation": "A表示事先安排好或做好某事。B表示事情已经完成。C表示事情开始进行。D表示事情停止不做。"
   },
   {
@@ -505,12 +505,12 @@
     "question_cn": "李小姐在哪里工作？",
     "question_en": "Where does Miss Li work?",
     "options": {
-      "A": "在医院",
+      "A": "在银行",
       "B": "在学校",
       "C": "在公司",
-      "D": "在银行"
+      "D": "在医院"
     },
-    "correct_answer": "A",
+    "correct_answer": "D",
     "explanation": "文中第一句'在一家医院工作'明确说明。B、C、D均与原文不符。"
   },
   {
@@ -522,12 +522,12 @@
     "question_cn": "昨天是什么日子？",
     "question_en": "What day was yesterday?",
     "options": {
-      "A": "我的生日",
+      "A": "周末",
       "B": "国庆节",
       "C": "新年",
-      "D": "周末"
+      "D": "我的生日"
     },
-    "correct_answer": "A",
+    "correct_answer": "D",
     "explanation": "文中第一句'昨天是我的生日'。B、C、D文中均未提及。"
   },
   {
@@ -537,12 +537,12 @@
     "question_cn": "你平时怎么锻炼身体？",
     "question_en": "Nǐ píngshí zěnme duànliàn shēntǐ? (How do you usually exercise?)",
     "options": {
-      "A": "我每天早上跑步。(I go running every morning.)",
+      "A": "我周末不上班。(I don't work on weekends.)",
       "B": "我喜欢吃水果。(I like eating fruit.)",
       "C": "我家离公司很近。(My home is close to the company.)",
-      "D": "我周末不上班。(I don't work on weekends.)"
+      "D": "我每天早上跑步。(I go running every morning.)"
     },
-    "correct_answer": "A",
+    "correct_answer": "D",
     "explanation": "'怎么锻炼身体'询问运动方式，A回答跑步。B说饮食，C说距离，D说工作，均不匹配。 / 'How do you exercise' asks about exercise methods; A answers running. B is about diet, C about distance, D about work."
   },
   {
@@ -552,12 +552,12 @@
     "question_cn": "你最喜欢的季节是哪个？",
     "question_en": "Nǐ zuì xǐhuan de jìjié shì nǎge? (Which season do you like best?)",
     "options": {
-      "A": "我最喜欢春天，天气很舒服。(I like spring best; the weather is very comfortable.)",
-      "B": "春天有很多花。(There are many flowers in spring.)",
+      "A": "春天有很多花。(There are many flowers in spring.)",
+      "B": "我最喜欢春天，天气很舒服。(I like spring best; the weather is very comfortable.)",
       "C": "春天在三月份。(Spring is in March.)",
       "D": "春天比冬天暖和。(Spring is warmer than winter.)"
     },
-    "correct_answer": "A",
+    "correct_answer": "B",
     "explanation": "'最喜欢哪个'要求明确选择并说明原因，A直接选择并给出理由。B、C、D都是描述，未明确回答'最喜欢'。 / 'Which do you like best' requires a clear choice with reasons; A directly chooses and gives a reason. B, C, D are descriptions without a clear choice."
   },
   {
@@ -612,12 +612,12 @@
     "question_cn": "我______想喝一杯咖啡。",
     "question_en": "Wǒ ______ xiǎng hē yì bēi kāfēi. (I ______ want to drink a cup of coffee.)",
     "options": {
-      "A": "现在(just now)",
+      "A": "常常(often)",
       "B": "已经(already)",
-      "C": "常常(often)",
+      "C": "现在(just now)",
       "D": "一起(together)"
     },
-    "correct_answer": "A",
+    "correct_answer": "C",
     "explanation": "'现在'表示此刻，'现在想喝'=want to drink right now。'已经'表完成，'常常'表频率，'一起'表伴随，均不匹配。 / 'Now' indicates the present moment. 'Already' indicates completion, 'often' indicates frequency, 'together' indicates accompaniment."
   },
   {
@@ -627,12 +627,12 @@
     "question_cn": "他______汉语，______英语。",
     "question_en": "Tā ______ Hànyǔ, ______ Yīngyǔ. (He ______ Chinese, ______ English.)",
     "options": {
-      "A": "不但……而且……(not only...but also...)",
-      "B": "虽然……但是……(although...but...)",
+      "A": "虽然……但是……(although...but...)",
+      "B": "不但……而且……(not only...but also...)",
       "C": "因为……所以……(because...so...)",
       "D": "如果……就……(if...then...)"
     },
-    "correct_answer": "A",
+    "correct_answer": "B",
     "explanation": "'不但……而且……'表递进，'不但会汉语而且会英语'=not only speaks Chinese but also English。B表转折，C表因果，D表假设，均不匹配。 / 'Not only...but also' indicates progression. B indicates contrast, C indicates cause-effect, D indicates hypothesis."
   },
   {
@@ -642,12 +642,12 @@
     "question_cn": "______下雨，我们就不去了。",
     "question_en": "______ xiàyǔ, wǒmen jiù bù qù le. (______ it rains, we won't go.)",
     "options": {
-      "A": "如果(if)",
+      "A": "不但(not only)",
       "B": "因为(because)",
       "C": "虽然(although)",
-      "D": "不但(not only)"
+      "D": "如果(if)"
     },
-    "correct_answer": "A",
+    "correct_answer": "D",
     "explanation": "'如果……就……'表假设，'如果下雨就不去'=if it rains, we won't go。'因为'表因果，'虽然'表转折，'不但'表递进，均不匹配。 / 'If...then' indicates hypothesis. 'Because' indicates cause-effect, 'although' indicates contrast, 'not only' indicates progression."
   },
   {
@@ -657,12 +657,12 @@
     "question_cn": "这个房间______干净______明亮。",
     "question_en": "Zhège fángjiān ______ gānjìng ______ míngliàng. (This room is ______ clean ______ bright.)",
     "options": {
-      "A": "又……又……(both...and...)",
+      "A": "如果……就……(if...then...)",
       "B": "虽然……但是……(although...but...)",
       "C": "因为……所以……(because...so...)",
-      "D": "如果……就……(if...then...)"
+      "D": "又……又……(both...and...)"
     },
-    "correct_answer": "A",
+    "correct_answer": "D",
     "explanation": "'又……又……'表并列，'又干净又明亮'=both clean and bright。B表转折，C表因果，D表假设，均不匹配。 / 'Both...and' indicates parallelism. B indicates contrast, C indicates cause-effect, D indicates hypothesis."
   },
   {
@@ -672,12 +672,12 @@
     "question_cn": "你______去过长城吗？",
     "question_en": "Nǐ ______ qùguò Chángchéng ma? (Have you ______ been to the Great Wall?)",
     "options": {
-      "A": "曾经(ever)",
-      "B": "正在(currently)",
+      "A": "正在(currently)",
+      "B": "曾经(ever)",
       "C": "常常(often)",
       "D": "一起(together)"
     },
-    "correct_answer": "A",
+    "correct_answer": "B",
     "explanation": "'曾经……过'表示过去的经历，'曾经去过'=have ever been to。'正在'表现在进行，'常常'表现在习惯，'一起'表伴随，均不匹配。 / 'Ever...before' indicates past experience. 'Currently' indicates present continuous, 'often' indicates present habit, 'together' indicates accompaniment."
   },
   {
@@ -687,12 +687,12 @@
     "question_cn": "'安静'是什么意思？",
     "question_en": "'Ānjìng' shì shénme yìsi? (What does 'ānjìng' mean?)",
     "options": {
-      "A": "Quiet",
+      "A": "Happy",
       "B": "Noisy",
-      "C": "Happy",
+      "C": "Quiet",
       "D": "Sad"
     },
-    "correct_answer": "A",
+    "correct_answer": "C",
     "explanation": "A表示没有声音、不吵闹。B表示声音大、吵闹（反义词）。C表示开心。D表示难过。 / A means without sound, not noisy. B means loud, noisy (antonym). C means happy. D means sad."
   },
   {
@@ -717,12 +717,12 @@
     "question_cn": "'超市'是什么地方？",
     "question_en": "'Chāoshì' shì shénme dìfang? (What kind of place is 'chāoshì'?)",
     "options": {
-      "A": "Supermarket",
-      "B": "Hospital",
+      "A": "Hospital",
+      "B": "Supermarket",
       "C": "School",
       "D": "Park"
     },
-    "correct_answer": "A",
+    "correct_answer": "B",
     "explanation": "A表示售卖各种商品的大型商店。B表示看病的地方。C表示学习的地方。D表示休闲娱乐的地方。 / A is a large store selling various goods. B is for medical treatment. C is for studying. D is for recreation."
   },
   {
@@ -751,12 +751,12 @@
     "question_cn": "王老师为什么坐地铁上班？",
     "question_en": "Wáng lǎoshī wèishénme zuò dìtiě shàngbān? (Why does Teacher Wang take the subway to work?)",
     "options": {
-      "A": "因为地铁比公交车快，也比开车省钱",
+      "A": "因为她不会开车",
       "B": "因为她家离地铁站很近",
-      "C": "因为她不会开车",
+      "C": "因为地铁比公交车快，也比开车省钱",
       "D": "因为地铁很空，有座位"
     },
-    "correct_answer": "A",
+    "correct_answer": "C",
     "explanation": "文中明确说'她觉得地铁比公交车快，也比开车省钱'。B、C、D文中均未提及。 / The text explicitly states she thinks the subway is faster than the bus and cheaper than driving. B, C, D are not mentioned."
   }
 ]
