@@ -43,7 +43,10 @@ export default function PrivacyPolicyPage() {
           <section className="mb-8">
             <h2 className="text-h3 mb-4">Cookies and Tracking</h2>
             <p className="text-body text-ink-secondary mb-4">
-              We do not use cookie-based analytics in the current version. If analytics are added in the future, they will use privacy-first, cookieless approaches such as Plausible. You can control cookies through your browser settings.
+              We use <strong>Plausible Analytics</strong>, a privacy-friendly, cookieless analytics service, to understand how visitors use our site. Plausible does not use cookies and does not track individual users across the web. It collects aggregated data such as page views, referrer information, and device types in a way designed not to identify individual visitors.
+            </p>
+            <p className="text-body text-ink-secondary mb-4">
+              We do not use cookie-based advertising trackers or share your data with third parties for marketing purposes. You can control cookies through your browser settings.
             </p>
           </section>
 

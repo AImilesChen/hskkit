@@ -16,6 +16,8 @@ interface Question {
   type: string;
   question_cn: string;
   question_en: string;
+  passage_cn?: string;
+  passage_en?: string;
   options: Record<string, string>;
   correct_answer: string;
   explanation: string;
@@ -220,6 +222,8 @@ export default function PracticeTest({
         <QuestionTitle
           questionCn={currentQuestion.question_cn}
           questionEn={currentQuestion.question_en}
+          passageCn={currentQuestion.passage_cn}
+          passageEn={currentQuestion.passage_en}
         />
       </div>
 

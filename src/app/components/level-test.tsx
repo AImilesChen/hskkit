@@ -16,6 +16,8 @@ interface LevelQuestion {
   type: string;
   question_cn: string;
   question_en: string;
+  passage_cn?: string;
+  passage_en?: string;
   options: Record<string, string>;
   correct_answer: string;
   explanation: string;
@@ -46,7 +48,7 @@ function pickQuestions(all: LevelQuestion[]): LevelQuestion[] {
   });
 
   const picked: LevelQuestion[] = [];
-  const distribution = [2, 2, 2, 2, 1, 1];
+  const distribution = [3, 3, 3, 3, 2, 1];
   for (let i = 0; i < 6; i++) {
     const level = i + 1;
     const pool = byLevel[level] || [];
@@ -54,14 +56,22 @@ function pickQuestions(all: LevelQuestion[]): LevelQuestion[] {
     picked.push(...shuffleArray(pool).slice(0, count));
   }
 
-  if (picked.length < 8) {
+  // Ensure we always pick exactly 15 questions if possible
+  if (picked.length < 15 && all.length >= 15) {
     const remaining = shuffleArray(
       all.filter((q) => !picked.includes(q))
-    ).slice(0, 8 - picked.length);
+    ).slice(0, 15 - picked.length);
     picked.push(...remaining);
   }
 
-  return shuffleArray(picked).slice(0, 8);
+  if (picked.length < 15 && all.length >= 15) {
+    const remaining = shuffleArray(
+      all.filter((q) => !picked.includes(q))
+    ).slice(0, 15 - picked.length);
+    picked.push(...remaining);
+  }
+
+  return picked;
 }
 
 function getRecommendedLevel(
@@ -125,7 +135,7 @@ function getRecommendedLevel(
 export default function LevelTest({
   questions: allQuestions,
   title = "Quick HSK Level Check",
-  description = "8 short questions. No timer. Get a suggested HSK level and a personalized next step.",
+  description = "15 short questions across HSK 1–6. No timer. Get a suggested HSK level and a personalized next step.",
 }: LevelTestProps) {
   const [started, setStarted] = useState(false);
   const [questions, setQuestions] = useState<LevelQuestion[]>(() =>
@@ -323,6 +333,8 @@ export default function LevelTest({
         <QuestionTitle
           questionCn={currentQuestion.question_cn}
           questionEn={currentQuestion.question_en}
+          passageCn={currentQuestion.passage_cn}
+          passageEn={currentQuestion.passage_en}
         />
       </div>
 

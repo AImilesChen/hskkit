@@ -13,6 +13,8 @@ interface Question {
   type: string;
   question_cn: string;
   question_en: string;
+  passage_cn?: string;
+  passage_en?: string;
   options: Record<string, string>;
   correct_answer: string;
   explanation: string;
@@ -110,9 +112,13 @@ export function formatExplanation(
 export function QuestionTitle({
   questionCn,
   questionEn,
+  passageCn,
+  passageEn,
 }: {
   questionCn: string;
   questionEn: string;
+  passageCn?: string;
+  passageEn?: string;
 }) {
   const { pinyin, en } = useMemo(
     () => parseQuestionEn(questionEn),
@@ -121,6 +127,14 @@ export function QuestionTitle({
 
   return (
     <div className="mb-6">
+      {passageCn && (
+        <div className="bg-[#F1F5F9] border border-[#CBD5E1] rounded-xl px-5 py-4 mb-5">
+          <p className="text-[14px] leading-relaxed text-[#475569] mb-2">{passageCn}</p>
+          {passageEn && (
+            <p className="text-[13px] leading-relaxed text-[#64748B]">{passageEn}</p>
+          )}
+        </div>
+      )}
       <h2 className="text-[24px] font-semibold leading-snug text-[#0F172A] mb-1">
         {questionCn}
       </h2>
@@ -240,6 +254,14 @@ export function ReviewCard({
 
   return (
     <div className="bg-white border border-[#E2E8F0] rounded-xl p-6 shadow-[0_2px_8px_rgba(0,0,0,0.04)]">
+      {q.passage_cn && (
+        <div className="bg-[#F1F5F9] border border-[#CBD5E1] rounded-xl px-4 py-3 mb-4">
+          <p className="text-[14px] leading-relaxed text-[#475569] mb-1">{q.passage_cn}</p>
+          {q.passage_en && (
+            <p className="text-[12px] leading-relaxed text-[#64748B]">{q.passage_en}</p>
+          )}
+        </div>
+      )}
       <p className="text-sm font-semibold text-[#EF4444] mb-2">
         Question {index + 1} · HSK {q.level} · Your answer: {userAnswer}
       </p>

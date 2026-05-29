@@ -2,6 +2,9 @@ import type { Metadata } from "next";
 import Script from "next/script";
 import "./globals.css";
 
+const PLAUSIBLE_DOMAIN = process.env.NEXT_PUBLIC_PLAUSIBLE_DOMAIN || "hskkit.com";
+const PLAUSIBLE_SCRIPT_URL = process.env.NEXT_PUBLIC_PLAUSIBLE_SCRIPT_URL || "https://plausible.io/js/script.js";
+
 export const metadata: Metadata = {
   metadataBase: new URL("https://hskkit.com"),
   title: "HSKKit | Free HSK Vocabulary, Practice Tests & Level Guides",
@@ -44,6 +47,12 @@ export default function RootLayout({
         />
       </head>
       <body>{children}</body>
+      <Script
+        defer
+        data-domain={PLAUSIBLE_DOMAIN}
+        src={PLAUSIBLE_SCRIPT_URL}
+        strategy="afterInteractive"
+      />
     </html>
   );
 }

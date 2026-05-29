@@ -21,7 +21,7 @@ export default function HSKLevelTestPage() {
         <LevelTest
           questions={questions}
           title="Quick HSK Level Check"
-          description="8 short questions across HSK 1–6. No timer. Get a suggested HSK level and a personalized next step."
+          description="15 short questions across HSK 1–6. No timer. Get a suggested HSK level and a personalized next step."
         />
       </main>
       <SiteFooter />
