@@ -46,13 +46,15 @@ export default function RootLayout({
           rel="stylesheet"
         />
       </head>
-      <body>{children}</body>
-      <Script
-        defer
-        data-domain={PLAUSIBLE_DOMAIN}
-        src={PLAUSIBLE_SCRIPT_URL}
-        strategy="afterInteractive"
-      />
+      <body>
+        {children}
+        <Script
+          defer
+          data-domain={PLAUSIBLE_DOMAIN}
+          src={PLAUSIBLE_SCRIPT_URL}
+          strategy="afterInteractive"
+        />
+      </body>
     </html>
   );
 }
