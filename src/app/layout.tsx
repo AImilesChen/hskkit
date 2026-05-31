@@ -48,7 +48,10 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
-        <link rel="manifest" href="/site.webmanifest" />
+        <link rel="manifest" href="https://hskkit.com/site.webmanifest" />
+        <link rel="icon" href="https://hskkit.com/favicon.ico" sizes="any" />
+        <link rel="icon" type="image/png" sizes="32x32" href="https://hskkit.com/favicon-32x32.png" />
+        <link rel="apple-touch-icon" sizes="180x180" href="https://hskkit.com/apple-touch-icon.png" />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link
