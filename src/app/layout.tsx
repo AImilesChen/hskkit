@@ -3,7 +3,7 @@ import Script from "next/script";
 import "./globals.css";
 
 const PLAUSIBLE_DOMAIN = process.env.NEXT_PUBLIC_PLAUSIBLE_DOMAIN || "hskkit.com";
-const PLAUSIBLE_SCRIPT_URL = process.env.NEXT_PUBLIC_PLAUSIBLE_SCRIPT_URL || "https://plausible.io/js/script.js";
+const PLAUSIBLE_SCRIPT_URL = process.env.NEXT_PUBLIC_PLAUSIBLE_SCRIPT_URL || "https://plausible.shipsolo.io/js/script.js";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://hskkit.com"),
