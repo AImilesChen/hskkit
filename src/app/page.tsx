@@ -220,7 +220,7 @@ export default function HomePage() {
               </div>
 
               {/* Visual — Study Path (desktop: side, mobile: below CTAs) */}
-              <div className="max-lg:order-first">
+              <div>
                 <StudyPathBlock />
               </div>
             </div>
