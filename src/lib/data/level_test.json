@@ -21,13 +21,13 @@
     "question_cn": "'水'是什么？",
     "question_en": "What is '水' (shuǐ)?",
     "options": {
-      "A": "Coffee / 咖啡",
-      "B": "Tea / 茶",
-      "C": "Water / 水",
-      "D": "Juice / 果汁"
+      "A": "Coffee",
+      "B": "Tea",
+      "C": "Water",
+      "D": "Juice"
     },
     "correct_answer": "C",
-    "explanation": "'水'就是water。B是茶，C是咖啡，D是果汁。"
+    "explanation": "'水' means water. A is coffee, B is tea, D is juice."
   },
   {
     "id": "level_003",
@@ -81,13 +81,13 @@
     "question_cn": "'浪费'的反义词是什么？",
     "question_en": "What is the opposite of '浪费' (làngfèi / waste)?",
     "options": {
-      "A": "节约 / jiéyuē (save)",
-      "B": "使用 / shǐyòng (use)",
-      "C": "需要 / xūyào (need)",
-      "D": "花费 / huāfèi (spend)"
+      "A": "Save / Conserve",
+      "B": "Use",
+      "C": "Need",
+      "D": "Spend"
     },
     "correct_answer": "A",
-    "explanation": "'浪费'(waste)的反义词是'节约'(save)。B、C、D均不是反义关系。"
+    "explanation": "The opposite of '浪费' (waste) is '节约' (save/conserve). B, C, and D are not antonyms."
   },
   {
     "id": "level_007",
@@ -128,13 +128,13 @@
     "question_cn": "'熟悉'的反义词是什么？",
     "question_en": "What is the opposite of '熟悉' (shúxī / familiar)?",
     "options": {
-      "A": "了解 / liǎojiě (understand)",
-      "B": "清楚 / qīngchǔ (clear)",
-      "C": "明白 / míngbai (understand)",
-      "D": "陌生 / mòshēng (strange/unfamiliar)"
+      "A": "Understand",
+      "B": "Clear",
+      "C": "Comprehend",
+      "D": "Strange / Unfamiliar"
     },
     "correct_answer": "D",
-    "explanation": "'熟悉'(familiar)的反义词是'陌生'(strange/unfamiliar)。B、C、D都是近义词。"
+    "explanation": "The opposite of '熟悉' (familiar) is '陌生' (strange/unfamiliar). A, B, and C are near-synonyms of '熟悉'."
   },
   {
     "id": "level_010",
@@ -205,13 +205,13 @@
     "question_cn": "'趋势'是什么意思？",
     "question_en": "What does '趋势' (qūshì) mean?",
     "options": {
-      "A": "Problem / 问题",
-      "B": "Reason / 原因",
-      "C": "Result / 结果",
-      "D": "Trend/Tendency / 趋势"
+      "A": "Problem",
+      "B": "Reason",
+      "C": "Result",
+      "D": "Trend / Tendency"
     },
     "correct_answer": "D",
-    "explanation": "'趋势'意为trend/tendency。B是原因，C是结果，D是问题。"
+    "explanation": "'趋势' means trend or tendency. A is a problem, B is a reason, C is a result."
   },
   {
     "id": "level_015",
@@ -252,13 +252,13 @@
     "question_cn": "'宏观'和'微观'的区别是什么？",
     "question_en": "What is the difference between '宏观' (hóngguān) and '微观' (wēiguān)?",
     "options": {
-      "A": "'宏观'指整体/大范围，'微观'指局部/小范围 / '宏观' refers to the whole/large scale; '微观' to the part/small scale",
-      "B": "意思一样 / They mean the same",
-      "C": "'宏观'是形容词，'微观'是名词 / '宏观' is an adjective, '微观' is a noun",
-      "D": "'宏观'用于经济，'微观'用于生物 / '宏观' is for economics, '微观' for biology"
+      "A": "Macro refers to the whole / large scale; micro refers to the part / small scale",
+      "B": "They mean the same",
+      "C": "Macro is an adjective; micro is a noun",
+      "D": "Macro is for economics; micro is for biology"
     },
     "correct_answer": "A",
-    "explanation": "'宏观'指从整体/大范围看，'微观'指从局部/小范围看。B错误，C错误，D过于局限。"
+    "explanation": "'宏观' refers to viewing things from a whole / large-scale perspective, while '微观' refers to viewing from a partial / small-scale perspective. B is wrong, C is wrong, and D is too limited."
   },
   {
     "id": "level_018",

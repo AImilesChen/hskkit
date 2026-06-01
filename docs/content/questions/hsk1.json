@@ -12,7 +12,7 @@
       "D": "我二十岁。(I am 20 years old.)"
     },
     "correct_answer": "B",
-    "explanation": "'你好吗'是问候语，标准回应是'我很好，谢谢'。B回答身份，C回答名字，D回答年龄，均不匹配。"
+    "explanation": "'你好吗'是问候语，标准回应是'我很好，谢谢'。A回答身份，C回答名字，D回答年龄，均不匹配。"
   },
   {
     "id": "hsk1_002",
@@ -42,7 +42,7 @@
       "D": "我喜欢老师。(I like teachers.)"
     },
     "correct_answer": "B",
-    "explanation": "'是……吗'是一般疑问句，肯定回答用'是的'。C是否定含义的回答（我是学生=不是老师），B语法错误，D答非所问。"
+    "explanation": "'是……吗'是一般疑问句，肯定回答用'是的'。B直接肯定回答。C是否定含义的回答（我是学生=不是老师），A语法错误，D答非所问。"
   },
   {
     "id": "hsk1_004",
@@ -87,7 +87,7 @@
       "D": "现在三点半。(It's 3:30 now.)"
     },
     "correct_answer": "D",
-    "explanation": "'几点'询问具体时间，B回答三点半。A回答时段，C回答日期，D回答季节，均不匹配。"
+    "explanation": "'几点'询问具体时间，D回答三点半。A回答时段，B回答季节，C回答日期，均不匹配。"
   },
   {
     "id": "hsk1_007",
@@ -102,7 +102,7 @@
       "D": "我喜欢我家。(I like my home.)"
     },
     "correct_answer": "C",
-    "explanation": "'在哪里'询问地点，A回答城市（北京）。B回答人数，C描述房子，D表达情感，均不匹配。"
+    "explanation": "'在哪里'询问地点，C回答城市（北京）。A描述房子，B回答人数，D表达情感，均不匹配。"
   },
   {
     "id": "hsk1_008",
@@ -132,7 +132,7 @@
       "D": "这个很重。(This is very heavy.)"
     },
     "correct_answer": "C",
-    "explanation": "'多少钱'询问价格，B回答具体金额。A评价外观，C说颜色，D说重量，均不匹配。"
+    "explanation": "'多少钱'询问价格，C回答具体金额。A评价外观，B说颜色，D说重量，均不匹配。"
   },
   {
     "id": "hsk1_010",
@@ -147,7 +147,7 @@
       "D": "我今天不吃饭。(I am not eating today.)"
     },
     "correct_answer": "B",
-    "explanation": "'去哪儿'询问目的地，A回答地点（学校）。B表达情绪，C描述状态，D说行为，均不匹配。"
+    "explanation": "'去哪儿'询问目的地，B回答地点（学校）。A表达情绪，C描述状态，D说行为，均不匹配。"
   },
   {
     "id": "hsk1_011",
@@ -162,7 +162,7 @@
       "D": "我爸爸很好。(My father is very well.)"
     },
     "correct_answer": "C",
-    "explanation": "'做什么工作'询问职业，A回答职业（医生）。B回答年龄，C回答地点，D回应问候，均不匹配。"
+    "explanation": "'做什么工作'询问职业，C回答职业（医生）。A回答地点，B回答年龄，D回应问候，均不匹配。"
   },
   {
     "id": "hsk1_012",
@@ -222,7 +222,7 @@
       "D": "今天天气很好。(The weather is very nice today.)"
     },
     "correct_answer": "D",
-    "explanation": "'天气怎么样'询问天气状况，A直接描述天气。B回答日期，C说个人状态，D说计划，均不匹配。"
+    "explanation": "'天气怎么样'询问天气状况，D直接描述天气。A说计划，B回答日期，C说个人状态，均不匹配。"
   },
   {
     "id": "hsk1_016",
@@ -237,7 +237,7 @@
       "D": "我想喝水。(I want to drink water.)"
     },
     "correct_answer": "D",
-    "explanation": "'喝什么'询问饮品，A回答水（饮品）。B是食物，C是行为，D是活动，均不匹配。"
+    "explanation": "'喝什么'询问饮品，D回答水（饮品）。A是活动，B是食物，C是行为，均不匹配。"
   },
   {
     "id": "hsk1_017",
@@ -252,7 +252,7 @@
       "D": "我的电话坏了。(My phone is broken.)"
     },
     "correct_answer": "A",
-    "explanation": "'电话号码是多少'询问号码，B回答具体数字。A说颜色，C说喜好，D说状态，均不匹配。"
+    "explanation": "'电话号码是多少'询问号码，A回答具体数字。B说颜色，C说喜好，D说状态，均不匹配。"
   },
   {
     "id": "hsk1_018",
@@ -267,7 +267,7 @@
       "D": "我喜欢学校。(I like school.)"
     },
     "correct_answer": "B",
-    "explanation": "'怎么去'询问交通方式，A回答坐公交车。B回答目的，C描述学校，D表达喜好，均不匹配。"
+    "explanation": "'怎么去'询问交通方式，B回答坐公交车。A回答目的，C描述学校，D表达喜好，均不匹配。"
   },
   {
     "id": "hsk1_019",
@@ -282,7 +282,7 @@
       "D": "我妈妈是老师。(My mother is a teacher.)"
     },
     "correct_answer": "C",
-    "explanation": "'在……吗'询问是否在某处，A直接回答在不在家。B说行为，C回应问候，D说职业，均不匹配。"
+    "explanation": "'在……吗'询问是否在某处，C直接回答在不在家。A回应问候，B说行为，D说职业，均不匹配。"
   },
   {
     "id": "hsk1_020",
@@ -537,7 +537,7 @@
       "D": "Apple"
     },
     "correct_answer": "D",
-    "explanation": "A是常见的水果名称。B是另一种黄色弯曲的水果。C是柑橘类水果。D是成串生长的小水果。"
+    "explanation": "'苹果' means apple. A is a small fruit that grows in clusters. B is a long curved yellow fruit. C is a citrus fruit. D is a common round fruit that can be red, green, or yellow."
   },
   {
     "id": "hsk1_037",
@@ -552,7 +552,7 @@
       "D": "Doctor"
     },
     "correct_answer": "D",
-    "explanation": "A是治病救人的职业。B是在学校教书的人。C是在校学习的人。D是在工厂劳动的人。"
+    "explanation": "'医生' means doctor. A is someone who does physical labor in a factory or construction site. B is someone who teaches at a school. C is someone who studies at school. D is a medical professional who treats patients."
   },
   {
     "id": "hsk1_038",
@@ -582,7 +582,7 @@
       "D": "Juice"
     },
     "correct_answer": "C",
-    "explanation": "A是最常见的无色透明饮品。B是用茶叶冲泡的饮品。C是用咖啡豆制作的饮品。D是用水果榨取的饮品。"
+    "explanation": "'水' means water. A is a dark beverage made from roasted coffee beans. B is a beverage made by steeping tea leaves in hot water. C is the clear, colorless liquid essential for life. D is a drink made by squeezing fruits."
   },
   {
     "id": "hsk1_040",
@@ -597,7 +597,7 @@
       "D": "Park"
     },
     "correct_answer": "C",
-    "explanation": "A是学生学习的地方。B是病人看病的地方。C是人们吃饭的地方。D是人们休闲娱乐的地方。"
+    "explanation": "'学校' means school. A is a place where people pay to eat meals. B is a place where sick people go for medical treatment. C is a place where students go to learn and study. D is a public area with grass and trees for recreation."
   },
   {
     "id": "hsk1_041",
@@ -627,7 +627,7 @@
       "D": "Fish"
     },
     "correct_answer": "C",
-    "explanation": "A是一种常见的家养宠物，会抓老鼠。B是人类最忠诚的家养宠物。C是会飞的动物。D是生活在水中的动物。"
+    "explanation": "'猫' means cat. A is an animal with feathers and wings that can fly. B is a loyal domestic animal that often barks. C is a small furry domestic animal that catches mice and says 'meow'. D is an animal that lives in water and swims."
   },
   {
     "id": "hsk1_043",
@@ -672,7 +672,7 @@
       "D": "Tired"
     },
     "correct_answer": "B",
-    "explanation": "A表示心情愉悦、快乐。B表示心情悲伤。C表示心情愤怒。D表示身体疲倦。"
+    "explanation": "'高兴' means happy. A means feeling sorrow or unhappiness. B means feeling joy, pleasure, or delight. C means feeling furious or irritated. D means feeling physically exhausted or sleepy."
   },
   {
     "id": "hsk1_046",
@@ -687,7 +687,7 @@
       "D": "Write letters"
     },
     "correct_answer": "B",
-    "explanation": "A表示阅读书籍的行为。B表示观看电视节目的行为。C表示用耳朵欣赏音乐。D表示用笔写字或写信。"
+    "explanation": "'看书' means to read books. A means to watch television programs. B means to look at and understand written words in books. C means to hear and enjoy music through ears. D means to compose written messages or correspondence."
   },
   {
     "id": "hsk1_047",
@@ -702,7 +702,7 @@
       "D": "Buy food"
     },
     "correct_answer": "B",
-    "explanation": "A表示进食的行为，通常指吃正餐。B表示饮用液体。C表示睡眠休息。D表示购买食物。"
+    "explanation": "'吃饭' means to eat (a meal). A means to consume liquid, especially water. B means to take food into the mouth and swallow it, typically referring to meals. C means to prepare food by heating and combining ingredients. D means to purchase food from a store or market."
   },
   {
     "id": "hsk1_048",
@@ -747,6 +747,6 @@
       "D": "When expressing gratitude"
     },
     "correct_answer": "D",
-    "explanation": "A用于对别人表示感谢的场合。B用于见面打招呼。C用于告别时。D用于向别人道歉。"
+    "explanation": "'谢谢' means thank you. A is when you say sorry for a mistake. B is when you meet someone and say hello. C is when you leave and say farewell. D is when you want to show appreciation and thanks to someone."
   }
 ]

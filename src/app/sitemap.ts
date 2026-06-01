@@ -21,6 +21,7 @@ export default function sitemap() {
     "/new-hsk-3-0",
     "/privacy-policy",
     "/terms-of-service",
+    "/disclaimer",
   ];
 
   return routes.map((route) => ({

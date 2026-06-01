@@ -8,6 +8,7 @@ export default function SiteFooter() {
         <div className="flex justify-center gap-6 flex-wrap mb-4">
           <a href="/privacy-policy" className="text-sm text-[#64748B] no-underline hover:text-[#0F172A]">Privacy Policy</a>
           <a href="/terms-of-service" className="text-sm text-[#64748B] no-underline hover:text-[#0F172A]">Terms of Service</a>
+          <a href="/disclaimer" className="text-sm text-[#64748B] no-underline hover:text-[#0F172A]">Disclaimer</a>
           <a href="/hsk-levels" className="text-sm text-[#64748B] no-underline hover:text-[#0F172A]">HSK Levels</a>
           <a href="mailto:support@hskkit.com" className="text-sm text-[#64748B] no-underline hover:text-[#0F172A]">Contact</a>
         </div>
