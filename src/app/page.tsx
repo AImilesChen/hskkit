@@ -105,8 +105,81 @@ function FaqAccordion() {
   );
 }
 
+/* ────────── Study Path Card (clickable, mobile-friendly) ────────── */
+function StudyPathCard({
+  n,
+  t,
+  l,
+  href,
+  planned,
+}: {
+  n: number;
+  t: string;
+  l: string;
+  href: string;
+  planned?: boolean;
+}) {
+  const content = (
+    <div
+      className={`flex items-center gap-4 p-4 rounded-xl border transition-all duration-200 ${
+        planned
+          ? "bg-[#F8FAFC] border-[#E2E8F0] opacity-50"
+          : "bg-[#F8FAFC] border-[#E2E8F0] hover:bg-white hover:border-[#2563EB] hover:shadow-[0_4px_12px_rgba(37,99,235,0.08)] active:scale-[0.98]"
+      }`}
+    >
+      <div
+        className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0 ${
+          planned ? "bg-[#94A3B8] text-white" : "bg-[#2563EB] text-white"
+        }`}
+      >
+        {n}
+      </div>
+      <div className="flex-1 min-w-0">
+        <div className="text-sm font-semibold text-[#0F172A]">{t}</div>
+        <div className="text-xs text-[#64748B]">{l}</div>
+      </div>
+      {!planned && (
+        <svg
+          viewBox="0 0 24 24"
+          width="16"
+          height="16"
+          stroke="#94A3B8"
+          strokeWidth="2"
+          fill="none"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          className="flex-shrink-0"
+        >
+          <polyline points="9 18 15 12 9 6" />
+        </svg>
+      )}
+      {planned && (
+        <span className="text-[11px] font-semibold text-[#F59E0B] bg-[#FEF3C7] px-2 py-0.5 rounded-full flex-shrink-0">
+          Planned
+        </span>
+      )}
+    </div>
+  );
+
+  if (planned) return content;
+
+  return (
+    <Link href={href} className="block no-underline">
+      {content}
+    </Link>
+  );
+}
+
 /* ────────── Page ────────── */
 export default function HomePage() {
+  const studyPathSteps = [
+    { n: 1, t: "HSK 1", l: "150 words · Beginner", href: "/hsk-1-vocabulary" },
+    { n: 2, t: "HSK 2", l: "300 words · Elementary", href: "/hsk-2-vocabulary" },
+    { n: 3, t: "HSK 3", l: "600 words · Intermediate", href: "/hsk-3-vocabulary" },
+    { n: 4, t: "HSK 4", l: "1,200 words · Upper-Int", href: "/hsk-4-vocabulary" },
+    { n: 5, t: "HSK 5", l: "2,500 words · Advanced", href: "/hsk-5-vocabulary" },
+  ];
+
   return (
     <>
       {/* FAQ Schema */}
@@ -118,18 +191,58 @@ export default function HomePage() {
 
       <main>
         {/* ═════ BLOCK 1: HERO ═════ */}
-        <section className="py-24 bg-gradient-to-b from-[#EFF6FF] to-white max-sm:py-12">
+        <section className="py-24 bg-gradient-to-b from-[#EFF6FF] to-white max-sm:py-10">
           <div className="max-w-[1200px] mx-auto px-8 max-sm:px-4">
             <div className="grid grid-cols-2 gap-10 items-center max-lg:grid-cols-1 max-lg:text-center">
               {/* Text */}
               <div className="max-w-[560px] max-lg:max-w-full">
-                <h1 className="text-[48px] font-bold leading-[1.1] tracking-tight text-[#0F172A] mb-5 max-sm:text-[32px]">
+                <h1 className="text-[48px] font-bold leading-[1.1] tracking-tight text-[#0F172A] mb-5 max-sm:text-[28px] max-sm:mb-3">
                   Prepare for the HSK with Free Vocabulary, Practice Tests &amp; Level Guides
                 </h1>
-                <p className="text-lg leading-relaxed text-[#64748B] mb-8">
+                <p className="text-lg leading-relaxed text-[#64748B] mb-8 max-sm:text-base max-sm:mb-5">
                   HSKKit gives you level-by-level vocabulary lists, sample questions, and a quick self-check — so you stop guessing and start studying what actually matters.
                 </p>
-                <div className="flex gap-4 mb-8 flex-wrap max-lg:justify-center">
+
+                {/* Mobile: Quick Action Cards (visible first on mobile) */}
+                <div className="hidden max-sm:flex flex-col gap-3 mb-6">
+                  <Link
+                    href="/hsk-level-test"
+                    className="flex items-center justify-center gap-2 bg-[#2563EB] text-white px-6 py-3.5 rounded-xl text-base font-semibold no-underline transition-all duration-200 shadow-[0_1px_2px_rgba(0,0,0,0.04)] hover:bg-[#1D4ED8] active:scale-[0.98]"
+                  >
+                    <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round">
+                      <circle cx="12" cy="12" r="10" />
+                      <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" />
+                      <line x1="12" y1="17" x2="12.01" y2="17" />
+                    </svg>
+                    Take the Quick Level Check
+                  </Link>
+                  <Link
+                    href="/hsk-1-practice-test"
+                    className="flex items-center justify-center gap-2 bg-white text-[#2563EB] px-6 py-3.5 rounded-xl text-base font-semibold no-underline border-[1.5px] border-[#2563EB] transition-all duration-200 hover:bg-[#EFF6FF] active:scale-[0.98]"
+                  >
+                    <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z" />
+                      <polyline points="14 2 14 8 20 8" />
+                      <line x1="16" y1="13" x2="8" y2="13" />
+                      <line x1="16" y1="17" x2="8" y2="17" />
+                      <line x1="10" y1="9" x2="8" y2="9" />
+                    </svg>
+                    Start HSK 1 Practice Test
+                  </Link>
+                  <Link
+                    href="/hsk-1-vocabulary"
+                    className="flex items-center justify-center gap-2 bg-white text-[#334155] px-6 py-3.5 rounded-xl text-base font-semibold no-underline border-[1.5px] border-[#E2E8F0] transition-all duration-200 hover:border-[#2563EB] hover:text-[#2563EB] active:scale-[0.98]"
+                  >
+                    <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z" />
+                      <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z" />
+                    </svg>
+                    Browse HSK 1 Vocabulary
+                  </Link>
+                </div>
+
+                {/* Desktop: Original CTA buttons */}
+                <div className="flex gap-4 mb-8 flex-wrap max-lg:justify-center max-sm:hidden">
                   <Link
                     href="/hsk-level-test"
                     className="inline-flex items-center gap-2 bg-[#2563EB] text-white px-8 py-4 rounded-full text-lg font-semibold no-underline transition-all duration-200 shadow-[0_1px_2px_rgba(0,0,0,0.04)] hover:bg-[#1D4ED8] hover:shadow-[0_4px_12px_rgba(0,0,0,0.06)] active:scale-[0.98]"
@@ -143,44 +256,27 @@ export default function HomePage() {
                     Browse HSK 1 Vocabulary
                   </Link>
                 </div>
-                <div className="flex gap-5 flex-wrap text-[13px] font-medium text-[#64748B] max-lg:justify-center">
+
+                <div className="flex gap-5 flex-wrap text-[13px] font-medium text-[#64748B] max-lg:justify-center max-sm:gap-3 max-sm:text-xs">
                   <span className="flex items-center gap-2"><CheckIcon />Core guides are free</span>
                   <span className="flex items-center gap-2"><CheckIcon />No signup required</span>
                   <span className="flex items-center gap-2"><CheckIcon />HSK 1–5 available now</span>
                 </div>
               </div>
 
-              {/* Visual — Study Path */}
-              <div className="bg-white border border-[#E2E8F0] rounded-2xl p-8 shadow-[0_12px_32px_rgba(0,0,0,0.08)] max-lg:order-first max-lg:max-w-[500px] max-lg:mx-auto">
-                <div className="text-sm font-semibold text-[#64748B] mb-6 text-center uppercase tracking-wider">
+              {/* Visual — Study Path (desktop first, mobile below CTA cards) */}
+              <div className="bg-white border border-[#E2E8F0] rounded-2xl p-8 shadow-[0_12px_32px_rgba(0,0,0,0.08)] max-lg:max-w-[500px] max-lg:mx-auto max-sm:p-5 max-sm:shadow-[0_4px_12px_rgba(0,0,0,0.06)] max-sm:order-last">
+                <div className="text-sm font-semibold text-[#64748B] mb-6 text-center uppercase tracking-wider max-sm:mb-4 max-sm:text-xs">
                   Your HSK Study Path
                 </div>
-                <div className="flex flex-col gap-4">
-                  {[
-                    { n: 1, t: "HSK 1", l: "150 words · Beginner" },
-                    { n: 2, t: "HSK 2", l: "300 words · Elementary" },
-                    { n: 3, t: "HSK 3", l: "600 words · Intermediate" },
-                    { n: 4, t: "HSK 4", l: "1,200 words · Upper-Int" },
-                    { n: 5, t: "HSK 5", l: "2,500 words · Advanced" },
-                  ].map((s) => (
+                <div className="flex flex-col gap-3 max-sm:gap-2">
+                  {studyPathSteps.map((s) => (
                     <div key={s.n}>
-                      <div className="flex items-center gap-4 p-4 bg-[#F8FAFC] rounded-xl border border-[#E2E8F0]">
-                        <div className="w-8 h-8 rounded-full bg-[#2563EB] text-white flex items-center justify-center text-sm font-bold flex-shrink-0">
-                          {s.n}
-                        </div>
-                        <div>
-                          <div className="text-sm font-semibold text-[#0F172A]">{s.t}</div>
-                          <div className="text-xs text-[#64748B]">{s.l}</div>
-                        </div>
-                      </div>
-                      {s.n < 5 && <div className="w-[2px] h-5 bg-[#DBEAFE] ml-[23px]" />}
+                      <StudyPathCard n={s.n} t={s.t} l={s.l} href={s.href} />
+                      {s.n < 5 && <div className="w-[2px] h-4 bg-[#DBEAFE] ml-[23px] max-sm:h-3" />}
                     </div>
                   ))}
-                  <div className="flex items-center gap-4 p-4 bg-[#F8FAFC] rounded-xl border border-[#E2E8F0] opacity-50">
-                    <div className="w-8 h-8 rounded-full bg-[#94A3B8] text-white flex items-center justify-center text-sm font-bold flex-shrink-0">6</div>
-                    <div className="text-sm font-semibold text-[#0F172A]">HSK 6</div>
-                    <span className="ml-auto text-[11px] font-semibold text-[#F59E0B] bg-[#FEF3C7] px-2 py-0.5 rounded-full">Planned</span>
-                  </div>
+                  <StudyPathCard n={6} t="HSK 6" l="5,000+ words · Mastery" href="/hsk-6-vocabulary" planned />
                 </div>
               </div>
             </div>
