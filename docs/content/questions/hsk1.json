@@ -177,7 +177,7 @@
       "D": "我家有猫。(My family has a cat.)"
     },
     "correct_answer": "B",
-    "explanation": "'A还是B'是选择疑问句，需要明确选择其一。A直接选择猫。B是评价，C是否定，D是陈述事实，均未直接回答选择。"
+    "explanation": "'猫还是狗'是选择疑问句，需要明确选择其一。B直接回答'我喜欢猫'。A只是评价两种动物，C是否定动物偏好，D只说明家里有猫，均未直接回答选择。"
   },
   {
     "id": "hsk1_013",
@@ -342,7 +342,7 @@
       "D": "做(do)"
     },
     "correct_answer": "C",
-    "explanation": "'叫什么名字'是固定搭配，'叫'意为'被称为'。虽然B语法上可通，但'你是什么名字'不自然，A是标准表达。"
+    "explanation": "'叫什么名字'是固定搭配，'叫'意为'被称为'。C填入后是'你叫什么名字？'=What is your name? A、B、D均不构成自然表达。"
   },
   {
     "id": "hsk1_024",
@@ -402,14 +402,14 @@
       "D": "了(completed)"
     },
     "correct_answer": "C",
-    "explanation": "'好吗'是完整疑问结构。'很吗'不通，'的吗'用于陈述句变疑问，'了吗'用于完成态，但均不如A自然。"
+    "explanation": "'好吗'是完整疑问结构，C填入后是'你好吗？'=Are you well? '很吗'不通，'的吗'和'了吗'语义不符合本题。"
   },
   {
     "id": "hsk1_028",
     "level": 1,
     "type": "grammar",
-    "question_cn": "我______吃饭了。",
-    "question_en": "I ______ ate. (completed action)",
+    "question_cn": "我吃饭______。",
+    "question_en": "I have eaten. (completed action)",
     "options": {
       "A": "的(de (possessive))",
       "B": "了(le (completed action marker))",
@@ -417,7 +417,7 @@
       "D": "会(hui (can))"
     },
     "correct_answer": "B",
-    "explanation": "'了'放在动词后表示动作完成。'我吃饭了'=I have eaten. '的'、'在'、'会'均不表示完成态。"
+    "explanation": "'了'放在动词短语后表示动作已经完成。'我吃饭了。'=I have eaten. '的'、'在'、'会'均不表示完成态。"
   },
   {
     "id": "hsk1_029",
