@@ -59,3 +59,24 @@ export function trackPageView(url: string) {
     gtag("config", GA_ID, { page_path: url });
   }
 }
+
+/**
+ * Named event constants for HSKKit P0 Full tracking.
+ */
+export const AnalyticsEvents = {
+  // Core events
+  page_view: "page_view",
+  level_test_start: "level_test_start",
+  level_test_complete: "level_test_complete",
+  practice_test_complete: "practice_test_complete",
+  // Worksheet events (P0 Full)
+  worksheet_generate: "worksheet_generate",
+  worksheet_print: "worksheet_print",
+  worksheet_reset: "worksheet_reset",
+  // Reading events (P0 Full)
+  reading_start: "reading_start",
+  reading_story_view: "reading_story_view",
+  reading_vocab_tap: "reading_vocab_tap",
+  // Tool card clicks
+  tool_card_click: "tool_card_click",
+} as const;

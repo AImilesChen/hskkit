@@ -479,6 +479,18 @@ export default function HomePage() {
                   href: "/hsk-1-practice-test",
                   label: "Try Sample Practice Questions",
                 },
+                {
+                  title: "HSK 1 Reading with Pinyin",
+                  text: "Read 5 original short stories with pinyin support, highlighted vocabulary, and comprehension questions. 5 minutes per story.",
+                  href: "/hsk-1-reading-practice",
+                  label: "Start Reading",
+                },
+                {
+                  title: "Character Practice Sheets",
+                  text: "Generate printable Tian Zi Grids for any Chinese characters. Type, preview, and print in seconds. Great for handwriting practice.",
+                  href: "/tools/chinese-character-practice-sheet-generator",
+                  label: "Generate Worksheet",
+                },
               ].map((card) => (
                 <div
                   key={card.title}

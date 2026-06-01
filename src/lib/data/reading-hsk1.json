@@ -1,0 +1,202 @@
+[
+  {
+    "id": 1,
+    "titleCN": "我的家",
+    "titleEN": "My Family",
+    "theme": "Family",
+    "targetVocab": [
+      { "hanzi": "家", "pinyin": "jiā", "meaning": "home; family" },
+      { "hanzi": "爸爸", "pinyin": "bàba", "meaning": "father; dad" },
+      { "hanzi": "妈妈", "pinyin": "māma", "meaning": "mother; mom" },
+      { "hanzi": "狗", "pinyin": "gǒu", "meaning": "dog" },
+      { "hanzi": "漂亮", "pinyin": "piàoliang", "meaning": "beautiful" },
+      { "hanzi": "爱", "pinyin": "ài", "meaning": "to love" },
+      { "hanzi": "有", "pinyin": "yǒu", "meaning": "to have" },
+      { "hanzi": "个", "pinyin": "gè", "meaning": "a (general measure word)" }
+    ],
+    "chineseText": "我的家有三个人。爸爸、妈妈和我。爸爸是老师，妈妈是老师。他们很爱我和小狗。我有一个漂亮的小狗。小狗很喜欢我。我们上午吃饭，下午看电视。我爱我的家。",
+    "pinyinText": "Wǒ de jiā yǒu sān gè rén. Bàba, māma hé wǒ. Bàba shì lǎoshī, māma shì lǎoshī. Tāmen hěn ài wǒ hé xiǎo gǒu. Wǒ yǒu yī gè piàoliang de xiǎo gǒu. Xiǎo gǒu hěn xǐhuan wǒ. Wǒmen shàngwǔ chī fàn, xiàwǔ kàn diànshì. Wǒ ài wǒ de jiā.",
+    "englishSummary": "This family has three people: father, mother, and me. Father is a teacher. Mother is a teacher too. They love me and the small dog very much. I have a pretty small dog. The dog likes me very much. We eat at noon and watch TV in the afternoon. I love my family.",
+    "questions": [
+      {
+        "qCN": "家有几个人？",
+        "qEN": "How many people are in the family?",
+        "aCN": "三个人。",
+        "aEN": "Three people."
+      },
+      {
+        "qCN": "爸爸和妈妈是什么工作？",
+        "qEN": "What do the father and mother do?",
+        "aCN": "他们是老师。",
+        "aEN": "They are teachers."
+      },
+      {
+        "qCN": "小狗怎么样？",
+        "qEN": "How is the small dog?",
+        "aCN": "很漂亮。",
+        "aEN": "Very pretty."
+      }
+    ],
+    "studyTip": "Notice how 很 (hěn) is used before adjectives like 漂亮. In HSK 1, 很 often functions as a softener rather than meaning \"very\" in a strong sense. Also, 爱 is a verb meaning \"to love,\" while 漂亮 is an adjective meaning \"beautiful.\""
+  },
+  {
+    "id": 2,
+    "titleCN": "我的老师",
+    "titleEN": "My Teacher",
+    "theme": "School",
+    "targetVocab": [
+      { "hanzi": "老师", "pinyin": "lǎoshī", "meaning": "teacher" },
+      { "hanzi": "学生", "pinyin": "xuésheng", "meaning": "student" },
+      { "hanzi": "同学", "pinyin": "tóngxué", "meaning": "classmate" },
+      { "hanzi": "书", "pinyin": "shū", "meaning": "book" },
+      { "hanzi": "读", "pinyin": "dú", "meaning": "to read" },
+      { "hanzi": "学习", "pinyin": "xuéxí", "meaning": "to study; to learn" },
+      { "hanzi": "汉语", "pinyin": "Hànyǔ", "meaning": "Chinese language" },
+      { "hanzi": "字", "pinyin": "zì", "meaning": "character; word" }
+    ],
+    "chineseText": "我是学生，我的老师很好。老师叫我们学习汉语。我们今天读书，学习汉字。我的同学都喜欢学习。下午三点，我们回家。明天见，老师！",
+    "pinyinText": "Wǒ shì xuésheng, wǒ de lǎoshī hěn hǎo. Lǎoshī jiào wǒmen xuéxí Hànyǔ. Wǒmen jīntiān dú shū, xuéxí Hànzì. Wǒ de tóngxué dōu xǐhuan xuéxí. Xiàwǔ sān diǎn, wǒmen huí jiā. Míngtiān jiàn, lǎoshī!",
+    "englishSummary": "I am a student. My teacher is very nice. The teacher asks us to study Chinese. Today we read books and learn Chinese characters. My classmates all like studying. At 3 PM, we go home. See you tomorrow, teacher!",
+    "questions": [
+      {
+        "qCN": "我是学生还是老师？",
+        "qEN": "Am I a student or a teacher?",
+        "aCN": "学生。",
+        "aEN": "A student."
+      },
+      {
+        "qCN": "我们今天学习什么？",
+        "qEN": "What do we study today?",
+        "aCN": "汉语和汉字。",
+        "aEN": "Chinese language and Chinese characters."
+      },
+      {
+        "qCN": "我的同学喜欢学习吗？",
+        "qEN": "Do my classmates like studying?",
+        "aCN": "喜欢。",
+        "aEN": "Yes, they do."
+      }
+    ],
+    "studyTip": "Pay attention to the measure word 本 (běn) for books. \"五本书\" means \"five books.\" Measure words are essential in Chinese counting. Also notice 汉字 (Hànzì) means \"Chinese characters\" — a key word for all HSK learners."
+  },
+  {
+    "id": 3,
+    "titleCN": "在饭店",
+    "titleEN": "At the Restaurant",
+    "theme": "Restaurant",
+    "targetVocab": [
+      { "hanzi": "饭店", "pinyin": "fàndiàn", "meaning": "restaurant" },
+      { "hanzi": "吃", "pinyin": "chī", "meaning": "to eat" },
+      { "hanzi": "米饭", "pinyin": "mǐfàn", "meaning": "rice (cooked)" },
+      { "hanzi": "菜", "pinyin": "cài", "meaning": "dish; vegetable" },
+      { "hanzi": "茶", "pinyin": "chá", "meaning": "tea" },
+      { "hanzi": "水", "pinyin": "shuǐ", "meaning": "water" },
+      { "hanzi": "杯子", "pinyin": "bēizi", "meaning": "cup; glass" },
+      { "hanzi": "高兴", "pinyin": "gāoxìng", "meaning": "happy; glad" }
+    ],
+    "chineseText": "今天中午，我和朋友去饭店吃饭。饭店不大，菜很好。我们吃了米饭，喝了茶。我们看见四个杯子。一杯是水，三杯是茶。朋友说：这个菜很好！我很高兴。",
+    "pinyinText": "Jīntiān zhōngwǔ, wǒ hé péngyou qù fàndiàn chī fàn. Fàndiàn bù dà, cài hěn hǎo. Wǒmen chī le mǐfàn, hē le chá. Wǒmen kànjiàn sì gè bēizi. Yī bēi shì shuǐ, sān bēi shì chá. Péngyou shuō: Zhège cài hěn hǎo! Wǒ hěn gāoxìng.",
+    "englishSummary": "At noon today, my friend and I go to a restaurant to eat. The restaurant is not big, but the dishes are good. We eat rice and drink tea. We see four cups. One cup is water, three cups are tea. My friend says: \"This dish is good!\" I am happy.",
+    "questions": [
+      {
+        "qCN": "我们什么时候去饭店？",
+        "qEN": "When do we go to the restaurant?",
+        "aCN": "今天中午。",
+        "aEN": "Today at noon."
+      },
+      {
+        "qCN": "我们吃了什么？",
+        "qEN": "What did we eat?",
+        "aCN": "米饭。",
+        "aEN": "Rice."
+      },
+      {
+        "qCN": "有几个杯子？",
+        "qEN": "How many cups are there?",
+        "aCN": "四个。",
+        "aEN": "Four."
+      }
+    ],
+    "studyTip": "The word 了 (le) appears after verbs to show completed action: \"吃了米饭\" = \"ate rice.\" This is one of the most common grammar points in HSK 1. Also notice 杯 (bēi) is the measure word for cups: \"一杯水\" = \"one cup of water.\""
+  },
+  {
+    "id": 4,
+    "titleCN": "去北京",
+    "titleEN": "A Trip to Beijing",
+    "theme": "Travel",
+    "targetVocab": [
+      { "hanzi": "北京", "pinyin": "Běijīng", "meaning": "Beijing" },
+      { "hanzi": "飞机", "pinyin": "fēijī", "meaning": "airplane" },
+      { "hanzi": "出租车", "pinyin": "chūzūchē", "meaning": "taxi" },
+      { "hanzi": "饭店", "pinyin": "fàndiàn", "meaning": "restaurant; hotel" },
+      { "hanzi": "天气", "pinyin": "tiānqì", "meaning": "weather" },
+      { "hanzi": "冷", "pinyin": "lěng", "meaning": "cold" },
+      { "hanzi": "高兴", "pinyin": "gāoxìng", "meaning": "happy; glad" },
+      { "hanzi": "漂亮", "pinyin": "piàoliang", "meaning": "beautiful" }
+    ],
+    "chineseText": "明天我去北京。我坐飞机去。去了北京，我坐出租车去饭店。北京的天气很冷，我很高兴。我看见了很多漂亮的东西。我想买一些东西。北京很大，我很喜欢！",
+    "pinyinText": "Míngtiān wǒ qù Běijīng. Wǒ zuò fēijī qù. Qù le Běijīng, wǒ zuò chūzūchē qù fàndiàn. Běijīng de tiānqì hěn lěng, wǒ hěn gāoxìng. Wǒ kànjiàn le hěn duō piàoliang de dōngxi. Wǒ xiǎng mǎi yīxiē dōngxi. Běijīng hěn dà, wǒ hěn xǐhuan!",
+    "englishSummary": "Tomorrow I go to Beijing. I go by plane. After arriving in Beijing, I take a taxi to a hotel. The weather in Beijing is cold, but I am happy. I see many beautiful things. I want to buy some things. Beijing is big. I like it very much!",
+    "questions": [
+      {
+        "qCN": "我怎么去北京？",
+        "qEN": "How do I go to Beijing?",
+        "aCN": "坐飞机。",
+        "aEN": "By plane."
+      },
+      {
+        "qCN": "北京的天气怎么样？",
+        "qEN": "How is the weather in Beijing?",
+        "aCN": "很冷。",
+        "aEN": "Very cold."
+      },
+      {
+        "qCN": "我想做什么？",
+        "qEN": "What do I want to do?",
+        "aCN": "买东西。",
+        "aEN": "Buy things."
+      }
+    ],
+    "studyTip": "Pay attention to the word order: \"北京的天气\" = \"Beijing's weather.\" In Chinese, the possessive 的 (de) connects the place and the noun. This pattern is very common in HSK 1."
+  },
+  {
+    "id": 5,
+    "titleCN": "我的朋友",
+    "titleEN": "My Friend",
+    "theme": "Friendship",
+    "targetVocab": [
+      { "hanzi": "朋友", "pinyin": "péngyou", "meaning": "friend" },
+      { "hanzi": "喜欢", "pinyin": "xǐhuan", "meaning": "to like" },
+      { "hanzi": "猫", "pinyin": "māo", "meaning": "cat" },
+      { "hanzi": "狗", "pinyin": "gǒu", "meaning": "dog" },
+      { "hanzi": "电影", "pinyin": "diànyǐng", "meaning": "movie; film" },
+      { "hanzi": "电脑", "pinyin": "diànnǎo", "meaning": "computer" },
+      { "hanzi": "茶", "pinyin": "chá", "meaning": "tea" },
+      { "hanzi": "高兴", "pinyin": "gāoxìng", "meaning": "happy; glad" }
+    ],
+    "chineseText": "我有一个好朋友，她是我的同学。她喜欢猫，喜欢狗。她家有小猫，小猫很漂亮。她喜欢看电影，今天看了电影。她喜欢喝茶。下午，她和我看电视。她的电脑很漂亮。她很高兴，我很高兴。",
+    "pinyinText": "Wǒ yǒu yī gè hǎo péngyou, tā shì wǒ de tóngxué. Tā xǐhuan māo, xǐhuan gǒu. Tā jiā yǒu xiǎo māo, xiǎo māo hěn piàoliang. Tā xǐhuan kàn diànyǐng, jīntiān kàn le diànyǐng. Tā xǐhuan hē chá. Xiàwǔ, tā hé wǒ kàn diànshì. Tā de diànnǎo hěn piàoliang. Tā hěn gāoxìng, wǒ hěn gāoxìng.",
+    "englishSummary": "I have a good friend. She is my classmate. She likes cats and dogs. Her family has a small cat. The small cat is pretty. She likes watching movies. She watched a movie today. She likes drinking tea. In the afternoon, she and I watch TV. Her computer is pretty. She is happy. I am happy too.",
+    "questions": [
+      {
+        "qCN": "我的朋友是谁？",
+        "qEN": "Who is my friend?",
+        "aCN": "我的同学。",
+        "aEN": "My classmate."
+      },
+      {
+        "qCN": "她喜欢什么动物？",
+        "qEN": "What animals does she like?",
+        "aCN": "猫和狗。",
+        "aEN": "Cats and dogs."
+      },
+      {
+        "qCN": "下午我们做什么？",
+        "qEN": "What do we do in the afternoon?",
+        "aCN": "看电视。",
+        "aEN": "Watch TV."
+      }
+    ],
+    "studyTip": "Notice how 了 (le) shows completed action: \"今天看了电影\" = \"watched a movie today.\" The word 电影 (diànyǐng) is repeated after 看了 so learners can clearly see the object. This is a helpful pattern for HSK 1 beginners."
+  }
+]

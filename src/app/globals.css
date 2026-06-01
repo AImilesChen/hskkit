@@ -251,3 +251,46 @@
     animation: fadeInUp 0.6s ease forwards;
   }
 }
+
+/* ────────── Print styles for worksheet generator ────────── */
+@media print {
+  /* Hide navigation, footer, buttons, instructions, FAQ on print */
+  header,
+  footer,
+  .print-hide,
+  nav,
+  button,
+  a[href="#generator"] {
+    display: none !important;
+  }
+
+  /* Only show the print area */
+  .print-area {
+    display: block !important;
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  /* Ensure grid cells print with solid borders */
+  .print-area [class*="border"] {
+    border-color: #000 !important;
+  }
+
+  /* Remove shadows and backgrounds that waste ink */
+  .print-area * {
+    box-shadow: none !important;
+    background: white !important;
+  }
+
+  /* Force page break handling */
+  .print-area .flex-wrap {
+    page-break-inside: avoid;
+  }
+
+  /* Ensure body background is white for print */
+  body {
+    background: white !important;
+    color: black !important;
+  }
+}

@@ -17,6 +17,8 @@ export default function sitemap() {
     "/hsk-5-vocabulary",
     "/hsk-5-practice-test",
     "/hsk-6-vocabulary",
+    "/hsk-1-reading-practice",
+    "/tools/chinese-character-practice-sheet-generator",
     "/contact",
     "/new-hsk-3-0",
     "/privacy-policy",
