@@ -498,7 +498,7 @@
     "id": "hsk1_034",
     "level": 1,
     "type": "grammar",
-    "question_cn": "______你爸爸？",
+    "question_cn": "______是你爸爸？",
     "question_en": "______ is your father?",
     "options": {
       "A": "怎么(How)",
@@ -507,7 +507,7 @@
       "D": "谁(Who)"
     },
     "correct_answer": "D",
-    "explanation": "'谁'询问人。'什么'询问事物，'哪儿'询问地点，'怎么'询问方式，均不匹配。"
+    "explanation": "'谁'询问人。D填入后是'谁是你爸爸？'=Who is your father? '什么'询问事物，'哪儿'询问地点，'怎么'询问方式，均不匹配。"
   },
   {
     "id": "hsk1_035",
