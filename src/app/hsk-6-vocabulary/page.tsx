@@ -50,22 +50,22 @@ export default function HSK6VocabularyPage() {
             </p>
             <div className="flex flex-col gap-3 items-center">
               <a
-                href="/hsk-6-practice-test"
-                className="inline-flex items-center gap-2 bg-[#2563EB] text-white px-6 py-3 rounded-full text-[15px] font-semibold no-underline hover:bg-[#1D4ED8] transition-colors"
-              >
-                Next: HSK 6 Practice Test →
-              </a>
-              <a
                 href="/hsk-level-test"
-                className="inline-flex items-center gap-2 bg-transparent text-[#2563EB] border-[1.5px] border-[#2563EB] px-6 py-3 rounded-full text-[15px] font-semibold no-underline hover:bg-[#EFF6FF] transition-colors"
+                className="inline-flex items-center gap-2 bg-[#2563EB] text-white px-6 py-3 rounded-full text-[15px] font-semibold no-underline hover:bg-[#1D4ED8] transition-colors"
               >
                 Take the Level Check →
               </a>
               <a
                 href="/new-hsk-3-0"
-                className="inline-flex items-center gap-2 text-[#64748B] text-sm font-medium no-underline hover:text-[#334155] transition-colors mt-1"
+                className="inline-flex items-center gap-2 bg-transparent text-[#2563EB] border-[1.5px] border-[#2563EB] px-6 py-3 rounded-full text-[15px] font-semibold no-underline hover:bg-[#EFF6FF] transition-colors"
               >
                 Read the New HSK 3.0 Guide →
+              </a>
+              <a
+                href="/hsk-5-vocabulary"
+                className="inline-flex items-center gap-2 text-[#64748B] text-sm font-medium no-underline hover:text-[#334155] transition-colors mt-1"
+              >
+                Back to HSK 5 Vocabulary →
               </a>
             </div>
           </div>
