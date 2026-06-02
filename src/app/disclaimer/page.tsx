@@ -8,6 +8,14 @@ export const metadata: Metadata = {
   alternates: {
     canonical: "https://hskkit.com/disclaimer",
   },
+  openGraph: {
+    title: "Disclaimer | HSKKit",
+    description:
+      "Disclaimer and important notices for HSKKit users.",
+    url: "https://hskkit.com/disclaimer",
+    siteName: "HSKKit",
+    type: "website",
+  },
 };
 
 export default function DisclaimerPage() {

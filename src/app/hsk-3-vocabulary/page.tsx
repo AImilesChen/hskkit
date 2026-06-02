@@ -11,6 +11,14 @@ export const metadata: Metadata = {
   alternates: {
     canonical: "https://hskkit.com/hsk-3-vocabulary",
   },
+  openGraph: {
+    title: "HSK 3 Vocabulary Guide | HSKKit",
+    description:
+      "Study HSK 3 vocabulary, HSK 3 word list themes, sample Chinese words, transition tips from HSK 2, readiness checks, and next steps.",
+    url: "https://hskkit.com/hsk-3-vocabulary",
+    siteName: "HSKKit",
+    type: "website",
+  },
 };
 
 const sampleWords = [

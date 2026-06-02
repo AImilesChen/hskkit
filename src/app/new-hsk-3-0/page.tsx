@@ -9,6 +9,14 @@ export const metadata: Metadata = {
   alternates: {
     canonical: "https://hskkit.com/new-hsk-3-0",
   },
+  openGraph: {
+    title: "New HSK 3.0 Guide | HSKKit",
+    description:
+      "Understand the New HSK 3.0 discussion conservatively, compare beginner study planning, and choose practical HSK next steps.",
+    url: "https://hskkit.com/new-hsk-3-0",
+    siteName: "HSKKit",
+    type: "website",
+  },
 };
 
 /* ────────── 2.0 vs 3.0 comparison ────────── */

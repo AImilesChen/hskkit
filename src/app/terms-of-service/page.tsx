@@ -8,6 +8,14 @@ export const metadata: Metadata = {
   alternates: {
     canonical: "https://hskkit.com/terms-of-service",
   },
+  openGraph: {
+    title: "Terms of Service | HSKKit",
+    description:
+      "Terms for using the current HSKKit study guide website.",
+    url: "https://hskkit.com/terms-of-service",
+    siteName: "HSKKit",
+    type: "website",
+  },
 };
 
 export default function TermsPage() {

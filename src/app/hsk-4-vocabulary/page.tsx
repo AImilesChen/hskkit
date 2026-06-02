@@ -11,6 +11,14 @@ export const metadata: Metadata = {
   alternates: {
     canonical: "https://hskkit.com/hsk-4-vocabulary",
   },
+  openGraph: {
+    title: "HSK 4 Vocabulary Guide | HSKKit",
+    description:
+      "Study HSK 4 vocabulary, HSK 4 word list themes, sample Chinese words, transition challenges from HSK 3, readiness checks, and review advice.",
+    url: "https://hskkit.com/hsk-4-vocabulary",
+    siteName: "HSKKit",
+    type: "website",
+  },
 };
 
 const sampleWords = [

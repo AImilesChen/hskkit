@@ -9,6 +9,14 @@ export const metadata: Metadata = {
   alternates: {
     canonical: "https://hskkit.com/hsk-levels",
   },
+  openGraph: {
+    title: "HSK Levels Explained | HSKKit",
+    description:
+      "Compare HSK 1 to HSK 6 and find a practical beginner path for Chinese vocabulary, practice tests, and level checking.",
+    url: "https://hskkit.com/hsk-levels",
+    siteName: "HSKKit",
+    type: "website",
+  },
 };
 
 const levels = [

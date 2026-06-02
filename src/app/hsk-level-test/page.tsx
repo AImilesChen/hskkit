@@ -11,6 +11,14 @@ export const metadata: Metadata = {
   alternates: {
     canonical: "https://hskkit.com/hsk-level-test",
   },
+  openGraph: {
+    title: "HSK Level Test | HSKKit",
+    description:
+      "Take a quick HSK level check with 8 questions across all levels. Get a personalized HSK level recommendation and next steps.",
+    url: "https://hskkit.com/hsk-level-test",
+    siteName: "HSKKit",
+    type: "website",
+  },
 };
 
 export default function HSKLevelTestPage() {

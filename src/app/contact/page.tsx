@@ -9,6 +9,14 @@ export const metadata: Metadata = {
   alternates: {
     canonical: "https://hskkit.com/contact",
   },
+  openGraph: {
+    title: "Contact HSKKit | Get Help & Support",
+    description:
+      "Reach out to HSKKit for questions, feedback, or support. We typically respond within 1–2 business days.",
+    url: "https://hskkit.com/contact",
+    siteName: "HSKKit",
+    type: "website",
+  },
 };
 
 const faqs = [

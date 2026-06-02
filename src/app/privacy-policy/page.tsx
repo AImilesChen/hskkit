@@ -8,6 +8,14 @@ export const metadata: Metadata = {
   alternates: {
     canonical: "https://hskkit.com/privacy-policy",
   },
+  openGraph: {
+    title: "Privacy Policy | HSKKit",
+    description:
+      "How HSKKit handles privacy for the current study guide website.",
+    url: "https://hskkit.com/privacy-policy",
+    siteName: "HSKKit",
+    type: "website",
+  },
 };
 
 export default function PrivacyPolicyPage() {
