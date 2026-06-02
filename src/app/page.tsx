@@ -474,6 +474,12 @@ export default function HomePage() {
                   label: "Start HSK 1 Vocabulary",
                 },
                 {
+                  title: "HSK 1 Flashcards",
+                  text: "Flip beginner cards: front shows hanzi; back shows pinyin, English meaning, and an example sentence.",
+                  href: "/hsk-1-vocabulary#flashcards",
+                  label: "Start Flashcards",
+                },
+                {
                   title: "HSK 1 Sample Practice Questions",
                   text: "Sample questions with answer keys. Test what you've learned and find your weak spots.",
                   href: "/hsk-1-practice-test",

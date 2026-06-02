@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
+import Link from "next/link";
 import InfoBanner from "../components/info-banner";
 import LearningPath from "../components/learning-path";
 import words from "../../lib/data/hsk1_vocab.json";
@@ -42,6 +43,14 @@ export default function HSK1VocabularyClient() {
 
   const currentFlash = filtered[flashIndex];
 
+  useEffect(() => {
+    if (window.location.hash === "#flashcards") {
+      setFlashMode(true);
+      setFlashFlipped(false);
+      setFlashIndex(0);
+    }
+  }, []);
+
   const handleNextFlash = () => {
     setFlashFlipped(false);
     setFlashIndex((prev) => (prev + 1) % filtered.length);
@@ -74,6 +83,14 @@ export default function HSK1VocabularyClient() {
             <a href="/hsk-level-test" className="btn btn-secondary">
               Check your level
             </a>
+          </div>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <Link
+              href="/hsk-1-vocabulary#flashcards"
+              className="inline-flex items-center justify-center gap-2 bg-white text-[#2563EB] px-8 py-4 rounded-full text-lg font-semibold no-underline border border-[#DBEAFE] transition-all duration-200 hover:bg-[#EFF6FF]"
+            >
+              Start HSK 1 Flashcards
+            </Link>
           </div>
         </div>
       </section>
