@@ -11,6 +11,14 @@ export const metadata: Metadata = {
   alternates: {
     canonical: "https://hskkit.com/hsk-5-practice-test",
   },
+  openGraph: {
+    title: "HSK 5 Practice Test | HSKKit",
+    description:
+      "Take an interactive HSK 5 practice test with 10 random questions from a 35-question bank. Instant scoring, explanations, and personalized next steps.",
+    url: "https://hskkit.com/hsk-5-practice-test",
+    siteName: "HSKKit",
+    type: "website",
+  },
 };
 
 export default function HSK5PracticeTestPage() {
