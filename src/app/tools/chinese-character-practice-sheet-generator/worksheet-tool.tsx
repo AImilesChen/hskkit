@@ -1,12 +1,12 @@
 "use client";
 
 import { useState, useCallback } from "react";
+import { trackEvent, AnalyticsEvents } from "../../../lib/analytics";
 
 const MAX_CHARS = 200;
 const WARNING_CHARS = 50;
 
 function extractChineseChars(input: string): string[] {
-  // Extract CJK Unified Ideographs (common Chinese characters)
   const cjkRegex = /[\u4e00-\u9fff]/gu;
   return input.match(cjkRegex) || [];
 }
@@ -42,17 +42,25 @@ export function WorksheetTool() {
     if (chineseCount === 0) return;
     setChars(chineseChars);
     setGenerated(true);
+    trackEvent(AnalyticsEvents.worksheet_generate, {
+      char_count: chineseCount,
+      grid_style: "tianzige",
+    });
   }, [chineseChars, chineseCount]);
 
   const handleReset = useCallback(() => {
     setInput("");
     setGenerated(false);
     setChars([]);
+    trackEvent(AnalyticsEvents.worksheet_reset);
   }, []);
 
   const handlePrint = useCallback(() => {
     window.print();
-  }, []);
+    trackEvent(AnalyticsEvents.worksheet_print, {
+      char_count: chars.length,
+    });
+  }, [chars.length]);
 
   const counterColor =
     chineseCount > MAX_CHARS

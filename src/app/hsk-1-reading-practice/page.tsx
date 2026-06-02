@@ -4,6 +4,8 @@ import Script from "next/script";
 import SiteHeader from "../site-header";
 import SiteFooter from "../site-footer";
 import readingData from "../../lib/data/reading-hsk1.json";
+import { StoryCard } from "./story-card";
+import { ReadingAnalytics } from "./reading-analytics";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://hskkit.com"),
@@ -89,105 +91,15 @@ interface Story {
 
 const stories = readingData as Story[];
 
-/* ────────── Components ────────── */
-
-function VocabChip({ vocab }: { vocab: VocabItem }) {
-  return (
-    <div className="inline-flex flex-col items-center bg-[#F8FAFC] border border-[#E2E8F0] rounded-lg px-3 py-2 min-w-[64px] transition-all duration-150 hover:bg-[#EFF6FF] hover:border-[#2563EB] hover:-translate-y-px hover:shadow-sm cursor-pointer group">
-      <span className="text-lg font-semibold text-[#C23A30] chinese-char">{vocab.hanzi}</span>
-      <span className="text-[11px] text-[#64748B] mt-0.5">{vocab.pinyin}</span>
-      <span className="text-[10px] text-[#94A3B8] mt-0.5 hidden group-hover:inline-block max-w-[120px] text-center leading-tight">
-        {vocab.meaning}
-      </span>
-    </div>
-  );
-}
-
-function StoryCard({ story }: { story: Story }) {
-  return (
-    <article
-      id={`story-${story.id}`}
-      className="bg-white border border-[#E2E8F0] rounded-2xl p-8 max-sm:p-5 shadow-[0_4px_12px_rgba(0,0,0,0.06)] mb-12 max-sm:mb-8 scroll-mt-24"
-    >
-      {/* Header */}
-      <div className="flex items-start gap-4 mb-6">
-        <div className="w-10 h-10 rounded-full bg-[#2563EB] text-white flex items-center justify-center text-sm font-bold flex-shrink-0">
-          {String(story.id).padStart(2, "0")}
-        </div>
-        <div>
-          <h2 className="text-2xl font-bold text-[#0F172A] chinese-char leading-tight">{story.titleCN}</h2>
-          <p className="text-lg font-semibold text-[#64748B] mt-1">{story.titleEN}</p>
-          <span className="inline-block text-xs font-semibold text-[#2563EB] bg-[#EFF6FF] px-2 py-0.5 rounded-full mt-2">
-            {story.theme}
-          </span>
-        </div>
-      </div>
-
-      {/* Target Vocabulary */}
-      <div className="mb-6">
-        <div className="text-xs font-semibold uppercase tracking-wider text-[#64748B] mb-3">
-          Target Vocabulary ({story.targetVocab.length} words)
-        </div>
-        <div className="flex flex-wrap gap-2">
-          {story.targetVocab.map((v) => (
-            <VocabChip key={v.hanzi} vocab={v} />
-          ))}
-        </div>
-      </div>
-
-      {/* Chinese Text */}
-      <div className="mb-4">
-        <div className="text-xs font-semibold uppercase tracking-wider text-[#64748B] mb-3">Chinese Text</div>
-        <p className="text-lg leading-[1.8] text-[#0F172A] chinese-char">{story.chineseText}</p>
-      </div>
-
-      {/* Pinyin */}
-      <div className="bg-[#F8FAFC] rounded-lg p-4 mb-6">
-        <div className="text-xs font-semibold uppercase tracking-wider text-[#64748B] mb-2">Pinyin</div>
-        <p className="text-sm leading-[1.6] text-[#64748B] tracking-wide">{story.pinyinText}</p>
-      </div>
-
-      {/* English Summary */}
-      <div className="mb-6">
-        <div className="text-xs font-semibold uppercase tracking-wider text-[#64748B] mb-3">English Summary</div>
-        <p className="text-base leading-[1.7] text-[#334155] italic">{story.englishSummary}</p>
-      </div>
-
-      {/* Comprehension Questions */}
-      <div className="mb-6">
-        <div className="text-xs font-semibold uppercase tracking-wider text-[#64748B] mb-3">Comprehension Questions</div>
-        <div className="divide-y divide-[#E2E8F0]">
-          {story.questions.map((q, i) => (
-            <div key={i} className="py-4 first:pt-0 last:pb-0">
-              <p className="text-base font-semibold text-[#0F172A] mb-1">
-                <span className="text-[#2563EB] font-bold mr-2">Q:</span>
-                <span className="chinese-char mr-2">{q.qCN}</span>
-                <span className="text-[#64748B] font-normal">/ {q.qEN}</span>
-              </p>
-              <p className="text-base text-[#334155] pl-6">
-                <span className="text-[#10B981] font-bold mr-2">A:</span>
-                <span className="chinese-char mr-2">{q.aCN}</span>
-                <span className="text-[#64748B]">/ {q.aEN}</span>
-              </p>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* Study Tip */}
-      <div className="bg-[#FEF3C7] border-l-4 border-[#F59E0B] rounded-r-lg p-4">
-        <div className="text-xs font-semibold uppercase tracking-wider text-[#64748B] mb-2">Study Tip</div>
-        <p className="text-base leading-[1.7] text-[#334155]">{story.studyTip}</p>
-      </div>
-    </article>
-  );
-}
-
 /* ────────── Page ────────── */
 export default function ReadingPracticePage() {
   return (
     <>
-      <Script id="faq-schema-reading" type="application/ld+json" strategy="beforeInteractive">
+      <Script
+        id="faq-schema-reading"
+        type="application/ld+json"
+        strategy="beforeInteractive"
+      >
         {JSON.stringify(faqSchema)}
       </Script>
 
@@ -393,6 +305,7 @@ export default function ReadingPracticePage() {
       </main>
 
       <SiteFooter />
+      <ReadingAnalytics />
     </>
   );
 }
