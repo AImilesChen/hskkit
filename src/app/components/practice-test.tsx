@@ -198,6 +198,14 @@ export default function PracticeTest({
 
   return (
     <div className="max-w-[720px] mx-auto px-8 max-sm:px-4 py-16 max-sm:py-10">
+      {/* H1 */}
+      <div className="mb-8">
+        <h1 className="text-[28px] font-bold text-[#0F172A] max-sm:text-[24px] mb-2">{title}</h1>
+        {description && (
+          <p className="text-base text-[#64748B]">{description}</p>
+        )}
+      </div>
+
       {/* Progress */}
       <div className="mb-8">
         <div className="flex justify-between text-sm font-medium text-[#64748B] mb-2">

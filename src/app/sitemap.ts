@@ -16,7 +16,6 @@ export default function sitemap() {
     "/hsk-4-practice-test",
     "/hsk-5-vocabulary",
     "/hsk-5-practice-test",
-    "/hsk-6-vocabulary",
     "/hsk-1-reading-practice",
     "/tools/chinese-character-practice-sheet-generator",
     "/contact",
@@ -25,7 +24,6 @@ export default function sitemap() {
     "/terms-of-service",
     "/disclaimer",
   ];
-
   return routes.map((route) => ({
     url: `${baseUrl}${route}`,
     lastModified: new Date(),
