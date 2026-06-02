@@ -2,6 +2,7 @@
 
 import { useState, useCallback, useMemo } from "react";
 import Link from "next/link";
+import { trackEvent, AnalyticsEvents } from "../../lib/analytics";
 import {
   QuestionTitle,
   OptionButton,
@@ -173,9 +174,16 @@ export default function LevelTest({
     if (currentIndex < total - 1) {
       setCurrentIndex((prev) => prev + 1);
     } else {
+      const recommended = getRecommendedLevel(questions, answers);
+      trackEvent(AnalyticsEvents.level_test_complete, {
+        total_questions: total,
+        correct_count: correctCount,
+        accuracy: Math.round((correctCount / total) * 100),
+        suggested_level: recommended.label,
+      });
       setShowResult(true);
     }
-  }, [currentIndex, total]);
+  }, [currentIndex, total, questions, answers, correctCount]);
 
   const handlePrev = useCallback(() => {
     if (currentIndex > 0) {
@@ -210,7 +218,10 @@ export default function LevelTest({
         </p>
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
           <button
-            onClick={() => setStarted(true)}
+            onClick={() => {
+              trackEvent(AnalyticsEvents.level_test_start);
+              setStarted(true);
+            }}
             className="inline-flex items-center justify-center gap-2 bg-[#2563EB] text-white px-8 py-4 rounded-full text-lg font-semibold border-none cursor-pointer transition-all duration-200 shadow-[0_1px_2px_rgba(0,0,0,0.04)] hover:bg-[#1D4ED8] hover:shadow-[0_4px_12px_rgba(0,0,0,0.06)] active:scale-[0.98]"
           >
             Start the Level Check

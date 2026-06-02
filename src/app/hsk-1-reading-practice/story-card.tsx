@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import type { ReactNode } from "react";
 import { trackEvent, AnalyticsEvents } from "../../lib/analytics";
 
 interface VocabItem {
@@ -41,6 +42,51 @@ export function StoryCard({ story }: { story: Story }) {
         vocab: hanzi,
       });
     }
+  };
+
+  const renderHighlightedChineseText = () => {
+    const vocabByLength = story.targetVocab
+      .map((v, idx) => ({ ...v, idx }))
+      .sort((a, b) => b.hanzi.length - a.hanzi.length);
+    const parts: ReactNode[] = [];
+    let i = 0;
+
+    while (i < story.chineseText.length) {
+      const match = vocabByLength.find((v) =>
+        story.chineseText.startsWith(v.hanzi, i)
+      );
+
+      if (!match) {
+        parts.push(<span key={`text-${i}`}>{story.chineseText[i]}</span>);
+        i += 1;
+        continue;
+      }
+
+      const isActive = activeChip === match.idx;
+      parts.push(
+        <button
+          key={`vocab-${i}-${match.hanzi}`}
+          type="button"
+          onClick={() => handleVocabTap(match.idx, match.hanzi)}
+          className={`relative inline-flex items-baseline rounded-md px-1 py-0.5 mx-0.5 border transition-colors duration-150 ${
+            isActive
+              ? "bg-[#DBEAFE] border-[#2563EB] text-[#1D4ED8]"
+              : "bg-[#FEF3C7] border-[#F59E0B] text-[#0F172A] hover:bg-[#DBEAFE] hover:border-[#2563EB]"
+          }`}
+          aria-label={`${match.hanzi}, ${match.pinyin}, ${match.meaning}`}
+        >
+          <span>{match.hanzi}</span>
+          {isActive && (
+            <span className="ml-1 text-xs text-[#2563EB] font-sans">
+              {match.pinyin} · {match.meaning}
+            </span>
+          )}
+        </button>
+      );
+      i += match.hanzi.length;
+    }
+
+    return parts;
   };
 
   return (
@@ -111,7 +157,7 @@ export function StoryCard({ story }: { story: Story }) {
           className="text-lg leading-[1.8] text-[#0F172A] max-sm:text-base"
           style={{ fontFamily: "'Noto Serif SC', STSong, serif" }}
         >
-          {story.chineseText}
+          {renderHighlightedChineseText()}
         </p>
       </div>
 

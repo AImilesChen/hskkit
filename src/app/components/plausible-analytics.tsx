@@ -64,6 +64,7 @@ export function PlausibleAnalytics({
       if (lastPageviewUrl && sameUrlWithoutHash(lastPageviewUrl, currentUrl)) return;
       lastPageviewUrl = currentUrl;
       sendEvent("pageview");
+      sendEvent("page_view");
     };
 
     const queuedEvents = window.plausible?.q || [];

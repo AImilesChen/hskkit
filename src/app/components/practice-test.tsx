@@ -2,6 +2,7 @@
 
 import { useState, useCallback, useMemo } from "react";
 import Link from "next/link";
+import { trackEvent, AnalyticsEvents } from "../../lib/analytics";
 import {
   QuestionTitle,
   OptionButton,
@@ -85,9 +86,15 @@ export default function PracticeTest({
     if (currentIndex < total - 1) {
       setCurrentIndex((prev) => prev + 1);
     } else {
+      trackEvent(AnalyticsEvents.practice_test_complete, {
+        level,
+        total_questions: total,
+        correct_count: correctCount,
+        accuracy: Math.round((correctCount / total) * 100),
+      });
       setShowResult(true);
     }
-  }, [currentIndex, total]);
+  }, [currentIndex, total, level, correctCount]);
 
   const handlePrev = useCallback(() => {
     if (currentIndex > 0) {
