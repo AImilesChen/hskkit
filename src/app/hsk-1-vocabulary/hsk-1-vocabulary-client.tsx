@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useMemo, useEffect } from "react";
-import Link from "next/link";
 import InfoBanner from "../components/info-banner";
 import LearningPath from "../components/learning-path";
 import words from "../../lib/data/hsk1_vocab.json";
@@ -43,13 +42,41 @@ export default function HSK1VocabularyClient() {
 
   const currentFlash = filtered[flashIndex];
 
+  const activateFlashcards = () => {
+    setFlashMode(true);
+    setFlashFlipped(false);
+    setFlashIndex(0);
+  };
+
+  const scrollToFlashcards = () => {
+    requestAnimationFrame(() => {
+      document.getElementById("flashcards")?.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
+    });
+  };
+
   useEffect(() => {
-    if (window.location.hash === "#flashcards") {
-      setFlashMode(true);
-      setFlashFlipped(false);
-      setFlashIndex(0);
-    }
+    const openFromHash = () => {
+      if (window.location.hash === "#flashcards") {
+        activateFlashcards();
+        scrollToFlashcards();
+      }
+    };
+
+    openFromHash();
+    window.addEventListener("hashchange", openFromHash);
+    return () => window.removeEventListener("hashchange", openFromHash);
   }, []);
+
+  const handleStartFlashcards = () => {
+    activateFlashcards();
+    if (window.location.hash !== "#flashcards") {
+      window.history.pushState(null, "", "#flashcards");
+    }
+    scrollToFlashcards();
+  };
 
   const handleNextFlash = () => {
     setFlashFlipped(false);
@@ -85,12 +112,16 @@ export default function HSK1VocabularyClient() {
             </a>
           </div>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link
-              href="/hsk-1-vocabulary#flashcards"
-              className="inline-flex items-center justify-center gap-2 bg-white text-[#2563EB] px-8 py-4 rounded-full text-lg font-semibold no-underline border border-[#DBEAFE] transition-all duration-200 hover:bg-[#EFF6FF]"
+            <a
+              href="#flashcards"
+              onClick={(event) => {
+                event.preventDefault();
+                handleStartFlashcards();
+              }}
+              className="inline-flex items-center justify-center gap-2 bg-white text-[#2563EB] px-8 py-4 rounded-full text-lg font-semibold no-underline border border-[#DBEAFE] transition-all duration-200 hover:bg-[#EFF6FF] cursor-pointer"
             >
               Start HSK 1 Flashcards
-            </Link>
+            </a>
           </div>
         </div>
       </section>
@@ -131,7 +162,7 @@ export default function HSK1VocabularyClient() {
       </section>
 
       {/* Search + Toggle */}
-      <section className="section">
+      <section id="flashcards" className="section scroll-mt-24">
         <div className="section-inner">
           <div className="flex flex-col sm:flex-row gap-4 items-center justify-between mb-8">
             <h2 className="text-h2 max-sm:text-[28px]">
