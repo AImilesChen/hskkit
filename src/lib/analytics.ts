@@ -77,6 +77,7 @@ export const AnalyticsEvents = {
   reading_start: "reading_start",
   reading_story_view: "reading_story_view",
   reading_vocab_tap: "reading_vocab_tap",
+  reading_story_complete: "reading_story_complete",
   // Tool card clicks
   tool_card_click: "tool_card_click",
 } as const;

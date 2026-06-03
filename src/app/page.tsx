@@ -193,16 +193,16 @@ export default function HomePage() {
                 {/* Mobile-first CTA stack: 3 primary actions */}
                 <div className="flex flex-col gap-3 mb-6 max-sm:mb-5">
                   <Link
-                    href="/hsk-level-test"
+                    href="/hsk-1-practice-test"
                     className="inline-flex items-center justify-center gap-2 bg-[#2563EB] text-white px-8 py-4 rounded-full text-lg font-semibold no-underline transition-all duration-200 shadow-[0_1px_2px_rgba(0,0,0,0.04)] hover:bg-[#1D4ED8] hover:shadow-[0_4px_12px_rgba(0,0,0,0.06)] active:scale-[0.98] max-sm:px-6 max-sm:py-3.5 max-sm:text-base"
                   >
-                    Take the Quick Level Check
+                    Start Today’s HSK 1 Practice
                   </Link>
                   <Link
-                    href="/hsk-1-practice-test"
+                    href="/hsk-level-test"
                     className="inline-flex items-center justify-center gap-2 bg-[#EFF6FF] text-[#2563EB] px-8 py-4 rounded-full text-lg font-semibold no-underline border-[1.5px] border-[#2563EB] transition-all duration-200 hover:bg-[#DBEAFE] active:scale-[0.98] max-sm:px-6 max-sm:py-3.5 max-sm:text-base"
                   >
-                    Start HSK 1 Practice Test
+                    Take the Quick Level Check
                   </Link>
                   <Link
                     href="/hsk-1-vocabulary"
@@ -222,6 +222,49 @@ export default function HomePage() {
               {/* Visual — Study Path (desktop: side, mobile: below CTAs) */}
               <div>
                 <StudyPathBlock />
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* ═════ BLOCK 1B: DAILY LOOP ═════ */}
+        <section className="py-16 bg-white max-sm:py-10">
+          <div className="max-w-[1200px] mx-auto px-8 max-sm:px-4">
+            <div className="bg-[#F8FAFC] border border-[#E2E8F0] rounded-3xl p-8 max-sm:p-5">
+              <div className="flex items-start justify-between gap-6 mb-6 max-lg:flex-col">
+                <div className="max-w-[680px]">
+                  <p className="text-sm font-semibold text-[#2563EB] uppercase tracking-wider mb-2">Daily study path</p>
+                  <h2 className="text-[32px] font-bold leading-tight text-[#0F172A] mb-3 max-sm:text-[26px]">Today’s 10-Minute HSK 1 Loop</h2>
+                  <p className="text-base leading-relaxed text-[#64748B]">
+                    One beginner-friendly loop connects vocabulary, flashcards, practice questions, reading, handwriting, and a progress summary — so learners always know the next step.
+                  </p>
+                </div>
+                <Link
+                  href="/hsk-1-practice-test"
+                  className="inline-flex items-center justify-center bg-[#2563EB] text-white px-6 py-3 rounded-full text-base font-semibold no-underline transition-all duration-200 hover:bg-[#1D4ED8]"
+                >
+                  Start the loop
+                </Link>
+              </div>
+              <div className="grid grid-cols-6 gap-3 max-lg:grid-cols-3 max-sm:grid-cols-1">
+                {[
+                  { step: "1", title: "Learn", href: "/hsk-1-vocabulary", text: "Review 5 HSK 1 words" },
+                  { step: "2", title: "Flashcards", href: "/hsk-1-vocabulary#flashcards", text: "Flip hanzi → pinyin + meaning" },
+                  { step: "3", title: "Test", href: "/hsk-1-practice-test", text: "Answer 10 random questions" },
+                  { step: "4", title: "Read", href: "/hsk-1-reading-practice", text: "Complete one short story" },
+                  { step: "5", title: "Write", href: "/tools/chinese-character-practice-sheet-generator", text: "Generate Tian Zi Ge practice" },
+                  { step: "6", title: "Summary", href: "/hsk-1-practice-test", text: "Save score and review misses" },
+                ].map((item) => (
+                  <Link
+                    key={item.step}
+                    href={item.href}
+                    className="block bg-white border border-[#E2E8F0] rounded-2xl p-4 no-underline transition-all duration-200 hover:border-[#2563EB] hover:shadow-[0_8px_24px_rgba(37,99,235,0.08)]"
+                  >
+                    <span className="inline-flex w-8 h-8 rounded-full bg-[#EFF6FF] text-[#2563EB] items-center justify-center text-sm font-bold mb-3">{item.step}</span>
+                    <h3 className="text-base font-bold text-[#0F172A] mb-1">{item.title}</h3>
+                    <p className="text-sm leading-relaxed text-[#64748B]">{item.text}</p>
+                  </Link>
+                ))}
               </div>
             </div>
           </div>

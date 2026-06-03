@@ -1,10 +1,12 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { trackEvent, AnalyticsEvents } from "../../../lib/analytics";
 
 const MAX_CHARS = 200;
 const WARNING_CHARS = 50;
+const WORKSHEET_DAILY_KEY = "hskkit.worksheet.daily";
+const DAILY_SOFT_LIMIT = 3;
 
 function extractChineseChars(input: string): string[] {
   const cjkRegex = /[\u4e00-\u9fff]/gu;
@@ -33,6 +35,23 @@ export function WorksheetTool() {
   const [input, setInput] = useState("");
   const [generated, setGenerated] = useState(false);
   const [chars, setChars] = useState<string[]>([]);
+  const [dailyCount, setDailyCount] = useState(0);
+
+  useEffect(() => {
+    try {
+      const params = new URLSearchParams(window.location.search);
+      const text = params.get("text");
+      if (text) setInput(text.slice(0, MAX_CHARS));
+
+      const today = new Date().toISOString().slice(0, 10);
+      const saved = JSON.parse(localStorage.getItem(WORKSHEET_DAILY_KEY) || "{}");
+      if (saved.date === today) {
+        setDailyCount(Number(saved.count || 0));
+      }
+    } catch {
+      // URL prefill and daily counter are optional enhancements.
+    }
+  }, []);
 
   const rawCount = input.length;
   const chineseChars = extractChineseChars(input);
@@ -42,11 +61,25 @@ export function WorksheetTool() {
     if (chineseCount === 0) return;
     setChars(chineseChars);
     setGenerated(true);
+    const today = new Date().toISOString().slice(0, 10);
+    let nextCount = dailyCount + 1;
+    try {
+      const saved = JSON.parse(localStorage.getItem(WORKSHEET_DAILY_KEY) || "{}");
+      nextCount = saved.date === today ? Number(saved.count || 0) + 1 : 1;
+      localStorage.setItem(
+        WORKSHEET_DAILY_KEY,
+        JSON.stringify({ date: today, count: nextCount })
+      );
+    } catch {
+      // Daily soft limit is guidance only; generation should still work.
+    }
+    setDailyCount(nextCount);
     trackEvent(AnalyticsEvents.worksheet_generate, {
       char_count: chineseCount,
       grid_style: "tianzige",
+      daily_count: nextCount,
     });
-  }, [chineseChars, chineseCount]);
+  }, [chineseChars, chineseCount, dailyCount]);
 
   const handleReset = useCallback(() => {
     setInput("");
@@ -98,6 +131,9 @@ export function WorksheetTool() {
             {chineseCount} / {MAX_CHARS} characters
           </p>
         </div>
+        <p className="text-xs text-[#64748B] mt-2">
+          Daily worksheet guide: {dailyCount}/{DAILY_SOFT_LIMIT} generated today. {dailyCount >= DAILY_SOFT_LIMIT ? "You’ve generated 3 sheets today; you can still print, but try reviewing before making more." : "Teachers can generate batches; beginners may start with up to 3 focused sheets per day."}
+        </p>
         {isOverLimit && (
           <p className="text-xs text-[#DC2626] mt-1">
             Input exceeds recommended limit. Output may span multiple pages.

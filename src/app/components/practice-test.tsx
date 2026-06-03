@@ -34,6 +34,8 @@ interface PracticeTestProps {
 }
 
 const LETTERS = ["A", "B", "C", "D"];
+const PRACTICE_PROGRESS_KEY = "hskkit.practice.progress";
+const PROGRESS_TTL_DAYS = 7;
 
 function shuffleArray<T>(array: T[]): T[] {
   const arr = [...array];
@@ -63,6 +65,7 @@ export default function PracticeTest({
   const [answers, setAnswers] = useState<Record<number, string>>({});
   const [showResult, setShowResult] = useState(false);
   const [checked, setChecked] = useState<Record<number, boolean>>({});
+  const [savedSummary, setSavedSummary] = useState<string | null>(null);
 
   const currentQuestion = questions[currentIndex];
   const total = questions.length;
@@ -86,15 +89,40 @@ export default function PracticeTest({
     if (currentIndex < total - 1) {
       setCurrentIndex((prev) => prev + 1);
     } else {
+      const accuracy = Math.round((correctCount / total) * 100);
       trackEvent(AnalyticsEvents.practice_test_complete, {
         level,
         total_questions: total,
         correct_count: correctCount,
-        accuracy: Math.round((correctCount / total) * 100),
+        accuracy,
       });
+      try {
+        const now = new Date();
+        const expiresAt = new Date(now);
+        expiresAt.setDate(expiresAt.getDate() + PROGRESS_TTL_DAYS);
+        const wrongQuestionIds = questions
+          .filter((q, i) => answers[i] !== q.correct_answer)
+          .slice(0, 5)
+          .map((q) => q.id);
+        localStorage.setItem(
+          PRACTICE_PROGRESS_KEY,
+          JSON.stringify({
+            level,
+            completedAt: now.toISOString(),
+            expiresAt: expiresAt.toISOString(),
+            totalQuestions: total,
+            correctCount,
+            accuracy,
+            wrongQuestionIds,
+          })
+        );
+        setSavedSummary(`Saved locally for ${PROGRESS_TTL_DAYS} days on this device.`);
+      } catch {
+        setSavedSummary("Progress summary is shown here, but this browser blocked local saving.");
+      }
       setShowResult(true);
     }
-  }, [currentIndex, total, level, correctCount]);
+  }, [currentIndex, total, level, correctCount, questions, answers]);
 
   const handlePrev = useCallback(() => {
     if (currentIndex > 0) {
@@ -166,6 +194,21 @@ export default function PracticeTest({
         <div className="bg-white border border-[#E2E8F0] rounded-2xl p-8 shadow-[0_4px_12px_rgba(0,0,0,0.06)] mb-8">
           <h2 className="text-[24px] font-bold text-[#0F172A] mb-3">Result</h2>
           <p className="text-base leading-relaxed text-[#334155] mb-6">{recommendation}</p>
+          <div className="bg-[#EFF6FF] border border-[#DBEAFE] rounded-xl p-4 mb-6">
+            <div className="flex items-center justify-between gap-4 mb-2 max-sm:flex-col max-sm:items-start">
+              <h3 className="text-base font-bold text-[#0F172A]">Today’s progress summary</h3>
+              <span className="text-sm font-semibold text-[#2563EB]">{accuracy}% complete</span>
+            </div>
+            <div className="w-full h-2 bg-white rounded-full overflow-hidden mb-3">
+              <div className="h-full bg-[#2563EB] rounded-full" style={{ width: `${accuracy}%` }} />
+            </div>
+            <p className="text-sm leading-relaxed text-[#334155] mb-2">
+              Save your progress later: {savedSummary || "Your result is ready to save on this device."}
+            </p>
+            <p className="text-xs leading-relaxed text-[#64748B]">
+              Next loop: review missed words, read one HSK 1 story, then print a Tian Zi Ge worksheet for handwriting practice.
+            </p>
+          </div>
           <div className="flex flex-col sm:flex-row gap-3">
             <Link
               href={nextHref}
@@ -173,6 +216,14 @@ export default function PracticeTest({
             >
               {nextLabel}
             </Link>
+            {level === 1 && (
+              <Link
+                href="/hsk-1-reading-practice"
+                className="inline-flex items-center justify-center gap-2 bg-[#EFF6FF] text-[#2563EB] px-6 py-3 rounded-full text-base font-semibold no-underline border-[1.5px] border-[#2563EB] transition-all duration-200 hover:bg-[#DBEAFE]"
+              >
+                Read one HSK 1 story
+              </Link>
+            )}
             <button
               onClick={handleRestart}
               className="inline-flex items-center justify-center gap-2 bg-transparent text-[#2563EB] px-6 py-3 rounded-full text-base font-semibold border-[1.5px] border-[#2563EB] cursor-pointer transition-all duration-200 hover:bg-[#EFF6FF]"
@@ -180,6 +231,16 @@ export default function PracticeTest({
               Retake Practice Test
             </button>
           </div>
+          {level === 1 && (
+            <div className="mt-4">
+              <Link
+                href="/tools/chinese-character-practice-sheet-generator"
+                className="text-sm font-semibold text-[#2563EB] no-underline hover:underline"
+              >
+                Generate a handwriting worksheet from missed words →
+              </Link>
+            </div>
+          )}
         </div>
 
         {wrongQuestions.length > 0 && (

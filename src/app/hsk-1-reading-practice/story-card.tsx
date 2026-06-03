@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import type { ReactNode } from "react";
+import Link from "next/link";
 import { trackEvent, AnalyticsEvents } from "../../lib/analytics";
 
 interface VocabItem {
@@ -32,6 +33,7 @@ interface Story {
 
 export function StoryCard({ story }: { story: Story }) {
   const [activeChip, setActiveChip] = useState<number | null>(null);
+  const [isComplete, setIsComplete] = useState(false);
 
   const handleVocabTap = (idx: number, hanzi: string) => {
     const next = activeChip === idx ? null : idx;
@@ -42,6 +44,27 @@ export function StoryCard({ story }: { story: Story }) {
         vocab: hanzi,
       });
     }
+  };
+
+  const handleComplete = () => {
+    setIsComplete(true);
+    try {
+      const key = "hskkit.reading.progress";
+      const saved = JSON.parse(localStorage.getItem(key) || "{}");
+      localStorage.setItem(
+        key,
+        JSON.stringify({
+          ...saved,
+          [`story-${story.id}`]: new Date().toISOString(),
+        })
+      );
+    } catch {
+      // Local progress is optional; the completion UI still works.
+    }
+    trackEvent(AnalyticsEvents.reading_story_complete, {
+      story_id: story.id,
+      target_vocab_count: story.targetVocab.length,
+    });
   };
 
   const renderHighlightedChineseText = () => {
@@ -218,6 +241,29 @@ export function StoryCard({ story }: { story: Story }) {
         <p className="text-base leading-relaxed text-[#78350F]">
           {story.studyTip}
         </p>
+      </div>
+      <div className="mt-6 flex flex-wrap items-center gap-3">
+        <button
+          type="button"
+          onClick={handleComplete}
+          className="inline-flex items-center justify-center bg-[#2563EB] text-white px-5 py-2.5 rounded-full text-sm font-semibold transition-all duration-200 hover:bg-[#1D4ED8]"
+        >
+          {isComplete ? "Story complete ✓" : "Mark story complete"}
+        </button>
+        <Link
+          href="/hsk-1-practice-test"
+          className="inline-flex items-center justify-center bg-[#EFF6FF] text-[#2563EB] px-5 py-2.5 rounded-full text-sm font-semibold no-underline border border-[#DBEAFE] hover:bg-[#DBEAFE]"
+        >
+          Continue to HSK 1 Practice
+        </Link>
+        <Link
+          href={`/tools/chinese-character-practice-sheet-generator?text=${encodeURIComponent(
+            story.targetVocab.map((v) => v.hanzi).join("")
+          )}`}
+          className="inline-flex items-center justify-center bg-white text-[#2563EB] px-5 py-2.5 rounded-full text-sm font-semibold no-underline border border-[#DBEAFE] hover:bg-[#EFF6FF]"
+        >
+          Generate worksheet from this story
+        </Link>
       </div>
     </article>
   );
