@@ -21,8 +21,6 @@ const practiceLevels = [
 ];
 
 const studyTools = [
-  { href: "/hsk-level-test", label: "Level Check", icon: "target" },
-  { href: "/hsk-1-practice-test", label: "HSK Practice Tests", icon: "clipboard" },
   { href: "/hsk-1-reading-practice", label: "Reading Practice", icon: "book-open" },
   { href: "/worksheet", label: "Worksheet Generator", icon: "file-text" },
   { href: "/hsk-1-vocabulary#flashcards", label: "Flashcards", icon: "layers" },
