@@ -15,9 +15,9 @@ for (const file of files) {
     continue;
   }
   const checks = [
-    ['question_cn', '这个问题他______解释，大家______听越糊涂。'],
-    ['question_en', 'The more he explained this problem, the more confused everyone got.'],
-    ['explanation', '这个问题他越解释，大家越听越糊涂'],
+    ['question_cn', '这个问题他______解释，大家听得______糊涂。'],
+    ['question_en', 'The more he explained this problem, the more confused everyone became.'],
+    ['explanation', '这个问题他越解释，大家听得越糊涂'],
     ['explanation', 'A表转折，B表递进，D表因果'],
   ];
   for (const [field, expected] of checks) {
