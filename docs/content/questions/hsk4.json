@@ -198,8 +198,8 @@
     "id": "hsk4_014",
     "level": 4,
     "type": "grammar",
-    "question_cn": "这个问题______他解释，______越听越糊涂。",
-    "question_en": "The more he explained this problem, ______ more confused people got.",
+    "question_cn": "这个问题他______解释，大家______听越糊涂。",
+    "question_en": "The more he explained this problem, the more confused everyone got.",
     "options": {
       "A": "虽然……但是……",
       "B": "不但……而且……",
@@ -207,7 +207,7 @@
       "D": "因为……所以……"
     },
     "correct_answer": "C",
-    "explanation": "'越……越……'表示程度随条件变化，'越解释越糊涂'=the more he explained, the more confused。B表递进，C表转折，D表因果，均不匹配。"
+    "explanation": "“越……越……”表示程度随条件变化，完整句子是“这个问题他越解释，大家越听越糊涂” = the more he explained this problem, the more confused everyone got。A表转折，B表递进，D表因果，均不匹配。"
   },
   {
     "id": "hsk4_015",
