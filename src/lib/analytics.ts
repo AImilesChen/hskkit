@@ -78,6 +78,8 @@ export const AnalyticsEvents = {
   reading_story_view: "reading_story_view",
   reading_vocab_tap: "reading_vocab_tap",
   reading_story_complete: "reading_story_complete",
+  // Flashcard events
+  flashcard_flip: "flashcard_flip",
   // Tool card clicks
   tool_card_click: "tool_card_click",
 } as const;

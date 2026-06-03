@@ -3,6 +3,7 @@
 import { useState, useMemo, useEffect } from "react";
 import InfoBanner from "../components/info-banner";
 import LearningPath from "../components/learning-path";
+import { trackEvent, AnalyticsEvents } from "../../lib/analytics";
 import words from "../../lib/data/hsk1_vocab.json";
 
 interface Word {
@@ -86,6 +87,18 @@ export default function HSK1VocabularyClient() {
   const handlePrevFlash = () => {
     setFlashFlipped(false);
     setFlashIndex((prev) => (prev - 1 + filtered.length) % filtered.length);
+  };
+
+  const handleFlipFlash = () => {
+    const nextSide = flashFlipped ? "front" : "back";
+    setFlashFlipped((v) => !v);
+    if (currentFlash) {
+      trackEvent(AnalyticsEvents.flashcard_flip, {
+        side: nextSide,
+        card_index: flashIndex + 1,
+        word: currentFlash.chinese,
+      });
+    }
   };
 
   return (
@@ -217,21 +230,29 @@ export default function HSK1VocabularyClient() {
                   <div className="text-center mb-4 text-sm text-[#64748B]">
                     Card {flashIndex + 1} of {filtered.length}
                   </div>
-                  <div
-                    onClick={() => setFlashFlipped((v) => !v)}
-                    className="bg-white border border-[#E2E8F0] rounded-2xl p-10 text-center cursor-pointer transition-all duration-200 hover:shadow-[0_4px_12px_rgba(0,0,0,0.06)] min-h-[280px] flex flex-col justify-center"
+                  <button
+                    type="button"
+                    onClick={handleFlipFlash}
+                    aria-label={flashFlipped ? "Show hanzi front" : "Show pinyin, meaning, and example"}
+                    className="w-full bg-white border border-[#E2E8F0] rounded-2xl p-10 text-center cursor-pointer transition-all duration-200 hover:shadow-[0_4px_12px_rgba(0,0,0,0.06)] min-h-[280px] flex flex-col justify-center"
                   >
                     {!flashFlipped ? (
                       <>
+                        <p className="text-xs font-semibold uppercase tracking-wider text-[#2563EB] mb-4">
+                          Front of card
+                        </p>
                         <p className="chinese-char text-[64px] mb-4">
                           {currentFlash.chinese}
                         </p>
                         <p className="text-sm text-[#94A3B8]">
-                          Tap to flip
+                          Tap the card or use the button below to flip
                         </p>
                       </>
                     ) : (
                       <>
+                        <p className="text-xs font-semibold uppercase tracking-wider text-[#2563EB] mb-4">
+                          Back of card
+                        </p>
                         <p className="text-[28px] font-semibold text-[#0F172A] mb-2">
                           {currentFlash.pinyin}
                         </p>
@@ -251,6 +272,15 @@ export default function HSK1VocabularyClient() {
                         </div>
                       </>
                     )}
+                  </button>
+                  <div className="flex justify-center mt-4">
+                    <button
+                      type="button"
+                      onClick={handleFlipFlash}
+                      className="inline-flex items-center justify-center gap-2 bg-[#EFF6FF] text-[#2563EB] px-5 py-2.5 rounded-full text-sm font-semibold border border-[#DBEAFE] transition-all duration-200 hover:bg-[#DBEAFE]"
+                    >
+                      {flashFlipped ? "Show hanzi front" : "Show pinyin & example"}
+                    </button>
                   </div>
                   <div className="flex justify-between items-center mt-6">
                     <button
