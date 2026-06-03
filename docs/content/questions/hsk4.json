@@ -228,8 +228,8 @@
     "id": "hsk4_016",
     "level": 4,
     "type": "grammar",
-    "question_cn": "你______来，我______告诉你。",
-    "question_en": "______ you come, I ______ tell you.",
+    "question_cn": "______你来了，我______能告诉你。",
+    "question_en": "Only if you come can I tell you.",
     "options": {
       "A": "只有……才……",
       "B": "不但……而且……",
@@ -237,7 +237,7 @@
       "D": "因为……所以……"
     },
     "correct_answer": "A",
-    "explanation": "'只有……才……'表必要条件，'只有你来了我才告诉你'=only if you come will I tell you。B表递进，C表转折，D表因果，均不匹配。"
+    "explanation": "“只有……才……”表必要条件，完整句子是“只有你来了，我才能告诉你” = only if you come can I tell you。B表递进，C表转折，D表因果，均不匹配。"
   },
   {
     "id": "hsk4_017",
