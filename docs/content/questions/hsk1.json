@@ -483,8 +483,8 @@
     "id": "hsk1_033",
     "level": 1,
     "type": "grammar",
-    "question_cn": "我______家______学校很近。",
-    "question_en": "My home ______ school is very close.",
+    "question_cn": "我家______学校很近。",
+    "question_en": "My home is very close to school.",
     "options": {
       "A": "从……到……(from...to...)",
       "B": "在……里……(in...)",
@@ -492,7 +492,7 @@
       "D": "对……(to...)"
     },
     "correct_answer": "C",
-    "explanation": "'离'表示距离，'我家离学校很近'=My home is close to school。'从……到'表范围，'在……里'表位置，'对'表对象，均不匹配。"
+    "explanation": "'离'表示两者之间的距离。'我家离学校很近'=My home is very close to school。'从……到'表示起点到终点，'在……里'表示位置，'对'表示对象，均不匹配。"
   },
   {
     "id": "hsk1_034",
