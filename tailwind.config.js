@@ -35,9 +35,9 @@ module.exports = {
         },
       },
       fontFamily: {
-        heading: ["'Source Serif 4'", "'Noto Serif SC'", "Georgia", "serif"],
-        body: ["'Inter'", "'Noto Sans SC'", "-apple-system", "sans-serif"],
-        chinese: ["'Noto Serif SC'", "'STSong'", "serif"],
+        heading: ["var(--font-heading)"],
+        body: ["var(--font-body)"],
+        chinese: ["var(--font-chinese)"],
       },
       fontSize: {
         h1: ["48px", { lineHeight: "1.2", fontWeight: "700" }],

@@ -7,8 +7,14 @@
 
   html { scroll-behavior: smooth; }
 
+  :root {
+    --font-body: var(--font-inter), var(--font-noto-sans-sc), -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    --font-heading: var(--font-source-serif-4), var(--font-noto-serif-sc), Georgia, serif;
+    --font-chinese: var(--font-noto-serif-sc), 'STSong', 'Songti SC', 'Noto Serif CJK SC', serif;
+  }
+
   body {
-    font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    font-family: var(--font-body);
     font-size: 16px;
     line-height: 1.6;
     color: #334155;
@@ -18,7 +24,7 @@
   }
 
   h1, h2, h3, h4 {
-    font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    font-family: var(--font-heading);
     color: #0F172A;
   }
 
@@ -28,7 +34,7 @@
 @layer components {
   /* Eyebrow */
   .eyebrow {
-    font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    font-family: var(--font-body);
     font-size: 12px;
     font-weight: 600;
     letter-spacing: 0.15em;
@@ -62,7 +68,7 @@
     gap: 8px;
     padding: 14px 28px;
     border-radius: 8px;
-    font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    font-family: var(--font-body);
     font-size: 16px;
     font-weight: 600;
     text-decoration: none;
@@ -151,7 +157,7 @@
     padding: 24px 0;
   }
   .faq-question {
-    font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    font-family: var(--font-body);
     font-size: 18px;
     font-weight: 600;
     color: #1A1A2E;
@@ -238,7 +244,7 @@
 
   /* Chinese character display */
   .chinese-char {
-    font-family: 'Songti SC', STSong, 'Noto Serif CJK SC', serif;
+    font-family: var(--font-chinese);
     color: #C23A30;
   }
 

@@ -1,9 +1,36 @@
 import type { Metadata } from "next";
+import { Inter, Noto_Sans_SC, Noto_Serif_SC, Source_Serif_4 } from "next/font/google";
 import { PlausibleAnalytics } from "./components/plausible-analytics";
 import "./globals.css";
 
 const PLAUSIBLE_DOMAIN = process.env.NEXT_PUBLIC_PLAUSIBLE_DOMAIN || "hskkit.com";
 const PLAUSIBLE_ENDPOINT = process.env.NEXT_PUBLIC_PLAUSIBLE_ENDPOINT || "https://plausible.shipsolo.io/api/event";
+
+const inter = Inter({
+  subsets: ["latin"],
+  variable: "--font-inter",
+  display: "swap",
+});
+
+const sourceSerif = Source_Serif_4({
+  subsets: ["latin"],
+  variable: "--font-source-serif-4",
+  display: "swap",
+});
+
+const notoSansSc = Noto_Sans_SC({
+  subsets: ["latin"],
+  variable: "--font-noto-sans-sc",
+  display: "swap",
+  preload: false,
+});
+
+const notoSerifSc = Noto_Serif_SC({
+  subsets: ["latin"],
+  variable: "--font-noto-serif-sc",
+  display: "swap",
+  preload: false,
+});
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://hskkit.com"),
@@ -46,7 +73,10 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en">
+    <html
+      lang="en"
+      className={`${inter.variable} ${sourceSerif.variable} ${notoSansSc.variable} ${notoSerifSc.variable}`}
+    >
       <head>
         <link rel="manifest" href="https://hskkit.com/site.webmanifest" />
         <link rel="icon" href="https://hskkit.com/favicon.ico" sizes="any" />

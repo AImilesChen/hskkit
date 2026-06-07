@@ -23,7 +23,7 @@ function TianZiGeCell({ char }: { char: string }) {
       {/* Character */}
       <span
         className="text-[36px] text-[#0F172A] relative z-10 max-sm:text-[28px]"
-        style={{ fontFamily: "'Noto Serif SC', STSong, serif" }}
+        style={{ fontFamily: "var(--font-chinese)" }}
       >
         {char}
       </span>
@@ -121,7 +121,7 @@ export function WorksheetTool() {
               ? "border-[#DC2626] focus:ring-[#DC2626]/20"
               : "border-[#E2E8F0] focus:border-[#2563EB] focus:ring-[#2563EB]/20"
           }`}
-          style={{ fontFamily: "'Noto Serif SC', STSong, serif" }}
+          style={{ fontFamily: "var(--font-chinese)" }}
         />
         <div className="flex items-center justify-between mt-2">
           <p className="text-xs text-[#64748B]">

@@ -125,7 +125,7 @@ export function StoryCard({ story }: { story: Story }) {
         <div>
           <h2
             className="text-2xl font-bold text-[#0F172A] max-sm:text-xl"
-            style={{ fontFamily: "'Noto Serif SC', STSong, serif" }}
+            style={{ fontFamily: "var(--font-chinese)" }}
           >
             {story.titleCN}
           </h2>
@@ -156,7 +156,7 @@ export function StoryCard({ story }: { story: Story }) {
             >
               <span
                 className="text-lg font-semibold text-[#C23A30]"
-                style={{ fontFamily: "'Noto Serif SC', STSong, serif" }}
+                style={{ fontFamily: "var(--font-chinese)" }}
               >
                 {v.hanzi}
               </span>
@@ -178,7 +178,7 @@ export function StoryCard({ story }: { story: Story }) {
         </div>
         <p
           className="text-lg leading-[1.8] text-[#0F172A] max-sm:text-base"
-          style={{ fontFamily: "'Noto Serif SC', STSong, serif" }}
+          style={{ fontFamily: "var(--font-chinese)" }}
         >
           {renderHighlightedChineseText()}
         </p>
@@ -192,7 +192,7 @@ export function StoryCard({ story }: { story: Story }) {
         <p
           className="text-sm leading-[1.6] text-[#64748B]"
           style={{
-            fontFamily: "Inter, system-ui, sans-serif",
+            fontFamily: "var(--font-body)",
             letterSpacing: "0.02em",
           }}
         >
