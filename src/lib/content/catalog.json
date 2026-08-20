@@ -1,0 +1,44 @@
+{
+  "schemaVersion": "1.0.0",
+  "levels": [
+    { "standard": "hsk2", "level": 1, "title": "HSK 2.0 Level 1" },
+    { "standard": "hsk2", "level": 2, "title": "HSK 2.0 Level 2" },
+    { "standard": "hsk2", "level": 3, "title": "HSK 2.0 Level 3" },
+    { "standard": "hsk2", "level": 4, "title": "HSK 2.0 Level 4" },
+    { "standard": "hsk2", "level": 5, "title": "HSK 2.0 Level 5" },
+    { "standard": "hsk2", "level": 6, "title": "HSK 2.0 Level 6" },
+    { "standard": "hsk3", "level": 1, "title": "HSK 3.0 Level 1" },
+    { "standard": "hsk3", "level": 2, "title": "HSK 3.0 Level 2" },
+    { "standard": "hsk3", "level": 3, "title": "HSK 3.0 Level 3" },
+    { "standard": "hsk3", "level": 4, "title": "HSK 3.0 Level 4" },
+    { "standard": "hsk3", "level": 5, "title": "HSK 3.0 Level 5" },
+    { "standard": "hsk3", "level": 6, "title": "HSK 3.0 Level 6" },
+    { "standard": "hsk3", "level": 7, "title": "HSK 3.0 Level 7" },
+    { "standard": "hsk3", "level": 8, "title": "HSK 3.0 Level 8" },
+    { "standard": "hsk3", "level": 9, "title": "HSK 3.0 Level 9" }
+  ],
+  "contentAssets": [],
+  "audioAssets": [],
+  "releases": [
+    {
+      "id": "hsk3-foundation-v1",
+      "standard": "hsk3",
+      "version": 1,
+      "status": "published",
+      "contentAssetIds": [],
+      "audioAssetIds": [],
+      "publishedAt": "2026-08-20T00:00:00.000Z"
+    }
+  ],
+  "releaseEvents": [
+    {
+      "action": "publish",
+      "releaseId": "hsk3-foundation-v1",
+      "standard": "hsk3",
+      "at": "2026-08-20T00:00:00.000Z"
+    }
+  ],
+  "activeReleaseByStandard": {
+    "hsk3": "hsk3-foundation-v1"
+  }
+}
