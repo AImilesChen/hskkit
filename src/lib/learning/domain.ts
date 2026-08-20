@@ -80,10 +80,11 @@ function reconcileSummary(session: DailySession): DailySession {
 
 function applyAttemptToSessions(state: LearningState, attempt: Attempt, card: SrsCard): DailySession[] {
   return state.dailySessions.map((session) => {
+    const firstPendingId = session.items.find((item) => item.status === "pending")?.id;
     let items = session.items.map((item) => {
       const practiceMatch = item.kind === "practice" && attempt.dimension === "reading";
       const listenMatch = item.kind === "listen" && item.contentId === attempt.contentId && item.dimension === attempt.dimension;
-      return practiceMatch || listenMatch ? { ...item, status: "completed" as const } : item;
+      return item.id === firstPendingId && (practiceMatch || listenMatch) ? { ...item, status: "completed" as const } : item;
     });
     if (!attempt.correct && !items.some((item) => item.id === `review:${card.id}`)) {
       const reviewItem: DailyItem = { id: `review:${card.id}`, kind: "review", contentId: card.contentId, dimension: card.dimension, status: "pending" };

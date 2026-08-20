@@ -132,6 +132,8 @@ test("only the current learn item can be manually completed", () => {
   const daily = buildDailySession(emptyState(), { ownerId: "guest-order", localDay: "2026-08-20", ruleVersion: "today-v2", now });
   const listen = daily.session.items.find((item) => item.kind === "listen")!;
   assert.throws(() => completeDailyItem(daily.state, daily.session.id, listen.id), /ITEM_REQUIRES_ACTIVITY/);
+  const earlyAudio = recordAudioAttempt(daily.state, { idempotencyKey: "early-audio", contentId: "word:word-ni-hao", contentVersion: "catalog-v1", dimension: "audio", answer: "A", correctAnswer: "A", observedAt: now, playbackResult: "completed" }).state;
+  assert.equal(earlyAudio.dailySessions[0].items.find((item) => item.id === listen.id)?.status, "pending");
   const learn = daily.session.items.find((item) => item.kind === "learn")!;
   const completed = completeDailyItem(daily.state, daily.session.id, learn.id);
   assert.equal(completed.state.dailySessions.find((session) => session.id === daily.session.id)?.items.find((item) => item.id === learn.id)?.status, "completed");
