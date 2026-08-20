@@ -2,11 +2,16 @@ import { getCloudflareContext } from "@opennextjs/cloudflare";
 
 const db = () => getCloudflareContext().env.LEARNING_DB;
 
-export async function createStep7PlaybackTicket(ownerId: string, exerciseId: string, now = new Date()) {
+export function estimateStep7PlaybackMs(voiceText: string) {
+  const spokenUnits = [...voiceText.normalize("NFKC")].filter((char) => /[\p{L}\p{N}]/u.test(char)).length;
+  return Math.min(30_000, Math.max(2_000, spokenUnits * 380));
+}
+
+export async function createStep7PlaybackTicket(ownerId: string, exerciseId: string, voiceText: string, now = new Date()) {
   const id = crypto.randomUUID();
   const assertionId = crypto.randomUUID();
   const createdAt = now.toISOString();
-  const notBefore = new Date(now.getTime() + 1_200).toISOString();
+  const notBefore = new Date(now.getTime() + estimateStep7PlaybackMs(voiceText)).toISOString();
   const expiresAt = new Date(now.getTime() + 10 * 60_000).toISOString();
   try {
     await db().batch([
@@ -22,9 +27,16 @@ export async function createStep7PlaybackTicket(ownerId: string, exerciseId: str
   return { id, notBefore, expiresAt };
 }
 
+export async function completeStep7PlaybackTicket(ownerId: string, exerciseId: string, ticketId: string, completionKey: string, now = new Date()) {
+  const timestamp = now.toISOString();
+  const result = await db().prepare("UPDATE step7_playback_tickets SET completed_at=COALESCE(completed_at,?),completed_by_key=COALESCE(completed_by_key,?) WHERE id=? AND owner_id=? AND exercise_id=? AND not_before<=? AND expires_at>? AND (completed_by_key IS NULL OR completed_by_key=?) AND (substr(owner_id,1,5)!='user:' OR EXISTS(SELECT 1 FROM accounts WHERE user_id=substr(owner_id,6) AND status='active')) AND NOT EXISTS(SELECT 1 FROM guest_merges WHERE guest_owner_id=? AND state='confirmed')")
+    .bind(timestamp, completionKey, ticketId, ownerId, exerciseId, timestamp, timestamp, completionKey, ownerId).run();
+  if ((result.meta.changes ?? 0) !== 1) throw new Error("AUDIO_PLAYBACK_INCOMPLETE");
+}
+
 export async function consumeStep7PlaybackTicket(ownerId: string, exerciseId: string, ticketId: string, attemptKey: string, now = new Date()) {
   const timestamp = now.toISOString();
-  const result = await db().prepare("UPDATE step7_playback_tickets SET used_by_key=COALESCE(used_by_key,?) WHERE id=? AND owner_id=? AND exercise_id=? AND not_before<=? AND expires_at>? AND (used_by_key IS NULL OR used_by_key=?) AND (substr(owner_id,1,5)!='user:' OR EXISTS(SELECT 1 FROM accounts WHERE user_id=substr(owner_id,6) AND status='active')) AND NOT EXISTS(SELECT 1 FROM guest_merges WHERE guest_owner_id=? AND state='confirmed')")
-    .bind(attemptKey, ticketId, ownerId, exerciseId, timestamp, timestamp, attemptKey, ownerId).run();
+  const result = await db().prepare("UPDATE step7_playback_tickets SET used_by_key=COALESCE(used_by_key,?) WHERE id=? AND owner_id=? AND exercise_id=? AND completed_at IS NOT NULL AND completed_by_key IS NOT NULL AND not_before<=completed_at AND expires_at>? AND (used_by_key IS NULL OR used_by_key=?) AND (substr(owner_id,1,5)!='user:' OR EXISTS(SELECT 1 FROM accounts WHERE user_id=substr(owner_id,6) AND status='active')) AND NOT EXISTS(SELECT 1 FROM guest_merges WHERE guest_owner_id=? AND state='confirmed')")
+    .bind(attemptKey, ticketId, ownerId, exerciseId, timestamp, attemptKey, ownerId).run();
   if ((result.meta.changes ?? 0) !== 1) throw new Error("AUDIO_PLAYBACK_REQUIRED");
 }

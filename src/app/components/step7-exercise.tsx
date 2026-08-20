@@ -35,7 +35,20 @@ export default function Step7ExerciseClient({ exercise, voiceText, nextHref, nex
     utterance.lang = "zh-CN";
     utterance.rate = exercise.kind === "dictation" ? 0.78 : 0.86;
     setPlaying(true);
-    utterance.onend = () => { setPlaying(false); setPlayed(Boolean(playbackTicket.current)); };
+    utterance.onend = async () => {
+      setPlaying(false);
+      const ticketId = playbackTicket.current;
+      if (!ticketId) return;
+      try {
+        const verified = await fetch("/api/v1/learning", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ action: "step7_playback_complete", payload: { idempotencyKey: crypto.randomUUID(), exerciseId: exercise.id, playbackTicket: ticketId } }) });
+        if (!verified.ok) throw new Error("PLAYBACK_NOT_VERIFIED");
+        setPlayed(true);
+      } catch {
+        playbackTicket.current = undefined;
+        setPlayed(false);
+        setError("Playback could not be verified. Nothing was written to mastery; play it again before answering.");
+      }
+    };
     utterance.onerror = () => { playbackTicket.current = undefined; setPlaying(false); setPlayed(false); setError("Audio failed. Nothing was written to mastery; play it again before answering."); };
     window.speechSynthesis.speak(utterance);
   }

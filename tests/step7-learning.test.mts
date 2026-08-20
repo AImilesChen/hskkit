@@ -16,6 +16,7 @@ import {
   type StudyPlan,
 } from "../src/lib/planner/domain.ts";
 import type { LearningState } from "../src/lib/learning/domain.ts";
+import { estimateStep7PlaybackMs } from "../src/lib/learning/step7-playback.ts";
 
 const now = "2026-08-20T12:00:00.000Z";
 
@@ -49,6 +50,12 @@ test("advanced listening is levelled and includes discrimination, tone and dicta
     assert.equal(item!.exercise.contentVersion, item!.contentVersion);
     assert.ok(item!.voiceText.length > 0);
   }
+});
+
+test("Step 7 playback verification uses trusted content duration instead of a fixed client flag", () => {
+  assert.equal(estimateStep7PlaybackMs("买"), 2000);
+  assert.ok(estimateStep7PlaybackMs("老师让我们练习发音。") > estimateStep7PlaybackMs("买"));
+  assert.equal(estimateStep7PlaybackMs("学".repeat(200)), 30000);
 });
 
 test("planner uses goal, available time, weak points and due SRS load", () => {

@@ -11,7 +11,7 @@ import {
 } from "../../../../lib/learning/domain";
 import { trustedAudioExercise, type AudioMode } from "../../../../lib/learning/audio";
 import { advancedListeningBySlug, isStep7AnswerAllowed, normalizeStep7Answer, trustedStep7Exercise } from "../../../../lib/learning/step7-content";
-import { consumeStep7PlaybackTicket, createStep7PlaybackTicket } from "../../../../lib/learning/step7-playback";
+import { completeStep7PlaybackTicket, consumeStep7PlaybackTicket, createStep7PlaybackTicket } from "../../../../lib/learning/step7-playback";
 import { trustedQuestion } from "../../../../lib/learning/questions";
 import { requestIdentity, GUEST_COOKIE } from "../../../../lib/account/identity";
 import { loadState, saveState } from "../../../../lib/learning/storage";
@@ -106,10 +106,29 @@ export async function POST(req: NextRequest) {
     const exercise = exerciseId ? trustedStep7Exercise(exerciseId) : undefined;
     const listening = exercise && (exercise.kind === "tone" || exercise.kind === "discrimination" || exercise.kind === "dictation");
     if (!exercise || !listening) return NextResponse.json({ error: "INVALID_STEP7_PLAYBACK" }, { status: 422 });
-    const ticket = await createStep7PlaybackTicket(identity.id, exercise.id);
+    const lesson = advancedListeningBySlug(exercise.contentId.slice("listening:".length));
+    if (!lesson) return NextResponse.json({ error: "INVALID_STEP7_PLAYBACK" }, { status: 422 });
+    const ticket = await createStep7PlaybackTicket(identity.id, exercise.id, lesson.voiceText);
     const res = NextResponse.json({ playbackTicket: ticket.id, notBefore: ticket.notBefore, expiresAt: ticket.expiresAt }, { status: 201 });
     if (identity.fresh) res.cookies.set(COOKIE, identity.id, { httpOnly: true, sameSite: "lax", secure: true, maxAge: 31_536_000, path: "/" });
     return res;
+  }
+
+  if (action === "step7_playback_complete") {
+    const exerciseId = short(payload.exerciseId, 120);
+    const ticketId = short(payload.playbackTicket, 80);
+    const exercise = exerciseId ? trustedStep7Exercise(exerciseId) : undefined;
+    const listening = exercise && (exercise.kind === "tone" || exercise.kind === "discrimination" || exercise.kind === "dictation");
+    if (!exercise || !listening || !ticketId) return NextResponse.json({ error: "INVALID_STEP7_PLAYBACK" }, { status: 422 });
+    try {
+      await completeStep7PlaybackTicket(identity.id, exercise.id, ticketId, key);
+      const res = NextResponse.json({ state: "playback_verified" });
+      if (identity.fresh) res.cookies.set(COOKIE, identity.id, { httpOnly: true, sameSite: "lax", secure: true, maxAge: 31_536_000, path: "/" });
+      return res;
+    } catch (error) {
+      const code = error instanceof Error ? error.message : "AUDIO_PLAYBACK_INCOMPLETE";
+      return NextResponse.json({ error: code }, { status: code === "ACCOUNT_DELETED" ? 403 : 422 });
+    }
   }
 
   for (let turn = 0; turn < 3; turn += 1) {
