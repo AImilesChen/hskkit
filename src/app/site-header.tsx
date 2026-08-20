@@ -276,6 +276,12 @@ export default function SiteHeader() {
           >
             Listen
           </Link>
+          <Link
+            href="/account"
+            className="px-4 py-2 text-sm font-medium text-[#334155] no-underline transition-colors duration-150 hover:text-[#0F172A] hover:bg-[#F8FAFC] rounded-lg"
+          >
+            Account
+          </Link>
           <DesktopDropdown
             label="Study Tools"
             items={studyTools}
@@ -439,6 +445,13 @@ export default function SiteHeader() {
               onClick={closeMobile}
             >
               Listen
+            </Link>
+            <Link
+              href="/account"
+              className="py-3.5 text-base font-medium text-[#334155] no-underline"
+              onClick={closeMobile}
+            >
+              Account
             </Link>
 
             {/* Study Tools Accordion */}

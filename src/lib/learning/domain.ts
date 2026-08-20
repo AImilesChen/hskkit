@@ -54,6 +54,7 @@ export interface DailySession {
   localDay: string;
   ruleVersion: string;
   createdAt: string;
+  completedAt?: string;
   items: DailyItem[];
 }
 export interface LearningState {
@@ -68,10 +69,12 @@ export interface LearningState {
 const id = (prefix: string, key: string) => `${prefix}_${createHash("sha256").update(key).digest("base64url")}`;
 const add = (iso: string, days: number, minutes = 0) => new Date(new Date(iso).getTime() + days * 86_400_000 + minutes * 60_000).toISOString();
 
-function reconcileSummary(session: DailySession): DailySession {
+function reconcileSummary(session: DailySession, completedAt?: string): DailySession {
   const unfinished = session.items.some((item) => item.kind !== "summary" && item.status === "pending");
+  const wasComplete = session.items.some((item) => item.kind === "summary" && item.status === "completed");
   return {
     ...session,
+    completedAt: !unfinished && !wasComplete ? completedAt ?? session.completedAt : session.completedAt,
     items: session.items.map((item) => item.kind === "summary"
       ? { ...item, status: unfinished ? "pending" as const : "completed" as const }
       : item),
@@ -91,7 +94,7 @@ function applyAttemptToSessions(state: LearningState, attempt: Attempt, card: Sr
       const summaryIndex = items.findIndex((item) => item.kind === "summary");
       items = summaryIndex < 0 ? [...items, reviewItem] : [...items.slice(0, summaryIndex), reviewItem, ...items.slice(summaryIndex)];
     }
-    return reconcileSummary({ ...session, items });
+    return reconcileSummary({ ...session, items }, attempt.observedAt);
   });
 }
 
@@ -183,7 +186,7 @@ export function gradeReview(state: LearningState, input: {
   const dailySessions = state.dailySessions.map((session) => reconcileSummary({
     ...session,
     items: session.items.map((item) => item.id === `review:${card.id}` ? { ...item, status: "completed" as const } : item),
-  }));
+  }, input.observedAt));
   return { state: { ...state, cards: state.cards.map((candidate) => candidate.id === card.id ? card : candidate), mistakes, dailySessions, audioReviewReady: state.audioReviewReady?.filter((ready) => ready.cardId !== old.id) }, card };
 }
 
@@ -211,7 +214,7 @@ export function retireContent(state: LearningState, contentId: string): Learning
   };
 }
 
-export function completeDailyItem(state: LearningState, sessionId: string, itemId: string) {
+export function completeDailyItem(state: LearningState, sessionId: string, itemId: string, observedAt = new Date().toISOString()) {
   const session = state.dailySessions.find((candidate) => candidate.id === sessionId);
   if (!session) throw new Error("SESSION_NOT_FOUND");
   if (!session.items.some((item) => item.id === itemId)) throw new Error("ITEM_NOT_FOUND");
@@ -219,7 +222,7 @@ export function completeDailyItem(state: LearningState, sessionId: string, itemI
   if (item.kind !== "learn") throw new Error("ITEM_REQUIRES_ACTIVITY");
   if (session.items.find((candidate) => candidate.status === "pending")?.id !== itemId) throw new Error("ITEM_OUT_OF_ORDER");
   const dailySessions = state.dailySessions.map((candidate) => candidate.id === sessionId
-    ? reconcileSummary({ ...candidate, items: candidate.items.map((item) => item.id === itemId ? { ...item, status: "completed" as const } : item) })
+    ? reconcileSummary({ ...candidate, items: candidate.items.map((item) => item.id === itemId ? { ...item, status: "completed" as const } : item) }, observedAt)
     : candidate);
   const updated = dailySessions.find((candidate) => candidate.id === sessionId)!;
   return { state: { ...state, dailySessions }, item: updated.items.find((item) => item.id === itemId)! };

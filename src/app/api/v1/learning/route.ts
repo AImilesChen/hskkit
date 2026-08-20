@@ -11,15 +11,18 @@ import {
 } from "../../../../lib/learning/domain";
 import { trustedAudioExercise, type AudioMode } from "../../../../lib/learning/audio";
 import { trustedQuestion } from "../../../../lib/learning/questions";
+import { requestIdentity, GUEST_COOKIE } from "../../../../lib/account/identity";
 import { loadState, saveState } from "../../../../lib/learning/storage";
 
-const COOKIE = "hskkit_guest";
+const COOKIE = GUEST_COOKIE;
 async function owner() {
+  const identity = await requestIdentity();
+  if (identity.account) return { id: `user:${identity.account.userId}`, fresh: false, account: identity.account };
   const jar = await cookies();
   let id = jar.get(COOKIE)?.value;
   let fresh = false;
   if (!id) { id = crypto.randomUUID(); fresh = true; }
-  return { id, fresh };
+  return { id, fresh, account: undefined };
 }
 const short = (value: unknown, max = 100) => typeof value === "string" && value.length > 0 && value.length <= max ? value : undefined;
 const offset = (value: unknown) => Number.isInteger(value) && Number(value) >= -840 && Number(value) <= 840 ? Number(value) : 0;
@@ -55,21 +58,31 @@ function view(state: LearningState, ownerId: string, offsetMinutes: number) {
   };
   return { state: built.state, session: built.session, cards, mistakes, mastery };
 }
-function response(data: ReturnType<typeof view>, fresh: boolean, id: string) {
-  const res = NextResponse.json({ session: data.session, cards: data.cards, mistakes: data.mistakes, mastery: data.mastery });
+function response(data: ReturnType<typeof view>, fresh: boolean, id: string, revision: number, account = false) {
+  const res = NextResponse.json({ session: data.session, cards: data.cards, mistakes: data.mistakes, mastery: data.mastery, revision, scope: account ? "account" : "guest" });
   if (fresh) res.cookies.set(COOKIE, id, { httpOnly: true, sameSite: "lax", secure: true, maxAge: 31_536_000, path: "/" });
   return res;
 }
 export async function GET(req: NextRequest) {
   const identity = await owner();
+  if (identity.account?.status === "deleted") return NextResponse.json({ error: "ACCOUNT_DELETED" }, { status: 403 });
   const loaded = await loadState(identity.id);
   const tz = offset(req.nextUrl.searchParams.get("tzOffset") ? Number(req.nextUrl.searchParams.get("tzOffset")) : 0);
   const data = view(loaded.state, identity.id, tz);
-  if (data.state.dailySessions.length !== loaded.state.dailySessions.length) await saveState(identity.id, data.state, loaded.revision);
-  return response(data, identity.fresh, identity.id);
+  const changed = data.state.dailySessions.length !== loaded.state.dailySessions.length;
+  if (changed) {
+    try {
+      await saveState(identity.id, data.state, loaded.revision);
+    } catch (error) {
+      if (error instanceof Error && error.message === "ACCOUNT_DELETED") return NextResponse.json({ error: "ACCOUNT_DELETED" }, { status: 403 });
+      throw error;
+    }
+  }
+  return response(data, identity.fresh, identity.id, loaded.revision + (changed ? 1 : 0), Boolean(identity.account));
 }
 export async function POST(req: NextRequest) {
   const identity = await owner();
+  if (identity.account?.status === "deleted") return NextResponse.json({ error: "ACCOUNT_DELETED" }, { status: 403 });
   let body: any;
   try {
     const text = await req.text();
@@ -139,12 +152,12 @@ export async function POST(req: NextRequest) {
       }
       const data = view(state, identity.id, tz);
       await saveState(identity.id, data.state, loaded.revision);
-      return response(data, identity.fresh, identity.id);
+      return response(data, identity.fresh, identity.id, loaded.revision + 1, Boolean(identity.account));
     } catch (error) {
       const code = error instanceof Error ? error.message : "SAVE_FAILED";
       const replayable = action === "attempt" || action === "audio_attempt" || action === "audio_review_ready" || action === "complete_item";
       if (code === "REVISION_CONFLICT" && replayable && turn < 2) continue;
-      return NextResponse.json({ error: code }, { status: code === "REVISION_CONFLICT" ? 409 : 422 });
+      return NextResponse.json({ error: code }, { status: code === "ACCOUNT_DELETED" ? 403 : code === "REVISION_CONFLICT" ? 409 : 422 });
     }
   }
   return NextResponse.json({ error: "REVISION_CONFLICT" }, { status: 409 });
