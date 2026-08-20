@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Exports - HSKKit</title>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Google Fonts for Academic Clarity Theme -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Tailwind Config from Guidance -->
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "surface-bright": "#F8FAFC",
+                      "primary-container": "#2563EB",
+                      "primary-fixed": "#2563EB",
+                      "inverse-on-surface": "#F8FAFC",
+                      "surface-container-high": "#F8FAFC",
+                      "inverse-primary": "#2563EB",
+                      "error": "#ba1a1a",
+                      "on-secondary": "#ffffff",
+                      "surface-container-highest": "#F8FAFC",
+                      "on-tertiary-container": "#0F172A",
+                      "on-background": "#0F172A",
+                      "tertiary-fixed-dim": "#0F172A",
+                      "on-surface-variant": "#0F172A",
+                      "background": "#F8FAFC",
+                      "tertiary-fixed": "#0F172A",
+                      "outline": "#E2E8F0",
+                      "on-error": "#ffffff",
+                      "surface-container-lowest": "#FFFFFF",
+                      "on-tertiary": "#ffffff",
+                      "surface-container": "#FFFFFF",
+                      "secondary": "#0F172A",
+                      "tertiary-container": "#FFFFFF",
+                      "on-error-container": "#93000a",
+                      "on-tertiary-fixed": "#0F172A",
+                      "error-container": "#ffdad6",
+                      "primary": "#2563EB",
+                      "on-tertiary-fixed-variant": "#0F172A",
+                      "surface-dim": "#F8FAFC",
+                      "on-primary": "#ffffff",
+                      "tertiary": "#0F172A",
+                      "surface-variant": "#FFFFFF",
+                      "surface": "#F8FAFC",
+                      "on-secondary-container": "#0F172A",
+                      "secondary-fixed": "#0F172A",
+                      "on-secondary-fixed": "#0F172A",
+                      "on-primary-container": "#ffffff",
+                      "outline-variant": "#E2E8F0",
+                      "on-primary-fixed": "#ffffff",
+                      "surface-container-low": "#F8FAFC",
+                      "secondary-container": "#FFFFFF",
+                      "on-primary-fixed-variant": "#ffffff",
+                      "inverse-surface": "#0F172A",
+                      "surface-tint": "#2563EB",
+                      "on-secondary-fixed-variant": "#0F172A",
+                      "primary-fixed-dim": "#2563EB",
+                      "secondary-fixed-dim": "#0F172A",
+                      "on-surface": "#0F172A"
+              },
+              "borderRadius": {
+                      "DEFAULT": "8px",
+                      "lg": "8px",
+                      "xl": "16px",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "margin-desktop": "64px",
+                      "margin-mobile": "20px",
+                      "container-max": "1140px",
+                      "unit": "8px",
+                      "gutter": "24px"
+              },
+              "fontFamily": {
+                      "label-caps": [
+                              "Inter"
+                      ],
+                      "body-lg": [
+                              "Inter"
+                      ],
+                      "h1": [
+                              "Inter"
+                      ],
+                      "body-md": [
+                              "Inter"
+                      ],
+                      "h2": [
+                              "Inter"
+                      ],
+                      "h1-mobile": [
+                              "Inter"
+                      ],
+                      "h3": [
+                              "Inter"
+                      ],
+                      "body-sm": [
+                              "Inter"
+                      ]
+              },
+              "fontSize": {
+                      "label-caps": [
+                              "12px",
+                              {
+                                      "lineHeight": "1.2",
+                                      "letterSpacing": "0.05em",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "body-lg": [
+                              "18px",
+                              {
+                                      "lineHeight": "1.6",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "h1": [
+                              "40px",
+                              {
+                                      "lineHeight": "1.2",
+                                      "letterSpacing": "-0.02em",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "body-md": [
+                              "16px",
+                              {
+                                      "lineHeight": "1.5",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "h2": [
+                              "32px",
+                              {
+                                      "lineHeight": "1.3",
+                                      "letterSpacing": "-0.01em",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "h1-mobile": [
+                              "32px",
+                              {
+                                      "lineHeight": "1.2",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "h3": [
+                              "24px",
+                              {
+                                      "lineHeight": "1.4",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "body-sm": [
+                              "14px",
+                              {
+                                      "lineHeight": "1.5",
+                                      "fontWeight": "400"
+                              }
+                      ]
+              }
+            },
+          },
+        }
+    </script>
+<style>
+        /* Minimalist animations for structural feel */
+        @keyframes subtle-spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        .animate-spin-slow {
+            animation: subtle-spin 3s linear infinite;
+        }
+        @keyframes pulse-bar {
+            0% { opacity: 0.6; width: 30%; }
+            50% { opacity: 1; width: 70%; }
+            100% { opacity: 0.6; width: 30%; }
+        }
+        .animate-pulse-bar {
+            animation: pulse-bar 2s ease-in-out infinite;
+        }
+    </style>
+</head>
+<body class="bg-[#F8FAFC] text-[#0F172A] min-h-screen flex flex-col font-body-md antialiased selection:bg-[#2563EB] selection:text-white">
+<!-- TopNavBar (Shared Component) -->
+<nav class="hidden md:flex justify-between items-center w-full px-margin-desktop max-w-container-max mx-auto h-20 bg-[#F8FAFC] border-b border-[#E2E8F0] font-body-md text-body-md relative z-10">
+<!-- Brand -->
+<div class="flex items-center gap-2 cursor-pointer active:opacity-80">
+<span class="text-h3 font-h3 text-[#0F172A] font-bold">HSKKit</span>
+</div>
+<!-- Navigation Links -->
+<ul class="flex items-center gap-8">
+<li class="cursor-pointer active:opacity-80 transition-colors duration-200 hover:bg-white px-3 py-2 rounded-DEFAULT">
+<span class="text-[#0F172A] hover:text-[#2563EB]">Levels</span>
+</li>
+<li class="cursor-pointer active:opacity-80 transition-colors duration-200 hover:bg-white px-3 py-2 rounded-DEFAULT">
+<span class="text-[#0F172A] hover:text-[#2563EB]">Vocabulary</span>
+</li>
+<li class="cursor-pointer active:opacity-80 transition-colors duration-200 hover:bg-white px-3 py-2 rounded-DEFAULT">
+<span class="text-[#0F172A] hover:text-[#2563EB]">Practice</span>
+</li>
+<li class="cursor-pointer active:opacity-80 transition-colors duration-200 hover:bg-white px-3 py-2 rounded-DEFAULT">
+<!-- Active State -->
+<span class="text-[#2563EB] border-b-2 border-[#2563EB] pb-1 font-semibold">Study Tools</span>
+</li>
+</ul>
+<!-- Trailing Actions (Search on right implied by JSON, plus account) -->
+<div class="flex items-center gap-4">
+<button aria-label="Search" class="p-2 rounded-DEFAULT hover:bg-white transition-colors duration-200 text-[#0F172A] cursor-pointer active:opacity-80">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">search</span>
+</button>
+<button aria-label="Account" class="p-2 rounded-DEFAULT hover:bg-white transition-colors duration-200 text-[#0F172A] cursor-pointer active:opacity-80">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">account_circle</span>
+</button>
+</div>
+</nav>
+<!-- Main Content Canvas -->
+<main class="flex-grow w-full max-w-container-max mx-auto px-margin-desktop py-12">
+<!-- Planned State Banner -->
+<div class="mb-12 border border-[#E2E8F0] bg-white p-6 rounded-xl flex items-start gap-4 shadow-sm">
+<span class="material-symbols-outlined text-[#0F172A] mt-0.5" style="font-variation-settings: 'FILL' 1;">info</span>
+<div>
+<p class="font-body-md text-body-md text-[#0F172A]">
+                    This option is planned. It is not available until the required product, rights, commercial and technical checks are complete.
+                </p>
+</div>
+</div>
+<!-- Page Header -->
+<header class="mb-12 border-b border-[#E2E8F0] pb-8">
+<h1 class="font-h1 text-h1 text-[#0F172A] mb-4">PDF Packs and Exports</h1>
+<p class="font-body-lg text-body-lg text-[#0F172A] max-w-2xl opacity-80">
+                Manage your generated documents, flashcard sheets, and structured learning material exports.
+            </p>
+</header>
+<!-- Bento Grid for States -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-gutter">
+<!-- 1. Queued State -->
+<article class="bg-white border border-[#E2E8F0] rounded-xl p-6 flex flex-col h-full hover:shadow-md transition-shadow duration-300">
+<header class="flex justify-between items-start mb-6">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[#0F172A]" style="font-variation-settings: 'FILL' 0;">hourglass_empty</span>
+<span class="font-label-caps text-label-caps text-[#0F172A] uppercase tracking-widest opacity-70">Queued</span>
+</div>
+</header>
+<div class="flex-grow">
+<h2 class="font-h3 text-h3 text-[#0F172A] mb-2 font-bold">HSK 1 Vocab</h2>
+<p class="font-body-sm text-body-sm text-[#0F172A] opacity-80">Standard vocabulary list layout with pinyin and english translations.</p>
+</div>
+<div class="mt-6 pt-6 border-t border-[#E2E8F0] flex justify-between items-center">
+<span class="font-body-sm text-body-sm text-[#0F172A] opacity-70">Est. wait: 2 mins</span>
+<button class="font-body-sm text-body-sm text-[#0F172A] opacity-50 cursor-not-allowed" disabled="">Cancel</button>
+</div>
+</article>
+<!-- 2. Generating State -->
+<article class="bg-white border border-[#E2E8F0] rounded-xl p-6 flex flex-col h-full relative overflow-hidden hover:shadow-md transition-shadow duration-300">
+<!-- Subtle progress background indicator -->
+<div class="absolute bottom-0 left-0 h-1 bg-[#2563EB] w-1/3 animate-pulse-bar"></div>
+<header class="flex justify-between items-start mb-6">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[#2563EB] animate-spin-slow" style="font-variation-settings: 'FILL' 0;">sync</span>
+<span class="font-label-caps text-label-caps text-[#2563EB] uppercase tracking-widest">Generating</span>
+</div>
+</header>
+<div class="flex-grow">
+<h2 class="font-h3 text-h3 text-[#0F172A] mb-2 font-bold">HSK 3 Grammar</h2>
+<p class="font-body-sm text-body-sm text-[#0F172A] opacity-80">Comprehensive grammar structures with example sentences.</p>
+</div>
+<div class="mt-6 pt-6 border-t border-[#E2E8F0]">
+<!-- Progress Indicator -->
+<div class="w-full bg-[#E2E8F0] h-2 rounded-full overflow-hidden mb-2">
+<div class="bg-[#2563EB] h-full w-3/5 rounded-full"></div>
+</div>
+<span class="font-body-sm text-body-sm text-[#0F172A] opacity-70">Processing pages...</span>
+</div>
+</article>
+<!-- 3. Ready State -->
+<article class="bg-white border border-[#E2E8F0] rounded-xl p-6 flex flex-col h-full hover:shadow-md transition-shadow duration-300">
+<header class="flex justify-between items-start mb-6">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[#2563EB]" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+<span class="font-label-caps text-label-caps text-[#2563EB] uppercase tracking-widest">Ready</span>
+</div>
+<span class="font-body-sm text-body-sm text-[#0F172A] opacity-70">2.4 MB</span>
+</header>
+<div class="flex-grow">
+<h2 class="font-h3 text-h3 text-[#0F172A] mb-2 font-bold">Custom Character Sheets</h2>
+<p class="font-body-sm text-body-sm text-[#0F172A] opacity-80">Blank practice grids for target HSK 4 characters.</p>
+</div>
+<div class="mt-6 pt-6 border-t border-[#E2E8F0] flex justify-end">
+<button class="bg-[#2563EB] text-white font-body-sm text-body-sm px-4 py-2 rounded-DEFAULT hover:opacity-90 transition-opacity flex items-center gap-2 font-medium">
+<span class="material-symbols-outlined text-[18px]">download</span>
+                        Download PDF
+                    </button>
+</div>
+</article>
+<!-- 4. Failed State -->
+<article class="bg-white border border-[#E2E8F0] rounded-xl p-6 flex flex-col h-full hover:shadow-md transition-shadow duration-300">
+<header class="flex justify-between items-start mb-6">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-error" style="font-variation-settings: 'FILL' 1;">error</span>
+<span class="font-label-caps text-label-caps text-error uppercase tracking-widest">Failed</span>
+</div>
+</header>
+<div class="flex-grow">
+<h2 class="font-h3 text-h3 text-[#0F172A] mb-2 font-bold">HSK 5 Reading</h2>
+<p class="font-body-sm text-body-sm text-[#0F172A] opacity-80">Long-form reading comprehension texts and questions.</p>
+<p class="font-body-sm text-body-sm text-error mt-2">Error code: 504 Gateway Timeout</p>
+</div>
+<div class="mt-6 pt-6 border-t border-[#E2E8F0] flex justify-end">
+<button class="border border-[#2563EB] text-[#2563EB] font-body-sm text-body-sm px-4 py-2 rounded-DEFAULT hover:bg-[#F8FAFC] transition-colors flex items-center gap-2 bg-transparent font-medium">
+<span class="material-symbols-outlined text-[18px]">refresh</span>
+                        Retry
+                    </button>
+</div>
+</article>
+<!-- 5. Expired State -->
+<article class="bg-white border border-[#E2E8F0] rounded-xl p-6 flex flex-col h-full hover:shadow-md transition-shadow duration-300 opacity-75">
+<header class="flex justify-between items-start mb-6">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[#0F172A]" style="font-variation-settings: 'FILL' 0;">history</span>
+<span class="font-label-caps text-label-caps text-[#0F172A] uppercase tracking-widest">Expired</span>
+</div>
+</header>
+<div class="flex-grow">
+<h2 class="font-h3 text-h3 text-[#0F172A] mb-2 font-bold">Daily Flashcards</h2>
+<p class="font-body-sm text-body-sm text-[#0F172A] opacity-80">Spaced repetition queue export for offline review.</p>
+<p class="font-body-sm text-body-sm text-[#0F172A] opacity-60 mt-2">Links expire after 7 days for security.</p>
+</div>
+<div class="mt-6 pt-6 border-t border-[#E2E8F0] flex justify-end">
+<button class="text-[#2563EB] font-body-sm text-body-sm px-4 py-2 hover:bg-[#F8FAFC] transition-colors rounded-DEFAULT flex items-center gap-2 bg-transparent font-medium">
+<span class="material-symbols-outlined text-[18px]">add_task</span>
+                        Request Again
+                    </button>
+</div>
+</article>
+<!-- 6. Revoked State -->
+<article class="bg-white border border-[#E2E8F0] rounded-xl p-6 flex flex-col h-full border-dashed hover:shadow-md transition-shadow duration-300 opacity-75">
+<header class="flex justify-between items-start mb-6">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[#0F172A]" style="font-variation-settings: 'FILL' 1;">block</span>
+<span class="font-label-caps text-label-caps text-[#0F172A] uppercase tracking-widest">Revoked</span>
+</div>
+</header>
+<div class="flex-grow">
+<h2 class="font-h3 text-h3 text-[#0F172A] mb-2 font-bold">Premium Pack</h2>
+<p class="font-body-sm text-body-sm text-[#0F172A] opacity-80">Advanced colloquialisms and idiom worksheets.</p>
+<p class="font-body-sm text-body-sm text-[#0F172A] opacity-60 mt-2">Access to this specific asset has been restricted.</p>
+</div>
+<div class="mt-6 pt-6 border-t border-[#E2E8F0] flex justify-end">
+<button class="text-[#0F172A] font-body-sm text-body-sm px-4 py-2 hover:bg-[#F8FAFC] transition-colors rounded-DEFAULT flex items-center gap-2 bg-transparent font-medium">
+<span class="material-symbols-outlined text-[18px]">support_agent</span>
+                        Contact Support
+                    </button>
+</div>
+</article>
+</div>
+</main>
+</body></html>

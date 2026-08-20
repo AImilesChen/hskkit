@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>HSKKit - Account</title>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "secondary-fixed-dim": "#b9c7e0",
+                        "on-secondary-container": "#57657b",
+                        "outline-variant": "#e2e8f0",
+                        "tertiary-fixed-dim": "#b7c8e1",
+                        "surface-variant": "#f1f5f9",
+                        "surface-bright": "#ffffff",
+                        "secondary-container": "#d5e3fd",
+                        "on-secondary-fixed-variant": "#3a485c",
+                        "primary-fixed": "#d8e3fb",
+                        "background": "#f8fafc",
+                        "tertiary-container": "#1a2a3e",
+                        "surface-container": "#f8fafc",
+                        "on-error": "#ffffff",
+                        "inverse-on-surface": "#f2f0ed",
+                        "surface-container-high": "#eae8e4",
+                        "secondary-fixed": "#d5e3fd",
+                        "tertiary-fixed": "#d3e4fe",
+                        "primary-fixed-dim": "#bcc7de",
+                        "on-surface": "#0f172a",
+                        "on-secondary": "#ffffff",
+                        "tertiary": "#041528",
+                        "inverse-surface": "#30312e",
+                        "error-container": "#fee2e2",
+                        "on-tertiary-container": "#8191a9",
+                        "on-primary-fixed-variant": "#3c475a",
+                        "surface-dim": "#dbdad6",
+                        "on-primary-container": "#ffffff",
+                        "on-primary": "#ffffff",
+                        "on-surface-variant": "#475569",
+                        "on-tertiary-fixed-variant": "#38485d",
+                        "on-tertiary": "#ffffff",
+                        "on-tertiary-fixed": "#0b1c30",
+                        "surface-container-highest": "#e4e2de",
+                        "surface-container-lowest": "#ffffff",
+                        "primary": "#2563eb",
+                        "inverse-primary": "#bcc7de",
+                        "on-background": "#0f172a",
+                        "outline": "#cbd5e1",
+                        "error": "#ef4444",
+                        "surface-tint": "#2563eb",
+                        "surface": "#ffffff",
+                        "secondary": "#64748b",
+                        "surface-container-low": "#f1f5f9",
+                        "primary-container": "#2563eb",
+                        "on-secondary-fixed": "#0d1c2f",
+                        "on-primary-fixed": "#111c2d",
+                        "on-error-container": "#991b1b"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "8px",
+                        "lg": "12px",
+                        "xl": "16px",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "margin-mobile": "20px",
+                        "gutter": "24px",
+                        "unit": "8px",
+                        "margin-desktop": "64px",
+                        "container-max": "1140px"
+                    },
+                    "fontFamily": {
+                        "h1": ["Inter"],
+                        "h3": ["Inter"],
+                        "h2": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "body-sm": ["Inter"],
+                        "label-caps": ["Inter"],
+                        "body-md": ["Inter"],
+                        "h1-mobile": ["Inter"]
+                    },
+                    "fontSize": {
+                        "h1": ["40px", { "lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "h3": ["24px", { "lineHeight": "1.4", "fontWeight": "600" }],
+                        "h2": ["32px", { "lineHeight": "1.3", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+                        "body-lg": ["18px", { "lineHeight": "1.6", "fontWeight": "400" }],
+                        "body-sm": ["14px", { "lineHeight": "1.5", "fontWeight": "400" }],
+                        "label-caps": ["12px", { "lineHeight": "1.2", "letterSpacing": "0.05em", "fontWeight": "600" }],
+                        "body-md": ["16px", { "lineHeight": "1.5", "fontWeight": "400" }],
+                        "h1-mobile": ["32px", { "lineHeight": "1.2", "fontWeight": "700" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .icon-filled {
+            font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+</head>
+<body class="bg-background text-on-background antialiased pb-24 md:pb-0 font-body-md">
+<!-- Top Navigation Shell (Mobile Hidden, Desktop Visible) -->
+<header class="hidden md:flex justify-between items-center px-margin-desktop h-16 bg-surface border-b border-outline-variant w-full top-0 sticky z-50">
+<div class="flex items-center gap-4">
+<span aria-hidden="true" class="material-symbols-outlined text-primary font-h2">menu_book</span>
+<span class="font-h2 text-h2 text-primary tracking-tight">HSKKit</span>
+</div>
+<nav class="flex gap-8">
+<a class="font-body-md text-body-md text-secondary hover:text-primary hover:bg-surface-container-low transition-colors duration-200 px-4 py-2 rounded-DEFAULT min-h-[44px] min-w-[44px] flex items-center justify-center" href="#">Home</a>
+<a class="font-body-md text-body-md text-secondary hover:text-primary hover:bg-surface-container-low transition-colors duration-200 px-4 py-2 rounded-DEFAULT min-h-[44px] min-w-[44px] flex items-center justify-center" href="#">Vocab</a>
+<a class="font-body-md text-body-md text-secondary hover:text-primary hover:bg-surface-container-low transition-colors duration-200 px-4 py-2 rounded-DEFAULT min-h-[44px] min-w-[44px] flex items-center justify-center" href="#">Practice</a>
+<a aria-current="page" class="font-body-md text-body-md text-primary font-bold px-4 py-2 rounded-DEFAULT min-h-[44px] min-w-[44px] flex items-center justify-center bg-primary/10" href="#">Account</a>
+</nav>
+</header>
+<!-- Mobile Top App Bar -->
+<div class="md:hidden w-full top-0 sticky bg-surface border-b border-outline-variant flex justify-between items-center px-margin-mobile h-16 z-40 transition-colors duration-200">
+<button aria-label="Menu" class="material-symbols-outlined text-primary min-h-[44px] min-w-[44px] flex items-center justify-center hover:bg-surface-container-low rounded-DEFAULT">menu_book</button>
+<h1 class="font-h1-mobile text-h1-mobile text-primary tracking-tight m-0 p-0 leading-none">Account</h1>
+<div class="w-11"></div> <!-- Spacer for centering -->
+</div>
+<!-- Main Content Canvas -->
+<main class="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop py-8 flex flex-col gap-8 md:grid md:grid-cols-12 md:gap-gutter">
+<!-- Desktop Header (Hidden on Mobile) -->
+<div class="hidden md:block md:col-span-12 mb-4">
+<h1 class="font-h1 text-h1 text-primary m-0">Account</h1>
+</div>
+<!-- User Profile Card -->
+<section class="md:col-span-12 lg:col-span-8 lg:col-start-3 bg-surface-container-lowest border border-outline-variant rounded-xl p-6 flex flex-col sm:flex-row items-center sm:items-start gap-6 text-center sm:text-left">
+<div class="relative group">
+<img alt="User Avatar" class="w-24 h-24 rounded-full object-cover border border-outline-variant" data-alt="A clean, minimalist portrait placeholder or avatar illustrating an elegant, scholarly user profile graphic in a light-mode educational UI setting. Soft natural lighting, delicate paper textures, and navy blue accents. High-quality vector-style illustration, serene and professional." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDrff1dbsU5h-aAGlYVy86aOq0byNTUmjts7hQp4gJ5E1ZIGUlb9sFOE6qO9jRjNKUJGyH5SgBrglUBZ4ppAOUpeBgdnKczWi0iWTA01n6UtQjqqH4fZaS0FQEiYmi1tUjJwxudULq19DkZQ2nlWA_AcEaw7DPBN4vWFDNET4pwNXSIR95JZMUIx2BewKsXc8yem3IFEaaz-8HSayvFNgdoH2I3KgzxWqp2X9mROp4VcykfUTJAGkrulayQZyAqFEg5WxXYr2sYngs"/>
+<button aria-label="Edit Avatar" class="absolute bottom-0 right-0 bg-surface-container-lowest text-primary border border-outline-variant rounded-full p-2 min-h-[44px] min-w-[44px] flex items-center justify-center hover:bg-surface-variant transition-colors shadow-sm">
+<span class="material-symbols-outlined text-[20px]">edit</span>
+</button>
+</div>
+<div class="flex-1 space-y-1">
+<h2 class="font-h3 text-h3 text-on-surface">Eleanor Vance</h2>
+<p class="font-body-md text-body-md text-on-surface-variant">eleanor.v@example.com</p>
+<div class="flex flex-wrap gap-3 justify-center sm:justify-start pt-3">
+<span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-DEFAULT bg-primary/10 border border-primary/20 font-label-caps text-label-caps text-primary">
+<span class="material-symbols-outlined text-[16px] icon-filled">school</span> HSK 4 LEVEL
+                    </span>
+<span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-DEFAULT bg-surface-container border border-outline-variant font-label-caps text-label-caps text-on-surface">
+<span class="material-symbols-outlined text-[16px] icon-filled">menu_book</span> 1,240 WORDS
+                    </span>
+</div>
+</div>
+<button class="bg-transparent border border-primary text-primary hover:bg-primary/10 transition-colors rounded-DEFAULT px-6 py-2 font-body-md text-body-md min-h-[44px] min-w-[44px] mt-4 sm:mt-0 whitespace-nowrap">Edit Profile</button>
+</section>
+<!-- Guest Data Warning (Contextual) -->
+<section class="md:col-span-12 lg:col-span-8 lg:col-start-3 bg-error-container border border-error/20 rounded-xl p-6">
+<div class="flex items-start gap-4">
+<span class="material-symbols-outlined text-error text-[28px] mt-1 icon-filled">warning</span>
+<div class="flex-1 space-y-2">
+<h3 class="font-body-lg text-body-lg text-on-error-container font-semibold">Guest Data Found</h3>
+<p class="font-body-md text-body-md text-on-error-container/80">We found existing study progress on this device. Would you like to merge it with your account?</p>
+<div class="flex flex-wrap gap-3 pt-2">
+<button class="bg-primary text-on-primary rounded-DEFAULT px-5 py-2 font-body-md text-body-md min-h-[44px] min-w-[44px] hover:opacity-90 transition-opacity">Merge Data</button>
+<button class="bg-transparent border border-error text-error hover:bg-error/10 transition-colors rounded-DEFAULT px-5 py-2 font-body-md text-body-md min-h-[44px] min-w-[44px]">Discard</button>
+</div>
+</div>
+</div>
+</section>
+<!-- Bento Grid: Stats & Goals -->
+<div class="md:col-span-12 lg:col-span-8 lg:col-start-3 grid grid-cols-1 sm:grid-cols-2 gap-4">
+<!-- Daily Streak -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-6 flex flex-col justify-between h-full">
+<div class="flex justify-between items-start mb-4">
+<h3 class="font-body-lg text-body-lg text-on-surface">Daily Streak</h3>
+<span class="material-symbols-outlined text-primary text-[24px]">local_fire_department</span>
+</div>
+<div class="flex items-baseline gap-2">
+<span class="font-h2 text-h2 text-on-surface">14</span>
+<span class="font-body-md text-body-md text-on-surface-variant">days</span>
+</div>
+<div class="mt-4 pt-4 border-t border-outline-variant/50">
+<p class="font-body-sm text-body-sm text-on-surface-variant">Keep it up! 7 days to next milestone.</p>
+</div>
+</div>
+<!-- Today's Goal -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-6 flex flex-col justify-between h-full">
+<div class="flex justify-between items-start mb-4">
+<h3 class="font-body-lg text-body-lg text-on-surface">Today's Goal</h3>
+<span class="material-symbols-outlined text-primary text-[24px]">target</span>
+</div>
+<div class="flex flex-col gap-1 mb-4">
+<p class="font-body-md text-body-md text-on-surface font-medium">Review 30 words</p>
+<div class="w-full bg-surface-variant h-2 rounded-sm overflow-hidden mt-2">
+<div class="bg-primary h-full w-[40%] rounded-sm"></div>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant text-right mt-1">12 / 30</p>
+</div>
+<button class="bg-primary text-on-primary rounded-DEFAULT w-full py-2 font-body-md text-body-md min-h-[44px] min-w-[44px] hover:opacity-90 transition-opacity flex items-center justify-center gap-2">
+                    Start Review <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+</button>
+</div>
+</div>
+<!-- List Sections -->
+<div class="md:col-span-12 lg:col-span-8 lg:col-start-3 space-y-4">
+<button class="w-full bg-surface-container-lowest border border-outline-variant rounded-xl p-4 flex items-center justify-between hover:bg-surface-container-low transition-colors min-h-[64px]">
+<div class="flex items-center gap-4">
+<div class="bg-surface-container p-2 rounded-DEFAULT text-primary">
+<span class="material-symbols-outlined text-[24px]">sync</span>
+</div>
+<div class="text-left">
+<h4 class="font-body-md text-body-md text-on-surface font-medium">Sync Status</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Last synced: 2 mins ago</p>
+</div>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant min-h-[44px] min-w-[44px] flex items-center justify-center">chevron_right</span>
+</button>
+<button class="w-full bg-surface-container-lowest border border-outline-variant rounded-xl p-4 flex items-center justify-between hover:bg-surface-container-low transition-colors min-h-[64px]">
+<div class="flex items-center gap-4">
+<div class="bg-surface-container p-2 rounded-DEFAULT text-primary">
+<span class="material-symbols-outlined text-[24px]">history</span>
+</div>
+<div class="text-left">
+<h4 class="font-body-md text-body-md text-on-surface font-medium">Study History</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant">View past sessions and analytics</p>
+</div>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant min-h-[44px] min-w-[44px] flex items-center justify-center">chevron_right</span>
+</button>
+<button class="w-full bg-surface-container-lowest border border-outline-variant rounded-xl p-4 flex items-center justify-between hover:bg-surface-container-low transition-colors min-h-[64px]">
+<div class="flex items-center gap-4">
+<div class="bg-surface-container p-2 rounded-DEFAULT text-primary">
+<span class="material-symbols-outlined text-[24px]">cloud_download</span>
+</div>
+<div class="text-left">
+<h4 class="font-body-md text-body-md text-on-surface font-medium">Offline Data Management</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Manage downloaded audio and decks</p>
+</div>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant min-h-[44px] min-w-[44px] flex items-center justify-center">chevron_right</span>
+</button>
+</div>
+<!-- Sign Out Action -->
+<div class="md:col-span-12 lg:col-span-8 lg:col-start-3 mt-4 mb-8">
+<button class="w-full bg-transparent border-t border-b sm:border border-outline-variant/50 sm:rounded-xl p-4 text-center text-error hover:bg-error/5 transition-colors font-body-md text-body-md min-h-[64px] flex items-center justify-center gap-2">
+<span class="material-symbols-outlined text-[20px]">logout</span> Sign Out
+            </button>
+</div>
+</main>
+<!-- Bottom Navigation Shell (Mobile Visible, Desktop Hidden) -->
+<nav class="md:hidden fixed bottom-0 w-full z-50 flex justify-around items-center h-16 bg-surface border-t border-outline-variant transition-transform">
+<a class="flex flex-col items-center justify-center text-secondary hover:text-primary hover:bg-surface-container-low min-h-[44px] min-w-[64px] py-1 rounded-DEFAULT" href="#">
+<span class="material-symbols-outlined mb-1">home</span>
+<span class="font-label-caps text-label-caps">Home</span>
+</a>
+<a class="flex flex-col items-center justify-center text-secondary hover:text-primary hover:bg-surface-container-low min-h-[44px] min-w-[64px] py-1 rounded-DEFAULT" href="#">
+<span class="material-symbols-outlined mb-1">import_contacts</span>
+<span class="font-label-caps text-label-caps">Vocab</span>
+</a>
+<a class="flex flex-col items-center justify-center text-secondary hover:text-primary hover:bg-surface-container-low min-h-[44px] min-w-[64px] py-1 rounded-DEFAULT" href="#">
+<span class="material-symbols-outlined mb-1">exercise</span>
+<span class="font-label-caps text-label-caps">Practice</span>
+</a>
+<a aria-current="page" class="flex flex-col items-center justify-center text-primary font-bold bg-primary/10 hover:bg-primary/20 min-h-[44px] min-w-[64px] py-1 rounded-DEFAULT" href="#">
+<span class="material-symbols-outlined mb-1 icon-filled">person</span>
+<span class="font-label-caps text-label-caps">Account</span>
+</a>
+</nav>
+<!-- Desktop Footer -->
+<footer class="hidden md:flex flex-col items-center py-8 px-margin-mobile space-y-4 text-center bg-surface-container-low border-t border-outline-variant w-full mt-12">
+<h3 class="font-h3 text-h3 text-primary">HSKKit</h3>
+<nav class="flex flex-wrap justify-center gap-6 mb-4 max-w-2xl">
+<a class="font-body-sm text-body-sm text-secondary hover:text-primary hover:underline transition-all min-h-[44px] min-w-[44px] inline-flex items-center justify-center" href="#">Privacy Policy</a>
+<a class="font-body-sm text-body-sm text-secondary hover:text-primary hover:underline transition-all min-h-[44px] min-w-[44px] inline-flex items-center justify-center" href="#">Terms of Service</a>
+<a class="font-body-sm text-body-sm text-secondary hover:text-primary hover:underline transition-all min-h-[44px] min-w-[44px] inline-flex items-center justify-center" href="#">Cookie Policy</a>
+<a class="font-body-sm text-body-sm text-secondary hover:text-primary hover:underline transition-all min-h-[44px] min-w-[44px] inline-flex items-center justify-center" href="#">Refund and Cancellation Policy</a>
+<a class="font-body-sm text-body-sm text-secondary hover:text-primary hover:underline transition-all min-h-[44px] min-w-[44px] inline-flex items-center justify-center" href="#">Disclaimer</a>
+<a class="font-body-sm text-body-sm text-secondary hover:text-primary hover:underline transition-all min-h-[44px] min-w-[44px] inline-flex items-center justify-center" href="#">AI Policy</a>
+</nav>
+<p class="font-body-sm text-body-sm text-secondary">© 2024 HSKKit. All rights reserved.</p>
+</footer>
+</body></html>

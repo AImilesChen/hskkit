@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>HSKKit - Study Planner</title>
+<!-- Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Tailwind Config -->
+<script id="tailwind-config">
+  tailwind.config = {
+    darkMode: "class",
+    theme: {
+      extend: {
+        fontFamily: {
+          sans: ['Inter', 'sans-serif'],
+        }
+      }
+    }
+  }
+</script>
+<style>
+        /* Form focus overrides to maintain layout stability when border thickens */
+        input[type="text"]:focus, input[type="number"]:focus, input[type="date"]:focus, select:focus {
+            outline: none;
+            box-shadow: none;
+        }
+        
+        /* Custom checkbox style */
+        input[type="checkbox"] {
+            border-radius: 4px;
+            border-color: #E2E8F0;
+            color: #2563EB;
+        }
+        input[type="checkbox"]:focus {
+            --tw-ring-color: #2563EB;
+        }
+    </style>
+</head>
+<body class="bg-[#F8FAFC] text-[#0F172A] font-sans antialiased min-h-screen flex flex-col">
+<!-- TopNavBar -->
+<nav class="bg-white docked full-width top-0 border-b border-[#E2E8F0] flat no shadows">
+<div class="hidden md:flex justify-between items-center w-full px-8 max-w-[1140px] mx-auto h-20">
+<!-- Brand Logo -->
+<div class="flex-shrink-0 cursor-pointer active:opacity-80">
+<img alt="HSKKit" class="h-10" src="https://lh3.googleusercontent.com/aida/AP1WRLt2yPCk2PUGELNjF5LnLexVtPU8YVU1s5IPqsn-9drSHHnnBeeB_l1kBwmfbqLXKga63BKqIoOC3WvG8td-L9UpeBzSvqZp2F_0DUmY0Ncvq6PqpvJ58NLq6BS9pcBCYepblagbqBlZjmtI_yqwHmnQqYJrnT6kv10DVlrLY8VaPaXSox_xIt5u4_YSzheGzhjFOfbfF3wzKYr1ZLFnzs4DGtU_did08zdHcmgMe_nJP8IceNVq1bw063c"/>
+</div>
+<!-- Navigation Links -->
+<div class="flex space-x-8">
+<!-- Inactive Tab -->
+<a class="text-[#0F172A]/70 hover:text-[#2563EB] text-base transition-colors duration-200 cursor-pointer active:opacity-80 py-1" href="#">Levels</a>
+<!-- Inactive Tab -->
+<a class="text-[#0F172A]/70 hover:text-[#2563EB] text-base transition-colors duration-200 cursor-pointer active:opacity-80 py-1" href="#">Vocabulary</a>
+<!-- Inactive Tab -->
+<a class="text-[#0F172A]/70 hover:text-[#2563EB] text-base transition-colors duration-200 cursor-pointer active:opacity-80 py-1" href="#">Practice</a>
+<!-- Active Tab -->
+<a class="text-[#2563EB] border-b-2 border-[#2563EB] pb-1 text-base font-medium cursor-pointer active:opacity-80" href="#">Study Tools</a>
+</div>
+<!-- Trailing Icon Actions -->
+<div class="flex-shrink-0">
+<button class="text-[#0F172A] hover:bg-[#F8FAFC] transition-colors duration-200 cursor-pointer active:opacity-80 p-2 rounded-full flex items-center justify-center">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">account_circle</span>
+</button>
+</div>
+</div>
+</nav>
+<!-- Version Update Banner -->
+<div class="w-full bg-[#E2E8F0]/50 text-[#0F172A] border-b border-[#E2E8F0] py-3 px-8">
+<div class="max-w-[1140px] mx-auto flex items-center justify-between">
+<div class="flex items-center space-x-3">
+<span class="material-symbols-outlined text-[#2563EB]" style="font-variation-settings: 'FILL' 1;">upgrade</span>
+<p class="text-sm"><strong class="font-semibold">Version Update Available:</strong> v3.0 introduces new adaptive algorithms for personalized pacing.</p>
+</div>
+<button class="text-xs font-semibold text-[#2563EB] hover:opacity-80 uppercase tracking-wider underline underline-offset-2">Update Now</button>
+</div>
+</div>
+<!-- Main Layout -->
+<main class="flex-grow w-full px-8 py-12 max-w-[1140px] mx-auto">
+<header class="mb-10">
+<h1 class="text-4xl font-bold text-[#0F172A] mb-2 tracking-tight">Study Planner</h1>
+<p class="text-lg text-[#0F172A]/70 max-w-2xl">Configure your learning parameters to generate an optimized, academic-grade study schedule.</p>
+</header>
+<!-- 12-Column Grid Layout -->
+<div class="grid grid-cols-1 md:grid-cols-12 gap-6 items-start">
+<!-- Main Content Area (8 Columns) -->
+<div class="md:col-span-8 flex flex-col space-y-8">
+<!-- Schedule Overload Warning -->
+<div class="bg-[#FEE2E2] border border-[#FCA5A5] rounded-2xl p-5 flex flex-col sm:flex-row gap-4 items-start relative">
+<span class="material-symbols-outlined text-[#DC2626] mt-0.5" style="font-variation-settings: 'FILL' 1;">warning</span>
+<div class="flex-grow">
+<h4 class="text-base font-semibold text-[#991B1B] mb-1">Schedule Overload Warning</h4>
+<p class="text-sm text-[#991B1B] mb-4 opacity-90">Based on your current retention rate and selected target date, the required daily volume exceeds your available study time. This goal is mathematically unreachable without adjustments.</p>
+<div class="flex space-x-3">
+<button class="bg-transparent border border-[#DC2626] text-[#DC2626] hover:bg-[#DC2626] hover:text-white px-4 py-1.5 rounded-lg text-xs font-semibold transition-colors">Increase Time</button>
+<button class="bg-transparent border border-[#DC2626] text-[#DC2626] hover:bg-[#DC2626] hover:text-white px-4 py-1.5 rounded-lg text-xs font-semibold transition-colors">Extend Deadline</button>
+</div>
+</div>
+</div>
+<!-- Planner Form -->
+<div class="bg-white border border-[#E2E8F0] p-8 rounded-2xl relative shadow-sm">
+<form class="space-y-6">
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+<!-- Target HSK Level -->
+<div>
+<label class="text-xs font-semibold uppercase tracking-wider text-[#0F172A] block mb-2" for="target-level">Target HSK Level (Goal)</label>
+<select class="w-full bg-white border border-[#E2E8F0] rounded-lg px-4 py-2.5 text-[#0F172A] text-base focus:border-[#2563EB] focus:ring-1 focus:ring-[#2563EB] transition-all cursor-pointer" id="target-level">
+<option>HSK Level 1</option>
+<option>HSK Level 2</option>
+<option>HSK Level 3</option>
+<option selected="">HSK Level 4</option>
+<option>HSK Level 5</option>
+<option>HSK Level 6</option>
+</select>
+</div>
+<!-- Available Study Time -->
+<div>
+<label class="text-xs font-semibold uppercase tracking-wider text-[#0F172A] block mb-2" for="study-time">Available Study Time (min/day)</label>
+<input class="w-full bg-white border border-[#E2E8F0] rounded-lg px-4 py-2.5 text-[#0F172A] text-base focus:border-[#2563EB] focus:ring-1 focus:ring-[#2563EB] transition-all" id="study-time" type="number" value="45"/>
+</div>
+</div>
+<!-- Target Date -->
+<div>
+<label class="text-xs font-semibold uppercase tracking-wider text-[#0F172A] block mb-2" for="target-date">Target Date (Optional)</label>
+<input class="w-full sm:w-1/2 bg-white border border-[#E2E8F0] rounded-lg px-4 py-2.5 text-[#0F172A] text-base focus:border-[#2563EB] focus:ring-1 focus:ring-[#2563EB] transition-all" id="target-date" type="date" value="2024-12-15"/>
+</div>
+<!-- Focus Areas (Checkboxes) -->
+<div class="pt-2">
+<label class="text-xs font-semibold uppercase tracking-wider text-[#0F172A] block mb-4 border-b border-[#E2E8F0] pb-2">Focus Areas</label>
+<div class="grid grid-cols-2 gap-4">
+<label class="flex items-center space-x-3 cursor-pointer group">
+<input checked="" class="form-checkbox h-5 w-5 bg-white border-[#E2E8F0] text-[#2563EB] focus:ring-[#2563EB] rounded" type="checkbox"/>
+<span class="text-base text-[#0F172A] group-hover:text-[#2563EB] transition-colors">Vocabulary</span>
+</label>
+<label class="flex items-center space-x-3 cursor-pointer group">
+<input checked="" class="form-checkbox h-5 w-5 bg-white border-[#E2E8F0] text-[#2563EB] focus:ring-[#2563EB] rounded" type="checkbox"/>
+<span class="text-base text-[#0F172A] group-hover:text-[#2563EB] transition-colors">Grammar Patterns</span>
+</label>
+<label class="flex items-center space-x-3 cursor-pointer group">
+<input class="form-checkbox h-5 w-5 bg-white border-[#E2E8F0] text-[#2563EB] focus:ring-[#2563EB] rounded" type="checkbox"/>
+<span class="text-base text-[#0F172A] group-hover:text-[#2563EB] transition-colors">Reading Comprehension</span>
+</label>
+<label class="flex items-center space-x-3 cursor-pointer group">
+<input class="form-checkbox h-5 w-5 bg-white border-[#E2E8F0] text-[#2563EB] focus:ring-[#2563EB] rounded" type="checkbox"/>
+<span class="text-base text-[#0F172A] group-hover:text-[#2563EB] transition-colors">Listening Practice</span>
+</label>
+</div>
+</div>
+<!-- Action Button -->
+<div class="pt-6 mt-4 border-t border-[#E2E8F0] flex justify-end">
+<button class="bg-[#2563EB] text-white hover:bg-[#1D4ED8] px-6 py-3 rounded-lg text-xs font-semibold uppercase transition-colors tracking-wide flex items-center space-x-2 shadow-sm" type="button">
+<span class="material-symbols-outlined text-[18px]">calendar_month</span>
+<span>Generate Study Plan</span>
+</button>
+</div>
+</form>
+</div>
+</div>
+<!-- Sidebar (4 Columns) -->
+<aside class="md:col-span-4">
+<div class="bg-white border border-[#E2E8F0] p-6 rounded-2xl sticky top-28 shadow-sm">
+<div class="flex items-center space-x-2 mb-6 pb-4 border-b border-[#E2E8F0]">
+<span class="material-symbols-outlined text-[#2563EB]" style="font-variation-settings: 'FILL' 1;">analytics</span>
+<h3 class="text-xl font-bold text-[#0F172A]">Current Load Analysis</h3>
+</div>
+<div class="space-y-8">
+<!-- Progress Item 1 -->
+<div>
+<div class="flex justify-between mb-2">
+<span class="text-xs font-semibold uppercase tracking-wider text-[#0F172A]">Vocabulary Reviews Pending</span>
+<span class="text-sm font-bold text-[#2563EB]">842</span>
+</div>
+<div class="w-full bg-[#E2E8F0] rounded-full h-1.5 overflow-hidden">
+<div class="bg-[#2563EB] h-full rounded-full" style="width: 75%"></div>
+</div>
+<p class="text-sm text-[#0F172A]/70 mt-2">High volume detected. Consider dedicating 20mins strictly to spaced repetition today.</p>
+</div>
+<!-- Progress Item 2 -->
+<div>
+<div class="flex justify-between mb-2">
+<span class="text-xs font-semibold uppercase tracking-wider text-[#0F172A]">Grammar Patterns to Review</span>
+<span class="text-sm font-bold text-[#2563EB]">15</span>
+</div>
+<div class="w-full bg-[#E2E8F0] rounded-full h-1.5 overflow-hidden">
+<div class="bg-[#2563EB] h-full rounded-full" style="width: 30%"></div>
+</div>
+<p class="text-sm text-[#0F172A]/70 mt-2">Manageable load. Incorporate into reading exercises.</p>
+</div>
+</div>
+<div class="mt-8 pt-6 border-t border-[#E2E8F0]">
+<button class="w-full bg-transparent border border-[#2563EB] text-[#2563EB] hover:bg-[#F8FAFC] px-4 py-2.5 rounded-lg text-xs font-semibold uppercase transition-colors flex items-center justify-center space-x-2">
+<span class="material-symbols-outlined text-[18px]">history</span>
+<span>View Historical Load</span>
+</button>
+</div>
+</div>
+</aside>
+</div>
+</main>
+</body></html>

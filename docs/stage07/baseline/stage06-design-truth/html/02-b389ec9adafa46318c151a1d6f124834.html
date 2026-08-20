@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>HSKKit - Home</title>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Theme Configuration -->
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "primary": "#2563EB",
+                        "primary-container": "#2563EB",
+                        "on-primary": "#ffffff",
+                        "background": "#F8FAFC",
+                        "on-background": "#0F172A",
+                        "surface": "#ffffff",
+                        "on-surface": "#0F172A",
+                        "surface-bright": "#ffffff",
+                        "surface-container": "#F1F5F9",
+                        "surface-container-low": "#ffffff",
+                        "surface-container-high": "#F1F5F9",
+                        "outline": "#94A3B8",
+                        "outline-variant": "#E2E8F0",
+                        "secondary": "#475569",
+                        "on-surface-variant": "#475569",
+                        "primary-fixed-dim": "#BFDBFE",
+                        "secondary-fixed": "#d5e3fd",
+                        "on-secondary-fixed": "#0d1c2f",
+                        "surface-tint": "#2563EB",
+                        "surface-dim": "#E2E8F0",
+                        "tertiary-fixed": "#d3e4fe",
+                        "primary-fixed": "#BFDBFE",
+                        "surface-variant": "#F1F5F9",
+                        "on-secondary-container": "#475569",
+                        "inverse-on-surface": "#F8FAFC",
+                        "inverse-surface": "#0F172A",
+                        "tertiary-container": "#1a2a3e",
+                        "error": "#ba1a1a",
+                        "tertiary": "#041528",
+                        "on-primary-fixed-variant": "#1E3A8A",
+                        "on-tertiary-container": "#8191a9",
+                        "on-tertiary": "#ffffff",
+                        "secondary-container": "#F1F5F9",
+                        "tertiary-fixed-dim": "#b7c8e1",
+                        "on-secondary-fixed-variant": "#3a485c",
+                        "surface-container-highest": "#E2E8F0",
+                        "on-tertiary-fixed": "#0b1c30",
+                        "surface-container-lowest": "#ffffff",
+                        "secondary-fixed-dim": "#b9c7e0",
+                        "on-primary-container": "#ffffff",
+                        "on-tertiary-fixed-variant": "#38485d",
+                        "on-primary-fixed": "#1E3A8A",
+                        "inverse-primary": "#BFDBFE",
+                        "on-error-container": "#93000a",
+                        "on-secondary": "#ffffff",
+                        "on-error": "#ffffff",
+                        "error-container": "#ffdad6"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.5rem",
+                        "md": "0.5rem",
+                        "lg": "1rem",
+                        "xl": "1rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "container-max": "1140px",
+                        "unit": "8px",
+                        "margin-desktop": "64px",
+                        "margin-mobile": "20px",
+                        "gutter": "24px"
+                    },
+                    "fontFamily": {
+                        "h2": ["Inter", "sans-serif"],
+                        "h3": ["Inter", "sans-serif"],
+                        "h1-mobile": ["Inter", "sans-serif"],
+                        "h1": ["Inter", "sans-serif"],
+                        "body-sm": ["Inter", "sans-serif"],
+                        "body-md": ["Inter", "sans-serif"],
+                        "label-caps": ["Inter", "sans-serif"],
+                        "body-lg": ["Inter", "sans-serif"]
+                    },
+                    "fontSize": {
+                        "h2": ["32px", { "lineHeight": "1.3", "letterSpacing": "-0.01em", "fontWeight": "700" }],
+                        "h3": ["24px", { "lineHeight": "1.4", "fontWeight": "600" }],
+                        "h1-mobile": ["32px", { "lineHeight": "1.2", "fontWeight": "700" }],
+                        "h1": ["40px", { "lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "800" }],
+                        "body-sm": ["14px", { "lineHeight": "1.5", "fontWeight": "400" }],
+                        "body-md": ["16px", { "lineHeight": "1.5", "fontWeight": "400" }],
+                        "label-caps": ["12px", { "lineHeight": "1.2", "letterSpacing": "0.05em", "fontWeight": "600" }],
+                        "body-lg": ["18px", { "lineHeight": "1.6", "fontWeight": "400" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body {
+            background-color: theme('colors.background');
+            color: theme('colors.on-background');
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+        
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .material-symbols-outlined[data-weight="fill"] {
+            font-variation-settings: 'FILL' 1;
+        }
+        
+        /* Focus styles for accessibility */
+        *:focus-visible {
+            outline: 2px solid theme('colors.primary');
+            outline-offset: 2px;
+            border-radius: 2px;
+        }
+        
+        /* Typography utilities based on config */
+        .h1 { font-family: theme('fontFamily.h1'); font-size: theme('fontSize.h1[0]'); line-height: theme('fontSize.h1[1].lineHeight'); letter-spacing: theme('fontSize.h1[1].letterSpacing'); font-weight: theme('fontSize.h1[1].fontWeight'); }
+        .h2 { font-family: theme('fontFamily.h2'); font-size: theme('fontSize.h2[0]'); line-height: theme('fontSize.h2[1].lineHeight'); letter-spacing: theme('fontSize.h2[1].letterSpacing'); font-weight: theme('fontSize.h2[1].fontWeight'); }
+        .h3 { font-family: theme('fontFamily.h3'); font-size: theme('fontSize.h3[0]'); line-height: theme('fontSize.h3[1].lineHeight'); font-weight: theme('fontSize.h3[1].fontWeight'); }
+        .body-lg { font-family: theme('fontFamily.body-lg'); font-size: theme('fontSize.body-lg[0]'); line-height: theme('fontSize.body-lg[1].lineHeight'); font-weight: theme('fontSize.body-lg[1].fontWeight'); }
+        .body-md { font-family: theme('fontFamily.body-md'); font-size: theme('fontSize.body-md[0]'); line-height: theme('fontSize.body-md[1].lineHeight'); font-weight: theme('fontSize.body-md[1].fontWeight'); }
+        .body-sm { font-family: theme('fontFamily.body-sm'); font-size: theme('fontSize.body-sm[0]'); line-height: theme('fontSize.body-sm[1].lineHeight'); font-weight: theme('fontSize.body-sm[1].fontWeight'); }
+        .label-caps { font-family: theme('fontFamily.label-caps'); font-size: theme('fontSize.label-caps[0]'); line-height: theme('fontSize.label-caps[1].lineHeight'); letter-spacing: theme('fontSize.label-caps[1].letterSpacing'); font-weight: theme('fontSize.label-caps[1].fontWeight'); text-transform: uppercase; }
+
+        /* Shimmer effect for skeleton loading */
+        @keyframes shimmer {
+            0% { background-position: -1000px 0; }
+            100% { background-position: 1000px 0; }
+        }
+        .skeleton-shimmer {
+            animation: shimmer 2s infinite linear;
+            background: linear-gradient(to right, theme('colors.surface-container') 4%, theme('colors.surface-container-high') 25%, theme('colors.surface-container') 36%);
+            background-size: 1000px 100%;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col bg-background">
+<!-- TopNavBar -->
+<nav class="bg-surface dark:bg-background w-full top-0 sticky z-50 border-b border-outline-variant dark:border-outline">
+<div class="flex justify-between items-center w-full px-margin-desktop py-unit max-w-container-max mx-auto h-[72px]">
+<!-- Brand Logo -->
+<a class="font-h3 text-h3 font-bold text-on-background flex items-center gap-2" href="#">
+<span class="material-symbols-outlined text-primary" data-weight="fill">school</span>
+                HSKKit
+            </a>
+<!-- Desktop Navigation Links -->
+<div class="hidden md:flex items-center gap-8 h-full">
+<!-- Highlight 'Levels' as active since it's the core focus of the homepage -->
+<a class="text-primary font-bold border-b-2 border-primary h-full flex items-center mt-[2px] transition-opacity active:opacity-80" href="#">Levels</a>
+<a class="text-secondary font-medium hover:text-primary transition-colors duration-200 h-full flex items-center cursor-pointer transition-opacity active:opacity-80" href="#">Vocabulary</a>
+<a class="text-secondary font-medium hover:text-primary transition-colors duration-200 h-full flex items-center cursor-pointer transition-opacity active:opacity-80" href="#">Practice</a>
+<a class="text-secondary font-medium hover:text-primary transition-colors duration-200 h-full flex items-center cursor-pointer transition-opacity active:opacity-80" href="#">Study Tools</a>
+</div>
+<!-- Actions -->
+<div class="flex items-center gap-4">
+<button class="hidden md:flex text-on-background font-medium hover:bg-surface-container px-4 py-2 rounded transition-colors min-h-[44px] items-center">
+                    Sign In
+                </button>
+<button class="bg-primary text-white font-medium px-5 py-2 rounded hover:bg-opacity-90 transition-opacity min-h-[44px] items-center shadow-sm">
+                    Get Started
+                </button>
+</div>
+</div>
+</nav>
+<!-- Main Content Area (Fixed Grid 1140px centered) -->
+<main class="flex-grow w-full max-w-container-max mx-auto px-margin-desktop py-12 flex flex-col gap-24">
+<!-- Hero Section -->
+<section class="grid grid-cols-12 gap-gutter items-center pt-8 pb-16 border-b border-outline-variant">
+<div class="col-span-12 md:col-span-8 flex flex-col gap-6">
+<h1 class="h1 text-on-background">Build your HSK 3.0 learning path</h1>
+<p class="body-lg text-secondary max-w-2xl">
+                    Choose a starting point, study by level, and return to the next useful task. HSKKit is for learners who want a clearer way to practise Chinese.
+                </p>
+<div class="flex flex-wrap gap-4 mt-4">
+<button class="bg-primary text-white px-6 py-3 rounded font-medium min-h-[44px] flex items-center hover:bg-opacity-90 transition-opacity shadow-sm">
+                        Find your starting point
+                    </button>
+<button class="bg-surface border border-outline-variant text-on-background px-6 py-3 rounded font-medium min-h-[44px] flex items-center hover:bg-surface-container transition-colors shadow-sm">
+                        Explore HSK 3.0 levels
+                    </button>
+</div>
+<p class="body-sm text-outline mt-2 italic flex items-center gap-2">
+<span class="material-symbols-outlined text-sm">info</span>
+                    A learning suggestion is not an examination result or a promise of an outcome.
+                </p>
+</div>
+<div class="col-span-12 md:col-span-4 hidden md:flex justify-end relative h-64">
+<!-- Abstract visual representation of a path or book, fitting the scholarly aesthetic -->
+<div class="absolute inset-0 bg-white border border-outline-variant rounded-lg p-6 shadow-sm rotate-3 transform origin-bottom-right"></div>
+<div class="absolute inset-0 bg-white border border-outline-variant rounded-lg p-6 z-10 flex flex-col gap-4 shadow-sm">
+<div class="h-4 w-1/3 bg-surface-container-high rounded"></div>
+<div class="h-2 w-full bg-surface-container rounded"></div>
+<div class="h-2 w-5/6 bg-surface-container rounded"></div>
+<div class="h-2 w-4/6 bg-surface-container rounded"></div>
+<div class="mt-auto h-32 w-full bg-surface-container rounded flex items-center justify-center">
+<span class="material-symbols-outlined text-4xl text-outline-variant">menu_book</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Section 1: Make today's next step clear (Recovery & Status Patterns) -->
+<section class="flex flex-col gap-8">
+<h2 class="h2 text-on-background">Make today’s next step clear.</h2>
+<div class="grid grid-cols-12 gap-gutter">
+<!-- Quick Access Column -->
+<div class="col-span-12 md:col-span-4 flex flex-col gap-4">
+<h3 class="label-caps text-secondary mb-2">Tools</h3>
+<a class="bg-white border border-outline-variant rounded-lg p-4 flex items-center gap-4 hover:border-primary transition-colors min-h-[44px] group shadow-sm" href="#">
+<div class="bg-surface-container w-10 h-10 rounded flex items-center justify-center text-secondary group-hover:text-primary transition-colors">
+<span class="material-symbols-outlined">library_books</span>
+</div>
+<div>
+<div class="body-md font-medium text-on-background">Vocabulary browser</div>
+</div>
+<span class="material-symbols-outlined ml-auto text-outline group-hover:text-primary">arrow_forward</span>
+</a>
+<a class="bg-white border border-outline-variant rounded-lg p-4 flex items-center gap-4 hover:border-primary transition-colors min-h-[44px] group shadow-sm" href="#">
+<div class="bg-surface-container w-10 h-10 rounded flex items-center justify-center text-secondary group-hover:text-primary transition-colors">
+<span class="material-symbols-outlined">description</span>
+</div>
+<div>
+<div class="body-md font-medium text-on-background">Word detail</div>
+</div>
+<span class="material-symbols-outlined ml-auto text-outline group-hover:text-primary">arrow_forward</span>
+</a>
+<a class="bg-white border border-outline-variant rounded-lg p-4 flex items-center gap-4 hover:border-primary transition-colors min-h-[44px] group shadow-sm" href="#">
+<div class="bg-surface-container w-10 h-10 rounded flex items-center justify-center text-secondary group-hover:text-primary transition-colors">
+<span class="material-symbols-outlined">menu_book</span>
+</div>
+<div>
+<div class="body-md font-medium text-on-background">Dictionary lookup</div>
+</div>
+<span class="material-symbols-outlined ml-auto text-outline group-hover:text-primary">arrow_forward</span>
+</a>
+</div>
+<!-- Recovery States Column -->
+<div class="col-span-12 md:col-span-8 flex flex-col gap-4">
+<!-- Loading Skeleton State -->
+<h3 class="label-caps text-secondary mb-2">Continue Studying</h3>
+<div class="bg-white border border-outline-variant rounded-lg p-6 w-full flex flex-col gap-4 relative overflow-hidden shadow-sm">
+<div class="flex justify-between items-center w-full">
+<div class="h-6 w-48 skeleton-shimmer rounded"></div>
+<div class="h-8 w-24 skeleton-shimmer rounded"></div>
+</div>
+<div class="h-2 w-full skeleton-shimmer rounded mt-4"></div>
+<div class="flex justify-between w-full mt-1">
+<div class="h-4 w-12 skeleton-shimmer rounded"></div>
+<div class="h-4 w-16 skeleton-shimmer rounded"></div>
+</div>
+</div>
+<!-- Empty State -->
+<h3 class="label-caps text-secondary mt-4 mb-2">Recent Practice</h3>
+<div class="bg-white border border-dashed border-outline-variant rounded-lg p-8 flex flex-col items-center justify-center text-center gap-3 shadow-sm">
+<div class="bg-surface-container p-3 rounded-full inline-flex text-secondary">
+<span class="material-symbols-outlined text-3xl">history</span>
+</div>
+<div class="body-md font-medium text-on-background">No recent practice found</div>
+<div class="body-sm text-secondary max-w-sm">When you complete practice modules or mock tests, they will appear here so you can review your mistakes.</div>
+<button class="mt-2 text-primary font-medium hover:underline flex items-center gap-1 min-h-[44px]">
+                            Start practicing now <span class="material-symbols-outlined text-sm">arrow_forward</span>
+</button>
+</div>
+</div>
+</div>
+</section>
+<hr class="border-t border-outline-variant w-full"/>
+<!-- Section 2: Learn by HSK 3.0 level -->
+<section class="flex flex-col gap-8">
+<div class="flex justify-between items-end">
+<h2 class="h2 text-on-background">Learn by HSK 3.0 level.</h2>
+<a class="hidden md:flex text-primary font-medium hover:underline items-center gap-1 min-h-[44px]" href="#">
+                    View full curriculum <span class="material-symbols-outlined text-sm">arrow_forward</span>
+</a>
+</div>
+<!-- Grid of levels using Bento Grid style approach (asymmetric but structured) -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+<!-- Level 1 (Beginner - highlighted slightly to show start path) -->
+<div class="bg-white border-2 border-primary rounded-lg p-6 flex flex-col gap-4 relative hover:shadow-md transition-shadow cursor-pointer shadow-sm">
+<div class="absolute top-0 right-0 bg-primary text-white label-caps px-3 py-1 rounded-bl-lg rounded-tr-[0.4rem]">Start Here</div>
+<div class="flex justify-between items-center mb-2 mt-4">
+<h3 class="h3 text-on-background">Level 1</h3>
+<span class="bg-surface-container text-secondary text-xs px-2 py-1 rounded font-medium">500 Words</span>
+</div>
+<p class="body-sm text-secondary">Basic communication and everyday topics. The foundation of Chinese study.</p>
+<div class="mt-auto pt-6">
+<div class="flex justify-between body-sm text-secondary mb-2">
+<span>Progress</span>
+<span>0%</span>
+</div>
+<div class="w-full h-2 bg-surface-container rounded-sm overflow-hidden">
+<div class="bg-primary h-full w-0 rounded-sm"></div>
+</div>
+</div>
+</div>
+<!-- Level 2 -->
+<div class="bg-white border border-outline-variant rounded-lg p-6 flex flex-col gap-4 hover:border-primary transition-colors cursor-pointer group shadow-sm">
+<div class="flex justify-between items-center mb-2">
+<h3 class="h3 text-on-background group-hover:text-primary transition-colors">Level 2</h3>
+<span class="bg-surface-container text-secondary text-xs px-2 py-1 rounded font-medium">772 Words</span>
+</div>
+<p class="body-sm text-secondary">Routine tasks and basic social exchanges. Expanding vocabulary for daily life.</p>
+<div class="mt-auto pt-6">
+<div class="flex justify-between body-sm text-secondary mb-2">
+<span>Progress</span>
+<span>0%</span>
+</div>
+<div class="w-full h-2 bg-surface-container rounded-sm overflow-hidden">
+<div class="bg-primary h-full w-0 rounded-sm"></div>
+</div>
+</div>
+</div>
+<!-- Level 3 -->
+<div class="bg-white border border-outline-variant rounded-lg p-6 flex flex-col gap-4 hover:border-primary transition-colors cursor-pointer group shadow-sm">
+<div class="flex justify-between items-center mb-2">
+<h3 class="h3 text-on-background group-hover:text-primary transition-colors">Level 3</h3>
+<span class="bg-surface-container text-secondary text-xs px-2 py-1 rounded font-medium">973 Words</span>
+</div>
+<p class="body-sm text-secondary">Standard situations encountered in work, school, and leisure.</p>
+<div class="mt-auto pt-6">
+<div class="flex justify-between body-sm text-secondary mb-2">
+<span>Progress</span>
+<span>0%</span>
+</div>
+<div class="w-full h-2 bg-surface-container rounded-sm overflow-hidden">
+<div class="bg-primary h-full w-0 rounded-sm"></div>
+</div>
+</div>
+</div>
+<!-- Levels 4-6 Row (Slightly denser visual hierarchy) -->
+<div class="md:col-span-3 grid grid-cols-1 md:grid-cols-3 gap-6 pt-4 border-t border-outline-variant border-dashed">
+<div class="bg-white border border-outline-variant rounded-lg p-5 flex flex-col gap-2 hover:border-primary transition-colors cursor-pointer group shadow-sm">
+<div class="flex justify-between items-center">
+<h4 class="font-medium text-on-background text-lg">Level 4</h4>
+<span class="text-outline text-xs">1000 Words</span>
+</div>
+<div class="w-full h-1.5 bg-surface-container rounded-sm mt-3">
+<div class="bg-primary h-full w-0 rounded-sm"></div>
+</div>
+</div>
+<div class="bg-white border border-outline-variant rounded-lg p-5 flex flex-col gap-2 hover:border-primary transition-colors cursor-pointer group shadow-sm">
+<div class="flex justify-between items-center">
+<h4 class="font-medium text-on-background text-lg">Level 5</h4>
+<span class="text-outline text-xs">1071 Words</span>
+</div>
+<div class="w-full h-1.5 bg-surface-container rounded-sm mt-3">
+<div class="bg-primary h-full w-0 rounded-sm"></div>
+</div>
+</div>
+<div class="bg-white border border-outline-variant rounded-lg p-5 flex flex-col gap-2 hover:border-primary transition-colors cursor-pointer group shadow-sm">
+<div class="flex justify-between items-center">
+<h4 class="font-medium text-on-background text-lg">Level 6</h4>
+<span class="text-outline text-xs">1140+ Words</span>
+</div>
+<div class="w-full h-1.5 bg-surface-container rounded-sm mt-3">
+<div class="bg-primary h-full w-0 rounded-sm"></div>
+</div>
+</div>
+</div>
+</div>
+<a class="md:hidden text-primary font-medium hover:underline flex items-center justify-center gap-1 min-h-[44px] w-full border border-outline-variant rounded mt-4 bg-white" href="#">
+                View full curriculum
+            </a>
+</section>
+<!-- Section 3: Use the tool that matches your task -->
+<section class="bg-white border border-outline-variant rounded-xl p-8 md:p-12 mt-8 shadow-sm">
+<h2 class="h2 text-on-background mb-8 text-center max-w-2xl mx-auto">Use the tool that matches your task.</h2>
+<!-- Bento-style feature layout -->
+<div class="grid grid-cols-1 md:grid-cols-12 gap-6">
+<!-- Main Featured Tool (Spans more columns) -->
+<div class="col-span-12 md:col-span-8 bg-surface border border-outline-variant rounded-lg p-8 hover:border-primary transition-colors cursor-pointer flex flex-col md:flex-row gap-6 items-center shadow-sm">
+<div class="bg-primary text-white w-16 h-16 rounded-full flex items-center justify-center shrink-0 shadow-sm">
+<span class="material-symbols-outlined text-3xl">library_books</span>
+</div>
+<div class="flex flex-col gap-2">
+<div class="flex items-center gap-3">
+<h3 class="h3 text-on-background">Vocabulary</h3>
+<span class="bg-green-100 text-green-800 border border-green-200 text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">Live</span>
+</div>
+<p class="body-md text-secondary">Master HSK lists with spaced repetition and deep character analysis. Learn meaning, pronunciation, and stroke order in context.</p>
+</div>
+</div>
+<!-- Secondary Feature -->
+<div class="col-span-12 md:col-span-4 bg-surface border border-outline-variant rounded-lg p-8 hover:border-primary transition-colors cursor-pointer flex flex-col gap-4 shadow-sm">
+<div class="bg-surface-container text-primary w-12 h-12 rounded flex items-center justify-center">
+<span class="material-symbols-outlined">headset</span>
+</div>
+<div>
+<div class="flex items-center gap-3 mb-2">
+<h4 class="font-medium text-on-background text-lg">Listening</h4>
+<span class="bg-green-100 text-green-800 border border-green-200 text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">Live</span>
+</div>
+<p class="body-sm text-secondary">Train your ear with native speaker audio across varying speeds and contexts.</p>
+</div>
+</div>
+<!-- Smaller Features Row -->
+<div class="col-span-12 md:col-span-4 bg-surface border border-outline-variant rounded-lg p-6 hover:border-primary transition-colors cursor-pointer shadow-sm">
+<div class="flex items-start justify-between mb-4">
+<span class="material-symbols-outlined text-secondary text-2xl">edit_note</span>
+<span class="text-xs font-medium text-outline">Live</span>
+</div>
+<h4 class="font-medium text-on-background mb-1">Practice</h4>
+<p class="body-sm text-secondary text-sm">Targeted exercises for retention.</p>
+</div>
+<div class="col-span-12 md:col-span-4 bg-surface border border-outline-variant rounded-lg p-6 hover:border-primary transition-colors cursor-pointer shadow-sm">
+<div class="flex items-start justify-between mb-4">
+<span class="material-symbols-outlined text-secondary text-2xl">menu_book</span>
+<span class="text-xs font-medium text-outline">Live</span>
+</div>
+<h4 class="font-medium text-on-background mb-1">Reading</h4>
+<p class="body-sm text-secondary text-sm">Graded texts mapped to your level.</p>
+</div>
+<div class="col-span-12 md:col-span-4 bg-surface border border-outline-variant rounded-lg p-6 hover:border-primary transition-colors cursor-pointer shadow-sm">
+<div class="flex items-start justify-between mb-4">
+<span class="material-symbols-outlined text-secondary text-2xl">account_tree</span>
+<span class="text-xs font-medium text-outline">Live</span>
+</div>
+<h4 class="font-medium text-on-background mb-1">Grammar</h4>
+<p class="body-sm text-secondary text-sm">Structured sentence patterns.</p>
+</div>
+</div>
+</section>
+<!-- Section 4: What is available, and what is planned -->
+<section class="flex flex-col gap-6 max-w-3xl mx-auto w-full py-8">
+<h2 class="h3 text-on-background border-b border-outline-variant pb-4">What is available, and what is planned.</h2>
+<div class="flex flex-col gap-0 border border-outline-variant rounded-lg overflow-hidden bg-white shadow-sm">
+<!-- Available (Zebra striping) -->
+<div class="flex justify-between items-center p-4 bg-white border-b border-outline-variant">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary">check_circle</span>
+<span class="body-md font-medium text-on-background">Core Learning Modules</span>
+</div>
+<span class="label-caps text-primary">Available</span>
+</div>
+<div class="flex justify-between items-center p-4 bg-surface-container-low border-b border-outline-variant">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary">check_circle</span>
+<span class="body-md font-medium text-on-background">Level Tracking (Levels 1-6)</span>
+</div>
+<span class="label-caps text-primary">Available</span>
+</div>
+<div class="flex justify-between items-center p-4 bg-white border-b border-outline-variant">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary">check_circle</span>
+<span class="body-md font-medium text-on-background">Dictionary Integration</span>
+</div>
+<span class="label-caps text-primary">Available</span>
+</div>
+<!-- Planned -->
+<div class="flex justify-between items-center p-4 bg-surface-container border-b border-outline-variant text-secondary">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-outline">schedule</span>
+<span class="body-md text-secondary">Mock Tests</span>
+</div>
+<span class="label-caps text-outline">Planned</span>
+</div>
+<div class="flex justify-between items-center p-4 bg-surface-container text-secondary">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-outline">schedule</span>
+<span class="body-md text-secondary">Practice History Analytics</span>
+</div>
+<span class="label-caps text-outline">Planned</span>
+</div>
+</div>
+</section>
+<!-- Section 5: Start with one useful next step (Bottom CTA) -->
+<section class="bg-[#0F172A] text-white rounded-xl p-12 mt-12 text-center flex flex-col items-center gap-6 shadow-md">
+<h2 class="h2 text-white">Start with one useful next step.</h2>
+<p class="body-lg text-slate-300 max-w-xl">
+                Begin your journey through HSK 3.0 vocabulary and structure today. Find the level that suits you and track your progress.
+            </p>
+<button class="bg-white text-[#0F172A] px-8 py-3 rounded font-medium min-h-[44px] hover:bg-slate-100 transition-colors mt-4 shadow-sm">
+                Find your starting point
+            </button>
+</section>
+</main>
+<!-- Footer -->
+<footer class="bg-surface w-full mt-auto border-t border-outline-variant">
+<div class="flex flex-col md:flex-row justify-between items-center w-full px-margin-desktop py-12 max-w-container-max mx-auto gap-gutter">
+<div class="flex flex-col items-center md:items-start gap-4">
+<div class="font-h3 text-h3 font-bold text-on-background flex items-center gap-2">
+<span class="material-symbols-outlined text-primary" data-weight="fill">school</span>
+                    HSKKit
+                </div>
+<p class="font-body-sm text-body-sm text-secondary">
+                    © 2024 HSKKit Language Systems. All rights reserved.
+                </p>
+</div>
+<div class="flex flex-wrap justify-center md:justify-end gap-x-6 gap-y-3">
+<a class="font-body-sm text-body-sm text-secondary hover:text-primary hover:underline transition-colors duration-150 p-2 min-h-[44px] flex items-center" href="#">Privacy Policy</a>
+<a class="font-body-sm text-body-sm text-secondary hover:text-primary hover:underline transition-colors duration-150 p-2 min-h-[44px] flex items-center" href="#">Terms of Service</a>
+<a class="font-body-sm text-body-sm text-secondary hover:text-primary hover:underline transition-colors duration-150 p-2 min-h-[44px] flex items-center" href="#">Cookie Policy</a>
+<a class="font-body-sm text-body-sm text-secondary hover:text-primary hover:underline transition-colors duration-150 p-2 min-h-[44px] flex items-center" href="#">Refund and Cancellation Policy</a>
+<a class="font-body-sm text-body-sm text-secondary hover:text-primary hover:underline transition-colors duration-150 p-2 min-h-[44px] flex items-center" href="#">Disclaimer</a>
+<a class="font-body-sm text-body-sm text-secondary hover:text-primary hover:underline transition-colors duration-150 p-2 min-h-[44px] flex items-center" href="#">AI Policy</a>
+</div>
+</div>
+</footer>
+</body></html>

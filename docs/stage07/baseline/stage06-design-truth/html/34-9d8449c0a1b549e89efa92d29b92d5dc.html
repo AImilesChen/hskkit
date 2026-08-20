@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>PDF Packs and Exports - Planned Status</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+  tailwind.config = {
+    darkMode: "class",
+    theme: {
+      extend: {
+        "fontFamily": {
+          "sans": ["Inter", "sans-serif"]
+        }
+      }
+    }
+  }
+</script>
+<style>
+  body {
+    font-family: 'Inter', sans-serif;
+  }
+</style>
+</head>
+<body class="bg-[#F8FAFC] text-[#0F172A] min-h-screen flex flex-col">
+<!-- TopNavBar -->
+<nav class="bg-white border-b border-[#E2E8F0] w-full docked top-0 z-50">
+<div class="flex justify-between items-center px-5 md:px-16 py-4 max-w-[1140px] mx-auto">
+<div class="text-xl font-bold text-[#0F172A]">HSKKit</div>
+<div class="hidden md:flex gap-6 items-center">
+<a class="text-[#0F172A] opacity-80 hover:opacity-100 hover:text-[#2563EB] transition-colors text-base" href="#">Levels</a>
+<a class="text-[#0F172A] opacity-80 hover:opacity-100 hover:text-[#2563EB] transition-colors text-base" href="#">Vocabulary</a>
+<a class="text-[#0F172A] opacity-80 hover:opacity-100 hover:text-[#2563EB] transition-colors text-base" href="#">Practice</a>
+<a class="text-[#2563EB] border-b-2 border-[#2563EB] pb-1 text-base font-medium" href="#">Study Tools</a>
+</div>
+<div class="flex items-center gap-4">
+<!-- Search placeholder, assuming right alignment as per JSON -->
+<span class="material-symbols-outlined text-[#0F172A] opacity-60 cursor-pointer hover:text-[#2563EB] hover:opacity-100 transition-colors">search</span>
+<button class="bg-[#2563EB] text-white text-sm font-medium px-4 py-2 rounded-[8px] min-h-[44px] hover:bg-blue-700 transition-colors focus:ring-2 focus:ring-[#2563EB] focus:outline-none">Sign In</button>
+</div>
+</div>
+</nav>
+<main class="flex-grow w-full max-w-[1140px] mx-auto px-5 md:px-16 py-12 flex flex-col items-center">
+<!-- Banner Message -->
+<div class="w-full max-w-3xl bg-white border border-[#E2E8F0] p-6 rounded-[16px] mb-12 flex items-start gap-4">
+<span class="material-symbols-outlined text-[#2563EB] mt-1" style="font-variation-settings: 'FILL' 1;">info</span>
+<p class="text-base text-[#0F172A] opacity-80 leading-relaxed">
+                This option is planned. It is not available until the required product, rights, commercial and technical checks are complete.
+             </p>
+</div>
+<!-- Main Content -->
+<section class="max-w-2xl text-center mb-16">
+<h1 class="text-3xl md:text-4xl font-bold text-[#0F172A] mb-6 tracking-tight">PDF Packs and Exports</h1>
+<p class="text-lg text-[#0F172A] opacity-80 mb-8 text-left md:text-center leading-relaxed">
+                The creation and distribution of downloadable PDF materials is currently under review. Before release, we must confirm authorized content parameters, generation versions, download entitlements, expiry/withdrawal conditions, and refund applicability. We appreciate your patience as we finalize these academic resources.
+            </p>
+<button class="bg-[#2563EB] text-white text-base font-medium px-6 py-3 rounded-[8px] min-h-[44px] hover:bg-blue-700 transition-colors focus:ring-2 focus:ring-[#2563EB] focus:ring-offset-2 focus:outline-none">
+                Continue with free learning
+            </button>
+</section>
+<!-- Non-Interactive State Examples -->
+<section class="w-full max-w-5xl">
+<h2 class="text-2xl font-bold text-[#0F172A] border-b border-[#E2E8F0] pb-2 mb-8">Planned Resources Overview</h2>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+<!-- Card 1 -->
+<div class="bg-white border border-[#E2E8F0] rounded-[16px] p-6 opacity-60 grayscale cursor-not-allowed flex flex-col h-full">
+<div class="flex justify-between items-start mb-4">
+<span class="material-symbols-outlined text-[#2563EB] text-4xl">inventory_2</span>
+<span class="bg-[#F8FAFC] border border-[#E2E8F0] text-[#0F172A] text-xs font-semibold px-2 py-1 rounded-[8px]">Planned Feature</span>
+</div>
+<h3 class="text-lg font-bold text-[#0F172A] mb-2">Standard Vocabulary List</h3>
+<p class="text-sm text-[#0F172A] opacity-80 flex-grow mb-4 leading-relaxed">Comprehensive HSK vocabulary sheets optimized for printing and offline memorization.</p>
+<div class="mt-auto border-t border-[#E2E8F0] pt-4">
+<span class="text-xs font-semibold uppercase tracking-widest text-[#0F172A] opacity-60 block text-center">Unavailable</span>
+</div>
+</div>
+<!-- Card 2 -->
+<div class="bg-white border border-[#E2E8F0] rounded-[16px] p-6 opacity-60 grayscale cursor-not-allowed flex flex-col h-full">
+<div class="flex justify-between items-start mb-4">
+<span class="material-symbols-outlined text-[#2563EB] text-4xl">text_snippet</span>
+<span class="bg-[#F8FAFC] border border-[#E2E8F0] text-[#0F172A] text-xs font-semibold px-2 py-1 rounded-[8px]">Planned Feature</span>
+</div>
+<h3 class="text-lg font-bold text-[#0F172A] mb-2">Grammar Guide</h3>
+<p class="text-sm text-[#0F172A] opacity-80 flex-grow mb-4 leading-relaxed">Structured grammatical explanations and sentence patterns formatted for quick reference.</p>
+<div class="mt-auto border-t border-[#E2E8F0] pt-4">
+<span class="text-xs font-semibold uppercase tracking-widest text-[#0F172A] opacity-60 block text-center">Unavailable</span>
+</div>
+</div>
+<!-- Card 3 -->
+<div class="bg-white border border-[#E2E8F0] rounded-[16px] p-6 opacity-60 grayscale cursor-not-allowed flex flex-col h-full">
+<div class="flex justify-between items-start mb-4">
+<span class="material-symbols-outlined text-[#2563EB] text-4xl">assignment</span>
+<span class="bg-[#F8FAFC] border border-[#E2E8F0] text-[#0F172A] text-xs font-semibold px-2 py-1 rounded-[8px]">Planned Feature</span>
+</div>
+<h3 class="text-lg font-bold text-[#0F172A] mb-2">Custom Practice Sheets</h3>
+<p class="text-sm text-[#0F172A] opacity-80 flex-grow mb-4 leading-relaxed">Printable exercises tailored to specific difficulty levels and target vocabulary sets.</p>
+<div class="mt-auto border-t border-[#E2E8F0] pt-4">
+<span class="text-xs font-semibold uppercase tracking-widest text-[#0F172A] opacity-60 block text-center">Unavailable</span>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- Footer -->
+<footer class="bg-[#F8FAFC] border-t border-[#E2E8F0] w-full mt-auto">
+<div class="w-full py-8 px-5 md:px-16 flex flex-col md:flex-row justify-between items-center max-w-[1140px] mx-auto gap-4 md:gap-0">
+<div class="text-xs font-semibold uppercase tracking-widest text-[#0F172A] opacity-80">
+                © 2024 HSKKit Language Institute. All rights reserved.
+            </div>
+<div class="flex flex-wrap gap-4 justify-center md:justify-end">
+<a class="text-sm text-[#0F172A] opacity-80 hover:text-[#2563EB] hover:opacity-100 transition-colors min-h-[44px] flex items-center" href="#">Privacy Policy</a>
+<a class="text-sm text-[#0F172A] opacity-80 hover:text-[#2563EB] hover:opacity-100 transition-colors min-h-[44px] flex items-center" href="#">Terms of Service</a>
+<a class="text-sm text-[#0F172A] opacity-80 hover:text-[#2563EB] hover:opacity-100 transition-colors min-h-[44px] flex items-center" href="#">Institutional Access</a>
+<a class="text-sm text-[#0F172A] opacity-80 hover:text-[#2563EB] hover:opacity-100 transition-colors min-h-[44px] flex items-center" href="#">Contact</a>
+</div>
+</div>
+</footer>
+</body></html>

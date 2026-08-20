@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>ROUTE · /word/:slug · DESKTOP · ADOPTED · QA-V2</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "background": "#F8FAFC",
+                        "surface": "#FFFFFF",
+                        "surface-container": "#FFFFFF",
+                        "surface-container-low": "#F8FAFC",
+                        "surface-container-highest": "#E2E8F0",
+                        "on-background": "#0F172A",
+                        "on-surface": "#0F172A",
+                        "on-surface-variant": "#475569",
+                        "primary": "#2563EB",
+                        "primary-container": "#2563EB",
+                        "on-primary": "#FFFFFF",
+                        "on-primary-container": "#FFFFFF",
+                        "secondary": "#0F172A",
+                        "on-secondary": "#FFFFFF",
+                        "on-secondary-container": "#475569",
+                        "outline": "#E2E8F0",
+                        "outline-variant": "#E2E8F0",
+                        "error": "#BA1A1A",
+                        "on-error": "#FFFFFF",
+                        "error-container": "#FFDAD6",
+                        "on-error-container": "#93000A"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "8px",
+                        "lg": "12px",
+                        "xl": "16px",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "margin-desktop": "64px",
+                        "gutter": "24px",
+                        "margin-mobile": "20px",
+                        "unit": "8px",
+                        "container-max": "1140px"
+                    },
+                    "fontFamily": {
+                        "h1-mobile": ["Inter", "sans-serif"],
+                        "label-caps": ["Inter", "sans-serif"],
+                        "body-sm": ["Inter", "sans-serif"],
+                        "h1": ["Inter", "sans-serif"],
+                        "body-md": ["Inter", "sans-serif"],
+                        "h3": ["Inter", "sans-serif"],
+                        "body-lg": ["Inter", "sans-serif"],
+                        "h2": ["Inter", "sans-serif"]
+                    },
+                    "fontSize": {
+                        "h1-mobile": ["32px", { "lineHeight": "1.2", "fontWeight": "700" }],
+                        "label-caps": ["12px", { "lineHeight": "1.2", "letterSpacing": "0.05em", "fontWeight": "600" }],
+                        "body-sm": ["14px", { "lineHeight": "1.5", "fontWeight": "400" }],
+                        "h1": ["40px", { "lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "body-md": ["16px", { "lineHeight": "1.5", "fontWeight": "400" }],
+                        "h3": ["24px", { "lineHeight": "1.4", "fontWeight": "600" }],
+                        "body-lg": ["18px", { "lineHeight": "1.6", "fontWeight": "400" }],
+                        "h2": ["32px", { "lineHeight": "1.3", "letterSpacing": "-0.01em", "fontWeight": "600" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body { background-color: theme('colors.background'); color: theme('colors.on-background'); }
+        .hanzi-display { font-size: 120px; line-height: 1.1; font-weight: 700; font-family: 'Inter', sans-serif; letter-spacing: 0.05em; }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col font-body-md text-body-md antialiased selection:bg-primary-container selection:text-on-primary-container">
+<!-- TopNavBar -->
+<header class="bg-surface w-full top-0 sticky border-b border-outline-variant flat no shadows z-50">
+<div class="max-w-container-max mx-auto px-margin-desktop flex items-center justify-between h-20">
+<a class="font-h2 text-h2 font-bold text-primary hover:opacity-80 transition-opacity min-h-[44px] flex items-center" href="#">HSKKit</a>
+<nav aria-label="Main Navigation" class="hidden md:flex space-x-8 items-center h-full">
+<a class="text-secondary font-medium hover:text-primary transition-colors cursor-pointer min-h-[44px] flex items-center" href="#">Levels</a>
+<a class="text-primary font-bold border-b-2 border-primary cursor-pointer min-h-[44px] flex items-center pt-[2px]" href="#">Vocabulary</a>
+<a class="text-secondary font-medium hover:text-primary transition-colors cursor-pointer min-h-[44px] flex items-center" href="#">Practice</a>
+<a class="text-secondary font-medium hover:text-primary transition-colors cursor-pointer min-h-[44px] flex items-center" href="#">Study Tools</a>
+</nav>
+<div class="flex items-center space-x-4">
+<div class="relative hidden lg:block">
+<button class="absolute left-3 top-1/2 -translate-y-1/2 min-h-[44px] min-w-[44px] flex items-center justify-center text-outline hover:text-primary transition-colors" tabindex="-1">
+<span class="material-symbols-outlined" data-icon="search" style="font-size: 20px;">search</span>
+</button>
+<input class="pl-14 pr-4 py-2 border border-outline-variant rounded bg-surface focus:border-primary focus:ring-1 focus:ring-primary outline-none font-body-sm text-body-sm text-on-surface w-64 transition-all placeholder:text-on-surface-variant min-h-[44px]" placeholder="Search vocabulary..." type="text"/>
+</div>
+<button class="bg-primary-container text-on-primary px-6 py-2 rounded font-body-sm text-body-sm font-semibold hover:bg-opacity-90 transition-opacity active:opacity-80 min-h-[44px] flex items-center justify-center">Sign In</button>
+</div>
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="flex-grow max-w-container-max mx-auto px-margin-desktop w-full py-16 grid grid-cols-12 gap-gutter">
+<!-- Breadcrumbs & Meta -->
+<div class="col-span-12 mb-8 flex items-center justify-between">
+<div class="flex items-center space-x-2 text-on-surface-variant font-body-sm text-body-sm">
+<a class="hover:text-primary transition-colors min-h-[44px] inline-flex items-center px-1 -ml-1" href="#">Vocabulary</a>
+<span class="material-symbols-outlined text-[16px]">chevron_right</span>
+<a class="hover:text-primary transition-colors min-h-[44px] inline-flex items-center px-1" href="#">HSK 1</a>
+<span class="material-symbols-outlined text-[16px]">chevron_right</span>
+<span class="text-primary font-semibold px-1">你好</span>
+</div>
+<div class="flex space-x-4">
+<button class="flex items-center space-x-2 text-secondary hover:text-primary transition-colors font-body-sm text-body-sm min-h-[44px] px-2 -mx-2 rounded">
+<span class="material-symbols-outlined text-[20px]">bookmark_border</span>
+<span>Save</span>
+</button>
+</div>
+</div>
+<!-- Word Detail Bento Grid -->
+<div class="col-span-12 lg:col-span-8 space-y-gutter">
+<!-- Hero Card: Hanzi, Pinyin, Meaning -->
+<div class="bg-on-secondary border border-outline-variant rounded-xl p-12 relative overflow-hidden group">
+<div class="absolute top-0 right-0 p-6 flex space-x-2">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded text-xs font-semibold bg-surface-container text-on-surface-variant border border-outline-variant">
+                        HSK 1
+                    </span>
+<span class="inline-flex items-center px-2.5 py-0.5 rounded text-xs font-semibold bg-surface-container text-on-surface-variant border border-outline-variant">
+                        Noun / Phrase
+                    </span>
+</div>
+<div class="flex flex-col items-center text-center mt-4">
+<div class="text-secondary font-h3 text-h3 mb-2 tracking-widest uppercase">nǐ hǎo</div>
+<h1 class="hanzi-display text-primary mb-6 text-center select-all">你好</h1>
+<div class="flex items-center space-x-4 mb-8">
+<!-- Audio Unavailable State -->
+<button class="flex items-center justify-center space-x-2 px-4 py-2 border border-outline-variant rounded bg-surface-container-low text-on-surface-variant cursor-not-allowed opacity-70 group-hover:opacity-100 transition-opacity min-h-[44px]" title="Audio currently unavailable">
+<span class="material-symbols-outlined">volume_off</span>
+<span class="font-body-sm text-body-sm font-medium">Pronunciation</span>
+</button>
+</div>
+<div class="border-t border-outline-variant w-full pt-8">
+<h2 class="font-label-caps text-label-caps text-secondary mb-4 text-left">PRIMARY MEANING</h2>
+<div class="font-h2 text-h2 text-primary text-left">Hello; How do you do?</div>
+</div>
+</div>
+</div>
+<!-- Example Sentences -->
+<div class="bg-on-secondary border border-outline-variant rounded-xl p-8">
+<h3 class="font-h3 text-h3 text-primary mb-6 pb-4 border-b border-outline-variant">Usage Examples</h3>
+<ul class="space-y-6">
+<li class="group hover:bg-surface-container-low p-4 -mx-4 rounded transition-colors border-l-2 border-transparent hover:border-primary">
+<div class="flex items-start justify-between">
+<div class="space-y-2">
+<div class="font-h3 text-h3 text-primary">你好，很高兴认识你。</div>
+<div class="font-body-md text-body-md text-secondary">Nǐ hǎo, hěn gāoxìng rènshì nǐ.</div>
+<div class="font-body-md text-body-md text-on-surface italic mt-2">Hello, nice to meet you.</div>
+</div>
+<button class="text-on-surface-variant hover:text-primary transition-colors p-2 cursor-not-allowed opacity-50 min-h-[44px] min-w-[44px] flex items-center justify-center" title="Audio unavailable">
+<span class="material-symbols-outlined">volume_off</span>
+</button>
+</div>
+</li>
+<li class="group hover:bg-surface-container-low p-4 -mx-4 rounded transition-colors border-l-2 border-transparent hover:border-primary">
+<div class="flex items-start justify-between">
+<div class="space-y-2">
+<div class="font-h3 text-h3 text-primary">李老师，你好！</div>
+<div class="font-body-md text-body-md text-secondary">Lǐ lǎoshī, nǐ hǎo!</div>
+<div class="font-body-md text-body-md text-on-surface italic mt-2">Hello, Teacher Li!</div>
+</div>
+<button class="text-on-surface-variant hover:text-primary transition-colors p-2 cursor-not-allowed opacity-50 min-h-[44px] min-w-[44px] flex items-center justify-center" title="Audio unavailable">
+<span class="material-symbols-outlined">volume_off</span>
+</button>
+</div>
+</li>
+</ul>
+</div>
+<!-- Etymology / Structure (Placeholder for scholarly depth) -->
+<div class="bg-on-secondary border border-outline-variant rounded-xl p-8">
+<h3 class="font-h3 text-h3 text-primary mb-6 pb-4 border-b border-outline-variant">Character Structure</h3>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+<div class="flex items-start space-x-4">
+<div class="text-4xl text-primary font-body-md bg-surface-container-low p-4 rounded border border-outline-variant">你</div>
+<div>
+<div class="font-body-md text-body-md font-semibold text-primary mb-1">nǐ - you</div>
+<div class="font-body-sm text-body-sm text-secondary">Radical: 亻 (person)</div>
+</div>
+</div>
+<div class="flex items-start space-x-4">
+<div class="text-4xl text-primary font-body-md bg-surface-container-low p-4 rounded border border-outline-variant">好</div>
+<div>
+<div class="font-body-md text-body-md font-semibold text-primary mb-1">hǎo - good</div>
+<div class="font-body-sm text-body-sm text-secondary">Radical: 女 (woman) + 子 (child)</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Sidebar Actions & Context -->
+<div class="col-span-12 lg:col-span-4 space-y-gutter">
+<!-- Action Card -->
+<div class="bg-on-secondary border border-outline-variant rounded-xl p-6">
+<h4 class="font-label-caps text-label-caps text-secondary mb-4">STUDY ACTIONS</h4>
+<div class="space-y-3">
+<button class="w-full flex items-center justify-center space-x-2 bg-primary-container text-on-primary px-4 py-3 rounded min-h-[44px] hover:bg-opacity-90 transition-opacity font-body-sm text-body-sm font-semibold">
+<span class="material-symbols-outlined text-[20px]">library_add</span>
+<span>Add to Flashcards</span>
+</button>
+<button class="w-full flex items-center justify-center space-x-2 bg-transparent text-primary border border-primary px-4 py-3 rounded min-h-[44px] hover:bg-surface-container-low transition-colors font-body-sm text-body-sm font-semibold">
+<span class="material-symbols-outlined text-[20px]">edit_note</span>
+<span>Practice Writing</span>
+</button>
+</div>
+</div>
+<!-- Issue Reporting -->
+<div class="bg-surface-container-low border border-outline-variant rounded-xl p-6">
+<div class="flex items-start space-x-3 mb-4">
+<span class="material-symbols-outlined text-on-surface-variant mt-1">flag</span>
+<div>
+<h4 class="font-body-sm text-body-sm font-semibold text-primary">Found an error?</h4>
+<p class="font-body-sm text-body-sm text-secondary mt-1">Help us improve scholarly accuracy by reporting issues with definitions or examples.</p>
+</div>
+</div>
+<button class="w-full flex items-center justify-center space-x-2 bg-on-secondary text-primary border border-outline-variant px-4 py-3 rounded min-h-[44px] hover:bg-surface-container-lowest transition-colors font-body-sm text-body-sm font-medium">
+<span>Report an issue with this word</span>
+</button>
+</div>
+</div>
+</main>
+<!-- Footer -->
+<footer class="bg-surface-container-low w-full mt-auto border-t border-outline-variant flat no shadows">
+<div class="max-w-container-max mx-auto px-margin-desktop py-12 flex flex-col md:flex-row justify-between items-center gap-gutter">
+<div class="font-h3 text-h3 font-bold text-secondary">HSKKit</div>
+<nav aria-label="Footer Navigation" class="flex flex-wrap justify-center gap-2 md:gap-6">
+<a class="text-on-secondary-container hover:text-primary hover:underline transition-all font-body-sm text-body-sm opacity-90 hover:opacity-100 min-h-[44px] inline-flex items-center px-2" href="#">Privacy Policy</a>
+<a class="text-on-secondary-container hover:text-primary hover:underline transition-all font-body-sm text-body-sm opacity-90 hover:opacity-100 min-h-[44px] inline-flex items-center px-2" href="#">Terms of Service</a>
+<a class="text-on-secondary-container hover:text-primary hover:underline transition-all font-body-sm text-body-sm opacity-90 hover:opacity-100 min-h-[44px] inline-flex items-center px-2" href="#">Cookie Policy</a>
+<a class="text-on-secondary-container hover:text-primary hover:underline transition-all font-body-sm text-body-sm opacity-90 hover:opacity-100 min-h-[44px] inline-flex items-center px-2" href="#">Academic Integrity</a>
+<a class="text-on-secondary-container hover:text-primary hover:underline transition-all font-body-sm text-body-sm opacity-90 hover:opacity-100 min-h-[44px] inline-flex items-center px-2" href="#">Contact Support</a>
+</nav>
+<div class="font-body-sm text-body-sm text-on-secondary-container">© 2024 HSKKit Scholarly Language Systems. All rights reserved.</div>
+</div>
+</footer>
+</body></html>

@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>HSKKit - PDF Packs</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "primary": "#2563EB",
+                        "primary-hover": "#1D4ED8",
+                        "primary-bg": "#EFF6FF",
+                        "text-main": "#0F172A",
+                        "text-muted": "#64748B",
+                        "background": "#F8FAFC",
+                        "surface": "#FFFFFF",
+                        "border": "#E2E8F0",
+                        "error": "#EF4444",
+                        "error-bg": "#FEF2F2",
+                        "success": "#10B981"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "8px",
+                        "xl": "16px",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "margin-mobile": "20px",
+                        "gutter": "24px",
+                        "unit": "8px",
+                        "margin-desktop": "64px",
+                        "container-max": "1140px"
+                    },
+                    "fontFamily": {
+                        "sans": ["Inter", "sans-serif"]
+                    },
+                    "fontSize": {
+                        "h1": ["32px", { "lineHeight": "1.2", "fontWeight": "700" }],
+                        "h2": ["24px", { "lineHeight": "1.3", "fontWeight": "600" }],
+                        "h3": ["20px", { "lineHeight": "1.4", "fontWeight": "600" }],
+                        "body-lg": ["18px", { "lineHeight": "1.6", "fontWeight": "400" }],
+                        "body-md": ["16px", { "lineHeight": "1.5", "fontWeight": "400" }],
+                        "body-sm": ["14px", { "lineHeight": "1.5", "fontWeight": "400" }],
+                        "label-caps": ["12px", { "lineHeight": "1.2", "letterSpacing": "0.05em", "fontWeight": "600" }]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        body { background-color: theme('colors.background'); color: theme('colors.text-main'); font-family: theme('fontFamily.sans'); }
+        /* Focus styles for accessibility */
+        *:focus-visible { outline: 2px solid theme('colors.primary'); outline-offset: 2px; }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+</head>
+<body class="antialiased min-h-screen flex flex-col pt-16 pb-24 text-body-md">
+<!-- TopAppBar Semantic Shell -->
+<header class="fixed top-0 w-full z-50 border-b border-border bg-surface flat no shadows active:opacity-80 transition-opacity flex items-center justify-between px-margin-mobile h-16">
+<button aria-label="Menu" class="w-11 h-11 flex items-center justify-center text-text-muted hover:bg-background transition-colors rounded-full">
+<span class="material-symbols-outlined" data-icon="menu">menu</span>
+</button>
+<span class="text-h3 font-bold text-text-main tracking-tight">HSKKit</span>
+<div class="w-11 h-11"></div> <!-- Spacer for center alignment -->
+</header>
+<main class="flex-grow px-margin-mobile pt-8 pb-12 w-full max-w-container-max mx-auto md:grid md:grid-cols-12 md:gap-gutter">
+<div class="md:col-span-8 md:col-start-3 lg:col-span-6 lg:col-start-4">
+<header class="mb-8">
+<h1 class="text-h1 text-text-main mb-2">PDF Packs</h1>
+<p class="text-body-md text-text-muted">Export your progress.</p>
+</header>
+<button class="w-full h-11 min-h-[44px] mb-8 bg-primary text-white rounded-lg font-semibold text-body-sm flex items-center justify-center gap-2 hover:bg-primary-hover transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+<span class="material-symbols-outlined text-[18px]">add</span>
+                Create New Pack
+            </button>
+<div class="space-y-4">
+<!-- List Item: Generating -->
+<div class="bg-surface border border-border rounded-xl p-4 flex items-center justify-between min-h-[64px]">
+<div class="flex-grow pr-4">
+<h2 class="text-body-md font-semibold text-text-main">HSK 3 - Chapter 4 Review</h2>
+<span class="text-body-sm text-text-muted flex items-center gap-1 mt-1">
+<span class="material-symbols-outlined text-[14px] animate-spin">sync</span> Generating...
+                        </span>
+</div>
+<div class="w-11 h-11 flex items-center justify-center opacity-30 cursor-not-allowed text-text-muted">
+<span class="material-symbols-outlined" data-icon="download">download</span>
+</div>
+</div>
+<!-- List Item: Queued -->
+<div class="bg-surface border border-border rounded-xl p-4 flex items-center justify-between min-h-[64px]">
+<div class="flex-grow pr-4">
+<h2 class="text-body-md font-semibold text-text-main">Custom: Medical Terms</h2>
+<span class="text-body-sm text-text-muted flex items-center gap-1 mt-1">
+<span class="material-symbols-outlined text-[14px]">hourglass_empty</span> Queued
+                        </span>
+</div>
+<div class="w-11 h-11 flex items-center justify-center opacity-30 cursor-not-allowed text-text-muted">
+<span class="material-symbols-outlined" data-icon="download">download</span>
+</div>
+</div>
+<!-- List Item: Ready -->
+<div class="bg-surface border border-border rounded-xl p-4 flex items-center justify-between min-h-[64px] relative overflow-hidden group">
+<div class="absolute inset-0 bg-primary-bg opacity-0 group-hover:opacity-10 transition-opacity"></div>
+<div class="flex-grow pr-4 relative z-10">
+<h2 class="text-body-md font-semibold text-text-main">HSK 2 Complete Study Guide</h2>
+<span class="text-body-sm text-success flex items-center gap-1 mt-1">
+<span class="material-symbols-outlined text-[14px]">check_circle</span> Ready
+                        </span>
+</div>
+<button aria-label="Download HSK 2 Complete Study Guide" class="w-11 h-11 min-h-[44px] min-w-[44px] flex items-center justify-center text-primary bg-primary-bg rounded-lg hover:bg-blue-100 transition-colors relative z-10">
+<span class="material-symbols-outlined" data-icon="download">download</span>
+</button>
+</div>
+<!-- List Item: Failed -->
+<div class="bg-error-bg border border-error/30 rounded-xl p-4 flex items-center justify-between min-h-[64px]">
+<div class="flex-grow pr-4">
+<h2 class="text-body-md font-semibold text-text-main">Weekly Diagnostic Test</h2>
+<span class="text-body-sm text-error flex items-center gap-1 mt-1">
+<span class="material-symbols-outlined text-[14px]">error</span> Failed
+                        </span>
+</div>
+<button aria-label="Retry Weekly Diagnostic Test" class="w-11 h-11 min-h-[44px] min-w-[44px] flex items-center justify-center text-error border border-error/50 rounded-lg hover:bg-red-100 transition-colors">
+<span class="material-symbols-outlined" data-icon="refresh">refresh</span>
+</button>
+</div>
+</div>
+<div class="mt-8 flex justify-center">
+<button aria-label="Help and Information" class="w-11 h-11 min-h-[44px] min-w-[44px] flex items-center justify-center text-text-muted hover:text-primary hover:bg-background rounded-full transition-colors">
+<span class="material-symbols-outlined" data-icon="help">help</span>
+</button>
+</div>
+</div>
+</main>
+<!-- BottomNavBar Semantic Shell -->
+<nav class="fixed bottom-0 left-0 w-full flex justify-around items-center py-2 px-margin-mobile bg-surface border-t border-border z-50 md:hidden">
+<a aria-label="Learn" class="flex flex-col items-center justify-center text-text-muted hover:text-primary active:scale-95 transition-transform duration-150 w-16 h-14" href="#">
+<span class="material-symbols-outlined mb-1" data-icon="school">school</span>
+<span class="text-label-caps uppercase">Learn</span>
+</a>
+<a aria-label="Review" class="flex flex-col items-center justify-center text-text-muted hover:text-primary active:scale-95 transition-transform duration-150 w-16 h-14" href="#">
+<span class="material-symbols-outlined mb-1" data-icon="auto_stories">auto_stories</span>
+<span class="text-label-caps uppercase">Review</span>
+</a>
+<a aria-label="Dictionary" class="flex flex-col items-center justify-center text-text-muted hover:text-primary active:scale-95 transition-transform duration-150 w-16 h-14" href="#">
+<span class="material-symbols-outlined mb-1" data-icon="menu_book">menu_book</span>
+<span class="text-label-caps uppercase">Dictionary</span>
+</a>
+<a aria-label="Profile (Active)" class="flex flex-col items-center justify-center text-primary font-bold hover:text-primary active:scale-95 transition-transform duration-150 w-16 h-14" href="#">
+<span class="material-symbols-outlined mb-1" data-icon="person" style="font-variation-settings: 'FILL' 1;">person</span>
+<span class="text-label-caps uppercase">Profile</span>
+</a>
+</nav>
+</body></html>

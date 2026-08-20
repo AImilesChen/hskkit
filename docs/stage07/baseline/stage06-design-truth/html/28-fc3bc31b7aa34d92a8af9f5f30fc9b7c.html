@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>HSKKit - Listening Session</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&amp;family=Source+Serif+4:wght@600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "on-secondary": "#ffffff",
+                      "on-tertiary-fixed-variant": "#38485d",
+                      "on-tertiary-container": "#8191a9",
+                      "secondary-fixed": "#d5e3fd",
+                      "on-error-container": "#93000a",
+                      "error": "#ba1a1a",
+                      "on-primary-container": "#8590a6",
+                      "primary-fixed-dim": "#bcc7de",
+                      "surface-variant": "#e4e2de",
+                      "surface-bright": "#fbf9f5",
+                      "surface-container": "#efeeea",
+                      "on-secondary-fixed": "#0d1c2f",
+                      "primary": "#091426",
+                      "surface-container-low": "#f5f3ef",
+                      "primary-container": "#1e293b",
+                      "on-surface": "#1b1c1a",
+                      "on-tertiary-fixed": "#0b1c30",
+                      "on-tertiary": "#ffffff",
+                      "inverse-on-surface": "#f2f0ed",
+                      "secondary-fixed-dim": "#b9c7e0",
+                      "on-background": "#1b1c1a",
+                      "tertiary-container": "#1a2a3e",
+                      "surface-container-highest": "#e4e2de",
+                      "surface-container-lowest": "#ffffff",
+                      "tertiary-fixed": "#d3e4fe",
+                      "outline": "#75777d",
+                      "inverse-primary": "#bcc7de",
+                      "tertiary-fixed-dim": "#b7c8e1",
+                      "surface-tint": "#545f73",
+                      "secondary": "#515f74",
+                      "on-secondary-fixed-variant": "#3a485c",
+                      "surface-dim": "#dbdad6",
+                      "on-secondary-container": "#57657b",
+                      "on-primary": "#ffffff",
+                      "on-surface-variant": "#45474c",
+                      "tertiary": "#041528",
+                      "outline-variant": "#c5c6cd",
+                      "surface-container-high": "#eae8e4",
+                      "on-error": "#ffffff",
+                      "background": "#fbf9f5",
+                      "inverse-surface": "#30312e",
+                      "primary-fixed": "#d8e3fb",
+                      "surface": "#fbf9f5",
+                      "secondary-container": "#d5e3fd",
+                      "on-primary-fixed": "#111c2d",
+                      "error-container": "#ffdad6",
+                      "on-primary-fixed-variant": "#3c475a"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.125rem",
+                      "lg": "0.25rem",
+                      "xl": "0.5rem",
+                      "full": "0.75rem"
+              },
+              "spacing": {
+                      "unit": "8px",
+                      "container-max": "1140px",
+                      "gutter": "24px",
+                      "margin-desktop": "64px",
+                      "margin-mobile": "20px"
+              },
+              "fontFamily": {
+                      "h1-mobile": [
+                              "\"Source Serif 4\""
+                      ],
+                      "label-caps": [
+                              "Inter"
+                      ],
+                      "body-lg": [
+                              "Inter"
+                      ],
+                      "h1": [
+                              "\"Source Serif 4\""
+                      ],
+                      "h3": [
+                              "\"Source Serif 4\""
+                      ],
+                      "body-sm": [
+                              "Inter"
+                      ],
+                      "body-md": [
+                              "Inter"
+                      ],
+                      "h2": [
+                              "\"Source Serif 4\""
+                      ]
+              },
+              "fontSize": {
+                      "h1-mobile": [
+                              "32px",
+                              {
+                                      "lineHeight": "1.2",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "label-caps": [
+                              "12px",
+                              {
+                                      "lineHeight": "1.2",
+                                      "letterSpacing": "0.05em",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "body-lg": [
+                              "18px",
+                              {
+                                      "lineHeight": "1.6",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "h1": [
+                              "40px",
+                              {
+                                      "lineHeight": "1.2",
+                                      "letterSpacing": "-0.02em",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "h3": [
+                              "24px",
+                              {
+                                      "lineHeight": "1.4",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "body-sm": [
+                              "14px",
+                              {
+                                      "lineHeight": "1.5",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "body-md": [
+                              "16px",
+                              {
+                                      "lineHeight": "1.5",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "h2": [
+                              "32px",
+                              {
+                                      "lineHeight": "1.3",
+                                      "letterSpacing": "-0.01em",
+                                      "fontWeight": "600"
+                              }
+                      ]
+              }
+      },
+          },
+        }
+    </script>
+<style>
+        body {
+            background-color: theme('colors.surface');
+            color: theme('colors.on-surface');
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col font-body-md text-body-md bg-[#F8FAFC] text-[#0F172A]">
+<!-- TopNavBar -->
+<header class="bg-white border-b border-[#E2E8F0] w-full top-0 z-50">
+<div class="flex justify-between items-center w-full px-gutter max-w-container-max mx-auto h-[64px]">
+<div class="flex items-center gap-6"><a class="text-[24px] font-bold text-[#2563EB]" href="#">HSKKit</a><nav class="hidden md:flex gap-4"><a class="text-[#475569] font-body-md hover:text-[#2563EB] transition-colors duration-200 cursor-pointer active:scale-95 transition-transform min-h-[44px] min-w-[44px] flex items-center justify-center" href="#">Today</a><a class="text-[#475569] font-body-md hover:text-[#2563EB] transition-colors duration-200 cursor-pointer active:scale-95 transition-transform min-h-[44px] min-w-[44px] flex items-center justify-center" href="#">Vocabulary</a><a class="text-[#2563EB] font-bold border-b-2 border-[#2563EB] pb-1 cursor-pointer active:scale-95 transition-transform min-h-[44px] min-w-[44px] flex items-center justify-center mt-1" href="#">Practice</a><a class="text-[#475569] font-body-md hover:text-[#2563EB] transition-colors duration-200 cursor-pointer active:scale-95 transition-transform min-h-[44px] min-w-[44px] flex items-center justify-center" href="#">Study Tools</a></nav></div>
+<div class="flex items-center">
+<button aria-label="User Account Profile" class="text-primary hover:text-primary-container transition-colors duration-200 cursor-pointer active:scale-95 transition-transform min-h-[44px] min-w-[44px] flex items-center justify-center">
+<span class="material-symbols-outlined text-[24px]">account_circle</span>
+</button>
+</div>
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="flex-grow w-full px-gutter max-w-container-max mx-auto py-margin-desktop grid grid-cols-4 md:grid-cols-12 gap-gutter">
+<!-- Focus Area (Narrowed 8-column layout for reading/testing) -->
+<div class="col-span-4 md:col-start-3 md:col-span-8 flex flex-col gap-8">
+<!-- Breadcrumb / Back Navigation (Task-Focused) -->
+<div class="flex items-center gap-2 mb-4">
+<a class="text-secondary hover:text-primary transition-colors flex items-center gap-1 min-h-[44px] min-w-[44px] -ml-2 p-2" href="#">
+<span class="material-symbols-outlined text-[20px]">arrow_back</span>
+<span class="font-body-sm text-body-sm">Back to Asset Library</span>
+</a>
+</div>
+<!-- Header Section -->
+<header class="flex flex-col gap-2 border-b border-outline-variant pb-6">
+<div class="flex justify-between items-start">
+<h1 class="text-[32px] md:text-[40px] font-bold text-[#0F172A]">Listening Asset: L-8042</h1>
+<span class="inline-flex items-center px-2 py-1 rounded bg-surface-container-high text-on-surface-variant font-label-caps text-label-caps">HSK 4</span>
+</div>
+<p class="font-body-lg text-body-lg text-on-surface-variant">Dialogue regarding travel arrangements and ticketing.</p>
+</header>
+<!-- Audio Player Card (Central Component) -->
+<section class="bg-white border border-[#E2E8F0] rounded-[16px] p-6 shadow-sm flex flex-col gap-6" id="audio-player-container">
+<div class="flex flex-col items-center justify-center py-8 gap-4 border-b border-outline-variant border-dashed">
+<!-- Player State Indicator -->
+<div class="font-label-caps text-label-caps text-secondary mb-2 flex items-center gap-2" id="player-state">
+<span class="material-symbols-outlined text-[16px] animate-spin hidden" id="icon-loading">sync</span>
+<span class="material-symbols-outlined text-[16px]" id="icon-ready">headphones</span>
+<span class="material-symbols-outlined text-[16px] hidden" id="icon-playing">volume_up</span>
+<span class="material-symbols-outlined text-[16px] hidden" id="icon-paused">pause</span>
+<span class="material-symbols-outlined text-[16px] hidden" id="icon-ended">replay</span>
+<span id="state-text">Ready to Play</span>
+</div>
+<!-- Main Play Button -->
+<button aria-label="Play Audio" class="min-h-[44px] px-6 rounded-[8px] bg-[#2563EB] text-white hover:bg-[#1D4ED8] transition-colors font-body-md text-body-md flex items-center gap-2" id="main-play-btn">
+<span class="material-symbols-outlined text-[40px] ml-1" style="font-variation-settings: 'FILL' 1;">play_arrow</span>
+</button>
+<!-- Progress / Scrub Bar -->
+<div class="w-full max-w-[400px] flex items-center gap-3 mt-4">
+<span class="font-body-sm text-body-sm text-secondary w-[40px] text-right">0:00</span>
+<div class="flex-grow h-2 bg-surface-container-high rounded-[2px] cursor-pointer relative overflow-hidden group">
+<div class="absolute top-0 left-0 h-full bg-[#2563EB] w-[0%] rounded-[2px] transition-all duration-75"></div>
+</div>
+<span class="font-body-sm text-body-sm text-secondary w-[40px]">1:42</span>
+</div>
+</div>
+<!-- Answer Reveal Toggle (Before revealing answer) -->
+<div class="flex justify-between items-center">
+<p class="font-body-sm text-body-sm text-on-surface-variant italic">Listen completely before revealing the transcript.</p>
+<button class="min-h-[44px] px-6 rounded-[8px] bg-[#2563EB] text-white hover:bg-[#1D4ED8] transition-colors font-body-md text-body-md flex items-center gap-2">
+<span class="material-symbols-outlined text-[20px]">visibility</span>
+                        Reveal Transcript &amp; Answer
+                    </button>
+</div>
+</section>
+<!-- Mastery Sub-Sections (Bento-style layout for data) -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
+<!-- Audio Mastery -->
+<section class="bg-white border border-[#E2E8F0] rounded-[16px] p-6 flex flex-col gap-4">
+<h3 class="text-[20px] font-semibold text-[#0F172A] flex items-center gap-2">
+<span class="material-symbols-outlined">hearing</span>
+                        Audio Mastery
+                    </h3>
+<div class="flex-grow flex flex-col justify-center text-center p-4">
+<!-- State: No score recorded yet -->
+<p class="font-body-md text-body-md text-secondary italic">No listening score has been recorded.</p>
+</div>
+</section>
+<!-- Reading Mastery Context -->
+<section class="bg-white border border-[#E2E8F0] rounded-[16px] p-6 flex flex-col gap-4">
+<h3 class="text-[20px] font-semibold text-[#0F172A] flex items-center gap-2">
+<span class="material-symbols-outlined">menu_book</span>
+                        Context &amp; Reading
+                    </h3>
+<div class="flex-grow flex flex-col gap-3">
+<div class="flex justify-between items-center py-2 border-b border-surface-variant">
+<span class="font-body-sm text-body-sm text-on-surface-variant">Vocabulary Level</span>
+<span class="font-body-sm text-body-sm font-semibold text-primary">HSK 4 Core</span>
+</div>
+<div class="flex justify-between items-center py-2 border-b border-surface-variant">
+<span class="font-body-sm text-body-sm text-on-surface-variant">Speech Rate</span>
+<span class="font-body-sm text-body-sm font-semibold text-primary">Natural (Fast)</span>
+</div>
+<div class="flex justify-between items-center py-2">
+<span class="font-body-sm text-body-sm text-on-surface-variant">Topic</span>
+<span class="font-body-sm text-body-sm font-semibold text-primary">Transportation</span>
+</div>
+</div>
+</section>
+</div>
+<!-- Action Area -->
+<div class="flex justify-between items-center mt-8 pt-6 border-t border-outline-variant">
+<button class="min-h-[44px] px-4 rounded text-secondary hover:text-error hover:bg-error-container transition-colors font-body-sm text-body-sm flex items-center gap-2 bg-transparent border-0">
+<span class="material-symbols-outlined text-[18px]">flag</span>
+                    Report Issue
+                </button>
+<div class="flex gap-4">
+<button class="min-h-[44px] px-6 rounded-[8px] text-[#2563EB] bg-transparent border border-[#2563EB] hover:bg-[#F1F5F9] transition-colors font-body-md text-body-md flex items-center gap-2">
+<span class="material-symbols-outlined text-[20px]">refresh</span>
+                        Retry
+                    </button>
+<button class="min-h-[44px] px-6 rounded-[8px] bg-[#2563EB] text-white hover:bg-[#1D4ED8] transition-colors font-body-md text-body-md flex items-center gap-2">
+                        Next Asset
+                        <span class="material-symbols-outlined text-[20px]">arrow_forward</span>
+</button>
+</div>
+</div>
+</div>
+</main>
+<!-- Footer -->
+<footer class="bg-surface-container-low border-t border-outline-variant w-full mt-auto">
+<div class="flex flex-col md:flex-row justify-between items-center w-full py-gutter px-gutter max-w-container-max mx-auto">
+<span class="font-label-caps text-label-caps text-primary mb-4 md:mb-0">© 2024 HSKKit. Academic Clarity System.</span>
+<nav class="flex flex-wrap justify-center gap-4">
+<a class="font-body-sm text-body-sm text-secondary hover:underline hover:text-primary transition-all duration-200 min-h-[44px] flex items-center" href="#">Legal</a>
+<a class="font-body-sm text-body-sm text-secondary hover:underline hover:text-primary transition-all duration-200 min-h-[44px] flex items-center" href="#">Support</a>
+<a class="font-body-sm text-body-sm text-secondary hover:underline hover:text-primary transition-all duration-200 min-h-[44px] flex items-center" href="#">Privacy Policy</a>
+<a class="font-body-sm text-body-sm text-secondary hover:underline hover:text-primary transition-all duration-200 min-h-[44px] flex items-center" href="#">Terms of Service</a>
+</nav>
+</div>
+</footer>
+<!-- Simple Interaction Script for Audio State Simulation -->
+<script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const playBtn = document.getElementById('main-play-btn');
+            const stateText = document.getElementById('state-text');
+            const icons = {
+                ready: document.getElementById('icon-ready'),
+                playing: document.getElementById('icon-playing'),
+                paused: document.getElementById('icon-paused'),
+                loading: document.getElementById('icon-loading'),
+                ended: document.getElementById('icon-ended')
+            };
+
+            let isPlaying = false;
+
+            function hideAllIcons() {
+                Object.values(icons).forEach(icon => icon.classList.add('hidden'));
+            }
+
+            playBtn.addEventListener('click', () => {
+                const iconSpan = playBtn.querySelector('span');
+                
+                if (!isPlaying) {
+                    // Simulate play
+                    iconSpan.textContent = 'pause';
+                    hideAllIcons();
+                    icons.playing.classList.remove('hidden');
+                    stateText.textContent = 'Playing';
+                    isPlaying = true;
+                } else {
+                    // Simulate pause
+                    iconSpan.textContent = 'play_arrow';
+                    hideAllIcons();
+                    icons.paused.classList.remove('hidden');
+                    stateText.textContent = 'Paused';
+                    isPlaying = false;
+                }
+            });
+        });
+    </script>
+</body></html>

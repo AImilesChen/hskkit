@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>HSKKit - Pricing</title>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Tailwind Configuration -->
+<script id="tailwind-config">
+  tailwind.config = {
+    darkMode: "class",
+    theme: {
+      extend: {
+        "colors": {
+                "surface-bright": "#f7f9fb",
+                "secondary-container": "#d5e3fd",
+                "secondary-fixed": "#d5e3fd",
+                "secondary": "#515f74",
+                "on-error": "#ffffff",
+                "on-secondary-container": "#57657b",
+                "surface-tint": "#0053db",
+                "on-background": "#191c1e",
+                "on-secondary-fixed": "#0d1c2f",
+                "secondary-fixed-dim": "#b9c7e0",
+                "surface-container-highest": "#e0e3e5",
+                "on-surface": "#0f172a",
+                "background": "#f8fafc",
+                "on-primary": "#ffffff",
+                "surface-container-lowest": "#ffffff",
+                "surface-container": "#eceef0",
+                "error-container": "#ffdad6",
+                "primary-fixed-dim": "#b4c5ff",
+                "on-error-container": "#93000a",
+                "on-primary-container": "#eeefff",
+                "on-primary-fixed-variant": "#003ea8",
+                "on-tertiary-fixed-variant": "#3f465c",
+                "on-tertiary-container": "#eef0ff",
+                "on-tertiary": "#ffffff",
+                "surface-variant": "#e0e3e5",
+                "inverse-surface": "#2d3133",
+                "on-primary-fixed": "#00174b",
+                "inverse-primary": "#b4c5ff",
+                "tertiary-fixed-dim": "#bec6e0",
+                "outline": "#e2e8f0",
+                "tertiary-container": "#656d84",
+                "surface-dim": "#d8dadc",
+                "outline-variant": "#e2e8f0",
+                "on-surface-variant": "#0f172a",
+                "primary-container": "#2563eb",
+                "on-secondary": "#ffffff",
+                "surface-container-high": "#e6e8ea",
+                "on-tertiary-fixed": "#131b2e",
+                "on-secondary-fixed-variant": "#3a485c",
+                "tertiary": "#4d556b",
+                "error": "#ba1a1a",
+                "surface": "#f8fafc",
+                "primary-fixed": "#dbe1ff",
+                "surface-container-low": "#f2f4f6",
+                "primary": "#2563eb",
+                "inverse-on-surface": "#eff1f3",
+                "tertiary-fixed": "#dae2fd"
+        },
+        "borderRadius": {
+                "DEFAULT": "8px",
+                "lg": "16px",
+                "xl": "0.75rem",
+                "full": "9999px"
+        },
+        "spacing": {
+                "stack-md": "16px",
+                "stack-lg": "24px",
+                "mobile-margin": "20px",
+                "gutter": "16px",
+                "stack-sm": "8px",
+                "touch-target-min": "44px"
+        },
+        "fontFamily": {
+                "body-md": [
+                        "Inter"
+                ],
+                "character-display": [
+                        "Inter"
+                ],
+                "headline-md": [
+                        "Inter"
+                ],
+                "headline-lg-mobile": [
+                        "Inter"
+                ],
+                "headline-lg": [
+                        "Inter"
+                ],
+                "label-md": [
+                        "Inter"
+                ],
+                "body-lg": [
+                        "Inter"
+                ]
+        },
+        "fontSize": {
+                "body-md": [
+                        "16px",
+                        {
+                                "lineHeight": "24px",
+                                "fontWeight": "400"
+                        }
+                ],
+                "character-display": [
+                        "48px",
+                        {
+                                "lineHeight": "56px",
+                                "fontWeight": "500"
+                        }
+                ],
+                "headline-md": [
+                        "20px",
+                        {
+                                "lineHeight": "28px",
+                                "fontWeight": "600"
+                        }
+                ],
+                "headline-lg-mobile": [
+                        "24px",
+                        {
+                                "lineHeight": "32px",
+                                "letterSpacing": "-0.01em",
+                                "fontWeight": "700"
+                        }
+                ],
+                "headline-lg": [
+                        "32px",
+                        {
+                                "lineHeight": "40px",
+                                "letterSpacing": "-0.02em",
+                                "fontWeight": "700"
+                        }
+                ],
+                "label-md": [
+                        "14px",
+                        {
+                                "lineHeight": "20px",
+                                "letterSpacing": "0.01em",
+                                "fontWeight": "500"
+                        }
+                ],
+                "body-lg": [
+                        "18px",
+                        {
+                                "lineHeight": "28px",
+                                "fontWeight": "400"
+                        }
+                ]
+        }
+},
+    },
+  }
+</script>
+<style>
+        body {
+            max-width: 390px; /* Force mobile width for preview */
+            margin: 0 auto;
+            border-left: 1px solid #E2E8F0;
+            border-right: 1px solid #E2E8F0;
+            min-height: 100vh;
+        }
+    </style>
+</head>
+<body class="bg-surface text-on-surface font-body-md antialiased flex flex-col">
+<!-- TopAppBar -->
+<header class="bg-surface border-b border-outline-variant w-full top-0 sticky z-50">
+<div class="flex items-center justify-center px-mobile-margin h-16 w-full">
+<div class="flex items-center justify-center">
+<span class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface tracking-tight">HSKKit</span>
+</div>
+</div>
+</header>
+<main class="flex-grow flex flex-col gap-12 px-mobile-margin py-8">
+<!-- Hero Section -->
+<section class="flex flex-col gap-4 text-center">
+<h1 class="font-headline-lg text-headline-lg text-on-surface">Study options</h1>
+<p class="font-body-md text-body-md text-on-surface-variant max-w-sm mx-auto">Core browsing, basic learning utilities, and public learning content remain free to use. Future paid plans will be published before any chargeable product is offered.</p>
+</section>
+<!-- Pricing Cards -->
+<section class="flex flex-col gap-6">
+<!-- Card 1: Free -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-lg p-6 flex flex-col gap-6 items-center text-center">
+<h2 class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface">Free learning access</h2>
+<button class="w-full bg-primary-container text-on-primary py-3 px-6 rounded font-label-md text-label-md hover:bg-surface-tint transition-colors">
+                    Continue with free learning
+                </button>
+</div>
+<!-- Card 2: Planned -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-lg p-6 flex flex-col gap-6 items-center text-center opacity-80">
+<div class="flex flex-col gap-2">
+<h2 class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface">Planned paid options</h2>
+<p class="font-body-md text-body-md text-on-surface-variant">Pricing not yet published.</p>
+</div>
+</div>
+</section>
+<hr class="border-t border-outline-variant my-2 w-full"/>
+<!-- FAQ Section -->
+<section class="flex flex-col gap-6">
+<h2 class="font-headline-md text-headline-md text-on-surface">Frequently Asked Questions</h2>
+<div class="flex flex-col divide-y divide-outline-variant border-t border-b border-outline-variant"><div class="py-4 font-body-md text-body-md font-semibold text-on-surface">Free learning access</div><div class="py-4 font-body-md text-body-md font-semibold text-on-surface">Planned paid options</div><div class="py-4 font-body-md text-body-md font-semibold text-on-surface">Refunds and cancellations</div><div class="py-4 font-body-md text-body-md font-semibold text-on-surface">Product roadmap</div></div>
+</section>
+</main>
+<!-- Footer -->
+<footer class="bg-surface-container-low border-t border-outline-variant w-full mt-auto">
+<div class="flex flex-col items-center gap-4 py-8 px-mobile-margin w-full text-center">
+<span class="font-label-md text-label-md text-on-surface tracking-wider">HSKKIT</span>
+<div class="flex flex-col gap-3 font-body-md text-body-md text-primary">
+<a class="hover:text-surface-tint transition-opacity duration-150" href="#">Privacy Policy</a>
+<a class="hover:text-surface-tint transition-opacity duration-150" href="#">Terms of Service</a>
+<a class="hover:text-surface-tint transition-opacity duration-150" href="#">Cookie Policy</a>
+<a class="hover:text-surface-tint transition-opacity duration-150" href="#">Refund and Cancellation Policy</a>
+<a class="hover:text-surface-tint transition-opacity duration-150" href="#">Disclaimer</a>
+<a class="hover:text-surface-tint transition-opacity duration-150" href="#">AI Policy</a>
+</div>
+<div class="text-on-surface-variant font-body-md text-body-md mt-4">
+                © 2024 HSKKit Language Systems
+            </div>
+</div>
+</footer>
+<style>
+        .animate-fade-in-down {
+            animation: fadeInDown 0.3s ease-out forwards;
+            opacity: 0;
+            transform: translateY(-5px);
+        }
+        @keyframes fadeInDown {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</body></html>

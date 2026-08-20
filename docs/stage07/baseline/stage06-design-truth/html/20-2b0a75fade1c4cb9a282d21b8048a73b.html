@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>HSK 2.0 vs HSK 3.0</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-container-high": "#f1f5f9",
+                        "surface-container-lowest": "#ffffff",
+                        "secondary": "#475569",
+                        "on-secondary-fixed-variant": "#334155",
+                        "on-secondary": "#ffffff",
+                        "error": "#ef4444",
+                        "surface-container-highest": "#e2e8f0",
+                        "on-tertiary-container": "#475569",
+                        "on-primary": "#ffffff",
+                        "on-error-container": "#7f1d1d",
+                        "primary": "#2563eb",
+                        "outline-variant": "#e2e8f0",
+                        "on-background": "#0f172a",
+                        "on-error": "#ffffff",
+                        "on-tertiary-fixed": "#0f172a",
+                        "on-secondary-fixed": "#0f172a",
+                        "on-secondary-container": "#475569",
+                        "surface-tint": "#2563eb",
+                        "secondary-container": "#e2e8f0",
+                        "outline": "#e2e8f0",
+                        "primary-fixed-dim": "#93c5fd",
+                        "inverse-surface": "#0f172a",
+                        "tertiary-fixed": "#e0e7ff",
+                        "secondary-fixed": "#e2e8f0",
+                        "tertiary-fixed-dim": "#c7d2fe",
+                        "background": "#f8fafc",
+                        "tertiary": "#0f172a",
+                        "primary-fixed": "#bfdbfe",
+                        "inverse-primary": "#93c5fd",
+                        "on-tertiary-fixed-variant": "#334155",
+                        "on-primary-fixed-variant": "#1e3a8a",
+                        "primary-container": "#2563eb",
+                        "surface-variant": "#f1f5f9",
+                        "secondary-fixed-dim": "#cbd5e1",
+                        "on-surface-variant": "#334155",
+                        "error-container": "#fee2e2",
+                        "on-surface": "#0f172a",
+                        "surface-bright": "#ffffff",
+                        "on-primary-fixed": "#1e3a8a",
+                        "surface-container": "#f8fafc",
+                        "surface": "#ffffff",
+                        "surface-container-low": "#f8fafc",
+                        "inverse-on-surface": "#f8fafc",
+                        "on-tertiary": "#ffffff",
+                        "on-primary-container": "#eff6ff",
+                        "tertiary-container": "#1e293b",
+                        "surface-dim": "#e2e8f0"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "8px",
+                        "lg": "8px",
+                        "xl": "16px",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "margin-desktop": "64px",
+                        "unit": "8px",
+                        "margin-mobile": "20px",
+                        "container-max": "1140px",
+                        "gutter": "24px"
+                    },
+                    "fontFamily": {
+                        "h2": ["Inter"],
+                        "h1-mobile": ["Inter"],
+                        "h1": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "body-md": ["Inter"],
+                        "label-caps": ["Inter"],
+                        "h3": ["Inter"],
+                        "body-sm": ["Inter"]
+                    },
+                    "fontSize": {
+                        "h2": ["32px", { "lineHeight": "1.3", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+                        "h1-mobile": ["32px", { "lineHeight": "1.2", "fontWeight": "700" }],
+                        "h1": ["40px", { "lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "body-lg": ["18px", { "lineHeight": "1.6", "fontWeight": "400" }],
+                        "body-md": ["16px", { "lineHeight": "1.5", "fontWeight": "400" }],
+                        "label-caps": ["12px", { "lineHeight": "1.2", "letterSpacing": "0.05em", "fontWeight": "600" }],
+                        "h3": ["24px", { "lineHeight": "1.4", "fontWeight": "600" }],
+                        "body-sm": ["14px", { "lineHeight": "1.5", "fontWeight": "400" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body { background-color: #f8fafc; }
+    </style>
+</head>
+<body class="font-body-md text-on-background flex flex-col min-h-screen">
+<!-- TopNavBar -->
+<nav class="bg-surface dark:bg-surface-dim w-full top-0 border-b border-outline-variant dark:border-outline">
+<div class="flex justify-between items-center h-16 max-w-container-max mx-auto px-margin-desktop">
+<div class="font-h2 text-h2 font-bold text-on-background dark:text-on-background">HSKKit</div>
+<div class="hidden md:flex gap-gutter items-center">
+<a class="font-body-md text-body-md text-primary dark:text-primary border-b-2 border-primary dark:border-primary pb-1 cursor-pointer active:opacity-80 transition-opacity" href="#">Levels</a>
+<a class="font-body-md text-body-md text-secondary dark:text-secondary hover:text-primary dark:hover:text-primary cursor-pointer active:opacity-80 transition-opacity transition-colors duration-200" href="#">Vocabulary</a>
+<a class="font-body-md text-body-md text-secondary dark:text-secondary hover:text-primary dark:hover:text-primary cursor-pointer active:opacity-80 transition-opacity transition-colors duration-200" href="#">Practice</a>
+<a class="font-body-md text-body-md text-secondary dark:text-secondary hover:text-primary dark:hover:text-primary cursor-pointer active:opacity-80 transition-opacity transition-colors duration-200" href="#">Study Tools</a>
+</div>
+</div>
+</nav>
+<!-- Main Content -->
+<main class="flex-grow w-full max-w-container-max mx-auto px-margin-desktop py-16">
+<header class="mb-16 text-center max-w-3xl mx-auto">
+<h1 class="font-h1 text-h1 text-on-background mb-6">HSK 2.0 and HSK 3.0: plan with one standard at a time</h1>
+<p class="font-body-lg text-body-lg text-secondary">A side-by-side comparison to help you choose the right path for your scholarly language learning journey. Focus on one standard to ensure consistent progress.</p>
+</header>
+<!-- Comparison Bento Grid -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-gutter mb-16">
+<!-- HSK 2.0 Card -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-8 flex flex-col">
+<div class="flex items-center gap-4 mb-6">
+<span class="material-symbols-outlined text-on-background text-4xl" data-weight="fill" style="font-variation-settings: 'FILL' 1;">book</span>
+<h2 class="font-h2 text-h2 text-on-background">HSK 2.0</h2>
+</div>
+<div class="space-y-6 flex-grow">
+<div>
+<h3 class="font-label-caps text-label-caps text-secondary mb-2 uppercase tracking-wider">Levels</h3>
+<p class="font-body-md text-body-md">6 Levels (Basic to Advanced)</p>
+</div>
+<div>
+<h3 class="font-label-caps text-label-caps text-secondary mb-2 uppercase tracking-wider">Vocabulary Count</h3>
+<p class="font-body-md text-body-md">150 to 5,000 words</p>
+</div>
+<div>
+<h3 class="font-label-caps text-label-caps text-secondary mb-2 uppercase tracking-wider">Focus</h3>
+<p class="font-body-md text-body-md">Practical communication, established standard for many universities and employers.</p>
+</div>
+</div>
+</div>
+<!-- HSK 3.0 Card -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-8 flex flex-col">
+<div class="flex items-center gap-4 mb-6">
+<span class="material-symbols-outlined text-on-background text-4xl" data-weight="fill" style="font-variation-settings: 'FILL' 1;">school</span>
+<h2 class="font-h2 text-h2 text-on-background">HSK 3.0</h2>
+</div>
+<div class="space-y-6 flex-grow">
+<div>
+<h3 class="font-label-caps text-label-caps text-secondary mb-2 uppercase tracking-wider">Levels</h3>
+<p class="font-body-md text-body-md">9 Levels (3 Bands: Beginner, Intermediate, Advanced)</p>
+</div>
+<div>
+<h3 class="font-label-caps text-label-caps text-secondary mb-2 uppercase tracking-wider">Vocabulary Count</h3>
+<p class="font-body-md text-body-md">500 to 11,092 words</p>
+</div>
+<div>
+<h3 class="font-label-caps text-label-caps text-secondary mb-2 uppercase tracking-wider">Focus</h3>
+<p class="font-body-md text-body-md">Comprehensive linguistic competence, deeper integration of syllables, characters, words, and grammar.</p>
+</div>
+</div>
+</div>
+</div>
+<!-- CTA Section -->
+<div class="flex justify-center">
+<button class="bg-primary-container text-on-primary rounded font-body-md text-body-md px-8 py-4 font-bold hover:opacity-90 transition-opacity focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background">
+                Choose a starting point
+            </button>
+</div>
+</main>
+<!-- Footer -->
+<footer class="bg-surface-container-low dark:bg-surface-container w-full py-unit-3 border-t border-outline-variant dark:border-outline mt-auto">
+<div class="flex flex-col md:flex-row justify-between items-center max-w-container-max mx-auto px-margin-desktop py-8">
+<div class="font-h3 text-h3 text-on-background dark:text-on-background mb-4 md:mb-0">HSKKit</div>
+<div class="flex flex-wrap justify-center gap-gutter mb-4 md:mb-0">
+<a class="font-body-sm text-body-sm text-secondary dark:text-secondary transition-all duration-200 hover:text-primary dark:hover:text-primary underline" href="#">Terms of Service</a>
+<a class="font-body-sm text-body-sm text-secondary dark:text-secondary transition-all duration-200 hover:text-primary dark:hover:text-primary underline" href="#">Privacy Policy</a>
+<a class="font-body-sm text-body-sm text-secondary dark:text-secondary transition-all duration-200 hover:text-primary dark:hover:text-primary underline" href="#">Institutional Access</a>
+<a class="font-body-sm text-body-sm text-secondary dark:text-secondary transition-all duration-200 hover:text-primary dark:hover:text-primary underline" href="#">Academic Documentation</a>
+</div>
+<div class="font-body-sm text-body-sm text-secondary dark:text-secondary">
+                © 2024 HSKKit Scholarly Language Learning Platform. All rights reserved.
+            </div>
+</div>
+</footer>
+</body></html>

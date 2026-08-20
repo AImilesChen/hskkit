@@ -1,0 +1,25 @@
+{
+  "project_id": "5509035292021811601",
+  "items": [
+    {
+      "screen_id": "6b4ebe73a0de4bccae42401192a94aff",
+      "device": "DESKTOP",
+      "html_url": "https://contribution.usercontent.google.com/download?c=CgthaWRhX2NvZGVmeBJ7Eh1hcHBfY29tcGFuaW9uX2dlbmVyYXRlZF9maWxlcxpaCiVodG1sX2FmNDI3ZmUyODIyMzRiMDNiNmQwNjdkODc2ZGUxMzhiEgsSBxD14qOA2RwYAZIBIwoKcHJvamVjdF9pZBIVQhM1NTA5MDM1MjkyMDIxODExNjAx&filename=&opi=96797242",
+      "screenshot_url": "https://lh3.googleusercontent.com/aida/AP1WRLvXVxDCVi3LZZVnWGXnlpM7m1Vdv2L7wxY9copNvOG2_JS3D6oi6EKt1NT7cJcVYC-toia01ENsjZoxW9K1cWJF0I1FSDzlq2fzedhNpCztDhwatihzsnEonsyyMmvC9dxW8dACojULnCJeKpjEumpGkjmyBt34zmyvUgDbg4VsGtn8dk1E_c_u-395GqjMCLAy-r9Nd5d230xXxXrAuaG4JjN532ZQ4KED-GxAv10O7fWTuIFnA4s8zso",
+      "html_sha256": "17f0736aa48087f2e536404df6befe37c0d1d583080171ca1941d3a766c509b2",
+      "html_bytes": 14680,
+      "screenshot_sha256": "94f398a2826c5629f4225d5a67651f3f80b523b66dd9c75d3cc73f2581f36b57",
+      "screenshot_bytes": 51720
+    },
+    {
+      "screen_id": "9b03858eefb04312b66bc8a5712e3196",
+      "device": "MOBILE",
+      "html_url": "https://contribution.usercontent.google.com/download?c=CgthaWRhX2NvZGVmeBJ7Eh1hcHBfY29tcGFuaW9uX2dlbmVyYXRlZF9maWxlcxpaCiVodG1sXzRlZjYzYWY4OTRkODRkNDg4Y2Q0ZDVhMTA1MDQzZGZiEgsSBxD14qOA2RwYAZIBIwoKcHJvamVjdF9pZBIVQhM1NTA5MDM1MjkyMDIxODExNjAx&filename=&opi=96797242",
+      "screenshot_url": "https://lh3.googleusercontent.com/aida/AP1WRLuNss3j974VJ4EV3iUQcQIvniFNwHzH3SZrRvJjqXStZs15RXmC2XWQ12CoFtLuWapI1uIt0CpzO04RGYbfa8ezY55uvSuGz9-Sky7cpj5FFNOiKhSahNKNI7cIosHd0lEO7ia-EpAtahuaT9-7CEZ7zY8kPlJIvt0lSSzrpCYs74EMrFRyV8K63Hg_Y9gtJ0gcRLKHFt2bnoaMuGdVvolmoGEexnEMo0R2H_qRPOXQ4nO6T1hZO7aQjPQ",
+      "html_sha256": "5df2d5b827a5bcf2afb195cc537a956afb035bb700d38e3930774781256ceec2",
+      "html_bytes": 14056,
+      "screenshot_sha256": "1375630901941baf3a72e282602e74c1528492ed0b72158ff623b56c872596e8",
+      "screenshot_bytes": 27958
+    }
+  ]
+}

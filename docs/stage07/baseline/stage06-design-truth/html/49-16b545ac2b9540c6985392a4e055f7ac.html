@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>HSKKit - Today's Dashboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "primary": "#2563EB",
+                        "primary-container": "#EFF6FF",
+                        "on-primary": "#ffffff",
+                        "background": "#F8FAFC",
+                        "surface": "#ffffff",
+                        "surface-container": "#F1F5F9",
+                        "surface-container-low": "#F8FAFC",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-variant": "#E2E8F0",
+                        "outline-variant": "#E2E8F0",
+                        "secondary": "#64748B",
+                        "heading": "#0F172A",
+                        "on-surface": "#334155"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "8px",
+                        "lg": "8px",
+                        "xl": "16px",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "unit": "8px",
+                        "container-max": "1140px",
+                        "gutter": "24px",
+                        "margin-desktop": "64px",
+                        "margin-mobile": "20px"
+                    },
+                    "fontFamily": {
+                        "h1-mobile": ["Inter", "sans-serif"],
+                        "label-caps": ["Inter", "sans-serif"],
+                        "body-lg": ["Inter", "sans-serif"],
+                        "h1": ["Inter", "sans-serif"],
+                        "h3": ["Inter", "sans-serif"],
+                        "body-sm": ["Inter", "sans-serif"],
+                        "body-md": ["Inter", "sans-serif"],
+                        "h2": ["Inter", "sans-serif"]
+                    },
+                    "fontSize": {
+                        "h1-mobile": ["32px", { "lineHeight": "1.2", "fontWeight": "700" }],
+                        "label-caps": ["12px", { "lineHeight": "1.2", "letterSpacing": "0.05em", "fontWeight": "600" }],
+                        "body-lg": ["18px", { "lineHeight": "1.6", "fontWeight": "400" }],
+                        "h1": ["40px", { "lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "h3": ["24px", { "lineHeight": "1.4", "fontWeight": "600" }],
+                        "body-sm": ["14px", { "lineHeight": "1.5", "fontWeight": "400" }],
+                        "body-md": ["16px", { "lineHeight": "1.5", "fontWeight": "400" }],
+                        "h2": ["32px", { "lineHeight": "1.3", "letterSpacing": "-0.01em", "fontWeight": "600" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body { background-color: #F8FAFC; }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        .material-symbols-outlined.filled { font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+    </style>
+</head>
+<body class="bg-background text-on-surface min-h-screen flex flex-col font-body-md text-body-md">
+<!-- TopNavBar (JSON execution) -->
+<header class="bg-surface docked full-width top-0 border-b border-outline-variant flat no shadows">
+<div class="flex justify-between items-center w-full px-gutter max-w-container-max mx-auto h-[64px]">
+<div class="font-h3 text-h3 font-bold text-heading flex items-center gap-2">
+                HSKKit
+            </div>
+<nav class="hidden md:flex items-center gap-6">
+<!-- "Today" is active based on intent/prompt -->
+<a class="text-heading font-bold border-b-2 border-primary pb-1 font-body-md text-body-md cursor-pointer active:scale-95 transition-transform hover:text-primary transition-colors duration-200 min-h-[44px] flex items-center" href="#">
+                    Today
+                </a>
+<a class="text-secondary font-body-md text-body-md cursor-pointer active:scale-95 transition-transform hover:text-primary transition-colors duration-200 min-h-[44px] flex items-center" href="#">
+                    Vocabulary
+                </a>
+<a class="text-secondary font-body-md text-body-md cursor-pointer active:scale-95 transition-transform hover:text-primary transition-colors duration-200 min-h-[44px] flex items-center" href="#">
+                    Practice
+                </a>
+<a class="text-secondary font-body-md text-body-md cursor-pointer active:scale-95 transition-transform hover:text-primary transition-colors duration-200 min-h-[44px] flex items-center" href="#">
+                    Study Tools
+                </a>
+</nav>
+<div class="flex items-center gap-4">
+<button class="text-secondary hover:text-primary min-h-[44px] min-w-[44px] flex items-center justify-center transition-colors">
+<span aria-label="User Account Profile" class="material-symbols-outlined">account_circle</span>
+</button>
+</div>
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="flex-grow w-full max-w-container-max mx-auto px-margin-mobile md:px-gutter py-12 flex flex-col items-center">
+<!-- Narrow focus container for readability -->
+<div class="w-full max-w-[720px] flex flex-col gap-8">
+<!-- Page Header -->
+<header class="mb-4">
+<h1 class="font-h1-mobile text-h1-mobile md:font-h1 md:text-h1 text-heading mb-2">Today's Agenda</h1>
+<p class="font-body-lg text-body-lg text-secondary">Your daily learning modules are ready. Let's maintain that streak.</p>
+</header>
+<!-- Sync State Notification (Pending/Conflict) - Hidden by default, shown for example -->
+<div class="bg-surface border border-outline-variant rounded-xl p-4 flex items-start gap-4" style="display: flex;">
+<span class="material-symbols-outlined text-secondary mt-1">sync_problem</span>
+<div class="flex-grow">
+<p class="font-body-sm text-body-sm font-semibold text-heading">Sync Pending</p>
+<p class="font-body-sm text-body-sm text-secondary">Your latest progress hasn't synced across devices. Waiting for network connection.</p>
+</div>
+<button class="font-body-sm text-body-sm font-semibold text-heading px-3 py-1 border border-outline-variant rounded hover:bg-surface-variant transition-colors min-h-[44px]">Retry</button>
+</div>
+<!-- Dashboard Modules (Bento-ish vertical flow) -->
+<!-- 1. Review Card -->
+<div class="bg-surface border border-outline-variant rounded-xl p-6 transition-colors hover:bg-surface-container cursor-pointer group">
+<div class="flex justify-between items-start mb-6">
+<div>
+<h2 class="font-h3 text-h3 text-heading mb-1">Review</h2>
+<p class="font-body-sm text-body-sm text-secondary">Spaced repetition queue</p>
+</div>
+<div class="bg-primary text-on-primary rounded-lg w-12 h-12 flex items-center justify-center font-bold font-body-lg text-body-lg">
+                        42
+                    </div>
+</div>
+<div class="flex justify-between items-center">
+<span class="font-label-caps text-label-caps text-secondary uppercase tracking-wider">Due Now</span>
+<button class="bg-primary text-on-primary px-6 py-2 rounded-lg font-body-sm text-body-sm font-semibold min-h-[44px] hover:bg-opacity-90 transition-colors flex items-center gap-2">
+                        Start Review <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+</button>
+</div>
+</div>
+<!-- 2. Learn Card -->
+<div class="bg-surface border border-outline-variant rounded-xl p-6 transition-colors hover:bg-surface-container cursor-pointer group">
+<div class="flex justify-between items-start mb-6">
+<div>
+<h2 class="font-h3 text-h3 text-heading mb-1">Learn</h2>
+<p class="font-body-sm text-body-sm text-secondary">New vocabulary items</p>
+</div>
+<div class="w-12 h-12 flex items-center justify-center text-heading">
+<span class="material-symbols-outlined text-3xl">menu_book</span>
+</div>
+</div>
+<div class="mb-4">
+<div class="flex justify-between font-body-sm text-body-sm text-secondary mb-2">
+<span>Daily Goal: 15 words</span>
+<span>0 / 15</span>
+</div>
+<div class="w-full h-2 bg-outline-variant rounded">
+<div class="w-[5%] h-full bg-primary rounded transition-all duration-500"></div>
+</div>
+</div>
+<div class="flex justify-end">
+<button class="border border-outline-variant text-heading px-6 py-2 rounded-lg font-body-sm text-body-sm font-semibold min-h-[44px] hover:bg-surface-variant transition-colors flex items-center gap-2">
+                        Begin Module
+                    </button>
+</div>
+</div>
+<!-- 3. Listen/Practice Card -->
+<div class="bg-surface border border-outline-variant rounded-xl p-6 transition-colors hover:bg-surface-container cursor-pointer group">
+<div class="flex justify-between items-start mb-6">
+<div>
+<h2 class="font-h3 text-h3 text-heading mb-1">Listen &amp; Practice</h2>
+<p class="font-body-sm text-body-sm text-secondary">Tone and auditory drills</p>
+</div>
+<div class="w-12 h-12 flex items-center justify-center text-heading">
+<span class="material-symbols-outlined text-3xl">headphones</span>
+</div>
+</div>
+<div class="bg-surface-container rounded-lg p-4 mb-4 flex items-center gap-4">
+<button class="w-10 h-10 rounded-lg bg-primary text-on-primary flex items-center justify-center min-h-[44px] min-w-[44px]">
+<span class="material-symbols-outlined filled text-[20px]">play_arrow</span>
+</button>
+<div class="flex-grow">
+<p class="font-body-sm text-body-sm font-semibold text-heading">Tone Pair Drill: HSK 3</p>
+<p class="font-body-sm text-body-sm text-secondary text-xs">5 minutes remaining</p>
+</div>
+</div>
+<div class="flex justify-end">
+<button class="text-heading font-body-sm text-body-sm font-semibold hover:underline min-h-[44px] flex items-center">
+                        View all audio exercises
+                    </button>
+</div>
+</div>
+<!-- 4. Summary / Empty State -->
+<div class="border-t border-outline-variant pt-8 mt-4 text-center">
+<h3 class="font-h3 text-h3 text-heading mb-2">Daily Summary</h3>
+<div class="py-12 flex flex-col items-center justify-center text-secondary">
+<span class="material-symbols-outlined text-5xl mb-4 opacity-50">data_usage</span>
+<p class="font-body-md text-body-md">Complete your daily modules to see your progress summary.</p>
+</div>
+</div>
+</div>
+</main>
+<!-- Footer (JSON execution) -->
+<footer class="bg-surface-container-low full-width border-t border-outline-variant flat no shadows mt-auto">
+<div class="flex flex-col md:flex-row justify-between items-center w-full py-gutter px-gutter max-w-container-max mx-auto font-body-sm text-body-sm text-secondary">
+<div class="font-label-caps text-label-caps text-heading mb-4 md:mb-0">
+                © 2024 HSKKit. Academic Clarity System.
+            </div>
+<nav class="flex flex-wrap justify-center gap-6">
+<a class="text-secondary hover:underline hover:text-primary transition-all duration-200 min-h-[44px] flex items-center" href="#">Legal</a>
+<a class="text-secondary hover:underline hover:text-primary transition-all duration-200 min-h-[44px] flex items-center" href="#">Support</a>
+<a class="text-secondary hover:underline hover:text-primary transition-all duration-200 min-h-[44px] flex items-center" href="#">Privacy Policy</a>
+<a class="text-secondary hover:underline hover:text-primary transition-all duration-200 min-h-[44px] flex items-center" href="#">Terms of Service</a>
+</nav>
+</div>
+</footer>
+</body></html>

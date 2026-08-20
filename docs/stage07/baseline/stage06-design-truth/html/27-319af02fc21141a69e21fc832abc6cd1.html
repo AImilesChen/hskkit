@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport"/>
+<title>HSKKit - Listening Modules</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "primary": "#2563EB",
+                      "on-primary": "#ffffff",
+                      "background": "#F8FAFC",
+                      "surface": "#ffffff",
+                      "on-surface": "#0F172A",
+                      "outline-variant": "#E2E8F0",
+                      "secondary": "#64748b",
+                      "surface-container-lowest": "#ffffff",
+                      "surface-container-low": "#f1f5f9",
+                      "surface-container-high": "#f1f5f9",
+              },
+              "borderRadius": {
+                      "DEFAULT": "8px",
+                      "lg": "8px",
+                      "xl": "16px",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "unit": "8px",
+                      "container-max": "1140px",
+                      "gutter": "24px",
+                      "margin-desktop": "64px",
+                      "margin-mobile": "20px"
+              },
+              "fontFamily": {
+                      "h1-mobile": [
+                              "Inter"
+                      ],
+                      "label-caps": [
+                              "Inter"
+                      ],
+                      "body-lg": [
+                              "Inter"
+                      ],
+                      "h1": [
+                              "Inter"
+                      ],
+                      "h3": [
+                              "Inter"
+                      ],
+                      "body-sm": [
+                              "Inter"
+                      ],
+                      "body-md": [
+                              "Inter"
+                      ],
+                      "h2": [
+                              "Inter"
+                      ]
+              },
+              "fontSize": {
+                      "h1-mobile": [
+                              "32px",
+                              {
+                                      "lineHeight": "1.2",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "label-caps": [
+                              "12px",
+                              {
+                                      "lineHeight": "1.2",
+                                      "letterSpacing": "0.05em",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "body-lg": [
+                              "18px",
+                              {
+                                      "lineHeight": "1.6",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "h1": [
+                              "40px",
+                              {
+                                      "lineHeight": "1.2",
+                                      "letterSpacing": "-0.02em",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "h3": [
+                              "24px",
+                              {
+                                      "lineHeight": "1.4",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "body-sm": [
+                              "14px",
+                              {
+                                      "lineHeight": "1.5",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "body-md": [
+                              "16px",
+                              {
+                                      "lineHeight": "1.5",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "h2": [
+                              "32px",
+                              {
+                                      "lineHeight": "1.3",
+                                      "letterSpacing": "-0.01em",
+                                      "fontWeight": "600"
+                              }
+                      ]
+              }
+      },
+          },
+        }
+    </script>
+<style>
+        /* Mobile specific constraints */
+        html, body {
+            max-width: 100vw;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+        
+        .mobile-container {
+            max-width: 390px;
+            margin: 0 auto;
+            position: relative;
+        }
+        
+        /* 44px min touch target */
+        .touch-target {
+            min-height: 44px;
+            min-width: 44px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+</head>
+<body class="bg-background text-on-surface antialiased">
+<div class="mobile-container min-h-screen flex flex-col bg-background shadow-sm border-x border-outline-variant/30">
+<!-- TopAppBar (from JSON) -->
+<header class="bg-background font-h3 text-h3 (headings), font-body-md text-body-md (navigation) docked full-width top-0 border-b border-outline-variant flat no shadows z-50 sticky top-0">
+<div class="flex justify-between items-center w-full px-gutter max-w-container-max mx-auto h-[64px]">
+<div class="font-h3 text-h3 font-bold text-on-surface">
+                    HSKKit
+                </div>
+<!-- Desktop Nav (Hidden on Mobile) -->
+<nav class="hidden md:flex space-x-6 items-center">
+<a class="text-secondary font-body-md text-body-md hover:text-primary transition-colors duration-200 cursor-pointer active:scale-95 transition-transform" href="#">Today</a>
+<a class="text-secondary font-body-md text-body-md hover:text-primary transition-colors duration-200 cursor-pointer active:scale-95 transition-transform" href="#">Vocabulary</a>
+<a class="text-primary font-bold border-b-2 border-primary pb-1 hover:text-primary transition-colors duration-200 cursor-pointer active:scale-95 transition-transform" href="#">Practice</a>
+<a class="text-secondary font-body-md text-body-md hover:text-primary transition-colors duration-200 cursor-pointer active:scale-95 transition-transform" href="#">Study Tools</a>
+</nav>
+<div class="flex items-center space-x-2">
+<button aria-label="User Account Profile" class="touch-target cursor-pointer active:scale-95 transition-transform text-secondary hover:text-primary">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">account_circle</span>
+</button>
+</div>
+</div>
+</header>
+<!-- Main Content -->
+<main class="flex-grow px-margin-mobile py-6 flex flex-col space-y-6">
+<header class="mb-2">
+<h1 class="font-h1-mobile text-h1-mobile text-on-surface mb-2">Listening</h1>
+<p class="font-body-md text-body-md text-secondary">Audio modules to improve your comprehension speed.</p>
+</header>
+<!-- Module List -->
+<div class="flex flex-col space-y-3">
+<!-- Card 1 -->
+<article class="bg-surface border border-outline-variant rounded-xl p-4 flex items-center justify-between active:bg-surface-container-low transition-colors duration-200 cursor-pointer group">
+<div class="flex flex-col mr-4">
+<span class="font-label-caps text-label-caps text-secondary uppercase tracking-wider mb-1">Module 01</span>
+<h2 class="font-h3 text-h3 text-on-surface text-[18px] leading-tight mb-1 transition-colors">Daily Routines</h2>
+<span class="font-body-sm text-body-sm text-secondary flex items-center">
+<span class="material-symbols-outlined text-[16px] mr-1">schedule</span> 4:30
+                        </span>
+</div>
+<button aria-label="Play Daily Routines" class="touch-target bg-primary text-on-primary rounded-[8px] shrink-0 group-active:scale-95 transition-transform shadow-sm">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">play_arrow</span>
+</button>
+</article>
+<!-- Card 2 -->
+<article class="bg-surface border border-outline-variant rounded-xl p-4 flex items-center justify-between active:bg-surface-container-low transition-colors duration-200 cursor-pointer group">
+<div class="flex flex-col mr-4">
+<span class="font-label-caps text-label-caps text-secondary uppercase tracking-wider mb-1">Module 02</span>
+<h2 class="font-h3 text-h3 text-on-surface text-[18px] leading-tight mb-1 transition-colors">At the Train Station</h2>
+<span class="font-body-sm text-body-sm text-secondary flex items-center">
+<span class="material-symbols-outlined text-[16px] mr-1">schedule</span> 6:15
+                        </span>
+</div>
+<button aria-label="Play At the Train Station" class="touch-target bg-surface-container-high text-on-surface border border-outline-variant rounded-[8px] shrink-0 group-active:scale-95 transition-transform">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">play_arrow</span>
+</button>
+</article>
+<!-- Card 3 -->
+<article class="bg-surface border border-outline-variant rounded-xl p-4 flex items-center justify-between active:bg-surface-container-low transition-colors duration-200 cursor-pointer group">
+<div class="flex flex-col mr-4">
+<span class="font-label-caps text-label-caps text-secondary uppercase tracking-wider mb-1">Module 03</span>
+<h2 class="font-h3 text-h3 text-on-surface text-[18px] leading-tight mb-1 transition-colors">Ordering Food</h2>
+<span class="font-body-sm text-body-sm text-secondary flex items-center">
+<span class="material-symbols-outlined text-[16px] mr-1">schedule</span> 5:45
+                        </span>
+</div>
+<button aria-label="Play Ordering Food" class="touch-target bg-surface-container-high text-on-surface border border-outline-variant rounded-[8px] shrink-0 group-active:scale-95 transition-transform">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">play_arrow</span>
+</button>
+</article>
+<!-- Card 4 -->
+<article class="bg-surface border border-outline-variant rounded-xl p-4 flex items-center justify-between active:bg-surface-container-low transition-colors duration-200 cursor-pointer group opacity-75">
+<div class="flex flex-col mr-4">
+<span class="font-label-caps text-label-caps text-secondary uppercase tracking-wider mb-1 flex items-center">
+<span class="material-symbols-outlined text-[14px] mr-1">lock</span> Module 04
+                        </span>
+<h2 class="font-h3 text-h3 text-on-surface text-[18px] leading-tight mb-1">Advanced Conversations</h2>
+<span class="font-body-sm text-body-sm text-secondary">Requires HSK 3</span>
+</div>
+</article>
+</div>
+</main>
+<!-- Footer (from JSON) -->
+<footer class="bg-background font-body-sm text-body-sm full-width border-t border-outline-variant flat no shadows mt-auto">
+<div class="flex flex-col md:flex-row justify-between items-center w-full py-gutter px-gutter max-w-container-max mx-auto space-y-4 md:space-y-0">
+<div class="font-label-caps text-label-caps text-on-surface">
+                    © 2024 HSKKit. Academic Clarity System.
+                </div>
+<div class="flex space-x-4 items-center">
+<a class="text-secondary hover:underline hover:text-primary transition-all duration-200 touch-target" href="#">Legal</a>
+<a class="text-secondary hover:underline hover:text-primary transition-all duration-200 touch-target" href="#">Support</a>
+<a class="text-secondary hover:underline hover:text-primary transition-all duration-200 touch-target" href="#">Privacy Policy</a>
+<a class="text-secondary hover:underline hover:text-primary transition-all duration-200 touch-target" href="#">Terms of Service</a>
+</div>
+</div>
+</footer>
+</div>
+</body></html>

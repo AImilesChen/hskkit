@@ -1,0 +1,26 @@
+{
+  "display_name": "HSKKit Blue Production System",
+  "project_id": "5509035292021811601",
+  "primary": "#2563EB",
+  "primary_hover": "#1D4ED8",
+  "primary_pressed": "#1E40AF",
+  "heading_text": "#0F172A",
+  "body_text": "#334155",
+  "page_background": "#F8FAFC",
+  "card_background": "#FFFFFF",
+  "border": "#E2E8F0",
+  "light_brand_surfaces": [
+    "#EFF6FF",
+    "#DBEAFE"
+  ],
+  "typography": {
+    "headline": "Inter",
+    "body": "Inter",
+    "label": "Inter"
+  },
+  "roundness": {
+    "controls": "8px",
+    "large_cards": "16px"
+  },
+  "status": "FROZEN_FOR_STAGE06_HANDOFF"
+}

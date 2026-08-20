@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>ROUTE · /character/:hanzi · DESKTOP · ADOPTED</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+  tailwind.config = {
+    darkMode: "class",
+    theme: {
+      extend: {
+        "colors": {
+                "tertiary-fixed": "#dae2fd",
+                "inverse-surface": "#2d3133",
+                "on-tertiary-fixed-variant": "#3f465c",
+                "on-secondary-fixed-variant": "#3a485c",
+                "on-primary-fixed": "#00174b",
+                "tertiary": "#4d556b",
+                "on-primary-container": "#eeefff",
+                "surface-tint": "#0053db",
+                "primary": "#2563eb",
+                "on-primary-fixed-variant": "#003ea8",
+                "surface-dim": "#d8dadc",
+                "secondary-fixed-dim": "#b9c7e0",
+                "surface-container-highest": "#e0e3e5",
+                "tertiary-fixed-dim": "#bec6e0",
+                "surface": "#f7f9fb",
+                "error-container": "#ffdad6",
+                "on-secondary": "#ffffff",
+                "on-error-container": "#93000a",
+                "surface-container-lowest": "#ffffff",
+                "on-error": "#ffffff",
+                "secondary": "#515f74",
+                "tertiary-container": "#656d84",
+                "secondary-fixed": "#d5e3fd",
+                "outline": "#737686",
+                "on-surface": "#191c1e",
+                "inverse-primary": "#b4c5ff",
+                "on-surface-variant": "#434655",
+                "on-background": "#0F172A",
+                "surface-container-high": "#e6e8ea",
+                "primary-fixed-dim": "#b4c5ff",
+                "on-tertiary-fixed": "#131b2e",
+                "primary-fixed": "#dbe1ff",
+                "surface-container-low": "#f2f4f6",
+                "surface-variant": "#e0e3e5",
+                "surface-container": "#eceef0",
+                "background": "#F8FAFC",
+                "on-secondary-fixed": "#0d1c2f",
+                "on-tertiary-container": "#eef0ff",
+                "primary-container": "#2563eb",
+                "outline-variant": "#E2E8F0",
+                "inverse-on-surface": "#eff1f3",
+                "on-primary": "#ffffff",
+                "on-tertiary": "#ffffff",
+                "error": "#ba1a1a",
+                "surface-bright": "#f7f9fb",
+                "on-secondary-container": "#57657b",
+                "secondary-container": "#d5e3fd"
+        },
+        "borderRadius": {
+                "DEFAULT": "0.25rem",
+                "lg": "0.5rem",
+                "xl": "16px",
+                "full": "9999px",
+                "controls": "8px"
+        },
+        "spacing": {
+                "margin-desktop": "64px",
+                "gutter": "24px",
+                "margin-mobile": "20px",
+                "unit": "8px",
+                "container-max": "1140px"
+        },
+        "fontFamily": {
+                "sans": ["Inter", "sans-serif"]
+        }
+      }
+    }
+  }
+</script>
+</head>
+<body class="bg-[#F8FAFC] text-[#0F172A] min-h-screen flex flex-col font-sans selection:bg-blue-100 selection:text-blue-900">
+<!-- TopNavBar -->
+<header class="bg-white w-full top-0 sticky border-b border-[#E2E8F0] z-50">
+<div class="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop flex items-center justify-between h-20">
+<!-- Brand -->
+<a class="text-2xl font-bold text-[#0F172A] no-underline hover:opacity-80 transition-opacity" href="#">
+                HSKKit
+            </a>
+<!-- Desktop Navigation -->
+<nav class="hidden md:flex items-center gap-8 h-full">
+<a class="text-slate-500 font-medium hover:text-[#2563EB] transition-colors flex items-center h-full px-2" href="#">
+<span>Levels</span>
+</a>
+<a class="text-[#2563EB] font-bold border-b-2 border-[#2563EB] pb-1 flex items-center h-full px-2 cursor-pointer active:opacity-80 transition-opacity" href="#">
+<span>Vocabulary</span>
+</a>
+<a class="text-slate-500 font-medium hover:text-[#2563EB] transition-colors flex items-center h-full px-2" href="#">
+<span>Practice</span>
+</a>
+<a class="text-slate-500 font-medium hover:text-[#2563EB] transition-colors flex items-center h-full px-2" href="#">
+<span>Study Tools</span>
+</a>
+</nav>
+<!-- Right Actions -->
+<div class="flex items-center gap-4">
+<div class="hidden md:flex items-center bg-[#F8FAFC] rounded-[8px] px-4 py-2 border border-[#E2E8F0] focus-within:border-[#2563EB] transition-colors">
+<span class="material-symbols-outlined text-slate-400 mr-2" style="font-variation-settings: 'FILL' 0;">search</span>
+<input class="bg-transparent border-none outline-none text-sm text-[#0F172A] w-40 placeholder-slate-400" placeholder="Search Hanzi..." type="text"/>
+</div>
+<button class="hidden md:flex bg-[#2563EB] text-white rounded-[8px] px-6 py-2 text-sm font-semibold hover:opacity-90 transition-opacity">
+                    Sign In
+                </button>
+<!-- Mobile Menu Toggle -->
+<button class="md:hidden text-[#0F172A] p-2">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">menu</span>
+</button>
+</div>
+</div>
+</header>
+<!-- Main Content Canvas (404 Boundary) -->
+<main class="flex-grow flex items-center justify-center py-20 px-margin-mobile md:px-margin-desktop">
+<div class="max-w-[720px] w-full mx-auto text-center">
+<!-- Icon/Visual Anchor -->
+<div class="mb-8 flex justify-center">
+<div class="w-24 h-24 rounded-full bg-white border border-[#E2E8F0] flex items-center justify-center shadow-sm">
+<span class="material-symbols-outlined text-4xl text-slate-400" style="font-size: 48px; font-variation-settings: 'FILL' 0;">find_replace</span>
+</div>
+</div>
+<!-- Typography & Messaging -->
+<h1 class="text-4xl font-bold text-[#0F172A] mb-6">Character not found</h1>
+<div class="bg-white border border-[#E2E8F0] rounded-[16px] p-8 mb-10 shadow-sm max-w-lg mx-auto">
+<p class="text-lg text-[#0F172A] leading-relaxed">
+                    The character <strong class="text-[#2563EB] font-bold text-2xl mx-1">𪚥</strong> is not part of the HSK 3.0 vocabulary set or our current reference database.
+                </p>
+<div class="mt-6 border-t border-[#E2E8F0] pt-6">
+<p class="text-sm text-slate-500">
+                        Please verify your input or explore our standard curriculum lists.
+                    </p>
+</div>
+</div>
+<!-- Actions -->
+<div class="flex flex-col sm:flex-row items-center justify-center gap-4">
+<button class="w-full sm:w-auto px-8 py-3 bg-[#2563EB] text-white rounded-[8px] font-medium hover:opacity-90 transition-opacity" onclick="window.history.back()">
+                    Return to Dictionary
+                </button>
+<button class="w-full sm:w-auto px-8 py-3 bg-white text-[#2563EB] border border-[#2563EB] rounded-[8px] font-medium hover:bg-slate-50 transition-colors">
+                    Browse HSK Levels
+                </button>
+</div>
+</div>
+</main>
+<!-- Footer -->
+<footer class="bg-white w-full mt-auto border-t border-[#E2E8F0]">
+<div class="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop py-12 flex flex-col md:flex-row justify-between items-center gap-gutter">
+<div class="flex flex-col items-center md:items-start mb-6 md:mb-0">
+<span class="text-xl font-bold text-[#0F172A] mb-2">HSKKit</span>
+<p class="text-sm text-slate-500">
+                    © 2024 HSKKit Scholarly Language Systems. All rights reserved.
+                </p>
+</div>
+<nav class="flex flex-wrap justify-center md:justify-end gap-x-6 gap-y-4">
+<a class="text-sm text-slate-500 hover:text-[#2563EB] hover:underline transition-all" href="#">Privacy Policy</a>
+<a class="text-sm text-slate-500 hover:text-[#2563EB] hover:underline transition-all" href="#">Terms of Service</a>
+<a class="text-sm text-slate-500 hover:text-[#2563EB] hover:underline transition-all" href="#">Cookie Policy</a>
+<a class="text-sm text-slate-500 hover:text-[#2563EB] hover:underline transition-all" href="#">Academic Integrity</a>
+<a class="text-sm text-slate-500 hover:text-[#2563EB] hover:underline transition-all" href="#">Contact Support</a>
+</nav>
+</div>
+</footer>
+</body></html>

@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>ROUTE · /placement · MOBILE · ACTIVE · ADOPTED · QA-V2</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body {
+            min-height: max(884px, 100dvh);
+            font-family: 'Inter', sans-serif;
+        }
+    </style>
+</head>
+<body class="bg-[#F8FAFC] text-[#0F172A] antialiased min-h-screen flex flex-col items-center justify-center p-4">
+<!-- Main Container -->
+<main class="w-full max-w-[390px] mx-auto bg-[#FFFFFF] border border-[#E2E8F0] rounded-[16px] p-6 flex flex-col min-h-[600px] overflow-x-hidden">
+<!-- Top App Bar -->
+<div class="flex justify-start w-full mb-8">
+<button aria-label="Go back" class="text-[#0F172A] opacity-70 hover:opacity-100 hover:text-[#2563EB] transition-colors flex items-center justify-center w-11 h-11 min-w-[44px] min-h-[44px] rounded-[8px] hover:bg-[#F8FAFC]">
+<span class="material-symbols-outlined" data-icon="arrow_back">arrow_back</span>
+</button>
+</div>
+<!-- Content Canvas -->
+<div class="flex-grow flex flex-col items-center justify-center text-center px-2">
+<!-- Graphic/Icon representation -->
+<div class="mb-8 w-24 h-24 rounded-full bg-[#F8FAFC] flex items-center justify-center border border-[#E2E8F0]">
+<span class="material-symbols-outlined text-4xl text-[#2563EB]" data-icon="map" style="font-variation-settings: 'FILL' 1;">map</span>
+</div>
+<h1 class="text-3xl font-bold text-[#0F172A] mb-4">
+                Find your starting point
+            </h1>
+<p class="text-base text-[#0F172A] opacity-80 mb-8 max-w-sm">
+                Take a brief diagnostic assessment to accurately place you in the appropriate HSK study level. This helps personalize your learning trajectory.
+            </p>
+<!-- Metadata/Info Box -->
+<div class="w-full bg-[#FFFFFF] border border-[#E2E8F0] rounded-[8px] p-4 mb-8 flex flex-col space-y-3">
+<div class="flex items-center text-left">
+<span class="material-symbols-outlined text-[#2563EB] mr-3" data-icon="timer">timer</span>
+<span class="text-sm text-[#0F172A]">~ 10-15 Minutes</span>
+</div>
+<div class="w-full h-px bg-[#E2E8F0]"></div>
+<div class="flex items-center text-left">
+<span class="material-symbols-outlined text-[#2563EB] mr-3" data-icon="fact_check">fact_check</span>
+<span class="text-sm text-[#0F172A]">Adaptive questioning</span>
+</div>
+</div>
+</div>
+<!-- Primary Action -->
+<div class="w-full mt-auto">
+<button class="w-full bg-[#2563EB] text-[#FFFFFF] text-base font-medium py-3 px-6 rounded-[8px] min-w-[44px] min-h-[44px] hover:opacity-90 transition-opacity flex items-center justify-center">
+                Start Assessment
+            </button>
+<button class="w-full mt-3 bg-transparent border border-[#E2E8F0] text-[#0F172A] text-sm font-medium py-3 px-6 rounded-[8px] min-w-[44px] min-h-[44px] hover:bg-[#F8FAFC] transition-colors flex items-center justify-center">
+                Skip for now
+            </button>
+</div>
+</main>
+</body></html>

@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=390, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport"/>
+<title>ROUTE · /dictionary · MOBILE · ADOPTED · QA-V2</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#2563EB",
+                        background: "#F8FAFC",
+                        surface: "#FFFFFF",
+                        border: "#E2E8F0",
+                        text: "#0F172A",
+                        muted: "#64748b"
+                    },
+                    fontFamily: {
+                        sans: ["Inter", "sans-serif"]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body { width: 390px; margin: 0 auto; overflow-x: hidden; }
+        /* Add a 390px frame for web preview purposes, simulating mobile */
+        @media (min-width: 391px) {
+            body { border-left: 1px solid #E2E8F0; border-right: 1px solid #E2E8F0; min-height: 100vh; box-shadow: 0 0 20px rgba(0,0,0,0.05); }
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+</head>
+<body class="bg-background text-text font-sans antialiased flex flex-col min-h-screen">
+<!-- Header / Nav -->
+<header class="w-full top-0 sticky z-50 bg-surface border-b border-border">
+<div class="px-5 flex items-center justify-between h-20">
+<h2 class="text-2xl font-bold text-text">HSKKit</h2>
+<!-- Hamburger menu for mobile representation, functional nav hidden -->
+<button aria-label="Menu" class="p-2 -mr-2 text-text min-w-[44px] min-h-[44px] flex items-center justify-center">
+<span class="material-symbols-outlined" style="font-size: 28px;">menu</span>
+</button>
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="flex-grow flex flex-col w-full px-5 py-6 gap-6">
+<!-- Search Section -->
+<section class="w-full flex flex-col gap-4">
+<h1 class="text-3xl font-bold text-text">Dictionary</h1>
+<form action="#" class="flex flex-col gap-3" method="GET" onsubmit="event.preventDefault(); document.getElementById('empty-state').classList.remove('hidden'); document.getElementById('search-input').blur();">
+<div class="relative w-full">
+<label class="sr-only" for="search-input">Search terms</label>
+<span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-muted" style="font-size: 24px;">search</span>
+<input autocomplete="off" class="w-full min-h-[44px] h-14 pl-12 pr-4 bg-surface border border-border rounded-[8px] focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary text-text transition-all placeholder:text-muted" id="search-input" name="q" placeholder="Enter Hanzi, Pinyin, or English..." type="text"/>
+</div>
+<button class="w-full min-h-[44px] h-14 bg-primary text-white rounded-[8px] text-base font-semibold flex items-center justify-center gap-2 hover:opacity-90 active:opacity-80 transition-opacity" type="submit">
+                    Search
+                </button>
+</form>
+<div class="flex flex-wrap gap-2 mt-2 items-center">
+<span class="text-xs font-semibold text-muted uppercase tracking-wider py-1">Recent:</span>
+<button class="px-3 min-w-[44px] min-h-[44px] bg-surface border border-border rounded-[8px] text-sm text-text hover:bg-gray-50 transition-colors">xuéxí</button>
+<button class="px-3 min-w-[44px] min-h-[44px] bg-surface border border-border rounded-[8px] text-sm text-text hover:bg-gray-50 transition-colors">dictionary</button>
+</div>
+</section>
+<hr class="border-t border-border my-2 w-full"/>
+<!-- Empty State Container (Hidden by default, shown on search) -->
+<section class="hidden flex-grow flex flex-col items-center justify-center text-center px-4 py-12 animate-fade-in" id="empty-state">
+<div class="w-24 h-24 mb-6 rounded-full bg-surface flex items-center justify-center border border-border">
+<span class="material-symbols-outlined text-muted" style="font-size: 48px;">manage_search</span>
+</div>
+<h3 class="text-xl font-bold text-text mb-2">No Results Found</h3>
+<p class="text-base text-muted max-w-[280px]">
+                We couldn't find any matches for your search. Try checking your spelling or using different keywords.
+            </p>
+<button class="mt-8 px-6 min-w-[44px] min-h-[44px] bg-transparent border border-border text-primary rounded-[8px] text-base font-semibold hover:bg-gray-50 transition-colors" onclick="document.getElementById('search-input').value = ''; document.getElementById('search-input').focus(); document.getElementById('empty-state').classList.add('hidden');">
+                Clear Search
+            </button>
+</section>
+</main>
+<!-- Footer representation for mobile -->
+<footer class="w-full mt-auto bg-background border-t border-border py-8 px-5 text-center">
+<h4 class="text-xl font-bold text-text mb-4">HSKKit</h4>
+<div class="flex flex-wrap justify-center gap-4 mb-6">
+<a class="text-sm text-muted hover:text-primary transition-all min-w-[44px] min-h-[44px] flex items-center justify-center" href="#">Privacy</a>
+<a class="text-sm text-muted hover:text-primary transition-all min-w-[44px] min-h-[44px] flex items-center justify-center" href="#">Terms</a>
+<a class="text-sm text-muted hover:text-primary transition-all min-w-[44px] min-h-[44px] flex items-center justify-center" href="#">Support</a>
+</div>
+<p class="text-sm text-muted">© 2024 HSKKit. All rights reserved.</p>
+</footer>
+<style>
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fade-in {
+            animation: fadeIn 0.3s ease-out forwards;
+        }
+    </style>
+</body></html>

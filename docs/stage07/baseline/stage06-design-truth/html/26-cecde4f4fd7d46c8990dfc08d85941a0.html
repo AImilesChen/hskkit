@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Audio Library - HSKKit</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                "primary": "#2563EB",
+                "text-main": "#0F172A",
+                "bg-page": "#F8FAFC",
+                "bg-card": "#ffffff",
+                "border-color": "#E2E8F0",
+                "text-muted": "#64748b"
+              },
+              "borderRadius": {
+                "control": "8px",
+                "card": "16px"
+              },
+              "fontFamily": {
+                "sans": ["Inter", "sans-serif"]
+              }
+            },
+          },
+        }
+      </script>
+</head>
+<body class="bg-bg-page text-text-main min-h-screen flex flex-col font-sans">
+<!-- TopNavBar -->
+<nav class="bg-bg-card border-b border-border-color docked full-width top-0 z-50">
+<div class="flex justify-between items-center w-full px-6 max-w-[1140px] mx-auto h-[64px]">
+<div class="text-2xl font-bold text-text-main">
+                HSKKit
+            </div>
+<div class="hidden md:flex gap-6 items-center h-full">
+<a class="text-text-muted text-base hover:text-primary transition-colors duration-200 cursor-pointer active:scale-95 transition-transform h-full flex items-center" href="#">Today</a>
+<a class="text-text-muted text-base hover:text-primary transition-colors duration-200 cursor-pointer active:scale-95 transition-transform h-full flex items-center" href="#">Vocabulary</a>
+<a class="text-primary font-bold border-b-2 border-primary pb-1 h-full flex items-center hover:text-primary transition-colors duration-200 cursor-pointer active:scale-95 transition-transform" href="#">Practice</a>
+<a class="text-text-muted text-base hover:text-primary transition-colors duration-200 cursor-pointer active:scale-95 transition-transform h-full flex items-center" href="#">Study Tools</a>
+</div>
+<div class="flex items-center gap-4 text-text-main">
+<button aria-label="User Account Profile" class="hover:text-primary transition-colors duration-200 cursor-pointer active:scale-95 transition-transform">
+<span class="material-symbols-outlined" data-icon="account_circle">account_circle</span>
+</button>
+</div>
+</div>
+</nav>
+<!-- Main Content -->
+<main class="flex-grow w-full max-w-[1140px] mx-auto px-6 py-16 md:grid md:grid-cols-12 md:gap-6">
+<!-- Header Section -->
+<header class="col-span-12 mb-12 border-b border-border-color pb-8">
+<h1 class="text-4xl font-bold text-text-main mb-2">Audio Library</h1>
+<p class="text-lg text-text-muted max-w-2xl">
+                Curated listening sessions spanning HSK 1 through 6. Select a module below to begin or continue your audio comprehension practice.
+            </p>
+</header>
+<!-- Sidebar Filters (Optional/Contextual) -->
+<aside class="col-span-12 md:col-span-3 mb-8 md:mb-0">
+<div class="sticky top-[96px]">
+<h3 class="text-xl font-bold text-text-main mb-4 border-b border-border-color pb-2">Levels</h3>
+<ul class="space-y-2 mb-8">
+<li><a class="flex items-center gap-2 text-base text-primary font-bold" href="#"><span class="w-2 h-2 rounded-full bg-primary block"></span> HSK 1-2 (Beginner)</a></li>
+<li><a class="flex items-center gap-2 text-base text-text-muted hover:text-primary transition-colors" href="#"><span class="w-2 h-2 rounded-full bg-border-color block"></span> HSK 3-4 (Intermediate)</a></li>
+<li><a class="flex items-center gap-2 text-base text-text-muted hover:text-primary transition-colors" href="#"><span class="w-2 h-2 rounded-full bg-border-color block"></span> HSK 5-6 (Advanced)</a></li>
+</ul>
+<h3 class="text-xl font-bold text-text-main mb-4 border-b border-border-color pb-2">Themes</h3>
+<ul class="space-y-2">
+<li><a class="text-base text-text-muted hover:text-primary transition-colors" href="#">Daily Life</a></li>
+<li><a class="text-base text-text-muted hover:text-primary transition-colors" href="#">Academic</a></li>
+<li><a class="text-base text-text-muted hover:text-primary transition-colors" href="#">Business</a></li>
+</ul>
+</div>
+</aside>
+<!-- Library Grid -->
+<div class="col-span-12 md:col-span-9 grid grid-cols-1 md:grid-cols-2 gap-6">
+<!-- Card 1: Active/Continue -->
+<article class="bg-bg-card border border-border-color rounded-card p-6 flex flex-col hover:border-primary transition-colors duration-200">
+<div class="flex justify-between items-start mb-4">
+<span class="text-xs text-text-muted uppercase tracking-wider font-semibold">HSK 2 · Daily Life</span>
+<span class="material-symbols-outlined text-text-muted" data-icon="headphones">headphones</span>
+</div>
+<h2 class="text-2xl font-bold text-text-main mb-2">Ordering at a Restaurant</h2>
+<p class="text-sm text-text-muted mb-6 flex-grow">
+                    Practice common phrases for ordering food, asking for recommendations, and paying the bill. Includes regional dialect variations.
+                </p>
+<div class="mb-4">
+<div class="flex justify-between text-sm text-text-muted mb-1">
+<span>Progress</span>
+<span>45%</span>
+</div>
+<div class="h-1 bg-border-color rounded-sm overflow-hidden">
+<div class="h-full bg-primary w-[45%]"></div>
+</div>
+</div>
+<div class="flex items-center gap-4 mt-auto">
+<button class="bg-primary text-white hover:bg-blue-700 transition-colors rounded-control px-4 py-2 text-sm font-bold flex items-center gap-2">
+<span class="material-symbols-outlined" data-icon="play_arrow" data-weight="fill" style="font-variation-settings: 'FILL' 1;">play_arrow</span>
+                        Continue
+                    </button>
+<span class="text-sm text-text-muted">12 mins left</span>
+</div>
+</article>
+<!-- Card 2: New -->
+<article class="bg-bg-card border border-border-color rounded-card p-6 flex flex-col hover:border-primary transition-colors duration-200">
+<div class="flex justify-between items-start mb-4">
+<span class="text-xs text-text-muted uppercase tracking-wider font-semibold">HSK 3 · Travel</span>
+<span class="material-symbols-outlined text-text-muted" data-icon="train">train</span>
+</div>
+<h2 class="text-2xl font-bold text-text-main mb-2">Navigating the High-Speed Rail</h2>
+<p class="text-sm text-text-muted mb-6 flex-grow">
+                    Listen to station announcements, ticketing counter interactions, and platform directions typical of a major transit hub.
+                </p>
+<div class="flex items-center gap-4 mt-auto">
+<button class="border border-border-color text-text-main hover:border-primary hover:text-primary transition-colors rounded-control px-4 py-2 text-sm font-bold flex items-center gap-2">
+<span class="material-symbols-outlined" data-icon="play_arrow">play_arrow</span>
+                        Start Session
+                    </button>
+<span class="text-sm text-text-muted">25 mins</span>
+</div>
+</article>
+<!-- Card 3: New -->
+<article class="bg-bg-card border border-border-color rounded-card p-6 flex flex-col hover:border-primary transition-colors duration-200">
+<div class="flex justify-between items-start mb-4">
+<span class="text-xs text-text-muted uppercase tracking-wider font-semibold">HSK 4 · Academic</span>
+<span class="material-symbols-outlined text-text-muted" data-icon="school">school</span>
+</div>
+<h2 class="text-2xl font-bold text-text-main mb-2">University Lecture: History</h2>
+<p class="text-sm text-text-muted mb-6 flex-grow">
+                    An excerpt from a freshman-level history course discussing the Ming Dynasty economic expansion. Focus on formal academic vocabulary.
+                </p>
+<div class="flex items-center gap-4 mt-auto">
+<button class="border border-border-color text-text-main hover:border-primary hover:text-primary transition-colors rounded-control px-4 py-2 text-sm font-bold flex items-center gap-2">
+<span class="material-symbols-outlined" data-icon="play_arrow">play_arrow</span>
+                        Start Session
+                    </button>
+<span class="text-sm text-text-muted">40 mins</span>
+</div>
+</article>
+<!-- Card 4: Locked/Requires Pre-req -->
+<article class="bg-bg-card opacity-60 border border-border-color rounded-card p-6 flex flex-col relative">
+<div class="absolute inset-0 flex items-center justify-center pointer-events-none">
+<span class="material-symbols-outlined text-text-muted text-opacity-20 text-6xl" data-icon="lock" data-weight="fill" style="font-variation-settings: 'FILL' 1;">lock</span>
+</div>
+<div class="flex justify-between items-start mb-4">
+<span class="text-xs text-text-muted uppercase tracking-wider font-semibold">HSK 5 · Business</span>
+<span class="material-symbols-outlined text-text-muted" data-icon="business_center">business_center</span>
+</div>
+<h2 class="text-2xl font-bold text-text-main mb-2">Contract Negotiation</h2>
+<p class="text-sm text-text-muted mb-6 flex-grow">
+                    Advanced dialogues focusing on negotiation tactics, contract terms, and formal business correspondence etiquette.
+                </p>
+<div class="flex items-center gap-4 mt-auto">
+<button class="border border-border-color text-text-muted bg-gray-50 rounded-control px-4 py-2 text-sm font-bold flex items-center gap-2 cursor-not-allowed" disabled="">
+                        Locked
+                    </button>
+<span class="text-sm text-text-muted">Complete HSK 4</span>
+</div>
+</article>
+</div>
+</main>
+<!-- Footer -->
+<footer class="bg-bg-page border-t border-border-color full-width mt-auto">
+<div class="flex flex-col md:flex-row justify-between items-center w-full py-6 px-6 max-w-[1140px] mx-auto">
+<div class="text-sm text-text-main font-semibold mb-4 md:mb-0">
+                © 2024 HSKKit. Academic Clarity System.
+            </div>
+<div class="flex gap-6">
+<a class="text-sm text-text-muted hover:underline hover:text-primary transition-all duration-200" href="#">Legal</a>
+<a class="text-sm text-text-muted hover:underline hover:text-primary transition-all duration-200" href="#">Support</a>
+<a class="text-sm text-text-muted hover:underline hover:text-primary transition-all duration-200" href="#">Privacy Policy</a>
+<a class="text-sm text-text-muted hover:underline hover:text-primary transition-all duration-200" href="#">Terms of Service</a>
+</div>
+</div>
+</footer>
+</body></html>

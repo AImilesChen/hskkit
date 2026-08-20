@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Placement Result - HSKKit</title>
+<meta content="noindex, nofollow" name="robots"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "primary": "#2563EB",
+                        "on-primary": "#ffffff",
+                        "primary-fixed": "#eff6ff",
+                        "background": "#F8FAFC",
+                        "surface": "#ffffff",
+                        "on-surface": "#0F172A",
+                        "on-surface-variant": "#475569",
+                        "outline-variant": "#E2E8F0",
+                        "secondary": "#64748b"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "8px",
+                        "lg": "8px",
+                        "xl": "16px",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "container-max": "1140px",
+                        "unit": "8px",
+                        "margin-desktop": "64px",
+                        "gutter": "24px",
+                        "margin-mobile": "20px"
+                    },
+                    "fontFamily": {
+                        "body": ["Inter", "sans-serif"],
+                        "heading": ["Inter", "sans-serif"]
+                    },
+                    "fontSize": {
+                        "h1-mobile": ["32px", { "lineHeight": "1.2", "fontWeight": "700" }],
+                        "body-md": ["16px", { "lineHeight": "1.5", "fontWeight": "400" }],
+                        "body-lg": ["18px", { "lineHeight": "1.6", "fontWeight": "400" }],
+                        "h1": ["40px", { "lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "label-caps": ["12px", { "lineHeight": "1.2", "letterSpacing": "0.05em", "fontWeight": "600" }],
+                        "body-sm": ["14px", { "lineHeight": "1.5", "fontWeight": "400" }],
+                        "h2": ["32px", { "lineHeight": "1.3", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+                        "h3": ["24px", { "lineHeight": "1.4", "fontWeight": "600" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-surface min-h-screen flex flex-col antialiased font-body">
+<!-- TopAppBar Navigation -->
+<header class="w-full top-0 sticky bg-background border-b border-outline-variant z-40 transition-all duration-200">
+<div class="max-w-container-max mx-auto px-margin-desktop flex items-center justify-between h-16">
+<div class="flex items-center gap-8">
+<a class="font-heading text-h3 text-on-surface" href="#">HSKKit</a>
+<nav class="hidden md:flex gap-6 items-center">
+<a class="text-on-surface-variant font-body-md text-body-md hover:text-primary transition-colors cursor-pointer transition-all duration-200" href="#">Levels</a>
+<a class="text-on-surface-variant font-body-md text-body-md hover:text-primary transition-colors cursor-pointer transition-all duration-200" href="#">Vocabulary</a>
+<a class="text-on-surface-variant font-body-md text-body-md hover:text-primary transition-colors cursor-pointer transition-all duration-200" href="#">Practice</a>
+<a class="text-on-surface-variant font-body-md text-body-md hover:text-primary transition-colors cursor-pointer transition-all duration-200" href="#">Study Tools</a>
+</nav>
+</div>
+<div class="flex items-center">
+<button class="bg-primary text-on-primary font-body-sm text-body-sm px-4 py-2 rounded font-semibold transition-opacity hover:opacity-90 min-h-[44px] min-w-[44px] flex items-center justify-center">Sign In</button>
+</div>
+</div>
+</header>
+<!-- Main Content Area -->
+<main class="flex-grow flex items-center justify-center py-16 px-gutter md:px-margin-desktop w-full max-w-container-max mx-auto">
+<div class="max-w-[720px] w-full mx-auto">
+<!-- Result Container -->
+<div class="bg-surface border border-outline-variant rounded-xl p-8 md:p-12 relative overflow-hidden flex flex-col items-center text-center shadow-sm">
+<span class="material-symbols-outlined text-on-surface text-5xl mb-6" style="font-variation-settings: 'FILL' 1;">
+                    check_circle
+                </span>
+<h1 class="font-heading text-h1 text-on-surface mb-2">Your Learning Suggestion</h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant mb-8 max-w-lg">
+                    Based on your recent assessment, we have determined a starting point tailored to your current proficiency.
+                </p>
+<!-- Recommendation Card -->
+<div class="w-full bg-background border border-outline-variant rounded-lg p-6 mb-8 flex flex-col md:flex-row items-center justify-between gap-6 text-left">
+<div class="flex-1">
+<h2 class="font-heading text-h3 text-on-surface mb-2">Suggested: HSK Level 3</h2>
+<div class="flex items-center gap-2 mb-1">
+<span class="material-symbols-outlined text-secondary text-sm">
+                                error
+                            </span>
+<span class="font-body-sm text-body-sm text-secondary italic">Moderate confidence - consider level 3</span>
+</div>
+</div>
+<div class="flex flex-col gap-2 min-w-[140px]">
+<div class="flex justify-between items-center text-sm">
+<span class="font-body-sm text-body-sm text-on-surface-variant font-semibold">Vocab</span>
+<span class="font-label-caps text-label-caps text-primary bg-primary-fixed px-2 py-1 rounded">Lvl 3</span>
+</div>
+<div class="flex justify-between items-center text-sm">
+<span class="font-body-sm text-body-sm text-on-surface-variant font-semibold">Grammar</span>
+<span class="font-label-caps text-label-caps text-primary bg-primary-fixed px-2 py-1 rounded">Lvl 2</span>
+</div>
+</div>
+</div>
+<!-- Action Buttons -->
+<div class="flex flex-col sm:flex-row w-full gap-4 justify-center mt-4">
+<button class="flex items-center justify-center gap-2 bg-surface border border-outline-variant text-on-surface font-body-md text-body-md font-semibold px-6 py-3 rounded min-h-[44px] hover:bg-background transition-colors">
+<span class="material-symbols-outlined text-lg">replay</span>
+                        Retest
+                    </button>
+<button class="flex items-center justify-center gap-2 bg-primary text-on-primary font-body-md text-body-md font-semibold px-6 py-3 rounded min-h-[44px] hover:opacity-90 transition-opacity">
+                        Create Learning Plan
+                        <span class="material-symbols-outlined text-lg">arrow_forward</span>
+</button>
+</div>
+</div>
+</div>
+</main>
+<!-- Footer -->
+<footer class="bg-background w-full py-8 border-t border-outline-variant mt-auto">
+<div class="max-w-container-max mx-auto px-margin-desktop flex flex-col md:flex-row justify-between items-center gap-4">
+<span class="font-label-caps text-label-caps text-on-surface-variant">© 2024 HSKKit Academic. All rights reserved.</span>
+<div class="flex gap-6">
+<a class="font-body-sm text-body-sm text-on-surface-variant hover:text-primary transition-colors" href="#">Academic Integrity</a>
+<a class="font-body-sm text-body-sm text-on-surface-variant hover:text-primary transition-colors" href="#">Research Methodology</a>
+<a class="font-body-sm text-body-sm text-on-surface-variant hover:text-primary transition-colors" href="#">Terms of Service</a>
+</div>
+</div>
+</footer>
+</body></html>

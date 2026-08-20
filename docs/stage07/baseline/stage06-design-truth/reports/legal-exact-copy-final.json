@@ -1,0 +1,29 @@
+{
+  "source": "Stage04 v1.4 \u00a79.1\u2013\u00a79.6 full blockquote bodies",
+  "expected_count": 6,
+  "items": [
+    {
+      "file": "html/legal-template-six-routes-desktop-release-blocked-adopted-v2.html",
+      "matches": [
+        true,
+        true,
+        true,
+        true,
+        true,
+        true
+      ]
+    },
+    {
+      "file": "html/legal-template-six-routes-mobile-release-blocked-adopted-qa-v2.html",
+      "matches": [
+        true,
+        true,
+        true,
+        true,
+        true,
+        true
+      ]
+    }
+  ],
+  "status": "PASS"
+}

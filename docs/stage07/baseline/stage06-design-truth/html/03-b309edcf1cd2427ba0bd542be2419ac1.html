@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>HSKKit - Build your HSK 3.0 learning path</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body { background-color: #F8FAFC; overflow-x: hidden; font-family: 'Inter', sans-serif; }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+    </style>
+</head>
+<body class="text-slate-600 antialiased flex flex-col min-h-screen pt-16 pb-20 bg-[#F8FAFC]">
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full z-50 bg-[#F8FAFC] border-b border-[#E2E8F0] h-16 flex items-center justify-between px-5">
+<button class="w-11 h-11 flex items-center justify-center text-slate-500 hover:bg-[#E2E8F0] transition-colors rounded-full active:opacity-80">
+<span class="material-symbols-outlined">menu</span>
+</button>
+<div class="flex items-center gap-2">
+<img alt="HSKKit Logo" class="h-8 w-8 object-contain" src="https://lh3.googleusercontent.com/aida/AP1WRLt2yPCk2PUGELNjF5LnLexVtPU8YVU1s5IPqsn-9drSHHnnBeeB_l1kBwmfbqLXKga63BKqIoOC3WvG8td-L9UpeBzSvqZp2F_0DUmY0Ncvq6PqpvJ58NLq6BS9pcBCYepblagbqBlZjmtI_yqwHmnQqYJrnT6kv10DVlrLY8VaPaXSox_xIt5u4_YSzheGzhjFOfbfF3wzKYr1ZLFnzs4DGtU_did08zdHcmgMe_nJP8IceNVq1bw063c"/>
+<h1 class="text-xl font-bold text-[#0F172A] tracking-tight">HSKKit</h1>
+</div>
+<div class="w-11 h-11"></div> <!-- Spacer for center alignment -->
+</header>
+<!-- Main Content Canvas -->
+<main class="flex-grow flex flex-col px-5 py-8 gap-12 max-w-lg mx-auto w-full">
+<!-- Hero Section -->
+<section class="flex flex-col gap-6 text-center">
+<h1 class="text-3xl font-bold text-[#0F172A]">Build your HSK 3.0 learning path</h1>
+<p class="text-lg text-slate-600">Choose a starting point, study by level, and return to the next useful task. HSKKit is for learners who want a clearer way to practise Chinese.</p>
+<div class="flex flex-col gap-4 mt-2">
+<button class="min-h-[44px] bg-[#2563EB] text-white rounded-[8px] font-semibold w-full flex items-center justify-center">
+                Find your starting point
+            </button>
+<button class="min-h-[44px] bg-transparent border border-[#2563EB] text-[#2563EB] rounded-[8px] font-semibold w-full flex items-center justify-center">
+                Explore HSK 3.0 levels
+            </button>
+</div>
+<p class="text-sm text-slate-500 mt-2">A learning suggestion is not an examination result or a promise of an outcome.</p>
+</section>
+<!-- Divider -->
+<div class="h-px bg-[#E2E8F0] w-full"></div>
+<!-- Section: Make today's next step clear -->
+<section class="flex flex-col gap-6">
+<h2 class="text-2xl font-bold text-[#0F172A]">Make today’s next step clear.</h2>
+<div class="grid grid-cols-1 gap-4">
+<div class="bg-white border border-[#E2E8F0] rounded-[16px] p-4 flex items-center gap-4 hover:bg-slate-50 transition-colors">
+<span class="material-symbols-outlined text-[#2563EB] text-[32px]">menu_book</span>
+<div>
+<h3 class="font-bold text-[#0F172A] text-lg">Vocabulary</h3>
+<p class="text-sm text-slate-600">Learn new words</p>
+</div>
+</div>
+<div class="bg-white border border-[#E2E8F0] rounded-[16px] p-4 flex items-center gap-4 hover:bg-slate-50 transition-colors">
+<span class="material-symbols-outlined text-[#2563EB] text-[32px]">headphones</span>
+<div>
+<h3 class="font-bold text-[#0F172A] text-lg">Listening</h3>
+<p class="text-sm text-slate-600">Improve comprehension</p>
+</div>
+</div>
+<div class="bg-white border border-[#E2E8F0] rounded-[16px] p-4 flex items-center gap-4 hover:bg-slate-50 transition-colors">
+<span class="material-symbols-outlined text-[#2563EB] text-[32px]">edit_note</span>
+<div>
+<h3 class="font-bold text-[#0F172A] text-lg">Practice</h3>
+<p class="text-sm text-slate-600">Test your skills</p>
+</div>
+</div>
+</div>
+</section>
+<!-- Divider -->
+<div class="h-px bg-[#E2E8F0] w-full"></div>
+<!-- Section: Learn by HSK 3.0 level -->
+<section class="flex flex-col gap-6">
+<h2 class="text-2xl font-bold text-[#0F172A]">Learn by HSK 3.0 level.</h2>
+<div class="flex flex-col gap-4">
+<!-- Level 1 -->
+<div class="bg-white border border-[#E2E8F0] rounded-[16px] p-4">
+<div class="flex justify-between items-center mb-2">
+<span class="font-semibold text-[#0F172A]">Level 1</span>
+<span class="text-sm text-slate-500">0%</span>
+</div>
+<div class="w-full bg-[#E2E8F0] rounded-[8px] h-2">
+<div class="bg-[#2563EB] h-2 rounded-[8px] w-0"></div>
+</div>
+</div>
+<!-- Level 2 -->
+<div class="bg-white border border-[#E2E8F0] rounded-[16px] p-4">
+<div class="flex justify-between items-center mb-2">
+<span class="font-semibold text-[#0F172A]">Level 2</span>
+<span class="text-sm text-slate-500">0%</span>
+</div>
+<div class="w-full bg-[#E2E8F0] rounded-[8px] h-2">
+<div class="bg-[#2563EB] h-2 rounded-[8px] w-0"></div>
+</div>
+</div>
+<!-- Level 3 -->
+<div class="bg-white border border-[#E2E8F0] rounded-[16px] p-4">
+<div class="flex justify-between items-center mb-2">
+<span class="font-semibold text-[#0F172A]">Level 3</span>
+<span class="text-sm text-slate-500">0%</span>
+</div>
+<div class="w-full bg-[#E2E8F0] rounded-[8px] h-2">
+<div class="bg-[#2563EB] h-2 rounded-[8px] w-0"></div>
+</div>
+</div>
+</div>
+</section>
+<!-- Divider -->
+<div class="h-px bg-[#E2E8F0] w-full"></div>
+<!-- Final Section: Start with one useful next step -->
+<section class="flex flex-col gap-6 text-center items-center">
+<h2 class="text-2xl font-bold text-[#0F172A]">Start with one useful next step.</h2>
+<button class="min-h-[44px] bg-[#2563EB] text-white rounded-[8px] font-semibold w-full flex items-center justify-center max-w-xs">
+            Find your starting point
+        </button>
+</section>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-0 w-full flex justify-around items-center py-2 px-5 bg-[#F8FAFC] border-t border-[#E2E8F0] z-50">
+<!-- Learn (Active) -->
+<a class="flex flex-col items-center justify-center text-[#2563EB] font-bold active:scale-95 transition-transform duration-150 min-w-[64px] min-h-[44px]" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">school</span>
+<span class="text-[10px] font-semibold uppercase tracking-wider mt-1">Learn</span>
+</a>
+<!-- Review (Inactive) -->
+<a class="flex flex-col items-center justify-center text-slate-500 hover:text-[#2563EB] active:scale-95 transition-transform duration-150 min-w-[64px] min-h-[44px]" href="#">
+<span class="material-symbols-outlined">auto_stories</span>
+<span class="text-[10px] font-semibold uppercase tracking-wider mt-1">Review</span>
+</a>
+<!-- Dictionary (Inactive) -->
+<a class="flex flex-col items-center justify-center text-slate-500 hover:text-[#2563EB] active:scale-95 transition-transform duration-150 min-w-[64px] min-h-[44px]" href="#">
+<span class="material-symbols-outlined">menu_book</span>
+<span class="text-[10px] font-semibold uppercase tracking-wider mt-1">Dictionary</span>
+</a>
+<!-- Profile (Inactive) -->
+<a class="flex flex-col items-center justify-center text-slate-500 hover:text-[#2563EB] active:scale-95 transition-transform duration-150 min-w-[64px] min-h-[44px]" href="#">
+<span class="material-symbols-outlined">person</span>
+<span class="text-[10px] font-semibold uppercase tracking-wider mt-1">Profile</span>
+</a>
+</nav>
+<!-- Footer -->
+<footer class="relative w-full flex flex-col items-center gap-4 py-8 px-5 text-center bg-[#F8FAFC] border-t border-[#E2E8F0] mb-16">
+<div class="text-xl font-bold text-[#0F172A] mb-2">HSKKit</div>
+<p class="text-sm text-slate-600 mb-4">© 2024 HSKKit. Scholarly language documentation.</p>
+<div class="flex flex-wrap justify-center gap-x-4 gap-y-2">
+<a class="text-sm text-slate-600 hover:text-[#2563EB] hover:underline transition-colors min-h-[44px] flex items-center" href="#">Privacy Policy</a>
+<a class="text-sm text-slate-600 hover:text-[#2563EB] hover:underline transition-colors min-h-[44px] flex items-center" href="#">Terms of Service</a>
+<a class="text-sm text-slate-600 hover:text-[#2563EB] hover:underline transition-colors min-h-[44px] flex items-center" href="#">Cookie Policy</a>
+<a class="text-sm text-slate-600 hover:text-[#2563EB] hover:underline transition-colors min-h-[44px] flex items-center" href="#">Refund and Cancellation Policy</a>
+<a class="text-sm text-slate-600 hover:text-[#2563EB] hover:underline transition-colors min-h-[44px] flex items-center" href="#">Disclaimer</a>
+<a class="text-sm text-slate-600 hover:text-[#2563EB] hover:underline transition-colors min-h-[44px] flex items-center" href="#">AI Policy</a>
+</div>
+</footer>
+</body></html>

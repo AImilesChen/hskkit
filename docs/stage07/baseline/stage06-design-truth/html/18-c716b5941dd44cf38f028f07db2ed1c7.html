@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>ROUTE · /grammar/:slug · DESKTOP · ADOPTED</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<style>
+        body { background-color: #F8FAFC; color: #0F172A; font-family: 'Inter', sans-serif; }
+        .focus-mode-container { max-width: 720px; margin: 0 auto; }
+        .hanzi-lg { font-size: 2.5rem; line-height: 1.2; }
+</style>
+</head>
+<body class="bg-[#F8FAFC] text-[#0F172A] antialiased min-h-screen flex flex-col">
+<!-- Top Navigation (Shared Component) -->
+<nav class="bg-[#F8FAFC] w-full top-0 sticky border-b border-[#E2E8F0] z-50">
+<div class="max-w-[1140px] mx-auto px-[64px] flex items-center justify-between h-20 max-md:px-5">
+<div class="flex items-center gap-12">
+<a class="text-2xl font-bold text-[#0F172A] cursor-pointer active:opacity-80 transition-opacity" href="/">
+                    HSKKit
+                </a>
+<div class="hidden md:flex gap-8">
+<a class="text-[#0F172A] font-medium hover:text-[#2563EB] transition-colors" href="#">Levels</a>
+<a class="text-[#0F172A] font-medium hover:text-[#2563EB] transition-colors" href="#">Vocabulary</a>
+<a class="text-[#0F172A] font-medium hover:text-[#2563EB] transition-colors" href="#">Practice</a>
+<a class="text-[#2563EB] font-bold border-b-2 border-[#2563EB] pb-1" href="#">Study Tools</a>
+</div>
+</div>
+<div class="flex items-center gap-6">
+<!-- Search Icon -->
+<button class="cursor-pointer active:opacity-80 transition-opacity hover:bg-[#E2E8F0] transition-colors duration-200 p-2 rounded-full">
+<span class="material-symbols-outlined text-[#0F172A]" data-icon="search">search</span>
+</button>
+<button class="bg-[#2563EB] text-[#FFFFFF] px-6 py-2 rounded-[8px] text-sm font-semibold hover:bg-opacity-90 transition-opacity">
+                    Sign In
+                </button>
+</div>
+</div>
+</nav>
+<!-- Main Content Canvas - Focus Mode -->
+<main class="flex-grow w-full py-16 px-5 md:px-0 focus-mode-container">
+<!-- Breadcrumbs -->
+<div class="mb-8 text-xs font-semibold uppercase tracking-wider text-[#0F172A] flex items-center gap-2">
+<a class="hover:text-[#2563EB] transition-colors" href="#">GRAMMAR</a>
+<span class="material-symbols-outlined text-[16px]" data-icon="chevron_right">chevron_right</span>
+<a class="hover:text-[#2563EB] transition-colors" href="#">HSK 3</a>
+<span class="material-symbols-outlined text-[16px]" data-icon="chevron_right">chevron_right</span>
+<span class="text-[#2563EB]">THE BA CONSTRUCTION</span>
+</div>
+<!-- Lesson Header -->
+<header class="mb-12 border-b border-[#E2E8F0] pb-8">
+<h1 class="text-4xl font-bold text-[#0F172A] mb-4">The "ba" construction (把)</h1>
+<p class="text-lg text-[#0F172A] leading-relaxed">
+                The <span class="font-semibold text-[#2563EB]">把 (bǎ)</span> structure is one of the most important grammatical concepts in Chinese. It is used to highlight the object and the result of an action.
+            </p>
+</header>
+<!-- Section: Explanation -->
+<section class="mb-12">
+<h2 class="text-2xl font-bold text-[#0F172A] mb-6">Explanation &amp; Structure</h2>
+<div class="bg-[#FFFFFF] border border-[#E2E8F0] rounded-[16px] p-8 shadow-sm">
+<p class="mb-6 text-base leading-relaxed text-[#0F172A]">
+                    In standard English or basic Chinese syntax, sentences typically follow a <strong>Subject + Verb + Object (SVO)</strong> pattern. The <strong class="text-[#2563EB]">把 (bǎ)</strong> sentence pulls the object forward, placing it immediately after the subject and before the verb.
+                </p>
+<div class="bg-[#F8FAFC] p-6 rounded-[8px] border border-[#E2E8F0] flex items-center justify-center mb-6">
+<div class="text-center text-xl font-medium text-[#0F172A] tracking-wide">
+<span class="text-[#0F172A]">Subject</span> + <strong class="text-[#2563EB]">把</strong> + <span class="text-[#0F172A]">Object</span> + Verb + <span class="text-[#0F172A] italic">Result/Direction</span>
+</div>
+</div>
+<p class="text-sm text-[#0F172A]">
+<em>Crucial Note:</em> You cannot simply end a 把 sentence with just a verb. There must be some "disposal" or change of state affecting the object (the Result/Direction part).
+                </p>
+</div>
+</section>
+<!-- Section: Examples -->
+<section class="mb-16">
+<h2 class="text-2xl font-bold text-[#0F172A] mb-6">Example Sentences</h2>
+<div class="flex flex-col gap-6">
+<!-- Example 1 -->
+<div class="bg-[#FFFFFF] border border-[#E2E8F0] rounded-[16px] p-6 shadow-sm group hover:border-[#2563EB] transition-colors">
+<div class="flex items-start gap-4">
+<div class="bg-[#F8FAFC] text-[#2563EB] font-bold w-8 h-8 flex items-center justify-center rounded-[8px] shrink-0 border border-[#E2E8F0]">1</div>
+<div>
+<div class="hanzi-lg text-[#0F172A] mb-2">我把书放在桌子上了。</div>
+<div class="text-base text-[#0F172A] mb-2 tracking-wider">Wǒ bǎ shū fàng zài zhuōzi shang le.</div>
+<div class="text-base text-[#0F172A]">I put the book on the table.</div>
+</div>
+</div>
+</div>
+<!-- Example 2 -->
+<div class="bg-[#FFFFFF] border border-[#E2E8F0] rounded-[16px] p-6 shadow-sm group hover:border-[#2563EB] transition-colors">
+<div class="flex items-start gap-4">
+<div class="bg-[#F8FAFC] text-[#2563EB] font-bold w-8 h-8 flex items-center justify-center rounded-[8px] shrink-0 border border-[#E2E8F0]">2</div>
+<div>
+<div class="hanzi-lg text-[#0F172A] mb-2">请把门关上。</div>
+<div class="text-base text-[#0F172A] mb-2 tracking-wider">Qǐng bǎ mén guānshang.</div>
+<div class="text-base text-[#0F172A]">Please close the door.</div>
+</div>
+</div>
+</div>
+<!-- Example 3 -->
+<div class="bg-[#FFFFFF] border border-[#E2E8F0] rounded-[16px] p-6 shadow-sm group hover:border-[#2563EB] transition-colors">
+<div class="flex items-start gap-4">
+<div class="bg-[#F8FAFC] text-[#2563EB] font-bold w-8 h-8 flex items-center justify-center rounded-[8px] shrink-0 border border-[#E2E8F0]">3</div>
+<div>
+<div class="hanzi-lg text-[#0F172A] mb-2">他把我的咖啡喝完了。</div>
+<div class="text-base text-[#0F172A] mb-2 tracking-wider">Tā bǎ wǒ de kāfēi hē wán le.</div>
+<div class="text-base text-[#0F172A]">He drank (finished) my coffee.</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Section: Check Understanding -->
+<section class="mb-12">
+<h2 class="text-2xl font-bold text-[#0F172A] mb-6">Check Your Understanding</h2>
+<div class="bg-[#FFFFFF] border border-[#E2E8F0] rounded-[16px] p-8 shadow-sm">
+<p class="text-base font-semibold text-[#0F172A] mb-6">Choose the grammatically correct sentence using the 把 construction:</p>
+<form class="flex flex-col gap-4">
+<label class="flex items-center gap-4 bg-[#FFFFFF] p-4 rounded-[8px] border border-[#E2E8F0] cursor-pointer hover:bg-[#F8FAFC] transition-colors focus-within:border-[#2563EB] focus-within:ring-1 focus-within:ring-[#2563EB]">
+<input class="w-5 h-5 text-[#2563EB] border-[#E2E8F0] focus:ring-[#2563EB]" name="quiz1" type="radio"/>
+<div>
+<span class="block hanzi-lg text-xl text-[#0F172A]">我看完把书了。</span>
+<span class="block text-sm text-[#0F172A]">Wǒ kàn wán bǎ shū le.</span>
+</div>
+</label>
+<label class="flex items-center gap-4 bg-[#FFFFFF] p-4 rounded-[8px] border border-[#E2E8F0] cursor-pointer hover:bg-[#F8FAFC] transition-colors focus-within:border-[#2563EB] focus-within:ring-1 focus-within:ring-[#2563EB]">
+<input class="w-5 h-5 text-[#2563EB] border-[#E2E8F0] focus:ring-[#2563EB]" name="quiz1" type="radio"/>
+<div>
+<span class="block hanzi-lg text-xl text-[#0F172A]">我把书看完了。</span>
+<span class="block text-sm text-[#0F172A]">Wǒ bǎ shū kàn wán le.</span>
+</div>
+</label>
+<label class="flex items-center gap-4 bg-[#FFFFFF] p-4 rounded-[8px] border border-[#E2E8F0] cursor-pointer hover:bg-[#F8FAFC] transition-colors focus-within:border-[#2563EB] focus-within:ring-1 focus-within:ring-[#2563EB]">
+<input class="w-5 h-5 text-[#2563EB] border-[#E2E8F0] focus:ring-[#2563EB]" name="quiz1" type="radio"/>
+<div>
+<span class="block hanzi-lg text-xl text-[#0F172A]">把书我看完了。</span>
+<span class="block text-sm text-[#0F172A]">Bǎ shū wǒ kàn wán le.</span>
+</div>
+</label>
+<div class="mt-6 flex justify-end">
+<button class="bg-[#2563EB] text-[#FFFFFF] px-8 py-3 rounded-[8px] text-base font-semibold hover:bg-opacity-90 transition-opacity" type="button">
+                            Check Answer
+                        </button>
+</div>
+</form>
+</div>
+</section>
+</main>
+<!-- Footer (Shared Component) -->
+<footer class="bg-[#F8FAFC] border-t border-[#E2E8F0] w-full mt-auto">
+<div class="max-w-[1140px] mx-auto px-[64px] py-12 flex flex-col md:flex-row justify-between items-center gap-6 max-md:px-5">
+<div class="text-2xl font-bold text-[#0F172A]">
+                HSKKit
+            </div>
+<div class="flex flex-wrap gap-6 text-sm text-[#0F172A] justify-center">
+<a class="hover:text-[#2563EB] hover:underline transition-all opacity-90 hover:opacity-100" href="#">Privacy Policy</a>
+<a class="hover:text-[#2563EB] hover:underline transition-all opacity-90 hover:opacity-100" href="#">Terms of Service</a>
+<a class="hover:text-[#2563EB] hover:underline transition-all opacity-90 hover:opacity-100" href="#">Cookie Policy</a>
+<a class="hover:text-[#2563EB] hover:underline transition-all opacity-90 hover:opacity-100" href="#">Academic Integrity</a>
+<a class="hover:text-[#2563EB] hover:underline transition-all opacity-90 hover:opacity-100" href="#">Contact Support</a>
+</div>
+<div class="text-sm text-[#0F172A] text-center">
+                © 2024 HSKKit Scholarly Language Systems. All rights reserved.
+            </div>
+</div>
+</footer>
+</body></html>

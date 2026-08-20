@@ -1,0 +1,974 @@
+[
+  {
+    "screen_id": "658796597d1a45108e1cd961ee235a56",
+    "artifact": "html",
+    "local_path": "html/01-658796597d1a45108e1cd961ee235a56.html",
+    "sha256": "2bcb868d2b33f16d7bcc3da9b6576fea2364469ec3c14cd54dac8ff773e8402e",
+    "status": "ok",
+    "http_status": 200,
+    "original_download_url": "[NOT_PERSISTED: signed URL intentionally omitted]"
+  },
+  {
+    "screen_id": "658796597d1a45108e1cd961ee235a56",
+    "artifact": "screenshot",
+    "local_path": "screenshots/01-658796597d1a45108e1cd961ee235a56.png",
+    "sha256": "3c0cbe7ee9e3946ded59e913d96430a28a5ee5851544905310c024d0f3e72c4f",
+    "status": "ok",
+    "http_status": 200,
+    "original_download_url": "[NOT_PERSISTED: signed URL intentionally omitted]"
+  },
+  {
+    "screen_id": "b389ec9adafa46318c151a1d6f124834",
+    "artifact": "html",
+    "local_path": "html/02-b389ec9adafa46318c151a1d6f124834.html",
+    "sha256": "2e0a3c776abf037b2f45a30862e8030f9fff24bce02285b1f5c8f6bfc9c0d476",
+    "status": "ok",
+    "http_status": 200,
+    "original_download_url": "[NOT_PERSISTED: signed URL intentionally omitted]"
+  },
+  {
+    "screen_id": "b389ec9adafa46318c151a1d6f124834",
+    "artifact": "screenshot",
+    "local_path": "screenshots/02-b389ec9adafa46318c151a1d6f124834.png",
+    "sha256": "212924b3b6d52bbda314f6692a9eb59faf9365aae16b6670cdc5304236d0b339",
+    "status": "ok",
+    "http_status": 200,
+    "original_download_url": "[NOT_PERSISTED: signed URL intentionally omitted]"
+  },
+  {
+    "screen_id": "b309edcf1cd2427ba0bd542be2419ac1",
+    "artifact": "html",
+    "local_path": "html/03-b309edcf1cd2427ba0bd542be2419ac1.html",
+    "sha256": "15026377a7425c3092e5eb83076f4caa1667203e6597a52f5a5a2f76c8d9ed52",
+    "status": "ok",
+    "http_status": 200,
+    "original_download_url": "[NOT_PERSISTED: signed URL intentionally omitted]"
+  },
+  {
+    "screen_id": "b309edcf1cd2427ba0bd542be2419ac1",
+    "artifact": "screenshot",
+    "local_path": "screenshots/03-b309edcf1cd2427ba0bd542be2419ac1.png",
+    "sha256": "0425ee5c8ef9fb5a1c3c884d10755a7cd002dada74c85df74cfe53fd82d60ac6",
+    "status": "ok",
+    "http_status": 200,
+    "original_download_url": "[NOT_PERSISTED: signed URL intentionally omitted]"
+  },
+  {
+    "screen_id": "92eebad4e6aa436aa0527da665acf20c",
+    "artifact": "html",
+    "local_path": "html/04-92eebad4e6aa436aa0527da665acf20c.html",
+    "sha256": "1cf0ca1c6771f2507119a0bd25a480a8841a566ce21b35c86ec8df5aec5c1a3b",
+    "status": "ok",
+    "http_status": 200,
+    "original_download_url": "[NOT_PERSISTED: signed URL intentionally omitted]"
+  },
+  {
+    "screen_id": "92eebad4e6aa436aa0527da665acf20c",
+    "artifact": "screenshot",
+    "local_path": "screenshots/04-92eebad4e6aa436aa0527da665acf20c.png",
+    "sha256": "3cc188a7c69420ebb0cc781b388c11f800eef6d57abd562b9d78ca2ce686265e",
+    "status": "ok",
+    "http_status": 200,
+    "original_download_url": "[NOT_PERSISTED: signed URL intentionally omitted]"
+  },
+  {
+    "screen_id": "d66718d3a574454aa3bbbd5116709efd",
+    "artifact": "html",
+    "local_path": "html/05-d66718d3a574454aa3bbbd5116709efd.html",
+    "sha256": "eb176942e73756c3b82d43c7be9c53517f4fb22c153afa1f18fb52fe51c2d80f",
+    "status": "ok",
+    "http_status": 200,
+    "original_download_url": "[NOT_PERSISTED: signed URL intentionally omitted]"
+  },
+  {
+    "screen_id": "d66718d3a574454aa3bbbd5116709efd",
+    "artifact": "screenshot",
+    "local_path": "screenshots/05-d66718d3a574454aa3bbbd5116709efd.png",
+    "sha256": "678df740ea9c0c3c315c385c7250153d5ad205edd452307b9d79f5ea1fa44da2",
+    "status": "ok",
+    "http_status": 200,
+    "original_download_url": "[NOT_PERSISTED: signed URL intentionally omitted]"
+  },
+  {
+    "screen_id": "70ee08ba5a7f432e847ea43b23b0bd15",
+    "artifact": "html",
+    "local_path": "html/06-70ee08ba5a7f432e847ea43b23b0bd15.html",
+    "sha256": "c5f67c0170a32dcc59f6b14d163451fbd28d6aa92ed5c9f0754693a5262b3eeb",
+    "status": "ok",
+    "http_status": 200,
+    "original_download_url": "[NOT_PERSISTED: signed URL intentionally omitted]"
+  },
+  {
+    "screen_id": "70ee08ba5a7f432e847ea43b23b0bd15",
+    "artifact": "screenshot",
+    "local_path": "screenshots/06-70ee08ba5a7f432e847ea43b23b0bd15.png",
+    "sha256": "44c8945b751db6b97dc8f02d9b2667b6b596486ac8b55677ee469b898deacef0",
+    "status": "ok",
+    "http_status": 200,
+    "original_download_url": "[NOT_PERSISTED: signed URL intentionally omitted]"
+  },
+  {
+    "screen_id": "6fa0f3e08f9041e2a08db3fb822dd4c3",
+    "artifact": "html",
+    "local_path": "html/07-6fa0f3e08f9041e2a08db3fb822dd4c3.html",
+    "sha256": "dfddd495a8cc13811dfd53d611b1710e028bb1f3b65df247c1eb6b7823c27034",
+    "status": "ok",
+    "http_status": 200,
+    "original_download_url": "[NOT_PERSISTED: signed URL intentionally omitted]"
+  },
+  {
+    "screen_id": "6fa0f3e08f9041e2a08db3fb822dd4c3",
+    "artifact": "screenshot",
+    "local_path": "screenshots/07-6fa0f3e08f9041e2a08db3fb822dd4c3.png",
+    "sha256": "0d884e8348bdadaa239fa01ef291b865468fb366af49d9cde4d09a11efa9b488",
+    "status": "ok",
+    "http_status": 200,
+    "original_download_url": "[NOT_PERSISTED: signed URL intentionally omitted]"
+  },
+  {
+    "screen_id": "f5ae6b45d2ed4f5f888408def254c5ec",
+    "artifact": "html",
+    "local_path": "html/08-f5ae6b45d2ed4f5f888408def254c5ec.html",
+    "sha256": "0f58f308fd7878590d185e0a27aa130f17194f8d1cde13d9b195b03c15522f6b",
+    "status": "ok",
+    "http_status": 200,
+    "original_download_url": "[NOT_PERSISTED: signed URL intentionally omitted]"
+  },
+  {
+    "screen_id": "f5ae6b45d2ed4f5f888408def254c5ec",
+    "artifact": "screenshot",
+    "local_path": "screenshots/08-f5ae6b45d2ed4f5f888408def254c5ec.png",
+    "sha256": "22ca9e47c283d55c7db682649753e64f7eb37f54052fcebffe5a239ef142ca45",
+    "status": "ok",
+    "http_status": 200,
+    "original_download_url": "[NOT_PERSISTED: signed URL intentionally omitted]"
+  },
+  {
+    "screen_id": "b9af1d3aeb534201b726ef42213ebe12",
+    "artifact": "html",
+    "local_path": "html/09-b9af1d3aeb534201b726ef42213ebe12.html",
+    "sha256": "fdcf8b597388bebe43462ab7329a85117824778a318e5b80570485162285b63e",
+    "status": "ok",
+    "http_status": 200,
+    "original_download_url": "[NOT_PERSISTED: signed URL intentionally omitted]"
+  },
+  {
+    "screen_id": "b9af1d3aeb534201b726ef42213ebe12",
+    "artifact": "screenshot",
+    "local_path": "screenshots/09-b9af1d3aeb534201b726ef42213ebe12.png",
+    "sha256": "4c7386f607c398b9fa20443ab09546cbe52c5de5f56a1606599b01f649285ede",
+    "status": "ok",
+    "http_status": 200,
+    "original_download_url": "[NOT_PERSISTED: signed URL intentionally omitted]"
+  },
+  {
+    "screen_id": "2645bbd2e3b34876828c11160b995c68",
+    "artifact": "html",
+    "local_path": "html/10-2645bbd2e3b34876828c11160b995c68.html",
+    "sha256": "746a00cc1e3dd47d7a14d8f0c26610da06dfc55ba39a75b3712391e9a3a88794",
+    "status": "ok",
+    "http_status": 200,
+    "original_download_url": "[NOT_PERSISTED: signed URL intentionally omitted]"
+  },
+  {
+    "screen_id": "2645bbd2e3b34876828c11160b995c68",
+    "artifact": "screenshot",
+    "local_path": "screenshots/10-2645bbd2e3b34876828c11160b995c68.png",
+    "sha256": "1bb271462db170fc22c8cf35db1919d0f13f7f1cf0a4d086b2514380d0f93e51",
+    "status": "ok",
+    "http_status": 200,
+    "original_download_url": "[NOT_PERSISTED: signed URL intentionally omitted]"
+  },
+  {
+    "screen_id": "a03b1d57012543b8b123ae7b1327d20f",
+    "artifact": "html",
+    "local_path": "html/11-a03b1d57012543b8b123ae7b1327d20f.html",
+    "sha256": "f30fbfc2e3471f05af89ad9ee51f4d8223ab6384177cb26efe96dc6fc37984b6",
+    "status": "ok",
+    "http_status": 200,
+    "original_download_url": "[NOT_PERSISTED: signed URL intentionally omitted]"
+  },
+  {
+    "screen_id": "a03b1d57012543b8b123ae7b1327d20f",
+    "artifact": "screenshot",
+    "local_path": "screenshots/11-a03b1d57012543b8b123ae7b1327d20f.png",
+    "sha256": "4a6459409d4f154ee664a37945e9abf19911e7f5a12c5fef9cb38e4a4ff0b6b7",
+    "status": "ok",
+    "http_status": 200,
+    "original_download_url": "[NOT_PERSISTED: signed URL intentionally omitted]"
+  },
+  {
+    "screen_id": "0cdeedec85f240c88c66eb1509c08f7a",
+    "artifact": "html",
+    "local_path": "html/12-0cdeedec85f240c88c66eb1509c08f7a.html",
+    "sha256": "e4970808f11fea9593648c76fa20a7ca693419e4774b6e8f6761bc9a2a2e83c5",
+    "status": "ok",
+    "http_status": 200,
+    "original_download_url": "[NOT_PERSISTED: signed URL intentionally omitted]"
+  },
+  {
+    "screen_id": "0cdeedec85f240c88c66eb1509c08f7a",
+    "artifact": "screenshot",
+    "local_path": "screenshots/12-0cdeedec85f240c88c66eb1509c08f7a.png",
+    "sha256": "cfba404b5b3ff9f49fb8658f26203c59d378fc94d58046e0327bea3d667e0c5b",
+    "status": "ok",
+    "http_status": 200,
+    "original_download_url": "[NOT_PERSISTED: signed URL intentionally omitted]"
+  },
+  {
+    "screen_id": "a2a78d0055234c2784f3bb1d90cbb6f1",
+    "artifact": "html",
+    "local_path": "html/13-a2a78d0055234c2784f3bb1d90cbb6f1.html",
+    "sha256": "049629c151ecd86f428f205bc72f48065dfd18cff5843a8ab42dd252617cf727",
+    "status": "ok",
+    "http_status": 200,
+    "original_download_url": "[NOT_PERSISTED: signed URL intentionally omitted]"
+  },
+  {
+    "screen_id": "a2a78d0055234c2784f3bb1d90cbb6f1",
+    "artifact": "screenshot",
+    "local_path": "screenshots/13-a2a78d0055234c2784f3bb1d90cbb6f1.png",
+    "sha256": "b6ba7413b2c61ba0b5af4d2c7bb1651d924bb759778409b45c26cf6b4be506b6",
+    "status": "ok",
+    "http_status": 200,
+    "original_download_url": "[NOT_PERSISTED: signed URL intentionally omitted]"
+  },
+  {
+    "screen_id": "754327e6293540829f24a033a5dfe213",
+    "artifact": "html",
+    "local_path": "html/14-754327e6293540829f24a033a5dfe213.html",
+    "sha256": "cf176518f088aa5ef9fa1f87eddde3a76cc7f9e6ea10d7cc94286f67044dcc70",
+    "status": "ok",
+    "http_status": 200,
+    "original_download_url": "[NOT_PERSISTED: signed URL intentionally omitted]"
+  },
+  {
+    "screen_id": "754327e6293540829f24a033a5dfe213",
+    "artifact": "screenshot",
+    "local_path": "screenshots/14-754327e6293540829f24a033a5dfe213.png",
+    "sha256": "198560f5ccf61eb5a8e5947f3e1860ecf37de35a1da37b11ac8c21d7adb3f490",
+    "status": "ok",
+    "http_status": 200,
+    "original_download_url": "[NOT_PERSISTED: signed URL intentionally omitted]"
+  },
+  {
+    "screen_id": "cab0b2342fc8459d88da6f793d6437cb",
+    "artifact": "html",
+    "local_path": "html/15-cab0b2342fc8459d88da6f793d6437cb.html",
+    "sha256": "e08067f36bf61466b94d4fcb2047f489287883343e5b0258476ff9aa80fbd844",
+    "status": "ok",
+    "http_status": 200,
+    "original_download_url": "[NOT_PERSISTED: signed URL intentionally omitted]"
+  },
+  {
+    "screen_id": "cab0b2342fc8459d88da6f793d6437cb",
+    "artifact": "screenshot",
+    "local_path": "screenshots/15-cab0b2342fc8459d88da6f793d6437cb.png",
+    "sha256": "76d152257d50aa5931e06cd2ae4ac40745a1e1da875ff01b98f01095200c5f62",
+    "status": "ok",
+    "http_status": 200,
+    "original_download_url": "[NOT_PERSISTED: signed URL intentionally omitted]"
+  },
+  {
+    "screen_id": "1bc7112d12a148fab9c8fe92c0007a10",
+    "artifact": "html",
+    "local_path": "html/16-1bc7112d12a148fab9c8fe92c0007a10.html",
+    "sha256": "820786f00bc935b7a84f5fd056d2503677e1f3d9e1ee8281e8db33269dcb2771",
+    "status": "ok",
+    "http_status": 200,
+    "original_download_url": "[NOT_PERSISTED: signed URL intentionally omitted]"
+  },
+  {
+    "screen_id": "1bc7112d12a148fab9c8fe92c0007a10",
+    "artifact": "screenshot",
+    "local_path": "screenshots/16-1bc7112d12a148fab9c8fe92c0007a10.png",
+    "sha256": "69fce3687d28cf8e1837f7c8005df1c4f33ea442f174033294bff4326f011a3b",
+    "status": "ok",
+    "http_status": 200,
+    "original_download_url": "[NOT_PERSISTED: signed URL intentionally omitted]"
+  },
+  {
+    "screen_id": "2ad75c4226dc46c1b08c17b1ad323d88",
+    "artifact": "html",
+    "local_path": "html/17-2ad75c4226dc46c1b08c17b1ad323d88.html",
+    "sha256": "6cd956b57ad4edab92b6eb97d8d1c1a453faf9092135301eb2da44519000064c",
+    "status": "ok",
+    "http_status": 200,
+    "original_download_url": "[NOT_PERSISTED: signed URL intentionally omitted]"
+  },
+  {
+    "screen_id": "2ad75c4226dc46c1b08c17b1ad323d88",
+    "artifact": "screenshot",
+    "local_path": "screenshots/17-2ad75c4226dc46c1b08c17b1ad323d88.png",
+    "sha256": "2c06e0214bb4d9527758b98df13b9ea6f7659edb37730be986d400530f05acd4",
+    "status": "ok",
+    "http_status": 200,
+    "original_download_url": "[NOT_PERSISTED: signed URL intentionally omitted]"
+  },
+  {
+    "screen_id": "c716b5941dd44cf38f028f07db2ed1c7",
+    "artifact": "html",
+    "local_path": "html/18-c716b5941dd44cf38f028f07db2ed1c7.html",
+    "sha256": "989e7ebfa33fcdfa4dfd65a1d83664dd8b2064f603e3b95701d9c0c6c687b8b3",
+    "status": "ok",
+    "http_status": 200,
+    "original_download_url": "[NOT_PERSISTED: signed URL intentionally omitted]"
+  },
+  {
+    "screen_id": "c716b5941dd44cf38f028f07db2ed1c7",
+    "artifact": "screenshot",
+    "local_path": "screenshots/18-c716b5941dd44cf38f028f07db2ed1c7.png",
+    "sha256": "54cd22ce54b9fc0190753f886a6a65f520e3172c840ea3d152eb93557f5d71ab",
+    "status": "ok",
+    "http_status": 200,
+    "original_download_url": "[NOT_PERSISTED: signed URL intentionally omitted]"
+  },
+  {
+    "screen_id": "040c9de2553945f39c208e3f50e062c6",
+    "artifact": "html",
+    "local_path": "html/19-040c9de2553945f39c208e3f50e062c6.html",
+    "sha256": "0c5b7af0de96118908fd340855d56a27723ba869b62e09d2f41733b76d71014a",
+    "status": "ok",
+    "http_status": 200,
+    "original_download_url": "[NOT_PERSISTED: signed URL intentionally omitted]"
+  },
+  {
+    "screen_id": "040c9de2553945f39c208e3f50e062c6",
+    "artifact": "screenshot",
+    "local_path": "screenshots/19-040c9de2553945f39c208e3f50e062c6.png",
+    "sha256": "e1bffc56c1fa960c1d5160cb45bd53a0c38ab3cd223c911797031678e6931c88",
+    "status": "ok",
+    "http_status": 200,
+    "original_download_url": "[NOT_PERSISTED: signed URL intentionally omitted]"
+  },
+  {
+    "screen_id": "2b0a75fade1c4cb9a282d21b8048a73b",
+    "artifact": "html",
+    "local_path": "html/20-2b0a75fade1c4cb9a282d21b8048a73b.html",
+    "sha256": "9c349e7b8e9182b0240c564d8a2e88cf1baf244ff8445b0d49a6d354cc6ae100",
+    "status": "ok",
+    "http_status": 200,
+    "original_download_url": "[NOT_PERSISTED: signed URL intentionally omitted]"
+  },
+  {
+    "screen_id": "2b0a75fade1c4cb9a282d21b8048a73b",
+    "artifact": "screenshot",
+    "local_path": "screenshots/20-2b0a75fade1c4cb9a282d21b8048a73b.png",
+    "sha256": "fc1af7002b22ab49e94e5f7627edae78a727f1462e45295506550687c13c7834",
+    "status": "ok",
+    "http_status": 200,
+    "original_download_url": "[NOT_PERSISTED: signed URL intentionally omitted]"
+  },
+  {
+    "screen_id": "87c9b49163724639b3a0330df4de0da4",
+    "artifact": "html",
+    "local_path": "html/21-87c9b49163724639b3a0330df4de0da4.html",
+    "sha256": "a0186bdba3071a195c251cfe7dca8f367f19336cce9e37797a40cacfb5e18996",
+    "status": "ok",
+    "http_status": 200,
+    "original_download_url": "[NOT_PERSISTED: signed URL intentionally omitted]"
+  },
+  {
+    "screen_id": "87c9b49163724639b3a0330df4de0da4",
+    "artifact": "screenshot",
+    "local_path": "screenshots/21-87c9b49163724639b3a0330df4de0da4.png",
+    "sha256": "f8667f066f8d7b471a5573ccfa7cab519d64632141cff8a46aa50157c37ce285",
+    "status": "ok",
+    "http_status": 200,
+    "original_download_url": "[NOT_PERSISTED: signed URL intentionally omitted]"
+  },
+  {
+    "screen_id": "cbd34ca6970c4c57ab6570c7462a50d9",
+    "artifact": "html",
+    "local_path": "html/22-cbd34ca6970c4c57ab6570c7462a50d9.html",
+    "sha256": "5b8a59799574a3a488ddf2edd4891adef35cf4c96780005d6a745a0b8492480d",
+    "status": "ok",
+    "http_status": 200,
+    "original_download_url": "[NOT_PERSISTED: signed URL intentionally omitted]"
+  },
+  {
+    "screen_id": "cbd34ca6970c4c57ab6570c7462a50d9",
+    "artifact": "screenshot",
+    "local_path": "screenshots/22-cbd34ca6970c4c57ab6570c7462a50d9.png",
+    "sha256": "9c46ab653e4d6ebd99e430acdace1be3fbde37d6d0b67291a7ed73ded2e52ada",
+    "status": "ok",
+    "http_status": 200,
+    "original_download_url": "[NOT_PERSISTED: signed URL intentionally omitted]"
+  },
+  {
+    "screen_id": "84c137a517484a52b332b6c456ac3813",
+    "artifact": "html",
+    "local_path": "html/23-84c137a517484a52b332b6c456ac3813.html",
+    "sha256": "f0196e1c52b55c1322d4a2ae880a19c5d5e0df712f4fb07fea955413bb291019",
+    "status": "ok",
+    "http_status": 200,
+    "original_download_url": "[NOT_PERSISTED: signed URL intentionally omitted]"
+  },
+  {
+    "screen_id": "84c137a517484a52b332b6c456ac3813",
+    "artifact": "screenshot",
+    "local_path": "screenshots/23-84c137a517484a52b332b6c456ac3813.png",
+    "sha256": "06a46a6ba9400ed4d08012e111e7dd793ff345ea6c4363741da1f82863370e9e",
+    "status": "ok",
+    "http_status": 200,
+    "original_download_url": "[NOT_PERSISTED: signed URL intentionally omitted]"
+  },
+  {
+    "screen_id": "0ce5274a69be4d6aaf889c85a928b046",
+    "artifact": "html",
+    "local_path": "html/24-0ce5274a69be4d6aaf889c85a928b046.html",
+    "sha256": "d8dfff7d6200427d4a2b03a0b0d92066fd27c30af57272e354644bb9306b98da",
+    "status": "ok",
+    "http_status": 200,
+    "original_download_url": "[NOT_PERSISTED: signed URL intentionally omitted]"
+  },
+  {
+    "screen_id": "0ce5274a69be4d6aaf889c85a928b046",
+    "artifact": "screenshot",
+    "local_path": "screenshots/24-0ce5274a69be4d6aaf889c85a928b046.png",
+    "sha256": "bcd552f7ac3124bf21a399b0bf9cae2ff3280e5719d27806c8cc8329c3a355b0",
+    "status": "ok",
+    "http_status": 200,
+    "original_download_url": "[NOT_PERSISTED: signed URL intentionally omitted]"
+  },
+  {
+    "screen_id": "0e7b4f3014bf47dc9ea49f8129a8efba",
+    "artifact": "html",
+    "local_path": "html/25-0e7b4f3014bf47dc9ea49f8129a8efba.html",
+    "sha256": "df0db6e0d1f60a44dc6be7c60d0d5f6aae0805326576524452e943a5e7283341",
+    "status": "ok",
+    "http_status": 200,
+    "original_download_url": "[NOT_PERSISTED: signed URL intentionally omitted]"
+  },
+  {
+    "screen_id": "0e7b4f3014bf47dc9ea49f8129a8efba",
+    "artifact": "screenshot",
+    "local_path": "screenshots/25-0e7b4f3014bf47dc9ea49f8129a8efba.png",
+    "sha256": "290309cc6fca84f4ff8a08a96a3fd7ab5378e8b70b2848e7febbd0f5763c174e",
+    "status": "ok",
+    "http_status": 200,
+    "original_download_url": "[NOT_PERSISTED: signed URL intentionally omitted]"
+  },
+  {
+    "screen_id": "cecde4f4fd7d46c8990dfc08d85941a0",
+    "artifact": "html",
+    "local_path": "html/26-cecde4f4fd7d46c8990dfc08d85941a0.html",
+    "sha256": "e5cadabb5528f56ed407645cf4ab26549d7364a3cf63e0eb99e48288333c1be1",
+    "status": "ok",
+    "http_status": 200,
+    "original_download_url": "[NOT_PERSISTED: signed URL intentionally omitted]"
+  },
+  {
+    "screen_id": "cecde4f4fd7d46c8990dfc08d85941a0",
+    "artifact": "screenshot",
+    "local_path": "screenshots/26-cecde4f4fd7d46c8990dfc08d85941a0.png",
+    "sha256": "ec196b2d591bf8a5abfcbda720b6b886153efd3979e400b8ce2f72b63823fbcb",
+    "status": "ok",
+    "http_status": 200,
+    "original_download_url": "[NOT_PERSISTED: signed URL intentionally omitted]"
+  },
+  {
+    "screen_id": "319af02fc21141a69e21fc832abc6cd1",
+    "artifact": "html",
+    "local_path": "html/27-319af02fc21141a69e21fc832abc6cd1.html",
+    "sha256": "35bc57293cf16abae8a1f436eb2db59a5c212241f76769325c15c843b4b3dc84",
+    "status": "ok",
+    "http_status": 200,
+    "original_download_url": "[NOT_PERSISTED: signed URL intentionally omitted]"
+  },
+  {
+    "screen_id": "319af02fc21141a69e21fc832abc6cd1",
+    "artifact": "screenshot",
+    "local_path": "screenshots/27-319af02fc21141a69e21fc832abc6cd1.png",
+    "sha256": "c984528af3107d511a21777d5373f2559200be072bb82f3b630337865f7e38d6",
+    "status": "ok",
+    "http_status": 200,
+    "original_download_url": "[NOT_PERSISTED: signed URL intentionally omitted]"
+  },
+  {
+    "screen_id": "fc3bc31b7aa34d92a8af9f5f30fc9b7c",
+    "artifact": "html",
+    "local_path": "html/28-fc3bc31b7aa34d92a8af9f5f30fc9b7c.html",
+    "sha256": "30cd35eab8e807941bbbd7894f44a9d28bd387f3e4f6b389838798cd1a36e886",
+    "status": "ok",
+    "http_status": 200,
+    "original_download_url": "[NOT_PERSISTED: signed URL intentionally omitted]"
+  },
+  {
+    "screen_id": "fc3bc31b7aa34d92a8af9f5f30fc9b7c",
+    "artifact": "screenshot",
+    "local_path": "screenshots/28-fc3bc31b7aa34d92a8af9f5f30fc9b7c.png",
+    "sha256": "a6d0ab7b79111869fbb77249d8c30eaa318094712e8a35c2973e175a17be46e2",
+    "status": "ok",
+    "http_status": 200,
+    "original_download_url": "[NOT_PERSISTED: signed URL intentionally omitted]"
+  },
+  {
+    "screen_id": "53d517299d9a4098855242a5fa2b2987",
+    "artifact": "html",
+    "local_path": "html/29-53d517299d9a4098855242a5fa2b2987.html",
+    "sha256": "3647ef28752efb85719d598b6d6dc96a52d9070056a7131f576d55c157f8fdb9",
+    "status": "ok",
+    "http_status": 200,
+    "original_download_url": "[NOT_PERSISTED: signed URL intentionally omitted]"
+  },
+  {
+    "screen_id": "53d517299d9a4098855242a5fa2b2987",
+    "artifact": "screenshot",
+    "local_path": "screenshots/29-53d517299d9a4098855242a5fa2b2987.png",
+    "sha256": "bf1b7ada4f592614ce4f0b6e9807cf0e43ee26bd5d3cccf70c48f39a4032b3c8",
+    "status": "ok",
+    "http_status": 200,
+    "original_download_url": "[NOT_PERSISTED: signed URL intentionally omitted]"
+  },
+  {
+    "screen_id": "6ff2bc7174114164bf168f3027c441de",
+    "artifact": "html",
+    "local_path": "html/30-6ff2bc7174114164bf168f3027c441de.html",
+    "sha256": "6738ecd74d8aa46722e85c7cdf4d037a9b7cf10b02795d92e2bb5d3505a0d898",
+    "status": "ok",
+    "http_status": 200,
+    "original_download_url": "[NOT_PERSISTED: signed URL intentionally omitted]"
+  },
+  {
+    "screen_id": "6ff2bc7174114164bf168f3027c441de",
+    "artifact": "screenshot",
+    "local_path": "screenshots/30-6ff2bc7174114164bf168f3027c441de.png",
+    "sha256": "554ef71b1caef103a816f0aa0194306a40175e3dad1d3b12f5c932166bbf1182",
+    "status": "ok",
+    "http_status": 200,
+    "original_download_url": "[NOT_PERSISTED: signed URL intentionally omitted]"
+  },
+  {
+    "screen_id": "42e0a57054c543b2a8b40bba29fb12fb",
+    "artifact": "html",
+    "local_path": "html/31-42e0a57054c543b2a8b40bba29fb12fb.html",
+    "sha256": "3a4c66af18778cb4335b7f6b21ab431976ef5ecbe1e32f70683f03549b87e1cc",
+    "status": "ok",
+    "http_status": 200,
+    "original_download_url": "[NOT_PERSISTED: signed URL intentionally omitted]"
+  },
+  {
+    "screen_id": "42e0a57054c543b2a8b40bba29fb12fb",
+    "artifact": "screenshot",
+    "local_path": "screenshots/31-42e0a57054c543b2a8b40bba29fb12fb.png",
+    "sha256": "616c488ce5442da556f668b08ff8ebff1238df750de3ca6e6280eb7f922474e0",
+    "status": "ok",
+    "http_status": 200,
+    "original_download_url": "[NOT_PERSISTED: signed URL intentionally omitted]"
+  },
+  {
+    "screen_id": "abaeb10d20cf46908ee3134fdfefaaf5",
+    "artifact": "html",
+    "local_path": "html/32-abaeb10d20cf46908ee3134fdfefaaf5.html",
+    "sha256": "8c04689257d5c5e2eafedb8edab3bd19b2b12ce9f75e903c4d5e90951b113c4b",
+    "status": "ok",
+    "http_status": 200,
+    "original_download_url": "[NOT_PERSISTED: signed URL intentionally omitted]"
+  },
+  {
+    "screen_id": "abaeb10d20cf46908ee3134fdfefaaf5",
+    "artifact": "screenshot",
+    "local_path": "screenshots/32-abaeb10d20cf46908ee3134fdfefaaf5.png",
+    "sha256": "62518bb229aea638da97ef14f8157eb246825e1608c3c8e05d13bc4730bcc7a5",
+    "status": "ok",
+    "http_status": 200,
+    "original_download_url": "[NOT_PERSISTED: signed URL intentionally omitted]"
+  },
+  {
+    "screen_id": "f5a174ecf320455d9420704e2567d471",
+    "artifact": "html",
+    "local_path": "html/33-f5a174ecf320455d9420704e2567d471.html",
+    "sha256": "0b784759d89ae0942285e76461fcf8b04dd00410cf56be4448dde51b776a7fae",
+    "status": "ok",
+    "http_status": 200,
+    "original_download_url": "[NOT_PERSISTED: signed URL intentionally omitted]"
+  },
+  {
+    "screen_id": "f5a174ecf320455d9420704e2567d471",
+    "artifact": "screenshot",
+    "local_path": "screenshots/33-f5a174ecf320455d9420704e2567d471.png",
+    "sha256": "dd510f9924e29eecc1be696ba6f129110bd4cd81360255fe4065842a6f73bbe2",
+    "status": "ok",
+    "http_status": 200,
+    "original_download_url": "[NOT_PERSISTED: signed URL intentionally omitted]"
+  },
+  {
+    "screen_id": "9d8449c0a1b549e89efa92d29b92d5dc",
+    "artifact": "html",
+    "local_path": "html/34-9d8449c0a1b549e89efa92d29b92d5dc.html",
+    "sha256": "f18c3303c2d199ba2a02c5e3a9d3275f317ac58dfb21c55a022b77c9d2f5ea44",
+    "status": "ok",
+    "http_status": 200,
+    "original_download_url": "[NOT_PERSISTED: signed URL intentionally omitted]"
+  },
+  {
+    "screen_id": "9d8449c0a1b549e89efa92d29b92d5dc",
+    "artifact": "screenshot",
+    "local_path": "screenshots/34-9d8449c0a1b549e89efa92d29b92d5dc.png",
+    "sha256": "bda51fc23ec7223f3616baf5537fb91fe15ca668be4cd4ede28976d639fcd3a8",
+    "status": "ok",
+    "http_status": 200,
+    "original_download_url": "[NOT_PERSISTED: signed URL intentionally omitted]"
+  },
+  {
+    "screen_id": "2c6bafe3185444a897a6572b9662e5ea",
+    "artifact": "html",
+    "local_path": "html/35-2c6bafe3185444a897a6572b9662e5ea.html",
+    "sha256": "0e877b856e2242c7645b67b36343eb25aab04f18bdebd635ed665154e763cb60",
+    "status": "ok",
+    "http_status": 200,
+    "original_download_url": "[NOT_PERSISTED: signed URL intentionally omitted]"
+  },
+  {
+    "screen_id": "2c6bafe3185444a897a6572b9662e5ea",
+    "artifact": "screenshot",
+    "local_path": "screenshots/35-2c6bafe3185444a897a6572b9662e5ea.png",
+    "sha256": "2dac8cdb617e70fb913bb87a914aed5312116464daf3f6fdafc00f974e0b935c",
+    "status": "ok",
+    "http_status": 200,
+    "original_download_url": "[NOT_PERSISTED: signed URL intentionally omitted]"
+  },
+  {
+    "screen_id": "e390b81a0c1545a8844ab3a502496f6f",
+    "artifact": "html",
+    "local_path": "html/36-e390b81a0c1545a8844ab3a502496f6f.html",
+    "sha256": "1737d78288364b994ff07b624a09d065b55b960d6b411113986ce70021cf26a6",
+    "status": "ok",
+    "http_status": 200,
+    "original_download_url": "[NOT_PERSISTED: signed URL intentionally omitted]"
+  },
+  {
+    "screen_id": "e390b81a0c1545a8844ab3a502496f6f",
+    "artifact": "screenshot",
+    "local_path": "screenshots/36-e390b81a0c1545a8844ab3a502496f6f.png",
+    "sha256": "f7da83da4c2822fba92e7162ecd8899a6fb2e0ee5081f3031e05a9f47d4c80ed",
+    "status": "ok",
+    "http_status": 200,
+    "original_download_url": "[NOT_PERSISTED: signed URL intentionally omitted]"
+  },
+  {
+    "screen_id": "ee433819b2d14ebcb5e000bb1de5d564",
+    "artifact": "html",
+    "local_path": "html/37-ee433819b2d14ebcb5e000bb1de5d564.html",
+    "sha256": "7b94e755440185d65f2cd41766a888124dc66d29828db1749cc5db438c9f3339",
+    "status": "ok",
+    "http_status": 200,
+    "original_download_url": "[NOT_PERSISTED: signed URL intentionally omitted]"
+  },
+  {
+    "screen_id": "ee433819b2d14ebcb5e000bb1de5d564",
+    "artifact": "screenshot",
+    "local_path": "screenshots/37-ee433819b2d14ebcb5e000bb1de5d564.png",
+    "sha256": "3815dffe69f1ee9c7926515b1d7ff28debc0f62c1c99228a6b8123ced6e73093",
+    "status": "ok",
+    "http_status": 200,
+    "original_download_url": "[NOT_PERSISTED: signed URL intentionally omitted]"
+  },
+  {
+    "screen_id": "ecf68bd267bc47cdaab5ea4126a6f523",
+    "artifact": "html",
+    "local_path": "html/38-ecf68bd267bc47cdaab5ea4126a6f523.html",
+    "sha256": "cdbd68ee56267d897ca40c8d201d7218bf40e7808ce9e01353f602b12548f15b",
+    "status": "ok",
+    "http_status": 200,
+    "original_download_url": "[NOT_PERSISTED: signed URL intentionally omitted]"
+  },
+  {
+    "screen_id": "ecf68bd267bc47cdaab5ea4126a6f523",
+    "artifact": "screenshot",
+    "local_path": "screenshots/38-ecf68bd267bc47cdaab5ea4126a6f523.png",
+    "sha256": "4ba5ad9769fea157e3d49dc21d97d6b519e8f53e8f93642c04e1fd1f0045af1d",
+    "status": "ok",
+    "http_status": 200,
+    "original_download_url": "[NOT_PERSISTED: signed URL intentionally omitted]"
+  },
+  {
+    "screen_id": "9a83a34a08ce46d2b3ca1482dd695016",
+    "artifact": "html",
+    "local_path": "html/39-9a83a34a08ce46d2b3ca1482dd695016.html",
+    "sha256": "bd75c6836d41e6f79138fc76af3969b9caa580739d06bffdfd4f2522490efbbd",
+    "status": "ok",
+    "http_status": 200,
+    "original_download_url": "[NOT_PERSISTED: signed URL intentionally omitted]"
+  },
+  {
+    "screen_id": "9a83a34a08ce46d2b3ca1482dd695016",
+    "artifact": "screenshot",
+    "local_path": "screenshots/39-9a83a34a08ce46d2b3ca1482dd695016.png",
+    "sha256": "e9cf197e06257be6108682262cd7a34871faa739f63715045161e09dfd2503e6",
+    "status": "ok",
+    "http_status": 200,
+    "original_download_url": "[NOT_PERSISTED: signed URL intentionally omitted]"
+  },
+  {
+    "screen_id": "8527b58635204d76823c713a9bc095b4",
+    "artifact": "html",
+    "local_path": "html/40-8527b58635204d76823c713a9bc095b4.html",
+    "sha256": "488dc548f54f881809b67a0a6160b02295d405a1b02801aadaef4ea1fc8f95c2",
+    "status": "ok",
+    "http_status": 200,
+    "original_download_url": "[NOT_PERSISTED: signed URL intentionally omitted]"
+  },
+  {
+    "screen_id": "8527b58635204d76823c713a9bc095b4",
+    "artifact": "screenshot",
+    "local_path": "screenshots/40-8527b58635204d76823c713a9bc095b4.png",
+    "sha256": "5840ef2bb507778c38e123cd2e7c4042697670fa4222ff0931697f258332ad19",
+    "status": "ok",
+    "http_status": 200,
+    "original_download_url": "[NOT_PERSISTED: signed URL intentionally omitted]"
+  },
+  {
+    "screen_id": "efc7427807c44ac5a07db9635a92b007",
+    "artifact": "html",
+    "local_path": "html/41-efc7427807c44ac5a07db9635a92b007.html",
+    "sha256": "552adbbbfa990ce3bb94c7b87e2f69b0e8b25fadbe79bada671a1ddd89929f38",
+    "status": "ok",
+    "http_status": 200,
+    "original_download_url": "[NOT_PERSISTED: signed URL intentionally omitted]"
+  },
+  {
+    "screen_id": "efc7427807c44ac5a07db9635a92b007",
+    "artifact": "screenshot",
+    "local_path": "screenshots/41-efc7427807c44ac5a07db9635a92b007.png",
+    "sha256": "9bee70e81839f203455141b39fe04f2ea11acbeedff224d0aa520f61f494da94",
+    "status": "ok",
+    "http_status": 200,
+    "original_download_url": "[NOT_PERSISTED: signed URL intentionally omitted]"
+  },
+  {
+    "screen_id": "138331f372044a34b1b2904f5258656b",
+    "artifact": "html",
+    "local_path": "html/42-138331f372044a34b1b2904f5258656b.html",
+    "sha256": "9243eef5c46e7fc334ec186bec0dedd11cc2b48117db5bc87b96735a191ba2b3",
+    "status": "ok",
+    "http_status": 200,
+    "original_download_url": "[NOT_PERSISTED: signed URL intentionally omitted]"
+  },
+  {
+    "screen_id": "138331f372044a34b1b2904f5258656b",
+    "artifact": "screenshot",
+    "local_path": "screenshots/42-138331f372044a34b1b2904f5258656b.png",
+    "sha256": "1ec7cf7541ac4342521286c9d11c0d265fe5ebd4ef9a1bfe774b0173dce640bb",
+    "status": "ok",
+    "http_status": 200,
+    "original_download_url": "[NOT_PERSISTED: signed URL intentionally omitted]"
+  },
+  {
+    "screen_id": "88b71ccd23914d7a8138bf6b917a45f9",
+    "artifact": "html",
+    "local_path": "html/43-88b71ccd23914d7a8138bf6b917a45f9.html",
+    "sha256": "83e96ea1e15454899da551100dd6306a0f7b5d3641cd3a2c4ba78ec317871543",
+    "status": "ok",
+    "http_status": 200,
+    "original_download_url": "[NOT_PERSISTED: signed URL intentionally omitted]"
+  },
+  {
+    "screen_id": "88b71ccd23914d7a8138bf6b917a45f9",
+    "artifact": "screenshot",
+    "local_path": "screenshots/43-88b71ccd23914d7a8138bf6b917a45f9.png",
+    "sha256": "6c0f7e051a8bc46932c7e7b7a87e6367a9696a8d1ebd5419f2e288e0461b5274",
+    "status": "ok",
+    "http_status": 200,
+    "original_download_url": "[NOT_PERSISTED: signed URL intentionally omitted]"
+  },
+  {
+    "screen_id": "f47203ca5be348f8931c558077a435cc",
+    "artifact": "html",
+    "local_path": "html/44-f47203ca5be348f8931c558077a435cc.html",
+    "sha256": "bf748522fc61af6d9d3859064f9244a9e4731e8187a7a83e7c02a326d0688d00",
+    "status": "ok",
+    "http_status": 200,
+    "original_download_url": "[NOT_PERSISTED: signed URL intentionally omitted]"
+  },
+  {
+    "screen_id": "f47203ca5be348f8931c558077a435cc",
+    "artifact": "screenshot",
+    "local_path": "screenshots/44-f47203ca5be348f8931c558077a435cc.png",
+    "sha256": "66ff35f8d6bd8ab7d9d4e90aacba734d676eaf8bc2ae19d45d6eeef7ce4dcf83",
+    "status": "ok",
+    "http_status": 200,
+    "original_download_url": "[NOT_PERSISTED: signed URL intentionally omitted]"
+  },
+  {
+    "screen_id": "ec34d44d118c4e69846d7d05a7145ba7",
+    "artifact": "html",
+    "local_path": "html/45-ec34d44d118c4e69846d7d05a7145ba7.html",
+    "sha256": "2d8c1b4741e25266c93ddeebf4debe7286c70cdaade626d54cca84ee8fe1efdf",
+    "status": "ok",
+    "http_status": 200,
+    "original_download_url": "[NOT_PERSISTED: signed URL intentionally omitted]"
+  },
+  {
+    "screen_id": "ec34d44d118c4e69846d7d05a7145ba7",
+    "artifact": "screenshot",
+    "local_path": "screenshots/45-ec34d44d118c4e69846d7d05a7145ba7.png",
+    "sha256": "f20e96209cf313d97cc9c43a4ed61a5578ebd135bee9fd8d2ee03e6e96d3fce6",
+    "status": "ok",
+    "http_status": 200,
+    "original_download_url": "[NOT_PERSISTED: signed URL intentionally omitted]"
+  },
+  {
+    "screen_id": "068c0d7ce28c498a9626d0ff86711464",
+    "artifact": "html",
+    "local_path": "html/46-068c0d7ce28c498a9626d0ff86711464.html",
+    "sha256": "fb07eff9d4017293a9cd84158e006ef0a0196d9610e2f0e1796bf1c6a63b7893",
+    "status": "ok",
+    "http_status": 200,
+    "original_download_url": "[NOT_PERSISTED: signed URL intentionally omitted]"
+  },
+  {
+    "screen_id": "068c0d7ce28c498a9626d0ff86711464",
+    "artifact": "screenshot",
+    "local_path": "screenshots/46-068c0d7ce28c498a9626d0ff86711464.png",
+    "sha256": "02864f9032f1c2a59758320e5b5721077341b5b5cf43ea95d295e1723c31594a",
+    "status": "ok",
+    "http_status": 200,
+    "original_download_url": "[NOT_PERSISTED: signed URL intentionally omitted]"
+  },
+  {
+    "screen_id": "d35020a589064eb793cc0694a9de59a5",
+    "artifact": "html",
+    "local_path": "html/47-d35020a589064eb793cc0694a9de59a5.html",
+    "sha256": "b1de90273d2433e72a6f388d1d5d8f9787ba783a746df8c69f48062ebc0dcdd7",
+    "status": "ok",
+    "http_status": 200,
+    "original_download_url": "[NOT_PERSISTED: signed URL intentionally omitted]"
+  },
+  {
+    "screen_id": "d35020a589064eb793cc0694a9de59a5",
+    "artifact": "screenshot",
+    "local_path": "screenshots/47-d35020a589064eb793cc0694a9de59a5.png",
+    "sha256": "0eb7c0b4b0b4105d1739e0c782c30eec5524cffc4b89a00bd533ee2e5c0c6f6a",
+    "status": "ok",
+    "http_status": 200,
+    "original_download_url": "[NOT_PERSISTED: signed URL intentionally omitted]"
+  },
+  {
+    "screen_id": "2f52b7516f634bb9bcca6f00d7e3cf64",
+    "artifact": "html",
+    "local_path": "html/48-2f52b7516f634bb9bcca6f00d7e3cf64.html",
+    "sha256": "1432404558fd2b97d2e231eb11251907c5875ef939cf708ec183251229237875",
+    "status": "ok",
+    "http_status": 200,
+    "original_download_url": "[NOT_PERSISTED: signed URL intentionally omitted]"
+  },
+  {
+    "screen_id": "2f52b7516f634bb9bcca6f00d7e3cf64",
+    "artifact": "screenshot",
+    "local_path": "screenshots/48-2f52b7516f634bb9bcca6f00d7e3cf64.png",
+    "sha256": "37f5d4401f2774d11f8a4ba548a1d595bf0f6d27b0c01427e3698d53759116ce",
+    "status": "ok",
+    "http_status": 200,
+    "original_download_url": "[NOT_PERSISTED: signed URL intentionally omitted]"
+  },
+  {
+    "screen_id": "16b545ac2b9540c6985392a4e055f7ac",
+    "artifact": "html",
+    "local_path": "html/49-16b545ac2b9540c6985392a4e055f7ac.html",
+    "sha256": "750407c4c8177229e0eab00777f87865c10e971bff211c1e7d19864f10ce234b",
+    "status": "ok",
+    "http_status": 200,
+    "original_download_url": "[NOT_PERSISTED: signed URL intentionally omitted]"
+  },
+  {
+    "screen_id": "16b545ac2b9540c6985392a4e055f7ac",
+    "artifact": "screenshot",
+    "local_path": "screenshots/49-16b545ac2b9540c6985392a4e055f7ac.png",
+    "sha256": "767e7fb8b3771a517feec00230bbc13658f1bdb444893bd571e725b0c7d4d9fc",
+    "status": "ok",
+    "http_status": 200,
+    "original_download_url": "[NOT_PERSISTED: signed URL intentionally omitted]"
+  },
+  {
+    "screen_id": "76fb6d6c4b3e447e9ea8254db47872a4",
+    "artifact": "html",
+    "local_path": "html/50-76fb6d6c4b3e447e9ea8254db47872a4.html",
+    "sha256": "9c1bea98dd206c002f1abaa8ae4769b9aacaca31b6c9f557815872e85b09d899",
+    "status": "ok",
+    "http_status": 200,
+    "original_download_url": "[NOT_PERSISTED: signed URL intentionally omitted]"
+  },
+  {
+    "screen_id": "76fb6d6c4b3e447e9ea8254db47872a4",
+    "artifact": "screenshot",
+    "local_path": "screenshots/50-76fb6d6c4b3e447e9ea8254db47872a4.png",
+    "sha256": "4973324ace583c2dc222840a5fbe7de31d5c587e7e60128e9da46a73f7a566df",
+    "status": "ok",
+    "http_status": 200,
+    "original_download_url": "[NOT_PERSISTED: signed URL intentionally omitted]"
+  },
+  {
+    "screen_id": "7729dae23a204d288fa6a8472b342040",
+    "artifact": "html",
+    "local_path": "html/51-7729dae23a204d288fa6a8472b342040.html",
+    "sha256": "9a9d89869a47ab5e74890c567a22f3da7d3d2aaa71a8613dcf428870fa82b258",
+    "status": "ok",
+    "http_status": 200,
+    "original_download_url": "[NOT_PERSISTED: signed URL intentionally omitted]"
+  },
+  {
+    "screen_id": "7729dae23a204d288fa6a8472b342040",
+    "artifact": "screenshot",
+    "local_path": "screenshots/51-7729dae23a204d288fa6a8472b342040.png",
+    "sha256": "caab32570ae060fc1446150e9535be1ed63a7f669b6675ce909c5014cd9014a5",
+    "status": "ok",
+    "http_status": 200,
+    "original_download_url": "[NOT_PERSISTED: signed URL intentionally omitted]"
+  },
+  {
+    "screen_id": "41ae8e6befde4dc0a0b6ad1a5a2d2b6f",
+    "artifact": "html",
+    "local_path": "html/52-41ae8e6befde4dc0a0b6ad1a5a2d2b6f.html",
+    "sha256": "a4ad1f44e68eb033e6a36d1fb4c1239d5c897d0d6896a023952a73c232d35aa9",
+    "status": "ok",
+    "http_status": 200,
+    "original_download_url": "[NOT_PERSISTED: signed URL intentionally omitted]"
+  },
+  {
+    "screen_id": "41ae8e6befde4dc0a0b6ad1a5a2d2b6f",
+    "artifact": "screenshot",
+    "local_path": "screenshots/52-41ae8e6befde4dc0a0b6ad1a5a2d2b6f.png",
+    "sha256": "a8771285f8cc35d6fc411824e0bbb7b31bec5582584afe3a6727e451a4bf8ea5",
+    "status": "ok",
+    "http_status": 200,
+    "original_download_url": "[NOT_PERSISTED: signed URL intentionally omitted]"
+  },
+  {
+    "screen_id": "156a934545074bcb97df57c4667dd759",
+    "artifact": "html",
+    "local_path": "html/53-156a934545074bcb97df57c4667dd759.html",
+    "sha256": "c26b9281291a9f766b5a91eba46486a45dd91ef09ebc7013ac3d4a01d15dbfaa",
+    "status": "ok",
+    "http_status": 200,
+    "original_download_url": "[NOT_PERSISTED: signed URL intentionally omitted]"
+  },
+  {
+    "screen_id": "156a934545074bcb97df57c4667dd759",
+    "artifact": "screenshot",
+    "local_path": "screenshots/53-156a934545074bcb97df57c4667dd759.png",
+    "sha256": "c5c3fd97374db504de262b5b0d796025c497d281684fee6b8d947359112b3a8d",
+    "status": "ok",
+    "http_status": 200,
+    "original_download_url": "[NOT_PERSISTED: signed URL intentionally omitted]"
+  },
+  {
+    "screen_id": "17852655874f4be6bdcfe03c094e0902",
+    "artifact": "html",
+    "local_path": "html/54-17852655874f4be6bdcfe03c094e0902.html",
+    "sha256": "8e23e78593d1d9b6d6fec7300e63912995ac15b48afb84b6d1084d76475b7ab2",
+    "status": "ok",
+    "http_status": 200,
+    "original_download_url": "[NOT_PERSISTED: signed URL intentionally omitted]"
+  },
+  {
+    "screen_id": "17852655874f4be6bdcfe03c094e0902",
+    "artifact": "screenshot",
+    "local_path": "screenshots/54-17852655874f4be6bdcfe03c094e0902.png",
+    "sha256": "13eaf44a3317f4cbdbd9e06f5935ea4166ee87d29d45b0ef34351093582a310b",
+    "status": "ok",
+    "http_status": 200,
+    "original_download_url": "[NOT_PERSISTED: signed URL intentionally omitted]"
+  }
+]

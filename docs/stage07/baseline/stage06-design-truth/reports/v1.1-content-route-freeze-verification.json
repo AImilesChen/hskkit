@@ -1,0 +1,18 @@
+{
+  "status": "PASS",
+  "screen_count": 54,
+  "violations": [],
+  "checks": [
+    "visible text hash unchanged",
+    "href sequence unchanged",
+    "document title unchanged"
+  ],
+  "frozen": [
+    "routes",
+    "copy",
+    "pricing",
+    "entitlements",
+    "state semantics",
+    "behavior"
+  ]
+}

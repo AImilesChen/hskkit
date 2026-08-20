@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>ROUTE · /reading/:slug · DESKTOP · ADOPTED</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                fontFamily: {
+                    sans: ['Inter', 'sans-serif'],
+                },
+                extend: {
+                    colors: {
+                        brandBlue: '#2563EB',
+                        brandText: '#0F172A',
+                        brandBg: '#F8FAFC',
+                        brandBorder: '#E2E8F0',
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        [data-weight="fill"] .material-symbols-outlined {
+            font-variation-settings: 'FILL' 1;
+        }
+    </style>
+</head>
+<body class="bg-brandBg text-brandText antialiased min-h-screen flex flex-col font-sans">
+<!-- TopNavBar -->
+<header class="w-full top-0 sticky bg-brandBg border-b border-brandBorder z-50">
+<div class="max-w-[1140px] mx-auto px-6 lg:px-[64px] flex items-center justify-between h-20">
+<!-- Brand -->
+<div class="flex items-center">
+<a class="text-3xl font-bold tracking-tight text-brandText" href="/">HSKKit</a>
+</div>
+<!-- Navigation -->
+<nav class="hidden md:flex items-center space-x-8">
+<a class="text-brandText/70 font-medium hover:text-brandBlue transition-colors cursor-pointer" href="#">Levels</a>
+<a class="text-brandText/70 font-medium hover:text-brandBlue transition-colors cursor-pointer" href="#">Vocabulary</a>
+<a class="text-brandBlue font-bold border-b-2 border-brandBlue pb-1 cursor-pointer" href="#">Practice</a>
+<a class="text-brandText/70 font-medium hover:text-brandBlue transition-colors cursor-pointer" href="#">Study Tools</a>
+</nav>
+<!-- Actions -->
+<div class="flex items-center space-x-6">
+<button class="text-brandText/70 hover:text-brandBlue transition-colors" data-icon="search">
+<span class="material-symbols-outlined">search</span>
+</button>
+<button class="text-white bg-brandText hover:bg-brandText/90 transition-colors px-6 py-2 rounded-[8px] font-medium">
+                Sign In
+            </button>
+</div>
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="flex-grow max-w-[1140px] mx-auto px-6 lg:px-[64px] py-12 w-full grid grid-cols-1 lg:grid-cols-12 gap-6 relative">
+<!-- Left Column: Reading Material -->
+<article class="lg:col-span-8 bg-white border border-brandBorder rounded-[16px] p-8 shadow-sm">
+<!-- Breadcrumb / Meta -->
+<div class="mb-8 flex items-center space-x-2 text-brandText/60 text-xs font-semibold uppercase tracking-wider">
+<span class="mr-1" data-icon="menu_book"><span class="material-symbols-outlined text-[16px] align-text-bottom">menu_book</span></span>
+<span>Reading Module</span>
+<span class="mx-2">/</span>
+<span>HSK 3</span>
+<span class="mx-2">/</span>
+<span class="text-brandText font-bold">A Visit to the Tea House</span>
+</div>
+<!-- Title -->
+<h1 class="text-4xl font-bold text-brandText mb-6 tracking-tight">茶馆之行</h1>
+<!-- Reading Text -->
+<div class="text-lg leading-loose text-brandText/90 mb-10 tracking-wide">
+            昨天下午，我和朋友一起去了一家有名的老茶馆。
+            茶馆里人很多，大家一边喝茶一边聊天，气氛非常热闹。
+            我们点了一壶龙井茶和一些点心。茶的味道很香，点心也很好吃。
+            在那里，我们还听了传统的音乐表演。虽然我不完全懂，但觉得很有意思。
+            在茶馆度过的时光让人感到很放松。
+        </div>
+<!-- Divider -->
+<hr class="border-t border-brandBorder my-10"/>
+<!-- Check Understanding Quiz -->
+<section>
+<h2 class="text-2xl font-semibold text-brandText mb-6 flex items-center">
+<span class="material-symbols-outlined mr-2 text-brandText">quiz</span>
+                Check Understanding
+            </h2>
+<form class="space-y-6">
+<!-- Question 1 -->
+<div class="bg-white p-6 rounded-[16px] border border-brandBorder">
+<p class="text-lg font-semibold text-brandText mb-4">1. 作者昨天下午去了哪里？</p>
+<div class="space-y-3">
+<label class="flex items-center space-x-3 cursor-pointer p-3 rounded-[8px] hover:bg-brandBg transition-colors border border-transparent hover:border-brandBorder">
+<input class="form-radio text-brandBlue border-brandBorder focus:ring-brandBlue h-5 w-5" name="q1" type="radio"/>
+<span class="text-brandText">一家咖啡馆 (A coffee shop)</span>
+</label>
+<label class="flex items-center space-x-3 cursor-pointer p-3 rounded-[8px] hover:bg-brandBg transition-colors border border-transparent hover:border-brandBorder">
+<input class="form-radio text-brandBlue border-brandBorder focus:ring-brandBlue h-5 w-5" name="q1" type="radio"/>
+<span class="text-brandText">一家老茶馆 (An old tea house)</span>
+</label>
+<label class="flex items-center space-x-3 cursor-pointer p-3 rounded-[8px] hover:bg-brandBg transition-colors border border-transparent hover:border-brandBorder">
+<input class="form-radio text-brandBlue border-brandBorder focus:ring-brandBlue h-5 w-5" name="q1" type="radio"/>
+<span class="text-brandText">一家电影院 (A cinema)</span>
+</label>
+</div>
+</div>
+<!-- Question 2 -->
+<div class="bg-white p-6 rounded-[16px] border border-brandBorder">
+<p class="text-lg font-semibold text-brandText mb-4">2. 他们在茶馆做了什么？</p>
+<div class="space-y-3">
+<label class="flex items-center space-x-3 cursor-pointer p-3 rounded-[8px] hover:bg-brandBg transition-colors border border-transparent hover:border-brandBorder">
+<input class="form-radio text-brandBlue border-brandBorder focus:ring-brandBlue h-5 w-5" name="q2" type="radio"/>
+<span class="text-brandText">看书和写字 (Read books and write)</span>
+</label>
+<label class="flex items-center space-x-3 cursor-pointer p-3 rounded-[8px] hover:bg-brandBg transition-colors border border-transparent hover:border-brandBorder">
+<input class="form-radio text-brandBlue border-brandBorder focus:ring-brandBlue h-5 w-5" name="q2" type="radio"/>
+<span class="text-brandText">喝茶、吃点心、听音乐 (Drink tea, eat snacks, listen to music)</span>
+</label>
+<label class="flex items-center space-x-3 cursor-pointer p-3 rounded-[8px] hover:bg-brandBg transition-colors border border-transparent hover:border-brandBorder">
+<input class="form-radio text-brandBlue border-brandBorder focus:ring-brandBlue h-5 w-5" name="q2" type="radio"/>
+<span class="text-brandText">学习和工作 (Study and work)</span>
+</label>
+</div>
+</div>
+<div class="pt-4">
+<button class="bg-brandBlue text-white font-medium py-3 px-8 rounded-[8px] hover:bg-blue-700 transition-colors w-full sm:w-auto" type="button">
+                        Submit Answers
+                    </button>
+</div>
+</form>
+</section>
+</article>
+<!-- Right Column: Support Words -->
+<aside class="lg:col-span-4 mt-8 lg:mt-0">
+<div class="bg-white border border-brandBorder rounded-[16px] p-6 sticky top-28 shadow-sm">
+<h3 class="text-xl font-bold text-brandText mb-4 flex items-center border-b border-brandBorder pb-4">
+<span class="material-symbols-outlined mr-2 text-brandText">dictionary</span>
+                Support Words
+            </h3>
+<ul class="space-y-3">
+<!-- Word 1 -->
+<li class="p-3 bg-white rounded-[8px] border border-brandBorder hover:border-brandBlue transition-colors">
+<div class="flex justify-between items-baseline mb-1">
+<span class="text-lg text-brandText font-bold">茶馆</span>
+<span class="text-sm text-brandText/70 bg-brandBg px-2 py-1 rounded">chá guǎn</span>
+</div>
+<p class="text-sm text-brandText/70">n. teahouse</p>
+</li>
+<!-- Word 2 -->
+<li class="p-3 bg-white rounded-[8px] border border-brandBorder hover:border-brandBlue transition-colors">
+<div class="flex justify-between items-baseline mb-1">
+<span class="text-lg text-brandText font-bold">热闹</span>
+<span class="text-sm text-brandText/70 bg-brandBg px-2 py-1 rounded">rè nao</span>
+</div>
+<p class="text-sm text-brandText/70">adj. lively; bustling with noise and excitement</p>
+</li>
+<!-- Word 3 -->
+<li class="p-3 bg-white rounded-[8px] border border-brandBorder hover:border-brandBlue transition-colors">
+<div class="flex justify-between items-baseline mb-1">
+<span class="text-lg text-brandText font-bold">一壶</span>
+<span class="text-sm text-brandText/70 bg-brandBg px-2 py-1 rounded">yì hú</span>
+</div>
+<p class="text-sm text-brandText/70">m.w. a pot of (tea, wine, etc.)</p>
+</li>
+<!-- Word 4 -->
+<li class="p-3 bg-white rounded-[8px] border border-brandBorder hover:border-brandBlue transition-colors">
+<div class="flex justify-between items-baseline mb-1">
+<span class="text-lg text-brandText font-bold">点心</span>
+<span class="text-sm text-brandText/70 bg-brandBg px-2 py-1 rounded">diǎn xin</span>
+</div>
+<p class="text-sm text-brandText/70">n. light refreshments; dim sum</p>
+</li>
+<!-- Word 5 -->
+<li class="p-3 bg-white rounded-[8px] border border-brandBorder hover:border-brandBlue transition-colors">
+<div class="flex justify-between items-baseline mb-1">
+<span class="text-lg text-brandText font-bold">放松</span>
+<span class="text-sm text-brandText/70 bg-brandBg px-2 py-1 rounded">fàng sōng</span>
+</div>
+<p class="text-sm text-brandText/70">v. to relax</p>
+</li>
+</ul>
+<!-- Play Audio Button -->
+<button class="mt-6 w-full flex items-center justify-center space-x-2 bg-white border border-brandBorder text-brandText font-medium py-3 px-4 rounded-[8px] hover:bg-brandBg hover:text-brandBlue hover:border-brandBlue transition-colors">
+<span class="material-symbols-outlined">volume_up</span>
+<span>Listen to Passage</span>
+</button>
+</div>
+</aside>
+</main>
+<!-- Footer -->
+<footer class="w-full mt-auto border-t border-brandBorder">
+<div class="max-w-[1140px] mx-auto px-6 lg:px-[64px] py-10 flex flex-col md:flex-row justify-between items-center gap-6">
+<div class="text-xl font-bold text-brandText/60">HSKKit</div>
+<nav class="flex flex-wrap justify-center gap-6">
+<a class="text-brandText/60 text-sm hover:text-brandBlue transition-all" href="#">Privacy Policy</a>
+<a class="text-brandText/60 text-sm hover:text-brandBlue transition-all" href="#">Terms of Service</a>
+<a class="text-brandText/60 text-sm hover:text-brandBlue transition-all" href="#">Cookie Policy</a>
+<a class="text-brandText/60 text-sm hover:text-brandBlue transition-all" href="#">Academic Integrity</a>
+<a class="text-brandText/60 text-sm hover:text-brandBlue transition-all" href="#">Contact Support</a>
+</nav>
+<div class="text-sm text-brandText/60">
+            © 2024 HSKKit Scholarly Language Systems. All rights reserved.
+        </div>
+</div>
+</footer>
+</body></html>

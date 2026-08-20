@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=390, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport"/>
+<title>ROUTE · /word/:slug · MOBILE · ADOPTED · QA-V2</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+              "primary": "#2563EB",
+              "on-primary": "#ffffff",
+              "primary-container": "#2563eb",
+              "background": "#F8FAFC",
+              "surface": "#ffffff",
+              "on-surface": "#0F172A",
+              "outline-variant": "#E2E8F0",
+              "on-surface-variant": "#475569",
+              "secondary": "#334155",
+              "surface-container-low": "#F1F5F9",
+              "outline": "#64748B",
+              "surface-variant": "#E2E8F0"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.125rem",
+                    "lg": "8px",
+                    "xl": "16px",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "margin-desktop": "64px",
+                    "gutter": "24px",
+                    "margin-mobile": "20px",
+                    "unit": "8px",
+                    "container-max": "1140px"
+            },
+            "fontFamily": {
+                    "h1-mobile": ["Inter", "sans-serif"],
+                    "label-caps": ["Inter", "sans-serif"],
+                    "body-sm": ["Inter", "sans-serif"],
+                    "h1": ["Inter", "sans-serif"],
+                    "body-md": ["Inter", "sans-serif"],
+                    "h3": ["Inter", "sans-serif"],
+                    "body-lg": ["Inter", "sans-serif"],
+                    "h2": ["Inter", "sans-serif"]
+            },
+            "fontSize": {
+                    "h1-mobile": ["32px", { "lineHeight": "1.2", "fontWeight": "700" }],
+                    "label-caps": ["12px", { "lineHeight": "1.2", "letterSpacing": "0.05em", "fontWeight": "600" }],
+                    "body-sm": ["14px", { "lineHeight": "1.5", "fontWeight": "400" }],
+                    "h1": ["40px", { "lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                    "body-md": ["16px", { "lineHeight": "1.5", "fontWeight": "400" }],
+                    "h3": ["24px", { "lineHeight": "1.4", "fontWeight": "600" }],
+                    "body-lg": ["18px", { "lineHeight": "1.6", "fontWeight": "400" }],
+                    "h2": ["32px", { "lineHeight": "1.3", "letterSpacing": "-0.01em", "fontWeight": "600" }]
+            }
+          }
+        }
+      }
+    </script>
+<style>
+        body { width: 390px; margin: 0 auto; overflow-x: hidden; }
+        .hanzi-display { font-family: "Inter", sans-serif; font-size: 84px; line-height: 1.1; font-weight: 700; text-align: center; }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+</head>
+<body class="bg-background text-on-surface antialiased min-h-screen flex flex-col font-body-md">
+<!-- Top App Bar (Task-Focused: Back navigation) -->
+<header class="w-full top-0 sticky bg-background z-50 border-b border-outline-variant flex items-center h-16 px-margin-mobile">
+<button aria-label="Go back" class="flex items-center justify-center p-2 -ml-2 rounded-full hover:bg-surface-container-low transition-colors min-w-[44px] min-h-[44px]">
+<span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 0;">arrow_back</span>
+</button>
+<div class="flex-1 text-center font-body-md text-body-md font-semibold text-on-surface">
+            Word Details
+        </div>
+<button aria-label="Bookmark" class="flex items-center justify-center p-2 -mr-2 rounded-full hover:bg-surface-container-low transition-colors min-w-[44px] min-h-[44px]">
+<span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 0;">bookmark_add</span>
+</button>
+</header>
+<!-- Main Content -->
+<main class="flex-1 px-margin-mobile py-8 flex flex-col gap-6">
+<!-- Word Header / Hero -->
+<section class="flex flex-col items-center gap-2 border-b border-outline-variant pb-8">
+<h1 class="hanzi-display text-primary tracking-wide">学习</h1>
+<div class="font-h3 text-h3 text-secondary mt-2">xué xí</div>
+<div class="flex items-center gap-2 mt-4 bg-surface-container-low px-4 py-2 rounded-lg">
+<span class="material-symbols-outlined text-outline" style="font-variation-settings: 'FILL' 0;">volume_off</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Audio playback is currently in development</span>
+</div>
+</section>
+<!-- Definition Section -->
+<section class="flex flex-col gap-4">
+<h2 class="font-label-caps text-label-caps text-primary uppercase">Definition</h2>
+<div class="bg-surface border border-outline-variant rounded-xl p-6">
+<ol class="list-decimal list-inside font-body-md text-body-md text-on-surface space-y-3">
+<li>to learn; to study</li>
+<li>learning; study</li>
+</ol>
+</div>
+</section>
+<!-- Context / Example Section -->
+<section class="flex flex-col gap-4 mt-2">
+<h2 class="font-label-caps text-label-caps text-primary uppercase">Example Sentence</h2>
+<div class="bg-surface border border-outline-variant rounded-xl p-6 flex flex-col gap-3">
+<p class="font-body-lg text-body-lg text-on-surface font-medium">他们在图书馆学习。</p>
+<p class="font-body-md text-body-md text-secondary">Tāmen zài túshūguǎn xuéxí.</p>
+<p class="font-body-sm text-body-sm text-on-surface-variant italic mt-1 border-t border-surface-variant pt-3">They are studying in the library.</p>
+</div>
+</section>
+<!-- Component Details -->
+<section class="flex flex-col gap-4 mt-2">
+<h2 class="font-label-caps text-label-caps text-primary uppercase">Character Breakdown</h2>
+<div class="grid grid-cols-2 gap-4">
+<div class="bg-surface border border-outline-variant rounded-xl p-4 flex flex-col items-center gap-1">
+<span class="font-h2 text-h2 text-on-surface">学</span>
+<span class="font-body-sm text-body-sm text-secondary">xué</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant text-center mt-2 border-t border-surface-variant pt-2 w-full">to study, to learn</span>
+</div>
+<div class="bg-surface border border-outline-variant rounded-xl p-4 flex flex-col items-center gap-1">
+<span class="font-h2 text-h2 text-on-surface">习</span>
+<span class="font-body-sm text-body-sm text-secondary">xí</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant text-center mt-2 border-t border-surface-variant pt-2 w-full">to practice, habit</span>
+</div>
+</div>
+</section>
+<div class="mt-8 pb-8 flex justify-center border-t border-outline-variant pt-8">
+<button class="flex items-center gap-2 font-body-sm text-body-sm text-on-surface-variant hover:text-on-surface transition-colors min-w-[44px] min-h-[44px] justify-center px-4 rounded-lg">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0; font-size: 18px;">flag</span>
+                Report Issue
+            </button>
+</div>
+</main>
+</body></html>

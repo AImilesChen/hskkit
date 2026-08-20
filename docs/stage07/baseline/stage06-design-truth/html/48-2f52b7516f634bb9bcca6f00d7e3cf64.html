@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>ROUTE · /review · MOBILE · ADOPTED · QA-V2</title>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&amp;family=Source+Serif+4:opsz,wght@8..60,600;8..60,700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Tailwind Config -->
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-container-lowest": "#ffffff",
+                        "on-tertiary-container": "#8191a9",
+                        "error-container": "#ffdad6",
+                        "secondary": "#515f74",
+                        "surface-variant": "#e4e2de",
+                        "surface": "#fbf9f5",
+                        "on-secondary-fixed": "#0d1c2f",
+                        "outline": "#75777d",
+                        "surface-container-highest": "#e4e2de",
+                        "outline-variant": "#c5c6cd",
+                        "on-secondary-fixed-variant": "#3a485c",
+                        "tertiary-fixed-dim": "#b7c8e1",
+                        "secondary-container": "#d5e3fd",
+                        "on-surface": "#1b1c1a",
+                        "on-primary-fixed-variant": "#3c475a",
+                        "on-background": "#1b1c1a",
+                        "tertiary": "#041528",
+                        "on-tertiary": "#ffffff",
+                        "background": "#fbf9f5",
+                        "surface-container-high": "#eae8e4",
+                        "on-secondary": "#ffffff",
+                        "secondary-fixed": "#d5e3fd",
+                        "primary-fixed-dim": "#bcc7de",
+                        "tertiary-container": "#1a2a3e",
+                        "primary": "#091426",
+                        "on-error": "#ffffff",
+                        "on-secondary-container": "#57657b",
+                        "on-primary-fixed": "#111c2d",
+                        "inverse-primary": "#bcc7de",
+                        "tertiary-fixed": "#d3e4fe",
+                        "surface-container": "#efeeea",
+                        "on-surface-variant": "#45474c",
+                        "secondary-fixed-dim": "#b9c7e0",
+                        "surface-tint": "#545f73",
+                        "inverse-on-surface": "#f2f0ed",
+                        "error": "#ba1a1a",
+                        "on-primary": "#ffffff",
+                        "surface-bright": "#fbf9f5",
+                        "on-primary-container": "#8590a6",
+                        "surface-container-low": "#f5f3ef",
+                        "inverse-surface": "#30312e",
+                        "on-tertiary-fixed": "#0b1c30",
+                        "on-error-container": "#93000a",
+                        "primary-container": "#1e293b",
+                        "on-tertiary-fixed-variant": "#38485d",
+                        "surface-dim": "#dbdad6",
+                        "primary-fixed": "#d8e3fb"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "container-max": "1140px",
+                        "unit": "8px",
+                        "gutter": "24px",
+                        "margin-mobile": "20px",
+                        "margin-desktop": "64px"
+                    },
+                    "fontFamily": {
+                        "h2": ["\"Source Serif 4\""],
+                        "body-sm": ["Inter"],
+                        "label-caps": ["Inter"],
+                        "h3": ["\"Source Serif 4\""],
+                        "body-md": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "h1-mobile": ["\"Source Serif 4\""],
+                        "h1": ["\"Source Serif 4\""]
+                    },
+                    "fontSize": {
+                        "h2": ["32px", { "lineHeight": "1.3", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+                        "body-sm": ["14px", { "lineHeight": "1.5", "fontWeight": "400" }],
+                        "label-caps": ["12px", { "lineHeight": "1.2", "letterSpacing": "0.05em", "fontWeight": "600" }],
+                        "h3": ["24px", { "lineHeight": "1.4", "fontWeight": "600" }],
+                        "body-md": ["16px", { "lineHeight": "1.5", "fontWeight": "400" }],
+                        "body-lg": ["18px", { "lineHeight": "1.6", "fontWeight": "400" }],
+                        "h1-mobile": ["32px", { "lineHeight": "1.2", "fontWeight": "700" }],
+                        "h1": ["40px", { "lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "700" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        /* Flip card animation */
+        .flip-card-inner {
+            transition: transform 0.6s;
+            transform-style: preserve-3d;
+        }
+        .flip-card.flipped .flip-card-inner {
+            transform: rotateY(180deg);
+        }
+        .flip-card-front, .flip-card-back {
+            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden;
+        }
+        .flip-card-back {
+            transform: rotateY(180deg);
+        }
+        
+        /* Hide scrollbar for a cleaner look but keep functionality if needed */
+        ::-webkit-scrollbar {
+            display: none;
+        }
+        * {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+</head>
+<body class="bg-surface dark:bg-surface-dim text-on-surface w-full h-screen overflow-hidden flex flex-col">
+<!-- TopAppBar Semantic Mapping: Review -->
+<header class="fixed top-0 w-full z-50 bg-surface dark:bg-surface-dim border-b border-outline-variant dark:border-outline flat no shadows flex items-center justify-between px-margin-mobile h-16 w-full">
+<button class="w-11 h-11 flex items-center justify-center text-primary dark:text-primary-fixed hover:bg-surface-container-low dark:hover:bg-tertiary-container transition-colors rounded-full active:opacity-80">
+<span class="material-symbols-outlined" data-icon="menu">menu</span>
+</button>
+<div class="font-h3 text-h3 font-bold text-primary dark:text-primary-fixed tracking-tight">HSKKit</div>
+<div class="w-11 h-11"></div> <!-- Spacer for centering -->
+</header>
+<!-- Main Content Canvas -->
+<main class="flex-grow flex flex-col px-margin-mobile pt-24 pb-24 h-full relative z-10 w-full max-w-md mx-auto">
+<h1 class="sr-only">Review due cards</h1>
+<!-- Progress Indicator -->
+<div class="w-full mb-6 flex items-center gap-4">
+<div class="flex-grow h-1 bg-surface-container-highest rounded">
+<div class="h-full bg-primary-container rounded w-1/3"></div>
+</div>
+<span class="font-body-sm text-body-sm text-on-surface-variant whitespace-nowrap">15 / 45</span>
+</div>
+<!-- Flashcard Area -->
+<div class="flex-grow flex flex-col justify-center items-center w-full relative perspective-1000">
+<div class="flip-card w-full aspect-[3/4] max-h-[530px] cursor-pointer touch-none" id="flashcard">
+<div class="flip-card-inner w-full h-full relative">
+<!-- Front of card (Character) -->
+<div class="flip-card-front absolute inset-0 w-full h-full bg-surface-container-lowest border border-outline-variant rounded-xl flex items-center justify-center p-gutter shadow-sm">
+<span class="text-[120px] leading-none font-h1-mobile text-primary">学习</span>
+</div>
+<!-- Back of card (Pinyin & Meaning) -->
+<div class="flip-card-back absolute inset-0 w-full h-full bg-surface-container-lowest border border-outline-variant rounded-xl flex flex-col items-center justify-center p-gutter shadow-sm">
+<span class="text-[120px] leading-none font-h1-mobile text-primary mb-4 opacity-30 absolute top-8 pointer-events-none">学习</span>
+<div class="text-center z-10 bg-surface-container-lowest/80 backdrop-blur-sm p-4 rounded-lg w-full">
+<h2 class="font-h3 text-h3 text-primary mb-2">xué xí</h2>
+<p class="font-body-lg text-body-lg text-on-surface-variant">to study; to learn</p>
+</div>
+</div>
+</div>
+</div>
+<p class="mt-6 font-body-sm text-body-sm text-on-surface-variant text-center opacity-70">Tap card to flip</p>
+</div>
+<!-- Rating Buttons Container (Initially hidden, shown when card flipped) -->
+<div class="w-full mt-auto pt-6 flex flex-col gap-4 opacity-30 pointer-events-none transition-opacity duration-300" id="rating-controls">
+<div class="grid grid-cols-4 gap-2 w-full">
+<!-- Again -->
+<button class="h-12 flex flex-col items-center justify-center rounded-lg bg-surface-container-high border border-outline-variant text-on-surface active:bg-error-container active:border-error transition-colors min-h-[44px] min-w-[44px]">
+<span class="font-body-md text-body-md font-semibold mb-1">Again</span>
+<span class="font-label-caps text-label-caps text-on-surface-variant text-[10px]">1m</span>
+</button>
+<!-- Hard -->
+<button class="h-12 flex flex-col items-center justify-center rounded-lg bg-surface-container-high border border-outline-variant text-on-surface active:bg-secondary-container active:border-secondary transition-colors min-h-[44px] min-w-[44px]">
+<span class="font-body-md text-body-md font-semibold mb-1">Hard</span>
+<span class="font-label-caps text-label-caps text-on-surface-variant text-[10px]">10m</span>
+</button>
+<!-- Good -->
+<button class="h-12 flex flex-col items-center justify-center rounded-lg bg-surface-container-high border border-outline-variant text-on-surface active:bg-primary-container active:border-primary transition-colors min-h-[44px] min-w-[44px]">
+<span class="font-body-md text-body-md font-semibold mb-1">Good</span>
+<span class="font-label-caps text-label-caps text-on-surface-variant text-[10px]">1d</span>
+</button>
+<!-- Easy -->
+<button class="h-12 flex flex-col items-center justify-center rounded-lg bg-surface-container-high border border-outline-variant text-on-surface active:bg-tertiary-fixed active:border-tertiary transition-colors min-h-[44px] min-w-[44px]">
+<span class="font-body-md text-body-md font-semibold mb-1">Easy</span>
+<span class="font-label-caps text-label-caps text-on-surface-variant text-[10px]">4d</span>
+</button>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant text-center w-full">Your choice changes the next review time.</p>
+</div>
+</main>
+<!-- BottomNavBar Semantic Mapping: Review is Active -->
+<nav class="fixed bottom-0 w-full z-50 border-t border-outline-variant dark:border-outline flat no shadows fixed bottom-0 left-0 w-full flex justify-around items-center py-2 px-margin-mobile bg-surface dark:bg-surface-dim">
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-on-tertiary-container hover:text-primary dark:hover:text-primary-fixed active:scale-95 transition-transform duration-150 min-h-[44px] min-w-[44px] p-2" href="#">
+<span class="material-symbols-outlined mb-1" data-icon="school">school</span>
+<span class="font-label-caps text-label-caps">Learn</span>
+</a>
+<a class="flex flex-col items-center justify-center text-primary dark:text-primary-fixed font-bold hover:text-primary dark:hover:text-primary-fixed active:scale-95 transition-transform duration-150 min-h-[44px] min-w-[44px] p-2 relative" href="#">
+<div class="absolute -top-1 -right-1 w-2 h-2 rounded-full bg-error"></div>
+<span class="material-symbols-outlined mb-1" data-icon="auto_stories" data-weight="fill" style="font-variation-settings: 'FILL' 1;">auto_stories</span>
+<span class="font-label-caps text-label-caps">Review</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-on-tertiary-container hover:text-primary dark:hover:text-primary-fixed active:scale-95 transition-transform duration-150 min-h-[44px] min-w-[44px] p-2" href="#">
+<span class="material-symbols-outlined mb-1" data-icon="menu_book">menu_book</span>
+<span class="font-label-caps text-label-caps">Dictionary</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-on-tertiary-container hover:text-primary dark:hover:text-primary-fixed active:scale-95 transition-transform duration-150 min-h-[44px] min-w-[44px] p-2" href="#">
+<span class="material-symbols-outlined mb-1" data-icon="person">person</span>
+<span class="font-label-caps text-label-caps">Profile</span>
+</a>
+</nav>
+<script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const flashcard = document.getElementById('flashcard');
+            const ratingControls = document.getElementById('rating-controls');
+            let isFlipped = false;
+
+            flashcard.addEventListener('click', () => {
+                if (!isFlipped) {
+                    flashcard.classList.add('flipped');
+                    isFlipped = true;
+                    
+                    // Reveal controls
+                    ratingControls.classList.remove('opacity-30', 'pointer-events-none');
+                    ratingControls.classList.add('opacity-100');
+                }
+            });
+
+            // Handle rating button clicks to simulate moving to next card
+            const buttons = ratingControls.querySelectorAll('button');
+            buttons.forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    e.stopPropagation(); // Prevent card flip toggle
+                    
+                    // Simulate loading next card
+                    flashcard.style.transform = 'translateX(-120%)';
+                    flashcard.style.opacity = '0';
+                    flashcard.style.transition = 'transform 0.3s ease-in, opacity 0.2s ease-out';
+                    
+                    setTimeout(() => {
+                        // Reset card state
+                        flashcard.classList.remove('flipped');
+                        isFlipped = false;
+                        
+                        // Hide controls
+                        ratingControls.classList.add('opacity-30', 'pointer-events-none');
+                        ratingControls.classList.remove('opacity-100');
+                        
+                        // Bring card back from right
+                        flashcard.style.transition = 'none';
+                        flashcard.style.transform = 'translateX(120%)';
+                        
+                        // Small delay to allow reflow before sliding in
+                        setTimeout(() => {
+                            flashcard.style.transition = 'transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.4s ease-in';
+                            flashcard.style.transform = 'translateX(0)';
+                            flashcard.style.opacity = '1';
+                        }, 50);
+                    }, 300);
+                });
+            });
+        });
+    </script>
+</body></html>

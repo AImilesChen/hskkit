@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Learning History - HSKKit</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                            "primary": "#2563EB",
+                            "on-primary": "#ffffff",
+                            "primary-container": "#2563EB",
+                            "on-primary-container": "#ffffff",
+                            "background": "#F8FAFC",
+                            "on-background": "#0F172A",
+                            "surface": "#ffffff",
+                            "on-surface": "#0F172A",
+                            "surface-bright": "#ffffff",
+                            "surface-container-lowest": "#ffffff",
+                            "surface-container-low": "#f8fafc",
+                            "surface-container": "#f1f5f9",
+                            "surface-variant": "#f1f5f9",
+                            "on-surface-variant": "#475569",
+                            "secondary": "#64748b",
+                            "outline": "#E2E8F0",
+                            "outline-variant": "#E2E8F0",
+                            "error-container": "#fee2e2",
+                            "on-error-container": "#991b1b"
+                    },
+                    "borderRadius": {
+                            "DEFAULT": "0.5rem",
+                            "lg": "0.5rem",
+                            "xl": "1rem",
+                            "2xl": "1rem"
+                    },
+                    "spacing": {
+                            "unit": "8px",
+                            "container-max": "1140px",
+                            "gutter": "24px",
+                            "margin-desktop": "64px",
+                            "margin-mobile": "20px"
+                    },
+                    "fontFamily": {
+                            "h1-mobile": ["Inter", "sans-serif"],
+                            "label-caps": ["Inter", "sans-serif"],
+                            "body-lg": ["Inter", "sans-serif"],
+                            "h1": ["Inter", "sans-serif"],
+                            "h3": ["Inter", "sans-serif"],
+                            "body-sm": ["Inter", "sans-serif"],
+                            "body-md": ["Inter", "sans-serif"],
+                            "h2": ["Inter", "sans-serif"]
+                    },
+                    "fontSize": {
+                            "h1-mobile": ["32px", { "lineHeight": "1.2", "fontWeight": "700" }],
+                            "label-caps": ["12px", { "lineHeight": "1.2", "letterSpacing": "0.05em", "fontWeight": "600" }],
+                            "body-lg": ["18px", { "lineHeight": "1.6", "fontWeight": "400" }],
+                            "h1": ["40px", { "lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                            "h3": ["24px", { "lineHeight": "1.4", "fontWeight": "600" }],
+                            "body-sm": ["14px", { "lineHeight": "1.5", "fontWeight": "400" }],
+                            "body-md": ["16px", { "lineHeight": "1.5", "fontWeight": "400" }],
+                            "h2": ["32px", { "lineHeight": "1.3", "letterSpacing": "-0.01em", "fontWeight": "600" }]
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-background text-on-background min-h-screen flex flex-col font-body-md text-body-md">
+<!-- TopNavBar -->
+<header class="bg-surface docked full-width top-0 border-b border-outline-variant flat no shadows">
+<div class="flex justify-between items-center w-full px-gutter max-w-container-max mx-auto h-[64px]">
+<div class="font-h3 text-h3 font-bold text-on-background">HSKKit</div>
+<nav class="hidden md:flex gap-6">
+<a class="text-secondary font-body-md text-body-md hover:text-primary transition-colors duration-200 cursor-pointer active:scale-95 transition-transform" href="#">Today</a>
+<a class="text-secondary font-body-md text-body-md hover:text-primary transition-colors duration-200 cursor-pointer active:scale-95 transition-transform" href="#">Vocabulary</a>
+<a class="text-secondary font-body-md text-body-md hover:text-primary transition-colors duration-200 cursor-pointer active:scale-95 transition-transform" href="#">Practice</a>
+<a class="text-primary font-bold border-b-2 border-primary pb-1 hover:text-primary transition-colors duration-200 cursor-pointer active:scale-95 transition-transform" href="#">Study Tools</a>
+</nav>
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-on-background cursor-pointer active:scale-95 transition-transform" data-icon="account_circle">account_circle</span>
+</div>
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="flex-grow w-full max-w-container-max mx-auto px-gutter py-margin-desktop md:py-margin-desktop flex flex-col items-center">
+<!-- Page Header -->
+<div class="w-full max-w-[720px] mb-12 text-center">
+<h1 class="font-h1 text-h1 text-on-background mb-4">Learning History</h1>
+<p class="font-body-lg text-body-lg text-secondary">A record of your recent challenges and resolved errors.</p>
+</div>
+<!-- Filters / Controls (Optional, for structure) -->
+<div class="w-full max-w-[960px] flex justify-between items-center mb-6 pb-4 border-b border-outline-variant">
+<div class="flex gap-4">
+<button class="font-label-caps text-label-caps text-primary border-b-2 border-primary pb-1">All Mistakes</button>
+<button class="font-label-caps text-label-caps text-secondary hover:text-primary pb-1 transition-colors">Unresolved</button>
+<button class="font-label-caps text-label-caps text-secondary hover:text-primary pb-1 transition-colors">Fixed</button>
+</div>
+<div>
+<span class="material-symbols-outlined text-secondary cursor-pointer hover:text-primary transition-colors" data-icon="filter_list">filter_list</span>
+</div>
+</div>
+<!-- History Table -->
+<div class="w-full max-w-[960px] bg-surface border border-outline-variant rounded-2xl overflow-hidden">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-surface-container-low border-b border-outline-variant">
+<th class="py-4 px-6 font-body-sm text-body-sm font-semibold text-secondary">Character / Word</th>
+<th class="py-4 px-6 font-body-sm text-body-sm font-semibold text-secondary">Category</th>
+<th class="py-4 px-6 font-body-sm text-body-sm font-semibold text-secondary">Last Error Date</th>
+<th class="py-4 px-6 font-body-sm text-body-sm font-semibold text-secondary">Status</th>
+<th class="py-4 px-6 font-body-sm text-body-sm font-semibold text-secondary text-right">Actions</th>
+</tr>
+</thead>
+<tbody class="font-body-md text-body-md">
+<!-- Unresolved Item -->
+<tr class="border-b border-outline-variant hover:bg-surface-container transition-colors">
+<td class="py-4 px-6">
+<div class="flex flex-col">
+<span class="font-h3 text-h3 text-on-background mb-1">知道</span>
+<span class="font-body-sm text-body-sm text-secondary">zhīdào</span>
+</div>
+</td>
+<td class="py-4 px-6 text-on-surface-variant">Tone Error</td>
+<td class="py-4 px-6 text-on-surface-variant">Oct 24, 2024</td>
+<td class="py-4 px-6">
+<span class="inline-flex items-center px-2 py-1 rounded bg-error-container text-on-error-container font-label-caps text-label-caps">Unresolved</span>
+</td>
+<td class="py-4 px-6 text-right">
+<button class="px-4 py-2 bg-primary text-on-primary rounded-lg font-body-sm text-body-sm hover:opacity-90 transition-colors">Review</button>
+</td>
+</tr>
+<!-- Fixed Item -->
+<tr class="border-b border-outline-variant hover:bg-surface-container transition-colors">
+<td class="py-4 px-6">
+<div class="flex flex-col">
+<span class="font-h3 text-h3 text-secondary mb-1">图书馆</span>
+<span class="font-body-sm text-body-sm text-secondary">túshūguǎn</span>
+</div>
+</td>
+<td class="py-4 px-6 text-secondary">Meaning</td>
+<td class="py-4 px-6 text-secondary">Oct 22, 2024</td>
+<td class="py-4 px-6">
+<span class="inline-flex items-center px-2 py-1 rounded border border-outline text-secondary font-label-caps text-label-caps">Fixed</span>
+</td>
+<td class="py-4 px-6 text-right">
+<button class="px-4 py-2 border border-outline-variant text-secondary rounded-lg font-body-sm text-body-sm hover:bg-surface-container-low transition-colors">Details</button>
+</td>
+</tr>
+<!-- Unresolved Item -->
+<tr class="border-b border-outline-variant hover:bg-surface-container transition-colors">
+<td class="py-4 px-6">
+<div class="flex flex-col">
+<span class="font-h3 text-h3 text-on-background mb-1">应该</span>
+<span class="font-body-sm text-body-sm text-secondary">yīnggāi</span>
+</div>
+</td>
+<td class="py-4 px-6 text-on-surface-variant">Stroke Order</td>
+<td class="py-4 px-6 text-on-surface-variant">Oct 21, 2024</td>
+<td class="py-4 px-6">
+<span class="inline-flex items-center px-2 py-1 rounded bg-error-container text-on-error-container font-label-caps text-label-caps">Unresolved</span>
+</td>
+<td class="py-4 px-6 text-right">
+<button class="px-4 py-2 bg-primary text-on-primary rounded-lg font-body-sm text-body-sm hover:opacity-90 transition-colors">Review</button>
+</td>
+</tr>
+<!-- Fixed Item -->
+<tr class="hover:bg-surface-container transition-colors">
+<td class="py-4 px-6">
+<div class="flex flex-col">
+<span class="font-h3 text-h3 text-secondary mb-1">但是</span>
+<span class="font-body-sm text-body-sm text-secondary">dànshì</span>
+</div>
+</td>
+<td class="py-4 px-6 text-secondary">Usage</td>
+<td class="py-4 px-6 text-secondary">Oct 18, 2024</td>
+<td class="py-4 px-6">
+<span class="inline-flex items-center px-2 py-1 rounded border border-outline text-secondary font-label-caps text-label-caps">Fixed</span>
+</td>
+<td class="py-4 px-6 text-right">
+<button class="px-4 py-2 border border-outline-variant text-secondary rounded-lg font-body-sm text-body-sm hover:bg-surface-container-low transition-colors">Details</button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Pagination (Decorative) -->
+<div class="w-full max-w-[960px] flex justify-center mt-8 gap-2">
+<button class="w-8 h-8 flex items-center justify-center border border-outline-variant rounded-lg text-secondary hover:bg-surface-container-low"><span class="material-symbols-outlined text-sm">chevron_left</span></button>
+<button class="w-8 h-8 flex items-center justify-center border border-primary bg-primary text-on-primary rounded-lg font-body-sm">1</button>
+<button class="w-8 h-8 flex items-center justify-center border border-outline-variant rounded-lg text-secondary hover:bg-surface-container-low font-body-sm">2</button>
+<button class="w-8 h-8 flex items-center justify-center border border-outline-variant rounded-lg text-secondary hover:bg-surface-container-low"><span class="material-symbols-outlined text-sm">chevron_right</span></button>
+</div>
+</main>
+<!-- Footer -->
+<footer class="bg-surface full-width border-t border-outline-variant flat no shadows mt-auto">
+<div class="flex flex-col md:flex-row justify-between items-center w-full py-gutter px-gutter max-w-container-max mx-auto">
+<div class="font-label-caps text-label-caps text-on-background mb-4 md:mb-0">© 2024 HSKKit. Academic Clarity System.</div>
+<nav class="flex gap-4 font-body-sm text-body-sm">
+<a class="text-secondary hover:underline hover:text-primary transition-all duration-200" href="#">Legal</a>
+<a class="text-secondary hover:underline hover:text-primary transition-all duration-200" href="#">Support</a>
+<a class="text-secondary hover:underline hover:text-primary transition-all duration-200" href="#">Privacy Policy</a>
+<a class="text-secondary hover:underline hover:text-primary transition-all duration-200" href="#">Terms of Service</a>
+</nav>
+</div>
+</footer>
+</body></html>

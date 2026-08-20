@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Review due cards - HSKKit</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&amp;family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;0,8..60,700;1,8..60,400&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-container-lowest": "#ffffff",
+                        "on-tertiary-container": "#8191a9",
+                        "error-container": "#ffdad6",
+                        "secondary": "#515f74",
+                        "surface-variant": "#e4e2de",
+                        "surface": "#fbf9f5",
+                        "on-secondary-fixed": "#0d1c2f",
+                        "outline": "#75777d",
+                        "surface-container-highest": "#e4e2de",
+                        "outline-variant": "#c5c6cd",
+                        "on-secondary-fixed-variant": "#3a485c",
+                        "tertiary-fixed-dim": "#b7c8e1",
+                        "secondary-container": "#d5e3fd",
+                        "on-surface": "#1b1c1a",
+                        "on-primary-fixed-variant": "#3c475a",
+                        "on-background": "#1b1c1a",
+                        "tertiary": "#041528",
+                        "on-tertiary": "#ffffff",
+                        "background": "#fbf9f5",
+                        "surface-container-high": "#eae8e4",
+                        "on-secondary": "#ffffff",
+                        "secondary-fixed": "#d5e3fd",
+                        "primary-fixed-dim": "#bcc7de",
+                        "tertiary-container": "#1a2a3e",
+                        "primary": "#091426",
+                        "on-error": "#ffffff",
+                        "on-secondary-container": "#57657b",
+                        "on-primary-fixed": "#111c2d",
+                        "inverse-primary": "#bcc7de",
+                        "tertiary-fixed": "#d3e4fe",
+                        "surface-container": "#efeeea",
+                        "on-surface-variant": "#45474c",
+                        "secondary-fixed-dim": "#b9c7e0",
+                        "surface-tint": "#545f73",
+                        "inverse-on-surface": "#f2f0ed",
+                        "error": "#ba1a1a",
+                        "on-primary": "#ffffff",
+                        "surface-bright": "#fbf9f5",
+                        "on-primary-container": "#8590a6",
+                        "surface-container-low": "#f5f3ef",
+                        "inverse-surface": "#30312e",
+                        "on-tertiary-fixed": "#0b1c30",
+                        "on-error-container": "#93000a",
+                        "primary-container": "#1e293b",
+                        "on-tertiary-fixed-variant": "#38485d",
+                        "surface-dim": "#dbdad6",
+                        "primary-fixed": "#d8e3fb"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "container-max": "1140px",
+                        "unit": "8px",
+                        "gutter": "24px",
+                        "margin-mobile": "20px",
+                        "margin-desktop": "64px"
+                    },
+                    "fontFamily": {
+                        "h2": ["\"Source Serif 4\""],
+                        "body-sm": ["Inter"],
+                        "label-caps": ["Inter"],
+                        "h3": ["\"Source Serif 4\""],
+                        "body-md": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "h1-mobile": ["\"Source Serif 4\""],
+                        "h1": ["\"Source Serif 4\""]
+                    },
+                    "fontSize": {
+                        "h2": ["32px", { "lineHeight": "1.3", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+                        "body-sm": ["14px", { "lineHeight": "1.5", "fontWeight": "400" }],
+                        "label-caps": ["12px", { "lineHeight": "1.2", "letterSpacing": "0.05em", "fontWeight": "600" }],
+                        "h3": ["24px", { "lineHeight": "1.4", "fontWeight": "600" }],
+                        "body-md": ["16px", { "lineHeight": "1.5", "fontWeight": "400" }],
+                        "body-lg": ["18px", { "lineHeight": "1.6", "fontWeight": "400" }],
+                        "h1-mobile": ["32px", { "lineHeight": "1.2", "fontWeight": "700" }],
+                        "h1": ["40px", { "lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "700" }]
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-background text-on-background min-h-screen flex flex-col font-body-md" style="background-color: #F8FAFC; font-family: 'Inter', sans-serif;">
+<!-- Title marker (hidden functionally, visible contextually based on instructions) -->
+<div class="sr-only">ROUTE · /review · DESKTOP · ADOPTED · QA-V2</div>
+<!-- TopNavBar -->
+<header class="bg-surface dark:bg-surface border-b border-outline-variant dark:border-outline docked full-width top-0 z-50">
+<div class="flex justify-between items-center px-margin-desktop py-4 max-w-container-max mx-auto">
+<div class="font-h3 text-h3 font-bold text-primary dark:text-primary-fixed-dim">HSKKit</div>
+<nav class="hidden md:flex gap-8 items-center">
+<a class="text-secondary dark:text-secondary-fixed-dim hover:text-primary dark:hover:text-primary-fixed transition-colors active:scale-95 transition-transform font-h3 text-h3" href="#">Levels</a>
+<a class="text-secondary dark:text-secondary-fixed-dim hover:text-primary dark:hover:text-primary-fixed transition-colors active:scale-95 transition-transform font-h3 text-h3" href="#">Vocabulary</a>
+<!-- Active Navigation -->
+<a class="text-primary dark:text-primary-fixed-dim border-b-2 border-primary dark:border-primary-fixed-dim pb-1 active:scale-95 transition-transform font-h3 text-h3" href="#">Practice</a>
+<a class="text-secondary dark:text-secondary-fixed-dim hover:text-primary dark:hover:text-primary-fixed transition-colors active:scale-95 transition-transform font-h3 text-h3" href="#">Study Tools</a>
+</nav>
+<div class="flex items-center gap-4">
+<button class="bg-primary-container text-on-primary rounded px-4 py-2 font-body-sm active:scale-95 transition-transform shadow-none">Sign In</button>
+</div>
+</div>
+</header>
+<!-- Main Content -->
+<main class="flex-grow flex flex-col justify-center items-center py-12 px-margin-desktop max-w-container-max mx-auto w-full">
+<!-- Semantic H1 -->
+<h1 class="font-h1 text-h1 text-primary mb-12 text-center w-full" style="color: #0F172A;">Review due cards</h1>
+<!-- Flashcard Container -->
+<div class="w-full max-w-2xl bg-surface-container-lowest border border-outline-variant rounded-xl p-12 flex flex-col items-center justify-center min-h-[400px] mb-8 relative" id="flashcard" style="background-color: #FFFFFF; border-color: #E2E8F0; border-radius: 16px;">
+<div class="absolute top-4 right-4 text-secondary font-label-caps text-label-caps">
+                HSK 3 · SET 4
+            </div>
+<!-- Front of Card (Character) -->
+<div class="text-[120px] leading-none font-h1 text-primary mb-8 tracking-widest text-center" style="color: #0F172A; font-family: 'Inter', sans-serif;">
+                图书馆
+            </div>
+<!-- Back of Card (Pinyin & Definition - Initially Hidden conceptually, but shown for UI demonstration) -->
+<div class="flex flex-col items-center text-center opacity-0 hover:opacity-100 transition-opacity duration-300" id="card-back">
+<div class="font-h3 text-h3 text-secondary mb-4">tú shū guǎn</div>
+<div class="font-body-lg text-body-lg text-on-surface">library</div>
+</div>
+<div class="absolute bottom-4 text-surface-tint font-body-sm flex gap-2 items-center opacity-50">
+<span class="material-symbols-outlined text-[16px]">flip</span>
+<span>Hover to reveal</span>
+</div>
+</div>
+<!-- Action Controls -->
+<div class="w-full max-w-2xl">
+<p class="font-body-sm text-body-sm text-secondary text-center mb-6">Your choice changes the next review time.</p>
+<div class="grid grid-cols-4 gap-4">
+<!-- Again -->
+<button class="flex flex-col items-center justify-center py-4 border border-outline-variant bg-surface-container-lowest hover:bg-surface-container-low transition-colors rounded-lg group">
+<span class="font-h3 text-h3 text-error mb-1 group-hover:text-error-container transition-colors">Again</span>
+<span class="font-body-sm text-body-sm text-secondary">1m</span>
+</button>
+<!-- Hard -->
+<button class="flex flex-col items-center justify-center py-4 border border-outline-variant bg-surface-container-lowest hover:bg-surface-container-low transition-colors rounded-lg group">
+<span class="font-h3 text-h3 text-primary mb-1">Hard</span>
+<span class="font-body-sm text-body-sm text-secondary">6m</span>
+</button>
+<!-- Good -->
+<button class="flex flex-col items-center justify-center py-4 border-2 border-primary bg-surface-container-lowest hover:bg-surface-container-low transition-colors rounded-lg group relative" style="border-color: #2563EB; border-radius: 8px; background-color: #FFFFFF;">
+<span class="absolute -top-3 bg-surface px-2 font-label-caps text-label-caps text-primary" style="color: #2563EB; background-color: #F8FAFC;">RECOMMENDED</span>
+<span class="font-h3 text-h3 text-primary mb-1">Good</span>
+<span class="font-body-sm text-body-sm text-secondary">10m</span>
+</button>
+<!-- Easy -->
+<button class="flex flex-col items-center justify-center py-4 border border-outline-variant bg-surface-container-lowest hover:bg-surface-container-low transition-colors rounded-lg group">
+<span class="font-h3 text-h3 text-secondary mb-1">Easy</span>
+<span class="font-body-sm text-body-sm text-secondary">4d</span>
+</button>
+</div>
+</div>
+<!-- Progress Indicator -->
+<div class="w-full max-w-2xl mt-12">
+<div class="flex justify-between font-label-caps text-label-caps text-secondary mb-2">
+<span>Session Progress</span>
+<span>42 / 100 Cards</span>
+</div>
+<div class="h-2 w-full bg-surface-container-highest rounded-DEFAULT overflow-hidden" style="background-color: #E2E8F0;">
+<div class="h-full bg-primary w-[42%] rounded-DEFAULT" style="background-color: #2563EB;"></div>
+</div>
+</div>
+</main>
+<!-- Footer -->
+<footer class="bg-surface-container-highest dark:bg-tertiary-container border-t border-outline-variant dark:border-outline full-width">
+<div class="w-full py-8 px-margin-desktop flex flex-col md:flex-row justify-between items-center max-w-container-max mx-auto">
+<div class="font-body-sm text-body-sm text-on-surface dark:text-on-tertiary-container mb-4 md:mb-0">
+                © 2024 HSKKit Language Institute. All rights reserved.
+            </div>
+<div class="flex gap-6">
+<a class="font-body-sm text-body-sm text-on-surface-variant dark:text-on-tertiary-container hover:text-primary dark:hover:text-on-primary-fixed-variant transition-colors opacity-80 hover:opacity-100 transition-opacity" href="#">Privacy Policy</a>
+<a class="font-body-sm text-body-sm text-on-surface-variant dark:text-on-tertiary-container hover:text-primary dark:hover:text-on-primary-fixed-variant transition-colors opacity-80 hover:opacity-100 transition-opacity" href="#">Terms of Service</a>
+<a class="font-body-sm text-body-sm text-on-surface-variant dark:text-on-tertiary-container hover:text-primary dark:hover:text-on-primary-fixed-variant transition-colors opacity-80 hover:opacity-100 transition-opacity" href="#">Institutional Access</a>
+<a class="font-body-sm text-body-sm text-on-surface-variant dark:text-on-tertiary-container hover:text-primary dark:hover:text-on-primary-fixed-variant transition-colors opacity-80 hover:opacity-100 transition-opacity" href="#">Contact</a>
+</div>
+</div>
+</footer>
+<script>
+        // Simple vanilla JS to handle flip interaction for demonstration
+        document.getElementById('flashcard').addEventListener('click', function() {
+            const cardBack = document.getElementById('card-back');
+            if (cardBack.classList.contains('opacity-0')) {
+                cardBack.classList.remove('opacity-0');
+                cardBack.classList.add('opacity-100');
+            } else {
+                cardBack.classList.remove('opacity-100');
+                cardBack.classList.add('opacity-0');
+            }
+        });
+    </script>
+</body></html>

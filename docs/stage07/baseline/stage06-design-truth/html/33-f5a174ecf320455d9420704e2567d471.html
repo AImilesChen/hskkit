@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=390, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport"/>
+<title>ROUTE · /mock/:band · MOBILE · BLOCKED · ADOPTED · QA-V2</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+  tailwind.config = {
+    darkMode: "class",
+    theme: {
+      extend: {
+        "colors": {
+                "surface-container-low": "#f2f4f6",
+                "primary-container": "#2563eb",
+                "on-error-container": "#93000a",
+                "on-tertiary": "#ffffff",
+                "on-secondary-container": "#57657b",
+                "inverse-on-surface": "#eff1f3",
+                "on-surface": "#191c1e",
+                "inverse-primary": "#b4c5ff",
+                "error": "#ba1a1a",
+                "surface-container-lowest": "#ffffff",
+                "tertiary-fixed": "#dae2fd",
+                "on-primary": "#ffffff",
+                "on-error": "#ffffff",
+                "surface-tint": "#0053db",
+                "surface-dim": "#d8dadc",
+                "tertiary-container": "#656d84",
+                "primary-fixed": "#dbe1ff",
+                "tertiary-fixed-dim": "#bec6e0",
+                "surface-container-highest": "#e0e3e5",
+                "surface": "#f7f9fb",
+                "secondary-fixed": "#d5e3fd",
+                "outline-variant": "#c3c6d7",
+                "error-container": "#ffdad6",
+                "secondary": "#515f74",
+                "on-secondary-fixed-variant": "#3a485c",
+                "secondary-fixed-dim": "#b9c7e0",
+                "surface-variant": "#e0e3e5",
+                "primary": "#004ac6",
+                "inverse-surface": "#2d3133",
+                "surface-container-high": "#e6e8ea",
+                "on-background": "#191c1e",
+                "outline": "#737686",
+                "on-tertiary-fixed": "#131b2e",
+                "on-primary-fixed-variant": "#003ea8",
+                "on-tertiary-container": "#eef0ff",
+                "on-secondary-fixed": "#0d1c2f",
+                "on-secondary": "#ffffff",
+                "on-primary-container": "#eeefff",
+                "background": "#f7f9fb",
+                "on-surface-variant": "#434655",
+                "surface-container": "#eceef0",
+                "primary-fixed-dim": "#b4c5ff",
+                "secondary-container": "#d5e3fd",
+                "on-tertiary-fixed-variant": "#3f465c",
+                "surface-bright": "#f7f9fb",
+                "tertiary": "#4d556b",
+                "on-primary-fixed": "#00174b"
+        },
+        "borderRadius": {
+                "DEFAULT": "0.25rem",
+                "lg": "0.5rem",
+                "xl": "0.75rem",
+                "full": "9999px"
+        },
+        "spacing": {
+                "gutter": "16px",
+                "mobile-margin": "20px",
+                "touch-target-min": "44px",
+                "stack-sm": "8px",
+                "stack-md": "16px",
+                "stack-lg": "24px"
+        },
+        "fontFamily": {
+                "body-md": [
+                        "Inter"
+                ],
+                "label-md": [
+                        "Inter"
+                ],
+                "headline-md": [
+                        "Inter"
+                ],
+                "character-display": [
+                        "Inter"
+                ],
+                "headline-lg": [
+                        "Inter"
+                ],
+                "body-lg": [
+                        "Inter"
+                ],
+                "headline-lg-mobile": [
+                        "Inter"
+                ],
+                "label-caps": [
+                        "Inter"
+                ],
+                "body-sm": [
+                        "Inter"
+                ]
+        },
+        "fontSize": {
+                "body-md": [
+                        "16px",
+                        {
+                                "lineHeight": "24px",
+                                "fontWeight": "400"
+                        }
+                ],
+                "label-md": [
+                        "14px",
+                        {
+                                "lineHeight": "20px",
+                                "letterSpacing": "0.01em",
+                                "fontWeight": "500"
+                        }
+                ],
+                "headline-md": [
+                        "20px",
+                        {
+                                "lineHeight": "28px",
+                                "fontWeight": "600"
+                        }
+                ],
+                "character-display": [
+                        "48px",
+                        {
+                                "lineHeight": "56px",
+                                "fontWeight": "500"
+                        }
+                ],
+                "headline-lg": [
+                        "32px",
+                        {
+                                "lineHeight": "40px",
+                                "letterSpacing": "-0.02em",
+                                "fontWeight": "700"
+                        }
+                ],
+                "body-lg": [
+                        "18px",
+                        {
+                                "lineHeight": "28px",
+                                "fontWeight": "400"
+                        }
+                ],
+                "headline-lg-mobile": [
+                        "24px",
+                        {
+                                "lineHeight": "32px",
+                                "letterSpacing": "-0.01em",
+                                "fontWeight": "700"
+                        }
+                ],
+                "label-caps": [
+                        "12px",
+                        {
+                                "lineHeight": "1.2",
+                                "letterSpacing": "0.05em",
+                                "fontWeight": "600"
+                        }
+                ],
+                "body-sm": [
+                        "14px",
+                        {
+                                "lineHeight": "1.5",
+                                "fontWeight": "400"
+                        }
+                ]
+        }
+},
+    },
+  }
+</script>
+<style>
+        body {
+            /* Mobile width constraint for preview */
+            max-width: 390px;
+            margin: 0 auto;
+            position: relative;
+            background-color: #F8FAFC;
+            min-height: 100vh;
+            border-left: 1px solid #E2E8F0;
+            border-right: 1px solid #E2E8F0;
+        }
+        
+        /* Utility for Material Symbols */
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .material-symbols-outlined.fill {
+            font-variation-settings: 'FILL' 1;
+        }
+      </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+</head>
+<body class="bg-[#F8FAFC] text-[#0F172A] antialiased flex flex-col font-body-md overflow-x-hidden">
+<!-- Intent: Focus mode / Task departure. Suppressing TopAppBar navigation shell -->
+<!-- Simple Header for structural context only -->
+<header class="w-full flex items-center justify-between p-4 border-b border-[#E2E8F0] bg-white sticky top-0 z-10">
+<button aria-label="Go back" class="flex items-center justify-center p-2 text-[#0F172A] active:bg-gray-100 rounded-[8px] transition-colors min-w-[44px] min-h-[44px]">
+<span class="material-symbols-outlined">arrow_back</span>
+</button>
+<span class="font-headline-md text-headline-md text-[#0F172A]">HSKKit</span>
+<div class="w-11"></div> <!-- Spacer for balance, matched min-width -->
+</header>
+<main class="flex-1 flex flex-col pb-safe">
+<!-- Hero Section - Locked State -->
+<section class="px-5 pt-8 pb-6 flex flex-col items-center text-center bg-[#F8FAFC] border-b border-[#E2E8F0]">
+<div class="w-20 h-20 mb-4 bg-white rounded-[16px] flex items-center justify-center border border-[#E2E8F0]">
+<span class="material-symbols-outlined text-4xl text-[#2563EB]">lock</span>
+</div>
+<span class="font-label-caps text-label-caps text-gray-500 uppercase tracking-widest mb-2">HSK Level 4</span>
+<h1 class="font-headline-lg text-headline-lg text-[#0F172A] mb-3">Mock Examination</h1>
+<p class="font-body-md text-body-md text-gray-600 max-w-[280px]">
+                This comprehensive assessment is currently locked. Complete the prerequisite vocabulary modules to gain access.
+            </p>
+</section>
+<!-- Requirements List -->
+<section class="px-5 py-6 flex flex-col gap-4">
+<h2 class="font-label-caps text-label-caps text-gray-500 uppercase border-b border-[#E2E8F0] pb-2 mb-2">Prerequisites</h2>
+<!-- Incomplete Requirement -->
+<div class="flex items-start gap-4 p-4 rounded-[16px] border border-[#E2E8F0] bg-white min-w-[44px] min-h-[44px]">
+<span class="material-symbols-outlined text-[#2563EB] mt-0.5">radio_button_unchecked</span>
+<div class="flex flex-col">
+<span class="font-body-md text-body-md text-[#0F172A] font-semibold">Vocabulary Core</span>
+<span class="font-body-sm text-body-sm text-gray-600 mt-1">Master 600 essential terms for Level 4.</span>
+</div>
+</div>
+<!-- Complete Requirement (Example) -->
+<div class="flex items-start gap-4 p-4 rounded-[16px] border border-[#E2E8F0] bg-white opacity-70 min-w-[44px] min-h-[44px]">
+<span class="material-symbols-outlined text-[#2563EB] fill mt-0.5">check_circle</span>
+<div class="flex flex-col">
+<span class="font-body-md text-body-md text-[#0F172A] font-semibold line-through">Grammar Foundations</span>
+<span class="font-body-sm text-body-sm text-gray-600 mt-1">Complete structural exercises.</span>
+</div>
+</div>
+</section>
+<!-- Alternative Actions / Study Paths -->
+<section class="px-5 py-6 mt-auto border-t border-[#E2E8F0] bg-[#F8FAFC] flex flex-col gap-4">
+<h2 class="font-label-caps text-label-caps text-gray-500 uppercase mb-2">Recommended Study Paths</h2>
+<a class="flex items-center justify-between p-4 rounded-[16px] bg-white border border-[#E2E8F0] active:bg-gray-50 transition-colors min-w-[44px] min-h-[44px]" href="#">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-gray-500">format_list_bulleted</span>
+<span class="font-body-md text-body-md text-[#0F172A] font-semibold">Review Vocabulary List</span>
+</div>
+<span class="material-symbols-outlined text-gray-400">chevron_right</span>
+</a>
+<a class="flex items-center justify-between p-4 rounded-[16px] bg-white border border-[#E2E8F0] active:bg-gray-50 transition-colors min-w-[44px] min-h-[44px]" href="#">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-gray-500">quiz</span>
+<span class="font-body-md text-body-md text-[#0F172A] font-semibold">Start Practice Quiz</span>
+</div>
+<span class="material-symbols-outlined text-gray-400">chevron_right</span>
+</a>
+</section>
+<!-- CTA area (Disabled) -->
+<div class="px-5 py-6 bg-white border-t border-[#E2E8F0]">
+<button class="w-full py-4 bg-gray-200 text-gray-400 rounded-[8px] font-body-md text-body-md font-semibold cursor-not-allowed text-center min-w-[44px] min-h-[44px]" disabled="">
+                 Begin Examination
+             </button>
+</div>
+</main>
+<!-- Suppressed BottomNavBar due to focus/task mode departure -->
+</body></html>

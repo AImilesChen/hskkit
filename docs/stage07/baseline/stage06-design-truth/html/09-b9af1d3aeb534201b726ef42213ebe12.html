@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Data &amp; Privacy - HSKKit</title>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+  tailwind.config = {
+    darkMode: "class",
+    theme: {
+      extend: {
+        "colors": {
+                "tertiary-fixed": "#dae2fd",
+                "inverse-surface": "#2d3133",
+                "on-tertiary-fixed-variant": "#3f465c",
+                "on-secondary-fixed-variant": "#3a485c",
+                "on-primary-fixed": "#00174b",
+                "tertiary": "#4d556b",
+                "on-primary-container": "#eeefff",
+                "surface-tint": "#0053db",
+                "primary": "#004ac6",
+                "on-primary-fixed-variant": "#003ea8",
+                "surface-dim": "#d8dadc",
+                "secondary-fixed-dim": "#b9c7e0",
+                "surface-container-highest": "#e0e3e5",
+                "tertiary-fixed-dim": "#bec6e0",
+                "surface": "#f7f9fb",
+                "error-container": "#ffdad6",
+                "on-secondary": "#ffffff",
+                "on-error-container": "#93000a",
+                "surface-container-lowest": "#ffffff",
+                "on-error": "#ffffff",
+                "secondary": "#515f74",
+                "tertiary-container": "#656d84",
+                "secondary-fixed": "#d5e3fd",
+                "outline": "#737686",
+                "on-surface": "#191c1e",
+                "inverse-primary": "#b4c5ff",
+                "on-surface-variant": "#434655",
+                "on-background": "#191c1e",
+                "surface-container-high": "#e6e8ea",
+                "primary-fixed-dim": "#b4c5ff",
+                "on-tertiary-fixed": "#131b2e",
+                "primary-fixed": "#dbe1ff",
+                "surface-container-low": "#f2f4f6",
+                "surface-variant": "#e0e3e5",
+                "surface-container": "#eceef0",
+                "background": "#f7f9fb",
+                "on-secondary-fixed": "#0d1c2f",
+                "on-tertiary-container": "#eef0ff",
+                "primary-container": "#2563eb",
+                "outline-variant": "#c3c6d7",
+                "inverse-on-surface": "#eff1f3",
+                "on-primary": "#ffffff",
+                "on-tertiary": "#ffffff",
+                "error": "#ba1a1a",
+                "surface-bright": "#f7f9fb",
+                "on-secondary-container": "#57657b",
+                "secondary-container": "#d5e3fd",
+                "brand-primary": "#2563eb",
+                "brand-text": "#0f172a",
+                "brand-bg": "#f8fafc",
+                "brand-border": "#e2e8f0"
+        },
+        "borderRadius": {
+                "DEFAULT": "0.25rem",
+                "lg": "0.5rem",
+                "xl": "0.75rem",
+                "full": "9999px",
+                "brand-control": "8px",
+                "brand-card": "16px"
+        },
+        "spacing": {
+                "stack-sm": "8px",
+                "gutter": "16px",
+                "stack-lg": "24px",
+                "stack-md": "16px",
+                "touch-target-min": "44px",
+                "mobile-margin": "20px"
+        },
+        "fontFamily": {
+                "label-md": [
+                        "Inter"
+                ],
+                "character-display": [
+                        "Inter"
+                ],
+                "body-lg": [
+                        "Inter"
+                ],
+                "headline-md": [
+                        "Inter"
+                ],
+                "body-md": [
+                        "Inter"
+                ],
+                "headline-lg-mobile": [
+                        "Inter"
+                ],
+                "headline-lg": [
+                        "Inter"
+                ]
+        },
+        "fontSize": {
+                "label-md": [
+                        "14px",
+                        {
+                                "lineHeight": "20px",
+                                "letterSpacing": "0.01em",
+                                "fontWeight": "500"
+                        }
+                ],
+                "character-display": [
+                        "48px",
+                        {
+                                "lineHeight": "56px",
+                                "fontWeight": "500"
+                        }
+                ],
+                "body-lg": [
+                        "18px",
+                        {
+                                "lineHeight": "28px",
+                                "fontWeight": "400"
+                        }
+                ],
+                "headline-md": [
+                        "20px",
+                        {
+                                "lineHeight": "28px",
+                                "fontWeight": "600"
+                        }
+                ],
+                "body-md": [
+                        "16px",
+                        {
+                                "lineHeight": "24px",
+                                "fontWeight": "400"
+                        }
+                ],
+                "headline-lg-mobile": [
+                        "24px",
+                        {
+                                "lineHeight": "32px",
+                                "letterSpacing": "-0.01em",
+                                "fontWeight": "700"
+                        }
+                ],
+                "headline-lg": [
+                        "32px",
+                        {
+                                "lineHeight": "40px",
+                                "letterSpacing": "-0.02em",
+                                "fontWeight": "700"
+                        }
+                ]
+        }
+},
+    },
+  }
+</script>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+</head>
+<body class="bg-brand-bg text-brand-text font-body-md antialiased min-h-screen flex flex-col">
+<!-- Header for Subpage (No Navigation Shell) -->
+<header class="sticky top-0 w-full z-50 bg-brand-bg border-b border-brand-border flex items-center px-mobile-margin h-16 shadow-none">
+<a aria-label="Go back" class="flex items-center justify-center min-w-touch-target-min min-h-touch-target-min -ml-2 text-brand-text hover:bg-slate-100 transition-colors rounded-brand-control" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">arrow_back</span>
+</a>
+<h1 class="font-headline-lg-mobile text-headline-lg-mobile text-brand-text ml-2">Data &amp; Privacy</h1>
+</header>
+<!-- Main Content Canvas -->
+<main class="flex-grow w-full max-w-5xl mx-auto px-mobile-margin py-8 md:py-12 md:grid md:grid-cols-12 md:gap-gutter">
+<div class="md:col-span-8 md:col-start-3 lg:col-span-6 lg:col-start-4 space-y-12">
+<!-- Description -->
+<section class="space-y-4">
+<p class="font-body-md text-slate-600">
+                    Manage your personal data and privacy settings. HSKKit respects your privacy and provides tools to control your information.
+                </p>
+</section>
+<!-- Export Data Section -->
+<section class="space-y-6">
+<div class="border-b border-brand-border pb-2">
+<h2 class="font-headline-md text-headline-md text-brand-text">Export Data</h2>
+</div>
+<div class="bg-white border border-brand-border rounded-brand-card p-6">
+<p class="font-body-md text-slate-600 mb-6">
+                        You can request a copy of your personal data, including your study history, vocabulary lists, and account details. The export will be delivered to your registered email address as a secure, machine-readable file.
+                    </p>
+<button class="bg-brand-primary text-white rounded-brand-control w-full flex items-center justify-center gap-2 min-h-[44px] px-4 font-label-md transition-colors hover:opacity-90 active:scale-[0.98]">
+<span class="material-symbols-outlined text-[20px]">download</span>
+                        Request Data Export
+                    </button>
+<p class="font-body-md text-[14px] text-slate-500 mt-4 text-center">
+                        Exports typically take up to 24 hours to process.
+                    </p>
+</div>
+</section>
+<!-- Danger Zone Section -->
+<section class="space-y-6 pt-4">
+<div class="border-b border-brand-border pb-2">
+<h2 class="font-headline-md text-headline-md text-red-600">Danger Zone</h2>
+</div>
+<div class="bg-white border border-red-200 rounded-brand-card p-6">
+<p class="font-body-md text-slate-600 mb-6">
+                        Permanently delete your account and all associated data. This action is irreversible. All study progress, active subscriptions, and personal information will be wiped from our servers immediately.
+                    </p>
+<button class="bg-transparent border-2 border-red-600 text-red-600 rounded-brand-control w-full flex items-center justify-center gap-2 min-h-[44px] px-4 font-label-md transition-colors hover:bg-red-50 active:scale-[0.98]">
+<span class="material-symbols-outlined text-[20px]">delete_forever</span>
+                        Permanently Delete Account
+                    </button>
+</div>
+</section>
+</div>
+</main>
+<!-- Simple Footer for transactional/sub pages -->
+<footer class="bg-slate-50 w-full border-t border-brand-border py-8 px-mobile-margin text-center flex flex-col items-center gap-4 mt-auto">
+<div class="font-headline-md text-headline-md text-brand-text">HSKKit</div>
+<div class="flex flex-wrap justify-center gap-x-6 gap-y-2 max-w-lg">
+<a class="font-body-md text-[14px] text-slate-600 hover:text-brand-primary transition-colors min-h-[44px] flex items-center px-2 py-1" href="#">Privacy Policy</a>
+<a class="font-body-md text-[14px] text-slate-600 hover:text-brand-primary transition-colors min-h-[44px] flex items-center px-2 py-1" href="#">Terms of Service</a>
+</div>
+<p class="font-body-md text-[14px] text-slate-500 mt-4">
+            © 2024 HSKKit. Scholarly language documentation.
+        </p>
+</footer>
+</body></html>

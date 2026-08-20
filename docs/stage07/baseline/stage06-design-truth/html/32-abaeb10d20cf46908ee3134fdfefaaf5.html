@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>ROUTE · /mock/:band · DESKTOP · BLOCKED · ADOPTED</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+  tailwind.config = {
+    darkMode: "class",
+    theme: {
+      extend: {
+        "colors": {
+                "inverse-primary": "#b4c5ff",
+                "error-container": "#ffdad6",
+                "surface-container-highest": "#e0e3e5",
+                "surface-container-lowest": "#ffffff",
+                "surface-container": "#eceef0",
+                "surface-variant": "#e0e3e5",
+                "surface": "#f7f9fb",
+                "on-tertiary-fixed-variant": "#3f465c",
+                "on-primary-fixed": "#00174b",
+                "secondary": "#515f74",
+                "on-error-container": "#93000a",
+                "secondary-fixed-dim": "#b9c7e0",
+                "on-primary-container": "#eeefff",
+                "on-secondary-fixed": "#0d1c2f",
+                "surface-tint": "#0053db",
+                "on-secondary": "#ffffff",
+                "primary-fixed": "#dbe1ff",
+                "on-secondary-fixed-variant": "#3a485c",
+                "surface-container-low": "#f2f4f6",
+                "on-tertiary-container": "#eef0ff",
+                "outline-variant": "#c3c6d7",
+                "background": "#f7f9fb",
+                "secondary-container": "#d5e3fd",
+                "tertiary-container": "#656d84",
+                "surface-bright": "#f7f9fb",
+                "primary-container": "#2563eb",
+                "on-error": "#ffffff",
+                "error": "#ba1a1a",
+                "tertiary-fixed-dim": "#bec6e0",
+                "secondary-fixed": "#d5e3fd",
+                "surface-container-high": "#e6e8ea",
+                "on-primary-fixed-variant": "#003ea8",
+                "on-surface": "#191c1e",
+                "on-surface-variant": "#434655",
+                "on-primary": "#ffffff",
+                "on-secondary-container": "#57657b",
+                "outline": "#737686",
+                "on-tertiary": "#ffffff",
+                "on-tertiary-fixed": "#131b2e",
+                "on-background": "#191c1e",
+                "inverse-surface": "#2d3133",
+                "tertiary-fixed": "#dae2fd",
+                "primary-fixed-dim": "#b4c5ff",
+                "primary": "#004ac6",
+                "inverse-on-surface": "#eff1f3",
+                "tertiary": "#4d556b",
+                "surface-dim": "#d8dadc"
+        },
+        "borderRadius": {
+                "DEFAULT": "0.25rem",
+                "lg": "0.5rem",
+                "xl": "0.75rem",
+                "2xl": "1rem",
+                "full": "9999px"
+        },
+        "spacing": {
+                "gutter": "16px",
+                "stack-md": "16px",
+                "mobile-margin": "20px",
+                "touch-target-min": "44px",
+                "stack-sm": "8px",
+                "stack-lg": "24px",
+                "container-max": "1140px",
+                "margin-desktop": "64px"
+        },
+        "fontFamily": {
+                "sans": ["Inter", "sans-serif"]
+        }
+    }
+  }
+}
+</script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+</style>
+</head>
+<body class="bg-[#F8FAFC] text-[#0F172A] min-h-screen flex flex-col antialiased">
+<!-- TopAppBar -->
+<header class="bg-[#F8FAFC] w-full top-0 sticky border-b border-[#E2E8F0] z-50">
+<div class="max-w-container-max mx-auto px-margin-desktop flex items-center justify-between h-16">
+<div class="text-2xl font-bold text-[#0F172A] cursor-pointer transition-all duration-200">
+                HSKKit
+            </div>
+<nav class="hidden md:flex items-center space-x-8">
+<a class="text-[#0F172A] hover:text-[#2563EB] transition-colors text-base" href="#">Levels</a>
+<a class="text-[#0F172A] hover:text-[#2563EB] transition-colors text-base" href="#">Vocabulary</a>
+<a class="text-[#2563EB] font-bold border-b-2 border-[#2563EB] text-base transition-colors hover:text-[#2563EB] pb-5 pt-5" href="#">Practice</a>
+<a class="text-[#0F172A] hover:text-[#2563EB] transition-colors text-base" href="#">Study Tools</a>
+</nav>
+<div class="flex items-center space-x-4">
+<span class="material-symbols-outlined cursor-pointer hover:text-[#2563EB] transition-colors text-[#0F172A]" data-icon="search">search</span>
+<button class="bg-[#2563EB] text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors hover:bg-blue-700">Sign In</button>
+</div>
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="flex-grow flex justify-center py-16 px-4 md:px-margin-desktop bg-[#F8FAFC]">
+<!-- Narrow focus container -->
+<div class="max-w-[720px] w-full">
+<!-- Breadcrumbs / Back navigation -->
+<div class="mb-8 flex items-center text-[#0F172A] text-sm">
+<a class="hover:text-[#2563EB] transition-colors flex items-center" href="#">
+<span class="material-symbols-outlined mr-1 text-[16px]" data-icon="arrow_back">arrow_back</span>
+                    Back to Mock Exams
+                </a>
+</div>
+<!-- Blocked State Container -->
+<div class="bg-white border border-[#E2E8F0] rounded-[16px] p-8 md:p-12 mb-12 flex flex-col items-center text-center">
+<div class="w-20 h-20 bg-slate-100 rounded-full flex items-center justify-center mb-6">
+<span class="material-symbols-outlined text-[40px] text-slate-500" data-icon="lock">lock</span>
+</div>
+<h1 class="text-3xl font-bold text-[#0F172A] mb-4">Advanced Mock Exam (Band 7-9)</h1>
+<p class="text-lg text-slate-600 mb-8 max-w-lg">
+                    This advanced mock examination requires verified proficiency at Level 6 before unlocking. Our system indicates you are currently strengthening foundational skills in prior bands.
+                </p>
+<div class="bg-slate-50 w-full p-6 border-t border-b border-[#E2E8F0] text-left mb-8">
+<h3 class="text-base font-semibold text-[#0F172A] mb-2">Prerequisites Missing</h3>
+<ul class="space-y-3 text-sm text-slate-600">
+<li class="flex items-start">
+<span class="material-symbols-outlined text-[18px] mr-2 text-red-600 mt-0.5" data-icon="cancel">cancel</span>
+<span>Level 6 Mock Exam Completion (Score &gt; 180 required)</span>
+</li>
+<li class="flex items-start">
+<span class="material-symbols-outlined text-[18px] mr-2 text-red-600 mt-0.5" data-icon="cancel">cancel</span>
+<span>Mastery of 2,500 core vocabulary items verified</span>
+</li>
+</ul>
+</div>
+</div>
+<!-- Alternative Pathway Section -->
+<div class="mb-6">
+<h2 class="text-2xl font-bold text-[#0F172A] mb-2">Suggested Next Steps</h2>
+<p class="text-sm text-slate-600">Focus your studies on these critical areas before attempting the advanced bands.</p>
+</div>
+<!-- Bento Grid Alternatives -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+<!-- Card 1 -->
+<a class="block bg-white border border-[#E2E8F0] rounded-[16px] p-6 hover:border-[#2563EB] transition-colors group" href="#">
+<div class="flex justify-between items-start mb-4">
+<span class="material-symbols-outlined text-[#2563EB]" data-icon="headphones">headphones</span>
+<span class="material-symbols-outlined text-slate-400 group-hover:text-[#2563EB] transition-colors" data-icon="arrow_forward">arrow_forward</span>
+</div>
+<h3 class="text-base font-semibold text-[#0F172A] mb-1">Improve Level 6 Listening</h3>
+<p class="text-sm text-slate-600">Intensive dictation and comprehension drills to build phonetic endurance.</p>
+</a>
+<!-- Card 2 -->
+<a class="block bg-white border border-[#E2E8F0] rounded-[16px] p-6 hover:border-[#2563EB] transition-colors group" href="#">
+<div class="flex justify-between items-start mb-4">
+<span class="material-symbols-outlined text-[#2563EB]" data-icon="menu_book">menu_book</span>
+<span class="material-symbols-outlined text-slate-400 group-hover:text-[#2563EB] transition-colors" data-icon="arrow_forward">arrow_forward</span>
+</div>
+<h3 class="text-base font-semibold text-[#0F172A] mb-1">Advanced Reading Speed</h3>
+<p class="text-sm text-slate-600">Practice scanning dense academic and journalistic texts efficiently.</p>
+</a>
+<!-- Card 3 (Full width) -->
+<a class="block bg-white border border-[#E2E8F0] rounded-[16px] p-6 hover:border-[#2563EB] transition-colors group md:col-span-2" href="#">
+<div class="flex items-center mb-2">
+<span class="material-symbols-outlined text-[#2563EB] mr-3" data-icon="history_edu">history_edu</span>
+<h3 class="text-base font-semibold text-[#0F172A]">Level 6 Essay Writing Modules</h3>
+</div>
+<p class="text-sm text-slate-600 mb-4 pl-9">Develop cohesive arguments and master complex sentence structures required for high-band expression.</p>
+<div class="pl-9 flex items-center text-[#2563EB] text-sm font-semibold">
+                        Start Module <span class="material-symbols-outlined text-[16px] ml-1" data-icon="chevron_right">chevron_right</span>
+</div>
+</a>
+</div>
+</div>
+</main>
+<!-- Footer -->
+<footer class="bg-[#F8FAFC] w-full py-8 border-t border-[#E2E8F0]">
+<div class="max-w-container-max mx-auto px-margin-desktop flex flex-col md:flex-row justify-between items-center">
+<div class="text-xs font-semibold tracking-wider text-slate-500 mb-4 md:mb-0 hover:text-slate-700 transition-colors">
+                © 2024 HSKKit Academic. All rights reserved.
+            </div>
+<nav class="flex space-x-6">
+<a class="text-sm text-slate-500 hover:text-[#2563EB] transition-all" href="#">Academic Integrity</a>
+<a class="text-sm text-slate-500 hover:text-[#2563EB] transition-all" href="#">Research Methodology</a>
+<a class="text-sm text-slate-500 hover:text-[#2563EB] transition-all" href="#">Terms of Service</a>
+</nav>
+</div>
+</footer>
+</body></html>

@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+
+<html class="h-full" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>HSKKit - Account Management</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "primary": "#2563eb",
+                        "primary-container": "#2563eb",
+                        "on-primary": "#ffffff",
+                        "background": "#f8fafc",
+                        "surface": "#ffffff",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-container-low": "#f1f5f9",
+                        "surface-variant": "#e2e8f0",
+                        "outline": "#cbd5e1",
+                        "outline-variant": "#e2e8f0",
+                        "secondary": "#64748b",
+                        "on-surface": "#0f172a",
+                        "error": "#ef4444",
+                        "error-container": "#fee2e2",
+                        "secondary-fixed-dim": "#94a3b8",
+                        "primary-fixed": "#3b82f6"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "8px",
+                        "lg": "8px",
+                        "xl": "16px",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "margin-desktop": "64px",
+                        "margin-mobile": "20px",
+                        "container-max": "1140px",
+                        "gutter": "24px"
+                    },
+                    "fontFamily": {
+                        "label-caps": ["Inter", "sans-serif"],
+                        "body-lg": ["Inter", "sans-serif"],
+                        "h1": ["Inter", "sans-serif"],
+                        "body-md": ["Inter", "sans-serif"],
+                        "h2": ["Inter", "sans-serif"],
+                        "h1-mobile": ["Inter", "sans-serif"],
+                        "h3": ["Inter", "sans-serif"],
+                        "body-sm": ["Inter", "sans-serif"]
+                    },
+                    "fontSize": {
+                        "label-caps": ["12px", { "lineHeight": "1.2", "letterSpacing": "0.05em", "fontWeight": "600" }],
+                        "body-lg": ["18px", { "lineHeight": "1.6", "fontWeight": "400" }],
+                        "h1": ["40px", { "lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "body-md": ["16px", { "lineHeight": "1.5", "fontWeight": "400" }],
+                        "h2": ["32px", { "lineHeight": "1.3", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+                        "h1-mobile": ["32px", { "lineHeight": "1.2", "fontWeight": "700" }],
+                        "h3": ["24px", { "lineHeight": "1.4", "fontWeight": "600" }],
+                        "body-sm": ["14px", { "lineHeight": "1.5", "fontWeight": "400" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body { background-color: #f8fafc; color: #0f172a; }
+        .border-level-1 { border: 1px solid #e2e8f0; }
+        .shadow-none { box-shadow: none !important; }
+    </style>
+</head>
+<body class="h-full flex flex-col font-body-md text-body-md bg-background antialiased">
+<!-- TopNavBar -->
+<header class="bg-surface dark:bg-surface border-b border-outline-variant dark:border-outline flat no shadows docked full-width top-0 z-40">
+<div class="hidden md:flex justify-between items-center w-full px-margin-desktop max-w-container-max mx-auto h-20">
+<div class="flex items-center gap-8">
+<div class="text-h3 font-h3 text-[#0f172a] font-bold">HSKKit</div>
+<nav class="flex gap-6">
+<a class="text-secondary dark:text-secondary-fixed-dim hover:text-primary dark:hover:text-primary-fixed hover:bg-surface-container-low dark:hover:bg-primary-container transition-colors duration-200 cursor-pointer active:opacity-80 px-2 py-1 rounded" href="#">Levels</a>
+<a class="text-secondary dark:text-secondary-fixed-dim hover:text-primary dark:hover:text-primary-fixed hover:bg-surface-container-low dark:hover:bg-primary-container transition-colors duration-200 cursor-pointer active:opacity-80 px-2 py-1 rounded" href="#">Vocabulary</a>
+<a class="text-secondary dark:text-secondary-fixed-dim hover:text-primary dark:hover:text-primary-fixed hover:bg-surface-container-low dark:hover:bg-primary-container transition-colors duration-200 cursor-pointer active:opacity-80 px-2 py-1 rounded" href="#">Practice</a>
+<a class="text-secondary dark:text-secondary-fixed-dim hover:text-primary dark:hover:text-primary-fixed hover:bg-surface-container-low dark:hover:bg-primary-container transition-colors duration-200 cursor-pointer active:opacity-80 px-2 py-1 rounded" href="#">Study Tools</a>
+</nav>
+</div>
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-[#0f172a] border-b-2 border-[#0f172a] pb-1 cursor-pointer" data-icon="account_circle">account_circle</span>
+</div>
+</div>
+</header>
+<main class="flex-grow w-full max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop py-12">
+<div class="grid grid-cols-1 md:grid-cols-12 gap-gutter">
+<!-- Main Content Area (8 columns) -->
+<div class="md:col-span-8 flex flex-col gap-8">
+<!-- Page Header -->
+<div>
+<h1 class="font-h1 text-h1 text-[#0f172a]">Account Management</h1>
+<p class="font-body-lg text-body-lg text-secondary mt-2">Manage your profile, synchronization status, and academic data.</p>
+</div>
+<!-- Profile Section -->
+<section class="bg-surface-container-lowest border-level-1 rounded-xl p-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
+<div class="flex items-center gap-6">
+<img class="w-24 h-24 rounded-full object-cover border-2 border-surface-variant" data-alt="A highly detailed, professional headshot portrait of an academic student against a clean, stark white background. The lighting is soft and even, typical of a high-end studio light-mode setup. The student appears focused and scholarly, wearing understated clothing in deep navy tones, aligning with a rigorous, minimalist educational aesthetic." src="https://www.gstatic.com/labs-code/stitch/stitch-placeholder-300x300.svg"/>
+<div>
+<h2 class="font-h3 text-h3 text-[#0f172a]">Eleanor Vance</h2>
+<p class="font-body-md text-body-md text-secondary">eleanor.vance@university.edu</p>
+</div>
+</div>
+<div class="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
+<button class="bg-primary text-on-primary font-body-md text-body-md px-4 py-2 rounded-lg shadow-none hover:bg-opacity-90 transition-opacity">Edit Profile</button>
+<button class="bg-transparent border border-outline-variant text-[#0f172a] font-body-md text-body-md px-4 py-2 rounded-lg shadow-none hover:bg-surface-container-low transition-colors">Sign Out</button>
+</div>
+</section>
+<!-- Data Merge Pending -->
+<section class="bg-surface-container-lowest border border-error-container rounded-xl p-6 relative overflow-hidden">
+<div class="absolute top-0 left-0 w-1 h-full bg-error"></div>
+<div class="pl-4">
+<div class="flex items-center gap-2 mb-2">
+<span class="material-symbols-outlined text-error" data-icon="sync_problem">sync_problem</span>
+<h3 class="font-body-lg text-body-lg font-bold text-[#0f172a]">Data Merge Pending</h3>
+</div>
+<p class="font-body-md text-body-md text-secondary mb-4">We found unsaved activity from a recent guest session. Would you like to merge this data into your account?</p>
+<div class="flex gap-6 mb-6">
+<div class="flex flex-col">
+<span class="font-h3 text-h3 text-primary">142</span>
+<span class="font-label-caps text-label-caps text-secondary uppercase">Vocabulary Items</span>
+</div>
+<div class="w-px bg-outline-variant h-auto"></div>
+<div class="flex flex-col">
+<span class="font-h3 text-h3 text-primary">12 Days</span>
+<span class="font-label-caps text-label-caps text-secondary uppercase">Streak Activity</span>
+</div>
+</div>
+<div class="flex gap-3">
+<button class="bg-primary text-on-primary font-body-md text-body-md px-4 py-2 rounded-lg shadow-none hover:bg-opacity-90 transition-opacity">Merge Data</button>
+<button class="bg-transparent text-secondary hover:text-error font-body-md text-body-md px-4 py-2 rounded-lg transition-colors">Discard Guest Data</button>
+</div>
+</div>
+</section>
+<!-- Sync Status Log -->
+<section class="flex flex-col gap-4">
+<h3 class="font-h3 text-h3 text-[#0f172a] border-b border-level-1 pb-2">Sync Status Log</h3>
+<!-- Pending -->
+<div class="bg-surface-container-lowest border-level-1 rounded-xl p-4 flex justify-between items-center bg-surface-container-low">
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-secondary" data-icon="cloud_sync">cloud_sync</span>
+<div>
+<p class="font-body-md text-body-md font-bold text-on-surface">Vocabulary Deck Update</p>
+<p class="font-body-sm text-body-sm text-secondary">Status: Pending synchronization</p>
+</div>
+</div>
+<span class="font-label-caps text-label-caps text-secondary uppercase bg-surface-variant px-2 py-1 rounded-lg">Pending</span>
+</div>
+<!-- Mismatch -->
+<div class="bg-surface-container-lowest border-level-1 rounded-xl p-4 flex justify-between items-center">
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-error" data-icon="warning">warning</span>
+<div>
+<p class="font-body-md text-body-md font-bold text-on-surface">Practice History</p>
+<p class="font-body-sm text-body-sm text-secondary">Status: Version Mismatch detected</p>
+</div>
+</div>
+<button class="bg-transparent border border-outline-variant text-[#0f172a] font-body-sm text-body-sm px-3 py-1 rounded-lg hover:bg-surface-container-low transition-colors">Resolve</button>
+</div>
+<!-- Failed -->
+<div class="bg-surface-container-lowest border-level-1 border-error-container rounded-xl p-4 flex justify-between items-center">
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-error" data-icon="cloud_off">cloud_off</span>
+<div>
+<p class="font-body-md text-body-md font-bold text-on-surface">Study Settings</p>
+<p class="font-body-sm text-body-sm text-error">Status: Failed - Connection error</p>
+</div>
+</div>
+<button class="text-primary font-body-sm text-body-sm hover:underline">Retry</button>
+</div>
+</section>
+</div>
+<!-- Sidebar Area (4 columns) -->
+<aside class="md:col-span-4 flex flex-col gap-6">
+<!-- Current Learning Streak -->
+<div class="bg-surface-container-lowest border-level-1 rounded-xl p-6 text-center">
+<span class="material-symbols-outlined text-4xl text-[#0f172a] mb-2" data-icon="local_fire_department">local_fire_department</span>
+<h4 class="font-label-caps text-label-caps text-secondary uppercase mb-1">Current Learning Streak</h4>
+<p class="font-h1 text-h1 text-[#0f172a]">42 <span class="font-h3 text-h3 text-secondary">Days</span></p>
+</div>
+<!-- Academic Standing -->
+<div class="bg-surface-container-lowest border-level-1 rounded-xl p-6">
+<h4 class="font-label-caps text-label-caps text-secondary uppercase mb-4 border-b border-level-1 pb-2">Academic Standing</h4>
+<div class="flex justify-between items-end mb-2">
+<span class="font-body-md text-body-md font-bold text-on-surface">HSK 3 Mastery</span>
+<span class="font-h3 text-h3 text-[#0f172a]">68%</span>
+</div>
+<div class="w-full bg-surface-variant h-2 rounded-sm overflow-hidden">
+<div class="bg-primary h-full rounded-sm" style="width: 68%;"></div>
+</div>
+<p class="font-body-sm text-body-sm text-secondary mt-4 text-center">Maintain daily practice to improve your mastery level.</p>
+</div>
+</aside>
+</div>
+</main>
+<!-- BottomNavBar (Mobile Only) -->
+<nav class="md:hidden fixed bottom-0 left-0 w-full flex justify-around items-center px-margin-mobile py-3 bg-surface dark:bg-surface-container-high border-t border-outline-variant dark:border-outline z-50">
+<a class="flex flex-col items-center justify-center text-secondary dark:text-secondary-fixed-dim transition-all duration-150 active:scale-95 active:bg-surface-container dark:active:bg-primary-container p-2 rounded-lg" href="#">
+<span class="material-symbols-outlined mb-1" data-icon="home">home</span>
+<span class="font-label-caps text-label-caps">Home</span>
+</a>
+<a class="flex flex-col items-center justify-center text-secondary dark:text-secondary-fixed-dim transition-all duration-150 active:scale-95 active:bg-surface-container dark:active:bg-primary-container p-2 rounded-lg" href="#">
+<span class="material-symbols-outlined mb-1" data-icon="menu_book">menu_book</span>
+<span class="font-label-caps text-label-caps">Learn</span>
+</a>
+<a class="flex flex-col items-center justify-center text-secondary dark:text-secondary-fixed-dim transition-all duration-150 active:scale-95 active:bg-surface-container dark:active:bg-primary-container p-2 rounded-lg" href="#">
+<span class="material-symbols-outlined mb-1" data-icon="exercise">exercise</span>
+<span class="font-label-caps text-label-caps">Practice</span>
+</a>
+<a class="flex flex-col items-center justify-center text-primary dark:text-primary-fixed font-bold transition-all duration-150 active:scale-95 active:bg-surface-container dark:active:bg-primary-container p-2 rounded-lg" href="#">
+<span class="material-symbols-outlined mb-1" data-icon="person">person</span>
+<span class="font-label-caps text-label-caps">Account</span>
+</a>
+</nav>
+</body></html>

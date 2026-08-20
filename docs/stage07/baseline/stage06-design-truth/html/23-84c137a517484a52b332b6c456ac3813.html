@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport"/>
+<title>HSK 3.0 Standard - HSKKit</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                            "primary": "#2563EB",
+                            "primary-container": "#2563EB",
+                            "on-primary": "#ffffff",
+                            "background": "#F8FAFC",
+                            "on-background": "#0F172A",
+                            "surface-container-lowest": "#ffffff",
+                            "surface-container-low": "#F1F5F9",
+                            "surface-container-high": "#E2E8F0",
+                            "surface-bright": "#ffffff",
+                            "on-surface": "#0F172A",
+                            "on-surface-variant": "#475569",
+                            "outline-variant": "#E2E8F0",
+                            "outline": "#E2E8F0",
+                            "secondary": "#475569",
+                            "on-secondary-fixed-variant": "#475569"
+                    },
+                    "borderRadius": {
+                            "DEFAULT": "8px",
+                            "lg": "8px",
+                            "xl": "16px",
+                            "full": "9999px"
+                    },
+                    "spacing": {
+                            "margin-desktop": "64px",
+                            "unit": "8px",
+                            "margin-mobile": "20px",
+                            "container-max": "1140px",
+                            "gutter": "24px"
+                    },
+                    "fontFamily": {
+                            "h2": ["Inter", "sans-serif"],
+                            "h1-mobile": ["Inter", "sans-serif"],
+                            "h1": ["Inter", "sans-serif"],
+                            "body-lg": ["Inter", "sans-serif"],
+                            "body-md": ["Inter", "sans-serif"],
+                            "label-caps": ["Inter", "sans-serif"],
+                            "h3": ["Inter", "sans-serif"],
+                            "body-sm": ["Inter", "sans-serif"]
+                    },
+                    "fontSize": {
+                            "h2": ["32px", { "lineHeight": "1.3", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+                            "h1-mobile": ["32px", { "lineHeight": "1.2", "fontWeight": "700" }],
+                            "h1": ["40px", { "lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                            "body-lg": ["18px", { "lineHeight": "1.6", "fontWeight": "600" }],
+                            "body-md": ["16px", { "lineHeight": "1.5", "fontWeight": "400" }],
+                            "label-caps": ["12px", { "lineHeight": "1.2", "letterSpacing": "0.05em", "fontWeight": "600" }],
+                            "h3": ["24px", { "lineHeight": "1.4", "fontWeight": "600" }],
+                            "body-sm": ["14px", { "lineHeight": "1.5", "fontWeight": "400" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        /* Touch target minimums */
+        button, a, .touch-target { min-height: 44px; min-width: 44px; }
+        
+        /* Typography utilities */
+        .font-h1-mobile { font-family: "Inter", sans-serif; font-size: 32px; line-height: 1.2; font-weight: 700; }
+        .font-h2 { font-family: "Inter", sans-serif; font-size: 32px; line-height: 1.3; letter-spacing: -0.01em; font-weight: 600; }
+        .font-h3 { font-family: "Inter", sans-serif; font-size: 24px; line-height: 1.4; font-weight: 600; }
+        .font-body-lg { font-family: "Inter", sans-serif; font-size: 18px; line-height: 1.6; font-weight: 600; }
+        .font-body-md { font-family: "Inter", sans-serif; font-size: 16px; line-height: 1.5; font-weight: 400; }
+        .font-body-sm { font-family: "Inter", sans-serif; font-size: 14px; line-height: 1.5; font-weight: 400; }
+        .font-label-caps { font-family: "Inter", sans-serif; font-size: 12px; line-height: 1.2; letter-spacing: 0.05em; font-weight: 600; }
+        
+        /* Mobile reflow strict max width */
+        body { max-width: 100vw; overflow-x: hidden; background-color: #F8FAFC; }
+        
+        /* Smooth scrolling */
+        html { scroll-behavior: smooth; }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+</head>
+<body class="bg-background text-on-background antialiased flex flex-col min-h-screen font-body-md">
+<!-- TopAppBar -->
+<header class="bg-background border-b border-outline-variant w-full sticky top-0 z-50">
+<div class="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop flex justify-between items-center h-16">
+<!-- Leading Icon / Brand -->
+<div class="flex items-center gap-unit cursor-pointer duration-200 hover:text-primary transition-colors text-on-background">
+<span class="material-symbols-outlined touch-target flex items-center justify-center">menu_book</span>
+<span class="font-h3 text-h3 text-on-background">HSKKit</span>
+</div>
+<!-- Trailing Action (CTA) -->
+<button class="bg-primary text-on-primary rounded touch-target px-4 flex items-center justify-center font-body-sm hover:bg-opacity-90 transition-opacity">
+                Choose a starting point
+            </button>
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="flex-grow w-full max-w-[390px] mx-auto flex flex-col pt-8 pb-20 md:max-w-container-max px-margin-mobile md:px-margin-desktop gap-8 relative z-0 overflow-x-hidden">
+<!-- Hero Section -->
+<section class="flex flex-col gap-4">
+<h1 class="font-h1-mobile text-h1-mobile text-on-background">Understand the HSK 3.0 learning framework</h1>
+<p class="font-body-md text-body-md text-on-surface-variant">
+                The new HSK standard expands from 6 levels to a comprehensive 9-level system, providing a more granular and rigorous path to Chinese language proficiency.
+            </p>
+</section>
+<!-- Image Banner -->
+<div class="w-full h-48 bg-surface-container-high rounded-xl overflow-hidden border border-outline-variant relative flex-shrink-0">
+<img class="w-full h-full object-cover" data-alt="A meticulously organized desk in a well-lit academic library. A stack of textured, high-quality notebooks rests beside a sleek, modern tablet displaying Chinese characters. Soft natural daylight streams through a window, illuminating the scene. The aesthetic is clean, intellectual, and focused, employing a minimalist color palette of crisp whites, soft greys, and deep navy accents to convey a sense of rigorous study." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCAjbq4fJ6l8Q6ffV9a-OeEnWUwIIyuSMKMPDo8vuv1iX8LuisixNy35R5O7tbkMPsYAvxrJBc0rHUfjOmus9uocMG1BgkT2XtfS3zfA6tvY4gWHC2HSTv_tb02YPd1f2zgAs5QaFdmR5_wyXmKP7Id2rEzCCWjwkZiriQ4BCZjORIp8nGe9jHbO-N5xcBSlWXnO4WSD25eDglwUqS3kUXO0m8X7ZXWvz5Q54opcVXXlmpMRMXcIKpjkbOr9M7NVYbUw_D3Tg0xhRA"/>
+</div>
+<!-- 3 Stages Overview (Bento-ish Mobile Grid) -->
+<section class="flex flex-col gap-6">
+<h2 class="font-h3 text-h3 text-on-background">Three Stages, Nine Levels</h2>
+<div class="flex flex-col gap-4">
+<!-- Stage 1: Beginner -->
+<div class="bg-surface-container-lowest border border-outline-variant p-6 rounded-xl flex flex-col gap-4 relative shadow-sm">
+<div class="flex items-center gap-2 text-on-background">
+<span class="material-symbols-outlined text-on-background" style="font-variation-settings: 'FILL' 1;">layers</span>
+<h3 class="font-body-lg text-body-lg text-on-background">Beginner</h3>
+</div>
+<div class="flex gap-2">
+<span class="px-2 py-1 bg-surface-container-low text-secondary font-label-caps rounded">Level 1</span>
+<span class="px-2 py-1 bg-surface-container-low text-secondary font-label-caps rounded">Level 2</span>
+<span class="px-2 py-1 bg-surface-container-low text-secondary font-label-caps rounded">Level 3</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+                        Focuses on foundational phonetics, basic characters, and daily survival communication. Requires mastery of ~2,245 words total by Level 3.
+                    </p>
+</div>
+<!-- Stage 2: Intermediate -->
+<div class="bg-surface-container-lowest border border-outline-variant p-6 rounded-xl flex flex-col gap-4 relative shadow-sm">
+<div class="flex items-center gap-2 text-on-background">
+<span class="material-symbols-outlined text-on-background" style="font-variation-settings: 'FILL' 1;">translate</span>
+<h3 class="font-body-lg text-body-lg text-on-background">Intermediate</h3>
+</div>
+<div class="flex gap-2">
+<span class="px-2 py-1 bg-surface-container-low text-secondary font-label-caps rounded">Level 4</span>
+<span class="px-2 py-1 bg-surface-container-low text-secondary font-label-caps rounded">Level 5</span>
+<span class="px-2 py-1 bg-surface-container-low text-secondary font-label-caps rounded">Level 6</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+                        Enables fluid conversation across varied topics. Emphasizes complex grammar and longer reading comprehension. ~5,456 cumulative words.
+                    </p>
+</div>
+<!-- Stage 3: Advanced -->
+<div class="bg-surface-container-lowest border border-outline-variant p-6 rounded-xl flex flex-col gap-4 relative shadow-sm">
+<div class="flex items-center gap-2 text-on-background">
+<span class="material-symbols-outlined text-on-background" style="font-variation-settings: 'FILL' 1;">school</span>
+<h3 class="font-body-lg text-body-lg text-on-background">Advanced</h3>
+</div>
+<div class="flex gap-2">
+<span class="px-2 py-1 bg-surface-container-low text-secondary font-label-caps rounded">Level 7</span>
+<span class="px-2 py-1 bg-surface-container-low text-secondary font-label-caps rounded">Level 8</span>
+<span class="px-2 py-1 bg-surface-container-low text-secondary font-label-caps rounded">Level 9</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+                        Designed for academic and professional fluency. Translation, cultural nuance, and specialized vocabulary. Exceeds 11,000 words.
+                    </p>
+</div>
+</div>
+</section>
+<!-- Vocabulary Shift Data (Zebra Table fallback for mobile list) -->
+<section class="flex flex-col gap-4">
+<h2 class="font-h3 text-h3 text-on-background">Vocabulary Expansion</h2>
+<p class="font-body-sm text-body-sm text-on-surface-variant mb-2">A comparison of vocabulary requirements between the 2.0 and 3.0 standards.</p>
+<div class="border-y border-outline-variant w-full">
+<div class="flex py-3 font-label-caps text-label-caps text-on-background border-b border-outline-variant">
+<div class="flex-1">Level Segment</div>
+<div class="w-20 text-right">HSK 2.0</div>
+<div class="w-20 text-right">HSK 3.0</div>
+</div>
+<div class="flex py-3 font-body-sm text-body-sm border-b border-outline-variant bg-surface-bright">
+<div class="flex-1 text-on-surface">Beginner (1-3)</div>
+<div class="w-20 text-right text-on-surface-variant">600</div>
+<div class="w-20 text-right text-on-background font-bold">2,245</div>
+</div>
+<div class="flex py-3 font-body-sm text-body-sm border-b border-outline-variant bg-surface-container-low">
+<div class="flex-1 text-on-surface">Intermed. (4-6)</div>
+<div class="w-20 text-right text-on-surface-variant">5,000</div>
+<div class="w-20 text-right text-on-background font-bold">5,456</div>
+</div>
+<div class="flex py-3 font-body-sm text-body-sm bg-surface-bright">
+<div class="flex-1 text-on-surface">Advanced (7-9)</div>
+<div class="w-20 text-right text-on-surface-variant">N/A</div>
+<div class="w-20 text-right text-on-background font-bold">11,092</div>
+</div>
+</div>
+</section>
+<!-- Primary CTA Area -->
+<section class="mt-8 mb-4 w-full flex justify-center">
+<button class="bg-primary text-on-primary w-full max-w-[300px] h-12 rounded touch-target font-body-md font-bold hover:bg-opacity-90 transition-opacity flex items-center justify-center gap-2">
+                Find your starting point
+                <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+</button>
+</section>
+</main>
+<!-- Footer -->
+<footer class="bg-surface-container-low w-full py-12 border-t border-outline-variant mt-auto">
+<div class="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop flex flex-col md:flex-row justify-between gap-gutter">
+<div class="flex flex-col gap-4">
+<span class="font-h3 text-h3 text-on-background">HSKKit</span>
+<span class="font-body-sm text-body-sm text-secondary">© 2024 HSKKit Language Institute. All rights reserved.</span>
+</div>
+<div class="flex flex-col gap-3 font-body-sm text-body-sm">
+<a class="text-primary underline hover:opacity-80 transition-opacity touch-target flex items-center" href="#">Find your starting point</a>
+<a class="text-secondary hover:text-primary transition-opacity touch-target flex items-center" href="#">Explore published vocabulary</a>
+<a class="text-secondary hover:text-primary transition-opacity touch-target flex items-center" href="#">Scholarly Standards</a>
+<a class="text-secondary hover:text-primary transition-opacity touch-target flex items-center" href="#">Privacy Policy</a>
+<a class="text-secondary hover:text-primary transition-opacity touch-target flex items-center" href="#">Terms of Service</a>
+</div>
+</div>
+</footer>
+</body></html>

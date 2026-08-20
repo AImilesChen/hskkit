@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Data &amp; Privacy - HSKKit</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+  tailwind.config = {
+    darkMode: "class",
+    theme: {
+      extend: {
+        colors: {
+          primary: "#2563eb",
+          "on-surface": "#0f172a",
+          background: "#f8fafc",
+          surface: "#ffffff",
+          outline: "#e2e8f0",
+          "outline-variant": "#e2e8f0",
+          error: "#ef4444",
+          "error-container": "#fef2f2",
+        },
+        fontFamily: {
+          sans: ["Inter", "sans-serif"],
+        }
+      }
+    }
+  }
+</script>
+</head>
+<body class="bg-background text-on-surface min-h-screen font-sans antialiased">
+<!-- TopNavBar -->
+<nav class="bg-background border-b border-outline-variant hidden md:flex justify-between items-center w-full px-16 max-w-[1140px] mx-auto h-20 top-0 z-40 relative">
+<div class="flex items-center gap-8">
+<div class="text-2xl font-bold text-on-surface">HSKKit</div>
+<div class="flex gap-6">
+<a class="text-slate-500 hover:text-primary transition-colors duration-200 text-base cursor-pointer active:opacity-80" href="#">Levels</a>
+<a class="text-slate-500 hover:text-primary transition-colors duration-200 text-base cursor-pointer active:opacity-80" href="#">Vocabulary</a>
+<a class="text-slate-500 hover:text-primary transition-colors duration-200 text-base cursor-pointer active:opacity-80" href="#">Practice</a>
+<a class="text-slate-500 hover:text-primary transition-colors duration-200 text-base cursor-pointer active:opacity-80" href="#">Study Tools</a>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<button class="text-on-surface hover:bg-slate-100 transition-colors duration-200 p-2 rounded-lg cursor-pointer active:opacity-80 flex items-center justify-center">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">account_circle</span>
+</button>
+</div>
+</nav>
+<!-- Main Layout Grid -->
+<div class="max-w-[1140px] mx-auto px-16 py-12 grid grid-cols-12 gap-6">
+<!-- Sidebar Navigation (3 columns) -->
+<aside class="col-span-3 hidden md:block border-r border-outline-variant pr-6">
+<h1 class="text-2xl font-bold text-on-surface mb-8">Account Settings</h1>
+<nav class="flex flex-col gap-2">
+<a class="px-4 py-3 text-slate-500 hover:bg-slate-100 hover:text-primary transition-colors duration-200 rounded-lg flex items-center gap-3" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">person</span>
+<span class="text-base font-medium">Profile</span>
+</a>
+<a class="px-4 py-3 text-slate-500 hover:bg-slate-100 hover:text-primary transition-colors duration-200 rounded-lg flex items-center gap-3" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">settings</span>
+<span class="text-base font-medium">Preferences</span>
+</a>
+<a class="px-4 py-3 bg-blue-50 text-primary font-semibold rounded-lg flex items-center gap-3 border-l-2 border-primary" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">privacy_tip</span>
+<span class="text-base font-medium">Data &amp; Privacy</span>
+</a>
+<a class="px-4 py-3 text-slate-500 hover:bg-slate-100 hover:text-primary transition-colors duration-200 rounded-lg flex items-center gap-3" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">security</span>
+<span class="text-base font-medium">Security</span>
+</a>
+</nav>
+</aside>
+<!-- Main Content (9 columns) -->
+<main class="col-span-12 md:col-span-9 pl-0 md:pl-6 max-w-[720px]">
+<header class="mb-10">
+<h2 class="text-3xl font-bold text-on-surface mb-2">Data &amp; Privacy</h2>
+<p class="text-lg text-slate-500">Manage your personal data, export your learning history, or permanently delete your account.</p>
+</header>
+<!-- Export Data Section -->
+<section class="mb-12">
+<h3 class="text-2xl font-bold text-on-surface mb-4">Export Your Data</h3>
+<div class="bg-surface border border-outline-variant rounded-2xl p-6 mb-6">
+<p class="text-base text-slate-600 mb-6">You can request an archive containing your learning progress, vocabulary lists, and practice history. The export process may take up to 24 hours.</p>
+<button class="bg-primary text-white rounded-lg px-6 py-2 text-base font-semibold hover:bg-blue-700 transition-colors duration-200 border-none">
+                        Request Export
+                    </button>
+</div>
+<!-- Recent Requests -->
+<h4 class="text-lg font-bold text-on-surface mb-3">Recent Requests</h4>
+<div class="border border-outline-variant rounded-2xl overflow-hidden bg-surface">
+<div class="flex items-center justify-between p-4 border-b border-outline-variant bg-surface">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-slate-400" style="font-variation-settings: 'FILL' 0;">folder_zip</span>
+<div>
+<p class="text-base font-semibold text-on-surface">Data Archive - Oct 12, 2023</p>
+<p class="text-sm text-slate-500">Requested: Oct 12, 2023 • Expires: Oct 19, 2023</p>
+</div>
+</div>
+<span class="text-xs font-semibold uppercase tracking-wider text-slate-500 bg-slate-100 px-2 py-1 rounded-lg">Expired</span>
+</div>
+<div class="flex items-center justify-between p-4 bg-surface">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 0;">folder_zip</span>
+<div>
+<p class="text-base font-semibold text-on-surface">Data Archive - Nov 05, 2023</p>
+<p class="text-sm text-slate-500">Requested: Nov 05, 2023 • Expires: Nov 12, 2023</p>
+</div>
+</div>
+<button class="bg-transparent border border-primary text-primary rounded-lg px-4 py-1 text-sm font-semibold hover:bg-blue-50 transition-colors duration-200">
+                            Download
+                        </button>
+</div>
+</div>
+</section>
+<!-- Danger Zone -->
+<section>
+<h3 class="text-2xl font-bold text-error mb-4">Danger Zone</h3>
+<div class="bg-error-container border border-red-200 rounded-2xl p-6">
+<h4 class="text-lg font-bold text-on-surface mb-2">Delete Account</h4>
+<p class="text-base text-slate-600 mb-6">Permanently delete your account and all associated data. This action cannot be undone, and you will lose access to all your progress and study materials.</p>
+<button class="bg-transparent border border-error text-error rounded-lg px-6 py-2 text-base font-semibold hover:bg-red-100 transition-colors duration-200">
+                        Delete Account
+                    </button>
+</div>
+</section>
+</main>
+</div>
+</body></html>

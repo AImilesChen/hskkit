@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>ROUTE · /vocabulary/:level · DESKTOP · ADOPTED</title>
+<!-- Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Tailwind Configuration -->
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+              "brand-blue": "#2563EB",
+              "text-primary": "#0F172A",
+              "text-secondary": "#475569",
+              "bg-page": "#F8FAFC",
+              "bg-surface": "#FFFFFF",
+              "border-color": "#E2E8F0"
+            },
+            "borderRadius": {
+              "control": "8px",
+              "container": "16px"
+            },
+            "fontFamily": {
+              "sans": ["Inter", "sans-serif"]
+            }
+          }
+        }
+      }
+    </script>
+</head>
+<body class="bg-bg-page text-text-primary font-sans min-h-screen flex flex-col antialiased selection:bg-brand-blue selection:text-white">
+<!-- Navigation Header -->
+<header class="bg-bg-surface border-b border-border-color w-full top-0 sticky z-50">
+<div class="max-w-[1140px] mx-auto px-5 md:px-16 flex items-center justify-between h-20">
+<!-- Brand -->
+<div class="text-2xl font-bold text-text-primary">HSKKit</div>
+<!-- Navigation Links (Desktop) -->
+<nav class="hidden md:flex gap-8 h-full items-center">
+<!-- Levels is active based on context -->
+<a class="h-full flex items-center text-brand-blue font-bold border-b-2 border-brand-blue pt-[2px]" href="#">Levels</a>
+<a class="h-full flex items-center text-text-secondary font-medium hover:text-brand-blue transition-colors pt-[2px] border-b-2 border-transparent" href="#">Vocabulary</a>
+<a class="h-full flex items-center text-text-secondary font-medium hover:text-brand-blue transition-colors pt-[2px] border-b-2 border-transparent" href="#">Practice</a>
+<a class="h-full flex items-center text-text-secondary font-medium hover:text-brand-blue transition-colors pt-[2px] border-b-2 border-transparent" href="#">Study Tools</a>
+</nav>
+<!-- Trailing Action -->
+<div class="flex items-center gap-4">
+<button class="hidden md:flex items-center justify-center min-w-[44px] min-h-[44px] px-4 text-sm font-bold text-white bg-brand-blue rounded-control border-none hover:bg-opacity-90 transition-opacity focus:outline-none focus:ring-2 focus:ring-brand-blue focus:ring-offset-2">
+                    Sign In
+                </button>
+<button class="md:hidden flex items-center justify-center min-w-[44px] min-h-[44px] text-text-primary focus:outline-none focus:ring-2 focus:ring-brand-blue rounded-control">
+<span class="material-symbols-outlined" data-icon="menu">menu</span>
+</button>
+</div>
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="flex-grow flex flex-col w-full max-w-[1140px] mx-auto px-5 md:px-16 py-12 md:py-16">
+<!-- Page Header -->
+<div class="mb-12 border-b border-border-color pb-8">
+<h1 class="text-4xl md:text-5xl font-bold text-text-primary mb-4">Level 1</h1>
+<p class="text-lg text-text-secondary max-w-2xl">
+                HSK 3.0 Standard Vocabulary · Level 1. 
+                <br/>
+<span class="text-sm text-text-secondary mt-2 block">Source: Official Chinese Proficiency Grading Standards for International Chinese Language Education.</span>
+</p>
+</div>
+<!-- Utility Bar (Search/Filter) -->
+<div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
+<div class="relative w-full md:w-96">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-text-secondary" data-icon="search">search</span>
+<input class="w-full bg-bg-surface border border-border-color rounded-control min-h-[44px] pl-10 pr-4 py-2 text-text-primary focus:outline-none focus:border-brand-blue focus:ring-1 focus:ring-brand-blue transition-colors" placeholder="Search vocabulary..." type="text"/>
+</div>
+<div class="flex gap-2 w-full md:w-auto">
+<button class="flex-1 md:flex-none flex items-center justify-center min-h-[44px] px-4 text-sm font-medium text-text-primary bg-bg-surface border border-border-color rounded-control hover:bg-gray-50 transition-colors focus:outline-none focus:ring-2 focus:ring-brand-blue">
+<span class="material-symbols-outlined mr-2 text-[18px]" data-icon="filter_list">filter_list</span>
+                    Filter
+                </button>
+<button class="flex-1 md:flex-none flex items-center justify-center min-h-[44px] px-4 text-sm font-medium text-text-primary bg-bg-surface border border-border-color rounded-control hover:bg-gray-50 transition-colors focus:outline-none focus:ring-2 focus:ring-brand-blue">
+<span class="material-symbols-outlined mr-2 text-[18px]" data-icon="sort">sort</span>
+                    Sort
+                </button>
+</div>
+</div>
+<!-- Data Table (Zebra Striping) -->
+<div class="bg-bg-surface border border-border-color rounded-container overflow-hidden">
+<div class="overflow-x-auto w-full">
+<table class="w-full text-left border-collapse min-w-[600px]">
+<thead>
+<tr class="border-b border-border-color bg-gray-50 text-xs font-semibold uppercase tracking-wider text-text-secondary">
+<th class="py-4 px-6 w-16">#</th>
+<th class="py-4 px-6 w-1/4">Hanzi (Simplified)</th>
+<th class="py-4 px-6 w-1/4">Pinyin</th>
+<th class="py-4 px-6">Primary Meaning</th>
+</tr>
+</thead>
+<tbody class="text-base text-text-primary">
+<tr class="border-b border-border-color hover:bg-gray-50 transition-colors group cursor-pointer" tabindex="0">
+<td class="py-4 px-6 text-text-secondary group-hover:text-brand-blue transition-colors">1</td>
+<td class="py-4 px-6 text-2xl font-semibold">爱</td>
+<td class="py-4 px-6 text-text-secondary">ài</td>
+<td class="py-4 px-6">to love; affection; to be fond of</td>
+</tr>
+<tr class="border-b border-border-color bg-bg-page hover:bg-gray-50 transition-colors group cursor-pointer" tabindex="0">
+<td class="py-4 px-6 text-text-secondary group-hover:text-brand-blue transition-colors">2</td>
+<td class="py-4 px-6 text-2xl font-semibold">八</td>
+<td class="py-4 px-6 text-text-secondary">bā</td>
+<td class="py-4 px-6">eight; 8</td>
+</tr>
+<tr class="border-b border-border-color hover:bg-gray-50 transition-colors group cursor-pointer" tabindex="0">
+<td class="py-4 px-6 text-text-secondary group-hover:text-brand-blue transition-colors">3</td>
+<td class="py-4 px-6 text-2xl font-semibold">爸爸</td>
+<td class="py-4 px-6 text-text-secondary">bà ba</td>
+<td class="py-4 px-6">(informal) father; dad</td>
+</tr>
+<tr class="border-b border-border-color bg-bg-page hover:bg-gray-50 transition-colors group cursor-pointer" tabindex="0">
+<td class="py-4 px-6 text-text-secondary group-hover:text-brand-blue transition-colors">4</td>
+<td class="py-4 px-6 text-2xl font-semibold">杯子</td>
+<td class="py-4 px-6 text-text-secondary">bēi zi</td>
+<td class="py-4 px-6">cup; glass</td>
+</tr>
+<tr class="border-b border-border-color hover:bg-gray-50 transition-colors group cursor-pointer" tabindex="0">
+<td class="py-4 px-6 text-text-secondary group-hover:text-brand-blue transition-colors">5</td>
+<td class="py-4 px-6 text-2xl font-semibold">北京</td>
+<td class="py-4 px-6 text-text-secondary">Běi jīng</td>
+<td class="py-4 px-6">Beijing, capital of People's Republic of China</td>
+</tr>
+<tr class="border-b border-border-color bg-bg-page hover:bg-gray-50 transition-colors group cursor-pointer" tabindex="0">
+<td class="py-4 px-6 text-text-secondary group-hover:text-brand-blue transition-colors">6</td>
+<td class="py-4 px-6 text-2xl font-semibold">本</td>
+<td class="py-4 px-6 text-text-secondary">běn</td>
+<td class="py-4 px-6">roots or stems of plants; origin; source; this; the current; root; foundation; basis; classifier for books, periodicals, files etc</td>
+</tr>
+<tr class="border-b border-border-color hover:bg-gray-50 transition-colors group cursor-pointer" tabindex="0">
+<td class="py-4 px-6 text-text-secondary group-hover:text-brand-blue transition-colors">7</td>
+<td class="py-4 px-6 text-2xl font-semibold">不客气</td>
+<td class="py-4 px-6 text-text-secondary">bù kè qi</td>
+<td class="py-4 px-6">you're welcome; impolite; rude; blunt; don't mention it</td>
+</tr>
+<tr class="border-b border-border-color bg-bg-page hover:bg-gray-50 transition-colors group cursor-pointer" tabindex="0">
+<td class="py-4 px-6 text-text-secondary group-hover:text-brand-blue transition-colors">8</td>
+<td class="py-4 px-6 text-2xl font-semibold">不</td>
+<td class="py-4 px-6 text-text-secondary">bù</td>
+<td class="py-4 px-6">(negative prefix); not; no</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<!-- Pagination / Load More -->
+<div class="mt-8 flex justify-center">
+<button class="flex items-center justify-center min-h-[44px] px-8 text-sm font-bold text-text-primary bg-bg-surface border border-border-color rounded-control hover:bg-gray-50 transition-colors focus:outline-none focus:ring-2 focus:ring-brand-blue">
+                Load More Vocabulary
+            </button>
+</div>
+</main>
+<!-- Footer -->
+<footer class="bg-bg-surface w-full mt-auto border-t border-border-color">
+<div class="max-w-[1140px] mx-auto px-5 md:px-16 py-12 flex flex-col md:flex-row justify-between items-center gap-6">
+<div class="text-xl font-bold text-text-primary">HSKKit</div>
+<div class="flex flex-wrap justify-center gap-6 text-sm text-text-secondary">
+<a class="hover:text-brand-blue hover:underline transition-all focus:outline-none focus:ring-2 focus:ring-brand-blue rounded" href="#">Privacy Policy</a>
+<a class="hover:text-brand-blue hover:underline transition-all focus:outline-none focus:ring-2 focus:ring-brand-blue rounded" href="#">Terms of Service</a>
+<a class="hover:text-brand-blue hover:underline transition-all focus:outline-none focus:ring-2 focus:ring-brand-blue rounded" href="#">Cookie Policy</a>
+<a class="hover:text-brand-blue hover:underline transition-all focus:outline-none focus:ring-2 focus:ring-brand-blue rounded" href="#">Academic Integrity</a>
+<a class="hover:text-brand-blue hover:underline transition-all focus:outline-none focus:ring-2 focus:ring-brand-blue rounded" href="#">Contact Support</a>
+</div>
+<div class="text-sm text-text-secondary mt-6 md:mt-0">
+                © 2024 HSKKit Scholarly Language Systems. All rights reserved.
+            </div>
+</div>
+</footer>
+</body></html>
