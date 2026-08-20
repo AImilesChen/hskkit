@@ -1,8 +1,11 @@
+import type { MetadataRoute } from "next";
+import { sitemapContentRoutes } from "@/lib/dictionary/catalog";
+
 export const dynamic = "force-static";
 
-export default function sitemap() {
+export default function sitemap(): MetadataRoute.Sitemap {
   const baseUrl = "https://hskkit.com";
-  const routes = [
+  const existingPublicRoutes = [
     "",
     "/hsk-levels",
     "/hsk-level-test",
@@ -24,8 +27,10 @@ export default function sitemap() {
     "/terms-of-service",
     "/disclaimer",
   ];
+  const routes = [...new Set([...existingPublicRoutes, ...sitemapContentRoutes()])];
   return routes.map((route) => ({
     url: `${baseUrl}${route}`,
     lastModified: new Date(),
+    changeFrequency: route.startsWith("/word/") || route.startsWith("/character/") ? "monthly" : "weekly",
   }));
 }
