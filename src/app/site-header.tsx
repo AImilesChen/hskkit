@@ -21,6 +21,9 @@ const practiceLevels = [
 ];
 
 const studyTools = [
+  { href: "/grammar/ba-sentence-basics", label: "Grammar", icon: "book-open" },
+  { href: "/reading/morning-study-routine", label: "Reading", icon: "book-open" },
+  { href: "/planner", label: "Study Planner", icon: "target" },
   { href: "/hsk-1-reading-practice", label: "Reading Practice", icon: "book-open" },
   { href: "/worksheet", label: "Worksheet Generator", icon: "file-text" },
   { href: "/hsk-1-vocabulary#flashcards", label: "Flashcards", icon: "layers" },

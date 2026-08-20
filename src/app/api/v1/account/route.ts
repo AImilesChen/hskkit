@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { ACCOUNT_COOKIE, requestIdentity } from "../../../../lib/account/identity";
 import { authenticateAccount, createAccount, updateTimezone } from "../../../../lib/account/storage";
 import { loadState } from "../../../../lib/learning/storage";
+import { listAllPlans } from "../../../../lib/planner/storage";
 
 const cookie = (response: NextResponse, value: string, maxAge = 31_536_000) => {
   response.cookies.set(ACCOUNT_COOKIE, value, { httpOnly: true, sameSite: "strict", secure: true, maxAge, path: "/" });
@@ -16,10 +17,10 @@ const statusFor = (code: string) => code === "ACCOUNT_REQUIRED" ? 401 : code.sta
 
 export async function GET() {
   const identity = await requestIdentity();
-  const guest = identity.guestId ? await loadState(identity.guestId) : undefined;
+  const [guest, guestPlans] = identity.guestId ? await Promise.all([loadState(identity.guestId), listAllPlans(identity.guestId)]) : [undefined, []];
   return NextResponse.json({
     account: identity.account ?? null,
-    guest: guest ? { hasData: guest.state.attempts.length > 0 || guest.state.dailySessions.length > 0, attempts: guest.state.attempts.length, revision: guest.revision } : { hasData: false, attempts: 0, revision: 0 },
+    guest: guest ? { hasData: guest.state.attempts.length > 0 || guest.state.dailySessions.length > 0 || guestPlans.length > 0, attempts: guest.state.attempts.length, plannerVersions: guestPlans.length, revision: guest.revision } : { hasData: false, attempts: 0, plannerVersions: 0, revision: 0 },
   });
 }
 

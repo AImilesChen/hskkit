@@ -1,5 +1,6 @@
 import type { MetadataRoute } from "next";
 import { sitemapContentRoutes } from "@/lib/dictionary/catalog";
+import { GRAMMAR_LESSONS, READING_LESSONS } from "@/lib/learning/step7-content";
 
 export const dynamic = "force-static";
 
@@ -27,7 +28,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "/terms-of-service",
     "/disclaimer",
   ];
-  const routes = [...new Set([...existingPublicRoutes, ...sitemapContentRoutes()])];
+  const routes = [...new Set([
+    ...existingPublicRoutes,
+    ...sitemapContentRoutes(),
+    ...GRAMMAR_LESSONS.map((lesson) => `/grammar/${lesson.slug}`),
+    ...READING_LESSONS.map((lesson) => `/reading/${lesson.slug}`),
+  ])];
   return routes.map((route) => ({
     url: `${baseUrl}${route}`,
     lastModified: new Date(),

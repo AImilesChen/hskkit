@@ -8,8 +8,8 @@ export async function saveState(ownerId: string, state: LearningState, revision:
   const isAccount = ownerId.startsWith("user:");
   const userId = isAccount ? ownerId.slice(5) : "";
   const result = await database.prepare(
-    "INSERT INTO learning_states(owner_id,state_json,revision,updated_at) SELECT ?,?,?,? WHERE ?=0 OR EXISTS(SELECT 1 FROM accounts WHERE user_id=? AND status='active') ON CONFLICT(owner_id) DO UPDATE SET state_json=excluded.state_json,revision=learning_states.revision+1,updated_at=excluded.updated_at WHERE learning_states.revision=? AND (?=0 OR EXISTS(SELECT 1 FROM accounts WHERE user_id=? AND status='active'))",
-  ).bind(ownerId, JSON.stringify(state), 1, now, isAccount ? 1 : 0, userId, revision, isAccount ? 1 : 0, userId).run();
+    "INSERT INTO learning_states(owner_id,state_json,revision,updated_at) SELECT ?,?,?,? WHERE (?=0 OR EXISTS(SELECT 1 FROM accounts WHERE user_id=? AND status='active')) AND NOT EXISTS(SELECT 1 FROM guest_merges WHERE guest_owner_id=? AND state='confirmed') ON CONFLICT(owner_id) DO UPDATE SET state_json=excluded.state_json,revision=learning_states.revision+1,updated_at=excluded.updated_at WHERE learning_states.revision=? AND (?=0 OR EXISTS(SELECT 1 FROM accounts WHERE user_id=? AND status='active')) AND NOT EXISTS(SELECT 1 FROM guest_merges WHERE guest_owner_id=? AND state='confirmed')",
+  ).bind(ownerId, JSON.stringify(state), 1, now, isAccount ? 1 : 0, userId, ownerId, revision, isAccount ? 1 : 0, userId, ownerId).run();
   if (!result.meta.changes) {
     if (isAccount) {
       const account = await database.prepare("SELECT status FROM accounts WHERE user_id=?").bind(userId).first<{ status: string }>();

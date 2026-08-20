@@ -364,3 +364,74 @@
     color: black !important;
   }
 }
+
+/* Step 7: linked content, advanced listening and deterministic planner */
+.step7-page { max-width: 1040px; }
+.step7-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 22px; align-items: start; }
+.step7-lesson h2 { margin-bottom: 20px; }
+.step7-examples { display: grid; gap: 12px; }
+.step7-examples > div { display: grid; gap: 2px; border-left: 3px solid #2563EB; padding: 12px 14px; background: #F8FAFC; }
+.step7-examples strong, .step7-chinese { font-family: var(--font-chinese); color: #0F172A; }
+.step7-examples span { color: #475569; }
+.step7-related { display: inline-flex; margin-top: 20px; color: #2563EB; font-weight: 750; }
+.step7-reading { margin-bottom: 22px; }
+.step7-chinese { font-size: 24px; line-height: 1.9; }
+.step7-reading details { margin: 18px 0; border-radius: 12px; padding: 14px; background: #F8FAFC; }
+.step7-reading summary { cursor: pointer; font-weight: 700; color: #2563EB; }
+.step7-reading h2 { margin: 20px 0 10px; }
+.step7-vocab { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+.step7-vocab div { display: grid; gap: 2px; border: 1px solid #E2E8F0; border-radius: 10px; padding: 12px; }
+.step7-vocab strong { font-family: var(--font-chinese); font-size: 20px; }
+.step7-vocab small { color: #64748B; }
+.step7-exercise { border: 1px solid #BFDBFE; border-radius: 16px; padding: 24px; background: #F8FBFF; }
+.step7-exercise h2 { margin-bottom: 8px; }
+.step7-options { display: grid; gap: 10px; margin-top: 18px; }
+.step7-options .btn { justify-content: flex-start; text-align: left; border-radius: 10px; }
+.step7-dictation { display: grid; gap: 10px; margin-top: 18px; }
+.step7-dictation label { font-weight: 750; color: #334155; }
+.step7-dictation input, .planner-fields input, .planner-fields select { width: 100%; min-height: 46px; border: 1px solid #CBD5E1; border-radius: 10px; padding: 10px 12px; font: inherit; color: #0F172A; background: white; }
+.step7-alert { margin-top: 16px; border-radius: 12px; padding: 14px 16px; }
+.step7-alert p { margin: 6px 0 0 !important; color: inherit !important; }
+.step7-alert.error { color: #991B1B; border: 1px solid #FECACA; background: #FEF2F2; }
+.step7-alert.success { color: #166534; border: 1px solid #BBF7D0; background: #F0FDF4; }
+.step7-alert.warning { color: #92400E; border: 1px solid #FDE68A; background: #FFFBEB; }
+.step7-actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 14px; }
+.planner-page { max-width: 1120px; }
+.planner-layout { display: grid; grid-template-columns: minmax(300px, .8fr) minmax(0, 1.2fr); gap: 24px; align-items: start; }
+.planner-form { position: sticky; top: 88px; }
+.planner-form h2, .planner-result h2 { margin-bottom: 8px; }
+.planner-signals { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin: 18px 0; }
+.planner-signals div { display: grid; border: 1px solid #E2E8F0; border-radius: 10px; padding: 10px; }
+.planner-signals strong { color: #2563EB; font-size: 22px; overflow-wrap: anywhere; }
+.planner-signals span { color: #64748B; font-size: 12px; }
+.planner-fields { display: grid; gap: 12px; }
+.planner-fields label { display: grid; gap: 5px; font-weight: 700; }
+.planner-form fieldset { border: 0; margin: 18px 0; }
+.planner-form legend { font-weight: 750; margin-bottom: 8px; }
+.planner-days { display: flex; flex-wrap: wrap; gap: 6px; }
+.planner-days input { position: absolute; opacity: 0; pointer-events: none; }
+.planner-days span { display: inline-flex; min-width: 46px; min-height: 44px; align-items: center; justify-content: center; border: 1px solid #CBD5E1; border-radius: 10px; cursor: pointer; }
+.planner-days input:checked + span { background: #2563EB; border-color: #2563EB; color: white; }
+.planner-days input:focus-visible + span { outline: 2px solid #2563EB; outline-offset: 2px; }
+.planner-weak { border-left: 3px solid #2563EB; padding-left: 10px; }
+.planner-heading, .planner-session-head, .planner-load { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.planner-heading > span { border-radius: 999px; padding: 6px 10px; background: #EFF6FF; color: #2563EB; font-weight: 750; }
+.planner-load { margin: 12px 0 18px; border-radius: 12px; padding: 14px; background: #F8FAFC; }
+.planner-load span { color: #64748B; }
+.planner-sessions { display: grid; gap: 12px; }
+.planner-sessions .card { padding: 18px; }
+.planner-sessions h3 { font-size: 20px; }
+.planner-sessions a { display: flex; justify-content: space-between; gap: 12px; margin-top: 10px; border-radius: 10px; padding: 10px 12px; background: #EFF6FF; color: #1D4ED8; font-weight: 700; }
+.planner-sessions small { color: #475569; text-align: right; }
+.planner-history { margin-top: 18px; border-top: 1px solid #E2E8F0; padding-top: 14px; }
+.planner-history summary { cursor: pointer; font-weight: 750; }
+.planner-history p { margin-top: 8px; color: #64748B; }
+@media (max-width: 760px) {
+  .step7-grid, .planner-layout { grid-template-columns: 1fr; }
+  .planner-form { position: static; }
+  .step7-vocab { grid-template-columns: 1fr; }
+  .planner-signals { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .step7-actions .btn { width: 100%; }
+  .planner-sessions a { flex-direction: column; }
+  .planner-sessions small { text-align: left; }
+}

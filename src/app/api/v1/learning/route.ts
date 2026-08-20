@@ -10,6 +10,8 @@ import {
   type LearningState,
 } from "../../../../lib/learning/domain";
 import { trustedAudioExercise, type AudioMode } from "../../../../lib/learning/audio";
+import { advancedListeningBySlug, isStep7AnswerAllowed, normalizeStep7Answer, trustedStep7Exercise } from "../../../../lib/learning/step7-content";
+import { consumeStep7PlaybackTicket, createStep7PlaybackTicket } from "../../../../lib/learning/step7-playback";
 import { trustedQuestion } from "../../../../lib/learning/questions";
 import { requestIdentity, GUEST_COOKIE } from "../../../../lib/account/identity";
 import { loadState, saveState } from "../../../../lib/learning/storage";
@@ -36,13 +38,15 @@ function view(state: LearningState, ownerId: string, offsetMinutes: number) {
     const attempt = built.state.attempts.find((candidate) => candidate.id === card.sourceAttemptId);
     const question = attempt?.contentId.startsWith("question:") ? trustedQuestion(attempt.contentId.slice(9)) : undefined;
     const assetId = attempt?.contentId.startsWith("word:") ? attempt.contentId.slice(5) : undefined;
+    const listeningSlug = attempt?.contentId.startsWith("listening:") ? attempt.contentId.slice(10) : undefined;
+    const advancedListening = listeningSlug ? trustedStep7Exercise(`exercise:listening:${listeningSlug}`) : undefined;
     const audio = assetId && card.dimension !== "reading" ? trustedAudioExercise(assetId, card.dimension as AudioMode) : undefined;
     return {
       ...card,
-      prompt: attempt?.prompt ?? (question ? `${question.question_cn} — ${question.question_en}` : audio?.prompt ?? card.contentId),
-      correctAnswer: attempt?.correctAnswerText ?? (question?.options[question.correct_answer] ?? audio?.options[audio.correctAnswer] ?? attempt?.correctAnswer ?? ""),
+      prompt: attempt?.prompt ?? (question ? `${question.question_cn} — ${question.question_en}` : audio?.prompt ?? advancedListening?.prompt ?? card.contentId),
+      correctAnswer: attempt?.correctAnswerText ?? (question?.options[question.correct_answer] ?? audio?.options[audio.correctAnswer] ?? advancedListening?.correctAnswer ?? attempt?.correctAnswer ?? ""),
       userAnswer: attempt?.userAnswerText ?? (question && attempt ? question.options[attempt.answer] ?? attempt.answer : audio && attempt ? audio.options[attempt.answer] ?? attempt.answer : attempt?.answer ?? ""),
-      audioText: audio?.voiceText,
+      audioText: audio?.voiceText ?? (listeningSlug ? advancedListeningBySlug(listeningSlug)?.voiceText : undefined),
       assetId,
       playbackReady: card.dimension === "reading" || Boolean(built.state.audioReviewReady?.some((ready) => ready.cardId === card.id && ready.cardRevision === card.revision)),
     };
@@ -97,6 +101,17 @@ export async function POST(req: NextRequest) {
   const key = short(payload.idempotencyKey, 80);
   if (!key) return NextResponse.json({ error: "INVALID_IDEMPOTENCY_KEY" }, { status: 422 });
 
+  if (action === "step7_playback_start") {
+    const exerciseId = short(payload.exerciseId, 120);
+    const exercise = exerciseId ? trustedStep7Exercise(exerciseId) : undefined;
+    const listening = exercise && (exercise.kind === "tone" || exercise.kind === "discrimination" || exercise.kind === "dictation");
+    if (!exercise || !listening) return NextResponse.json({ error: "INVALID_STEP7_PLAYBACK" }, { status: 422 });
+    const ticket = await createStep7PlaybackTicket(identity.id, exercise.id);
+    const res = NextResponse.json({ playbackTicket: ticket.id, notBefore: ticket.notBefore, expiresAt: ticket.expiresAt }, { status: 201 });
+    if (identity.fresh) res.cookies.set(COOKIE, identity.id, { httpOnly: true, sameSite: "lax", secure: true, maxAge: 31_536_000, path: "/" });
+    return res;
+  }
+
   for (let turn = 0; turn < 3; turn += 1) {
     const loaded = await loadState(identity.id);
     let state = loaded.state;
@@ -118,6 +133,35 @@ export async function POST(req: NextRequest) {
           correctAnswerText: question.options[question.correct_answer],
           observedAt: new Date().toISOString(),
         }).state;
+      } else if (action === "step7_attempt") {
+        const exerciseId = short(payload.exerciseId, 120);
+        const rawAnswer = short(payload.answer, 160);
+        const exercise = exerciseId ? trustedStep7Exercise(exerciseId) : undefined;
+        if (!exercise || !rawAnswer || !isStep7AnswerAllowed(exercise, rawAnswer)) throw new Error("INVALID_STEP7_ATTEMPT");
+        const listening = exercise.kind === "tone" || exercise.kind === "discrimination" || exercise.kind === "dictation";
+        if (listening) {
+          const ticketId = short(payload.playbackTicket, 80);
+          if (!ticketId) throw new Error("AUDIO_PLAYBACK_REQUIRED");
+          await consumeStep7PlaybackTicket(identity.id, exercise.id, ticketId, key);
+        }
+        const answer = normalizeStep7Answer(rawAnswer);
+        const correctAnswer = normalizeStep7Answer(exercise.correctAnswer);
+        if (!answer) throw new Error("INVALID_STEP7_ATTEMPT");
+        const input = {
+          idempotencyKey: key,
+          contentId: exercise.contentId,
+          contentVersion: exercise.contentVersion,
+          dimension: listening ? "audio" as const : "reading" as const,
+          answer,
+          correctAnswer,
+          prompt: exercise.prompt,
+          userAnswerText: rawAnswer,
+          correctAnswerText: exercise.options?.[exercise.correctAnswer] ?? exercise.correctAnswer,
+          observedAt: new Date().toISOString(),
+        };
+        state = listening
+          ? recordAudioAttempt(state, { ...input, dimension: "audio", playbackResult: "completed" }).state
+          : recordAttempt(state, input).state;
       } else if (action === "audio_attempt") {
         const assetId = short(payload.assetId, 80);
         const mode = payload.mode === "audio" || payload.mode === "context_audio" ? payload.mode as AudioMode : undefined;
@@ -155,7 +199,7 @@ export async function POST(req: NextRequest) {
       return response(data, identity.fresh, identity.id, loaded.revision + 1, Boolean(identity.account));
     } catch (error) {
       const code = error instanceof Error ? error.message : "SAVE_FAILED";
-      const replayable = action === "attempt" || action === "audio_attempt" || action === "audio_review_ready" || action === "complete_item";
+      const replayable = action === "attempt" || action === "step7_attempt" || action === "audio_attempt" || action === "audio_review_ready" || action === "complete_item";
       if (code === "REVISION_CONFLICT" && replayable && turn < 2) continue;
       return NextResponse.json({ error: code }, { status: code === "ACCOUNT_DELETED" ? 403 : code === "REVISION_CONFLICT" ? 409 : 422 });
     }
