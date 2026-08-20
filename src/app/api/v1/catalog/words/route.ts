@@ -1,5 +1,3 @@
-import { NextResponse } from "next/server.js";
-
 import catalog from "../../../../../lib/content/catalog.json" with { type: "json" };
 import {
   queryCatalog,
@@ -12,7 +10,7 @@ const repository = catalog as ContentRepository;
 const VALID_STANDARDS = new Set<HskStandard>(["hsk2", "hsk3"]);
 
 function errorResponse(status: number, error: string, message: string) {
-  return NextResponse.json({ error, message }, { status, headers: { "Cache-Control": "no-store" } });
+  return Response.json({ error, message }, { status, headers: { "Cache-Control": "no-store" } });
 }
 
 export async function GET(request: Request) {
@@ -29,7 +27,7 @@ export async function GET(request: Request) {
 
   try {
     const result = queryCatalog(repository, { standard: standardParam as HskStandard, level });
-    return NextResponse.json(toPublicCatalogResponse(result), {
+    return Response.json(toPublicCatalogResponse(result), {
       headers: { "Cache-Control": "public, max-age=60, s-maxage=300" },
     });
   } catch (error) {
