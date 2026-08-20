@@ -21,7 +21,13 @@
 	],
 	"images": {
 		// Enable image optimization
-		// see https://opennext.js.org/cloudflare/howtos/image
+		// see https://opennextjs.org/cloudflare/howtos/image
 		"binding": "IMAGES"
-	}
+	},
+	"d1_databases": [{
+		"binding": "LEARNING_DB",
+		"database_name": "hskkit-learning",
+		"database_id": "214d11f8-3cb2-46b7-b7b1-0dfb602dc6e7",
+		"migrations_dir": "migrations"
+	}]
 }

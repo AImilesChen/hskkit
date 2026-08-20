@@ -1,0 +1,25 @@
+"use client";
+import { useEffect,useState } from "react";
+import Link from "next/link";
+type Item={id:string;kind:"review"|"learn";contentId:string;status:string};
+type Card={id:string;contentId:string;dueAt:string;revision:number;prompt:string;correctAnswer:string;userAnswer:string};
+type Data={session:{id:string;items:Item[]};cards:Card[];mistakes:{id:string;contentId:string;status:string;createdAt:string}[]};
+const tz=()=>new Date().getTimezoneOffset();
+export default function LearningDashboard({mode}:{mode:"today"|"review"|"mistakes"}){
+ const [data,setData]=useState<Data|null>(null),[error,setError]=useState(""),[revealed,setRevealed]=useState<Record<string,boolean>>({});
+ async function load(){setError("");try{const r=await fetch(`/api/v1/learning?tzOffset=${tz()}`,{cache:"no-store"});if(!r.ok)throw 0;setData(await r.json())}catch{setError("We couldn't sync your learning data. Check your connection and try again.")}}
+ useEffect(()=>{void load()},[]);
+ async function post(action:string,payload:Record<string,unknown>){const r=await fetch("/api/v1/learning",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({action,payload:{...payload,idempotencyKey:crypto.randomUUID()},tzOffset:tz()})});if(r.ok){setData(await r.json());return true}setError("Your progress changed elsewhere. Reload and try again.");return false}
+ async function grade(card:Card,gradeName:string){if(await post("grade",{cardId:card.id,grade:gradeName,clientRevision:card.revision}))setRevealed(x=>({...x,[card.id]:false}))}
+ async function complete(item:Item){await post("complete_item",{sessionId:data!.session.id,itemId:item.id})}
+ if(error)return <State title="Sync paused" text={error}><button onClick={load} className="btn">Try again</button></State>;
+ if(!data)return <State title="Loading your learning plan…" text="Restoring your latest progress."/>;
+ const open=data.mistakes.filter(x=>x.status==="open");
+ if(mode==="today")return <Shell title="Today" sub="Review what is due, then keep learning."><div className="grid gap-4">{data.session.items.map(item=><article className="card" key={item.id}><span className="eyebrow">{item.kind}</span><h2>{item.contentId.replace("word:","").replace("question:","Question ")}</h2><p>{item.status==="pending"?"Ready to continue":"Completed"}</p>{item.kind==="review"?<Link className="btn" href="/review">Start review</Link>:<div className="flex flex-wrap gap-2"><Link className="btn" href="/word/ni-hao">Learn 你好</Link>{item.status==="pending"&&<button className="btn secondary" onClick={()=>complete(item)}>Mark learned</button>}</div>}</article>)}</div><Summary completed={data.session.items.filter(x=>x.status==="completed").length} total={data.session.items.length} cards={data.cards.length} mistakes={open.length}/></Shell>;
+ if(mode==="mistakes")return <Shell title="Mistakes" sub="Your missed items stay here until review resolves them.">{open.length?<div className="grid gap-4">{open.map(x=><article className="card" key={x.id}><h2>{x.contentId.replace("question:","Question ")}</h2><p>Added {new Date(x.createdAt).toLocaleDateString()}</p><Link className="btn" href="/review">Review now</Link></article>)}</div>:<State title="No open mistakes" text="Practice mistakes will appear here automatically."><Link className="btn" href="/hsk-1-practice-test">Start practice</Link></State>}</Shell>;
+ const due=data.cards.filter(x=>x.dueAt<=new Date().toISOString());
+ return <Shell title="Review" sub="Recall first, reveal the answer, then rate honestly.">{due.length?<div className="grid gap-4">{due.map(card=><article className="card" key={card.id}><span className="eyebrow">Due now</span><h2>{card.prompt}</h2>{!revealed[card.id]?<button className="btn" onClick={()=>setRevealed(x=>({...x,[card.id]:true}))}>Reveal answer</button>:<><div className="rounded-xl bg-[#F8FAFC] p-4 mb-4"><p><strong>Your answer:</strong> {card.userAnswer||"No answer"}</p><p><strong>Correct answer:</strong> {card.correctAnswer}</p></div><div className="flex flex-wrap gap-2">{["again","hard","good","easy"].map(g=><button className="btn secondary" key={g} onClick={()=>grade(card,g)}>{g}</button>)}</div></>}</article>)}</div>:<State title="You're caught up" text="There are no reviews due right now."><Link className="btn" href="/today">Back to Today</Link></State>}</Shell>
+}
+function Shell(p:any){return <main className="learn"><header><span className="eyebrow">HSKKit learning loop</span><h1>{p.title}</h1><p>{p.sub}</p><nav><Link href="/today">Today</Link><Link href="/review">Review</Link><Link href="/mistakes">Mistakes</Link></nav></header>{p.children}</main>}
+function State(p:any){return <div className="state"><h2>{p.title}</h2><p>{p.text}</p>{p.children}</div>}
+function Summary({completed,total,cards,mistakes}:{completed:number;total:number;cards:number;mistakes:number}){return <section className="summary"><h2>Today’s summary</h2><p>{completed}/{total} tasks complete · {cards} review cards · {mistakes} open mistakes</p><p>Your unfinished item will be restored when you return.</p></section>}

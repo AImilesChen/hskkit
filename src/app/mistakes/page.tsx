@@ -1,0 +1,1 @@
+import type { Metadata } from "next";import SiteHeader from "../site-header";import SiteFooter from "../site-footer";import LearningDashboard from "../components/learning-dashboard";export const metadata:Metadata={title:"Mistakes | HSKKit",robots:{index:false,follow:false}};export default function Page(){return <><SiteHeader/><LearningDashboard mode="mistakes"/><SiteFooter/></>}

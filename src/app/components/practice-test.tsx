@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback, useMemo } from "react";
+import { useState, useCallback, useMemo, useRef } from "react";
 import Link from "next/link";
 import { trackEvent, AnalyticsEvents } from "../../lib/analytics";
 import {
@@ -66,6 +66,9 @@ export default function PracticeTest({
   const [showResult, setShowResult] = useState(false);
   const [checked, setChecked] = useState<Record<number, boolean>>({});
   const [savedSummary, setSavedSummary] = useState<string | null>(null);
+  const [savingAnswer, setSavingAnswer] = useState(false);
+  const [saveError, setSaveError] = useState("");
+  const attemptKeys = useRef<Record<string, string>>({});
 
   const currentQuestion = questions[currentIndex];
   const total = questions.length;
@@ -77,12 +80,36 @@ export default function PracticeTest({
   }, [questions, answers]);
 
   const handleAnswer = useCallback(
-    (letter: string) => {
-      if (checked[currentIndex]) return;
+    async (letter: string) => {
+      if (checked[currentIndex] || savingAnswer) return;
+      setSavingAnswer(true);
+      setSaveError("");
+      const key = attemptKeys.current[currentQuestion.id] ?? crypto.randomUUID();
+      attemptKeys.current[currentQuestion.id] = key;
+      const body = JSON.stringify({
+        action: "attempt",
+        payload: { idempotencyKey: key, questionId: currentQuestion.id, answer: letter },
+        tzOffset: new Date().getTimezoneOffset(),
+      });
+      let saved = false;
+      for (let attempt = 0; attempt < 3 && !saved; attempt += 1) {
+        try {
+          const response = await fetch("/api/v1/learning", { method: "POST", headers: { "content-type": "application/json" }, body });
+          saved = response.ok;
+        } catch {
+          saved = false;
+        }
+      }
+      setSavingAnswer(false);
+      if (!saved) {
+        setSaveError("Your answer was not saved. Check your connection and try again before continuing.");
+        return;
+      }
+      delete attemptKeys.current[currentQuestion.id];
       setAnswers((prev) => ({ ...prev, [currentIndex]: letter }));
       setChecked((prev) => ({ ...prev, [currentIndex]: true }));
     },
-    [currentIndex, checked]
+    [currentIndex, checked, currentQuestion, savingAnswer]
   );
 
   const handleNext = useCallback(() => {
@@ -304,6 +331,8 @@ export default function PracticeTest({
       </div>
 
       {/* Options */}
+      {savingAnswer && <p className="mb-3 text-sm font-semibold text-[#2563EB]" role="status">Saving your answer…</p>}
+      {saveError && <p className="mb-3 rounded-lg bg-red-50 p-3 text-sm text-red-700" role="alert">{saveError}</p>}
       <div className="flex flex-col gap-3 mb-6">
         {LETTERS.map((letter) => (
           <OptionButton

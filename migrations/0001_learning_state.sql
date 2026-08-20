@@ -1,0 +1,2 @@
+CREATE TABLE IF NOT EXISTS learning_states (owner_id TEXT PRIMARY KEY, schema_version INTEGER NOT NULL DEFAULT 1, state_json TEXT NOT NULL, revision INTEGER NOT NULL DEFAULT 0, updated_at TEXT NOT NULL);
+CREATE TABLE IF NOT EXISTS learning_audit (id TEXT PRIMARY KEY, owner_id TEXT NOT NULL, event_type TEXT NOT NULL, idempotency_key TEXT NOT NULL, created_at TEXT NOT NULL, UNIQUE(owner_id,event_type,idempotency_key));

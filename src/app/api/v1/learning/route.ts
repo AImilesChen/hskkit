@@ -1,0 +1,23 @@
+import { cookies } from "next/headers";
+import { NextRequest, NextResponse } from "next/server";
+import { buildDailySession, completeDailyItem, gradeReview, recordAttempt, type LearningState } from "../../../../lib/learning/domain";
+import { trustedQuestion } from "../../../../lib/learning/questions";
+import { loadState, saveState } from "../../../../lib/learning/storage";
+const COOKIE="hskkit_guest";
+async function owner(){const jar=await cookies();let id=jar.get(COOKIE)?.value;let fresh=false;if(!id){id=crypto.randomUUID();fresh=true;}return {id,fresh};}
+const short=(v:unknown,n=100)=>typeof v==="string"&&v.length>0&&v.length<=n?v:undefined;
+const offset=(v:unknown)=>Number.isInteger(v)&&Number(v)>=-840&&Number(v)<=840?Number(v):0;
+function localDay(now:string,offsetMinutes:number){return new Date(new Date(now).getTime()-offsetMinutes*60000).toISOString().slice(0,10);}
+function view(state:LearningState,ownerId:string,offsetMinutes:number){const now=new Date().toISOString();const built=buildDailySession(state,{ownerId,localDay:localDay(now,offsetMinutes),ruleVersion:"today-v1",now});const cards=built.state.cards.map(card=>{const attempt=built.state.attempts.find(a=>a.id===card.sourceAttemptId);const q=attempt?.contentId.startsWith("question:")?trustedQuestion(attempt.contentId.slice(9)):undefined;return {...card,prompt:attempt?.prompt??(q?`${q.question_cn} — ${q.question_en}`:card.contentId),correctAnswer:attempt?.correctAnswerText??(q?.options[q.correct_answer]??attempt?.correctAnswer??""),userAnswer:attempt?.userAnswerText??(q&&attempt?q.options[attempt.answer]??attempt.answer:attempt?.answer??"")};});return {state:built.state,session:built.session,cards,mistakes:built.state.mistakes};}
+function response(data:ReturnType<typeof view>,fresh:boolean,id:string){const res=NextResponse.json({session:data.session,cards:data.cards,mistakes:data.mistakes});if(fresh)res.cookies.set(COOKIE,id,{httpOnly:true,sameSite:"lax",secure:true,maxAge:31536000,path:"/"});return res;}
+export async function GET(req:NextRequest){const o=await owner();const loaded=await loadState(o.id);const data=view(loaded.state,o.id,offset(req.nextUrl.searchParams.get("tzOffset")?Number(req.nextUrl.searchParams.get("tzOffset")):0));if(data.state.dailySessions.length!==loaded.state.dailySessions.length)await saveState(o.id,data.state,loaded.revision);return response(data,o.fresh,o.id);}
+export async function POST(req:NextRequest){const o=await owner();let body:any;try{const text=await req.text();if(text.length>4096)return NextResponse.json({error:"PAYLOAD_TOO_LARGE"},{status:413});body=JSON.parse(text);}catch{return NextResponse.json({error:"INVALID_JSON"},{status:400});}
+ const action=body?.action;const payload=body?.payload??{};const tz=offset(body?.tzOffset);const key=short(payload.idempotencyKey,80);if(!key)return NextResponse.json({error:"INVALID_IDEMPOTENCY_KEY"},{status:422});
+ for(let turn=0;turn<3;turn++){const loaded=await loadState(o.id);let state=loaded.state;try{
+  if(action==="attempt"){const qid=short(payload.questionId,50),answer=short(payload.answer,8);const q=qid?trustedQuestion(qid):undefined;if(!q||!answer||!Object.hasOwn(q.options,answer))throw new Error("INVALID_ATTEMPT");state=recordAttempt(state,{idempotencyKey:key,contentId:`question:${q.id}`,contentVersion:q.contentVersion,dimension:"reading",answer,correctAnswer:q.correct_answer,prompt:[q.passage_cn,q.passage_en,q.question_cn,q.question_en].filter(Boolean).join(" — "),userAnswerText:q.options[answer],correctAnswerText:q.options[q.correct_answer],observedAt:new Date().toISOString()}).state;}
+  else if(action==="grade"){if(!short(payload.cardId,120)||!["again","hard","good","easy"].includes(payload.grade)||!Number.isInteger(payload.clientRevision))throw new Error("INVALID_GRADE");state=gradeReview(state,{cardId:payload.cardId,grade:payload.grade,idempotencyKey:key,observedAt:new Date().toISOString(),clientRevision:payload.clientRevision}).state;}
+  else if(action==="complete_item"){if(!short(payload.sessionId,120)||!short(payload.itemId,160))throw new Error("INVALID_ITEM");state=completeDailyItem(state,payload.sessionId,payload.itemId).state;}
+  else return NextResponse.json({error:"INVALID_ACTION"},{status:422});
+  const data=view(state,o.id,tz);await saveState(o.id,data.state,loaded.revision);return response(data,o.fresh,o.id);
+ }catch(e){const code=e instanceof Error?e.message:"SAVE_FAILED";if(code==="REVISION_CONFLICT"&&action==="attempt"&&turn<2)continue;return NextResponse.json({error:code},{status:code==="REVISION_CONFLICT"?409:422});}}
+ return NextResponse.json({error:"REVISION_CONFLICT"},{status:409});}

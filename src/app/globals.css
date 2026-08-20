@@ -32,6 +32,21 @@
 }
 
 @layer components {
+  .learn { max-width: 960px; min-height: 70vh; margin: 0 auto; padding: 64px 24px 96px; }
+  .learn > header { margin-bottom: 32px; }
+  .learn > header h1 { font-size: clamp(36px, 7vw, 56px); margin-bottom: 8px; }
+  .learn > header > p { color: #64748B; margin-bottom: 20px; }
+  .learn nav { display: flex; gap: 8px; overflow-x: auto; }
+  .learn nav a { min-height: 44px; display: inline-flex; align-items: center; padding: 8px 16px; border-radius: 999px; background: #EFF6FF; color: #2563EB; font-weight: 700; }
+  .learn .card, .learn .summary, .learn .state { border: 1px solid #E2E8F0; border-radius: 16px; padding: 24px; background: white; }
+  .learn .card h2, .learn .state h2 { font-size: 22px; margin-bottom: 8px; }
+  .learn .card p, .learn .state p { color: #64748B; margin-bottom: 18px; }
+  .learn .summary { margin-top: 24px; background: #F8FAFC; }
+  .learn .summary h2 { margin-bottom: 8px; }
+  .learn .btn { background: #2563EB; color: white; min-height: 44px; padding: 10px 18px; border-radius: 999px; }
+  .learn .btn.secondary { background: white; color: #2563EB; border: 1px solid #2563EB; text-transform: capitalize; }
+  @media (max-width: 639px) { .learn { padding: 40px 16px 80px; } .learn .card, .learn .summary, .learn .state { padding: 20px; } }
+
   /* Eyebrow */
   .eyebrow {
     font-family: var(--font-body);

@@ -1,0 +1,5 @@
+import { getCloudflareContext } from "@opennextjs/cloudflare";
+import { emptyLearningState, type LearningState } from "./domain";
+export async function db(){return (await getCloudflareContext({async:true})).env.LEARNING_DB;}
+export async function loadState(ownerId:string){const row=await (await db()).prepare("SELECT state_json,revision FROM learning_states WHERE owner_id=?").bind(ownerId).first<{state_json:string;revision:number}>();return row?{state:JSON.parse(row.state_json) as LearningState,revision:row.revision}:{state:emptyLearningState(),revision:0};}
+export async function saveState(ownerId:string,state:LearningState,revision:number){const now=new Date().toISOString();const result=await (await db()).prepare("INSERT INTO learning_states(owner_id,state_json,revision,updated_at) VALUES(?,?,1,?) ON CONFLICT(owner_id) DO UPDATE SET state_json=excluded.state_json,revision=learning_states.revision+1,updated_at=excluded.updated_at WHERE learning_states.revision=?").bind(ownerId,JSON.stringify(state),now,revision).run();if(!result.meta.changes)throw new Error("REVISION_CONFLICT");}

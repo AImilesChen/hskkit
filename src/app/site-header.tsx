@@ -264,6 +264,12 @@ export default function SiteHeader() {
           >
             Levels
           </Link>
+          <Link
+            href="/today"
+            className="px-4 py-2 text-sm font-medium text-[#334155] no-underline transition-colors duration-150 hover:text-[#0F172A] hover:bg-[#F8FAFC] rounded-lg"
+          >
+            Today
+          </Link>
           <DesktopDropdown
             label="Study Tools"
             items={studyTools}
