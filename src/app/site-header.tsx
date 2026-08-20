@@ -270,6 +270,12 @@ export default function SiteHeader() {
           >
             Today
           </Link>
+          <Link
+            href="/listen"
+            className="px-4 py-2 text-sm font-medium text-[#334155] no-underline transition-colors duration-150 hover:text-[#0F172A] hover:bg-[#F8FAFC] rounded-lg"
+          >
+            Listen
+          </Link>
           <DesktopDropdown
             label="Study Tools"
             items={studyTools}
@@ -417,6 +423,22 @@ export default function SiteHeader() {
               onClick={closeMobile}
             >
               Levels
+            </Link>
+
+            {/* Learning links */}
+            <Link
+              href="/today"
+              className="py-3.5 text-base font-medium text-[#334155] no-underline"
+              onClick={closeMobile}
+            >
+              Today
+            </Link>
+            <Link
+              href="/listen"
+              className="py-3.5 text-base font-medium text-[#334155] no-underline"
+              onClick={closeMobile}
+            >
+              Listen
             </Link>
 
             {/* Study Tools Accordion */}

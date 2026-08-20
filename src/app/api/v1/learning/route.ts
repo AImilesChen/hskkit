@@ -1,23 +1,151 @@
 import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
-import { buildDailySession, completeDailyItem, gradeReview, recordAttempt, type LearningState } from "../../../../lib/learning/domain";
+import {
+  buildDailySession,
+  completeDailyItem,
+  gradeReview,
+  markAudioReviewReady,
+  recordAttempt,
+  recordAudioAttempt,
+  type LearningState,
+} from "../../../../lib/learning/domain";
+import { trustedAudioExercise, type AudioMode } from "../../../../lib/learning/audio";
 import { trustedQuestion } from "../../../../lib/learning/questions";
 import { loadState, saveState } from "../../../../lib/learning/storage";
-const COOKIE="hskkit_guest";
-async function owner(){const jar=await cookies();let id=jar.get(COOKIE)?.value;let fresh=false;if(!id){id=crypto.randomUUID();fresh=true;}return {id,fresh};}
-const short=(v:unknown,n=100)=>typeof v==="string"&&v.length>0&&v.length<=n?v:undefined;
-const offset=(v:unknown)=>Number.isInteger(v)&&Number(v)>=-840&&Number(v)<=840?Number(v):0;
-function localDay(now:string,offsetMinutes:number){return new Date(new Date(now).getTime()-offsetMinutes*60000).toISOString().slice(0,10);}
-function view(state:LearningState,ownerId:string,offsetMinutes:number){const now=new Date().toISOString();const built=buildDailySession(state,{ownerId,localDay:localDay(now,offsetMinutes),ruleVersion:"today-v1",now});const cards=built.state.cards.map(card=>{const attempt=built.state.attempts.find(a=>a.id===card.sourceAttemptId);const q=attempt?.contentId.startsWith("question:")?trustedQuestion(attempt.contentId.slice(9)):undefined;return {...card,prompt:attempt?.prompt??(q?`${q.question_cn} — ${q.question_en}`:card.contentId),correctAnswer:attempt?.correctAnswerText??(q?.options[q.correct_answer]??attempt?.correctAnswer??""),userAnswer:attempt?.userAnswerText??(q&&attempt?q.options[attempt.answer]??attempt.answer:attempt?.answer??"")};});return {state:built.state,session:built.session,cards,mistakes:built.state.mistakes};}
-function response(data:ReturnType<typeof view>,fresh:boolean,id:string){const res=NextResponse.json({session:data.session,cards:data.cards,mistakes:data.mistakes});if(fresh)res.cookies.set(COOKIE,id,{httpOnly:true,sameSite:"lax",secure:true,maxAge:31536000,path:"/"});return res;}
-export async function GET(req:NextRequest){const o=await owner();const loaded=await loadState(o.id);const data=view(loaded.state,o.id,offset(req.nextUrl.searchParams.get("tzOffset")?Number(req.nextUrl.searchParams.get("tzOffset")):0));if(data.state.dailySessions.length!==loaded.state.dailySessions.length)await saveState(o.id,data.state,loaded.revision);return response(data,o.fresh,o.id);}
-export async function POST(req:NextRequest){const o=await owner();let body:any;try{const text=await req.text();if(text.length>4096)return NextResponse.json({error:"PAYLOAD_TOO_LARGE"},{status:413});body=JSON.parse(text);}catch{return NextResponse.json({error:"INVALID_JSON"},{status:400});}
- const action=body?.action;const payload=body?.payload??{};const tz=offset(body?.tzOffset);const key=short(payload.idempotencyKey,80);if(!key)return NextResponse.json({error:"INVALID_IDEMPOTENCY_KEY"},{status:422});
- for(let turn=0;turn<3;turn++){const loaded=await loadState(o.id);let state=loaded.state;try{
-  if(action==="attempt"){const qid=short(payload.questionId,50),answer=short(payload.answer,8);const q=qid?trustedQuestion(qid):undefined;if(!q||!answer||!Object.hasOwn(q.options,answer))throw new Error("INVALID_ATTEMPT");state=recordAttempt(state,{idempotencyKey:key,contentId:`question:${q.id}`,contentVersion:q.contentVersion,dimension:"reading",answer,correctAnswer:q.correct_answer,prompt:[q.passage_cn,q.passage_en,q.question_cn,q.question_en].filter(Boolean).join(" — "),userAnswerText:q.options[answer],correctAnswerText:q.options[q.correct_answer],observedAt:new Date().toISOString()}).state;}
-  else if(action==="grade"){if(!short(payload.cardId,120)||!["again","hard","good","easy"].includes(payload.grade)||!Number.isInteger(payload.clientRevision))throw new Error("INVALID_GRADE");state=gradeReview(state,{cardId:payload.cardId,grade:payload.grade,idempotencyKey:key,observedAt:new Date().toISOString(),clientRevision:payload.clientRevision}).state;}
-  else if(action==="complete_item"){if(!short(payload.sessionId,120)||!short(payload.itemId,160))throw new Error("INVALID_ITEM");state=completeDailyItem(state,payload.sessionId,payload.itemId).state;}
-  else return NextResponse.json({error:"INVALID_ACTION"},{status:422});
-  const data=view(state,o.id,tz);await saveState(o.id,data.state,loaded.revision);return response(data,o.fresh,o.id);
- }catch(e){const code=e instanceof Error?e.message:"SAVE_FAILED";if(code==="REVISION_CONFLICT"&&action==="attempt"&&turn<2)continue;return NextResponse.json({error:code},{status:code==="REVISION_CONFLICT"?409:422});}}
- return NextResponse.json({error:"REVISION_CONFLICT"},{status:409});}
+
+const COOKIE = "hskkit_guest";
+async function owner() {
+  const jar = await cookies();
+  let id = jar.get(COOKIE)?.value;
+  let fresh = false;
+  if (!id) { id = crypto.randomUUID(); fresh = true; }
+  return { id, fresh };
+}
+const short = (value: unknown, max = 100) => typeof value === "string" && value.length > 0 && value.length <= max ? value : undefined;
+const offset = (value: unknown) => Number.isInteger(value) && Number(value) >= -840 && Number(value) <= 840 ? Number(value) : 0;
+function localDay(now: string, offsetMinutes: number) {
+  return new Date(new Date(now).getTime() - offsetMinutes * 60_000).toISOString().slice(0, 10);
+}
+function view(state: LearningState, ownerId: string, offsetMinutes: number) {
+  const now = new Date().toISOString();
+  const built = buildDailySession(state, { ownerId, localDay: localDay(now, offsetMinutes), ruleVersion: "today-v2", now });
+  const cards = built.state.cards.map((card) => {
+    const attempt = built.state.attempts.find((candidate) => candidate.id === card.sourceAttemptId);
+    const question = attempt?.contentId.startsWith("question:") ? trustedQuestion(attempt.contentId.slice(9)) : undefined;
+    const assetId = attempt?.contentId.startsWith("word:") ? attempt.contentId.slice(5) : undefined;
+    const audio = assetId && card.dimension !== "reading" ? trustedAudioExercise(assetId, card.dimension as AudioMode) : undefined;
+    return {
+      ...card,
+      prompt: attempt?.prompt ?? (question ? `${question.question_cn} — ${question.question_en}` : audio?.prompt ?? card.contentId),
+      correctAnswer: attempt?.correctAnswerText ?? (question?.options[question.correct_answer] ?? audio?.options[audio.correctAnswer] ?? attempt?.correctAnswer ?? ""),
+      userAnswer: attempt?.userAnswerText ?? (question && attempt ? question.options[attempt.answer] ?? attempt.answer : audio && attempt ? audio.options[attempt.answer] ?? attempt.answer : attempt?.answer ?? ""),
+      audioText: audio?.voiceText,
+      assetId,
+      playbackReady: card.dimension === "reading" || Boolean(built.state.audioReviewReady?.some((ready) => ready.cardId === card.id && ready.cardRevision === card.revision)),
+    };
+  });
+  const mistakes = built.state.mistakes.map((mistake) => {
+    const attempt = built.state.attempts.find((candidate) => candidate.id === mistake.sourceAttemptId);
+    return { ...mistake, dimension: attempt?.dimension ?? "reading", prompt: attempt?.prompt ?? mistake.contentId };
+  });
+  const mastery = {
+    reading: built.state.cards.filter((card) => card.dimension === "reading").length,
+    audio: built.state.cards.filter((card) => card.dimension === "audio").length,
+    context_audio: built.state.cards.filter((card) => card.dimension === "context_audio").length,
+  };
+  return { state: built.state, session: built.session, cards, mistakes, mastery };
+}
+function response(data: ReturnType<typeof view>, fresh: boolean, id: string) {
+  const res = NextResponse.json({ session: data.session, cards: data.cards, mistakes: data.mistakes, mastery: data.mastery });
+  if (fresh) res.cookies.set(COOKIE, id, { httpOnly: true, sameSite: "lax", secure: true, maxAge: 31_536_000, path: "/" });
+  return res;
+}
+export async function GET(req: NextRequest) {
+  const identity = await owner();
+  const loaded = await loadState(identity.id);
+  const tz = offset(req.nextUrl.searchParams.get("tzOffset") ? Number(req.nextUrl.searchParams.get("tzOffset")) : 0);
+  const data = view(loaded.state, identity.id, tz);
+  if (data.state.dailySessions.length !== loaded.state.dailySessions.length) await saveState(identity.id, data.state, loaded.revision);
+  return response(data, identity.fresh, identity.id);
+}
+export async function POST(req: NextRequest) {
+  const identity = await owner();
+  let body: any;
+  try {
+    const text = await req.text();
+    if (text.length > 4096) return NextResponse.json({ error: "PAYLOAD_TOO_LARGE" }, { status: 413 });
+    body = JSON.parse(text);
+  } catch {
+    return NextResponse.json({ error: "INVALID_JSON" }, { status: 400 });
+  }
+  const action = body?.action;
+  const payload = body?.payload ?? {};
+  const tz = offset(body?.tzOffset);
+  const key = short(payload.idempotencyKey, 80);
+  if (!key) return NextResponse.json({ error: "INVALID_IDEMPOTENCY_KEY" }, { status: 422 });
+
+  for (let turn = 0; turn < 3; turn += 1) {
+    const loaded = await loadState(identity.id);
+    let state = loaded.state;
+    try {
+      if (action === "attempt") {
+        const questionId = short(payload.questionId, 50);
+        const answer = short(payload.answer, 8);
+        const question = questionId ? trustedQuestion(questionId) : undefined;
+        if (!question || !answer || !Object.hasOwn(question.options, answer)) throw new Error("INVALID_ATTEMPT");
+        state = recordAttempt(state, {
+          idempotencyKey: key,
+          contentId: `question:${question.id}`,
+          contentVersion: question.contentVersion,
+          dimension: "reading",
+          answer,
+          correctAnswer: question.correct_answer,
+          prompt: [question.passage_cn, question.passage_en, question.question_cn, question.question_en].filter(Boolean).join(" — "),
+          userAnswerText: question.options[answer],
+          correctAnswerText: question.options[question.correct_answer],
+          observedAt: new Date().toISOString(),
+        }).state;
+      } else if (action === "audio_attempt") {
+        const assetId = short(payload.assetId, 80);
+        const mode = payload.mode === "audio" || payload.mode === "context_audio" ? payload.mode as AudioMode : undefined;
+        const answer = short(payload.answer, 8);
+        const exercise = assetId && mode ? trustedAudioExercise(assetId, mode) : undefined;
+        if (!exercise || !answer || !Object.hasOwn(exercise.options, answer)) throw new Error("INVALID_AUDIO_ATTEMPT");
+        state = recordAudioAttempt(state, {
+          idempotencyKey: key,
+          contentId: exercise.contentId,
+          contentVersion: exercise.contentVersion,
+          dimension: exercise.dimension,
+          answer,
+          correctAnswer: exercise.correctAnswer,
+          prompt: exercise.prompt,
+          userAnswerText: exercise.options[answer],
+          correctAnswerText: exercise.options[exercise.correctAnswer],
+          observedAt: new Date().toISOString(),
+          playbackResult: "completed",
+        }).state;
+      } else if (action === "audio_review_ready") {
+        const cardId = short(payload.cardId, 120);
+        if (!cardId || !Number.isInteger(payload.cardRevision)) throw new Error("INVALID_AUDIO_REVIEW");
+        state = markAudioReviewReady(state, cardId, payload.cardRevision, key);
+      } else if (action === "grade") {
+        if (!short(payload.cardId, 120) || !["again", "hard", "good", "easy"].includes(payload.grade) || !Number.isInteger(payload.clientRevision)) throw new Error("INVALID_GRADE");
+        state = gradeReview(state, { cardId: payload.cardId, grade: payload.grade, idempotencyKey: key, observedAt: new Date().toISOString(), clientRevision: payload.clientRevision }).state;
+      } else if (action === "complete_item") {
+        if (!short(payload.sessionId, 120) || !short(payload.itemId, 160)) throw new Error("INVALID_ITEM");
+        state = completeDailyItem(state, payload.sessionId, payload.itemId).state;
+      } else {
+        return NextResponse.json({ error: "INVALID_ACTION" }, { status: 422 });
+      }
+      const data = view(state, identity.id, tz);
+      await saveState(identity.id, data.state, loaded.revision);
+      return response(data, identity.fresh, identity.id);
+    } catch (error) {
+      const code = error instanceof Error ? error.message : "SAVE_FAILED";
+      const replayable = action === "attempt" || action === "audio_attempt" || action === "audio_review_ready" || action === "complete_item";
+      if (code === "REVISION_CONFLICT" && replayable && turn < 2) continue;
+      return NextResponse.json({ error: code }, { status: code === "REVISION_CONFLICT" ? 409 : 422 });
+    }
+  }
+  return NextResponse.json({ error: "REVISION_CONFLICT" }, { status: 409 });
+}

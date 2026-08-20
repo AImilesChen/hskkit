@@ -350,10 +350,13 @@ export default function PracticeTest({
 
       {/* Feedback */}
       {checked[currentIndex] && (
-        <FeedbackBox
-          isCorrect={isCorrect}
-          rawExplanation={currentQuestion.explanation}
-        />
+        <>
+          <FeedbackBox
+            isCorrect={isCorrect}
+            rawExplanation={currentQuestion.explanation}
+          />
+          {!isCorrect && <div className="mb-5"><Link href="/mistakes" className="inline-flex min-h-11 items-center rounded-full bg-[#2563EB] px-5 py-2.5 font-semibold text-white">Open Mistakes and Review</Link></div>}
+        </>
       )}
 
       {/* Navigation */}
