@@ -2,6 +2,8 @@ import { getCloudflareContext } from "@opennextjs/cloudflare";
 import { emptyLearningState, type LearningState } from "../learning/domain";
 import { loadState } from "../learning/storage";
 import { listAllPlans } from "../planner/storage";
+import { aiRuntimePolicy } from "../ai/domain";
+import { AI_MERGE_BUCKET_SQL } from "../ai/merge";
 import {
   createDataRequest,
   mergeLearningStates,
@@ -43,10 +45,16 @@ type RequestRow = {
   completed_at: string | null;
   failure_code: string | null;
 };
+type AiMergeSnapshot = { operationCount: number; operationMax: string; bucketCount: number; bucketMax: string };
 
 const db = () => getCloudflareContext().env.LEARNING_DB;
 const now = () => new Date().toISOString();
 const ownerId = (userId: string) => `user:${userId}`;
+async function aiMergeSnapshot(owner: string): Promise<AiMergeSnapshot> {
+  const row = await db().prepare("SELECT (SELECT COUNT(*) FROM ai_operations WHERE owner_id=?) AS operation_count,COALESCE((SELECT MAX(updated_at) FROM ai_operations WHERE owner_id=?),'') AS operation_max,(SELECT COUNT(*) FROM ai_quota_buckets WHERE owner_id=?) AS bucket_count,COALESCE((SELECT MAX(updated_at) FROM ai_quota_buckets WHERE owner_id=?),'') AS bucket_max")
+    .bind(owner, owner, owner, owner).first<{ operation_count: number; operation_max: string; bucket_count: number; bucket_max: string }>();
+  return { operationCount: Number(row?.operation_count ?? 0), operationMax: row?.operation_max ?? "", bucketCount: Number(row?.bucket_count ?? 0), bucketMax: row?.bucket_max ?? "" };
+}
 const b64url = (bytes: Uint8Array) => btoa(String.fromCharCode(...bytes)).replaceAll("+", "-").replaceAll("/", "_").replaceAll("=", "");
 function secret() { const bytes = crypto.getRandomValues(new Uint8Array(32)); return b64url(bytes); }
 async function hash(value: string) {
@@ -126,10 +134,12 @@ export async function getAccount(userId: string) {
 export async function createMergePreview(userId: string, guestOwnerId: string) {
   const existing = await db().prepare("SELECT * FROM guest_merges WHERE user_id=? AND guest_owner_id=?").bind(userId, guestOwnerId).first<any>();
   if (existing?.state === "confirmed") throw new Error("GUEST_ALREADY_MERGED");
-  const [accountState, guestState, accountPlans, guestPlans] = await Promise.all([loadState(ownerId(userId)), loadState(guestOwnerId), listAllPlans(ownerId(userId)), listAllPlans(guestOwnerId)]);
-  if (guestState.state.attempts.length === 0 && guestState.state.dailySessions.length === 0 && guestPlans.length === 0) throw new Error("NO_GUEST_DATA");
+  const [accountState, guestState, accountPlans, guestPlans, accountAi, guestAi] = await Promise.all([
+    loadState(ownerId(userId)), loadState(guestOwnerId), listAllPlans(ownerId(userId)), listAllPlans(guestOwnerId), aiMergeSnapshot(ownerId(userId)), aiMergeSnapshot(guestOwnerId),
+  ]);
+  if (guestState.state.attempts.length === 0 && guestState.state.dailySessions.length === 0 && guestPlans.length === 0 && guestAi.operationCount === 0 && guestAi.bucketCount === 0) throw new Error("NO_GUEST_DATA");
   const preview = previewMerge(accountState.state, guestState.state);
-  const storedPreview = { ...preview, plannerVersions: guestPlans.length, accountPlannerCount: accountPlans.length, accountPlannerMax: accountPlans[0]?.version ?? 0, guestPlannerCount: guestPlans.length, guestPlannerMax: guestPlans[0]?.version ?? 0 };
+  const storedPreview = { ...preview, plannerVersions: guestPlans.length, accountPlannerCount: accountPlans.length, accountPlannerMax: accountPlans[0]?.version ?? 0, guestPlannerCount: guestPlans.length, guestPlannerMax: guestPlans[0]?.version ?? 0, accountAi, guestAi };
   const id = existing?.id ?? crypto.randomUUID();
   const mergeKey = secret();
   const mergeTokenHash = await hash(mergeKey);
@@ -169,28 +179,38 @@ export async function closeMerge(userId: string, mergeId: string, mergeKey: stri
   const [accountState, guestState] = await Promise.all([loadState(ownerId(userId)), loadState(row.guest_owner_id)]);
   if (accountState.revision !== row.account_revision || guestState.revision !== row.guest_revision) throw new Error("MERGE_PREVIEW_STALE");
   const merged = mergeLearningStates(accountState.state, guestState.state, ownerId(userId));
-  const plannerSnapshot = JSON.parse(row.preview_json) as { accountPlannerMax?: number; accountPlannerCount?: number; guestPlannerMax?: number; guestPlannerCount?: number };
+  const plannerSnapshot = JSON.parse(row.preview_json) as { accountPlannerMax?: number; accountPlannerCount?: number; guestPlannerMax?: number; guestPlannerCount?: number; accountAi?: AiMergeSnapshot; guestAi?: AiMergeSnapshot };
   const accountPlanVersion = Number(plannerSnapshot.accountPlannerMax ?? -1);
   const accountPlanCount = Number(plannerSnapshot.accountPlannerCount ?? -1);
   const guestPlanVersion = Number(plannerSnapshot.guestPlannerMax ?? -1);
   const guestPlanCount = Number(plannerSnapshot.guestPlannerCount ?? -1);
-  const [accountPlanNow, guestPlanNow] = await Promise.all([
+  if (!plannerSnapshot.accountAi || !plannerSnapshot.guestAi) throw new Error("MERGE_PREVIEW_STALE");
+  const [accountPlanNow, guestPlanNow, accountAiNow, guestAiNow] = await Promise.all([
     db().prepare("SELECT COALESCE(MAX(version),0) AS max_version, COUNT(*) AS plan_count FROM study_plan_versions WHERE owner_id=?").bind(ownerId(userId)).first<{ max_version: number; plan_count: number }>(),
     db().prepare("SELECT COALESCE(MAX(version),0) AS max_version, COUNT(*) AS plan_count FROM study_plan_versions WHERE owner_id=?").bind(row.guest_owner_id).first<{ max_version: number; plan_count: number }>(),
+    aiMergeSnapshot(ownerId(userId)), aiMergeSnapshot(row.guest_owner_id),
   ]);
-  if (Number(accountPlanNow?.max_version ?? 0) !== accountPlanVersion || Number(accountPlanNow?.plan_count ?? 0) !== accountPlanCount || Number(guestPlanNow?.max_version ?? 0) !== guestPlanVersion || Number(guestPlanNow?.plan_count ?? 0) !== guestPlanCount) throw new Error("MERGE_PREVIEW_STALE");
+  if (Number(accountPlanNow?.max_version ?? 0) !== accountPlanVersion || Number(accountPlanNow?.plan_count ?? 0) !== accountPlanCount || Number(guestPlanNow?.max_version ?? 0) !== guestPlanVersion || Number(guestPlanNow?.plan_count ?? 0) !== guestPlanCount || JSON.stringify(accountAiNow) !== JSON.stringify(plannerSnapshot.accountAi) || JSON.stringify(guestAiNow) !== JSON.stringify(plannerSnapshot.guestAi)) throw new Error("MERGE_PREVIEW_STALE");
   const assertionId = crypto.randomUUID();
+  const aiAllowance = aiRuntimePolicy(getCloudflareContext().env).dailyAllowance;
   try {
     await db().batch([
+    db().prepare("INSERT INTO account_cas_assertions(id,ok) VALUES(?,CASE WHEN (SELECT COUNT(*) FROM ai_operations WHERE owner_id=?)=? AND COALESCE((SELECT MAX(updated_at) FROM ai_operations WHERE owner_id=?),'')=? AND (SELECT COUNT(*) FROM ai_quota_buckets WHERE owner_id=?)=? AND COALESCE((SELECT MAX(updated_at) FROM ai_quota_buckets WHERE owner_id=?),'')=? AND (SELECT COUNT(*) FROM ai_operations WHERE owner_id=?)=? AND COALESCE((SELECT MAX(updated_at) FROM ai_operations WHERE owner_id=?),'')=? AND (SELECT COUNT(*) FROM ai_quota_buckets WHERE owner_id=?)=? AND COALESCE((SELECT MAX(updated_at) FROM ai_quota_buckets WHERE owner_id=?),'')=? THEN 1 ELSE 0 END)")
+      .bind(`${assertionId}:ai`, ownerId(userId), plannerSnapshot.accountAi.operationCount, ownerId(userId), plannerSnapshot.accountAi.operationMax, ownerId(userId), plannerSnapshot.accountAi.bucketCount, ownerId(userId), plannerSnapshot.accountAi.bucketMax, row.guest_owner_id, plannerSnapshot.guestAi.operationCount, row.guest_owner_id, plannerSnapshot.guestAi.operationMax, row.guest_owner_id, plannerSnapshot.guestAi.bucketCount, row.guest_owner_id, plannerSnapshot.guestAi.bucketMax),
     db().prepare("INSERT INTO account_cas_assertions(id,ok) VALUES(?, CASE WHEN COALESCE((SELECT revision FROM learning_states WHERE owner_id=?),0)=? AND COALESCE((SELECT revision FROM learning_states WHERE owner_id=?),0)=? AND COALESCE((SELECT MAX(version) FROM study_plan_versions WHERE owner_id=?),0)=? AND (SELECT COUNT(*) FROM study_plan_versions WHERE owner_id=?)=? AND COALESCE((SELECT MAX(version) FROM study_plan_versions WHERE owner_id=?),0)=? AND (SELECT COUNT(*) FROM study_plan_versions WHERE owner_id=?)=? AND EXISTS(SELECT 1 FROM guest_merges WHERE id=? AND user_id=? AND state='previewed' AND merge_token_hash=? AND expires_at>?) AND EXISTS(SELECT 1 FROM accounts WHERE user_id=? AND status='active') THEN 1 ELSE 0 END)").bind(assertionId, ownerId(userId), accountState.revision, row.guest_owner_id, guestState.revision, ownerId(userId), accountPlanVersion, ownerId(userId), accountPlanCount, row.guest_owner_id, guestPlanVersion, row.guest_owner_id, guestPlanCount, mergeId, userId, row.merge_token_hash, timestamp, userId),
     db().prepare("UPDATE learning_states SET state_json=?,revision=revision+1,updated_at=? WHERE owner_id=? AND revision=?").bind(JSON.stringify(merged.state), timestamp, ownerId(userId), accountState.revision),
     db().prepare("DELETE FROM learning_states WHERE owner_id=? AND revision=?").bind(row.guest_owner_id, guestState.revision),
     db().prepare("DELETE FROM step7_playback_tickets WHERE owner_id=?").bind(row.guest_owner_id),
+    db().prepare("INSERT INTO ai_operations(id,owner_id,feature,idempotency_key,request_hash,status,quota_period,cost_units,response_json,failure_code,provider_request_id,prompt_tokens,completion_tokens,created_at,updated_at) SELECT 'merged-ai:'||?||':'||id,?,feature,'merge:'||?||':'||id,request_hash,CASE WHEN status='reserved' THEN 'failed' ELSE status END,quota_period,cost_units,CASE WHEN status='reserved' THEN NULL ELSE response_json END,CASE WHEN status='reserved' THEN 'AI_MERGED_BEFORE_COMPLETION' ELSE failure_code END,provider_request_id,prompt_tokens,completion_tokens,created_at,updated_at FROM ai_operations WHERE owner_id=?")
+      .bind(userId, ownerId(userId), row.merge_token_hash, row.guest_owner_id),
+    db().prepare(AI_MERGE_BUCKET_SQL).bind(ownerId(userId), aiAllowance, aiAllowance, timestamp, row.guest_owner_id),
+    db().prepare("DELETE FROM ai_operations WHERE owner_id=?").bind(row.guest_owner_id),
+    db().prepare("DELETE FROM ai_quota_buckets WHERE owner_id=?").bind(row.guest_owner_id),
     db().prepare("INSERT INTO study_plan_versions(id,owner_id,version,parent_version,status,goal_level,target_date,weekly_minutes,preferred_days_json,weak_points_json,srs_load_json,warnings_json,sessions_json,idempotency_key,created_at) SELECT 'merged:'||?||':'||id,?,version+?,CASE WHEN parent_version IS NULL THEN NULL ELSE parent_version+? END,CASE WHEN ?>0 THEN 'superseded' ELSE status END,goal_level,target_date,weekly_minutes,preferred_days_json,weak_points_json,srs_load_json,warnings_json,sessions_json,'merge:'||?||':'||id,created_at FROM study_plan_versions WHERE owner_id=? ORDER BY version").bind(userId, ownerId(userId), accountPlanVersion, accountPlanVersion, accountPlanCount, row.merge_token_hash, row.guest_owner_id),
     db().prepare("DELETE FROM study_plan_versions WHERE owner_id=?").bind(row.guest_owner_id),
     db().prepare("UPDATE guest_merges SET state='confirmed',updated_at=? WHERE id=? AND state='previewed'").bind(timestamp, mergeId),
     db().prepare("INSERT INTO account_audit(id,user_id,action,resource_type,resource_id,result,metadata_json,idempotency_key,created_at) VALUES(?,?,'guest_merge_confirmed','guest_merge',?,'success',?,?,?)").bind(crypto.randomUUID(), userId, mergeId, JSON.stringify({ conflicts: merged.conflicts }), `merge-confirm:${mergeId}`, timestamp),
-    db().prepare("DELETE FROM account_cas_assertions WHERE id=?").bind(assertionId),
+    db().prepare("DELETE FROM account_cas_assertions WHERE id IN (?,?)").bind(assertionId, `${assertionId}:ai`),
     ]);
   } catch (error) {
     if (String(error).includes("account_cas_assertions") || String(error).includes("CHECK constraint")) throw new Error("MERGE_PREVIEW_STALE");
@@ -270,14 +290,16 @@ export async function actOnDataRequest(userId: string, requestId: string, action
   const processing = await persistTransition(userId, current, "process");
   try {
     if (processing.type === "export") {
-      const [learning, accountRow, requests, audits, plans] = await Promise.all([
+      const [learning, accountRow, requests, audits, plans, aiOperations, aiQuota] = await Promise.all([
         loadState(ownerId(userId)),
         getAccount(userId),
         listAccountDataRequests(userId),
         db().prepare("SELECT action,resource_type,resource_id,result,created_at FROM account_audit WHERE user_id=? ORDER BY created_at").bind(userId).all(),
         listAllPlans(ownerId(userId)),
+        db().prepare("SELECT feature,status,quota_period,cost_units,response_json,failure_code,created_at,updated_at FROM ai_operations WHERE owner_id=? ORDER BY created_at").bind(ownerId(userId)).all(),
+        db().prepare("SELECT period_key,allowance,used,reserved,updated_at FROM ai_quota_buckets WHERE owner_id=? ORDER BY period_key").bind(ownerId(userId)).all(),
       ]);
-      const resultJson = JSON.stringify({ schemaVersion: "account-export-v1", generatedAt: now(), account: accountRow, learning: learning.state, plans, requests, audit: audits.results });
+      const resultJson = JSON.stringify({ schemaVersion: "account-export-v1", generatedAt: now(), account: accountRow, learning: learning.state, plans, ai: { operations: aiOperations.results, quota: aiQuota.results }, requests, audit: audits.results });
       const completed = transitionDataRequest(processing, "complete", now());
       const expiresAt = new Date(Date.now() + 24 * 60 * 60_000).toISOString();
       const assertionId = crypto.randomUUID();
@@ -296,6 +318,8 @@ export async function actOnDataRequest(userId: string, requestId: string, action
       db().prepare("DELETE FROM learning_states WHERE owner_id=?").bind(ownerId(userId)),
       db().prepare("DELETE FROM study_plan_versions WHERE owner_id=?").bind(ownerId(userId)),
       db().prepare("DELETE FROM step7_playback_tickets WHERE owner_id=?").bind(ownerId(userId)),
+      db().prepare("DELETE FROM ai_operations WHERE owner_id=?").bind(ownerId(userId)),
+      db().prepare("DELETE FROM ai_quota_buckets WHERE owner_id=?").bind(ownerId(userId)),
       db().prepare("UPDATE account_data_requests SET result_json=NULL,expires_at=NULL WHERE user_id=?").bind(userId),
       db().prepare("UPDATE accounts SET status='deleted',deleted_at=?,updated_at=? WHERE user_id=? AND status='active'").bind(completed.completedAt, completed.updatedAt, userId),
       db().prepare("UPDATE account_data_requests SET state='completed',updated_at=?,completed_at=?,failure_code=NULL WHERE id=? AND user_id=? AND state='processing'").bind(completed.updatedAt, completed.completedAt, requestId, userId),

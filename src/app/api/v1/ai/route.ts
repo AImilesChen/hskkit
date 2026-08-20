@@ -1,0 +1,110 @@
+import { getCloudflareContext } from "@opennextjs/cloudflare";
+import { cookies } from "next/headers";
+import { NextRequest, NextResponse } from "next/server";
+import { GUEST_COOKIE, requestIdentity } from "@/lib/account/identity";
+import { aiRuntimePolicy, buildExplanationPrompt, buildStudyPlanPrompt, nonAiExplanation, nonAiStudyPlan, parseAiOutput, type AiFeature } from "@/lib/ai/domain";
+import { callAiProvider, providerConfig } from "@/lib/ai/provider";
+import { finalizeFailure, finalizeSuccess, quotaView, reserveOperation } from "@/lib/ai/storage";
+import { loadState } from "@/lib/learning/storage";
+import { trustedStep7Exercise } from "@/lib/learning/step7-content";
+import { latestPlan } from "@/lib/planner/storage";
+
+async function owner() {
+  const identity = await requestIdentity();
+  if (identity.account) return { id: `user:${identity.account.userId}`, account: identity.account, fresh: false };
+  const jar = await cookies();
+  const current = jar.get(GUEST_COOKIE)?.value;
+  return { id: current ?? crypto.randomUUID(), account: undefined, fresh: !current };
+}
+function response(payload: unknown, identity: Awaited<ReturnType<typeof owner>>, status = 200, extraHeaders: Record<string, string> = {}) {
+  const res = NextResponse.json(payload, { status, headers: { "cache-control": "private, no-store", "x-robots-tag": "noindex, nofollow", ...extraHeaders } });
+  if (identity.fresh) res.cookies.set(GUEST_COOKIE, identity.id, { httpOnly: true, sameSite: "lax", secure: true, maxAge: 31_536_000, path: "/" });
+  return res;
+}
+const safeKey = (value: unknown) => typeof value === "string" && /^[A-Za-z0-9_-]{12,80}$/.test(value) ? value : undefined;
+const safeId = (value: unknown) => typeof value === "string" && /^[a-z0-9:_-]{3,160}$/i.test(value) ? value : undefined;
+async function hash(value: string) {
+  const bytes = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(value));
+  return Array.from(new Uint8Array(bytes), (byte) => byte.toString(16).padStart(2, "0")).join("");
+}
+const normalizedFailure = (error: unknown) => {
+  const code = error instanceof Error ? error.message : "AI_PROVIDER_UNAVAILABLE";
+  return ["AI_PROVIDER_UNAVAILABLE", "AI_PROVIDER_RATE_LIMITED", "AI_PROVIDER_INVALID_RESPONSE", "AI_OUTPUT_INVALID", "AI_OUTPUT_UNSAFE", "AI_PROVIDER_CONFIG_INVALID"].includes(code) ? code : "AI_PROVIDER_UNAVAILABLE";
+};
+
+export async function GET() {
+  const identity = await owner();
+  if (identity.account?.status === "deleted") return response({ error: "ACCOUNT_DELETED" }, identity, 403);
+  const env = (await getCloudflareContext({ async: true })).env;
+  const policy = aiRuntimePolicy(env);
+  return response({ quota: await quotaView(identity.id, policy), scope: identity.account ? "account" : "guest" }, identity);
+}
+
+export async function POST(req: NextRequest) {
+  const identity = await owner();
+  if (identity.account?.status === "deleted") return response({ error: "ACCOUNT_DELETED" }, identity, 403);
+  const env = (await getCloudflareContext({ async: true })).env;
+  const policy = aiRuntimePolicy(env);
+  let body: Record<string, unknown>;
+  try {
+    const raw = await req.text();
+    if (raw.length > 1024) return response({ error: "PAYLOAD_TOO_LARGE" }, identity, 413);
+    body = JSON.parse(raw) as Record<string, unknown>;
+  } catch { return response({ error: "INVALID_JSON" }, identity, 400); }
+  const feature = body.feature as AiFeature;
+  const idempotencyKey = safeKey(body.idempotencyKey);
+  if ((feature !== "explanation" && feature !== "study_plan") || !idempotencyKey) return response({ error: "INVALID_AI_REQUEST" }, identity, 422);
+
+  let prompt: string;
+  let fallback: ReturnType<typeof nonAiExplanation> | ReturnType<typeof nonAiStudyPlan>;
+  let anchor: string;
+  if (feature === "explanation") {
+    const exerciseId = safeId(body.exerciseId);
+    const exercise = exerciseId ? trustedStep7Exercise(exerciseId) : undefined;
+    if (!exercise) return response({ error: "EXERCISE_NOT_FOUND" }, identity, 404);
+    const learning = await loadState(identity.id);
+    const attempt = [...learning.state.attempts].reverse().find((item) => item.contentId === exercise.contentId && item.contentVersion === exercise.contentVersion);
+    if (!attempt) return response({ error: "EXPLANATION_REQUIRES_ATTEMPT", fallback: nonAiExplanation(exercise) }, identity, 409);
+    prompt = buildExplanationPrompt(exercise, attempt.answer);
+    fallback = nonAiExplanation(exercise);
+    anchor = `${exercise.id}:${exercise.contentVersion}:${attempt.id}`;
+  } else {
+    const plan = await latestPlan(identity.id);
+    if (!plan) return response({ error: "STUDY_PLAN_REQUIRED", fallback: nonAiStudyPlan() }, identity, 409);
+    prompt = buildStudyPlanPrompt(plan);
+    fallback = nonAiStudyPlan();
+    anchor = `${plan.id}:v${plan.version}`;
+  }
+
+  const requestHash = await hash(`${feature}:${anchor}`);
+  let reserved: Awaited<ReturnType<typeof reserveOperation>>;
+  try {
+    reserved = await reserveOperation({ ownerId: identity.id, feature, idempotencyKey, requestHash, policy });
+  } catch (error) {
+    const code = error instanceof Error ? error.message : "AI_RESERVATION_FAILED";
+    const status = code === "ACCOUNT_DELETED" ? 403 : code === "AI_QUOTA_EXHAUSTED" || code === "AI_RATE_LIMITED" ? 429 : code === "AI_IDEMPOTENCY_CONFLICT" ? 409 : 503;
+    const retryAt = code === "AI_RATE_LIMITED" ? new Date(Date.now() + 60_000).toISOString() : undefined;
+    return response({ error: code, charged: false, fallback, quota: await quotaView(identity.id, policy), retryAt }, identity, status, retryAt ? { "retry-after": "60" } : {});
+  }
+  const operation = reserved.operation;
+  if (reserved.replayed) {
+    if (operation.status === "succeeded") return response({ status: "succeeded", charged: true, replayed: true, output: operation.response, quota: await quotaView(identity.id, policy) }, identity);
+    if (operation.status === "failed") return response({ status: "fallback", charged: false, replayed: true, failureCode: operation.failureCode, fallback, quota: await quotaView(identity.id, policy) }, identity);
+    return response({ error: "AI_REQUEST_IN_PROGRESS", charged: false, fallback, quota: await quotaView(identity.id, policy) }, identity, 409);
+  }
+
+  try {
+    const config = providerConfig(env);
+    if (!config) throw new Error("AI_PROVIDER_UNAVAILABLE");
+    const provider = await callAiProvider(config, prompt, policy.maxOutputTokens);
+    const output = parseAiOutput(feature, provider.content);
+    await finalizeSuccess({ operation, output, providerRequestId: provider.providerRequestId, promptTokens: provider.promptTokens, completionTokens: provider.completionTokens });
+    return response({ status: "succeeded", charged: true, replayed: false, output, quota: await quotaView(identity.id, policy) }, identity, 201);
+  } catch (error) {
+    const rawCode = error instanceof Error ? error.message : "AI_PROVIDER_UNAVAILABLE";
+    const failureCode = rawCode === "ACCOUNT_DELETED" ? rawCode : normalizedFailure(error);
+    try { await finalizeFailure(operation, failureCode); } catch { /* stale reservation cleanup returns it automatically */ }
+    if (rawCode === "ACCOUNT_DELETED") return response({ error: "ACCOUNT_DELETED", charged: false, fallback, quota: await quotaView(identity.id, policy) }, identity, 403);
+    return response({ status: "fallback", charged: false, replayed: false, failureCode, fallback, quota: await quotaView(identity.id, policy) }, identity);
+  }
+}

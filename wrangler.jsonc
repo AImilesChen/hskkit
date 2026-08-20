@@ -24,6 +24,13 @@
 		// see https://opennextjs.org/cloudflare/howtos/image
 		"binding": "IMAGES"
 	},
+	"vars": {
+		"DEEPSEEK_BASE_URL": "https://api.deepseek.com",
+		"DEEPSEEK_MODEL": "deepseek-chat",
+		"AI_DAILY_ALLOWANCE": "10",
+		"AI_RATE_LIMIT_PER_MINUTE": "6",
+		"AI_MAX_OUTPUT_TOKENS": "500"
+	},
 	"d1_databases": [{
 		"binding": "LEARNING_DB",
 		"database_name": "hskkit-learning",

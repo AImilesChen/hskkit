@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useRef, useState } from "react";
+import AiAssist from "@/app/components/ai-assist";
 import { normalizeStep7Answer, type Step7Exercise } from "@/lib/learning/step7-content";
 
 type Props = { exercise: Step7Exercise; voiceText?: string; nextHref?: string; nextLabel?: string };
@@ -80,6 +81,6 @@ export default function Step7ExerciseClient({ exercise, voiceText, nextHref, nex
       {Object.entries(exercise.options).map(([letter, text]) => <button key={letter} className="btn secondary" disabled={!played || saving || saved} onClick={() => { setAnswer(letter); void submit(letter); }}>{letter}. {text}</button>)}
     </div> : <div className="step7-dictation"><label htmlFor="dictation-answer">Your dictation</label><input id="dictation-answer" lang="zh-CN" value={answer} disabled={!played || saving || saved} onChange={(event) => setAnswer(event.target.value)} placeholder="Type the Chinese sentence"/><button className="btn" disabled={!played || !answer.trim() || saving || saved} onClick={() => void submit()}>{saving ? "Saving…" : "Check dictation"}</button></div>}
     {saving && <p role="status">Saving this linked exercise…</p>}
-    {saved && <div className={`step7-alert ${correct ? "success" : "warning"}`} role="status"><strong>{correct ? "Correct — progress saved." : "Not yet — added to Mistakes and SRS."}</strong><p>{exercise.explanation}</p><p><strong>Correct answer:</strong> {exercise.options?.[exercise.correctAnswer] ?? exercise.correctAnswer}</p><div className="step7-actions">{nextHref && <Link className="btn" href={nextHref}>{nextLabel ?? "Continue"}</Link>}<Link className="btn secondary" href={correct ? "/planner" : "/mistakes"}>{correct ? "Open Planner" : "Open Mistakes"}</Link></div></div>}
+    {saved && <><div className={`step7-alert ${correct ? "success" : "warning"}`} role="status"><strong>{correct ? "Correct — progress saved." : "Not yet — added to Mistakes and SRS."}</strong><p>{exercise.explanation}</p><p><strong>Correct answer:</strong> {exercise.options?.[exercise.correctAnswer] ?? exercise.correctAnswer}</p><div className="step7-actions">{nextHref && <Link className="btn" href={nextHref}>{nextLabel ?? "Continue"}</Link>}<Link className="btn secondary" href={correct ? "/planner" : "/mistakes"}>{correct ? "Open Planner" : "Open Mistakes"}</Link></div></div><AiAssist feature="explanation" exerciseId={exercise.id}/></>}
   </section>;
 }

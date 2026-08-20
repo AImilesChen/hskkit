@@ -1,0 +1,1 @@
+export const AI_MERGE_BUCKET_SQL = "INSERT INTO ai_quota_buckets(owner_id,period_key,allowance,used,reserved,updated_at) SELECT ?,period_key,?,MIN(used,?),0,? FROM ai_quota_buckets WHERE owner_id=? ON CONFLICT(owner_id,period_key) DO UPDATE SET used=MIN(ai_quota_buckets.allowance-ai_quota_buckets.reserved,ai_quota_buckets.used+excluded.used),updated_at=excluded.updated_at";
