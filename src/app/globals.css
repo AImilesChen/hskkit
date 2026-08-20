@@ -45,7 +45,12 @@
   .learn .summary h2 { margin-bottom: 8px; }
   .learn .btn { background: #2563EB; color: white; min-height: 44px; padding: 10px 18px; border-radius: 999px; }
   .learn .btn.secondary { background: white; color: #2563EB; border: 1px solid #2563EB; text-transform: capitalize; }
-  @media (max-width: 639px) { .learn { padding: 40px 16px 80px; } .learn .card, .learn .summary, .learn .state { padding: 20px; } }
+  @media (max-width: 639px) {
+    .learn { padding: 40px 16px 80px; }
+    .learn .card, .learn .summary, .learn .state { padding: 20px; }
+    .learn nav { flex-wrap: wrap; overflow-x: visible; }
+    .learn nav a { flex: 0 0 auto; white-space: nowrap; }
+  }
 
   /* Eyebrow */
   .eyebrow {
