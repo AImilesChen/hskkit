@@ -117,6 +117,7 @@ export default function PlacementClient() {
         idempotencyKey: `placement-answer:${session.id.slice(-24)}:${question.id}:${answer}`,
       });
       setSession(data.session ?? session);
+      setManualIndex(index);
     } catch (reason) {
       const code = reason instanceof Error ? reason.message : "PLACEMENT_ANSWER_FAILED";
       if (code === "PLACEMENT_SESSION_EXPIRED") {
