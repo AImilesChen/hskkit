@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import fs from "node:fs";
 import test from "node:test";
 
 import {
@@ -32,4 +33,9 @@ test("levels 7 through 9 identify the unified advanced path", () => {
 test("formal status rejects levels outside HSK 3.0", () => {
   assert.throws(() => getHsk3LevelStatus(0), /level/i);
   assert.throws(() => getHsk3LevelStatus(10), /level/i);
+});
+
+test("sitemap excludes legacy sample vocabulary routes before adding formal published levels", () => {
+  const source = fs.readFileSync(new URL("../src/app/sitemap.ts", import.meta.url), "utf8");
+  assert.match(source, /sitemapContentRoutes\(\)\.filter\(\(route\) => !route\.startsWith\("\/vocabulary\/"\)\)/);
 });

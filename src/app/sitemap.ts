@@ -38,7 +38,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
   ];
   const routes = [...new Set([
     ...existingPublicRoutes,
-    ...sitemapContentRoutes(),
+    ...sitemapContentRoutes().filter((route) => !route.startsWith("/vocabulary/")),
     ...getHsk3LevelStatuses().filter((entry) => entry.availability === "ready").map((entry) => `/vocabulary/${entry.level}`),
     ...GRAMMAR_LESSONS.map((lesson) => `/grammar/${lesson.slug}`),
     ...READING_LESSONS.map((lesson) => `/reading/${lesson.slug}`),
