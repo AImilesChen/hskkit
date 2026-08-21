@@ -114,7 +114,7 @@ export default function PlacementClient() {
       const data = await placementRequest(`/api/v1/attempts/${encodeURIComponent(session.id)}/submit`, {
         questionId: question.id,
         answer,
-        idempotencyKey: `placement-answer:${session.id}:${question.id}:${answer}`,
+        idempotencyKey: `placement-answer:${session.id.slice(-24)}:${question.id}:${answer}`,
       });
       setSession(data.session ?? session);
     } catch (reason) {

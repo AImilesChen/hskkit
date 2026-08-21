@@ -81,6 +81,8 @@ test("batch 3 REST entry points exist and the placement UI uses them", () => {
   assert.match(attemptsRoute, /export async function POST/);
   assert.match(client, /\/api\/v1\/placement\/sessions/);
   assert.match(client, /\/api\/v1\/attempts\/\$\{encodeURIComponent\(session\.id\)\}\/submit/);
+  assert.match(client, /session\.id\.slice\(-24\)/);
+  assert.doesNotMatch(client, /placement-answer:\$\{session\.id\}:/);
   assert.match(client, /PLACEMENT_SESSION_EXPIRED/);
   assert.match(client, /PLACEMENT_NO_QUESTIONS/);
   assert.match(resultClient, /\/vocabulary\/\$\{catalogLevel\}/);
