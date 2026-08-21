@@ -9,8 +9,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
   const baseUrl = "https://hskkit.com";
   const existingPublicRoutes = [
     "",
-    "/hsk-levels",
-    "/hsk-level-test",
     "/hsk-1-vocabulary",
     "/hsk-1-practice-test",
     "/hsk-2-vocabulary",
@@ -24,7 +22,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "/hsk-1-reading-practice",
     "/tools/chinese-character-practice-sheet-generator",
     "/contact",
-    "/new-hsk-3-0",
     "/hsk-3-0",
     "/hsk-2-0-vs-3-0",
     "/levels",

@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import AccountClient from "./account-client";
+import SiteFooter from "../site-footer";
+import SiteHeader from "../site-header";
 
 export const metadata: Metadata = {
   title: "Account & Sync | HSKKit",
@@ -9,7 +11,7 @@ export const metadata: Metadata = {
 };
 
 export default function AccountPage() {
-  return <main className="learn account-page">
+  return <><SiteHeader/><main className="learn account-page">
     <header>
       <p className="eyebrow">Private learning account</p>
       <h1>Account & sync</h1>
@@ -17,5 +19,5 @@ export default function AccountPage() {
       <nav aria-label="Learning navigation"><Link href="/today">Today</Link><Link href="/review">Review</Link><Link href="/mistakes">Mistakes</Link><Link href="/listen">Listen</Link><Link href="/account/data">Data</Link></nav>
     </header>
     <AccountClient />
-  </main>;
+  </main><SiteFooter/></>;
 }
