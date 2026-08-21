@@ -8,6 +8,7 @@
     "start": "next start",
     "test": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --test tests/*.test.mts",
     "typecheck": "tsc --noEmit",
+    "content:import:batch1": "python3 scripts/content/import-hsk3-batch1.py",
     "content:validate": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/content/validate-content.mts src/lib/content/catalog.json",
     "content:import": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/content/import-content.mts",
     "content:release": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/content/release-content.mts",

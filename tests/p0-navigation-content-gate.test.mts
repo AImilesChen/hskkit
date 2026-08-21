@@ -12,14 +12,14 @@ test("formal HSK 3.0 level status exposes exactly levels 1 through 9", () => {
   assert.equal(statuses.every((entry) => entry.standard === "hsk3"), true);
 });
 
-test("an empty active release is reported as an explicit content gap", () => {
+test("the active formal release reports published Level 1 content", () => {
   const status = getHsk3LevelStatus(1);
-  assert.equal(status.availability, "gap");
-  assert.equal(status.contentCount, 0);
+  assert.equal(status.availability, "ready");
+  assert.equal(status.contentCount, 500);
   assert.equal(status.audioCount, 0);
-  assert.equal(status.releaseId, "hsk3-foundation-v1");
-  assert.equal(status.releaseVersion, 1);
-  assert.match(status.message, /not yet available/i);
+  assert.equal(status.releaseId, "hsk3-gf0025-2021-v2");
+  assert.equal(status.releaseVersion, 2);
+  assert.match(status.message, /available/i);
 });
 
 test("levels 7 through 9 identify the unified advanced path", () => {

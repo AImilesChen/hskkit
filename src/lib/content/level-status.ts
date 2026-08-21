@@ -41,3 +41,15 @@ export function getHsk3LevelStatus(level: number): LevelPublicationStatus {
 export function getHsk3LevelStatuses(): LevelPublicationStatus[] {
   return Array.from({ length: 9 }, (_, index) => getHsk3LevelStatus(index + 1));
 }
+
+export function getHsk3LevelPreview(level: number, limit = 100) {
+  const result = queryCatalog(repository, { standard: "hsk3", level });
+  return result.contentAssets.slice(0, limit).map((asset) => ({
+    id: asset.id,
+    hanzi: String(asset.payload.hanzi),
+    pinyin: String(asset.payload.pinyin ?? ""),
+    meaning: String(asset.payload.meaning ?? ""),
+    partOfSpeech: String(asset.payload.partOfSpeech ?? ""),
+    levelBand: asset.level_band ?? String(asset.level),
+  }));
+}

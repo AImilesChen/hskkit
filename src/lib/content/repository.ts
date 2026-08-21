@@ -35,6 +35,13 @@ export interface ContentAsset {
   level: number;
   kind: ContentKind;
   version: number;
+  standard_version?: string;
+  level_band?: string;
+  content_version?: string;
+  source_ref?: string;
+  license_ref?: string;
+  qa_status?: QaStatus;
+  publish_status?: "draft" | "published" | "withdrawn";
   payload: Record<string, unknown>;
   source: SourceMetadata;
   authorization: AuthorizationMetadata;
@@ -332,6 +339,17 @@ function validateRepositoryInternal(repository: ContentRepository, enforceActive
     assertStandard(asset.standard, `ContentAsset ${asset.id} standard`);
     assertLevel(asset.standard, asset.level as number, `ContentAsset ${asset.id}`);
     assertVersion(asset.version, `ContentAsset ${asset.id}`);
+    const releaseMetadata = [asset.standard_version, asset.level_band, asset.content_version, asset.source_ref, asset.license_ref, asset.qa_status, asset.publish_status];
+    if (releaseMetadata.some((value) => value !== undefined)) {
+      if (asset.standard_version !== "GF0025-2021") throw new Error(`ContentAsset ${asset.id} has invalid standard_version`);
+      const expectedBand = asset.level >= 7 ? "7-9" : String(asset.level);
+      if (asset.level_band !== expectedBand) throw new Error(`ContentAsset ${asset.id} has invalid level_band`);
+      for (const [key, value] of [["content_version", asset.content_version], ["source_ref", asset.source_ref], ["license_ref", asset.license_ref]] as const) {
+        if (typeof value !== "string" || !value.trim()) throw new Error(`ContentAsset ${asset.id} requires ${key}`);
+      }
+      if (asset.qa_status !== asset.qaStatus) throw new Error(`ContentAsset ${asset.id} QA metadata is inconsistent`);
+      if (asset.publish_status !== "published") throw new Error(`ContentAsset ${asset.id} is not publishable`);
+    }
     if (typeof asset.kind !== "string" || !CONTENT_KINDS.has(asset.kind as ContentKind)) {
       throw new Error(`ContentAsset ${asset.id} has invalid kind`);
     }

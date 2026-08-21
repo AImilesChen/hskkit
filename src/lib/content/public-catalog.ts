@@ -9,6 +9,13 @@ export function toPublicCatalogResponse(result: CatalogResult) {
       level: asset.level,
       version: asset.version,
       kind: asset.kind,
+      standard_version: asset.standard_version,
+      level_band: asset.level_band,
+      content_version: asset.content_version,
+      source_ref: asset.source_ref,
+      license_ref: asset.license_ref,
+      qa_status: asset.qa_status,
+      publish_status: asset.publish_status,
       payload: {
         hanzi: asset.payload.hanzi,
         ...(typeof asset.payload.traditional === "string" ? { traditional: asset.payload.traditional } : {}),
