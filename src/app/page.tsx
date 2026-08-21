@@ -39,7 +39,7 @@ export default function HomePage() {
 
         <section data-home-section="placement" className="px-5 py-14 sm:py-18">
           <div className="mx-auto grid max-w-[1120px] gap-6 rounded-3xl bg-slate-950 p-7 text-white sm:p-10 lg:grid-cols-[1fr_auto] lg:items-center">
-            <div><p className="text-sm font-bold uppercase tracking-[0.15em] text-blue-300">Start here</p><h2 className="mt-3 text-3xl font-bold sm:text-4xl">Not sure which level fits?</h2><p className="mt-4 max-w-3xl text-lg leading-8 text-slate-300">Placement saves each answer, restores after refresh, and recommends a learning starting point. If listening evidence is unavailable, the result says so instead of pretending to be an official score.</p></div>
+            <div><p className="text-sm font-bold uppercase tracking-[0.15em] text-blue-300">Start here</p><h2 className="mt-3 text-3xl font-bold text-white sm:text-4xl">Not sure which level fits?</h2><p className="mt-4 max-w-3xl text-lg leading-8 text-slate-300">Placement saves each answer, restores after refresh, and recommends a learning starting point. If listening evidence is unavailable, the result says so instead of pretending to be an official score.</p></div>
             <Link href="/placement" className="inline-flex min-h-12 items-center justify-center rounded-full bg-white px-7 font-bold text-slate-950 hover:bg-blue-50">Start Placement</Link>
           </div>
         </section>
