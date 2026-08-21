@@ -12,10 +12,21 @@ export function createPracticeSession(state: LearningState, input: {
   skill: string;
   idempotencyKey: string;
   now: string;
+  dailySessionId?: string;
+  dailyItemId?: string;
 }) {
   const priorByKey = sessions(state).find((session) => session.ownerId === input.ownerId && session.idempotencyKey === input.idempotencyKey);
-  if (priorByKey) return { state, session: priorByKey };
-  const active = [...sessions(state)].reverse().find((session) => session.ownerId === input.ownerId && session.level === input.level && session.skill === input.skill && session.status === "in_progress");
+  if (priorByKey) {
+    if (priorByKey.level !== input.level || priorByKey.skill !== input.skill || priorByKey.dailySessionId !== input.dailySessionId || priorByKey.dailyItemId !== input.dailyItemId) throw new Error("IDEMPOTENCY_KEY_REUSED");
+    return { state, session: priorByKey };
+  }
+  if ((input.dailySessionId && !input.dailyItemId) || (!input.dailySessionId && input.dailyItemId)) throw new Error("INVALID_DAILY_PRACTICE_BINDING");
+  if (input.dailySessionId) {
+    const daily = state.dailySessions.find((candidate) => candidate.id === input.dailySessionId && candidate.ownerId === input.ownerId);
+    const firstPending = daily?.items.find((item) => item.status === "pending");
+    if (!daily || !firstPending || firstPending.id !== input.dailyItemId || firstPending.kind !== "practice" || firstPending.contentId !== `practice:${input.level}:${input.skill}`) throw new Error("INVALID_DAILY_PRACTICE_BINDING");
+  }
+  const active = [...sessions(state)].reverse().find((session) => session.ownerId === input.ownerId && session.level === input.level && session.skill === input.skill && session.dailySessionId === input.dailySessionId && session.dailyItemId === input.dailyItemId && session.status === "in_progress");
   if (active) return { state, session: active };
   const questions = practiceQuestionSet(input.level, input.skill);
   if (!questions.length) throw new Error("PRACTICE_NOT_READY");
@@ -29,6 +40,8 @@ export function createPracticeSession(state: LearningState, input: {
     skill: input.skill,
     questionVersion: PRACTICE_VERSION,
     questionIds: questions.map((question) => question.id),
+    dailySessionId: input.dailySessionId,
+    dailyItemId: input.dailyItemId,
     answers: [],
     status: "in_progress",
     createdAt: input.now,
@@ -78,15 +91,16 @@ export function publicPracticeSession(session: PracticeSession) {
   };
 }
 
-function finishTodayPractice(state: LearningState, ownerId: string, completedAt: string) {
+function finishTodayPractice(state: LearningState, session: PracticeSession, completedAt: string) {
+  if (!session.dailySessionId || !session.dailyItemId) return state;
   return {
     ...state,
     dailySessions: state.dailySessions.map((daily) => {
-      if (daily.ownerId !== ownerId) return daily;
+      if (daily.ownerId !== session.ownerId || daily.id !== session.dailySessionId) return daily;
       const firstPendingId = daily.items.find((item) => item.status === "pending")?.id;
       let changed = false;
       let items = daily.items.map((item) => {
-        if (item.id === firstPendingId && item.kind === "practice" && item.contentId === "practice:1:vocabulary" && item.status === "pending") {
+        if (item.id === firstPendingId && item.id === session.dailyItemId && item.kind === "practice" && item.contentId === `practice:${session.level}:${session.skill}` && item.status === "pending") {
           changed = true;
           return { ...item, status: "completed" as const };
         }
@@ -110,7 +124,6 @@ export function answerPracticeQuestion(state: LearningState, input: {
 }) {
   const session = sessions(state).find((candidate) => candidate.id === input.sessionId && candidate.ownerId === input.ownerId);
   if (!session) throw new Error("PRACTICE_SESSION_NOT_FOUND");
-  if (session.status !== "in_progress") throw new Error("PRACTICE_SESSION_CLOSED");
   const question = trustedPracticeQuestion(input.questionId);
   if (!question || !session.questionIds.includes(question.id) || question.contentVersion !== session.questionVersion) throw new Error("PRACTICE_QUESTION_WITHDRAWN");
   if (!Object.hasOwn(question.options, input.answer)) throw new Error("INVALID_PRACTICE_ANSWER");
@@ -120,6 +133,7 @@ export function answerPracticeQuestion(state: LearningState, input: {
     const feedback = feedbackFor(session).find((entry) => entry.questionId === replay.questionId)!;
     return { state, session, feedback };
   }
+  if (session.status !== "in_progress") throw new Error("PRACTICE_SESSION_CLOSED");
   if (session.answers.some((answer) => answer.questionId === question.id)) throw new Error("PRACTICE_QUESTION_ALREADY_ANSWERED");
   const attempted = recordAttempt(state, {
     idempotencyKey: input.idempotencyKey,
@@ -137,6 +151,7 @@ export function answerPracticeQuestion(state: LearningState, input: {
     standardVersion: session.standardVersion,
     sessionId: session.id,
     questionVersion: session.questionVersion,
+    dailySessionId: session.dailySessionId,
   });
   const answers = [...session.answers, {
     questionId: question.id,
@@ -159,7 +174,7 @@ export function answerPracticeQuestion(state: LearningState, input: {
     } : undefined,
   };
   const nextState = { ...attempted.state, practiceSessions: sessions(attempted.state).map((candidate) => candidate.id === updated.id ? updated : candidate) };
-  const finalState = complete ? finishTodayPractice(nextState, input.ownerId, input.now) : nextState;
+  const finalState = complete ? finishTodayPractice(nextState, updated, input.now) : nextState;
   return { state: finalState, session: updated, feedback: feedbackFor(updated).at(-1)! };
 }
 
@@ -172,7 +187,10 @@ export function reportPracticeQuestion(state: LearningState, input: {
   now: string;
 }) {
   const replay = reports(state).find((report) => report.ownerId === input.ownerId && report.idempotencyKey === input.idempotencyKey);
-  if (replay) return { state, report: replay };
+  if (replay) {
+    if (replay.sessionId !== input.sessionId || replay.questionId !== input.questionId || replay.reason !== input.reason) throw new Error("IDEMPOTENCY_KEY_REUSED");
+    return { state, report: replay };
+  }
   const session = sessions(state).find((candidate) => candidate.id === input.sessionId && candidate.ownerId === input.ownerId);
   if (!session || !session.questionIds.includes(input.questionId)) throw new Error("PRACTICE_QUESTION_NOT_FOUND");
   const question = trustedPracticeQuestion(input.questionId);

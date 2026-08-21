@@ -91,7 +91,7 @@ export default function LearningDashboard({ mode }: { mode: "today" | "review" |
             <span className="eyebrow">{item.dimension?.replace("_", " ") ?? item.kind}</span>
             <h2>{label(item)}</h2>
             <p>{item.status === "completed" ? "Completed" : locked ? "Complete the previous step first." : "Ready to continue"}</p>
-            {!locked && item.status === "pending" && actionFor(item, complete)}
+            {!locked && item.status === "pending" && actionFor(item, complete, data.session.id)}
           </article>;
         })}
       </div>
@@ -132,11 +132,11 @@ function label(item: Item) {
   if (item.kind === "practice") return "Level 1 vocabulary practice";
   return `Review ${item.dimension?.replace("_", " ") ?? "item"}`;
 }
-function actionFor(item: Item, complete: (item: Item) => Promise<void>) {
+function actionFor(item: Item, complete: (item: Item) => Promise<void>, dailySessionId: string) {
   if (item.kind === "review") return <Link className="btn" href="/review">Start review</Link>;
   if (item.kind === "learn") return <div className="flex flex-wrap gap-2"><Link className="btn" href="/word/ni-hao">Learn 你好</Link><button className="btn secondary" onClick={() => complete(item)}>Mark learned</button></div>;
   if (item.kind === "listen") return <Link className="btn" href={`/listen/word-ni-hao?mode=${item.dimension}`}>Start listening</Link>;
-  if (item.kind === "practice") return <Link className="btn" href="/practice/1/vocabulary">Start practice</Link>;
+  if (item.kind === "practice") return <Link className="btn" href={`/practice/1/vocabulary?dailySessionId=${encodeURIComponent(dailySessionId)}&dailyItemId=${encodeURIComponent(item.id)}`}>Start practice</Link>;
   return null;
 }
 function Shell(props: any) {

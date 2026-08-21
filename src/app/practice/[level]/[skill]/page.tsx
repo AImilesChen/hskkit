@@ -8,9 +8,10 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false },
 };
 
-export default async function PracticePage({ params }: { params: Promise<{ level: string; skill: string }> }) {
+export default async function PracticePage({ params, searchParams }: { params: Promise<{ level: string; skill: string }>; searchParams: Promise<{ dailySessionId?: string; dailyItemId?: string }> }) {
   const { level: rawLevel, skill } = await params;
+  const { dailySessionId, dailyItemId } = await searchParams;
   const level = Number(rawLevel);
   if (!Number.isInteger(level) || level < 1 || level > 9 || !/^[a-z-]+$/.test(skill)) notFound();
-  return <PracticeClient level={level} skill={skill} />;
+  return <PracticeClient level={level} skill={skill} dailySessionId={dailySessionId} dailyItemId={dailyItemId} />;
 }

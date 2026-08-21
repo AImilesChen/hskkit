@@ -94,6 +94,31 @@ test("practice completes after all answers and retains wrong attempt history", (
   assert.equal(state.mistakes[0].status, "open");
 });
 
+test("the final Practice answer can be replayed after the session closes", () => {
+  let { state, session } = createPracticeSession(emptyLearningState(), {
+    ownerId: "guest-final-replay", level: 1, skill: "vocabulary", idempotencyKey: "final-start", now,
+  });
+  let finalInput: Parameters<typeof answerPracticeQuestion>[1] | undefined;
+  for (const [index, questionId] of session.questionIds.entries()) {
+    finalInput = {
+      ownerId: "guest-final-replay", sessionId: session.id, questionId, answer: index === 0 ? "b" : "a",
+      idempotencyKey: `final-answer-${index}`, now,
+    };
+    const answered = answerPracticeQuestion(state, finalInput);
+    state = answered.state;
+    session = answered.session;
+  }
+  assert.equal(session.status, "completed");
+  const attempts = state.attempts.length;
+  const mistakes = state.mistakes.length;
+  const cards = state.cards.length;
+  const replay = answerPracticeQuestion(state, finalInput!);
+  assert.equal(replay.state, state);
+  assert.equal(replay.state.attempts.length, attempts);
+  assert.equal(replay.state.mistakes.length, mistakes);
+  assert.equal(replay.state.cards.length, cards);
+});
+
 test("question report is idempotent and does not erase historical attempts", () => {
   const created = createPracticeSession(emptyLearningState(), {
     ownerId: "guest-1", level: 1, skill: "vocabulary", idempotencyKey: "create-1", now,
@@ -134,6 +159,7 @@ test("Today practice completes only after the whole session and inserts wrong an
   );
   const started = createPracticeSession(daily.state, {
     ownerId: "guest:today-practice", level: 1, skill: "vocabulary", idempotencyKey: "today-start", now,
+    dailySessionId: daily.session.id, dailyItemId: "practice:1:vocabulary",
   });
   let state = started.state;
   for (const [index, questionId] of started.session.questionIds.entries()) {
@@ -154,6 +180,81 @@ test("Today practice completes only after the whole session and inserts wrong an
   });
   assert.equal(graded.state.mistakes[0].status, "resolved");
   assert.equal(graded.state.dailySessions[0].items.at(-1)?.status, "completed");
+});
+
+test("Today-bound Practice changes only its bound daily session", () => {
+  const first = buildDailySession(emptyLearningState(), {
+    ownerId: "guest:history", localDay: "2026-08-20", ruleVersion: "today-v2", now,
+  });
+  const second = buildDailySession(first.state, {
+    ownerId: "guest:history", localDay: "2026-08-21", ruleVersion: "today-v2", now,
+  });
+  second.state.dailySessions = second.state.dailySessions.map((daily) => ({
+    ...daily,
+    items: daily.items.map((item) => item.kind === "learn" || item.kind === "listen" ? { ...item, status: "completed" as const } : item),
+  }));
+  const priorSnapshot = structuredClone(second.state.dailySessions[0]);
+  const started = createPracticeSession(second.state, {
+    ownerId: "guest:history", level: 1, skill: "vocabulary", idempotencyKey: "history-start", now,
+    dailySessionId: second.session.id, dailyItemId: "practice:1:vocabulary",
+  });
+  let state = started.state;
+  for (const [index, questionId] of started.session.questionIds.entries()) {
+    state = answerPracticeQuestion(state, {
+      ownerId: "guest:history", sessionId: started.session.id, questionId,
+      answer: index === 0 ? "b" : "a", idempotencyKey: `history-answer-${index}`, now,
+    }).state;
+  }
+  assert.deepEqual(state.dailySessions[0], priorSnapshot);
+  assert.equal(state.dailySessions[1].items.find((item) => item.kind === "practice")?.status, "completed");
+  assert.ok(state.dailySessions[1].items.some((item) => item.kind === "review"));
+});
+
+test("a new wrong attempt makes an existing SRS card due now with current source", () => {
+  let first = createPracticeSession(emptyLearningState(), {
+    ownerId: "guest:card", level: 1, skill: "vocabulary", idempotencyKey: "card-start-1", now,
+  });
+  let state = first.state;
+  for (const [index, questionId] of first.session.questionIds.entries()) {
+    state = answerPracticeQuestion(state, {
+      ownerId: "guest:card", sessionId: first.session.id, questionId, answer: "a",
+      idempotencyKey: `card-correct-${index}`, now,
+    }).state;
+  }
+  const oldCard = state.cards[0];
+  const second = createPracticeSession(state, {
+    ownerId: "guest:card", level: 1, skill: "vocabulary", idempotencyKey: "card-start-2", now,
+  });
+  const wrongAt = "2026-08-21T11:00:00.000Z";
+  const wrong = answerPracticeQuestion(second.state, {
+    ownerId: "guest:card", sessionId: second.session.id, questionId: second.session.questionIds[0],
+    answer: "b", idempotencyKey: "card-wrong", now: wrongAt,
+  });
+  const updated = wrong.state.cards.find((card) => card.id === oldCard.id)!;
+  assert.equal(updated.dueAt, wrongAt);
+  assert.equal(updated.intervalDays, 0);
+  assert.equal(updated.revision, oldCard.revision + 1);
+  assert.equal(updated.sourceAttemptId, wrong.state.attempts.at(-1)?.id);
+});
+
+test("answer idempotency keys cannot be reused across Practice sessions", () => {
+  let first = createPracticeSession(emptyLearningState(), {
+    ownerId: "guest:cross-key", level: 1, skill: "vocabulary", idempotencyKey: "cross-start-1", now,
+  });
+  let state = first.state;
+  for (const [index, questionId] of first.session.questionIds.entries()) {
+    state = answerPracticeQuestion(state, {
+      ownerId: "guest:cross-key", sessionId: first.session.id, questionId, answer: "a",
+      idempotencyKey: index === 0 ? "cross-answer" : `cross-answer-${index}`, now,
+    }).state;
+  }
+  const second = createPracticeSession(state, {
+    ownerId: "guest:cross-key", level: 1, skill: "vocabulary", idempotencyKey: "cross-start-2", now,
+  });
+  assert.throws(() => answerPracticeQuestion(second.state, {
+    ownerId: "guest:cross-key", sessionId: second.session.id, questionId: second.session.questionIds[0],
+    answer: "b", idempotencyKey: "cross-answer", now,
+  }), /IDEMPOTENCY_KEY_REUSED/);
 });
 
 test("direct out-of-order Practice does not silently complete a later Today item", () => {

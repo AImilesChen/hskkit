@@ -166,11 +166,12 @@ export async function POST(req: NextRequest) {
       } else {
         return response(req, { error: "INVALID_ACTION" }, identity, 422);
       }
-      await saveState(identity.id, nextState, loaded.revision);
+      const changed = nextState !== loaded.state;
+      if (changed) await saveState(identity.id, nextState, loaded.revision);
       return response(req, {
         ...data,
         scope: identity.account ? "account" : "guest",
-        revision: loaded.revision + 1,
+        revision: loaded.revision + (changed ? 1 : 0),
       }, identity, action === "start" ? 201 : 200);
     } catch (error) {
       const code = error instanceof Error ? error.message : "PLACEMENT_SAVE_FAILED";

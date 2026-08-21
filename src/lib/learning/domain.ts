@@ -22,6 +22,7 @@ export interface Attempt {
   standardVersion?: "HSK 3.0" | "HSK 2.0";
   sessionId?: string;
   questionVersion?: string;
+  dailySessionId?: string;
 }
 export interface SrsCard {
   id: string;
@@ -113,6 +114,8 @@ export interface PracticeSession {
   skill: string;
   questionVersion: string;
   questionIds: string[];
+  dailySessionId?: string;
+  dailyItemId?: string;
   answers: PracticeAnswer[];
   status: "in_progress" | "completed" | "abandoned";
   createdAt: string;
@@ -160,6 +163,7 @@ function reconcileSummary(session: DailySession, completedAt?: string): DailySes
 
 function applyAttemptToSessions(state: LearningState, attempt: Attempt, card: SrsCard): DailySession[] {
   return state.dailySessions.map((session) => {
+    if (attempt.mode === "practice" && session.id !== attempt.dailySessionId) return session;
     const firstPendingId = session.items.find((item) => item.status === "pending")?.id;
     let items = session.items.map((item) => {
       const practiceMatch = item.kind === "practice" && attempt.dimension === "reading" && attempt.mode !== "practice" && attempt.mode !== "placement";
@@ -191,9 +195,21 @@ export function recordAttempt(state: LearningState, input: {
   standardVersion?: Attempt["standardVersion"];
   sessionId?: string;
   questionVersion?: string;
+  dailySessionId?: string;
 }) {
   const prior = state.attempts.find((attempt) => attempt.idempotencyKey === input.idempotencyKey);
-  if (prior) return { state, attempt: prior };
+  if (prior) {
+    const samePayload = prior.contentId === input.contentId
+      && prior.contentVersion === input.contentVersion
+      && prior.dimension === input.dimension
+      && prior.answer === input.answer
+      && prior.correctAnswer === input.correctAnswer
+      && prior.mode === input.mode
+      && prior.sessionId === input.sessionId
+      && prior.questionVersion === input.questionVersion;
+    if (!samePayload) throw new Error("IDEMPOTENCY_KEY_REUSED");
+    return { state, attempt: prior };
+  }
 
   const attempt: Attempt = { ...input, id: id("att", input.idempotencyKey), correct: input.answer === input.correctAnswer };
   const card: SrsCard = {
@@ -211,8 +227,16 @@ export function recordAttempt(state: LearningState, input: {
     gradeKeys: [],
   };
   const existingCard = state.cards.find((candidate) => candidate.id === card.id);
-  const activeCard = existingCard ?? card;
-  const cards = existingCard ? state.cards : [...state.cards, card];
+  const activeCard = existingCard && !attempt.correct ? {
+    ...existingCard,
+    dueAt: input.observedAt,
+    intervalDays: 0,
+    revision: existingCard.revision + 1,
+    sourceAttemptId: attempt.id,
+  } : existingCard ?? card;
+  const cards = existingCard
+    ? state.cards.map((candidate) => candidate.id === activeCard.id ? activeCard : candidate)
+    : [...state.cards, card];
   const mistakes = attempt.correct ? state.mistakes : [...state.mistakes, {
     id: id("mistake", attempt.id),
     contentId: input.contentId,
@@ -221,7 +245,13 @@ export function recordAttempt(state: LearningState, input: {
     status: "open" as const,
     createdAt: input.observedAt,
   }];
-  const withAttempt: LearningState = { ...state, attempts: [...state.attempts, attempt], cards, mistakes };
+  const withAttempt: LearningState = {
+    ...state,
+    attempts: [...state.attempts, attempt],
+    cards,
+    mistakes,
+    audioReviewReady: !attempt.correct ? state.audioReviewReady?.filter((ready) => ready.cardId !== activeCard.id) : state.audioReviewReady,
+  };
   return { state: { ...withAttempt, dailySessions: applyAttemptToSessions(withAttempt, attempt, activeCard) }, attempt };
 }
 

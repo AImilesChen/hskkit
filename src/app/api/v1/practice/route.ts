@@ -27,9 +27,11 @@ export async function GET(req: NextRequest) {
   if (identity.account?.status === "deleted") return response(req, { error: "ACCOUNT_DELETED" }, identity, 403);
   const requestedLevel = level(req.nextUrl.searchParams.get("level"));
   const skill = short(req.nextUrl.searchParams.get("skill"), 40);
+  const dailySessionId = short(req.nextUrl.searchParams.get("dailySessionId"), 180);
+  const dailyItemId = short(req.nextUrl.searchParams.get("dailyItemId"), 180);
   if (!requestedLevel || !skill) return response(req, { error: "INVALID_PRACTICE_REQUEST" }, identity, 422);
   const loaded = await loadState(identity.id);
-  const session = [...(loaded.state.practiceSessions ?? [])].reverse().find((candidate) => candidate.ownerId === identity.id && candidate.level === requestedLevel && candidate.skill === skill);
+  const session = [...(loaded.state.practiceSessions ?? [])].reverse().find((candidate) => candidate.ownerId === identity.id && candidate.level === requestedLevel && candidate.skill === skill && candidate.dailySessionId === dailySessionId && candidate.dailyItemId === dailyItemId);
   return response(req, { session: session ? publicPracticeSession(session) : null, scope: identity.account ? "account" : "guest", revision: loaded.revision }, identity);
 }
 
@@ -58,7 +60,9 @@ export async function POST(req: NextRequest) {
         const requestedLevel = level(payload.level);
         const skill = short(payload.skill, 40);
         if (!requestedLevel || !skill) throw new Error("INVALID_PRACTICE_REQUEST");
-        const created = createPracticeSession(state, { ownerId: identity.id, level: requestedLevel, skill, idempotencyKey: key, now });
+        const dailySessionId = short(payload.dailySessionId, 180);
+        const dailyItemId = short(payload.dailyItemId, 180);
+        const created = createPracticeSession(state, { ownerId: identity.id, level: requestedLevel, skill, idempotencyKey: key, now, dailySessionId, dailyItemId });
         state = created.state;
         data = { session: publicPracticeSession(created.session) };
       } else if (action === "answer") {
@@ -81,8 +85,9 @@ export async function POST(req: NextRequest) {
       } else {
         return response(req, { error: "INVALID_ACTION" }, identity, 422);
       }
-      await saveState(identity.id, state, loaded.revision);
-      return response(req, { ...data, scope: identity.account ? "account" : "guest", revision: loaded.revision + 1 }, identity, action === "start" ? 201 : 200);
+      const changed = state !== loaded.state;
+      if (changed) await saveState(identity.id, state, loaded.revision);
+      return response(req, { ...data, scope: identity.account ? "account" : "guest", revision: loaded.revision + (changed ? 1 : 0) }, identity, action === "start" ? 201 : 200);
     } catch (error) {
       const code = error instanceof Error ? error.message : "PRACTICE_SAVE_FAILED";
       if (code === "REVISION_CONFLICT" && turn < 2) continue;

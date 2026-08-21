@@ -14,7 +14,7 @@ async function json(url: string, init?: RequestInit) {
   return data;
 }
 
-export default function PracticeClient({ level, skill }: { level: number; skill: string }) {
+export default function PracticeClient({ level, skill, dailySessionId, dailyItemId }: { level: number; skill: string; dailySessionId?: string; dailyItemId?: string }) {
   const [session, setSession] = useState<Session | null>();
   const [index, setIndex] = useState(0);
   const [error, setError] = useState("");
@@ -23,13 +23,16 @@ export default function PracticeClient({ level, skill }: { level: number; skill:
   const keys = useRef<Record<string, string>>({});
 
   useEffect(() => {
-    void json(`/api/v1/practice?level=${level}&skill=${encodeURIComponent(skill)}`)
+    const query = new URLSearchParams({ level: String(level), skill });
+    if (dailySessionId) query.set("dailySessionId", dailySessionId);
+    if (dailyItemId) query.set("dailyItemId", dailyItemId);
+    void json(`/api/v1/practice?${query.toString()}`)
       .then((data) => {
         setSession(data.session);
         if (data.session?.status === "in_progress") setIndex(Math.min(data.session.feedback.length, data.session.questions.length - 1));
       })
       .catch((cause) => { setError(cause instanceof Error ? cause.message : "PRACTICE_LOAD_FAILED"); setSession(null); });
-  }, [level, skill]);
+  }, [level, skill, dailySessionId, dailyItemId]);
 
   const post = async (action: string, payload: Record<string, unknown>, operation: string) => {
     const key = keys.current[operation] ?? crypto.randomUUID();
@@ -42,7 +45,7 @@ export default function PracticeClient({ level, skill }: { level: number; skill:
   const start = async () => {
     setBusy(true); setError(""); setNotice("");
     try {
-      const data = await post("start", { level, skill }, `start:${crypto.randomUUID()}`);
+      const data = await post("start", { level, skill, dailySessionId, dailyItemId }, `start:${crypto.randomUUID()}`);
       setSession(data.session); setIndex(0);
     } catch (cause) { setError(cause instanceof Error ? cause.message : "PRACTICE_NOT_READY"); }
     finally { setBusy(false); }
