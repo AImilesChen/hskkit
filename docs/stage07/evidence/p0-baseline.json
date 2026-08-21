@@ -1,0 +1,97 @@
+{
+  "captured_at_utc": "2026-08-21T06:59:23.525089+00:00",
+  "git": "BRANCH=stage07-content-foundation\n\nHEAD=5c0d4176d66e6362d81381d1dbde89cf6161c520\n\nREMOTE=git@github.com-hermes-opc-backup:AImilesChen/hskkit.git",
+  "production": [
+    {
+      "route": "/",
+      "status": 200,
+      "final_url": "https://hskkit.com/",
+      "title": "HSKKit | Free HSK Vocabulary, Practice Tests &amp; Level Guides",
+      "bytes_sampled": 65688
+    },
+    {
+      "route": "/levels",
+      "status": 200,
+      "final_url": "https://hskkit.com/levels",
+      "title": "HSK 3.0 Levels 1–9 Explained — HSKKit",
+      "bytes_sampled": 31988
+    },
+    {
+      "route": "/vocabulary/1",
+      "status": 200,
+      "final_url": "https://hskkit.com/vocabulary/1",
+      "title": "HSK 1 Vocabulary: Published Study Words — HSKKit",
+      "bytes_sampled": 22460
+    },
+    {
+      "route": "/vocabulary/9",
+      "status": 200,
+      "final_url": "https://hskkit.com/vocabulary/9",
+      "title": "HSK 9 Vocabulary: Published Study Words — HSKKit",
+      "bytes_sampled": 22667
+    },
+    {
+      "route": "/placement",
+      "status": 404,
+      "final_url": "https://hskkit.com/placement"
+    },
+    {
+      "route": "/placement/result/probe",
+      "status": 404,
+      "final_url": "https://hskkit.com/placement/result/probe"
+    },
+    {
+      "route": "/practice/1/vocabulary",
+      "status": 404,
+      "final_url": "https://hskkit.com/practice/1/vocabulary"
+    },
+    {
+      "route": "/today",
+      "status": 200,
+      "final_url": "https://hskkit.com/today",
+      "title": "Today | HSKKit",
+      "bytes_sampled": 27534
+    },
+    {
+      "route": "/mistakes",
+      "status": 200,
+      "final_url": "https://hskkit.com/mistakes",
+      "title": "Mistakes | HSKKit",
+      "bytes_sampled": 27559
+    },
+    {
+      "route": "/account",
+      "status": 200,
+      "final_url": "https://hskkit.com/account",
+      "title": "Account &amp; Sync | HSKKit",
+      "bytes_sampled": 14142
+    },
+    {
+      "route": "/hsk-3-0",
+      "status": 404,
+      "final_url": "https://hskkit.com/hsk-3-0"
+    },
+    {
+      "route": "/hsk-2-0-vs-3-0",
+      "status": 404,
+      "final_url": "https://hskkit.com/hsk-2-0-vs-3-0"
+    }
+  ],
+  "content": {
+    "formal_catalog": {
+      "schemaVersion": "1.0.0",
+      "releaseId": "hsk3-foundation-v1",
+      "releaseVersion": 1,
+      "releaseStatus": "published",
+      "contentAssets": 0,
+      "audioAssets": 0,
+      "availabilityAcrossLevels": "gap"
+    },
+    "demo_dictionary_catalog": {
+      "source": "src/lib/dictionary/catalog.ts",
+      "level_entries": 9,
+      "word_entries": 18
+    },
+    "rule": "demo_dictionary_catalog must not be represented as complete or official HSK 3.0 coverage"
+  }
+}

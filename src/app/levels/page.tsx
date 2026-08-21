@@ -1,12 +1,44 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { StudyPage } from "../components/study-shell";
-import { listPublishedWords } from "@/lib/dictionary/catalog";
+import { getHsk3LevelStatuses } from "@/lib/content/level-status";
 
-export const metadata: Metadata = { title: "HSK 3.0 Levels 1–9 Explained — HSKKit", description: "Choose an HSK 3.0 study level and browse its published vocabulary.", alternates: { canonical: "/levels" } };
-const descriptions = ["Build essential greetings and everyday study language.", "Handle familiar routines, travel, and common habits.", "Discuss experience, study, and everyday environments.", "Communicate more precisely about ideas and responsibilities.", "Follow broader topics, changes, and developing trends.", "Work with abstract topics, resources, and formal discussion.", "Enter the unified advanced path with analytical vocabulary.", "Develop precise interpretation and deliberate expression.", "Use nuanced idioms and strategic language in the advanced path."];
+export const metadata: Metadata = {
+  title: "HSK 3.0 Levels 1–9 — publication status and study path | HSKKit",
+  description: "Explore HSK 3.0 Levels 1–9 with transparent content status. Levels 7–9 form one unified advanced path.",
+  alternates: { canonical: "/levels" },
+};
+
+const descriptions = [
+  "Build essential greetings and everyday study language.",
+  "Handle familiar routines, travel, and common habits.",
+  "Discuss experience, study, and everyday environments.",
+  "Communicate more precisely about ideas and responsibilities.",
+  "Follow broader topics, changes, and developing trends.",
+  "Work with abstract topics, resources, and formal discussion.",
+  "Enter the unified advanced path with analytical language.",
+  "Develop precise interpretation and deliberate expression.",
+  "Use nuanced and strategic language in the advanced path.",
+];
 
 export default function LevelsPage() {
-  const schema = { "@context": "https://schema.org", "@type": "BreadcrumbList", itemListElement: [{ "@type": "ListItem", position: 1, name: "Home", item: "https://hskkit.com" }, { "@type": "ListItem", position: 2, name: "HSK 3.0 Levels", item: "https://hskkit.com/levels" }] };
-  return <StudyPage><main className="mx-auto w-full max-w-[1140px] flex-1 px-5 py-12 md:px-16 md:py-16"><script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }} /><header className="max-w-3xl"><p className="text-sm font-bold uppercase tracking-[0.15em] text-blue-600">HSK 3.0 study path</p><h1 className="mt-3 text-4xl font-bold tracking-tight md:text-5xl">HSK 3.0 levels, explained for learners</h1><p className="mt-5 text-lg leading-8 text-slate-600">Choose a practical starting point and browse only study words in the current published release. Levels 7–9 form one advanced learning path; the cards remain separate so you can filter study material precisely.</p></header><section className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-3" aria-label="HSK levels">{descriptions.map((description, index) => { const level = index + 1; const count = listPublishedWords({ level }).length; return <article key={level} className="flex flex-col rounded-2xl border border-slate-200 bg-white p-6"><div className="flex items-center justify-between"><span className="text-sm font-bold text-blue-600">LEVEL</span><span className="rounded-full bg-blue-50 px-3 py-1 text-xs font-semibold text-blue-700">{count} published</span></div><h2 className="mt-4 text-3xl font-bold">Level {level}</h2><p className="mt-3 flex-1 text-slate-600">{description}</p><Link href={`/vocabulary/${level}`} className="mt-6 inline-flex min-h-11 items-center justify-center rounded-lg bg-blue-600 px-5 py-3 font-semibold text-white hover:bg-blue-700">Browse Level {level} words</Link></article>; })}</section><section className="mt-12 rounded-2xl border border-blue-100 bg-blue-50 p-7"><h2 className="text-2xl font-semibold">How to choose</h2><p className="mt-3 max-w-3xl text-slate-700">Start where you can understand most examples without guessing. Move down if every item is new; move up when recognition and pronunciation feel reliable. This is learning guidance, not an official examination result.</p></section></main></StudyPage>;
+  const levels = getHsk3LevelStatuses();
+  return (
+    <StudyPage>
+      <main className="mx-auto w-full max-w-[1140px] flex-1 px-5 py-12 md:px-16 md:py-16">
+        <header className="max-w-3xl"><p className="text-sm font-bold uppercase tracking-[0.15em] text-blue-600">HSK 3.0 study path</p><h1 className="mt-3 text-4xl font-bold tracking-tight md:text-5xl">Levels 1–9, with honest content status</h1><p className="mt-5 text-lg leading-8 text-slate-600">Choose a learning level and see whether QA-approved material is actually present in the active release. Levels 7–9 are filters within one unified advanced learning path.</p></header>
+        <div className="mt-8 rounded-2xl border border-amber-200 bg-amber-50 p-5 text-amber-950"><strong>Publication gate is active.</strong><p className="mt-1 leading-7">No QA-approved HSK 3.0 study assets are currently published. Level routes remain visible so the product can report the gap clearly; demo dictionary entries are not counted as official level content.</p></div>
+        <section className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-3" aria-label="HSK 3.0 levels">
+          {levels.map((entry, index) => (
+            <article key={entry.level} className="flex flex-col rounded-2xl border border-slate-200 bg-white p-6">
+              <div className="flex items-center justify-between gap-3"><span className="text-sm font-bold text-blue-600">{entry.isAdvancedPath ? "ADVANCED PATH" : "FOUNDATION PATH"}</span><span className={`rounded-full px-3 py-1 text-xs font-bold ${entry.availability === "ready" ? "bg-green-50 text-green-800" : "bg-amber-50 text-amber-800"}`}>{entry.availability === "ready" ? `${entry.contentCount} published` : "Content gap"}</span></div>
+              <h2 className="mt-4 text-3xl font-bold">Level {entry.level}</h2><p className="mt-3 flex-1 leading-7 text-slate-600">{descriptions[index]}</p><p className="mt-4 text-sm text-slate-500">{entry.message}</p>
+              <Link href={`/vocabulary/${entry.level}`} className="mt-6 inline-flex min-h-11 items-center justify-center rounded-lg border border-blue-600 px-5 py-3 font-semibold text-blue-700 hover:bg-blue-50">View Level {entry.level} status</Link>
+            </article>
+          ))}
+        </section>
+        <section className="mt-12 rounded-2xl border border-blue-100 bg-blue-50 p-7"><h2 className="text-2xl font-semibold">Not sure where to begin?</h2><p className="mt-3 max-w-3xl text-slate-700">Use Placement for a suggested starting point. It is learning guidance, not an official examination result.</p><Link href="/placement" className="mt-5 inline-flex min-h-11 items-center rounded-lg bg-blue-600 px-5 py-3 font-semibold text-white hover:bg-blue-700">Start Placement</Link></section>
+      </main>
+    </StudyPage>
+  );
 }
