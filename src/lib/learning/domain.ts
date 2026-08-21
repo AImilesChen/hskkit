@@ -78,6 +78,7 @@ export interface PlacementSession {
   answers: PlacementAnswer[];
   status: "in_progress" | "submitted" | "abandoned";
   createdAt: string;
+  expiresAt?: string;
   submittedAt?: string;
   resultId?: string;
 }

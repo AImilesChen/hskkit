@@ -125,8 +125,16 @@ export const PLACEMENT_QUESTIONS: PlacementQuestion[] = [
   },
 ];
 
-export function trustedPlacementQuestion(id: string) {
-  return PLACEMENT_QUESTIONS.find((question) => question.id === id);
+const PLACEMENT_CATALOGS: Record<string, PlacementQuestion[]> = {
+  [PLACEMENT_VERSION]: PLACEMENT_QUESTIONS,
+};
+
+export function placementCatalog(version = PLACEMENT_VERSION) {
+  return PLACEMENT_CATALOGS[version] ?? [];
+}
+
+export function trustedPlacementQuestion(id: string, version = PLACEMENT_VERSION) {
+  return placementCatalog(version).find((question) => question.id === id);
 }
 
 export function publicPlacementQuestion(question: PlacementQuestion) {

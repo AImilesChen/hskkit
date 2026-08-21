@@ -21,19 +21,29 @@ type Session = {
   questionIds: string[];
   answers: Array<{ questionId: string; answer: string }>;
   status: "in_progress" | "submitted" | "abandoned";
+  expiresAt: string;
   questions: Question[];
 };
 
 const key = (prefix: string) => `${prefix}:${crypto.randomUUID()}`;
 
-async function api(action: string, payload: Record<string, unknown>) {
-  const response = await fetch("/api/v1/placement", {
+type PlacementResponse = { session?: Session; result?: { id: string }; error?: string };
+
+async function placementRequest(url: string, payload: Record<string, unknown>) {
+  const response = await fetch(url, {
     method: "POST",
     headers: { "content-type": "application/json" },
-    body: JSON.stringify({ action, payload }),
+    body: JSON.stringify(payload),
   });
-  const data = await response.json() as { session?: Session; result?: { id: string }; error?: string };
+  const data = await response.json() as PlacementResponse;
   if (!response.ok) throw new Error(data.error ?? "PLACEMENT_REQUEST_FAILED");
+  return data;
+}
+
+async function loadPlacementSession() {
+  const response = await fetch("/api/v1/placement/sessions", { cache: "no-store" });
+  const data = await response.json() as { session: Session | null; expired?: boolean; error?: string };
+  if (!response.ok) throw new Error(data.error ?? "PLACEMENT_LOAD_FAILED");
   return data;
 }
 
@@ -42,15 +52,31 @@ export default function PlacementClient() {
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [expired, setExpired] = useState(false);
   const [error, setError] = useState<string>();
+
+  async function load() {
+    setLoading(true);
+    setError(undefined);
+    try {
+      const data = await loadPlacementSession();
+      setSession(data.session);
+      setExpired(Boolean(data.expired));
+    } catch (reason) {
+      setSession(null);
+      setError(reason instanceof Error ? reason.message : "PLACEMENT_LOAD_FAILED");
+    } finally {
+      setLoading(false);
+    }
+  }
 
   useEffect(() => {
     let active = true;
-    fetch("/api/v1/placement", { cache: "no-store" })
-      .then(async (response) => {
-        const data = await response.json() as { session: Session | null; error?: string };
-        if (!response.ok) throw new Error(data.error ?? "PLACEMENT_LOAD_FAILED");
-        if (active) setSession(data.session);
+    loadPlacementSession()
+      .then((data) => {
+        if (!active) return;
+        setSession(data.session);
+        setExpired(Boolean(data.expired));
       })
       .catch((reason: Error) => active && setError(reason.message))
       .finally(() => active && setLoading(false));
@@ -69,8 +95,9 @@ export default function PlacementClient() {
     setSaving(true);
     setError(undefined);
     try {
-      const data = await api("start", { idempotencyKey: key("placement-start") });
+      const data = await placementRequest("/api/v1/placement/sessions", { idempotencyKey: key("placement-start") });
       setSession(data.session ?? null);
+      setExpired(false);
       setManualIndex(0);
     } catch (reason) {
       setError(reason instanceof Error ? reason.message : "PLACEMENT_START_FAILED");
@@ -84,15 +111,19 @@ export default function PlacementClient() {
     setSaving(true);
     setError(undefined);
     try {
-      const data = await api("answer", {
-        sessionId: session.id,
+      const data = await placementRequest(`/api/v1/attempts/${encodeURIComponent(session.id)}/submit`, {
         questionId: question.id,
         answer,
         idempotencyKey: `placement-answer:${session.id}:${question.id}:${answer}`,
       });
       setSession(data.session ?? session);
     } catch (reason) {
-      setError(reason instanceof Error ? reason.message : "PLACEMENT_ANSWER_FAILED");
+      const code = reason instanceof Error ? reason.message : "PLACEMENT_ANSWER_FAILED";
+      if (code === "PLACEMENT_SESSION_EXPIRED") {
+        setSession(null);
+        setExpired(true);
+      }
+      setError(code);
     } finally {
       setSaving(false);
     }
@@ -107,14 +138,19 @@ export default function PlacementClient() {
     setSaving(true);
     setError(undefined);
     try {
-      const data = await api("submit", {
-        sessionId: session.id,
+      const data = await placementRequest(`/api/v1/attempts/${encodeURIComponent(session.id)}/submit`, {
+        finalize: true,
         idempotencyKey: `placement-submit:${session.id}`,
       });
       if (!data.result?.id) throw new Error("PLACEMENT_RESULT_NOT_FOUND");
       router.push(`/placement/result/${encodeURIComponent(data.result.id)}`);
     } catch (reason) {
-      setError(reason instanceof Error ? reason.message : "PLACEMENT_SUBMIT_FAILED");
+      const code = reason instanceof Error ? reason.message : "PLACEMENT_SUBMIT_FAILED";
+      if (code === "PLACEMENT_SESSION_EXPIRED") {
+        setSession(null);
+        setExpired(true);
+      }
+      setError(code);
       setSaving(false);
     }
   }
@@ -124,17 +160,25 @@ export default function PlacementClient() {
   }
 
   if (!session) {
+    const noQuestions = error === "PLACEMENT_NO_QUESTIONS";
+    const loadFailed = Boolean(error) && !expired && !noQuestions;
     return (
       <main className="mx-auto min-h-[70vh] max-w-3xl px-5 py-14 sm:py-20">
         <p className="text-sm font-bold uppercase tracking-[0.18em] text-blue-700">HSKKit diagnostic · version 1</p>
-        <h1 className="mt-4 text-4xl font-black tracking-tight text-slate-950 sm:text-5xl">Find a practical starting level</h1>
-        <p className="mt-5 max-w-2xl text-lg leading-8 text-slate-600">Answer nine vocabulary, grammar, and reading questions. Your progress is saved after every answer, so you can refresh and continue.</p>
-        <div className="mt-8 rounded-3xl border border-amber-200 bg-amber-50 p-5 text-sm leading-6 text-amber-950">
+        <h1 className="mt-4 text-4xl font-black tracking-tight text-slate-950 sm:text-5xl">
+          {expired ? "Your saved placement session expired" : noQuestions ? "Placement is temporarily unavailable" : loadFailed ? "We couldn't load your placement" : "Find a practical starting level"}
+        </h1>
+        <p className="mt-5 max-w-2xl text-lg leading-8 text-slate-600">
+          {expired ? "Placement sessions stay available for seven days. Start a new version-locked session to continue." : noQuestions ? "No approved versioned diagnostic questions are available right now. No empty or demo result will be generated." : loadFailed ? "Your saved answers have not been changed. Retry loading before starting a new session." : "Answer nine vocabulary, grammar, and reading questions. Your progress is saved after every answer, so you can refresh and continue."}
+        </p>
+        {!loadFailed && !noQuestions ? <div className="mt-8 rounded-3xl border border-amber-200 bg-amber-50 p-5 text-sm leading-6 text-amber-950">
           <strong>Current evidence limit:</strong> listening is not measured because an approved audio diagnostic set is not yet published. Every result is therefore shown with low confidence and is only a learning suggestion.
-        </div>
-        {error ? <p className="mt-5 rounded-xl bg-red-50 p-4 text-sm text-red-800" role="alert">Could not load or start the diagnostic: {error}</p> : null}
+        </div> : null}
+        {error && !expired ? <p className="mt-5 rounded-xl bg-red-50 p-4 text-sm text-red-800" role="alert">Could not load or start the diagnostic: {error}</p> : null}
         <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-          <button className="inline-flex min-h-12 items-center justify-center rounded-xl bg-blue-600 px-6 font-bold text-white hover:bg-blue-700 disabled:opacity-60" disabled={saving} onClick={start} type="button">{saving ? "Starting…" : "Start placement"}</button>
+          {loadFailed || noQuestions
+            ? <button className="inline-flex min-h-12 items-center justify-center rounded-xl bg-blue-600 px-6 font-bold text-white hover:bg-blue-700 disabled:opacity-60" disabled={loading} onClick={load} type="button">Try loading again</button>
+            : <button className="inline-flex min-h-12 items-center justify-center rounded-xl bg-blue-600 px-6 font-bold text-white hover:bg-blue-700 disabled:opacity-60" disabled={saving} onClick={start} type="button">{saving ? "Starting…" : expired ? "Start a new placement" : "Start placement"}</button>}
           <Link className="inline-flex min-h-12 items-center justify-center rounded-xl border border-slate-300 px-6 font-bold text-slate-800" href="/levels">Choose a level instead</Link>
         </div>
       </main>

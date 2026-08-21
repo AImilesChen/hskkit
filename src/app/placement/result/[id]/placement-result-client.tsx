@@ -79,6 +79,7 @@ export default function PlacementResultClient({ resultId }: { resultId: string }
 
   const weakLabels = result.weakSkills.map((skill) => skill === "reading" ? "reading" : "vocabulary & grammar");
   const todayHref = `/today?level=${result.recommendedLevel}&source=placement&result=${encodeURIComponent(result.id)}`;
+  const catalogLevel = result.recommendedLevel;
   return (
     <main className="mx-auto min-h-[70vh] max-w-4xl px-5 py-12 sm:py-16">
       <p className="text-sm font-bold uppercase tracking-[0.18em] text-blue-700">Your learning suggestion</p>
@@ -104,6 +105,7 @@ export default function PlacementResultClient({ resultId }: { resultId: string }
         <p className="mt-2 leading-7 text-slate-600">Use Level {result.recommendedLevel} as a starting point. Today will keep the source and can adjust the queue as more evidence becomes available.</p>
         <div className="mt-6 flex flex-col gap-3 sm:flex-row">
           <Link className="inline-flex min-h-12 items-center justify-center rounded-xl bg-blue-600 px-6 font-bold text-white" href={todayHref}>Start my Level {result.recommendedLevel} queue</Link>
+          <Link className="inline-flex min-h-12 items-center justify-center rounded-xl border border-blue-300 px-6 font-bold text-blue-800" href={`/vocabulary/${catalogLevel}`}>Open Level {catalogLevel} learning path</Link>
           <button className="inline-flex min-h-12 items-center justify-center rounded-xl border border-slate-300 px-6 font-bold text-slate-800 disabled:opacity-50" disabled={restarting} onClick={restart} type="button">{restarting ? "Restarting…" : "Retake placement"}</button>
           <Link className="inline-flex min-h-12 items-center justify-center rounded-xl border border-slate-300 px-5 font-bold text-slate-700 hover:border-blue-400 hover:text-blue-700" href="/levels">Compare levels</Link>
         </div>
