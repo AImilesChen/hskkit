@@ -50,3 +50,9 @@ test("source notices and editorial scope remain internally consistent", () => {
   const editorialSource = (manifestJson as { source_refs: Array<{ id: string; scope: string }> }).source_refs.find((source) => source.id === "hskkit-editorial-v1");
   assert.equal(editorialSource?.scope, "28 missing compositional phrase glosses");
 });
+
+test("vocabulary pages render at runtime so Cloudflare does not depend on oversized prerender cache entries", () => {
+  const page = fs.readFileSync(new URL("../src/app/vocabulary/[level]/page.tsx", import.meta.url), "utf8");
+  assert.match(page, /export const dynamic = ["']force-dynamic["']/);
+  assert.doesNotMatch(page, /dynamicParams\s*=\s*false/);
+});

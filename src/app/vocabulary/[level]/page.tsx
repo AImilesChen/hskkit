@@ -2,12 +2,11 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { StudyPage } from "../../components/study-shell";
-import { getHsk3LevelPreview, getHsk3LevelStatus, getHsk3LevelStatuses } from "@/lib/content/level-status";
+import { getHsk3LevelPreview, getHsk3LevelStatus } from "@/lib/content/level-status";
 
 interface Props { params: Promise<{ level: string }> }
 function parseLevel(value: string) { const level = Number(value); return Number.isInteger(level) && level >= 1 && level <= 9 ? level : null; }
-export const dynamicParams = false;
-export function generateStaticParams() { return getHsk3LevelStatuses().filter((entry) => entry.availability === "ready").map((entry) => ({ level: String(entry.level) })); }
+export const dynamic = "force-dynamic";
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const level = parseLevel((await params).level);
   if (!level) return { title: "Level not found — HSKKit", robots: { index: false, follow: false } };
