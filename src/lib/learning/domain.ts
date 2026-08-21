@@ -120,6 +120,7 @@ export interface PracticeSession {
   answers: PracticeAnswer[];
   status: "in_progress" | "completed" | "abandoned";
   createdAt: string;
+  expiresAt?: string;
   completedAt?: string;
   result?: { correctCount: number; totalCount: number; weaknessTags: string[] };
 }

@@ -23,7 +23,7 @@ test("practice creates one resumable versioned HSK 3.0 session", () => {
   assert.equal(first.session.mode, "practice");
   assert.equal(first.session.standardVersion, "HSK 3.0");
   assert.match(first.session.questionVersion, /^hskkit-practice-/);
-  assert.equal(resumePracticeSession(first.state, "guest-1")?.id, first.session.id);
+  assert.equal(resumePracticeSession(first.state, "guest-1", now)?.id, first.session.id);
 });
 
 test("practice refuses levels without an approved bounded question set", () => {

@@ -16,7 +16,13 @@ export interface PracticeQuestion {
   weaknessTag: string;
   qaStatus: "approved-for-bounded-practice";
   publicationStatus: "practice-only";
+  lifecycleStatus: "published" | "withdrawn";
 }
+
+export const WITHDRAWN_PRACTICE_QUESTION_ID = "practice-v1-l1-vocab-retired-sample";
+const PRACTICE_QUESTION_STATUS: Record<string, "published" | "withdrawn"> = {
+  [WITHDRAWN_PRACTICE_QUESTION_ID]: "withdrawn",
+};
 
 export const PRACTICE_QUESTIONS: PracticeQuestion[] = [
   {
@@ -32,6 +38,7 @@ export const PRACTICE_QUESTIONS: PracticeQuestion[] = [
     weaknessTag: "basic-greetings",
     qaStatus: "approved-for-bounded-practice",
     publicationStatus: "practice-only",
+    lifecycleStatus: "published",
   },
   {
     id: "practice-v1-l1-vocab-thanks",
@@ -46,6 +53,7 @@ export const PRACTICE_QUESTIONS: PracticeQuestion[] = [
     weaknessTag: "basic-greetings",
     qaStatus: "approved-for-bounded-practice",
     publicationStatus: "practice-only",
+    lifecycleStatus: "published",
   },
   {
     id: "practice-v1-l1-vocab-goodbye",
@@ -60,11 +68,16 @@ export const PRACTICE_QUESTIONS: PracticeQuestion[] = [
     weaknessTag: "basic-greetings",
     qaStatus: "approved-for-bounded-practice",
     publicationStatus: "practice-only",
+    lifecycleStatus: "published",
   },
 ];
 
+export function practiceQuestionLifecycle(id: string) {
+  return PRACTICE_QUESTION_STATUS[id] ?? PRACTICE_QUESTIONS.find((question) => question.id === id)?.lifecycleStatus;
+}
+
 export function practiceQuestionSet(level: number, skill: string) {
-  return PRACTICE_QUESTIONS.filter((question) => question.level === level && question.skill === skill);
+  return PRACTICE_QUESTIONS.filter((question) => question.level === level && question.skill === skill && question.lifecycleStatus === "published");
 }
 
 export function trustedPracticeQuestion(id: string) {

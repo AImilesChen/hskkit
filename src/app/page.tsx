@@ -13,7 +13,7 @@ export const metadata: Metadata = {
 const tools = [
   { title: "Dictionary", text: "Search published words by Hanzi, pinyin, English meaning, or level.", href: "/dictionary", cta: "Search the dictionary" },
   { title: "Listening", text: "Build word and context listening mastery with levelled audio tasks.", href: "/listen", cta: "Start listening" },
-  { title: "Practice", text: "Complete focused questions, keep your attempt, and send mistakes into review.", href: "/practice/1/vocabulary", cta: "Start Level 1 practice" },
+  { title: "Practice", text: "Choose a level and skill, keep your attempt, and send mistakes into review.", href: "/practice", cta: "Choose practice" },
 ];
 
 export default function HomePage() {

@@ -1,10 +1,13 @@
 import { createHash } from "node:crypto";
 import { recordAttempt, type LearningState, type PracticeSession, type QuestionReport } from "../learning/domain.ts";
-import { PRACTICE_VERSION, practiceQuestionSet, publicPracticeQuestion, trustedPracticeQuestion } from "./questions.ts";
+import { PRACTICE_VERSION, practiceQuestionLifecycle, practiceQuestionSet, publicPracticeQuestion, trustedPracticeQuestion } from "./questions.ts";
 
 const stableId = (prefix: string, key: string) => `${prefix}_${createHash("sha256").update(key).digest("base64url")}`;
+const PRACTICE_SESSION_TTL_MS = 24 * 60 * 60 * 1000;
 const sessions = (state: LearningState) => state.practiceSessions ?? [];
 const reports = (state: LearningState) => state.questionReports ?? [];
+const expiresAt = (session: PracticeSession) => session.expiresAt ?? new Date(new Date(session.createdAt).getTime() + PRACTICE_SESSION_TTL_MS).toISOString();
+const isExpired = (session: PracticeSession, now: string) => session.status === "in_progress" && new Date(now).getTime() >= new Date(expiresAt(session)).getTime();
 
 export function createPracticeSession(state: LearningState, input: {
   ownerId: string;
@@ -26,7 +29,7 @@ export function createPracticeSession(state: LearningState, input: {
     const firstPending = daily?.items.find((item) => item.status === "pending");
     if (!daily || !firstPending || firstPending.id !== input.dailyItemId || firstPending.kind !== "practice" || firstPending.contentId !== `practice:${input.level}:${input.skill}`) throw new Error("INVALID_DAILY_PRACTICE_BINDING");
   }
-  const active = [...sessions(state)].reverse().find((session) => session.ownerId === input.ownerId && session.level === input.level && session.skill === input.skill && session.dailySessionId === input.dailySessionId && session.dailyItemId === input.dailyItemId && session.status === "in_progress");
+  const active = [...sessions(state)].reverse().find((session) => session.ownerId === input.ownerId && session.level === input.level && session.skill === input.skill && session.dailySessionId === input.dailySessionId && session.dailyItemId === input.dailyItemId && session.status === "in_progress" && !isExpired(session, input.now));
   if (active) return { state, session: active };
   const questions = practiceQuestionSet(input.level, input.skill);
   if (!questions.length) throw new Error("PRACTICE_NOT_READY");
@@ -45,12 +48,13 @@ export function createPracticeSession(state: LearningState, input: {
     answers: [],
     status: "in_progress",
     createdAt: input.now,
+    expiresAt: new Date(new Date(input.now).getTime() + PRACTICE_SESSION_TTL_MS).toISOString(),
   };
   return { state: { ...state, practiceSessions: [...sessions(state), session] }, session };
 }
 
-export function resumePracticeSession(state: LearningState, ownerId: string) {
-  return [...sessions(state)].reverse().find((session) => session.ownerId === ownerId && session.status === "in_progress");
+export function resumePracticeSession(state: LearningState, ownerId: string, now: string) {
+  return [...sessions(state)].reverse().find((session) => session.ownerId === ownerId && session.status === "in_progress" && !isExpired(session, now));
 }
 
 function feedbackFor(session: PracticeSession) {
@@ -69,8 +73,9 @@ function feedbackFor(session: PracticeSession) {
   });
 }
 
-export function publicPracticeSession(session: PracticeSession) {
+export function publicPracticeSession(session: PracticeSession, now = session.createdAt) {
   const questions = session.questionIds.map((questionId) => {
+    if (practiceQuestionLifecycle(questionId) === "withdrawn") throw new Error("PRACTICE_QUESTION_WITHDRAWN");
     const question = trustedPracticeQuestion(questionId);
     if (!question) throw new Error("PRACTICE_QUESTION_WITHDRAWN");
     return publicPracticeQuestion(question);
@@ -82,8 +87,9 @@ export function publicPracticeSession(session: PracticeSession) {
     level: session.level,
     skill: session.skill,
     questionVersion: session.questionVersion,
-    status: session.status,
+    status: isExpired(session, now) ? "expired" as const : session.status,
     createdAt: session.createdAt,
+    expiresAt: expiresAt(session),
     completedAt: session.completedAt,
     result: session.result,
     questions,
@@ -124,15 +130,16 @@ export function answerPracticeQuestion(state: LearningState, input: {
 }) {
   const session = sessions(state).find((candidate) => candidate.id === input.sessionId && candidate.ownerId === input.ownerId);
   if (!session) throw new Error("PRACTICE_SESSION_NOT_FOUND");
-  const question = trustedPracticeQuestion(input.questionId);
-  if (!question || !session.questionIds.includes(question.id) || question.contentVersion !== session.questionVersion) throw new Error("PRACTICE_QUESTION_WITHDRAWN");
-  if (!Object.hasOwn(question.options, input.answer)) throw new Error("INVALID_PRACTICE_ANSWER");
   const replay = session.answers.find((answer) => answer.idempotencyKey === input.idempotencyKey);
   if (replay) {
     if (replay.questionId !== input.questionId || replay.answer !== input.answer) throw new Error("IDEMPOTENCY_KEY_REUSED");
     const feedback = feedbackFor(session).find((entry) => entry.questionId === replay.questionId)!;
     return { state, session, feedback };
   }
+  if (isExpired(session, input.now)) throw new Error("PRACTICE_SESSION_EXPIRED");
+  const question = trustedPracticeQuestion(input.questionId);
+  if (practiceQuestionLifecycle(input.questionId) !== "published" || !question || !session.questionIds.includes(question.id) || question.contentVersion !== session.questionVersion) throw new Error("PRACTICE_QUESTION_WITHDRAWN");
+  if (!Object.hasOwn(question.options, input.answer)) throw new Error("INVALID_PRACTICE_ANSWER");
   if (session.status !== "in_progress") throw new Error("PRACTICE_SESSION_CLOSED");
   if (session.answers.some((answer) => answer.questionId === question.id)) throw new Error("PRACTICE_QUESTION_ALREADY_ANSWERED");
   const attempted = recordAttempt(state, {

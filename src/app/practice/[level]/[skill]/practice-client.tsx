@@ -5,12 +5,19 @@ import { useEffect, useRef, useState } from "react";
 
 type Question = { id: string; prompt: string; context?: string; options: Record<string, string>; level: number; skill: string; contentVersion: string };
 type Feedback = { questionId: string; selectedAnswer: string; correct: boolean; correctAnswer: string; correctAnswerText: string; explanation: string; weaknessTag: string };
-type Session = { id: string; status: "in_progress" | "completed"; level: number; skill: string; questionVersion: string; questions: Question[]; feedback: Feedback[]; result?: { correctCount: number; totalCount: number; weaknessTags: string[] } };
+type Session = { id: string; status: "in_progress" | "completed" | "expired"; level: number; skill: string; questionVersion: string; expiresAt: string; questions: Question[]; feedback: Feedback[]; result?: { correctCount: number; totalCount: number; weaknessTags: string[] } };
+
+function practiceMessage(code: string) {
+  if (code === "PRACTICE_SESSION_EXPIRED") return "This Practice Session timed out. Start a new session; no late answer was saved.";
+  if (code === "PRACTICE_QUESTION_WITHDRAWN") return "This question was withdrawn after a content review. Start a new session to continue with the current set.";
+  if (code === "INVALID_PRACTICE_ANSWER") return "That answer is not valid for this question. No attempt was saved.";
+  return code;
+}
 
 async function json(url: string, init?: RequestInit) {
   const response = await fetch(url, { ...init, headers: { "content-type": "application/json", ...(init?.headers ?? {}) }, cache: "no-store" });
   const data = await response.json();
-  if (!response.ok) throw new Error(data.error ?? "PRACTICE_REQUEST_FAILED");
+  if (!response.ok) throw new Error(practiceMessage(data.error ?? "PRACTICE_REQUEST_FAILED"));
   return data;
 }
 
@@ -81,7 +88,15 @@ export default function PracticeClient({ level, skill, dailySessionId, dailyItem
     <p className="mt-5 max-w-2xl text-lg leading-8 text-slate-600">Get immediate feedback. Wrong answers create a recoverable Mistake and SRS review card; refresh restores the same session.</p>
     {level === 1 && skill === "vocabulary" ? <p className="mt-6 rounded-2xl border border-amber-200 bg-amber-50 p-4 text-sm leading-6 text-amber-950"><strong>Current published scope:</strong> this bounded set contains three QA-approved Level 1 vocabulary items. Other levels and skills stay unavailable until their approved question sets are published.</p> : <p className="mt-6 rounded-2xl border border-slate-200 bg-slate-50 p-4 text-sm leading-6 text-slate-700">This level and skill are not published yet. No legacy HSK 2.0 questions will be substituted.</p>}
     {error && <Alert text={error === "PRACTICE_NOT_READY" ? "This practice set is not ready. Choose Level 1 vocabulary for the published bounded set." : error} />}
-    <div className="mt-8 flex flex-wrap gap-3"><button className="btn" disabled={busy} onClick={start}>Start practice</button><Link className="btn secondary" href="/levels">Choose another level</Link></div>
+    <div className="mt-8 flex flex-wrap gap-3"><button className="btn" disabled={busy} onClick={start}>Start practice</button><Link className="btn secondary" href="/practice">Choose another level or skill</Link></div>
+  </main>;
+
+  if (session.status === "expired") return <main className="mx-auto min-h-[calc(100vh-64px)] max-w-3xl px-6 py-16 sm:py-24">
+    <span className="text-xs font-extrabold uppercase tracking-[.2em] text-amber-700">Practice Session expired</span>
+    <h1 className="mt-4 font-serif text-5xl font-bold text-slate-950">Start a fresh session</h1>
+    <p className="mt-5 max-w-2xl text-lg leading-8 text-slate-600">The 24-hour answer window ended. Your earlier saved attempts remain in Mistakes and Review; no late answer was recorded.</p>
+    {error && <Alert text={error} />}
+    <div className="mt-8 flex flex-wrap gap-3"><button className="btn" disabled={busy} onClick={start}>Start new session</button><Link className="btn secondary" href="/practice">Choose another level or skill</Link></div>
   </main>;
 
   if (session.status === "completed") return <main className="mx-auto min-h-[calc(100vh-64px)] max-w-3xl px-6 py-16 sm:py-24">
