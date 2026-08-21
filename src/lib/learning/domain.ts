@@ -17,6 +17,11 @@ export interface Attempt {
   correctAnswerText?: string;
   correct: boolean;
   observedAt: string;
+  mode?: "practice" | "placement" | "legacy_practice" | "listening";
+  skill?: string;
+  standardVersion?: "HSK 3.0" | "HSK 2.0";
+  sessionId?: string;
+  questionVersion?: string;
 }
 export interface SrsCard {
   id: string;
@@ -90,6 +95,41 @@ export interface PlacementResult {
   disclaimer: string;
   createdAt: string;
 }
+export interface PracticeAnswer {
+  questionId: string;
+  answer: string;
+  idempotencyKey: string;
+  attemptId: string;
+  correct: boolean;
+  answeredAt: string;
+}
+export interface PracticeSession {
+  id: string;
+  ownerId: string;
+  idempotencyKey: string;
+  mode: "practice";
+  standardVersion: "HSK 3.0";
+  level: number;
+  skill: string;
+  questionVersion: string;
+  questionIds: string[];
+  answers: PracticeAnswer[];
+  status: "in_progress" | "completed" | "abandoned";
+  createdAt: string;
+  completedAt?: string;
+  result?: { correctCount: number; totalCount: number; weaknessTags: string[] };
+}
+export interface QuestionReport {
+  id: string;
+  ownerId: string;
+  sessionId: string;
+  questionId: string;
+  questionVersion: string;
+  reason: string;
+  idempotencyKey: string;
+  status: "open" | "reviewing" | "resolved" | "rejected";
+  createdAt: string;
+}
 export interface LearningState {
   attempts: Attempt[];
   cards: SrsCard[];
@@ -97,6 +137,8 @@ export interface LearningState {
   dailySessions: DailySession[];
   placementSessions?: PlacementSession[];
   placementResults?: PlacementResult[];
+  practiceSessions?: PracticeSession[];
+  questionReports?: QuestionReport[];
   audioReviewReady?: Array<{ cardId: string; cardRevision: number }>;
   audioPlaybackKeys?: string[];
 }
@@ -120,7 +162,7 @@ function applyAttemptToSessions(state: LearningState, attempt: Attempt, card: Sr
   return state.dailySessions.map((session) => {
     const firstPendingId = session.items.find((item) => item.status === "pending")?.id;
     let items = session.items.map((item) => {
-      const practiceMatch = item.kind === "practice" && attempt.dimension === "reading";
+      const practiceMatch = item.kind === "practice" && attempt.dimension === "reading" && attempt.mode !== "practice" && attempt.mode !== "placement";
       const listenMatch = item.kind === "listen" && item.contentId === attempt.contentId && item.dimension === attempt.dimension;
       return item.id === firstPendingId && (practiceMatch || listenMatch) ? { ...item, status: "completed" as const } : item;
     });
@@ -144,6 +186,11 @@ export function recordAttempt(state: LearningState, input: {
   userAnswerText?: string;
   correctAnswerText?: string;
   observedAt: string;
+  mode?: Attempt["mode"];
+  skill?: string;
+  standardVersion?: Attempt["standardVersion"];
+  sessionId?: string;
+  questionVersion?: string;
 }) {
   const prior = state.attempts.find((attempt) => attempt.idempotencyKey === input.idempotencyKey);
   if (prior) return { state, attempt: prior };
@@ -274,7 +321,7 @@ export function buildDailySession(state: LearningState, input: { ownerId: string
     { id: "learn:word:ni-hao", kind: "learn", contentId: "word:ni-hao", status: "pending" },
     { id: "listen:word:word-ni-hao:audio", kind: "listen", contentId: "word:word-ni-hao", dimension: "audio", status: "pending" },
     { id: "listen:word:word-ni-hao:context_audio", kind: "listen", contentId: "word:word-ni-hao", dimension: "context_audio", status: "pending" },
-    { id: "practice:question:hsk1_001", kind: "practice", contentId: "question:hsk1_001", dimension: "reading", status: "pending" },
+    { id: "practice:1:vocabulary", kind: "practice", contentId: "practice:1:vocabulary", dimension: "reading", status: "pending" },
     { id: "summary", kind: "summary", contentId: "summary", status: "pending" },
   ];
   const session: DailySession = {

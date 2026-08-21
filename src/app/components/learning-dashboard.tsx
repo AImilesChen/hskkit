@@ -129,14 +129,14 @@ export default function LearningDashboard({ mode }: { mode: "today" | "review" |
 function label(item: Item) {
   if (item.kind === "learn") return "Learn 你好";
   if (item.kind === "listen") return item.dimension === "audio" ? "Listen to 你好" : "Listen in context";
-  if (item.kind === "practice") return "Reading practice";
+  if (item.kind === "practice") return "Level 1 vocabulary practice";
   return `Review ${item.dimension?.replace("_", " ") ?? "item"}`;
 }
 function actionFor(item: Item, complete: (item: Item) => Promise<void>) {
   if (item.kind === "review") return <Link className="btn" href="/review">Start review</Link>;
   if (item.kind === "learn") return <div className="flex flex-wrap gap-2"><Link className="btn" href="/word/ni-hao">Learn 你好</Link><button className="btn secondary" onClick={() => complete(item)}>Mark learned</button></div>;
   if (item.kind === "listen") return <Link className="btn" href={`/listen/word-ni-hao?mode=${item.dimension}`}>Start listening</Link>;
-  if (item.kind === "practice") return <Link className="btn" href="/hsk-1-practice-test">Start practice</Link>;
+  if (item.kind === "practice") return <Link className="btn" href="/practice/1/vocabulary">Start practice</Link>;
   return null;
 }
 function Shell(props: any) {

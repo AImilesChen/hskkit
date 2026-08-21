@@ -1,0 +1,192 @@
+import { createHash } from "node:crypto";
+import { recordAttempt, type LearningState, type PracticeSession, type QuestionReport } from "../learning/domain.ts";
+import { PRACTICE_VERSION, practiceQuestionSet, publicPracticeQuestion, trustedPracticeQuestion } from "./questions.ts";
+
+const stableId = (prefix: string, key: string) => `${prefix}_${createHash("sha256").update(key).digest("base64url")}`;
+const sessions = (state: LearningState) => state.practiceSessions ?? [];
+const reports = (state: LearningState) => state.questionReports ?? [];
+
+export function createPracticeSession(state: LearningState, input: {
+  ownerId: string;
+  level: number;
+  skill: string;
+  idempotencyKey: string;
+  now: string;
+}) {
+  const priorByKey = sessions(state).find((session) => session.ownerId === input.ownerId && session.idempotencyKey === input.idempotencyKey);
+  if (priorByKey) return { state, session: priorByKey };
+  const active = [...sessions(state)].reverse().find((session) => session.ownerId === input.ownerId && session.level === input.level && session.skill === input.skill && session.status === "in_progress");
+  if (active) return { state, session: active };
+  const questions = practiceQuestionSet(input.level, input.skill);
+  if (!questions.length) throw new Error("PRACTICE_NOT_READY");
+  const session: PracticeSession = {
+    id: stableId("practice_session", `${input.ownerId}:${PRACTICE_VERSION}:${input.idempotencyKey}`),
+    ownerId: input.ownerId,
+    idempotencyKey: input.idempotencyKey,
+    mode: "practice",
+    standardVersion: "HSK 3.0",
+    level: input.level,
+    skill: input.skill,
+    questionVersion: PRACTICE_VERSION,
+    questionIds: questions.map((question) => question.id),
+    answers: [],
+    status: "in_progress",
+    createdAt: input.now,
+  };
+  return { state: { ...state, practiceSessions: [...sessions(state), session] }, session };
+}
+
+export function resumePracticeSession(state: LearningState, ownerId: string) {
+  return [...sessions(state)].reverse().find((session) => session.ownerId === ownerId && session.status === "in_progress");
+}
+
+function feedbackFor(session: PracticeSession) {
+  return session.answers.map((answer) => {
+    const question = trustedPracticeQuestion(answer.questionId);
+    if (!question) throw new Error("PRACTICE_QUESTION_WITHDRAWN");
+    return {
+      questionId: answer.questionId,
+      selectedAnswer: answer.answer,
+      correct: answer.correct,
+      correctAnswer: question.correctAnswer,
+      correctAnswerText: question.options[question.correctAnswer],
+      explanation: question.explanation,
+      weaknessTag: question.weaknessTag,
+    };
+  });
+}
+
+export function publicPracticeSession(session: PracticeSession) {
+  const questions = session.questionIds.map((questionId) => {
+    const question = trustedPracticeQuestion(questionId);
+    if (!question) throw new Error("PRACTICE_QUESTION_WITHDRAWN");
+    return publicPracticeQuestion(question);
+  });
+  return {
+    id: session.id,
+    mode: session.mode,
+    standardVersion: session.standardVersion,
+    level: session.level,
+    skill: session.skill,
+    questionVersion: session.questionVersion,
+    status: session.status,
+    createdAt: session.createdAt,
+    completedAt: session.completedAt,
+    result: session.result,
+    questions,
+    feedback: feedbackFor(session),
+  };
+}
+
+function finishTodayPractice(state: LearningState, ownerId: string, completedAt: string) {
+  return {
+    ...state,
+    dailySessions: state.dailySessions.map((daily) => {
+      if (daily.ownerId !== ownerId) return daily;
+      const firstPendingId = daily.items.find((item) => item.status === "pending")?.id;
+      let changed = false;
+      let items = daily.items.map((item) => {
+        if (item.id === firstPendingId && item.kind === "practice" && item.contentId === "practice:1:vocabulary" && item.status === "pending") {
+          changed = true;
+          return { ...item, status: "completed" as const };
+        }
+        return item;
+      });
+      if (!changed) return daily;
+      const summaryReady = items.filter((item) => item.kind !== "summary").every((item) => item.status !== "pending");
+      if (summaryReady) items = items.map((item) => item.kind === "summary" ? { ...item, status: "completed" as const } : item);
+      return { ...daily, items, completedAt: summaryReady ? (daily.completedAt ?? completedAt) : daily.completedAt };
+    }),
+  };
+}
+
+export function answerPracticeQuestion(state: LearningState, input: {
+  ownerId: string;
+  sessionId: string;
+  questionId: string;
+  answer: string;
+  idempotencyKey: string;
+  now: string;
+}) {
+  const session = sessions(state).find((candidate) => candidate.id === input.sessionId && candidate.ownerId === input.ownerId);
+  if (!session) throw new Error("PRACTICE_SESSION_NOT_FOUND");
+  if (session.status !== "in_progress") throw new Error("PRACTICE_SESSION_CLOSED");
+  const question = trustedPracticeQuestion(input.questionId);
+  if (!question || !session.questionIds.includes(question.id) || question.contentVersion !== session.questionVersion) throw new Error("PRACTICE_QUESTION_WITHDRAWN");
+  if (!Object.hasOwn(question.options, input.answer)) throw new Error("INVALID_PRACTICE_ANSWER");
+  const replay = session.answers.find((answer) => answer.idempotencyKey === input.idempotencyKey);
+  if (replay) {
+    if (replay.questionId !== input.questionId || replay.answer !== input.answer) throw new Error("IDEMPOTENCY_KEY_REUSED");
+    const feedback = feedbackFor(session).find((entry) => entry.questionId === replay.questionId)!;
+    return { state, session, feedback };
+  }
+  if (session.answers.some((answer) => answer.questionId === question.id)) throw new Error("PRACTICE_QUESTION_ALREADY_ANSWERED");
+  const attempted = recordAttempt(state, {
+    idempotencyKey: input.idempotencyKey,
+    contentId: `practice:${question.id}`,
+    contentVersion: question.contentVersion,
+    dimension: "reading",
+    answer: input.answer,
+    correctAnswer: question.correctAnswer,
+    prompt: [question.context, question.prompt].filter(Boolean).join(" — "),
+    userAnswerText: question.options[input.answer as keyof typeof question.options],
+    correctAnswerText: question.options[question.correctAnswer],
+    observedAt: input.now,
+    mode: "practice",
+    skill: session.skill,
+    standardVersion: session.standardVersion,
+    sessionId: session.id,
+    questionVersion: session.questionVersion,
+  });
+  const answers = [...session.answers, {
+    questionId: question.id,
+    answer: input.answer,
+    idempotencyKey: input.idempotencyKey,
+    attemptId: attempted.attempt.id,
+    correct: attempted.attempt.correct,
+    answeredAt: input.now,
+  }];
+  const complete = answers.length === session.questionIds.length;
+  const updated: PracticeSession = {
+    ...session,
+    answers,
+    status: complete ? "completed" : "in_progress",
+    completedAt: complete ? input.now : undefined,
+    result: complete ? {
+      correctCount: answers.filter((answer) => answer.correct).length,
+      totalCount: answers.length,
+      weaknessTags: [...new Set(answers.filter((answer) => !answer.correct).map((answer) => trustedPracticeQuestion(answer.questionId)?.weaknessTag).filter((value): value is string => Boolean(value)))],
+    } : undefined,
+  };
+  const nextState = { ...attempted.state, practiceSessions: sessions(attempted.state).map((candidate) => candidate.id === updated.id ? updated : candidate) };
+  const finalState = complete ? finishTodayPractice(nextState, input.ownerId, input.now) : nextState;
+  return { state: finalState, session: updated, feedback: feedbackFor(updated).at(-1)! };
+}
+
+export function reportPracticeQuestion(state: LearningState, input: {
+  ownerId: string;
+  sessionId: string;
+  questionId: string;
+  reason: string;
+  idempotencyKey: string;
+  now: string;
+}) {
+  const replay = reports(state).find((report) => report.ownerId === input.ownerId && report.idempotencyKey === input.idempotencyKey);
+  if (replay) return { state, report: replay };
+  const session = sessions(state).find((candidate) => candidate.id === input.sessionId && candidate.ownerId === input.ownerId);
+  if (!session || !session.questionIds.includes(input.questionId)) throw new Error("PRACTICE_QUESTION_NOT_FOUND");
+  const question = trustedPracticeQuestion(input.questionId);
+  if (!question) throw new Error("PRACTICE_QUESTION_WITHDRAWN");
+  const report: QuestionReport = {
+    id: stableId("question_report", `${input.ownerId}:${input.sessionId}:${input.questionId}:${input.idempotencyKey}`),
+    ownerId: input.ownerId,
+    sessionId: input.sessionId,
+    questionId: input.questionId,
+    questionVersion: question.contentVersion,
+    reason: input.reason,
+    idempotencyKey: input.idempotencyKey,
+    status: "open",
+    createdAt: input.now,
+  };
+  return { state: { ...state, questionReports: [...reports(state), report] }, report };
+}

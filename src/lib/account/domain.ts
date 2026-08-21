@@ -39,6 +39,10 @@ export function mergeLearningStates(account: LearningState, guest: LearningState
   const cards = mergeById(account.cards, guest.cards);
   const mistakes = mergeById(account.mistakes, guest.mistakes);
   const sessions = mergeById(account.dailySessions, guest.dailySessions.map((session) => accountOwnerId ? { ...session, ownerId: accountOwnerId } : session));
+  const placementSessions = mergeById(account.placementSessions ?? [], (guest.placementSessions ?? []).map((session) => accountOwnerId ? { ...session, ownerId: accountOwnerId } : session));
+  const placementResults = mergeById(account.placementResults ?? [], guest.placementResults ?? []);
+  const practiceSessions = mergeById(account.practiceSessions ?? [], (guest.practiceSessions ?? []).map((session) => accountOwnerId ? { ...session, ownerId: accountOwnerId } : session));
+  const questionReports = mergeById(account.questionReports ?? [], (guest.questionReports ?? []).map((report) => accountOwnerId ? { ...report, ownerId: accountOwnerId } : report));
   const readyKey = (entry: { cardId: string; cardRevision: number }) => `${entry.cardId}:${entry.cardRevision}`;
   const ready = new Map((account.audioReviewReady ?? []).map((entry) => [readyKey(entry), entry]));
   for (const entry of guest.audioReviewReady ?? []) if (!ready.has(readyKey(entry))) ready.set(readyKey(entry), entry);
@@ -48,19 +52,27 @@ export function mergeLearningStates(account: LearningState, guest: LearningState
       cards: cards.values,
       mistakes: mistakes.values,
       dailySessions: sessions.values,
+      placementSessions: placementSessions.values,
+      placementResults: placementResults.values,
+      practiceSessions: practiceSessions.values,
+      questionReports: questionReports.values,
       audioReviewReady: [...ready.values()],
       audioPlaybackKeys: mergeStrings(account.audioPlaybackKeys, guest.audioPlaybackKeys),
     } satisfies LearningState,
-    conflicts: attempts.conflicts + cards.conflicts + mistakes.conflicts + sessions.conflicts,
+    conflicts: attempts.conflicts + cards.conflicts + mistakes.conflicts + sessions.conflicts + placementSessions.conflicts + placementResults.conflicts + practiceSessions.conflicts + questionReports.conflicts,
   };
 }
 
 export function previewMerge(account: LearningState, guest: LearningState) {
   const merged = mergeLearningStates(account, guest);
+  const sessionCount = (state: LearningState) => (state.placementSessions?.length ?? 0) + (state.practiceSessions?.length ?? 0);
   return {
     accountAttempts: account.attempts.length,
     guestAttempts: guest.attempts.length,
+    accountLearningSessions: sessionCount(account),
+    guestLearningSessions: sessionCount(guest),
     additions: Math.max(0, merged.state.attempts.length - account.attempts.length),
+    sessionAdditions: Math.max(0, sessionCount(merged.state) - sessionCount(account)),
     conflicts: merged.conflicts,
     strategy: "account_wins_conflicts" as MergeStrategy,
   };

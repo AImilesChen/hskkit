@@ -1,0 +1,175 @@
+import test from "node:test";
+import assert from "node:assert/strict";
+import { buildDailySession, emptyLearningState, gradeReview } from "../src/lib/learning/domain.ts";
+import {
+  answerPracticeQuestion,
+  createPracticeSession,
+  publicPracticeSession,
+  reportPracticeQuestion,
+  resumePracticeSession,
+} from "../src/lib/practice/domain.ts";
+
+const now = "2026-08-21T10:00:00.000Z";
+
+test("practice creates one resumable versioned HSK 3.0 session", () => {
+  const first = createPracticeSession(emptyLearningState(), {
+    ownerId: "guest-1", level: 1, skill: "vocabulary", idempotencyKey: "create-1", now,
+  });
+  const replay = createPracticeSession(first.state, {
+    ownerId: "guest-1", level: 1, skill: "vocabulary", idempotencyKey: "create-1", now,
+  });
+  assert.equal(replay.session.id, first.session.id);
+  assert.equal(replay.state.practiceSessions?.length, 1);
+  assert.equal(first.session.mode, "practice");
+  assert.equal(first.session.standardVersion, "HSK 3.0");
+  assert.match(first.session.questionVersion, /^hskkit-practice-/);
+  assert.equal(resumePracticeSession(first.state, "guest-1")?.id, first.session.id);
+});
+
+test("practice refuses levels without an approved bounded question set", () => {
+  assert.throws(() => createPracticeSession(emptyLearningState(), {
+    ownerId: "guest-1", level: 2, skill: "vocabulary", idempotencyKey: "create-2", now,
+  }), /PRACTICE_NOT_READY/);
+});
+
+test("practice gives immediate feedback, records versioned attempt, mistake and SRS exactly once", () => {
+  const created = createPracticeSession(emptyLearningState(), {
+    ownerId: "guest-1", level: 1, skill: "vocabulary", idempotencyKey: "create-1", now,
+  });
+  const questionId = created.session.questionIds[0];
+  const answered = answerPracticeQuestion(created.state, {
+    ownerId: "guest-1", sessionId: created.session.id, questionId, answer: "b",
+    idempotencyKey: "answer-1", now: "2026-08-21T10:01:00.000Z",
+  });
+  assert.equal(answered.feedback.correct, false);
+  assert.ok(answered.feedback.correctAnswer);
+  assert.equal(answered.state.attempts.length, 1);
+  assert.equal(answered.state.attempts[0].mode, "practice");
+  assert.equal(answered.state.attempts[0].skill, "vocabulary");
+  assert.equal(answered.state.attempts[0].standardVersion, "HSK 3.0");
+  assert.equal(answered.state.mistakes.length, 1);
+  assert.equal(answered.state.cards.length, 1);
+  const replay = answerPracticeQuestion(answered.state, {
+    ownerId: "guest-1", sessionId: created.session.id, questionId, answer: "b",
+    idempotencyKey: "answer-1", now: "2026-08-21T10:02:00.000Z",
+  });
+  assert.equal(replay.state.attempts.length, 1);
+  assert.equal(replay.state.mistakes.length, 1);
+  assert.equal(replay.state.cards.length, 1);
+});
+
+test("public session reveals answers only for questions already answered", () => {
+  const created = createPracticeSession(emptyLearningState(), {
+    ownerId: "guest-1", level: 1, skill: "vocabulary", idempotencyKey: "create-1", now,
+  });
+  const before = publicPracticeSession(created.session);
+  assert.equal(JSON.stringify(before).includes("correctAnswer"), false);
+  assert.equal(JSON.stringify(before).includes("idempotencyKey"), false);
+  assert.equal(JSON.stringify(before).includes("attemptId"), false);
+  assert.equal(JSON.stringify(before).includes("qaStatus"), false);
+  const answered = answerPracticeQuestion(created.state, {
+    ownerId: "guest-1", sessionId: created.session.id, questionId: created.session.questionIds[0],
+    answer: "a", idempotencyKey: "answer-1", now,
+  });
+  const after = publicPracticeSession(answered.session);
+  assert.equal(after.feedback.length, 1);
+  assert.equal(after.questions.length, created.session.questionIds.length);
+  assert.equal(Object.hasOwn(after.questions[1], "correctAnswer"), false);
+});
+
+test("practice completes after all answers and retains wrong attempt history", () => {
+  let { state, session } = createPracticeSession(emptyLearningState(), {
+    ownerId: "guest-1", level: 1, skill: "vocabulary", idempotencyKey: "create-1", now,
+  });
+  session.questionIds.forEach((questionId, index) => {
+    const result = answerPracticeQuestion(state, {
+      ownerId: "guest-1", sessionId: session.id, questionId, answer: index === 0 ? "b" : "a",
+      idempotencyKey: `answer-${index}`, now: `2026-08-21T10:0${index + 1}:00.000Z`,
+    });
+    state = result.state;
+    session = result.session;
+  });
+  assert.equal(session.status, "completed");
+  assert.equal(session.result?.totalCount, session.questionIds.length);
+  assert.equal(state.mistakes[0].status, "open");
+});
+
+test("question report is idempotent and does not erase historical attempts", () => {
+  const created = createPracticeSession(emptyLearningState(), {
+    ownerId: "guest-1", level: 1, skill: "vocabulary", idempotencyKey: "create-1", now,
+  });
+  const first = reportPracticeQuestion(created.state, {
+    ownerId: "guest-1", sessionId: created.session.id, questionId: created.session.questionIds[0],
+    reason: "answer_or_explanation", idempotencyKey: "report-1", now,
+  });
+  const replay = reportPracticeQuestion(first.state, {
+    ownerId: "guest-1", sessionId: created.session.id, questionId: created.session.questionIds[0],
+    reason: "answer_or_explanation", idempotencyKey: "report-1", now,
+  });
+  assert.equal(replay.state.questionReports?.length, 1);
+  assert.equal(replay.report.status, "open");
+  assert.equal(replay.state.attempts.length, 0);
+});
+
+test("answer idempotency keys cannot be reused for a different question", () => {
+  const created = createPracticeSession(emptyLearningState(), {
+    ownerId: "guest-1", level: 1, skill: "vocabulary", idempotencyKey: "create-1", now,
+  });
+  const first = answerPracticeQuestion(created.state, {
+    ownerId: "guest-1", sessionId: created.session.id, questionId: created.session.questionIds[0],
+    answer: "a", idempotencyKey: "shared-key", now,
+  });
+  assert.throws(() => answerPracticeQuestion(first.state, {
+    ownerId: "guest-1", sessionId: created.session.id, questionId: created.session.questionIds[1],
+    answer: "a", idempotencyKey: "shared-key", now,
+  }), /IDEMPOTENCY_KEY_REUSED/);
+});
+
+test("Today practice completes only after the whole session and inserts wrong answers into Review", () => {
+  const daily = buildDailySession(emptyLearningState(), {
+    ownerId: "guest:today-practice", localDay: "2026-08-21", ruleVersion: "today-v2", now,
+  });
+  daily.state.dailySessions[0].items = daily.state.dailySessions[0].items.map((item) =>
+    item.kind === "learn" || item.kind === "listen" ? { ...item, status: "completed" as const } : item,
+  );
+  const started = createPracticeSession(daily.state, {
+    ownerId: "guest:today-practice", level: 1, skill: "vocabulary", idempotencyKey: "today-start", now,
+  });
+  let state = started.state;
+  for (const [index, questionId] of started.session.questionIds.entries()) {
+    state = answerPracticeQuestion(state, {
+      ownerId: "guest:today-practice", sessionId: started.session.id, questionId,
+      answer: index === 0 ? "b" : "a", idempotencyKey: `today-answer-${index}`, now,
+    }).state;
+    const practiceItem = state.dailySessions[0].items.find((item) => item.kind === "practice");
+    assert.equal(practiceItem?.status, index === started.session.questionIds.length - 1 ? "completed" : "pending");
+  }
+  const review = state.dailySessions[0].items.find((item) => item.kind === "review");
+  assert.equal(review?.status, "pending");
+  assert.equal(state.dailySessions[0].items.at(-1)?.kind, "summary");
+  assert.equal(state.dailySessions[0].items.at(-1)?.status, "pending");
+  const graded = gradeReview(state, {
+    cardId: state.cards[0].id, grade: "good", observedAt: "2026-08-21T10:10:00.000Z",
+    clientRevision: state.cards[0].revision, idempotencyKey: "grade-1",
+  });
+  assert.equal(graded.state.mistakes[0].status, "resolved");
+  assert.equal(graded.state.dailySessions[0].items.at(-1)?.status, "completed");
+});
+
+test("direct out-of-order Practice does not silently complete a later Today item", () => {
+  const daily = buildDailySession(emptyLearningState(), {
+    ownerId: "guest:ordered", localDay: "2026-08-21", ruleVersion: "today-v2", now,
+  });
+  let { state, session } = createPracticeSession(daily.state, {
+    ownerId: "guest:ordered", level: 1, skill: "vocabulary", idempotencyKey: "ordered-start", now,
+  });
+  for (const [index, questionId] of session.questionIds.entries()) {
+    const answered = answerPracticeQuestion(state, {
+      ownerId: "guest:ordered", sessionId: session.id, questionId, answer: "a",
+      idempotencyKey: `ordered-answer-${index}`, now,
+    });
+    state = answered.state;
+    session = answered.session;
+  }
+  assert.equal(state.dailySessions[0].items.find((item) => item.kind === "practice")?.status, "pending");
+});

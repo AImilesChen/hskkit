@@ -20,7 +20,17 @@ export async function GET() {
   const [guest, guestPlans] = identity.guestId ? await Promise.all([loadState(identity.guestId), listAllPlans(identity.guestId)]) : [undefined, []];
   return NextResponse.json({
     account: identity.account ?? null,
-    guest: guest ? { hasData: guest.state.attempts.length > 0 || guest.state.dailySessions.length > 0 || guestPlans.length > 0, attempts: guest.state.attempts.length, plannerVersions: guestPlans.length, revision: guest.revision } : { hasData: false, attempts: 0, plannerVersions: 0, revision: 0 },
+    guest: guest ? {
+      hasData: guest.state.attempts.length > 0
+        || guest.state.dailySessions.length > 0
+        || (guest.state.placementSessions?.length ?? 0) > 0
+        || (guest.state.practiceSessions?.length ?? 0) > 0
+        || guestPlans.length > 0,
+      attempts: guest.state.attempts.length,
+      learningSessions: (guest.state.placementSessions?.length ?? 0) + (guest.state.practiceSessions?.length ?? 0),
+      plannerVersions: guestPlans.length,
+      revision: guest.revision,
+    } : { hasData: false, attempts: 0, learningSessions: 0, plannerVersions: 0, revision: 0 },
   });
 }
 

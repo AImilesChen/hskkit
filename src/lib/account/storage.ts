@@ -137,7 +137,13 @@ export async function createMergePreview(userId: string, guestOwnerId: string) {
   const [accountState, guestState, accountPlans, guestPlans, accountAi, guestAi] = await Promise.all([
     loadState(ownerId(userId)), loadState(guestOwnerId), listAllPlans(ownerId(userId)), listAllPlans(guestOwnerId), aiMergeSnapshot(ownerId(userId)), aiMergeSnapshot(guestOwnerId),
   ]);
-  if (guestState.state.attempts.length === 0 && guestState.state.dailySessions.length === 0 && guestPlans.length === 0 && guestAi.operationCount === 0 && guestAi.bucketCount === 0) throw new Error("NO_GUEST_DATA");
+  const guestHasLearningData = guestState.state.attempts.length > 0
+    || guestState.state.dailySessions.length > 0
+    || (guestState.state.placementSessions?.length ?? 0) > 0
+    || (guestState.state.placementResults?.length ?? 0) > 0
+    || (guestState.state.practiceSessions?.length ?? 0) > 0
+    || (guestState.state.questionReports?.length ?? 0) > 0;
+  if (!guestHasLearningData && guestPlans.length === 0 && guestAi.operationCount === 0 && guestAi.bucketCount === 0) throw new Error("NO_GUEST_DATA");
   const preview = previewMerge(accountState.state, guestState.state);
   const storedPreview = { ...preview, plannerVersions: guestPlans.length, accountPlannerCount: accountPlans.length, accountPlannerMax: accountPlans[0]?.version ?? 0, guestPlannerCount: guestPlans.length, guestPlannerMax: guestPlans[0]?.version ?? 0, accountAi, guestAi };
   const id = existing?.id ?? crypto.randomUUID();

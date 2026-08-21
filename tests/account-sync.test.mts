@@ -38,7 +38,10 @@ test("merge preview is explicit and cancellation can preserve the exact account 
   assert.deepEqual(preview, {
     accountAttempts: 1,
     guestAttempts: 1,
+    accountLearningSessions: 0,
+    guestLearningSessions: 0,
     additions: 1,
+    sessionAdditions: 0,
     conflicts: 0,
     strategy: "account_wins_conflicts",
   });
@@ -56,6 +59,35 @@ test("confirmed merge adds unique guest history once and account wins same-recor
   assert.equal(first.state.attempts.find((item) => item.id === "same")?.observedAt, "2026-08-20T10:00:00.000Z");
   assert.equal(first.state.attempts.length, 2);
   assert.equal(replay.state.attempts.length, 2);
+});
+
+test("confirmed merge preserves placement, Practice and report state and rewrites guest ownership", () => {
+  const account = empty();
+  const guest: LearningState = {
+    ...empty(),
+    placementSessions: [{
+      id: "placement-guest", ownerId: "guest:one", questionVersion: "placement-v1", questionIds: ["p1"],
+      answers: [], status: "in_progress", idempotencyKey: "placement-start", createdAt: "2026-08-20T10:00:00.000Z",
+    }],
+    placementResults: [],
+    practiceSessions: [{
+      id: "practice-guest", ownerId: "guest:one", mode: "practice", standardVersion: "HSK 3.0",
+      level: 1, skill: "vocabulary", questionVersion: "practice-v1", questionIds: ["q1"], answers: [],
+      status: "in_progress", idempotencyKey: "practice-start", createdAt: "2026-08-20T10:00:00.000Z",
+    }],
+    questionReports: [{
+      id: "report-guest", ownerId: "guest:one", sessionId: "practice-guest", questionId: "q1",
+      questionVersion: "practice-v1", reason: "answer_or_explanation", idempotencyKey: "report-1",
+      status: "open", createdAt: "2026-08-20T10:00:00.000Z",
+    }],
+  };
+  const preview = previewMerge(account, guest);
+  assert.equal(preview.guestLearningSessions, 2);
+  assert.equal(preview.sessionAdditions, 2);
+  const merged = mergeLearningStates(account, guest, "user:account");
+  assert.equal(merged.state.placementSessions?.[0].ownerId, "user:account");
+  assert.equal(merged.state.practiceSessions?.[0].ownerId, "user:account");
+  assert.equal(merged.state.questionReports?.[0].ownerId, "user:account");
 });
 
 test("two-device stale revision becomes an explicit conflict instead of an overwrite", () => {
