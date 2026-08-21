@@ -13,7 +13,7 @@ export default function SiteFooter() {
           <a href="mailto:support@hskkit.com" className="text-sm text-[#64748B] no-underline hover:text-[#0F172A]">Contact</a>
         </div>
         <p className="text-[13px] text-[#64748B] mb-2">© 2026 HSKKit</p>
-        <p className="text-[12px] text-[#94A3B8] max-w-[800px] mx-auto leading-relaxed">{disclaimer}</p>
+        <p className="text-[13px] text-[#64748B] max-w-[800px] mx-auto leading-relaxed">{disclaimer}</p>
       </div>
     </footer>
   );

@@ -57,11 +57,46 @@ export interface DailySession {
   completedAt?: string;
   items: DailyItem[];
 }
+export interface PlacementAnswer {
+  questionId: string;
+  answer: string;
+  idempotencyKey: string;
+  answeredAt: string;
+}
+export interface PlacementSession {
+  id: string;
+  ownerId: string;
+  idempotencyKey: string;
+  questionVersion: string;
+  questionIds: string[];
+  answers: PlacementAnswer[];
+  status: "in_progress" | "submitted" | "abandoned";
+  createdAt: string;
+  submittedAt?: string;
+  resultId?: string;
+}
+export interface PlacementResult {
+  id: string;
+  sessionId: string;
+  submitIdempotencyKey: string;
+  questionVersion: string;
+  recommendedLevel: number;
+  correctCount: number;
+  totalCount: number;
+  confidence: "low" | "medium" | "high";
+  missingDimensions: string[];
+  weakSkills: string[];
+  evidenceSummary: string;
+  disclaimer: string;
+  createdAt: string;
+}
 export interface LearningState {
   attempts: Attempt[];
   cards: SrsCard[];
   mistakes: Mistake[];
   dailySessions: DailySession[];
+  placementSessions?: PlacementSession[];
+  placementResults?: PlacementResult[];
   audioReviewReady?: Array<{ cardId: string; cardRevision: number }>;
   audioPlaybackKeys?: string[];
 }
