@@ -19,10 +19,10 @@ const disclaimer = "HSKKit is an independent study tool and is not affiliated wi
 
 export default function SiteFooter() {
   return (
-    <footer className="border-t border-slate-200 bg-white py-10">
-      <div className="mx-auto max-w-[1200px] px-4 sm:px-8">
+    <footer className="mt-auto border-t border-slate-200 bg-white py-12">
+      <div className="mx-auto max-w-[1204px] px-5 sm:px-8">
         <div className="grid gap-8 border-b border-slate-200 pb-8 sm:grid-cols-2 lg:grid-cols-[1.2fr_1fr_1fr]">
-          <div><Link href="/" className="text-2xl font-bold text-slate-900">HSK<span className="text-blue-600">Kit</span></Link><p className="mt-3 max-w-md text-sm leading-6 text-slate-500">A connected HSK 3.0 Level 1–9 study path for placement, published vocabulary, daily learning, listening, and practice.</p></div>
+          <div><Link href="/" className="inline-flex min-h-11 items-center gap-2 text-2xl font-bold text-slate-900"><span aria-hidden="true" className="grid h-8 w-8 place-items-center rounded-lg bg-blue-600 text-sm font-bold text-white">学</span>HSKKit</Link><p className="mt-3 max-w-md text-sm leading-6 text-slate-500">A connected HSK 3.0 Level 1–9 study path for placement, published vocabulary, daily learning, listening, and practice.</p></div>
           <nav aria-label="Study links"><h2 className="text-sm font-bold uppercase tracking-wider text-slate-900">Study</h2><div className="mt-3 grid grid-cols-2 gap-x-4 gap-y-2">{studyLinks.map((item) => <Link key={item.href} href={item.href} className="inline-flex min-h-10 items-center text-sm text-slate-600 hover:text-blue-700">{item.label}</Link>)}</div></nav>
           <nav aria-label="Standards links"><h2 className="text-sm font-bold uppercase tracking-wider text-slate-900">Standards</h2><div className="mt-3 grid gap-2">{guideLinks.map((item) => <Link key={item.href} href={item.href} className="inline-flex min-h-10 items-center text-sm text-slate-600 hover:text-blue-700">{item.label}</Link>)}</div></nav>
         </div>
