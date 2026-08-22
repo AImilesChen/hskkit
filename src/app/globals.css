@@ -387,7 +387,7 @@
 .step7-examples > div { display: grid; gap: 2px; border-left: 3px solid #2563EB; padding: 12px 14px; background: #F8FAFC; }
 .step7-examples strong, .step7-chinese { font-family: var(--font-chinese); color: #0F172A; }
 .step7-examples span { color: #475569; }
-.step7-related { display: inline-flex; margin-top: 20px; color: #2563EB; font-weight: 750; }
+.step7-related { display: inline-flex; min-height: 44px; align-items: center; margin-top: 20px; color: #2563EB; font-weight: 750; }
 .step7-reading { margin-bottom: 22px; }
 .step7-chinese { font-size: 24px; line-height: 1.9; }
 .step7-reading details { margin: 18px 0; border-radius: 12px; padding: 14px; background: #F8FAFC; }

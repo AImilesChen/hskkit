@@ -66,7 +66,7 @@ export function DictionarySearch({ words, characters }: { words: StudyWord[]; ch
 
     {!query ? <div className="mt-8 rounded-2xl border border-slate-200 bg-white p-8 text-center">
       <h2 className="text-2xl font-semibold">Start with a word, character, or meaning</h2>
-      <p className="mt-2 text-slate-600">Search the published study catalog, or <Link href="/levels" className="font-semibold text-blue-600 hover:underline">browse by level</Link>.</p>
+      <p className="mt-2 text-slate-600">Search the published study catalog, or <Link href="/levels" className="inline-flex min-h-11 items-center font-semibold text-blue-600 hover:underline">browse by level</Link>.</p>
     </div> : resultCount === 0 ? <div className="mt-8 rounded-2xl border border-slate-200 bg-white p-8 text-center" aria-live="polite">
       <h2 className="text-2xl font-semibold">No results found</h2>
       <p className="mt-2 text-slate-600">No published item matched “{query}”. Try another spelling or level.</p>

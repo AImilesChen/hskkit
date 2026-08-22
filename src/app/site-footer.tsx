@@ -27,10 +27,10 @@ export default function SiteFooter() {
           <nav aria-label="Standards links"><h2 className="text-sm font-bold uppercase tracking-wider text-slate-900">Standards</h2><div className="mt-3 grid gap-2">{guideLinks.map((item) => <Link key={item.href} href={item.href} className="inline-flex min-h-10 items-center text-sm text-slate-600 hover:text-blue-700">{item.label}</Link>)}</div></nav>
         </div>
         <div className="mt-6 flex flex-wrap justify-center gap-x-6 gap-y-2">
-          <Link href="/privacy-policy" className="text-sm text-slate-500 hover:text-slate-900">Privacy Policy</Link>
-          <Link href="/terms-of-service" className="text-sm text-slate-500 hover:text-slate-900">Terms of Service</Link>
-          <Link href="/disclaimer" className="text-sm text-slate-500 hover:text-slate-900">Disclaimer</Link>
-          <Link href="/contact" className="text-sm text-slate-500 hover:text-slate-900">Contact</Link>
+          <Link href="/privacy-policy" className="inline-flex min-h-11 items-center text-sm text-slate-500 hover:text-slate-900">Privacy Policy</Link>
+          <Link href="/terms-of-service" className="inline-flex min-h-11 items-center text-sm text-slate-500 hover:text-slate-900">Terms of Service</Link>
+          <Link href="/disclaimer" className="inline-flex min-h-11 items-center text-sm text-slate-500 hover:text-slate-900">Disclaimer</Link>
+          <Link href="/contact" className="inline-flex min-h-11 items-center text-sm text-slate-500 hover:text-slate-900">Contact</Link>
         </div>
         <p className="mt-5 text-center text-[13px] text-slate-500">© 2026 HSKKit</p>
         <p className="mx-auto mt-2 max-w-[800px] text-center text-[13px] leading-relaxed text-slate-500">{disclaimer}</p>
