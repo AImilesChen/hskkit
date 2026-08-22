@@ -59,9 +59,10 @@ export function trustedAudioExercise(assetId: string, mode: AudioMode): AudioExe
 }
 
 export function trustedTodayAudioExercise(assetId: string, mode: AudioMode): AudioExercise | undefined {
-  const item = todayContentByAssetId(assetId);
+  const plans = Array.from({ length: 7 }, (_, index) => selectTodayContent(index + 1));
+  const item = plans.flatMap((plan) => plan.status === "ready" ? [plan.item] : []).find((candidate) => candidate.assetId === assetId) ?? todayContentByAssetId(assetId);
   if (!item) return undefined;
-  const distractors = Array.from({ length: 7 }, (_, index) => selectTodayContent(index + 1))
+  const distractors = plans
     .flatMap((plan) => plan.status === "ready" && plan.item.assetId !== assetId ? [plan.item] : [])
     .slice(0, 3);
   if (distractors.length < 3) return undefined;
