@@ -58,7 +58,7 @@ export async function POST(req: NextRequest) {
       weakPoints: weakPoints as WeakPoint[], state: learning.state, now: new Date().toISOString(), ownerId: identity.id,
       version: (current?.version ?? 0) + 1,
     });
-    if (!result.ok) return response({ error: result.code, minimumWeeklyMinutes: result.minimumWeeklyMinutes, warnings: result.warnings, realSignals: { weakPoints, dueCards: learning.state.cards.filter((card: { dueAt: string }) => Date.parse(card.dueAt) <= Date.now()).length } }, identity, 422);
+    if (!result.ok) return response({ error: result.code, minimumWeeklyMinutes: result.minimumWeeklyMinutes, suggestedTargetDate: result.suggestedTargetDate, warnings: result.warnings, realSignals: { weakPoints, dueCards: learning.state.cards.filter((card: { dueAt: string }) => Date.parse(card.dueAt) <= Date.now()).length } }, identity, 422);
     result.plan.parentVersion = current?.version;
     try {
       const saved = await persistPlan(result.plan, key, current?.version ?? 0);

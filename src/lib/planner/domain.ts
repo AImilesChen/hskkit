@@ -1,4 +1,5 @@
 import type { LearningState } from "../learning/domain";
+import { getHsk3LevelStatuses } from "../content/level-status.ts";
 
 export type WeakPoint = "grammar" | "reading" | "listening" | "tone" | "dictation";
 export interface PlannerInputs {
@@ -30,7 +31,7 @@ export interface StudyPlan {
 }
 export type PlannerResult =
   | { ok: true; plan: StudyPlan }
-  | { ok: false; code: "PLAN_INFEASIBLE"; minimumWeeklyMinutes: number; warnings: string[] };
+  | { ok: false; code: "PLAN_INFEASIBLE"; minimumWeeklyMinutes: number; suggestedTargetDate?: string; warnings: string[] };
 
 type BuildInput = PlannerInputs & { state: LearningState; now: string; ownerId?: string; version?: number; id?: string };
 
@@ -90,11 +91,19 @@ export function buildPlannerDraft(input: BuildInput): PlannerResult {
   const weakMinutes = Math.min(60, input.weakPoints.length * 15);
   const minimumWeeklyMinutes = srsMinutes + weakMinutes + goalPerWeek;
   const warnings: string[] = [];
+  const publishedLevels = getHsk3LevelStatuses().filter((status) => status.availability === "ready").map((status) => status.level);
+  const availableGoalLevel = publishedLevels.filter((level) => level <= goalLevel).at(-1);
+  if (availableGoalLevel !== goalLevel) warnings.push("TARGET_LEVEL_CONTENT_GAP");
   if (srsMinutes > input.weeklyMinutes) warnings.push("SRS_LOAD_EXCEEDS_CAPACITY");
   else if (srsMinutes * 2 >= input.weeklyMinutes) warnings.push("SRS_LOAD_HIGH");
   if (minimumWeeklyMinutes > input.weeklyMinutes) {
     if (!warnings.length) warnings.push("TARGET_EXCEEDS_CAPACITY");
-    return { ok: false, code: "PLAN_INFEASIBLE", minimumWeeklyMinutes, warnings };
+    const goalCapacity = input.weeklyMinutes - srsMinutes - weakMinutes;
+    const suggestedWeeks = goalCapacity > 0 ? Math.ceil(curriculumMinutes / goalCapacity) : undefined;
+    const suggestedTargetDate = suggestedWeeks
+      ? new Date(current + suggestedWeeks * 7 * 86_400_000).toISOString().slice(0, 10)
+      : undefined;
+    return { ok: false, code: "PLAN_INFEASIBLE", minimumWeeklyMinutes, suggestedTargetDate, warnings };
   }
 
   const perDay = Math.floor(input.weeklyMinutes / days.length);
@@ -120,7 +129,13 @@ export function buildPlannerDraft(input: BuildInput): PlannerResult {
       const point = input.weakPoints[taskNumber % Math.max(1, input.weakPoints.length)] ?? "reading";
       weakRemaining -= add(`Strengthen ${point}`, Math.ceil(weakRemaining / Math.max(1, days.length - sessionsCreated)), "weak-point", weakHref[point]);
     }
-    if (goalRemaining > 0) goalRemaining -= add(`Progress toward HSK ${goalLevel}`, Math.ceil(goalRemaining / Math.max(1, days.length - sessionsCreated)), "goal", goalLevel <= 2 ? "/reading/weekend-travel-plan" : "/grammar/ba-sentence-basics");
+    if (goalRemaining > 0) {
+      const level = availableGoalLevel ?? 1;
+      const title = level === goalLevel
+        ? `Study published HSK ${goalLevel} vocabulary`
+        : `Build published HSK ${level} foundations toward HSK ${goalLevel}`;
+      goalRemaining -= add(title, Math.ceil(goalRemaining / Math.max(1, days.length - sessionsCreated)), "goal", `/vocabulary/${level}`);
+    }
     sessionsCreated += 1;
     return { day, minutes: tasks.reduce((sum, task) => sum + task.minutes, 0), tasks };
   });

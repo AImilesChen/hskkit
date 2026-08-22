@@ -34,6 +34,8 @@ test("grammar and reading lessons expose only trusted exercises linked to the sa
   assert.equal(reading.exercise.contentVersion, reading.contentVersion);
   assert.deepEqual(trustedStep7Exercise(grammar.exercise.id), grammar.exercise);
   assert.deepEqual(trustedStep7Exercise(reading.exercise.id), reading.exercise);
+  assert.ok(grammar.level >= 1 && grammar.examples.length > 0 && grammar.exercise.prompt.length > 0);
+  assert.ok(reading.level >= 1 && reading.passage.length > 0 && reading.vocabulary.length > 0 && reading.exercise.prompt.length > 0);
 });
 
 test("advanced listening is levelled and includes discrimination, tone and dictation", () => {
@@ -114,6 +116,32 @@ test("planner refuses impossible targets instead of persisting an unfinishable p
   assert.equal(result.code, "PLAN_INFEASIBLE");
   assert.ok(result.minimumWeeklyMinutes > 30);
   assert.ok(result.warnings.includes("SRS_LOAD_EXCEEDS_CAPACITY"));
+});
+
+test("planner keeps Level 1–9 goals aligned with the active content release", () => {
+  for (let goalLevel = 1; goalLevel <= 9; goalLevel += 1) {
+    const result = buildPlannerDraft({ goalLevel, targetDate: "2028-08-20", weeklyMinutes: 600, preferredDays: [1, 3, 5], weakPoints: [], state: learning(), now });
+    assert.equal(result.ok, true, `HSK ${goalLevel}`);
+    if (!result.ok) continue;
+    const goalTasks = result.plan.sessions.flatMap((session) => session.tasks).filter((task) => task.source === "goal");
+    assert.ok(goalTasks.length > 0);
+    if (goalLevel <= 7) {
+      assert.equal(result.plan.warnings.includes("TARGET_LEVEL_CONTENT_GAP"), false);
+      assert.ok(goalTasks.every((task) => task.href === `/vocabulary/${goalLevel}`));
+    } else {
+      assert.ok(result.plan.warnings.includes("TARGET_LEVEL_CONTENT_GAP"));
+      assert.ok(goalTasks.every((task) => task.href === "/vocabulary/7"));
+      assert.ok(goalTasks.every((task) => task.title.includes(`toward HSK ${goalLevel}`)));
+    }
+  }
+});
+
+test("planner returns concrete capacity and date downgrade options", () => {
+  const result = buildPlannerDraft({ goalLevel: 6, targetDate: "2026-09-01", weeklyMinutes: 60, preferredDays: [1, 3, 5], weakPoints: ["reading"], state: learning(), now });
+  assert.equal(result.ok, false);
+  if (result.ok) return;
+  assert.ok(result.minimumWeeklyMinutes > 60);
+  assert.match(result.suggestedTargetDate ?? "", /^2026-\d{2}-\d{2}$/);
 });
 
 test("editing creates an immutable next plan version", () => {
