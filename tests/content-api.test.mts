@@ -14,10 +14,10 @@ test("catalog API defaults to isolated HSK 3.0 data", async () => {
   const body = await response.json();
   assert.equal(response.status, 200);
   assert.equal(body.standard, "hsk3");
-  assert.equal(body.releaseId, "hsk3-foundation-v1");
+  assert.equal(body.releaseId, "hsk3-gf0025-2021-v2");
   assert.equal(body.level.level, 1);
-  assert.equal(body.availability, "gap");
-  assert.deepEqual(body.contentAssets, []);
+  assert.equal(body.availability, "ready");
+  assert.equal(body.contentAssets.length, 500);
   assert.deepEqual(body.audioAssets, []);
 });
 
@@ -27,8 +27,11 @@ test("catalog API exposes HSK 3.0 Level 1 through 9", async () => {
     const body = await response.json();
     assert.equal(response.status, 200);
     assert.equal(body.standard, "hsk3");
+    assert.equal(body.releaseId, "hsk3-gf0025-2021-v2");
     assert.equal(body.level.level, level);
-    assert.equal(body.availability, "gap");
+    assert.equal(body.availability, level <= 7 ? "ready" : "gap");
+    assert.equal(body.contentAssets.length > 0, level <= 7);
+    assert.deepEqual(body.audioAssets, []);
   }
 });
 
