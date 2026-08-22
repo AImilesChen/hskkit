@@ -2,7 +2,7 @@ import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 import { requestIdentity, GUEST_COOKIE } from "@/lib/account/identity";
 import { loadState, saveState } from "@/lib/learning/storage";
-import { answerPracticeQuestion, createPracticeSession, publicPracticeSession, reportPracticeQuestion } from "@/lib/practice/domain";
+import { answerPracticeQuestion, createPracticeSession, publicPracticeSession, reportPracticeQuestion, selectPracticeSession } from "@/lib/practice/domain";
 import { practiceQuestionLifecycle, trustedPracticeQuestion } from "@/lib/practice/questions";
 
 async function owner() {
@@ -36,7 +36,7 @@ export async function GET(req: NextRequest) {
   const dailyItemId = short(req.nextUrl.searchParams.get("dailyItemId"), 180);
   if (!requestedLevel || !skill) return response(req, { error: "INVALID_PRACTICE_REQUEST" }, identity, 422);
   const loaded = await loadState(identity.id);
-  const session = [...(loaded.state.practiceSessions ?? [])].reverse().find((candidate) => candidate.ownerId === identity.id && candidate.level === requestedLevel && candidate.skill === skill && candidate.dailySessionId === dailySessionId && candidate.dailyItemId === dailyItemId);
+  const session = selectPracticeSession(loaded.state, { ownerId: identity.id, level: requestedLevel, skill, dailySessionId, dailyItemId });
   try {
     return response(req, { session: session ? publicPracticeSession(session, new Date().toISOString()) : null, scope: identity.account ? "account" : "guest", revision: loaded.revision }, identity);
   } catch (error) {

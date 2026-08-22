@@ -1,6 +1,6 @@
 import { createHash } from "node:crypto";
 import { recordAttempt, type LearningState, type PracticeSession, type QuestionReport } from "../learning/domain.ts";
-import { PRACTICE_VERSION, practiceQuestionLifecycle, practiceQuestionSet, publicPracticeQuestion, trustedPracticeQuestion } from "./questions.ts";
+import { practiceQuestionLifecycle, practiceQuestionSet, publicPracticeQuestion, trustedPracticeQuestion } from "./questions.ts";
 
 const stableId = (prefix: string, key: string) => `${prefix}_${createHash("sha256").update(key).digest("base64url")}`;
 const PRACTICE_SESSION_TTL_MS = 24 * 60 * 60 * 1000;
@@ -8,6 +8,13 @@ const sessions = (state: LearningState) => state.practiceSessions ?? [];
 const reports = (state: LearningState) => state.questionReports ?? [];
 const expiresAt = (session: PracticeSession) => session.expiresAt ?? new Date(new Date(session.createdAt).getTime() + PRACTICE_SESSION_TTL_MS).toISOString();
 const isExpired = (session: PracticeSession, now: string) => session.status === "in_progress" && new Date(now).getTime() >= new Date(expiresAt(session)).getTime();
+
+export function isPracticeSessionCurrent(session: PracticeSession) {
+  const current = practiceQuestionSet(session.level, session.skill);
+  if (!current.length || current[0].contentVersion !== session.questionVersion || current.length !== session.questionIds.length) return false;
+  const currentIds = new Set(current.map((question) => question.id));
+  return session.questionIds.every((id) => currentIds.has(id) && practiceQuestionLifecycle(id) === "published");
+}
 
 export function createPracticeSession(state: LearningState, input: {
   ownerId: string;
@@ -18,30 +25,34 @@ export function createPracticeSession(state: LearningState, input: {
   dailySessionId?: string;
   dailyItemId?: string;
 }) {
+  if ((input.dailySessionId && !input.dailyItemId) || (!input.dailySessionId && input.dailyItemId)) throw new Error("INVALID_DAILY_PRACTICE_BINDING");
+  const questions = practiceQuestionSet(input.level, input.skill);
+  if (!questions.length) throw new Error("PRACTICE_NOT_READY");
+  const questionVersion = questions[0].contentVersion;
+  if (questions.some((question) => question.contentVersion !== questionVersion)) throw new Error("PRACTICE_CONTENT_VERSION_MISMATCH");
+  const currentQuestionIds = new Set(questions.map((question) => question.id));
   const priorByKey = sessions(state).find((session) => session.ownerId === input.ownerId && session.idempotencyKey === input.idempotencyKey);
   if (priorByKey) {
     if (priorByKey.level !== input.level || priorByKey.skill !== input.skill || priorByKey.dailySessionId !== input.dailySessionId || priorByKey.dailyItemId !== input.dailyItemId) throw new Error("IDEMPOTENCY_KEY_REUSED");
+    if (!isPracticeSessionCurrent(priorByKey)) throw new Error("PRACTICE_SESSION_STALE");
     return { state, session: priorByKey };
   }
-  if ((input.dailySessionId && !input.dailyItemId) || (!input.dailySessionId && input.dailyItemId)) throw new Error("INVALID_DAILY_PRACTICE_BINDING");
   if (input.dailySessionId) {
     const daily = state.dailySessions.find((candidate) => candidate.id === input.dailySessionId && candidate.ownerId === input.ownerId);
     const firstPending = daily?.items.find((item) => item.status === "pending");
-    if (!daily || !firstPending || firstPending.id !== input.dailyItemId || firstPending.kind !== "practice" || firstPending.contentId !== `practice:${input.level}:${input.skill}`) throw new Error("INVALID_DAILY_PRACTICE_BINDING");
+    if (!daily || !firstPending || firstPending.id !== input.dailyItemId || firstPending.kind !== "practice" || firstPending.contentId !== `practice:${input.level}:${input.skill}` || firstPending.contentVersion !== questionVersion) throw new Error("INVALID_DAILY_PRACTICE_BINDING");
   }
-  const active = [...sessions(state)].reverse().find((session) => session.ownerId === input.ownerId && session.level === input.level && session.skill === input.skill && session.dailySessionId === input.dailySessionId && session.dailyItemId === input.dailyItemId && session.status === "in_progress" && !isExpired(session, input.now));
+  const active = [...sessions(state)].reverse().find((session) => session.ownerId === input.ownerId && session.level === input.level && session.skill === input.skill && session.questionVersion === questionVersion && session.questionIds.every((id) => currentQuestionIds.has(id)) && isPracticeSessionCurrent(session) && session.dailySessionId === input.dailySessionId && session.dailyItemId === input.dailyItemId && session.status === "in_progress" && !isExpired(session, input.now));
   if (active) return { state, session: active };
-  const questions = practiceQuestionSet(input.level, input.skill);
-  if (!questions.length) throw new Error("PRACTICE_NOT_READY");
   const session: PracticeSession = {
-    id: stableId("practice_session", `${input.ownerId}:${PRACTICE_VERSION}:${input.idempotencyKey}`),
+    id: stableId("practice_session", `${input.ownerId}:${questionVersion}:${input.idempotencyKey}`),
     ownerId: input.ownerId,
     idempotencyKey: input.idempotencyKey,
     mode: "practice",
     standardVersion: "HSK 3.0",
     level: input.level,
     skill: input.skill,
-    questionVersion: PRACTICE_VERSION,
+    questionVersion,
     questionIds: questions.map((question) => question.id),
     dailySessionId: input.dailySessionId,
     dailyItemId: input.dailyItemId,
@@ -54,7 +65,22 @@ export function createPracticeSession(state: LearningState, input: {
 }
 
 export function resumePracticeSession(state: LearningState, ownerId: string, now: string) {
-  return [...sessions(state)].reverse().find((session) => session.ownerId === ownerId && session.status === "in_progress" && !isExpired(session, now));
+  return [...sessions(state)].reverse().find((session) => session.ownerId === ownerId && session.status === "in_progress" && !isExpired(session, now) && isPracticeSessionCurrent(session));
+}
+
+export function selectPracticeSession(state: LearningState, input: {
+  ownerId: string;
+  level: number;
+  skill: string;
+  dailySessionId?: string;
+  dailyItemId?: string;
+}) {
+  return [...sessions(state)].reverse().find((session) => session.ownerId === input.ownerId
+    && session.level === input.level
+    && session.skill === input.skill
+    && session.dailySessionId === input.dailySessionId
+    && session.dailyItemId === input.dailyItemId
+    && isPracticeSessionCurrent(session));
 }
 
 function feedbackFor(session: PracticeSession) {
@@ -106,7 +132,7 @@ function finishTodayPractice(state: LearningState, session: PracticeSession, com
       const firstPendingId = daily.items.find((item) => item.status === "pending")?.id;
       let changed = false;
       let items = daily.items.map((item) => {
-        if (item.id === firstPendingId && item.id === session.dailyItemId && item.kind === "practice" && item.contentId === `practice:${session.level}:${session.skill}` && item.status === "pending") {
+        if (item.id === firstPendingId && item.id === session.dailyItemId && item.kind === "practice" && item.contentId === `practice:${session.level}:${session.skill}` && item.contentVersion === session.questionVersion && item.status === "pending") {
           changed = true;
           return { ...item, status: "completed" as const };
         }
@@ -159,6 +185,7 @@ export function answerPracticeQuestion(state: LearningState, input: {
     sessionId: session.id,
     questionVersion: session.questionVersion,
     dailySessionId: session.dailySessionId,
+    dailyItemId: session.dailyItemId,
   });
   const answers = [...session.answers, {
     questionId: question.id,

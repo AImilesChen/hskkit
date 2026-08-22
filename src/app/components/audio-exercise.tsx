@@ -2,36 +2,81 @@
 
 import Link from "next/link";
 import { useRef, useState } from "react";
-import type { AudioExercise, AudioMode } from "@/lib/learning/audio";
+import type { AudioMode, PublicAudioExercise } from "@/lib/learning/audio";
 
-type Props = { exercises: Record<AudioMode, AudioExercise>; initialMode: AudioMode };
+type Props = { exercises: Record<AudioMode, PublicAudioExercise>; initialMode: AudioMode; dailySessionId?: string; dailyItemId?: string };
 
-export default function AudioExerciseClient({ exercises, initialMode }: Props) {
+export default function AudioExerciseClient({ exercises, initialMode, dailySessionId, dailyItemId }: Props) {
   const [mode, setMode] = useState<AudioMode>(initialMode);
   const [played, setPlayed] = useState<Record<AudioMode, boolean>>({ audio: false, context_audio: false });
   const [playing, setPlaying] = useState(false);
   const [saving, setSaving] = useState(false);
-  const [saved, setSaved] = useState<Record<AudioMode, { answer: string; correct: boolean } | undefined>>({ audio: undefined, context_audio: undefined });
+  const [saved, setSaved] = useState<Record<AudioMode, { answer: string; correct: boolean; correctAnswerText: string } | undefined>>({ audio: undefined, context_audio: undefined });
   const [error, setError] = useState("");
   const keys = useRef<Partial<Record<AudioMode, string>>>({});
+  const tickets = useRef<Partial<Record<AudioMode, string>>>({});
+  const ticketNotBefore = useRef<Partial<Record<AudioMode, number>>>({});
   const exercise = exercises[mode];
 
   function selectMode(next: AudioMode) { setMode(next); setError(""); }
-  function play() {
+  async function play() {
     setError("");
     setPlayed((current) => ({ ...current, [mode]: false }));
+    tickets.current[mode] = undefined;
     if (!("speechSynthesis" in window)) {
       setError("Audio is unavailable in this browser. No mastery was saved.");
       return;
     }
+    let started: Response;
+    try {
+      started = await fetch("/api/v1/learning", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ action: "audio_playback_start", payload: { idempotencyKey: crypto.randomUUID(), assetId: exercise.assetId, mode, dailySessionId, dailyItemId } }),
+      });
+    } catch {
+      setError("Playback verification could not start. Nothing was written to mastery.");
+      return;
+    }
+    if (!started.ok) {
+      setError("This Daily item changed or playback verification could not start. Return to Today and resume the current step.");
+      return;
+    }
+    const ticket = await started.json() as { playbackTicket?: string; notBefore?: string };
+    if (!ticket.playbackTicket) {
+      setError("Playback verification could not start. Nothing was written to mastery.");
+      return;
+    }
+    tickets.current[mode] = ticket.playbackTicket;
+    ticketNotBefore.current[mode] = ticket.notBefore ? new Date(ticket.notBefore).getTime() : Date.now();
     window.speechSynthesis.cancel();
     const utterance = new SpeechSynthesisUtterance(exercise.voiceText);
     utterance.lang = "zh-CN";
     utterance.rate = 0.85;
     setPlaying(true);
-    utterance.onend = () => { setPlaying(false); setPlayed((current) => ({ ...current, [mode]: true })); };
+    utterance.onend = async () => {
+      setPlaying(false);
+      const playbackTicket = tickets.current[mode];
+      if (!playbackTicket) return;
+      try {
+        const remaining = Math.max(0, (ticketNotBefore.current[mode] ?? Date.now()) - Date.now());
+        if (remaining) await new Promise((resolve) => window.setTimeout(resolve, remaining));
+        const completed = await fetch("/api/v1/learning", {
+          method: "POST",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify({ action: "audio_playback_complete", payload: { idempotencyKey: crypto.randomUUID(), assetId: exercise.assetId, mode, playbackTicket, dailySessionId, dailyItemId } }),
+        });
+        if (!completed.ok) throw new Error("PLAYBACK_NOT_VERIFIED");
+        setPlayed((current) => ({ ...current, [mode]: true }));
+      } catch {
+        tickets.current[mode] = undefined;
+        setPlayed((current) => ({ ...current, [mode]: false }));
+        setError("Playback could not be verified. Nothing was written to mastery; play it again before answering.");
+      }
+    };
     utterance.onerror = () => {
       setPlaying(false);
+      tickets.current[mode] = undefined;
       setPlayed((current) => ({ ...current, [mode]: false }));
       setError("Audio failed. Nothing was written to mastery; try playback again.");
     };
@@ -45,7 +90,7 @@ export default function AudioExerciseClient({ exercises, initialMode }: Props) {
     keys.current[mode] = key;
     const body = JSON.stringify({
       action: "audio_attempt",
-      payload: { idempotencyKey: key, assetId: exercise.assetId, mode, answer: letter },
+      payload: { idempotencyKey: key, assetId: exercise.assetId, mode, answer: letter, playbackTicket: tickets.current[mode], dailySessionId, dailyItemId },
       tzOffset: new Date().getTimezoneOffset(),
     });
     let response: Response | undefined;
@@ -60,17 +105,22 @@ export default function AudioExerciseClient({ exercises, initialMode }: Props) {
       setError("We couldn't save this answer. Your mastery was not advanced; retry with the same option.");
       return;
     }
+    const payload = await response.json() as { feedback?: { correct?: boolean; correctAnswerText?: string } };
+    if (typeof payload.feedback?.correct !== "boolean" || !payload.feedback.correctAnswerText) {
+      setError("The answer was saved, but feedback could not be loaded. Return to Today to continue.");
+      return;
+    }
     delete keys.current[mode];
-    setSaved((current) => ({ ...current, [mode]: { answer: letter, correct: letter === exercise.correctAnswer } }));
+    setSaved((current) => ({ ...current, [mode]: { answer: letter, correct: payload.feedback!.correct!, correctAnswerText: payload.feedback!.correctAnswerText! } }));
   }
 
   const result = saved[mode];
   return <main className="learn"><header><span className="eyebrow">Audio SRS · HSK {exercise.word.level}</span><h1>{exercise.word.hanzi}</h1><p>{exercise.word.pinyin} · Complete word audio and context audio separately.</p><nav><Link href="/today">Today</Link><Link href="/review">Review</Link><Link href="/mistakes">Mistakes</Link><Link href="/listen">Listen</Link></nav></header>
     <article className="card">
-      <div className="mb-5 flex flex-wrap gap-2" role="tablist" aria-label="Listening mode">
+      {!dailyItemId && <div className="mb-5 flex flex-wrap gap-2" role="tablist" aria-label="Listening mode">
         <button className={`btn ${mode === "audio" ? "" : "secondary"}`} onClick={() => selectMode("audio")}>Word audio</button>
         <button className={`btn ${mode === "context_audio" ? "" : "secondary"}`} onClick={() => selectMode("context_audio")}>Context audio</button>
-      </div>
+      </div>}
       <span className="eyebrow">{mode.replace("_", " ")}</span>
       <h2>{exercise.prompt}</h2>
       <p>Playback must finish before answers unlock. A playback failure never changes mastery.</p>
@@ -80,7 +130,7 @@ export default function AudioExerciseClient({ exercises, initialMode }: Props) {
         {Object.entries(exercise.options).map(([letter, text]) => <button key={letter} className="btn secondary text-left" disabled={!played[mode] || saving || Boolean(result)} onClick={() => answer(letter)}>{letter}. {text}</button>)}
       </div>
       {saving && <p className="mt-4 text-sm font-semibold text-blue-700" role="status">Saving mastery…</p>}
-      {result && <div className={`mt-5 rounded-xl p-4 ${result.correct ? "bg-emerald-50 text-emerald-800" : "bg-amber-50 text-amber-900"}`} role="status"><strong>{result.correct ? "Correct — mastery saved." : "Not yet — added to Mistakes and Review."}</strong><p className="mt-2">Correct answer: {exercise.options[exercise.correctAnswer]}</p><div className="mt-4 flex flex-wrap gap-2">{mode === "audio" && !saved.context_audio && <button className="btn" onClick={() => selectMode("context_audio")}>Continue to context audio</button>}<Link className="btn secondary" href={result.correct ? "/today" : "/mistakes"}>{result.correct ? "Return to Today" : "Open Mistakes"}</Link></div></div>}
+      {result && <div className={`mt-5 rounded-xl p-4 ${result.correct ? "bg-emerald-50 text-emerald-800" : "bg-amber-50 text-amber-900"}`} role="status"><strong>{result.correct ? "Correct — mastery saved." : "Not yet — added to Mistakes and Review."}</strong><p className="mt-2">Correct answer: {result.correctAnswerText}</p><div className="mt-4 flex flex-wrap gap-2">{mode === "audio" && !saved.context_audio && !dailyItemId && <button className="btn" onClick={() => selectMode("context_audio")}>Continue to context audio</button>}<Link className="btn secondary" href={result.correct ? "/today" : "/mistakes"}>{result.correct ? "Return to Today" : "Open Mistakes"}</Link></div></div>}
     </article>
   </main>;
 }

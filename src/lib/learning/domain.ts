@@ -1,4 +1,6 @@
 import { createHash } from "node:crypto";
+import type { TodayContentPlan } from "./today-content.ts";
+import { practiceQuestionSet } from "../practice/questions.ts";
 
 export type Grade = "again" | "hard" | "good" | "easy";
 export type Dimension = "reading" | "audio" | "context_audio";
@@ -23,6 +25,7 @@ export interface Attempt {
   sessionId?: string;
   questionVersion?: string;
   dailySessionId?: string;
+  dailyItemId?: string;
 }
 export interface SrsCard {
   id: string;
@@ -53,6 +56,9 @@ export interface DailyItem {
   contentId: string;
   status: "pending" | "completed" | "skipped";
   dimension?: Dimension;
+  contentVersion?: string;
+  title?: string;
+  href?: string;
 }
 export interface DailySession {
   id: string;
@@ -61,6 +67,10 @@ export interface DailySession {
   ruleVersion: string;
   createdAt: string;
   completedAt?: string;
+  startLevel?: number;
+  contentReleaseId?: string;
+  planFingerprint?: string;
+  notice?: { code: string; message: string; actionHref: string; actionLabel: string };
   items: DailyItem[];
 }
 export interface PlacementAnswer {
@@ -156,24 +166,26 @@ function reconcileSummary(session: DailySession, completedAt?: string): DailySes
   const wasComplete = session.items.some((item) => item.kind === "summary" && item.status === "completed");
   return {
     ...session,
-    completedAt: !unfinished && !wasComplete ? completedAt ?? session.completedAt : session.completedAt,
+    completedAt: unfinished ? undefined : !wasComplete ? completedAt ?? session.completedAt : session.completedAt,
     items: session.items.map((item) => item.kind === "summary"
       ? { ...item, status: unfinished ? "pending" as const : "completed" as const }
       : item),
   };
 }
 
+const reviewItemId = (card: Pick<SrsCard, "id" | "revision">) => `review:${card.id}:${card.revision}`;
+
 function applyAttemptToSessions(state: LearningState, attempt: Attempt, card: SrsCard): DailySession[] {
   return state.dailySessions.map((session) => {
-    if (attempt.mode === "practice" && session.id !== attempt.dailySessionId) return session;
+    if ((attempt.mode === "practice" || attempt.mode === "listening") && session.id !== attempt.dailySessionId) return session;
     const firstPendingId = session.items.find((item) => item.status === "pending")?.id;
     let items = session.items.map((item) => {
       const practiceMatch = item.kind === "practice" && attempt.dimension === "reading" && attempt.mode !== "practice" && attempt.mode !== "placement";
-      const listenMatch = item.kind === "listen" && item.contentId === attempt.contentId && item.dimension === attempt.dimension;
+      const listenMatch = item.kind === "listen" && item.contentId === attempt.contentId && item.contentVersion === attempt.contentVersion && item.dimension === attempt.dimension;
       return item.id === firstPendingId && (practiceMatch || listenMatch) ? { ...item, status: "completed" as const } : item;
     });
-    if (!attempt.correct && !items.some((item) => item.id === `review:${card.id}`)) {
-      const reviewItem: DailyItem = { id: `review:${card.id}`, kind: "review", contentId: card.contentId, dimension: card.dimension, status: "pending" };
+    if (!attempt.correct && !items.some((item) => item.id === reviewItemId(card))) {
+      const reviewItem: DailyItem = { id: reviewItemId(card), kind: "review", contentId: card.contentId, dimension: card.dimension, status: "pending" };
       const summaryIndex = items.findIndex((item) => item.kind === "summary");
       items = summaryIndex < 0 ? [...items, reviewItem] : [...items.slice(0, summaryIndex), reviewItem, ...items.slice(summaryIndex)];
     }
@@ -198,6 +210,7 @@ export function recordAttempt(state: LearningState, input: {
   sessionId?: string;
   questionVersion?: string;
   dailySessionId?: string;
+  dailyItemId?: string;
 }) {
   const prior = state.attempts.find((attempt) => attempt.idempotencyKey === input.idempotencyKey);
   if (prior) {
@@ -208,7 +221,9 @@ export function recordAttempt(state: LearningState, input: {
       && prior.correctAnswer === input.correctAnswer
       && prior.mode === input.mode
       && prior.sessionId === input.sessionId
-      && prior.questionVersion === input.questionVersion;
+      && prior.questionVersion === input.questionVersion
+      && prior.dailySessionId === input.dailySessionId
+      && prior.dailyItemId === input.dailyItemId;
     if (!samePayload) throw new Error("IDEMPOTENCY_KEY_REUSED");
     return { state, attempt: prior };
   }
@@ -299,7 +314,7 @@ export function gradeReview(state: LearningState, input: {
       : mistake);
   const dailySessions = state.dailySessions.map((session) => reconcileSummary({
     ...session,
-    items: session.items.map((item) => item.id === `review:${card.id}` ? { ...item, status: "completed" as const } : item),
+    items: session.items.map((item) => item.id === reviewItemId(old) || item.id === `review:${old.id}` ? { ...item, status: "completed" as const } : item),
   }, input.observedAt));
   return { state: { ...state, cards: state.cards.map((candidate) => candidate.id === card.id ? card : candidate), mistakes, dailySessions, audioReviewReady: state.audioReviewReady?.filter((ready) => ready.cardId !== old.id) }, card };
 }
@@ -342,29 +357,77 @@ export function completeDailyItem(state: LearningState, sessionId: string, itemI
   return { state: { ...state, dailySessions }, item: updated.items.find((item) => item.id === itemId)! };
 }
 
-export function buildDailySession(state: LearningState, input: { ownerId: string; localDay: string; ruleVersion: string; now: string }) {
-  const prior = state.dailySessions.find((session) => session.ownerId === input.ownerId && session.localDay === input.localDay && session.ruleVersion === input.ruleVersion);
-  if (prior) return { state, session: prior };
+export function buildDailySession(state: LearningState, input: { ownerId: string; localDay: string; ruleVersion: string; now: string; dailyContent?: TodayContentPlan }) {
+  const prior = state.dailySessions.find((session) => session.ownerId === input.ownerId && session.localDay === input.localDay);
   const due: DailyItem[] = state.cards
     .filter((card) => card.dueAt <= input.now)
     .slice(0, 20)
-    .map((card) => ({ id: `review:${card.id}`, kind: "review", contentId: card.contentId, dimension: card.dimension, status: "pending" }));
-  const core: DailyItem[] = [
+    .map((card) => ({ id: reviewItemId(card), kind: "review", contentId: card.contentId, dimension: card.dimension, status: "pending" }));
+  const content = input.dailyContent;
+  const planFingerprint = content?.status === "ready"
+    ? `ready:${content.releaseId}:${content.startLevel}:${content.item.contentId}:${content.item.contentVersion}`
+    : content?.status === "empty"
+      ? `empty:${content.releaseId}:${content.startLevel}:${content.code}`
+      : "legacy";
+  const practiceVersion = content?.status === "ready" && content.practiceHref
+    ? practiceQuestionSet(content.startLevel, "vocabulary")[0]?.contentVersion
+    : undefined;
+  const core: DailyItem[] = content?.status === "ready" ? [
+    { id: `learn:${content.item.contentId}:${content.item.contentVersion}`, kind: "learn", contentId: content.item.contentId, contentVersion: content.item.contentVersion, title: `Learn ${content.item.hanzi}`, href: `/vocabulary/${content.startLevel}`, status: "pending" },
+    { id: `listen:${content.item.contentId}:${content.item.contentVersion}:audio`, kind: "listen", contentId: content.item.contentId, contentVersion: content.item.contentVersion, dimension: "audio", title: `Listen to ${content.item.hanzi}`, href: `/listen/today/${content.item.assetId}?mode=audio`, status: "pending" },
+    { id: `listen:${content.item.contentId}:${content.item.contentVersion}:context_audio`, kind: "listen", contentId: content.item.contentId, contentVersion: content.item.contentVersion, dimension: "context_audio", title: "Listen in context", href: `/listen/today/${content.item.assetId}?mode=context_audio`, status: "pending" },
+    ...(content.practiceHref && practiceVersion ? [{ id: `practice:${content.startLevel}:vocabulary:${practiceVersion}`, kind: "practice" as const, contentId: `practice:${content.startLevel}:vocabulary`, contentVersion: practiceVersion, dimension: "reading" as const, title: `Level ${content.startLevel} vocabulary practice`, href: content.practiceHref, status: "pending" as const }] : []),
+    { id: "summary", kind: "summary", contentId: "summary", status: "pending" },
+  ] : content?.status === "empty" ? [
+    { id: "summary", kind: "summary", contentId: "summary", status: "pending" },
+  ] : [
     { id: "learn:word:ni-hao", kind: "learn", contentId: "word:ni-hao", status: "pending" },
     { id: "listen:word:word-ni-hao:audio", kind: "listen", contentId: "word:word-ni-hao", dimension: "audio", status: "pending" },
     { id: "listen:word:word-ni-hao:context_audio", kind: "listen", contentId: "word:word-ni-hao", dimension: "context_audio", status: "pending" },
-    { id: "practice:1:vocabulary", kind: "practice", contentId: "practice:1:vocabulary", dimension: "reading", status: "pending" },
+    { id: "practice:1:vocabulary", kind: "practice", contentId: "practice:1:vocabulary", contentVersion: practiceQuestionSet(1, "vocabulary")[0]?.contentVersion, dimension: "reading", status: "pending" },
     { id: "summary", kind: "summary", contentId: "summary", status: "pending" },
   ];
+  if (prior) {
+    const dueIds = new Set(due.map((item) => item.id));
+    const priorPendingReviewIds = prior.items.filter((item) => item.kind === "review" && item.status === "pending").map((item) => item.id);
+    const duePlanMatches = due.every((item) => prior.items.some((priorItem) => priorItem.id === item.id))
+      && priorPendingReviewIds.every((itemId) => dueIds.has(itemId));
+    const samePlan = prior.ruleVersion === input.ruleVersion
+      && prior.planFingerprint === planFingerprint
+      && duePlanMatches;
+    if (samePlan) return { state, session: prior };
+    const completedHistory = prior.items.filter((item) => item.kind !== "summary" && item.status === "completed");
+    const replacement = [...due, ...core].filter((item) => !completedHistory.some((completed) => completed.id === item.id));
+    const refreshed: DailySession = {
+      ...prior,
+      ruleVersion: input.ruleVersion,
+      startLevel: content?.startLevel,
+      contentReleaseId: content?.releaseId,
+      planFingerprint,
+      notice: content?.status === "empty"
+        ? { code: content.code, message: content.message, actionHref: content.actionHref, actionLabel: content.actionLabel }
+        : content?.status === "ready"
+          ? { code: "CONTENT_UPDATED", message: "Daily content was updated to the current approved learning plan. Completed history was kept.", actionHref: "/today", actionLabel: "Continue updated session" }
+          : undefined,
+      items: [...completedHistory, ...replacement],
+    };
+    const reconciled = reconcileSummary(refreshed, input.now);
+    return { state: { ...state, dailySessions: state.dailySessions.map((session) => session.id === prior.id ? reconciled : session) }, session: reconciled };
+  }
   const session: DailySession = {
     id: id("day", `${input.ownerId}:${input.localDay}:${input.ruleVersion}`),
     ownerId: input.ownerId,
     localDay: input.localDay,
     ruleVersion: input.ruleVersion,
     createdAt: input.now,
+    startLevel: content?.startLevel,
+    contentReleaseId: content?.releaseId,
+    planFingerprint,
+    notice: content?.status === "empty" ? { code: content.code, message: content.message, actionHref: content.actionHref, actionLabel: content.actionLabel } : undefined,
     items: [...due, ...core],
   };
-  return { state: { ...state, dailySessions: [...state.dailySessions, session] }, session };
+  const reconciled = reconcileSummary(session, input.now);
+  return { state: { ...state, dailySessions: [...state.dailySessions, reconciled] }, session: reconciled };
 }
 
 export function resumeDailySession(state: LearningState, sessionId: string) {

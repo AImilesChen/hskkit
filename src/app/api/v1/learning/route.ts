@@ -9,12 +9,13 @@ import {
   recordAudioAttempt,
   type LearningState,
 } from "../../../../lib/learning/domain";
-import { trustedAudioExercise, type AudioMode } from "../../../../lib/learning/audio";
+import { audioPlaybackSubject, trustedAudioExercise, trustedTodayAudioExercise, type AudioMode } from "../../../../lib/learning/audio";
 import { advancedListeningBySlug, isStep7AnswerAllowed, normalizeStep7Answer, trustedStep7Exercise } from "../../../../lib/learning/step7-content";
 import { completeStep7PlaybackTicket, consumeStep7PlaybackTicket, createStep7PlaybackTicket } from "../../../../lib/learning/step7-playback";
 import { trustedQuestion } from "../../../../lib/learning/questions";
 import { requestIdentity, GUEST_COOKIE } from "../../../../lib/account/identity";
 import { loadState, saveState } from "../../../../lib/learning/storage";
+import { selectTodayContent, todayContentByContentId } from "../../../../lib/learning/today-content";
 
 const COOKIE = GUEST_COOKIE;
 async function owner() {
@@ -28,26 +29,43 @@ async function owner() {
 }
 const short = (value: unknown, max = 100) => typeof value === "string" && value.length > 0 && value.length <= max ? value : undefined;
 const offset = (value: unknown) => Number.isInteger(value) && Number(value) >= -840 && Number(value) <= 840 ? Number(value) : 0;
+function audioExercise(assetId: string, mode: AudioMode) {
+  return trustedAudioExercise(assetId, mode) ?? trustedTodayAudioExercise(assetId, mode);
+}
+function assertDailyAudioBinding(state: LearningState, dailySessionId: string | undefined, dailyItemId: string | undefined, exercise: NonNullable<ReturnType<typeof audioExercise>>) {
+  if (!dailySessionId && !dailyItemId) return;
+  const session = dailySessionId ? state.dailySessions.find((candidate) => candidate.id === dailySessionId) : undefined;
+  const item = session && dailyItemId ? session.items.find((candidate) => candidate.id === dailyItemId) : undefined;
+  const firstPending = session?.items.find((candidate) => candidate.status === "pending");
+  if (!session || !item || firstPending?.id !== item.id || item.kind !== "listen" || item.contentId !== exercise.contentId || item.contentVersion !== exercise.contentVersion || item.dimension !== exercise.dimension) {
+    throw new Error("DAILY_ITEM_MISMATCH");
+  }
+}
 function localDay(now: string, offsetMinutes: number) {
   return new Date(new Date(now).getTime() - offsetMinutes * 60_000).toISOString().slice(0, 10);
 }
 function view(state: LearningState, ownerId: string, offsetMinutes: number) {
   const now = new Date().toISOString();
-  const built = buildDailySession(state, { ownerId, localDay: localDay(now, offsetMinutes), ruleVersion: "today-v2", now });
+  const latestPlacement = [...(state.placementResults ?? [])].sort((a, b) => b.createdAt.localeCompare(a.createdAt))[0];
+  const startLevel = latestPlacement?.recommendedLevel ?? 1;
+  const built = buildDailySession(state, { ownerId, localDay: localDay(now, offsetMinutes), ruleVersion: "today-v3", now, dailyContent: selectTodayContent(startLevel) });
   const cards = built.state.cards.map((card) => {
     const attempt = built.state.attempts.find((candidate) => candidate.id === card.sourceAttemptId);
     const question = attempt?.contentId.startsWith("question:") ? trustedQuestion(attempt.contentId.slice(9)) : undefined;
     const assetId = attempt?.contentId.startsWith("word:") ? attempt.contentId.slice(5) : undefined;
+    const todayItem = attempt?.contentId.startsWith("catalog:") ? todayContentByContentId(attempt.contentId) : undefined;
     const listeningSlug = attempt?.contentId.startsWith("listening:") ? attempt.contentId.slice(10) : undefined;
     const advancedListening = listeningSlug ? trustedStep7Exercise(`exercise:listening:${listeningSlug}`) : undefined;
-    const audio = assetId && card.dimension !== "reading" ? trustedAudioExercise(assetId, card.dimension as AudioMode) : undefined;
+    const audio = card.dimension !== "reading"
+      ? (assetId ? trustedAudioExercise(assetId, card.dimension as AudioMode) : todayItem ? trustedTodayAudioExercise(todayItem.assetId, card.dimension as AudioMode) : undefined)
+      : undefined;
     return {
       ...card,
       prompt: attempt?.prompt ?? (question ? `${question.question_cn} — ${question.question_en}` : audio?.prompt ?? advancedListening?.prompt ?? card.contentId),
       correctAnswer: attempt?.correctAnswerText ?? (question?.options[question.correct_answer] ?? audio?.options[audio.correctAnswer] ?? advancedListening?.correctAnswer ?? attempt?.correctAnswer ?? ""),
       userAnswer: attempt?.userAnswerText ?? (question && attempt ? question.options[attempt.answer] ?? attempt.answer : audio && attempt ? audio.options[attempt.answer] ?? attempt.answer : attempt?.answer ?? ""),
       audioText: audio?.voiceText ?? (listeningSlug ? advancedListeningBySlug(listeningSlug)?.voiceText : undefined),
-      assetId,
+      assetId: assetId ?? todayItem?.assetId,
       playbackReady: card.dimension === "reading" || Boolean(built.state.audioReviewReady?.some((ready) => ready.cardId === card.id && ready.cardRevision === card.revision)),
     };
   });
@@ -62,8 +80,8 @@ function view(state: LearningState, ownerId: string, offsetMinutes: number) {
   };
   return { state: built.state, session: built.session, cards, mistakes, mastery };
 }
-function response(data: ReturnType<typeof view>, fresh: boolean, id: string, revision: number, account = false) {
-  const res = NextResponse.json({ session: data.session, cards: data.cards, mistakes: data.mistakes, mastery: data.mastery, revision, scope: account ? "account" : "guest" });
+function response(data: ReturnType<typeof view>, fresh: boolean, id: string, revision: number, account = false, feedback?: { correct: boolean; correctAnswerText: string }) {
+  const res = NextResponse.json({ session: data.session, cards: data.cards, mistakes: data.mistakes, mastery: data.mastery, revision, scope: account ? "account" : "guest", ...(feedback ? { feedback } : {}) });
   if (fresh) res.cookies.set(COOKIE, id, { httpOnly: true, sameSite: "lax", secure: true, maxAge: 31_536_000, path: "/" });
   return res;
 }
@@ -73,7 +91,7 @@ export async function GET(req: NextRequest) {
   const loaded = await loadState(identity.id);
   const tz = offset(req.nextUrl.searchParams.get("tzOffset") ? Number(req.nextUrl.searchParams.get("tzOffset")) : 0);
   const data = view(loaded.state, identity.id, tz);
-  const changed = data.state.dailySessions.length !== loaded.state.dailySessions.length;
+  const changed = JSON.stringify(data.state) !== JSON.stringify(loaded.state);
   if (changed) {
     try {
       await saveState(identity.id, data.state, loaded.revision);
@@ -100,6 +118,56 @@ export async function POST(req: NextRequest) {
   const tz = offset(body?.tzOffset);
   const key = short(payload.idempotencyKey, 80);
   if (!key) return NextResponse.json({ error: "INVALID_IDEMPOTENCY_KEY" }, { status: 422 });
+
+  if (action === "audio_review_playback_start" || action === "audio_review_playback_complete") {
+    const cardId = short(payload.cardId, 120);
+    const cardRevision = Number.isInteger(payload.cardRevision) ? Number(payload.cardRevision) : -1;
+    try {
+      const loaded = await loadState(identity.id);
+      const card = view(loaded.state, identity.id, tz).cards.find((candidate) => candidate.id === cardId && candidate.revision === cardRevision);
+      if (!card?.audioText || card.dimension === "reading") throw new Error("INVALID_AUDIO_REVIEW");
+      const exerciseKey = `review:${card.id}:${card.revision}`;
+      if (action === "audio_review_playback_start") {
+        const ticket = await createStep7PlaybackTicket(identity.id, exerciseKey, card.audioText);
+        return NextResponse.json({ playbackTicket: ticket.id, notBefore: ticket.notBefore, expiresAt: ticket.expiresAt }, { status: 201 });
+      }
+      const ticketId = short(payload.playbackTicket, 80);
+      if (!ticketId) throw new Error("AUDIO_PLAYBACK_REQUIRED");
+      await completeStep7PlaybackTicket(identity.id, exerciseKey, ticketId, key);
+      return NextResponse.json({ state: "playback_verified" });
+    } catch (error) {
+      return NextResponse.json({ error: error instanceof Error ? error.message : "AUDIO_PLAYBACK_INCOMPLETE" }, { status: 422 });
+    }
+  }
+
+  if (action === "audio_playback_start" || action === "audio_playback_complete") {
+    const assetId = short(payload.assetId, 80);
+    const mode = payload.mode === "audio" || payload.mode === "context_audio" ? payload.mode as AudioMode : undefined;
+    const exercise = assetId && mode ? audioExercise(assetId, mode) : undefined;
+    const dailySessionId = short(payload.dailySessionId, 120);
+    const dailyItemId = short(payload.dailyItemId, 220);
+    if (!exercise) return NextResponse.json({ error: "INVALID_AUDIO_PLAYBACK" }, { status: 422 });
+    try {
+      const loaded = await loadState(identity.id);
+      assertDailyAudioBinding(loaded.state, dailySessionId, dailyItemId, exercise);
+      const exerciseKey = audioPlaybackSubject(exercise, dailySessionId, dailyItemId);
+      if (action === "audio_playback_start") {
+        const ticket = await createStep7PlaybackTicket(identity.id, exerciseKey, exercise.voiceText);
+        const res = NextResponse.json({ playbackTicket: ticket.id, notBefore: ticket.notBefore, expiresAt: ticket.expiresAt }, { status: 201 });
+        if (identity.fresh) res.cookies.set(COOKIE, identity.id, { httpOnly: true, sameSite: "lax", secure: true, maxAge: 31_536_000, path: "/" });
+        return res;
+      }
+      const ticketId = short(payload.playbackTicket, 80);
+      if (!ticketId) throw new Error("AUDIO_PLAYBACK_REQUIRED");
+      await completeStep7PlaybackTicket(identity.id, exerciseKey, ticketId, key);
+      const res = NextResponse.json({ state: "playback_verified" });
+      if (identity.fresh) res.cookies.set(COOKIE, identity.id, { httpOnly: true, sameSite: "lax", secure: true, maxAge: 31_536_000, path: "/" });
+      return res;
+    } catch (error) {
+      const code = error instanceof Error ? error.message : "AUDIO_PLAYBACK_INCOMPLETE";
+      return NextResponse.json({ error: code }, { status: code === "ACCOUNT_DELETED" ? 403 : 422 });
+    }
+  }
 
   if (action === "step7_playback_start") {
     const exerciseId = short(payload.exerciseId, 120);
@@ -134,6 +202,7 @@ export async function POST(req: NextRequest) {
   for (let turn = 0; turn < 3; turn += 1) {
     const loaded = await loadState(identity.id);
     let state = loaded.state;
+    let feedback: { correct: boolean; correctAnswerText: string } | undefined;
     try {
       if (action === "attempt") {
         const questionId = short(payload.questionId, 50);
@@ -185,9 +254,15 @@ export async function POST(req: NextRequest) {
         const assetId = short(payload.assetId, 80);
         const mode = payload.mode === "audio" || payload.mode === "context_audio" ? payload.mode as AudioMode : undefined;
         const answer = short(payload.answer, 8);
-        const exercise = assetId && mode ? trustedAudioExercise(assetId, mode) : undefined;
+        const exercise = assetId && mode ? audioExercise(assetId, mode) : undefined;
         if (!exercise || !answer || !Object.hasOwn(exercise.options, answer)) throw new Error("INVALID_AUDIO_ATTEMPT");
-        state = recordAudioAttempt(state, {
+        const dailySessionId = short(payload.dailySessionId, 120);
+        const dailyItemId = short(payload.dailyItemId, 220);
+        assertDailyAudioBinding(state, dailySessionId, dailyItemId, exercise);
+        const ticketId = short(payload.playbackTicket, 80);
+        if (!ticketId) throw new Error("AUDIO_PLAYBACK_REQUIRED");
+        await consumeStep7PlaybackTicket(identity.id, audioPlaybackSubject(exercise, dailySessionId, dailyItemId), ticketId, key);
+        const recorded = recordAudioAttempt(state, {
           idempotencyKey: key,
           contentId: exercise.contentId,
           contentVersion: exercise.contentVersion,
@@ -199,10 +274,18 @@ export async function POST(req: NextRequest) {
           correctAnswerText: exercise.options[exercise.correctAnswer],
           observedAt: new Date().toISOString(),
           playbackResult: "completed",
-        }).state;
+          mode: "listening",
+          dailySessionId,
+          dailyItemId,
+        });
+        if (!("attempt" in recorded)) throw new Error("AUDIO_PLAYBACK_REQUIRED");
+        state = recorded.state;
+        feedback = { correct: recorded.attempt.correct, correctAnswerText: exercise.options[exercise.correctAnswer] };
       } else if (action === "audio_review_ready") {
         const cardId = short(payload.cardId, 120);
-        if (!cardId || !Number.isInteger(payload.cardRevision)) throw new Error("INVALID_AUDIO_REVIEW");
+        const playbackTicket = short(payload.playbackTicket, 80);
+        if (!cardId || !Number.isInteger(payload.cardRevision) || !playbackTicket) throw new Error("INVALID_AUDIO_REVIEW");
+        await consumeStep7PlaybackTicket(identity.id, `review:${cardId}:${payload.cardRevision}`, playbackTicket, key);
         state = markAudioReviewReady(state, cardId, payload.cardRevision, key);
       } else if (action === "grade") {
         if (!short(payload.cardId, 120) || !["again", "hard", "good", "easy"].includes(payload.grade) || !Number.isInteger(payload.clientRevision)) throw new Error("INVALID_GRADE");
@@ -215,7 +298,7 @@ export async function POST(req: NextRequest) {
       }
       const data = view(state, identity.id, tz);
       await saveState(identity.id, data.state, loaded.revision);
-      return response(data, identity.fresh, identity.id, loaded.revision + 1, Boolean(identity.account));
+      return response(data, identity.fresh, identity.id, loaded.revision + 1, Boolean(identity.account), feedback);
     } catch (error) {
       const code = error instanceof Error ? error.message : "SAVE_FAILED";
       const replayable = action === "attempt" || action === "step7_attempt" || action === "audio_attempt" || action === "audio_review_ready" || action === "complete_item";

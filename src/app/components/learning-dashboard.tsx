@@ -4,11 +4,12 @@ import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 
 type Dimension = "reading" | "audio" | "context_audio";
-type Item = { id: string; kind: "review" | "learn" | "listen" | "practice" | "summary"; contentId: string; status: string; dimension?: Dimension };
+type Item = { id: string; kind: "review" | "learn" | "listen" | "practice" | "summary"; contentId: string; contentVersion?: string; status: string; dimension?: Dimension; title?: string; href?: string };
+type Notice = { code: string; message: string; actionHref: string; actionLabel: string };
 type Card = { id: string; contentId: string; dimension: Dimension; dueAt: string; revision: number; prompt: string; correctAnswer: string; userAnswer: string; audioText?: string; assetId?: string; playbackReady: boolean };
 type Mistake = { id: string; contentId: string; status: string; createdAt: string; dimension: Dimension; prompt: string };
 type Data = {
-  session: { id: string; items: Item[] };
+  session: { id: string; startLevel?: number; contentReleaseId?: string; notice?: Notice; items: Item[] };
   cards: Card[];
   mistakes: Mistake[];
   mastery: Record<Dimension, number>;
@@ -61,13 +62,31 @@ export default function LearningDashboard({ mode }: { mode: "today" | "review" |
   async function complete(item: Item) {
     await post("complete_item", { sessionId: data!.session.id, itemId: item.id }, `complete:${data!.session.id}:${item.id}`);
   }
-  function play(card: Card) {
+  async function play(card: Card) {
     setAudioError("");
     if (!card.audioText || !("speechSynthesis" in window)) { setAudioError("Audio is unavailable in this browser. No mastery was changed."); return; }
+    let ticket: { playbackTicket?: string; notBefore?: string };
+    try {
+      const started = await fetch("/api/v1/learning", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ action: "audio_review_playback_start", payload: { idempotencyKey: crypto.randomUUID(), cardId: card.id, cardRevision: card.revision }, tzOffset: tz() }) });
+      if (!started.ok) throw new Error("START_FAILED");
+      ticket = await started.json();
+      if (!ticket.playbackTicket) throw new Error("NO_TICKET");
+    } catch {
+      setAudioError("Playback verification could not start. No mastery was changed.");
+      return;
+    }
     window.speechSynthesis.cancel();
     const utterance = new SpeechSynthesisUtterance(card.audioText);
     utterance.lang = "zh-CN";
-    utterance.onend = () => { void post("audio_review_ready", { cardId: card.id, cardRevision: card.revision }, `audio-ready:${card.id}:${card.revision}`); };
+    utterance.onend = async () => {
+      try {
+        const remaining = Math.max(0, (ticket.notBefore ? new Date(ticket.notBefore).getTime() : Date.now()) - Date.now());
+        if (remaining) await new Promise((resolve) => window.setTimeout(resolve, remaining));
+        const completed = await fetch("/api/v1/learning", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ action: "audio_review_playback_complete", payload: { idempotencyKey: crypto.randomUUID(), cardId: card.id, cardRevision: card.revision, playbackTicket: ticket.playbackTicket }, tzOffset: tz() }) });
+        if (!completed.ok) throw new Error("COMPLETE_FAILED");
+        await post("audio_review_ready", { cardId: card.id, cardRevision: card.revision, playbackTicket: ticket.playbackTicket }, `audio-ready:${card.id}:${card.revision}`);
+      } catch { setAudioError("Playback could not be verified. Replay it before grading; no mastery was changed."); }
+    };
     utterance.onerror = () => setAudioError("Audio failed. No mastery was changed.");
     window.speechSynthesis.speak(utterance);
   }
@@ -79,6 +98,7 @@ export default function LearningDashboard({ mode }: { mode: "today" | "review" |
   if (mode === "today") {
     const firstPending = data.session.items.findIndex((item) => item.status === "pending");
     return <Shell title="Today" sub="Review → Learn → Listen/Practice → Summary">
+      {data.session.notice && <article className="mb-4 rounded-2xl bg-amber-50 p-5 text-amber-950" role="status"><span className="eyebrow">{data.session.notice.code.replaceAll("_", " ")}</span><h2>{data.session.notice.message}</h2><Link className="btn mt-3" href={data.session.notice.actionHref}>{data.session.notice.actionLabel}</Link></article>}
       <div className="grid gap-4">
         {data.session.items.map((item, index) => {
           const locked = item.status === "pending" && firstPending >= 0 && index > firstPending;
@@ -127,16 +147,21 @@ export default function LearningDashboard({ mode }: { mode: "today" | "review" |
 }
 
 function label(item: Item) {
-  if (item.kind === "learn") return "Learn 你好";
-  if (item.kind === "listen") return item.dimension === "audio" ? "Listen to 你好" : "Listen in context";
-  if (item.kind === "practice") return "Level 1 vocabulary practice";
-  return `Review ${item.dimension?.replace("_", " ") ?? "item"}`;
+  return item.title ?? (item.kind === "learn" ? "Learn new vocabulary" : item.kind === "listen" ? (item.dimension === "audio" ? "Word listening" : "Listening in context") : item.kind === "practice" ? "Vocabulary practice" : `Review ${item.dimension?.replace("_", " ") ?? "item"}`);
 }
 function actionFor(item: Item, complete: (item: Item) => Promise<void>, dailySessionId: string) {
   if (item.kind === "review") return <Link className="btn" href="/review">Start review</Link>;
-  if (item.kind === "learn") return <div className="flex flex-wrap gap-2"><Link className="btn" href="/word/ni-hao">Learn 你好</Link><button className="btn secondary" onClick={() => complete(item)}>Mark learned</button></div>;
-  if (item.kind === "listen") return <Link className="btn" href={`/listen/word-ni-hao?mode=${item.dimension}`}>Start listening</Link>;
-  if (item.kind === "practice") return <Link className="btn" href={`/practice/1/vocabulary?dailySessionId=${encodeURIComponent(dailySessionId)}&dailyItemId=${encodeURIComponent(item.id)}`}>Start practice</Link>;
+  if (item.kind === "learn") return <div className="flex flex-wrap gap-2"><Link className="btn" href={item.href ?? "/levels"}>Open word list</Link><button className="btn secondary" onClick={() => complete(item)}>Mark learned</button></div>;
+  if (item.kind === "listen") {
+    const href = item.href ?? "/listen";
+    const separator = href.includes("?") ? "&" : "?";
+    return <Link className="btn" href={`${href}${separator}dailySessionId=${encodeURIComponent(dailySessionId)}&dailyItemId=${encodeURIComponent(item.id)}`}>Start listening</Link>;
+  }
+  if (item.kind === "practice") {
+    const href = item.href ?? "/practice";
+    const separator = href.includes("?") ? "&" : "?";
+    return <Link className="btn" href={`${href}${separator}dailySessionId=${encodeURIComponent(dailySessionId)}&dailyItemId=${encodeURIComponent(item.id)}`}>Start practice</Link>;
+  }
   return null;
 }
 function Shell(props: any) {

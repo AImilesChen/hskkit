@@ -4,10 +4,13 @@ import { buildDailySession, emptyLearningState, gradeReview } from "../src/lib/l
 import {
   answerPracticeQuestion,
   createPracticeSession,
+  isPracticeSessionCurrent,
   publicPracticeSession,
   reportPracticeQuestion,
   resumePracticeSession,
+  selectPracticeSession,
 } from "../src/lib/practice/domain.ts";
+import { PRACTICE_VERSION, WITHDRAWN_PRACTICE_QUESTION_ID, practiceQuestionSet, practiceSetContentVersion, trustedPracticeQuestion } from "../src/lib/practice/questions.ts";
 
 const now = "2026-08-21T10:00:00.000Z";
 
@@ -26,9 +29,32 @@ test("practice creates one resumable versioned HSK 3.0 session", () => {
   assert.equal(resumePracticeSession(first.state, "guest-1", now)?.id, first.session.id);
 });
 
+test("Practice levels 2-6 use versioned questions derived from the active formal content release", () => {
+  for (let level = 2; level <= 6; level += 1) {
+    const questions = practiceQuestionSet(level, "vocabulary");
+    assert.ok(questions.length >= 3);
+    assert.ok(questions.every((question) => question.level === level));
+    assert.ok(questions.every((question) => question.id.startsWith(`practice-catalog-l${level}-`)));
+    assert.ok(questions.every((question) => question.contentVersion.startsWith("hsk3-gf0025-2021-v2:")));
+    const created = createPracticeSession(emptyLearningState(), {
+      ownerId: `guest-l${level}`, level, skill: "vocabulary", idempotencyKey: `create-l${level}`, now,
+    });
+    assert.equal(created.session.questionVersion, questions[0].contentVersion);
+    assert.deepEqual(created.session.questionIds, questions.map((question) => question.id));
+    assert.equal(JSON.stringify(publicPracticeSession(created.session)).includes("correctAnswer"), false);
+  }
+  const answerKeys = [2, 3, 4, 5, 6].flatMap((level) => practiceQuestionSet(level, "vocabulary").map((question) => question.correctAnswer));
+  assert.ok(new Set(answerKeys).size >= 3);
+  for (const level of [2, 3, 4, 5, 6]) {
+    const keys = practiceQuestionSet(level, "vocabulary").map((question) => question.correctAnswer);
+    const predictableRotation = Array.from({ length: keys.length }, (_, index) => (["a", "b", "c", "d"] as const)[(level + index) % 4]);
+    assert.notDeepEqual(keys, predictableRotation);
+  }
+});
+
 test("practice refuses levels without an approved bounded question set", () => {
   assert.throws(() => createPracticeSession(emptyLearningState(), {
-    ownerId: "guest-1", level: 2, skill: "vocabulary", idempotencyKey: "create-2", now,
+    ownerId: "guest-1", level: 7, skill: "vocabulary", idempotencyKey: "create-7", now,
   }), /PRACTICE_NOT_READY/);
 });
 
@@ -273,4 +299,49 @@ test("direct out-of-order Practice does not silently complete a later Today item
     session = answered.session;
   }
   assert.equal(state.dailySessions[0].items.find((item) => item.kind === "practice")?.status, "pending");
+});
+
+test("an old Practice Session cannot complete a refreshed Daily item with a newer question version", () => {
+  const daily = buildDailySession(emptyLearningState(), { ownerId: "guest:stale-daily", localDay: "2026-08-21", ruleVersion: "today-v2", now });
+  daily.state.dailySessions[0].items = daily.state.dailySessions[0].items.map((item) => item.kind === "learn" || item.kind === "listen" ? { ...item, status: "completed" as const } : item);
+  const started = createPracticeSession(daily.state, { ownerId: "guest:stale-daily", level: 1, skill: "vocabulary", idempotencyKey: "stale-start", now, dailySessionId: daily.session.id, dailyItemId: "practice:1:vocabulary" });
+  let state = { ...started.state, dailySessions: started.state.dailySessions.map((session) => ({ ...session, items: session.items.map((item) => item.id === "practice:1:vocabulary" ? { ...item, contentVersion: "newer-release" } : item) })) };
+  for (const [index, questionId] of started.session.questionIds.entries()) {
+    const question = trustedPracticeQuestion(questionId)!;
+    state = answerPracticeQuestion(state, { ownerId: "guest:stale-daily", sessionId: started.session.id, questionId, answer: question.correctAnswer, idempotencyKey: `stale-answer-${index}`, now }).state;
+  }
+  assert.equal(state.dailySessions[0].items.find((item) => item.id === "practice:1:vocabulary")?.status, "pending");
+});
+
+test("a withdrawn active Practice Session is not resumed when a fresh set is requested", () => {
+  const state = emptyLearningState();
+  state.practiceSessions = [{ id: "stale-session", ownerId: "guest:withdrawn-practice", idempotencyKey: "old-start", mode: "practice", standardVersion: "HSK 3.0", level: 1, skill: "vocabulary", questionVersion: PRACTICE_VERSION, questionIds: [WITHDRAWN_PRACTICE_QUESTION_ID], answers: [], status: "in_progress", createdAt: now, expiresAt: "2026-08-22T10:00:00.000Z" }];
+  const restarted = createPracticeSession(state, { ownerId: "guest:withdrawn-practice", level: 1, skill: "vocabulary", idempotencyKey: "fresh-start", now });
+  assert.notEqual(restarted.session.id, "stale-session");
+  assert.equal(restarted.session.questionIds.includes(WITHDRAWN_PRACTICE_QUESTION_ID), false);
+  assert.equal(restarted.state.practiceSessions?.length, 2);
+  assert.equal(resumePracticeSession(state, "guest:withdrawn-practice", now), undefined);
+  assert.equal(selectPracticeSession(state, { ownerId: "guest:withdrawn-practice", level: 1, skill: "vocabulary" }), undefined);
+});
+
+test("production restore selector rejects a stale version even when question IDs still exist", () => {
+  const current = practiceQuestionSet(2, "vocabulary");
+  const state = emptyLearningState();
+  state.practiceSessions = [{ id: "stale-version-session", ownerId: "guest:stale-version", idempotencyKey: "stale-version-start", mode: "practice", standardVersion: "HSK 3.0", level: 2, skill: "vocabulary", questionVersion: "old-version", questionIds: current.map((question) => question.id), answers: [], status: "in_progress", createdAt: now, expiresAt: "2026-08-22T10:00:00.000Z" }];
+  assert.equal(selectPracticeSession(state, { ownerId: "guest:stale-version", level: 2, skill: "vocabulary" }), undefined);
+});
+
+test("Practice set version changes when any prompt, answer or distractor source changes", () => {
+  const sources = [
+    { logicalId: "word-1", version: "v1" },
+    { logicalId: "word-2", version: "v1" },
+    { logicalId: "word-3", version: "v1" },
+    { logicalId: "word-4", version: "v1" },
+  ];
+  const baseline = practiceSetContentVersion("release-1", sources);
+  for (const index of sources.keys()) {
+    const changed = sources.map((source, sourceIndex) => sourceIndex === index ? { ...source, version: "v2" } : source);
+    assert.notEqual(practiceSetContentVersion("release-1", changed), baseline);
+  }
+  assert.notEqual(practiceSetContentVersion("release-2", sources), baseline);
 });

@@ -1,3 +1,7 @@
+import { createHash } from "node:crypto";
+import catalog from "../content/catalog.json" with { type: "json" };
+import { queryCatalog, type ContentRepository } from "../content/repository.ts";
+
 export const PRACTICE_VERSION = "hskkit-practice-l1-vocabulary-v1";
 export type PracticeSkill = "vocabulary";
 export type PracticeAnswerChoice = "a" | "b" | "c" | "d";
@@ -5,8 +9,8 @@ export type PracticeAnswerChoice = "a" | "b" | "c" | "d";
 export interface PracticeQuestion {
   id: string;
   standardVersion: "HSK 3.0";
-  contentVersion: typeof PRACTICE_VERSION;
-  level: 1;
+  contentVersion: string;
+  level: number;
   skill: PracticeSkill;
   prompt: string;
   context?: string;
@@ -17,6 +21,47 @@ export interface PracticeQuestion {
   qaStatus: "approved-for-bounded-practice";
   publicationStatus: "practice-only";
   lifecycleStatus: "published" | "withdrawn";
+}
+
+const repository = catalog as ContentRepository;
+
+export function practiceSetContentVersion(releaseId: string, sources: Array<{ logicalId: string; version: string | number }>) {
+  const digest = createHash("sha256")
+    .update(JSON.stringify(sources.map((source) => [source.logicalId, String(source.version)])))
+    .digest("base64url")
+    .slice(0, 24);
+  return `${releaseId}:practice-set-${digest}`;
+}
+
+function catalogPracticeQuestions(level: number): PracticeQuestion[] {
+  const result = queryCatalog(repository, { standard: "hsk3", level });
+  const words = result.contentAssets.filter((asset) => asset.kind === "word").slice(0, 4);
+  if (words.length < 4) return [];
+  const contentVersion = practiceSetContentVersion(result.releaseId, words.map((asset) => ({ logicalId: asset.logicalId, version: asset.content_version ?? `asset-v${asset.version}` })));
+  const options = words.map((asset) => String(asset.payload.hanzi)) as [string, string, string, string];
+  return words.slice(0, 3).map((asset, index) => {
+    const correctIndex = createHash("sha256")
+      .update(`hskkit-practice-option-order:${result.releaseId}:${asset.logicalId}:${asset.content_version ?? asset.version}`)
+      .digest()[0] % 4;
+    const ordered = options.filter((_, optionIndex) => optionIndex !== index);
+    ordered.splice(correctIndex, 0, options[index]);
+    const correctAnswer = (["a", "b", "c", "d"] as const)[correctIndex];
+    return {
+      id: `practice-catalog-l${level}-${asset.logicalId}`,
+      standardVersion: "HSK 3.0",
+      contentVersion,
+      level,
+      skill: "vocabulary",
+      prompt: `Which Chinese entry means “${String(asset.payload.meaning)}”?`,
+      options: { a: ordered[0], b: ordered[1], c: ordered[2], d: ordered[3] },
+      correctAnswer,
+      explanation: `${String(asset.payload.hanzi)} means “${String(asset.payload.meaning)}.”`,
+      weaknessTag: `hsk3-level-${level}-vocabulary`,
+      qaStatus: "approved-for-bounded-practice",
+      publicationStatus: "practice-only",
+      lifecycleStatus: "published",
+    };
+  });
 }
 
 export const WITHDRAWN_PRACTICE_QUESTION_ID = "practice-v1-l1-vocab-retired-sample";
@@ -70,6 +115,7 @@ export const PRACTICE_QUESTIONS: PracticeQuestion[] = [
     publicationStatus: "practice-only",
     lifecycleStatus: "published",
   },
+  ...[2, 3, 4, 5, 6].flatMap(catalogPracticeQuestions),
 ];
 
 export function practiceQuestionLifecycle(id: string) {
