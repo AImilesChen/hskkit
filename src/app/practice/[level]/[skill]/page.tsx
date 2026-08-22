@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import PracticeClient from "./practice-client";
+import { StudyPage } from "../../../components/study-shell";
 
 export const metadata: Metadata = {
   title: "HSK 3.0 Practice — HSKKit",
@@ -13,5 +14,5 @@ export default async function PracticePage({ params, searchParams }: { params: P
   const { dailySessionId, dailyItemId } = await searchParams;
   const level = Number(rawLevel);
   if (!Number.isInteger(level) || level < 1 || level > 9 || !/^[a-z-]+$/.test(skill)) notFound();
-  return <PracticeClient level={level} skill={skill} dailySessionId={dailySessionId} dailyItemId={dailyItemId} />;
+  return <StudyPage><PracticeClient level={level} skill={skill} dailySessionId={dailySessionId} dailyItemId={dailyItemId} /></StudyPage>;
 }
