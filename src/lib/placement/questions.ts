@@ -1,21 +1,31 @@
-export const PLACEMENT_VERSION = "hskkit-placement-v1";
+import catalog from "../content/catalog.json" with { type: "json" };
+import type { ContentRepository } from "../content/repository.ts";
 
-export type PlacementSkill = "vocabulary_grammar" | "reading";
+export const PLACEMENT_VERSION = "hskkit-placement-multiskill-v2";
+export const LEGACY_PLACEMENT_VERSION = "hskkit-placement-v1";
+
+export type PlacementSkill = "vocabulary_grammar" | "reading" | "listening";
 
 export interface PlacementQuestion {
   id: string;
   standardVersion: "HSK 3.0";
-  contentVersion: typeof PLACEMENT_VERSION;
+  contentVersion: string;
   level: number;
   skill: PlacementSkill;
   prompt: string;
   context?: string;
+  audioSrc?: string;
+  audioAssetId?: string;
   options: Record<"a" | "b" | "c" | "d", string>;
   correctAnswer: "a" | "b" | "c" | "d";
+  sourceRef: string;
+  sourceUrl: string;
+  qaStatus: "approved";
+  lifecycleStatus: "published" | "withdrawn";
   publicationStatus: "diagnostic-only";
 }
 
-export const PLACEMENT_QUESTIONS: PlacementQuestion[] = [
+const PLACEMENT_TEXT_QUESTIONS: Array<Omit<PlacementQuestion, "sourceRef" | "sourceUrl" | "qaStatus" | "lifecycleStatus">> = [
   {
     id: "placement-v1-l1-vocab",
     standardVersion: "HSK 3.0",
@@ -125,16 +135,73 @@ export const PLACEMENT_QUESTIONS: PlacementQuestion[] = [
   },
 ];
 
-const PLACEMENT_CATALOGS: Record<string, PlacementQuestion[]> = {
-  [PLACEMENT_VERSION]: PLACEMENT_QUESTIONS,
+const PLACEMENT_LISTENING_QUESTIONS: Array<Omit<PlacementQuestion, "sourceRef" | "sourceUrl" | "qaStatus" | "lifecycleStatus">> = [
+  {
+    id: "placement-v2-l1-listening-word-mai",
+    standardVersion: "HSK 3.0", contentVersion: PLACEMENT_VERSION, level: 1, skill: "listening",
+    prompt: "Which pinyin matches the word you hear?", audioSrc: "/audio/formal/word-mai-v1.mp3",
+    options: { a: "mǎi", b: "mài", c: "māi", d: "mái" }, correctAnswer: "a", publicationStatus: "diagnostic-only",
+  },
+  {
+    id: "placement-v2-l2-listening-sentence",
+    standardVersion: "HSK 3.0", contentVersion: PLACEMENT_VERSION, level: 2, skill: "listening",
+    prompt: "Which sentence did you hear?", audioSrc: "/audio/formal/sentence-pronunciation-v1.mp3",
+    options: { a: "老师让我们练习发音。", b: "老鼠让我们联系发言。", c: "老师让他们练习写字。", d: "老师让我们复习语法。" }, correctAnswer: "a", publicationStatus: "diagnostic-only",
+  },
+  {
+    id: "placement-v2-l3-listening-context",
+    standardVersion: "HSK 3.0", contentVersion: PLACEMENT_VERSION, level: 3, skill: "listening",
+    prompt: "What does Lin Yue do at night?", audioSrc: "/audio/formal/context-morning-study-v1.mp3",
+    options: { a: "She reads the difficult sentences again.", b: "She goes to the station.", c: "She learns ten new songs.", d: "She stops studying completely." }, correctAnswer: "a", publicationStatus: "diagnostic-only",
+  },
+];
+
+const AUDIO_ASSET_BY_PATH: Record<string, string> = {
+  "/audio/formal/word-mai-v1.mp3": "hsk3.audio.word-mai.v1",
+  "/audio/formal/sentence-pronunciation-v1.mp3": "hsk3.audio.sentence-pronunciation.v1",
+  "/audio/formal/context-morning-study-v1.mp3": "hsk3.audio.context-morning-study.v1",
+};
+const repository = catalog as ContentRepository;
+const isEligibleAudio = (audioAssetId: string | undefined, source: ContentRepository) => {
+  if (!audioAssetId) return false;
+  const release = source.releases.find((candidate) => candidate.id === source.activeReleaseByStandard.hsk3 && candidate.status === "published" && !candidate.withdrawnAt);
+  const asset = source.audioAssets.find((candidate) => candidate.id === audioAssetId);
+  return Boolean(release?.audioAssetIds.includes(audioAssetId) && asset && !asset.withdrawnAt && asset.authorization.status === "authorized" && asset.qaStatus === "approved" && asset.usageRights.streaming);
 };
 
-export function placementCatalog(version = PLACEMENT_VERSION) {
+const ALL_PLACEMENT_QUESTIONS: PlacementQuestion[] = [...PLACEMENT_TEXT_QUESTIONS, ...PLACEMENT_LISTENING_QUESTIONS].map((question) => {
+  const audioAssetId = question.skill === "listening" ? AUDIO_ASSET_BY_PATH[question.audioSrc ?? ""] : undefined;
+  return {
+    ...question,
+    audioAssetId,
+    sourceRef: audioAssetId ?? `hskkit-placement-editorial:${question.id}`,
+    sourceUrl: "https://hskkit.com/content-license",
+    qaStatus: "approved",
+    lifecycleStatus: "published",
+  };
+});
+
+export const PLACEMENT_QUESTIONS = ALL_PLACEMENT_QUESTIONS.filter((question) => question.skill !== "listening" || isEligibleAudio(question.audioAssetId, repository));
+const LEGACY_PLACEMENT_QUESTIONS: PlacementQuestion[] = PLACEMENT_TEXT_QUESTIONS.map((question) => ({
+  ...question,
+  contentVersion: LEGACY_PLACEMENT_VERSION,
+  sourceRef: `hskkit-placement-editorial:${question.id}`,
+  sourceUrl: "https://hskkit.com/content-license",
+  qaStatus: "approved",
+  lifecycleStatus: "published",
+}));
+
+const PLACEMENT_CATALOGS: Record<string, PlacementQuestion[]> = {
+  [LEGACY_PLACEMENT_VERSION]: LEGACY_PLACEMENT_QUESTIONS,
+};
+
+export function placementCatalog(version = PLACEMENT_VERSION, source: ContentRepository = repository) {
+  if (version === PLACEMENT_VERSION) return ALL_PLACEMENT_QUESTIONS.filter((question) => question.skill !== "listening" || isEligibleAudio(question.audioAssetId, source));
   return PLACEMENT_CATALOGS[version] ?? [];
 }
 
-export function trustedPlacementQuestion(id: string, version = PLACEMENT_VERSION) {
-  return placementCatalog(version).find((question) => question.id === id);
+export function trustedPlacementQuestion(id: string, version = PLACEMENT_VERSION, source: ContentRepository = repository) {
+  return placementCatalog(version, source).find((question) => question.id === id);
 }
 
 export function publicPlacementQuestion(question: PlacementQuestion) {

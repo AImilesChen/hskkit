@@ -34,8 +34,8 @@ test("Practice levels 2-6 use versioned questions derived from the active formal
     const questions = practiceQuestionSet(level, "vocabulary");
     assert.ok(questions.length >= 3);
     assert.ok(questions.every((question) => question.level === level));
-    assert.ok(questions.every((question) => question.id.startsWith(`practice-catalog-l${level}-`)));
-    assert.ok(questions.every((question) => question.contentVersion.startsWith("hsk3-gf0025-2021-v2:")));
+    assert.ok(questions.every((question) => question.id.startsWith(`practice-v2-level-${level}-vocabulary-`)));
+    assert.ok(questions.every((question) => question.contentVersion.startsWith("hskkit-practice-multiskill-v2:")));
     const created = createPracticeSession(emptyLearningState(), {
       ownerId: `guest-l${level}`, level, skill: "vocabulary", idempotencyKey: `create-l${level}`, now,
     });
@@ -52,9 +52,12 @@ test("Practice levels 2-6 use versioned questions derived from the active formal
   }
 });
 
-test("practice refuses levels without an approved bounded question set", () => {
-  assert.throws(() => createPracticeSession(emptyLearningState(), {
+test("practice publishes the unified Advanced 7–9 band at level 7 and refuses fake standalone levels 8–9", () => {
+  assert.ok(createPracticeSession(emptyLearningState(), {
     ownerId: "guest-1", level: 7, skill: "vocabulary", idempotencyKey: "create-7", now,
+  }).session.questionIds.length >= 8);
+  assert.throws(() => createPracticeSession(emptyLearningState(), {
+    ownerId: "guest-1", level: 8, skill: "vocabulary", idempotencyKey: "create-8", now,
   }), /PRACTICE_NOT_READY/);
 });
 
@@ -189,9 +192,11 @@ test("Today practice completes only after the whole session and inserts wrong an
   });
   let state = started.state;
   for (const [index, questionId] of started.session.questionIds.entries()) {
+    const question = trustedPracticeQuestion(questionId)!;
+    const wrong = Object.keys(question.options).find((answer) => answer !== question.correctAnswer)!;
     state = answerPracticeQuestion(state, {
       ownerId: "guest:today-practice", sessionId: started.session.id, questionId,
-      answer: index === 0 ? "b" : "a", idempotencyKey: `today-answer-${index}`, now,
+      answer: index === 0 ? wrong : question.correctAnswer, idempotencyKey: `today-answer-${index}`, now,
     }).state;
     const practiceItem = state.dailySessions[0].items.find((item) => item.kind === "practice");
     assert.equal(practiceItem?.status, index === started.session.questionIds.length - 1 ? "completed" : "pending");

@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 
-type Question = { id: string; prompt: string; context?: string; options: Record<string, string>; level: number; skill: string; contentVersion: string };
+type Question = { id: string; prompt: string; context?: string; audioSrc?: string; options: Record<string, string>; level: number; skill: string; contentVersion: string };
 type Feedback = { questionId: string; selectedAnswer: string; correct: boolean; correctAnswer: string; correctAnswerText: string; explanation: string; weaknessTag: string };
 type Session = { id: string; status: "in_progress" | "completed" | "expired"; level: number; skill: string; questionVersion: string; expiresAt: string; questions: Question[]; feedback: Feedback[]; result?: { correctCount: number; totalCount: number; weaknessTags: string[] } };
 
@@ -86,8 +86,8 @@ export default function PracticeClient({ level, skill, dailySessionId, dailyItem
     <span className="text-xs font-extrabold uppercase tracking-[.2em] text-blue-700">HSK 3.0 bounded practice</span>
     <h1 className="mt-4 max-w-3xl font-serif text-4xl font-bold leading-tight text-slate-950 sm:text-6xl">Level {level} {skill.replaceAll("-", " ")} practice</h1>
     <p className="mt-5 max-w-2xl text-lg leading-8 text-slate-600">Get immediate feedback. Wrong answers create a recoverable Mistake and SRS review card; refresh restores the same session.</p>
-    {level >= 1 && level <= 6 && skill === "vocabulary" ? <p className="mt-6 rounded-2xl border border-amber-200 bg-amber-50 p-4 text-sm leading-6 text-amber-950"><strong>Current published scope:</strong> this bounded set contains three version-locked vocabulary items from the active formal Level {level} release.</p> : <p className="mt-6 rounded-2xl border border-slate-200 bg-slate-50 p-4 text-sm leading-6 text-slate-700">This level and skill are not published yet. No legacy HSK 2.0 questions will be substituted.</p>}
-    {error && <Alert text={error === "PRACTICE_NOT_READY" ? "This practice set is not ready. Choose Level 1–6 vocabulary for a published bounded set." : error} />}
+    {(level >= 1 && level <= 7) ? <p className="mt-6 rounded-2xl border border-emerald-200 bg-emerald-50 p-4 text-sm leading-6 text-emerald-950"><strong>Published scope:</strong> eight version-locked {skill} questions with source, QA, answer, explanation and lifecycle records. Level 7 represents the unified Advanced 7–9 band.</p> : <p className="mt-6 rounded-2xl border border-slate-200 bg-slate-50 p-4 text-sm leading-6 text-slate-700">Use the unified Advanced 7–9 band. No separate HSK 8 or 9 official list is implied.</p>}
+    {error && <Alert text={error === "PRACTICE_NOT_READY" ? "This practice set is not published. Choose Levels 1–6 or the unified Advanced 7–9 band." : error} />}
     <div className="mt-8 flex flex-wrap gap-3"><button className="btn" disabled={busy} onClick={start}>Start practice</button><Link className="btn secondary" href="/practice">Choose another level or skill</Link></div>
   </main>;
 
@@ -105,7 +105,7 @@ export default function PracticeClient({ level, skill, dailySessionId, dailyItem
     <p className="mt-5 text-xl text-slate-700">{session.result?.correctCount} of {session.result?.totalCount} correct · HSK 3.0 Level {session.level} {session.skill}</p>
     {session.result?.weaknessTags.length ? <div className="mt-6 rounded-2xl border border-amber-200 bg-amber-50 p-5"><h2 className="font-bold text-amber-950">Review created</h2><p className="mt-2 text-amber-900">Weakness: {session.result.weaknessTags.join(", ")}. Wrong attempts remain in Mistakes and are scheduled in Review.</p></div> : <div className="mt-6 rounded-2xl border border-emerald-200 bg-emerald-50 p-5 text-emerald-900">No wrong answers in this session.</div>}
     {error && <Alert text={error} />}
-    <div className="mt-8 flex flex-wrap gap-3"><Link className="btn" href="/mistakes">Open Mistakes</Link><Link className="btn secondary" href="/review">Open Review</Link><button className="btn secondary" disabled={busy} onClick={start}>Practice again</button><Link className="btn secondary" href="/today">Continue Today</Link></div>
+    <div className="mt-8 flex flex-wrap gap-3"><Link className="btn" href="/mistakes">Open Mistakes</Link><Link className="btn secondary" href="/review">Open Review/SRS</Link><Link className="btn secondary" href={`/planner?source=practice&level=${session.level}&skill=${session.skill}`}>Create or update learning plan</Link><button className="btn secondary" disabled={busy} onClick={start}>Practice again</button><Link className="btn secondary" href="/today">Continue Today</Link></div>
   </main>;
 
   const question = session.questions[index];
@@ -116,6 +116,7 @@ export default function PracticeClient({ level, skill, dailySessionId, dailyItem
     <section className="mt-8 rounded-3xl border border-slate-200 bg-white p-5 shadow-sm sm:p-8">
       <p className="text-xs font-bold uppercase tracking-[.15em] text-slate-500">HSK 3.0 · Published bounded set</p>
       {question.context && <p className="mt-5 rounded-xl bg-slate-50 p-4 text-xl leading-8 text-slate-900">{question.context}</p>}
+      {question.audioSrc && <div className="mt-5 rounded-2xl border border-blue-100 bg-blue-50 p-4"><p className="mb-3 text-sm font-bold text-blue-950">Listen before answering</p><audio className="w-full" controls preload="metadata" src={question.audioSrc}>Your browser cannot play this approved audio item.</audio><p className="mt-2 text-xs text-blue-800">A playback error does not submit an answer or change Mistakes/SRS state.</p></div>}
       <h2 className="mt-5 font-serif text-2xl font-bold leading-tight text-slate-950 sm:text-3xl">{question.prompt}</h2>
       <div className="mt-6 grid gap-3">{Object.entries(question.options).map(([key, value]) => {
         const selected = feedback?.selectedAnswer === key;

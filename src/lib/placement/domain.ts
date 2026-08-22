@@ -147,7 +147,10 @@ export function submitPlacement(
     return { question, correct: answer.answer === question.correctAnswer };
   });
   const correctCount = evaluated.filter((entry) => entry.correct).length;
-  const recommendedLevel = Math.min(9, Math.max(1, correctCount));
+  const correctTextCount = evaluated.filter((entry) => entry.question.skill !== "listening" && entry.correct).length;
+  const recommendedLevel = Math.min(9, Math.max(1, correctTextCount));
+  const hasListeningEvidence = evaluated.some((entry) => entry.question.skill === "listening");
+  const listeningCorrect = evaluated.filter((entry) => entry.question.skill === "listening" && entry.correct).length;
   const weakSkills = [...new Set(
     evaluated.filter((entry) => !entry.correct).map((entry) => entry.question.skill),
   )];
@@ -159,10 +162,12 @@ export function submitPlacement(
     recommendedLevel,
     correctCount,
     totalCount: evaluated.length,
-    confidence: "low",
-    missingDimensions: ["listening"],
+    confidence: hasListeningEvidence ? "medium" : "low",
+    missingDimensions: hasListeningEvidence ? [] : ["listening"],
     weakSkills,
-    evidenceSummary: `${correctCount} of ${evaluated.length} diagnostic items were answered correctly. Listening was not measured.`,
+    evidenceSummary: hasListeningEvidence
+      ? `${correctCount} of ${evaluated.length} diagnostic items were answered correctly. Listening was measured with ${listeningCorrect} of ${evaluated.filter((entry) => entry.question.skill === "listening").length} approved audio items correct.`
+      : `${correctCount} of ${evaluated.length} diagnostic items were answered correctly. Listening was not measured.`,
     disclaimer: "This is a learning suggestion, not an official HSK score, certificate, or guarantee.",
     createdAt: input.now,
   };

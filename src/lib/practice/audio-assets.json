@@ -1,0 +1,257 @@
+{
+  "version": "hskkit-practice-audio-v1",
+  "assets": [
+    {
+      "id": "hsk3.practice.audio.level-1-1.v1",
+      "storageKey": "audio/practice/batch11-level-1-listening-1.mp3",
+      "text": "请给我一杯水，谢谢。",
+      "version": 1,
+      "checksumSha256": "d813cead6dc7706c37dca919dcdc5617f4eed6351cf6c157eaa41a824fcc7ff5",
+      "source": {
+        "name": "HSKKit-authored Batch 11 listening script synthesized for HSKKit",
+        "url": "https://hskkit.com/content-license"
+      },
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "qaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk3.practice.audio.level-1-2.v1",
+      "storageKey": "audio/practice/batch11-level-1-listening-2.mp3",
+      "text": "我叫李明，今年十八岁，是学生。",
+      "version": 1,
+      "checksumSha256": "4bf2c76420cfa9279b15c6fbc4b61402a039d9c030dd32ad5695a01b810ae346",
+      "source": {
+        "name": "HSKKit-authored Batch 11 listening script synthesized for HSKKit",
+        "url": "https://hskkit.com/content-license"
+      },
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "qaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk3.practice.audio.level-2-1.v1",
+      "storageKey": "audio/practice/batch11-level-2-listening-1.mp3",
+      "text": "老师让我们练习发音，明天上课前要练习三遍。",
+      "version": 1,
+      "checksumSha256": "7c6b6b272da9146856eaf9e65f9944ce7cc00c30639db730bd27520e7636d19f",
+      "source": {
+        "name": "HSKKit-authored Batch 11 listening script synthesized for HSKKit",
+        "url": "https://hskkit.com/content-license"
+      },
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "qaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk3.practice.audio.level-2-2.v1",
+      "storageKey": "audio/practice/batch11-level-2-listening-2.mp3",
+      "text": "今天比昨天冷，你出门的时候别忘了带外套。",
+      "version": 1,
+      "checksumSha256": "f9a64f893bbd746ea1959ce450b2056dfda88452e2454aaf31c69bb323850631",
+      "source": {
+        "name": "HSKKit-authored Batch 11 listening script synthesized for HSKKit",
+        "url": "https://hskkit.com/content-license"
+      },
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "qaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk3.practice.audio.level-3-1.v1",
+      "storageKey": "audio/practice/batch11-level-3-listening-1.mp3",
+      "text": "每天早上，林月先复习十个生词，再听十五分钟中文。她把不懂的句子写在本子上，晚上再看一遍。",
+      "version": 1,
+      "checksumSha256": "55e1a2e6028e8e94cc4bfb19b84d78c0dd0cba57f2736b9e7a69b1830e3ff92f",
+      "source": {
+        "name": "HSKKit-authored Batch 11 listening script synthesized for HSKKit",
+        "url": "https://hskkit.com/content-license"
+      },
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "qaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk3.practice.audio.level-3-2.v1",
+      "storageKey": "audio/practice/batch11-level-3-listening-2.mp3",
+      "text": "会议改到下午三点，地点还是二楼会议室，请大家提前十分钟到。",
+      "version": 1,
+      "checksumSha256": "9da43aacef7e8004be1c7d274db705f9ff33c43eb1726d93e9594ffa71a16bd3",
+      "source": {
+        "name": "HSKKit-authored Batch 11 listening script synthesized for HSKKit",
+        "url": "https://hskkit.com/content-license"
+      },
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "qaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk3.practice.audio.level-4-1.v1",
+      "storageKey": "audio/practice/batch11-level-4-listening-1.mp3",
+      "text": "各位乘客请注意，开往上海的列车晚点二十分钟，新的检票时间是九点十分。",
+      "version": 1,
+      "checksumSha256": "0521572b32bb5d2e0dfe7b2cfaed715c01cdc93802b41eec02b1ffb2097ad5c9",
+      "source": {
+        "name": "HSKKit-authored Batch 11 listening script synthesized for HSKKit",
+        "url": "https://hskkit.com/content-license"
+      },
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "qaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk3.practice.audio.level-4-2.v1",
+      "storageKey": "audio/practice/batch11-level-4-listening-2.mp3",
+      "text": "我已经把修改后的合同发到你的邮箱，请在今天下班前确认金额和日期。",
+      "version": 1,
+      "checksumSha256": "ab03f894ba3dda0b517f037c7c6db07e85ac9b4c8e5ac331f72b300061cbeb8a",
+      "source": {
+        "name": "HSKKit-authored Batch 11 listening script synthesized for HSKKit",
+        "url": "https://hskkit.com/content-license"
+      },
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "qaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk3.practice.audio.level-5-1.v1",
+      "storageKey": "audio/practice/batch11-level-5-listening-1.mp3",
+      "text": "调查结果显示，多数用户喜欢新的搜索方式，但希望保留旧版筛选条件作为备用。",
+      "version": 1,
+      "checksumSha256": "b2541d6a7e4e4de6a5201d2d05c06f34965c8a86801fb445ad0102cc292c404c",
+      "source": {
+        "name": "HSKKit-authored Batch 11 listening script synthesized for HSKKit",
+        "url": "https://hskkit.com/content-license"
+      },
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "qaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk3.practice.audio.level-5-2.v1",
+      "storageKey": "audio/practice/batch11-level-5-listening-2.mp3",
+      "text": "由于原材料价格上涨，本季度成本增加了百分之八，不过交付时间没有受到影响。",
+      "version": 1,
+      "checksumSha256": "0ccec2c93203209dbf4c105f894022259da1301feaa1729cd58193a97462144c",
+      "source": {
+        "name": "HSKKit-authored Batch 11 listening script synthesized for HSKKit",
+        "url": "https://hskkit.com/content-license"
+      },
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "qaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk3.practice.audio.level-6-1.v1",
+      "storageKey": "audio/practice/batch11-level-6-listening-1.mp3",
+      "text": "专家提醒，相关性并不等于因果关系，在获得更多实验数据之前，不应把初步发现写成确定结论。",
+      "version": 1,
+      "checksumSha256": "90a12be1715e9fa18fa95956830144581cbb4bff439caa595f85bf1e0850eeeb",
+      "source": {
+        "name": "HSKKit-authored Batch 11 listening script synthesized for HSKKit",
+        "url": "https://hskkit.com/content-license"
+      },
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "qaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk3.practice.audio.level-6-2.v1",
+      "storageKey": "audio/practice/batch11-level-6-listening-2.mp3",
+      "text": "谈判暂时没有达成最终协议，不过双方同意继续交换资料，并在两周后举行下一轮会议。",
+      "version": 1,
+      "checksumSha256": "45a4a2b5a73ecdb39260da14e9385caeb99200ba5927807a60f213ab8d73ad80",
+      "source": {
+        "name": "HSKKit-authored Batch 11 listening script synthesized for HSKKit",
+        "url": "https://hskkit.com/content-license"
+      },
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "qaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk3.practice.audio.advanced-7-9-1.v1",
+      "storageKey": "audio/practice/batch11-advanced-7-9-listening-1.mp3",
+      "text": "委员会认可试点取得的阶段性进展，但认为样本范围仍然有限，建议扩大观察周期后再决定是否全面推广。",
+      "version": 1,
+      "checksumSha256": "68c4b7cd1a460b13ee2acf7c6a280b47e1c0f25ef39b6ea7ca675cfbc59f9e6e",
+      "source": {
+        "name": "HSKKit-authored Batch 11 listening script synthesized for HSKKit",
+        "url": "https://hskkit.com/content-license"
+      },
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "qaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk3.practice.audio.advanced-7-9-2.v1",
+      "storageKey": "audio/practice/batch11-advanced-7-9-listening-2.mp3",
+      "text": "表面上看，两个方案的平均收益相近，然而第二个方案的波动更大，对资源不足的参与者而言风险也更高。",
+      "version": 1,
+      "checksumSha256": "563cdf8cd712df528a0735de532ae58c82def8aa9c210c65a110ac8fb7b38697",
+      "source": {
+        "name": "HSKKit-authored Batch 11 listening script synthesized for HSKKit",
+        "url": "https://hskkit.com/content-license"
+      },
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "qaStatus": "approved",
+      "lifecycleStatus": "published"
+    }
+  ]
+}

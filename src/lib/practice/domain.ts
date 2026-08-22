@@ -1,6 +1,6 @@
 import { createHash } from "node:crypto";
 import { recordAttempt, type LearningState, type PracticeSession, type QuestionReport } from "../learning/domain.ts";
-import { practiceQuestionLifecycle, practiceQuestionSet, publicPracticeQuestion, trustedPracticeQuestion } from "./questions.ts";
+import { practiceQuestionLifecycle, practiceQuestionSet, publicPracticeQuestion, trustedPracticeQuestionVersion } from "./questions.ts";
 
 const stableId = (prefix: string, key: string) => `${prefix}_${createHash("sha256").update(key).digest("base64url")}`;
 const PRACTICE_SESSION_TTL_MS = 24 * 60 * 60 * 1000;
@@ -10,10 +10,9 @@ const expiresAt = (session: PracticeSession) => session.expiresAt ?? new Date(ne
 const isExpired = (session: PracticeSession, now: string) => session.status === "in_progress" && new Date(now).getTime() >= new Date(expiresAt(session)).getTime();
 
 export function isPracticeSessionCurrent(session: PracticeSession) {
-  const current = practiceQuestionSet(session.level, session.skill);
-  if (!current.length || current[0].contentVersion !== session.questionVersion || current.length !== session.questionIds.length) return false;
-  const currentIds = new Set(current.map((question) => question.id));
-  return session.questionIds.every((id) => currentIds.has(id) && practiceQuestionLifecycle(id) === "published");
+  const snapshots = session.questionIds.map((id) => trustedPracticeQuestionVersion(id, session.questionVersion));
+  if (!snapshots.length || snapshots.some((question) => !question)) return false;
+  return session.questionIds.every((id) => practiceQuestionLifecycle(id) === "published");
 }
 
 export function createPracticeSession(state: LearningState, input: {
@@ -85,7 +84,7 @@ export function selectPracticeSession(state: LearningState, input: {
 
 function feedbackFor(session: PracticeSession) {
   return session.answers.map((answer) => {
-    const question = trustedPracticeQuestion(answer.questionId);
+    const question = trustedPracticeQuestionVersion(answer.questionId, session.questionVersion);
     if (!question) throw new Error("PRACTICE_QUESTION_WITHDRAWN");
     return {
       questionId: answer.questionId,
@@ -102,7 +101,7 @@ function feedbackFor(session: PracticeSession) {
 export function publicPracticeSession(session: PracticeSession, now = session.createdAt) {
   const questions = session.questionIds.map((questionId) => {
     if (practiceQuestionLifecycle(questionId) === "withdrawn") throw new Error("PRACTICE_QUESTION_WITHDRAWN");
-    const question = trustedPracticeQuestion(questionId);
+    const question = trustedPracticeQuestionVersion(questionId, session.questionVersion);
     if (!question) throw new Error("PRACTICE_QUESTION_WITHDRAWN");
     return publicPracticeQuestion(question);
   });
@@ -163,7 +162,7 @@ export function answerPracticeQuestion(state: LearningState, input: {
     return { state, session, feedback };
   }
   if (isExpired(session, input.now)) throw new Error("PRACTICE_SESSION_EXPIRED");
-  const question = trustedPracticeQuestion(input.questionId);
+  const question = trustedPracticeQuestionVersion(input.questionId, session.questionVersion);
   if (practiceQuestionLifecycle(input.questionId) !== "published" || !question || !session.questionIds.includes(question.id) || question.contentVersion !== session.questionVersion) throw new Error("PRACTICE_QUESTION_WITHDRAWN");
   if (!Object.hasOwn(question.options, input.answer)) throw new Error("INVALID_PRACTICE_ANSWER");
   if (session.status !== "in_progress") throw new Error("PRACTICE_SESSION_CLOSED");
@@ -172,7 +171,7 @@ export function answerPracticeQuestion(state: LearningState, input: {
     idempotencyKey: input.idempotencyKey,
     contentId: `practice:${question.id}`,
     contentVersion: question.contentVersion,
-    dimension: "reading",
+    dimension: question.skill === "listening" ? "audio" : "reading",
     answer: input.answer,
     correctAnswer: question.correctAnswer,
     prompt: [question.context, question.prompt].filter(Boolean).join(" — "),
@@ -204,7 +203,7 @@ export function answerPracticeQuestion(state: LearningState, input: {
     result: complete ? {
       correctCount: answers.filter((answer) => answer.correct).length,
       totalCount: answers.length,
-      weaknessTags: [...new Set(answers.filter((answer) => !answer.correct).map((answer) => trustedPracticeQuestion(answer.questionId)?.weaknessTag).filter((value): value is string => Boolean(value)))],
+      weaknessTags: [...new Set(answers.filter((answer) => !answer.correct).map((answer) => trustedPracticeQuestionVersion(answer.questionId, session.questionVersion)?.weaknessTag).filter((value): value is string => Boolean(value)))],
     } : undefined,
   };
   const nextState = { ...attempted.state, practiceSessions: sessions(attempted.state).map((candidate) => candidate.id === updated.id ? updated : candidate) };
@@ -227,7 +226,7 @@ export function reportPracticeQuestion(state: LearningState, input: {
   }
   const session = sessions(state).find((candidate) => candidate.id === input.sessionId && candidate.ownerId === input.ownerId);
   if (!session || !session.questionIds.includes(input.questionId)) throw new Error("PRACTICE_QUESTION_NOT_FOUND");
-  const question = trustedPracticeQuestion(input.questionId);
+  const question = trustedPracticeQuestionVersion(input.questionId, session.questionVersion);
   if (!question) throw new Error("PRACTICE_QUESTION_WITHDRAWN");
   const report: QuestionReport = {
     id: stableId("question_report", `${input.ownerId}:${input.sessionId}:${input.questionId}:${input.idempotencyKey}`),

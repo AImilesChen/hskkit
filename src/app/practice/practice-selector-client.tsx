@@ -1,33 +1,48 @@
 "use client";
 
 import Link from "next/link";
-import { useSearchParams } from "next/navigation";
+import { useMemo, useState } from "react";
 
-const levels = Array.from({ length: 9 }, (_, index) => index + 1);
+const LEVELS = [
+  { value: 1, label: "Level 1", detail: "Foundation" },
+  { value: 2, label: "Level 2", detail: "Foundation" },
+  { value: 3, label: "Level 3", detail: "Intermediate" },
+  { value: 4, label: "Level 4", detail: "Intermediate" },
+  { value: 5, label: "Level 5", detail: "Upper intermediate" },
+  { value: 6, label: "Level 6", detail: "Upper intermediate" },
+  { value: 7, label: "Advanced 7–9", detail: "Unified advanced band" },
+] as const;
+const SKILLS = [
+  { slug: "vocabulary", label: "Vocabulary", detail: "Meaning and recognition" },
+  { slug: "grammar", label: "Grammar", detail: "Natural word order" },
+  { slug: "reading", label: "Reading", detail: "Passage comprehension" },
+  { slug: "listening", label: "Listening", detail: "Approved audio comprehension" },
+] as const;
 
 export default function PracticeSelectorClient() {
-  const rawLevel = useSearchParams().get("level");
-  const selectedLevel = rawLevel && Number.isInteger(Number(rawLevel)) && Number(rawLevel) >= 1 && Number(rawLevel) <= 9 ? Number(rawLevel) : undefined;
+  const [selectedLevel, setSelectedLevel] = useState<number>(1);
+  const [selectedSkill, setSelectedSkill] = useState<(typeof SKILLS)[number]["slug"]>("vocabulary");
+  const level = useMemo(() => LEVELS.find((item) => item.value === selectedLevel)!, [selectedLevel]);
+  const skill = useMemo(() => SKILLS.find((item) => item.slug === selectedSkill)!, [selectedSkill]);
 
-  return <main className="mx-auto min-h-[calc(100vh-64px)] max-w-5xl px-4 py-12 sm:px-8 sm:py-20">
-    <span className="text-xs font-extrabold uppercase tracking-[.2em] text-blue-700">HSK 3.0 Practice</span>
-    <h1 className="mt-4 font-serif text-4xl font-bold leading-tight text-slate-950 sm:text-6xl">Choose a level</h1>
-    <p className="mt-4 max-w-2xl text-lg leading-8 text-slate-600">Select your learning level first, then choose a published skill. These are bounded Practice sessions with immediate feedback, not full Mock exams.</p>
-    <div className="mt-8 grid grid-cols-3 gap-3 sm:grid-cols-5 lg:grid-cols-9" aria-label="Practice levels">
-      {levels.map((level) => <Link key={level} href={`/practice?level=${level}`} aria-current={selectedLevel === level ? "step" : undefined} className={`flex min-h-12 items-center justify-center rounded-2xl border-2 font-bold ${selectedLevel === level ? "border-blue-600 bg-blue-50 text-blue-800" : "border-slate-200 bg-white text-slate-800 hover:border-blue-300"}`}>Level {level}</Link>)}
-    </div>
-
-    <section className="mt-12 border-t border-slate-200 pt-10" aria-labelledby="skill-heading">
-      <h2 id="skill-heading" className="font-serif text-3xl font-bold text-slate-950">Choose a skill</h2>
-      {!selectedLevel ? <p className="mt-3 text-slate-600">Choose a level above to see its published skill sets.</p> : selectedLevel >= 1 && selectedLevel <= 6 ? <div className="mt-6 grid gap-4 sm:grid-cols-2">
-        <article className="rounded-3xl border border-emerald-200 bg-emerald-50 p-6">
-          <span className="text-xs font-extrabold uppercase tracking-[.16em] text-emerald-800">Published · 3 items</span>
-          <h3 className="mt-3 text-2xl font-bold text-slate-950">Vocabulary</h3>
-          <p className="mt-2 leading-7 text-slate-700">Immediate feedback, server-side recovery, Mistakes, and due-now Review.</p>
-          <Link className="btn mt-5" href={`/practice/${selectedLevel}/vocabulary`}>Continue to Level {selectedLevel} vocabulary</Link>
-        </article>
-      </div> : <div className="mt-6 rounded-2xl border border-slate-200 bg-slate-50 p-6 text-slate-700"><strong>Level {selectedLevel} has no published Practice set yet.</strong><p className="mt-2">We do not substitute legacy or unapproved questions into the new data contract.</p></div>}
+  return <div className="space-y-8">
+    <section aria-labelledby="choose-level" className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
+      <h2 className="text-2xl font-black text-slate-950" id="choose-level">Choose a level</h2>
+      <p className="mt-2 text-slate-600">Levels 1–6 follow their published band. HSK 7–9 uses one honest Advanced 7–9 band rather than pretending there are separate official lists.</p>
+      <div className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">{LEVELS.map((item) => <button aria-pressed={selectedLevel === item.value} className={`min-h-20 rounded-2xl border p-4 text-left transition ${selectedLevel === item.value ? "border-blue-600 bg-blue-50 text-blue-950" : "border-slate-200 bg-white text-slate-800 hover:border-blue-300"}`} key={item.value} onClick={() => setSelectedLevel(item.value)} type="button"><strong className="block">{item.label}</strong><span className="mt-1 block text-sm opacity-75">{item.detail}</span></button>)}</div>
     </section>
-    <section className="mt-12 rounded-3xl border border-slate-200 bg-slate-50 p-6"><span className="text-xs font-extrabold uppercase tracking-[.16em] text-slate-600">Mock readiness gate</span><h2 className="mt-3 font-serif text-3xl font-bold text-slate-950">Need a timed Mock?</h2><p className="mt-3 max-w-2xl leading-7 text-slate-700">Basic and advanced Mock routes stay gated until their timed structure, question set, authorization, and scoring rules are approved. No Practice set is relabeled as a Mock.</p><Link className="btn secondary mt-5" href="/mock/basic">Check Mock availability</Link></section>
-  </main>;
+
+    <section aria-labelledby="choose-skill" className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
+      <h2 className="text-2xl font-black text-slate-950" id="choose-skill">Choose a skill</h2>
+      <p className="mt-2 text-slate-600">Every available set has eight formally published, versioned questions with answer explanations and QA/source records.</p>
+      <div className="mt-6 grid gap-3 sm:grid-cols-2">{SKILLS.map((item) => <button aria-pressed={selectedSkill === item.slug} className={`min-h-20 rounded-2xl border p-4 text-left transition ${selectedSkill === item.slug ? "border-blue-600 bg-blue-50 text-blue-950" : "border-slate-200 bg-white text-slate-800 hover:border-blue-300"}`} key={item.slug} onClick={() => setSelectedSkill(item.slug)} type="button"><strong className="block">{item.label}</strong><span className="mt-1 block text-sm opacity-75">{item.detail}</span></button>)}</div>
+    </section>
+
+    <section className="flex flex-col gap-4 rounded-3xl bg-slate-950 p-6 text-white sm:flex-row sm:items-center sm:justify-between sm:p-8">
+      <div><p className="text-sm font-bold uppercase tracking-[0.16em] text-blue-300">Ready</p><h2 className="mt-2 text-2xl font-black">{level.label} · {skill.label}</h2><p className="mt-1 text-slate-300">Eight questions · immediate feedback · Mistakes and SRS saved</p></div>
+      {selectedSkill === "vocabulary"
+        ? <Link className="inline-flex min-h-12 items-center justify-center rounded-xl bg-blue-500 px-6 font-bold text-white hover:bg-blue-400" href={`/practice/${selectedLevel}/vocabulary`}>Start vocabulary practice</Link>
+        : <Link className="inline-flex min-h-12 items-center justify-center rounded-xl bg-blue-500 px-6 font-bold text-white hover:bg-blue-400" href={`/practice/${selectedLevel}/${selectedSkill}`}>Start {skill.label.toLowerCase()} practice</Link>}
+    </section>
+  </div>;
 }

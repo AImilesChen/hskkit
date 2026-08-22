@@ -9,9 +9,10 @@ type Question = {
   standardVersion: string;
   contentVersion: string;
   level: number;
-  skill: "vocabulary_grammar" | "reading";
+  skill: "vocabulary_grammar" | "reading" | "listening";
   prompt: string;
   context?: string;
+  audioSrc?: string;
   options: Record<string, string>;
   publicationStatus: "diagnostic-only";
 };
@@ -165,15 +166,15 @@ export default function PlacementClient() {
     const loadFailed = Boolean(error) && !expired && !noQuestions;
     return (
       <main className="mx-auto min-h-[70vh] max-w-3xl px-5 py-14 sm:py-20">
-        <p className="text-sm font-bold uppercase tracking-[0.18em] text-blue-700">HSKKit diagnostic · version 1</p>
+        <p className="text-sm font-bold uppercase tracking-[0.18em] text-blue-700">HSKKit diagnostic · multiskill version 2</p>
         <h1 className="mt-4 text-4xl font-black tracking-tight text-slate-950 sm:text-5xl">
           {expired ? "Your saved placement session expired" : noQuestions ? "Placement is temporarily unavailable" : loadFailed ? "We couldn't load your placement" : "Find a practical starting level"}
         </h1>
         <p className="mt-5 max-w-2xl text-lg leading-8 text-slate-600">
-          {expired ? "Placement sessions stay available for seven days. Start a new version-locked session to continue." : noQuestions ? "No approved versioned diagnostic questions are available right now. No empty or demo result will be generated." : loadFailed ? "Your saved answers have not been changed. Retry loading before starting a new session." : "Answer nine vocabulary, grammar, and reading questions. Your progress is saved after every answer, so you can refresh and continue."}
+          {expired ? "Placement sessions stay available for seven days. Start a new version-locked session to continue." : noQuestions ? "No approved versioned diagnostic questions are available right now. No empty or demo result will be generated." : loadFailed ? "Your saved answers have not been changed. Retry loading before starting a new session." : "Answer versioned vocabulary, grammar, reading and approved Listening questions. Your progress is saved after every answer, so you can refresh and continue."}
         </p>
-        {!loadFailed && !noQuestions ? <div className="mt-8 rounded-3xl border border-amber-200 bg-amber-50 p-5 text-sm leading-6 text-amber-950">
-          <strong>Current evidence limit:</strong> listening is not measured because an approved audio diagnostic set is not yet published. Every result is therefore shown with low confidence and is only a learning suggestion.
+        {!loadFailed && !noQuestions ? <div className="mt-8 rounded-3xl border border-blue-200 bg-blue-50 p-5 text-sm leading-6 text-blue-950">
+          <strong>Evidence scope:</strong> this diagnostic includes three approved formal Listening items. If approved audio becomes unavailable, the server keeps the honest low-confidence, Listening-missing fallback instead of inventing evidence.
         </div> : null}
         {error && !expired ? <p className="mt-5 rounded-xl bg-red-50 p-4 text-sm text-red-800" role="alert">Could not load or start the diagnostic: {error}</p> : null}
         <div className="mt-8 flex flex-col gap-3 sm:flex-row">
@@ -199,9 +200,10 @@ export default function PlacementClient() {
         <div className="h-full rounded-full bg-blue-600" style={{ width: `${progress}%` }} />
       </div>
       <section className="mt-8 rounded-3xl border border-slate-200 bg-white p-6 shadow-sm sm:p-9" aria-labelledby="placement-question">
-        <div className="flex flex-wrap gap-2 text-xs font-bold uppercase tracking-wider text-blue-700"><span>HSK 3.0 diagnostic</span><span aria-hidden="true">·</span><span>{question.skill === "reading" ? "Reading" : "Vocabulary & grammar"}</span></div>
+        <div className="flex flex-wrap gap-2 text-xs font-bold uppercase tracking-wider text-blue-700"><span>HSK 3.0 diagnostic</span><span aria-hidden="true">·</span><span>{question.skill === "reading" ? "Reading" : question.skill === "listening" ? "Listening" : "Vocabulary & grammar"}</span></div>
         <h1 className="mt-4 text-2xl font-black leading-tight text-slate-950 sm:text-3xl" id="placement-question">{question.prompt}</h1>
         {question.context ? <p className="mt-5 rounded-2xl bg-slate-50 p-5 text-lg leading-8 text-slate-900" lang="zh-Hans">{question.context}</p> : null}
+        {question.audioSrc ? <div className="mt-5 rounded-2xl border border-blue-100 bg-blue-50 p-4"><audio className="w-full" controls preload="metadata" src={question.audioSrc}>Your browser cannot play this approved audio item.</audio><p className="mt-2 text-xs text-blue-800">Playback failures never submit an answer or change your learning state.</p></div> : null}
         <fieldset className="mt-6 grid gap-3" disabled={saving}>
           <legend className="sr-only">Choose one answer</legend>
           {Object.entries(question.options).map(([option, label]) => (

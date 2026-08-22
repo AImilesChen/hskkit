@@ -13,6 +13,6 @@ export default async function PracticePage({ params, searchParams }: { params: P
   const { level: rawLevel, skill } = await params;
   const { dailySessionId, dailyItemId } = await searchParams;
   const level = Number(rawLevel);
-  if (!Number.isInteger(level) || level < 1 || level > 9 || !/^[a-z-]+$/.test(skill)) notFound();
+  if (!Number.isInteger(level) || level < 1 || level > 7 || !["vocabulary", "grammar", "reading", "listening"].includes(skill)) notFound();
   return <StudyPage><PracticeClient level={level} skill={skill} dailySessionId={dailySessionId} dailyItemId={dailyItemId} /></StudyPage>;
 }
