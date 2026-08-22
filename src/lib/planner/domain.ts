@@ -28,12 +28,14 @@ export interface StudyPlan {
   warnings: string[];
   sessions: PlanSession[];
   status: "active" | "superseded";
+  signals?: { placementLevel?: number; weakPoints: WeakPoint[]; dueCards: number };
+  adjustmentReasons?: Array<{ code: "PLACEMENT_BASELINE" | "PRACTICE_WEAKNESS" | "SRS_LOAD" | "USER_AVAILABILITY"; message: string }>;
 }
 export type PlannerResult =
   | { ok: true; plan: StudyPlan }
   | { ok: false; code: "PLAN_INFEASIBLE"; minimumWeeklyMinutes: number; suggestedTargetDate?: string; warnings: string[] };
 
-type BuildInput = PlannerInputs & { state: LearningState; now: string; ownerId?: string; version?: number; id?: string };
+type BuildInput = PlannerInputs & { state: LearningState; now: string; ownerId?: string; version?: number; id?: string; placementLevel?: number };
 
 const uniqueDays = (days: number[]) => [...new Set(days)].filter((day) => Number.isInteger(day) && day >= 0 && day <= 6).sort();
 const DATE_ONLY = /^(\d{4})-(\d{2})-(\d{2})$/;
@@ -66,13 +68,24 @@ export function weakPointsFromLearning(state: LearningState): WeakPoint[] {
   for (const mistake of state.mistakes.filter((item) => item.status === "open")) {
     const attempt = state.attempts.find((item) => item.id === mistake.sourceAttemptId);
     let point: WeakPoint = "reading";
-    if (mistake.contentId.startsWith("grammar:")) point = "grammar";
+    if (attempt?.mode === "practice" && attempt.skill === "grammar") point = "grammar";
+    else if (attempt?.mode === "practice" && attempt.skill === "listening") point = "listening";
+    else if (mistake.contentId.startsWith("grammar:")) point = "grammar";
     else if (mistake.contentId.includes("tone")) point = "tone";
     else if (mistake.contentId.includes("dictation")) point = "dictation";
     else if (mistake.contentId.startsWith("listening:") || attempt?.dimension !== "reading") point = "listening";
     counts.set(point, (counts.get(point) ?? 0) + 1);
   }
   return [...counts.entries()].sort((a, b) => b[1] - a[1]).map(([point]) => point);
+}
+
+export function plannerSignalsFromLearning(state: LearningState, now: string) {
+  const latestPlacement = [...(state.placementResults ?? [])].sort((a, b) => b.createdAt.localeCompare(a.createdAt))[0];
+  return {
+    placementLevel: latestPlacement?.recommendedLevel,
+    weakPoints: weakPointsFromLearning(state),
+    dueCards: state.cards.filter((card) => Date.parse(card.dueAt) <= Date.parse(now)).length,
+  };
 }
 
 export function buildPlannerDraft(input: BuildInput): PlannerResult {
@@ -86,7 +99,11 @@ export function buildPlannerDraft(input: BuildInput): PlannerResult {
   const dueCards = input.state.cards.filter((card) => Date.parse(card.dueAt) <= current).length;
   const srsMinutes = dueCards * 2;
   const weeks = Math.max(1, Math.floor((target - current) / (7 * 86_400_000)));
-  const curriculumMinutes = goalLevel * 120;
+  const placementBaseline = Number.isInteger(input.placementLevel)
+    ? Math.max(1, Math.min(9, input.placementLevel!))
+    : undefined;
+  const remainingLevels = placementBaseline === undefined ? goalLevel : Math.max(0, goalLevel - placementBaseline);
+  const curriculumMinutes = placementBaseline === undefined ? goalLevel * 120 : Math.max(60, remainingLevels * 120);
   const goalPerWeek = Math.ceil(curriculumMinutes / weeks);
   const weakMinutes = Math.min(60, input.weakPoints.length * 15);
   const minimumWeeklyMinutes = srsMinutes + weakMinutes + goalPerWeek;
@@ -139,12 +156,22 @@ export function buildPlannerDraft(input: BuildInput): PlannerResult {
     sessionsCreated += 1;
     return { day, minutes: tasks.reduce((sum, task) => sum + task.minutes, 0), tasks };
   });
+  const adjustmentReasons: NonNullable<StudyPlan["adjustmentReasons"]> = [
+    { code: "USER_AVAILABILITY", message: `Scheduled within ${input.weeklyMinutes} available minutes across ${days.length} days.` },
+  ];
+  if (placementBaseline) adjustmentReasons.push({ code: "PLACEMENT_BASELINE", message: placementBaseline >= goalLevel
+    ? `Placement recommended HSK ${placementBaseline}; the plan reserves maintenance work at the HSK ${goalLevel} goal.`
+    : `Placement recommended HSK ${placementBaseline}; the plan allocates work across ${remainingLevels} remaining level${remainingLevels === 1 ? "" : "s"} toward HSK ${goalLevel}.` });
+  if (input.weakPoints.length) adjustmentReasons.push({ code: "PRACTICE_WEAKNESS", message: `Reserved time for unresolved ${input.weakPoints.join(", ")} weaknesses.` });
+  if (dueCards) adjustmentReasons.push({ code: "SRS_LOAD", message: `Reserved ${srsMinutes} minutes for ${dueCards} due SRS cards.` });
   return {
     ok: true,
     plan: {
       id: input.id ?? crypto.randomUUID(), ownerId: input.ownerId ?? "preview", version: input.version ?? 1, createdAt: input.now,
       inputs: { goalLevel, targetDate: input.targetDate, weeklyMinutes: input.weeklyMinutes, preferredDays: days, weakPoints: [...input.weakPoints] },
       srsLoad: { dueCards, weeklyMinutes: srsMinutes }, warnings, sessions, status: "active",
+      signals: { placementLevel: placementBaseline, weakPoints: [...input.weakPoints], dueCards },
+      adjustmentReasons,
     },
   };
 }

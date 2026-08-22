@@ -59,6 +59,7 @@ export interface DailyItem {
   contentVersion?: string;
   title?: string;
   href?: string;
+  estimatedMinutes?: number;
 }
 export interface DailySession {
   id: string;
@@ -71,6 +72,8 @@ export interface DailySession {
   contentReleaseId?: string;
   planFingerprint?: string;
   notice?: { code: string; message: string; actionHref: string; actionLabel: string };
+  budgetMinutes?: number;
+  totalEstimatedMinutes?: number;
   items: DailyItem[];
 }
 export interface PlacementAnswer {
@@ -156,6 +159,7 @@ export interface LearningState {
   questionReports?: QuestionReport[];
   audioReviewReady?: Array<{ cardId: string; cardRevision: number }>;
   audioPlaybackKeys?: string[];
+  dailyOperationKeys?: string[];
 }
 
 const id = (prefix: string, key: string) => `${prefix}_${createHash("sha256").update(key).digest("base64url")}`;
@@ -357,7 +361,35 @@ export function completeDailyItem(state: LearningState, sessionId: string, itemI
   return { state: { ...state, dailySessions }, item: updated.items.find((item) => item.id === itemId)! };
 }
 
-export function buildDailySession(state: LearningState, input: { ownerId: string; localDay: string; ruleVersion: string; now: string; dailyContent?: TodayContentPlan }) {
+export function applyDailyItemAction(state: LearningState, input: {
+  sessionId: string;
+  itemId: string;
+  action: "complete" | "skip" | "restore";
+  idempotencyKey: string;
+  observedAt: string;
+}) {
+  if (!input.idempotencyKey) throw new Error("INVALID_IDEMPOTENCY_KEY");
+  if ((state.dailyOperationKeys ?? []).includes(input.idempotencyKey)) {
+    const replay = state.dailySessions.find((session) => session.id === input.sessionId)?.items.find((item) => item.id === input.itemId);
+    if (!replay) throw new Error("ITEM_NOT_FOUND");
+    return { state, item: replay, replayed: true as const };
+  }
+  const session = state.dailySessions.find((candidate) => candidate.id === input.sessionId);
+  if (!session) throw new Error("SESSION_NOT_FOUND");
+  const current = session.items.find((item) => item.id === input.itemId);
+  if (!current || current.kind === "summary") throw new Error("ITEM_NOT_FOUND");
+  if (input.action !== "restore" && session.items.find((item) => item.status === "pending")?.id !== current.id) throw new Error("ITEM_OUT_OF_ORDER");
+  if (input.action === "complete" && current.kind !== "learn") throw new Error("ITEM_REQUIRES_ACTIVITY");
+  if (input.action === "restore" && current.status !== "skipped") throw new Error("ITEM_NOT_SKIPPED");
+  const status = input.action === "restore" ? "pending" as const : input.action === "skip" ? "skipped" as const : "completed" as const;
+  const dailySessions = state.dailySessions.map((candidate) => candidate.id === input.sessionId
+    ? reconcileSummary({ ...candidate, completedAt: input.action === "restore" ? undefined : candidate.completedAt, items: candidate.items.map((item) => item.id === input.itemId ? { ...item, status } : item) }, input.observedAt)
+    : candidate);
+  const next = { ...state, dailySessions, dailyOperationKeys: [...(state.dailyOperationKeys ?? []).slice(-499), input.idempotencyKey] };
+  return { state: next, item: dailySessions.find((candidate) => candidate.id === input.sessionId)!.items.find((item) => item.id === input.itemId)!, replayed: false as const };
+}
+
+export function buildDailySession(state: LearningState, input: { ownerId: string; localDay: string; ruleVersion: string; now: string; dailyContent?: TodayContentPlan; budgetMinutes?: number }) {
   const prior = state.dailySessions.find((session) => session.ownerId === input.ownerId && session.localDay === input.localDay);
   const due: DailyItem[] = state.cards
     .filter((card) => card.dueAt <= input.now)
@@ -387,6 +419,18 @@ export function buildDailySession(state: LearningState, input: { ownerId: string
     { id: "practice:1:vocabulary", kind: "practice", contentId: "practice:1:vocabulary", contentVersion: practiceQuestionSet(1, "vocabulary")[0]?.contentVersion, dimension: "reading", status: "pending" },
     { id: "summary", kind: "summary", contentId: "summary", status: "pending" },
   ];
+  const estimate = (item: DailyItem) => item.kind === "summary" ? 0 : item.kind === "review" || item.kind === "listen" ? 3 : item.kind === "learn" ? 5 : 8;
+  const budgetMinutes = Number.isInteger(input.budgetMinutes) && Number(input.budgetMinutes) >= 5 && Number(input.budgetMinutes) <= 180 ? Number(input.budgetMinutes) : prior?.budgetMinutes ?? 30;
+  const candidates = [...due, ...core.filter((item) => item.kind !== "summary")].map((item) => ({ ...item, estimatedMinutes: item.estimatedMinutes ?? estimate(item) }));
+  let used = 0;
+  const planned = candidates.filter((item) => {
+    const minutes = item.estimatedMinutes ?? 0;
+    if (used + minutes > budgetMinutes) return false;
+    used += minutes;
+    return true;
+  });
+  const summary = { ...(core.find((item) => item.kind === "summary") ?? { id: "summary", kind: "summary" as const, contentId: "summary", status: "pending" as const }), estimatedMinutes: 0 };
+  const plannedItems = [...planned, summary];
   if (prior) {
     const dueIds = new Set(due.map((item) => item.id));
     const priorPendingReviewIds = prior.items.filter((item) => item.kind === "review" && item.status === "pending").map((item) => item.id);
@@ -394,13 +438,21 @@ export function buildDailySession(state: LearningState, input: { ownerId: string
       && priorPendingReviewIds.every((itemId) => dueIds.has(itemId));
     const samePlan = prior.ruleVersion === input.ruleVersion
       && prior.planFingerprint === planFingerprint
+      && (prior.budgetMinutes ?? 30) === budgetMinutes
       && duePlanMatches;
     if (samePlan) return { state, session: prior };
-    const completedHistory = prior.items.filter((item) => item.kind !== "summary" && item.status === "completed");
-    const replacement = [...due, ...core].filter((item) => !completedHistory.some((completed) => completed.id === item.id));
+    const activePlanned = plannedItems.filter((item) => item.kind !== "summary");
+    const retained = activePlanned.map((item) => {
+      const previous = prior.items.find((candidate) => candidate.id === item.id && candidate.contentVersion === item.contentVersion);
+      return previous?.status === "completed" || previous?.status === "skipped" ? { ...item, status: previous.status } : item;
+    });
+    const archivedCompleted = prior.items.filter((item) => item.kind !== "summary" && item.status === "completed" && !activePlanned.some((plannedItem) => plannedItem.id === item.id));
+    const replacement = [...archivedCompleted, ...retained, summary];
     const refreshed: DailySession = {
       ...prior,
       ruleVersion: input.ruleVersion,
+      budgetMinutes,
+      totalEstimatedMinutes: replacement.reduce((sum, item) => sum + (item.estimatedMinutes ?? estimate(item)), 0),
       startLevel: content?.startLevel,
       contentReleaseId: content?.releaseId,
       planFingerprint,
@@ -409,7 +461,7 @@ export function buildDailySession(state: LearningState, input: { ownerId: string
         : content?.status === "ready"
           ? { code: "CONTENT_UPDATED", message: "Daily content was updated to the current approved learning plan. Completed history was kept.", actionHref: "/today", actionLabel: "Continue updated session" }
           : undefined,
-      items: [...completedHistory, ...replacement],
+      items: replacement,
     };
     const reconciled = reconcileSummary(refreshed, input.now);
     return { state: { ...state, dailySessions: state.dailySessions.map((session) => session.id === prior.id ? reconciled : session) }, session: reconciled };
@@ -423,8 +475,10 @@ export function buildDailySession(state: LearningState, input: { ownerId: string
     startLevel: content?.startLevel,
     contentReleaseId: content?.releaseId,
     planFingerprint,
+    budgetMinutes,
+    totalEstimatedMinutes: plannedItems.reduce((sum, item) => sum + (item.estimatedMinutes ?? estimate(item)), 0),
     notice: content?.status === "empty" ? { code: content.code, message: content.message, actionHref: content.actionHref, actionLabel: content.actionLabel } : undefined,
-    items: [...due, ...core],
+    items: plannedItems,
   };
   const reconciled = reconcileSummary(session, input.now);
   return { state: { ...state, dailySessions: [...state.dailySessions, reconciled] }, session: reconciled };

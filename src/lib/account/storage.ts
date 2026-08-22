@@ -4,6 +4,8 @@ import { loadState } from "../learning/storage";
 import { listAllPlans } from "../planner/storage";
 import { aiRuntimePolicy } from "../ai/domain";
 import { AI_MERGE_BUCKET_SQL } from "../ai/merge";
+import { createAuditEvent } from "./access-policy";
+import { POLICY_AUDIT_SQL, policyAuditBindings } from "./audit-storage";
 import {
   createDataRequest,
   mergeLearningStates,
@@ -151,15 +153,26 @@ export async function createMergePreview(userId: string, guestOwnerId: string) {
   const mergeTokenHash = await hash(mergeKey);
   const timestamp = now();
   const expiresAt = new Date(Date.now() + 30 * 60_000).toISOString();
-  if (existing) {
-    const updated = await db().prepare("UPDATE guest_merges SET merge_token_hash=?,state='previewed',preview_json=?,account_revision=?,guest_revision=?,updated_at=?,expires_at=? WHERE id=? AND user_id=? AND state!='confirmed'")
-      .bind(mergeTokenHash, JSON.stringify(storedPreview), accountState.revision, guestState.revision, timestamp, expiresAt, id, userId).run();
-    if ((updated.meta.changes ?? 0) !== 1) throw new Error("GUEST_ALREADY_MERGED");
-  } else {
-    await db().prepare("INSERT INTO guest_merges(id,user_id,guest_owner_id,merge_token_hash,state,preview_json,account_revision,guest_revision,created_at,updated_at,expires_at) VALUES(?,?,?,?,'previewed',?,?,?,?,?,?)")
-      .bind(id, userId, guestOwnerId, mergeTokenHash, JSON.stringify(storedPreview), accountState.revision, guestState.revision, timestamp, timestamp, expiresAt).run();
+  const database = db();
+  const assertionId = crypto.randomUUID();
+  const mutation = existing
+    ? database.prepare("UPDATE guest_merges SET merge_token_hash=?,state='previewed',preview_json=?,account_revision=?,guest_revision=?,updated_at=?,expires_at=? WHERE id=? AND user_id=? AND state!='confirmed'")
+      .bind(mergeTokenHash, JSON.stringify(storedPreview), accountState.revision, guestState.revision, timestamp, expiresAt, id, userId)
+    : database.prepare("INSERT INTO guest_merges(id,user_id,guest_owner_id,merge_token_hash,state,preview_json,account_revision,guest_revision,created_at,updated_at,expires_at) VALUES(?,?,?,?,'previewed',?,?,?,?,?,?)")
+      .bind(id, userId, guestOwnerId, mergeTokenHash, JSON.stringify(storedPreview), accountState.revision, guestState.revision, timestamp, timestamp, expiresAt);
+  const policyAudit = createAuditEvent({ subjectId: ownerId(userId), action: "merge_preview", resourceType: "account", resourceId: id, result: "success", idempotencyKey: `merge-preview:${id}:${timestamp}`, createdAt: timestamp, metadata: { conflicts: preview.conflicts, additions: preview.additions } });
+  try {
+    await database.batch([
+      database.prepare("INSERT INTO account_cas_assertions(id,ok) VALUES(?, CASE WHEN EXISTS(SELECT 1 FROM accounts WHERE user_id=? AND status='active') AND (?=0 OR EXISTS(SELECT 1 FROM guest_merges WHERE id=? AND user_id=? AND state!='confirmed')) THEN 1 ELSE 0 END)").bind(assertionId, userId, existing ? 1 : 0, id, userId),
+      mutation,
+      database.prepare("INSERT INTO account_audit(id,user_id,action,resource_type,resource_id,result,metadata_json,idempotency_key,created_at) VALUES(?,?,'guest_merge_previewed','guest_merge',?,'success',?,?,?)").bind(crypto.randomUUID(), userId, id, JSON.stringify({ conflicts: preview.conflicts, additions: preview.additions }), `merge-preview:${id}:${timestamp}`, timestamp),
+      database.prepare(POLICY_AUDIT_SQL).bind(...policyAuditBindings(policyAudit)),
+      database.prepare("DELETE FROM account_cas_assertions WHERE id=?").bind(assertionId),
+    ]);
+  } catch (error) {
+    if (String(error).includes("account_cas_assertions") || String(error).includes("CHECK constraint")) throw new Error("GUEST_ALREADY_MERGED");
+    throw error;
   }
-  await audit(userId, "guest_merge_previewed", "guest_merge", id, "success", `merge-preview:${id}:${timestamp}`, { conflicts: preview.conflicts, additions: preview.additions });
   return { id, state: "previewed", preview: { ...preview, plannerVersions: guestPlans.length }, mergeKey, expiresAt };
 }
 
@@ -178,6 +191,7 @@ export async function closeMerge(userId: string, mergeId: string, mergeKey: stri
       db().prepare("INSERT INTO account_cas_assertions(id,ok) VALUES(?, CASE WHEN EXISTS(SELECT 1 FROM guest_merges WHERE id=? AND user_id=? AND state='previewed' AND merge_token_hash=?) AND EXISTS(SELECT 1 FROM accounts WHERE user_id=? AND status='active') THEN 1 ELSE 0 END)").bind(assertionId, mergeId, userId, row.merge_token_hash, userId),
       db().prepare("UPDATE guest_merges SET state='cancelled',updated_at=? WHERE id=? AND state='previewed'").bind(timestamp, mergeId),
       db().prepare("INSERT INTO account_audit(id,user_id,action,resource_type,resource_id,result,idempotency_key,created_at) VALUES(?,?,'guest_merge_cancelled','guest_merge',?,'success',?,?)").bind(crypto.randomUUID(), userId, mergeId, `merge-cancel:${mergeId}`, timestamp),
+      db().prepare(POLICY_AUDIT_SQL).bind(...policyAuditBindings(createAuditEvent({ subjectId: ownerId(userId), action: "merge_cancel", resourceType: "account", resourceId: mergeId, result: "success", idempotencyKey: `merge-cancel:${mergeId}`, createdAt: timestamp }))),
       db().prepare("DELETE FROM account_cas_assertions WHERE id=?").bind(assertionId),
     ]);
     return { state: "cancelled" as const };
@@ -212,10 +226,11 @@ export async function closeMerge(userId: string, mergeId: string, mergeKey: stri
     db().prepare(AI_MERGE_BUCKET_SQL).bind(ownerId(userId), aiAllowance, aiAllowance, timestamp, row.guest_owner_id),
     db().prepare("DELETE FROM ai_operations WHERE owner_id=?").bind(row.guest_owner_id),
     db().prepare("DELETE FROM ai_quota_buckets WHERE owner_id=?").bind(row.guest_owner_id),
-    db().prepare("INSERT INTO study_plan_versions(id,owner_id,version,parent_version,status,goal_level,target_date,weekly_minutes,preferred_days_json,weak_points_json,srs_load_json,warnings_json,sessions_json,idempotency_key,created_at) SELECT 'merged:'||?||':'||id,?,version+?,CASE WHEN parent_version IS NULL THEN NULL ELSE parent_version+? END,CASE WHEN ?>0 THEN 'superseded' ELSE status END,goal_level,target_date,weekly_minutes,preferred_days_json,weak_points_json,srs_load_json,warnings_json,sessions_json,'merge:'||?||':'||id,created_at FROM study_plan_versions WHERE owner_id=? ORDER BY version").bind(userId, ownerId(userId), accountPlanVersion, accountPlanVersion, accountPlanCount, row.merge_token_hash, row.guest_owner_id),
+    db().prepare("INSERT INTO study_plan_versions(id,owner_id,version,parent_version,status,goal_level,target_date,weekly_minutes,preferred_days_json,weak_points_json,srs_load_json,warnings_json,sessions_json,signals_json,adjustment_reasons_json,idempotency_key,created_at) SELECT 'merged:'||?||':'||id,?,version+?,CASE WHEN parent_version IS NULL THEN NULL ELSE parent_version+? END,CASE WHEN ?>0 THEN 'superseded' ELSE status END,goal_level,target_date,weekly_minutes,preferred_days_json,weak_points_json,srs_load_json,warnings_json,sessions_json,signals_json,adjustment_reasons_json,'merge:'||?||':'||id,created_at FROM study_plan_versions WHERE owner_id=? ORDER BY version").bind(userId, ownerId(userId), accountPlanVersion, accountPlanVersion, accountPlanCount, row.merge_token_hash, row.guest_owner_id),
     db().prepare("DELETE FROM study_plan_versions WHERE owner_id=?").bind(row.guest_owner_id),
     db().prepare("UPDATE guest_merges SET state='confirmed',updated_at=? WHERE id=? AND state='previewed'").bind(timestamp, mergeId),
     db().prepare("INSERT INTO account_audit(id,user_id,action,resource_type,resource_id,result,metadata_json,idempotency_key,created_at) VALUES(?,?,'guest_merge_confirmed','guest_merge',?,'success',?,?,?)").bind(crypto.randomUUID(), userId, mergeId, JSON.stringify({ conflicts: merged.conflicts }), `merge-confirm:${mergeId}`, timestamp),
+    db().prepare(POLICY_AUDIT_SQL).bind(...policyAuditBindings(createAuditEvent({ subjectId: ownerId(userId), action: "merge_confirm", resourceType: "account", resourceId: mergeId, result: "success", idempotencyKey: `merge-confirm:${mergeId}`, createdAt: timestamp, metadata: { conflicts: merged.conflicts } }))),
     db().prepare("DELETE FROM account_cas_assertions WHERE id IN (?,?)").bind(assertionId, `${assertionId}:ai`),
     ]);
   } catch (error) {
@@ -236,6 +251,7 @@ export async function syncCheckpoint(userId: string, clientRevision: number, dev
     await db().batch([
       db().prepare("INSERT INTO sync_conflicts(id,user_id,device_id,client_revision,server_revision,state,created_at) VALUES(?,?,?,?,?,'open',?)").bind(id, userId, deviceId, clientRevision, loaded.revision, timestamp),
       db().prepare("INSERT INTO account_audit(id,user_id,action,resource_type,resource_id,result,metadata_json,idempotency_key,created_at) VALUES(?,?,'sync_conflict','sync_conflict',?,'conflict',?,?,?)").bind(crypto.randomUUID(), userId, id, JSON.stringify({ clientRevision, serverRevision: loaded.revision }), `sync-conflict:${id}`, timestamp),
+      db().prepare(POLICY_AUDIT_SQL).bind(...policyAuditBindings(createAuditEvent({ subjectId: ownerId(userId), action: "account_sync", resourceType: "account", resourceId: id, result: "conflict", idempotencyKey: `sync-conflict:${id}`, createdAt: timestamp, metadata: { clientRevision, serverRevision: loaded.revision } }))),
     ]);
     return { ...decision, conflictId: id, snapshot: loaded.state };
   }

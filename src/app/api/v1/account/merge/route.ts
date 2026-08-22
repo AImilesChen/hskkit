@@ -1,14 +1,24 @@
 import { NextRequest, NextResponse } from "next/server";
 import { requestIdentity } from "../../../../../lib/account/identity";
 import { closeMerge, createMergePreview } from "../../../../../lib/account/storage";
+import { accessDecision, createAuditEvent, errorContract } from "../../../../../lib/account/access-policy";
+import { recordPolicyAudit } from "../../../../../lib/account/audit-storage";
+
+const errorResponse = (code: string, status: number) => NextResponse.json(errorContract(code), { status });
 
 export async function POST(req: NextRequest) {
   const identity = await requestIdentity();
-  if (!identity.account || identity.account.status !== "active") return NextResponse.json({ error: "ACCOUNT_REQUIRED" }, { status: 401 });
-  if (!identity.guestId) return NextResponse.json({ error: "NO_GUEST_DATA" }, { status: 422 });
+  const subjectId = identity.account ? `user:${identity.account.userId}` : identity.guestId ?? "anonymous";
+  const access = accessDecision({ accountStatus: identity.account?.status ?? "guest", permission: "account:merge" });
+  if (!access.allowed) {
+    await recordPolicyAudit(createAuditEvent({ subjectId, action: "account:merge", resourceType: "account", resourceId: subjectId, result: "denied", idempotencyKey: `merge-denied:${crypto.randomUUID()}` }));
+    return errorResponse(access.code, access.code === "ACCOUNT_REQUIRED" ? 401 : 403);
+  }
+  if (!identity.account) return errorResponse("ACCOUNT_REQUIRED", 401);
+  if (!identity.guestId) return errorResponse("NO_GUEST_DATA", 422);
   try {
     const text = await req.text();
-    if (text.length > 2048) return NextResponse.json({ error: "PAYLOAD_TOO_LARGE" }, { status: 413 });
+    if (text.length > 2048) return errorResponse("PAYLOAD_TOO_LARGE", 413);
     const body = JSON.parse(text);
     if (body.action === "preview") {
       return NextResponse.json(await createMergePreview(identity.account.userId, identity.guestId), { status: 201 });
@@ -19,10 +29,11 @@ export async function POST(req: NextRequest) {
       if (!mergeId || !mergeKey) throw new Error("INVALID_MERGE_TOKEN");
       return NextResponse.json(await closeMerge(identity.account.userId, mergeId, mergeKey, body.action));
     }
-    return NextResponse.json({ error: "INVALID_ACTION" }, { status: 422 });
+    return errorResponse("INVALID_ACTION", 422);
   } catch (error) {
     const code = error instanceof Error ? error.message : "MERGE_FAILED";
     const status = code === "MERGE_PREVIEW_STALE" || code.includes("ALREADY") ? 409 : code === "MERGE_EXPIRED" ? 410 : 422;
-    return NextResponse.json({ error: code }, { status });
+    await recordPolicyAudit(createAuditEvent({ subjectId, action: "account:merge", resourceType: "account", resourceId: subjectId, result: status === 409 ? "conflict" : "failed", idempotencyKey: `merge-error:${crypto.randomUUID()}`, metadata: { code } }));
+    return errorResponse(code, status);
   }
 }

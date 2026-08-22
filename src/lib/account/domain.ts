@@ -58,6 +58,7 @@ export function mergeLearningStates(account: LearningState, guest: LearningState
       questionReports: questionReports.values,
       audioReviewReady: [...ready.values()],
       audioPlaybackKeys: mergeStrings(account.audioPlaybackKeys, guest.audioPlaybackKeys),
+      dailyOperationKeys: mergeStrings(account.dailyOperationKeys, guest.dailyOperationKeys),
     } satisfies LearningState,
     conflicts: attempts.conflicts + cards.conflicts + mistakes.conflicts + sessions.conflicts + placementSessions.conflicts + placementResults.conflicts + practiceSessions.conflicts + questionReports.conflicts,
   };

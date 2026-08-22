@@ -2,7 +2,8 @@ import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 import {
   buildDailySession,
-  completeDailyItem,
+  applyDailyItemAction,
+
   gradeReview,
   markAudioReviewReady,
   recordAttempt,
@@ -16,6 +17,8 @@ import { trustedQuestion } from "../../../../lib/learning/questions";
 import { requestIdentity, GUEST_COOKIE } from "../../../../lib/account/identity";
 import { loadState, saveState } from "../../../../lib/learning/storage";
 import { selectTodayContent, todayContentByContentId } from "../../../../lib/learning/today-content";
+import { accessDecision, createAuditEvent, errorContract } from "../../../../lib/account/access-policy";
+import { recordPolicyAudit } from "../../../../lib/account/audit-storage";
 
 const COOKIE = GUEST_COOKIE;
 async function owner() {
@@ -29,6 +32,14 @@ async function owner() {
 }
 const short = (value: unknown, max = 100) => typeof value === "string" && value.length > 0 && value.length <= max ? value : undefined;
 const offset = (value: unknown) => Number.isInteger(value) && Number(value) >= -840 && Number(value) <= 840 ? Number(value) : 0;
+const errorResponse = (code: string, status: number, extra: Record<string, unknown> = {}) => NextResponse.json({ ...errorContract(code), ...extra }, { status });
+async function requireLearningAccess(identity: Awaited<ReturnType<typeof owner>>, permission: "learning:read" | "learning:write") {
+  const decision = accessDecision({ accountStatus: identity.account?.status ?? "guest", permission });
+  if (!decision.allowed) {
+    await recordPolicyAudit(createAuditEvent({ subjectId: identity.id, action: permission, resourceType: "learning", resourceId: identity.id, result: "denied", idempotencyKey: `${permission}:${crypto.randomUUID()}` }));
+  }
+  return decision;
+}
 function audioExercise(assetId: string, mode: AudioMode) {
   return trustedAudioExercise(assetId, mode) ?? trustedTodayAudioExercise(assetId, mode);
 }
@@ -48,7 +59,7 @@ function view(state: LearningState, ownerId: string, offsetMinutes: number) {
   const now = new Date().toISOString();
   const latestPlacement = [...(state.placementResults ?? [])].sort((a, b) => b.createdAt.localeCompare(a.createdAt))[0];
   const startLevel = latestPlacement?.recommendedLevel ?? 1;
-  const built = buildDailySession(state, { ownerId, localDay: localDay(now, offsetMinutes), ruleVersion: "today-v3", now, dailyContent: selectTodayContent(startLevel) });
+  const built = buildDailySession(state, { ownerId, localDay: localDay(now, offsetMinutes), ruleVersion: "today-v4", now, dailyContent: selectTodayContent(startLevel) });
   const cards = built.state.cards.map((card) => {
     const attempt = built.state.attempts.find((candidate) => candidate.id === card.sourceAttemptId);
     const question = attempt?.contentId.startsWith("question:") ? trustedQuestion(attempt.contentId.slice(9)) : undefined;
@@ -87,37 +98,30 @@ function response(data: ReturnType<typeof view>, fresh: boolean, id: string, rev
 }
 export async function GET(req: NextRequest) {
   const identity = await owner();
-  if (identity.account?.status === "deleted") return NextResponse.json({ error: "ACCOUNT_DELETED" }, { status: 403 });
+  const access = await requireLearningAccess(identity, "learning:read");
+  if (!access.allowed) return errorResponse(access.code, 403);
   const loaded = await loadState(identity.id);
   const tz = offset(req.nextUrl.searchParams.get("tzOffset") ? Number(req.nextUrl.searchParams.get("tzOffset")) : 0);
   const data = view(loaded.state, identity.id, tz);
-  const changed = JSON.stringify(data.state) !== JSON.stringify(loaded.state);
-  if (changed) {
-    try {
-      await saveState(identity.id, data.state, loaded.revision);
-    } catch (error) {
-      if (error instanceof Error && error.message === "ACCOUNT_DELETED") return NextResponse.json({ error: "ACCOUNT_DELETED" }, { status: 403 });
-      throw error;
-    }
-  }
-  return response(data, identity.fresh, identity.id, loaded.revision + (changed ? 1 : 0), Boolean(identity.account));
+  return response(data, identity.fresh, identity.id, loaded.revision, Boolean(identity.account));
 }
 export async function POST(req: NextRequest) {
   const identity = await owner();
-  if (identity.account?.status === "deleted") return NextResponse.json({ error: "ACCOUNT_DELETED" }, { status: 403 });
+  const access = await requireLearningAccess(identity, "learning:write");
+  if (!access.allowed) return errorResponse(access.code, 403);
   let body: any;
   try {
     const text = await req.text();
-    if (text.length > 4096) return NextResponse.json({ error: "PAYLOAD_TOO_LARGE" }, { status: 413 });
+    if (text.length > 4096) return errorResponse("PAYLOAD_TOO_LARGE", 413);
     body = JSON.parse(text);
   } catch {
-    return NextResponse.json({ error: "INVALID_JSON" }, { status: 400 });
+    return errorResponse("INVALID_JSON", 400);
   }
   const action = body?.action;
   const payload = body?.payload ?? {};
   const tz = offset(body?.tzOffset);
   const key = short(payload.idempotencyKey, 80);
-  if (!key) return NextResponse.json({ error: "INVALID_IDEMPOTENCY_KEY" }, { status: 422 });
+  if (!key) return errorResponse("INVALID_IDEMPOTENCY_KEY", 422);
 
   if (action === "audio_review_playback_start" || action === "audio_review_playback_complete") {
     const cardId = short(payload.cardId, 120);
@@ -136,7 +140,7 @@ export async function POST(req: NextRequest) {
       await completeStep7PlaybackTicket(identity.id, exerciseKey, ticketId, key);
       return NextResponse.json({ state: "playback_verified" });
     } catch (error) {
-      return NextResponse.json({ error: error instanceof Error ? error.message : "AUDIO_PLAYBACK_INCOMPLETE" }, { status: 422 });
+      return errorResponse(error instanceof Error ? error.message : "AUDIO_PLAYBACK_INCOMPLETE", 422);
     }
   }
 
@@ -146,7 +150,7 @@ export async function POST(req: NextRequest) {
     const exercise = assetId && mode ? audioExercise(assetId, mode) : undefined;
     const dailySessionId = short(payload.dailySessionId, 120);
     const dailyItemId = short(payload.dailyItemId, 220);
-    if (!exercise) return NextResponse.json({ error: "INVALID_AUDIO_PLAYBACK" }, { status: 422 });
+    if (!exercise) return errorResponse("INVALID_AUDIO_PLAYBACK", 422);
     try {
       const loaded = await loadState(identity.id);
       assertDailyAudioBinding(loaded.state, dailySessionId, dailyItemId, exercise);
@@ -165,7 +169,7 @@ export async function POST(req: NextRequest) {
       return res;
     } catch (error) {
       const code = error instanceof Error ? error.message : "AUDIO_PLAYBACK_INCOMPLETE";
-      return NextResponse.json({ error: code }, { status: code === "ACCOUNT_DELETED" ? 403 : 422 });
+      return errorResponse(code, code === "ACCOUNT_DELETED" ? 403 : 422);
     }
   }
 
@@ -173,9 +177,9 @@ export async function POST(req: NextRequest) {
     const exerciseId = short(payload.exerciseId, 120);
     const exercise = exerciseId ? trustedStep7Exercise(exerciseId) : undefined;
     const listening = exercise && (exercise.kind === "tone" || exercise.kind === "discrimination" || exercise.kind === "dictation");
-    if (!exercise || !listening) return NextResponse.json({ error: "INVALID_STEP7_PLAYBACK" }, { status: 422 });
+    if (!exercise || !listening) return errorResponse("INVALID_STEP7_PLAYBACK", 422);
     const lesson = advancedListeningBySlug(exercise.contentId.slice("listening:".length));
-    if (!lesson) return NextResponse.json({ error: "INVALID_STEP7_PLAYBACK" }, { status: 422 });
+    if (!lesson) return errorResponse("INVALID_STEP7_PLAYBACK", 422);
     const ticket = await createStep7PlaybackTicket(identity.id, exercise.id, lesson.voiceText);
     const res = NextResponse.json({ playbackTicket: ticket.id, notBefore: ticket.notBefore, expiresAt: ticket.expiresAt }, { status: 201 });
     if (identity.fresh) res.cookies.set(COOKIE, identity.id, { httpOnly: true, sameSite: "lax", secure: true, maxAge: 31_536_000, path: "/" });
@@ -187,7 +191,7 @@ export async function POST(req: NextRequest) {
     const ticketId = short(payload.playbackTicket, 80);
     const exercise = exerciseId ? trustedStep7Exercise(exerciseId) : undefined;
     const listening = exercise && (exercise.kind === "tone" || exercise.kind === "discrimination" || exercise.kind === "dictation");
-    if (!exercise || !listening || !ticketId) return NextResponse.json({ error: "INVALID_STEP7_PLAYBACK" }, { status: 422 });
+    if (!exercise || !listening || !ticketId) return errorResponse("INVALID_STEP7_PLAYBACK", 422);
     try {
       await completeStep7PlaybackTicket(identity.id, exercise.id, ticketId, key);
       const res = NextResponse.json({ state: "playback_verified" });
@@ -195,13 +199,21 @@ export async function POST(req: NextRequest) {
       return res;
     } catch (error) {
       const code = error instanceof Error ? error.message : "AUDIO_PLAYBACK_INCOMPLETE";
-      return NextResponse.json({ error: code }, { status: code === "ACCOUNT_DELETED" ? 403 : 422 });
+      return errorResponse(code, code === "ACCOUNT_DELETED" ? 403 : 422);
     }
   }
 
   for (let turn = 0; turn < 3; turn += 1) {
     const loaded = await loadState(identity.id);
-    let state = loaded.state;
+    const dailyAction = action === "complete_item" || action === "skip_item" || action === "restore_item" || action === "configure_today";
+    if (dailyAction && (loaded.state.dailyOperationKeys ?? []).includes(key)) {
+      return response(view(loaded.state, identity.id, tz), identity.fresh, identity.id, loaded.revision, Boolean(identity.account));
+    }
+    if (dailyAction && Number.isInteger(body?.clientRevision) && body.clientRevision !== loaded.revision && !(loaded.state.dailyOperationKeys ?? []).includes(key)) {
+      await recordPolicyAudit(createAuditEvent({ subjectId: identity.id, action: String(action), resourceType: "learning", resourceId: identity.id, result: "conflict", idempotencyKey: key, metadata: { serverRevision: loaded.revision, clientRevision: body.clientRevision } }));
+      return errorResponse("REVISION_CONFLICT", 409, { state: "conflict", serverRevision: loaded.revision, clientRevision: body.clientRevision });
+    }
+    let state = view(loaded.state, identity.id, tz).state;
     let feedback: { correct: boolean; correctAnswerText: string } | undefined;
     try {
       if (action === "attempt") {
@@ -290,21 +302,34 @@ export async function POST(req: NextRequest) {
       } else if (action === "grade") {
         if (!short(payload.cardId, 120) || !["again", "hard", "good", "easy"].includes(payload.grade) || !Number.isInteger(payload.clientRevision)) throw new Error("INVALID_GRADE");
         state = gradeReview(state, { cardId: payload.cardId, grade: payload.grade, idempotencyKey: key, observedAt: new Date().toISOString(), clientRevision: payload.clientRevision }).state;
-      } else if (action === "complete_item") {
+      } else if (action === "complete_item" || action === "skip_item" || action === "restore_item") {
         if (!short(payload.sessionId, 120) || !short(payload.itemId, 160)) throw new Error("INVALID_ITEM");
-        state = completeDailyItem(state, payload.sessionId, payload.itemId).state;
+        state = applyDailyItemAction(state, {
+          sessionId: payload.sessionId,
+          itemId: payload.itemId,
+          action: action === "complete_item" ? "complete" : action === "skip_item" ? "skip" : "restore",
+          idempotencyKey: key,
+          observedAt: new Date().toISOString(),
+        }).state;
+      } else if (action === "configure_today") {
+        if (!Number.isInteger(payload.budgetMinutes) || payload.budgetMinutes < 5 || payload.budgetMinutes > 180) throw new Error("INVALID_TIME_BUDGET");
+        const observedAt = new Date().toISOString();
+        const latestPlacement = [...(state.placementResults ?? [])].sort((a, b) => b.createdAt.localeCompare(a.createdAt))[0];
+        state = buildDailySession(state, { ownerId: identity.id, localDay: localDay(observedAt, tz), ruleVersion: "today-v4", now: observedAt, dailyContent: selectTodayContent(latestPlacement?.recommendedLevel ?? 1), budgetMinutes: payload.budgetMinutes }).state;
+        state = { ...state, dailyOperationKeys: [...(state.dailyOperationKeys ?? []), key].slice(-400) };
       } else {
-        return NextResponse.json({ error: "INVALID_ACTION" }, { status: 422 });
+        return errorResponse("INVALID_ACTION", 422);
       }
       const data = view(state, identity.id, tz);
-      await saveState(identity.id, data.state, loaded.revision);
+      await saveState(identity.id, data.state, loaded.revision, createAuditEvent({ subjectId: identity.id, action: String(action), resourceType: "learning", resourceId: data.session.id, result: "success", idempotencyKey: key, metadata: { revision: loaded.revision + 1 } }));
       return response(data, identity.fresh, identity.id, loaded.revision + 1, Boolean(identity.account), feedback);
     } catch (error) {
       const code = error instanceof Error ? error.message : "SAVE_FAILED";
-      const replayable = action === "attempt" || action === "step7_attempt" || action === "audio_attempt" || action === "audio_review_ready" || action === "complete_item";
+      const replayable = action === "attempt" || action === "step7_attempt" || action === "audio_attempt" || action === "audio_review_ready" || dailyAction;
       if (code === "REVISION_CONFLICT" && replayable && turn < 2) continue;
-      return NextResponse.json({ error: code }, { status: code === "ACCOUNT_DELETED" ? 403 : code === "REVISION_CONFLICT" ? 409 : 422 });
+      if (code === "REVISION_CONFLICT") await recordPolicyAudit(createAuditEvent({ subjectId: identity.id, action: String(action), resourceType: "learning", resourceId: identity.id, result: "conflict", idempotencyKey: key }));
+      return errorResponse(code, code === "ACCOUNT_DELETED" ? 403 : code === "REVISION_CONFLICT" ? 409 : 422);
     }
   }
-  return NextResponse.json({ error: "REVISION_CONFLICT" }, { status: 409 });
+  return errorResponse("REVISION_CONFLICT", 409);
 }

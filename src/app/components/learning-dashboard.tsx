@@ -4,23 +4,34 @@ import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 
 type Dimension = "reading" | "audio" | "context_audio";
-type Item = { id: string; kind: "review" | "learn" | "listen" | "practice" | "summary"; contentId: string; contentVersion?: string; status: string; dimension?: Dimension; title?: string; href?: string };
+type Item = { id: string; kind: "review" | "learn" | "listen" | "practice" | "summary"; contentId: string; contentVersion?: string; status: "pending" | "completed" | "skipped"; dimension?: Dimension; title?: string; href?: string; estimatedMinutes?: number };
 type Notice = { code: string; message: string; actionHref: string; actionLabel: string };
 type Card = { id: string; contentId: string; dimension: Dimension; dueAt: string; revision: number; prompt: string; correctAnswer: string; userAnswer: string; audioText?: string; assetId?: string; playbackReady: boolean };
 type Mistake = { id: string; contentId: string; status: string; createdAt: string; dimension: Dimension; prompt: string };
 type Data = {
-  session: { id: string; startLevel?: number; contentReleaseId?: string; notice?: Notice; items: Item[] };
+  session: { id: string; startLevel?: number; contentReleaseId?: string; notice?: Notice; budgetMinutes?: number; totalEstimatedMinutes?: number; items: Item[] };
   cards: Card[];
   mistakes: Mistake[];
   mastery: Record<Dimension, number>;
+  revision: number;
 };
 const tz = () => new Date().getTimezoneOffset();
+const OFFLINE_KEY = "hskkit_learning_pending_v1";
+type PendingOperation = { action: string; payload: Record<string, unknown>; idempotencyKey: string; clientRevision: number };
+function pendingQueue(): PendingOperation[] {
+  const raw = localStorage.getItem(OFFLINE_KEY);
+  if (!raw) return [];
+  try { const parsed = JSON.parse(raw); return Array.isArray(parsed) ? parsed : [parsed]; } catch { return []; }
+}
+function savePending(queue: PendingOperation[]) { if (queue.length) localStorage.setItem(OFFLINE_KEY, JSON.stringify(queue)); else localStorage.removeItem(OFFLINE_KEY); }
+function appendPending(operation: PendingOperation) { const queue = pendingQueue(); if (!queue.some((item) => item.idempotencyKey === operation.idempotencyKey)) queue.push(operation); savePending(queue); }
 
 export default function LearningDashboard({ mode }: { mode: "today" | "review" | "mistakes" }) {
   const [data, setData] = useState<Data | null>(null);
   const [error, setError] = useState("");
   const [revealed, setRevealed] = useState<Record<string, boolean>>({});
   const [audioError, setAudioError] = useState("");
+  const [syncState, setSyncState] = useState<"synced" | "local_pending" | "syncing" | "conflict" | "failed">("synced");
   const operationKeys = useRef<Record<string, string>>({});
 
   async function load() {
@@ -28,17 +39,48 @@ export default function LearningDashboard({ mode }: { mode: "today" | "review" |
     try {
       const response = await fetch(`/api/v1/learning?tzOffset=${tz()}`, { cache: "no-store" });
       if (!response.ok) throw new Error("SYNC_FAILED");
-      setData(await response.json());
+      const loaded = await response.json();
+      setData(loaded);
+      if (!localStorage.getItem(OFFLINE_KEY)) setSyncState("synced");
     } catch {
       setError("We couldn't sync your learning data. Check your connection and try again.");
     }
   }
-  useEffect(() => { void load(); }, []);
+  useEffect(() => {
+    void load();
+    const online = () => { void retryPending(); };
+    window.addEventListener("online", online);
+    return () => window.removeEventListener("online", online);
+  }, []);
+
+  async function retryPending() {
+    const queue = pendingQueue();
+    if (!queue.length) { setSyncState("synced"); return; }
+    setSyncState("syncing");
+    try {
+      let revision = queue[0].clientRevision;
+      while (queue.length) {
+        const pending = queue[0];
+        const response = await fetch("/api/v1/learning", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ action: pending.action, payload: { ...pending.payload, idempotencyKey: pending.idempotencyKey }, clientRevision: revision, tzOffset: tz() }) });
+        const result = await response.json();
+        if (response.status === 409) {
+          setSyncState("conflict");
+          const latest = await fetch(`/api/v1/learning?tzOffset=${tz()}`, { cache: "no-store" });
+          const latestData = await latest.json();
+          setData(latestData); queue[0] = { ...pending, clientRevision: latestData.revision }; savePending(queue);
+          return;
+        }
+        if (!response.ok) throw new Error(result.error ?? "SYNC_FAILED");
+        revision = result.revision; setData(result); queue.shift(); savePending(queue);
+      }
+      setSyncState("synced");
+    } catch { setSyncState("failed"); }
+  }
 
   async function post(action: string, payload: Record<string, unknown>, operation: string) {
     const key = operationKeys.current[operation] ?? crypto.randomUUID();
     operationKeys.current[operation] = key;
-    const body = JSON.stringify({ action, payload: { ...payload, idempotencyKey: key }, tzOffset: tz() });
+    const body = JSON.stringify({ action, payload: { ...payload, idempotencyKey: key }, clientRevision: data?.revision, tzOffset: tz() });
     let response: Response | undefined;
     for (let attempt = 0; attempt < 3; attempt += 1) {
       try {
@@ -49,6 +91,19 @@ export default function LearningDashboard({ mode }: { mode: "today" | "review" |
     if (response?.ok) {
       delete operationKeys.current[operation];
       setData(await response.json());
+      setSyncState("synced");
+      return true;
+    }
+    if (response?.status === 409) {
+      const conflict = await response.json();
+      appendPending({ action, payload, idempotencyKey: key, clientRevision: conflict.serverRevision ?? data?.revision ?? 0 });
+      setSyncState("conflict");
+      return false;
+    }
+    if (["complete_item", "skip_item", "restore_item", "configure_today"].includes(action) && data) {
+      appendPending({ action, payload, idempotencyKey: key, clientRevision: data.revision });
+      setSyncState("local_pending");
+      if (payload.itemId) setData({ ...data, session: { ...data.session, items: data.session.items.map((item) => item.id === payload.itemId ? { ...item, status: action === "restore_item" ? "pending" : action === "skip_item" ? "skipped" : "completed" } : item) } });
       return true;
     }
     setError("Your progress could not be confirmed. Reload to restore the server copy, then retry.");
@@ -62,6 +117,9 @@ export default function LearningDashboard({ mode }: { mode: "today" | "review" |
   async function complete(item: Item) {
     await post("complete_item", { sessionId: data!.session.id, itemId: item.id }, `complete:${data!.session.id}:${item.id}`);
   }
+  async function skip(item: Item) { await post("skip_item", { sessionId: data!.session.id, itemId: item.id }, `skip:${data!.session.id}:${item.id}`); }
+  async function restore(item: Item) { await post("restore_item", { sessionId: data!.session.id, itemId: item.id }, `restore:${data!.session.id}:${item.id}`); }
+  async function setBudget(minutes: number) { await post("configure_today", { budgetMinutes: minutes }, `budget:${data!.session.id}:${minutes}`); }
   async function play(card: Card) {
     setAudioError("");
     if (!card.audioText || !("speechSynthesis" in window)) { setAudioError("Audio is unavailable in this browser. No mastery was changed."); return; }
@@ -98,6 +156,8 @@ export default function LearningDashboard({ mode }: { mode: "today" | "review" |
   if (mode === "today") {
     const firstPending = data.session.items.findIndex((item) => item.status === "pending");
     return <Shell title="Today" sub="Review → Learn → Listen/Practice → Summary">
+      <section className="card mb-4"><div className="flex flex-wrap items-end justify-between gap-3"><label>Today's time budget<select value={data.session.budgetMinutes ?? 30} onChange={(event) => void setBudget(Number(event.target.value))}>{[10, 15, 20, 30, 45, 60].map((minutes) => <option key={minutes} value={minutes}>{minutes} minutes</option>)}</select></label><p><strong>{data.session.totalEstimatedMinutes ?? 0} min planned</strong> · version today-v4</p></div></section>
+      {syncState !== "synced" && <div className={`step7-alert ${syncState === "failed" || syncState === "conflict" ? "error" : "warning"}`} role="status"><strong>Offline sync: {syncState.replaceAll("_", " ")}</strong><p>{syncState === "conflict" ? "Another device changed this learning record. The server copy was loaded; retry your pending action." : syncState === "failed" ? "Sync failed. Your pending action remains on this device." : "Your action is stored locally and will sync with the same operation key."}</p><button className="btn secondary" onClick={() => void retryPending()}>Retry sync</button></div>}
       {data.session.notice && <article className="mb-4 rounded-2xl bg-amber-50 p-5 text-amber-950" role="status"><span className="eyebrow">{data.session.notice.code.replaceAll("_", " ")}</span><h2>{data.session.notice.message}</h2><Link className="btn mt-3" href={data.session.notice.actionHref}>{data.session.notice.actionLabel}</Link></article>}
       <div className="grid gap-4">
         {data.session.items.map((item, index) => {
@@ -110,8 +170,9 @@ export default function LearningDashboard({ mode }: { mode: "today" | "review" |
           return <article className={`card ${locked ? "opacity-60" : ""}`} key={item.id}>
             <span className="eyebrow">{item.dimension?.replace("_", " ") ?? item.kind}</span>
             <h2>{label(item)}</h2>
-            <p>{item.status === "completed" ? "Completed" : locked ? "Complete the previous step first." : "Ready to continue"}</p>
-            {!locked && item.status === "pending" && actionFor(item, complete, data.session.id)}
+            <p>{item.status === "completed" ? "Completed" : item.status === "skipped" ? "Skipped · available to restore" : locked ? "Complete the previous step first." : "Ready to continue"} · {item.estimatedMinutes ?? 0} min</p>
+            {!locked && item.status === "pending" && <div className="flex flex-wrap gap-2">{actionFor(item, complete, data.session.id)}<button className="btn secondary" onClick={() => void skip(item)}>Skip for today</button></div>}
+            {item.status === "skipped" && <button className="btn secondary" onClick={() => void restore(item)}>Restore step</button>}
           </article>;
         })}
       </div>
