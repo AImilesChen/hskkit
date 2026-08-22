@@ -3,7 +3,7 @@ import { readFile } from "node:fs/promises";
 import test from "node:test";
 
 import catalogJson from "../src/lib/content/catalog.json" with { type: "json" };
-import { queryCatalog, validateRepository, type ContentRepository } from "../src/lib/content/repository.ts";
+import { queryCatalog, validateRepository, withdrawRelease, type ContentRepository } from "../src/lib/content/repository.ts";
 
 const repository = catalogJson as ContentRepository;
 const source = (path: string) => readFile(new URL(`../${path}`, import.meta.url), "utf8");
@@ -82,4 +82,22 @@ test("audio issue reporting is persisted and does not mutate learning state", as
   assert.match(route, /\.prepare\(/);
   assert.doesNotMatch(route, /learning_states|mastery|attempt/);
   assert.match(migration, /CREATE TABLE IF NOT EXISTS audio_issue_reports/);
+});
+
+test("sitemap excludes private noindex application routes", async () => {
+  const sitemap = await source("src/app/sitemap.ts");
+  assert.doesNotMatch(sitemap, /"\/today"/);
+  assert.doesNotMatch(sitemap, /"\/mistakes"/);
+  assert.doesNotMatch(sitemap, /"\/account"/);
+});
+
+test("withdrawing the active release returns an empty public catalog instead of throwing", () => {
+  const activeReleaseId = repository.activeReleaseByStandard.hsk3!;
+  const withdrawn = withdrawRelease(repository, activeReleaseId, "2026-08-22T08:00:00.000Z");
+  const result = queryCatalog(withdrawn, { standard: "hsk3", level: 1 });
+  assert.equal(result.releaseId, "unavailable");
+  assert.equal(result.releaseVersion, 0);
+  assert.equal(result.availability, "gap");
+  assert.deepEqual(result.contentAssets, []);
+  assert.deepEqual(result.audioAssets, []);
 });

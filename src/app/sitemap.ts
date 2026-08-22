@@ -26,9 +26,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "/hsk-2-0-vs-3-0",
     "/levels",
     "/content-license",
-    "/today",
-    "/mistakes",
-    "/account",
+
     "/privacy-policy",
     "/terms-of-service",
     "/disclaimer",

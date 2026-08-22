@@ -4,10 +4,9 @@ import type { AudioAsset, ContentAsset, ContentRepository } from "./repository.t
 const repository = catalog as ContentRepository;
 const activeReleaseId = repository.activeReleaseByStandard.hsk3;
 const activeRelease = repository.releases.find((release) => release.id === activeReleaseId && release.standard === "hsk3" && release.status === "published");
-if (!activeRelease) throw new Error("No active published HSK 3.0 content release");
 
-const activeContentIds = new Set(activeRelease.contentAssetIds);
-const activeAudioIds = new Set(activeRelease.audioAssetIds);
+const activeContentIds = new Set(activeRelease?.contentAssetIds ?? []);
+const activeAudioIds = new Set(activeRelease?.audioAssetIds ?? []);
 
 export const publishedContentAssets: ContentAsset[] = repository.contentAssets.filter((asset) =>
   activeContentIds.has(asset.id)
@@ -49,7 +48,7 @@ export function publicAudioSrc(asset: AudioAsset): string {
 }
 
 export const activeContentRelease = {
-  id: activeRelease.id,
-  version: activeRelease.version,
-  publishedAt: activeRelease.publishedAt,
+  id: activeRelease?.id ?? "unavailable",
+  version: activeRelease?.version ?? 0,
+  publishedAt: activeRelease?.publishedAt,
 };

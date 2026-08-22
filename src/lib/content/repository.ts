@@ -531,7 +531,17 @@ export function queryCatalog(repository: ContentRepository, query: CatalogQuery)
   const level = repository.levels.find((candidate) => candidate.standard === standard && candidate.level === query.level);
   if (!level) throw new Error(`No ${standard.toUpperCase()} Level ${query.level} definition`);
   const releaseId = repository.activeReleaseByStandard[standard];
-  if (!releaseId) throw new Error(`No active ${standard === "hsk3" ? "HSK 3.0" : "HSK 2.0"} release`);
+  if (!releaseId) {
+    return {
+      standard,
+      releaseId: "unavailable",
+      releaseVersion: 0,
+      availability: "gap",
+      level,
+      contentAssets: [],
+      audioAssets: [],
+    };
+  }
   const release = repository.releases.find((candidate) => candidate.id === releaseId)!;
   const contentIds = new Set(release.contentAssetIds);
   const audioIds = new Set(release.audioAssetIds);

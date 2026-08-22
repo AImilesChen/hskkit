@@ -6,11 +6,9 @@ const activeReleaseId = repository.activeReleaseByStandard.hsk3;
 const activeRelease = repository.releases.find(
   (release) => release.id === activeReleaseId && release.standard === "hsk3" && release.status === "published",
 );
-if (!activeRelease) throw new Error("No published active HSK 3.0 release");
-const publishedRelease = activeRelease!;
 
-const activeContentIds = new Set(publishedRelease.contentAssetIds);
-const activeAudioIds = new Set(publishedRelease.audioAssetIds);
+const activeContentIds = new Set(activeRelease?.contentAssetIds ?? []);
+const activeAudioIds = new Set(activeRelease?.audioAssetIds ?? []);
 const publishedAssetsByLevel = new Map<number, ContentAsset[]>();
 for (let level = 1; level <= 9; level += 1) publishedAssetsByLevel.set(level, []);
 for (const asset of repository.contentAssets) {
@@ -56,8 +54,8 @@ export function getHsk3LevelStatus(level: number): LevelPublicationStatus {
     standard: "hsk3",
     level,
     title: levelDefinition.title,
-    releaseId: publishedRelease.id,
-    releaseVersion: publishedRelease.version,
+    releaseId: activeRelease?.id ?? "unavailable",
+    releaseVersion: activeRelease?.version ?? 0,
     availability,
     contentCount,
     audioCount,

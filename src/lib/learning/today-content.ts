@@ -29,7 +29,10 @@ function activeLevel(level: number) {
     validateRepository(repository);
     const releaseId = repository.activeReleaseByStandard.hsk3;
     const release = releaseId ? repository.releases.find((candidate) => candidate.id === releaseId && candidate.standard === "hsk3" && candidate.status === "published") : undefined;
-    if (!release) throw new Error("No active HSK 3.0 release");
+    if (!release) {
+      activeCache = { releaseId: "unavailable", contentByLevel: new Map() };
+      return { releaseId: activeCache.releaseId, contentAssets: [], availability: "gap" as const };
+    }
     const releaseIds = new Set(release.contentAssetIds);
     const contentByLevel = new Map<number, ContentAsset[]>();
     for (const asset of repository.contentAssets) {

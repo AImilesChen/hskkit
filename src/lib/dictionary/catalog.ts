@@ -40,8 +40,7 @@ type LookupResult<T> =
   | { status: "missing" };
 
 const repository = catalog as ContentRepository;
-const activeReleaseId = repository.activeReleaseByStandard.hsk3;
-if (!activeReleaseId) throw new Error("Dictionary requires the active formal HSK 3.0 release");
+const activeReleaseId = repository.activeReleaseByStandard.hsk3 ?? "unavailable";
 
 const curated = [
   { hanzi: "学习", slug: "xue-xi", example: ["我每天学习中文。", "Wǒ měitiān xuéxí Zhōngwén.", "I study Chinese every day."] },
