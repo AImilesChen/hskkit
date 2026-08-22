@@ -5,9 +5,9 @@ import { useRef, useState } from "react";
 import AiAssist from "@/app/components/ai-assist";
 import { normalizeStep7Answer, type Step7Exercise } from "@/lib/learning/step7-content";
 
-type Props = { exercise: Step7Exercise; voiceText?: string; nextHref?: string; nextLabel?: string };
+type Props = { exercise: Step7Exercise; voiceText?: string; audioSrc?: string; nextHref?: string; nextLabel?: string };
 
-export default function Step7ExerciseClient({ exercise, voiceText, nextHref, nextLabel }: Props) {
+export default function Step7ExerciseClient({ exercise, voiceText, audioSrc, nextHref, nextLabel }: Props) {
   const [answer, setAnswer] = useState("");
   const [played, setPlayed] = useState(!voiceText);
   const [playing, setPlaying] = useState(false);
@@ -16,31 +16,30 @@ export default function Step7ExerciseClient({ exercise, voiceText, nextHref, nex
   const [error, setError] = useState("");
   const key = useRef<string | undefined>(undefined);
   const playbackTicket = useRef<string | undefined>(undefined);
+  const audio = useRef<HTMLAudioElement | undefined>(undefined);
   const correct = saved && normalizeStep7Answer(answer) === normalizeStep7Answer(exercise.correctAnswer);
 
   async function play() {
     setError("");
     setPlayed(false);
     playbackTicket.current = undefined;
-    if (!voiceText || !("speechSynthesis" in window)) { setError("Audio is unavailable in this browser. No learning result was saved."); return; }
+    if (!voiceText || (!audioSrc && !("speechSynthesis" in window))) { setError("Audio is unavailable in this browser. No learning result was saved."); return; }
     let ticketResponse: Response;
     try {
       ticketResponse = await fetch("/api/v1/learning", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ action: "step7_playback_start", payload: { idempotencyKey: crypto.randomUUID(), exerciseId: exercise.id } }) });
     } catch { setError("Audio verification could not start. Nothing was written to mastery."); return; }
     if (!ticketResponse.ok) { setError("Audio verification could not start. Nothing was written to mastery."); return; }
-    const ticket = await ticketResponse.json() as { playbackTicket?: string };
+    const ticket = await ticketResponse.json() as { playbackTicket?: string; notBefore?: string };
     if (!ticket.playbackTicket) { setError("Audio verification could not start. Nothing was written to mastery."); return; }
     playbackTicket.current = ticket.playbackTicket;
-    window.speechSynthesis.cancel();
-    const utterance = new SpeechSynthesisUtterance(voiceText);
-    utterance.lang = "zh-CN";
-    utterance.rate = exercise.kind === "dictation" ? 0.78 : 0.86;
     setPlaying(true);
-    utterance.onend = async () => {
+    const finish = async () => {
       setPlaying(false);
       const ticketId = playbackTicket.current;
       if (!ticketId) return;
       try {
+        const waitMs = Math.max(0, Date.parse(ticket.notBefore ?? "") - Date.now());
+        if (waitMs > 0) await new Promise((resolve) => window.setTimeout(resolve, waitMs));
         const verified = await fetch("/api/v1/learning", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ action: "step7_playback_complete", payload: { idempotencyKey: crypto.randomUUID(), exerciseId: exercise.id, playbackTicket: ticketId } }) });
         if (!verified.ok) throw new Error("PLAYBACK_NOT_VERIFIED");
         setPlayed(true);
@@ -50,7 +49,22 @@ export default function Step7ExerciseClient({ exercise, voiceText, nextHref, nex
         setError("Playback could not be verified. Nothing was written to mastery; play it again before answering.");
       }
     };
-    utterance.onerror = () => { playbackTicket.current = undefined; setPlaying(false); setPlayed(false); setError("Audio failed. Nothing was written to mastery; play it again before answering."); };
+    const fail = () => { playbackTicket.current = undefined; setPlaying(false); setPlayed(false); setError("Audio failed. Nothing was written to mastery; play it again before answering."); };
+    if (audioSrc) {
+      audio.current?.pause();
+      const player = new Audio(audioSrc);
+      audio.current = player;
+      player.onended = () => { void finish(); };
+      player.onerror = fail;
+      try { await player.play(); } catch { fail(); }
+      return;
+    }
+    window.speechSynthesis.cancel();
+    const utterance = new SpeechSynthesisUtterance(voiceText);
+    utterance.lang = "zh-CN";
+    utterance.rate = exercise.kind === "dictation" ? 0.78 : 0.86;
+    utterance.onend = () => { void finish(); };
+    utterance.onerror = fail;
     window.speechSynthesis.speak(utterance);
   }
 

@@ -42,6 +42,7 @@ export interface AdvancedListeningLesson {
   title: string;
   kind: "tone" | "discrimination" | "dictation";
   voiceText: string;
+  audioSrc: string;
   guidance: string;
   contentVersion: string;
   exercise: Step7Exercise;
@@ -114,9 +115,9 @@ export const READING_LESSONS: ReadingLesson[] = [
 ];
 
 export const ADVANCED_LISTENING_LESSONS: AdvancedListeningLesson[] = [
-  listening({ slug: "hsk1-tone-pairs", level: 1, title: "Third tone or fourth tone?", kind: "tone", voiceText: "买", guidance: "Listen for the low, dipping third tone. Playback must finish before answering.", prompt: "Which pinyin matches what you hear?", options: { A: "mǎi", B: "mài", C: "māi" }, answer: "A", explanationAnswer: "买 is pronounced mǎi with the third tone." }),
-  listening({ slug: "hsk2-syllable-discrimination", level: 2, title: "Distinguish close syllables", kind: "discrimination", voiceText: "老师让我们练习发音。", guidance: "Focus on the middle phrase and distinguish lǎoshī from lǎoshǔ.", prompt: "Which phrase did you hear?", options: { A: "老师让我们练习发音。", B: "老鼠让我们练习发音。", C: "老师让我们联系发音。" }, answer: "A", explanationAnswer: "The sentence uses 老师 (teacher) and 练习 (practise)." }),
-  listening({ slug: "hsk3-sentence-dictation", level: 3, title: "Sentence dictation", kind: "dictation", voiceText: "请把今天的作业写完。", guidance: "Listen to the complete sentence, then type the Chinese characters. Punctuation and spaces are ignored.", prompt: "Type the sentence you hear.", answer: "请把今天的作业写完", explanationAnswer: "The complete sentence is 请把今天的作业写完。" }),
+  listening({ slug: "hsk1-tone-pairs", level: 1, title: "Third tone or fourth tone?", kind: "tone", voiceText: "买", audioSrc: "/audio/advanced-listening/hsk1-tone-pairs.mp3", guidance: "Listen for the low, dipping third tone. Playback must finish before answering.", prompt: "Which pinyin matches what you hear?", options: { A: "mǎi", B: "mài", C: "māi" }, answer: "A", explanationAnswer: "买 is pronounced mǎi with the third tone." }),
+  listening({ slug: "hsk2-syllable-discrimination", level: 2, title: "Distinguish close syllables", kind: "discrimination", voiceText: "老师让我们练习发音。", audioSrc: "/audio/advanced-listening/hsk2-syllable-discrimination.mp3", guidance: "Focus on the middle phrase and distinguish lǎoshī from lǎoshǔ.", prompt: "Which phrase did you hear?", options: { A: "老师让我们练习发音。", B: "老鼠让我们练习发音。", C: "老师让我们联系发音。" }, answer: "A", explanationAnswer: "The sentence uses 老师 (teacher) and 练习 (practise)." }),
+  listening({ slug: "hsk3-sentence-dictation", level: 3, title: "Sentence dictation", kind: "dictation", voiceText: "请把今天的作业写完。", audioSrc: "/audio/advanced-listening/hsk3-sentence-dictation.mp3", guidance: "Listen to the complete sentence, then type the Chinese characters. Punctuation and spaces are ignored.", prompt: "Type the sentence you hear.", answer: "请把今天的作业写完", explanationAnswer: "The complete sentence is 请把今天的作业写完。" }),
 ];
 
 export function grammarBySlug(slug: string) { return GRAMMAR_LESSONS.find((item) => item.slug === slug); }

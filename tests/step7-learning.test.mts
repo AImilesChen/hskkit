@@ -51,6 +51,7 @@ test("advanced listening is levelled and includes discrimination, tone and dicta
     assert.equal(item!.exercise.contentId, `listening:${item!.slug}`);
     assert.equal(item!.exercise.contentVersion, item!.contentVersion);
     assert.ok(item!.voiceText.length > 0);
+    assert.match(item!.audioSrc, /^\/audio\/advanced-listening\/.+\.mp3$/);
   }
 });
 
