@@ -1,0 +1,341 @@
+{
+  "schema": "hskkit-stage07-total-matrix-v2",
+  "status": "FROZEN",
+  "frozen_date": "2026-08-22",
+  "source": {
+    "prd": "docs/product/HSKKit-PRD-v4.0-owner-review.md",
+    "prd_sha256": "09b5b7b8a372fedd6f472368381187bf4ed71818a6316200b266640b02f29688",
+    "canonical_manifest_sha256": "e5099d099f46430a7121e75a896803c0e4ef214252079e075ff360fddf22fb2a",
+    "production_commit": "7e265a2ab764e7d3c93d13484d3ef5e5d62b08e1",
+    "production_go_tag": "hskkit-batch9-prod-go-20260822T064749Z",
+    "batch9_report_sha256": "566d10d6ceb283e9783ecce16fb6b19418e5ad5610f84207551ebf797dae1560"
+  },
+  "counts": {
+    "total": 38,
+    "priority": {
+      "P0": 21,
+      "P1": 12,
+      "P2": 5
+    },
+    "status": {
+      "DONE": 29,
+      "OPEN": 7,
+      "PARTIAL": 2
+    }
+  },
+  "batch10": {
+    "authorized": false,
+    "only": [
+      "REQ-LVL-03",
+      "REQ-TEST-06"
+    ],
+    "keep": [
+      "REQ-LVL-01",
+      "REQ-LVL-02",
+      "REQ-LVL-04",
+      "REQ-AUD-01",
+      "REQ-AUD-02",
+      "REQ-AUD-03",
+      "REQ-AUD-04",
+      "REQ-AUD-05",
+      "REQ-LEARN-01",
+      "REQ-LEARN-02",
+      "REQ-LEARN-03",
+      "REQ-LEARN-04",
+      "REQ-LEARN-05",
+      "REQ-LEARN-06",
+      "REQ-LEARN-07",
+      "REQ-AI-01",
+      "REQ-AI-02",
+      "REQ-TEST-01",
+      "REQ-TEST-02",
+      "REQ-TEST-03",
+      "REQ-TEST-04",
+      "REQ-KNOW-01",
+      "REQ-KNOW-02",
+      "REQ-KNOW-03",
+      "REQ-KNOW-04",
+      "REQ-PLAN-01",
+      "REQ-PLAT-01",
+      "REQ-PLAT-02",
+      "REQ-PLAT-03"
+    ],
+    "forbidden": [
+      "REQ-PAY-01",
+      "REQ-PAY-02",
+      "REQ-TEST-05",
+      "REQ-OFF-01",
+      "REQ-PDF-01",
+      "REQ-PDF-02",
+      "REQ-PDF-03"
+    ]
+  },
+  "requirements": [
+    {
+      "id": "REQ-LVL-01",
+      "priority": "P0",
+      "status": "DONE",
+      "evidence_level": "L3",
+      "conclusion": "HSK 3.0 默认隔离、标准/等级/内容版本合同已进入发布目录与生产门。"
+    },
+    {
+      "id": "REQ-LVL-02",
+      "priority": "P0",
+      "status": "DONE",
+      "evidence_level": "L3",
+      "conclusion": "Level 1–7 为已发布正式内容；Level 8–9 明确 `gap`，满足“已发布或明确缺口”，不得宣传完整 1–9。"
+    },
+    {
+      "id": "REQ-LVL-03",
+      "priority": "P1",
+      "status": "PARTIAL",
+      "evidence_level": "L1",
+      "conclusion": "已有统一高级学习/听力入口，但 `/mock/:band` 统一高级诊断与能力区间合同未完整验收。"
+    },
+    {
+      "id": "REQ-LVL-04",
+      "priority": "P0",
+      "status": "DONE",
+      "evidence_level": "L2",
+      "conclusion": "内容版本、撤回和历史 Attempt 可追溯合同已有目录/领域测试。"
+    },
+    {
+      "id": "REQ-AUD-01",
+      "priority": "P0",
+      "status": "DONE",
+      "evidence_level": "L2",
+      "conclusion": "音频来源、许可、使用权、版本、QA 与报告门已有模型和发布阻断测试。"
+    },
+    {
+      "id": "REQ-AUD-02",
+      "priority": "P0",
+      "status": "DONE",
+      "evidence_level": "L2",
+      "conclusion": "reading/audio/context_audio mastery 分离并有领域测试。"
+    },
+    {
+      "id": "REQ-AUD-03",
+      "priority": "P0",
+      "status": "DONE",
+      "evidence_level": "L3",
+      "conclusion": "音频 SRS、播放后评分、恢复与无可用音频降级已纳入学习闭环。"
+    },
+    {
+      "id": "REQ-AUD-04",
+      "priority": "P0",
+      "status": "DONE",
+      "evidence_level": "L3",
+      "conclusion": "播放状态、失败不写 mastery、重播幂等及恢复路径已有测试与生产流证据。"
+    },
+    {
+      "id": "REQ-AUD-05",
+      "priority": "P1",
+      "status": "DONE",
+      "evidence_level": "L3",
+      "conclusion": "分级听力与高级听力素材已发布；跟读仍保持“未评分”边界，不输出伪分数。"
+    },
+    {
+      "id": "REQ-LEARN-01",
+      "priority": "P0",
+      "status": "DONE",
+      "evidence_level": "L3",
+      "conclusion": "Today/Daily Session 的 Review→Learn→Listen/Practice→Summary 主链与版本规则已验收。"
+    },
+    {
+      "id": "REQ-LEARN-02",
+      "priority": "P0",
+      "status": "DONE",
+      "evidence_level": "L3",
+      "conclusion": "SRS card/grade/due/算法版本/来源 attempt 与幂等提交已验收。"
+    },
+    {
+      "id": "REQ-LEARN-03",
+      "priority": "P0",
+      "status": "DONE",
+      "evidence_level": "L3",
+      "conclusion": "Practice 错题进入 Mistakes/Review，复练保留原 Attempt 与解决状态。"
+    },
+    {
+      "id": "REQ-LEARN-04",
+      "priority": "P1",
+      "status": "DONE",
+      "evidence_level": "L2",
+      "conclusion": "streak 以完成学习事件和账号 IANA 时区计算；访问页面不计 streak。"
+    },
+    {
+      "id": "REQ-LEARN-05",
+      "priority": "P0",
+      "status": "DONE",
+      "evidence_level": "L3",
+      "conclusion": "Guest merge preview/confirm/skip、幂等合并与生产真实账号流已验收。"
+    },
+    {
+      "id": "REQ-LEARN-06",
+      "priority": "P1",
+      "status": "DONE",
+      "evidence_level": "L3",
+      "conclusion": "跨设备 revision 同步与冲突规则已验收；导出/删除请求具有状态机领域合同。"
+    },
+    {
+      "id": "REQ-LEARN-07",
+      "priority": "P1",
+      "status": "DONE",
+      "evidence_level": "L3",
+      "conclusion": "服务端真相、断网失败提示、恢复后恰好同步/继续与冲突状态已验收。"
+    },
+    {
+      "id": "REQ-AI-01",
+      "priority": "P1",
+      "status": "DONE",
+      "evidence_level": "L2",
+      "conclusion": "AI 身份/额度/成本/速率/降级与无供应商替代路径已有有界实现和测试。"
+    },
+    {
+      "id": "REQ-AI-02",
+      "priority": "P1",
+      "status": "DONE",
+      "evidence_level": "L2",
+      "conclusion": "输入最小化、输出安全、供应商失败、重试边界及非考试承诺已有测试。"
+    },
+    {
+      "id": "REQ-PDF-01",
+      "priority": "P2",
+      "status": "OPEN",
+      "evidence_level": "L0",
+      "conclusion": "高级 PDF/PDF Pack 尚未获批上线；授权、下载权益、撤回与退款合同待后续独立批次。"
+    },
+    {
+      "id": "REQ-PDF-02",
+      "priority": "P2",
+      "status": "OPEN",
+      "evidence_level": "L0",
+      "conclusion": "异步导出、取消和过期链接未形成生产实现。"
+    },
+    {
+      "id": "REQ-PAY-01",
+      "priority": "P1",
+      "status": "OPEN",
+      "evidence_level": "L0",
+      "conclusion": "商业配置未获批；当前不得展示虚构价格或创建订单，`/pricing` 待独立商业批次。"
+    },
+    {
+      "id": "REQ-PAY-02",
+      "priority": "P1",
+      "status": "OPEN",
+      "evidence_level": "L0",
+      "conclusion": "checkout 状态机与权益生效链未启用；Payment Live 明确禁止。"
+    },
+    {
+      "id": "REQ-TEST-01",
+      "priority": "P0",
+      "status": "DONE",
+      "evidence_level": "L3",
+      "conclusion": "Placement 已绑定题库/标准/技能/版本；缺 Listening 时明确降级。"
+    },
+    {
+      "id": "REQ-TEST-02",
+      "priority": "P0",
+      "status": "DONE",
+      "evidence_level": "L3",
+      "conclusion": "推荐起点、证据、不确定性、重测及下一步入口已生产验收，非官方成绩。"
+    },
+    {
+      "id": "REQ-TEST-03",
+      "priority": "P0",
+      "status": "DONE",
+      "evidence_level": "L3",
+      "conclusion": "Practice 逐题反馈、版本 Session/Attempt、刷新恢复和幂等提交已验收；Mock 扩展不冒充 P0。"
+    },
+    {
+      "id": "REQ-TEST-04",
+      "priority": "P0",
+      "status": "DONE",
+      "evidence_level": "L3",
+      "conclusion": "报题、撤回、版本审计与历史 Attempt 可解释合同已进入自动门。"
+    },
+    {
+      "id": "REQ-TEST-05",
+      "priority": "P2",
+      "status": "OPEN",
+      "evidence_level": "L0",
+      "conclusion": "HSK 7–9 正式 Mock 未获批开放；不能启动伪模考。"
+    },
+    {
+      "id": "REQ-TEST-06",
+      "priority": "P1",
+      "status": "PARTIAL",
+      "evidence_level": "L1",
+      "conclusion": "Placement/Practice 已可进入后续学习路径，Planner 本体已实现；Mock 输入与明确“创建/更新计划”取消合同未完整闭合。"
+    },
+    {
+      "id": "REQ-KNOW-01",
+      "priority": "P0",
+      "status": "DONE",
+      "evidence_level": "L2",
+      "conclusion": "词典检索、等级筛选、来源/版本/可用状态及无音频降级已有实现。"
+    },
+    {
+      "id": "REQ-KNOW-02",
+      "priority": "P0",
+      "status": "DONE",
+      "evidence_level": "L2",
+      "conclusion": "汉字页最小字段、真实 404/noindex 边界已有实现/门禁。"
+    },
+    {
+      "id": "REQ-KNOW-03",
+      "priority": "P1",
+      "status": "DONE",
+      "evidence_level": "L2",
+      "conclusion": "语法/阅读的任务、示例、练习和关联复习动作已有 Step 7 自动证据。"
+    },
+    {
+      "id": "REQ-KNOW-04",
+      "priority": "P0",
+      "status": "DONE",
+      "evidence_level": "L3",
+      "conclusion": "sitemap 仅纳入已发布可索引内容；Level 8–9 gap 与撤回内容不伪装为有效页。"
+    },
+    {
+      "id": "REQ-PLAN-01",
+      "priority": "P1",
+      "status": "DONE",
+      "evidence_level": "L2",
+      "conclusion": "goal/time/target/SRS/弱项、版本化计划、过载提示和调整理由已有有界实现/测试。"
+    },
+    {
+      "id": "REQ-OFF-01",
+      "priority": "P2",
+      "status": "OPEN",
+      "evidence_level": "L0",
+      "conclusion": "离线包未获批实现；无离线再分发权的音频不得进入包。"
+    },
+    {
+      "id": "REQ-PDF-03",
+      "priority": "P2",
+      "status": "OPEN",
+      "evidence_level": "L0",
+      "conclusion": "PDF 包与用户练习数据隔离、生成版本及资产清单追溯未形成生产实现。"
+    },
+    {
+      "id": "REQ-PLAT-01",
+      "priority": "P0",
+      "status": "DONE",
+      "evidence_level": "L3",
+      "conclusion": "公开/私有边界、受控操作确认及无权请求拒绝已纳入生产权限探测。"
+    },
+    {
+      "id": "REQ-PLAT-02",
+      "priority": "P0",
+      "status": "DONE",
+      "evidence_level": "L3",
+      "conclusion": "authenticated user/受控 guest token、写入幂等与审计标识已在核心流验收。"
+    },
+    {
+      "id": "REQ-PLAT-03",
+      "priority": "P0",
+      "status": "DONE",
+      "evidence_level": "L3",
+      "conclusion": "loading/empty/error/unauthorized/withdrawn/网络失败状态与恢复动作已纳入双端用户流。"
+    }
+  ]
+}
