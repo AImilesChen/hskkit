@@ -6,6 +6,7 @@ import { listAllPlans } from "../../../../lib/planner/storage";
 
 const cookie = (response: NextResponse, value: string, maxAge = 31_536_000) => {
   response.cookies.set(ACCOUNT_COOKIE, value, { httpOnly: true, sameSite: "strict", secure: true, maxAge, path: "/" });
+  response.headers.set("cache-control", "private, no-store");
   return response;
 };
 const safeBody = async (req: NextRequest) => {

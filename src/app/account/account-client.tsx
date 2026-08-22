@@ -10,7 +10,7 @@ type MergePreview = { id: string; mergeKey: string; expiresAt: string; preview: 
 async function json(url: string, init?: RequestInit) {
   const response = await fetch(url, { ...init, headers: { "content-type": "application/json", ...(init?.headers ?? {}) }, cache: "no-store" });
   const data = await response.json();
-  if (!response.ok) throw new Error(data.error ?? "REQUEST_FAILED");
+  if (!response.ok && !(response.status === 409 && data.state === "conflict")) throw new Error(data.error ?? "REQUEST_FAILED");
   return data;
 }
 
@@ -70,8 +70,19 @@ export default function AccountClient() {
     if (!sync) return;
     const deviceId = localStorage.getItem("hskkit_device") ?? crypto.randomUUID();
     localStorage.setItem("hskkit_device", deviceId);
-    const result = await act(() => json("/api/v1/account/sync", { method: "POST", body: JSON.stringify({ clientRevision: sync.revision, deviceId }) }), "Device is synced to the current server revision.");
-    if (result) setSync({ ...sync, revision: result.serverRevision, state: result.state });
+    setBusy(true); setError(""); setMessage("");
+    try {
+      const result = await json("/api/v1/account/sync", { method: "POST", body: JSON.stringify({ clientRevision: sync.revision, deviceId }) });
+      if (result.state === "conflict") {
+        const latest = await json("/api/v1/account/sync");
+        setSync(latest);
+        setMessage(`Another device advanced progress to revision ${result.serverRevision}. This device reloaded the server snapshot and is ready to retry.`);
+      } else {
+        setSync({ ...sync, revision: result.serverRevision, state: result.state });
+        setMessage("Device is synced to the current server revision.");
+      }
+    } catch (cause) { setError(cause instanceof Error ? cause.message : "REQUEST_FAILED"); }
+    finally { setBusy(false); }
   };
 
   if (!view) return <div className="state" role="status"><h2>Loading account…</h2><p>Checking your secure server-side account state.</p></div>;
@@ -91,7 +102,7 @@ export default function AccountClient() {
       <form className="card account-form" onSubmit={connect}>
         <h2>Connect this device</h2>
         <p>Enter the sync key shown when the account was created.</p>
-        <label>Sync key<input name="syncKey" required minLength={20} autoComplete="off" /></label>
+        <label>Sync key<input name="syncKey" type="password" required minLength={20} autoComplete="off" autoCapitalize="none" spellCheck={false} /></label>
         <button className="btn secondary" disabled={busy}>Connect device</button>
       </form>
     </div> : view.account.status === "deleted" ? <div className="state"><h2>Account data deleted</h2><p>Learning data is no longer available. The minimal request audit remains visible on the data page.</p><Link className="btn secondary" href="/account/data">View request status</Link></div> : <div className="account-grid">

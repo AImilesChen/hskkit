@@ -119,6 +119,35 @@ test("streak uses completed learning events in the account IANA timezone, not UT
   assert.throws(() => computeStreak(events, "Mars/Olympus", "2026-08-20T16:00:00.000Z"), /INVALID_TIMEZONE/);
 });
 
+test("an empty or visit-only Daily Session does not count toward streak", () => {
+  const sessions = [
+    {
+      id: "empty",
+      ownerId: "account:user",
+      localDay: "2026-08-20",
+      ruleVersion: "today-v3",
+      createdAt: "2026-08-20T08:00:00.000Z",
+      completedAt: "2026-08-20T08:00:00.000Z",
+      items: [{ id: "summary", kind: "summary" as const, contentId: "summary", status: "completed" as const }],
+    },
+    {
+      id: "unfinished",
+      ownerId: "account:user",
+      localDay: "2026-08-21",
+      ruleVersion: "today-v3",
+      createdAt: "2026-08-21T08:00:00.000Z",
+      items: [
+        { id: "learn:one", kind: "learn" as const, contentId: "catalog:one", status: "pending" as const },
+        { id: "summary", kind: "summary" as const, contentId: "summary", status: "pending" as const },
+      ],
+    },
+  ];
+  const result = computeSessionStreak(sessions, "UTC", "2026-08-21T12:00:00.000Z");
+  assert.equal(result.current, 0);
+  assert.equal(result.longest, 0);
+  assert.equal(result.lastLearningDay, null);
+});
+
 test("legacy completed sessions without completedAt remain in timezone streaks with an explicit fallback count", () => {
   const sessions = [
     {
@@ -127,7 +156,10 @@ test("legacy completed sessions without completedAt remain in timezone streaks w
       localDay: "2026-08-19",
       ruleVersion: "today-v1",
       createdAt: "2026-08-19T15:30:00.000Z",
-      items: [{ id: "summary", kind: "summary" as const, contentId: "summary", status: "completed" as const }],
+      items: [
+        { id: "learn:legacy", kind: "learn" as const, contentId: "catalog:legacy", status: "completed" as const },
+        { id: "summary", kind: "summary" as const, contentId: "summary", status: "completed" as const },
+      ],
     },
     {
       id: "current",
@@ -136,7 +168,10 @@ test("legacy completed sessions without completedAt remain in timezone streaks w
       ruleVersion: "today-v1",
       createdAt: "2026-08-20T08:00:00.000Z",
       completedAt: "2026-08-20T15:30:00.000Z",
-      items: [{ id: "summary", kind: "summary" as const, contentId: "summary", status: "completed" as const }],
+      items: [
+        { id: "learn:current", kind: "learn" as const, contentId: "catalog:current", status: "completed" as const },
+        { id: "summary", kind: "summary" as const, contentId: "summary", status: "completed" as const },
+      ],
     },
   ];
   const result = computeSessionStreak(sessions, "Asia/Shanghai", "2026-08-20T16:00:00.000Z");

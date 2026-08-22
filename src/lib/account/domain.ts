@@ -143,7 +143,8 @@ export function computeStreak(completedAt: string[], timezone: string, now: stri
 
 export function computeSessionStreak(sessions: DailySession[], timezone: string, now: string) {
   const completed = sessions.filter((session) =>
-    session.items.some((item) => item.kind === "summary" && item.status === "completed"),
+    session.items.some((item) => item.kind === "summary" && item.status === "completed")
+    && session.items.some((item) => item.kind !== "summary" && item.status === "completed"),
   );
   const legacyFallbackCount = completed.filter((session) => !session.completedAt).length;
   const streak = computeStreak(
