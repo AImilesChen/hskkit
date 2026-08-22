@@ -60,6 +60,10 @@ export interface AudioAsset {
   locale: string;
   voice: string;
   speed: number;
+  audioKind: "word" | "sentence" | "context";
+  publishedAt: string;
+  withdrawnAt?: string;
+  issueReportPath: "/api/v1/content/audio/report";
   usageRights: AudioUsageRights;
   source: SourceMetadata;
   authorization: AuthorizationMetadata;
@@ -374,6 +378,14 @@ function validateRepositoryInternal(repository: ContentRepository, enforceActive
     }
     if (typeof asset.speed !== "number" || !Number.isFinite(asset.speed) || asset.speed <= 0 || asset.speed > 2) {
       throw new Error(`AudioAsset ${asset.id} has invalid speed`);
+    }
+    if (!(["word", "sentence", "context"] as const).includes(asset.audioKind)) {
+      throw new Error(`AudioAsset ${asset.id} has invalid audio kind`);
+    }
+    assertIsoTimestamp(asset.publishedAt, `AudioAsset ${asset.id} publishedAt`);
+    if (asset.withdrawnAt !== undefined) assertIsoTimestamp(asset.withdrawnAt, `AudioAsset ${asset.id} withdrawnAt`);
+    if (asset.issueReportPath !== "/api/v1/content/audio/report") {
+      throw new Error(`AudioAsset ${asset.id} has invalid issue report path`);
     }
     if (!isRecord(asset.usageRights) || typeof asset.usageRights.streaming !== "boolean" ||
         typeof asset.usageRights.caching !== "boolean" || typeof asset.usageRights.offlineRedistribution !== "boolean") {

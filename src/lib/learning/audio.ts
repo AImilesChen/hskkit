@@ -84,7 +84,7 @@ export function trustedTodayAudioExercise(assetId: string, mode: AudioMode): Aud
     qaStatus: "approved",
     contentVersion: 1,
     sourceVersion: item.contentVersion,
-    audio: { status: "browser-speech", locale: "zh-CN" },
+    audio: { status: "unavailable", locale: "zh-CN" },
   };
   return {
     assetId,

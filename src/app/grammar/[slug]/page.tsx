@@ -9,8 +9,9 @@ import { GRAMMAR_LESSONS, grammarBySlug } from "@/lib/learning/step7-content";
 type Props = { params: Promise<{ slug: string }> };
 export function generateStaticParams() { return GRAMMAR_LESSONS.map(({ slug }) => ({ slug })); }
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const lesson = grammarBySlug((await params).slug);
-  return lesson ? { title: `${lesson.title} | HSKKit Grammar`, description: lesson.explanation } : { title: "Grammar lesson unavailable | HSKKit" };
+  const { slug } = await params; const lesson = grammarBySlug(slug);
+  if (!lesson) return { title: "Grammar lesson unavailable | HSKKit", robots: { index: false, follow: false } };
+  return { title: `${lesson.title} | HSKKit Grammar`, description: lesson.explanation, alternates: { canonical: `/grammar/${lesson.slug}` } };
 }
 export default async function GrammarPage({ params }: Props) {
   const lesson = grammarBySlug((await params).slug);

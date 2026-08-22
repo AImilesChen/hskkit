@@ -1,6 +1,8 @@
 export type Step7ContentKind = "grammar" | "reading" | "tone" | "discrimination" | "dictation";
 
-export interface Step7Exercise {
+import { isPublishedContentLogicalId, publishedAudioByLogicalId, publicAudioSrc } from "../content/published-content.ts";
+
+export type Step7Exercise = {
   id: string;
   contentId: string;
   contentVersion: string;
@@ -66,7 +68,7 @@ const listening = (value: Omit<AdvancedListeningLesson, "contentVersion" | "exer
   return { ...lesson, contentVersion, exercise: { id: `exercise:listening:${lesson.slug}`, contentId: `listening:${lesson.slug}`, contentVersion, kind: lesson.kind, prompt, options, correctAnswer: answer, explanation: explanationAnswer } };
 };
 
-export const GRAMMAR_LESSONS: GrammarLesson[] = [
+const ALL_GRAMMAR_LESSONS: GrammarLesson[] = [
   grammar({
     slug: "ba-sentence-basics", level: 3, title: "The 把 sentence: object before the action", pattern: "Subject + 把 + object + verb + result",
     explanation: "Use 把 when a known object is changed, moved or otherwise affected. The verb normally needs a result, direction or other complement.",
@@ -91,7 +93,7 @@ export const GRAMMAR_LESSONS: GrammarLesson[] = [
   }),
 ];
 
-export const READING_LESSONS: ReadingLesson[] = [
+const ALL_READING_LESSONS: ReadingLesson[] = [
   reading({
     slug: "morning-study-routine", level: 3, title: "A focused morning routine",
     passage: "每天早上，林月先复习十个生词，再听十五分钟中文。她把不懂的句子写在本子上，晚上再看一遍。",
@@ -114,11 +116,21 @@ export const READING_LESSONS: ReadingLesson[] = [
   }),
 ];
 
-export const ADVANCED_LISTENING_LESSONS: AdvancedListeningLesson[] = [
-  listening({ slug: "hsk1-tone-pairs", level: 1, title: "Third tone or fourth tone?", kind: "tone", voiceText: "买", audioSrc: "/audio/advanced-listening/hsk1-tone-pairs.mp3", guidance: "Listen for the low, dipping third tone. Playback must finish before answering.", prompt: "Which pinyin matches what you hear?", options: { A: "mǎi", B: "mài", C: "māi" }, answer: "A", explanationAnswer: "买 is pronounced mǎi with the third tone." }),
-  listening({ slug: "hsk2-syllable-discrimination", level: 2, title: "Distinguish close syllables", kind: "discrimination", voiceText: "老师让我们练习发音。", audioSrc: "/audio/advanced-listening/hsk2-syllable-discrimination.mp3", guidance: "Focus on the middle phrase and distinguish lǎoshī from lǎoshǔ.", prompt: "Which phrase did you hear?", options: { A: "老师让我们练习发音。", B: "老鼠让我们练习发音。", C: "老师让我们联系发音。" }, answer: "A", explanationAnswer: "The sentence uses 老师 (teacher) and 练习 (practise)." }),
-  listening({ slug: "hsk3-sentence-dictation", level: 3, title: "Sentence dictation", kind: "dictation", voiceText: "请把今天的作业写完。", audioSrc: "/audio/advanced-listening/hsk3-sentence-dictation.mp3", guidance: "Listen to the complete sentence, then type the Chinese characters. Punctuation and spaces are ignored.", prompt: "Type the sentence you hear.", answer: "请把今天的作业写完", explanationAnswer: "The complete sentence is 请把今天的作业写完。" }),
+const wordAudio = publishedAudioByLogicalId("hsk3.audio.word-mai");
+const sentenceAudio = publishedAudioByLogicalId("hsk3.audio.sentence-pronunciation");
+const contextAudio = publishedAudioByLogicalId("hsk3.audio.context-morning-study");
+
+const ALL_ADVANCED_LISTENING_LESSONS: AdvancedListeningLesson[] = [
+  ...(wordAudio ? [listening({ slug: "hsk1-tone-pairs", level: 1, title: "Third tone or fourth tone?", kind: "tone", voiceText: "买", audioSrc: publicAudioSrc(wordAudio), guidance: "Listen for the low, dipping third tone. Playback must finish before answering.", prompt: "Which pinyin matches what you hear?", options: { A: "mǎi", B: "mài", C: "māi" }, answer: "A", explanationAnswer: "买 is pronounced mǎi with the third tone." })] : []),
+  ...(sentenceAudio ? [listening({ slug: "hsk2-syllable-discrimination", level: 2, title: "Distinguish close syllables", kind: "discrimination", voiceText: "老师让我们练习发音。", audioSrc: publicAudioSrc(sentenceAudio), guidance: "Focus on the middle phrase and distinguish lǎoshī from lǎoshǔ.", prompt: "Which phrase did you hear?", options: { A: "老师让我们练习发音。", B: "老鼠让我们练习发音。", C: "老师让我们联系发音。" }, answer: "A", explanationAnswer: "The sentence uses 老师 (teacher) and 练习 (practise)." })] : []),
+  ...(contextAudio ? [listening({ slug: "hsk3-sentence-dictation", level: 3, title: "Context dictation", kind: "dictation", voiceText: "每天早上，林月先复习十个生词，再听十五分钟中文。她把不懂的句子写在本子上，晚上再看一遍。", audioSrc: publicAudioSrc(contextAudio), guidance: "Listen to the full context, then type the first sentence. Punctuation and spaces are ignored.", prompt: "Type the first sentence you hear.", answer: "每天早上林月先复习十个生词再听十五分钟中文", explanationAnswer: "The first sentence is 每天早上，林月先复习十个生词，再听十五分钟中文。" })] : []),
 ];
+
+export const GRAMMAR_LESSONS = ALL_GRAMMAR_LESSONS.filter((lesson) => isPublishedContentLogicalId(`hsk3.grammar.${lesson.slug}`));
+export const READING_LESSONS = ALL_READING_LESSONS.filter((lesson) => isPublishedContentLogicalId(`hsk3.reading.${lesson.slug}`));
+export const ADVANCED_LISTENING_LESSONS = ALL_ADVANCED_LISTENING_LESSONS;
+export const publishedGrammarLessons = GRAMMAR_LESSONS;
+export const publishedReadingLessons = READING_LESSONS;
 
 export function grammarBySlug(slug: string) { return GRAMMAR_LESSONS.find((item) => item.slug === slug); }
 export function readingBySlug(slug: string) { return READING_LESSONS.find((item) => item.slug === slug); }

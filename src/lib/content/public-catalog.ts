@@ -36,6 +36,10 @@ export function toPublicCatalogResponse(result: CatalogResult) {
       locale: asset.locale,
       voice: asset.voice,
       speed: asset.speed,
+      audioKind: asset.audioKind,
+      src: `/${asset.storageKey}`,
+      publishedAt: asset.publishedAt,
+      issueReportPath: asset.issueReportPath,
       available: true,
     }));
 

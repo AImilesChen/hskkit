@@ -9,8 +9,9 @@ import { READING_LESSONS, readingBySlug } from "@/lib/learning/step7-content";
 type Props = { params: Promise<{ slug: string }> };
 export function generateStaticParams() { return READING_LESSONS.map(({ slug }) => ({ slug })); }
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const lesson = readingBySlug((await params).slug);
-  return lesson ? { title: `${lesson.title} | HSKKit Reading`, description: lesson.translation } : { title: "Reading unavailable | HSKKit" };
+  const { slug } = await params; const lesson = readingBySlug(slug);
+  if (!lesson) return { title: "Reading unavailable | HSKKit", robots: { index: false, follow: false } };
+  return { title: `${lesson.title} | HSKKit Reading`, description: lesson.translation, alternates: { canonical: `/reading/${lesson.slug}` } };
 }
 export default async function ReadingPage({ params }: Props) {
   const lesson = readingBySlug((await params).slug);

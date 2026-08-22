@@ -61,6 +61,9 @@ function importFixture(): ContentImportBatch {
         locale: "zh-CN",
         voice: "studio-speaker-1",
         speed: 1,
+        audioKind: "word",
+        publishedAt: "2026-08-22T00:00:00.000Z",
+        issueReportPath: "/api/v1/content/audio/report",
         usageRights: { streaming: true, caching: true, offlineRedistribution: false },
         source: { name: "licensed studio", url: "https://example.com/audio-1" },
         authorization: {

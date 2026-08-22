@@ -14,11 +14,13 @@ test("catalog API defaults to isolated HSK 3.0 data", async () => {
   const body = await response.json();
   assert.equal(response.status, 200);
   assert.equal(body.standard, "hsk3");
-  assert.equal(body.releaseId, "hsk3-gf0025-2021-v2");
+  assert.equal(body.releaseId, "hsk3-batch10-content-audio-v3");
   assert.equal(body.level.level, 1);
   assert.equal(body.availability, "ready");
   assert.equal(body.contentAssets.length, 500);
-  assert.deepEqual(body.audioAssets, []);
+  assert.equal(body.audioAssets.length, 1);
+  assert.equal(body.audioAssets[0].audioKind, "word");
+  assert.match(body.audioAssets[0].src, /^\/audio\/formal\/.+\.mp3$/);
 });
 
 test("catalog API exposes HSK 3.0 Level 1 through 9", async () => {
@@ -27,11 +29,14 @@ test("catalog API exposes HSK 3.0 Level 1 through 9", async () => {
     const body = await response.json();
     assert.equal(response.status, 200);
     assert.equal(body.standard, "hsk3");
-    assert.equal(body.releaseId, "hsk3-gf0025-2021-v2");
+    assert.equal(body.releaseId, "hsk3-batch10-content-audio-v3");
     assert.equal(body.level.level, level);
     assert.equal(body.availability, level <= 7 ? "ready" : "gap");
     assert.equal(body.contentAssets.length > 0, level <= 7);
-    assert.deepEqual(body.audioAssets, []);
+    assert.equal(body.audioAssets.length, level === 1 ? 1 : 0);
+    if (level === 1) {
+      assert.equal(body.audioAssets[0].audioKind, "word");
+    }
   }
 });
 
@@ -84,6 +89,9 @@ test("public catalog DTO never exposes storage keys or authorization metadata", 
       locale: "zh-CN",
       voice: "speaker-1",
       speed: 1,
+      audioKind: "word",
+      publishedAt: "2026-08-22T00:00:00.000Z",
+      issueReportPath: "/api/v1/content/audio/report",
       usageRights: { streaming: true, caching: true, offlineRedistribution: false },
       source: { name: "studio", url: "https://example.com/audio" },
       authorization: { status: "authorized", license: "owned", evidenceUrl: "https://example.com/evidence/audio" },
