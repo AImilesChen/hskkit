@@ -5,7 +5,7 @@ import SiteHeader from "../site-header";
 import { listAudioAssets } from "@/lib/learning/audio";
 import { ADVANCED_LISTENING_LESSONS } from "@/lib/learning/step7-content";
 
-export const metadata: Metadata = { title: "Listening Practice | HSKKit", robots: { index: false, follow: false } };
+export const metadata: Metadata = { title: "Listening Practice | HSKKit", alternates: { canonical: "/listen" }, robots: { index: false, follow: false } };
 
 export default function ListenPage() {
   const assets = listAudioAssets();

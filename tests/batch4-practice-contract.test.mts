@@ -71,7 +71,7 @@ test("invalid answers are rejected before Attempt, Mistake, or SRS state changes
 });
 
 test("batch 4 exposes level then skill selection and keeps legacy HSK 1-5 practice routes", () => {
-  const selector = source("../src/app/practice/page.tsx");
+  const selector = source("../src/app/practice/page.tsx") + source("../src/app/practice/practice-selector-client.tsx");
   const home = source("../src/app/page.tsx");
   const client = source("../src/app/practice/[level]/[skill]/practice-client.tsx");
   const route = source("../src/app/api/v1/practice/route.ts");
@@ -79,7 +79,7 @@ test("batch 4 exposes level then skill selection and keeps legacy HSK 1-5 practi
 
   assert.match(selector, /Choose a level/);
   assert.match(selector, /Choose a skill/);
-  assert.match(selector, /\/practice\/1\/vocabulary/);
+  assert.match(selector, /href=\{`\/practice\/\$\{selectedLevel\}\/vocabulary`\}/);
   assert.match(home, /href: "\/practice"/);
   assert.match(client, /PRACTICE_SESSION_EXPIRED/);
   assert.match(client, /PRACTICE_QUESTION_WITHDRAWN/);
