@@ -1,6 +1,6 @@
 # HSKKit Stage 07 唯一总矩阵 v2（冻结）
 
-- 状态：`FROZEN`
+- 状态：`FROZEN — FINAL GO (38/38 DONE)`
 - 冻结日期：2026-08-22
 - 作用：从本文件冻结后，HSKKit 前八步及后续有界批次只以本矩阵作为 Requirement 分母、范围边界和验收入口；旧的阶段性汇报不能替代本矩阵。
 - 冻结 PRD：`docs/product/HSKKit-PRD-v4.0-owner-review.md`
@@ -11,6 +11,7 @@
 - 批次 9 生产 GO 标签：`hskkit-batch9-prod-go-20260822T064749Z`，peeled commit 指向同一提交。
 - 批次 9 最终报告 SHA256：`566d10d6ceb283e9783ecce16fb6b19418e5ad5610f84207551ebf797dae1560`
 - Requirement 分母：38；P0=21，P1=12，P2=5。
+- 最终生产证据：`docs/stage07/Batch-16-final-evidence.md`；生产源码提交 `4ee28d1993447d1a08b7e88d349c7ad915d1a48c`；Main Worker 版本 `67b795e0-4079-4c89-8c72-3b03b22bc83f`。
 
 ## 1. 状态与证据等级
 
@@ -30,7 +31,7 @@
 |---|---:|---|---|---|
 | REQ-LVL-01 | P0 | DONE | L3 | HSK 3.0 默认隔离、标准/等级/内容版本合同已进入发布目录与生产门。 |
 | REQ-LVL-02 | P0 | DONE | L3 | Level 1–7 为已发布正式内容；Level 8–9 明确 `gap`，满足“已发布或明确缺口”，不得宣传完整 1–9。 |
-| REQ-LVL-03 | P1 | PARTIAL | L1 | 已有统一高级学习/听力入口，但 `/mock/:band` 统一高级诊断与能力区间合同未完整验收。 |
+| REQ-LVL-03 | P1 | DONE | L3 | 统一高级入口、能力区间与 bounded Mock 已完成自动门禁及生产验收；不冒充 HSK 7–9 官方正式试卷。 |
 | REQ-LVL-04 | P0 | DONE | L2 | 内容版本、撤回和历史 Attempt 可追溯合同已有目录/领域测试。 |
 | REQ-AUD-01 | P0 | DONE | L2 | 音频来源、许可、使用权、版本、QA 与报告门已有模型和发布阻断测试。 |
 | REQ-AUD-02 | P0 | DONE | L2 | reading/audio/context_audio mastery 分离并有领域测试。 |
@@ -46,39 +47,35 @@
 | REQ-LEARN-07 | P1 | DONE | L3 | 服务端真相、断网失败提示、恢复后恰好同步/继续与冲突状态已验收。 |
 | REQ-AI-01 | P1 | DONE | L2 | AI 身份/额度/成本/速率/降级与无供应商替代路径已有有界实现和测试。 |
 | REQ-AI-02 | P1 | DONE | L2 | 输入最小化、输出安全、供应商失败、重试边界及非考试承诺已有测试。 |
-| REQ-PDF-01 | P2 | OPEN | L0 | 高级 PDF/PDF Pack 尚未获批上线；授权、下载权益、撤回与退款合同待后续独立批次。 |
-| REQ-PDF-02 | P2 | OPEN | L0 | 异步导出、取消和过期链接未形成生产实现。 |
-| REQ-PAY-01 | P1 | OPEN | L0 | 商业配置未获批；当前不得展示虚构价格或创建订单，`/pricing` 待独立商业批次。 |
-| REQ-PAY-02 | P1 | OPEN | L0 | checkout 状态机与权益生效链未启用；Payment Live 明确禁止。 |
+| REQ-PDF-01 | P2 | DONE | L3 | 高级 PDF/PDF Pack 已完成真实字节、字体、搜索文本、分页、授权内容与生产回读；退款后权益撤销。 |
+| REQ-PDF-02 | P2 | DONE | L3 | Queue/R2 异步导出、取消/失败/过期/撤销、owner-only 短效单次下载已完成真实生产链验收。 |
+| REQ-PAY-01 | P1 | DONE | L3 | US$9.99 Stripe Test Checkout→签名 webhook→单一权益真实闭环通过；生产公开购买保持 fail-closed，Stripe Live 仍为 NO-GO。 |
+| REQ-PAY-02 | P1 | DONE | L3 | webhook 幂等、真实 Test 退款、订单/权益/导出/旧链接撤销及审计链已闭合。 |
 | REQ-TEST-01 | P0 | DONE | L3 | Placement 已绑定题库/标准/技能/版本；缺 Listening 时明确降级。 |
 | REQ-TEST-02 | P0 | DONE | L3 | 推荐起点、证据、不确定性、重测及下一步入口已生产验收，非官方成绩。 |
 | REQ-TEST-03 | P0 | DONE | L3 | Practice 逐题反馈、版本 Session/Attempt、刷新恢复和幂等提交已验收；Mock 扩展不冒充 P0。 |
 | REQ-TEST-04 | P0 | DONE | L3 | 报题、撤回、版本审计与历史 Attempt 可解释合同已进入自动门。 |
-| REQ-TEST-05 | P2 | OPEN | L0 | HSK 7–9 正式 Mock 未获批开放；不能启动伪模考。 |
-| REQ-TEST-06 | P1 | PARTIAL | L1 | Placement/Practice 已可进入后续学习路径，Planner 本体已实现；Mock 输入与明确“创建/更新计划”取消合同未完整闭合。 |
+| REQ-TEST-05 | P2 | DONE | L3 | bounded advanced Mock 与安全降级已完成自动门禁和生产验收，继续明确非官方 HSK 7–9 正式试卷。 |
+| REQ-TEST-06 | P1 | DONE | L3 | Placement/Practice/Mock 结果到 Planner 的创建、更新、取消与版本合同已完成生产验收。 |
 | REQ-KNOW-01 | P0 | DONE | L2 | 词典检索、等级筛选、来源/版本/可用状态及无音频降级已有实现。 |
 | REQ-KNOW-02 | P0 | DONE | L2 | 汉字页最小字段、真实 404/noindex 边界已有实现/门禁。 |
 | REQ-KNOW-03 | P1 | DONE | L2 | 语法/阅读的任务、示例、练习和关联复习动作已有 Step 7 自动证据。 |
 | REQ-KNOW-04 | P0 | DONE | L3 | sitemap 仅纳入已发布可索引内容；Level 8–9 gap 与撤回内容不伪装为有效页。 |
 | REQ-PLAN-01 | P1 | DONE | L2 | goal/time/target/SRS/弱项、版本化计划、过载提示和调整理由已有有界实现/测试。 |
-| REQ-OFF-01 | P2 | OPEN | L0 | 离线包未获批实现；无离线再分发权的音频不得进入包。 |
-| REQ-PDF-03 | P2 | OPEN | L0 | PDF 包与用户练习数据隔离、生成版本及资产清单追溯未形成生产实现。 |
+| REQ-OFF-01 | P2 | DONE | L3 | 真实离线 ZIP、manifest、来源/许可/版本追溯已验收；无离线再分发权的音频被排除。 |
+| REQ-PDF-03 | P2 | DONE | L3 | PDF/离线包与账号数据导出隔离，生成版本、确定性 manifest、checksum 与私有 R2 生命周期已完成生产验收。 |
 | REQ-PLAT-01 | P0 | DONE | L3 | 公开/私有边界、受控操作确认及无权请求拒绝已纳入生产权限探测。 |
 | REQ-PLAT-02 | P0 | DONE | L3 | authenticated user/受控 guest token、写入幂等与审计标识已在核心流验收。 |
 | REQ-PLAT-03 | P0 | DONE | L3 | loading/empty/error/unauthorized/withdrawn/网络失败状态与恢复动作已纳入双端用户流。 |
 
 ## 3. 冻结统计
 
-- `DONE`：29
+- `DONE`：38
   - P0：21/21
-  - P1：8/12
-  - P2：0/5
-- `PARTIAL`：2
-  - `REQ-LVL-03`
-  - `REQ-TEST-06`
-- `OPEN`：7
-  - P1：`REQ-PAY-01`、`REQ-PAY-02`
-  - P2：`REQ-TEST-05`、`REQ-OFF-01`、`REQ-PDF-01`、`REQ-PDF-02`、`REQ-PDF-03`
+  - P1：12/12
+  - P2：5/5
+- `PARTIAL`：0
+- `OPEN`：0
 
 ## 4. 批次 10 精确范围冻结
 
@@ -119,4 +116,4 @@
 1. Requirement ID 只允许来自本文件列出的 38 条；不得新增别名、合并、拆分或暗改优先级。
 2. 后续状态变化必须逐行更新本矩阵，并绑定新的提交、生产证据和标签；口头汇报不改变状态。
 3. `DONE` 不等于“全部正式内容永久齐全”；内容发布状态继续由版本化目录、授权与 QA 门决定。
-4. 商业、Mock、离线、PDF 的 OPEN 状态是明确产品边界，不得用占位页面或演示数据冒充上线。
+4. 批次 10 的历史 `FORBIDDEN` 仅约束当时批次范围；后续 Owner 授权的有界批次已逐行闭合。商业生产仍保持 Stripe Live `NO-GO`，不得用 Test 证据冒充 Live 放行。
