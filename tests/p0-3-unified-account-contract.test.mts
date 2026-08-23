@@ -76,8 +76,19 @@ test("P0-3 removes contradictory account language and publishes a visible sign-i
   assert.match(planner, /Guests can try Planner/);
   assert.match(planner, /sign in to save it across devices/i);
   assert.match(account, /Google sign-in/);
-  assert.match(account, /Sync Key/);
+  assert.doesNotMatch(account, /Sync Key/);
   assert.match(navigation, /href: "\/account", label: "Sign in"/);
+});
+
+test("P0-3 presents Google as the only user-facing sign-in and recovery choice", () => {
+  const login = read("../src/app/login/page.tsx");
+  const account = read("../src/app/account/account-client.tsx");
+  assert.match(login, /Continue with Google/);
+  assert.doesNotMatch(login, /Use a Sync Key for recovery/);
+  assert.doesNotMatch(account, /Recover with a Sync Key/);
+  assert.doesNotMatch(account, /Connect with Sync Key/);
+  assert.doesNotMatch(account, /Sync Key recovery/);
+  assert.doesNotMatch(account, /Rotate Sync Key/);
 });
 
 test("P0-3 account request path does not initialize the catalog-backed learning domain", () => {

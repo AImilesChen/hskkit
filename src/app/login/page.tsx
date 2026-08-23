@@ -35,9 +35,6 @@ export default async function LoginPage({ searchParams }: { searchParams: Promis
             {params.error ? "Try Google sign-in again" : "Continue with Google"}
           </a>
           <p className="mt-4 text-sm leading-6 text-slate-600">After sign-in, HSKKit previews eligible guest progress. Nothing is merged until you confirm.</p>
-          <div className="my-6 h-px bg-slate-200" />
-          <Link className="inline-flex min-h-11 w-full items-center justify-center rounded-xl border border-slate-300 px-4 font-bold text-slate-800 hover:bg-slate-50" href="/account">Use a Sync Key for recovery</Link>
-          <p className="mt-3 text-xs leading-5 text-slate-500">A Sync Key is a recovery and device-connection method, not the primary sign-in.</p>
         </div>
         <Link className="mt-6 inline-flex min-h-11 items-center font-bold text-blue-700" href="/today">Continue as a guest</Link>
       </main>
