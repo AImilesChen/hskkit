@@ -1,5 +1,5 @@
 import catalog from "../content/catalog.json" with { type: "json" };
-import { validateRepository, type ContentAsset, type ContentRepository } from "../content/repository.ts";
+import { type ContentAsset, type ContentRepository } from "../content/repository.ts";
 import { listPublishedWords, type StudyWord } from "../dictionary/catalog.ts";
 
 const repository = catalog as ContentRepository;
@@ -26,7 +26,8 @@ export type TodayContentPlan =
 
 function activeLevel(level: number) {
   if (!activeCache) {
-    validateRepository(repository);
+    // The immutable bundled catalog is fully validated by the release gate. Keep the
+    // request path fail-closed on the active release without revalidating 11k assets.
     const releaseId = repository.activeReleaseByStandard.hsk3;
     const release = releaseId ? repository.releases.find((candidate) => candidate.id === releaseId && candidate.standard === "hsk3" && candidate.status === "published") : undefined;
     if (!release) {

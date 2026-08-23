@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
 import test from "node:test";
 
 import {
@@ -18,6 +19,11 @@ import { practiceQuestionSet } from "../src/lib/practice/questions.ts";
 
 const emptyState = (): LearningState => ({ attempts: [], cards: [], mistakes: [], dailySessions: [] });
 const now = "2026-08-20T09:00:00.000Z";
+
+test("Today request path does not run the full 11k-asset repository validator", () => {
+  const source = readFileSync(new URL("../src/lib/learning/today-content.ts", import.meta.url), "utf8");
+  assert.doesNotMatch(source, /validateRepository\s*\(/);
+});
 
 test("wrong practice answer creates one versioned attempt, mistake and due review", () => {
   const state = emptyState();
@@ -163,9 +169,9 @@ test("Today selects a source-locked word from the active versioned HSK 3.0 relea
   const plan = selectTodayContent(1);
   assert.equal(plan.status, "ready");
   if (plan.status !== "ready") return;
-  assert.equal(plan.releaseId, "hsk3-batch10-content-audio-v3");
+  assert.equal(plan.releaseId, "hsk3-batch13-formal-learning-v4");
   assert.match(plan.item.contentId, /^catalog:hsk3\.word\.l1\./);
-  assert.match(plan.item.contentVersion, /^hsk3-batch10-content-audio-v3:/);
+  assert.match(plan.item.contentVersion, /^hsk3-batch13-formal-learning-v4:/);
   assert.equal(plan.item.level, 1);
   assert.ok(plan.item.example.hanzi.includes(plan.item.hanzi));
 });
