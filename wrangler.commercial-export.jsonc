@@ -1,0 +1,26 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "hskkit-commercial-export-worker",
+  "main": "workers/commercial-export-worker.ts",
+  "compatibility_date": "2026-05-24",
+  "compatibility_flags": ["nodejs_compat"],
+  "d1_databases": [{
+    "binding": "LEARNING_DB",
+    "database_name": "hskkit-learning",
+    "database_id": "214d11f8-3cb2-46b7-b7b1-0dfb602dc6e7",
+    "migrations_dir": "migrations"
+  }],
+  "r2_buckets": [{
+    "binding": "COMMERCIAL_EXPORTS_R2",
+    "bucket_name": "hskkit-commercial-exports"
+  }],
+  "queues": {
+    "consumers": [{
+      "queue": "hskkit-commercial-exports",
+      "max_batch_size": 3,
+      "max_batch_timeout": 5,
+      "max_retries": 3,
+      "dead_letter_queue": "hskkit-commercial-exports-dlq"
+    }]
+  }
+}

@@ -16,7 +16,7 @@ export default function AccountPage() {
       <p className="eyebrow">Private learning account</p>
       <h1>Account & sync</h1>
       <p>Connect devices, preview guest progress before merging, and review conflict-safe sync status.</p>
-      <nav aria-label="Learning navigation"><Link href="/today">Today</Link><Link href="/review">Review</Link><Link href="/mistakes">Mistakes</Link><Link href="/listen">Listen</Link><Link href="/account/data">Data</Link></nav>
+      <nav aria-label="Learning navigation"><Link href="/today">Today</Link><Link href="/review">Review</Link><Link href="/mistakes">Mistakes</Link><Link href="/listen">Listen</Link><Link href="/account/data">Data</Link><Link href="/exports">Exports</Link></nav>
     </header>
     <AccountClient />
   </main><SiteFooter/></>;

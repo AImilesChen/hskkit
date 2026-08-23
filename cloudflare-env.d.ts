@@ -1,5 +1,12 @@
 interface CloudflareEnv {
   LEARNING_DB: D1Database;
+  COMMERCIAL_EXPORTS_R2: R2Bucket;
+  COMMERCIAL_EXPORT_QUEUE: Queue<{ jobId: string }>;
+  COMMERCE_MODE?: string;
+  STRIPE_SECRET_KEY?: string;
+  STRIPE_WEBHOOK_SECRET?: string;
+  EXPORT_SIGNING_SECRET?: string;
+  ADMIN_REFUND_TOKEN?: string;
   DEEPSEEK_API_KEY?: string;
   DEEPSEEK_BASE_URL?: string;
   DEEPSEEK_MODEL?: string;

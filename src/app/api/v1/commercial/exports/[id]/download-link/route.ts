@@ -1,0 +1,30 @@
+import { getCloudflareContext } from "@opennextjs/cloudflare";
+import { NextRequest, NextResponse } from "next/server";
+import { requestIdentity } from "@/lib/account/identity";
+import { manifestStillAuthorized } from "@/lib/commercial/catalog";
+import { canIssueDownload } from "@/lib/commercial/domain";
+import { createDownloadTokenRecord,getExportJob,revokeExportJob } from "@/lib/commercial/storage";
+import { sha256Hex, signDownloadToken } from "@/lib/commercial/signer";
+
+export async function POST(req:NextRequest,{params}:{params:Promise<{id:string}>}) {
+  const identity=await requestIdentity();
+  if(!identity.account||identity.account.status!=="active") return NextResponse.json({error:"ACCOUNT_REQUIRED"},{status:401});
+  const env=getCloudflareContext().env;
+  if(!env.EXPORT_SIGNING_SECRET||env.EXPORT_SIGNING_SECRET.length<32) return NextResponse.json({error:"DOWNLOAD_SIGNING_NOT_CONFIGURED"},{status:503});
+  const job=await getExportJob((await params).id,identity.account.userId);
+  if(!job) return NextResponse.json({error:"EXPORT_NOT_FOUND"},{status:404});
+  if(job.kind==="account_data") {
+    if(job.state!=="ready") return NextResponse.json({error:"EXPORT_NOT_READY"},{status:409});
+    if(!job.expires_at||Date.parse(job.expires_at)<=Date.now()) return NextResponse.json({error:"EXPORT_EXPIRED"},{status:410});
+  } else {
+    if(!manifestStillAuthorized(job.manifest_json)){await revokeExportJob(job.id,"CONTENT_RIGHTS_CHANGED");return NextResponse.json({error:"CONTENT_RIGHTS_CHANGED"},{status:410});}
+    const entitlement=job.entitlement_id?await env.LEARNING_DB.prepare(`SELECT status,download_limit,successful_downloads FROM commercial_entitlements WHERE id=?`).bind(job.entitlement_id).first<{status:string;download_limit:number;successful_downloads:number}>():null;
+    const decision=canIssueDownload({actorUserId:identity.account.userId,ownerUserId:job.user_id,entitlementStatus:entitlement?.status??"revoked",jobState:job.state,expiresAt:job.expires_at??"",successfulDownloads:entitlement?.successful_downloads??0,downloadLimit:entitlement?.download_limit??0});
+    if(!decision.allowed) return NextResponse.json({error:decision.code},{status:decision.code==="ACCESS_DENIED"?403:decision.code==="EXPORT_EXPIRED"?410:409});
+  }
+  const tokenId=`tok_${crypto.randomUUID()}`;
+  const exp=Math.min(Math.floor(Date.now()/1000)+600,Math.floor(Date.parse(job.expires_at!)/1000));
+  const token=await signDownloadToken({jobId:job.id,userId:identity.account.userId,jti:tokenId,exp},env.EXPORT_SIGNING_SECRET);
+  await createDownloadTokenRecord({tokenId,jobId:job.id,userId:identity.account.userId,tokenSha256:await sha256Hex(token),expiresAt:new Date(exp*1000).toISOString()});
+  return NextResponse.json({url:`${req.nextUrl.origin}/api/v1/commercial/download/${encodeURIComponent(token)}`,expiresAt:new Date(exp*1000).toISOString(),singleUse:true},{headers:{"cache-control":"private, no-store"}});
+}

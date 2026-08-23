@@ -343,6 +343,8 @@ export async function actOnDataRequest(userId: string, requestId: string, action
       db().prepare("DELETE FROM ai_operations WHERE owner_id=?").bind(ownerId(userId)),
       db().prepare("DELETE FROM ai_quota_buckets WHERE owner_id=?").bind(ownerId(userId)),
       db().prepare("UPDATE account_data_requests SET result_json=NULL,expires_at=NULL WHERE user_id=?").bind(userId),
+      db().prepare("UPDATE commercial_entitlements SET status='revoked',revoked_reason='account_deleted',version=version+1,updated_at=? WHERE user_id=? AND status='active'").bind(completed.updatedAt, userId),
+      db().prepare("UPDATE commercial_export_jobs SET state='revoked',expires_at=?,lease_owner=NULL,lease_expires_at=NULL,updated_at=? WHERE user_id=? AND state IN ('queued','generating','ready')").bind(completed.updatedAt, completed.updatedAt, userId),
       db().prepare("UPDATE accounts SET status='deleted',deleted_at=?,updated_at=? WHERE user_id=? AND status='active'").bind(completed.completedAt, completed.updatedAt, userId),
       db().prepare("UPDATE account_data_requests SET state='completed',updated_at=?,completed_at=?,failure_code=NULL WHERE id=? AND user_id=? AND state='processing'").bind(completed.updatedAt, completed.completedAt, requestId, userId),
       db().prepare("INSERT INTO account_audit(id,user_id,action,resource_type,resource_id,result,idempotency_key,created_at) VALUES(?,?,'delete_complete','account_data_request',?,'completed',?,?)").bind(crypto.randomUUID(), userId, requestId, `${requestId}:complete:${processing.attempt}`, completed.updatedAt),

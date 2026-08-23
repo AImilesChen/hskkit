@@ -36,5 +36,15 @@
 		"database_name": "hskkit-learning",
 		"database_id": "214d11f8-3cb2-46b7-b7b1-0dfb602dc6e7",
 		"migrations_dir": "migrations"
-	}]
+	}],
+	"r2_buckets": [{
+		"binding": "COMMERCIAL_EXPORTS_R2",
+		"bucket_name": "hskkit-commercial-exports"
+	}],
+	"queues": {
+		"producers": [{
+			"binding": "COMMERCIAL_EXPORT_QUEUE",
+			"queue": "hskkit-commercial-exports"
+		}]
+	}
 }

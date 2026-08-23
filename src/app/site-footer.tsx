@@ -7,6 +7,8 @@ const studyLinks = [
   { href: "/today", label: "Today" },
   { href: "/listen", label: "Listening" },
   { href: "/account", label: "Account" },
+  { href: "/exports", label: "Exports" },
+  { href: "/pricing", label: "Pricing" },
 ];
 
 const guideLinks = [
