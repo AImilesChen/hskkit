@@ -1,5 +1,5 @@
 import practiceAudioManifest from "../practice/audio-assets.json" with { type: "json" };
-import { isPublishedContentLogicalId, publishedAudioByLogicalId, publicAudioSrc } from "../content/published-content.ts";
+import { isPublishedStep7Content, publishedStep7AudioSrc } from "./step7-release.ts";
 
 export type Step7ContentKind = "grammar" | "reading" | "tone" | "discrimination" | "dictation";
 
@@ -89,7 +89,7 @@ const ALL_READING_LESSONS: ReadingSource[] = [
 ];
 
 export const GRAMMAR_LESSONS: GrammarLesson[] = ALL_GRAMMAR_LESSONS
-  .filter((lesson) => isPublishedContentLogicalId(`hsk3.grammar.${lesson.slug}`))
+  .filter((lesson) => isPublishedStep7Content(`hsk3.grammar.${lesson.slug}`))
   .map((lesson) => ({
     ...lesson,
     contentVersion: lesson.exercise.contentVersion,
@@ -97,7 +97,7 @@ export const GRAMMAR_LESSONS: GrammarLesson[] = ALL_GRAMMAR_LESSONS
     examples: lesson.examples.map((example) => ({ ...example, chinese: example.zh, pinyin: "", english: example.en })),
   }));
 export const READING_LESSONS: ReadingLesson[] = ALL_READING_LESSONS
-  .filter((lesson) => isPublishedContentLogicalId(`hsk3.reading.${lesson.slug}`))
+  .filter((lesson) => isPublishedStep7Content(`hsk3.reading.${lesson.slug}`))
   .map((lesson) => ({
     ...lesson,
     contentVersion: lesson.exercise.contentVersion,
@@ -108,9 +108,9 @@ export const READING_LESSONS: ReadingLesson[] = ALL_READING_LESSONS
   }));
 
 const formalAudio = (logicalId: string) => {
-  const asset = publishedAudioByLogicalId(logicalId);
-  if (!asset) throw new Error(`LISTENING_AUDIO_NOT_PUBLISHED:${logicalId}`);
-  return publicAudioSrc(asset);
+  const src = publishedStep7AudioSrc(logicalId);
+  if (!src) throw new Error(`LISTENING_AUDIO_NOT_PUBLISHED:${logicalId}`);
+  return src;
 };
 const practiceAudio = (id: string) => {
   const asset = practiceAudioManifest.assets.find((candidate) => candidate.id === id && candidate.authorization.status === "authorized" && candidate.qaStatus === "approved" && candidate.lifecycleStatus === "published");
@@ -134,8 +134,8 @@ export const ADVANCED_LISTENING_LESSONS: AdvancedListeningLesson[] = [
   listen("hsk9-formal-argument", 9, "HSK 9 formal argument", "discrimination", "formal-argument", "formal", "谈判暂时没有达成最终协议，不过双方同意继续交换资料，并在两周后举行下一轮会议。", practiceAudio("hsk3.practice.audio.level-6-2.v1"), "Distinguish the current status from the next agreed procedural step.", "Which conclusion is justified?", { A: "Negotiations have permanently ended", B: "A final agreement was signed", C: "No final agreement exists, but talks will continue" }, "C", "The parties have not reached a final agreement, yet they agreed on further exchange and another meeting."),
 ];
 
-function releasedGrammar(lesson: GrammarLesson) { return isPublishedContentLogicalId(`hsk3.grammar.${lesson.slug}`) ? lesson : undefined; }
-function releasedReading(lesson: ReadingLesson) { return isPublishedContentLogicalId(`hsk3.reading.${lesson.slug}`) ? lesson : undefined; }
+function releasedGrammar(lesson: GrammarLesson) { return isPublishedStep7Content(`hsk3.grammar.${lesson.slug}`) ? lesson : undefined; }
+function releasedReading(lesson: ReadingLesson) { return isPublishedStep7Content(`hsk3.reading.${lesson.slug}`) ? lesson : undefined; }
 export const grammarLessonBySlug = (slug: string) => { const lesson = GRAMMAR_LESSONS.find((item) => item.slug === slug); return lesson ? releasedGrammar(lesson) : undefined; };
 export const readingLessonBySlug = (slug: string) => { const lesson = READING_LESSONS.find((item) => item.slug === slug); return lesson ? releasedReading(lesson) : undefined; };
 export const advancedListeningBySlug = (slug: string) => ADVANCED_LISTENING_LESSONS.find((item) => item.slug === slug);

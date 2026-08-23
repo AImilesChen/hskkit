@@ -41,7 +41,8 @@ test("Dictionary Word Character Grammar and Reading are gated by the active form
   const sitemap = await source("src/app/sitemap.ts");
   assert.match(dictionary, /lib\/content\/catalog\.json|\.\.\/content\/catalog\.json/);
   assert.match(dictionary, /activeReleaseByStandard/);
-  assert.match(learning, /content\/published-content/);
+  assert.match(learning, /\.\/step7-release/);
+  assert.doesNotMatch(learning, /content\/published-content|content\/catalog\.json/);
   assert.match(sitemap, /publishedGrammarLessons/);
   assert.match(sitemap, /publishedReadingLessons/);
 });

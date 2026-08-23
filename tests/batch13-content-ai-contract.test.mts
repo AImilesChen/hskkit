@@ -152,3 +152,51 @@ test("AI provider retries one transient failure only and never retries invalid o
   await assert.rejects(() => callAiProvider(config, "trusted", 100, async () => { attempts += 1; return new Response("bad", { status: 400 }); }), /AI_PROVIDER_UNAVAILABLE/);
   assert.equal(attempts, 1);
 });
+
+test("Batch 13 dynamic AI path uses a release-gated lightweight Step 7 manifest", async () => {
+  const step7Source = await source("src/lib/learning/step7-content.ts");
+  assert.doesNotMatch(step7Source, /content\/published-content|content\/catalog\.json/);
+
+  const manifest = await import("../src/lib/learning/step7-release.ts");
+  const catalog = JSON.parse(await source("src/lib/content/catalog.json"));
+  const release = catalog.releases.find((item: { id: string }) => item.id === catalog.activeReleaseByStandard.hsk3);
+  assert.equal(release?.id, "hsk3-batch13-formal-learning-v4");
+  assert.equal(release?.standard, "hsk3");
+  assert.equal(release?.status, "published");
+  assert.equal(manifest.STEP7_RELEASE_ID, catalog.activeReleaseByStandard.hsk3);
+  assert.deepEqual(
+    new Set(manifest.STEP7_PUBLISHED_CONTENT_LOGICAL_IDS),
+    new Set([
+      ...GRAMMAR_LESSONS.map((item) => `hsk3.grammar.${item.slug}`),
+      ...READING_LESSONS.map((item) => `hsk3.reading.${item.slug}`),
+    ]),
+  );
+  assert.deepEqual(new Set(Object.keys(manifest.STEP7_PUBLISHED_AUDIO_BY_LOGICAL_ID)), new Set([
+    "hsk3.audio.word-mai",
+    "hsk3.audio.sentence-pronunciation",
+    "hsk3.audio.context-morning-study",
+  ]));
+  assert.equal(manifest.isPublishedStep7Content("hsk3.grammar.not-released"), false);
+  assert.equal(manifest.publishedStep7AudioSrc("hsk3.audio.not-released"), undefined);
+  const contentIds = new Set(release.contentAssetIds);
+  const audioIds = new Set(release.audioAssetIds);
+
+  for (const logicalId of manifest.STEP7_PUBLISHED_CONTENT_LOGICAL_IDS) {
+    const asset = catalog.contentAssets.find((item: { logicalId: string }) => item.logicalId === logicalId);
+    assert.ok(asset && contentIds.has(asset.id));
+    assert.equal(asset.standard, "hsk3");
+    assert.equal(asset.authorization.status, "authorized");
+    assert.equal(asset.qaStatus, "approved");
+    assert.equal(asset.publish_status, "published");
+  }
+  for (const [logicalId, storageKey] of Object.entries(manifest.STEP7_PUBLISHED_AUDIO_BY_LOGICAL_ID)) {
+    const asset = catalog.audioAssets.find((item: { logicalId: string }) => item.logicalId === logicalId);
+    assert.ok(asset && audioIds.has(asset.id));
+    assert.equal(asset.standard, "hsk3");
+    assert.equal(asset.authorization.status, "authorized");
+    assert.equal(asset.qaStatus, "approved");
+    assert.equal(asset.usageRights.streaming, true);
+    assert.equal(asset.withdrawnAt, undefined);
+    assert.equal(storageKey, asset.storageKey);
+  }
+});
