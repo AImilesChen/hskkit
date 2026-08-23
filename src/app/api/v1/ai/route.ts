@@ -1,9 +1,9 @@
 import { getCloudflareContext } from "@opennextjs/cloudflare";
-import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
-import { GUEST_COOKIE, requestIdentity } from "@/lib/account/identity";
+import { requestIdentity } from "@/lib/account/identity";
 import { aiRuntimePolicy, buildExplanationPrompt, buildStudyPlanPrompt, nonAiExplanation, nonAiStudyPlan, parseAiOutput, type AiFeature } from "@/lib/ai/domain";
 import { callAiProvider, providerConfig } from "@/lib/ai/provider";
+import { readBoundedJsonObject } from "@/lib/ai/request";
 import { finalizeFailure, finalizeSuccess, quotaView, reserveOperation } from "@/lib/ai/storage";
 import { loadState } from "@/lib/learning/storage";
 import { trustedStep7Exercise } from "@/lib/learning/step7-content";
@@ -12,13 +12,10 @@ import { latestPlan } from "@/lib/planner/storage";
 async function owner() {
   const identity = await requestIdentity();
   if (identity.account) return { id: `user:${identity.account.userId}`, account: identity.account, fresh: false };
-  const jar = await cookies();
-  const current = jar.get(GUEST_COOKIE)?.value;
-  return { id: current ?? crypto.randomUUID(), account: undefined, fresh: !current };
+  return { id: "guest", account: undefined, fresh: false };
 }
 function response(payload: unknown, identity: Awaited<ReturnType<typeof owner>>, status = 200, extraHeaders: Record<string, string> = {}) {
   const res = NextResponse.json(payload, { status, headers: { "cache-control": "private, no-store", "x-robots-tag": "noindex, nofollow", ...extraHeaders } });
-  if (identity.fresh) res.cookies.set(GUEST_COOKIE, identity.id, { httpOnly: true, sameSite: "lax", secure: true, maxAge: 31_536_000, path: "/" });
   return res;
 }
 const safeKey = (value: unknown) => typeof value === "string" && /^[A-Za-z0-9_-]{12,80}$/.test(value) ? value : undefined;
@@ -34,6 +31,7 @@ const normalizedFailure = (error: unknown) => {
 
 export async function GET() {
   const identity = await owner();
+  if (!identity.account) return response({ error: "AI_ACCOUNT_REQUIRED", charged: false }, identity, 401);
   if (identity.account?.status === "deleted") return response({ error: "ACCOUNT_DELETED" }, identity, 403);
   const env = (await getCloudflareContext({ async: true })).env;
   const policy = aiRuntimePolicy(env);
@@ -42,15 +40,17 @@ export async function GET() {
 
 export async function POST(req: NextRequest) {
   const identity = await owner();
+  if (!identity.account) return response({ error: "AI_ACCOUNT_REQUIRED", charged: false }, identity, 401);
   if (identity.account?.status === "deleted") return response({ error: "ACCOUNT_DELETED" }, identity, 403);
   const env = (await getCloudflareContext({ async: true })).env;
   const policy = aiRuntimePolicy(env);
   let body: Record<string, unknown>;
   try {
-    const raw = await req.text();
-    if (raw.length > 1024) return response({ error: "PAYLOAD_TOO_LARGE" }, identity, 413);
-    body = JSON.parse(raw) as Record<string, unknown>;
-  } catch { return response({ error: "INVALID_JSON" }, identity, 400); }
+    body = await readBoundedJsonObject(req, 1024);
+  } catch (error) {
+    const code = error instanceof Error ? error.message : "INVALID_JSON";
+    return response({ error: code === "PAYLOAD_TOO_LARGE" ? code : "INVALID_JSON" }, identity, code === "PAYLOAD_TOO_LARGE" ? 413 : 400);
+  }
   const feature = body.feature as AiFeature;
   const idempotencyKey = safeKey(body.idempotencyKey);
   if ((feature !== "explanation" && feature !== "study_plan") || !idempotencyKey) return response({ error: "INVALID_AI_REQUEST" }, identity, 422);
@@ -82,7 +82,7 @@ export async function POST(req: NextRequest) {
     reserved = await reserveOperation({ ownerId: identity.id, feature, idempotencyKey, requestHash, policy });
   } catch (error) {
     const code = error instanceof Error ? error.message : "AI_RESERVATION_FAILED";
-    const status = code === "ACCOUNT_DELETED" ? 403 : code === "AI_QUOTA_EXHAUSTED" || code === "AI_RATE_LIMITED" ? 429 : code === "AI_IDEMPOTENCY_CONFLICT" ? 409 : 503;
+    const status = code === "ACCOUNT_DELETED" ? 403 : code === "AI_QUOTA_EXHAUSTED" || code === "AI_RATE_LIMITED" ? 429 : code === "AI_IDEMPOTENCY_CONFLICT" || code === "AI_REQUEST_IN_PROGRESS" ? 409 : 503;
     const retryAt = code === "AI_RATE_LIMITED" ? new Date(Date.now() + 60_000).toISOString() : undefined;
     return response({ error: code, charged: false, fallback, quota: await quotaView(identity.id, policy), retryAt }, identity, status, retryAt ? { "retry-after": "60" } : {});
   }

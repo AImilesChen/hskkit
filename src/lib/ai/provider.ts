@@ -9,33 +9,41 @@ export function providerConfig(env: CloudflareEnv): AiProviderConfig | undefined
   return { apiKey: env.DEEPSEEK_API_KEY, baseUrl, model };
 }
 
+const transientStatus = (status: number) => status === 429 || status >= 500;
 export async function callAiProvider(config: AiProviderConfig, prompt: string, maxOutputTokens: number, request: typeof fetch = fetch): Promise<AiProviderResult> {
-  const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), 20_000);
-  let response: Response;
-  try {
-    response = await request(`${config.baseUrl}/chat/completions`, {
-      method: "POST",
-      headers: { authorization: `Bearer ${config.apiKey}`, "content-type": "application/json" },
-      body: JSON.stringify({
-        model: config.model,
-        messages: [
-          { role: "system", content: "You provide concise, grounded Chinese-language learning support. Follow the requested JSON schema exactly." },
-          { role: "user", content: prompt },
-        ],
-        temperature: 0.2,
-        max_tokens: maxOutputTokens,
-        stream: false,
-        response_format: { type: "json_object" },
-      }),
-      signal: controller.signal,
-    });
-  } catch {
-    throw new Error("AI_PROVIDER_UNAVAILABLE");
-  } finally {
-    clearTimeout(timeout);
+  let response: Response | undefined;
+  let finalStatus: number | undefined;
+  for (let attempt = 0; attempt < 2; attempt += 1) {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 8_000);
+    try {
+      response = await request(`${config.baseUrl}/chat/completions`, {
+        method: "POST",
+        headers: { authorization: `Bearer ${config.apiKey}`, "content-type": "application/json" },
+        body: JSON.stringify({
+          model: config.model,
+          messages: [
+            { role: "system", content: "You provide concise, grounded Chinese-language learning support. Follow the requested JSON schema exactly." },
+            { role: "user", content: prompt },
+          ],
+          temperature: 0.2,
+          max_tokens: maxOutputTokens,
+          stream: false,
+          response_format: { type: "json_object" },
+        }),
+        signal: controller.signal,
+      });
+      finalStatus = response.status;
+      if (response.ok || !transientStatus(response.status) || attempt === 1) break;
+    } catch {
+      response = undefined;
+      if (attempt === 1) throw new Error("AI_PROVIDER_UNAVAILABLE");
+    } finally {
+      clearTimeout(timeout);
+    }
   }
-  if (response.status === 429) throw new Error("AI_PROVIDER_RATE_LIMITED");
+  if (!response) throw new Error("AI_PROVIDER_UNAVAILABLE");
+  if (finalStatus === 429) throw new Error("AI_PROVIDER_RATE_LIMITED");
   if (!response.ok) throw new Error("AI_PROVIDER_UNAVAILABLE");
   let value: any;
   try { value = await response.json(); } catch { throw new Error("AI_PROVIDER_INVALID_RESPONSE"); }
@@ -45,10 +53,5 @@ export async function callAiProvider(config: AiProviderConfig, prompt: string, m
   const promptTokens = Number.isInteger(usage.prompt_tokens) && usage.prompt_tokens >= 0 ? usage.prompt_tokens : undefined;
   const completionTokens = Number.isInteger(usage.completion_tokens) && usage.completion_tokens >= 0 ? usage.completion_tokens : undefined;
   if (completionTokens !== undefined && completionTokens > maxOutputTokens) throw new Error("AI_PROVIDER_INVALID_RESPONSE");
-  return {
-    content,
-    providerRequestId: typeof value?.id === "string" ? value.id.slice(0, 160) : undefined,
-    promptTokens,
-    completionTokens,
-  };
+  return { content, providerRequestId: typeof value?.id === "string" ? value.id.slice(0, 160) : undefined, promptTokens, completionTokens };
 }

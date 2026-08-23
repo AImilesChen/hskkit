@@ -27,8 +27,8 @@ test("Step 8 freezes bounded quota, rate and one-call output cost", () => {
   assert.equal(AI_RATE_LIMIT_PER_MINUTE, 6);
   assert.equal(AI_MAX_OUTPUT_TOKENS, 500);
   assert.deepEqual(aiRuntimePolicy({ AI_DAILY_ALLOWANCE: "7", AI_RATE_LIMIT_PER_MINUTE: "4", AI_MAX_OUTPUT_TOKENS: "320" } as CloudflareEnv), {
-    dailyAllowance: 7,
-    rateLimitPerMinute: 4,
+    dailyAllowance: 10,
+    rateLimitPerMinute: 6,
     maxOutputTokens: 320,
   });
   assert.deepEqual(aiRuntimePolicy({ AI_DAILY_ALLOWANCE: "999", AI_RATE_LIMIT_PER_MINUTE: "0", AI_MAX_OUTPUT_TOKENS: "9999" } as CloudflareEnv), {
@@ -41,7 +41,7 @@ test("Step 8 freezes bounded quota, rate and one-call output cost", () => {
 test("AI Explanation prompt is grounded in trusted exercise data and forbids exam promises and pronunciation scores", () => {
   const lesson = grammarBySlug("ba-sentence-basics")!;
   const prompt = buildExplanationPrompt(lesson.exercise, "B");
-  assert.match(prompt, /Which sentence correctly uses/);
+  assert.match(prompt, /Choose the complete 把 sentence/);
   assert.match(prompt, /Correct answer: A/);
   assert.match(prompt, /Learner answer: B/);
   assert.match(prompt, /Never claim official HSK status/i);
@@ -78,7 +78,7 @@ test("non-AI alternatives are always usable without a provider", () => {
   const lesson = grammarBySlug("ba-sentence-basics")!;
   const explanation = nonAiExplanation(lesson.exercise);
   assert.equal(explanation.charged, false);
-  assert.match(explanation.summary, /写完/);
+  assert.equal(explanation.summary, lesson.exercise.explanation);
   const plan = nonAiStudyPlan("/planner", "/review");
   assert.equal(plan.charged, false);
   assert.deepEqual(plan.links.map((item) => item.href), ["/planner", "/review"]);

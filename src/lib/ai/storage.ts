@@ -42,7 +42,7 @@ async function operationByKey(ownerId: string, feature: AiFeature, idempotencyKe
 }
 
 async function ensureBucket(ownerId: string, period: string, now: string, allowance: number) {
-  await (await db()).prepare("INSERT INTO ai_quota_buckets(owner_id,period_key,allowance,used,reserved,updated_at) VALUES(?,?,?,?,?,?) ON CONFLICT(owner_id,period_key) DO NOTHING")
+  await (await db()).prepare("INSERT INTO ai_quota_buckets(owner_id,period_key,allowance,used,reserved,updated_at) VALUES(?,?,?,?,?,?) ON CONFLICT(owner_id,period_key) DO UPDATE SET allowance=excluded.allowance,updated_at=excluded.updated_at")
     .bind(ownerId, period, allowance, 0, 0, now).run();
 }
 
@@ -64,7 +64,10 @@ async function releaseStale(ownerId: string, now: Date) {
   }
 }
 
-export async function quotaView(ownerId: string, policy = defaultPolicy, now = new Date()) {
+const fixedPolicy = (policy: AiRuntimePolicy): AiRuntimePolicy => ({ ...policy, dailyAllowance: AI_DAILY_ALLOWANCE, rateLimitPerMinute: AI_RATE_LIMIT_PER_MINUTE });
+
+export async function quotaView(ownerId: string, requestedPolicy = defaultPolicy, now = new Date()) {
+  const policy = fixedPolicy(requestedPolicy);
   if (!await activeAccountOwner(ownerId)) {
     const reset = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() + 1)).toISOString();
     return { period: periodKey(now), allowance: policy.dailyAllowance, used: 0, reserved: 0, remaining: 0, rateLimitPerMinute: policy.rateLimitPerMinute, recentRequests: 0, resetAt: reset, accountDeleted: true };
@@ -84,7 +87,7 @@ export async function quotaView(ownerId: string, policy = defaultPolicy, now = n
 
 export async function reserveOperation(input: { ownerId: string; feature: AiFeature; idempotencyKey: string; requestHash: string; policy?: AiRuntimePolicy; now?: Date }) {
   const now = input.now ?? new Date();
-  const policy = input.policy ?? defaultPolicy;
+  const policy = fixedPolicy(input.policy ?? defaultPolicy);
   if (!await activeAccountOwner(input.ownerId)) throw new Error("ACCOUNT_DELETED");
   await releaseStale(input.ownerId, now);
   const replay = await operationByKey(input.ownerId, input.feature, input.idempotencyKey);
@@ -99,8 +102,8 @@ export async function reserveOperation(input: { ownerId: string; feature: AiFeat
   const assertion = crypto.randomUUID();
   try {
     await database.batch([
-      database.prepare("INSERT INTO ai_quota_buckets(owner_id,period_key,allowance,used,reserved,updated_at) VALUES(?,?,?,?,?,?) ON CONFLICT(owner_id,period_key) DO NOTHING").bind(input.ownerId, period, policy.dailyAllowance, 0, 0, timestamp),
-      database.prepare("UPDATE ai_quota_buckets SET reserved=reserved+1,updated_at=? WHERE owner_id=? AND period_key=? AND used+reserved<allowance AND (SELECT COUNT(*) FROM ai_operations WHERE owner_id=? AND created_at>=?)<? AND (substr(?,1,5)!='user:' OR EXISTS(SELECT 1 FROM accounts WHERE user_id=substr(?,6) AND status='active'))")
+      database.prepare("INSERT INTO ai_quota_buckets(owner_id,period_key,allowance,used,reserved,updated_at) VALUES(?,?,?,?,?,?) ON CONFLICT(owner_id,period_key) DO UPDATE SET allowance=excluded.allowance,updated_at=excluded.updated_at").bind(input.ownerId, period, policy.dailyAllowance, 0, 0, timestamp),
+      database.prepare("UPDATE ai_quota_buckets SET reserved=reserved+1,updated_at=? WHERE owner_id=? AND period_key=? AND reserved=0 AND used+reserved<allowance AND (SELECT COUNT(*) FROM ai_operations WHERE owner_id=? AND created_at>=?)<? AND (substr(?,1,5)!='user:' OR EXISTS(SELECT 1 FROM accounts WHERE user_id=substr(?,6) AND status='active'))")
         .bind(timestamp, input.ownerId, period, input.ownerId, minuteFloor(now), policy.rateLimitPerMinute, input.ownerId, input.ownerId),
       database.prepare("INSERT INTO ai_quota_assertions(id,ok) VALUES(?,CASE changes() WHEN 1 THEN 1 ELSE 0 END)").bind(assertion),
       database.prepare("INSERT INTO ai_operations(id,owner_id,feature,idempotency_key,request_hash,status,quota_period,cost_units,created_at,updated_at) VALUES(?,?,?,?,?,'reserved',?,1,?,?)")
@@ -115,6 +118,7 @@ export async function reserveOperation(input: { ownerId: string; feature: AiFeat
     }
     const quota = await quotaView(input.ownerId, policy, now);
     if (quota.accountDeleted) throw new Error("ACCOUNT_DELETED");
+    if (quota.reserved > 0) throw new Error("AI_REQUEST_IN_PROGRESS");
     if (quota.remaining <= 0) throw new Error("AI_QUOTA_EXHAUSTED");
     if (quota.recentRequests >= policy.rateLimitPerMinute) throw new Error("AI_RATE_LIMITED");
     throw new Error("AI_RESERVATION_FAILED");

@@ -13,8 +13,8 @@ const integer = (value: string | undefined, fallback: number, minimum: number, m
 };
 export function aiRuntimePolicy(env: Pick<CloudflareEnv, "AI_DAILY_ALLOWANCE" | "AI_RATE_LIMIT_PER_MINUTE" | "AI_MAX_OUTPUT_TOKENS">): AiRuntimePolicy {
   return {
-    dailyAllowance: integer(env.AI_DAILY_ALLOWANCE, AI_DAILY_ALLOWANCE, 1, 50),
-    rateLimitPerMinute: integer(env.AI_RATE_LIMIT_PER_MINUTE, AI_RATE_LIMIT_PER_MINUTE, 1, 20),
+    dailyAllowance: AI_DAILY_ALLOWANCE,
+    rateLimitPerMinute: AI_RATE_LIMIT_PER_MINUTE,
     maxOutputTokens: integer(env.AI_MAX_OUTPUT_TOKENS, AI_MAX_OUTPUT_TOKENS, 64, AI_MAX_OUTPUT_TOKENS),
   };
 }
@@ -54,6 +54,11 @@ function list(value: unknown) {
   if (!Array.isArray(value) || value.length < 2 || value.length > 4) throw new Error("AI_OUTPUT_INVALID");
   return value.map((item) => text(item, 2, 240));
 }
+function exactKeys(value: Record<string, unknown>, expected: string[]) {
+  const actual = Object.keys(value).sort();
+  const allowed = [...expected].sort();
+  if (actual.length !== allowed.length || actual.some((key, index) => key !== allowed[index])) throw new Error("AI_OUTPUT_INVALID");
+}
 
 export function parseAiOutput(feature: AiFeature, raw: string): AiOutput {
   if (raw.length > 8000 || raw.trim() !== raw || raw.startsWith("```")) throw new Error("AI_OUTPUT_INVALID");
@@ -61,8 +66,10 @@ export function parseAiOutput(feature: AiFeature, raw: string): AiOutput {
   try { value = JSON.parse(raw) as Record<string, unknown>; } catch { throw new Error("AI_OUTPUT_INVALID"); }
   if (!value || typeof value !== "object" || Array.isArray(value)) throw new Error("AI_OUTPUT_INVALID");
   if (feature === "explanation") {
+    exactKeys(value, ["title", "summary", "whyCorrect", "nextStep"]);
     return { kind: feature, title: text(value.title, 2, 120), summary: text(value.summary), whyCorrect: text(value.whyCorrect), nextStep: text(value.nextStep, 2, 240) };
   }
+  exactKeys(value, ["title", "priorities", "nextActions"]);
   return { kind: feature, title: text(value.title, 2, 120), priorities: list(value.priorities), nextActions: list(value.nextActions) };
 }
 

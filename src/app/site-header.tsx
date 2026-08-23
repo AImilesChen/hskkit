@@ -9,6 +9,8 @@ const primaryLinks = [
   { href: "/vocabulary/1", label: "Vocabulary" },
   { href: "/dictionary", label: "Dictionary" },
   { href: "/today", label: "Today" },
+  { href: "/grammar", label: "Grammar" },
+  { href: "/reading", label: "Reading" },
   { href: "/listen", label: "Listening" },
   { href: "/account", label: "Account" },
 ];
