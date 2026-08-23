@@ -224,7 +224,7 @@ export default function PlacementClient() {
           <button className="min-h-12 rounded-xl bg-blue-600 px-6 font-bold text-white disabled:cursor-not-allowed disabled:opacity-50" disabled={!selected || saving} onClick={next} type="button">{saving ? "Saving…" : index === session.questions.length - 1 ? "See my result" : "Next"}</button>
         </div>
       </section>
-      <p className="mt-5 text-center text-sm text-slate-500">Answers are saved to this guest session. Sign in later to merge eligible progress.</p>
+      <p className="mt-5 text-center text-sm text-slate-500">Answers are saved to this guest session. <Link className="font-bold text-blue-700 underline-offset-2 hover:underline" href="/login">Sign in later</Link> to preview and confirm eligible progress before it is merged.</p>
     </main>
   );
 }

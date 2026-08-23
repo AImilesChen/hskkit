@@ -20,11 +20,20 @@ export default function AccountDataClient() {
   const [busy, setBusy] = useState(false);
   const refresh = async () => { try { setView(await api("/api/v1/account/data-requests")); } catch (cause) { setError(cause instanceof Error ? cause.message : "LOAD_FAILED"); } };
   useEffect(() => { void refresh(); }, []);
-  const act = async (body: unknown, success: string, method: "POST" | "PATCH" = "PATCH") => {
+  const act = async (body: unknown, success: string, method: "POST" | "PATCH" = "PATCH", refreshAfter = true) => {
     setBusy(true); setError(""); setMessage("");
-    try { await api("/api/v1/account/data-requests", { method, body: JSON.stringify(body) }); setMessage(success); await refresh(); }
+    try {
+      const result = await api("/api/v1/account/data-requests", { method, body: JSON.stringify(body) });
+      setMessage(success);
+      if (refreshAfter) await refresh();
+      return result;
+    }
     catch (cause) { setError(cause instanceof Error ? cause.message : "REQUEST_FAILED"); }
     finally { setBusy(false); }
+  };
+  const deleteAndExit = async (requestId: string) => {
+    const result = await act({ requestId, action: "process" }, "Account learning data deleted.", "PATCH", false);
+    if (result?.request?.state === "completed") window.location.assign("/login?deleted=success");
   };
   if (!view) return <div className="state"><h2>Loading account data…</h2><p>Reading recoverable request and audit state.</p>{error && <p role="alert">{error}</p>}</div>;
   return <>
@@ -52,7 +61,7 @@ export default function AccountDataClient() {
           {item.type === "export" && item.state === "requested" && <button className="btn" disabled={busy} onClick={() => void act({ requestId: item.id, action: "process" }, "Export is ready.")}>Prepare export</button>}
           {item.type === "export" && item.state === "ready" && <a className="btn" href={`/api/v1/account/data-requests?download=${encodeURIComponent(item.id)}`}>Download JSON</a>}
           {item.type === "delete" && item.state === "requested" && <button className="btn danger" disabled={busy || confirmation !== "DELETE"} onClick={() => void act({ requestId: item.id, action: "confirm", confirmation }, "Deletion confirmed. You can still cancel before processing.")}>Confirm deletion</button>}
-          {item.type === "delete" && item.state === "confirmed" && <button className="btn danger" disabled={busy} onClick={() => void act({ requestId: item.id, action: "process" }, "Account learning data deleted.")}>Delete now</button>}
+          {item.type === "delete" && item.state === "confirmed" && <button className="btn danger" disabled={busy} onClick={() => void deleteAndExit(item.id)}>Delete now</button>}
           {["requested", "confirmed", "failed"].includes(item.state) && <button className="btn secondary" disabled={busy} onClick={() => void act({ requestId: item.id, action: "cancel" }, "Request cancelled. No data was deleted or overwritten.")}>Cancel</button>}
           {item.state === "failed" && <button className="btn" disabled={busy} onClick={() => void act({ requestId: item.id, action: "retry" }, "Request reset for retry.")}>Retry</button>}
         </div>

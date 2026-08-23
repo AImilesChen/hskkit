@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { requestIdentity } from "../../../../../lib/account/identity";
+import { GUEST_COOKIE, requestIdentity } from "../../../../../lib/account/identity";
 import { closeMerge, createMergePreview } from "../../../../../lib/account/storage";
 import { accessDecision, createAuditEvent, errorContract } from "../../../../../lib/account/access-policy";
 import { recordPolicyAudit } from "../../../../../lib/account/audit-storage";
@@ -27,7 +27,10 @@ export async function POST(req: NextRequest) {
       const mergeId = typeof body.mergeId === "string" ? body.mergeId : "";
       const mergeKey = typeof body.mergeKey === "string" ? body.mergeKey : "";
       if (!mergeId || !mergeKey) throw new Error("INVALID_MERGE_TOKEN");
-      return NextResponse.json(await closeMerge(identity.account.userId, mergeId, mergeKey, body.action));
+      const result = await closeMerge(identity.account.userId, mergeId, mergeKey, body.action);
+      const response = NextResponse.json(result);
+      if (body.action === "confirm") response.cookies.delete(GUEST_COOKIE);
+      return response;
     }
     return errorResponse("INVALID_ACTION", 422);
   } catch (error) {

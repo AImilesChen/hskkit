@@ -4,7 +4,7 @@ import Link from "next/link";
 import { FormEvent, useEffect, useState } from "react";
 
 type Account = { userId: string; displayName: string; timezone: string; status: "active" | "deleted" };
-type AccountView = { account: Account | null; guest: { hasData: boolean; attempts: number; learningSessions: number; plannerVersions: number; revision: number } };
+type AccountView = { account: Account | null; connection: "google" | "sync_key" | null; guest: { hasData: boolean; attempts: number; learningSessions: number; plannerVersions: number; revision: number } };
 type MergePreview = { id: string; mergeKey: string; expiresAt: string; preview: { accountAttempts: number; guestAttempts: number; accountLearningSessions: number; guestLearningSessions: number; additions: number; sessionAdditions: number; conflicts: number; strategy: string; plannerVersions: number } };
 
 async function json(url: string, init?: RequestInit) {
@@ -46,12 +46,6 @@ export default function AccountClient() {
     finally { setBusy(false); }
   };
 
-  const create = async (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    const form = new FormData(event.currentTarget);
-    const result = await act(() => json("/api/v1/account", { method: "POST", body: JSON.stringify({ action: "create", displayName: form.get("displayName"), timezone }) }), "Sync account created. Save the key before leaving this page.");
-    if (result?.syncKey) setSyncKey(result.syncKey);
-  };
   const connect = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const form = new FormData(event.currentTarget);
@@ -92,23 +86,22 @@ export default function AccountClient() {
     {message && <div className="account-alert success" role="status">{message}</div>}
 
     {!view.account ? <div className="account-grid">
-      <form className="card account-form" onSubmit={create}>
-        <h2>Create a sync account</h2>
-        <p>Create a private recovery key. No email or payment details are required.</p>
-        <label>Display name<input name="displayName" required maxLength={60} autoComplete="nickname" /></label>
-        <label>Learning timezone<input value={timezone} onChange={(event) => setTimezone(event.target.value)} required /></label>
-        <button className="btn" disabled={busy}>Create account</button>
-      </form>
+      <section className="card account-form">
+        <h2>Sign in to HSKKit</h2>
+        <p>Google sign-in is the main way to save your private learning state and read the same progress on another device.</p>
+        <Link className="btn" href="/login">Continue with Google</Link>
+        <p className="account-note">Guest Placement, Today, and Planner remain available. After signing in, you can preview and confirm any eligible guest merge.</p>
+      </section>
       <form className="card account-form" onSubmit={connect}>
-        <h2>Connect this device</h2>
-        <p>Enter the sync key shown when the account was created.</p>
-        <label>Sync key<input name="syncKey" type="password" required minLength={20} autoComplete="off" autoCapitalize="none" spellCheck={false} /></label>
-        <button className="btn secondary" disabled={busy}>Connect device</button>
+        <h2>Recover with a Sync Key</h2>
+        <p>Use an existing Sync Key to reconnect this device. Google sign-in remains the primary account method.</p>
+        <label>Sync Key<input name="syncKey" type="password" required minLength={20} autoComplete="off" autoCapitalize="none" spellCheck={false} /></label>
+        <button className="btn secondary" disabled={busy}>Connect with Sync Key</button>
       </form>
     </div> : view.account.status === "deleted" ? <div className="state"><h2>Account data deleted</h2><p>Learning data is no longer available. The minimal request audit remains visible on the data page.</p><Link className="btn secondary" href="/account/data">View request status</Link></div> : <div className="account-grid">
       <section className="card">
         <h2>{view.account.displayName}</h2>
-        <p>Connected account · Server-side sync enabled</p>
+        <p>{view.connection === "google" ? "Signed in with Google · Private server sync enabled" : "Connected with a Sync Key · Private server sync enabled"}</p>
         <div className="account-stat"><strong>{streak?.current ?? 0}</strong><span>current streak</span></div>
         <p>Longest: {streak?.longest ?? 0} · Last learning day: {streak?.lastLearningDay ?? "None yet"}</p>
         <p className="account-note">Calculated from completed Daily Sessions in {streak?.timezone ?? view.account.timezone}. Page visits do not count.</p>
@@ -138,7 +131,15 @@ export default function AccountClient() {
           <div className="account-actions"><button className="btn secondary" disabled={busy} onClick={() => void closeMerge("cancel")}>Cancel merge</button><button className="btn" disabled={busy} onClick={() => void closeMerge("confirm")}>Confirm merge</button></div>
         </div>}
       </section>}
-      <section className="card"><h2>Disconnect</h2><p>Signing out leaves server data intact. Use the sync key to reconnect.</p><button className="btn secondary" disabled={busy} onClick={() => void act(() => json("/api/v1/account", { method: "POST", body: JSON.stringify({ action: "logout" }) }), "This device is disconnected.")}>Disconnect device</button></section>
+      <section className="card">
+        <h2>Sync Key recovery</h2>
+        <p>Rotate to create one new recovery key and revoke every older key. Revoke removes every Sync Key without affecting an active Google session.</p>
+        <div className="account-actions">
+          <button className="btn secondary" disabled={busy} onClick={() => void act(() => json("/api/v1/account", { method: "POST", body: JSON.stringify({ action: "rotate_sync_key" }) }), "Sync Key rotated. Save the new key shown below.").then((result) => result?.syncKey && setSyncKey(result.syncKey))}>Rotate Sync Key</button>
+          <button className="btn secondary" disabled={busy} onClick={() => void act(() => json("/api/v1/account", { method: "POST", body: JSON.stringify({ action: "revoke_sync_keys" }) }), "All Sync Keys revoked.")}>Revoke all Sync Keys</button>
+        </div>
+      </section>
+      <section className="card"><h2>Sign out</h2><p>Signing out hides private account data in this browser. Server data remains available after the next Google sign-in.</p><button className="btn secondary" disabled={busy} onClick={() => void act(() => json("/api/v1/account", { method: "POST", body: JSON.stringify({ action: "logout" }) }), "You are signed out.")}>Sign out</button></section>
     </div>}
 
     {syncKey && <div className="account-key" role="status"><h2>Save your sync key now</h2><code>{syncKey}</code><p>This key is shown once. Anyone with it can access the learning account.</p></div>}

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
-import { ACCOUNT_COOKIE, requestIdentity } from "../../../../lib/account/identity";
-import { authenticateAccount, createAccount, updateTimezone } from "../../../../lib/account/storage";
+import { ACCOUNT_COOKIE, SESSION_COOKIE, requestIdentity } from "../../../../lib/account/identity";
+import { authenticateAccount, createAccount, revokeAccountSession, revokeSyncKeys, rotateSyncKey, updateTimezone } from "../../../../lib/account/storage";
 import { loadState } from "../../../../lib/learning/storage";
 import { listAllPlans } from "../../../../lib/planner/storage";
 
@@ -21,6 +21,7 @@ export async function GET() {
   const [guest, guestPlans] = identity.guestId ? await Promise.all([loadState(identity.guestId), listAllPlans(identity.guestId)]) : [undefined, []];
   return NextResponse.json({
     account: identity.account ?? null,
+    connection: identity.connection ?? null,
     guest: guest ? {
       hasData: guest.state.attempts.length > 0
         || guest.state.dailySessions.length > 0
@@ -49,7 +50,28 @@ export async function POST(req: NextRequest) {
       return cookie(NextResponse.json({ account }), syncKey);
     }
     if (body.action === "logout") {
-      return cookie(NextResponse.json({ state: "logged_out" }), "", 0);
+      const identity = await requestIdentity();
+      await revokeAccountSession(identity.sessionToken);
+      const response = NextResponse.json({ state: "logged_out" });
+      response.cookies.delete(SESSION_COOKIE);
+      response.cookies.delete(ACCOUNT_COOKIE);
+      response.headers.set("cache-control", "private, no-store");
+      return response;
+    }
+    if (body.action === "rotate_sync_key") {
+      const identity = await requestIdentity();
+      if (!identity.account) throw new Error("ACCOUNT_REQUIRED");
+      const rotated = await rotateSyncKey(identity.account.userId);
+      return cookie(NextResponse.json({ state: "rotated", syncKey: rotated.syncKey }), rotated.syncKey);
+    }
+    if (body.action === "revoke_sync_keys") {
+      const identity = await requestIdentity();
+      if (!identity.account) throw new Error("ACCOUNT_REQUIRED");
+      const result = await revokeSyncKeys(identity.account.userId);
+      const response = NextResponse.json(result);
+      response.cookies.delete(ACCOUNT_COOKIE);
+      response.headers.set("cache-control", "private, no-store");
+      return response;
     }
     if (body.action === "timezone") {
       const identity = await requestIdentity();

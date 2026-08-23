@@ -112,10 +112,85 @@ export async function createAccount(displayName: string, timezone: string) {
 export async function authenticateAccount(syncKey: string | undefined) {
   if (!syncKey || syncKey.length < 20 || syncKey.length > 100) return undefined;
   const tokenHash = await hash(syncKey);
-  const row = await db().prepare("SELECT a.* FROM account_tokens t JOIN accounts a ON a.user_id=t.user_id WHERE t.token_hash=? AND t.revoked_at IS NULL").bind(tokenHash).first<AccountRow>();
+  const row = await db().prepare("SELECT a.* FROM account_tokens t JOIN accounts a ON a.user_id=t.user_id WHERE t.token_hash=? AND t.revoked_at IS NULL AND a.status='active'").bind(tokenHash).first<AccountRow>();
   if (!row) return undefined;
   await db().prepare("UPDATE account_tokens SET last_used_at=? WHERE token_hash=?").bind(now(), tokenHash).run();
   return account(row);
+}
+
+export async function authenticateSession(sessionToken: string | undefined) {
+  if (!sessionToken || sessionToken.length < 20 || sessionToken.length > 100) return undefined;
+  const tokenHash = await hash(sessionToken);
+  const timestamp = now();
+  const row = await db().prepare("SELECT a.* FROM account_sessions s JOIN accounts a ON a.user_id=s.user_id WHERE s.token_hash=? AND s.revoked_at IS NULL AND s.expires_at>? AND a.status='active'").bind(tokenHash, timestamp).first<AccountRow>();
+  if (!row) return undefined;
+  await db().prepare("UPDATE account_sessions SET last_used_at=? WHERE token_hash=?").bind(timestamp, tokenHash).run();
+  return account(row);
+}
+
+export async function createAccountSession(userId: string) {
+  const active = await db().prepare("SELECT 1 AS ok FROM accounts WHERE user_id=? AND status='active'").bind(userId).first<{ ok: number }>();
+  if (!active) throw new Error("ACCOUNT_DELETED");
+  const sessionToken = secret();
+  const tokenHash = await hash(sessionToken);
+  const timestamp = now();
+  const expiresAt = new Date(Date.now() + 30 * 24 * 60 * 60_000).toISOString();
+  await db().prepare("INSERT INTO account_sessions(token_hash,user_id,created_at,last_used_at,expires_at) VALUES(?,?,?,?,?)")
+    .bind(tokenHash, userId, timestamp, timestamp, expiresAt).run();
+  return { sessionToken, expiresAt };
+}
+
+export async function revokeAccountSession(sessionToken: string | undefined) {
+  if (!sessionToken) return;
+  const tokenHash = await hash(sessionToken);
+  await db().prepare("UPDATE account_sessions SET revoked_at=? WHERE token_hash=? AND revoked_at IS NULL").bind(now(), tokenHash).run();
+}
+
+export async function upsertGoogleAccount(profile: { sub: string; name: string; email?: string; emailVerified: boolean }, timezone = "UTC") {
+  if (!profile.sub || profile.sub.length > 255) throw new Error("GOOGLE_PROFILE_INVALID");
+  if (!validTimezone(timezone)) timezone = "UTC";
+  const existing = await db().prepare("SELECT a.* FROM account_oauth_identities i JOIN accounts a ON a.user_id=i.user_id WHERE i.provider='google' AND i.provider_subject=?").bind(profile.sub).first<AccountRow>();
+  const timestamp = now();
+  if (existing) {
+    if (existing.status !== "active") throw new Error("ACCOUNT_DELETED");
+    await db().batch([
+      db().prepare("UPDATE account_oauth_identities SET email=?,email_verified=?,updated_at=? WHERE provider='google' AND provider_subject=?").bind(profile.email ?? null, profile.emailVerified ? 1 : 0, timestamp, profile.sub),
+      db().prepare("INSERT OR IGNORE INTO account_audit(id,user_id,action,resource_type,resource_id,result,idempotency_key,created_at) VALUES(?,?,'google_login','account',?,'success',?,?)").bind(crypto.randomUUID(), existing.user_id, existing.user_id, `google-login:${profile.sub}:${timestamp}`, timestamp),
+    ]);
+    return account(existing);
+  }
+  const userId = crypto.randomUUID();
+  const displayName = profile.name.trim().slice(0, 60) || "HSKKit learner";
+  await db().batch([
+    db().prepare("INSERT INTO accounts(user_id,display_name,timezone,status,created_at,updated_at) VALUES(?,?,?,'active',?,?)").bind(userId, displayName, timezone, timestamp, timestamp),
+    db().prepare("INSERT INTO account_oauth_identities(id,user_id,provider,provider_subject,email,email_verified,created_at,updated_at) VALUES(?,?,'google',?,?,?,?,?)").bind(crypto.randomUUID(), userId, profile.sub, profile.email ?? null, profile.emailVerified ? 1 : 0, timestamp, timestamp),
+    db().prepare("INSERT INTO learning_states(owner_id,state_json,revision,updated_at) VALUES(?,?,0,?)").bind(ownerId(userId), JSON.stringify(emptyLearningState()), timestamp),
+    db().prepare("INSERT INTO account_audit(id,user_id,action,resource_type,resource_id,result,idempotency_key,created_at) VALUES(?,?,'google_account_created','account',?,'success',?,?)").bind(crypto.randomUUID(), userId, userId, `google-create:${profile.sub}`, timestamp),
+  ]);
+  return { userId, displayName, timezone, status: "active", createdAt: timestamp, updatedAt: timestamp } satisfies Account;
+}
+
+export async function rotateSyncKey(userId: string) {
+  const accountRow = await getAccount(userId);
+  if (!accountRow || accountRow.status !== "active") throw new Error("ACCOUNT_REQUIRED");
+  const syncKey = secret();
+  const tokenHash = await hash(syncKey);
+  const timestamp = now();
+  await db().batch([
+    db().prepare("UPDATE account_tokens SET revoked_at=? WHERE user_id=? AND revoked_at IS NULL").bind(timestamp, userId),
+    db().prepare("INSERT INTO account_tokens(token_hash,user_id,label,created_at,last_used_at) VALUES(?,?,'recovery-key',?,?)").bind(tokenHash, userId, timestamp, timestamp),
+    db().prepare("INSERT INTO account_audit(id,user_id,action,resource_type,resource_id,result,idempotency_key,created_at) VALUES(?,?,'sync_key_rotated','account',?,'success',?,?)").bind(crypto.randomUUID(), userId, userId, `sync-key-rotate:${timestamp}`, timestamp),
+  ]);
+  return { syncKey };
+}
+
+export async function revokeSyncKeys(userId: string) {
+  const timestamp = now();
+  await db().batch([
+    db().prepare("UPDATE account_tokens SET revoked_at=? WHERE user_id=? AND revoked_at IS NULL").bind(timestamp, userId),
+    db().prepare("INSERT INTO account_audit(id,user_id,action,resource_type,resource_id,result,idempotency_key,created_at) VALUES(?,?,'sync_keys_revoked','account',?,'success',?,?)").bind(crypto.randomUUID(), userId, userId, `sync-key-revoke:${timestamp}`, timestamp),
+  ]);
+  return { state: "revoked" as const };
 }
 
 export async function updateTimezone(userId: string, timezone: string) {
@@ -343,6 +418,8 @@ export async function actOnDataRequest(userId: string, requestId: string, action
       db().prepare("DELETE FROM ai_operations WHERE owner_id=?").bind(ownerId(userId)),
       db().prepare("DELETE FROM ai_quota_buckets WHERE owner_id=?").bind(ownerId(userId)),
       db().prepare("UPDATE account_data_requests SET result_json=NULL,expires_at=NULL WHERE user_id=?").bind(userId),
+      db().prepare("UPDATE account_tokens SET revoked_at=? WHERE user_id=? AND revoked_at IS NULL").bind(completed.updatedAt, userId),
+      db().prepare("UPDATE account_sessions SET revoked_at=? WHERE user_id=? AND revoked_at IS NULL").bind(completed.updatedAt, userId),
       db().prepare("UPDATE commercial_entitlements SET status='revoked',revoked_reason='account_deleted',version=version+1,updated_at=? WHERE user_id=? AND status='active'").bind(completed.updatedAt, userId),
       db().prepare("UPDATE commercial_export_jobs SET state='revoked',expires_at=?,lease_owner=NULL,lease_expires_at=NULL,updated_at=? WHERE user_id=? AND state IN ('queued','generating','ready')").bind(completed.updatedAt, completed.updatedAt, userId),
       db().prepare("UPDATE accounts SET status='deleted',deleted_at=?,updated_at=? WHERE user_id=? AND status='active'").bind(completed.completedAt, completed.updatedAt, userId),

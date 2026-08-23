@@ -38,7 +38,7 @@ const faqs = [
   },
   {
     q: "I forgot my progress. Can you recover it?",
-    a: "HSKKit does not require accounts, so we do not store personal progress data. Your browser may keep local session info. If you need persistent tracking, we recommend keeping a simple study log.",
+    a: "Sign in with Google to save progress privately and continue across devices. If you previously created a Sync Key, you can also use it from Account as a recovery method. Guest progress remains in its guest session until you preview and confirm a merge.",
   },
 ];
 

@@ -14,8 +14,8 @@ export default function AccountPage() {
   return <><SiteHeader/><main className="learn account-page">
     <header>
       <p className="eyebrow">Private learning account</p>
-      <h1>Account & sync</h1>
-      <p>Connect devices, preview guest progress before merging, and review conflict-safe sync status.</p>
+      <h1>Account, sign-in, and sync</h1>
+      <p>Use Google sign-in for persistent private learning across devices. A Sync Key remains available for recovery and device connection.</p>
       <nav aria-label="Learning navigation"><Link href="/today">Today</Link><Link href="/review">Review</Link><Link href="/mistakes">Mistakes</Link><Link href="/listen">Listen</Link><Link href="/account/data">Data</Link><Link href="/exports">Exports</Link></nav>
     </header>
     <AccountClient />
