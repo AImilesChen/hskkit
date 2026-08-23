@@ -6,7 +6,7 @@ import SiteFooter from "@/app/site-footer";
 
 export const metadata: Metadata = {
   title: "HSK 3.0 Basic and Advanced Mock — HSKKit",
-  description: "Take a timed, autosaved HSKKit Basic Mock or a unified HSK 7–9 Advanced Mock with versioned learning feedback.",
+  description: "Take a timed, autosaved HSKKit Basic Mock or assess the unified HSK 7–9 advanced ability band with versioned learning feedback.",
   robots: { index: false, follow: false },
 };
 

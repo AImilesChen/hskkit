@@ -1,6 +1,11 @@
 import type { Metadata } from "next";
 import SiteHeader from "../site-header";
 import SiteFooter from "../site-footer";
+import {
+  PUBLIC_ACCOUNT_SCOPE,
+  PUBLIC_FORMAL_CONTENT_SCOPE,
+  PURCHASING_UNAVAILABLE,
+} from "@/lib/public-copy";
 
 export const metadata: Metadata = {
   title: "Terms of Service | HSKKit",
@@ -25,7 +30,7 @@ export default function TermsPage() {
       <main className="section pt-20">
         <div className="max-w-[800px] mx-auto">
           <h1 className="text-h1 max-sm:text-[32px] mb-4">Terms of Service</h1>
-          <p className="text-small text-ink-muted mb-8">Last updated: 2026-05-21</p>
+          <p className="text-small text-ink-muted mb-8">Last updated: 2026-08-23</p>
 
           <section className="mb-8">
             <h2 className="text-h3 mb-4">Acceptance of Terms</h2>
@@ -39,6 +44,17 @@ export default function TermsPage() {
             <p className="text-body text-ink-secondary mb-4">
               HSKKit provides independent Chinese learning guides and practice-planning resources. Content is for study support and may contain mistakes.
             </p>
+          </section>
+
+          <section className="mb-8">
+            <h2 className="text-h3 mb-4">Current Content and Account Scope</h2>
+            <p className="text-body text-ink-secondary mb-4">{PUBLIC_FORMAL_CONTENT_SCOPE}</p>
+            <p className="text-body text-ink-secondary mb-4">{PUBLIC_ACCOUNT_SCOPE}</p>
+          </section>
+
+          <section className="mb-8">
+            <h2 className="text-h3 mb-4">Purchasing Status</h2>
+            <p className="text-body text-ink-secondary mb-4"><strong>{PURCHASING_UNAVAILABLE}.</strong> Any planned pack description is informational only. HSKKit does not currently open checkout or collect live payment for that pack.</p>
           </section>
 
           <section className="mb-8">

@@ -224,7 +224,7 @@ export function submitMock(session: MockSession, input: { idempotencyKey: string
     items,
     questionSnapshots: session.questions,
     nextRoutes: session.band === "basic" ? ["/mistakes", "/review", "/planner"] : ["/planner"],
-    disclaimer: session.band === "advanced" ? "This unified HSK 7–9 ability interval is HSKKit learning feedback, not a single-level official score." : "This raw practice score is HSKKit learning feedback, not an official HSK scaled score.",
+    disclaimer: session.band === "advanced" ? "This unified HSK 7–9 advanced ability band result is HSKKit learning feedback, not a single-level official score." : "This raw practice score is HSKKit learning feedback, not an official HSK scaled score.",
     createdAt: input.now,
   };
   const submitted: MockSession = { ...session, status: "submitted", submittedAt: input.now, revision: session.revision + 1, result };

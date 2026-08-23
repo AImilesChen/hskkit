@@ -29,7 +29,7 @@ export const metadata: Metadata = {
 const faqs = [
   {
     q: "Is HSK 1 reading practice free?",
-    a: "Yes. All 5 reading stories are free to use. No account or payment is required.",
+    a: "Yes. All 5 reading stories are free to use. Guest study is supported; an optional account saves and syncs progress privately across devices.",
   },
   {
     q: "Do the stories use only HSK 1 vocabulary?",
@@ -37,15 +37,15 @@ const faqs = [
   },
   {
     q: "Can I read without pinyin?",
-    a: "Pinyin is displayed by default to support beginners. In future updates, we may add a toggle to hide pinyin for extra challenge.",
+    a: "Pinyin is displayed by default to support beginners. A hide-pinyin toggle: Coming later.",
   },
   {
     q: "How many stories are available?",
-    a: "P0 Full launches with 5 original stories. More stories will be added in future updates.",
+    a: "The current formal release contains 5 original stories. Additional stories: Coming later.",
   },
   {
     q: "Can I use these stories in my classroom?",
-    a: "Yes, teachers are welcome to use these stories for classroom instruction. A Teacher Pack with printable versions and additional materials will be available in a future release.",
+    a: "Yes, teachers are welcome to use these stories for classroom instruction. Additional printable teacher materials: Coming later.",
   },
 ];
 

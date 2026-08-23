@@ -5,7 +5,7 @@ import { getHsk3LevelStatuses } from "@/lib/content/level-status";
 
 export const metadata: Metadata = {
   title: "HSK 3.0 Levels 1–9 — publication status and study path | HSKKit",
-  description: "Explore HSK 3.0 Levels 1–9 with transparent content status. Levels 7–9 form one unified advanced path.",
+  description: "Explore HSK 3.0 Levels 1–9 with transparent content status and one unified HSK 7–9 advanced ability band.",
   alternates: { canonical: "/levels" },
 };
 
@@ -26,14 +26,14 @@ export default function LevelsPage() {
   return (
     <StudyPage>
       <main className="mx-auto w-full max-w-[1140px] flex-1 px-5 py-12 md:px-16 md:py-16">
-        <header className="max-w-3xl"><p className="text-sm font-bold uppercase tracking-[0.15em] text-blue-600">HSK 3.0 study path</p><h1 className="mt-3 text-4xl font-bold tracking-tight md:text-5xl">Levels 1–9, with honest content status</h1><p className="mt-5 text-lg leading-8 text-slate-600">Choose a learning level and see whether QA-approved material is actually present in the active release. Levels 7–9 are filters within one unified advanced learning path.</p></header>
-        <div className="mt-8 rounded-2xl border border-green-200 bg-green-50 p-5 text-green-950"><strong>Formal content release is active.</strong><p className="mt-1 leading-7">Only source-locked, license-recorded, QA-approved HSK 3.0 entries are counted. Levels 7–9 are one official advanced band and are published once under the Level 7 route rather than being split or duplicated.</p></div>
+        <header className="max-w-3xl"><p className="text-sm font-bold uppercase tracking-[0.15em] text-blue-600">HSK 3.0 study path</p><h1 className="mt-3 text-4xl font-bold tracking-tight md:text-5xl">Levels 1–9, with honest content status</h1><p className="mt-5 text-lg leading-8 text-slate-600">Choose a learning level and see whether QA-approved material is actually present in the active release. Levels 7–9 form one unified HSK 7–9 advanced ability band.</p></header>
+        <div className="mt-8 rounded-2xl border border-green-200 bg-green-50 p-5 text-green-950"><strong>Formal content release is active.</strong><p className="mt-1 leading-7">Only source-locked, license-recorded, QA-approved HSK 3.0 entries are counted. Levels 7–9 are published once under the Level 7 route as one unified HSK 7–9 advanced ability band rather than split or duplicated.</p></div>
         <section className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-3" aria-label="HSK 3.0 levels">
           {levels.map((entry, index) => (
             <article key={entry.level} className="flex flex-col rounded-2xl border border-slate-200 bg-white p-6">
-              <div className="flex items-center justify-between gap-3"><span className="text-sm font-bold text-blue-600">{entry.isAdvancedPath ? "ADVANCED PATH" : "FOUNDATION PATH"}</span><span className={`rounded-full px-3 py-1 text-xs font-bold ${entry.availability === "ready" || entry.level >= 8 ? "bg-green-50 text-green-800" : "bg-amber-50 text-amber-800"}`}>{entry.level >= 8 ? "Unified 7–9 band" : entry.availability === "ready" ? `${entry.contentCount} published` : "Content gap"}</span></div>
-              <h2 className="mt-4 text-3xl font-bold">Level {entry.level}</h2><p className="mt-3 flex-1 leading-7 text-slate-600">{descriptions[index]}</p><p className="mt-4 text-sm text-slate-500">{entry.level >= 8 ? "The official source does not split Levels 7–9; use the single published advanced-band catalog." : entry.message}</p>
-              <Link href={`/vocabulary/${entry.level >= 8 ? 7 : entry.level}`} className="mt-6 inline-flex min-h-11 items-center justify-center rounded-lg border border-blue-600 px-5 py-3 font-semibold text-blue-700 hover:bg-blue-50">{entry.level >= 8 ? "View unified 7–9 catalog" : `View Level ${entry.level} vocabulary`}</Link>
+              <div className="flex items-center justify-between gap-3"><span className="text-sm font-bold text-blue-600">{entry.isAdvancedPath ? "ADVANCED PATH" : "FOUNDATION PATH"}</span><span className={`rounded-full px-3 py-1 text-xs font-bold ${entry.availability === "ready" || entry.level >= 8 ? "bg-green-50 text-green-800" : "bg-amber-50 text-amber-800"}`}>{entry.level >= 8 ? "Unified HSK 7–9 advanced ability band" : entry.availability === "ready" ? `${entry.contentCount} published` : "Content gap"}</span></div>
+              <h2 className="mt-4 text-3xl font-bold">Level {entry.level}</h2><p className="mt-3 flex-1 leading-7 text-slate-600">{descriptions[index]}</p><p className="mt-4 text-sm text-slate-500">{entry.level >= 8 ? "Levels 7–9 share the Level 7 catalog as one unified HSK 7–9 advanced ability band." : entry.message}</p>
+              <Link href={`/vocabulary/${entry.level >= 8 ? 7 : entry.level}`} className="mt-6 inline-flex min-h-11 items-center justify-center rounded-lg border border-blue-600 px-5 py-3 font-semibold text-blue-700 hover:bg-blue-50">{entry.level >= 8 ? "View HSK 7–9 ability-band catalog" : `View Level ${entry.level} vocabulary`}</Link>
             </article>
           ))}
         </section>

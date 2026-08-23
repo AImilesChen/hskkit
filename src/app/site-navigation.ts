@@ -35,12 +35,12 @@ export const siteNavigation: NavigationEntry[] = [
     items: [
       { href: "/placement", label: "Placement", description: "Find a suggested starting point, not an official score." },
       { href: "/mock/basic", label: "Basic Mock", description: "Take the published HSK 1–6 timed mock." },
-      { href: "/mock/advanced", label: "Advanced Mock", description: "Use the unified HSK 7–9 advanced mock." },
+      { href: "/mock/advanced", label: "Advanced Mock", description: "Assess the unified HSK 7–9 advanced ability band." },
     ],
   },
   { href: "/dictionary", label: "Dictionary", description: "Search the published HSK 3.0 catalog." },
-  { href: "/pricing", label: "Pricing", description: "Free core and the current one-time PDF Pack offer." },
-  { href: "/account", label: "Sign in", description: "Sign in with Google or manage your synced account and PDF Pack." },
+  { href: "/pricing", label: "Pricing", description: "Free core and planned PDF Pack status; purchasing unavailable." },
+  { href: "/account", label: "Sign in", description: "Sign in with Google or manage your synced account and private exports." },
 ];
 
 export function isNavigationGroup(entry: NavigationEntry): entry is { label: string; items: NavigationItem[] } {

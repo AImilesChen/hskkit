@@ -28,7 +28,7 @@ export default function PracticeSelectorClient() {
   return <div className="space-y-8">
     <section aria-labelledby="choose-level" className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
       <h2 className="text-2xl font-black text-slate-950" id="choose-level">Choose a level</h2>
-      <p className="mt-2 text-slate-600">Levels 1–6 follow their published band. HSK 7–9 uses one honest Advanced 7–9 band rather than pretending there are separate official lists.</p>
+      <p className="mt-2 text-slate-600">Levels 1–6 follow their published bands. Levels 7–9 use one unified HSK 7–9 advanced ability band rather than pretending there are separate official lists.</p>
       <div className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">{LEVELS.map((item) => <button aria-pressed={selectedLevel === item.value} className={`min-h-20 rounded-2xl border p-4 text-left transition ${selectedLevel === item.value ? "border-blue-600 bg-blue-50 text-blue-950" : "border-slate-200 bg-white text-slate-800 hover:border-blue-300"}`} key={item.value} onClick={() => setSelectedLevel(item.value)} type="button"><strong className="block">{item.label}</strong><span className="mt-1 block text-sm opacity-75">{item.detail}</span></button>)}</div>
     </section>
 

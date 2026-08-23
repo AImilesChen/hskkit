@@ -38,7 +38,7 @@ const faqs = [
   },
   {
     q: "Can I download a PDF instead of printing?",
-    a: 'Currently, the generator outputs a browser-optimized print page. You can "Print to PDF" using your browser\'s built-in feature. A dedicated PDF download option is planned for a future release.',
+    a: 'Currently, the generator outputs a browser-optimized print page. You can "Print to PDF" using your browser\'s built-in feature. A dedicated PDF download option: Coming later.',
   },
   {
     q: "Is there a limit to how many characters I can enter?",
@@ -46,7 +46,7 @@ const faqs = [
   },
   {
     q: "Can teachers use this for their classes?",
-    a: "Yes. Teachers can generate unlimited sheets for classroom use. A Teacher Pack with batch generation and custom templates will be available in a future release.",
+    a: "Yes. Teachers can generate sheets for classroom use. Batch generation and custom teacher templates: Coming later.",
   },
 ];
 
@@ -124,7 +124,7 @@ export default function WorksheetGeneratorPage() {
                 {
                   n: "2",
                   title: "Choose grid style",
-                  text: "Select Tian Zi Ge (田字格) for balanced stroke training. More grid styles coming soon.",
+                  text: "Select Tian Zi Ge (田字格) for balanced stroke training. More grid styles: Coming later.",
                 },
                 {
                   n: "3",

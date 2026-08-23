@@ -4,6 +4,12 @@ import SiteFooter from "./site-footer";
 import SiteHeader from "./site-header";
 import HomeNextStep from "./components/home-next-step";
 import { getHsk3LevelStatuses } from "@/lib/content/level-status";
+import {
+  PUBLIC_ACCOUNT_SCOPE,
+  PUBLIC_DICTIONARY_SCOPE,
+  PUBLIC_FORMAL_CONTENT_SCOPE,
+  PURCHASING_UNAVAILABLE,
+} from "@/lib/public-copy";
 
 export const metadata: Metadata = {
   title: "HSKKit — HSK 3.0 Levels 1–9 study path",
@@ -18,7 +24,7 @@ const tools = [
   { title: "Reading", text: "Use levelled passages, vocabulary support, exercises, and review actions.", href: "/reading/morning-study-routine", status: "Limited" },
   { title: "Grammar", text: "Study a clear pattern, examples, a linked exercise, and a review action.", href: "/grammar/ba-sentence-basics", status: "Limited" },
   { title: "Basic Mock", text: "Take an 18-task timed HSK 1–6 assessment with autosave, scoring, Mistakes and SRS.", href: "/mock/basic", status: "Live" },
-  { title: "Advanced Mock", text: "Check unified HSK 7–9 reading, listening and pragmatic ability without a fake single-level score.", href: "/mock/advanced", status: "Live" },
+  { title: "Advanced Mock", text: "Check the unified HSK 7–9 advanced ability band across reading, listening and pragmatic ability without a fake single-level score.", href: "/mock/advanced", status: "Live" },
 ];
 
 const quickTools = [
@@ -35,7 +41,7 @@ export default function HomePage() {
       <div>
         <p className="text-xs font-semibold uppercase tracking-[.05em] text-blue-600">HSK 3.0 · Levels 1–9</p>
         <h1 className="mt-4 max-w-2xl text-[32px] font-extrabold leading-[1.2] tracking-[-.02em] sm:text-[40px]">Build your HSK 3.0 learning path</h1>
-        <p className="mt-5 max-w-2xl text-lg leading-[1.6] text-slate-600">Choose an evidence-based starting point, study published content by level, and return to the next useful task. Levels 7–9 use one unified advanced learning path.</p>
+        <p className="mt-5 max-w-2xl text-lg leading-[1.6] text-slate-600">Choose an evidence-based starting point, study published content by level, and return to the next useful task. Levels 7–9 use one unified HSK 7–9 advanced ability band.</p>
         <HomeNextStep />
         <p className="mt-5 text-sm italic text-slate-500">ⓘ A learning suggestion is not an examination result or a promise of an outcome.</p>
       </div>
@@ -54,12 +60,12 @@ export default function HomePage() {
 
     <section className="border-b border-slate-200 py-16"><div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between"><div><p className="text-xs font-semibold uppercase tracking-[.05em] text-blue-600">{publishedCount} published catalog routes</p><h2 className="mt-2 text-[32px] font-bold tracking-[-.01em]">Learn by HSK 3.0 level.</h2></div><Link href="/levels" className="inline-flex min-h-11 items-center font-semibold text-blue-700">View full curriculum →</Link></div>
       <div className="mt-8 grid gap-5 lg:grid-cols-3">{levels.slice(0,3).map((entry)=><Link key={entry.level} href={`/vocabulary/${entry.level}`} className={`relative rounded-2xl border bg-white p-6 shadow-sm ${entry.level===1?'border-2 border-blue-600':'border-slate-200'}`}>{entry.level===1&&<span className="absolute right-0 top-0 rounded-bl-lg rounded-tr-xl bg-blue-600 px-3 py-1 text-xs font-bold text-white">START HERE</span>}<div className="flex items-center justify-between gap-3"><h3 className="text-2xl font-semibold">Level {entry.level}</h3><span className="rounded-lg bg-blue-50 px-3 py-1 text-sm font-semibold text-blue-700">{entry.contentCount.toLocaleString("en-US")} words</span></div><p className="mt-4 text-sm leading-6 text-slate-600">Published, source-locked HSK 3.0 content for this level.</p><div className="mt-8 flex justify-between text-sm text-slate-500"><span>Catalog</span><span>Ready</span></div><div className="mt-2 h-1.5 rounded bg-blue-100"><div className="h-full w-full rounded bg-blue-600"/></div></Link>)}</div>
-      <div className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">{levels.slice(3).map((entry)=>{const catalog=entry.level>=8?7:entry.level;return <Link key={entry.level} href={`/vocabulary/${catalog}`} className="rounded-xl border border-slate-200 bg-white p-4"><div className="flex items-center justify-between gap-3"><h3 className="text-lg font-semibold">Level {entry.level}</h3><span className="text-sm text-slate-500">{entry.level>=8?'Unified 7–9 band':`${entry.contentCount.toLocaleString("en-US")} words`}</span></div><div className="mt-4 h-1.5 rounded bg-blue-100"/></Link>})}</div>
+      <div className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">{levels.slice(3).map((entry)=>{const catalog=entry.level>=8?7:entry.level;return <Link key={entry.level} href={`/vocabulary/${catalog}`} className="rounded-xl border border-slate-200 bg-white p-4"><div className="flex items-center justify-between gap-3"><h3 className="text-lg font-semibold">Level {entry.level}</h3><span className="text-sm text-slate-500">{entry.level>=8?'Unified HSK 7–9 advanced ability band':`${entry.contentCount.toLocaleString("en-US")} words`}</span></div><div className="mt-4 h-1.5 rounded bg-blue-100"/></Link>})}</div>
     </section>
 
     <section className="py-16"><div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8"><h2 className="text-center text-[32px] font-bold tracking-[-.01em]">Use the tool that matches your task.</h2><div className="mt-8 grid gap-4 lg:grid-cols-6">{tools.map((tool,index)=><Link key={tool.title} href={tool.href} className={`rounded-xl border border-slate-200 p-5 hover:border-blue-300 ${index<2?'lg:col-span-3':'lg:col-span-2'}`}><div className="flex items-center justify-between gap-3"><span className="grid h-10 w-10 place-items-center rounded-lg bg-blue-50 font-bold text-blue-700">{tool.title.slice(0,1)}</span><span className="text-xs font-semibold uppercase tracking-wide text-blue-600">{tool.status}</span></div><h3 className="mt-4 text-xl font-semibold">{tool.title}</h3><p className="mt-2 text-sm leading-6 text-slate-600">{tool.text}</p></Link>)}</div></div></section>
 
-    <section className="mx-auto max-w-3xl pb-16"><h2 className="border-b border-slate-200 pb-4 text-2xl font-semibold">What is available, and what is gated.</h2><div className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">{[["Published HSK 3.0 catalog","AVAILABLE"],["Placement, Today and review loop","AVAILABLE"],["Dictionary and listening","AVAILABLE"],["Basic Mock","AVAILABLE"],["HSK 7–9 advanced Mock","AVAILABLE"]].map(([name,status])=><div key={name} className="flex min-h-14 items-center justify-between gap-4 border-b border-slate-200 px-4 last:border-0"><span className="font-medium"><span className="mr-3 text-blue-600">✓</span>{name}</span><span className="text-xs font-semibold text-blue-600">{status}</span></div>)}</div></section>
+    <section className="mx-auto max-w-3xl pb-16"><h2 className="border-b border-slate-200 pb-4 text-2xl font-semibold">Current public scope</h2><div className="mt-5 space-y-3 rounded-xl border border-slate-200 bg-white p-5 text-sm leading-6 text-slate-600"><p>{PUBLIC_FORMAL_CONTENT_SCOPE}</p><p>{PUBLIC_DICTIONARY_SCOPE}</p><p>{PUBLIC_ACCOUNT_SCOPE}</p><p><strong>{PURCHASING_UNAVAILABLE}.</strong> The planned PDF Pack is marked Coming later and no checkout is open.</p></div><div className="mt-5 overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">{[["Published HSK 3.0 catalog","AVAILABLE"],["Placement, Today and review loop","AVAILABLE"],["Basic Mock","AVAILABLE"],["HSK 7–9 advanced Mock","AVAILABLE"]].map(([name,status])=><div key={name} className="flex min-h-14 items-center justify-between gap-4 border-b border-slate-200 px-4 last:border-0"><span className="font-medium"><span className="mr-3 text-blue-600">✓</span>{name}</span><span className="text-xs font-semibold text-blue-600">{status}</span></div>)}</div></section>
 
     <section className="rounded-2xl bg-slate-950 p-9 text-center text-white shadow-md sm:p-12"><h2 className="text-[32px] font-bold text-white">Start with one useful next step.</h2><p className="mx-auto mt-4 max-w-xl text-lg leading-8 text-slate-300">Find the level that fits, then keep Today, published content, listening, practice, mistakes, and review connected.</p><Link href="/placement" className="mt-7 inline-flex min-h-11 items-center rounded-lg bg-white px-7 font-semibold text-slate-950 hover:bg-slate-100">Find your starting point</Link></section>
   </main><SiteFooter/></>;

@@ -150,7 +150,7 @@ export function WorksheetTool() {
               Tian Zi Ge (田字格) — recommended for beginners
             </div>
             <div className="px-4 py-3 border-2 border-[#E2E8F0] rounded-lg text-sm font-medium text-[#94A3B8] opacity-50 cursor-not-allowed">
-              Mi Zi Ge — coming soon
+              Mi Zi Ge — Coming later
             </div>
           </div>
         </div>

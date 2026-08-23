@@ -88,7 +88,7 @@ export function selectTodayContent(startLevel: number): TodayContentPlan {
       code: "EMPTY_CONTENT_QUEUE",
       message: `No approved Level ${level} tasks are available in the active content release. Your saved progress is unchanged.`,
       actionHref: level >= 8 ? "/vocabulary/7" : "/levels",
-      actionLabel: level >= 8 ? "Open the unified Levels 7–9 catalog" : "Choose another available level",
+      actionLabel: level >= 8 ? "Open the unified HSK 7–9 advanced ability band catalog" : "Choose another available level",
     };
   } else {
     const words = listPublishedWords();

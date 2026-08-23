@@ -131,7 +131,7 @@ export function MockExam({ band }: { band: MockBand }) {
   }
 
   if (!session) return <section className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm sm:p-10">
-    <p className="text-sm font-bold uppercase tracking-[.16em] text-blue-700">{advanced ? "Unified HSK 7–9 ability model" : "HSK 1–6 approved practice assessment"}</p>
+    <p className="text-sm font-bold uppercase tracking-[.16em] text-blue-700">{advanced ? "Unified HSK 7–9 advanced ability band" : "HSK 1–6 approved practice assessment"}</p>
     <h1 className="mt-3 font-serif text-4xl font-bold text-slate-950 sm:text-6xl">{advanced ? "Advanced Mock" : "Basic Mock"}</h1>
     <p className="mt-5 max-w-2xl text-lg leading-8 text-slate-600">{advanced ? "Five approved reading, listening and pragmatic tasks. The result is one broad ability interval, never a fabricated single-level official score." : "Eighteen approved Grammar, Reading and Listening tasks with a 30-minute server timer, autosave, restoration and learning-loop result."}</p>
     <div className="mt-6 rounded-2xl bg-slate-50 p-4 text-sm leading-6 text-slate-600">Question set and scoring rules are versioned. If count, approval, authorization or scoring gates fail, the exam stays safely closed.</div>

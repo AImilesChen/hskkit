@@ -1,6 +1,11 @@
 import type { Metadata } from "next";
 import SiteHeader from "../site-header";
 import SiteFooter from "../site-footer";
+import {
+  PUBLIC_ACCOUNT_SCOPE,
+  PUBLIC_FORMAL_CONTENT_SCOPE,
+  PURCHASING_UNAVAILABLE,
+} from "@/lib/public-copy";
 
 export const metadata: Metadata = {
   title: "Contact HSKKit | Get Help & Support",
@@ -35,6 +40,18 @@ const faqs = [
   {
     q: "Do you offer tutoring or live classes?",
     a: "Not at the moment. HSKKit focuses on self-study vocabulary guides, practice questions, and level-check tools. If you need a tutor, we can suggest how to evaluate one.",
+  },
+  {
+    q: "Do I need an account to study?",
+    a: PUBLIC_ACCOUNT_SCOPE,
+  },
+  {
+    q: "What formal content is currently included?",
+    a: PUBLIC_FORMAL_CONTENT_SCOPE,
+  },
+  {
+    q: "Can I buy the PDF Pack now?",
+    a: `${PURCHASING_UNAVAILABLE}. The pack is marked Coming later, and no checkout or live payment collection is open.`,
   },
   {
     q: "I forgot my progress. Can you recover it?",
