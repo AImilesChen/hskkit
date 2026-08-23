@@ -1,5 +1,5 @@
 import { getCloudflareContext } from "@opennextjs/cloudflare";
-import { emptyLearningState, type LearningState } from "../learning/domain";
+import type { LearningState } from "../learning/domain";
 import { loadState } from "../learning/storage";
 import { listAllPlans } from "../planner/storage";
 import { aiRuntimePolicy } from "../ai/domain";
@@ -52,6 +52,7 @@ type AiMergeSnapshot = { operationCount: number; operationMax: string; bucketCou
 const db = () => getCloudflareContext().env.LEARNING_DB;
 const now = () => new Date().toISOString();
 const ownerId = (userId: string) => `user:${userId}`;
+const emptyLearningState = (): LearningState => ({ attempts: [], cards: [], mistakes: [], dailySessions: [] });
 async function aiMergeSnapshot(owner: string): Promise<AiMergeSnapshot> {
   const row = await db().prepare("SELECT (SELECT COUNT(*) FROM ai_operations WHERE owner_id=?) AS operation_count,COALESCE((SELECT MAX(updated_at) FROM ai_operations WHERE owner_id=?),'') AS operation_max,(SELECT COUNT(*) FROM ai_quota_buckets WHERE owner_id=?) AS bucket_count,COALESCE((SELECT MAX(updated_at) FROM ai_quota_buckets WHERE owner_id=?),'') AS bucket_max")
     .bind(owner, owner, owner, owner).first<{ operation_count: number; operation_max: string; bucket_count: number; bucket_max: string }>();

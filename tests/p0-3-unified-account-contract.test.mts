@@ -64,11 +64,12 @@ test("P0-3 deletion immediately invalidates sessions, Sync Keys and private expo
   assert.match(client, /result\?\.request\?\.state === "completed"/);
 });
 
-test("P0-3 removes contradictory account language and links Sign in later to login", () => {
+test("P0-3 removes contradictory account language and publishes a visible sign-in entry", () => {
   const placement = read("../src/app/placement/placement-client.tsx");
   const contact = read("../src/app/contact/page.tsx");
   const planner = read("../src/app/planner/planner-client.tsx");
   const account = read("../src/app/account/page.tsx");
+  const navigation = read("../src/app/site-navigation.ts");
   assert.match(placement, /href="\/login"/);
   assert.doesNotMatch(contact, /does not require accounts/i);
   assert.match(contact, /sign in with Google/i);
@@ -76,6 +77,13 @@ test("P0-3 removes contradictory account language and links Sign in later to log
   assert.match(planner, /sign in to save it across devices/i);
   assert.match(account, /Google sign-in/);
   assert.match(account, /Sync Key/);
+  assert.match(navigation, /href: "\/account", label: "Sign in"/);
+});
+
+test("P0-3 account request path does not initialize the catalog-backed learning domain", () => {
+  const storage = read("../src/lib/account/storage.ts");
+  assert.doesNotMatch(storage, /import \{ emptyLearningState, type LearningState \} from "\.\.\/learning\/domain"/);
+  assert.match(storage, /import type \{ LearningState \} from "\.\.\/learning\/domain"/);
 });
 
 test("P0-3 migration adds Google identities and revocable private sessions", () => {

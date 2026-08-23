@@ -40,7 +40,7 @@ export const siteNavigation: NavigationEntry[] = [
   },
   { href: "/dictionary", label: "Dictionary", description: "Search the published HSK 3.0 catalog." },
   { href: "/pricing", label: "Pricing", description: "Free core and the current one-time PDF Pack offer." },
-  { href: "/account", label: "Account", description: "Sign in to sync progress and purchase a PDF Pack." },
+  { href: "/account", label: "Sign in", description: "Sign in with Google or manage your synced account and PDF Pack." },
 ];
 
 export function isNavigationGroup(entry: NavigationEntry): entry is { label: string; items: NavigationItem[] } {
