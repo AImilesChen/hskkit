@@ -67,6 +67,7 @@ export default function SiteHeader() {
   }, []);
 
   return (
+    <>
     <header ref={headerRef} className="sticky top-0 z-[100] border-b border-slate-200 bg-white/95 backdrop-blur">
       <nav aria-label="Primary navigation" className="mx-auto flex h-[72px] max-w-[1204px] items-center justify-between px-5 sm:px-8">
         <Link href="/" className="flex min-h-11 items-center gap-2 text-[22px] font-bold tracking-tight text-slate-900" onClick={closeNavigation}>
@@ -117,9 +118,10 @@ export default function SiteHeader() {
           This page keeps its original standard label. For the current Level 1–9 path, <Link href="/levels" className="font-bold underline">open HSK 3.0 Levels</Link>.
         </div>
       )}
+    </header>
 
       {mobileOpen && (
-        <div id="mobile-menu" className="fixed inset-x-0 bottom-0 top-[72px] overflow-y-auto border-t border-slate-200 bg-white [@media(min-width:1040px)]:hidden">
+        <div id="mobile-menu" className="fixed inset-x-0 bottom-0 top-[72px] z-[90] overflow-y-auto border-t border-slate-200 bg-white [@media(min-width:1040px)]:hidden">
           <nav aria-label="Mobile navigation" className="grid gap-2 px-4 py-5">
             {siteNavigation.map((entry) => isNavigationGroup(entry) ? (
               <div key={entry.label} className="rounded-xl border border-slate-200 bg-white">
@@ -146,6 +148,6 @@ export default function SiteHeader() {
           </nav>
         </div>
       )}
-    </header>
+    </>
   );
 }

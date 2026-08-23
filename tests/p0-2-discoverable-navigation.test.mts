@@ -31,6 +31,7 @@ test("P0-2 grouped navigation keeps accessible responsive behavior", () => {
   assert.match(header, /event\.key === "Escape"/);
   assert.match(header, /pointerdown/);
   assert.match(header, /matchMedia\("\(min-width: 1040px\)"\)/);
+  assert.match(header, /<\/header>\s*\{mobileOpen && \(/, "the fixed mobile drawer must sit outside the backdrop-filter header containing block");
   assert.match(header, /focus\(\)/);
   assert.match(header, /overflow-y-auto/);
 });
