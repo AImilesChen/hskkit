@@ -225,6 +225,13 @@ export async function POST(req: NextRequest) {
     if (dailyAction && (loaded.state.dailyOperationKeys ?? []).includes(key)) {
       return response(view(loaded.state, identity.id, tz, identity.account?.timezone), identity.fresh, identity.id, loaded.revision, Boolean(identity.account));
     }
+    if (action === "grade") {
+      const replayCardId = short(payload.cardId, 120);
+      const replayCard = replayCardId ? loaded.state.cards.find((card) => card.id === replayCardId) : undefined;
+      if (replayCard?.gradeKeys.includes(key)) {
+        return response(view(loaded.state, identity.id, tz, identity.account?.timezone), identity.fresh, identity.id, loaded.revision, Boolean(identity.account));
+      }
+    }
     if (dailyAction && Number.isInteger(body?.clientRevision) && body.clientRevision !== loaded.revision && !(loaded.state.dailyOperationKeys ?? []).includes(key)) {
       await recordPolicyAudit(createAuditEvent({ subjectId: identity.id, action: String(action), resourceType: "learning", resourceId: identity.id, result: "conflict", idempotencyKey: key, metadata: { serverRevision: loaded.revision, clientRevision: body.clientRevision } }));
       return errorResponse("REVISION_CONFLICT", 409, { state: "conflict", serverRevision: loaded.revision, clientRevision: body.clientRevision });

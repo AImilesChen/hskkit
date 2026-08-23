@@ -85,6 +85,7 @@ test("production UI and learning API expose the same next action, scope and stre
   assert.match(route, /streak/);
   assert.match(route, /scope/);
   assert.match(route, /IDENTITY_CHANGED/);
+  assert.match(route, /action === "grade"[\s\S]*gradeKeys\.includes\(key\)[\s\S]*loaded\.revision/);
   assert.match(dashboard, /Current streak/);
   assert.match(dashboard, /scope === "account"/);
   assert.match(dashboard, /queueBinding/);
