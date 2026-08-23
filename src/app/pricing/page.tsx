@@ -2,5 +2,36 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import SiteHeader from "../site-header";
 import SiteFooter from "../site-footer";
-export const metadata:Metadata={title:"Pricing | HSKKit",description:"Free HSK 3.0 study tools and the one-time HSKKit Advanced Study PDF Pack.",alternates:{canonical:"/pricing"}};
-export default function PricingPage(){return <><SiteHeader/><main className="mx-auto w-full max-w-[1040px] px-5 py-12 sm:py-16"><div className="text-center"><p className="text-xs font-bold uppercase tracking-wider text-blue-600">Simple product boundaries</p><h1 className="mt-3 text-[32px] font-extrabold tracking-tight sm:text-[40px]">Study online for free. Buy only the printable pack you choose.</h1><p className="mx-auto mt-5 max-w-2xl text-lg leading-8 text-slate-600">No subscription is offered on this release. Existing learning tools stay in the free core.</p></div><div className="mt-10 grid gap-6 md:grid-cols-2"><section className="rounded-2xl border border-slate-200 bg-white p-7"><p className="font-bold text-blue-700">FREE CORE</p><h2 className="mt-3 text-3xl font-bold">US$0</h2><ul className="mt-6 grid gap-3 text-slate-700"><li>✓ Published vocabulary and dictionary</li><li>✓ Placement and Today path</li><li>✓ Practice, mistakes and review</li><li>✓ Listening and mock tools where published</li><li>✓ Private account data export</li></ul><Link href="/today" className="mt-8 inline-flex min-h-11 items-center justify-center rounded-lg border border-blue-600 px-5 font-bold text-blue-700">Open Today</Link></section><section className="rounded-2xl border-2 border-blue-600 bg-white p-7 shadow-sm"><p className="font-bold text-blue-700">ONE-TIME PDF PACK</p><h2 className="mt-3 text-3xl font-bold">US$9.99</h2><p className="mt-2 text-sm text-slate-500">One selected Level · personal use</p><ul className="mt-6 grid gap-3 text-slate-700"><li>✓ Up to 120 authorized entries</li><li>✓ Up to 20 practice prompts</li><li>✓ PDF and offline ZIP</li><li>✓ Up to 3 successful downloads</li><li>✓ Access expires 14 days after first ready</li></ul><Link href="/pdf-packs" className="mt-8 inline-flex min-h-11 items-center justify-center rounded-lg bg-blue-600 px-5 font-bold text-white">Choose a level</Link></section></div><p className="mx-auto mt-8 max-w-3xl text-center text-sm leading-6 text-slate-500">Refund requests for the PDF Pack are manually reviewed. A request is generally eligible within 7 UTC calendar days only when zero successful downloads are recorded, except where applicable law requires otherwise.</p></main><SiteFooter/></>}
+
+export const metadata: Metadata = {
+  title: "Pricing | HSKKit",
+  description: "Free HSK 3.0 study tools and the one-time HSKKit Advanced Study PDF Pack.",
+  alternates: { canonical: "/pricing" },
+};
+
+export default function PricingPage() {
+  return <><SiteHeader/><main className="mx-auto w-full max-w-[1040px] px-5 py-12 sm:py-16">
+    <div className="text-center">
+      <p className="text-xs font-bold uppercase tracking-wider text-blue-600">Simple product boundaries</p>
+      <h1 className="mt-3 text-[32px] font-extrabold tracking-tight sm:text-[40px]">Study online for free. Buy only the printable pack you choose.</h1>
+      <p className="mx-auto mt-5 max-w-2xl text-lg leading-8 text-slate-600">No subscription is offered on this release. Existing learning tools stay in the free core.</p>
+    </div>
+    <div className="mt-10 grid gap-6 md:grid-cols-2">
+      <section className="rounded-2xl border border-slate-200 bg-white p-7">
+        <p className="font-bold text-blue-700">FREE CORE</p>
+        <h2 className="mt-3 text-3xl font-bold">US$0</h2>
+        <ul className="mt-6 grid gap-3 text-slate-700"><li>✓ Published vocabulary and dictionary</li><li>✓ Placement and Today path</li><li>✓ Practice, mistakes and review</li><li>✓ Listening and mock tools where published</li><li>✓ Private account data export</li></ul>
+        <Link href="/today" className="mt-8 inline-flex min-h-11 items-center justify-center rounded-lg border border-blue-600 px-5 font-bold text-blue-700">Open Today</Link>
+      </section>
+      <section className="rounded-2xl border-2 border-blue-600 bg-white p-7 shadow-sm">
+        <p className="font-bold text-blue-700">CURRENT OFFER · ONE-TIME PDF PACK</p>
+        <h2 className="mt-3 text-3xl font-bold">US$9.99</h2>
+        <p className="mt-2 text-sm text-slate-500">One selected Level · personal use</p>
+        <ul className="mt-6 grid gap-3 text-slate-700"><li>✓ Up to 120 authorized entries</li><li>✓ Up to 20 practice prompts</li><li>✓ PDF and offline ZIP</li><li>✓ Up to 3 successful downloads</li><li>✓ Access expires 14 days after first ready</li></ul>
+        <p className="mt-6 rounded-lg bg-amber-50 p-3 text-sm leading-6 text-amber-950"><strong>Account required before purchase.</strong> Purchase availability is checked on the PDF Packs page before checkout; an unavailable checkout remains visibly disabled.</p>
+        <Link href="/pdf-packs" className="mt-5 inline-flex min-h-11 items-center justify-center rounded-lg bg-blue-600 px-5 font-bold text-white">View PDF Pack &amp; availability</Link>
+      </section>
+    </div>
+    <p className="mx-auto mt-8 max-w-3xl text-center text-sm leading-6 text-slate-500">Refund requests for the PDF Pack are manually reviewed. A request is generally eligible within 7 UTC calendar days only when zero successful downloads are recorded, except where applicable law requires otherwise.</p>
+  </main><SiteFooter/></>;
+}

@@ -37,11 +37,13 @@ test("homepage follows the adopted Stitch HSK 3.0 information order", () => {
   assert.match(home, /const catalog=entry\.level>=8\?7:entry\.level/);
 });
 
-test("desktop and mobile header expose one new-system navigation contract", () => {
+test("desktop and mobile header expose one shared new-system navigation contract", () => {
+  const navigation = read("../src/app/site-navigation.ts");
   for (const href of ["/levels", "/vocabulary/1", "/dictionary", "/today", "/listen", "/account"]) {
-    assert.ok(header.includes(`href: "${href}"`), `header must include ${href}`);
+    assert.ok(navigation.includes(`href: "${href}"`), `shared navigation must include ${href}`);
   }
-  assert.doesNotMatch(header, /href:\s*["']\/hsk-levels["']/);
+  assert.match(header, /siteNavigation\.map/);
+  assert.doesNotMatch(navigation, /href:\s*["']\/hsk-levels["']/);
   assert.match(header, /Traditional HSK 2\.0/);
   assert.match(header, /legacyRoutePattern/);
 });
