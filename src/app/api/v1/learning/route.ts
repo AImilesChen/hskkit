@@ -1,5 +1,6 @@
 import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
+import { createHash } from "node:crypto";
 import {
   buildDailySession,
   applyDailyItemAction,
@@ -19,8 +20,11 @@ import { loadState, saveState } from "../../../../lib/learning/storage";
 import { selectTodayContent, todayContentByContentId } from "../../../../lib/learning/today-content";
 import { accessDecision, createAuditEvent, errorContract } from "../../../../lib/account/access-policy";
 import { recordPolicyAudit } from "../../../../lib/account/audit-storage";
+import { computeSessionStreak } from "../../../../lib/account/domain";
+import { computeOffsetSessionStreak, deriveHomeNextStep, learningLocalDay } from "../../../../lib/learning/progress";
 
 const COOKIE = GUEST_COOKIE;
+const queueBindingFor = (ownerId: string) => createHash("sha256").update(`hskkit-learning-queue:${ownerId}`).digest("base64url").slice(0, 24);
 async function owner() {
   const identity = await requestIdentity();
   if (identity.account) return { id: `user:${identity.account.userId}`, fresh: false, account: identity.account };
@@ -52,14 +56,12 @@ function assertDailyAudioBinding(state: LearningState, dailySessionId: string | 
     throw new Error("DAILY_ITEM_MISMATCH");
   }
 }
-function localDay(now: string, offsetMinutes: number) {
-  return new Date(new Date(now).getTime() - offsetMinutes * 60_000).toISOString().slice(0, 10);
-}
-function view(state: LearningState, ownerId: string, offsetMinutes: number) {
+function view(state: LearningState, ownerId: string, offsetMinutes: number, accountTimezone?: string) {
   const now = new Date().toISOString();
+  const nextAction = deriveHomeNextStep(state, now);
   const latestPlacement = [...(state.placementResults ?? [])].sort((a, b) => b.createdAt.localeCompare(a.createdAt))[0];
   const startLevel = latestPlacement?.recommendedLevel ?? 1;
-  const built = buildDailySession(state, { ownerId, localDay: localDay(now, offsetMinutes), ruleVersion: "today-v4", now, dailyContent: selectTodayContent(startLevel) });
+  const built = buildDailySession(state, { ownerId, localDay: learningLocalDay(now, offsetMinutes, accountTimezone), ruleVersion: "today-v4", now, dailyContent: selectTodayContent(startLevel) });
   const cards = built.state.cards.map((card) => {
     const attempt = built.state.attempts.find((candidate) => candidate.id === card.sourceAttemptId);
     const question = attempt?.contentId.startsWith("question:") ? trustedQuestion(attempt.contentId.slice(9)) : undefined;
@@ -89,10 +91,23 @@ function view(state: LearningState, ownerId: string, offsetMinutes: number) {
     audio: built.state.cards.filter((card) => card.dimension === "audio").length,
     context_audio: built.state.cards.filter((card) => card.dimension === "context_audio").length,
   };
-  return { state: built.state, session: built.session, cards, mistakes, mastery };
+  const streak = accountTimezone
+    ? computeSessionStreak(built.state.dailySessions, accountTimezone, now)
+    : computeOffsetSessionStreak(built.state.dailySessions, offsetMinutes, now);
+  return {
+    state: built.state,
+    session: built.session,
+    cards,
+    mistakes,
+    mastery,
+    nextAction,
+    streak,
+    streakBasis: accountTimezone ? `Account timezone: ${accountTimezone}` : "This device's local day",
+  };
 }
 function response(data: ReturnType<typeof view>, fresh: boolean, id: string, revision: number, account = false, feedback?: { correct: boolean; correctAnswerText: string }) {
-  const res = NextResponse.json({ session: data.session, cards: data.cards, mistakes: data.mistakes, mastery: data.mastery, revision, scope: account ? "account" : "guest", ...(feedback ? { feedback } : {}) });
+  const queueBinding = queueBindingFor(id);
+  const res = NextResponse.json({ session: data.session, cards: data.cards, mistakes: data.mistakes, mastery: data.mastery, nextAction: data.nextAction, streak: data.streak, streakBasis: data.streakBasis, queueBinding, revision, scope: account ? "account" : "guest", ...(feedback ? { feedback } : {}) });
   if (fresh) res.cookies.set(COOKIE, id, { httpOnly: true, sameSite: "lax", secure: true, maxAge: 31_536_000, path: "/" });
   return res;
 }
@@ -102,7 +117,7 @@ export async function GET(req: NextRequest) {
   if (!access.allowed) return errorResponse(access.code, 403);
   const loaded = await loadState(identity.id);
   const tz = offset(req.nextUrl.searchParams.get("tzOffset") ? Number(req.nextUrl.searchParams.get("tzOffset")) : 0);
-  const data = view(loaded.state, identity.id, tz);
+  const data = view(loaded.state, identity.id, tz, identity.account?.timezone);
   return response(data, identity.fresh, identity.id, loaded.revision, Boolean(identity.account));
 }
 export async function POST(req: NextRequest) {
@@ -117,6 +132,7 @@ export async function POST(req: NextRequest) {
   } catch {
     return errorResponse("INVALID_JSON", 400);
   }
+  if (body?.queueBinding && body.queueBinding !== queueBindingFor(identity.id)) return errorResponse("IDENTITY_CHANGED", 409);
   const action = body?.action;
   const payload = body?.payload ?? {};
   const tz = offset(body?.tzOffset);
@@ -128,7 +144,7 @@ export async function POST(req: NextRequest) {
     const cardRevision = Number.isInteger(payload.cardRevision) ? Number(payload.cardRevision) : -1;
     try {
       const loaded = await loadState(identity.id);
-      const card = view(loaded.state, identity.id, tz).cards.find((candidate) => candidate.id === cardId && candidate.revision === cardRevision);
+      const card = view(loaded.state, identity.id, tz, identity.account?.timezone).cards.find((candidate) => candidate.id === cardId && candidate.revision === cardRevision);
       if (!card?.audioText || card.dimension === "reading") throw new Error("INVALID_AUDIO_REVIEW");
       const exerciseKey = `review:${card.id}:${card.revision}`;
       if (action === "audio_review_playback_start") {
@@ -207,13 +223,13 @@ export async function POST(req: NextRequest) {
     const loaded = await loadState(identity.id);
     const dailyAction = action === "complete_item" || action === "skip_item" || action === "restore_item" || action === "configure_today";
     if (dailyAction && (loaded.state.dailyOperationKeys ?? []).includes(key)) {
-      return response(view(loaded.state, identity.id, tz), identity.fresh, identity.id, loaded.revision, Boolean(identity.account));
+      return response(view(loaded.state, identity.id, tz, identity.account?.timezone), identity.fresh, identity.id, loaded.revision, Boolean(identity.account));
     }
     if (dailyAction && Number.isInteger(body?.clientRevision) && body.clientRevision !== loaded.revision && !(loaded.state.dailyOperationKeys ?? []).includes(key)) {
       await recordPolicyAudit(createAuditEvent({ subjectId: identity.id, action: String(action), resourceType: "learning", resourceId: identity.id, result: "conflict", idempotencyKey: key, metadata: { serverRevision: loaded.revision, clientRevision: body.clientRevision } }));
       return errorResponse("REVISION_CONFLICT", 409, { state: "conflict", serverRevision: loaded.revision, clientRevision: body.clientRevision });
     }
-    let state = view(loaded.state, identity.id, tz).state;
+    let state = view(loaded.state, identity.id, tz, identity.account?.timezone).state;
     let feedback: { correct: boolean; correctAnswerText: string } | undefined;
     try {
       if (action === "attempt") {
@@ -315,12 +331,12 @@ export async function POST(req: NextRequest) {
         if (!Number.isInteger(payload.budgetMinutes) || payload.budgetMinutes < 5 || payload.budgetMinutes > 180) throw new Error("INVALID_TIME_BUDGET");
         const observedAt = new Date().toISOString();
         const latestPlacement = [...(state.placementResults ?? [])].sort((a, b) => b.createdAt.localeCompare(a.createdAt))[0];
-        state = buildDailySession(state, { ownerId: identity.id, localDay: localDay(observedAt, tz), ruleVersion: "today-v4", now: observedAt, dailyContent: selectTodayContent(latestPlacement?.recommendedLevel ?? 1), budgetMinutes: payload.budgetMinutes }).state;
+        state = buildDailySession(state, { ownerId: identity.id, localDay: learningLocalDay(observedAt, tz, identity.account?.timezone), ruleVersion: "today-v4", now: observedAt, dailyContent: selectTodayContent(latestPlacement?.recommendedLevel ?? 1), budgetMinutes: payload.budgetMinutes }).state;
         state = { ...state, dailyOperationKeys: [...(state.dailyOperationKeys ?? []), key].slice(-400) };
       } else {
         return errorResponse("INVALID_ACTION", 422);
       }
-      const data = view(state, identity.id, tz);
+      const data = view(state, identity.id, tz, identity.account?.timezone);
       await saveState(identity.id, data.state, loaded.revision, createAuditEvent({ subjectId: identity.id, action: String(action), resourceType: "learning", resourceId: data.session.id, result: "success", idempotencyKey: key, metadata: { revision: loaded.revision + 1 } }));
       return response(data, identity.fresh, identity.id, loaded.revision + 1, Boolean(identity.account), feedback);
     } catch (error) {

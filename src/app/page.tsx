@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import SiteFooter from "./site-footer";
 import SiteHeader from "./site-header";
+import HomeNextStep from "./components/home-next-step";
 import { getHsk3LevelStatuses } from "@/lib/content/level-status";
 
 export const metadata: Metadata = {
@@ -35,7 +36,7 @@ export default function HomePage() {
         <p className="text-xs font-semibold uppercase tracking-[.05em] text-blue-600">HSK 3.0 · Levels 1–9</p>
         <h1 className="mt-4 max-w-2xl text-[32px] font-extrabold leading-[1.2] tracking-[-.02em] sm:text-[40px]">Build your HSK 3.0 learning path</h1>
         <p className="mt-5 max-w-2xl text-lg leading-[1.6] text-slate-600">Choose an evidence-based starting point, study published content by level, and return to the next useful task. Levels 7–9 use one unified advanced learning path.</p>
-        <div className="mt-7 flex flex-col gap-3 sm:flex-row"><Link href="/placement" className="inline-flex min-h-11 items-center justify-center rounded-lg bg-blue-600 px-6 font-semibold text-white hover:bg-blue-700">Find your starting point</Link><Link href="/levels" className="inline-flex min-h-11 items-center justify-center rounded-lg border border-slate-300 bg-white px-6 font-semibold text-slate-800 hover:border-blue-300 hover:bg-blue-50">Explore HSK 3.0 levels</Link></div>
+        <HomeNextStep />
         <p className="mt-5 text-sm italic text-slate-500">ⓘ A learning suggestion is not an examination result or a promise of an outcome.</p>
       </div>
       <div aria-hidden="true" className="relative mx-auto h-[300px] w-full max-w-[440px]">
