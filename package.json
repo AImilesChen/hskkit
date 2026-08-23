@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
+    "prebuild": "python3 scripts/content/build-catalog-search-index.py",
     "build": "next build",
     "dev": "next dev",
     "start": "next start",
