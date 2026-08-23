@@ -1,7 +1,8 @@
 import { getCloudflareContext } from "@opennextjs/cloudflare";
 import { POLICY_AUDIT_SQL, policyAuditBindings } from "../account/audit-storage";
 import type { AuditEvent } from "../account/access-policy";
-import { emptyLearningState, type LearningState } from "./domain";
+import type { LearningState } from "./domain";
+const emptyLearningState = (): LearningState => ({ attempts: [], cards: [], mistakes: [], dailySessions: [] });
 export async function db(){return (await getCloudflareContext({async:true})).env.LEARNING_DB;}
 export async function loadState(ownerId:string){const row=await (await db()).prepare("SELECT state_json,revision FROM learning_states WHERE owner_id=?").bind(ownerId).first<{state_json:string;revision:number}>();return row?{state:JSON.parse(row.state_json) as LearningState,revision:row.revision}:{state:emptyLearningState(),revision:0};}
 export async function saveState(ownerId: string, state: LearningState, revision: number, audit?: AuditEvent) {

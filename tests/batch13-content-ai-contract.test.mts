@@ -156,6 +156,9 @@ test("AI provider retries one transient failure only and never retries invalid o
 test("Batch 13 dynamic AI path uses a release-gated lightweight Step 7 manifest", async () => {
   const step7Source = await source("src/lib/learning/step7-content.ts");
   assert.doesNotMatch(step7Source, /content\/published-content|content\/catalog\.json/);
+  const storageSource = await source("src/lib/learning/storage.ts");
+  assert.match(storageSource, /import type \{ LearningState \} from \"\.\/domain\"/);
+  assert.doesNotMatch(storageSource, /import \{[^}]*emptyLearningState[^}]*\} from \"\.\/domain\"/);
 
   const manifest = await import("../src/lib/learning/step7-release.ts");
   const catalog = JSON.parse(await source("src/lib/content/catalog.json"));
