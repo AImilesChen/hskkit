@@ -158,7 +158,7 @@ export function MockExam({ band }: { band: MockBand }) {
   if (!current) return null;
   const answered = session.answers.length;
   return <section className="space-y-5" data-mobile-qa-width={MOBILE_QA_WIDTH}>
-    <header className="sticky top-0 z-20 rounded-2xl border border-slate-200 bg-white/95 p-4 shadow-sm backdrop-blur">
+    <header className="sticky top-[72px] z-20 rounded-2xl border border-slate-200 bg-white/95 p-4 shadow-sm backdrop-blur">
       <div className="flex flex-wrap items-center justify-between gap-3"><div><p className="text-xs font-bold uppercase tracking-[.14em] text-blue-700">{advanced ? "Advanced 7–9" : "Basic 1–6"} · {answered}/{session.questions.length} saved</p><p aria-live="polite" className="mt-1 text-sm text-slate-600">{status}</p></div><time className="rounded-xl bg-slate-950 px-4 py-2 font-mono text-xl font-bold text-white" dateTime={session.deadlineAt}>{formatTime(seconds)}</time></div>
     </header>
     <nav aria-label="Mock questions" className="flex gap-2 overflow-x-auto pb-2">{session.questions.map((question, questionIndex) => <button key={question.id} className={`min-h-11 min-w-11 rounded-xl border font-bold ${questionIndex === index ? "border-blue-600 bg-blue-600 text-white" : session.answers.some((answer) => answer.questionId === question.id) ? "border-emerald-300 bg-emerald-50" : "border-slate-200 bg-white"}`} onClick={() => setIndex(questionIndex)}>{questionIndex + 1}</button>)}</nav>
