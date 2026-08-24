@@ -48,6 +48,12 @@ test("2B export state contract exposes every required terminal and non-terminal 
   assert.equal(transitionExport("ready", "revoke"), "revoked");
 });
 
+test("2B webhook still grants PackPurchase when checkout-result reconciliation already marked the order paid", async () => {
+  const storage = await read("src/lib/commercial/storage.ts");
+  assert.match(storage, /if \(order\.status === "paid"\) \{\s*const existing = await getPackPurchaseForOrder\(order\.id\);\s*if \(existing\) return existing;\s*\}/);
+  assert.match(storage, /status IN \('pending','failed','paid'\)/);
+});
+
 test("2B persists PackPurchase separately from subscription entitlement", async () => {
   const [migration, storage] = await Promise.all([
     read("migrations/0016_batch2b_pack_purchases.sql"),

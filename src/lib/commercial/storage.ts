@@ -5,6 +5,7 @@ import { SUBSCRIPTION_PLANS, entitlementFromSubscription, refundEligibility as s
 export const commerceDb = (env?: Pick<CloudflareEnv, "LEARNING_DB">) => env?.LEARNING_DB ?? getCloudflareContext().env.LEARNING_DB;
 const nowIso = () => new Date().toISOString();
 const id = (prefix: string) => `${prefix}_${crypto.randomUUID()}`;
+export const packPurchaseGrantInsertSql = `INSERT OR IGNORE INTO pack_purchases (id,user_id,order_id,sku,selected_level,status,starts_at,expires_at,download_limit,successful_downloads,version,updated_at) SELECT ?,user_id,id,sku,selected_level,'active',?,?,?,0,1,? FROM commerce_orders WHERE id=? AND status='paid' AND sku=?`;
 
 export type OrderRow = { id: string; user_id: string; sku:string; selected_level:number; status: string; stripe_checkout_session_id: string | null; stripe_payment_intent_id: string | null; stripe_charge_id: string | null; created_at: string; paid_at: string | null; refunded_at: string | null };
 export type PackPurchaseRow = { id: string; user_id: string; order_id: string; selected_level:number; status: string; starts_at: string; expires_at: string; download_limit: number; successful_downloads: number; version: number };
@@ -40,14 +41,21 @@ export async function grantPaidPackPurchase(input: { sessionId: string; orderId?
   if (input.expectedSku && (input.expectedSku!==PDF_PACK_SKU||order.sku!==input.expectedSku)) throw new Error("ORDER_METADATA_MISMATCH");
   if (input.expectedSelectedLevel && order.selected_level!==input.expectedSelectedLevel) throw new Error("ORDER_METADATA_MISMATCH");
   if (order.status === "refunded") throw new Error("ORDER_ALREADY_REFUNDED");
-  if (order.status === "paid") return getPackPurchaseForOrder(order.id);
+  if (order.status === "paid") {
+    const existing = await getPackPurchaseForOrder(order.id);
+    if (existing) return existing;
+  }
   const at = nowIso(); const expires = new Date(Date.parse(at) + PDF_PACK_ACCESS_DAYS * 86_400_000).toISOString(); const packPurchaseId = id("pack");
   await db.batch([
-    db.prepare(`UPDATE commerce_orders SET status='paid',stripe_checkout_session_id=COALESCE(stripe_checkout_session_id,?),stripe_payment_intent_id=COALESCE(?,stripe_payment_intent_id),stripe_charge_id=COALESCE(?,stripe_charge_id),paid_at=COALESCE(paid_at,?),updated_at=? WHERE id=? AND status IN ('pending','failed')`).bind(input.sessionId,input.paymentIntentId ?? null,input.chargeId ?? null,at,at,order.id),
-    db.prepare(`INSERT OR IGNORE INTO pack_purchases (id,user_id,order_id,sku,selected_level,status,starts_at,expires_at,download_limit,successful_downloads,version,updated_at) VALUES (?,?,?,?,?,'active',?,?,?,0,1,?)`).bind(packPurchaseId, order.user_id, order.id, PDF_PACK_SKU, order.selected_level, at, expires, PDF_PACK_DOWNLOAD_LIMIT, at),
-    db.prepare(`INSERT INTO commercial_audit_events (id,user_id,event_type,entity_type,entity_id,details_json,created_at) VALUES (?,?, 'pack_purchase.granted','order',?, ?,?)`).bind(id("aud"), order.user_id, order.id, JSON.stringify({ mode: "test", sku: PDF_PACK_SKU }), at),
+    db.prepare(`UPDATE commerce_orders SET status='paid',stripe_checkout_session_id=COALESCE(stripe_checkout_session_id,?),stripe_payment_intent_id=COALESCE(?,stripe_payment_intent_id),stripe_charge_id=COALESCE(?,stripe_charge_id),paid_at=COALESCE(paid_at,?),updated_at=? WHERE id=? AND status IN ('pending','failed','paid')`).bind(input.sessionId,input.paymentIntentId ?? null,input.chargeId ?? null,at,at,order.id),
+    db.prepare(packPurchaseGrantInsertSql).bind(packPurchaseId, at, expires, PDF_PACK_DOWNLOAD_LIMIT, at, order.id, PDF_PACK_SKU),
+    db.prepare(`INSERT INTO commercial_audit_events (id,user_id,event_type,entity_type,entity_id,details_json,created_at) SELECT ?,user_id,'pack_purchase.granted','order',order_id,?,? FROM pack_purchases WHERE id=? AND order_id=?`).bind(id("aud"), JSON.stringify({ mode: "test", sku: PDF_PACK_SKU }), at, packPurchaseId, order.id),
   ]);
-  return getPackPurchaseForOrder(order.id);
+  const purchase = await getPackPurchaseForOrder(order.id);
+  if (purchase) return purchase;
+  const latest = await db.prepare(`SELECT status FROM commerce_orders WHERE id=?`).bind(order.id).first<{status:string}>();
+  if (latest?.status === "refunded") throw new Error("ORDER_ALREADY_REFUNDED");
+  throw new Error("PACK_PURCHASE_GRANT_FAILED");
 }
 export async function revokeRefundedOrder(input: { paymentIntentId?: string; chargeId?: string }) {
   const db = commerceDb();

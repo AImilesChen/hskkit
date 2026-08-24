@@ -44,6 +44,26 @@ test("admin PackPurchase revocation matches the migrated D1 schema and preserves
   assert.equal(db.prepare("SELECT details_json FROM commercial_audit_events WHERE id='audit_1'").get()?.details_json, '{"reason":"manual_review"}');
 });
 
+test("delayed PackPurchase grant cannot reactivate a concurrently refunded order", async () => {
+  const db = await migratedDb();
+  const at = "2026-08-24T12:00:00.000Z";
+  const storage = await readFile("src/lib/commercial/storage.ts", "utf8");
+  const sql = storage.match(/export const packPurchaseGrantInsertSql = `([^`]+)`;/)?.[1];
+  assert.ok(sql, "grant SQL must be present in storage");
+  db.exec("PRAGMA foreign_keys=OFF");
+  db.prepare("INSERT INTO commerce_orders(id,user_id,sku,amount_cents,currency,selected_level,status,stripe_mode,idempotency_key,created_at,updated_at) VALUES(?,?,?,?,?,?,?,?,?,?,?)")
+    .run("ord_race", "usr_race", "hskkit_advanced_study_pdf_pack_v1", 999, "usd", 3, "refunded", "test", "idem_race", at, at);
+
+  db.prepare(sql).run("pack_after_refund", at, "2026-09-07T12:00:00.000Z", 3, at, "ord_race", "hskkit_advanced_study_pdf_pack_v1");
+  assert.equal(db.prepare("SELECT count(*) count FROM pack_purchases WHERE order_id='ord_race'").get()?.count, 0);
+
+  db.prepare("UPDATE commerce_orders SET status='paid' WHERE id='ord_race'").run();
+  db.prepare(sql).run("pack_after_paid", at, "2026-09-07T12:00:00.000Z", 3, at, "ord_race", "hskkit_advanced_study_pdf_pack_v1");
+  const granted = db.prepare("SELECT id,status FROM pack_purchases WHERE order_id='ord_race'").get();
+  assert.equal(granted?.id, "pack_after_paid");
+  assert.equal(granted?.status, "active");
+});
+
 test("migration backfills export expiry and runtime creation persists an expiry", async () => {
   const migration = await readFile("migrations/0016_batch2b_pack_purchases.sql", "utf8");
   const storage = await readFile("src/lib/commercial/storage.ts", "utf8");
