@@ -7,8 +7,8 @@ const nowIso = () => new Date().toISOString();
 const id = (prefix: string) => `${prefix}_${crypto.randomUUID()}`;
 
 export type OrderRow = { id: string; user_id: string; sku:string; selected_level:number; status: string; stripe_checkout_session_id: string | null; stripe_payment_intent_id: string | null; stripe_charge_id: string | null; created_at: string; paid_at: string | null; refunded_at: string | null };
-export type EntitlementRow = { id: string; user_id: string; order_id: string; selected_level:number; status: string; starts_at: string; expires_at: string; download_limit: number; successful_downloads: number; version: number };
-export type ExportRow = { id: string; user_id: string; entitlement_id: string | null; kind: "pdf_pack" | "offline_pack" | "account_data"; format: "pdf" | "zip" | "json"; level: number | null; state: string; object_key: string | null; manifest_json: string | null; checksum_sha256: string | null; byte_size: number | null; generation_version: string; expires_at: string | null; error_code: string | null; created_at: string; updated_at: string };
+export type PackPurchaseRow = { id: string; user_id: string; order_id: string; selected_level:number; status: string; starts_at: string; expires_at: string; download_limit: number; successful_downloads: number; version: number };
+export type ExportRow = { id: string; user_id: string; pack_purchase_id: string | null; kind: "pdf_pack" | "offline_pack" | "account_data"; format: "pdf" | "zip" | "json"; level: number | null; state: string; object_key: string | null; manifest_json: string | null; checksum_sha256: string | null; byte_size: number | null; generation_version: string; expires_at: string | null; error_code: string | null; created_at: string; updated_at: string };
 
 export async function createPendingOrder(userId: string, selectedLevel:number, idempotencyKey: string) {
   if(!Number.isInteger(selectedLevel)||selectedLevel<1||selectedLevel>7) throw new Error("INVALID_LEVEL");
@@ -31,7 +31,7 @@ export async function recordPaymentEvent(input: { eventId: string; eventType: st
     .bind(input.eventId, input.eventType, input.payloadSha256, nowIso(), input.outcome).run();
   return result.meta.changes === 1;
 }
-export async function grantPaidEntitlement(input: { sessionId: string; orderId?: string; expectedUserId?: string; expectedSku?: string; expectedSelectedLevel?: number; paymentIntentId?: string; chargeId?: string }) {
+export async function grantPaidPackPurchase(input: { sessionId: string; orderId?: string; expectedUserId?: string; expectedSku?: string; expectedSelectedLevel?: number; paymentIntentId?: string; chargeId?: string }) {
   const db = commerceDb();
   const order = await db.prepare(`SELECT * FROM commerce_orders WHERE stripe_checkout_session_id=? OR (id=? AND stripe_checkout_session_id IS NULL) ORDER BY CASE WHEN stripe_checkout_session_id=? THEN 0 ELSE 1 END LIMIT 1`)
     .bind(input.sessionId,input.orderId??"",input.sessionId).first<OrderRow>();
@@ -40,41 +40,75 @@ export async function grantPaidEntitlement(input: { sessionId: string; orderId?:
   if (input.expectedSku && (input.expectedSku!==PDF_PACK_SKU||order.sku!==input.expectedSku)) throw new Error("ORDER_METADATA_MISMATCH");
   if (input.expectedSelectedLevel && order.selected_level!==input.expectedSelectedLevel) throw new Error("ORDER_METADATA_MISMATCH");
   if (order.status === "refunded") throw new Error("ORDER_ALREADY_REFUNDED");
-  if (order.status === "paid") return getEntitlementForOrder(order.id);
-  const at = nowIso(); const expires = new Date(Date.parse(at) + PDF_PACK_ACCESS_DAYS * 86_400_000).toISOString(); const entitlementId = id("ent");
+  if (order.status === "paid") return getPackPurchaseForOrder(order.id);
+  const at = nowIso(); const expires = new Date(Date.parse(at) + PDF_PACK_ACCESS_DAYS * 86_400_000).toISOString(); const packPurchaseId = id("pack");
   await db.batch([
     db.prepare(`UPDATE commerce_orders SET status='paid',stripe_checkout_session_id=COALESCE(stripe_checkout_session_id,?),stripe_payment_intent_id=COALESCE(?,stripe_payment_intent_id),stripe_charge_id=COALESCE(?,stripe_charge_id),paid_at=COALESCE(paid_at,?),updated_at=? WHERE id=? AND status IN ('pending','failed')`).bind(input.sessionId,input.paymentIntentId ?? null,input.chargeId ?? null,at,at,order.id),
-    db.prepare(`INSERT OR IGNORE INTO commercial_entitlements (id,user_id,order_id,sku,selected_level,status,starts_at,expires_at,download_limit,successful_downloads,version,updated_at) VALUES (?,?,?,?,?,'active',?,?,?,0,1,?)`).bind(entitlementId, order.user_id, order.id, PDF_PACK_SKU, order.selected_level, at, expires, PDF_PACK_DOWNLOAD_LIMIT, at),
-    db.prepare(`INSERT INTO commercial_audit_events (id,user_id,event_type,entity_type,entity_id,details_json,created_at) VALUES (?,?, 'entitlement.granted','order',?, ?,?)`).bind(id("aud"), order.user_id, order.id, JSON.stringify({ mode: "test", sku: PDF_PACK_SKU }), at),
+    db.prepare(`INSERT OR IGNORE INTO pack_purchases (id,user_id,order_id,sku,selected_level,status,starts_at,expires_at,download_limit,successful_downloads,version,updated_at) VALUES (?,?,?,?,?,'active',?,?,?,0,1,?)`).bind(packPurchaseId, order.user_id, order.id, PDF_PACK_SKU, order.selected_level, at, expires, PDF_PACK_DOWNLOAD_LIMIT, at),
+    db.prepare(`INSERT INTO commercial_audit_events (id,user_id,event_type,entity_type,entity_id,details_json,created_at) VALUES (?,?, 'pack_purchase.granted','order',?, ?,?)`).bind(id("aud"), order.user_id, order.id, JSON.stringify({ mode: "test", sku: PDF_PACK_SKU }), at),
   ]);
-  return getEntitlementForOrder(order.id);
+  return getPackPurchaseForOrder(order.id);
 }
 export async function revokeRefundedOrder(input: { paymentIntentId?: string; chargeId?: string }) {
   const db = commerceDb();
   const order = await db.prepare(`SELECT * FROM commerce_orders WHERE (? IS NOT NULL AND stripe_payment_intent_id=?) OR (? IS NOT NULL AND stripe_charge_id=?)`).bind(input.paymentIntentId ?? null, input.paymentIntentId ?? null, input.chargeId ?? null, input.chargeId ?? null).first<OrderRow>();
   if (!order) throw new Error("ORDER_NOT_FOUND");
-  if (order.status === "refunded") return;
+  const objects=(await db.prepare(`SELECT object_key FROM commercial_export_jobs WHERE pack_purchase_id IN (SELECT id FROM pack_purchases WHERE order_id=?) AND object_key IS NOT NULL`).bind(order.id).all<{object_key:string}>()).results.map((row:{object_key:string})=>row.object_key);
+  if (order.status === "refunded") return objects;
   const at = nowIso();
   await db.batch([
     db.prepare(`UPDATE commerce_orders SET status='refunded',refunded_at=?,updated_at=? WHERE id=?`).bind(at, at, order.id),
-    db.prepare(`UPDATE commercial_entitlements SET status='refunded',revoked_reason='refund',version=version+1,updated_at=? WHERE order_id=? AND status='active'`).bind(at, order.id),
-    db.prepare(`UPDATE commercial_export_jobs SET state='revoked',expires_at=?,updated_at=? WHERE entitlement_id IN (SELECT id FROM commercial_entitlements WHERE order_id=?) AND state IN ('queued','generating','ready')`).bind(at, at, order.id),
+    db.prepare(`UPDATE pack_purchases SET status='refunded',revoked_reason='refund',version=version+1,updated_at=? WHERE order_id=? AND status='active'`).bind(at, order.id),
+    db.prepare(`UPDATE commercial_export_jobs SET state='revoked',expires_at=?,error_code='REFUND_REVOKED',lease_owner=NULL,lease_expires_at=NULL,updated_at=? WHERE pack_purchase_id IN (SELECT id FROM pack_purchases WHERE order_id=?) AND state IN ('queued','generating','ready','failed')`).bind(at, at, order.id),
+    db.prepare(`DELETE FROM commercial_download_tokens WHERE consumed_at IS NULL AND job_id IN (SELECT id FROM commercial_export_jobs WHERE pack_purchase_id IN (SELECT id FROM pack_purchases WHERE order_id=?))`).bind(order.id),
     db.prepare(`UPDATE commercial_refund_requests SET status='refunded',reviewed_at=? WHERE order_id=?`).bind(at, order.id),
-    db.prepare(`INSERT INTO commercial_audit_events (id,user_id,event_type,entity_type,entity_id,details_json,created_at) VALUES (?,?, 'entitlement.revoked','order',?, ?,?)`).bind(id("aud"), order.user_id, order.id, JSON.stringify({ reason: "refund" }), at),
+    db.prepare(`INSERT INTO commercial_audit_events (id,user_id,event_type,entity_type,entity_id,details_json,created_at) VALUES (?,?, 'pack_purchase.revoked','order',?, ?,?)`).bind(id("aud"), order.user_id, order.id, JSON.stringify({ reason: "refund" }), at),
   ]);
+  return objects;
 }
-export async function getEntitlementForOrder(orderId: string) { return commerceDb().prepare(`SELECT * FROM commercial_entitlements WHERE order_id=?`).bind(orderId).first<EntitlementRow>(); }
-export async function activeEntitlement(userId: string, at = nowIso()) { return commerceDb().prepare(`SELECT * FROM commercial_entitlements WHERE user_id=? AND status='active' AND expires_at>? ORDER BY starts_at DESC LIMIT 1`).bind(userId, at).first<EntitlementRow>(); }
-export async function activeEntitlementForLevel(userId:string,selectedLevel:number,at=nowIso()){return commerceDb().prepare(`SELECT * FROM commercial_entitlements WHERE user_id=? AND selected_level=? AND status='active' AND expires_at>? ORDER BY starts_at DESC LIMIT 1`).bind(userId,selectedLevel,at).first<EntitlementRow>();}
+export async function getPackPurchaseForOrder(orderId: string) { return commerceDb().prepare(`SELECT * FROM pack_purchases WHERE order_id=?`).bind(orderId).first<PackPurchaseRow>(); }
+export async function activePackPurchase(userId: string, at = nowIso()) { return commerceDb().prepare(`SELECT * FROM pack_purchases WHERE user_id=? AND status='active' AND expires_at>? ORDER BY starts_at DESC LIMIT 1`).bind(userId, at).first<PackPurchaseRow>(); }
+export async function activePackPurchaseForLevel(userId:string,selectedLevel:number,at=nowIso()){return commerceDb().prepare(`SELECT * FROM pack_purchases WHERE user_id=? AND selected_level=? AND status='active' AND expires_at>? ORDER BY starts_at DESC LIMIT 1`).bind(userId,selectedLevel,at).first<PackPurchaseRow>();}
 
-export async function createExportJob(input: { userId: string; entitlementId?: string; kind: ExportRow["kind"]; format: ExportRow["format"]; level?: number; idempotencyKey: string; generationVersion: string }) {
-  const db = commerceDb(); const jobId = id("exp"); const at = nowIso();
-  await db.prepare(`INSERT OR IGNORE INTO commercial_export_jobs (id,user_id,entitlement_id,kind,format,level,state,idempotency_key,generation_version,created_at,updated_at) VALUES (?,?,?,?,?,?,'queued',?,?,?,?)`)
-    .bind(jobId,input.userId,input.entitlementId ?? null,input.kind,input.format,input.level ?? null,input.idempotencyKey,input.generationVersion,at,at).run();
-  return db.prepare(`SELECT * FROM commercial_export_jobs WHERE user_id=? AND idempotency_key=?`).bind(input.userId,input.idempotencyKey).first<ExportRow>();
+export async function createExportJob(input: { userId: string; packPurchaseId?: string; kind: ExportRow["kind"]; format: ExportRow["format"]; level?: number; idempotencyKey: string; generationVersion: string }) {
+  const db = commerceDb(); const jobId = id("exp"); const at = nowIso(); const expiresAt=new Date(Date.parse(at)+(input.kind==="account_data"?1:14)*86_400_000).toISOString();
+  await db.prepare(`INSERT OR IGNORE INTO commercial_export_jobs (id,user_id,pack_purchase_id,kind,format,level,state,idempotency_key,generation_version,expires_at,created_at,updated_at) VALUES (?,?,?,?,?,?,'queued',?,?,?,?,?)`)
+    .bind(jobId,input.userId,input.packPurchaseId ?? null,input.kind,input.format,input.level ?? null,input.idempotencyKey,input.generationVersion,expiresAt,at,at).run();
+  const job=await db.prepare(`SELECT * FROM commercial_export_jobs WHERE user_id=? AND idempotency_key=?`).bind(input.userId,input.idempotencyKey).first<ExportRow>();
+  if(job && (job.kind!==input.kind || job.format!==input.format || job.level!==(input.level??null) || job.pack_purchase_id!==(input.packPurchaseId??null))) throw new Error("IDEMPOTENCY_CONFLICT");
+  return job;
 }
 export async function listExportJobs(userId: string) { return (await commerceDb().prepare(`SELECT * FROM commercial_export_jobs WHERE user_id=? ORDER BY created_at DESC LIMIT 50`).bind(userId).all<ExportRow>()).results; }
-export async function listEntitlements(userId:string){return (await commerceDb().prepare(`SELECT id,order_id,sku,selected_level,status,starts_at,expires_at,download_limit,successful_downloads FROM commercial_entitlements WHERE user_id=? ORDER BY starts_at DESC`).bind(userId).all()).results;}
+export async function listPackPurchases(userId:string){return (await commerceDb().prepare(`SELECT id,order_id,sku,selected_level,status,starts_at,expires_at,download_limit,successful_downloads FROM pack_purchases WHERE user_id=? ORDER BY starts_at DESC LIMIT 50`).bind(userId).all<PackPurchaseRow>()).results;}
+
+export async function revokePackPurchase(input:{packPurchaseId:string;reason:string}){
+  const db=commerceDb();const at=nowIso();
+  const purchase=await db.prepare(`SELECT id,status FROM pack_purchases WHERE id=?`).bind(input.packPurchaseId).first<{id:string;status:string}>();
+  if(!purchase) throw new Error("PACK_PURCHASE_NOT_FOUND");
+  const objects=(await db.prepare(`SELECT object_key FROM commercial_export_jobs WHERE pack_purchase_id=? AND object_key IS NOT NULL`).bind(input.packPurchaseId).all<{object_key:string}>()).results.map((row:{object_key:string})=>row.object_key);
+  if(purchase.status==="revoked") return objects;
+  if(purchase.status!=="active") throw new Error("PACK_PURCHASE_NOT_ACTIVE");
+  await db.batch([
+    db.prepare(`UPDATE pack_purchases SET status='revoked',revoked_reason=?,version=version+1,updated_at=? WHERE id=? AND status='active'`).bind(input.reason,at,input.packPurchaseId),
+    db.prepare(`UPDATE commercial_export_jobs SET state='revoked',error_code='PACK_PURCHASE_REVOKED',lease_owner=NULL,lease_expires_at=NULL,updated_at=? WHERE pack_purchase_id=? AND state!='revoked'`).bind(at,input.packPurchaseId),
+    db.prepare(`DELETE FROM commercial_download_tokens WHERE consumed_at IS NULL AND job_id IN (SELECT id FROM commercial_export_jobs WHERE pack_purchase_id=?)`).bind(input.packPurchaseId),
+    db.prepare(`INSERT INTO commercial_audit_events (id,user_id,event_type,entity_type,entity_id,details_json,created_at) SELECT ?,user_id,'pack_purchase_revoked','pack_purchase',?,json_object('reason',?),? FROM pack_purchases WHERE id=?`).bind(id("audit"),input.packPurchaseId,input.reason,at,input.packPurchaseId),
+  ]);
+  return objects;
+}
+
+export async function expireReadyExports(limit=100,env?:Pick<CloudflareEnv,"LEARNING_DB">){
+  const db=commerceDb(env);const at=nowIso();
+  await db.prepare(`UPDATE pack_purchases SET status='expired',version=version+1,updated_at=? WHERE status='active' AND expires_at<=?`).bind(at,at).run();
+  const rows=(await db.prepare(`SELECT id,object_key FROM commercial_export_jobs WHERE state IN ('queued','generating','ready','failed') AND expires_at<=? ORDER BY expires_at ASC LIMIT ?`).bind(at,limit).all<{id:string;object_key:string|null}>()).results;
+  for(const row of rows){
+    const result=await db.prepare(`UPDATE commercial_export_jobs SET state='expired',lease_owner=NULL,lease_expires_at=NULL,updated_at=? WHERE id=? AND state IN ('queued','generating','ready','failed') AND expires_at<=?`).bind(at,row.id,at).run();
+    if(result.meta.changes===1) await db.prepare(`DELETE FROM commercial_download_tokens WHERE job_id=? AND consumed_at IS NULL`).bind(row.id).run();
+  }
+  return (await db.prepare(`SELECT id,object_key objectKey FROM commercial_export_jobs WHERE state IN ('expired','revoked') AND object_key IS NOT NULL ORDER BY updated_at ASC LIMIT ?`).bind(limit).all<{id:string;objectKey:string}>()).results;
+}
+export async function listPackOrders(userId:string){return (await commerceDb().prepare(`SELECT o.id,o.sku,o.selected_level,o.amount_cents,o.currency,o.status,o.created_at,o.paid_at,o.refunded_at,p.status purchase_status,p.starts_at,p.expires_at,p.download_limit,p.successful_downloads FROM commerce_orders o LEFT JOIN pack_purchases p ON p.order_id=o.id WHERE o.user_id=? ORDER BY o.created_at DESC LIMIT 50`).bind(userId).all()).results;}
+export async function packCheckoutResultForUser(sessionId:string,userId:string){return commerceDb().prepare(`SELECT o.id order_id,o.status order_status,o.selected_level,o.amount_cents,o.currency,p.id pack_purchase_id,p.status purchase_status,p.expires_at,p.download_limit,p.successful_downloads FROM commerce_orders o LEFT JOIN pack_purchases p ON p.order_id=o.id WHERE o.stripe_checkout_session_id=? AND o.user_id=?`).bind(sessionId,userId).first<Record<string,unknown>>();}
 export async function getExportJob(jobId: string, userId?: string, env?: Pick<CloudflareEnv,"LEARNING_DB">) {
   const db = commerceDb(env); return userId ? db.prepare(`SELECT * FROM commercial_export_jobs WHERE id=? AND user_id=?`).bind(jobId,userId).first<ExportRow>() : db.prepare(`SELECT * FROM commercial_export_jobs WHERE id=?`).bind(jobId).first<ExportRow>();
 }
@@ -91,40 +125,58 @@ export async function cancelExportJob(jobId:string,userId:string) { const result
 export async function retryExportJob(jobId:string,userId:string) { const result=await commerceDb().prepare(`UPDATE commercial_export_jobs SET state='queued',error_code=NULL,lease_owner=NULL,lease_expires_at=NULL,updated_at=? WHERE id=? AND user_id=? AND state='failed' AND attempt<3`).bind(nowIso(),jobId,userId).run(); return result.meta.changes===1; }
 export async function paymentEventExists(eventId:string) { return Boolean(await commerceDb().prepare(`SELECT 1 present FROM payment_events WHERE event_id=?`).bind(eventId).first()); }
 export async function getOrderForUser(orderId:string,userId:string) { return commerceDb().prepare(`SELECT * FROM commerce_orders WHERE id=? AND user_id=?`).bind(orderId,userId).first<OrderRow>(); }
-export async function revokeExportJob(jobId:string,reason:string){const db=commerceDb();const at=nowIso();await db.batch([db.prepare(`UPDATE commercial_export_jobs SET state='revoked',error_code=?,updated_at=? WHERE id=? AND state NOT IN ('revoked','expired')`).bind(reason,at,jobId),db.prepare(`DELETE FROM commercial_download_tokens WHERE job_id=?`).bind(jobId)]);}
+export async function revokeExportJob(jobId:string,reason:string){
+  const db=commerceDb();const at=nowIso();
+  const job=await db.prepare(`SELECT object_key FROM commercial_export_jobs WHERE id=?`).bind(jobId).first<{object_key:string|null}>();
+  await db.batch([
+    db.prepare(`UPDATE commercial_export_jobs SET state='revoked',error_code=?,expires_at=?,lease_owner=NULL,lease_expires_at=NULL,updated_at=? WHERE id=? AND state NOT IN ('revoked','expired')`).bind(reason,at,at,jobId),
+    db.prepare(`DELETE FROM commercial_download_tokens WHERE job_id=? AND consumed_at IS NULL`).bind(jobId),
+  ]);
+  return job?.object_key??null;
+}
+export async function expireExportJob(jobId:string){
+  const db=commerceDb();const at=nowIso();
+  const job=await db.prepare(`SELECT object_key FROM commercial_export_jobs WHERE id=?`).bind(jobId).first<{object_key:string|null}>();
+  await db.batch([
+    db.prepare(`UPDATE commercial_export_jobs SET state='expired',error_code='ACCESS_EXPIRED',lease_owner=NULL,lease_expires_at=NULL,updated_at=? WHERE id=? AND state='ready' AND expires_at<=?`).bind(at,jobId,at),
+    db.prepare(`DELETE FROM commercial_download_tokens WHERE job_id=? AND consumed_at IS NULL`).bind(jobId),
+  ]);
+  return job?.object_key??null;
+}
+export async function clearExportObjectKey(jobId:string,objectKey:string,env?:Pick<CloudflareEnv,"LEARNING_DB">){await commerceDb(env).prepare(`UPDATE commercial_export_jobs SET object_key=NULL,updated_at=? WHERE id=? AND object_key=? AND state IN ('expired','revoked')`).bind(nowIso(),jobId,objectKey).run();}
+export async function clearRevokedExportObjectKey(objectKey:string){await commerceDb().prepare(`UPDATE commercial_export_jobs SET object_key=NULL,updated_at=? WHERE object_key=? AND state='revoked'`).bind(nowIso(),objectKey).run();}
 
 export async function createDownloadTokenRecord(input:{ tokenId:string; jobId:string; userId:string; tokenSha256:string; expiresAt:string }) { await commerceDb().prepare(`INSERT INTO commercial_download_tokens (id,job_id,user_id,token_sha256,expires_at,created_at) VALUES (?,?,?,?,?,?)`).bind(input.tokenId,input.jobId,input.userId,input.tokenSha256,input.expiresAt,nowIso()).run(); }
-export async function downloadContext(tokenSha256:string) { return commerceDb().prepare(`SELECT t.id token_id,t.user_id token_user_id,t.expires_at token_expires_at,t.consumed_at,j.*,e.status entitlement_status,e.download_limit,e.successful_downloads FROM commercial_download_tokens t JOIN commercial_export_jobs j ON j.id=t.job_id LEFT JOIN commercial_entitlements e ON e.id=j.entitlement_id WHERE t.token_sha256=?`).bind(tokenSha256).first<Record<string,unknown>>(); }
-export async function consumeSuccessfulDownload(input:{ tokenId:string; jobId:string; entitlementId:string|null; userId:string; byteSize:number; checksumSha256:string }) {
+export async function downloadContext(tokenSha256:string) { return commerceDb().prepare(`SELECT t.id token_id,t.user_id token_user_id,t.expires_at token_expires_at,t.consumed_at,j.*,p.status pack_purchase_status,p.download_limit,p.successful_downloads FROM commercial_download_tokens t JOIN commercial_export_jobs j ON j.id=t.job_id LEFT JOIN pack_purchases p ON p.id=j.pack_purchase_id WHERE t.token_sha256=?`).bind(tokenSha256).first<Record<string,unknown>>(); }
+export async function consumeSuccessfulDownload(input:{ tokenId:string; jobId:string; packPurchaseId:string|null; userId:string; byteSize:number; checksumSha256:string }) {
   const db=commerceDb(); const at=nowIso();
-  // Claim the single-use token first. Only one concurrent request can proceed.
-  const claim=await db.prepare(`UPDATE commercial_download_tokens SET consumed_at=? WHERE id=? AND user_id=? AND consumed_at IS NULL AND expires_at>?`).bind(at,input.tokenId,input.userId,at).run();
-  if(claim.meta.changes!==1) throw new Error("DOWNLOAD_TOKEN_CONSUMED");
-
-  if (!input.entitlementId) {
-    await db.prepare(`INSERT INTO commercial_download_ledger (id,token_id,job_id,entitlement_id,user_id,byte_size,checksum_sha256,succeeded_at) VALUES (?,?,?,?,?,?,?,?)`)
-      .bind(id("dl"),input.tokenId,input.jobId,null,input.userId,input.byteSize,input.checksumSha256,at).run();
+  if (!input.packPurchaseId) {
+    const [claim,ledger]=await db.batch([
+      db.prepare(`UPDATE commercial_download_tokens SET consumed_at=? WHERE id=? AND user_id=? AND consumed_at IS NULL AND expires_at>?`).bind(at,input.tokenId,input.userId,at),
+      db.prepare(`INSERT INTO commercial_download_ledger (id,token_id,job_id,pack_purchase_id,user_id,byte_size,checksum_sha256,succeeded_at) SELECT ?,?,?,?,?,?,?,? WHERE EXISTS (SELECT 1 FROM commercial_download_tokens WHERE id=? AND consumed_at=?)`).bind(id("dl"),input.tokenId,input.jobId,null,input.userId,input.byteSize,input.checksumSha256,at,input.tokenId,at),
+    ]);
+    if(claim.meta.changes!==1||ledger.meta.changes!==1) throw new Error("DOWNLOAD_NOT_ALLOWED");
     return;
   }
-
-  // D1 batch is transactional. The ledger insert reserves one entitlement slot;
-  // the counter increments only when that token's ledger row was inserted.
-  const [ledger]=await db.batch([
-    db.prepare(`INSERT INTO commercial_download_ledger (id,token_id,job_id,entitlement_id,user_id,byte_size,checksum_sha256,succeeded_at)
-      SELECT ?,?,?,?,?,?,?,? FROM commercial_entitlements
-      WHERE id=? AND user_id=? AND status='active' AND successful_downloads<download_limit`)
-      .bind(id("dl"),input.tokenId,input.jobId,input.entitlementId,input.userId,input.byteSize,input.checksumSha256,at,input.entitlementId,input.userId),
-    db.prepare(`UPDATE commercial_entitlements SET successful_downloads=successful_downloads+1,version=version+1,updated_at=?
+  // D1 batch is transactional: token claim, immutable ledger and PackPurchase debit commit together.
+  const [claim,ledger,debit]=await db.batch([
+    db.prepare(`UPDATE commercial_download_tokens SET consumed_at=? WHERE id=? AND user_id=? AND consumed_at IS NULL AND expires_at>?`).bind(at,input.tokenId,input.userId,at),
+    db.prepare(`INSERT INTO commercial_download_ledger (id,token_id,job_id,pack_purchase_id,user_id,byte_size,checksum_sha256,succeeded_at)
+      SELECT ?,?,?,?,?,?,?,? FROM pack_purchases
+      WHERE id=? AND user_id=? AND status='active' AND expires_at>? AND successful_downloads<download_limit
+        AND EXISTS (SELECT 1 FROM commercial_download_tokens WHERE id=? AND consumed_at=?)`)
+      .bind(id("dl"),input.tokenId,input.jobId,input.packPurchaseId,input.userId,input.byteSize,input.checksumSha256,at,input.packPurchaseId,input.userId,at,input.tokenId,at),
+    db.prepare(`UPDATE pack_purchases SET successful_downloads=successful_downloads+1,version=version+1,updated_at=?
       WHERE id=? AND user_id=? AND successful_downloads<download_limit
-        AND EXISTS (SELECT 1 FROM commercial_download_ledger WHERE token_id=?)`)
-      .bind(at,input.entitlementId,input.userId,input.tokenId),
+        AND EXISTS (SELECT 1 FROM commercial_download_ledger WHERE token_id=? AND succeeded_at=?)`)
+      .bind(at,input.packPurchaseId,input.userId,input.tokenId,at),
   ]);
-  if(ledger.meta.changes!==1) throw new Error("DOWNLOAD_NOT_ALLOWED");
+  if(claim.meta.changes!==1||ledger.meta.changes!==1||debit.meta.changes!==1) throw new Error("DOWNLOAD_NOT_ALLOWED");
 }
 export async function requestRefund(userId:string,orderId:string) {
   const db=commerceDb(); const order=await db.prepare(`SELECT * FROM commerce_orders WHERE id=? AND user_id=?`).bind(orderId,userId).first<OrderRow>(); if(!order||!order.paid_at) throw new Error("ORDER_NOT_ELIGIBLE");
-  const entitlement=await getEntitlementForOrder(order.id); if(!entitlement) throw new Error("ENTITLEMENT_NOT_FOUND");
-  const eligibility=refundEligibility({ purchasedAt:order.paid_at,successfulDownloads:entitlement.successful_downloads,alreadyRefunded:order.status==="refunded" }); if(!eligibility.eligible) throw new Error(eligibility.code);
+  const purchase=await getPackPurchaseForOrder(order.id); if(!purchase) throw new Error("PACK_PURCHASE_NOT_FOUND");
+  const eligibility=refundEligibility({ purchasedAt:order.paid_at,successfulDownloads:purchase.successful_downloads,alreadyRefunded:order.status==="refunded" }); if(!eligibility.eligible) throw new Error(eligibility.code);
   const requestId=id("ref"); const at=nowIso(); await db.batch([
     db.prepare(`INSERT OR IGNORE INTO commercial_refund_requests (id,order_id,user_id,status,eligibility_code,requested_at) VALUES (?,?,?,'pending_review',?,?)`).bind(requestId,orderId,userId,eligibility.code,at),
     db.prepare(`UPDATE commerce_orders SET status='refund_requested',updated_at=? WHERE id=? AND status='paid'`).bind(at,orderId),

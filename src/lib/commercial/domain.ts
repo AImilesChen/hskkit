@@ -25,7 +25,8 @@ export function refundEligibility(input: { purchasedAt: string; successfulDownlo
   return { eligible: true as const, code: "ELIGIBLE_FOR_MANUAL_REVIEW" as const };
 }
 
-export type ExportState = "queued" | "generating" | "ready" | "failed" | "cancelled" | "expired" | "revoked";
+export const EXPORT_STATES = ["queued", "generating", "ready", "failed", "expired", "cancelled", "revoked"] as const;
+export type ExportState = (typeof EXPORT_STATES)[number];
 export type ExportAction = "start" | "complete" | "fail" | "cancel" | "expire" | "revoke";
 const transitions: Record<ExportState, Partial<Record<ExportAction, ExportState>>> = {
   queued: { start: "generating", fail: "failed", cancel: "cancelled", revoke: "revoked" },
@@ -39,17 +40,54 @@ export function transitionExport(state: ExportState, action: ExportAction) {
   return next;
 }
 
+type PackCheckoutObject = {
+  id?: unknown;
+  mode?: unknown;
+  payment_status?: unknown;
+  amount_total?: unknown;
+  currency?: unknown;
+  payment_intent?: unknown;
+  metadata?: unknown;
+};
+
+export function normalizePackCheckoutEvent(object: PackCheckoutObject) {
+  const metadata = object.metadata && typeof object.metadata === "object"
+    ? object.metadata as Record<string, unknown>
+    : {};
+  const selectedLevel = Number(metadata.selected_level);
+  const valid =
+    typeof object.id === "string" && object.id.startsWith("cs_test_") &&
+    object.mode === "payment" && object.payment_status === "paid" &&
+    object.amount_total === PDF_PACK_PRICE_CENTS && object.currency === PDF_PACK_CURRENCY &&
+    typeof object.payment_intent === "string" && object.payment_intent.startsWith("pi_") &&
+    typeof metadata.order_id === "string" && metadata.order_id.length > 0 &&
+    typeof metadata.user_id === "string" && metadata.user_id.length > 0 &&
+    metadata.sku === PDF_PACK_SKU &&
+    Number.isInteger(selectedLevel) && selectedLevel >= 1 && selectedLevel <= 7;
+  if (!valid) throw new Error("PACK_CHECKOUT_MISMATCH");
+  return {
+    sessionId: object.id as string,
+    orderId: metadata.order_id as string,
+    userId: metadata.user_id as string,
+    sku: metadata.sku as string,
+    selectedLevel,
+    amountCents: object.amount_total as number,
+    currency: object.currency as string,
+    paymentIntentId: object.payment_intent as string,
+  };
+}
+
 export function canIssueDownload(input: {
   actorUserId: string;
   ownerUserId: string;
-  entitlementStatus: string;
+  packPurchaseStatus: string;
   jobState: string;
   expiresAt: string;
   successfulDownloads: number;
   downloadLimit: number;
 }, at = new Date()) {
   if (input.actorUserId !== input.ownerUserId) return { allowed: false as const, code: "ACCESS_DENIED" as const };
-  if (input.entitlementStatus !== "active") return { allowed: false as const, code: "ENTITLEMENT_REVOKED" as const };
+  if (input.packPurchaseStatus !== "active") return { allowed: false as const, code: "PACK_PURCHASE_REVOKED" as const };
   if (input.jobState !== "ready") return { allowed: false as const, code: input.jobState === "revoked" ? "EXPORT_REVOKED" as const : "EXPORT_NOT_READY" as const };
   if (!input.expiresAt || Date.parse(input.expiresAt) <= at.getTime()) return { allowed: false as const, code: "EXPORT_EXPIRED" as const };
   if (input.successfulDownloads >= input.downloadLimit) return { allowed: false as const, code: "DOWNLOAD_LIMIT_REACHED" as const };

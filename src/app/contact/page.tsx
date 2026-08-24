@@ -4,7 +4,6 @@ import SiteFooter from "../site-footer";
 import {
   PUBLIC_ACCOUNT_SCOPE,
   PUBLIC_FORMAL_CONTENT_SCOPE,
-  PURCHASING_UNAVAILABLE,
 } from "@/lib/public-copy";
 
 export const metadata: Metadata = {
@@ -51,7 +50,7 @@ const faqs = [
   },
   {
     q: "Can I buy the PDF Pack now?",
-    a: `${PURCHASING_UNAVAILABLE}. The pack is marked Coming later, and no checkout or live payment collection is open.`,
+    a: "Yes in Stripe Test mode. The US$9.99 one-time PackPurchase covers one selected HSK 3.0 level; no live card charge is enabled.",
   },
   {
     q: "I forgot my progress. Can you recover it?",

@@ -8,8 +8,8 @@ const files = {
   publicCopy: "src/lib/public-copy.ts",
   home: "src/app/page.tsx",
   pricing: "src/app/pricing/page.tsx",
-  packs: "src/app/pdf-packs/page.tsx",
-  purchase: "src/app/pdf-packs/pdf-pack-purchase.tsx",
+  packs: "src/app/store/page.tsx",
+  purchase: "src/app/store/store-purchase.tsx",
   contact: "src/app/contact/page.tsx",
   terms: "src/app/terms-of-service/page.tsx",
   reading: "src/app/hsk-1-reading-practice/page.tsx",
@@ -36,21 +36,22 @@ const files = {
 } as const;
 const s = Object.fromEntries(Object.entries(files).map(([key, path]) => [key, read(path)])) as Record<keyof typeof files, string>;
 
-test("P0-5 keeps one explicit public product boundary", () => {
+test("public copy keeps one explicit product boundary after the Test-mode Store opens", () => {
   assert.match(s.publicCopy, /11,107[\s\S]*5,469[\s\S]*5,638[\s\S]*unified HSK 7–9 advanced ability band/);
-  assert.match(s.publicCopy, /Purchasing unavailable/);
   assert.match(s.publicCopy, /Guest study is supported/);
-  for (const key of ["home", "pricing", "packs", "contact", "terms"] as const) {
+  for (const key of ["home", "pricing", "contact", "terms"] as const) {
     assert.match(s[key], /PUBLIC_FORMAL_CONTENT_SCOPE/);
     assert.match(s[key], /PUBLIC_ACCOUNT_SCOPE/);
-    assert.match(s[key], /PURCHASING_UNAVAILABLE/);
   }
+  assert.match(s.packs, /published, QA-approved, rights-checked content/);
+  assert.match([s.home,s.pricing,s.packs,s.contact,s.terms].join("\n"), /Stripe Test/);
 });
 
-test("P0-5 never presents an unavailable pack as purchasable", () => {
-  assert.doesNotMatch(s.pricing, /CURRENT OFFER|Buy only|before purchase|before checkout/);
-  assert.doesNotMatch(s.purchase, /Buy selected|onClick=\{checkout\}|commercial\/checkout/);
-  assert.match(s.purchase, /disabled[\s\S]*PURCHASING_UNAVAILABLE/);
+test("Test-mode Store exposes only the frozen one-level PackPurchase", () => {
+  assert.match(s.pricing, /US\$9\.99 one-time/);
+  assert.match(s.purchase, /commercial\/checkout/);
+  assert.match(s.purchase, /body:JSON\.stringify\(\{level,idempotencyKey/);
+  assert.doesNotMatch(s.purchase, /live payment|sk_live_/i);
 });
 
 test("P0-5 removes dictionary and account contradictions", () => {
@@ -75,10 +76,9 @@ test("P0-5 uses approved unopened-feature states", () => {
 
 test("P0-5 keeps direct commercial routes in Test-mode context", () => {
   assert.doesNotMatch(s.success, /Payment received/);
-  assert.match(s.success, /Test checkout complete[\s\S]*Public purchasing is unavailable[\s\S]*no live purchase occurred/);
-  assert.match(s.cancel, /Test checkout cancelled[\s\S]*Public purchasing is unavailable[\s\S]*no live payment was collected/);
-  assert.doesNotMatch(s.exports, /purchased study packs/);
-  assert.match(s.exports, /authorized Test-mode study-pack files/);
+  assert.match(s.success, /Stripe Test checkout returned[\s\S]*CheckoutSuccessClient/);
+  assert.match(s.cancel, /Stripe Test checkout cancelled[\s\S]*No payment was completed/);
+  assert.match(s.exports, /Create private files, follow generation status and use short-lived owner-only download links/);
 });
 
 test("P0-5 redirects stale public scope pages", () => {

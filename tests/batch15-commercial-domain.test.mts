@@ -16,12 +16,12 @@ test("PDF Pack refund is eligible only within seven UTC days and before any succ
   assert.equal(refundEligibility({ purchasedAt, successfulDownloads: 0, alreadyRefunded: false }, new Date("2026-08-28T00:00:00.000Z")).code, "REFUND_WINDOW_EXPIRED");
 });
 
-test("download issuance enforces ownership, entitlement, revocation, expiry and limit", () => {
-  const base = { actorUserId: "u1", ownerUserId: "u1", entitlementStatus: "active", jobState: "ready", expiresAt: "2026-09-01T00:00:00.000Z", successfulDownloads: 2, downloadLimit: 3 } as const;
+test("download issuance enforces ownership, PackPurchase, revocation, expiry and limit", () => {
+  const base = { actorUserId: "u1", ownerUserId: "u1", packPurchaseStatus: "active", jobState: "ready", expiresAt: "2026-09-01T00:00:00.000Z", successfulDownloads: 2, downloadLimit: 3 } as const;
   assert.equal(canIssueDownload(base, new Date("2026-08-25T00:00:00.000Z")).allowed, true);
   assert.equal(canIssueDownload({ ...base, actorUserId: "u2" }, new Date("2026-08-25T00:00:00.000Z")).code, "ACCESS_DENIED");
   assert.equal(canIssueDownload({ ...base, successfulDownloads: 3 }, new Date("2026-08-25T00:00:00.000Z")).code, "DOWNLOAD_LIMIT_REACHED");
-  assert.equal(canIssueDownload({ ...base, entitlementStatus: "revoked" }, new Date("2026-08-25T00:00:00.000Z")).code, "ENTITLEMENT_REVOKED");
+  assert.equal(canIssueDownload({ ...base, packPurchaseStatus: "revoked" }, new Date("2026-08-25T00:00:00.000Z")).code, "PACK_PURCHASE_REVOKED");
 });
 
 test("export lifecycle is explicit and cancellation cannot become ready", () => {
@@ -39,25 +39,26 @@ test("download debit uses a single-use CAS and transactional entitlement reserva
     readFile("src/lib/commercial/processor.ts", "utf8"),
     readFile("src/app/api/v1/commercial/exports/route.ts", "utf8"),
     readFile("src/app/sitemap.ts", "utf8"),
-    readFile("src/app/pdf-packs/pdf-pack-purchase.tsx", "utf8"),
+    readFile("src/app/store/store-purchase.tsx", "utf8"),
   ]);
   assert.match(storage, /UPDATE commercial_download_tokens SET consumed_at=\?/);
   assert.match(storage, /claim\.meta\.changes!==1/);
-  assert.match(storage, /INSERT INTO commercial_download_ledger[\s\S]*SELECT \?,\?,\?,\?,\?,\?,\?,\? FROM commercial_entitlements/);
-  assert.match(storage, /const \[ledger\]=await db\.batch/);
-  assert.match(storage, /if\(ledger\.meta\.changes!==1\) throw new Error\("DOWNLOAD_NOT_ALLOWED"\)/);
+  assert.match(storage, /INSERT INTO commercial_download_ledger[\s\S]*SELECT \?,\?,\?,\?,\?,\?,\?,\? FROM pack_purchases/);
+  assert.match(storage, /const \[claim,ledger,debit\]=await db\.batch/);
+  assert.match(storage, /claim\.meta\.changes!==1\|\|ledger\.meta\.changes!==1\|\|debit\.meta\.changes!==1/);
   assert.doesNotMatch(storage, /SELECT consumed_at FROM commercial_download_tokens/);
   assert.match(route, /code==="CONTENT_RIGHTS_CHANGED"\?410/);
   assert.match(storage, /stripe_checkout_session_id=\? OR \(id=\? AND stripe_checkout_session_id IS NULL\)/);
   assert.match(storage, /ORDER_METADATA_MISMATCH/);
-  assert.match(webhook, /metadata\.order_id/);
-  assert.match(webhook, /metadata\.selected_level/);
+  assert.match(webhook, /normalizePackCheckoutEvent/);
+  assert.match(webhook, /orderId:pack\.orderId/);
+  assert.match(webhook, /expectedSelectedLevel:pack\.selectedLevel/);
   assert.match(processor, /if\(!committed\) throw new Error\("EXPORT_LEASE_LOST"\)/);
   assert.match(processor, /if\(objectKey\) await env\.COMMERCIAL_EXPORTS_R2\.delete\(objectKey\)/);
-  assert.match(exportsRoute, /code==="LEVEL_NOT_ENTITLED"\?403/);
+  assert.match(exportsRoute, /code==="LEVEL_NOT_PURCHASED"\?403/);
   assert.match(sitemap, /"\/pricing"/);
-  assert.match(sitemap, /"\/pdf-packs"/);
+  assert.match(sitemap, /"\/store"/);
   assert.match(purchaseUi, /fetch\("\/api\/v1\/commercial\/config"/);
   assert.match(purchaseUi, /disabled=\{!commerceEnabled\|\|!accepted\|\|busy\}/);
-  assert.match(purchaseUi, /Purchasing is not available in this release\./);
+  assert.match(purchaseUi, /Stripe Test checkout/);
 });
