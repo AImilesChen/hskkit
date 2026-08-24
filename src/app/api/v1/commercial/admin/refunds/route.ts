@@ -1,17 +1,19 @@
 import { getCloudflareContext } from "@opennextjs/cloudflare";
 import { NextRequest,NextResponse } from "next/server";
 import { commerceDb } from "@/lib/commercial/storage";
-import { cancelStripeSubscriptionImmediately, createStripeTestRefund } from "@/lib/commercial/stripe";
+import { cancelStripeSubscriptionImmediately, createStripeTestRefund, findStripeInvoicePaymentIntent } from "@/lib/commercial/stripe";
 
 export async function POST(req:NextRequest){
   const env=getCloudflareContext().env; const expected=env.ADMIN_REFUND_TOKEN; const supplied=req.headers.get("authorization")?.replace(/^Bearer\s+/i,"");
   if(!expected||!supplied||supplied!==expected) return NextResponse.json({error:"ADMIN_AUTH_REQUIRED"},{status:401});
   try{
     const body=JSON.parse(await req.text()); const requestId=String(body.requestId??""); const db=commerceDb();
-    const subscription=await db.prepare(`SELECT r.id,r.status,c.provider_payment_intent_id,s.provider_subscription_id FROM subscription_refund_requests r JOIN subscription_charges c ON c.id=r.charge_id JOIN subscriptions s ON s.id=c.subscription_id WHERE r.id=?`).bind(requestId).first<{id:string;status:string;provider_payment_intent_id:string|null;provider_subscription_id:string}>();
+    const subscription=await db.prepare(`SELECT r.id,r.status,r.charge_id,c.provider_invoice_id,c.provider_payment_intent_id,s.provider_subscription_id FROM subscription_refund_requests r JOIN subscription_charges c ON c.id=r.charge_id JOIN subscriptions s ON s.id=c.subscription_id WHERE r.id=?`).bind(requestId).first<{id:string;status:string;charge_id:string;provider_invoice_id:string;provider_payment_intent_id:string|null;provider_subscription_id:string}>();
     if(subscription){
-      if(subscription.status!=="requested"||!subscription.provider_payment_intent_id) throw new Error("REFUND_REQUEST_NOT_READY");
-      const refund=await createStripeTestRefund({paymentIntentId:subscription.provider_payment_intent_id,secret:env.STRIPE_SECRET_KEY??"",idempotencyKey:`subscription-refund:${subscription.id}`});
+      if(subscription.status!=="requested") throw new Error("REFUND_REQUEST_NOT_READY");
+      const paymentIntentId=subscription.provider_payment_intent_id??await findStripeInvoicePaymentIntent({invoiceId:subscription.provider_invoice_id,secret:env.STRIPE_SECRET_KEY??""});
+      if(!subscription.provider_payment_intent_id) await db.prepare(`UPDATE subscription_charges SET provider_payment_intent_id=?,updated_at=? WHERE id=? AND provider_payment_intent_id IS NULL`).bind(paymentIntentId,new Date().toISOString(),subscription.charge_id).run();
+      const refund=await createStripeTestRefund({paymentIntentId,secret:env.STRIPE_SECRET_KEY??"",idempotencyKey:`subscription-refund:${subscription.id}`});
       await cancelStripeSubscriptionImmediately({subscriptionId:subscription.provider_subscription_id,secret:env.STRIPE_SECRET_KEY??"",idempotencyKey:`subscription-refund-cancel:${subscription.id}`});
       await db.prepare(`UPDATE subscription_refund_requests SET status='approved',updated_at=? WHERE id=? AND status='requested'`).bind(new Date().toISOString(),subscription.id).run();
       return NextResponse.json({requestId:subscription.id,stripeRefundId:refund.id,status:refund.status,mode:"test",kind:"subscription"});

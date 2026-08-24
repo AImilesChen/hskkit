@@ -57,10 +57,20 @@ export async function cancelStripeSubscriptionAtPeriodEnd(input:{subscriptionId:
   return {id:result.id,status:String(result.status??"active"),cancelAtPeriodEnd:true,periodEnd};
 }
 
-export async function cancelStripeSubscriptionImmediately(input:{subscriptionId:string;secret:string;idempotencyKey:string}){
+export async function cancelStripeSubscriptionImmediately(input:{subscriptionId:string;secret:string;idempotencyKey:string}) {
   const result=await stripeDelete(`subscriptions/${encodeURIComponent(input.subscriptionId)}`,input.secret,input.idempotencyKey);
   if(typeof result.id!=="string"||result.status!=="canceled") throw new Error("STRIPE_SUBSCRIPTION_CANCEL_INVALID");
   return {id:result.id,status:"canceled" as const};
+}
+
+export async function findStripeInvoicePaymentIntent(input:{invoiceId:string;secret:string}) {
+  if(!input.secret.startsWith("sk_test_")) throw new Error("TEST_KEY_REQUIRED");
+  const response=await fetch(`https://api.stripe.com/v1/invoice_payments?invoice=${encodeURIComponent(input.invoiceId)}&limit=10`,{headers:{authorization:`Bearer ${input.secret}`,"Stripe-Version":STRIPE_VERSION}});
+  const json=await response.json() as {data?:Array<{status?:string;payment?:{type?:string;payment_intent?:string}}> ;error?:{message?:string}};
+  if(!response.ok) throw new Error(json.error?.message??"STRIPE_INVOICE_PAYMENT_LOOKUP_FAILED");
+  const payment=json.data?.find(item=>item.status==="paid"&&item.payment?.type==="payment_intent"&&item.payment.payment_intent);
+  if(!payment?.payment?.payment_intent) throw new Error("STRIPE_PAYMENT_INTENT_NOT_FOUND");
+  return payment.payment.payment_intent;
 }
 
 export async function createStripeTestRefund(input: { paymentIntentId: string; secret: string; idempotencyKey: string }) {

@@ -79,11 +79,12 @@ test("refund eligibility follows seven UTC days, at most ten credits, once per c
 });
 
 test("2A routes and UI expose the full subscription lifecycle but no PDF Pack implementation", async () => {
-  const [checkout, webhook, subscriptionEvents, subscriptionRoute, pricing, account, migration, stripe, storage] = await Promise.all([
+  const [checkout, webhook, subscriptionEvents, subscriptionRoute, refundRoute, pricing, account, migration, stripe, storage] = await Promise.all([
     read("src/app/api/v1/commercial/checkout/route.ts"),
     read("src/app/api/v1/commercial/webhook/route.ts"),
     read("src/lib/commercial/subscription.ts"),
     read("src/app/api/v1/commercial/subscription/route.ts"),
+    read("src/app/api/v1/commercial/admin/refunds/route.ts"),
     read("src/app/pricing/page.tsx"),
     read("src/app/account/account-client.tsx"),
     read("migrations/0015_batch2a_subscriptions.sql"),
@@ -96,7 +97,8 @@ test("2A routes and UI expose the full subscription lifecycle but no PDF Pack im
   assert.match(webhook, /claimPaymentEvent/);
   assert.match(webhook, /WEBHOOK_PROCESSING/);
   assert.match(subscriptionRoute, /cancelStripeSubscriptionAtPeriodEnd/);
-  assert.match(stripe, /cancelStripeSubscriptionImmediately/);
+  assert.match(refundRoute, /cancelStripeSubscriptionImmediately/);
+  assert.match(refundRoute, /findStripeInvoicePaymentIntent/);
   assert.match(subscriptionRoute, /subscriptionSummaryForOwner/);
   assert.match(pricing, /US\$5\.99/);
   assert.match(pricing, /US\$49/);
