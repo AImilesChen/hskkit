@@ -54,7 +54,7 @@ export default function TermsPage() {
           <section className="mb-8">
             <h2 className="text-h3 mb-4">Subscriptions, Cancellation, and Refunds</h2>
             <p className="text-body text-ink-secondary mb-4">HSKKit offers Pro Monthly at US$5.99 per month and Pro Yearly at US$49 per year. Both renew automatically until cancelled and grant the same account-based Pro entitlement. Cancellation takes effect at the current paid period end.</p>
-            <p className="text-body text-ink-secondary mb-4">Eligible refund requests are reviewed under the <a href="/refund-policy" className="text-primary hover:underline">Refund Policy</a>. A full refund revokes Pro access after signed Stripe webhook confirmation. Checkout remains in Stripe Test mode until live payment is separately authorized.</p>
+            <p className="text-body text-ink-secondary mb-4">Eligible refund requests are reviewed under the <a href="/refund-policy" className="text-primary hover:underline">Refund Policy</a>, including its 2/5/3 UTC-calendar-day service timeline. A full refund revokes Pro access after signed Stripe webhook confirmation. Checkout remains in Stripe Test mode until live payment is separately authorized. Mandatory consumer rights remain unaffected.</p>
             <p className="text-body text-ink-secondary mb-4"><strong>Advanced Study PDF Pack: US$9.99 one-time in Stripe Test mode.</strong> It creates a separate personal PackPurchase for one selected HSK 3.0 level and is not included in Pro. Access lasts 14 days and permits up to 3 successful downloads; failed delivery does not consume a download. A signed Stripe refund revokes the purchase licence and private delivery.</p>
           </section>
 

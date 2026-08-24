@@ -58,7 +58,7 @@ export default function DisclaimerPage() {
           <section className="mb-8">
             <h2 className="text-h3 mb-4">Accuracy of Content</h2>
             <p className="text-body text-ink-secondary mb-4">
-              While we strive to keep all content accurate and up to date, errors or omissions may occur. HSKKit is provided "as is" without warranties of any kind. We are not liable for any damages or losses arising from the use of our materials.
+              While we strive to keep all content accurate and up to date, errors or omissions may occur. Content, practice results, and AI output can contain errors or vary. Verify important information against authoritative sources. HSKKit is provided "as is" without warranties of any kind.
             </p>
           </section>
 

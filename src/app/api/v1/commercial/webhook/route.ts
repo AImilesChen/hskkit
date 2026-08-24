@@ -15,7 +15,11 @@ import { verifyStripeWebhook } from "@/lib/commercial/stripe";
 
 async function revokePackPurchaseDelivery(input:{paymentIntentId?:string;chargeId?:string},env:CloudflareEnv){
   const objectKeys=await revokeRefundedOrder(input);
-  for(const objectKey of objectKeys??[]){await env.COMMERCIAL_EXPORTS_R2.delete(objectKey);await clearRevokedExportObjectKey(objectKey);}
+  for(const objectKey of objectKeys??[]){
+    await env.COMMERCIAL_EXPORTS_R2.delete(objectKey);
+    if(await env.COMMERCIAL_EXPORTS_R2.head(objectKey)) throw new Error("REFUND_OBJECT_DELETE_FAILED");
+    await clearRevokedExportObjectKey(objectKey);
+  }
 }
 
 export async function POST(req:NextRequest) {

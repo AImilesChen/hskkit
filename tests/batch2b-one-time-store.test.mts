@@ -114,4 +114,6 @@ test("refund and license withdrawal revoke access and delete private objects", a
   assert.match(adminRevoke, /revokePackPurchase/);
   assert.match(storage, /status='revoked'/);
   for (const source of [webhook, downloadLink, download, adminRevoke]) assert.match(source, /COMMERCIAL_EXPORTS_R2/);
+  assert.match(webhook, /await env\.COMMERCIAL_EXPORTS_R2\.delete\(objectKey\);\s*if\(await env\.COMMERCIAL_EXPORTS_R2\.head\(objectKey\)\) throw new Error\("REFUND_OBJECT_DELETE_FAILED"\);\s*await clearRevokedExportObjectKey\(objectKey\)/);
+  assert.ok(webhook.indexOf("COMMERCIAL_EXPORTS_R2.head(objectKey)") < webhook.indexOf("clearRevokedExportObjectKey(objectKey)"), "the D1 object key must remain recoverable until R2 deletion is verified");
 });

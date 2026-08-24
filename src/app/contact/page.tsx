@@ -9,14 +9,14 @@ import {
 export const metadata: Metadata = {
   title: "Contact HSKKit | Get Help & Support",
   description:
-    "Reach out to HSKKit for questions, feedback, or support. We typically respond within 1–2 business days.",
+    "Use HSKKit's in-site support paths for billing, PDF Pack, refund, study questions, or feedback.",
   alternates: {
     canonical: "https://hskkit.com/contact",
   },
   openGraph: {
     title: "Contact HSKKit | Get Help & Support",
     description:
-      "Reach out to HSKKit for questions, feedback, or support. We typically respond within 1–2 business days.",
+      "Use HSKKit's in-site support paths for billing, PDF Pack, refund, study questions, or feedback.",
     url: "https://hskkit.com/contact",
     siteName: "HSKKit",
     type: "website",
@@ -26,7 +26,7 @@ export const metadata: Metadata = {
 const faqs = [
   {
     q: "How fast will you reply?",
-    a: "We usually respond within 1–2 business days. For simple questions, check the FAQs below first—you might find an instant answer.",
+    a: "For billing and refund requests, we confirm receipt within 2 UTC calendar days and follow the Refund Policy timeline. For simple study questions, check the FAQs below first.",
   },
   {
     q: "Can I request a new feature or report a bug?",
@@ -72,9 +72,19 @@ export default function ContactPage() {
             </h1>
             <p className="text-body-lg text-ink-secondary mb-10">
               Have a question about HSK study, found something confusing, or want
-              to suggest an improvement? Send us a message and we will get back to
-              you as soon as we can.
+              to suggest an improvement? Choose an in-site support path or use the
+              fallback email channel.
             </p>
+
+            <section className="mb-10 rounded-2xl border border-blue-200 bg-blue-50 p-6" aria-labelledby="support-paths">
+              <h2 id="support-paths" className="text-h3 mb-3">Billing and subscription help</h2>
+              <p className="text-body text-ink-secondary mb-5">Use the secure in-site entry that matches your request. Email is the fallback support channel, not the only way to find help.</p>
+              <div className="flex flex-wrap gap-3">
+                <a href="/account" className="btn btn-primary">Account and Billing</a>
+                <a href="/exports" className="btn btn-secondary">PDF Pack and Exports</a>
+                <a href="/refund-policy" className="btn btn-secondary">Refund Policy</a>
+              </div>
+            </section>
 
             {/* Contact Form */}
             <form
@@ -186,9 +196,9 @@ export default function ContactPage() {
                   Response time
                 </p>
                 <p className="text-sm text-[#334155]">
-                  We read every message and typically reply within 1–2 business
-                  days. For urgent study questions, the FAQ section below may save
-                  you time.
+                  For billing and refund requests, we confirm receipt within 2 UTC
+                  calendar days and follow the Refund Policy timeline. General
+                  study feedback has no fixed response-time commitment.
                 </p>
               </div>
             </div>
