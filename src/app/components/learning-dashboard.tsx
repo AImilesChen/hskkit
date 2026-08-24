@@ -11,6 +11,9 @@ type Mistake = { id: string; contentId: string; status: string; createdAt: strin
 type Data = {
   session: { id: string; startLevel?: number; contentReleaseId?: string; notice?: Notice; budgetMinutes?: number; totalEstimatedMinutes?: number; items: Item[] };
   cards: Card[];
+  focusedReview: (Card & { focusReason: "open_mistake" | "due" })[];
+  capabilities: { tier: "free" | "pro"; dailyNewItems: number | null; dailyReviewGrades: number | null; focusedReview: boolean };
+  usage: { dailyNewItems: number; dailyReviewGrades: number };
   mistakes: Mistake[];
   mastery: Record<Dimension, number>;
   streak: { current: number; longest: number; lastLearningDay: string | null };
@@ -80,6 +83,12 @@ export default function LearningDashboard({ mode }: { mode: "today" | "review" |
         const pending = queue[0];
         const response = await fetch("/api/v1/learning", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ action: pending.action, payload: { ...pending.payload, idempotencyKey: pending.idempotencyKey }, clientRevision: revision, tzOffset: tz(), queueBinding: binding }) });
         const result = await response.json();
+        if (response.status === 429) {
+          queue.shift(); savePending(binding, queue);
+          setError(result.error === "FREE_DAILY_NEW_ITEM_LIMIT" ? "Free daily new-item limit reached." : "Free daily SRS rating limit reached.");
+          setSyncState("synced");
+          return;
+        }
         if (response.status === 409) {
           setSyncState("conflict");
           const latest = await fetch(`/api/v1/learning?tzOffset=${tz()}`, { cache: "no-store" });
@@ -115,6 +124,12 @@ export default function LearningDashboard({ mode }: { mode: "today" | "review" |
       setData(result);
       setSyncState("synced");
       return true;
+    }
+    if (response?.status === 429) {
+      const limited = await response.json();
+      delete operationKeys.current[operation];
+      setError(limited.error === "FREE_DAILY_NEW_ITEM_LIMIT" ? "Free daily new-item limit reached." : "Free daily SRS rating limit reached.");
+      return false;
     }
     if (response?.status === 409) {
       const conflict = await response.json();
@@ -171,14 +186,14 @@ export default function LearningDashboard({ mode }: { mode: "today" | "review" |
     window.speechSynthesis.speak(utterance);
   }
 
-  if (error) return <State title="Sync paused" text={error}><button onClick={load} className="btn">Try again</button></State>;
+  if (error) return <State title={error.startsWith("Free daily") ? "Daily limit reached" : "Sync paused"} text={error}>{error.startsWith("Free daily") ? <Link href="/pricing" className="btn">Compare Pro</Link> : <button onClick={load} className="btn">Try again</button>}</State>;
   if (!data) return <State title="Loading your learning plan…" text="Restoring your latest progress." />;
   const open = data.mistakes.filter((mistake) => mistake.status === "open");
 
   if (mode === "today") {
     const firstPending = data.session.items.findIndex((item) => item.status === "pending");
     return <Shell title="Today" sub="Review → Learn → Listen/Practice → Summary">
-      <section className="card mb-4"><div className="flex flex-wrap items-end justify-between gap-3"><label>Today's time budget<select value={data.session.budgetMinutes ?? 30} onChange={(event) => void setBudget(Number(event.target.value))}>{[10, 15, 20, 30, 45, 60].map((minutes) => <option key={minutes} value={minutes}>{minutes} minutes</option>)}</select></label><p><strong>{data.session.totalEstimatedMinutes ?? 0} min planned</strong> · version today-v4</p></div></section>
+      <section className="card mb-4"><div className="flex flex-wrap items-end justify-between gap-3"><label>Today&apos;s time budget<select value={data.session.budgetMinutes ?? 30} onChange={(event) => void setBudget(Number(event.target.value))}>{[10, 15, 20, 30, 45, 60].map((minutes) => <option key={minutes} value={minutes}>{minutes} minutes</option>)}</select></label><p><strong>{data.session.totalEstimatedMinutes ?? 0} min planned</strong> · version today-v4</p></div>{data.capabilities.tier === "free" && <p className="account-note">Free daily usage: {data.usage.dailyNewItems}/{data.capabilities.dailyNewItems} new items · {data.usage.dailyReviewGrades}/{data.capabilities.dailyReviewGrades} successful SRS ratings. <Link href="/pricing">Compare Pro</Link></p>}</section>
       {syncState !== "synced" && <div className={`step7-alert ${syncState === "failed" || syncState === "conflict" ? "error" : "warning"}`} role="status"><strong>Offline sync: {syncState.replaceAll("_", " ")}</strong><p>{syncState === "conflict" ? "Another device changed this learning record. The server copy was loaded; retry your pending action." : syncState === "failed" ? "Sync failed. Your pending action remains on this device." : "Your action is stored locally and will sync with the same operation key."}</p><button className="btn secondary" onClick={() => void retryPending()}>Retry sync</button></div>}
       {data.session.notice && <article className="mb-4 rounded-2xl bg-amber-50 p-5 text-amber-950" role="status"><span className="eyebrow">{data.session.notice.code.replaceAll("_", " ")}</span><h2>{data.session.notice.message}</h2><Link className="btn mt-3" href={data.session.notice.actionHref}>{data.session.notice.actionLabel}</Link></article>}
       <div className="grid gap-4">
@@ -213,8 +228,10 @@ export default function LearningDashboard({ mode }: { mode: "today" | "review" |
     <Mastery values={data.mastery} scope={data.scope} />
   </Shell>;
 
-  const due = data.cards.filter((card) => card.dueAt <= new Date().toISOString());
-  return <Shell title="Review" sub="Recall first, reveal the answer, then rate honestly.">
+  const due = data.capabilities.focusedReview ? data.focusedReview : data.cards.filter((card) => card.dueAt <= new Date().toISOString());
+  return <Shell title="Review" sub={data.capabilities.focusedReview ? "Focused Review prioritizes unresolved mistakes, then the rest of your due cards." : "Recall first, reveal the answer, then rate honestly."}>
+    {data.capabilities.tier === "free" && <article className="mb-4 rounded-2xl bg-amber-50 p-5 text-amber-950"><span className="eyebrow">Free review</span><p>{data.usage.dailyReviewGrades} of {data.capabilities.dailyReviewGrades} successful SRS ratings used today. Pro adds Focused Review and removes the Free daily limit.</p><Link className="btn mt-3" href="/pricing">Compare Pro</Link></article>}
+    {data.capabilities.focusedReview && <p className="mb-4 rounded-xl bg-emerald-50 p-4 text-emerald-900" role="status"><strong>Focused Review is active.</strong> Open mistakes are shown first.</p>}
     {audioError && <p className="mb-4 rounded-xl bg-red-50 p-4 text-sm text-red-700" role="alert">{audioError}</p>}
     {due.length ? <div className="grid gap-4">{due.map((card) => <article className="card" key={card.id}>
       <span className="eyebrow">{card.dimension.replace("_", " ")} · Due now</span>

@@ -14,6 +14,14 @@ async function json(url: string, init?: RequestInit) {
   return data;
 }
 
+function syncDeviceId() {
+  const current = localStorage.getItem("hskkit_device");
+  if (current) return current;
+  const created = crypto.randomUUID();
+  localStorage.setItem("hskkit_device", created);
+  return created;
+}
+
 export default function AccountClient() {
   const [view, setView] = useState<AccountView>();
   const [error, setError] = useState("");
@@ -22,6 +30,7 @@ export default function AccountClient() {
   const [streak, setStreak] = useState<any>();
   const [sync, setSync] = useState<any>();
   const [subscription, setSubscription] = useState<any>();
+  const [aiQuota, setAiQuota] = useState<any>();
   const [busy, setBusy] = useState(false);
   const [timezone, setTimezone] = useState("UTC");
 
@@ -31,10 +40,11 @@ export default function AccountClient() {
       setView(data);
       if (data.account?.timezone) setTimezone(data.account.timezone);
       if (data.account?.status === "active") {
-        const [streakData, syncData, subscriptionData] = await Promise.all([json("/api/v1/account/streak"), json("/api/v1/account/sync"), json("/api/v1/commercial/subscription")]);
+        const [streakData, syncData, subscriptionData, aiData] = await Promise.all([json("/api/v1/account/streak"), json(`/api/v1/account/sync?deviceId=${encodeURIComponent(syncDeviceId())}`), json("/api/v1/commercial/subscription"), json("/api/v1/ai")]);
         setStreak(streakData);
         setSync(syncData);
         setSubscription(subscriptionData);
+        setAiQuota(aiData);
       }
     } catch (cause) { setError(cause instanceof Error ? cause.message : "LOAD_FAILED"); }
   };
@@ -58,13 +68,12 @@ export default function AccountClient() {
   };
   const checkpoint = async () => {
     if (!sync) return;
-    const deviceId = localStorage.getItem("hskkit_device") ?? crypto.randomUUID();
-    localStorage.setItem("hskkit_device", deviceId);
+    const deviceId = syncDeviceId();
     setBusy(true); setError(""); setMessage("");
     try {
       const result = await json("/api/v1/account/sync", { method: "POST", body: JSON.stringify({ clientRevision: sync.revision, deviceId }) });
       if (result.state === "conflict") {
-        const latest = await json("/api/v1/account/sync");
+        const latest = await json(`/api/v1/account/sync?deviceId=${encodeURIComponent(deviceId)}`);
         setSync(latest);
         setMessage(`Another device advanced progress to revision ${result.serverRevision}. This device reloaded the server snapshot and is ready to retry.`);
       } else {
@@ -73,6 +82,10 @@ export default function AccountClient() {
       }
     } catch (cause) { setError(cause instanceof Error ? cause.message : "REQUEST_FAILED"); }
     finally { setBusy(false); }
+  };
+
+  const removeDevice = async (deviceId: string) => {
+    await act(() => json("/api/v1/account/sync", { method: "DELETE", body: JSON.stringify({ deviceId }) }), "Device access removed.");
   };
 
   const manageSubscription = async (action: "cancel" | "request_refund") => {
@@ -104,8 +117,23 @@ export default function AccountClient() {
       <section className="card">
         <h2>Device sync</h2>
         <p>Server revision: <strong>{sync?.revision ?? "—"}</strong></p>
+        <p><strong>{sync?.devices?.length ?? 0} of {sync?.capabilities?.syncDevices ?? 1}</strong> device slots active.</p>
         <p>{sync?.conflicts?.length ? `${sync.conflicts.length} conflict audit record(s). Reload before retrying a stale change.` : "No recorded sync conflicts."}</p>
+        {!!sync?.devices?.length && <ul>{sync.devices.map((device: any) => <li key={device.device_id}>{device.device_id.slice(0, 12)}… <button className="btn secondary" disabled={busy} onClick={() => void removeDevice(device.device_id)}>Remove</button></li>)}</ul>}
         <button className="btn" disabled={busy} onClick={checkpoint}>Check sync</button>
+        {sync?.capabilities?.tier === "free" && <p className="account-note">Free includes one device. Pro includes three active devices.</p>}
+      </section>
+      <section className="card">
+        <h2>Learning access</h2>
+        <p><strong>{subscription?.capabilities?.tier === "pro" ? "Pro" : "Free"}</strong></p>
+        {subscription?.capabilities?.tier === "pro" ? <>
+          <p>Study without the Free daily limits · Focused Review enabled · long-term history.</p>
+          <p>500 AI credits refresh monthly. <strong>{aiQuota?.quota?.remaining ?? 0}</strong> remaining in this period.</p>
+        </> : <>
+          <p>Daily limits: {subscription?.capabilities?.dailyNewItems ?? 10} new items and {subscription?.capabilities?.dailyReviewGrades ?? 20} successful SRS ratings.</p>
+          <p>Focused Review and AI credits unlock with Pro.</p>
+          <Link className="btn" href="/pricing">Compare Pro</Link>
+        </>}
       </section>
       <section className="card">
         <h2>Billing</h2>

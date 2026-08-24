@@ -1,5 +1,6 @@
 import type { Step7Exercise } from "@/lib/learning/step7-content";
 import type { StudyPlan } from "@/lib/planner/domain";
+import type { ProductCapabilities } from "@/lib/commercial/capabilities";
 
 export const AI_DAILY_ALLOWANCE = 10;
 export const AI_RATE_LIMIT_PER_MINUTE = 6;
@@ -16,6 +17,23 @@ export function aiRuntimePolicy(env: Pick<CloudflareEnv, "AI_DAILY_ALLOWANCE" | 
     dailyAllowance: AI_DAILY_ALLOWANCE,
     rateLimitPerMinute: AI_RATE_LIMIT_PER_MINUTE,
     maxOutputTokens: integer(env.AI_MAX_OUTPUT_TOKENS, AI_MAX_OUTPUT_TOKENS, 64, AI_MAX_OUTPUT_TOKENS),
+  };
+}
+
+export type ProductAiRuntimePolicy = AiRuntimePolicy & {
+  quotaPeriod: "month";
+  allowance: number;
+  rateLimitPerHour: number;
+  concurrency: number;
+};
+
+export function productAiRuntimePolicy(env: Pick<CloudflareEnv, "AI_DAILY_ALLOWANCE" | "AI_RATE_LIMIT_PER_MINUTE" | "AI_MAX_OUTPUT_TOKENS">, capabilities: ProductCapabilities): ProductAiRuntimePolicy {
+  return {
+    ...aiRuntimePolicy(env),
+    quotaPeriod: "month",
+    allowance: capabilities.aiMonthlyCredits,
+    rateLimitPerHour: capabilities.aiRequestsPerHour,
+    concurrency: capabilities.aiConcurrency,
   };
 }
 

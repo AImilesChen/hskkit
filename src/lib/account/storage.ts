@@ -316,6 +316,40 @@ export async function closeMerge(userId: string, mergeId: string, mergeKey: stri
   return { state: "confirmed" as const, revision: accountState.revision + 1, conflicts: merged.conflicts };
 }
 
+export async function registerSyncDevice(userId: string, deviceId: string, limit: number) {
+  if (!deviceId || deviceId.length > 80) throw new Error("INVALID_DEVICE_ID");
+  const database = db();
+  const timestamp = now();
+  await database.prepare("UPDATE account_devices SET revoked_at=? WHERE user_id=? AND revoked_at IS NULL AND device_id NOT IN (SELECT device_id FROM account_devices WHERE user_id=? AND revoked_at IS NULL ORDER BY first_seen_at ASC,device_id ASC LIMIT ?)").bind(timestamp, userId, userId, limit).run();
+  const existing = await database.prepare("SELECT device_id FROM account_devices WHERE user_id=? AND device_id=? AND revoked_at IS NULL").bind(userId, deviceId).first<{ device_id: string }>();
+  if (existing) {
+    await database.prepare("UPDATE account_devices SET last_seen_at=? WHERE user_id=? AND device_id=? AND revoked_at IS NULL").bind(timestamp, userId, deviceId).run();
+    return { deviceId, active: true, limit, existing: true };
+  }
+  const assertion = crypto.randomUUID();
+  try {
+    await database.batch([
+      database.prepare("INSERT INTO account_devices(user_id,device_id,first_seen_at,last_seen_at,revoked_at) SELECT ?,?,?,?,NULL WHERE (SELECT COUNT(*) FROM account_devices WHERE user_id=? AND revoked_at IS NULL)<? ON CONFLICT(user_id,device_id) DO UPDATE SET last_seen_at=excluded.last_seen_at,revoked_at=NULL WHERE (SELECT COUNT(*) FROM account_devices WHERE user_id=excluded.user_id AND revoked_at IS NULL)<?").bind(userId, deviceId, timestamp, timestamp, userId, limit, limit),
+      database.prepare("INSERT INTO entitlement_limit_assertions(id,ok) VALUES(?,CASE changes() WHEN 1 THEN 1 ELSE 0 END)").bind(assertion),
+      database.prepare("DELETE FROM entitlement_limit_assertions WHERE id=?").bind(assertion),
+    ]);
+  } catch {
+    const active = await database.prepare("SELECT COUNT(*) count FROM account_devices WHERE user_id=? AND revoked_at IS NULL").bind(userId).first<{ count: number }>();
+    if (Number(active?.count ?? 0) >= limit) throw new Error("SYNC_DEVICE_LIMIT_REACHED");
+    throw new Error("SYNC_DEVICE_REGISTRATION_FAILED");
+  }
+  return { deviceId, active: true, limit, existing: false };
+}
+
+export async function listSyncDevices(userId: string) {
+  const rows = await db().prepare("SELECT device_id,first_seen_at,last_seen_at FROM account_devices WHERE user_id=? AND revoked_at IS NULL ORDER BY last_seen_at DESC").bind(userId).all();
+  return rows.results;
+}
+
+export async function revokeSyncDevice(userId: string, deviceId: string) {
+  await db().prepare("UPDATE account_devices SET revoked_at=? WHERE user_id=? AND device_id=? AND revoked_at IS NULL").bind(now(), userId, deviceId).run();
+}
+
 export async function syncCheckpoint(userId: string, clientRevision: number, deviceId: string) {
   if (!Number.isInteger(clientRevision) || clientRevision < 0) throw new Error("INVALID_REVISION");
   if (!deviceId || deviceId.length > 80) throw new Error("INVALID_DEVICE_ID");

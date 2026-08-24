@@ -1,7 +1,9 @@
 import { db } from "@/lib/learning/storage";
-import { AI_DAILY_ALLOWANCE, AI_RATE_LIMIT_PER_MINUTE, type AiFeature, type AiOutput, type AiRuntimePolicy } from "./domain";
+import { AI_DAILY_ALLOWANCE, AI_RATE_LIMIT_PER_MINUTE, type AiFeature, type AiOutput, type AiRuntimePolicy, type ProductAiRuntimePolicy } from "./domain";
+import { aiCreditCost } from "../commercial/capabilities";
 
 const defaultPolicy: AiRuntimePolicy = { dailyAllowance: AI_DAILY_ALLOWANCE, rateLimitPerMinute: AI_RATE_LIMIT_PER_MINUTE, maxOutputTokens: 500 };
+type RuntimePolicy = AiRuntimePolicy | ProductAiRuntimePolicy;
 
 export type AiOperation = {
   id: string;
@@ -11,18 +13,22 @@ export type AiOperation = {
   requestHash: string;
   status: "reserved" | "succeeded" | "failed";
   quotaPeriod: string;
+  costUnits: number;
   response?: AiOutput;
   failureCode?: string;
 };
 
 type OperationRow = {
   id: string; owner_id: string; feature: AiFeature; idempotency_key: string; request_hash: string;
-  status: AiOperation["status"]; quota_period: string; response_json: string | null; failure_code: string | null;
+  status: AiOperation["status"]; quota_period: string; cost_units: number; response_json: string | null; failure_code: string | null;
 };
 type BucketRow = { allowance: number; used: number; reserved: number };
 
-const periodKey = (now: Date) => now.toISOString().slice(0, 10);
-const minuteFloor = (now: Date) => new Date(now.getTime() - 60_000).toISOString();
+const isProductPolicy = (policy: RuntimePolicy): policy is ProductAiRuntimePolicy => "quotaPeriod" in policy;
+const periodKey = (policy: RuntimePolicy, now: Date) => isProductPolicy(policy) ? now.toISOString().slice(0, 7) : now.toISOString().slice(0, 10);
+const requestFloor = (policy: RuntimePolicy, now: Date) => new Date(now.getTime() - (isProductPolicy(policy) ? 3_600_000 : 60_000)).toISOString();
+const allowanceFor = (policy: RuntimePolicy) => isProductPolicy(policy) ? policy.allowance : policy.dailyAllowance;
+const rateLimitFor = (policy: RuntimePolicy) => isProductPolicy(policy) ? policy.rateLimitPerHour : policy.rateLimitPerMinute;
 async function activeAccountOwner(ownerId: string) {
   if (!ownerId.startsWith("user:")) return true;
   const row = await (await db()).prepare("SELECT 1 AS ok FROM accounts WHERE user_id=? AND status='active'").bind(ownerId.slice(5)).first<{ ok: number }>();
@@ -30,13 +36,13 @@ async function activeAccountOwner(ownerId: string) {
 }
 const rowToOperation = (row: OperationRow): AiOperation => ({
   id: row.id, ownerId: row.owner_id, feature: row.feature, idempotencyKey: row.idempotency_key,
-  requestHash: row.request_hash, status: row.status, quotaPeriod: row.quota_period,
+  requestHash: row.request_hash, status: row.status, quotaPeriod: row.quota_period, costUnits: Number(row.cost_units),
   response: row.response_json ? JSON.parse(row.response_json) as AiOutput : undefined,
   failureCode: row.failure_code ?? undefined,
 });
 
 async function operationByKey(ownerId: string, feature: AiFeature, idempotencyKey: string) {
-  const row = await (await db()).prepare("SELECT id,owner_id,feature,idempotency_key,request_hash,status,quota_period,response_json,failure_code FROM ai_operations WHERE owner_id=? AND feature=? AND idempotency_key=?")
+  const row = await (await db()).prepare("SELECT id,owner_id,feature,idempotency_key,request_hash,status,quota_period,credit_units AS cost_units,response_json,failure_code FROM ai_operations WHERE owner_id=? AND feature=? AND idempotency_key=?")
     .bind(ownerId, feature, idempotencyKey).first<OperationRow>();
   return row ? rowToOperation(row) : undefined;
 }
@@ -49,14 +55,14 @@ async function ensureBucket(ownerId: string, period: string, now: string, allowa
 async function releaseStale(ownerId: string, now: Date) {
   const database = await db();
   const cutoff = new Date(now.getTime() - 5 * 60_000).toISOString();
-  const stale = await database.prepare("SELECT id,quota_period FROM ai_operations WHERE owner_id=? AND status='reserved' AND updated_at<? LIMIT 20").bind(ownerId, cutoff).all<{ id: string; quota_period: string }>();
+  const stale = await database.prepare("SELECT id,quota_period,credit_units AS cost_units FROM ai_operations WHERE owner_id=? AND status='reserved' AND updated_at<? LIMIT 20").bind(ownerId, cutoff).all<{ id: string; quota_period: string; cost_units: number }>();
   for (const item of stale.results) {
     const assertion = crypto.randomUUID();
     try {
       await database.batch([
         database.prepare("UPDATE ai_operations SET status='failed',failure_code='AI_RESERVATION_EXPIRED',updated_at=? WHERE id=? AND owner_id=? AND status='reserved'").bind(now.toISOString(), item.id, ownerId),
         database.prepare("INSERT INTO ai_quota_assertions(id,ok) VALUES(?,CASE changes() WHEN 1 THEN 1 ELSE 0 END)").bind(assertion),
-        database.prepare("UPDATE ai_quota_buckets SET reserved=reserved-1,updated_at=? WHERE owner_id=? AND period_key=? AND reserved>0").bind(now.toISOString(), ownerId, item.quota_period),
+        database.prepare("UPDATE ai_quota_buckets SET reserved=reserved-?,updated_at=? WHERE owner_id=? AND period_key=? AND reserved>=?").bind(item.cost_units, now.toISOString(), ownerId, item.quota_period, item.cost_units),
         database.prepare("INSERT INTO ai_quota_assertions(id,ok) VALUES(?,CASE changes() WHEN 1 THEN 1 ELSE 0 END)").bind(`${assertion}:bucket`),
         database.prepare("DELETE FROM ai_quota_assertions WHERE id IN (?,?)").bind(assertion, `${assertion}:bucket`),
       ]);
@@ -64,28 +70,30 @@ async function releaseStale(ownerId: string, now: Date) {
   }
 }
 
-const fixedPolicy = (policy: AiRuntimePolicy): AiRuntimePolicy => ({ ...policy, dailyAllowance: AI_DAILY_ALLOWANCE, rateLimitPerMinute: AI_RATE_LIMIT_PER_MINUTE });
+const fixedPolicy = (policy: RuntimePolicy): RuntimePolicy => isProductPolicy(policy) ? policy : { ...policy, dailyAllowance: AI_DAILY_ALLOWANCE, rateLimitPerMinute: AI_RATE_LIMIT_PER_MINUTE };
 
-export async function quotaView(ownerId: string, requestedPolicy = defaultPolicy, now = new Date()) {
+export async function quotaView(ownerId: string, requestedPolicy: RuntimePolicy = defaultPolicy, now = new Date()) {
   const policy = fixedPolicy(requestedPolicy);
+  const allowanceConfigured = allowanceFor(policy);
+  const reset = isProductPolicy(policy)
+    ? new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth() + 1, 1)).toISOString()
+    : new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() + 1)).toISOString();
   if (!await activeAccountOwner(ownerId)) {
-    const reset = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() + 1)).toISOString();
-    return { period: periodKey(now), allowance: policy.dailyAllowance, used: 0, reserved: 0, remaining: 0, rateLimitPerMinute: policy.rateLimitPerMinute, recentRequests: 0, resetAt: reset, accountDeleted: true };
+    return { period: periodKey(policy, now), allowance: allowanceConfigured, used: 0, reserved: 0, remaining: 0, rateLimitPerMinute: policy.rateLimitPerMinute, rateLimitPerHour: isProductPolicy(policy) ? policy.rateLimitPerHour : null, recentRequests: 0, resetAt: reset, accountDeleted: true };
   }
   await releaseStale(ownerId, now);
-  const period = periodKey(now);
-  await ensureBucket(ownerId, period, now.toISOString(), policy.dailyAllowance);
+  const period = periodKey(policy, now);
+  await ensureBucket(ownerId, period, now.toISOString(), allowanceConfigured);
   const database = await db();
   const bucket = await database.prepare("SELECT allowance,used,reserved FROM ai_quota_buckets WHERE owner_id=? AND period_key=?").bind(ownerId, period).first<BucketRow>();
-  const minute = await database.prepare("SELECT COUNT(*) AS count FROM ai_operations WHERE owner_id=? AND created_at>=?").bind(ownerId, minuteFloor(now)).first<{ count: number }>();
-  const reset = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() + 1)).toISOString();
-  const allowance = bucket?.allowance ?? policy.dailyAllowance;
+  const recent = await database.prepare("SELECT COUNT(*) AS count FROM ai_operations WHERE owner_id=? AND created_at>=?").bind(ownerId, requestFloor(policy, now)).first<{ count: number }>();
+  const allowance = bucket?.allowance ?? allowanceConfigured;
   const used = bucket?.used ?? 0;
   const reserved = bucket?.reserved ?? 0;
-  return { period, allowance, used, reserved, remaining: Math.max(0, allowance - used - reserved), rateLimitPerMinute: policy.rateLimitPerMinute, recentRequests: minute?.count ?? 0, resetAt: reset };
+  return { period, allowance, used, reserved, remaining: Math.max(0, allowance - used - reserved), rateLimitPerMinute: policy.rateLimitPerMinute, rateLimitPerHour: isProductPolicy(policy) ? policy.rateLimitPerHour : null, recentRequests: recent?.count ?? 0, resetAt: reset };
 }
 
-export async function reserveOperation(input: { ownerId: string; feature: AiFeature; idempotencyKey: string; requestHash: string; policy?: AiRuntimePolicy; now?: Date }) {
+export async function reserveOperation(input: { ownerId: string; feature: AiFeature; idempotencyKey: string; requestHash: string; policy?: RuntimePolicy; now?: Date }) {
   const now = input.now ?? new Date();
   const policy = fixedPolicy(input.policy ?? defaultPolicy);
   if (!await activeAccountOwner(input.ownerId)) throw new Error("ACCOUNT_DELETED");
@@ -96,18 +104,21 @@ export async function reserveOperation(input: { ownerId: string; feature: AiFeat
     return { operation: replay, replayed: true };
   }
   const database = await db();
-  const period = periodKey(now);
+  const period = periodKey(policy, now);
   const timestamp = now.toISOString();
   const id = crypto.randomUUID();
   const assertion = crypto.randomUUID();
+  const costUnits = aiCreditCost(input.feature);
+  const allowance = allowanceFor(policy);
+  const rateLimit = rateLimitFor(policy);
   try {
     await database.batch([
-      database.prepare("INSERT INTO ai_quota_buckets(owner_id,period_key,allowance,used,reserved,updated_at) VALUES(?,?,?,?,?,?) ON CONFLICT(owner_id,period_key) DO UPDATE SET allowance=excluded.allowance,updated_at=excluded.updated_at").bind(input.ownerId, period, policy.dailyAllowance, 0, 0, timestamp),
-      database.prepare("UPDATE ai_quota_buckets SET reserved=reserved+1,updated_at=? WHERE owner_id=? AND period_key=? AND reserved=0 AND used+reserved<allowance AND (SELECT COUNT(*) FROM ai_operations WHERE owner_id=? AND created_at>=?)<? AND (substr(?,1,5)!='user:' OR EXISTS(SELECT 1 FROM accounts WHERE user_id=substr(?,6) AND status='active'))")
-        .bind(timestamp, input.ownerId, period, input.ownerId, minuteFloor(now), policy.rateLimitPerMinute, input.ownerId, input.ownerId),
+      database.prepare("INSERT INTO ai_quota_buckets(owner_id,period_key,allowance,used,reserved,updated_at) VALUES(?,?,?,?,?,?) ON CONFLICT(owner_id,period_key) DO UPDATE SET allowance=excluded.allowance,updated_at=excluded.updated_at").bind(input.ownerId, period, allowance, 0, 0, timestamp),
+      database.prepare("UPDATE ai_quota_buckets SET reserved=reserved+?,updated_at=? WHERE owner_id=? AND period_key=? AND reserved=0 AND used+reserved+?<=allowance AND (SELECT COUNT(*) FROM ai_operations WHERE owner_id=? AND created_at>=?)<? AND (substr(?,1,5)!='user:' OR EXISTS(SELECT 1 FROM accounts WHERE user_id=substr(?,6) AND status='active'))")
+        .bind(costUnits, timestamp, input.ownerId, period, costUnits, input.ownerId, requestFloor(policy, now), rateLimit, input.ownerId, input.ownerId),
       database.prepare("INSERT INTO ai_quota_assertions(id,ok) VALUES(?,CASE changes() WHEN 1 THEN 1 ELSE 0 END)").bind(assertion),
-      database.prepare("INSERT INTO ai_operations(id,owner_id,feature,idempotency_key,request_hash,status,quota_period,cost_units,created_at,updated_at) VALUES(?,?,?,?,?,'reserved',?,1,?,?)")
-        .bind(id, input.ownerId, input.feature, input.idempotencyKey, input.requestHash, period, timestamp, timestamp),
+      database.prepare("INSERT INTO ai_operations(id,owner_id,feature,idempotency_key,request_hash,status,quota_period,cost_units,credit_units,created_at,updated_at) VALUES(?,?,?,?,?,'reserved',?,1,?,?,?)")
+        .bind(id, input.ownerId, input.feature, input.idempotencyKey, input.requestHash, period, costUnits, timestamp, timestamp),
       database.prepare("DELETE FROM ai_quota_assertions WHERE id=?").bind(assertion),
     ]);
   } catch {
@@ -120,10 +131,10 @@ export async function reserveOperation(input: { ownerId: string; feature: AiFeat
     if (quota.accountDeleted) throw new Error("ACCOUNT_DELETED");
     if (quota.reserved > 0) throw new Error("AI_REQUEST_IN_PROGRESS");
     if (quota.remaining <= 0) throw new Error("AI_QUOTA_EXHAUSTED");
-    if (quota.recentRequests >= policy.rateLimitPerMinute) throw new Error("AI_RATE_LIMITED");
+    if (quota.recentRequests >= rateLimit) throw new Error("AI_RATE_LIMITED");
     throw new Error("AI_RESERVATION_FAILED");
   }
-  return { operation: { id, ownerId: input.ownerId, feature: input.feature, idempotencyKey: input.idempotencyKey, requestHash: input.requestHash, status: "reserved" as const, quotaPeriod: period }, replayed: false };
+  return { operation: { id, ownerId: input.ownerId, feature: input.feature, idempotencyKey: input.idempotencyKey, requestHash: input.requestHash, status: "reserved" as const, quotaPeriod: period, costUnits }, replayed: false };
 }
 
 export async function finalizeSuccess(input: { operation: AiOperation; output: AiOutput; providerRequestId?: string; promptTokens?: number; completionTokens?: number; now?: Date }) {
@@ -135,8 +146,8 @@ export async function finalizeSuccess(input: { operation: AiOperation; output: A
       database.prepare("UPDATE ai_operations SET status='succeeded',response_json=?,provider_request_id=?,prompt_tokens=?,completion_tokens=?,updated_at=? WHERE id=? AND owner_id=? AND status='reserved' AND (substr(?,1,5)!='user:' OR EXISTS(SELECT 1 FROM accounts WHERE user_id=substr(?,6) AND status='active'))")
         .bind(JSON.stringify(input.output), input.providerRequestId ?? null, input.promptTokens ?? null, input.completionTokens ?? null, now, input.operation.id, input.operation.ownerId, input.operation.ownerId, input.operation.ownerId),
       database.prepare("INSERT INTO ai_quota_assertions(id,ok) VALUES(?,CASE changes() WHEN 1 THEN 1 ELSE 0 END)").bind(assertion),
-      database.prepare("UPDATE ai_quota_buckets SET reserved=reserved-1,used=used+1,updated_at=? WHERE owner_id=? AND period_key=? AND reserved>0 AND used<allowance")
-        .bind(now, input.operation.ownerId, input.operation.quotaPeriod),
+      database.prepare("UPDATE ai_quota_buckets SET reserved=reserved-?,used=used+?,updated_at=? WHERE owner_id=? AND period_key=? AND reserved>=? AND used+?<=allowance")
+        .bind(input.operation.costUnits, input.operation.costUnits, now, input.operation.ownerId, input.operation.quotaPeriod, input.operation.costUnits, input.operation.costUnits),
       database.prepare("INSERT INTO ai_quota_assertions(id,ok) VALUES(?,CASE changes() WHEN 1 THEN 1 ELSE 0 END)").bind(`${assertion}:bucket`),
       database.prepare("DELETE FROM ai_quota_assertions WHERE id IN (?,?)").bind(assertion, `${assertion}:bucket`),
     ]);
@@ -155,7 +166,7 @@ export async function finalizeFailure(operation: AiOperation, failureCode: strin
     await database.batch([
       database.prepare("UPDATE ai_operations SET status='failed',failure_code=?,updated_at=? WHERE id=? AND owner_id=? AND status='reserved'").bind(failureCode.slice(0, 80), now.toISOString(), operation.id, operation.ownerId),
       database.prepare("INSERT INTO ai_quota_assertions(id,ok) VALUES(?,CASE changes() WHEN 1 THEN 1 ELSE 0 END)").bind(assertion),
-      database.prepare("UPDATE ai_quota_buckets SET reserved=reserved-1,updated_at=? WHERE owner_id=? AND period_key=? AND reserved>0").bind(now.toISOString(), operation.ownerId, operation.quotaPeriod),
+      database.prepare("UPDATE ai_quota_buckets SET reserved=reserved-?,updated_at=? WHERE owner_id=? AND period_key=? AND reserved>=?").bind(operation.costUnits, now.toISOString(), operation.ownerId, operation.quotaPeriod, operation.costUnits),
       database.prepare("INSERT INTO ai_quota_assertions(id,ok) VALUES(?,CASE changes() WHEN 1 THEN 1 ELSE 0 END)").bind(`${assertion}:bucket`),
       database.prepare("DELETE FROM ai_quota_assertions WHERE id IN (?,?)").bind(assertion, `${assertion}:bucket`),
     ]);

@@ -1,6 +1,7 @@
 import { getCloudflareContext } from "@opennextjs/cloudflare";
 import { PDF_PACK_ACCESS_DAYS, PDF_PACK_CURRENCY, PDF_PACK_DOWNLOAD_LIMIT, PDF_PACK_PRICE_CENTS, PDF_PACK_SKU, canIssueDownload, refundEligibility } from "./domain.ts";
 import { SUBSCRIPTION_PLANS, entitlementFromSubscription, refundEligibility as subscriptionRefundEligibility, subscriptionPlan, type NormalizedSubscriptionEvent, type ProviderSubscriptionStatus, type SubscriptionPlanId } from "./subscription.ts";
+import { capabilitiesForEntitlement, type ProductCapabilities } from "./capabilities.ts";
 
 export const commerceDb = (env?: Pick<CloudflareEnv, "LEARNING_DB">) => env?.LEARNING_DB ?? getCloudflareContext().env.LEARNING_DB;
 const nowIso = () => new Date().toISOString();
@@ -276,7 +277,7 @@ export async function requestSubscriptionRefund(input:{ownerId:string;chargeId:s
   const db=commerceDb(); const at=nowIso();
   const charge=await db.prepare(`SELECT * FROM subscription_charges WHERE id=? AND owner_id=? AND status='paid'`).bind(input.chargeId,input.ownerId).first<SubscriptionChargeRow>();
   if(!charge||!charge.charged_at) throw new Error("SUBSCRIPTION_CHARGE_NOT_ELIGIBLE");
-  const usage=await db.prepare(`SELECT COUNT(*) used FROM ai_operations WHERE owner_id=? AND status='succeeded' AND created_at>=?`).bind(input.ownerId,charge.charged_at).first<{used:number}>();
+  const usage=await db.prepare(`SELECT COALESCE(SUM(COALESCE(credit_units,cost_units)),0) used FROM ai_operations WHERE owner_id=? AND status='succeeded' AND created_at>=?`).bind(input.ownerId,charge.charged_at).first<{used:number}>();
   const used=Number(usage?.used??0); const eligibility=subscriptionRefundEligibility({chargedAt:charge.charged_at,aiCreditsUsed:used,alreadyRefunded:charge.amount_refunded_cents>0});
   if(!eligibility.eligible) throw new Error(eligibility.reason??"SUBSCRIPTION_REFUND_NOT_ELIGIBLE");
   const requestId=id("subref");
@@ -284,3 +285,8 @@ export async function requestSubscriptionRefund(input:{ownerId:string;chargeId:s
   return db.prepare(`SELECT id,charge_id,status,ai_credits_used,created_at FROM subscription_refund_requests WHERE owner_id=? AND charge_id=?`).bind(input.ownerId,charge.id).first();
 }
 export async function activeProEntitlement(ownerId:string,at=nowIso()){return commerceDb().prepare(`SELECT * FROM subscription_entitlements WHERE owner_id=? AND status='active' AND (ends_at IS NULL OR ends_at>?)`).bind(ownerId,at).first<Record<string,unknown>>();}
+
+export async function resolveCapabilities(ownerId: string, at = new Date()): Promise<ProductCapabilities> {
+  const entitlement = await commerceDb().prepare(`SELECT status,ends_at FROM subscription_entitlements WHERE owner_id=?`).bind(ownerId).first<{ status: "active" | "suspended" | "ended" | "revoked"; ends_at: string | null }>();
+  return capabilitiesForEntitlement(entitlement ? { status: entitlement.status, endsAt: entitlement.ends_at } : null, at);
+}

@@ -1,13 +1,14 @@
 import { getCloudflareContext } from "@opennextjs/cloudflare";
 import { NextRequest, NextResponse } from "next/server";
 import { requestIdentity } from "@/lib/account/identity";
-import { aiRuntimePolicy, buildExplanationPrompt, buildStudyPlanPrompt, nonAiExplanation, nonAiStudyPlan, parseAiOutput, type AiFeature } from "@/lib/ai/domain";
+import { productAiRuntimePolicy, buildExplanationPrompt, buildStudyPlanPrompt, nonAiExplanation, nonAiStudyPlan, parseAiOutput, type AiFeature } from "@/lib/ai/domain";
 import { callAiProvider, providerConfig } from "@/lib/ai/provider";
 import { readBoundedJsonObject } from "@/lib/ai/request";
 import { finalizeFailure, finalizeSuccess, quotaView, reserveOperation } from "@/lib/ai/storage";
 import { loadState } from "@/lib/learning/storage";
 import { trustedStep7Exercise } from "@/lib/learning/step7-content";
 import { latestPlan } from "@/lib/planner/storage";
+import { resolveCapabilities } from "@/lib/commercial/storage";
 
 async function owner() {
   const identity = await requestIdentity();
@@ -34,8 +35,9 @@ export async function GET() {
   if (!identity.account) return response({ error: "AI_ACCOUNT_REQUIRED", charged: false }, identity, 401);
   if (identity.account?.status === "deleted") return response({ error: "ACCOUNT_DELETED" }, identity, 403);
   const env = (await getCloudflareContext({ async: true })).env;
-  const policy = aiRuntimePolicy(env);
-  return response({ quota: await quotaView(identity.id, policy), scope: identity.account ? "account" : "guest" }, identity);
+  const capabilities = await resolveCapabilities(identity.id);
+  const policy = productAiRuntimePolicy(env, capabilities);
+  return response({ quota: await quotaView(identity.id, policy), capabilities, scope: identity.account ? "account" : "guest" }, identity);
 }
 
 export async function POST(req: NextRequest) {
@@ -43,7 +45,8 @@ export async function POST(req: NextRequest) {
   if (!identity.account) return response({ error: "AI_ACCOUNT_REQUIRED", charged: false }, identity, 401);
   if (identity.account?.status === "deleted") return response({ error: "ACCOUNT_DELETED" }, identity, 403);
   const env = (await getCloudflareContext({ async: true })).env;
-  const policy = aiRuntimePolicy(env);
+  const capabilities = await resolveCapabilities(identity.id);
+  const policy = productAiRuntimePolicy(env, capabilities);
   let body: Record<string, unknown>;
   try {
     body = await readBoundedJsonObject(req, 1024);
@@ -76,6 +79,10 @@ export async function POST(req: NextRequest) {
     anchor = `${plan.id}:v${plan.version}`;
   }
 
+  if (capabilities.tier !== "pro") {
+    return response({ error: "PRO_AI_REQUIRED", charged: false, fallback, capabilities, upgradeHref: "/pricing", quota: await quotaView(identity.id, policy) }, identity, 403);
+  }
+
   const requestHash = await hash(`${feature}:${anchor}`);
   let reserved: Awaited<ReturnType<typeof reserveOperation>>;
   try {
@@ -83,8 +90,8 @@ export async function POST(req: NextRequest) {
   } catch (error) {
     const code = error instanceof Error ? error.message : "AI_RESERVATION_FAILED";
     const status = code === "ACCOUNT_DELETED" ? 403 : code === "AI_QUOTA_EXHAUSTED" || code === "AI_RATE_LIMITED" ? 429 : code === "AI_IDEMPOTENCY_CONFLICT" || code === "AI_REQUEST_IN_PROGRESS" ? 409 : 503;
-    const retryAt = code === "AI_RATE_LIMITED" ? new Date(Date.now() + 60_000).toISOString() : undefined;
-    return response({ error: code, charged: false, fallback, quota: await quotaView(identity.id, policy), retryAt }, identity, status, retryAt ? { "retry-after": "60" } : {});
+    const retryAt = code === "AI_RATE_LIMITED" ? new Date(Date.now() + 3_600_000).toISOString() : undefined;
+    return response({ error: code, charged: false, fallback, quota: await quotaView(identity.id, policy), retryAt }, identity, status, retryAt ? { "retry-after": "3600" } : {});
   }
   const operation = reserved.operation;
   if (reserved.replayed) {

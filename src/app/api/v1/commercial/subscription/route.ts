@@ -2,7 +2,7 @@ import { getCloudflareContext } from "@opennextjs/cloudflare";
 import { NextRequest, NextResponse } from "next/server";
 import { accountOwnerId, requestIdentity } from "@/lib/account/identity";
 import { subscriptionCommercePolicy } from "@/lib/commercial/domain";
-import { markSubscriptionCancelAtPeriodEnd, requestSubscriptionRefund, subscriptionSummaryForOwner } from "@/lib/commercial/storage";
+import { markSubscriptionCancelAtPeriodEnd, requestSubscriptionRefund, resolveCapabilities, subscriptionSummaryForOwner } from "@/lib/commercial/storage";
 import { cancelStripeSubscriptionAtPeriodEnd } from "@/lib/commercial/stripe";
 
 async function context(){
@@ -19,7 +19,8 @@ const publicSummary=(value:Awaited<ReturnType<typeof subscriptionSummaryForOwner
 
 export async function GET(){
   const identity=await context(); if(!identity) return NextResponse.json({error:"ACCOUNT_REQUIRED"},{status:401});
-  return NextResponse.json(publicSummary(await subscriptionSummaryForOwner(identity.ownerId)),{headers:{"cache-control":"no-store"}});
+  const [summary,capabilities]=await Promise.all([subscriptionSummaryForOwner(identity.ownerId),resolveCapabilities(identity.ownerId)]);
+  return NextResponse.json({...publicSummary(summary),capabilities},{headers:{"cache-control":"no-store"}});
 }
 
 export async function POST(req:NextRequest){
