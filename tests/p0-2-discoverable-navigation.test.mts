@@ -9,14 +9,14 @@ const pricing = read("../src/app/pricing/page.tsx");
 
 test("P0-2 exposes one frozen information architecture on desktop and mobile", async () => {
   const { siteNavigation, flattenNavigation } = await import("../src/app/site-navigation.ts");
-  assert.deepEqual(siteNavigation.map((entry) => entry.label), ["Learn", "Practice", "Tests", "Dictionary", "Pricing", "Sign in"]);
+  assert.deepEqual(siteNavigation.map((entry) => entry.label), ["Learn", "Practice", "Tests", "Dictionary", "Pricing", "Store", "Sign in"]);
   assert.deepEqual(siteNavigation[0].items?.map((item) => item.label), ["Today", "Planner", "Levels", "Vocabulary", "Grammar", "Reading", "Listening"]);
   assert.deepEqual(siteNavigation[1].items?.map((item) => item.label), ["Practice", "Review", "Mistakes"]);
   assert.deepEqual(siteNavigation[2].items?.map((item) => item.label), ["Placement", "Basic Mock", "Advanced Mock"]);
   assert.deepEqual(flattenNavigation().map((item) => item.href), [
     "/today", "/planner", "/levels", "/vocabulary/1", "/grammar", "/reading", "/listen",
     "/practice", "/review", "/mistakes", "/placement", "/mock/basic", "/mock/advanced",
-    "/dictionary", "/pricing", "/account",
+    "/dictionary", "/pricing", "/store", "/account",
   ]);
   const hrefs = flattenNavigation().map((item) => item.href);
   assert.equal(new Set(hrefs).size, hrefs.length, "the shared navigation must not contain duplicate destinations");
@@ -38,11 +38,12 @@ test("P0-2 grouped navigation keeps accessible responsive behavior", () => {
 
 test("P0-2 homepage and pricing expose truthful entry boundaries", () => {
   assert.match(home, /href="\/(?:placement|today)"/);
-  assert.match(pricing, /href="\/pdf-packs"/);
+  assert.match(pricing, /href="\/store"/);
   assert.match(pricing, /Stripe Test mode/i);
   assert.match(pricing, /account-based Pro entitlement/i);
   assert.match(pricing, /no live card charge is enabled/i);
-  assert.match(pricing, /no PDF Pack checkout is open/i);
+  assert.match(pricing, /Advanced Study PDF Pack/i);
+  assert.match(pricing, /one-time/i);
 });
 
 test("P0-2 every frozen destination has a real route", async () => {
