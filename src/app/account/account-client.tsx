@@ -21,6 +21,7 @@ export default function AccountClient() {
   const [merge, setMerge] = useState<MergePreview>();
   const [streak, setStreak] = useState<any>();
   const [sync, setSync] = useState<any>();
+  const [subscription, setSubscription] = useState<any>();
   const [busy, setBusy] = useState(false);
   const [timezone, setTimezone] = useState("UTC");
 
@@ -30,9 +31,10 @@ export default function AccountClient() {
       setView(data);
       if (data.account?.timezone) setTimezone(data.account.timezone);
       if (data.account?.status === "active") {
-        const [streakData, syncData] = await Promise.all([json("/api/v1/account/streak"), json("/api/v1/account/sync")]);
+        const [streakData, syncData, subscriptionData] = await Promise.all([json("/api/v1/account/streak"), json("/api/v1/account/sync"), json("/api/v1/commercial/subscription")]);
         setStreak(streakData);
         setSync(syncData);
+        setSubscription(subscriptionData);
       }
     } catch (cause) { setError(cause instanceof Error ? cause.message : "LOAD_FAILED"); }
   };
@@ -73,6 +75,11 @@ export default function AccountClient() {
     finally { setBusy(false); }
   };
 
+  const manageSubscription = async (action: "cancel" | "request_refund") => {
+    const success = action === "cancel" ? "Subscription will end at the current period end." : "Refund request submitted for review.";
+    await act(() => json("/api/v1/commercial/subscription", { method: "POST", body: JSON.stringify({ action, idempotencyKey: crypto.randomUUID(), reason: "Requested from Account billing" }) }), success);
+  };
+
   if (!view) return <div className="state" role="status"><h2>Loading account…</h2><p>Checking your secure server-side account state.</p></div>;
 
   return <>
@@ -99,6 +106,16 @@ export default function AccountClient() {
         <p>Server revision: <strong>{sync?.revision ?? "—"}</strong></p>
         <p>{sync?.conflicts?.length ? `${sync.conflicts.length} conflict audit record(s). Reload before retrying a stale change.` : "No recorded sync conflicts."}</p>
         <button className="btn" disabled={busy} onClick={checkpoint}>Check sync</button>
+      </section>
+      <section className="card">
+        <h2>Billing</h2>
+        {!subscription?.subscription ? <><p>You are on Free. Monthly and yearly Pro use the same account entitlement.</p><Link className="btn" href="/pricing">View Pro pricing</Link></> : <>
+          <p><strong>{subscription.subscription.planId === "pro_yearly" ? "Pro Yearly" : "Pro Monthly"}</strong> · {subscription.subscription.status}</p>
+          <p>Entitlement: <strong>{subscription.entitlement?.status ?? "pending"}</strong>{subscription.subscription.currentPeriodEnd ? ` · Current period ends ${new Date(subscription.subscription.currentPeriodEnd).toLocaleDateString()}` : ""}</p>
+          {subscription.subscription.cancelAtPeriodEnd ? <p className="account-note">Cancellation is scheduled. Pro access remains available through the current period end.</p> : ["active","trialing"].includes(subscription.subscription.status) && <button className="btn secondary" disabled={busy} onClick={() => void manageSubscription("cancel")}>Cancel at period end</button>}
+          {subscription.latestCharge?.status === "paid" && <button className="btn secondary" disabled={busy} onClick={() => void manageSubscription("request_refund")}>Request eligible refund</button>}
+          <p className="account-note">Refund review: within 7 days of the charge and no more than 10 AI credits used. An approved full refund revokes Pro access through Stripe webhook confirmation.</p>
+        </>}
       </section>
       <section className="card account-form">
         <h2>Learning timezone</h2>

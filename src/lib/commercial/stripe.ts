@@ -1,11 +1,26 @@
 import { PDF_PACK_CURRENCY, PDF_PACK_PRICE_CENTS, PDF_PACK_SKU } from "./domain.ts";
+import { buildSubscriptionCheckoutForm, type SubscriptionPlanId } from "./subscription.ts";
+
+const STRIPE_VERSION = "2024-06-20";
 
 const stripeFetch = async (path: string, secret: string, form: URLSearchParams, idempotencyKey?: string) => {
   if (!secret.startsWith("sk_test_")) throw new Error("STRIPE_TEST_KEY_REQUIRED");
   const response = await fetch(`https://api.stripe.com/v1/${path}`, {
     method: "POST",
-    headers: { authorization: `Bearer ${secret}`, "content-type": "application/x-www-form-urlencoded", ...(idempotencyKey ? { "idempotency-key": idempotencyKey } : {}) },
+    headers: { authorization: `Bearer ${secret}`, "content-type": "application/x-www-form-urlencoded", "Stripe-Version": STRIPE_VERSION, ...(idempotencyKey ? { "idempotency-key": idempotencyKey } : {}) },
     body: form,
+  });
+  const value = await response.json() as Record<string, unknown>;
+  if (!response.ok) throw new Error(`STRIPE_API_ERROR:${String((value.error as Record<string,unknown> | undefined)?.code ?? response.status)}`);
+  if (value.livemode === true) throw new Error("STRIPE_LIVE_RESPONSE_REJECTED");
+  return value;
+};
+
+const stripeDelete = async (path: string, secret: string, idempotencyKey: string) => {
+  if (!secret.startsWith("sk_test_")) throw new Error("STRIPE_TEST_KEY_REQUIRED");
+  const response = await fetch(`https://api.stripe.com/v1/${path}`, {
+    method: "DELETE",
+    headers: { authorization: `Bearer ${secret}`, "Stripe-Version": STRIPE_VERSION, "idempotency-key": idempotencyKey },
   });
   const value = await response.json() as Record<string, unknown>;
   if (!response.ok) throw new Error(`STRIPE_API_ERROR:${String((value.error as Record<string,unknown> | undefined)?.code ?? response.status)}`);
@@ -26,6 +41,26 @@ export async function createStripeTestCheckout(input: { orderId: string; userId:
   const result = await stripeFetch("checkout/sessions", input.secret, form, `checkout:${input.orderId}`);
   if (typeof result.id !== "string" || typeof result.url !== "string") throw new Error("STRIPE_CHECKOUT_INVALID");
   return { id: result.id, url: result.url };
+}
+
+export async function createStripeSubscriptionCheckout(input:{orderId:string;ownerId:string;userId:string;planId:SubscriptionPlanId;origin:string;secret:string;priceId?:string}){
+  const form=buildSubscriptionCheckoutForm({planId:input.planId,priceId:input.priceId,ownerId:input.ownerId,userId:input.userId,orderId:input.orderId,origin:input.origin});
+  const result=await stripeFetch("checkout/sessions",input.secret,form,`subscription-checkout:${input.orderId}`);
+  if(typeof result.id!=="string"||typeof result.url!=="string"||!result.id.startsWith("cs_test_")) throw new Error("STRIPE_SUBSCRIPTION_CHECKOUT_INVALID");
+  return {id:result.id,url:result.url};
+}
+
+export async function cancelStripeSubscriptionAtPeriodEnd(input:{subscriptionId:string;secret:string;idempotencyKey:string}){
+  const result=await stripeFetch(`subscriptions/${encodeURIComponent(input.subscriptionId)}`,input.secret,new URLSearchParams({cancel_at_period_end:"true"}),input.idempotencyKey);
+  if(typeof result.id!=="string"||result.cancel_at_period_end!==true) throw new Error("STRIPE_SUBSCRIPTION_CANCEL_INVALID");
+  const periodEnd=typeof result.current_period_end==="number"?new Date(result.current_period_end*1000).toISOString():undefined;
+  return {id:result.id,status:String(result.status??"active"),cancelAtPeriodEnd:true,periodEnd};
+}
+
+export async function cancelStripeSubscriptionImmediately(input:{subscriptionId:string;secret:string;idempotencyKey:string}){
+  const result=await stripeDelete(`subscriptions/${encodeURIComponent(input.subscriptionId)}`,input.secret,input.idempotencyKey);
+  if(typeof result.id!=="string"||result.status!=="canceled") throw new Error("STRIPE_SUBSCRIPTION_CANCEL_INVALID");
+  return {id:result.id,status:"canceled" as const};
 }
 
 export async function createStripeTestRefund(input: { paymentIntentId: string; secret: string; idempotencyKey: string }) {

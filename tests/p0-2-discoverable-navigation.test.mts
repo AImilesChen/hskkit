@@ -9,7 +9,7 @@ const pricing = read("../src/app/pricing/page.tsx");
 
 test("P0-2 exposes one frozen information architecture on desktop and mobile", async () => {
   const { siteNavigation, flattenNavigation } = await import("../src/app/site-navigation.ts");
-  assert.deepEqual(siteNavigation.map((entry) => entry.label), ["Learn", "Practice", "Tests", "Dictionary", "Pricing", "Account"]);
+  assert.deepEqual(siteNavigation.map((entry) => entry.label), ["Learn", "Practice", "Tests", "Dictionary", "Pricing", "Sign in"]);
   assert.deepEqual(siteNavigation[0].items?.map((item) => item.label), ["Today", "Planner", "Levels", "Vocabulary", "Grammar", "Reading", "Listening"]);
   assert.deepEqual(siteNavigation[1].items?.map((item) => item.label), ["Practice", "Review", "Mistakes"]);
   assert.deepEqual(siteNavigation[2].items?.map((item) => item.label), ["Placement", "Basic Mock", "Advanced Mock"]);
@@ -39,9 +39,10 @@ test("P0-2 grouped navigation keeps accessible responsive behavior", () => {
 test("P0-2 homepage and pricing expose truthful entry boundaries", () => {
   assert.match(home, /href="\/(?:placement|today)"/);
   assert.match(pricing, /href="\/pdf-packs"/);
-  assert.match(pricing, /Current offer/i);
-  assert.match(pricing, /account required before purchase/i);
-  assert.match(pricing, /purchase availability/i);
+  assert.match(pricing, /Stripe Test mode/i);
+  assert.match(pricing, /account-based Pro entitlement/i);
+  assert.match(pricing, /no live card charge is enabled/i);
+  assert.match(pricing, /no PDF Pack checkout is open/i);
 });
 
 test("P0-2 every frozen destination has a real route", async () => {

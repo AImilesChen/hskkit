@@ -1,5 +1,6 @@
 import { getCloudflareContext } from "@opennextjs/cloudflare";
 import { PDF_PACK_ACCESS_DAYS, PDF_PACK_CURRENCY, PDF_PACK_DOWNLOAD_LIMIT, PDF_PACK_PRICE_CENTS, PDF_PACK_SKU, canIssueDownload, refundEligibility } from "./domain.ts";
+import { SUBSCRIPTION_PLANS, entitlementFromSubscription, refundEligibility as subscriptionRefundEligibility, subscriptionPlan, type NormalizedSubscriptionEvent, type ProviderSubscriptionStatus, type SubscriptionPlanId } from "./subscription.ts";
 
 export const commerceDb = (env?: Pick<CloudflareEnv, "LEARNING_DB">) => env?.LEARNING_DB ?? getCloudflareContext().env.LEARNING_DB;
 const nowIso = () => new Date().toISOString();
@@ -129,3 +130,97 @@ export async function requestRefund(userId:string,orderId:string) {
     db.prepare(`UPDATE commerce_orders SET status='refund_requested',updated_at=? WHERE id=? AND status='paid'`).bind(at,orderId),
   ]); return db.prepare(`SELECT * FROM commercial_refund_requests WHERE order_id=?`).bind(orderId).first();
 }
+
+export type SubscriptionOrderRow = { id:string; owner_id:string; user_id:string; plan_id:SubscriptionPlanId; amount_cents:number; currency:string; status:string; idempotency_key:string; provider_checkout_session_id:string|null; provider_checkout_url:string|null; provider_customer_id:string|null; provider_subscription_id:string|null; created_at:string; updated_at:string };
+export type SubscriptionRow = { id:string; owner_id:string; user_id:string; plan_id:SubscriptionPlanId; status:ProviderSubscriptionStatus; cancel_at_period_end:number; current_period_start:string|null; current_period_end:string|null; provider_customer_id:string; provider_subscription_id:string; source_order_id:string|null; created_at:string; updated_at:string };
+export type SubscriptionChargeRow = { id:string; subscription_id:string; owner_id:string; provider_invoice_id:string; provider_payment_intent_id:string|null; provider_charge_id:string|null; amount_cents:number; amount_refunded_cents:number; currency:string; status:string; charged_at:string|null; created_at:string; updated_at:string };
+
+export async function createSubscriptionOrder(input:{ownerId:string;userId:string;planId:SubscriptionPlanId;idempotencyKey:string}) {
+  const db=commerceDb(); const at=nowIso(); const plan=SUBSCRIPTION_PLANS[input.planId]; const orderId=id("subord");
+  await db.prepare(`INSERT OR IGNORE INTO subscription_orders (id,owner_id,user_id,plan_id,amount_cents,currency,status,idempotency_key,created_at,updated_at) VALUES (?,?,?,?,?,?,'pending',?,?,?)`)
+    .bind(orderId,input.ownerId,input.userId,input.planId,plan.amountCents,plan.currency,input.idempotencyKey,at,at).run();
+  const order=await db.prepare(`SELECT * FROM subscription_orders WHERE owner_id=? AND idempotency_key=?`).bind(input.ownerId,input.idempotencyKey).first<SubscriptionOrderRow>();
+  if(!order) throw new Error("SUBSCRIPTION_ORDER_NOT_CREATED");
+  if(order.plan_id!==input.planId) throw new Error("IDEMPOTENCY_CONFLICT");
+  return order;
+}
+export async function openSubscriptionCheckout(ownerId:string,planId:SubscriptionPlanId){return commerceDb().prepare(`SELECT * FROM subscription_orders WHERE owner_id=? AND plan_id=? AND status='checkout_created' AND provider_checkout_url IS NOT NULL AND updated_at>? ORDER BY updated_at DESC LIMIT 1`).bind(ownerId,planId,new Date(Date.now()-24*60*60*1000).toISOString()).first<SubscriptionOrderRow>();}
+export async function attachSubscriptionCheckout(orderId:string,checkoutSessionId:string,checkoutUrl:string){await commerceDb().prepare(`UPDATE subscription_orders SET status='checkout_created',provider_checkout_session_id=?,provider_checkout_url=?,updated_at=? WHERE id=? AND status IN ('pending','checkout_created','failed')`).bind(checkoutSessionId,checkoutUrl,nowIso(),orderId).run();}
+export async function markSubscriptionOrderFailed(orderId:string){await commerceDb().prepare(`UPDATE subscription_orders SET status='failed',updated_at=? WHERE id=? AND status IN ('pending','checkout_created')`).bind(nowIso(),orderId).run();}
+
+export async function claimPaymentEvent(input:{eventId:string;eventType:string;livemode:boolean;payloadSha256:string}) {
+  if(input.livemode) throw new Error("LIVE_EVENT_REJECTED");
+  const at=nowIso(); const db=commerceDb(); const claimToken=id("whclaim");
+  const existing=await db.prepare(`SELECT outcome,processed_at FROM payment_events WHERE event_id=?`).bind(input.eventId).first<{outcome:string;processed_at:string}>();
+  if(existing?.outcome==="processed"||existing?.outcome==="ignored") return {state:"duplicate" as const};
+  const staleBefore=new Date(Date.now()-5*60*1000).toISOString();
+  if(existing?.outcome==="processing"&&existing.processed_at>staleBefore) return {state:"busy" as const};
+  if(existing){const retried=await db.prepare(`UPDATE payment_events SET event_type=?,payload_sha256=?,outcome='processing',processed_at=?,claim_token=? WHERE event_id=? AND (outcome='failed' OR (outcome='processing' AND processed_at<=?))`).bind(input.eventType,input.payloadSha256,at,claimToken,input.eventId,staleBefore).run();return retried.meta.changes===1?{state:"claimed" as const,claimToken}:{state:"busy" as const};}
+  const result=await db.prepare(`INSERT OR IGNORE INTO payment_events(event_id,event_type,livemode,payload_sha256,processed_at,outcome,claim_token) VALUES(?,?,0,?,?,'processing',?)`).bind(input.eventId,input.eventType,input.payloadSha256,at,claimToken).run();
+  if(result.meta.changes===1) return {state:"claimed" as const,claimToken};
+  return {state:"busy" as const};
+}
+export async function finalizePaymentEvent(eventId:string,claimToken:string,outcome:"processed"|"ignored"|"failed"){const result=await commerceDb().prepare(`UPDATE payment_events SET outcome=?,processed_at=?,claim_token=NULL WHERE event_id=? AND outcome='processing' AND claim_token=?`).bind(outcome,nowIso(),eventId,claimToken).run();if(result.meta.changes!==1) throw new Error("WEBHOOK_CLAIM_LOST");}
+
+export async function applySubscriptionEvent(event:NormalizedSubscriptionEvent){
+  const db=commerceDb(); const at=nowIso();
+  if(event.kind==="checkout_completed"){
+    const order=await db.prepare(`SELECT * FROM subscription_orders WHERE id=?`).bind(event.orderId).first<SubscriptionOrderRow>();
+    const plan=SUBSCRIPTION_PLANS[event.planId];
+    if(!order||order.user_id!==event.userId||order.owner_id!==event.ownerId||order.owner_id!==`user:${event.userId}`||order.plan_id!==event.planId||order.amount_cents!==plan.amountCents||order.amount_cents!==event.amountCents||order.currency!==plan.currency||order.currency!==event.currency||(order.provider_checkout_session_id&&order.provider_checkout_session_id!==event.checkoutSessionId)||(order.provider_customer_id&&order.provider_customer_id!==event.customerId)||(order.provider_subscription_id&&order.provider_subscription_id!==event.subscriptionId)) throw new Error("SUBSCRIPTION_ORDER_METADATA_MISMATCH");
+    if(order.status==="refunded") return;
+    const updated=await db.prepare(`UPDATE subscription_orders SET status='completed',provider_checkout_session_id=?,provider_customer_id=?,provider_subscription_id=?,updated_at=? WHERE id=? AND user_id=? AND plan_id=? AND status<>'refunded'`).bind(event.checkoutSessionId,event.customerId,event.subscriptionId,at,event.orderId,event.userId,event.planId).run();
+    if(updated.meta.changes!==1) throw new Error("SUBSCRIPTION_ORDER_UPDATE_FAILED"); return;
+  }
+  if(event.kind==="subscription_updated"){
+    const order=await db.prepare(`SELECT * FROM subscription_orders WHERE (id=? AND ?<>'') OR provider_subscription_id=? ORDER BY CASE WHEN id=? THEN 0 ELSE 1 END LIMIT 1`).bind(event.orderId??"",event.orderId??"",event.subscriptionId,event.orderId??"").first<SubscriptionOrderRow>();
+    const plan=SUBSCRIPTION_PLANS[event.planId];
+    if(!order||order.user_id!==event.userId||order.owner_id!==event.ownerId||order.owner_id!==`user:${event.userId}`||order.plan_id!==event.planId||order.amount_cents!==plan.amountCents||order.amount_cents!==event.amountCents||order.currency!==plan.currency||order.currency!==event.currency||(order.provider_customer_id&&order.provider_customer_id!==event.customerId)||(order.provider_subscription_id&&order.provider_subscription_id!==event.subscriptionId)) throw new Error("SUBSCRIPTION_ORDER_METADATA_MISMATCH");
+    if(order.status==="refunded") return;
+    const ownerId=order.owner_id; const subId=`sub_${event.subscriptionId}`; const entitlement=entitlementFromSubscription({status:event.status,currentPeriodEnd:event.currentPeriodEnd,cancelAtPeriodEnd:event.cancelAtPeriodEnd},new Date(at));
+    await db.batch([
+      db.prepare(`INSERT INTO subscriptions(id,owner_id,user_id,plan_id,status,cancel_at_period_end,current_period_start,current_period_end,provider_customer_id,provider_subscription_id,source_order_id,created_at,updated_at) SELECT ?,?,?,?,?,?,?,?,?,?,?,?,? WHERE NOT EXISTS (SELECT 1 FROM subscription_orders WHERE id=? AND status='refunded') ON CONFLICT(provider_subscription_id) DO UPDATE SET plan_id=excluded.plan_id,status=excluded.status,cancel_at_period_end=excluded.cancel_at_period_end,current_period_start=excluded.current_period_start,current_period_end=excluded.current_period_end,provider_customer_id=excluded.provider_customer_id,updated_at=excluded.updated_at WHERE NOT EXISTS (SELECT 1 FROM subscription_orders WHERE id=excluded.source_order_id AND status='refunded')`).bind(subId,ownerId,event.userId,event.planId,event.status,event.cancelAtPeriodEnd?1:0,event.currentPeriodStart??null,event.currentPeriodEnd??null,event.customerId,event.subscriptionId,order.id,at,at,order.id),
+      db.prepare(`INSERT INTO subscription_entitlements(owner_id,subscription_id,plan_id,status,starts_at,ends_at,revoked_at,revocation_reason,updated_at) SELECT ?,?,?,?,?,?,?,?,? WHERE NOT EXISTS (SELECT 1 FROM subscription_orders WHERE id=? AND status='refunded') ON CONFLICT(owner_id) DO UPDATE SET subscription_id=CASE WHEN subscription_entitlements.revocation_reason='refund' AND subscription_entitlements.subscription_id=excluded.subscription_id THEN subscription_entitlements.subscription_id ELSE excluded.subscription_id END,plan_id=CASE WHEN subscription_entitlements.revocation_reason='refund' AND subscription_entitlements.subscription_id=excluded.subscription_id THEN subscription_entitlements.plan_id ELSE excluded.plan_id END,status=CASE WHEN subscription_entitlements.revocation_reason='refund' AND subscription_entitlements.subscription_id=excluded.subscription_id THEN 'revoked' ELSE excluded.status END,ends_at=CASE WHEN subscription_entitlements.revocation_reason='refund' AND subscription_entitlements.subscription_id=excluded.subscription_id THEN subscription_entitlements.ends_at ELSE excluded.ends_at END,revoked_at=CASE WHEN subscription_entitlements.revocation_reason='refund' AND subscription_entitlements.subscription_id=excluded.subscription_id THEN subscription_entitlements.revoked_at ELSE excluded.revoked_at END,revocation_reason=CASE WHEN subscription_entitlements.revocation_reason='refund' AND subscription_entitlements.subscription_id=excluded.subscription_id THEN subscription_entitlements.revocation_reason ELSE excluded.revocation_reason END,updated_at=excluded.updated_at WHERE NOT EXISTS (SELECT 1 FROM subscription_orders WHERE id=? AND status='refunded')`).bind(ownerId,subId,event.planId,entitlement.status,event.currentPeriodStart??at,entitlement.endsAt??null,null,null,at,order.id,order.id),
+      db.prepare(`UPDATE subscription_orders SET status=CASE WHEN ? IN ('active','trialing') THEN 'completed' ELSE status END,provider_customer_id=?,provider_subscription_id=?,updated_at=? WHERE id=? AND status<>'refunded'`).bind(event.status,event.customerId,event.subscriptionId,at,order.id),
+    ]); return;
+  }
+  if(event.kind==="invoice_paid"||event.kind==="invoice_payment_failed"){
+    const sub=await db.prepare(`SELECT s.*,o.status source_order_status FROM subscriptions s LEFT JOIN subscription_orders o ON o.id=s.source_order_id WHERE s.provider_subscription_id=?`).bind(event.subscriptionId).first<SubscriptionRow & {source_order_status:string|null}>(); if(!sub) throw new Error("SUBSCRIPTION_NOT_FOUND");
+    if(sub.source_order_status==="refunded") return;
+    const plan=subscriptionPlan(sub.plan_id); if(!plan||event.customerId!==sub.provider_customer_id||event.amountCents!==plan.amountCents||event.currency!==plan.currency) throw new Error("SUBSCRIPTION_INVOICE_MISMATCH");
+    const chargeId=`charge_${event.invoiceId}`; const status=event.kind==="invoice_paid"?"paid":"failed";
+    const statements=[db.prepare(`INSERT INTO subscription_charges(id,subscription_id,owner_id,provider_invoice_id,provider_payment_intent_id,provider_charge_id,amount_cents,amount_refunded_cents,currency,status,charged_at,created_at,updated_at) VALUES(?,?,?,?,?,?,?,0,?,?,?,?,?) ON CONFLICT(provider_invoice_id) DO UPDATE SET provider_payment_intent_id=excluded.provider_payment_intent_id,provider_charge_id=excluded.provider_charge_id,amount_cents=excluded.amount_cents,status=excluded.status,charged_at=excluded.charged_at,updated_at=excluded.updated_at`).bind(chargeId,sub.id,sub.owner_id,event.invoiceId,event.paymentIntentId??null,event.chargeId??null,event.amountCents,event.currency,status,event.chargedAt??null,at,at)];
+    if(event.kind==="invoice_payment_failed") statements.push(db.prepare(`UPDATE subscriptions SET status='past_due',updated_at=? WHERE id=? AND NOT EXISTS (SELECT 1 FROM subscription_orders WHERE id=subscriptions.source_order_id AND status='refunded')`).bind(at,sub.id),db.prepare(`UPDATE subscription_entitlements SET status='suspended',updated_at=? WHERE owner_id=? AND subscription_id=? AND NOT EXISTS (SELECT 1 FROM subscriptions s JOIN subscription_orders o ON o.id=s.source_order_id WHERE s.id=? AND o.status='refunded')`).bind(at,sub.owner_id,sub.id,sub.id));
+    await db.batch(statements); return;
+  }
+  if(event.kind==="charge_refunded"){
+    const charge=await db.prepare(`SELECT * FROM subscription_charges WHERE provider_charge_id=? OR provider_payment_intent_id=? ORDER BY created_at DESC LIMIT 1`).bind(event.chargeId,event.paymentIntentId??"").first<SubscriptionChargeRow>(); if(!charge) throw new Error("SUBSCRIPTION_CHARGE_NOT_FOUND");
+    if(event.currency!==charge.currency||event.amountRefundedCents>charge.amount_cents) throw new Error("SUBSCRIPTION_REFUND_MISMATCH");
+    const status=event.amountRefundedCents===charge.amount_cents?"refunded":"partially_refunded";
+    const statements=[db.prepare(`UPDATE subscription_charges SET amount_refunded_cents=?,status=?,updated_at=? WHERE id=?`).bind(event.amountRefundedCents,status,at,charge.id)];
+    if(status==="refunded") statements.push(db.prepare(`UPDATE subscription_entitlements SET status='revoked',revoked_at=?,revocation_reason='refund',ends_at=?,updated_at=? WHERE subscription_id=?`).bind(at,at,at,charge.subscription_id),db.prepare(`UPDATE subscriptions SET status='canceled',cancel_at_period_end=0,current_period_end=?,updated_at=? WHERE id=?`).bind(at,at,charge.subscription_id),db.prepare(`UPDATE subscription_orders SET status='refunded',updated_at=? WHERE provider_subscription_id=(SELECT provider_subscription_id FROM subscriptions WHERE id=?)`).bind(at,charge.subscription_id),db.prepare(`UPDATE subscription_refund_requests SET status='processed',updated_at=? WHERE charge_id=? AND status IN ('requested','approved')`).bind(at,charge.id));
+    await db.batch(statements); return;
+  }
+}
+
+export async function subscriptionSummaryForOwner(ownerId:string){
+  const db=commerceDb();
+  const latestOrder=await db.prepare(`SELECT * FROM subscription_orders WHERE owner_id=? ORDER BY created_at DESC LIMIT 1`).bind(ownerId).first<SubscriptionOrderRow>();
+  const subscription=await db.prepare(`SELECT * FROM subscriptions WHERE owner_id=? ORDER BY updated_at DESC LIMIT 1`).bind(ownerId).first<SubscriptionRow>();
+  const entitlement=await db.prepare(`SELECT * FROM subscription_entitlements WHERE owner_id=?`).bind(ownerId).first<Record<string,unknown>>();
+  const latestCharge=subscription?await db.prepare(`SELECT * FROM subscription_charges WHERE subscription_id=? ORDER BY created_at DESC LIMIT 1`).bind(subscription.id).first<SubscriptionChargeRow>():null;
+  return {latestOrder:latestOrder??null,subscription:subscription??null,entitlement:entitlement??null,latestCharge:latestCharge??null};
+}
+export async function markSubscriptionCancelAtPeriodEnd(providerSubscriptionId:string,currentPeriodEnd?:string){const at=nowIso();await commerceDb().batch([commerceDb().prepare(`UPDATE subscriptions SET cancel_at_period_end=1,current_period_end=COALESCE(?,current_period_end),updated_at=? WHERE provider_subscription_id=?`).bind(currentPeriodEnd??null,at,providerSubscriptionId),commerceDb().prepare(`UPDATE subscription_entitlements SET ends_at=COALESCE(?,ends_at),updated_at=? WHERE subscription_id=(SELECT id FROM subscriptions WHERE provider_subscription_id=?)`).bind(currentPeriodEnd??null,at,providerSubscriptionId)]);}
+export async function requestSubscriptionRefund(input:{ownerId:string;chargeId:string;reason:string}){
+  const db=commerceDb(); const at=nowIso();
+  const charge=await db.prepare(`SELECT * FROM subscription_charges WHERE id=? AND owner_id=? AND status='paid'`).bind(input.chargeId,input.ownerId).first<SubscriptionChargeRow>();
+  if(!charge||!charge.charged_at) throw new Error("SUBSCRIPTION_CHARGE_NOT_ELIGIBLE");
+  const usage=await db.prepare(`SELECT COUNT(*) used FROM ai_operations WHERE owner_id=? AND status='succeeded' AND created_at>=?`).bind(input.ownerId,charge.charged_at).first<{used:number}>();
+  const used=Number(usage?.used??0); const eligibility=subscriptionRefundEligibility({chargedAt:charge.charged_at,aiCreditsUsed:used,alreadyRefunded:charge.amount_refunded_cents>0});
+  if(!eligibility.eligible) throw new Error(eligibility.reason??"SUBSCRIPTION_REFUND_NOT_ELIGIBLE");
+  const requestId=id("subref");
+  await db.prepare(`INSERT OR IGNORE INTO subscription_refund_requests(id,owner_id,charge_id,reason,ai_credits_used,status,created_at,updated_at) VALUES(?,?,?,?,?,'requested',?,?)`).bind(requestId,input.ownerId,charge.id,input.reason.slice(0,500),used,at,at).run();
+  return db.prepare(`SELECT id,charge_id,status,ai_credits_used,created_at FROM subscription_refund_requests WHERE owner_id=? AND charge_id=?`).bind(input.ownerId,charge.id).first();
+}
+export async function activeProEntitlement(ownerId:string,at=nowIso()){return commerceDb().prepare(`SELECT * FROM subscription_entitlements WHERE owner_id=? AND status='active' AND (ends_at IS NULL OR ends_at>?)`).bind(ownerId,at).first<Record<string,unknown>>();}

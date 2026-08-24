@@ -31,6 +31,7 @@ export default function SiteFooter() {
         <div className="mt-6 flex flex-wrap justify-center gap-x-6 gap-y-2">
           <Link href="/privacy-policy" className="inline-flex min-h-11 items-center text-sm text-slate-500 hover:text-slate-900">Privacy Policy</Link>
           <Link href="/terms-of-service" className="inline-flex min-h-11 items-center text-sm text-slate-500 hover:text-slate-900">Terms of Service</Link>
+          <Link href="/refund-policy" className="inline-flex min-h-11 items-center text-sm text-slate-500 hover:text-slate-900">Refund Policy</Link>
           <Link href="/disclaimer" className="inline-flex min-h-11 items-center text-sm text-slate-500 hover:text-slate-900">Disclaimer</Link>
           <Link href="/contact" className="inline-flex min-h-11 items-center text-sm text-slate-500 hover:text-slate-900">Contact</Link>
         </div>
