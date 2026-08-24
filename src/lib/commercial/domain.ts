@@ -6,6 +6,11 @@ export const PDF_PACK_ACCESS_DAYS = 14;
 export const PDF_PACK_REFUND_DAYS = 7;
 
 export type CommerceEnv = { COMMERCE_MODE?: string; STRIPE_SECRET_KEY?: string; EXPORT_SIGNING_SECRET?: string };
+export function subscriptionCommercePolicy(env: Pick<CommerceEnv, "COMMERCE_MODE" | "STRIPE_SECRET_KEY">) {
+  if (env.COMMERCE_MODE !== "test") return { enabled: false as const, code: env.COMMERCE_MODE === "live" ? "LIVE_MODE_FORBIDDEN" as const : "COMMERCE_NOT_CONFIGURED" as const };
+  if (!env.STRIPE_SECRET_KEY?.startsWith("sk_test_")) return { enabled: false as const, code: "COMMERCE_NOT_CONFIGURED" as const };
+  return { enabled: true as const, mode: "test" as const };
+}
 export function commercialPolicy(env: CommerceEnv) {
   if (env.COMMERCE_MODE !== "test") return { enabled: false as const, code: env.COMMERCE_MODE === "live" ? "LIVE_MODE_FORBIDDEN" as const : "COMMERCE_NOT_CONFIGURED" as const };
   if (!env.STRIPE_SECRET_KEY?.startsWith("sk_test_") || !env.EXPORT_SIGNING_SECRET || env.EXPORT_SIGNING_SECRET.length < 32) return { enabled: false as const, code: "COMMERCE_NOT_CONFIGURED" as const };

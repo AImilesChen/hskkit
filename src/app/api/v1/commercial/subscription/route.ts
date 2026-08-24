@@ -1,7 +1,7 @@
 import { getCloudflareContext } from "@opennextjs/cloudflare";
 import { NextRequest, NextResponse } from "next/server";
 import { accountOwnerId, requestIdentity } from "@/lib/account/identity";
-import { commercialPolicy } from "@/lib/commercial/domain";
+import { subscriptionCommercePolicy } from "@/lib/commercial/domain";
 import { markSubscriptionCancelAtPeriodEnd, requestSubscriptionRefund, subscriptionSummaryForOwner } from "@/lib/commercial/storage";
 import { cancelStripeSubscriptionAtPeriodEnd } from "@/lib/commercial/stripe";
 
@@ -30,7 +30,7 @@ export async function POST(req:NextRequest){
     if(action==="cancel"){
       if(!summary.subscription||!["active","trialing"].includes(summary.subscription.status)) return NextResponse.json({error:"ACTIVE_SUBSCRIPTION_REQUIRED"},{status:409});
       if(summary.subscription.cancel_at_period_end) return NextResponse.json({...publicSummary(summary),reused:true});
-      const env=getCloudflareContext().env; const policy=commercialPolicy(env); if(!policy.enabled) return NextResponse.json({error:policy.code},{status:503});
+      const env=getCloudflareContext().env; const policy=subscriptionCommercePolicy(env); if(!policy.enabled) return NextResponse.json({error:policy.code},{status:503});
       const key=String(body.idempotencyKey??""); if(!key||key.length>80) return NextResponse.json({error:"INVALID_IDEMPOTENCY_KEY"},{status:422});
       const cancelled=await cancelStripeSubscriptionAtPeriodEnd({subscriptionId:summary.subscription.provider_subscription_id,secret:env.STRIPE_SECRET_KEY!,idempotencyKey:`subscription-cancel:${key}`});
       await markSubscriptionCancelAtPeriodEnd(cancelled.id,cancelled.periodEnd);

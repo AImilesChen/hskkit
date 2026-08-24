@@ -1,7 +1,7 @@
 import { getCloudflareContext } from "@opennextjs/cloudflare";
 import { NextRequest, NextResponse } from "next/server";
 import { accountOwnerId, requestIdentity } from "@/lib/account/identity";
-import { commercialPolicy } from "@/lib/commercial/domain";
+import { commercialPolicy, subscriptionCommercePolicy } from "@/lib/commercial/domain";
 import { subscriptionPlan } from "@/lib/commercial/subscription";
 import { attachCheckoutSession, attachSubscriptionCheckout, createPendingOrder, createSubscriptionOrder, markOrderFailed, markSubscriptionOrderFailed, openSubscriptionCheckout, subscriptionSummaryForOwner } from "@/lib/commercial/storage";
 import { createStripeSubscriptionCheckout, createStripeTestCheckout } from "@/lib/commercial/stripe";
@@ -9,14 +9,14 @@ import { createStripeSubscriptionCheckout, createStripeTestCheckout } from "@/li
 export async function POST(req: NextRequest) {
   const identity=await requestIdentity();
   if(!identity.account||identity.account.status!=="active") return NextResponse.json({error:"ACCOUNT_REQUIRED"},{status:401});
-  const env=getCloudflareContext().env; const policy=commercialPolicy(env);
-  if(!policy.enabled) return NextResponse.json({error:policy.code},{status:503});
+  const env=getCloudflareContext().env;
   try {
     const body=JSON.parse(await req.text()) as Record<string,unknown>;
     const idempotencyKey=String(body.idempotencyKey??"");
     if(!idempotencyKey||idempotencyKey.length>80) throw new Error("INVALID_IDEMPOTENCY_KEY");
     const plan=subscriptionPlan(body.planRef);
     if(plan){
+      const policy=subscriptionCommercePolicy(env); if(!policy.enabled) return NextResponse.json({error:policy.code},{status:503});
       const ownerId=accountOwnerId(identity.account.userId);
       const current=await subscriptionSummaryForOwner(ownerId);
       if(current.entitlement?.status==="active"&&(!current.entitlement.ends_at||String(current.entitlement.ends_at)>new Date().toISOString())) return NextResponse.json({error:"SUBSCRIPTION_ALREADY_ACTIVE"},{status:409});
@@ -30,6 +30,7 @@ export async function POST(req: NextRequest) {
         return NextResponse.json({orderId:order.id,checkoutUrl:checkout.url,planId:plan.id,mode:"test"},{status:201});
       }catch(error){await markSubscriptionOrderFailed(order.id);throw error;}
     }
+    const policy=commercialPolicy(env); if(!policy.enabled) return NextResponse.json({error:policy.code},{status:503});
     const selectedLevel=Number(body.level);
     if(!Number.isInteger(selectedLevel)||selectedLevel<1||selectedLevel>7) throw new Error("INVALID_PLAN");
     const order=await createPendingOrder(identity.account.userId,selectedLevel,idempotencyKey); if(!order) throw new Error("ORDER_CREATE_FAILED");

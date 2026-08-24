@@ -8,6 +8,7 @@ import {
   normalizeSubscriptionEvent,
   refundEligibility,
 } from "../src/lib/commercial/subscription.ts";
+import { subscriptionCommercePolicy } from "../src/lib/commercial/domain.ts";
 
 const read = (path: string) => readFile(new URL(`../${path}`, import.meta.url), "utf8");
 
@@ -19,6 +20,11 @@ test("2A freezes exactly Monthly and Yearly recurring Pro plans", () => {
   assert.deepEqual(SUBSCRIPTION_PLANS.pro_yearly, {
     id: "pro_yearly", name: "Pro Yearly", amountCents: 4900, currency: "usd", interval: "year", intervalCount: 1,
   });
+});
+
+test("subscription Test commerce is independent from the future PDF export secret", () => {
+  assert.equal(subscriptionCommercePolicy({ COMMERCE_MODE: "test", STRIPE_SECRET_KEY: "sk_test_123" }).enabled, true);
+  assert.equal(subscriptionCommercePolicy({ COMMERCE_MODE: "test", STRIPE_SECRET_KEY: "rk_test_123" }).enabled, false);
 });
 
 test("subscription Checkout is recurring, account-scoped and idempotent", () => {
