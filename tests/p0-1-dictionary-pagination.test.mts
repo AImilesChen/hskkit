@@ -1,6 +1,8 @@
 import assert from "node:assert/strict";
 import fs from "node:fs";
+import path from "node:path";
 import test from "node:test";
+import { fileURLToPath } from "node:url";
 
 import {
   buildCatalogQuery,
@@ -76,11 +78,51 @@ test("Dictionary request path loads a shell and fetches paged data instead of im
   assert.doesNotMatch(route, /content\/catalog\.json|queryCatalog|repository\s*=/);
 });
 
-test("Vocabulary and word detail routes remain untouched by the paged Dictionary client", () => {
+test("Vocabulary and word detail routes use the bounded runtime snapshot instead of the full catalog", () => {
   const vocabulary = fs.readFileSync(new URL("../src/app/vocabulary/[level]/page.tsx", import.meta.url), "utf8");
   const word = fs.readFileSync(new URL("../src/app/word/[slug]/page.tsx", import.meta.url), "utf8");
+  const levelStatus = fs.readFileSync(new URL("../src/lib/content/level-status.ts", import.meta.url), "utf8");
+  const dictionaryCatalog = fs.readFileSync(new URL("../src/lib/dictionary/catalog.ts", import.meta.url), "utf8");
   assert.match(vocabulary, /getHsk3LevelPreview/);
   assert.match(word, /getWordBySlug/);
-  assert.doesNotMatch(vocabulary, /catalog-search|catalog\/words/);
+  assert.match(levelStatus, /runtime-content-index\.json/);
+  assert.match(dictionaryCatalog, /runtime-content-index\.json/);
+  assert.doesNotMatch(levelStatus, /catalog\.json|published-content/);
+  assert.doesNotMatch(dictionaryCatalog, /catalog\.json|published-content/);
+  assert.doesNotMatch(vocabulary, /published-content|catalog-search|catalog\/words/);
   assert.doesNotMatch(word, /catalog-search|catalog\/words/);
+});
+
+test("core anonymous routes do not initialize the full content repository", () => {
+  const paths = [
+    "../src/app/page.tsx",
+    "../src/app/login/page.tsx",
+    "../src/app/account/page.tsx",
+    "../src/app/layout.tsx",
+    "../src/app/levels/page.tsx",
+    "../src/app/dictionary/page.tsx",
+  ];
+  for (const path of paths) {
+    const source = fs.readFileSync(new URL(path, import.meta.url), "utf8");
+    assert.doesNotMatch(source, /catalog\.json|published-content|repository\.ts/, path);
+  }
+
+  const fullSize = fs.statSync(new URL("../src/lib/content/catalog.json", import.meta.url)).size;
+  const runtimeSize = fs.statSync(new URL("../src/lib/content/runtime-content-index.json", import.meta.url)).size;
+  assert.ok(runtimeSize < fullSize * 0.05, `runtime index ${runtimeSize} must stay below 5% of catalog ${fullSize}`);
+});
+
+test("no request-time module imports the 11K authoring catalog", () => {
+  const sourceRoot = new URL("../src/", import.meta.url);
+  const pending = [fileURLToPath(sourceRoot)];
+  const offenders: string[] = [];
+  while (pending.length) {
+    const directory = pending.pop()!;
+    for (const entry of fs.readdirSync(directory, { withFileTypes: true })) {
+      const fullPath = path.join(directory, entry.name);
+      if (entry.isDirectory()) pending.push(fullPath);
+      else if (/\.(?:ts|tsx)$/.test(entry.name) && /catalog\.json/.test(fs.readFileSync(fullPath, "utf8"))) offenders.push(fullPath);
+    }
+  }
+  assert.deepEqual(offenders, []);
 });

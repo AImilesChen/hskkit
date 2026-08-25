@@ -1,7 +1,6 @@
 import { createHash } from "node:crypto";
-import catalog from "../content/catalog.json" with { type: "json" };
+import runtimeIndex from "../content/runtime-content-index.json" with { type: "json" };
 import practiceAudioManifest from "./audio-assets.json" with { type: "json" };
-import { queryCatalog, type ContentRepository } from "../content/repository.ts";
 
 export const PRACTICE_VERSION = "hskkit-practice-multiskill-v2";
 export const PRACTICE_SKILLS = ["vocabulary", "grammar", "reading", "listening"] as const;
@@ -113,7 +112,18 @@ const BANDS: Record<number, BandSeed> = {
   },
 };
 
-const repository = catalog as ContentRepository;
+type RuntimeWord = {
+  id: string;
+  logicalId: string;
+  version: number;
+  contentVersion: string;
+  level: number;
+  hanzi: string;
+  pinyin: string;
+  meaning: string;
+};
+const runtimeWords = runtimeIndex.runtimeWords as Record<string, RuntimeWord[]>;
+const wordsForLevel = (level: number) => runtimeWords[String(level)] ?? [];
 const audioManifest = practiceAudioManifest as {
   assets: Array<{ id: string; authorization: { status: string }; qaStatus: string; lifecycleStatus: string }>;
 };
@@ -129,13 +139,12 @@ const rotateOptions = (values: string[], key: string) => {
 const base = (level: number, skill: PracticeSkill) => ({ standardVersion: "HSK 3.0" as const, standardRef: "GF0025-2021" as const, contentVersion: versionFor(level, skill), level, levelBand: bandLabel(level), skill, authorizationStatus: "authorized" as const, qaStatus: "approved" as const, publicationStatus: "formal-practice" as const, lifecycleStatus: "published" as const });
 
 function vocabularyQuestions(level: number): PracticeQuestion[] {
-  const result = queryCatalog(repository, { standard: "hsk3", level });
-  const words = [...new Map(result.contentAssets.filter((asset) => asset.kind === "word").map((asset) => [String(asset.payload.hanzi).normalize("NFC"), asset])).values()].slice(0, 12);
+  const words = [...new Map(wordsForLevel(level).map((word) => [word.hanzi.normalize("NFC"), word])).values()].slice(0, 12);
   if (words.length < 12) return [];
-  return words.slice(0, 8).map((asset, index) => {
+  return words.slice(0, 8).map((word, index) => {
     const distractors = [words[(index + 1) % 12], words[(index + 4) % 12], words[(index + 7) % 12]];
-    const arranged = rotateOptions([String(asset.payload.hanzi), ...distractors.map((item) => String(item.payload.hanzi))], asset.id);
-    return { ...base(level, "vocabulary"), id: `practice-v2-${bandLabel(level)}-vocabulary-${index + 1}`, prompt: `Which Chinese entry means “${String(asset.payload.meaning)}”?`, ...arranged, explanation: `${String(asset.payload.hanzi)} (${String(asset.payload.pinyin)}) means “${String(asset.payload.meaning)}.”`, weaknessTag: `${bandLabel(level)}-vocabulary`, sourceRef: `${result.releaseId}:${asset.id}`, sourceUrl: "https://hskkit.com/content-license" };
+    const arranged = rotateOptions([word.hanzi, ...distractors.map((item) => item.hanzi)], word.id);
+    return { ...base(level, "vocabulary"), id: `practice-v2-${bandLabel(level)}-vocabulary-${index + 1}`, prompt: `Which Chinese entry means “${word.meaning}”?`, ...arranged, explanation: `${word.hanzi} (${word.pinyin}) means “${word.meaning}.”`, weaknessTag: `${bandLabel(level)}-vocabulary`, sourceRef: `${runtimeIndex.releaseId}:${word.id}`, sourceUrl: "https://hskkit.com/content-license" };
   });
 }
 
@@ -181,15 +190,14 @@ const LEGACY_LEVEL_ONE: PracticeQuestion[] = [
   { ...legacyBase(1, LEGACY_PRACTICE_VERSION), id: "practice-v1-l1-vocab-goodbye", prompt: "Which expression means “goodbye”?", options: { a: "再见", b: "请", c: "是", d: "有" }, correctAnswer: "a", explanation: "再见 literally means “see you again” and is used for “goodbye.”", weaknessTag: "basic-greetings", sourceRef: "hskkit-practice-v1:goodbye", sourceUrl: "https://hskkit.com/content-license" },
 ];
 function legacyCatalogQuestions(level: number): PracticeQuestion[] {
-  const result = queryCatalog(repository, { standard: "hsk3", level });
-  const words = result.contentAssets.filter((asset) => asset.kind === "word").slice(0, 4);
+  const words = wordsForLevel(level).slice(0, 4);
   if (words.length < 4) return [];
-  const contentVersion = practiceSetContentVersion(result.releaseId, words.map((asset) => ({ logicalId: asset.logicalId, version: asset.content_version ?? `asset-v${asset.version}` })));
-  const values = words.map((asset) => String(asset.payload.hanzi)) as [string, string, string, string];
-  return words.slice(0, 3).map((asset, index) => {
-    const correctIndex = createHash("sha256").update(`hskkit-practice-option-order:${result.releaseId}:${asset.logicalId}:${asset.content_version ?? asset.version}`).digest()[0] % 4;
+  const contentVersion = practiceSetContentVersion(runtimeIndex.releaseId, words.map((word) => ({ logicalId: word.logicalId, version: word.contentVersion })));
+  const values = words.map((word) => word.hanzi) as [string, string, string, string];
+  return words.slice(0, 3).map((word, index) => {
+    const correctIndex = createHash("sha256").update(`hskkit-practice-option-order:${runtimeIndex.releaseId}:${word.logicalId}:${word.contentVersion}`).digest()[0] % 4;
     const ordered = values.filter((_, optionIndex) => optionIndex !== index); ordered.splice(correctIndex, 0, values[index]);
-    return { ...legacyBase(level, contentVersion), id: `practice-catalog-l${level}-${asset.logicalId}`, prompt: `Which Chinese entry means “${String(asset.payload.meaning)}”?`, options: { a: ordered[0], b: ordered[1], c: ordered[2], d: ordered[3] }, correctAnswer: choices[correctIndex], explanation: `${String(asset.payload.hanzi)} means “${String(asset.payload.meaning)}.”`, weaknessTag: `hsk3-level-${level}-vocabulary`, sourceRef: `${result.releaseId}:${asset.id}`, sourceUrl: "https://hskkit.com/content-license" };
+    return { ...legacyBase(level, contentVersion), id: `practice-catalog-l${level}-${word.logicalId}`, prompt: `Which Chinese entry means “${word.meaning}”?`, options: { a: ordered[0], b: ordered[1], c: ordered[2], d: ordered[3] }, correctAnswer: choices[correctIndex], explanation: `${word.hanzi} means “${word.meaning}.”`, weaknessTag: `hsk3-level-${level}-vocabulary`, sourceRef: `${runtimeIndex.releaseId}:${word.id}`, sourceUrl: "https://hskkit.com/content-license" };
   });
 }
 const LEGACY_PRACTICE_QUESTIONS = [...LEGACY_LEVEL_ONE, ...[2, 3, 4, 5, 6].flatMap(legacyCatalogQuestions)];

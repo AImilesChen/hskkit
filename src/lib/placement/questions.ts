@@ -1,4 +1,4 @@
-import catalog from "../content/catalog.json" with { type: "json" };
+import runtimeIndex from "../content/runtime-content-index.json" with { type: "json" };
 import type { ContentRepository } from "../content/repository.ts";
 
 export const PLACEMENT_VERSION = "hskkit-placement-multiskill-v2";
@@ -161,7 +161,19 @@ const AUDIO_ASSET_BY_PATH: Record<string, string> = {
   "/audio/formal/sentence-pronunciation-v1.mp3": "hsk3.audio.sentence-pronunciation.v1",
   "/audio/formal/context-morning-study-v1.mp3": "hsk3.audio.context-morning-study.v1",
 };
-const repository = catalog as ContentRepository;
+const repository = {
+  activeReleaseByStandard: { hsk3: runtimeIndex.releaseId },
+  releases: [{
+    id: runtimeIndex.releaseId,
+    standard: "hsk3",
+    version: runtimeIndex.releaseVersion,
+    status: "published",
+    contentAssetIds: [],
+    audioAssetIds: runtimeIndex.publishedAudioAssets.map((asset) => asset.id),
+    publishedAt: runtimeIndex.releasePublishedAt,
+  }],
+  audioAssets: runtimeIndex.publishedAudioAssets,
+} as unknown as ContentRepository;
 const isEligibleAudio = (audioAssetId: string | undefined, source: ContentRepository) => {
   if (!audioAssetId) return false;
   const release = source.releases.find((candidate) => candidate.id === source.activeReleaseByStandard.hsk3 && candidate.status === "published" && !candidate.withdrawnAt);

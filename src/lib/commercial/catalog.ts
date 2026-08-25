@@ -1,5 +1,4 @@
-import catalog from "../content/catalog.json" with { type: "json" };
-import type { AudioAsset, ContentAsset } from "../content/repository.ts";
+import runtimeIndex from "../content/runtime-content-index.json" with { type: "json" };
 
 export type PackWord = {
   id: string;
@@ -30,30 +29,27 @@ export type PackManifest = {
   licenseNotice: string;
 };
 
-const typedCatalog = catalog as unknown as { contentAssets: ContentAsset[]; audioAssets: AudioAsset[] };
-const contentAssets = typedCatalog.contentAssets;
-const audioAssets = typedCatalog.audioAssets;
+const contentAssets = Object.values(runtimeIndex.runtimeWords).flat();
+const audioAssets = runtimeIndex.publishedAudioAssets;
 
 export function selectPackAssets(level: number): PackSelection {
   if (!Number.isInteger(level) || level < 1 || level > 9) throw new Error("INVALID_LEVEL");
   const eligible = contentAssets.filter((asset) =>
-    asset.standard === "hsk3" && asset.level === level && asset.kind === "word" &&
-    asset.publish_status === "published" && asset.qa_status === "approved" &&
-    asset.authorization.status === "authorized" && Boolean(asset.source_ref) && Boolean(asset.license_ref),
+    asset.level === level && Boolean(asset.sourceRef) && Boolean(asset.licenseRef),
   ).slice(0, 120);
   if (!eligible.length) throw new Error("CONTENT_NOT_RELEASED");
   const words: PackWord[] = eligible.map((asset) => ({
     id: asset.id,
     version: String(asset.version),
-    contentVersion: String(asset.content_version),
-    standardVersion: String(asset.standard_version),
+    contentVersion: asset.contentVersion,
+    standardVersion: asset.standardVersion,
     level: asset.level,
-    hanzi: String(asset.payload.hanzi ?? ""),
-    pinyin: String(asset.payload.pinyin ?? ""),
-    meaning: String(asset.payload.meaning ?? ""),
-    partOfSpeech: String(asset.payload.partOfSpeech ?? ""),
-    sourceRef: String(asset.source_ref),
-    licenseRef: String(asset.license_ref),
+    hanzi: asset.hanzi,
+    pinyin: asset.pinyin,
+    meaning: asset.meaning,
+    partOfSpeech: asset.partOfSpeech,
+    sourceRef: asset.sourceRef,
+    licenseRef: asset.licenseRef,
     publishStatus: "published",
     qaStatus: "approved",
     authorizationStatus: "authorized",
@@ -75,8 +71,7 @@ export function manifestStillAuthorized(manifestJson:string|null|undefined){
   try{const manifest=JSON.parse(manifestJson) as PackManifest; if(!Array.isArray(manifest.assets)||manifest.assets.length===0)return false;
     const byId=new Map(contentAssets.map(asset=>[asset.id,asset]));
     return manifest.assets.every(ref=>{const asset=byId.get(ref.id); return Boolean(
-      asset&&String(asset.version)===ref.version&&asset.publish_status==="published"&&asset.qa_status==="approved"&&
-      asset.authorization.status==="authorized"&&Boolean(asset.source_ref)&&Boolean(asset.license_ref),
+      asset&&String(asset.version)===ref.version&&Boolean(asset.sourceRef)&&Boolean(asset.licenseRef),
     );});
   }catch{return false;}
 }

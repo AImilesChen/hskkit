@@ -1,6 +1,6 @@
-import catalog from "../content/catalog.json" with { type: "json" };
-import { publishedAudioForContent, publishedContentAssets, publicAudioSrc } from "../content/published-content.ts";
-import type { ContentRepository } from "../content/repository.ts";
+import runtimeIndex from "../content/runtime-content-index.json" with { type: "json" };
+
+const dictionaryAssets = runtimeIndex.dictionaryAssets;
 
 export type ReleaseStatus = "published" | "withdrawn";
 
@@ -39,8 +39,7 @@ type LookupResult<T> =
   | { status: "withdrawn" }
   | { status: "missing" };
 
-const repository = catalog as ContentRepository;
-const activeReleaseId = repository.activeReleaseByStandard.hsk3 ?? "unavailable";
+const activeReleaseId = runtimeIndex.releaseId;
 
 const curated = [
   { hanzi: "学习", slug: "xue-xi", example: ["我每天学习中文。", "Wǒ měitiān xuéxí Zhōngwén.", "I study Chinese every day."] },
@@ -59,23 +58,22 @@ const curated = [
 ] as const;
 
 export const STUDY_WORDS: StudyWord[] = curated.flatMap((entry) => {
-  const asset = publishedContentAssets.find((candidate) => candidate.kind === "word" && candidate.payload.hanzi === entry.hanzi);
+  const asset = dictionaryAssets.find((candidate) => candidate.hanzi === entry.hanzi);
   if (!asset) return [];
-  const audio = publishedAudioForContent(asset.id)[0];
   return [{
     id: asset.id,
     slug: entry.slug,
     level: asset.level,
-    hanzi: String(asset.payload.hanzi),
-    pinyin: String(asset.payload.pinyin ?? ""),
-    meaning: String(asset.payload.meaning ?? ""),
-    partOfSpeech: String(asset.payload.partOfSpeech ?? ""),
+    hanzi: asset.hanzi,
+    pinyin: asset.pinyin,
+    meaning: asset.meaning,
+    partOfSpeech: asset.partOfSpeech,
     example: { hanzi: entry.example[0], pinyin: entry.example[1], meaning: entry.example[2] },
     releaseStatus: "published" as const,
     qaStatus: "approved" as const,
     contentVersion: asset.version,
     sourceVersion: activeReleaseId,
-    audio: audio ? { status: "formal" as const, locale: "zh-CN" as const, src: publicAudioSrc(audio) } : { status: "unavailable" as const, locale: "zh-CN" as const },
+    audio: asset.audioSrc ? { status: "formal" as const, locale: "zh-CN" as const, src: asset.audioSrc } : { status: "unavailable" as const, locale: "zh-CN" as const },
   }];
 });
 

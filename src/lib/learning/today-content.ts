@@ -1,10 +1,9 @@
-import catalog from "../content/catalog.json" with { type: "json" };
-import { type ContentAsset, type ContentRepository } from "../content/repository.ts";
+import runtimeIndex from "../content/runtime-content-index.json" with { type: "json" };
+import { getHsk3LevelStatus } from "../content/level-status.ts";
 import { listPublishedWords, type StudyWord } from "../dictionary/catalog.ts";
 
-const repository = catalog as ContentRepository;
 const planCache = new Map<number, TodayContentPlan>();
-let activeCache: { releaseId: string; contentByLevel: Map<number, ContentAsset[]> } | undefined;
+type RuntimeTodayAsset = (typeof runtimeIndex.dictionaryAssets)[number];
 
 export interface TodayContentItem {
   assetId: string;
@@ -25,50 +24,34 @@ export type TodayContentPlan =
   | { status: "empty"; startLevel: number; releaseId?: string; code: "EMPTY_CONTENT_QUEUE" | "CONTEXT_AUDIO_UNAVAILABLE"; message: string; actionHref: string; actionLabel: string };
 
 function activeLevel(level: number) {
-  if (!activeCache) {
-    // The immutable bundled catalog is fully validated by the release gate. Keep the
-    // request path fail-closed on the active release without revalidating 11k assets.
-    const releaseId = repository.activeReleaseByStandard.hsk3;
-    const release = releaseId ? repository.releases.find((candidate) => candidate.id === releaseId && candidate.standard === "hsk3" && candidate.status === "published") : undefined;
-    if (!release) {
-      activeCache = { releaseId: "unavailable", contentByLevel: new Map() };
-      return { releaseId: activeCache.releaseId, contentAssets: [], availability: "gap" as const };
-    }
-    const releaseIds = new Set(release.contentAssetIds);
-    const contentByLevel = new Map<number, ContentAsset[]>();
-    for (const asset of repository.contentAssets) {
-      if (!releaseIds.has(asset.id) || asset.standard !== "hsk3") continue;
-      const levelAssets = contentByLevel.get(asset.level);
-      if (levelAssets) levelAssets.push(asset);
-      else contentByLevel.set(asset.level, [asset]);
-    }
-    activeCache = { releaseId: release.id, contentByLevel };
-  }
-  const contentAssets = activeCache.contentByLevel.get(level) ?? [];
-  return { releaseId: activeCache.releaseId, contentAssets, availability: contentAssets.length ? "ready" as const : "gap" as const };
+  const status = getHsk3LevelStatus(level);
+  return {
+    releaseId: runtimeIndex.releaseId,
+    contentAssets: runtimeIndex.dictionaryAssets.filter((asset) => asset.level === level),
+    availability: status.availability,
+  };
 }
 
-function compatibleAsset(asset: ContentAsset, words: StudyWord[]): { asset: ContentAsset; word: StudyWord } | undefined {
-  const hanzi = typeof asset.payload.hanzi === "string" ? asset.payload.hanzi : "";
-  const word = words.find((candidate) => candidate.hanzi === hanzi);
+function compatibleAsset(asset: RuntimeTodayAsset, words: StudyWord[]): { asset: RuntimeTodayAsset; word: StudyWord } | undefined {
+  const word = words.find((candidate) => candidate.hanzi === asset.hanzi);
   return word ? { asset, word } : undefined;
 }
 
-function versionFor(asset: ContentAsset, releaseId: string) {
-  return `${releaseId}:${asset.content_version ?? `asset-v${asset.version}`}`;
+function versionFor(asset: RuntimeTodayAsset, releaseId: string) {
+  return `${releaseId}:${asset.contentVersion}`;
 }
 
-function mapItem(asset: ContentAsset, word: StudyWord, releaseId: string): TodayContentItem {
+function mapItem(asset: RuntimeTodayAsset, word: StudyWord, releaseId: string): TodayContentItem {
   return {
     assetId: asset.id,
     contentId: `catalog:${asset.logicalId}`,
     contentVersion: versionFor(asset, releaseId),
     releaseId,
     level: asset.level,
-    hanzi: String(asset.payload.hanzi),
-    pinyin: String(asset.payload.pinyin),
-    meaning: String(asset.payload.meaning),
-    partOfSpeech: String(asset.payload.partOfSpeech),
+    hanzi: asset.hanzi,
+    pinyin: asset.pinyin,
+    meaning: asset.meaning,
+    partOfSpeech: asset.partOfSpeech,
     studySlug: word.slug,
     example: word.example,
   };
@@ -93,7 +76,6 @@ export function selectTodayContent(startLevel: number): TodayContentPlan {
   } else {
     const words = listPublishedWords();
     const joined = result.contentAssets
-      .filter((asset) => asset.kind === "word")
       .map((asset) => compatibleAsset(asset, words))
       .find(Boolean);
     plan = joined ? {
@@ -118,16 +100,13 @@ export function selectTodayContent(startLevel: number): TodayContentPlan {
 
 export function todayContentByContentId(contentId: string): TodayContentItem | undefined {
   const logicalId = contentId.startsWith("catalog:") ? contentId.slice("catalog:".length) : undefined;
-  const asset = logicalId ? repository.contentAssets.find((candidate) => candidate.logicalId === logicalId && candidate.publish_status === "published" && candidate.qa_status === "approved") : undefined;
+  const asset = logicalId ? runtimeIndex.dictionaryAssets.find((candidate) => candidate.logicalId === logicalId) : undefined;
   return asset ? todayContentByAssetId(asset.id) : undefined;
 }
 
 export function todayContentByAssetId(assetId: string): TodayContentItem | undefined {
-  const asset = repository.contentAssets.find((candidate) => candidate.id === assetId && candidate.publish_status === "published" && candidate.qa_status === "approved");
+  const asset = runtimeIndex.dictionaryAssets.find((candidate) => candidate.id === assetId);
   if (!asset) return undefined;
-  const activeReleaseId = repository.activeReleaseByStandard.hsk3;
-  const release = repository.releases.find((candidate) => candidate.id === activeReleaseId && candidate.status === "published");
-  if (!release?.contentAssetIds.includes(asset.id)) return undefined;
-  const word = listPublishedWords({ level: asset.level }).find((candidate) => candidate.hanzi === asset.payload.hanzi);
-  return word ? mapItem(asset, word, release.id) : undefined;
+  const word = listPublishedWords({ level: asset.level }).find((candidate) => candidate.hanzi === asset.hanzi);
+  return word ? mapItem(asset, word, runtimeIndex.releaseId) : undefined;
 }

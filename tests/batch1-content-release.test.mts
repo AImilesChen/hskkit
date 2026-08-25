@@ -59,6 +59,7 @@ test("vocabulary pages render at runtime so Cloudflare does not depend on oversi
 
 test("runtime level pages use the pre-indexed published catalog instead of full repository validation", () => {
   const source = fs.readFileSync(new URL("../src/lib/content/level-status.ts", import.meta.url), "utf8");
-  assert.doesNotMatch(source, /queryCatalog/);
-  assert.match(source, /publishedAssetsByLevel/);
+  assert.doesNotMatch(source, /queryCatalog|catalog\.json/);
+  assert.match(source, /runtime-content-index\.json/);
+  assert.match(source, /runtimeIndex\.runtimeWords/);
 });
