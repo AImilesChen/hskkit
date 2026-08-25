@@ -5,16 +5,22 @@ import { useEffect, useState } from "react";
 
 type NextAction = {
   kind: "placement" | "today" | "review";
-  label: "Start placement" | "Continue today" | "Review due";
+  label: string;
   href: "/placement" | "/today" | "/review";
   explanation: string;
 };
 
 const fallback: NextAction = {
   kind: "placement",
-  label: "Start placement",
+  label: "Find my starting level",
   href: "/placement",
   explanation: "Find an evidence-based starting level before building today's queue.",
+};
+
+const actionLabels: Record<NextAction["kind"], string> = {
+  placement: "Find my starting level",
+  today: "Continue today’s study",
+  review: "Review due items",
 };
 
 export default function HomeNextStep() {
@@ -35,13 +41,13 @@ export default function HomeNextStep() {
     return () => { active = false; };
   }, []);
 
-  return <div className="mt-7" aria-live="polite">
+  return <div className="mt-8" aria-live="polite">
     <div className="flex flex-col gap-3 sm:flex-row">
-      <Link href={unavailable ? "/today" : action.href} className="inline-flex min-h-11 items-center justify-center rounded-lg bg-blue-600 px-6 font-semibold text-white hover:bg-blue-700">
-        {unavailable ? "Open Today" : loaded ? action.label : "Start placement"}
+      <Link href={unavailable ? "/today" : action.href} className="inline-flex min-h-12 items-center justify-center rounded-xl bg-blue-700 px-6 font-semibold text-white shadow-[0_8px_24px_rgba(29,78,216,.18)] transition hover:-translate-y-0.5 hover:bg-blue-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-700 focus-visible:ring-offset-2 motion-reduce:transform-none">
+        {unavailable ? "Continue today’s study" : loaded ? actionLabels[action.kind] : "Find my starting level"}
       </Link>
-      <Link href="/levels" className="inline-flex min-h-11 items-center justify-center rounded-lg border border-slate-300 bg-white px-6 font-semibold text-slate-800 hover:border-blue-300 hover:bg-blue-50">Explore HSK 3.0 levels</Link>
+      <Link href="/levels" className="inline-flex min-h-12 items-center justify-center rounded-xl border border-slate-300 bg-white px-6 font-semibold text-slate-800 transition hover:-translate-y-0.5 hover:border-slate-400 hover:bg-slate-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-700 focus-visible:ring-offset-2 motion-reduce:transform-none">Browse HSK 3.0 levels</Link>
     </div>
-    <p className="mt-3 text-sm text-slate-600">{unavailable ? "We couldn't check your saved status. Open Today to restore the latest server copy without guessing your next step." : loaded ? action.explanation : fallback.explanation}</p>
+    <p className="mt-3 text-sm leading-6 text-slate-600">{unavailable ? "We couldn't check your saved status. Continue in Today to restore the latest server copy without guessing your next step." : loaded ? action.explanation : fallback.explanation}</p>
   </div>;
 }

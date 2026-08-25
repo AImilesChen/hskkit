@@ -21,7 +21,7 @@ const disclaimer = "HSKKit is an independent study tool and is not affiliated wi
 
 export default function SiteFooter() {
   return (
-    <footer className="mt-auto border-t border-slate-200 bg-white py-12">
+    <footer className="mt-auto border-t border-slate-200 bg-white py-10">
       <div className="mx-auto max-w-[1204px] px-5 sm:px-8">
         <div className="grid gap-8 border-b border-slate-200 pb-8 sm:grid-cols-2 lg:grid-cols-[1.2fr_1fr_1fr]">
           <div><Link href="/" className="inline-flex min-h-11 items-center gap-2 text-2xl font-bold text-slate-900"><span aria-hidden="true" className="grid h-8 w-8 place-items-center rounded-lg bg-blue-600 text-sm font-bold text-white">学</span>HSKKit</Link><p className="mt-3 max-w-md text-sm leading-6 text-slate-500">A connected HSK 3.0 Level 1–9 study path for placement, published vocabulary, daily learning, listening, and practice.</p></div>

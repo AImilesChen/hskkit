@@ -21,19 +21,20 @@ function expectInOrder(source: string, markers: string[]) {
   }
 }
 
-test("homepage follows the adopted Stitch HSK 3.0 information order", () => {
+test("homepage follows the approved result-first HSK 3.0 information order", () => {
   expectInOrder(home, [
-    "Build your HSK 3.0 learning path",
-    "Make today’s next step clear.",
-    "Learn by HSK 3.0 level.",
-    "Use the tool that matches your task.",
-    "Start with one useful next step.",
+    "Find your HSK 3.0 level.",
+    "One connected path from level check to daily review.",
+    "Explore the published HSK 3.0 catalog.",
+    "Choose a tool for the task in front of you.",
+    "Start with the right level.",
   ]);
   for (const href of ["/placement", "/today", "/levels", "/dictionary", "/listen", "/practice", "/vocabulary/1"]) {
     assert.ok(home.includes(`href: "${href}"`) || home.includes(`href="${href}"`), `homepage must link ${href}`);
   }
   assert.doesNotMatch(home, /HSK 1[–-]5 available now|HSK 6 Planned|no QA-approved level assets|not yet published/i);
-  assert.match(home, /const catalog=entry\.level>=8\?7:entry\.level/);
+  assert.match(home, /levels\.find\(\(entry\) => entry\.level === 7\)/);
+  assert.match(home, /Unified advanced band/);
 });
 
 test("desktop and mobile header expose one shared new-system navigation contract", () => {
