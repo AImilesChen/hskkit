@@ -51,11 +51,45 @@ test("homepage tells one learning-loop story before compact levels and grouped t
   assert.match(home, /Unified advanced band/);
 });
 
+test("P1 gives the hero one framed action zone with explicit CTA hierarchy", () => {
+  assert.match(nextStep, /home-cta-panel/);
+  assert.match(nextStep, /home-cta-primary/);
+  assert.match(nextStep, /home-cta-secondary/);
+  assert.match(nextStep, /Start as a guest/);
+  assert.match(nextStep, /Placement is a learning suggestion/);
+  assert.match(nextStep, /Sign in later to sync/);
+  assert.match(nextStep, /HomeIcon/);
+  assert.match(styles, /\.home-cta-panel/);
+  assert.match(styles, /\.home-cta-primary/);
+  assert.match(styles, /\.home-cta-secondary/);
+});
+
+test("P1 turns the learning loop into an icon-led connected path with task-specific actions", () => {
+  assert.match(home, /home-learning-path/);
+  assert.match(home, /home-flow-icon/);
+  assert.match(home, /home-flow-connector/);
+  for (const action of ["Start level check", "Open Today", "Practise skills", "Review mistakes"]) {
+    assert.match(home, new RegExp(action));
+  }
+  assert.doesNotMatch(home, /Open step/);
+});
+
+test("P2 uses one local inline icon system, stronger tool controls, and truthful level density bars", () => {
+  assert.match(home, /HomeIcon/);
+  assert.match(home, /home-tool-icon/);
+  assert.match(home, /home-tool-arrow/);
+  assert.match(home, /home-tool-card-core/);
+  assert.match(home, /home-level-density/);
+  assert.match(home, /aria-label={`Word-list size/);
+  assert.match(styles, /\.home-tool-arrow/);
+  assert.match(styles, /\.home-level-density/);
+});
+
 test("homepage polish is scoped, consistent and motion-safe", () => {
   for (const className of ["home-hero", "home-product-card", "home-flow-card", "home-level-card", "home-tool-card"]) {
     assert.match(styles, new RegExp(`\\.${className}`));
   }
   assert.match(styles, /@media \(prefers-reduced-motion: reduce\)/);
   assert.match(styles, /focus-visible/);
-  assert.match(footer, /py-10/);
+  assert.match(footer, /py-8/);
 });
