@@ -1,7 +1,6 @@
 import { buildPackManifest, selectPackAssets } from "./catalog.ts";
-import { generateOfflineZip, generatePackPdf, generateZipFiles } from "./generator.ts";
-import { generateDifferentiatedProductArtifact } from "./product-generator.ts";
-import { digitalProduct } from "./products.ts";
+import { generateOfflineZip, generatePackPdf } from "./generator.ts";
+import { buildProductDeliveries, digitalProduct, type DigitalProduct, type ProductDelivery } from "./products.ts";
 import { acquireJobLease, commerceDb, getExportJob, markJobFailed, markJobReady } from "./storage.ts";
 import { sha256Hex } from "./signer.ts";
 
@@ -9,6 +8,22 @@ export type CommercialQueueMessage = { jobId: string };
 export type CommercialWorkerEnv = Pick<CloudflareEnv, "LEARNING_DB" | "COMMERCIAL_EXPORTS_R2">;
 const FONT_OBJECT_KEY = "system/fonts/HskKitSansSubset.ttf";
 const EMOJI_FONT_OBJECT_KEY = "system/fonts/HskKitEmoji.ttf";
+
+type ProductTemplateJob={generation_version:string;delivery_key:string|null;format:string;level:number|null};
+export function validateProductArtifactTemplate(product:DigitalProduct,job:ProductTemplateJob,manifest:Record<string,unknown>):ProductDelivery{
+  if(!/^[a-z0-9][a-z0-9._-]{0,63}$/i.test(job.generation_version)||job.generation_version==="."||job.generation_version==="..")throw new Error("INVALID_GENERATION_VERSION");
+  const delivery=buildProductDeliveries(product.id).find(item=>item.deliveryKey===job.delivery_key);
+  if(!delivery||delivery.format!==job.format||(delivery.level??null)!==(job.level??null))throw new Error("PRODUCT_DELIVERY_MISMATCH");
+  if(manifest.generationVersion!==job.generation_version)throw new Error("PREGENERATED_ARTIFACT_VERSION_MISMATCH");
+  const templateIdentity=manifest.templateProductId===product.id&&manifest.templateDeliveryKey===delivery.deliveryKey&&manifest.templateFormat===delivery.format&&manifest.templateLevel===(delivery.level??null);
+  const artifactIdentity=delivery.artifactType==="level"
+    ? manifest.schemaVersion==="hskkit-pack-manifest-v1"&&manifest.level===delivery.level
+    : delivery.artifactType==="bundle"
+      ? manifest.schemaVersion==="hskkit-bundle-manifest-v1"&&manifest.productId===product.id
+      : manifest.schemaVersion==="hskkit-product-manifest-v1"&&manifest.productId===product.id;
+  if(!templateIdentity||!artifactIdentity)throw new Error("PREGENERATED_ARTIFACT_IDENTITY_MISMATCH");
+  return delivery;
+}
 
 async function accountExport(userId: string, env: CommercialWorkerEnv) {
   const db = commerceDb(env); const ownerId = `user:${userId}`;
@@ -50,19 +65,22 @@ export async function processCommercialExport(message: CommercialQueueMessage, e
       bytes = await accountExport(job.user_id, env); extension = "json"; contentType = "application/json";
       manifest = { schemaVersion: "hskkit-account-export-manifest-v1", generationVersion: job.generation_version, ownerUserId: job.user_id, format: "json" };
     } else {
-      const [fontObject,emojiFontObject] = await Promise.all([env.COMMERCIAL_EXPORTS_R2.get(FONT_OBJECT_KEY),env.COMMERCIAL_EXPORTS_R2.get(EMOJI_FONT_OBJECT_KEY)]);
-      if (!fontObject||!emojiFontObject) throw new Error("EMBEDDED_FONT_NOT_AVAILABLE");
-      const fontBytes=new Uint8Array(await fontObject.arrayBuffer());const emojiBytes=new Uint8Array(await emojiFontObject.arrayBuffer());
       const product=job.product_id?digitalProduct(job.product_id):null;
-      if(product?.category==="resource"){
-        const artifact=await generateDifferentiatedProductArtifact(product.id,fontBytes,emojiBytes,job.generation_version);bytes=artifact.bytes;extension=artifact.format;contentType=artifact.format==="pdf"?"application/pdf":"application/zip";
-        manifest=artifact.manifest;
-      }else if(product?.category==="bundle"&&!job.level){
-        const files:Array<{name:string;data:Uint8Array}>=[];const assets:unknown[]=[];
-        for(const level of product.levels){const selection=selectPackAssets(level);const levelManifest=buildPackManifest(selection,job.generation_version);assets.push(...levelManifest.assets);files.push({name:`HSKKit-Level-${level}.pdf`,data:await generatePackPdf(selection,levelManifest,fontBytes,emojiBytes)});}
-        manifest={schemaVersion:"hskkit-bundle-manifest-v1",productId:product.id,standard:"HSK 3.0",standardVersion:"GF0025-2021",generationVersion:job.generation_version,officialExam:false,levels:product.levels,advancedBandDisclosure:"HSK 3.0 defines one unified Levels 7–9 advanced ability band; the Level 7/8/9 PDFs use the same canonical approved source set.",assets,licenseNotice:"Personal, non-transferable study and print use only."};
-        bytes=generateZipFiles([...files,{name:"manifest.json",data:new TextEncoder().encode(JSON.stringify(manifest,null,2))}]);extension="zip";contentType="application/zip";
+      if(product){
+        if(!/^[a-z0-9][a-z0-9._-]{0,63}$/i.test(job.generation_version)||job.generation_version==="."||job.generation_version==="..")throw new Error("INVALID_GENERATION_VERSION");
+        const delivery=buildProductDeliveries(product.id).find(item=>item.deliveryKey===job.delivery_key);
+        if(!delivery||delivery.format!==job.format||(delivery.level??null)!==(job.level??null))throw new Error("PRODUCT_DELIVERY_MISMATCH");
+        extension=job.format;contentType=extension==="pdf"?"application/pdf":"application/zip";
+        const templateBase=`system/artifacts/${job.generation_version}/${product.id}/${job.delivery_key}`;
+        const [templateObject,manifestObject]=await Promise.all([env.COMMERCIAL_EXPORTS_R2.get(`${templateBase}.${extension}`),env.COMMERCIAL_EXPORTS_R2.get(`${templateBase}.manifest.json`)]);
+        if(!templateObject||!manifestObject)throw new Error("PREGENERATED_ARTIFACT_NOT_AVAILABLE");
+        bytes=new Uint8Array(await templateObject.arrayBuffer());
+        manifest=JSON.parse(await manifestObject.text()) as Record<string,unknown>;
+        validateProductArtifactTemplate(product,job,manifest);
       }else{
+        const [fontObject,emojiFontObject] = await Promise.all([env.COMMERCIAL_EXPORTS_R2.get(FONT_OBJECT_KEY),env.COMMERCIAL_EXPORTS_R2.get(EMOJI_FONT_OBJECT_KEY)]);
+        if (!fontObject||!emojiFontObject) throw new Error("EMBEDDED_FONT_NOT_AVAILABLE");
+        const fontBytes=new Uint8Array(await fontObject.arrayBuffer());const emojiBytes=new Uint8Array(await emojiFontObject.arrayBuffer());
         if (!job.level) throw new Error("LEVEL_REQUIRED");
         const selection = selectPackAssets(job.level); const packManifest = buildPackManifest(selection, job.generation_version);const expectedManifestJson = JSON.stringify(packManifest);let pdf: Uint8Array | null = null;
         if (job.format === "zip") {const reusable = await commerceDb(env).prepare(`SELECT object_key FROM commercial_export_jobs WHERE user_id=? AND COALESCE(pack_purchase_id,'')=COALESCE(?,'') AND COALESCE(product_entitlement_id,'')=COALESCE(?,'') AND kind='pdf_pack' AND format='pdf' AND level=? AND generation_version=? AND state='ready' AND expires_at>? AND manifest_json=? AND object_key IS NOT NULL ORDER BY completed_at DESC LIMIT 1`).bind(job.user_id,job.pack_purchase_id,job.product_entitlement_id,job.level,job.generation_version,new Date().toISOString(),expectedManifestJson).first<{object_key:string}>();if(reusable?.object_key){const reusableObject=await env.COMMERCIAL_EXPORTS_R2.get(reusable.object_key);if(reusableObject)pdf=new Uint8Array(await reusableObject.arrayBuffer());}}

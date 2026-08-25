@@ -1,4 +1,5 @@
 import { processCommercialExport } from "../src/lib/commercial/processor";
+import { retryDelaySeconds } from "../src/lib/commercial/queue-retry";
 import { clearExportObjectKey, expireReadyExports, getExportJob } from "../src/lib/commercial/storage";
 
 interface CommercialExportMessage {
@@ -12,7 +13,7 @@ export default {
     for (const message of batch.messages) {
       try {
         const result=await processCommercialExport(message.body, env);
-        if(result.skipped){const job=await getExportJob(message.body.jobId,undefined,env);if(job?.state==="generating"){message.retry({delaySeconds:60});continue;}}
+        if(result.skipped){const job=await getExportJob(message.body.jobId,undefined,env);if(job?.state==="generating"){message.retry({delaySeconds:retryDelaySeconds(job.lease_expires_at)});continue;}}
         message.ack();
       } catch (error) {
         console.error("commercial_export_failed", message.body.jobId, error);
