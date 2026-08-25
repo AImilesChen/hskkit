@@ -11,7 +11,9 @@ test("pack selection is one released level, bounded, authorized and excludes aud
   assert.ok(selected.exercises.length <= 20);
   assert.ok(selected.words.every((item) => item.publishStatus === "published" && item.qaStatus === "approved" && item.authorizationStatus === "authorized"));
   assert.deepEqual(selected.audio, []);
-  assert.throws(() => selectPackAssets(9), /CONTENT_NOT_RELEASED/);
+  const advanced9=selectPackAssets(9);
+  assert.equal(advanced9.level,9);
+  assert.deepEqual(advanced9.words.map(item=>item.id),selectPackAssets(7).words.map(item=>item.id));
 });
 
 test("manifest is traceable and deterministic", () => {
@@ -30,7 +32,7 @@ test("offline ZIP processor reuses an authorized ready PDF with the same entitle
   assert.match(processor, /job\.format === "zip"/);
   assert.match(processor, /kind='pdf_pack'.*format='pdf'.*level=\?.*generation_version=\?.*state='ready'.*expires_at>\?.*manifest_json=\?/s);
   assert.match(processor, /COMMERCIAL_EXPORTS_R2\.get\(reusable\.object_key\)/);
-  assert.match(processor, /if \(!pdf\).*generatePackPdf/s);
+  assert.match(processor, /pdf\s*\)\s*pdf\s*=\s*await generatePackPdf/s);
 });
 
 test("real PDF and offline ZIP bytes are generated", async () => {

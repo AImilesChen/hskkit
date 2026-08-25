@@ -43,14 +43,14 @@ test("public copy keeps one explicit product boundary after the Test-mode Store 
     assert.match(s[key], /PUBLIC_FORMAL_CONTENT_SCOPE/);
     assert.match(s[key], /PUBLIC_ACCOUNT_SCOPE/);
   }
-  assert.match(s.packs, /published, QA-approved, rights-checked content/);
+  assert.match(s.packs, /published, QA-approved, rights-checked content/i);
   assert.match([s.home,s.pricing,s.packs,s.contact,s.terms].join("\n"), /Stripe Test/);
 });
 
-test("Test-mode Store exposes only the frozen one-level PackPurchase", () => {
+test("Test-mode Store submits the frozen product identity", () => {
   assert.match(s.pricing, /US\$9\.99 one-time/);
   assert.match(s.purchase, /commercial\/checkout/);
-  assert.match(s.purchase, /body:JSON\.stringify\(\{level:submittedLevel,idempotencyKey/);
+  assert.match(s.purchase, /body:JSON\.stringify\(\{productId:selected\.id,idempotencyKey/);
   assert.doesNotMatch(s.purchase, /live payment|sk_live_/i);
 });
 

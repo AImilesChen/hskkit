@@ -55,10 +55,10 @@ test("download debit uses a single-use CAS and transactional entitlement reserva
   assert.match(webhook, /expectedSelectedLevel:pack\.selectedLevel/);
   assert.match(processor, /if\(!committed\) throw new Error\("EXPORT_LEASE_LOST"\)/);
   assert.match(processor, /if\(objectKey\) await env\.COMMERCIAL_EXPORTS_R2\.delete\(objectKey\)/);
-  assert.match(exportsRoute, /code==="LEVEL_NOT_PURCHASED"\?403/);
+  assert.match(exportsRoute, /code==="LEVEL_NOT_PURCHASED"\|\|code==="PRODUCT_NOT_PURCHASED"\?403/);
   assert.match(sitemap, /"\/pricing"/);
   assert.match(sitemap, /"\/store"/);
   assert.match(purchaseUi, /fetch\("\/api\/v1\/commercial\/config"/);
-  assert.match(purchaseUi, /disabled=\{!commerceEnabled\|\|!accepted\|\|busy\}/);
+  assert.match(purchaseUi, /disabled=\{!config\.enabled\|\|!accepted\|\|busy\}/);
   assert.match(purchaseUi, /Stripe Test checkout/);
 });

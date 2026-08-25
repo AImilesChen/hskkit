@@ -50,7 +50,7 @@ test("2B export state contract exposes every required terminal and non-terminal 
 
 test("2B webhook still grants PackPurchase when checkout-result reconciliation already marked the order paid", async () => {
   const storage = await read("src/lib/commercial/storage.ts");
-  assert.match(storage, /if \(order\.status === "paid"\) \{\s*const existing = await getPackPurchaseForOrder\(order\.id\);\s*if \(existing\) return existing;\s*\}/);
+  assert.match(storage, /if \(order\.status === "paid"\) \{\s*const existing = await getPackPurchaseForOrder\(order\.id,env\);\s*if \(existing\) return existing;\s*\}/);
   assert.match(storage, /status IN \('pending','failed','paid'\)/);
 });
 
@@ -114,6 +114,6 @@ test("refund and license withdrawal revoke access and delete private objects", a
   assert.match(adminRevoke, /revokePackPurchase/);
   assert.match(storage, /status='revoked'/);
   for (const source of [webhook, downloadLink, download, adminRevoke]) assert.match(source, /COMMERCIAL_EXPORTS_R2/);
-  assert.match(webhook, /await env\.COMMERCIAL_EXPORTS_R2\.delete\(objectKey\);\s*if\(await env\.COMMERCIAL_EXPORTS_R2\.head\(objectKey\)\) throw new Error\("REFUND_OBJECT_DELETE_FAILED"\);\s*await clearRevokedExportObjectKey\(objectKey\)/);
+  assert.match(webhook, /await env\.COMMERCIAL_EXPORTS_R2\.delete\(objectKey\);\s*if\(await env\.COMMERCIAL_EXPORTS_R2\.head\(objectKey\)\)\s*throw new Error\("REFUND_OBJECT_DELETE_FAILED"\);\s*await clearRevokedExportObjectKey\(objectKey\)/);
   assert.ok(webhook.indexOf("COMMERCIAL_EXPORTS_R2.head(objectKey)") < webhook.indexOf("clearRevokedExportObjectKey(objectKey)"), "the D1 object key must remain recoverable until R2 deletion is verified");
 });

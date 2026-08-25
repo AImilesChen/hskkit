@@ -1,4 +1,5 @@
 import { PDF_PACK_CURRENCY, PDF_PACK_PRICE_CENTS, PDF_PACK_SKU } from "./domain.ts";
+import type { DigitalProduct } from "./products.ts";
 import { buildSubscriptionCheckoutForm, type SubscriptionPlanId } from "./subscription.ts";
 
 const STRIPE_VERSION = "2024-06-20";
@@ -41,6 +42,21 @@ export async function createStripeTestCheckout(input: { orderId: string; userId:
   const result = await stripeFetch("checkout/sessions", input.secret, form, `checkout:${input.orderId}`);
   if (typeof result.id !== "string" || typeof result.url !== "string") throw new Error("STRIPE_CHECKOUT_INVALID");
   return { id: result.id, url: result.url };
+}
+
+export async function createStripeDigitalProductCheckout(input:{orderId:string;userId:string;product:DigitalProduct;successUrl:string;cancelUrl:string;secret:string}){
+  const form=new URLSearchParams({
+    mode:"payment",success_url:input.successUrl,cancel_url:input.cancelUrl,client_reference_id:input.userId,
+    "line_items[0][quantity]":"1","line_items[0][price_data][currency]":input.product.currency,
+    "line_items[0][price_data][unit_amount]":String(input.product.amountCents),
+    "line_items[0][price_data][product_data][name]":input.product.name,
+    "line_items[0][price_data][product_data][description]":"One-time purchase. Three successful downloads per delivery during a 14-day access window.",
+    "metadata[order_id]":input.orderId,"metadata[user_id]":input.userId,"metadata[product_id]":input.product.id,
+    "payment_intent_data[metadata][order_id]":input.orderId,"payment_intent_data[metadata][user_id]":input.userId,"payment_intent_data[metadata][product_id]":input.product.id,
+  });
+  const result=await stripeFetch("checkout/sessions",input.secret,form,`digital-checkout:${input.orderId}`);
+  if(typeof result.id!=="string"||typeof result.url!=="string"||!result.id.startsWith("cs_test_"))throw new Error("STRIPE_CHECKOUT_INVALID");
+  return {id:result.id,url:result.url};
 }
 
 export async function createStripeSubscriptionCheckout(input:{orderId:string;ownerId:string;userId:string;planId:SubscriptionPlanId;origin:string;secret:string;priceId?:string}){

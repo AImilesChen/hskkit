@@ -6,7 +6,7 @@ const pricingPath = new URL("../src/app/pricing/page.tsx", import.meta.url);
 const storePath = new URL("../src/app/store/page.tsx", import.meta.url);
 const checkoutPath = new URL("../src/app/pricing/subscription-checkout.tsx", import.meta.url);
 
-test("2C keeps Pro and one-time PDF Pack cross-sell boundaries explicit", async () => {
+test("2C keeps Pro and one-time Store product cross-sell boundaries explicit", async () => {
   const [pricing, store, checkout] = await Promise.all([
     readFile(pricingPath, "utf8"),
     readFile(storePath, "utf8"),
@@ -15,7 +15,7 @@ test("2C keeps Pro and one-time PDF Pack cross-sell boundaries explicit", async 
 
   assert.match(pricing, /Open Store/);
   assert.match(pricing, /Does not include the Advanced Study PDF Pack/);
-  assert.match(store, /PDF Pack or Pro\?/);
+  assert.match(store, /Store product or Pro\?/);
   assert.match(store, /Pro covers ongoing review, Focused mode, device sync and AI learning features/);
 
   assert.equal((pricing.match(/<SubscriptionCheckout /g) ?? []).length, 2);

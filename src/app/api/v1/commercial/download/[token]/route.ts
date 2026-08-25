@@ -39,7 +39,8 @@ export async function GET(_:Request,{params}:{params:Promise<{token:string}>}) {
       throw new Error("EXPORT_EXPIRED");
     }
     if(context.state!=="ready"||!context.object_key) throw new Error("EXPORT_NOT_READY");
-    if(context.pack_purchase_id&&(context.pack_purchase_status!=="active"||Number(context.successful_downloads)>=Number(context.download_limit))) throw new Error("DOWNLOAD_NOT_ALLOWED");
+    if(context.pack_purchase_id&&(context.pack_purchase_status!=="active"||!context.pack_purchase_expires_at||Date.parse(String(context.pack_purchase_expires_at))<=Date.now()||Number(context.successful_downloads)>=Number(context.download_limit))) throw new Error("DOWNLOAD_NOT_ALLOWED");
+    if(context.product_entitlement_id&&(context.product_entitlement_status!=="active"||!context.product_entitlement_expires_at||Date.parse(String(context.product_entitlement_expires_at))<=Date.now()||Number(context.product_successful_downloads)>=Number(context.product_download_limit))) throw new Error("DOWNLOAD_NOT_ALLOWED");
     if(context.kind!=="account_data"&&!manifestStillAuthorized(String(context.manifest_json??""))){
       await revokePackExportDelivery(String(context.id),"CONTENT_RIGHTS_CHANGED",env);
       throw new Error("CONTENT_RIGHTS_CHANGED");
@@ -53,6 +54,7 @@ export async function GET(_:Request,{params}:{params:Promise<{token:string}>}) {
       tokenId:String(context.token_id),
       jobId:String(context.id),
       packPurchaseId:context.pack_purchase_id?String(context.pack_purchase_id):null,
+      productEntitlementId:context.product_entitlement_id?String(context.product_entitlement_id):null,
       userId:identity.account.userId,
       byteSize:bytes.byteLength,
       checksumSha256:checksum,

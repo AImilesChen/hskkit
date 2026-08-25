@@ -42,7 +42,7 @@ export async function generatePackPdf(selection: PackSelection, manifest: PackMa
   page.drawText("HSKKit Advanced Study PDF Pack", { x: 40, y, size: 24, font, color: rgb(0.06, 0.35, 0.32) }); y -= 38;
   page.drawText(`HSK 3.0 Level ${selection.level} 学习材料`, { x: 40, y, size: 16, font });
   page.drawText("☺", { x: 278, y, size: 16, font: emojiFont }); y -= 28;
-  y = drawWrapped(page, `Generation: ${manifest.generationVersion}  |  ${selection.words.length} authorized words\nAudio excluded because offline redistribution is not authorized.`, font, 9, 40, y, 515); y -= 15;
+  y = drawWrapped(page, `Generation: ${manifest.generationVersion}  |  ${selection.words.length} authorized words\nAudio excluded because offline redistribution is not authorized.${selection.level>=7?"\nHSK 3.0 Levels 7–9 use one canonical unified advanced-band source set; this PDF is level-labelled, not a distinct official vocabulary list.":""}`, font, 9, 40, y, 515); y -= 15;
   for (const [index, word] of selection.words.entries()) {
     ensure(100);
     page.drawText(`${index + 1}. ${word.hanzi}  ${word.pinyin}`, { x: 40, y, size: 12, font, color: rgb(0.06, 0.35, 0.32) }); y -= 16;
@@ -57,7 +57,9 @@ export async function generatePackPdf(selection: PackSelection, manifest: PackMa
   ensure(180); y -= 10;
   page.drawText("授权与追溯 / License & traceability", { x: 40, y, size: 14, font }); y -= 22;
   y = drawWrapped(page, manifest.licenseNotice, font, 8, 40, y, 515); y -= 8;
-  y = drawWrapped(page, `Manifest schema: ${manifest.schemaVersion}; standard: ${manifest.standardVersion}; assets: ${manifest.assets.length}. Full per-asset source, version and license references are included in manifest.json inside the offline ZIP.`, font, 8, 40, y, 515);
+  y = drawWrapped(page, `Manifest schema: ${manifest.schemaVersion}; standard: ${manifest.standardVersion}; assets: ${manifest.assets.length}. Full per-asset source, version and license references follow in this PDF.`, font, 8, 40, y, 515); y-=18;
+  ensure(100);page.drawText("Per-asset manifest",{x:40,y,size:12,font,color:rgb(0.06,0.35,0.32)});y-=18;
+  for(const asset of manifest.assets){ensure(62);y=drawWrapped(page,`${asset.id} | ${asset.version} | source: ${asset.sourceRef} | license: ${asset.licenseRef}`,font,7,40,y,515);y-=4;}
   return new Uint8Array(await pdf.save({ useObjectStreams: false }));
 }
 
@@ -70,13 +72,8 @@ function crc32(data: Uint8Array) { let c = 0xffffffff; for (const byte of data) 
 function u16(value: number) { return [value & 255, (value >>> 8) & 255]; }
 function u32(value: number) { return [value & 255, (value >>> 8) & 255, (value >>> 16) & 255, (value >>> 24) & 255]; }
 
-export function generateOfflineZip(pdf: Uint8Array, manifest: PackManifest) {
+export function generateZipFiles(files:Array<{name:string;data:Uint8Array}>) {
   const encoder = new TextEncoder();
-  const files = [
-    { name: "HSKKit-Advanced-Study-Pack.pdf", data: pdf },
-    { name: "manifest.json", data: encoder.encode(JSON.stringify(manifest, null, 2)) },
-    { name: "README.txt", data: encoder.encode("HSKKit offline study pack. Personal, non-transferable study and print use only. Audio is excluded because offline redistribution is not authorized.\n") },
-  ];
   const local: Uint8Array[] = [], central: Uint8Array[] = [];
   let offset = 0;
   for (const file of files) {
@@ -90,4 +87,13 @@ export function generateOfflineZip(pdf: Uint8Array, manifest: PackManifest) {
   const end = Uint8Array.from([80,75,5,6,0,0,0,0,...u16(files.length),...u16(files.length),...u32(centralSize),...u32(offset),0,0]);
   const chunks=[...local,...central,end]; const total=chunks.reduce((sum,chunk)=>sum+chunk.length,0); const output=new Uint8Array(total);
   let cursor=0; for(const chunk of chunks){output.set(chunk,cursor);cursor+=chunk.length;} return output;
+}
+
+export function generateOfflineZip(pdf:Uint8Array,manifest:PackManifest){
+  const encoder=new TextEncoder();
+  return generateZipFiles([
+    {name:"HSKKit-Advanced-Study-Pack.pdf",data:pdf},
+    {name:"manifest.json",data:encoder.encode(JSON.stringify(manifest,null,2))},
+    {name:"README.txt",data:encoder.encode("HSKKit offline study pack. Personal, non-transferable study and print use only. Audio is excluded because offline redistribution is not authorized.\n")},
+  ]);
 }

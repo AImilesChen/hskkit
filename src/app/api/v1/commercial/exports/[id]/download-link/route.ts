@@ -33,6 +33,7 @@ export async function POST(req:NextRequest,{params}:{params:Promise<{id:string}>
     if(job.state==="ready") await expirePackExportDelivery(job.id,env);
     return NextResponse.json({error:"EXPORT_EXPIRED"},{status:410});
   }
+  let accessExpiresAt=job.expires_at;
   if(job.kind==="account_data") {
     if(job.state!=="ready") return NextResponse.json({error:"EXPORT_NOT_READY"},{status:409});
   } else {
@@ -41,21 +42,24 @@ export async function POST(req:NextRequest,{params}:{params:Promise<{id:string}>
       return NextResponse.json({error:"CONTENT_RIGHTS_CHANGED"},{status:410});
     }
     const purchase=job.pack_purchase_id
-      ?await env.LEARNING_DB.prepare(`SELECT status,download_limit,successful_downloads FROM pack_purchases WHERE id=?`).bind(job.pack_purchase_id).first<{status:string;download_limit:number;successful_downloads:number}>()
-      :null;
+      ?await env.LEARNING_DB.prepare(`SELECT status,expires_at,download_limit,successful_downloads FROM pack_purchases WHERE id=?`).bind(job.pack_purchase_id).first<{status:string;expires_at:string;download_limit:number;successful_downloads:number}>()
+      :job.product_entitlement_id
+        ?await env.LEARNING_DB.prepare(`SELECT status,expires_at,download_limit,successful_downloads FROM digital_product_entitlements WHERE id=?`).bind(job.product_entitlement_id).first<{status:string;expires_at:string;download_limit:number;successful_downloads:number}>()
+        :null;
+    if(purchase?.expires_at&&Date.parse(purchase.expires_at)<Date.parse(accessExpiresAt))accessExpiresAt=purchase.expires_at;
     const decision=canIssueDownload({
       actorUserId:identity.account.userId,
       ownerUserId:job.user_id,
       packPurchaseStatus:purchase?.status??"revoked",
       jobState:job.state,
-      expiresAt:job.expires_at,
+      expiresAt:accessExpiresAt,
       successfulDownloads:purchase?.successful_downloads??0,
       downloadLimit:purchase?.download_limit??0,
     });
     if(!decision.allowed) return NextResponse.json({error:decision.code},{status:decision.code==="ACCESS_DENIED"?403:decision.code==="EXPORT_EXPIRED"?410:409});
   }
   const tokenId=`tok_${crypto.randomUUID()}`;
-  const exp=Math.min(Math.floor(Date.now()/1000)+600,Math.floor(Date.parse(job.expires_at)/1000));
+  const exp=Math.min(Math.floor(Date.now()/1000)+600,Math.floor(Date.parse(accessExpiresAt)/1000));
   const token=await signDownloadToken({jobId:job.id,userId:identity.account.userId,jti:tokenId,exp},env.EXPORT_SIGNING_SECRET);
   await createDownloadTokenRecord({tokenId,jobId:job.id,userId:identity.account.userId,tokenSha256:await sha256Hex(token),expiresAt:new Date(exp*1000).toISOString()});
   return NextResponse.json({url:`${req.nextUrl.origin}/api/v1/commercial/download/${encodeURIComponent(token)}`,expiresAt:new Date(exp*1000).toISOString(),singleUse:true},{headers:{"cache-control":"private, no-store"}});

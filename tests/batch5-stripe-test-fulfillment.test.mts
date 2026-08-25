@@ -8,6 +8,7 @@ import {
   applySubscriptionEvent,
   claimPaymentEvent,
   consumeSuccessfulDownload,
+  createExportJob,
   createDownloadTokenRecord,
   downloadContext,
   expireReadyExports,
@@ -18,6 +19,8 @@ import {
 } from "../src/lib/commercial/storage.ts";
 import { buildSubscriptionCheckoutForm, SUBSCRIPTION_PLANS } from "../src/lib/commercial/subscription.ts";
 import { buildPackManifest, selectPackAssets } from "../src/lib/commercial/catalog.ts";
+import {activeDigitalEntitlement,createDigitalProductOrder,grantDigitalProductOrder,markDigitalOrderFailed,requestDigitalRefund,revokeRefundedDigitalProductOrder} from "../src/lib/commercial/digital-storage.ts";
+import {buildProductDeliveries} from "../src/lib/commercial/products.ts";
 import { generatePackPdf } from "../src/lib/commercial/generator.ts";
 
 class TestStatement {
@@ -110,6 +113,7 @@ async function packDb(){
   db.exec("CREATE TABLE accounts(user_id TEXT PRIMARY KEY); INSERT INTO accounts VALUES('pack-user');");
   db.exec(await read("migrations/0012_batch15_commercial_exports.sql"));
   db.exec(await read("migrations/0016_batch2b_pack_purchases.sql"));
+  db.exec(await read("migrations/0020_p0_p1_digital_products.sql"));
   return db;
 }
 
@@ -153,6 +157,56 @@ test("PDF Pack expires after 14 days and refund revokes rights plus old tokens",
   assert.equal(revoked.status,"refunded"); assert.equal(revoked.revoked_reason,"refund");
   db.prepare("UPDATE commercial_export_jobs SET state='ready',expires_at=?,object_key='private/expired.pdf' WHERE id='job_refund'").run("2000-01-01T00:00:00.000Z");
   const expired=await expireReadyExports(10,env); assert.ok(expired.some((item:{id:string})=>item.id==="job_refund"));
+});
+
+test("P0 bundles grant exact deliveries, meter successful downloads, block repeat purchase, and revoke on refund",async()=>{
+  const db=await packDb();const env=envFor(db);
+  const advanced=await createDigitalProductOrder("pack-user","advanced-7-9","digital-advanced",env);
+  db.prepare("UPDATE digital_product_orders SET stripe_checkout_session_id='cs_adv' WHERE id=?").run(advanced.id);
+  const rights=await grantDigitalProductOrder({sessionId:"cs_adv",expectedUserId:"pack-user",expectedProductId:"advanced-7-9",paymentIntentId:"pi_adv",chargeId:"ch_adv"},env);
+  assert.equal(rights.length,buildProductDeliveries("advanced-7-9").length);assert.deepEqual(rights.map((right:{delivery_key:string})=>right.delivery_key),["level-7","level-8","level-9","bundle-zip"]);
+  assert.equal((await grantDigitalProductOrder({sessionId:"cs_adv",expectedUserId:"pack-user",expectedProductId:"advanced-7-9"},env)).length,4);
+  await assert.rejects(createDigitalProductOrder("pack-user","advanced-7-9","digital-repeat",env),/PRODUCT_ALREADY_ACTIVE/);
+  const levelRight=rights.find((right:{delivery_key:string})=>right.delivery_key==="level-8")!;
+  const job=await createExportJob({userId:"pack-user",productEntitlementId:levelRight.id,productId:"advanced-7-9",deliveryKey:"level-8",kind:"pdf_pack",format:"pdf",level:8,idempotencyKey:"digital-job",generationVersion:"p01-v1"},env);
+  await createDownloadTokenRecord({tokenId:"digital-token",jobId:job.id,userId:"pack-user",tokenSha256:"digital-hash",expiresAt:new Date(Date.now()+60_000).toISOString()},env);
+  await consumeSuccessfulDownload({tokenId:"digital-token",jobId:job.id,packPurchaseId:null,productEntitlementId:levelRight.id,userId:"pack-user",byteSize:456,checksumSha256:"digital-sum"},env);
+  assert.equal((db.prepare("SELECT successful_downloads n FROM digital_product_entitlements WHERE id=?").get(levelRight.id) as {n:number}).n,1);
+  await assert.rejects(requestDigitalRefund("pack-user",advanced.id,env),/ALREADY_DOWNLOADED/);
+
+  const complete=await createDigitalProductOrder("pack-user","complete-1-9","digital-complete",env);db.prepare("UPDATE digital_product_orders SET stripe_checkout_session_id='cs_complete' WHERE id=?").run(complete.id);
+  const completeRights=await grantDigitalProductOrder({sessionId:"cs_complete",expectedUserId:"pack-user",expectedProductId:"complete-1-9",paymentIntentId:"pi_complete",chargeId:"ch_complete"},env);assert.equal(completeRights.length,10);
+  const combined=completeRights.find((right:{delivery_key:string})=>right.delivery_key==="bundle-zip")!;
+  const combinedJob=await createExportJob({userId:"pack-user",productEntitlementId:combined.id,productId:"complete-1-9",deliveryKey:"bundle-zip",kind:"offline_pack",format:"zip",idempotencyKey:"complete-job",generationVersion:"p01-v1"},env);
+  db.prepare("UPDATE commercial_export_jobs SET state='ready',object_key='private/complete.zip',manifest_json='{}',checksum_sha256='sum',byte_size=100 WHERE id=?").run(combinedJob.id);
+  await createDownloadTokenRecord({tokenId:"complete-token",jobId:combinedJob.id,userId:"pack-user",tokenSha256:"complete-hash",expiresAt:new Date(Date.now()+60_000).toISOString()},env);
+  assert.ok(await requestDigitalRefund("pack-user",complete.id,env));
+  assert.equal(await activeDigitalEntitlement("pack-user",combined.id,env),null);
+  assert.equal((db.prepare("SELECT state FROM commercial_export_jobs WHERE id=?").get(combinedJob.id) as {state:string}).state,"revoked");
+  const objects=await revokeRefundedDigitalProductOrder({chargeId:"ch_complete",amountRefundedCents:6499,currency:"usd"},env);assert.deepEqual(objects,["private/complete.zip"]);
+  assert.equal((db.prepare("SELECT status FROM digital_product_orders WHERE id=?").get(complete.id) as {status:string}).status,"refunded");
+  assert.equal((db.prepare("SELECT COUNT(*) n FROM digital_product_entitlements WHERE order_id=? AND status='refunded'").get(complete.id) as {n:number}).n,10);
+  assert.equal(await downloadContext("complete-hash",env),null);
+});
+
+test("digital checkout retries failed orders, blocks parallel pending checkout, freezes refunds and ignores partial refund revocation",async()=>{
+  const db=await packDb();const env=envFor(db);
+  const failed=await createDigitalProductOrder("pack-user","level-8","retry-idem",env);await markDigitalOrderFailed(failed.id,env);
+  const retried=await createDigitalProductOrder("pack-user","level-8","retry-idem",env);assert.equal(retried.id,failed.id);assert.equal(retried.status,"pending");
+  await assert.rejects(createDigitalProductOrder("pack-user","level-8","other-idem",env),/PRODUCT_CHECKOUT_PENDING/);
+  db.prepare("UPDATE digital_product_orders SET stripe_checkout_session_id='cs_retry' WHERE id=?").run(retried.id);
+  const rights=await grantDigitalProductOrder({sessionId:"cs_retry",expectedUserId:"pack-user",expectedProductId:"level-8",paymentIntentId:"pi_retry",chargeId:"ch_retry"},env);assert.equal(rights.length,1);
+  assert.ok(await requestDigitalRefund("pack-user",retried.id,env));assert.equal(await activeDigitalEntitlement("pack-user",rights[0].id,env),null);
+  await assert.rejects(revokeRefundedDigitalProductOrder({chargeId:"ch_retry",amountRefundedCents:500,currency:"usd"},env),/PARTIAL_REFUND_NOT_FINAL/);
+  assert.equal((db.prepare("SELECT status FROM digital_product_entitlements WHERE id=?").get(rights[0].id) as {status:string}).status,"refund_pending");
+  await revokeRefundedDigitalProductOrder({chargeId:"ch_retry",amountRefundedCents:999,currency:"usd"},env);
+  assert.equal((db.prepare("SELECT status FROM digital_product_entitlements WHERE id=?").get(rights[0].id) as {status:string}).status,"refunded");
+});
+
+test("failed checkout cannot be revived after the same user gains active product rights",async()=>{
+  const db=await packDb();const env=envFor(db);const stale=await createDigitalProductOrder("pack-user","worksheet-pack","stale-idem",env);await markDigitalOrderFailed(stale.id,env);
+  const winner=await createDigitalProductOrder("pack-user","worksheet-pack","winner-idem",env);db.prepare("UPDATE digital_product_orders SET stripe_checkout_session_id='cs_winner' WHERE id=?").run(winner.id);await grantDigitalProductOrder({sessionId:"cs_winner",expectedUserId:"pack-user",expectedProductId:"worksheet-pack",paymentIntentId:"pi_winner",chargeId:"ch_winner"},env);
+  await assert.rejects(createDigitalProductOrder("pack-user","worksheet-pack","stale-idem",env),/PRODUCT_ALREADY_ACTIVE/);assert.equal((db.prepare("SELECT status FROM digital_product_orders WHERE id=?").get(stale.id) as {status:string}).status,"failed");
 });
 
 test("final PDF bytes parse independently and render without blank pages",async()=>{

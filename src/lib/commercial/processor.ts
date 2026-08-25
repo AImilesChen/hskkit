@@ -1,5 +1,7 @@
 import { buildPackManifest, selectPackAssets } from "./catalog.ts";
-import { generateOfflineZip, generatePackPdf } from "./generator.ts";
+import { generateOfflineZip, generatePackPdf, generateZipFiles } from "./generator.ts";
+import { generateDifferentiatedProductArtifact } from "./product-generator.ts";
+import { digitalProduct } from "./products.ts";
 import { acquireJobLease, commerceDb, getExportJob, markJobFailed, markJobReady } from "./storage.ts";
 import { sha256Hex } from "./signer.ts";
 
@@ -10,7 +12,7 @@ const EMOJI_FONT_OBJECT_KEY = "system/fonts/HskKitEmoji.ttf";
 
 async function accountExport(userId: string, env: CommercialWorkerEnv) {
   const db = commerceDb(env); const ownerId = `user:${userId}`;
-  const [account, learning, plans, aiOperations, aiQuota, requests, audit, orders, purchases, exports] = await Promise.all([
+  const [account, learning, plans, aiOperations, aiQuota, requests, audit, orders, purchases, digitalOrders, digitalEntitlements, exports] = await Promise.all([
     db.prepare(`SELECT user_id,display_name,timezone,status,created_at,updated_at FROM accounts WHERE user_id=?`).bind(userId).first(),
     db.prepare(`SELECT revision,state_json,updated_at FROM learning_states WHERE owner_id=?`).bind(ownerId).first(),
     db.prepare(`SELECT version,status,goal_level,target_date,weekly_minutes,preferred_days_json,weak_points_json,warnings_json,sessions_json,created_at FROM study_plan_versions WHERE owner_id=? ORDER BY version`).bind(ownerId).all(),
@@ -20,13 +22,15 @@ async function accountExport(userId: string, env: CommercialWorkerEnv) {
     db.prepare(`SELECT action,resource_type,resource_id,result,created_at FROM account_audit WHERE user_id=? ORDER BY created_at`).bind(userId).all(),
     db.prepare(`SELECT id,sku,amount_cents,currency,status,created_at,paid_at,refunded_at FROM commerce_orders WHERE user_id=? ORDER BY created_at`).bind(userId).all(),
     db.prepare(`SELECT id,sku,status,starts_at,expires_at,successful_downloads,download_limit FROM pack_purchases WHERE user_id=? ORDER BY starts_at`).bind(userId).all(),
+    db.prepare(`SELECT id,product_id,sku,amount_cents,currency,status,created_at,paid_at,refunded_at FROM digital_product_orders WHERE user_id=? ORDER BY created_at`).bind(userId).all(),
+    db.prepare(`SELECT id,order_id,product_id,delivery_key,level,artifact_type,format,status,starts_at,expires_at,successful_downloads,download_limit FROM digital_product_entitlements WHERE user_id=? ORDER BY starts_at`).bind(userId).all(),
     db.prepare(`SELECT id,kind,format,level,state,generation_version,created_at,completed_at,expires_at FROM commercial_export_jobs WHERE user_id=? ORDER BY created_at`).bind(userId).all(),
   ]);
   return new TextEncoder().encode(JSON.stringify({
     schemaVersion: "hskkit-account-export-v2", generatedAt: new Date().toISOString(), account,
     learning: learning ? { ...learning, state_json: JSON.parse(String((learning as Record<string,unknown>).state_json ?? "{}")) } : null,
     plans: plans.results, ai: { operations: aiOperations.results, quota: aiQuota.results }, requests: requests.results,
-    audit: audit.results, commerce: { orders: orders.results, purchases: purchases.results, exports: exports.results },
+    audit: audit.results, commerce: { orders: orders.results, purchases: purchases.results, digitalOrders:digitalOrders.results, digitalEntitlements:digitalEntitlements.results, exports: exports.results },
   }, null, 2));
 }
 
@@ -38,39 +42,38 @@ export async function processCommercialExport(message: CommercialQueueMessage, e
   try {
     const job = await getExportJob(message.jobId, undefined, env);
     if (!job) throw new Error("EXPORT_NOT_FOUND");
-    let purchase = job.pack_purchase_id ? await commerceDb(env).prepare(`SELECT expires_at,status FROM pack_purchases WHERE id=?`).bind(job.pack_purchase_id).first<{expires_at:string;status:string}>() : null;
-    if (job.pack_purchase_id && (!purchase || purchase.status !== "active")) throw new Error("PACK_PURCHASE_REVOKED");
+    let purchase = job.pack_purchase_id ? await commerceDb(env).prepare(`SELECT expires_at,status FROM pack_purchases WHERE id=?`).bind(job.pack_purchase_id).first<{expires_at:string;status:string}>() : job.product_entitlement_id ? await commerceDb(env).prepare(`SELECT expires_at,status FROM digital_product_entitlements WHERE id=?`).bind(job.product_entitlement_id).first<{expires_at:string;status:string}>() : null;
+    if ((job.pack_purchase_id||job.product_entitlement_id) && (!purchase || purchase.status !== "active")) throw new Error("PACK_PURCHASE_REVOKED");
     if (purchase && Date.parse(purchase.expires_at) <= Date.now()) throw new Error("PACK_PURCHASE_EXPIRED");
     let bytes: Uint8Array; let manifest: Record<string,unknown>; let extension: string; let contentType: string;
     if (job.kind === "account_data") {
       bytes = await accountExport(job.user_id, env); extension = "json"; contentType = "application/json";
       manifest = { schemaVersion: "hskkit-account-export-manifest-v1", generationVersion: job.generation_version, ownerUserId: job.user_id, format: "json" };
     } else {
-      if (!job.level) throw new Error("LEVEL_REQUIRED");
-      const selection = selectPackAssets(job.level); const packManifest = buildPackManifest(selection, job.generation_version);
-      const expectedManifestJson = JSON.stringify(packManifest);
-      let pdf: Uint8Array | null = null;
-      if (job.format === "zip") {
-        const reusable = await commerceDb(env).prepare(`SELECT object_key FROM commercial_export_jobs WHERE user_id=? AND pack_purchase_id=? AND kind='pdf_pack' AND format='pdf' AND level=? AND generation_version=? AND state='ready' AND expires_at>? AND manifest_json=? AND object_key IS NOT NULL ORDER BY completed_at DESC LIMIT 1`).bind(job.user_id,job.pack_purchase_id,job.level,job.generation_version,new Date().toISOString(),expectedManifestJson).first<{object_key:string}>();
-        if (reusable?.object_key) {
-          const reusableObject = await env.COMMERCIAL_EXPORTS_R2.get(reusable.object_key);
-          if (reusableObject) pdf = new Uint8Array(await reusableObject.arrayBuffer());
-        }
+      const [fontObject,emojiFontObject] = await Promise.all([env.COMMERCIAL_EXPORTS_R2.get(FONT_OBJECT_KEY),env.COMMERCIAL_EXPORTS_R2.get(EMOJI_FONT_OBJECT_KEY)]);
+      if (!fontObject||!emojiFontObject) throw new Error("EMBEDDED_FONT_NOT_AVAILABLE");
+      const fontBytes=new Uint8Array(await fontObject.arrayBuffer());const emojiBytes=new Uint8Array(await emojiFontObject.arrayBuffer());
+      const product=job.product_id?digitalProduct(job.product_id):null;
+      if(product?.category==="resource"){
+        const artifact=await generateDifferentiatedProductArtifact(product.id,fontBytes,emojiBytes,job.generation_version);bytes=artifact.bytes;extension=artifact.format;contentType=artifact.format==="pdf"?"application/pdf":"application/zip";
+        manifest=artifact.manifest;
+      }else if(product?.category==="bundle"&&!job.level){
+        const files:Array<{name:string;data:Uint8Array}>=[];const assets:unknown[]=[];
+        for(const level of product.levels){const selection=selectPackAssets(level);const levelManifest=buildPackManifest(selection,job.generation_version);assets.push(...levelManifest.assets);files.push({name:`HSKKit-Level-${level}.pdf`,data:await generatePackPdf(selection,levelManifest,fontBytes,emojiBytes)});}
+        manifest={schemaVersion:"hskkit-bundle-manifest-v1",productId:product.id,standard:"HSK 3.0",standardVersion:"GF0025-2021",generationVersion:job.generation_version,officialExam:false,levels:product.levels,advancedBandDisclosure:"HSK 3.0 defines one unified Levels 7–9 advanced ability band; the Level 7/8/9 PDFs use the same canonical approved source set.",assets,licenseNotice:"Personal, non-transferable study and print use only."};
+        bytes=generateZipFiles([...files,{name:"manifest.json",data:new TextEncoder().encode(JSON.stringify(manifest,null,2))}]);extension="zip";contentType="application/zip";
+      }else{
+        if (!job.level) throw new Error("LEVEL_REQUIRED");
+        const selection = selectPackAssets(job.level); const packManifest = buildPackManifest(selection, job.generation_version);const expectedManifestJson = JSON.stringify(packManifest);let pdf: Uint8Array | null = null;
+        if (job.format === "zip") {const reusable = await commerceDb(env).prepare(`SELECT object_key FROM commercial_export_jobs WHERE user_id=? AND COALESCE(pack_purchase_id,'')=COALESCE(?,'') AND COALESCE(product_entitlement_id,'')=COALESCE(?,'') AND kind='pdf_pack' AND format='pdf' AND level=? AND generation_version=? AND state='ready' AND expires_at>? AND manifest_json=? AND object_key IS NOT NULL ORDER BY completed_at DESC LIMIT 1`).bind(job.user_id,job.pack_purchase_id,job.product_entitlement_id,job.level,job.generation_version,new Date().toISOString(),expectedManifestJson).first<{object_key:string}>();if(reusable?.object_key){const reusableObject=await env.COMMERCIAL_EXPORTS_R2.get(reusable.object_key);if(reusableObject)pdf=new Uint8Array(await reusableObject.arrayBuffer());}}
+        if(!pdf)pdf=await generatePackPdf(selection,packManifest,fontBytes,emojiBytes);
+        if(job.format==="zip"){bytes=generateOfflineZip(pdf,packManifest);extension="zip";contentType="application/zip";}else{bytes=pdf;extension="pdf";contentType="application/pdf";}manifest=packManifest as unknown as Record<string,unknown>;
       }
-      if (!pdf) {
-        const [fontObject,emojiFontObject] = await Promise.all([
-          env.COMMERCIAL_EXPORTS_R2.get(FONT_OBJECT_KEY),
-          env.COMMERCIAL_EXPORTS_R2.get(EMOJI_FONT_OBJECT_KEY),
-        ]);
-        if (!fontObject||!emojiFontObject) throw new Error("EMBEDDED_FONT_NOT_AVAILABLE");
-        pdf = await generatePackPdf(selection, packManifest, new Uint8Array(await fontObject.arrayBuffer()), new Uint8Array(await emojiFontObject.arrayBuffer()));
-      }
-      if (job.format === "zip") { bytes = generateOfflineZip(pdf, packManifest); extension = "zip"; contentType = "application/zip"; }
-      else { bytes = pdf; extension = "pdf"; contentType = "application/pdf"; }
-      manifest = packManifest as unknown as Record<string,unknown>;
     }
-    if (job.pack_purchase_id) {
-      purchase = await commerceDb(env).prepare(`SELECT expires_at,status FROM pack_purchases WHERE id=?`).bind(job.pack_purchase_id).first<{expires_at:string;status:string}>();
+    if (job.pack_purchase_id||job.product_entitlement_id) {
+      purchase = job.pack_purchase_id
+        ? await commerceDb(env).prepare(`SELECT expires_at,status FROM pack_purchases WHERE id=?`).bind(job.pack_purchase_id).first<{expires_at:string;status:string}>()
+        : await commerceDb(env).prepare(`SELECT expires_at,status FROM digital_product_entitlements WHERE id=?`).bind(job.product_entitlement_id).first<{expires_at:string;status:string}>();
       if (!purchase || purchase.status !== "active") throw new Error("PACK_PURCHASE_REVOKED");
       if (Date.parse(purchase.expires_at) <= Date.now()) throw new Error("PACK_PURCHASE_EXPIRED");
     }

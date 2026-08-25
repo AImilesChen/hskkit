@@ -18,6 +18,13 @@ export async function POST(req:NextRequest){
       await db.prepare(`UPDATE subscription_refund_requests SET status='approved',updated_at=? WHERE id=? AND status='requested'`).bind(new Date().toISOString(),subscription.id).run();
       return NextResponse.json({requestId:subscription.id,stripeRefundId:refund.id,status:refund.status,mode:"test",kind:"subscription"});
     }
+    const digital=await db.prepare(`SELECT r.id,r.status,r.order_id,o.stripe_payment_intent_id,COALESCE(SUM(e.successful_downloads),0) successful_downloads,SUM(CASE WHEN e.status='refund_pending' THEN 1 ELSE 0 END) frozen_deliveries,COUNT(e.id) delivery_count FROM digital_product_refund_requests r JOIN digital_product_orders o ON o.id=r.order_id LEFT JOIN digital_product_entitlements e ON e.order_id=o.id WHERE r.id=? GROUP BY r.id,r.status,r.order_id,o.stripe_payment_intent_id`).bind(requestId).first<{id:string;status:string;order_id:string;stripe_payment_intent_id:string|null;successful_downloads:number;frozen_deliveries:number;delivery_count:number}>();
+    if(digital){
+      if(digital.status!=="pending_review"||!digital.stripe_payment_intent_id||Number(digital.successful_downloads)!==0||Number(digital.delivery_count)<=0||Number(digital.frozen_deliveries)!==Number(digital.delivery_count))throw new Error("REFUND_REQUEST_NOT_READY");
+      const refund=await createStripeTestRefund({paymentIntentId:digital.stripe_payment_intent_id,secret:env.STRIPE_SECRET_KEY??"",idempotencyKey:`digital-refund:${digital.id}`});
+      await db.prepare(`UPDATE digital_product_refund_requests SET status='approved',reviewed_at=?,review_note=? WHERE id=? AND status='pending_review'`).bind(new Date().toISOString(),`Stripe Test refund ${refund.id} submitted`,digital.id).run();
+      return NextResponse.json({requestId:digital.id,stripeRefundId:refund.id,status:refund.status,mode:"test",kind:"digital_product"});
+    }
     const pack=await db.prepare(`SELECT r.id,r.status,o.stripe_payment_intent_id FROM commercial_refund_requests r JOIN commerce_orders o ON o.id=r.order_id WHERE r.id=?`).bind(requestId).first<{id:string;status:string;stripe_payment_intent_id:string|null}>();
     if(!pack||pack.status!=="pending_review"||!pack.stripe_payment_intent_id) throw new Error("REFUND_REQUEST_NOT_READY");
     const refund=await createStripeTestRefund({paymentIntentId:pack.stripe_payment_intent_id,secret:env.STRIPE_SECRET_KEY??"",idempotencyKey:`refund:${pack.id}`});

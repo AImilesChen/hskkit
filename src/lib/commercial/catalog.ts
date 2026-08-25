@@ -34,8 +34,9 @@ const audioAssets = runtimeIndex.publishedAudioAssets;
 
 export function selectPackAssets(level: number): PackSelection {
   if (!Number.isInteger(level) || level < 1 || level > 9) throw new Error("INVALID_LEVEL");
-  const eligible = contentAssets.filter((asset) =>
-    asset.level === level && Boolean(asset.sourceRef) && Boolean(asset.licenseRef),
+  const levelAssets=(runtimeIndex.runtimeWords as Record<string,typeof contentAssets>)[String(level)]??[];
+  const eligible = levelAssets.filter((asset) =>
+    Boolean(asset.sourceRef) && Boolean(asset.licenseRef),
   ).slice(0, 120);
   if (!eligible.length) throw new Error("CONTENT_NOT_RELEASED");
   const words: PackWord[] = eligible.map((asset) => ({
@@ -43,7 +44,7 @@ export function selectPackAssets(level: number): PackSelection {
     version: String(asset.version),
     contentVersion: asset.contentVersion,
     standardVersion: asset.standardVersion,
-    level: asset.level,
+    level,
     hanzi: asset.hanzi,
     pinyin: asset.pinyin,
     meaning: asset.meaning,
@@ -68,7 +69,7 @@ export function selectPackAssets(level: number): PackSelection {
 
 export function manifestStillAuthorized(manifestJson:string|null|undefined){
   if(!manifestJson)return false;
-  try{const manifest=JSON.parse(manifestJson) as PackManifest; if(!Array.isArray(manifest.assets)||manifest.assets.length===0)return false;
+  try{const manifest=JSON.parse(manifestJson) as {schemaVersion?:string;productId?:string;sourceIndependent?:boolean;assets?:PackManifest["assets"]}; if(!Array.isArray(manifest.assets))return false;if(manifest.assets.length===0)return manifest.schemaVersion==="hskkit-product-manifest-v1"&&manifest.productId==="30-day-planner"&&manifest.sourceIndependent===true;
     const byId=new Map(contentAssets.map(asset=>[asset.id,asset]));
     return manifest.assets.every(ref=>{const asset=byId.get(ref.id); return Boolean(
       asset&&String(asset.version)===ref.version&&Boolean(asset.sourceRef)&&Boolean(asset.licenseRef),

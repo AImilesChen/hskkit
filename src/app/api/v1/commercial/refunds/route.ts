@@ -1,4 +1,5 @@
-import { NextRequest,NextResponse } from "next/server";
-import { requestIdentity } from "@/lib/account/identity";
-import { requestRefund } from "@/lib/commercial/storage";
-export async function POST(req:NextRequest){const identity=await requestIdentity();if(!identity.account||identity.account.status!=="active")return NextResponse.json({error:"ACCOUNT_REQUIRED"},{status:401});try{const body=JSON.parse(await req.text());const request=await requestRefund(identity.account.userId,String(body.orderId??""));return NextResponse.json({request,notice:"Eligibility confirmed. Refund requires manual review; access remains until Stripe confirms the refund."},{status:201});}catch(error){const code=error instanceof Error?error.message:"REFUND_REQUEST_FAILED";return NextResponse.json({error:code},{status:code.includes("NOT_FOUND")?404:422});}}
+import {NextRequest,NextResponse} from "next/server";
+import {requestIdentity} from "@/lib/account/identity";
+import {requestDigitalRefund} from "@/lib/commercial/digital-storage";
+import {requestRefund} from "@/lib/commercial/storage";
+export async function POST(req:NextRequest){const identity=await requestIdentity();if(!identity.account||identity.account.status!=="active")return NextResponse.json({error:"ACCOUNT_REQUIRED"},{status:401});try{const body=JSON.parse(await req.text());const orderId=String(body.orderId??"");let request;try{request=await requestDigitalRefund(identity.account.userId,orderId);}catch(error){if(!(error instanceof Error)||!['ORDER_NOT_ELIGIBLE'].includes(error.message))throw error;request=await requestRefund(identity.account.userId,orderId);}return NextResponse.json({request,notice:"Eligibility confirmed. Refund requires manual review; access remains until Stripe confirms the refund."},{status:201});}catch(error){const code=error instanceof Error?error.message:"REFUND_REQUEST_FAILED";return NextResponse.json({error:code},{status:code.includes("NOT_FOUND")?404:422});}}

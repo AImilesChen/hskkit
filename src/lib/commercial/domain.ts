@@ -1,3 +1,5 @@
+import { digitalProduct } from "./products.ts";
+
 export const PDF_PACK_SKU = "hskkit_advanced_study_pdf_pack_v1";
 export const PDF_PACK_PRICE_CENTS = 999;
 export const PDF_PACK_CURRENCY = "usd";
@@ -75,6 +77,22 @@ export function normalizePackCheckoutEvent(object: PackCheckoutObject) {
     currency: object.currency as string,
     paymentIntentId: object.payment_intent as string,
   };
+}
+
+export function normalizeDigitalProductCheckoutEvent(object: PackCheckoutObject) {
+  const metadata = object.metadata && typeof object.metadata === "object"
+    ? object.metadata as Record<string, unknown>
+    : {};
+  const product=digitalProduct(metadata.product_id);
+  const valid=
+    typeof object.id==="string"&&object.id.startsWith("cs_test_")&&
+    object.mode==="payment"&&object.payment_status==="paid"&&
+    Boolean(product)&&object.amount_total===product?.amountCents&&object.currency===product?.currency&&
+    typeof object.payment_intent==="string"&&object.payment_intent.startsWith("pi_")&&
+    typeof metadata.order_id==="string"&&metadata.order_id.length>0&&
+    typeof metadata.user_id==="string"&&metadata.user_id.length>0;
+  if(!valid||!product) throw new Error("DIGITAL_CHECKOUT_MISMATCH");
+  return {sessionId:object.id as string,orderId:metadata.order_id as string,userId:metadata.user_id as string,productId:product.id,amountCents:object.amount_total as number,currency:object.currency as string,paymentIntentId:object.payment_intent as string};
 }
 
 export function canIssueDownload(input: {
