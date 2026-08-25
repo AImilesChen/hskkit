@@ -25,7 +25,21 @@ test("P0-3 publishes a real Google OAuth login, callback, failure retry and logo
   assert.match(callback, /exchangeGoogleCode/);
   assert.match(callback, /upsertGoogleAccount/);
   assert.match(callback, /createAccountSession/);
+  assert.match(start, /OAUTH_RETURN_COOKIE/);
+  assert.match(start, /safeReturnTo/);
+  assert.match(callback, /OAUTH_RETURN_COOKIE/);
+  assert.match(callback, /safeReturnTo/);
+  assert.match(callback, /NextResponse\.redirect\(new URL\(returnTo, request\.url\)\)/);
   assert.match(logout, /revokeAccountSession/);
+});
+
+test("P0-3 replays the same stale sync checkpoint without duplicating conflict records", () => {
+  const storage = read("../src/lib/account/storage.ts");
+  assert.match(storage, /SELECT id FROM sync_conflicts WHERE user_id=\? AND device_id=\? AND client_revision=\? AND server_revision=\? AND state='open'/);
+  assert.match(storage, /if \(existing\) return \{ \.\.\.decision, conflictId: existing\.id/);
+  assert.match(storage, /stableSyncConflictId\(userId, deviceId, clientRevision, loaded\.revision\)/);
+  assert.match(storage, /INSERT OR IGNORE INTO sync_conflicts/);
+  assert.match(storage, /INSERT OR IGNORE INTO account_audit/);
 });
 
 test("P0-3 keeps guest learning, requires preview confirmation and documents account-wins conflicts", () => {

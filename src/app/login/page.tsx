@@ -17,7 +17,7 @@ const messages: Record<string, string> = {
   account_deleted: "This HSKKit account was deleted and cannot be reopened with the old identity.",
 };
 
-export default async function LoginPage({ searchParams }: { searchParams: Promise<{ error?: string; logout?: string; deleted?: string }> }) {
+export default async function LoginPage({ searchParams }: { searchParams: Promise<{ error?: string; logout?: string; deleted?: string; returnTo?: string }> }) {
   const params = await searchParams;
   const message = params.error ? messages[params.error] ?? messages.google_failed : undefined;
   return (
@@ -31,7 +31,7 @@ export default async function LoginPage({ searchParams }: { searchParams: Promis
         {params.logout === "success" ? <p className="mt-6 rounded-xl border border-emerald-200 bg-emerald-50 p-4 text-sm text-emerald-900" role="status">You are signed out. Private account data is no longer available in this browser.</p> : null}
         {params.deleted === "success" ? <p className="mt-6 rounded-xl border border-emerald-200 bg-emerald-50 p-4 text-sm text-emerald-900" role="status">Account deletion completed. Sessions, Sync Keys, and private exports were revoked.</p> : null}
         <div className="mt-8 rounded-3xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
-          <a className="inline-flex min-h-12 w-full items-center justify-center rounded-xl bg-blue-600 px-5 text-base font-bold text-white hover:bg-blue-700" href="/api/v1/auth/google/start">
+          <a className="inline-flex min-h-12 w-full items-center justify-center rounded-xl bg-blue-600 px-5 text-base font-bold text-white hover:bg-blue-700" href={`/api/v1/auth/google/start?returnTo=${encodeURIComponent(params.returnTo ?? "/account")}`}>
             {params.error ? "Try Google sign-in again" : "Continue with Google"}
           </a>
           <p className="mt-4 text-sm leading-6 text-slate-600">After sign-in, HSKKit previews eligible guest progress. Nothing is merged until you confirm.</p>

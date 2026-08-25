@@ -103,7 +103,7 @@ export default function AccountClient() {
       <section className="card account-form">
         <h2>Sign in to HSKKit</h2>
         <p>Google sign-in is the main way to save your private learning state and read the same progress on another device.</p>
-        <Link className="btn" href="/login">Continue with Google</Link>
+        <Link className="btn" href="/login?returnTo=%2Faccount">Continue with Google</Link>
         <p className="account-note">Guest Placement, Today, and Planner remain available. After signing in, you can preview and confirm any eligible guest merge.</p>
       </section>
     </div> : view.account.status === "deleted" ? <div className="state"><h2>Account data deleted</h2><p>Learning data is no longer available. The minimal request audit remains visible on the data page.</p><Link className="btn secondary" href="/account/data">View request status</Link></div> : <div className="account-grid">

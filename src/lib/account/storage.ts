@@ -51,6 +51,12 @@ type AiMergeSnapshot = { operationCount: number; operationMax: string; bucketCou
 
 const db = () => getCloudflareContext().env.LEARNING_DB;
 const now = () => new Date().toISOString();
+
+async function stableSyncConflictId(userId: string, deviceId: string, clientRevision: number, serverRevision: number) {
+  const input = new TextEncoder().encode(`${userId}\u0000${deviceId}\u0000${clientRevision}\u0000${serverRevision}`);
+  const digest = await crypto.subtle.digest("SHA-256", input);
+  return `sync_conflict_${Array.from(new Uint8Array(digest), (byte) => byte.toString(16).padStart(2, "0")).join("")}`;
+}
 const ownerId = (userId: string) => `user:${userId}`;
 const emptyLearningState = (): LearningState => ({ attempts: [], cards: [], mistakes: [], dailySessions: [] });
 async function aiMergeSnapshot(owner: string): Promise<AiMergeSnapshot> {
@@ -356,11 +362,14 @@ export async function syncCheckpoint(userId: string, clientRevision: number, dev
   const loaded = await loadState(ownerId(userId));
   const decision = syncDecision(loaded.revision, clientRevision, deviceId);
   if (decision.state === "conflict") {
-    const id = crypto.randomUUID();
+    const existing = await db().prepare("SELECT id FROM sync_conflicts WHERE user_id=? AND device_id=? AND client_revision=? AND server_revision=? AND state='open'")
+      .bind(userId, deviceId, clientRevision, loaded.revision).first<{ id: string }>();
+    if (existing) return { ...decision, conflictId: existing.id, snapshot: loaded.state };
+    const id = await stableSyncConflictId(userId, deviceId, clientRevision, loaded.revision);
     const timestamp = now();
     await db().batch([
-      db().prepare("INSERT INTO sync_conflicts(id,user_id,device_id,client_revision,server_revision,state,created_at) VALUES(?,?,?,?,?,'open',?)").bind(id, userId, deviceId, clientRevision, loaded.revision, timestamp),
-      db().prepare("INSERT INTO account_audit(id,user_id,action,resource_type,resource_id,result,metadata_json,idempotency_key,created_at) VALUES(?,?,'sync_conflict','sync_conflict',?,'conflict',?,?,?)").bind(crypto.randomUUID(), userId, id, JSON.stringify({ clientRevision, serverRevision: loaded.revision }), `sync-conflict:${id}`, timestamp),
+      db().prepare("INSERT OR IGNORE INTO sync_conflicts(id,user_id,device_id,client_revision,server_revision,state,created_at) VALUES(?,?,?,?,?,'open',?)").bind(id, userId, deviceId, clientRevision, loaded.revision, timestamp),
+      db().prepare("INSERT OR IGNORE INTO account_audit(id,user_id,action,resource_type,resource_id,result,metadata_json,idempotency_key,created_at) VALUES(?,?,'sync_conflict','sync_conflict',?,'conflict',?,?,?)").bind(id, userId, id, JSON.stringify({ clientRevision, serverRevision: loaded.revision }), `sync-conflict:${id}`, timestamp),
       db().prepare(POLICY_AUDIT_SQL).bind(...policyAuditBindings(createAuditEvent({ subjectId: ownerId(userId), action: "account_sync", resourceType: "account", resourceId: id, result: "conflict", idempotencyKey: `sync-conflict:${id}`, createdAt: timestamp, metadata: { clientRevision, serverRevision: loaded.revision } }))),
     ]);
     return { ...decision, conflictId: id, snapshot: loaded.state };

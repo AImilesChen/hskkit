@@ -19,6 +19,17 @@ export interface AccountDataRequest {
 
 const stable = (value: unknown) => JSON.stringify(value);
 
+export function safeReturnTo(value: string | null | undefined, fallback = "/account") {
+  if (!value || !value.startsWith("/") || value.startsWith("//") || value.includes("\\")) return fallback;
+  try {
+    const parsed = new URL(value, "https://hskkit.local");
+    if (parsed.origin !== "https://hskkit.local") return fallback;
+    return `${parsed.pathname}${parsed.search}${parsed.hash}`;
+  } catch {
+    return fallback;
+  }
+}
+
 function mergeById<T extends { id: string }>(account: T[], guest: T[]) {
   const byId = new Map(account.map((item) => [item.id, item]));
   let conflicts = 0;

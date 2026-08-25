@@ -7,6 +7,7 @@ import {
   createDataRequest,
   mergeLearningStates,
   previewMerge,
+  safeReturnTo,
   syncDecision,
   transitionDataRequest,
 } from "../src/lib/account/domain.ts";
@@ -99,6 +100,14 @@ test("two-device stale revision becomes an explicit conflict instead of an overw
     deviceId: "device-b",
     resolution: "reload_then_retry",
   });
+});
+
+test("OAuth return paths stay same-origin and preserve the route that initiated sign-in", () => {
+  assert.equal(safeReturnTo("/today?from=login"), "/today?from=login");
+  assert.equal(safeReturnTo("/account"), "/account");
+  assert.equal(safeReturnTo("https://evil.example/steal"), "/account");
+  assert.equal(safeReturnTo("//evil.example/steal"), "/account");
+  assert.equal(safeReturnTo("javascript:alert(1)"), "/account");
 });
 
 test("streak uses completed learning events in the account IANA timezone, not UTC page views", () => {

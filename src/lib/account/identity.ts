@@ -6,6 +6,7 @@ export const SESSION_COOKIE = "hskkit_session";
 export const GUEST_COOKIE = "hskkit_guest";
 export const OAUTH_STATE_COOKIE = "hskkit_oauth_state";
 export const OAUTH_VERIFIER_COOKIE = "hskkit_oauth_verifier";
+export const OAUTH_RETURN_COOKIE = "hskkit_oauth_return";
 
 export type AccountConnection = "google" | "sync_key";
 
