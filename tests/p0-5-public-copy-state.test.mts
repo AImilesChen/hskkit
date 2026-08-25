@@ -50,7 +50,7 @@ test("public copy keeps one explicit product boundary after the Test-mode Store 
 test("Test-mode Store exposes only the frozen one-level PackPurchase", () => {
   assert.match(s.pricing, /US\$9\.99 one-time/);
   assert.match(s.purchase, /commercial\/checkout/);
-  assert.match(s.purchase, /body:JSON\.stringify\(\{level,idempotencyKey/);
+  assert.match(s.purchase, /body:JSON\.stringify\(\{level:submittedLevel,idempotencyKey/);
   assert.doesNotMatch(s.purchase, /live payment|sk_live_/i);
 });
 

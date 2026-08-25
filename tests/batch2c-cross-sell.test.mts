@@ -15,8 +15,8 @@ test("2C keeps Pro and one-time PDF Pack cross-sell boundaries explicit", async 
 
   assert.match(pricing, /Open Store/);
   assert.match(pricing, /Does not include the Advanced Study PDF Pack/);
-  assert.match(store, /Need ongoing SRS, sync, and AI learning\? View Pro subscriptions/);
-  assert.match(store, /Does not include Pro subscription benefits/);
+  assert.match(store, /PDF Pack or Pro\?/);
+  assert.match(store, /Pro covers ongoing review, Focused mode, device sync and AI learning features/);
 
   assert.equal((pricing.match(/<SubscriptionCheckout /g) ?? []).length, 2);
   assert.match(checkout, /type PlanId="pro_monthly"\|"pro_yearly"/);
