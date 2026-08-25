@@ -21,21 +21,21 @@ const disclaimer = "HSKKit is an independent study tool and is not affiliated wi
 
 export default function SiteFooter() {
   return (
-    <footer className="mt-auto border-t border-slate-200 bg-white py-10">
+    <footer className="mt-auto border-t border-slate-200 bg-white py-8">
       <div className="mx-auto max-w-[1204px] px-5 sm:px-8">
-        <div className="grid gap-8 border-b border-slate-200 pb-8 sm:grid-cols-2 lg:grid-cols-[1.2fr_1fr_1fr]">
+        <div className="grid gap-6 border-b border-slate-200 pb-6 sm:grid-cols-2 lg:grid-cols-[1.2fr_1fr_1fr]">
           <div><Link href="/" className="inline-flex min-h-11 items-center gap-2 text-2xl font-bold text-slate-900"><span aria-hidden="true" className="grid h-8 w-8 place-items-center rounded-lg bg-blue-600 text-sm font-bold text-white">学</span>HSKKit</Link><p className="mt-3 max-w-md text-sm leading-6 text-slate-500">A connected HSK 3.0 Level 1–9 study path for placement, published vocabulary, daily learning, listening, and practice.</p></div>
           <nav aria-label="Study links"><h2 className="text-sm font-bold uppercase tracking-wider text-slate-900">Study</h2><div className="mt-3 grid grid-cols-2 gap-x-4 gap-y-2">{studyLinks.map((item) => <Link key={item.href} href={item.href} className="inline-flex min-h-10 items-center text-sm text-slate-600 hover:text-blue-700">{item.label}</Link>)}</div></nav>
           <nav aria-label="Standards links"><h2 className="text-sm font-bold uppercase tracking-wider text-slate-900">Standards</h2><div className="mt-3 grid gap-2">{guideLinks.map((item) => <Link key={item.href} href={item.href} className="inline-flex min-h-10 items-center text-sm text-slate-600 hover:text-blue-700">{item.label}</Link>)}</div></nav>
         </div>
-        <div className="mt-6 flex flex-wrap justify-center gap-x-6 gap-y-2">
+        <div className="mt-4 flex flex-wrap justify-center gap-x-6 gap-y-1">
           <Link href="/privacy-policy" className="inline-flex min-h-11 items-center text-sm text-slate-500 hover:text-slate-900">Privacy Policy</Link>
           <Link href="/terms-of-service" className="inline-flex min-h-11 items-center text-sm text-slate-500 hover:text-slate-900">Terms of Service</Link>
           <Link href="/refund-policy" className="inline-flex min-h-11 items-center text-sm text-slate-500 hover:text-slate-900">Refund Policy</Link>
           <Link href="/disclaimer" className="inline-flex min-h-11 items-center text-sm text-slate-500 hover:text-slate-900">Disclaimer</Link>
           <Link href="/contact" className="inline-flex min-h-11 items-center text-sm text-slate-500 hover:text-slate-900">Contact</Link>
         </div>
-        <p className="mt-5 text-center text-[13px] text-slate-500">© 2026 HSKKit</p>
+        <p className="mt-3 text-center text-[13px] text-slate-500">© 2026 HSKKit</p>
         <p className="mx-auto mt-2 max-w-[800px] text-center text-[13px] leading-relaxed text-slate-500">{disclaimer}</p>
       </div>
     </footer>
