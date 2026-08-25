@@ -48,7 +48,7 @@ async function operationByKey(ownerId: string, feature: AiFeature, idempotencyKe
 }
 
 async function ensureBucket(ownerId: string, period: string, now: string, allowance: number) {
-  await (await db()).prepare("INSERT INTO ai_quota_buckets(owner_id,period_key,allowance,used,reserved,updated_at) VALUES(?,?,?,?,?,?) ON CONFLICT(owner_id,period_key) DO UPDATE SET allowance=excluded.allowance,updated_at=excluded.updated_at")
+  await (await db()).prepare("INSERT INTO ai_quota_buckets(owner_id,period_key,allowance,used,reserved,updated_at) VALUES(?,?,?,?,?,?) ON CONFLICT(owner_id,period_key) DO UPDATE SET allowance=MAX(excluded.allowance,used+reserved),updated_at=excluded.updated_at")
     .bind(ownerId, period, allowance, 0, 0, now).run();
 }
 

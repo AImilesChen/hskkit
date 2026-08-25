@@ -165,6 +165,7 @@ test("Batch 4 settlement is success-only and failures release credits and concur
   assert.match(storage, /status='reserved'/);
   assert.match(storage, /AI_REQUEST_IN_PROGRESS/);
   assert.match(storage, /AI_RATE_LIMITED/);
+  assert.match(storage, /allowance=MAX\(excluded\.allowance,used\+reserved\)/);
 });
 
 test("Batch 4 downgrade changes projection and authorization without deleting learning history", async () => {
