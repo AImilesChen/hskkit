@@ -4,6 +4,7 @@
   "main": "workers/commercial-export-worker.ts",
   "compatibility_date": "2026-05-24",
   "compatibility_flags": ["nodejs_compat"],
+  "limits": {"cpu_ms": 300000},
   "d1_databases": [{
     "binding": "LEARNING_DB",
     "database_name": "hskkit-learning",

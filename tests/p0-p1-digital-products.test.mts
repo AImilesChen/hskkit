@@ -91,4 +91,5 @@ test("Store and account UI expose P0/P1 products without hidden level dropdowns"
   assert.match(exportsUi,/product_entitlement_id|productEntitlementId/);
   assert.match(ordersUi,/product_name|productName/);
   assert.match(successUi,/product_name|productName/);
+  assert.match(successUi,/\/api\/v1\/commercial\/checkout\/result\?session_id=/);
 });

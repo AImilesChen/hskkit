@@ -84,14 +84,17 @@ test("2B Store is public/indexable while orders, exports and checkout results ar
 });
 
 test("2B uses a real queue consumer, private R2 and expires persisted jobs", async () => {
-  const [workerConfig, processor, storage, download] = await Promise.all([
+  const [workerConfig, workerEntry, processor, storage, download] = await Promise.all([
     read("wrangler.commercial-worker.jsonc"),
+    read("workers/commercial-export-worker.ts"),
     read("src/lib/commercial/processor.ts"),
     read("src/lib/commercial/storage.ts"),
     read("src/app/api/v1/commercial/download/[token]/route.ts"),
   ]);
   assert.match(workerConfig, /"consumers"/);
   assert.match(workerConfig, /"hskkit-commercial-exports"/);
+  assert.match(workerConfig, /"cpu_ms"\s*:\s*300000/);
+  assert.match(workerEntry, /result\.skipped[\s\S]*message\.retry/);
   assert.match(processor, /private\/exports/);
   assert.match(storage, /state='expired'/);
   assert.match(storage, /DELETE FROM commercial_download_tokens/);

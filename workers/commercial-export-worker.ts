@@ -1,5 +1,5 @@
 import { processCommercialExport } from "../src/lib/commercial/processor";
-import { clearExportObjectKey, expireReadyExports } from "../src/lib/commercial/storage";
+import { clearExportObjectKey, expireReadyExports, getExportJob } from "../src/lib/commercial/storage";
 
 interface CommercialExportMessage {
   jobId: string;
@@ -8,10 +8,11 @@ interface CommercialExportMessage {
 interface CommercialExportEnv extends CloudflareEnv {}
 
 export default {
-  async queue(batch: { messages: Array<{ body: CommercialExportMessage; ack(): void }> }, env: CommercialExportEnv) {
+  async queue(batch: { messages: Array<{ body: CommercialExportMessage; ack(): void; retry(options?:{delaySeconds?:number}):void }> }, env: CommercialExportEnv) {
     for (const message of batch.messages) {
       try {
-        await processCommercialExport(message.body, env);
+        const result=await processCommercialExport(message.body, env);
+        if(result.skipped){const job=await getExportJob(message.body.jobId,undefined,env);if(job?.state==="generating"){message.retry({delaySeconds:60});continue;}}
         message.ack();
       } catch (error) {
         console.error("commercial_export_failed", message.body.jobId, error);
