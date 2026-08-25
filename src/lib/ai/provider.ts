@@ -10,43 +10,62 @@ export function providerConfig(env: CloudflareEnv): AiProviderConfig | undefined
 }
 
 const transientStatus = (status: number) => status === 429 || status >= 500;
-export async function callAiProvider(config: AiProviderConfig, prompt: string, maxOutputTokens: number, request: typeof fetch = fetch): Promise<AiProviderResult> {
+export async function callAiProvider(config: AiProviderConfig, prompt: string, maxOutputTokens: number, request: typeof fetch = fetch, timeoutMs = 8_000): Promise<AiProviderResult> {
   let response: Response | undefined;
+  let responseBody: string | undefined;
   let finalStatus: number | undefined;
   for (let attempt = 0; attempt < 2; attempt += 1) {
     const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 8_000);
+    let timeout: ReturnType<typeof setTimeout> | undefined;
+    const timeoutFailure = new Promise<never>((_, reject) => {
+      timeout = setTimeout(() => {
+        controller.abort();
+        reject(new Error("AI_PROVIDER_TIMEOUT"));
+      }, timeoutMs);
+    });
     try {
-      response = await request(`${config.baseUrl}/chat/completions`, {
-        method: "POST",
-        headers: { authorization: `Bearer ${config.apiKey}`, "content-type": "application/json" },
-        body: JSON.stringify({
-          model: config.model,
-          messages: [
-            { role: "system", content: "You provide concise, grounded Chinese-language learning support. Follow the requested JSON schema exactly." },
-            { role: "user", content: prompt },
-          ],
-          temperature: 0.2,
-          max_tokens: maxOutputTokens,
-          stream: false,
-          response_format: { type: "json_object" },
-        }),
-        signal: controller.signal,
-      });
+      const completed = await Promise.race([
+        (async () => {
+          const nextResponse = await request(`${config.baseUrl}/chat/completions`, {
+            method: "POST",
+            headers: { authorization: `Bearer ${config.apiKey}`, "content-type": "application/json" },
+            body: JSON.stringify({
+              model: config.model,
+              messages: [
+                { role: "system", content: "You provide concise, grounded Chinese-language learning support. Follow the requested JSON schema exactly." },
+                { role: "user", content: prompt },
+              ],
+              temperature: 0.2,
+              max_tokens: maxOutputTokens,
+              stream: false,
+              response_format: { type: "json_object" },
+            }),
+            signal: controller.signal,
+          });
+          return { response: nextResponse, body: await nextResponse.text() };
+        })(),
+        timeoutFailure,
+      ]);
+      response = completed.response;
+      responseBody = completed.body;
       finalStatus = response.status;
       if (response.ok || !transientStatus(response.status) || attempt === 1) break;
-    } catch {
+    } catch (error) {
       response = undefined;
-      if (attempt === 1) throw new Error("AI_PROVIDER_UNAVAILABLE");
+      responseBody = undefined;
+      if (attempt === 1) {
+        if (error instanceof Error && error.message === "AI_PROVIDER_TIMEOUT") throw error;
+        throw new Error("AI_PROVIDER_UNAVAILABLE");
+      }
     } finally {
-      clearTimeout(timeout);
+      if (timeout) clearTimeout(timeout);
     }
   }
-  if (!response) throw new Error("AI_PROVIDER_UNAVAILABLE");
+  if (!response || responseBody === undefined) throw new Error("AI_PROVIDER_UNAVAILABLE");
   if (finalStatus === 429) throw new Error("AI_PROVIDER_RATE_LIMITED");
   if (!response.ok) throw new Error("AI_PROVIDER_UNAVAILABLE");
   let value: any;
-  try { value = await response.json(); } catch { throw new Error("AI_PROVIDER_INVALID_RESPONSE"); }
+  try { value = JSON.parse(responseBody); } catch { throw new Error("AI_PROVIDER_INVALID_RESPONSE"); }
   const content = value?.choices?.[0]?.message?.content;
   if (typeof content !== "string" || !content.trim() || content.length > 8000) throw new Error("AI_PROVIDER_INVALID_RESPONSE");
   const usage = value?.usage ?? {};

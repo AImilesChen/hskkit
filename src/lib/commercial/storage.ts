@@ -209,9 +209,9 @@ export async function openSubscriptionCheckout(ownerId:string,planId:Subscriptio
 export async function attachSubscriptionCheckout(orderId:string,checkoutSessionId:string,checkoutUrl:string){await commerceDb().prepare(`UPDATE subscription_orders SET status='checkout_created',provider_checkout_session_id=?,provider_checkout_url=?,updated_at=? WHERE id=? AND status IN ('pending','checkout_created','failed')`).bind(checkoutSessionId,checkoutUrl,nowIso(),orderId).run();}
 export async function markSubscriptionOrderFailed(orderId:string){await commerceDb().prepare(`UPDATE subscription_orders SET status='failed',updated_at=? WHERE id=? AND status IN ('pending','checkout_created')`).bind(nowIso(),orderId).run();}
 
-export async function claimPaymentEvent(input:{eventId:string;eventType:string;livemode:boolean;payloadSha256:string}) {
+export async function claimPaymentEvent(input:{eventId:string;eventType:string;livemode:boolean;payloadSha256:string}, env?: Pick<CloudflareEnv, "LEARNING_DB">) {
   if(input.livemode) throw new Error("LIVE_EVENT_REJECTED");
-  const at=nowIso(); const db=commerceDb(); const claimToken=id("whclaim");
+  const at=nowIso(); const db=commerceDb(env); const claimToken=id("whclaim");
   const existing=await db.prepare(`SELECT outcome,processed_at FROM payment_events WHERE event_id=?`).bind(input.eventId).first<{outcome:string;processed_at:string}>();
   if(existing?.outcome==="processed"||existing?.outcome==="ignored") return {state:"duplicate" as const};
   const staleBefore=new Date(Date.now()-5*60*1000).toISOString();
@@ -223,8 +223,8 @@ export async function claimPaymentEvent(input:{eventId:string;eventType:string;l
 }
 export async function finalizePaymentEvent(eventId:string,claimToken:string,outcome:"processed"|"ignored"|"failed"){const result=await commerceDb().prepare(`UPDATE payment_events SET outcome=?,processed_at=?,claim_token=NULL WHERE event_id=? AND outcome='processing' AND claim_token=?`).bind(outcome,nowIso(),eventId,claimToken).run();if(result.meta.changes!==1) throw new Error("WEBHOOK_CLAIM_LOST");}
 
-export async function applySubscriptionEvent(event:NormalizedSubscriptionEvent){
-  const db=commerceDb(); const at=nowIso();
+export async function applySubscriptionEvent(event:NormalizedSubscriptionEvent, env?: Pick<CloudflareEnv, "LEARNING_DB">){
+  const db=commerceDb(env); const at=nowIso();
   if(event.kind==="checkout_completed"){
     const order=await db.prepare(`SELECT * FROM subscription_orders WHERE id=?`).bind(event.orderId).first<SubscriptionOrderRow>();
     const plan=SUBSCRIPTION_PLANS[event.planId];

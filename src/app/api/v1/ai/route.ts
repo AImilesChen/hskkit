@@ -27,7 +27,7 @@ async function hash(value: string) {
 }
 const normalizedFailure = (error: unknown) => {
   const code = error instanceof Error ? error.message : "AI_PROVIDER_UNAVAILABLE";
-  return ["AI_PROVIDER_UNAVAILABLE", "AI_PROVIDER_RATE_LIMITED", "AI_PROVIDER_INVALID_RESPONSE", "AI_OUTPUT_INVALID", "AI_OUTPUT_UNSAFE", "AI_PROVIDER_CONFIG_INVALID"].includes(code) ? code : "AI_PROVIDER_UNAVAILABLE";
+  return ["AI_PROVIDER_UNAVAILABLE", "AI_PROVIDER_TIMEOUT", "AI_PROVIDER_RATE_LIMITED", "AI_PROVIDER_INVALID_RESPONSE", "AI_OUTPUT_INVALID", "AI_OUTPUT_UNSAFE", "AI_PROVIDER_CONFIG_INVALID"].includes(code) ? code : "AI_PROVIDER_UNAVAILABLE";
 };
 
 export async function GET() {
