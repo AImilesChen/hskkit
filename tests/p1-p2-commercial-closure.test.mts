@@ -28,7 +28,7 @@ test("public refund and support copy uses the frozen 2/5/3 UTC-day SLA", async (
   assert.doesNotMatch(contact, /1[–-]2 business days/i);
   assert.doesNotMatch(contact, /typically (?:reply|respond) within/i);
   for (const route of ["/refund-policy", "/terms-of-service", "/disclaimer", "/contact"]) {
-    assert.match(footer, new RegExp(`href=\\"${route}\\"`));
+    assert.match(footer, new RegExp(`href:\\s*\\"${route}\\"`));
   }
 });
 

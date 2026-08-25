@@ -91,5 +91,6 @@ test("homepage polish is scoped, consistent and motion-safe", () => {
   }
   assert.match(styles, /@media \(prefers-reduced-motion: reduce\)/);
   assert.match(styles, /focus-visible/);
-  assert.match(footer, /py-8/);
+  assert.match(footer, /footer-density-shell/);
+  assert.match(footer, /pb-\[32px\]/);
 });
