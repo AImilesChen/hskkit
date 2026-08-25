@@ -33,8 +33,8 @@ export async function recordPaymentEvent(input: { eventId: string; eventType: st
     .bind(input.eventId, input.eventType, input.payloadSha256, nowIso(), input.outcome).run();
   return result.meta.changes === 1;
 }
-export async function grantPaidPackPurchase(input: { sessionId: string; orderId?: string; expectedUserId?: string; expectedSku?: string; expectedSelectedLevel?: number; paymentIntentId?: string; chargeId?: string }) {
-  const db = commerceDb();
+export async function grantPaidPackPurchase(input: { sessionId: string; orderId?: string; expectedUserId?: string; expectedSku?: string; expectedSelectedLevel?: number; paymentIntentId?: string; chargeId?: string }, env?: Pick<CloudflareEnv,"LEARNING_DB">) {
+  const db = commerceDb(env);
   const order = await db.prepare(`SELECT * FROM commerce_orders WHERE stripe_checkout_session_id=? OR (id=? AND stripe_checkout_session_id IS NULL) ORDER BY CASE WHEN stripe_checkout_session_id=? THEN 0 ELSE 1 END LIMIT 1`)
     .bind(input.sessionId,input.orderId??"",input.sessionId).first<OrderRow>();
   if (!order) throw new Error("ORDER_NOT_FOUND");
@@ -43,7 +43,7 @@ export async function grantPaidPackPurchase(input: { sessionId: string; orderId?
   if (input.expectedSelectedLevel && order.selected_level!==input.expectedSelectedLevel) throw new Error("ORDER_METADATA_MISMATCH");
   if (order.status === "refunded") throw new Error("ORDER_ALREADY_REFUNDED");
   if (order.status === "paid") {
-    const existing = await getPackPurchaseForOrder(order.id);
+    const existing = await getPackPurchaseForOrder(order.id,env);
     if (existing) return existing;
   }
   const at = nowIso(); const expires = new Date(Date.parse(at) + PDF_PACK_ACCESS_DAYS * 86_400_000).toISOString(); const packPurchaseId = id("pack");
@@ -52,14 +52,14 @@ export async function grantPaidPackPurchase(input: { sessionId: string; orderId?
     db.prepare(packPurchaseGrantInsertSql).bind(packPurchaseId, at, expires, PDF_PACK_DOWNLOAD_LIMIT, at, order.id, PDF_PACK_SKU),
     db.prepare(`INSERT INTO commercial_audit_events (id,user_id,event_type,entity_type,entity_id,details_json,created_at) SELECT ?,user_id,'pack_purchase.granted','order',order_id,?,? FROM pack_purchases WHERE id=? AND order_id=?`).bind(id("aud"), JSON.stringify({ mode: "test", sku: PDF_PACK_SKU }), at, packPurchaseId, order.id),
   ]);
-  const purchase = await getPackPurchaseForOrder(order.id);
+  const purchase = await getPackPurchaseForOrder(order.id,env);
   if (purchase) return purchase;
   const latest = await db.prepare(`SELECT status FROM commerce_orders WHERE id=?`).bind(order.id).first<{status:string}>();
   if (latest?.status === "refunded") throw new Error("ORDER_ALREADY_REFUNDED");
   throw new Error("PACK_PURCHASE_GRANT_FAILED");
 }
-export async function revokeRefundedOrder(input: { paymentIntentId?: string; chargeId?: string }) {
-  const db = commerceDb();
+export async function revokeRefundedOrder(input: { paymentIntentId?: string; chargeId?: string }, env?: Pick<CloudflareEnv,"LEARNING_DB">) {
+  const db = commerceDb(env);
   const order = await db.prepare(`SELECT * FROM commerce_orders WHERE (? IS NOT NULL AND stripe_payment_intent_id=?) OR (? IS NOT NULL AND stripe_charge_id=?)`).bind(input.paymentIntentId ?? null, input.paymentIntentId ?? null, input.chargeId ?? null, input.chargeId ?? null).first<OrderRow>();
   if (!order) throw new Error("ORDER_NOT_FOUND");
   const objects=(await db.prepare(`SELECT object_key FROM commercial_export_jobs WHERE pack_purchase_id IN (SELECT id FROM pack_purchases WHERE order_id=?) AND object_key IS NOT NULL`).bind(order.id).all<{object_key:string}>()).results.map((row:{object_key:string})=>row.object_key);
@@ -75,12 +75,12 @@ export async function revokeRefundedOrder(input: { paymentIntentId?: string; cha
   ]);
   return objects;
 }
-export async function getPackPurchaseForOrder(orderId: string) { return commerceDb().prepare(`SELECT * FROM pack_purchases WHERE order_id=?`).bind(orderId).first<PackPurchaseRow>(); }
+export async function getPackPurchaseForOrder(orderId: string,env?:Pick<CloudflareEnv,"LEARNING_DB">) { return commerceDb(env).prepare(`SELECT * FROM pack_purchases WHERE order_id=?`).bind(orderId).first<PackPurchaseRow>(); }
 export async function activePackPurchase(userId: string, at = nowIso()) { return commerceDb().prepare(`SELECT * FROM pack_purchases WHERE user_id=? AND status='active' AND expires_at>? ORDER BY starts_at DESC LIMIT 1`).bind(userId, at).first<PackPurchaseRow>(); }
 export async function activePackPurchaseForLevel(userId:string,selectedLevel:number,at=nowIso()){return commerceDb().prepare(`SELECT * FROM pack_purchases WHERE user_id=? AND selected_level=? AND status='active' AND expires_at>? ORDER BY starts_at DESC LIMIT 1`).bind(userId,selectedLevel,at).first<PackPurchaseRow>();}
 
-export async function createExportJob(input: { userId: string; packPurchaseId?: string; kind: ExportRow["kind"]; format: ExportRow["format"]; level?: number; idempotencyKey: string; generationVersion: string }) {
-  const db = commerceDb(); const jobId = id("exp"); const at = nowIso(); const expiresAt=new Date(Date.parse(at)+(input.kind==="account_data"?1:14)*86_400_000).toISOString();
+export async function createExportJob(input: { userId: string; packPurchaseId?: string; kind: ExportRow["kind"]; format: ExportRow["format"]; level?: number; idempotencyKey: string; generationVersion: string },env?:Pick<CloudflareEnv,"LEARNING_DB">) {
+  const db = commerceDb(env); const jobId = id("exp"); const at = nowIso(); const expiresAt=new Date(Date.parse(at)+(input.kind==="account_data"?1:14)*86_400_000).toISOString();
   await db.prepare(`INSERT OR IGNORE INTO commercial_export_jobs (id,user_id,pack_purchase_id,kind,format,level,state,idempotency_key,generation_version,expires_at,created_at,updated_at) VALUES (?,?,?,?,?,?,'queued',?,?,?,?,?)`)
     .bind(jobId,input.userId,input.packPurchaseId ?? null,input.kind,input.format,input.level ?? null,input.idempotencyKey,input.generationVersion,expiresAt,at,at).run();
   const job=await db.prepare(`SELECT * FROM commercial_export_jobs WHERE user_id=? AND idempotency_key=?`).bind(input.userId,input.idempotencyKey).first<ExportRow>();
@@ -155,10 +155,10 @@ export async function expireExportJob(jobId:string){
 export async function clearExportObjectKey(jobId:string,objectKey:string,env?:Pick<CloudflareEnv,"LEARNING_DB">){await commerceDb(env).prepare(`UPDATE commercial_export_jobs SET object_key=NULL,updated_at=? WHERE id=? AND object_key=? AND state IN ('expired','revoked')`).bind(nowIso(),jobId,objectKey).run();}
 export async function clearRevokedExportObjectKey(objectKey:string){await commerceDb().prepare(`UPDATE commercial_export_jobs SET object_key=NULL,updated_at=? WHERE object_key=? AND state='revoked'`).bind(nowIso(),objectKey).run();}
 
-export async function createDownloadTokenRecord(input:{ tokenId:string; jobId:string; userId:string; tokenSha256:string; expiresAt:string }) { await commerceDb().prepare(`INSERT INTO commercial_download_tokens (id,job_id,user_id,token_sha256,expires_at,created_at) VALUES (?,?,?,?,?,?)`).bind(input.tokenId,input.jobId,input.userId,input.tokenSha256,input.expiresAt,nowIso()).run(); }
-export async function downloadContext(tokenSha256:string) { return commerceDb().prepare(`SELECT t.id token_id,t.user_id token_user_id,t.expires_at token_expires_at,t.consumed_at,j.*,p.status pack_purchase_status,p.download_limit,p.successful_downloads FROM commercial_download_tokens t JOIN commercial_export_jobs j ON j.id=t.job_id LEFT JOIN pack_purchases p ON p.id=j.pack_purchase_id WHERE t.token_sha256=?`).bind(tokenSha256).first<Record<string,unknown>>(); }
-export async function consumeSuccessfulDownload(input:{ tokenId:string; jobId:string; packPurchaseId:string|null; userId:string; byteSize:number; checksumSha256:string }) {
-  const db=commerceDb(); const at=nowIso();
+export async function createDownloadTokenRecord(input:{ tokenId:string; jobId:string; userId:string; tokenSha256:string; expiresAt:string },env?:Pick<CloudflareEnv,"LEARNING_DB">) { await commerceDb(env).prepare(`INSERT INTO commercial_download_tokens (id,job_id,user_id,token_sha256,expires_at,created_at) VALUES (?,?,?,?,?,?)`).bind(input.tokenId,input.jobId,input.userId,input.tokenSha256,input.expiresAt,nowIso()).run(); }
+export async function downloadContext(tokenSha256:string,env?:Pick<CloudflareEnv,"LEARNING_DB">) { return commerceDb(env).prepare(`SELECT t.id token_id,t.user_id token_user_id,t.expires_at token_expires_at,t.consumed_at,j.*,p.status pack_purchase_status,p.download_limit,p.successful_downloads FROM commercial_download_tokens t JOIN commercial_export_jobs j ON j.id=t.job_id LEFT JOIN pack_purchases p ON p.id=j.pack_purchase_id WHERE t.token_sha256=?`).bind(tokenSha256).first<Record<string,unknown>>(); }
+export async function consumeSuccessfulDownload(input:{ tokenId:string; jobId:string; packPurchaseId:string|null; userId:string; byteSize:number; checksumSha256:string },env?:Pick<CloudflareEnv,"LEARNING_DB">) {
+  const db=commerceDb(env); const at=nowIso();
   if (!input.packPurchaseId) {
     const [claim,ledger]=await db.batch([
       db.prepare(`UPDATE commercial_download_tokens SET consumed_at=? WHERE id=? AND user_id=? AND consumed_at IS NULL AND expires_at>?`).bind(at,input.tokenId,input.userId,at),
@@ -221,7 +221,7 @@ export async function claimPaymentEvent(input:{eventId:string;eventType:string;l
   if(result.meta.changes===1) return {state:"claimed" as const,claimToken};
   return {state:"busy" as const};
 }
-export async function finalizePaymentEvent(eventId:string,claimToken:string,outcome:"processed"|"ignored"|"failed"){const result=await commerceDb().prepare(`UPDATE payment_events SET outcome=?,processed_at=?,claim_token=NULL WHERE event_id=? AND outcome='processing' AND claim_token=?`).bind(outcome,nowIso(),eventId,claimToken).run();if(result.meta.changes!==1) throw new Error("WEBHOOK_CLAIM_LOST");}
+export async function finalizePaymentEvent(eventId:string,claimToken:string,outcome:"processed"|"ignored"|"failed",env?:Pick<CloudflareEnv,"LEARNING_DB">){const result=await commerceDb(env).prepare(`UPDATE payment_events SET outcome=?,processed_at=?,claim_token=NULL WHERE event_id=? AND outcome='processing' AND claim_token=?`).bind(outcome,nowIso(),eventId,claimToken).run();if(result.meta.changes!==1) throw new Error("WEBHOOK_CLAIM_LOST");}
 
 export async function applySubscriptionEvent(event:NormalizedSubscriptionEvent, env?: Pick<CloudflareEnv, "LEARNING_DB">){
   const db=commerceDb(env); const at=nowIso();
