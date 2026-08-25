@@ -169,9 +169,9 @@ test("Today selects a source-locked word from the active versioned HSK 3.0 relea
   const plan = selectTodayContent(1);
   assert.equal(plan.status, "ready");
   if (plan.status !== "ready") return;
-  assert.equal(plan.releaseId, "hsk3-batch13-formal-learning-v4");
+  assert.equal(plan.releaseId, "hsk3-content-truth-v5");
   assert.match(plan.item.contentId, /^catalog:hsk3\.word\.l1\./);
-  assert.match(plan.item.contentVersion, /^hsk3-batch13-formal-learning-v4:/);
+  assert.match(plan.item.contentVersion, /^hsk3-content-truth-v5:/);
   assert.equal(plan.item.level, 1);
   assert.ok(plan.item.example.hanzi.includes(plan.item.hanzi));
 });
@@ -211,14 +211,14 @@ test("next local day creates a new session at the same Placement-selected start"
   assert.equal(next.state.dailySessions.length, 2);
 });
 
-test("empty formal-content queue exposes a recovery action instead of demo tasks", () => {
+test("unified advanced-band content without contextual audio exposes the correct recovery action", () => {
   const gap = selectTodayContent(9);
   assert.equal(gap.status, "empty");
   if (gap.status !== "empty") return;
   const built = buildDailySession(emptyState(), { ownerId: "guest-gap", localDay: "2026-08-20", ruleVersion: "today-v3", now, dailyContent: gap });
   assert.equal(built.session.startLevel, 9);
   assert.equal(built.session.items.some((item) => item.kind === "learn"), false);
-  assert.equal(built.session.notice?.code, "EMPTY_CONTENT_QUEUE");
+  assert.equal(built.session.notice?.code, "CONTEXT_AUDIO_UNAVAILABLE");
   assert.ok(built.session.notice?.actionHref);
 });
 

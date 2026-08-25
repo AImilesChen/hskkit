@@ -236,7 +236,7 @@ test("publishing switches only the matching standard active release", () => {
 test("withdrawing an active release makes its assets unavailable", () => {
   const withdrawn = withdrawRelease(repositoryFixture(), "hsk3-v1", "2026-08-20T00:02:00.000Z");
   assert.equal(withdrawn.activeReleaseByStandard.hsk3, undefined);
-  assert.throws(() => queryCatalog(withdrawn, { level: 1 }), /no active HSK 3.0 release/i);
+  assert.deepEqual(queryCatalog(withdrawn, { level: 1 }).contentAssets, []);
   assert.equal(withdrawn.releaseEvents.at(-1)?.action, "withdraw");
 });
 

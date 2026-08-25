@@ -3,7 +3,7 @@ import { readFile } from "node:fs/promises";
 import test from "node:test";
 
 import { ADVANCED_LISTENING_LESSONS, GRAMMAR_LESSONS, READING_LESSONS, trustedStep7Exercise } from "../src/lib/learning/step7-content.ts";
-import { isPublishedContentLogicalId } from "../src/lib/content/published-content.ts";
+import { isPublishedStep7Content as isPublishedContentLogicalId } from "../src/lib/learning/step7-release.ts";
 import practiceAudio from "../src/lib/practice/audio-assets.json" with { type: "json" };
 import { AI_DAILY_ALLOWANCE, AI_RATE_LIMIT_PER_MINUTE, aiRuntimePolicy, nonAiExplanation, parseAiOutput } from "../src/lib/ai/domain.ts";
 import { callAiProvider } from "../src/lib/ai/provider.ts";
@@ -58,10 +58,10 @@ test("Batch 13 publication event and compatibility exports are wired", async () 
   const catalog = JSON.parse(await source("src/lib/content/catalog.json"));
   assert.deepEqual(catalog.releaseEvents.at(-1), {
     action: "publish",
-    releaseId: "hsk3-batch13-formal-learning-v4",
+    releaseId: "hsk3-content-truth-v5",
     standard: "hsk3",
-    at: "2026-08-22T15:24:52.000Z",
-    previousActiveReleaseId: "hsk3-batch10-content-audio-v3",
+    at: "2026-08-25T03:05:24.000Z",
+    previousActiveReleaseId: "hsk3-batch13-formal-learning-v4",
   });
   const module = await import("../src/lib/learning/step7-content.ts");
   assert.equal(module.publishedGrammarLessons.length, 7);
@@ -133,9 +133,9 @@ test("AI provider output rejects unknown fields", () => {
 });
 
 test("shared navigation exposes Grammar and Reading indexes", async () => {
-  const header = await source("src/app/site-header.tsx");
-  assert.match(header, /href:\s*"\/grammar",\s*label:\s*"Grammar"/);
-  assert.match(header, /href:\s*"\/reading",\s*label:\s*"Reading"/);
+  const navigation = await source("src/app/site-navigation.ts");
+  assert.match(navigation, /href:\s*"\/grammar",\s*label:\s*"Grammar"/);
+  assert.match(navigation, /href:\s*"\/reading",\s*label:\s*"Reading"/);
 });
 
 test("AI provider retries one transient failure only and never retries invalid output", async () => {
@@ -163,7 +163,7 @@ test("Batch 13 dynamic AI path uses a release-gated lightweight Step 7 manifest"
   const manifest = await import("../src/lib/learning/step7-release.ts");
   const catalog = JSON.parse(await source("src/lib/content/catalog.json"));
   const release = catalog.releases.find((item: { id: string }) => item.id === catalog.activeReleaseByStandard.hsk3);
-  assert.equal(release?.id, "hsk3-batch13-formal-learning-v4");
+  assert.equal(release?.id, "hsk3-content-truth-v5");
   assert.equal(release?.standard, "hsk3");
   assert.equal(release?.status, "published");
   assert.equal(manifest.STEP7_RELEASE_ID, catalog.activeReleaseByStandard.hsk3);

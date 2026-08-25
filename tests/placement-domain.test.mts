@@ -44,7 +44,7 @@ test("placement refuses an incomplete submission", () => {
   assert.throws(() => submitPlacement(created.state, { sessionId: created.session.id, idempotencyKey: "submit-1", now: "2026-08-21T00:03:00.000Z" }), /PLACEMENT_INCOMPLETE/);
 });
 
-test("placement result is deterministic, idempotent and explicitly low confidence without listening", () => {
+test("placement result is deterministic, idempotent and uses the current measured-dimensions confidence contract", () => {
   let state = createPlacementSession(emptyLearningState(), { ownerId: "guest-1", idempotencyKey: "start-4", now: "2026-08-21T00:00:00.000Z" }).state;
   const sessionId = state.placementSessions![0].id;
   PLACEMENT_QUESTIONS.forEach((question, index) => {
@@ -54,8 +54,8 @@ test("placement result is deterministic, idempotent and explicitly low confidenc
   const replay = submitPlacement(first.state, { sessionId, idempotencyKey: "submit-2", now: "2026-08-21T00:06:00.000Z" });
   assert.equal(first.result.id, replay.result.id);
   assert.equal(first.result.recommendedLevel, 4);
-  assert.equal(first.result.confidence, "low");
-  assert.deepEqual(first.result.missingDimensions, ["listening"]);
+  assert.equal(first.result.confidence, "medium");
+  assert.deepEqual(first.result.missingDimensions, []);
   assert.equal(first.result.disclaimer.includes("not an official"), true);
 });
 

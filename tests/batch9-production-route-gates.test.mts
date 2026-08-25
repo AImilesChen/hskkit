@@ -5,11 +5,12 @@ import { readFile } from "node:fs/promises";
 const root = new URL("../src/app/", import.meta.url);
 const source = (path: string) => readFile(new URL(path, root), "utf8");
 
-test("Practice selector stays static and reads level query in the client", async () => {
+test("Practice selector stays static and owns level selection in the client", async () => {
   const [page, client] = await Promise.all([source("practice/page.tsx"), source("practice/practice-selector-client.tsx")]);
   assert.match(page, /alternates:\s*\{\s*canonical:\s*["']\/practice["']/);
   assert.doesNotMatch(page, /searchParams/);
-  assert.match(client, /useSearchParams\(\)\.get\(["']level["']\)/);
+  assert.doesNotMatch(client, /useSearchParams/);
+  assert.match(client, /useState<number>\(1\)/);
 });
 
 test("critical learning routes publish self-referencing canonicals", async () => {

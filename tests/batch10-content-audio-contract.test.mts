@@ -50,7 +50,7 @@ test("Dictionary Word Character Grammar and Reading are gated by the active form
 
 test("Level 8 and 9 routes explain their mapping instead of returning a fake list or 404", async () => {
   const page = await source("src/app/vocabulary/[level]/page.tsx");
-  assert.match(page, /Levels 7–9 unified advanced band/);
+  assert.match(page, /unified HSK 7–9 advanced ability band/);
   assert.match(page, /requestedLevel >= 8/);
   assert.match(page, /not a separate Level \{requestedLevel\} official word list/);
   assert.doesNotMatch(page, /Audio assets<\/p><p className="text-2xl font-bold text-green-950">0/);
@@ -95,7 +95,7 @@ test("sitemap excludes private noindex application routes", async () => {
 
 test("withdrawing the active release returns an empty public catalog instead of throwing", () => {
   const activeReleaseId = repository.activeReleaseByStandard.hsk3!;
-  const withdrawn = withdrawRelease(repository, activeReleaseId, "2026-08-22T08:00:00.000Z");
+  const withdrawn = withdrawRelease(repository, activeReleaseId, "2026-08-25T03:05:25.000Z");
   const result = queryCatalog(withdrawn, { standard: "hsk3", level: 1 });
   assert.equal(result.releaseId, "unavailable");
   assert.equal(result.releaseVersion, 0);

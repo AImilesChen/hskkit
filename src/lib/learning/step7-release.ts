@@ -1,6 +1,6 @@
 // Generated release slice for request-time Step 7 and AI paths.
 // The Batch 13 contract verifies every entry against the fully validated catalog.
-export const STEP7_RELEASE_ID = "hsk3-batch13-formal-learning-v4";
+export const STEP7_RELEASE_ID = "hsk3-content-truth-v5";
 
 export const STEP7_PUBLISHED_CONTENT_LOGICAL_IDS = [
   "hsk3.grammar.basic-shi-negation",

@@ -6,32 +6,38 @@
     "hsk1.json": {
       "level": 1,
       "count": 50,
-      "description": "HSK 1 基础题库（≥50题，每次抽10-15题）"
+      "description": "HSK 1 基础题库（≥50题，每次抽10-15题）",
+      "sha256": "83939b18dff7d4961a26fb3f2942ff296805d097defe1ebb70ae5d731f6fad7f"
     },
     "hsk2.json": {
       "level": 2,
       "count": 50,
-      "description": "HSK 2 基础题库（≥30题）"
+      "description": "HSK 2 基础题库（≥30题）",
+      "sha256": "8bcc0ec3621d7a434968dfe398ce19da59eebf776806594d475b48e93b961487"
     },
     "hsk3.json": {
       "level": 3,
       "count": 50,
-      "description": "HSK 3 基础题库（≥30题）"
+      "description": "HSK 3 基础题库（≥30题）",
+      "sha256": "3f5c6f78e88a816cc13c944bdaf4afa26dcac5bc123ca1e1eab01283a66d3908"
     },
     "hsk4.json": {
       "level": 4,
       "count": 50,
-      "description": "HSK 4 基础题库（≥30题）"
+      "description": "HSK 4 基础题库（≥30题）",
+      "sha256": "a25cc43d1338f9aeb471b84ca8020f2e127ec74bc611315dc6a1b90dd109a6e7"
     },
     "hsk5.json": {
       "level": 5,
       "count": 50,
-      "description": "HSK 5 基础题库（≥30题）"
+      "description": "HSK 5 基础题库（≥30题）",
+      "sha256": "76a17039f7ebc0fbacd90ec000509be1d00aa664b669f12f071c65fc56484e25"
     },
     "level_test.json": {
       "level": "1-6",
       "count": 18,
-      "description": "HSK Level Test 水平自测题库（覆盖HSK 1-6，≥15题）"
+      "description": "HSK Level Test 水平自测题库（覆盖HSK 1-6，≥15题）",
+      "sha256": "64ae59418b995ed6e3267ec0f86196003c40d5d62d46731a4f286e1fd1c581ee"
     }
   },
   "total_questions": 268,
@@ -51,5 +57,6 @@
     "explanation": "解析说明（为什么对/为什么错）",
     "passage_cn": "【阅读理解题特有】文章（中文）",
     "passage_en": "【阅读理解题特有】文章（英文翻译）"
-  }
+  },
+  "updated_at": "2026-08-25T03:05:24.000Z"
 }

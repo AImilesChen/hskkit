@@ -27,7 +27,6 @@ test("homepage follows the adopted Stitch HSK 3.0 information order", () => {
     "Make today’s next step clear.",
     "Learn by HSK 3.0 level.",
     "Use the tool that matches your task.",
-    "What is available, and what is gated.",
     "Start with one useful next step.",
   ]);
   for (const href of ["/placement", "/today", "/levels", "/dictionary", "/listen", "/practice", "/vocabulary/1"]) {
@@ -71,7 +70,7 @@ test("old generic entry routes have explicit 301 consolidation while traditional
 });
 
 test("standards comparison reflects the active formal release", () => {
-  assert.match(comparison, /11,092/);
-  assert.match(comparison, /Levels 7[–-]9.*unified advanced/i);
+  assert.match(comparison, /11,107/);
+  assert.match(comparison, /Levels 7[–-]9.*unified HSK 7[–-]9 advanced ability band/i);
   assert.doesNotMatch(comparison, /no QA-approved level assets|currently published/i);
 });

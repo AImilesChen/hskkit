@@ -12,7 +12,7 @@ function request(query: string): Request {
 
 function fakeCatalogDb(options: { fail?: boolean } = {}) {
   const rows: CatalogSearchRow[] = Array.from({ length: 51 }, (_, index) => ({
-    id: `word-${index + 1}.v1`, release_id: "hsk3-batch13-formal-learning-v4", standard_version: "GF0025-2021",
+    id: `word-${index + 1}.v1`, release_id: "hsk3-content-truth-v5", standard_version: "GF0025-2021",
     content_version: "2026.08.21-batch1", level_band: index < 20 ? "1" : "7-9", hanzi: index === 0 ? "学习" : `词${index + 1}`,
     traditional: index === 0 ? "學習" : `詞${index + 1}`, pinyin: index === 0 ? "xuéxí" : `cí ${index + 1}`,
     meaning: index === 0 ? "to learn; to study" : `word ${index + 1}`, part_of_speech: index === 0 ? "V/N" : "N",
@@ -25,7 +25,7 @@ function fakeCatalogDb(options: { fail?: boolean } = {}) {
         bind(...values: Array<string | number>) { bindings = values; calls.push({ sql, bindings }); return this; },
         async first<T>() {
           if (options.fail) throw new Error("simulated D1 outage");
-          if (sql.includes("catalog_search_releases")) return { id: "hsk3-batch13-formal-learning-v4", version: 4, published_at: "2026-08-23T00:00:00.000Z", word_count: 11092 } as T;
+          if (sql.includes("catalog_search_releases")) return { id: "hsk3-content-truth-v5", version: 5, published_at: "2026-08-25T03:05:24.000Z", word_count: 11092 } as T;
           return { total: 51 } as T;
         },
         async all<T>() {
@@ -44,7 +44,7 @@ test("catalog API defaults to paged HSK 3.0 data without returning the full cata
   const body = await response.json();
   assert.equal(response.status, 200);
   assert.equal(body.standard, "hsk3");
-  assert.equal(body.releaseId, "hsk3-batch13-formal-learning-v4");
+  assert.equal(body.releaseId, "hsk3-content-truth-v5");
   assert.equal(body.availability, "ready");
   assert.equal(body.contentAssets.length, 50);
   assert.deepEqual(body.pagination, { page: 1, pageSize: 50, total: 51, totalPages: 2, hasPrevious: false, hasNext: true });

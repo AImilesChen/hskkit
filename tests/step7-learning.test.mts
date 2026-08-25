@@ -126,14 +126,8 @@ test("planner keeps Level 1–9 goals aligned with the active content release", 
     if (!result.ok) continue;
     const goalTasks = result.plan.sessions.flatMap((session) => session.tasks).filter((task) => task.source === "goal");
     assert.ok(goalTasks.length > 0);
-    if (goalLevel <= 7) {
-      assert.equal(result.plan.warnings.includes("TARGET_LEVEL_CONTENT_GAP"), false);
-      assert.ok(goalTasks.every((task) => task.href === `/vocabulary/${goalLevel}`));
-    } else {
-      assert.ok(result.plan.warnings.includes("TARGET_LEVEL_CONTENT_GAP"));
-      assert.ok(goalTasks.every((task) => task.href === "/vocabulary/7"));
-      assert.ok(goalTasks.every((task) => task.title.includes(`toward HSK ${goalLevel}`)));
-    }
+    assert.equal(result.plan.warnings.includes("TARGET_LEVEL_CONTENT_GAP"), false);
+    assert.ok(goalTasks.every((task) => task.href === `/vocabulary/${goalLevel}`));
   }
 });
 

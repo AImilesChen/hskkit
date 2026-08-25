@@ -3,7 +3,7 @@ import fs from "node:fs";
 import test from "node:test";
 
 import catalogJson from "../src/lib/content/catalog.json" with { type: "json" };
-import manifestJson from "../content/releases/hsk3-gf0025-2021-v2.json" with { type: "json" };
+import manifestJson from "../content/releases/hsk3-content-truth-v5.json" with { type: "json" };
 import { queryCatalog, validateRepository, type ContentRepository } from "../src/lib/content/repository.ts";
 import { toPublicCatalogResponse } from "../src/lib/content/public-catalog.ts";
 
@@ -11,16 +11,16 @@ type ManifestEntry = { id: string; standard_version: string; level_band: string;
 type Manifest = { entry_count: number; counts_by_level_band: Record<string, number>; entries: ManifestEntry[] };
 const repository = catalogJson as ContentRepository;
 const manifest = manifestJson as unknown as Manifest;
-const expected = { "1": 500, "2": 772, "3": 973, "4": 1000, "5": 1071, "6": 1140, "7-9": 5636 };
+const expected = { "1": 502, "2": 775, "3": 975, "4": 1002, "5": 1073, "6": 1142, "7-9": 5638 };
 
-test("batch 1 manifest, repository, API and D1 seed counts agree", () => {
+test("Batch 2 manifest, repository, API and D1 seed counts agree", () => {
   validateRepository(repository);
-  assert.equal(manifest.entry_count, 11092);
+  assert.equal(manifest.entry_count, 11107);
   assert.deepEqual(manifest.counts_by_level_band, expected);
   const results = [1, 2, 3, 4, 5, 6, 7].map((level) => queryCatalog(repository, { standard: "hsk3", level }));
   assert.deepEqual(results.map((result) => result.contentAssets.length), Object.values(expected));
   assert.equal(results.reduce((sum, result) => sum + result.contentAssets.length, 0), manifest.entry_count);
-  const seed = fs.readFileSync(new URL("../content/releases/hsk3-gf0025-2021-v2.sql", import.meta.url), "utf8");
+  const seed = fs.readFileSync(new URL("../content/releases/hsk3-content-truth-v5.sql", import.meta.url), "utf8");
   assert.equal((seed.match(/INSERT INTO content_assets/g) ?? []).length, manifest.entry_count);
 });
 
@@ -31,10 +31,10 @@ test("only approved, published HSK 3.0 content is exposed", () => {
   }
   assert.equal(queryCatalog(repository, { standard: "hsk3", level: 8 }).contentAssets.length, 0);
   assert.equal(queryCatalog(repository, { standard: "hsk3", level: 9 }).contentAssets.length, 0);
-  const release = repository.releases.find((candidate) => candidate.id === "hsk3-gf0025-2021-v2");
+  const release = repository.releases.find((candidate) => candidate.id === "hsk3-content-truth-v5");
   assert.ok(release);
   assert.equal(release.contentAssetIds.some((id) => repository.contentAssets.find((asset) => asset.id === id)?.standard === "hsk2"), false);
-  assert.equal(release.audioAssetIds.length, 0);
+  assert.equal(release.audioAssetIds.length, 3);
 });
 
 test("every published entry carries required provenance and validated lexical fields", () => {

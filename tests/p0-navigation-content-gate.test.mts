@@ -16,10 +16,10 @@ test("formal HSK 3.0 level status exposes exactly levels 1 through 9", () => {
 test("the active formal release reports published Level 1 content", () => {
   const status = getHsk3LevelStatus(1);
   assert.equal(status.availability, "ready");
-  assert.equal(status.contentCount, 500);
-  assert.equal(status.audioCount, 0);
-  assert.equal(status.releaseId, "hsk3-gf0025-2021-v2");
-  assert.equal(status.releaseVersion, 2);
+  assert.equal(status.contentCount, 502);
+  assert.equal(status.audioCount, 1);
+  assert.equal(status.releaseId, "hsk3-content-truth-v5");
+  assert.equal(status.releaseVersion, 5);
   assert.match(status.message, /available/i);
 });
 

@@ -13,7 +13,7 @@ import {
 
 const sampleRows: CatalogSearchRow[] = Array.from({ length: 51 }, (_, index) => ({
   id: `word-${index + 1}`,
-  release_id: "hsk3-gf0025-2021-v2",
+  release_id: "hsk3-content-truth-v5",
   standard_version: "GF0025-2021",
   content_version: "2026.08.21-batch1",
   level_band: index < 25 ? "1" : "7-9",
@@ -38,7 +38,7 @@ test("catalog query defaults to page size 50 and rejects values above 100", () =
 
 test("catalog query supports keyword, unified level and part-of-speech filters without selecting all rows", () => {
   const params = parseCatalogSearchParams(new URL("https://hskkit.com/api/v1/catalog/words?q=ni%20hao&level=9&pos=N&page=2&pageSize=25"));
-  const query = buildCatalogQuery(params, "hsk3-gf0025-2021-v2");
+  const query = buildCatalogQuery(params, "hsk3-content-truth-v5");
   assert.match(query.sql, /LIMIT \? OFFSET \?/);
   assert.match(query.sql, /level_band = \?/);
   assert.match(query.sql, /search_text LIKE \?/);
@@ -53,7 +53,7 @@ test("catalog response is paginated, compact and does not expose internal author
   const body = toCatalogWordResponse({
     rows: sampleRows.slice(0, 50),
     total: 51,
-    releaseId: "hsk3-gf0025-2021-v2",
+    releaseId: "hsk3-content-truth-v5",
     params: { q: "", level: undefined, partOfSpeech: "", page: 1, pageSize: 50 },
   });
   assert.equal(body.contentAssets.length, 50);

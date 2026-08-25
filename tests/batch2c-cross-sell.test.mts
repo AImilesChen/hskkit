@@ -13,7 +13,7 @@ test("2C keeps Pro and one-time PDF Pack cross-sell boundaries explicit", async 
     readFile(checkoutPath, "utf8"),
   ]);
 
-  assert.match(pricing, /Need offline printable study materials\? Visit the Store/);
+  assert.match(pricing, /Open Store/);
   assert.match(pricing, /Does not include the Advanced Study PDF Pack/);
   assert.match(store, /Need ongoing SRS, sync, and AI learning\? View Pro subscriptions/);
   assert.match(store, /Does not include Pro subscription benefits/);
