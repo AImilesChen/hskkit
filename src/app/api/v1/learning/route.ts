@@ -47,8 +47,10 @@ async function requireLearningAccess(identity: Awaited<ReturnType<typeof owner>>
   }
   return decision;
 }
-function audioExercise(assetId: string, mode: AudioMode) {
-  return trustedAudioExercise(assetId, mode) ?? trustedTodayAudioExercise(assetId, mode);
+function audioExercise(assetId: string, mode: AudioMode, dailyBound = false) {
+  return dailyBound
+    ? trustedTodayAudioExercise(assetId, mode)
+    : trustedAudioExercise(assetId, mode) ?? trustedTodayAudioExercise(assetId, mode);
 }
 function assertDailyAudioBinding(state: LearningState, dailySessionId: string | undefined, dailyItemId: string | undefined, exercise: NonNullable<ReturnType<typeof audioExercise>>) {
   if (!dailySessionId && !dailyItemId) return;
@@ -182,9 +184,9 @@ export async function POST(req: NextRequest) {
   if (action === "audio_playback_start" || action === "audio_playback_complete") {
     const assetId = short(payload.assetId, 80);
     const mode = payload.mode === "audio" || payload.mode === "context_audio" ? payload.mode as AudioMode : undefined;
-    const exercise = assetId && mode ? audioExercise(assetId, mode) : undefined;
     const dailySessionId = short(payload.dailySessionId, 120);
     const dailyItemId = short(payload.dailyItemId, 220);
+    const exercise = assetId && mode ? audioExercise(assetId, mode, Boolean(dailySessionId && dailyItemId)) : undefined;
     if (!exercise) return errorResponse("INVALID_AUDIO_PLAYBACK", 422);
     try {
       const loaded = await loadState(identity.id);
@@ -309,10 +311,10 @@ export async function POST(req: NextRequest) {
         const assetId = short(payload.assetId, 80);
         const mode = payload.mode === "audio" || payload.mode === "context_audio" ? payload.mode as AudioMode : undefined;
         const answer = short(payload.answer, 8);
-        const exercise = assetId && mode ? audioExercise(assetId, mode) : undefined;
-        if (!exercise || !answer || !Object.hasOwn(exercise.options, answer)) throw new Error("INVALID_AUDIO_ATTEMPT");
         const dailySessionId = short(payload.dailySessionId, 120);
         const dailyItemId = short(payload.dailyItemId, 220);
+        const exercise = assetId && mode ? audioExercise(assetId, mode, Boolean(dailySessionId && dailyItemId)) : undefined;
+        if (!exercise || !answer || !Object.hasOwn(exercise.options, answer)) throw new Error("INVALID_AUDIO_ATTEMPT");
         assertDailyAudioBinding(state, dailySessionId, dailyItemId, exercise);
         const ticketId = short(payload.playbackTicket, 80);
         if (!ticketId) throw new Error("AUDIO_PLAYBACK_REQUIRED");
