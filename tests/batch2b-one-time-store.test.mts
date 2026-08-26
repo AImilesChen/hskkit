@@ -114,6 +114,9 @@ test("pre-generated artifacts are bound to the paid product delivery and sidecar
   const bundleJob={generation_version:"p0-p1-v1",delivery_key:"bundle-zip",format:"zip",level:null};
   const bundleManifest={schemaVersion:"hskkit-bundle-manifest-v1",productId:"complete-1-9",generationVersion:"p0-p1-v1",templateProductId:"complete-1-9",templateDeliveryKey:"bundle-zip",templateFormat:"zip",templateLevel:null};
   assert.equal(validateProductArtifactTemplate(complete,bundleJob,bundleManifest).deliveryKey,"bundle-zip");
+  assert.equal(validateProductArtifactTemplate(complete,bundleJob,{...bundleManifest,templateChecksumSha256:"abc123"},"abc123").deliveryKey,"bundle-zip");
+  assert.throws(()=>validateProductArtifactTemplate(complete,bundleJob,{...bundleManifest,templateChecksumSha256:"wrong"},"abc123"),/PREGENERATED_ARTIFACT_CHECKSUM_MISMATCH/);
+  assert.throws(()=>validateProductArtifactTemplate(complete,bundleJob,bundleManifest,"abc123"),/PREGENERATED_ARTIFACT_CHECKSUM_MISMATCH/);
   assert.throws(()=>validateProductArtifactTemplate(complete,{...bundleJob,format:"pdf"},bundleManifest),/PRODUCT_DELIVERY_MISMATCH/);
   assert.throws(()=>validateProductArtifactTemplate(complete,{...bundleJob,delivery_key:"level-1",level:null},{schemaVersion:"hskkit-pack-manifest-v1",generationVersion:"p0-p1-v1",level:1}),/PRODUCT_DELIVERY_MISMATCH/);
   assert.throws(()=>validateProductArtifactTemplate(complete,bundleJob,{...bundleManifest,productId:"advanced-7-9"}),/PREGENERATED_ARTIFACT_IDENTITY_MISMATCH/);

@@ -1,0 +1,73 @@
+HSKKit 非官方 HSK 三点零分级练习测评，C卷听力。每个文本播放一次。每题后有五秒作答停顿。
+现在开始第1级听力。
+短句一：小安和朋友。短句二：时间是下午两点。短句三：要天气晴就去公园，下雨就在家看电影。短句四：因为他们想一起过周末。短句五：最后朋友分别准备水和水果。
+第1题。five short utterances · 谁是核心人物或机构。请作答。
+第2题。five short utterances · 核心行动是什么。请作答。
+第3题。five short utterances · 材料给出的原因是什么。请作答。
+第4题。five short utterances · 行动在什么时候或什么条件下进行。请作答。
+第5题。five short utterances · 最后的结果、建议或立场是什么。请作答。
+本级听力结束。
+现在开始第2级听力。
+女：我们在星期四上午十点做什么？男：在二楼诊室复查并带上检查单。女：为什么？男：因为医生需要查看上次结果。女：结果呢？男：赵明提前十分钟到医院。
+第1题。short everyday dialogue · 谁是核心人物或机构。请作答。
+第2题。short everyday dialogue · 核心行动是什么。请作答。
+第3题。short everyday dialogue · 材料给出的原因是什么。请作答。
+第4题。short everyday dialogue · 行动在什么时候或什么条件下进行。请作答。
+第5题。short everyday dialogue · 最后的结果、建议或立场是什么。请作答。
+本级听力结束。
+现在开始第3级听力。
+请听一段短文。志愿者小组原计划在周六上午九点先参加半小时培训，再做接待工作。安排的原因是整理图书组人数已满。事情完成以后，接待组补到两名新人。短文按时间顺序说明了人物、行动、原因和结果。
+第1题。short narrative passage · 谁是核心人物或机构。请作答。
+第2题。short narrative passage · 核心行动是什么。请作答。
+第3题。short narrative passage · 材料给出的原因是什么。请作答。
+第4题。short narrative passage · 行动在什么时候或什么条件下进行。请作答。
+第5题。short narrative passage · 最后的结果、建议或立场是什么。请作答。
+本级听力结束。
+现在开始第4级听力。
+第一段对话。甲：我们在下午六点以前凭取件码到社区快递站领取包裹。乙：我记住了。第二段对话。乙：计划有变化吗？甲：核心安排不变，因为大型包裹不能放入自助柜。乙：最后怎么处理？甲：逾期包裹第二天转到中心站。
+第1题。two-part changed-plan dialogue · 谁是核心人物或机构。请作答。
+第2题。two-part changed-plan dialogue · 核心行动是什么。请作答。
+第3题。two-part changed-plan dialogue · 材料给出的原因是什么。请作答。
+第4题。two-part changed-plan dialogue · 行动在什么时候或什么条件下进行。请作答。
+第5题。two-part changed-plan dialogue · 最后的结果、建议或立场是什么。请作答。
+本级听力结束。
+现在开始第5级听力。
+请听一段较长说明。河岸治理项目组准备在今年夏季在监测水质之外增加居民访谈。表面上这是一般安排，但关键依据是污染数据不能解释居民为何避开河岸。从材料立场看，行动不是目的本身；它要解决具体问题。实施以后，把照明和步道安全纳入改造。
+第1题。extended informational passage · 谁是核心人物或机构。请作答。
+第2题。extended informational passage · 核心行动是什么。请作答。
+第3题。extended informational passage · 材料给出的原因是什么。请作答。
+第4题。extended informational passage · 行动在什么时候或什么条件下进行。请作答。
+第5题。extended informational passage · 最后的结果、建议或立场是什么。请作答。
+本级听力结束。
+现在开始第6级听力。
+甲：当前问题是什么？乙：居民想降低高峰时段用电。甲：什么时候处理？乙：六个月内。甲：具体方案呢？乙：由社区能源试点在二十户家庭安装用电反馈设备。甲：这样会带来什么结果？乙：先比较账单变化再决定扩大。甲：那么原因、行动和结果已经形成完整链条。
+第1题。multi-turn problem-solving dialogue · 谁是核心人物或机构。请作答。
+第2题。multi-turn problem-solving dialogue · 核心行动是什么。请作答。
+第3题。multi-turn problem-solving dialogue · 材料给出的原因是什么。请作答。
+第4题。multi-turn problem-solving dialogue · 行动在什么时候或什么条件下进行。请作答。
+第5题。multi-turn problem-solving dialogue · 最后的结果、建议或立场是什么。请作答。
+本级听力结束。
+现在开始第7级听力。
+正式说明如下。地方旅游委员会提出在下一年度预算讨论前比较大型节庆与社区常态项目的长期影响，直接动因是游客数量不能单独反映居民收益。这项安排不仅回应眼前问题，也改变了执行结构。材料通过“问题—方案—结果”的组织推进论述，最终指出：把就业稳定和公共空间压力纳入评估。
+第1题。formal extended discourse · 谁是核心人物或机构。请作答。
+第2题。formal extended discourse · 核心行动是什么。请作答。
+第3题。formal extended discourse · 材料给出的原因是什么。请作答。
+第4题。formal extended discourse · 行动在什么时候或什么条件下进行。请作答。
+第5题。formal extended discourse · 最后的结果、建议或立场是什么。请作答。
+本级听力结束。
+现在开始第8级听力。
+主持人：请分别说明立场。发言人一：新分诊兼顾风险、时间和人工复核，所以医院分诊改革小组应在试点的前三个月结合症状风险和等候时间调整分诊。发言人二：我补充一点，患者代表指出模型可能低估慢性问题。主持人：两位的共同点和分歧是什么？发言人一：试点需比较效率，同时审查特定群体是否持续被低估。综合现有意见，公开规则并提供复核渠道。
+第1题。multi-speaker discussion · 谁是核心人物或机构。请作答。
+第2题。multi-speaker discussion · 核心行动是什么。请作答。
+第3题。multi-speaker discussion · 材料给出的原因是什么。请作答。
+第4题。multi-speaker discussion · 行动在什么时候或什么条件下进行。请作答。
+第5题。multi-speaker discussion · 最后的结果、建议或立场是什么。请作答。
+本级听力结束。
+现在开始第9级听力。
+主张方认为，气候适应规划组应在未来五年滚动评估中按风险、可逆性和公平影响安排投资，依据是只依据平均预测会忽略高风险社区。质疑方则指出，财政效率与尾部风险防护形成直接张力，不能只依据单一指标。回应方承认这一限制，并强调决策应比较概率、损失规模和可逆性，而不是只选择最常见情景。因此，结论必须同时处理主张、反驳、证据边界与后果：为不确定情景保留调整空间。
+第1题。argument with counterargument · 谁是核心人物或机构。请作答。
+第2题。argument with counterargument · 核心行动是什么。请作答。
+第3题。argument with counterargument · 材料给出的原因是什么。请作答。
+第4题。argument with counterargument · 行动在什么时候或什么条件下进行。请作答。
+第5题。argument with counterargument · 最后的结果、建议或立场是什么。请作答。
+本级听力结束。

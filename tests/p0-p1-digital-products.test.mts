@@ -63,12 +63,16 @@ test("schema and routes cover atomic grants, repeat blocking, refund revocation 
 
 test("five differentiated MVP generators produce real PDF or ZIP artifacts",async()=>{
   const generator=await import("../src/lib/commercial/product-generator.ts") as any;
-  const [font,emoji]=await Promise.all([
+  const [font,emoji,audioA,audioB,audioC]=await Promise.all([
     readFile(new URL("../assets/fonts/HskKitSansSubset.ttf",import.meta.url)),
     readFile(new URL("../assets/fonts/HskKitEmoji.ttf",import.meta.url)),
+    readFile(new URL("../assets/audio/mock-assessment-v2/form-A.mp3",import.meta.url)),
+    readFile(new URL("../assets/audio/mock-assessment-v2/form-B.mp3",import.meta.url)),
+    readFile(new URL("../assets/audio/mock-assessment-v2/form-C.mp3",import.meta.url)),
   ]);
+  const assessmentAudio={A:new Uint8Array(audioA),B:new Uint8Array(audioB),C:new Uint8Array(audioC)};
   for(const productId of expectedProducts.slice(4)){
-    const artifact=await generator.generateDifferentiatedProductArtifact(productId,new Uint8Array(font),new Uint8Array(emoji));
+    const artifact=await generator.generateDifferentiatedProductArtifact(productId,new Uint8Array(font),new Uint8Array(emoji),"p0-p1-v2",assessmentAudio);
     assert.ok(artifact.bytes.byteLength>1000,`${productId} artifact too small`);
     assert.ok(["pdf","zip"].includes(artifact.format));
     const magic=new TextDecoder().decode(artifact.bytes.slice(0,4));
@@ -85,7 +89,7 @@ test("Store and account UI expose P0/P1 products without hidden level dropdowns"
     read("src/app/store/store-purchase.tsx"),read("src/app/exports/exports-client.tsx"),read("src/app/orders/orders-client.tsx"),read("src/app/checkout/success/checkout-success-client.tsx"),
   ]);
   const catalog=await import("../src/lib/commercial/products.ts");
-  for(const label of ["Level 8 PDF Pack","Level 9 PDF Pack","Advanced 7–9 Bundle","Complete 1–9 Bundle","HSK Worksheet Pack","HSK Assessment Tracker","HSK 30-Day Planner","HSK Mock Exam Pack","HSK Teacher Lesson Plan Pack"]) assert.ok(catalog.DIGITAL_PRODUCTS.some(product=>product.name.includes(label)));
+  for(const label of ["Level 8 PDF Pack","Level 9 PDF Pack","Advanced 7–9 Bundle","Complete 1–9 Bundle","HSK Worksheet Pack","HSK Assessment Tracker","HSK 30-Day Planner","HSK Practice Assessment Pack","HSK Teacher Lesson Plan Pack"]) assert.ok(catalog.DIGITAL_PRODUCTS.some(product=>product.name.includes(label)));
   assert.doesNotMatch(purchase,/<select/);
   assert.match(purchase,/productId/);
   assert.match(exportsUi,/product_entitlement_id|productEntitlementId/);

@@ -69,7 +69,7 @@ export function selectPackAssets(level: number): PackSelection {
 
 export function manifestStillAuthorized(manifestJson:string|null|undefined){
   if(!manifestJson)return false;
-  try{const manifest=JSON.parse(manifestJson) as {schemaVersion?:string;productId?:string;sourceIndependent?:boolean;assets?:PackManifest["assets"]}; if(!Array.isArray(manifest.assets))return false;if(manifest.assets.length===0)return manifest.schemaVersion==="hskkit-product-manifest-v1"&&manifest.productId==="30-day-planner"&&manifest.sourceIndependent===true;
+  try{const manifest=JSON.parse(manifestJson) as {schemaVersion?:string;productId?:string;sourceIndependent?:boolean;assets?:PackManifest["assets"]}; if(!Array.isArray(manifest.assets))return false;if(manifest.assets.length===0)return manifest.schemaVersion==="hskkit-product-manifest-v1"&&["30-day-planner","mock-exam-pack"].includes(manifest.productId??"")&&manifest.sourceIndependent===true;
     const byId=new Map(contentAssets.map(asset=>[asset.id,asset]));
     return manifest.assets.every(ref=>{const asset=byId.get(ref.id); return Boolean(
       asset&&String(asset.version)===ref.version&&Boolean(asset.sourceRef)&&Boolean(asset.licenseRef),

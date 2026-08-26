@@ -10,7 +10,7 @@ const FONT_OBJECT_KEY = "system/fonts/HskKitSansSubset.ttf";
 const EMOJI_FONT_OBJECT_KEY = "system/fonts/HskKitEmoji.ttf";
 
 type ProductTemplateJob={generation_version:string;delivery_key:string|null;format:string;level:number|null};
-export function validateProductArtifactTemplate(product:DigitalProduct,job:ProductTemplateJob,manifest:Record<string,unknown>):ProductDelivery{
+export function validateProductArtifactTemplate(product:DigitalProduct,job:ProductTemplateJob,manifest:Record<string,unknown>,artifactChecksumSha256?:string):ProductDelivery{
   if(!/^[a-z0-9][a-z0-9._-]{0,63}$/i.test(job.generation_version)||job.generation_version==="."||job.generation_version==="..")throw new Error("INVALID_GENERATION_VERSION");
   const delivery=buildProductDeliveries(product.id).find(item=>item.deliveryKey===job.delivery_key);
   if(!delivery||delivery.format!==job.format||(delivery.level??null)!==(job.level??null))throw new Error("PRODUCT_DELIVERY_MISMATCH");
@@ -22,6 +22,7 @@ export function validateProductArtifactTemplate(product:DigitalProduct,job:Produ
       ? manifest.schemaVersion==="hskkit-bundle-manifest-v1"&&manifest.productId===product.id
       : manifest.schemaVersion==="hskkit-product-manifest-v1"&&manifest.productId===product.id;
   if(!templateIdentity||!artifactIdentity)throw new Error("PREGENERATED_ARTIFACT_IDENTITY_MISMATCH");
+  if(artifactChecksumSha256&&(typeof manifest.templateChecksumSha256!=="string"||manifest.templateChecksumSha256!==artifactChecksumSha256))throw new Error("PREGENERATED_ARTIFACT_CHECKSUM_MISMATCH");
   return delivery;
 }
 
@@ -76,7 +77,8 @@ export async function processCommercialExport(message: CommercialQueueMessage, e
         if(!templateObject||!manifestObject)throw new Error("PREGENERATED_ARTIFACT_NOT_AVAILABLE");
         bytes=new Uint8Array(await templateObject.arrayBuffer());
         manifest=JSON.parse(await manifestObject.text()) as Record<string,unknown>;
-        validateProductArtifactTemplate(product,job,manifest);
+        const templateChecksumSha256=await sha256Hex(bytes);
+        validateProductArtifactTemplate(product,job,manifest,templateChecksumSha256);
       }else{
         const [fontObject,emojiFontObject] = await Promise.all([env.COMMERCIAL_EXPORTS_R2.get(FONT_OBJECT_KEY),env.COMMERCIAL_EXPORTS_R2.get(EMOJI_FONT_OBJECT_KEY)]);
         if (!fontObject||!emojiFontObject) throw new Error("EMBEDDED_FONT_NOT_AVAILABLE");

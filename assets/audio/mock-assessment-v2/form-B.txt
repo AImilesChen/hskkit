@@ -1,0 +1,73 @@
+HSKKit 非官方 HSK 三点零分级练习测评，B卷听力。每个文本播放一次。每题后有五秒作答停顿。
+现在开始第1级听力。
+短句一：孩子和妈妈。短句二：时间是下午五点以前。短句三：要去超市买三个苹果。短句四：因为家里没有苹果了。短句五：最后孩子买完苹果回家。
+第1题。five short utterances · 谁是核心人物或机构。请作答。
+第2题。five short utterances · 核心行动是什么。请作答。
+第3题。five short utterances · 材料给出的原因是什么。请作答。
+第4题。five short utterances · 行动在什么时候或什么条件下进行。请作答。
+第5题。five short utterances · 最后的结果、建议或立场是什么。请作答。
+本级听力结束。
+现在开始第2级听力。
+女：我们在中午十二点做什么？男：把两碗面和一杯茶送到六号桌。女：为什么？男：因为顾客已经点好午饭。女：结果呢？男：顾客确认茶不要加糖。
+第1题。short everyday dialogue · 谁是核心人物或机构。请作答。
+第2题。short everyday dialogue · 核心行动是什么。请作答。
+第3题。short everyday dialogue · 材料给出的原因是什么。请作答。
+第4题。short everyday dialogue · 行动在什么时候或什么条件下进行。请作答。
+第5题。short everyday dialogue · 最后的结果、建议或立场是什么。请作答。
+本级听力结束。
+现在开始第3级听力。
+请听一段短文。摄影课学员原计划在晚上七点参加夜间摄影课并自带相机。安排的原因是下午班已经满员。事情完成以后，学员借到一台相机。短文按时间顺序说明了人物、行动、原因和结果。
+第1题。short narrative passage · 谁是核心人物或机构。请作答。
+第2题。short narrative passage · 核心行动是什么。请作答。
+第3题。short narrative passage · 材料给出的原因是什么。请作答。
+第4题。short narrative passage · 行动在什么时候或什么条件下进行。请作答。
+第5题。short narrative passage · 最后的结果、建议或立场是什么。请作答。
+本级听力结束。
+现在开始第4级听力。
+第一段对话。甲：我们在考试季工作日晚上十点前延长普通阅览区开放时间。乙：我记住了。第二段对话。乙：计划有变化吗？甲：核心安排不变，因为学生需要更多复习座位。乙：最后怎么处理？甲：儿童区仍在六点关闭。
+第1题。two-part changed-plan dialogue · 谁是核心人物或机构。请作答。
+第2题。two-part changed-plan dialogue · 核心行动是什么。请作答。
+第3题。two-part changed-plan dialogue · 材料给出的原因是什么。请作答。
+第4题。two-part changed-plan dialogue · 行动在什么时候或什么条件下进行。请作答。
+第5题。two-part changed-plan dialogue · 最后的结果、建议或立场是什么。请作答。
+本级听力结束。
+现在开始第5级听力。
+请听一段较长说明。公司项目组准备在三个月试行期内实行十点到四点的核心协作时间。表面上这是一般安排，但关键依据是员工希望避开通勤高峰。从材料立场看，行动不是目的本身；它要解决具体问题。实施以后，根据项目进度和员工反馈决定是否保留。
+第1题。extended informational passage · 谁是核心人物或机构。请作答。
+第2题。extended informational passage · 核心行动是什么。请作答。
+第3题。extended informational passage · 材料给出的原因是什么。请作答。
+第4题。extended informational passage · 行动在什么时候或什么条件下进行。请作答。
+第5题。extended informational passage · 最后的结果、建议或立场是什么。请作答。
+本级听力结束。
+现在开始第6级听力。
+甲：当前问题是什么？乙：部分家长不会每天查看应用。甲：什么时候处理？乙：下学期开始前。甲：具体方案呢？乙：由学校信息中心为关键通知增加短信并允许家庭选择渠道。甲：这样会带来什么结果？乙：保留应用而不恢复全部纸质通知。甲：那么原因、行动和结果已经形成完整链条。
+第1题。multi-turn problem-solving dialogue · 谁是核心人物或机构。请作答。
+第2题。multi-turn problem-solving dialogue · 核心行动是什么。请作答。
+第3题。multi-turn problem-solving dialogue · 材料给出的原因是什么。请作答。
+第4题。multi-turn problem-solving dialogue · 行动在什么时候或什么条件下进行。请作答。
+第5题。multi-turn problem-solving dialogue · 最后的结果、建议或立场是什么。请作答。
+本级听力结束。
+现在开始第7级听力。
+正式说明如下。人工智能课堂项目提出在每次使用工具后保留可核查的思考过程并由学习者完成关键判断，直接动因是只追求答案速度会削弱知识结构理解。这项安排不仅回应眼前问题，也改变了执行结构。材料通过“问题—方案—结果”的组织推进论述，最终指出：教师依据过程证据评价学习。
+第1题。formal extended discourse · 谁是核心人物或机构。请作答。
+第2题。formal extended discourse · 核心行动是什么。请作答。
+第3题。formal extended discourse · 材料给出的原因是什么。请作答。
+第4题。formal extended discourse · 行动在什么时候或什么条件下进行。请作答。
+第5题。formal extended discourse · 最后的结果、建议或立场是什么。请作答。
+本级听力结束。
+现在开始第8级听力。
+主持人：请分别说明立场。发言人一：可靠开放需要持续维护和责任信息，所以开放数据办公室应在每次数据更新时同时维护字段说明、反馈渠道和影响评估。发言人二：我补充一点，使用方强调发布速度和可用时效。主持人：两位的共同点和分歧是什么？发言人一：争议不在是否说明，而在说明应在发布前还是限期补齐。综合现有意见，外部使用者可以判断数据是否可靠。
+第1题。multi-speaker discussion · 谁是核心人物或机构。请作答。
+第2题。multi-speaker discussion · 核心行动是什么。请作答。
+第3题。multi-speaker discussion · 材料给出的原因是什么。请作答。
+第4题。multi-speaker discussion · 行动在什么时候或什么条件下进行。请作答。
+第5题。multi-speaker discussion · 最后的结果、建议或立场是什么。请作答。
+本级听力结束。
+现在开始第9级听力。
+主张方认为，平台治理审计组应在每个季度同时审查处置数量、申诉有效性和群体影响，依据是高删除量不等于高治理质量。质疑方则指出，数据透明需要在防滥用与可复核之间取舍，不能只依据单一指标。回应方承认这一限制，并强调可接受方案应保护个体信息，同时让外部人员验证审计方法。因此，结论必须同时处理主张、反驳、证据边界与后果：发现集中错误后修正规则并补救。
+第1题。argument with counterargument · 谁是核心人物或机构。请作答。
+第2题。argument with counterargument · 核心行动是什么。请作答。
+第3题。argument with counterargument · 材料给出的原因是什么。请作答。
+第4题。argument with counterargument · 行动在什么时候或什么条件下进行。请作答。
+第5题。argument with counterargument · 最后的结果、建议或立场是什么。请作答。
+本级听力结束。

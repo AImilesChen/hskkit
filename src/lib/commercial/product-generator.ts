@@ -3,17 +3,56 @@ import {PDFDocument,rgb,type PDFFont,type PDFPage} from "pdf-lib";
 import {selectPackAssets} from "./catalog.ts";
 import {generateZipFiles} from "./generator.ts";
 import {digitalProduct,type DigitalProduct,type DigitalProductId} from "./products.ts";
+import {assessmentListeningScript,assessmentScenario,type AssessmentForm} from "./mock-assessment-content.ts";
 
 const encoder=new TextEncoder();
-export type ProductArtifactManifest={schemaVersion:string;productId:string;generationVersion:string;standard:"HSK 3.0";standardVersion:"GF0025-2021";officialExam:false;levels:number[];advancedBandDisclosure:string;licenseNotice:string;files:string[];sourceIndependent:boolean;assets:Array<{id:string;version:string;sourceRef:string;licenseRef:string}>};
+export type ProductArtifactManifest={schemaVersion:string;productId:string;generationVersion:string;standard:"HSK 3.0";standardVersion:"GF0025-2021";officialExam:false;levels:number[];advancedBandDisclosure:string;licenseNotice:string;files:string[];sourceIndependent:boolean;assets:Array<{id:string;version:string;sourceRef:string;licenseRef:string}>;audioProvenance?:{provider:string;voices:Record<AssessmentForm,string>;generatedOn:string;responsePauseSeconds:number;redistributionStatus:string;sha256:Record<AssessmentForm,string>}};
+const ASSESSMENT_AUDIO_SHA256:Record<AssessmentForm,string>={A:"07f5273876f407f538dd713989b93336a2a863b3bdb5b75252254b432b2bac17",B:"677b74b33bb9bf94cb535336e4fa8789fbabea900dff130a4de384c8cab1be59",C:"3f6982318c9640cef1deece19a5d13b129eafd5b63c55b40636cfd6d51bc006b"};
+const ASSESSMENT_AUDIO_PROVENANCE={provider:"Piper open-source neural text-to-speech",voices:{A:"zh_CN-chaowen-medium",B:"zh_CN-chaowen-medium",C:"zh_CN-chaowen-medium"} as Record<AssessmentForm,string>,generatedOn:"2026-08-26",responsePauseSeconds:5,redistributionStatus:"Piper voice model repository: MIT; Chaowen training dataset: CC0-1.0; synthetic output generated for HSKKit with attribution and source notice included.",sha256:ASSESSMENT_AUDIO_SHA256};
+async function sha256Hex(bytes:Uint8Array){const copy=new Uint8Array(bytes.byteLength);copy.set(bytes);const digest=await crypto.subtle.digest("SHA-256",copy.buffer);return [...new Uint8Array(digest)].map(byte=>byte.toString(16).padStart(2,"0")).join("");}
+async function validateAssessmentAudio(audio:Partial<Record<AssessmentForm,Uint8Array>>|undefined){for(const form of ["A","B","C"] as const){const data=audio?.[form];if(!data||data.byteLength<5_000_000)throw new Error(`ASSESSMENT_AUDIO_REQUIRED_${form}`);if(await sha256Hex(data)!==ASSESSMENT_AUDIO_SHA256[form])throw new Error(`ASSESSMENT_AUDIO_UNVERIFIED_${form}`);}}
+type PdfSection={heading:string;body:string[];pageBreakBefore?:boolean};
 type Selection=ReturnType<typeof selectPackAssets>;
-type PdfSection={heading:string;body:string[]};
 
-function mockWords(selection:Selection,variant=0){
-  const seenHanzi=new Set<string>(),seenMeaning=new Set<string>();
-  const start=variant*40,candidates=[...selection.words.slice(start),...selection.words.slice(0,start)];
-  return candidates.filter(word=>{const hanzi=word.hanzi.trim(),meaning=word.meaning.trim().toLowerCase();if(seenHanzi.has(hanzi)||seenMeaning.has(meaning))return false;seenHanzi.add(hanzi);seenMeaning.add(meaning);return true;}).slice(0,20);
+export type MockAssessmentBlueprint={
+  level:number;
+  band:"foundation"|"developing"|"independent"|"advanced";
+  suggestedMinutes:number;
+  listening:string[];
+  reading:string[];
+  writing:string[];
+  rubricDimensions:string[];
+  recommendations:Record<"listening"|"reading"|"writing",readonly string[]>;
+};
+
+export function mockAssessmentBlueprint(level:number):MockAssessmentBlueprint{
+  if(!Number.isInteger(level)||level<1||level>9)throw new Error("INVALID_ASSESSMENT_LEVEL");
+  const levelRecommendations:Record<number,MockAssessmentBlueprint["recommendations"]>={
+    1:{listening:["Replay short utterances and mark the stated person, time and place."],reading:["Redo direct-detail and simple matching items with the supporting words underlined."],writing:["Rewrite one 20–40-character response with one complete sentence and the required word."]},
+    2:{listening:["Rebuild the two-step dialogue sequence before choosing an answer."],reading:["Redo event-order and information-matching items; explain each link aloud."],writing:["Revise the short report so both events are connected in the correct order."]},
+    3:{listening:["Summarize the short passage in one sentence before answering inference items."],reading:["Redo context-cloze items and cite the sentence that fixes each blank."],writing:["Expand one response to 50–80 characters with a clear reason and result."]},
+    4:{listening:["Map the changed plan across both dialogue parts, then answer reconstruction items."],reading:["Redo paragraph sequence and matching with transition words circled."],writing:["Revise cohesion by adding an explicit transition between evidence and conclusion."]},
+    5:{listening:["Note the speaker stance and the evidence that supports it in the extended passage."],reading:["Redo sentence-insertion items and justify the chosen position from surrounding cohesion."],writing:["Rewrite 100–150 characters with a stated viewpoint and one cited source detail."]},
+    6:{listening:["Draw the cause-to-effect chain from the multi-turn dialogue before checking options."],reading:["Redo cause-effect and cross-source items; reject options with reversed causality."],writing:["Revise the report so claim, evidence and consequence are explicit."]},
+    7:{listening:["Identify register, stance and discourse structure in the extended passage."],reading:["Annotate passage structure and explain how each paragraph advances the claim."],writing:["Rewrite the weakest advanced task with precise register and two source references."]},
+    8:{listening:["Track each speaker claim separately, then write the shared and conflicting points."],reading:["Redo multi-source synthesis using a two-column source-evidence matrix."],writing:["Revise 180–300 characters to integrate both sources without erasing disagreement."]},
+    9:{listening:["Separate claim, counterclaim, evidence and qualification in the argument."],reading:["Redo counterargument items and rank evidence strength before selecting a conclusion."],writing:["Rewrite the argument with a defensible claim, two-source evidence, counterpoint and justified conclusion."]}
+  };
+  const shared={recommendations:levelRecommendations[level]};
+  const byLevel:Record<number,Omit<MockAssessmentBlueprint,"level"|"recommendations">>={
+    1:{band:"foundation",suggestedMinutes:35,listening:["short-utterance meaning","short-dialogue detail"],reading:["sentence-meaning","information-match","short-passage detail"],writing:["basic sentence-order","controlled sentence writing"],rubricDimensions:["task completion","word order","target vocabulary accuracy"]},
+    2:{band:"foundation",suggestedMinutes:40,listening:["short-dialogue detail","everyday information-match"],reading:["context cloze","sentence-order","short-passage sequence"],writing:["sentence expansion","two-sentence message"],rubricDimensions:["task completion","sentence control","target vocabulary accuracy"]},
+    3:{band:"developing",suggestedMinutes:50,listening:["short-dialogue intent","short-passage information-match"],reading:["context cloze","sentence-order","short-passage comprehension"],writing:["guided paragraph","dialogue completion"],rubricDimensions:["task completion","grammar and cohesion","target vocabulary accuracy"]},
+    4:{band:"developing",suggestedMinutes:55,listening:["multi-turn dialogue purpose","short-passage inference"],reading:["paragraph cloze","information-match","short-passage main-idea"],writing:["narrative sequence","reason-and-result paragraph"],rubricDimensions:["content coverage","grammar and cohesion","vocabulary control"]},
+    5:{band:"independent",suggestedMinutes:65,listening:["extended-dialogue detail","short-passage inference"],reading:["paragraph cloze","sentence-insertion","short-passage inference","information-match"],writing:["structured summary","evidence-based response"],rubricDimensions:["content coverage","organization and cohesion","language control","target vocabulary accuracy"]},
+    6:{band:"independent",suggestedMinutes:70,listening:["extended-dialogue stance","extended-passage inference"],reading:["discourse cloze","sentence-insertion","author-purpose","cross-text information-match"],writing:["comparative summary","structured recommendation"],rubricDimensions:["evidence selection","organization and cohesion","precision and range","task fulfilment"]},
+    7:{band:"advanced",suggestedMinutes:75,listening:["extended-discourse inference","multi-speaker synthesis"],reading:["multi-source information-match","paragraph-order","extended-passage inference","argument structure"],writing:["source synthesis","structured summary","argument response"],rubricDimensions:["content and evidence","organization and cohesion","precision and range","register and task fulfilment"]},
+    8:{band:"advanced",suggestedMinutes:80,listening:["lecture-structure analysis","implicit-stance inference"],reading:["multi-source synthesis","paragraph-order","claim-evidence match","counterargument analysis"],writing:["comparative synthesis","evidence-led proposal","counterargument response"],rubricDimensions:["source integration","argument structure","precision and range","register and task fulfilment"]},
+    9:{band:"advanced",suggestedMinutes:85,listening:["extended-lecture synthesis","assumption-and-implication inference"],reading:["cross-source information-match","rhetorical-structure analysis","evidence evaluation","argument synthesis"],writing:["critical source synthesis","structured summary","independent argument"],rubricDimensions:["critical evidence use","conceptual organization","precision and nuance","register and task fulfilment"]},
+  };
+  return {level,...byLevel[level],...shared};
 }
+
 function sourceWords(selection:Selection,wordCount:number,exerciseCount:number){
   const ids=new Set(selection.words.slice(0,wordCount).map(word=>word.id));
   for(const exercise of selection.exercises.slice(0,exerciseCount))ids.add(exercise.sourceAssetId);
@@ -22,14 +61,14 @@ function sourceWords(selection:Selection,wordCount:number,exerciseCount:number){
 function productAssets(product:DigitalProduct,selections:Selection[]){
   const selected=product.id==="assessment-tracker"?selections.flatMap(selection=>selection.words)
     :product.id==="worksheet-pack"?selections.flatMap(selection=>sourceWords(selection,12,6))
-    :product.id==="mock-exam-pack"?selections.flatMap(selection=>[0,1,2].flatMap(variant=>mockWords(selection,variant)))
+    :product.id==="mock-exam-pack"?[]
     :product.id==="teacher-lesson-plan-pack"?selections.flatMap(selection=>sourceWords(selection,6,3)):[];
   const unique=new Map<string,{id:string;version:string;sourceRef:string;licenseRef:string}>();
   for(const asset of selected)unique.set(`${asset.id}:${asset.version}`,{id:asset.id,version:asset.version,sourceRef:asset.sourceRef,licenseRef:asset.licenseRef});
   return [...unique.values()];
 }
 function manifestFor(product:DigitalProduct,files:string[],selections:Selection[],generationVersion:string):ProductArtifactManifest{
-  return {schemaVersion:"hskkit-product-manifest-v1",productId:product.id,generationVersion,standard:"HSK 3.0",standardVersion:"GF0025-2021",officialExam:false,levels:product.levels,advancedBandDisclosure:"HSK 3.0 defines one unified Levels 7–9 advanced ability band; Level 7, 8 and 9 labels in this resource use the same canonical approved advanced source set.",licenseNotice:"Personal, non-transferable study and print use only.",files,sourceIndependent:product.id==="30-day-planner",assets:productAssets(product,selections)};
+  return {schemaVersion:"hskkit-product-manifest-v1",productId:product.id,generationVersion,standard:"HSK 3.0",standardVersion:"GF0025-2021",officialExam:false,levels:product.levels,advancedBandDisclosure:"HSK 3.0 defines one unified Levels 7–9 advanced ability band; Level 7, 8 and 9 labels in this resource use the same canonical approved advanced source set.",licenseNotice:"Personal, non-transferable study and print use only.",files,sourceIndependent:product.id==="30-day-planner"||product.id==="mock-exam-pack",assets:productAssets(product,selections),...(product.id==="mock-exam-pack"?{audioProvenance:ASSESSMENT_AUDIO_PROVENANCE}:{})};
 }
 
 function lines(text:string,font:PDFFont,size:number,width:number){
@@ -37,19 +76,49 @@ function lines(text:string,font:PDFFont,size:number,width:number){
   for(const char of text){if(char==="\n"){output.push(current);current="";continue;}const next=current+char;if(current&&font.widthOfTextAtSize(next,size)>width){output.push(current);current=char;}else current=next;}
   if(current)output.push(current);return output;
 }
+function wordLines(text:string,font:PDFFont,size:number,width:number){
+  const words=text.trim().split(/\s+/),output:string[]=[];let current="";
+  for(const word of words){const next=current?`${current} ${word}`:word;if(font.widthOfTextAtSize(next,size)<=width){current=next;continue;}if(current)output.push(current);if(font.widthOfTextAtSize(word,size)<=width)current=word;else{const fragments=lines(word,font,size,width);output.push(...fragments.slice(0,-1));current=fragments.at(-1)??"";}}
+  if(current)output.push(current);return output;
+}
 async function makePdf(title:string,subtitle:string,sections:PdfSection[],fontBytes:Uint8Array){
   const pdf=await PDFDocument.create();pdf.registerFontkit(fontkit);const font=await pdf.embedFont(fontBytes,{subset:false});
   pdf.setTitle(title);pdf.setAuthor("HSKKit");pdf.setSubject("HSK 3.0 unofficial learning resource");pdf.setKeywords(["HSK 3.0","unofficial","HSKKit"]);
   const size:[number,number]=[595.28,841.89];let page:PDFPage;let y=0;let pageNumber=0;
-  const fresh=()=>{page=pdf.addPage(size);pageNumber+=1;page.drawRectangle({x:0,y:812,width:595.28,height:30,color:rgb(.04,.31,.29)});page.drawText("HSKKit · HSK 3.0 · Unofficial learning resource",{x:32,y:822,size:9,font,color:rgb(1,1,1)});page.drawText(String(pageNumber),{x:540,y:26,size:8,font,color:rgb(.45,.5,.56)});y=785;};
-  fresh();page!.drawText(title,{x:36,y,size:22,font,color:rgb(.04,.31,.29)});y-=32;
-  for(const line of lines(subtitle,font,9,520)){page!.drawText(line,{x:36,y,size:9,font,color:rgb(.25,.3,.38)});y-=13;}
-  for(const line of lines("Advanced-band disclosure: HSK 3.0 defines one unified Levels 7–9 band; Level 7/8/9 labels use the same canonical approved source set.",font,8,520)){page!.drawText(line,{x:36,y,size:8,font,color:rgb(.45,.28,.08)});y-=12;}y-=12;
-  for(const section of sections){if(y<112)fresh();page!.drawText(section.heading,{x:36,y,size:14,font,color:rgb(.04,.31,.29)});y-=22;for(const item of section.body){for(const line of lines(item,font,9,510)){if(y<58)fresh();page!.drawText(line,{x:44,y,size:9,font,color:rgb(.12,.16,.24)});y-=13;}y-=5;}y-=10;}
+  const header=title.includes("Practice Assessment")?"HSKKit · Practice Assessment v2 · HSK 3.0 · Unofficial":"HSKKit · HSK 3.0 · Unofficial learning resource";
+  const fresh=()=>{page=pdf.addPage(size);pageNumber+=1;page.drawRectangle({x:0,y:812,width:595.28,height:30,color:rgb(.04,.31,.29)});page.drawText(header,{x:32,y:822,size:9,font,color:rgb(1,1,1)});page.drawText(String(pageNumber),{x:540,y:26,size:8,font,color:rgb(.45,.5,.56)});y=785;};
+  fresh();for(const line of wordLines(title,font,20,520)){page!.drawText(line,{x:36,y,size:20,font,color:rgb(.04,.31,.29)});y-=27;}y-=5;
+  for(const line of wordLines(subtitle,font,9.5,520)){page!.drawText(line,{x:36,y,size:9.5,font,color:rgb(.25,.3,.38)});y-=14;}
+  for(const line of wordLines("Advanced-band disclosure: HSK 3.0 defines one unified Levels 7–9 band; Level 7/8/9 labels use the same canonical approved source set.",font,8.5,520)){page!.drawText(line,{x:36,y,size:8.5,font,color:rgb(.45,.28,.08)});y-=12;}y-=12;
+  for(const section of sections){if(section.pageBreakBefore||y<112)fresh();for(const headingLine of wordLines(section.heading,font,14,520)){if(y<72)fresh();page!.drawText(headingLine,{x:36,y,size:14,font,color:rgb(.04,.31,.29)});y-=18;}y-=4;for(const item of section.body){for(const line of wordLines(item,font,9.5,510)){if(y<58)fresh();page!.drawText(line,{x:44,y,size:9.5,font,color:rgb(.12,.16,.24)});y-=14;}y-=5;}y-=10;}
   return new Uint8Array(await pdf.save({useObjectStreams:false}));
 }
-function readme(product:DigitalProduct,files:string[]){return encoder.encode([`${product.name} · HSKKit`,``,`How to use`,`1. Read the Quick Start or guide file before opening the working files.`,`2. Choose one HSK level and one evidence-based goal.`,`3. Complete work before checking answers or rubrics.`,`4. Record the next review action after each session.`,``,`Included files`,...files.map(name=>`- ${name}`),``,`Important`,`This is an unofficial HSK 3.0 learning resource, not an official examination product.`,`Audio is not included. Levels 7–9 use one unified canonical advanced source set.`,`Licensed for personal, non-transferable study and print use only.`].join("\n"));}
-function packageZip(product:DigitalProduct,files:Array<{name:string;data:Uint8Array}>,manifest:ProductArtifactManifest){return generateZipFiles([...files,{name:"manifest.json",data:encoder.encode(JSON.stringify(manifest,null,2))},{name:"README.txt",data:readme(product,files.map(file=>file.name))}]);}
+function readme(product:DigitalProduct,files:string[],manifest:ProductArtifactManifest){
+  const audio=manifest.audioProvenance;
+  const quickStart=audio?[
+    "1. Print one Level section from one Form A/B/C Student PDF and the matching Answer Sheet section.",
+    "2. Play the matching MP3 once without pausing; each numbered prompt already includes a 5-second response gap.",
+    "3. Complete Listening, Reading and Writing before opening Answers and Explanations.",
+    "4. Record /30 in the Score Report or CSV, identify the weakest skill and complete the linked practice before the next form."
+  ]:[
+    "1. Read the Quick Start or guide file before opening the working files.",
+    "2. Choose one HSK level and one evidence-based goal.",
+    "3. Complete work before checking answers or rubrics.",
+    "4. Record the next review action after each session."
+  ];
+  const lines=[
+    `${product.name} · HSKKit`,"","How to use",...quickStart,
+    "","Included files",...files.map(name=>`- ${name}`),"","Important",
+    "This is an unofficial HSK 3.0 learning resource, not an official examination product.",
+    audio?`Three Mandarin MP3 listening tracks are included for Forms A, B and C. Playback is once at natural pace with ${audio.responsePauseSeconds}-second response pauses; exact transcripts are included.`:"Audio is not included.",
+    audio?`Audio provenance: ${audio.provider}; voices ${Object.entries(audio.voices).map(([form,voice])=>`${form}=${voice}`).join(", ")}; generated ${audio.generatedOn}.`:"",
+    audio?`Audio integrity: each MP3 is pinned by SHA-256 in manifest.json. ${audio.redistributionStatus}`:"",
+    "Levels 7–9 use one unified canonical advanced source set.",
+    "Licensed for personal, non-transferable study and print use only."
+  ];
+  return encoder.encode(lines.filter(Boolean).join("\n"));
+}
+function packageZip(product:DigitalProduct,files:Array<{name:string;data:Uint8Array}>,manifest:ProductArtifactManifest){return generateZipFiles([...files,{name:"manifest.json",data:encoder.encode(JSON.stringify(manifest,null,2))},{name:"README.txt",data:readme(product,files.map(file=>file.name),manifest)}]);}
 
 function worksheetSections(selection:Selection):PdfSection[]{
   const words=selection.words.slice(0,12),exercises=selection.exercises.slice(0,6);
@@ -65,25 +134,54 @@ function worksheetAnswerSections(selection:Selection):PdfSection[]{
   return [{heading:`Level ${selection.level} · Vocabulary key`,body:words.map(word=>`${word.hanzi} (${word.pinyin}): ${word.meaning}`)},{heading:`Level ${selection.level} · Guided-practice key`,body:exercises.map((exercise,index)=>`${index+1}. ${exercise.answer}`)},{heading:`Level ${selection.level} · Open-response review`,body:["Original sentences vary. Accept only a complete response that uses the target word with the listed meaning.","If meaning is accurate but the sentence has a minor language error, revise and repeat once before marking secure."]}];
 }
 
-function rotatedWords(selection:Selection,variant:number){return mockWords(selection,variant);}
-function choice(word:{meaning:string},words:Array<{meaning:string}>,index:number,variant:number){const correct=(index+variant)%3;const distractors=[words[(index+6)%words.length].meaning,words[(index+11)%words.length].meaning];const options=correct===0?[word.meaning,...distractors]:correct===1?[distractors[0],word.meaning,distractors[1]]:[...distractors,word.meaning];return {correct,options};}
+const formLabel=(variant:number)=>(["A","B","C"] as const)[variant];
+export function mockAssessmentListeningScript(form:AssessmentForm){return assessmentListeningScript(form);}
+const formatObjective=(number:number,item:{prompt:string;options:readonly string[]})=>`${number}. ${item.prompt}  A. ${item.options[0]}  B. ${item.options[1]}  C. ${item.options[2]}`;
+type ReadingAssessmentItem={prompt:string;answer:string;explanation:string;distractorAnalysis:string};
+
+function assessmentReadingItems(selection:Selection,variant:number):ReadingAssessmentItem[]{
+  return assessmentScenario(selection.level,variant).reading.map(item=>({
+    prompt:formatObjective(0,item).replace(/^0\. /,""),
+    answer:item.answer,
+    explanation:item.explanation,
+    distractorAnalysis:item.distractorAnalysis
+  }));
+}
+function writingTasks(selection:Selection){
+  const spec=mockAssessmentBlueprint(selection.level),range=selection.level<=2?"20–40 Chinese characters":selection.level<=4?"50–80 Chinese characters":selection.level<=6?"100–150 Chinese characters":"180–300 Chinese characters";
+  const tasks=[`Task 1 · ${spec.writing[0]}. Write ${range} for a classmate. State the main point of Source A and cite one accurate detail.`,`Task 2 · ${spec.writing[1]}. Write ${range} for a study report. Compare Source A with Source B, explain whether Source B supports, extends or challenges Source A, and cite evidence from both.`];
+  if(selection.level>=7)tasks.push(`Task 3 · ${spec.writing[2]}. Write ${range} for an informed public reader. State a claim, cite both sources, address their disagreement or trade-off and reach a justified conclusion.`);
+  return tasks;
+}
+function writingScoring(selection:Selection){return selection.level<=6?["Writing /10: Task 1 /5 + Task 2 /5.","Each task: completion and source evidence /2 · organization /1 · language control /1 · factual accuracy to the supplied sources /1."]: ["Writing /10: Task 1 /3 + Task 2 /3 + Task 3 /4.","Tasks 1–2: evidence /1 · organization /1 · language control /1. Task 3: claim /1 · two-source evidence /1 · counterpoint or trade-off /1 · language/register /1."];}
 function assessmentStudentSections(selection:Selection,variant:number):PdfSection[]{
-  const words=rotatedWords(selection,variant),label=["A","B","C"][variant],minutes=selection.level<=2?35:selection.level<=4?50:selection.level<=6?65:80;
+  const label=formLabel(variant),spec=mockAssessmentBlueprint(selection.level),scenario=assessmentScenario(selection.level,variant),reading=assessmentReadingItems(selection,variant);
   return [
-    {heading:`Form ${label} · Level ${selection.level} · Instructions`,body:[`Suggested time: ${minutes} minutes. Total: 30 diagnostic points.`,`Listening simulation: 5 items / 10 points. Reading: 10 items / 10 points. Writing: 5 items / 10 points.`,`Have a facilitator read the separate script twice. This is level-aligned practice, not an official HSK exam.`]},
-    {heading:`Form ${label} · Level ${selection.level} · Listening simulation`,body:words.slice(0,5).map((word,index)=>{const item=choice(word,words,index,variant);return `${index+1}. Choose the meaning of the word you hear: A. ${item.options[0]}  B. ${item.options[1]}  C. ${item.options[2]}`;})},
-    {heading:`Form ${label} · Level ${selection.level} · Reading`,body:words.slice(5,15).map((word,index)=>`${index+1}. Match ${word.hanzi} (${word.pinyin}) to its English meaning: ______________________________`)},
-    {heading:`Form ${label} · Level ${selection.level} · Writing`,body:words.slice(15,20).map((word,index)=>`${index+1}. Write the English meaning of ${word.hanzi} (${word.pinyin}), then use it in one accurate sentence.`)}
+    {heading:`Form ${label} · Level ${selection.level} · Candidate details`,pageBreakBefore:true,body:["Name: ____________________   Date: ____________________   Level: ______",`Suggested total time: ${spec.suggestedMinutes} minutes. Listening: play the matching ${label}-form MP3 once; each question includes a five-second response pause.`,`Task mix · Listening: ${spec.listening.join(", ")} · Reading: ${spec.reading.join(", ")} · Writing: ${spec.writing.join(", ")}.`,`Scoring: Listening 5 items × 2 points = /10 · Reading 10 items × 1 point = /10 · Writing = /10 using the level rubric. Total = /30.`,`This is unofficial level-aligned practice, not an official HSK exam or official score.`]},
+    {heading:`Form ${label} · Level ${selection.level} · Listening`,body:[...scenario.listening.map((item,index)=>formatObjective(index+1,item)),"Record all five answers on the separate printable answer sheet."]},
+    {heading:`Form ${label} · Level ${selection.level} · Reading · Source A`,pageBreakBefore:true,body:[scenario.readingText]},
+    {heading:`Form ${label} · Level ${selection.level} · Reading · Source B`,body:[scenario.sourceB,...reading.map((item,index)=>`${index+1}. ${item.prompt}`),"Each reading item is worth 1 point. Record all ten answers on the separate answer sheet."]},
+    {heading:`Form ${label} · Level ${selection.level} · Writing`,pageBreakBefore:true,body:["Write each response in its numbered area on the separate printable answer sheet.",...writingTasks(selection),...writingScoring(selection),"Attach extra blank paper only if the answer-sheet space is insufficient."]}
   ];
 }
 function assessmentAnswerSections(selection:Selection,variant:number):PdfSection[]{
-  const words=rotatedWords(selection,variant),label=["A","B","C"][variant];
+  const label=formLabel(variant),spec=mockAssessmentBlueprint(selection.level),scenario=assessmentScenario(selection.level,variant),reading=assessmentReadingItems(selection,variant);
   return [
-    {heading:`Form ${label} · Level ${selection.level} · Listening answers`,body:words.slice(0,5).map((word,index)=>`${index+1}. ${["A","B","C"][choice(word,words,index,variant).correct]} · ${word.hanzi}: ${word.meaning}`)},
-    {heading:`Form ${label} · Level ${selection.level} · Reading answers`,body:words.slice(5,15).map((word,index)=>`${index+1}. ${word.hanzi}: ${word.meaning}`)},
-    {heading:`Form ${label} · Level ${selection.level} · Writing rubric`,body:["2 points: accurate meaning and a complete sentence using the target word accurately.","1 point: recognizable meaning with one minor language or usage error.","0 points: incorrect meaning, missing target word, or no response.","Diagnostic action: review the lowest-scoring skill before taking the next form."]}
+    {heading:`Form ${label} · Level ${selection.level} · Listening explanations`,body:scenario.listening.flatMap((item,index)=>[`${index+1}. ${item.answer} · ${item.explanation}`,`Distractors: ${item.distractorAnalysis}`])},
+    {heading:`Form ${label} · Level ${selection.level} · Reading explanations`,body:reading.flatMap((item,index)=>[`${index+1}. ${item.answer} · ${item.explanation}`,`Distractors / error analysis: ${item.distractorAnalysis}`])},
+    {heading:`Form ${label} · Level ${selection.level} · Writing rubric and conversion`,body:[`Apply only the ${spec.band} band. This diagnostic result is not an official HSK score.`,...writingScoring(selection),`Dimensions: ${spec.rubricDimensions.join(" · ")}.`,`0 on a criterion: missing, off-task or unsupported. 1: partial/uneven evidence. Full criterion points: complete, accurate and supported at the stated Level ${selection.level} constraint.`,`Record the criterion points for every task, add them exactly as shown, and transfer the writing total /10 to the score report.`]}
   ];
 }
+function assessmentAnswerSheetSections(selection:Selection,variant:number):PdfSection[]{
+  const label=formLabel(variant),writingCount=selection.level>=7?3:2,linesPerTask=selection.level>=7?8:selection.level>=5?6:4;
+  const writingBody=Array.from({length:writingCount},(_,task)=>[`Task ${task+1} response (${task===0?"evidence and completion":task===1?"connection and language":"claim, evidence and counterpoint"})`,...Array.from({length:linesPerTask},()=>"________________________________________________________________________")]).flat();
+  return [
+    {heading:`Form ${label} · Level ${selection.level} · Listening answers · 2 points each`,body:["Name: ____________________   Date: ____________________",...Array.from({length:5},(_,index)=>`${index+1}.  A  /  B  /  C`)]},
+    {heading:`Form ${label} · Level ${selection.level} · Reading answers · 1 point each`,body:Array.from({length:10},(_,index)=>`${index+1}.  A  /  B  /  C${index===6?"   (sentence/order item)":index===7?"   (information-match item)":""}`)},
+    {heading:`Form ${label} · Level ${selection.level} · Writing responses · /10`,body:writingBody}
+  ];
+}
+function assessmentReportSections(selection:Selection):PdfSection[]{const spec=mockAssessmentBlueprint(selection.level);return [{heading:`Level ${selection.level} · Score report`,body:["Learner: ____________________   Form: ____   Date: ____________________","Listening ____ / 10   Reading ____ / 10   Writing ____ / 10   Total ____ / 30",`Conversion: listening correct × 2; reading correct × 1; writing follows the printed Level ${selection.level} task allocation.`,`Rubric band: ${spec.band}. Suggested time: ${spec.suggestedMinutes} minutes. This is an unofficial diagnostic result, not an official HSK score.`,`Strongest evidence: ____________________   Weakest skill: listening / reading / writing`,`Weakest task family: detail / sequence / cloze / matching / insertion / inference / synthesis / counterargument`]},{heading:`Level ${selection.level} · Weakness → recommended practice`,body:[`Listening pathway: ${spec.recommendations.listening.join(" ")}`,`Reading pathway: ${spec.recommendations.reading.join(" ")}`,`Writing pathway: ${spec.recommendations.writing.join(" ")}`,"Select only the pathway matching the weakest skill and task family, complete it twice, then use the next form as a fresh check."]}];}
 
 function lessonSections(selection:Selection,duration:number):PdfSection[]{
   const words=selection.words.slice(0,6),exercises=selection.exercises.slice(0,3);const independent=duration===45?8:duration===60?12:20;
@@ -96,7 +194,7 @@ function lessonSections(selection:Selection,duration:number):PdfSection[]{
   ];
 }
 
-export async function generateDifferentiatedProductArtifact(productId:DigitalProductId|string,fontBytes:Uint8Array,_emojiFontBytes:Uint8Array,generationVersion="p0-p1-v2"){
+export async function generateDifferentiatedProductArtifact(productId:DigitalProductId|string,fontBytes:Uint8Array,_emojiFontBytes:Uint8Array,generationVersion="p0-p1-v2",assessmentAudio?:Partial<Record<AssessmentForm,Uint8Array>>){
   const product=digitalProduct(productId);if(!product||product.category!=="resource")throw new Error("INVALID_DIFFERENTIATED_PRODUCT");
   const selections=[1,2,3,4,5,6,7,8,9].map(selectPackAssets);
   if(product.id==="30-day-planner"){
@@ -165,12 +263,18 @@ export async function generateDifferentiatedProductArtifact(productId:DigitalPro
     const files=[{name:"HSKKit-Worksheet-Quick-Start.pdf",data:quickStart},{name:"HSKKit-Worksheets-Student.pdf",data:student},{name:"HSKKit-Worksheets-Answer-Key.pdf",data:answers},{name:"HSKKit-Worksheet-Progress-Checklist.pdf",data:checklist}];const manifest=manifestFor(product,files.map(file=>file.name),selections,generationVersion);return {bytes:packageZip(product,files,manifest),format:"zip" as const,manifest};
   }
   if(product.id==="mock-exam-pack"){
+    const forms=(["A","B","C"] as const);
+    await validateAssessmentAudio(assessmentAudio);
     const studentFiles:Array<{name:string;data:Uint8Array}>=[];
-    for(let variant=0;variant<3;variant++)studentFiles.push({name:`HSKKit-Practice-Assessment-${["A","B","C"][variant]}-Student.pdf`,data:await makePdf(`HSK Level-Aligned Practice Assessment · Form ${["A","B","C"][variant]}`,"Original diagnostic practice for Levels 1–9. This is not an official HSK examination and does not claim an official exam blueprint or score.",selections.flatMap(selection=>assessmentStudentSections(selection,variant)),fontBytes)});
-    const answers=await makePdf("HSK Level-Aligned Practice Assessment · Answers and Rubrics","Use after a form is complete. Scores identify a review priority; they are not official HSK scores.",selections.flatMap(selection=>[0,1,2].flatMap(variant=>assessmentAnswerSections(selection,variant))),fontBytes);
-    const scripts=await makePdf("HSK Level-Aligned Practice Assessment · Facilitator Scripts","Keep separate from student forms. Read each target twice at a natural pace with no additional definition or cue.",selections.flatMap(selection=>[0,1,2].map(variant=>({heading:`Form ${["A","B","C"][variant]} · Level ${selection.level}`,body:rotatedWords(selection,variant).slice(0,5).map((word,index)=>`${index+1}. Read twice: ${word.hanzi} (${word.pinyin}).`)}))),fontBytes);
-    const scoreRows=["form,level,date,listening_0_10,reading_0_10,writing_0_10,total_0_30,weakest_skill,next_review_action",...(["A","B","C"] as const).flatMap(form=>selections.map(selection=>`${form},${selection.level},,,,,,,`))];
-    const files=[...studentFiles,{name:"HSKKit-Practice-Assessment-Answers-Rubrics.pdf",data:answers},{name:"HSKKit-Practice-Assessment-Facilitator-Scripts.pdf",data:scripts},{name:"HSKKit-Practice-Assessment-Score-Tracker.csv",data:encoder.encode(scoreRows.join("\r\n"))}];const manifest=manifestFor(product,files.map(file=>file.name),selections,generationVersion);return {bytes:packageZip(product,files,manifest),format:"zip" as const,manifest};
+    for(let variant=0;variant<3;variant++)studentFiles.push({name:`HSKKit-Practice-Assessment-${formLabel(variant)}-Student.pdf`,data:await makePdf(`HSK Level-Aligned Practice Assessment v2 · Form ${formLabel(variant)}`,"Original Level 1–9 diagnostic practice with differentiated listening, reading and writing tasks. This is not an official HSK examination and does not claim an official blueprint or score.",selections.flatMap(selection=>assessmentStudentSections(selection,variant)),fontBytes)});
+    const answerSheets=await makePdf("HSK Level-Aligned Practice Assessment v2 · Answer Sheets","Print one Level section for each learner. Objective responses and writing space stay separate from the student paper.",selections.flatMap(selection=>[0,1,2].flatMap(variant=>assessmentAnswerSheetSections(selection,variant))),fontBytes);
+    const answers=await makePdf("HSK Level-Aligned Practice Assessment v2 · Answers and Explanations","Every objective answer includes evidence and distractor analysis. Apply only the rubric band named for that level. Scores are unofficial diagnostics.",selections.flatMap(selection=>[0,1,2].flatMap(variant=>assessmentAnswerSections(selection,variant))),fontBytes);
+    const transcripts=await makePdf("HSK Level-Aligned Practice Assessment v2 · Facilitator Transcripts","Exact spoken transcript for each matching MP3. Playback: once at natural pace, with five seconds of silence after every numbered question. Synthetic voice provenance is recorded in README and manifest.",forms.map(form=>({heading:`Form ${form} · exact MP3 transcript`,body:mockAssessmentListeningScript(form).split("\n")})),fontBytes);
+    const scoreReport=await makePdf("HSK Level-Aligned Practice Assessment v2 · Score Report","Record evidence by skill, identify the weakest result and complete the linked practice before attempting the next form.",selections.flatMap(assessmentReportSections),fontBytes);
+    const scoreRows=["form,level,date,listening_0_10,reading_0_10,writing_0_10,total_0_30,weakest_skill,recommended_practice,next_review_date",...forms.flatMap(form=>selections.map(selection=>`${form},${selection.level},,,,,,,,`))];
+    const audioFiles=forms.map(form=>({name:`HSKKit-Practice-Assessment-${form}-Listening.mp3`,data:assessmentAudio![form]!}));
+    const audioNotice=encoder.encode(["HSKKit Practice Assessment Pack v2 · Audio Source and License Notice","","Synthetic voice engine: Piper","Voice model: zh_CN-chaowen-medium (Chaowen)","Voice repository: https://huggingface.co/rhasspy/piper-voices/tree/main/zh/zh_CN/chaowen/medium","Repository license: MIT (see repository license metadata)","Model card: https://huggingface.co/rhasspy/piper-voices/blob/main/zh/zh_CN/chaowen/medium/MODEL_CARD","Training dataset: Chinese Standard Mandarin Speech Corpus","Dataset source: https://www.data-baker.com/open_source.html","Dataset license in model card: CC0-1.0","Generated by HSKKit on 2026-08-26. Synthetic voice; no natural person is represented or imitated.","Each numbered question is followed by five seconds of encoded response silence.","File identity is pinned by SHA-256 in manifest.json."].join("\r\n"));
+    const files=[...studentFiles,...audioFiles,{name:"HSKKit-Practice-Assessment-Audio-Source-License.txt",data:audioNotice},{name:"HSKKit-Practice-Assessment-Answer-Sheets.pdf",data:answerSheets},{name:"HSKKit-Practice-Assessment-Answers-Explanations.pdf",data:answers},{name:"HSKKit-Practice-Assessment-Facilitator-Transcripts.pdf",data:transcripts},{name:"HSKKit-Practice-Assessment-Score-Report.pdf",data:scoreReport},{name:"HSKKit-Practice-Assessment-Score-Tracker.csv",data:encoder.encode(scoreRows.join("\r\n"))}];const manifest=manifestFor(product,files.map(file=>file.name),selections,generationVersion);return {bytes:packageZip(product,files,manifest),format:"zip" as const,manifest};
   }
   const quickStart=await makePdf("HSK Teacher Lesson Plan Pack · Quick Start","Choose one target level, one duration and one evidence goal. These are sequenced teaching plans, not blank timing templates.",selections.flatMap(selection=>[{heading:`Level ${selection.level} · Preparation`,body:[`Preview the six target words in the selected plan and prepare one contextual example for each.`,`Choose the 45, 60 or 90-minute sequence from learner readiness—not from the amount of content you hope to cover.`,`Print one exit ticket per learner and decide what evidence will trigger retrieval homework versus sentence-use homework.`]},{heading:`Level ${selection.level} · After class`,body:["Record which words needed cues, which were retrieved, and which were used accurately.","Assign the included homework path from observed evidence, then begin the next lesson with the two least-secure items."]}]),fontBytes);
   const lessonFiles:Array<{name:string;data:Uint8Array}>=[];

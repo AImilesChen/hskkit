@@ -25,14 +25,18 @@ const expected={
   "worksheet-pack":["HSKKit-Worksheet-Quick-Start.pdf","HSKKit-Worksheets-Student.pdf","HSKKit-Worksheets-Answer-Key.pdf","HSKKit-Worksheet-Progress-Checklist.pdf"],
   "assessment-tracker":["HSKKit-Assessment-Tracker.csv","HSKKit-Weekly-Review.csv","HSKKit-Assessment-Dashboard-Guide.pdf","HSKKit-Printable-Assessment-Record.pdf"],
   "30-day-planner":["HSKKit-30-Day-Planner.pdf"],
-  "mock-exam-pack":["HSKKit-Practice-Assessment-A-Student.pdf","HSKKit-Practice-Assessment-B-Student.pdf","HSKKit-Practice-Assessment-C-Student.pdf","HSKKit-Practice-Assessment-Answers-Rubrics.pdf","HSKKit-Practice-Assessment-Facilitator-Scripts.pdf","HSKKit-Practice-Assessment-Score-Tracker.csv"],
+  "mock-exam-pack":["HSKKit-Practice-Assessment-A-Student.pdf","HSKKit-Practice-Assessment-B-Student.pdf","HSKKit-Practice-Assessment-C-Student.pdf","HSKKit-Practice-Assessment-A-Listening.mp3","HSKKit-Practice-Assessment-B-Listening.mp3","HSKKit-Practice-Assessment-C-Listening.mp3","HSKKit-Practice-Assessment-Audio-Source-License.txt","HSKKit-Practice-Assessment-Answer-Sheets.pdf","HSKKit-Practice-Assessment-Answers-Explanations.pdf","HSKKit-Practice-Assessment-Facilitator-Transcripts.pdf","HSKKit-Practice-Assessment-Score-Report.pdf","HSKKit-Practice-Assessment-Score-Tracker.csv"],
   "teacher-lesson-plan-pack":["HSKKit-Teacher-Quick-Start.pdf","HSKKit-Lesson-Plans-45-Minutes.pdf","HSKKit-Lesson-Plans-60-Minutes.pdf","HSKKit-Lesson-Plans-90-Minutes.pdf","HSKKit-Exit-Tickets-and-Homework.pdf"]
 } as const;
 
-const [font,emoji]=await Promise.all([
+const [font,emoji,audioA,audioB,audioC]=await Promise.all([
   readFile(new URL("../assets/fonts/HskKitSansSubset.ttf",import.meta.url)),
   readFile(new URL("../assets/fonts/HskKitEmoji.ttf",import.meta.url)),
+  readFile(new URL("../assets/audio/mock-assessment-v2/form-A.mp3",import.meta.url)),
+  readFile(new URL("../assets/audio/mock-assessment-v2/form-B.mp3",import.meta.url)),
+  readFile(new URL("../assets/audio/mock-assessment-v2/form-C.mp3",import.meta.url)),
 ]);
+const assessmentAudio={A:new Uint8Array(audioA),B:new Uint8Array(audioB),C:new Uint8Array(audioC)};
 
 test("five practical resources expose complete, reusable merchandising details",async()=>{
   assert.equal(resourceProductDetails.length,5);
@@ -66,7 +70,7 @@ test("each practical resource provides four to six readable real sample pages an
     const facts=detail.fit.facts.join(" ");
     assert.match(facts,/personal/i,`${detail.id}: personal licence`);
     assert.match(facts,/non-transferable/i,`${detail.id}: non-transferable licence`);
-    assert.match(facts,/no audio|audio (?:is )?not included/i,`${detail.id}: audio boundary`);
+    assert.match(facts,/no audio|audio (?:is )?not included|3 .*MP3|MP3 listening/i,`${detail.id}: audio boundary`);
     assert.match(facts,/14-day/i,`${detail.id}: access period`);
     assert.match(facts,/3 successful downloads/i,`${detail.id}: download limit`);
   }
@@ -74,13 +78,13 @@ test("each practical resource provides four to six readable real sample pages an
   assert.match(factMatrix["worksheet-pack"],/Levels 1–9.*answer/i);
   assert.match(factMatrix["assessment-tracker"],/Levels 1–9.*scoring/i);
   assert.match(factMatrix["30-day-planner"],/choose one target HSK level/i);
-  assert.match(factMatrix["mock-exam-pack"],/Levels 1–9.*rubric.*facilitator script/i);
+  assert.match(factMatrix["mock-exam-pack"],/Levels 1–9.*3 Mandarin MP3.*explanations.*rubric.*transcripts/i);
   assert.match(factMatrix["teacher-lesson-plan-pack"],/Levels 1–9.*teacher guidance/i);
 });
 
 test("each practical resource ships the promised usable files",async()=>{
   for(const [productId,names] of Object.entries(expected)){
-    const artifact=await generateDifferentiatedProductArtifact(productId,new Uint8Array(font),new Uint8Array(emoji));
+    const artifact=await generateDifferentiatedProductArtifact(productId,new Uint8Array(font),new Uint8Array(emoji),"p0-p1-v2",assessmentAudio);
     assert.equal(artifact.manifest.files.length,names.length,productId);
     assert.deepEqual([...artifact.manifest.files].sort(),[...names].sort(),productId);
     if(artifact.format==="pdf"){

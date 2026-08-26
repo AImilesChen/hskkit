@@ -35,11 +35,11 @@ PDF_SAMPLES = {
     ],
     "mock-exam-pack": [
         ("HSKKit-Practice-Assessment-A-Student.pdf", 2, "timed-instructions"),
-        ("HSKKit-Practice-Assessment-A-Student.pdf", 3, "listening-simulation"),
-        ("HSKKit-Practice-Assessment-A-Student.pdf", 5, "reading-section"),
-        ("HSKKit-Practice-Assessment-B-Student.pdf", 6, "writing-section"),
-        ("HSKKit-Practice-Assessment-Answers-Rubrics.pdf", 4, "answers-rubric"),
-        ("HSKKit-Practice-Assessment-Facilitator-Scripts.pdf", 4, "facilitator-script"),
+        ("HSKKit-Practice-Assessment-A-Student.pdf", 8, "listening-simulation"),
+        ("HSKKit-Practice-Assessment-B-Student.pdf", 15, "reading-section"),
+        ("HSKKit-Practice-Assessment-B-Student.pdf", 19, "writing-section"),
+        ("HSKKit-Practice-Assessment-Answers-Explanations.pdf", 13, "answers-rubric"),
+        ("HSKKit-Practice-Assessment-Facilitator-Transcripts.pdf", 1, "facilitator-script"),
     ],
     "teacher-lesson-plan-pack": [
         ("HSKKit-Teacher-Quick-Start.pdf", 1, "teacher-quick-start"),
@@ -129,9 +129,11 @@ def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("source_root", type=Path, help="p0-p1-v2 artifact directory")
     parser.add_argument("output_root", type=Path)
+    parser.add_argument("--product", choices=sorted(PDF_SAMPLES), help="Render only one product")
     args = parser.parse_args()
     args.output_root.mkdir(parents=True, exist_ok=True)
-    for product, samples in PDF_SAMPLES.items():
+    selected = {args.product: PDF_SAMPLES[args.product]} if args.product else PDF_SAMPLES
+    for product, samples in selected.items():
         product_output = args.output_root / product
         product_output.mkdir(parents=True, exist_ok=True)
         if product == "30-day-planner":
