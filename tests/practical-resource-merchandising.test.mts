@@ -22,7 +22,7 @@ function zipEntries(zip:Uint8Array){
 }
 
 const expected={
-  "worksheet-pack":["HSKKit-Worksheet-Quick-Start.pdf","HSKKit-Worksheets-Student.pdf","HSKKit-Worksheets-Answer-Key.pdf","HSKKit-Worksheet-Progress-Checklist.pdf"],
+  "worksheet-pack":["HSKKit-Worksheet-Quick-Start.pdf","HSKKit-Worksheets-Student-A4.pdf","HSKKit-Worksheets-Student-US-Letter.pdf","HSKKit-Worksheets-Student-A4-Low-Ink.pdf","HSKKit-Worksheets-Student-Fillable.pdf","HSKKit-Worksheets-Answer-Key.pdf","HSKKit-Worksheet-Completed-Samples.pdf","HSKKit-Worksheet-Progress-Checklist.pdf"],
   "assessment-tracker":["HSKKit-Assessment-Tracker-Blank.xlsx","HSKKit-Assessment-Tracker-Example.xlsx","HSKKit-Assessment-Tracker-Raw-Data.csv","HSKKit-Assessment-Tracker.csv","HSKKit-Weekly-Review.csv","HSKKit-Assessment-Dashboard-Guide.pdf","HSKKit-Printable-Assessment-Record.pdf"],
   "30-day-planner":["HSKKit-30-Day-Planner.pdf"],
   "mock-exam-pack":["HSKKit-Practice-Assessment-A-Student.pdf","HSKKit-Practice-Assessment-B-Student.pdf","HSKKit-Practice-Assessment-C-Student.pdf","HSKKit-Practice-Assessment-A-Listening.mp3","HSKKit-Practice-Assessment-B-Listening.mp3","HSKKit-Practice-Assessment-C-Listening.mp3","HSKKit-Practice-Assessment-Audio-Source-License.txt","HSKKit-Practice-Assessment-Answer-Sheets.pdf","HSKKit-Practice-Assessment-Answers-Explanations.pdf","HSKKit-Practice-Assessment-Facilitator-Transcripts.pdf","HSKKit-Practice-Assessment-Score-Report.pdf","HSKKit-Practice-Assessment-Score-Tracker.csv"],

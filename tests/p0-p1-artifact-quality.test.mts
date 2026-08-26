@@ -9,7 +9,7 @@ import {generatePackPdf} from "../src/lib/commercial/generator.ts";
 function zipEntries(zip:Uint8Array){const result=new Map<string,Uint8Array>();const view=new DataView(zip.buffer,zip.byteOffset,zip.byteLength);let offset=0;while(offset+30<=zip.length&&view.getUint32(offset,true)===0x04034b50){const compressed=view.getUint32(offset+18,true),nameLength=view.getUint16(offset+26,true),extraLength=view.getUint16(offset+28,true);const name=new TextDecoder().decode(zip.slice(offset+30,offset+30+nameLength));const start=offset+30+nameLength+extraLength;result.set(name,zip.slice(start,start+compressed));offset=start+compressed;}return result;}
 
 const products=["worksheet-pack","assessment-tracker","30-day-planner","mock-exam-pack","teacher-lesson-plan-pack"] as const;
-const expectedAssetCounts:Record<(typeof products)[number],number>={"worksheet-pack":84,"assessment-tracker":840,"30-day-planner":0,"mock-exam-pack":0,"teacher-lesson-plan-pack":42};
+const expectedAssetCounts:Record<(typeof products)[number],number>={"worksheet-pack":371,"assessment-tracker":840,"30-day-planner":0,"mock-exam-pack":0,"teacher-lesson-plan-pack":42};
 const [assessmentAudioA,assessmentAudioB,assessmentAudioC]=await Promise.all([
  readFile(new URL("../assets/audio/mock-assessment-v2/form-A.mp3",import.meta.url)),
  readFile(new URL("../assets/audio/mock-assessment-v2/form-B.mp3",import.meta.url)),

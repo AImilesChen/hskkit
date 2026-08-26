@@ -5,6 +5,7 @@ import {generateZipFiles} from "./generator.ts";
 import {digitalProduct,type DigitalProduct,type DigitalProductId} from "./products.ts";
 import {assessmentListeningScript,assessmentScenario,type AssessmentForm} from "./mock-assessment-content.ts";
 import {generateAssessmentWorkbook} from "./assessment-workbook.ts";
+import {buildWorksheetLevel,type WorksheetLevel} from "./worksheet-pack.ts";
 
 const encoder=new TextEncoder();
 export type ProductArtifactManifest={schemaVersion:string;productId:string;generationVersion:string;standard:"HSK 3.0";standardVersion:"GF0025-2021";officialExam:false;levels:number[];advancedBandDisclosure:string;licenseNotice:string;files:string[];sourceIndependent:boolean;assets:Array<{id:string;version:string;sourceRef:string;licenseRef:string}>;audioProvenance?:{provider:string;voices:Record<AssessmentForm,string>;generatedOn:string;responsePauseSeconds:number;redistributionStatus:string;sha256:Record<AssessmentForm,string>}};
@@ -61,7 +62,7 @@ function sourceWords(selection:Selection,wordCount:number,exerciseCount:number){
 }
 function productAssets(product:DigitalProduct,selections:Selection[]){
   const selected=product.id==="assessment-tracker"?selections.flatMap(selection=>selection.words)
-    :product.id==="worksheet-pack"?selections.flatMap(selection=>sourceWords(selection,12,6))
+    :product.id==="worksheet-pack"?selections.flatMap(selection=>sourceWords(selection,53,0))
     :product.id==="mock-exam-pack"?[]
     :product.id==="teacher-lesson-plan-pack"?selections.flatMap(selection=>sourceWords(selection,6,3)):[];
   const unique=new Map<string,{id:string;version:string;sourceRef:string;licenseRef:string}>();
@@ -83,7 +84,7 @@ function wordLines(text:string,font:PDFFont,size:number,width:number){
   if(current)output.push(current);return output;
 }
 async function makePdf(title:string,subtitle:string,sections:PdfSection[],fontBytes:Uint8Array){
-  const pdf=await PDFDocument.create();pdf.registerFontkit(fontkit);const font=await pdf.embedFont(fontBytes,{subset:false});
+  const pdf=await PDFDocument.create();pdf.registerFontkit(fontkit);const font=await pdf.embedFont(new Uint8Array(fontBytes),{subset:false});
   pdf.setTitle(title);pdf.setAuthor("HSKKit");pdf.setSubject("HSK 3.0 unofficial learning resource");pdf.setKeywords(["HSK 3.0","unofficial","HSKKit"]);
   const size:[number,number]=[595.28,841.89];let page:PDFPage;let y=0;let pageNumber=0;
   const header=title.includes("Practice Assessment")?"HSKKit · Practice Assessment v2 · HSK 3.0 · Unofficial":"HSKKit · HSK 3.0 · Unofficial learning resource";
@@ -121,18 +122,63 @@ function readme(product:DigitalProduct,files:string[],manifest:ProductArtifactMa
 }
 function packageZip(product:DigitalProduct,files:Array<{name:string;data:Uint8Array}>,manifest:ProductArtifactManifest){return generateZipFiles([...files,{name:"manifest.json",data:encoder.encode(JSON.stringify(manifest,null,2))},{name:"README.txt",data:readme(product,files.map(file=>file.name),manifest)}]);}
 
-function worksheetSections(selection:Selection):PdfSection[]{
-  const words=selection.words.slice(0,12),exercises=selection.exercises.slice(0,6);
-  return [
-    {heading:`Level ${selection.level} · Recognize and retrieve`,body:words.slice(0,6).map((word,index)=>`${index+1}. ${word.hanzi} (${word.pinyin}) · cover the meaning, retrieve it, then write: ____________________`)},
-    {heading:`Level ${selection.level} · Meaning to use`,body:words.slice(6,12).map((word,index)=>`${index+1}. ${word.hanzi} (${word.pinyin}) · English meaning: __________ · one accurate sentence: ______________________________`)},
-    {heading:`Level ${selection.level} · Guided practice`,body:exercises.map((exercise,index)=>`${index+1}. ${exercise.prompt}  Response: ______________________________________________`)},
-    {heading:`Level ${selection.level} · Checkpoint`,body:["Without looking back, write four target words and their meanings.","Read two target words aloud, then use each in a complete sentence.","Circle one result: secure / needs one review / needs guided help. Next review date: __________"]}
-  ];
+type WorksheetPdfMode="student"|"answer"|"fillable";
+type WorksheetPdfOptions={pageSize:"A4"|"LETTER";mode:WorksheetPdfMode;lowInk?:boolean};
+const WORKSHEET_PAGE_SIZES={A4:[595.28,841.89],LETTER:[612,792]} as const;
+
+async function makeWorksheetPdf(plans:WorksheetLevel[],fontBytes:Uint8Array,options:WorksheetPdfOptions){
+  const pdf=await PDFDocument.create();pdf.registerFontkit(fontkit);const font=await pdf.embedFont(new Uint8Array(fontBytes),{subset:false});
+  const form=options.mode==="fillable"?pdf.getForm():null;
+  const [width,height]=WORKSHEET_PAGE_SIZES[options.pageSize];
+  const dark=rgb(.04,.31,.29),ink=rgb(.11,.15,.22),muted=rgb(.38,.43,.5),lineColor=options.lowInk?rgb(.72,.72,.72):rgb(.55,.68,.65);
+  pdf.setTitle(`HSK Worksheet Pack · ${options.mode==="answer"?"Answer Key":options.mode==="fillable"?"Fillable Student Workbook":"Student Workbook"} · ${options.pageSize}`);
+  pdf.setAuthor("HSKKit");pdf.setSubject("Differentiated HSK 3.0 Level 1–9 multi-skill worksheets");
+  let pageNumber=0;
+  const drawText=(page:PDFPage,text:string,x:number,y:number,size:number,maxWidth:number,color=ink,lineHeight=size+3)=>{const wrapped=wordLines(text,font,size,maxWidth);for(const row of wrapped){page.drawText(row,{x,y,size,font,color});y-=lineHeight;}return y;};
+  for(const plan of plans)for(const worksheetModule of plan.modules){
+    const page=pdf.addPage([width,height]);pageNumber+=1;
+    if(options.lowInk){page.drawLine({start:{x:30,y:height-32},end:{x:width-30,y:height-32},thickness:1,color:dark});}
+    else page.drawRectangle({x:0,y:height-39,width,height:39,color:dark});
+    page.drawText(`HSKKit · Level ${plan.level} · ${options.mode==="answer"?"Teacher Answer Key":"Student Worksheet"}`,{x:30,y:height-25,size:9,font,color:options.lowInk?dark:rgb(1,1,1)});
+    page.drawText(String(pageNumber),{x:width-48,y:22,size:8,font,color:muted});
+    let y=height-65;
+    y=drawText(page,worksheetModule.title,30,y,15,width-60,dark,19)-2;
+    y=drawText(page,plan.difficultyNote,30,y,8.2,width-60,muted,11)-3;
+    y=drawText(page,worksheetModule.instruction,30,y,8.7,width-60,ink,12)-5;
+    for(const question of worksheetModule.questions){
+      if(options.mode==="answer"){
+        y=drawText(page,`${question.id} · Answer: ${question.answer}`,34,y,8,width-68,dark,10)-2;
+        y=drawText(page,`Why: ${question.explanation}`,40,y,7.5,width-80,ink,9.5)-2;
+        y=drawText(page,question.commonError,40,y,7.5,width-80,muted,9.5)-7;
+      }else{
+        y=drawText(page,`${question.id} · ${question.prompt}`,34,y,8.2,width-68,ink,10.5)-4;
+        const responseHeight=Math.max(18,question.responseLines*10.5);
+        if(form){
+          const field=form.createTextField(`worksheet.${question.id}`);field.enableMultiline();
+          field.addToPage(page,{x:40,y:y-responseHeight+4,width:width-80,height:responseHeight,borderColor:lineColor,borderWidth:.75,textColor:ink,font});field.setFontSize(8);
+          y-=responseHeight+8;
+        }else{
+          for(let row=0;row<question.responseLines;row++){page.drawLine({start:{x:40,y},end:{x:width-40,y},thickness:.55,color:lineColor});y-=10.5;}
+          y-=7;
+        }
+      }
+    }
+    if(options.mode==="answer")page.drawText("Key rule: score every ID against the matching student item; original output may vary only within the printed criteria.",{x:30,y:35,size:7.5,font,color:muted});
+    else{
+      page.drawText("Name:",{x:30,y:35,size:7.5,font,color:muted});page.drawLine({start:{x:58,y:34},end:{x:170,y:34},thickness:.6,color:muted});
+      page.drawText("Date:",{x:190,y:35,size:7.5,font,color:muted});page.drawLine({start:{x:216,y:34},end:{x:310,y:34},thickness:.6,color:muted});
+      page.drawText("Check only after completing all three IDs.",{x:330,y:35,size:7.5,font,color:muted});
+    }
+  }
+  if(form)form.updateFieldAppearances(font);
+  return new Uint8Array(await pdf.save({useObjectStreams:false}));
 }
-function worksheetAnswerSections(selection:Selection):PdfSection[]{
-  const words=selection.words.slice(0,12),exercises=selection.exercises.slice(0,6);
-  return [{heading:`Level ${selection.level} · Vocabulary key`,body:words.map(word=>`${word.hanzi} (${word.pinyin}): ${word.meaning}`)},{heading:`Level ${selection.level} · Guided-practice key`,body:exercises.map((exercise,index)=>`${index+1}. ${exercise.answer}`)},{heading:`Level ${selection.level} · Open-response review`,body:["Original sentences vary. Accept only a complete response that uses the target word with the listed meaning.","If meaning is accurate but the sentence has a minor language error, revise and repeat once before marking secure."]}];
+
+function worksheetSampleSections(plans:WorksheetLevel[]):PdfSection[]{
+  return plans.flatMap(plan=>{
+    const samples=[plan.modules[2].questions[0],plan.modules[6].questions[0],plan.modules[8].questions[0]];
+    return samples.map((question,index)=>({heading:`Level ${plan.level} · Completed student sample ${index+1} of 3`,pageBreakBefore:plan.level!==1||index!==0,body:[`${question.id} · Prompt: ${question.prompt}`,`Completed response: ${question.sampleResponse}`,`Self-check: ${question.explanation}`,question.commonError]}));
+  });
 }
 
 const formLabel=(variant:number)=>(["A","B","C"] as const)[variant];
@@ -255,29 +301,38 @@ export async function generateDifferentiatedProductArtifact(productId:DigitalPro
     const manifest=manifestFor(product,files.map(file=>file.name),selections,generationVersion);return {bytes:packageZip(product,files,manifest),format:"zip" as const,manifest};
   }
   if(product.id==="worksheet-pack"){
-    const quickStart=await makePdf("HSK Worksheet Pack · Quick Start","A focused 20–35 minute workflow for using the student workbook, answer key and progress checklist without passive copying.",selections.map(selection=>({heading:`Level ${selection.level} · One-session flow`,body:["1. Retrieval (5 min): cover meanings and retrieve six target words.","2. Guided work (10–20 min): complete one recognition block and the linked practice items.","3. Output (5 min): produce two complete sentences without copying a model.","4. Check (5 min): use the separate key, revise errors once, and set a next-review date."]})),fontBytes);
-    const student=await makePdf("HSK Worksheet Pack · Student Workbook","Print or annotate digitally. Complete retrieval and guided practice before opening the separate answer key.",selections.flatMap(worksheetSections),fontBytes);
-    const answers=await makePdf("HSK Worksheet Pack · Answer Key","Objective answers and model guidance are separated from the student workbook. Original sentence responses may vary.",selections.flatMap(worksheetAnswerSections),fontBytes);
-    const checklistSections=selections.flatMap(selection=>[
-      {
-        heading:`Level ${selection.level} · Practice record`,
-        body:[
-          "Session date ____ · recognition block complete yes / no · guided practice complete yes / no",
-          "Objective items correct ____ / ____ · revised errors ____ · original sentences accurate ____ / 2",
-          "Evidence rating: secure / review once / guided help needed · next review date: ____",
-        ],
-      },
-      {
-        heading:`Level ${selection.level} · Exit check`,
-        body:[
-          "I can retrieve at least 4 of 6 sampled meanings without cues: yes / not yet.",
-          "I can use two sampled words accurately in complete responses: yes / not yet.",
-          "The next block I will complete: ______________________________________________",
-        ],
-      },
-    ]);
-    const checklist=await makePdf("HSK Worksheet Pack · Progress Checklist","Mark secure only when you can retrieve meaning and use without looking. A confidence rating alone is not evidence.",checklistSections,fontBytes);
-    const files=[{name:"HSKKit-Worksheet-Quick-Start.pdf",data:quickStart},{name:"HSKKit-Worksheets-Student.pdf",data:student},{name:"HSKKit-Worksheets-Answer-Key.pdf",data:answers},{name:"HSKKit-Worksheet-Progress-Checklist.pdf",data:checklist}];const manifest=manifestFor(product,files.map(file=>file.name),selections,generationVersion);return {bytes:packageZip(product,files,manifest),format:"zip" as const,manifest};
+    const plans=selections.map(buildWorksheetLevel);
+    const quickStart=await makePdf("HSK Worksheet Pack · Quick Start","Use one differentiated module at a time. Student pages, answer pages and field IDs stay aligned from Level 1 through Level 9.",[
+      {heading:"Choose the correct level and mode",body:["Levels 1–2: direct recognition, tone accuracy, short routines and controlled output.","Levels 3–4: paragraph context, reason/result, reconstruction and viewpoint support.","Levels 5–6: extended evidence, cause/effect, comparison and recommendation.","Levels 7–9: multi-paragraph discourse, cross-text synthesis, counterargument and formal reasoning.","Choose A4, US Letter, low-ink or fillable. All four student versions contain the same 270 question IDs."]},
+      {heading:"20–35 minute study flow",pageBreakBefore:true,body:["1. Complete one three-item module without the answer key.","2. Use the printed response area; advanced writing tasks may continue on the back of the page.","3. Check the same IDs in the Teacher Answer Key. Read the explanation and common-error note.","4. Revise every missed item once, then record evidence and the next review date in the Progress Checklist."]},
+      {heading:"Scoring and open responses",body:["Objective items must match the keyed target, form and evidence link.","Dialogue, writing and speaking responses may vary only when they preserve the keyed meaning and satisfy every printed Level constraint.","Completed Samples demonstrate the checking method; they are not scripts to copy."]},
+    ],fontBytes);
+    // Fontkit mutates parsing state; generate sequentially so shared font bytes cannot corrupt glyph maps.
+    const studentA4=await makeWorksheetPdf(plans,fontBytes,{pageSize:"A4",mode:"student"});
+    const studentLetter=await makeWorksheetPdf(plans,fontBytes,{pageSize:"LETTER",mode:"student"});
+    const studentLowInk=await makeWorksheetPdf(plans,fontBytes,{pageSize:"A4",mode:"student",lowInk:true});
+    const fillable=await makeWorksheetPdf(plans,fontBytes,{pageSize:"A4",mode:"fillable"});
+    const answers=await makeWorksheetPdf(plans,fontBytes,{pageSize:"A4",mode:"answer"});
+    const completedSamples=await makePdf("HSK Worksheet Pack · Completed Samples","Three worked models per level show how to answer, check the matching ID and revise from evidence.",worksheetSampleSections(plans),fontBytes);
+    const checklistSections=plans.map(plan=>({heading:`Level ${plan.level} · Progress Checklist`,pageBreakBefore:true,body:[
+      `Difficulty focus: ${plan.difficultyNote}`,
+      ...plan.modules.map(module=>`□ ${module.title} · date ______ · correct before review ____ / 3 · correct after revision ____ / 3`),
+      "Evidence note: __________________________________________________________________",
+      "One recurring form / meaning / context error: ______________________________________",
+      "Next review date: __________   Next module or level decision: ________________________",
+    ]}));
+    const checklist=await makePdf("HSK Worksheet Pack · Progress Checklist","Record performance by module and question ID. Confidence alone does not count as evidence.",checklistSections,fontBytes);
+    const files=[
+      {name:"HSKKit-Worksheet-Quick-Start.pdf",data:quickStart},
+      {name:"HSKKit-Worksheets-Student-A4.pdf",data:studentA4},
+      {name:"HSKKit-Worksheets-Student-US-Letter.pdf",data:studentLetter},
+      {name:"HSKKit-Worksheets-Student-A4-Low-Ink.pdf",data:studentLowInk},
+      {name:"HSKKit-Worksheets-Student-Fillable.pdf",data:fillable},
+      {name:"HSKKit-Worksheets-Answer-Key.pdf",data:answers},
+      {name:"HSKKit-Worksheet-Completed-Samples.pdf",data:completedSamples},
+      {name:"HSKKit-Worksheet-Progress-Checklist.pdf",data:checklist},
+    ];
+    const manifest=manifestFor(product,files.map(file=>file.name),selections,generationVersion);return {bytes:packageZip(product,files,manifest),format:"zip" as const,manifest};
   }
   if(product.id==="mock-exam-pack"){
     const forms=(["A","B","C"] as const);
