@@ -5,7 +5,7 @@ import SiteFooter from "../site-footer";
 import StorePurchase from "./store-purchase";
 export const metadata:Metadata={title:"HSK 3.0 Study Packs & Teacher Resources | HSKKit Store",description:"Shop HSK 3.0 Level 1–9 PDF packs, multi-level bundles and printable study or teacher resources in Stripe Test mode.",alternates:{canonical:"/store"}};
 const faqs=[
- ["What can I buy?","Choose any Level 1–9 pack, an Advanced 7–9 or Complete 1–9 Bundle, or one of five printable HSK 3.0 resource MVPs."],
+ ["What can I buy?","Choose any Level 1–9 pack, an Advanced 7–9 or Complete 1–9 Bundle, or one of five complete printable HSK 3.0 resource packs."],
  ["How do Bundle downloads work?","A Bundle creates one separately metered delivery for each included level plus a combined offline ZIP. Each delivery has three successful downloads."],
  ["Is this included in Pro?","No. Store products are separate one-time purchases. Pro covers ongoing review, Focused mode, device sync and AI learning features."],
  ["Do the products include audio?","No. These products contain searchable or printable text resources. Audio is not included."],

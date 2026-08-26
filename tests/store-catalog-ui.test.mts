@@ -18,7 +18,8 @@ test("Store exposes the complete Level 1–9, Bundle, and resource catalog respo
   for (const id of ["worksheet-pack","assessment-tracker","30-day-planner","mock-exam-pack","teacher-lesson-plan-pack"]) assert.match(products,new RegExp(id));
   assert.match(purchase, /lg:grid-cols-3/);
   assert.match(purchase, /config\.products\.filter/);
-  assert.match(purchase, /product\.deliverables\.map/);
+  assert.match(purchase, /resource\?resource\.inside\.slice\(0,3\):product\.deliverables/);
+  assert.match(purchase, /See what’s inside/);
   assert.doesNotMatch(purchase, /<select/);
   assert.doesNotMatch(purchase, /pack-level/);
 });

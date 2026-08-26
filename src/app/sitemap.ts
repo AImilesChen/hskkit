@@ -2,6 +2,7 @@ import type { MetadataRoute } from "next";
 import { sitemapContentRoutes } from "@/lib/dictionary/catalog";
 import { getHsk3LevelStatuses } from "@/lib/content/level-status";
 import { publishedGrammarLessons, publishedReadingLessons } from "@/lib/learning/step7-content";
+import { resourceProductDetails } from "@/lib/commercial/resource-products";
 
 export const dynamic = "force-static";
 
@@ -40,6 +41,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     ...getHsk3LevelStatuses().filter((entry) => entry.availability === "ready").map((entry) => `/vocabulary/${entry.level}`),
     ...publishedGrammarLessons.map((lesson) => `/grammar/${lesson.slug}`),
     ...publishedReadingLessons.map((lesson) => `/reading/${lesson.slug}`),
+    ...resourceProductDetails.map((product) => `/store/${product.slug}`),
   ])];
   return routes.map((route) => ({
     url: `${baseUrl}${route}`,

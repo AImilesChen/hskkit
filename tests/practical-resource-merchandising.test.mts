@@ -1,0 +1,89 @@
+import assert from "node:assert/strict";
+import test from "node:test";
+import {access,readFile} from "node:fs/promises";
+import {PDFDocument} from "pdf-lib";
+import {generateDifferentiatedProductArtifact} from "../src/lib/commercial/product-generator.ts";
+import {resourceProductDetails} from "../src/lib/commercial/resource-products.ts";
+
+function zipEntries(zip:Uint8Array){
+  const result=new Map<string,Uint8Array>();
+  const view=new DataView(zip.buffer,zip.byteOffset,zip.byteLength);
+  let offset=0;
+  while(offset+30<=zip.length&&view.getUint32(offset,true)===0x04034b50){
+    const compressed=view.getUint32(offset+18,true);
+    const nameLength=view.getUint16(offset+26,true);
+    const extraLength=view.getUint16(offset+28,true);
+    const name=new TextDecoder().decode(zip.slice(offset+30,offset+30+nameLength));
+    const start=offset+30+nameLength+extraLength;
+    result.set(name,zip.slice(start,start+compressed));
+    offset=start+compressed;
+  }
+  return result;
+}
+
+const expected={
+  "worksheet-pack":["HSKKit-Worksheet-Quick-Start.pdf","HSKKit-Worksheets-Student.pdf","HSKKit-Worksheets-Answer-Key.pdf","HSKKit-Worksheet-Progress-Checklist.pdf"],
+  "assessment-tracker":["HSKKit-Assessment-Tracker.csv","HSKKit-Weekly-Review.csv","HSKKit-Assessment-Dashboard-Guide.pdf","HSKKit-Printable-Assessment-Record.pdf"],
+  "30-day-planner":["HSKKit-30-Day-Planner.pdf"],
+  "mock-exam-pack":["HSKKit-Practice-Assessment-A-Student.pdf","HSKKit-Practice-Assessment-B-Student.pdf","HSKKit-Practice-Assessment-C-Student.pdf","HSKKit-Practice-Assessment-Answers-Rubrics.pdf","HSKKit-Practice-Assessment-Facilitator-Scripts.pdf","HSKKit-Practice-Assessment-Score-Tracker.csv"],
+  "teacher-lesson-plan-pack":["HSKKit-Teacher-Quick-Start.pdf","HSKKit-Lesson-Plans-45-Minutes.pdf","HSKKit-Lesson-Plans-60-Minutes.pdf","HSKKit-Lesson-Plans-90-Minutes.pdf","HSKKit-Exit-Tickets-and-Homework.pdf"]
+} as const;
+
+const [font,emoji]=await Promise.all([
+  readFile(new URL("../assets/fonts/HskKitSansSubset.ttf",import.meta.url)),
+  readFile(new URL("../assets/fonts/HskKitEmoji.ttf",import.meta.url)),
+]);
+
+test("five practical resources expose complete, reusable merchandising details",async()=>{
+  assert.equal(resourceProductDetails.length,5);
+  for(const detail of resourceProductDetails){
+    assert.equal(detail.amountCents,999);
+    assert.ok(detail.outcomes.length>=3,detail.id);
+    assert.ok(detail.inside.length>=4,detail.id);
+    assert.ok(detail.howToUse.length>=3,detail.id);
+    assert.ok(detail.previewPages.length>=2,detail.id);
+    assert.ok(detail.faqs.length>=3,detail.id);
+    assert.match(detail.previewImage,/^\/store\/previews\/[a-z0-9-]+\.webp$/);
+    await access(new URL(`../public${detail.previewImage}`,import.meta.url));
+  }
+});
+
+test("each practical resource ships the promised usable files",async()=>{
+  for(const [productId,names] of Object.entries(expected)){
+    const artifact=await generateDifferentiatedProductArtifact(productId,new Uint8Array(font),new Uint8Array(emoji));
+    assert.equal(artifact.manifest.files.length,names.length,productId);
+    assert.deepEqual([...artifact.manifest.files].sort(),[...names].sort(),productId);
+    if(artifact.format==="pdf"){
+      assert.equal(productId,"30-day-planner");
+      const pdf=await PDFDocument.load(artifact.bytes);
+      assert.ok(pdf.getPageCount()>=7,"planner must contain structured daily work and reviews");
+      continue;
+    }
+    const files=zipEntries(artifact.bytes);
+    for(const name of names)assert.ok(files.has(name),`${productId}: ${name}`);
+    for(const [name,bytes] of files){if(name.endsWith(".pdf")){const pdf=await PDFDocument.load(bytes);assert.ok(pdf.getPageCount()>=2,`${productId}: ${name}`);}}
+    const readme=new TextDecoder().decode(files.get("README.txt"));
+    assert.match(readme,/How to use/i,productId);
+    assert.match(readme,/personal, non-transferable/i,productId);
+  }
+});
+
+test("Store resource cards lead to one shared detail-page template before checkout",async()=>{
+  const [store,detailPage,detailView,checkout]=await Promise.all([
+    readFile(new URL("../src/app/store/store-purchase.tsx",import.meta.url),"utf8"),
+    readFile(new URL("../src/app/store/[productId]/page.tsx",import.meta.url),"utf8"),
+    readFile(new URL("../src/app/store/[productId]/resource-product-detail.tsx",import.meta.url),"utf8"),
+    readFile(new URL("../src/app/store/[productId]/resource-product-checkout.tsx",import.meta.url),"utf8"),
+  ]);
+  assert.match(store,/See what’s inside/);
+  assert.match(store,/resourceProductDetail/);
+  assert.match(store,/href=\{`\/store\/\$\{product\.id\}`\}/);
+  assert.match(detailPage,/generateStaticParams/);
+  assert.match(detailPage,/resourceProductDetail/);
+  assert.match(detailView,/What’s inside/);
+  assert.match(detailView,/How to use it/);
+  assert.match(detailView,/Real product preview/);
+  assert.match(checkout,/Continue to Stripe Test checkout/);
+  assert.match(detailView,/lg:grid-cols-\[minmax\(0,0\.92fr\)_minmax\(360px,1\.08fr\)\]/);
+  assert.doesNotMatch(detailView,/placeholder/i);
+});

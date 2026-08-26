@@ -5,7 +5,7 @@ import { generatePackPdf, generateZipFiles } from "../src/lib/commercial/generat
 import { generateDifferentiatedProductArtifact } from "../src/lib/commercial/product-generator.ts";
 import { buildProductDeliveries, DIGITAL_PRODUCTS } from "../src/lib/commercial/products.ts";
 
-const generationVersion=process.env.GENERATION_VERSION||"p0-p1-v1";
+const generationVersion=process.env.GENERATION_VERSION||"p0-p1-v2";
 if(!/^[a-z0-9][a-z0-9._-]{0,63}$/i.test(generationVersion)||generationVersion==="."||generationVersion==="..")throw new Error("INVALID_GENERATION_VERSION");
 const outputRoot=resolve(process.argv[2]||"/tmp/hskkit-commercial-artifacts");
 const [fontBytes,emojiBytes]=await Promise.all([

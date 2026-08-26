@@ -18,7 +18,7 @@ export async function POST(req:NextRequest){
     }else if(kind!=="account_data"){
       level=Number(body.level);if(!Number.isInteger(level)||level<1||level>7)throw new Error("INVALID_LEVEL");const purchase=await activePackPurchaseForLevel(identity.account.userId,level);if(!purchase)throw new Error("LEVEL_NOT_PURCHASED");packPurchaseId=purchase.id;format=kind==="pdf_pack"?"pdf":"zip";
     }
-    const job=await createExportJob({userId:identity.account.userId,packPurchaseId,productEntitlementId,productId,deliveryKey,kind:resolvedKind,format,level,idempotencyKey,generationVersion:"p0-p1-v1"});if(!job)throw new Error("EXPORT_CREATE_FAILED");if(job.state==="queued")await getCloudflareContext().env.COMMERCIAL_EXPORT_QUEUE.send({jobId:job.id},{contentType:"json"});return NextResponse.json({job},{status:201});
+    const job=await createExportJob({userId:identity.account.userId,packPurchaseId,productEntitlementId,productId,deliveryKey,kind:resolvedKind,format,level,idempotencyKey,generationVersion:"p0-p1-v2"});if(!job)throw new Error("EXPORT_CREATE_FAILED");if(job.state==="queued")await getCloudflareContext().env.COMMERCIAL_EXPORT_QUEUE.send({jobId:job.id},{contentType:"json"});return NextResponse.json({job},{status:201});
   }catch(error){const code=error instanceof Error?error.message:"EXPORT_REQUEST_FAILED";const status=code==="LEVEL_NOT_PURCHASED"||code==="PRODUCT_NOT_PURCHASED"?403:code==="IDEMPOTENCY_CONFLICT"?409:code.startsWith("INVALID")?422:500;return NextResponse.json({error:code},{status});}
 }
 
