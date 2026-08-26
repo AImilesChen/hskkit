@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import {access,readFile} from "node:fs/promises";
+import {access,readFile,stat} from "node:fs/promises";
 import {PDFDocument} from "pdf-lib";
 import {generateDifferentiatedProductArtifact} from "../src/lib/commercial/product-generator.ts";
 import {resourceProductDetails} from "../src/lib/commercial/resource-products.ts";
@@ -48,6 +48,24 @@ test("five practical resources expose complete, reusable merchandising details",
   }
 });
 
+test("each practical resource provides four to six readable real sample pages and an explicit fit check",async()=>{
+  for(const detail of resourceProductDetails){
+    assert.ok(detail.samplePages.length>=4&&detail.samplePages.length<=6,`${detail.id}: sample count`);
+    assert.equal(new Set(detail.samplePages.map(sample=>sample.src)).size,detail.samplePages.length,`${detail.id}: unique samples`);
+    for(const sample of detail.samplePages){
+      assert.match(sample.src,new RegExp(`^/store/samples/${detail.id}/[a-z0-9-]+\\.webp$`));
+      assert.ok(sample.alt.length>=24,`${detail.id}: descriptive sample alt`);
+      assert.ok(sample.caption.length>=20,`${detail.id}: decision-useful sample caption`);
+      const sampleFile=new URL(`../public${sample.src}`,import.meta.url);
+      await access(sampleFile);
+      assert.ok((await stat(sampleFile)).size>=30_000,`${detail.id}: sample is a substantive readable image`);
+    }
+    assert.ok(detail.fit.idealFor.length>=2,`${detail.id}: ideal for`);
+    assert.ok(detail.fit.notFor.length>=2,`${detail.id}: not for`);
+    assert.ok(detail.fit.facts.length>=4,`${detail.id}: decision facts`);
+  }
+});
+
 test("each practical resource ships the promised usable files",async()=>{
   for(const [productId,names] of Object.entries(expected)){
     const artifact=await generateDifferentiatedProductArtifact(productId,new Uint8Array(font),new Uint8Array(emoji));
@@ -68,6 +86,13 @@ test("each practical resource ships the promised usable files",async()=>{
   }
 });
 
+test("sample generator uses the PDF renderer verified for embedded Chinese fonts",async()=>{
+  const generator=await readFile(new URL("../scripts/generate-store-samples.py",import.meta.url),"utf8");
+  assert.match(generator,/pdftoppm/);
+  assert.doesNotMatch(generator,/import fitz/);
+  assert.match(generator,/stderr=subprocess\.DEVNULL/);
+});
+
 test("Store resource cards lead to one shared detail-page template before checkout",async()=>{
   const [store,detailPage,detailView,checkout]=await Promise.all([
     readFile(new URL("../src/app/store/store-purchase.tsx",import.meta.url),"utf8"),
@@ -83,6 +108,20 @@ test("Store resource cards lead to one shared detail-page template before checko
   assert.match(detailView,/What’s inside/);
   assert.match(detailView,/How to use it/);
   assert.match(detailView,/Real product preview/);
+  assert.match(detailView,/Sample pages you can read/);
+  assert.match(detailView,/Is this right for me\?/);
+  assert.match(detailView,/ResourceSampleGallery/);
+  const gallery=await readFile(new URL("../src/app/store/[productId]/resource-sample-gallery.tsx",import.meta.url),"utf8");
+  assert.match(gallery,/<dialog/);
+  assert.match(gallery,/aria-modal="true"/);
+  assert.match(gallery,/Zoom to 100%/);
+  assert.match(gallery,/Zoom to 150%/);
+  assert.match(gallery,/Zoom to 200%/);
+  assert.match(gallery,/Previous sample/);
+  assert.match(gallery,/Next sample/);
+  assert.match(gallery,/onTouchStart/);
+  assert.match(gallery,/onTouchEnd/);
+  assert.match(gallery,/event\.key===\"Escape\"/);
   assert.match(checkout,/Continue to Stripe Test checkout/);
   assert.match(detailView,/lg:grid-cols-\[minmax\(0,0\.92fr\)_minmax\(360px,1\.08fr\)\]/);
   assert.doesNotMatch(detailView,/placeholder/i);
