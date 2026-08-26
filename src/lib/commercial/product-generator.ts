@@ -4,6 +4,7 @@ import {selectPackAssets} from "./catalog.ts";
 import {generateZipFiles} from "./generator.ts";
 import {digitalProduct,type DigitalProduct,type DigitalProductId} from "./products.ts";
 import {assessmentListeningScript,assessmentScenario,type AssessmentForm} from "./mock-assessment-content.ts";
+import {generateAssessmentWorkbook} from "./assessment-workbook.ts";
 
 const encoder=new TextEncoder();
 export type ProductArtifactManifest={schemaVersion:string;productId:string;generationVersion:string;standard:"HSK 3.0";standardVersion:"GF0025-2021";officialExam:false;levels:number[];advancedBandDisclosure:string;licenseNotice:string;files:string[];sourceIndependent:boolean;assets:Array<{id:string;version:string;sourceRef:string;licenseRef:string}>;audioProvenance?:{provider:string;voices:Record<AssessmentForm,string>;generatedOn:string;responsePauseSeconds:number;redistributionStatus:string;sha256:Record<AssessmentForm,string>}};
@@ -216,12 +217,16 @@ export async function generateDifferentiatedProductArtifact(productId:DigitalPro
     const printableSections=selections.flatMap(selection=>[
       {
         heading:`Level ${selection.level} · Checkpoint`,
+        pageBreakBefore:true,
         body:[
           "Date: ____   Learner/group: ____   Words sampled: ____",
           "Recognition total: ____ / ____   Recall total: ____ / ____   Usage total: ____ / ____",
           "Three secure items: ____________________  Three review items: ____________________",
           "Observed evidence: __________________________________________________________",
+          "___________________________________________________________________________",
+          "___________________________________________________________________________",
           "Next action and date: ________________________________________________________",
+          "___________________________________________________________________________",
         ],
       },
       {
@@ -229,12 +234,24 @@ export async function generateDifferentiatedProductArtifact(productId:DigitalPro
         body:[
           "Week start: ____   Planned review: ____   Completed: ____",
           "What changed in recognition / recall / usage: _________________________________",
+          "___________________________________________________________________________",
           "Keep / change / remove this review action: ____________________________________",
+          "___________________________________________________________________________",
         ],
       },
     ]);
     const printable=await makePdf("HSK Assessment Tracker · Printable Record","Use one checkpoint page per level. Sample words across the level and record evidence before choosing the next action.",printableSections,fontBytes);
-    const files=[{name:"HSKKit-Assessment-Tracker.csv",data:encoder.encode(rows.join("\r\n"))},{name:"HSKKit-Weekly-Review.csv",data:encoder.encode(weekly.join("\r\n"))},{name:"HSKKit-Assessment-Dashboard-Guide.pdf",data:guide},{name:"HSKKit-Printable-Assessment-Record.pdf",data:printable}];
+    const workbookWords=selections.flatMap(selection=>selection.words.map(word=>({level:selection.level,sourceBand:selection.level>=7?"unified-levels-7-9":"level-specific",sourceLevel:selection.level>=7?7:selection.level,id:word.id,hanzi:word.hanzi,pinyin:word.pinyin,meaning:word.meaning})));
+    const rawData=encoder.encode(rows.join("\r\n"));
+    const files=[
+      {name:"HSKKit-Assessment-Tracker-Blank.xlsx",data:generateAssessmentWorkbook(workbookWords,false)},
+      {name:"HSKKit-Assessment-Tracker-Example.xlsx",data:generateAssessmentWorkbook(workbookWords,true)},
+      {name:"HSKKit-Assessment-Tracker-Raw-Data.csv",data:rawData},
+      {name:"HSKKit-Assessment-Tracker.csv",data:rawData},
+      {name:"HSKKit-Weekly-Review.csv",data:encoder.encode(weekly.join("\r\n"))},
+      {name:"HSKKit-Assessment-Dashboard-Guide.pdf",data:guide},
+      {name:"HSKKit-Printable-Assessment-Record.pdf",data:printable},
+    ];
     const manifest=manifestFor(product,files.map(file=>file.name),selections,generationVersion);return {bytes:packageZip(product,files,manifest),format:"zip" as const,manifest};
   }
   if(product.id==="worksheet-pack"){
