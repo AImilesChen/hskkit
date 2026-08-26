@@ -63,7 +63,19 @@ test("each practical resource provides four to six readable real sample pages an
     assert.ok(detail.fit.idealFor.length>=2,`${detail.id}: ideal for`);
     assert.ok(detail.fit.notFor.length>=2,`${detail.id}: not for`);
     assert.ok(detail.fit.facts.length>=4,`${detail.id}: decision facts`);
+    const facts=detail.fit.facts.join(" ");
+    assert.match(facts,/personal/i,`${detail.id}: personal licence`);
+    assert.match(facts,/non-transferable/i,`${detail.id}: non-transferable licence`);
+    assert.match(facts,/no audio|audio (?:is )?not included/i,`${detail.id}: audio boundary`);
+    assert.match(facts,/14-day/i,`${detail.id}: access period`);
+    assert.match(facts,/3 successful downloads/i,`${detail.id}: download limit`);
   }
+  const factMatrix=Object.fromEntries(resourceProductDetails.map(detail=>[detail.id,detail.fit.facts.join(" ")]));
+  assert.match(factMatrix["worksheet-pack"],/Levels 1–9.*answer/i);
+  assert.match(factMatrix["assessment-tracker"],/Levels 1–9.*scoring/i);
+  assert.match(factMatrix["30-day-planner"],/choose one target HSK level/i);
+  assert.match(factMatrix["mock-exam-pack"],/Levels 1–9.*rubric.*facilitator script/i);
+  assert.match(factMatrix["teacher-lesson-plan-pack"],/Levels 1–9.*teacher guidance/i);
 });
 
 test("each practical resource ships the promised usable files",async()=>{

@@ -20,7 +20,7 @@ export default function ResourceProductDetail({product}: {product:ResourceProduc
         <h2 className="mt-2 text-3xl font-extrabold tracking-tight text-slate-950">Sample pages you can read</h2>
         <p className="mb-6 mt-3 max-w-2xl text-sm leading-6 text-slate-600">Open any page at full size. Use 100%, 150% or 200% zoom on desktop; swipe or pinch on mobile.</p>
         <ResourceSampleGallery samples={product.samplePages} productName={product.name}/>
-        <p className="mt-4 text-xs leading-5 text-slate-500">Rendered from the actual delivery files. “SAMPLE PREVIEW” is the only added content; minor scale differences may occur when printing.</p>
+        <p className="mt-4 text-xs leading-5 text-slate-500">Rendered from the actual delivery files. PDF previews add only the “SAMPLE PREVIEW” watermark; CSV previews add a labelled table frame and the same watermark. Minor scale differences may occur when printing.</p>
       </div>
     </section>
 
