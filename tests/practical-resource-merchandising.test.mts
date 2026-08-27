@@ -24,7 +24,7 @@ function zipEntries(zip:Uint8Array){
 const expected={
   "worksheet-pack":["HSKKit-Worksheet-Quick-Start.pdf","HSKKit-Worksheets-Student-A4.pdf","HSKKit-Worksheets-Student-US-Letter.pdf","HSKKit-Worksheets-Student-A4-Low-Ink.pdf","HSKKit-Worksheets-Student-Fillable.pdf","HSKKit-Worksheets-Answer-Key.pdf","HSKKit-Worksheet-Completed-Samples.pdf","HSKKit-Worksheet-Progress-Checklist.pdf"],
   "assessment-tracker":["HSKKit-Assessment-Tracker-Blank.xlsx","HSKKit-Assessment-Tracker-Example.xlsx","HSKKit-Assessment-Tracker-Raw-Data.csv","HSKKit-Assessment-Tracker.csv","HSKKit-Weekly-Review.csv","HSKKit-Assessment-Dashboard-Guide.pdf","HSKKit-Printable-Assessment-Record.pdf"],
-  "30-day-planner":["HSKKit-30-Day-Planner.pdf"],
+  "30-day-planner":["HSKKit-30-Day-Planner-Quick-Start.pdf","HSKKit-30-Day-Planner-Printable-A4.pdf","HSKKit-30-Day-Planner-Fillable-A4.pdf"],
   "mock-exam-pack":["HSKKit-Practice-Assessment-A-Student.pdf","HSKKit-Practice-Assessment-B-Student.pdf","HSKKit-Practice-Assessment-C-Student.pdf","HSKKit-Practice-Assessment-A-Listening.mp3","HSKKit-Practice-Assessment-B-Listening.mp3","HSKKit-Practice-Assessment-C-Listening.mp3","HSKKit-Practice-Assessment-Audio-Source-License.txt","HSKKit-Practice-Assessment-Answer-Sheets.pdf","HSKKit-Practice-Assessment-Answers-Explanations.pdf","HSKKit-Practice-Assessment-Facilitator-Transcripts.pdf","HSKKit-Practice-Assessment-Score-Report.pdf","HSKKit-Practice-Assessment-Score-Tracker.csv"],
   "teacher-lesson-plan-pack":["HSKKit-Teacher-Quick-Start.pdf","HSKKit-Lesson-Plans-45-Minutes.pdf","HSKKit-Lesson-Plans-60-Minutes.pdf","HSKKit-Lesson-Plans-90-Minutes.pdf","HSKKit-Exit-Tickets-and-Homework.pdf"]
 } as const;
@@ -77,7 +77,7 @@ test("each practical resource provides four to six readable real sample pages an
   const factMatrix=Object.fromEntries(resourceProductDetails.map(detail=>[detail.id,detail.fit.facts.join(" ")]));
   assert.match(factMatrix["worksheet-pack"],/Levels 1–9.*answer/i);
   assert.match(factMatrix["assessment-tracker"],/Levels 1–9.*scoring/i);
-  assert.match(factMatrix["30-day-planner"],/choose one target HSK level/i);
+  assert.match(factMatrix["30-day-planner"],/current Level.*target Level/i);
   assert.match(factMatrix["mock-exam-pack"],/Levels 1–9.*3 Mandarin MP3.*explanations.*rubric.*transcripts/i);
   assert.match(factMatrix["teacher-lesson-plan-pack"],/Levels 1–9.*teacher guidance/i);
 });
@@ -95,7 +95,7 @@ test("each practical resource ships the promised usable files",async()=>{
     }
     const files=zipEntries(artifact.bytes);
     for(const name of names)assert.ok(files.has(name),`${productId}: ${name}`);
-    for(const [name,bytes] of files){if(name.endsWith(".pdf")){const pdf=await PDFDocument.load(bytes);assert.ok(pdf.getPageCount()>=2,`${productId}: ${name}`);}}
+    for(const [name,bytes] of files){if(name.endsWith(".pdf")){const pdf=await PDFDocument.load(bytes);if(productId==="30-day-planner")assert.equal(pdf.getPageCount(),name.endsWith("Quick-Start.pdf")?1:38,`${productId}: ${name}`);else assert.ok(pdf.getPageCount()>=2,`${productId}: ${name}`);}}
     const readme=new TextDecoder().decode(files.get("README.txt"));
     assert.match(readme,/How to use/i,productId);
     assert.match(readme,/personal, non-transferable/i,productId);

@@ -27,11 +27,12 @@ PDF_SAMPLES = {
         ("HSKKit-Printable-Assessment-Record.pdf", 2, "level-3-review-record"),
     ],
     "30-day-planner": [
-        ("product.pdf", 1, "plan-overview"),
-        ("product.pdf", 2, "daily-routes"),
-        ("product.pdf", 4, "weekly-evidence-review"),
-        ("product.pdf", 6, "retrieval-check"),
-        ("product.pdf", 7, "final-review"),
+        ("HSKKit-30-Day-Planner-Quick-Start.pdf", 1, "quick-start"),
+        ("HSKKit-30-Day-Planner-Printable-A4.pdf", 1, "setup-diagnosis"),
+        ("HSKKit-30-Day-Planner-Printable-A4.pdf", 2, "assessment-mapping"),
+        ("HSKKit-30-Day-Planner-Printable-A4.pdf", 11, "day-8-routes"),
+        ("HSKKit-30-Day-Planner-Fillable-A4.pdf", 18, "weekly-review"),
+        ("HSKKit-30-Day-Planner-Fillable-A4.pdf", 37, "recovery-worksheet"),
     ],
     "mock-exam-pack": [
         ("HSKKit-Practice-Assessment-A-Student.pdf", 2, "timed-instructions"),
@@ -136,11 +137,8 @@ def main() -> None:
     for product, samples in selected.items():
         product_output = args.output_root / product
         product_output.mkdir(parents=True, exist_ok=True)
-        if product == "30-day-planner":
-            sources = {"product.pdf": (args.source_root / product / "product.pdf").read_bytes()}
-        else:
-            with zipfile.ZipFile(args.source_root / product / "product.zip") as archive:
-                sources = {name: archive.read(name) for name, _, _ in samples}
+        with zipfile.ZipFile(args.source_root / product / "product.zip") as archive:
+            sources = {name: archive.read(name) for name, _, _ in samples}
         for name, page, slug in samples:
             render_pdf(sources[name], page, product_output / f"{slug}.webp")
         if product in CSV_SAMPLES:

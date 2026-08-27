@@ -127,7 +127,7 @@ test("pre-generated artifacts are bound to the paid product delivery and sidecar
   assert.throws(()=>validateProductArtifactTemplate(complete,levelJob,{...levelManifest,templateProductId:"advanced-7-9"}),/PREGENERATED_ARTIFACT_IDENTITY_MISMATCH/);
   assert.throws(()=>validateProductArtifactTemplate(complete,levelJob,{...levelManifest,templateDeliveryKey:"level-2"}),/PREGENERATED_ARTIFACT_IDENTITY_MISMATCH/);
   const planner=digitalProduct("30-day-planner")!;
-  assert.equal(validateProductArtifactTemplate(planner,{generation_version:"p0-p1-v1",delivery_key:"product",format:"pdf",level:null},{schemaVersion:"hskkit-product-manifest-v1",productId:"30-day-planner",generationVersion:"p0-p1-v1",templateProductId:"30-day-planner",templateDeliveryKey:"product",templateFormat:"pdf",templateLevel:null}).deliveryKey,"product");
+  assert.equal(validateProductArtifactTemplate(planner,{generation_version:"p0-p1-v1",delivery_key:"product",format:"zip",level:null},{schemaVersion:"hskkit-product-manifest-v1",productId:"30-day-planner",generationVersion:"p0-p1-v1",templateProductId:"30-day-planner",templateDeliveryKey:"product",templateFormat:"zip",templateLevel:null}).deliveryKey,"product");
 });
 
 test("queue retries skipped generating jobs only after their lease can expire",()=>{

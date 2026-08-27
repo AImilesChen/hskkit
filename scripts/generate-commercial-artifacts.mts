@@ -4,12 +4,12 @@ import { createHash } from "node:crypto";
 import { buildPackManifest, selectPackAssets } from "../src/lib/commercial/catalog.ts";
 import { generatePackPdf, generateZipFiles } from "../src/lib/commercial/generator.ts";
 import { generateDifferentiatedProductArtifact } from "../src/lib/commercial/product-generator.ts";
-import { buildProductDeliveries, DIGITAL_PRODUCTS } from "../src/lib/commercial/products.ts";
+import { buildProductDeliveries, DEFAULT_PRODUCT_GENERATION_VERSION, DIGITAL_PRODUCTS, generationVersionForProduct } from "../src/lib/commercial/products.ts";
 
-const generationVersion=process.env.GENERATION_VERSION||"p0-p1-v2";
-if(!/^[a-z0-9][a-z0-9._-]{0,63}$/i.test(generationVersion)||generationVersion==="."||generationVersion==="..")throw new Error("INVALID_GENERATION_VERSION");
-const outputRoot=resolve(process.argv[2]||"/tmp/hskkit-commercial-artifacts");
 const selectedProductId=process.env.PRODUCT_ID?.trim();
+const requestedGenerationVersion=process.env.GENERATION_VERSION?.trim();
+if(requestedGenerationVersion&&(!/^[a-z0-9][a-z0-9._-]{0,63}$/i.test(requestedGenerationVersion)||requestedGenerationVersion==="."||requestedGenerationVersion===".."))throw new Error("INVALID_GENERATION_VERSION");
+const outputRoot=resolve(process.argv[2]||"/tmp/hskkit-commercial-artifacts");
 if(selectedProductId&&!DIGITAL_PRODUCTS.some(product=>product.id===selectedProductId))throw new Error("INVALID_PRODUCT_ID");
 const [fontBytes,emojiBytes,assessmentAudioA,assessmentAudioB,assessmentAudioC]=await Promise.all([
   readFile(new URL("../assets/fonts/HskKitSansSubset.ttf",import.meta.url)),
@@ -19,12 +19,13 @@ const [fontBytes,emojiBytes,assessmentAudioA,assessmentAudioB,assessmentAudioC]=
   readFile(new URL("../assets/audio/mock-assessment-v2/form-C.mp3",import.meta.url)),
 ]);
 const assessmentAudio={A:new Uint8Array(assessmentAudioA),B:new Uint8Array(assessmentAudioB),C:new Uint8Array(assessmentAudioC)};
+const levelGenerationVersion=requestedGenerationVersion||DEFAULT_PRODUCT_GENERATION_VERSION;
 const levelArtifacts=new Map<number,{bytes:Uint8Array;manifest:Record<string,unknown>}>();
 for(let level=1;level<=9;level++){
-  const selection=selectPackAssets(level);const packManifest=buildPackManifest(selection,generationVersion);const manifest=packManifest as unknown as Record<string,unknown>;
+  const selection=selectPackAssets(level);const packManifest=buildPackManifest(selection,levelGenerationVersion);const manifest=packManifest as unknown as Record<string,unknown>;
   levelArtifacts.set(level,{bytes:await generatePackPdf(selection,packManifest,fontBytes,emojiBytes),manifest});
 }
-async function save(productId:string,deliveryKey:string,format:"pdf"|"zip",bytes:Uint8Array,manifest:Record<string,unknown>){
+async function save(productId:string,deliveryKey:string,format:"pdf"|"zip",bytes:Uint8Array,manifest:Record<string,unknown>,generationVersion:string){
   const dir=resolve(outputRoot,generationVersion,productId);await mkdir(dir,{recursive:true});
   const delivery=buildProductDeliveries(productId).find(item=>item.deliveryKey===deliveryKey);
   if(!delivery||delivery.format!==format)throw new Error("PRODUCT_DELIVERY_MISMATCH");
@@ -35,19 +36,20 @@ async function save(productId:string,deliveryKey:string,format:"pdf"|"zip",bytes
 }
 for(const product of DIGITAL_PRODUCTS){
   if(selectedProductId&&product.id!==selectedProductId)continue;
+  const generationVersion=requestedGenerationVersion||generationVersionForProduct(product.id);
   const deliveries=buildProductDeliveries(product.id);
   if(product.category==="level"){
-    const level=product.levels[0];const artifact=levelArtifacts.get(level)!;await save(product.id,deliveries[0].deliveryKey,"pdf",artifact.bytes,artifact.manifest);continue;
+    const level=product.levels[0];const artifact=levelArtifacts.get(level)!;await save(product.id,deliveries[0].deliveryKey,"pdf",artifact.bytes,artifact.manifest,generationVersion);continue;
   }
   if(product.category==="bundle"){
     for(const delivery of deliveries.filter(item=>item.artifactType==="level")){
-      const artifact=levelArtifacts.get(delivery.level!)!;await save(product.id,delivery.deliveryKey,"pdf",artifact.bytes,artifact.manifest);
+      const artifact=levelArtifacts.get(delivery.level!)!;await save(product.id,delivery.deliveryKey,"pdf",artifact.bytes,artifact.manifest,generationVersion);
     }
     const files=product.levels.map(level=>({name:`HSKKit-Level-${level}.pdf`,data:levelArtifacts.get(level)!.bytes}));
     const manifest={schemaVersion:"hskkit-bundle-manifest-v1",productId:product.id,standard:"HSK 3.0",standardVersion:"GF0025-2021",generationVersion,officialExam:false,levels:product.levels,advancedBandDisclosure:"HSK 3.0 defines one unified Levels 7–9 advanced ability band; the Level 7/8/9 PDFs use the same canonical approved source set.",assets:product.levels.flatMap(level=>levelArtifacts.get(level)!.manifest.assets as unknown[]),licenseNotice:"Personal, non-transferable study and print use only."};
     const bytes=generateZipFiles([...files,{name:"manifest.json",data:new TextEncoder().encode(JSON.stringify(manifest,null,2))}]);
-    await save(product.id,"bundle-zip","zip",bytes,manifest);continue;
+    await save(product.id,"bundle-zip","zip",bytes,manifest,generationVersion);continue;
   }
   const artifact=await generateDifferentiatedProductArtifact(product.id,fontBytes,emojiBytes,generationVersion,assessmentAudio);
-  await save(product.id,deliveries[0].deliveryKey,artifact.format,artifact.bytes,artifact.manifest as unknown as Record<string,unknown>);
+  await save(product.id,deliveries[0].deliveryKey,artifact.format,artifact.bytes,artifact.manifest as unknown as Record<string,unknown>,generationVersion);
 }
