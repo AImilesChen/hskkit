@@ -7,6 +7,9 @@ import {assessmentListeningScript,assessmentScenario,type AssessmentForm} from "
 import {generateAssessmentWorkbook} from "./assessment-workbook.ts";
 import {buildWorksheetLevel,type WorksheetLevel} from "./worksheet-pack.ts";
 import {buildPlannerPack,type PlannerPack} from "./planner-pack.ts";
+import {buildTeacherLessonPack} from "./teacher-lesson-pack.ts";
+import {generateTeacherLessonDocx,generateTeacherLessonPptx} from "./teacher-office.ts";
+import {makeHomeworkPdf,makeStudentHandoutPdf,makeTeacherCutPdf,makeTeacherPlanPdf,makeTeacherQuickStartPdf,TEACHER_PAGE_SIZES} from "./teacher-pdf.ts";
 
 const encoder=new TextEncoder();
 export type ProductArtifactManifest={schemaVersion:string;productId:string;generationVersion:string;standard:"HSK 3.0";standardVersion:"GF0025-2021";officialExam:false;levels:number[];advancedBandDisclosure:string;licenseNotice:string;files:string[];sourceIndependent:boolean;assets:Array<{id:string;version:string;sourceRef:string;licenseRef:string}>;audioProvenance?:{provider:string;voices:Record<AssessmentForm,string>;generatedOn:string;responsePauseSeconds:number;redistributionStatus:string;sha256:Record<AssessmentForm,string>}};
@@ -16,6 +19,19 @@ async function sha256Hex(bytes:Uint8Array){const copy=new Uint8Array(bytes.byteL
 async function validateAssessmentAudio(audio:Partial<Record<AssessmentForm,Uint8Array>>|undefined){for(const form of ["A","B","C"] as const){const data=audio?.[form];if(!data||data.byteLength<5_000_000)throw new Error(`ASSESSMENT_AUDIO_REQUIRED_${form}`);if(await sha256Hex(data)!==ASSESSMENT_AUDIO_SHA256[form])throw new Error(`ASSESSMENT_AUDIO_UNVERIFIED_${form}`);}}
 type PdfSection={heading:string;body:string[];pageBreakBefore?:boolean};
 type Selection=ReturnType<typeof selectPackAssets>;
+const TEACHER_LESSON_WORDS:Record<number,string[]>={
+  1:["爱","爱好","常常","唱歌","读书","高兴"],2:["安全","办法","帮助","必须","不同","参加"],3:["安排","保证","标准","表达","处理","成果"],
+  4:["背景","材料","采访","参与","测试","诚信"],5:["病毒","补偿","成本","成效","产业","冲突"],6:["本质","策略","差异","常规","场景","波动"],
+  7:["癌症","艾滋病","安抚","安宁","保障","保质期"],8:["安定","安抚","安稳","安心","包容","保障"],9:["颁布","罢免","百分比","半信半疑","半真半假","报复"],
+};
+function teacherLessonSources(selections:Selection[]){return selections.map(selection=>{
+  const words=TEACHER_LESSON_WORDS[selection.level].map(hanzi=>{
+    const word=selection.words.find(candidate=>candidate.hanzi===hanzi);
+    if(!word)throw new Error(`TEACHER_LESSON_WORD_MISSING:Level ${selection.level}:${hanzi}`);
+    return word;
+  });
+  return {level:selection.level,words};
+});}
 
 export type MockAssessmentBlueprint={
   level:number;
@@ -65,7 +81,7 @@ function productAssets(product:DigitalProduct,selections:Selection[]){
   const selected=product.id==="assessment-tracker"?selections.flatMap(selection=>selection.words)
     :product.id==="worksheet-pack"?selections.flatMap(selection=>sourceWords(selection,53,0))
     :product.id==="mock-exam-pack"?[]
-    :product.id==="teacher-lesson-plan-pack"?selections.flatMap(selection=>sourceWords(selection,6,3)):[];
+    :product.id==="teacher-lesson-plan-pack"?teacherLessonSources(selections).flatMap(source=>source.words):[];
   const unique=new Map<string,{id:string;version:string;sourceRef:string;licenseRef:string}>();
   for(const asset of selected)unique.set(`${asset.id}:${asset.version}`,{id:asset.id,version:asset.version,sourceRef:asset.sourceRef,licenseRef:asset.licenseRef});
   return [...unique.values()];
@@ -84,16 +100,17 @@ function wordLines(text:string,font:PDFFont,size:number,width:number){
   for(const word of words){const next=current?`${current} ${word}`:word;if(font.widthOfTextAtSize(next,size)<=width){current=next;continue;}if(current)output.push(current);if(font.widthOfTextAtSize(word,size)<=width)current=word;else{const fragments=lines(word,font,size,width);output.push(...fragments.slice(0,-1));current=fragments.at(-1)??"";}}
   if(current)output.push(current);return output;
 }
-async function makePdf(title:string,subtitle:string,sections:PdfSection[],fontBytes:Uint8Array){
+async function makePdf(title:string,subtitle:string,sections:PdfSection[],fontBytes:Uint8Array,pageSize:[number,number]=[595.28,841.89]){
   const pdf=await PDFDocument.create();pdf.registerFontkit(fontkit);const font=await pdf.embedFont(new Uint8Array(fontBytes),{subset:false});
   pdf.setTitle(title);pdf.setAuthor("HSKKit");pdf.setSubject("HSK 3.0 unofficial learning resource");pdf.setKeywords(["HSK 3.0","unofficial","HSKKit"]);
-  const size:[number,number]=[595.28,841.89];let page:PDFPage;let y=0;let pageNumber=0;
+  const size:[number,number]=pageSize;let page:PDFPage;let y=0;let pageNumber=0;const [pageWidth,pageHeight]=size;
   const header=title.includes("Practice Assessment")?"HSKKit · Practice Assessment v2 · HSK 3.0 · Unofficial":"HSKKit · HSK 3.0 · Unofficial learning resource";
-  const fresh=()=>{page=pdf.addPage(size);pageNumber+=1;page.drawRectangle({x:0,y:812,width:595.28,height:30,color:rgb(.04,.31,.29)});page.drawText(header,{x:32,y:822,size:9,font,color:rgb(1,1,1)});page.drawText(String(pageNumber),{x:540,y:26,size:8,font,color:rgb(.45,.5,.56)});y=785;};
-  fresh();for(const line of wordLines(title,font,20,520)){page!.drawText(line,{x:36,y,size:20,font,color:rgb(.04,.31,.29)});y-=27;}y-=5;
-  for(const line of wordLines(subtitle,font,9.5,520)){page!.drawText(line,{x:36,y,size:9.5,font,color:rgb(.25,.3,.38)});y-=14;}
-  for(const line of wordLines("Advanced-band disclosure: HSK 3.0 defines one unified Levels 7–9 band; Level 7/8/9 labels use the same canonical approved source set.",font,8.5,520)){page!.drawText(line,{x:36,y,size:8.5,font,color:rgb(.45,.28,.08)});y-=12;}y-=12;
-  for(const section of sections){if(section.pageBreakBefore||y<112)fresh();for(const headingLine of wordLines(section.heading,font,14,520)){if(y<72)fresh();page!.drawText(headingLine,{x:36,y,size:14,font,color:rgb(.04,.31,.29)});y-=18;}y-=4;for(const item of section.body){for(const line of wordLines(item,font,9.5,510)){if(y<58)fresh();page!.drawText(line,{x:44,y,size:9.5,font,color:rgb(.12,.16,.24)});y-=14;}y-=5;}y-=10;}
+  const contentWidth=pageWidth-75;
+  const fresh=()=>{page=pdf.addPage(size);pageNumber+=1;page.drawRectangle({x:0,y:pageHeight-30,width:pageWidth,height:30,color:rgb(.04,.31,.29)});page.drawText(header,{x:32,y:pageHeight-20,size:9,font,color:rgb(1,1,1)});page.drawText(String(pageNumber),{x:pageWidth-55,y:26,size:8,font,color:rgb(.45,.5,.56)});y=pageHeight-57;};
+  fresh();for(const line of wordLines(title,font,20,contentWidth)){page!.drawText(line,{x:36,y,size:20,font,color:rgb(.04,.31,.29)});y-=27;}y-=5;
+  for(const line of wordLines(subtitle,font,9.5,contentWidth)){page!.drawText(line,{x:36,y,size:9.5,font,color:rgb(.25,.3,.38)});y-=14;}
+  for(const line of wordLines("Advanced-band disclosure: HSK 3.0 defines one unified Levels 7–9 band; Level 7/8/9 labels use the same canonical approved source set.",font,8.5,contentWidth)){page!.drawText(line,{x:36,y,size:8.5,font,color:rgb(.45,.28,.08)});y-=12;}y-=12;
+  for(const section of sections){if(section.pageBreakBefore||y<112)fresh();for(const headingLine of wordLines(section.heading,font,14,contentWidth)){if(y<72)fresh();page!.drawText(headingLine,{x:36,y,size:14,font,color:rgb(.04,.31,.29)});y-=18;}y-=4;for(const item of section.body){for(const line of wordLines(item,font,9.5,contentWidth-10)){if(y<58)fresh();page!.drawText(line,{x:44,y,size:9.5,font,color:rgb(.12,.16,.24)});y-=14;}y-=5;}y-=10;}
   return new Uint8Array(await pdf.save({useObjectStreams:false}));
 }
 function readme(product:DigitalProduct,files:string[],manifest:ProductArtifactManifest){
@@ -272,17 +289,6 @@ function assessmentAnswerSheetSections(selection:Selection,variant:number):PdfSe
 }
 function assessmentReportSections(selection:Selection):PdfSection[]{const spec=mockAssessmentBlueprint(selection.level);return [{heading:`Level ${selection.level} · Score report`,body:["Learner: ____________________   Form: ____   Date: ____________________","Listening ____ / 10   Reading ____ / 10   Writing ____ / 10   Total ____ / 30",`Conversion: listening correct × 2; reading correct × 1; writing follows the printed Level ${selection.level} task allocation.`,`Rubric band: ${spec.band}. Suggested time: ${spec.suggestedMinutes} minutes. This is an unofficial diagnostic result, not an official HSK score.`,`Strongest evidence: ____________________   Weakest skill: listening / reading / writing`,`Weakest task family: detail / sequence / cloze / matching / insertion / inference / synthesis / counterargument`]},{heading:`Level ${selection.level} · Weakness → recommended practice`,body:[`Listening pathway: ${spec.recommendations.listening.join(" ")}`,`Reading pathway: ${spec.recommendations.reading.join(" ")}`,`Writing pathway: ${spec.recommendations.writing.join(" ")}`,"Select only the pathway matching the weakest skill and task family, complete it twice, then use the next form as a fresh check."]}];}
 
-function lessonSections(selection:Selection,duration:number):PdfSection[]{
-  const words=selection.words.slice(0,6),exercises=selection.exercises.slice(0,3);const independent=duration===45?8:duration===60?12:20;
-  return [
-    {heading:`Level ${selection.level} · ${duration}-minute lesson · Outcome`,body:[`Learners will recognize, retrieve and accurately use: ${words.map(word=>word.hanzi).join("、")}.`,`Evidence: at least four accurate meaning recalls and two complete original uses before the exit ticket.`,`Materials: this plan, a board or shared page, and six learner response slips.`]},
-    {heading:"Teacher model and guided noticing",body:words.map(word=>`${word.hanzi} (${word.pinyin}) · ${word.meaning} · teacher gives one contextual example; learners identify the meaning cue.`)},
-    {heading:"Guided practice",body:exercises.map((exercise,index)=>`${index+1}. Prompt: ${exercise.prompt} · check: ${exercise.answer}`)},
-    {heading:"Independent check and differentiation",body:[`Independent check: ${independent} minutes. Learners retrieve four meanings and produce two sentences without the model.`,`Scaffold: show pinyin plus a choice of two meanings; remove the choice on the second attempt.`,`Extension: connect two target words in one coherent response and explain the context.`,`Accessibility: allow oral response before writing; record whether support was required.`]},
-    {heading:"Exit evidence and follow-up",body:["Exit ticket: one meaning from memory, one accurate sentence, and one confidence rating with evidence.","If fewer than four meanings are secure, assign retrieval review. If meanings are secure but use is weak, assign sentence revision.","Next lesson: begin with the two least-secure items before adding new vocabulary."]}
-  ];
-}
-
 export async function generateDifferentiatedProductArtifact(productId:DigitalProductId|string,fontBytes:Uint8Array,_emojiFontBytes:Uint8Array,generationVersion=generationVersionForProduct(productId),assessmentAudio?:Partial<Record<AssessmentForm,Uint8Array>>){
   const product=digitalProduct(productId);if(!product||product.category!=="resource")throw new Error("INVALID_DIFFERENTIATED_PRODUCT");
   const selections=[1,2,3,4,5,6,7,8,9].map(selectPackAssets);
@@ -386,9 +392,33 @@ export async function generateDifferentiatedProductArtifact(productId:DigitalPro
     const audioNotice=encoder.encode(["HSKKit Practice Assessment Pack v2 · Audio Source and License Notice","","Synthetic voice engine: Piper","Voice model: zh_CN-chaowen-medium (Chaowen)","Voice repository: https://huggingface.co/rhasspy/piper-voices/tree/main/zh/zh_CN/chaowen/medium","Repository license: MIT (see repository license metadata)","Model card: https://huggingface.co/rhasspy/piper-voices/blob/main/zh/zh_CN/chaowen/medium/MODEL_CARD","Training dataset: Chinese Standard Mandarin Speech Corpus","Dataset source: https://www.data-baker.com/open_source.html","Dataset license in model card: CC0-1.0","Generated by HSKKit on 2026-08-26. Synthetic voice; no natural person is represented or imitated.","Each numbered question is followed by five seconds of encoded response silence.","File identity is pinned by SHA-256 in manifest.json."].join("\r\n"));
     const files=[...studentFiles,...audioFiles,{name:"HSKKit-Practice-Assessment-Audio-Source-License.txt",data:audioNotice},{name:"HSKKit-Practice-Assessment-Answer-Sheets.pdf",data:answerSheets},{name:"HSKKit-Practice-Assessment-Answers-Explanations.pdf",data:answers},{name:"HSKKit-Practice-Assessment-Facilitator-Transcripts.pdf",data:transcripts},{name:"HSKKit-Practice-Assessment-Score-Report.pdf",data:scoreReport},{name:"HSKKit-Practice-Assessment-Score-Tracker.csv",data:encoder.encode(scoreRows.join("\r\n"))}];const manifest=manifestFor(product,files.map(file=>file.name),selections,generationVersion);return {bytes:packageZip(product,files,manifest),format:"zip" as const,manifest};
   }
-  const quickStart=await makePdf("HSK Teacher Lesson Plan Pack · Quick Start","Choose one target level, one duration and one evidence goal. These are sequenced teaching plans, not blank timing templates.",selections.flatMap(selection=>[{heading:`Level ${selection.level} · Preparation`,body:[`Preview the six target words in the selected plan and prepare one contextual example for each.`,`Choose the 45, 60 or 90-minute sequence from learner readiness—not from the amount of content you hope to cover.`,`Print one exit ticket per learner and decide what evidence will trigger retrieval homework versus sentence-use homework.`]},{heading:`Level ${selection.level} · After class`,body:["Record which words needed cues, which were retrieved, and which were used accurately.","Assign the included homework path from observed evidence, then begin the next lesson with the two least-secure items."]}]),fontBytes);
-  const lessonFiles:Array<{name:string;data:Uint8Array}>=[];
-  for(const duration of [45,60,90])lessonFiles.push({name:`HSKKit-Lesson-Plans-${duration}-Minutes.pdf`,data:await makePdf(`HSK Teacher Lesson Plans · ${duration} minutes`,`Ready-to-adapt Level 1–9 sequences with target vocabulary, teacher modelling, guided practice, independent checks and evidence-based follow-up.`,selections.flatMap(selection=>lessonSections(selection,duration)),fontBytes)});
-  const exits=await makePdf("HSK Teacher Lesson Plan Pack · Exit Tickets and Homework","Use one exit ticket after a lesson. Choose homework from observed need rather than assigning every task.",selections.flatMap(selection=>[{heading:`Level ${selection.level} · Exit ticket`,body:["Write or say the meaning of two target words without a cue.","Use one target word in a complete, contextually accurate response.","Circle the evidence: independent / one cue / not yet. Teacher next action: __________"]},{heading:`Level ${selection.level} · Homework paths`,body:["Retrieval path: review six target words, then record two closed-book attempts.","Usage path: revise two lesson sentences and add one new contextual response.","Input path: find or receive a short passage using two targets; underline the context cue for each."]}]),fontBytes);
-  const files=[{name:"HSKKit-Teacher-Quick-Start.pdf",data:quickStart},...lessonFiles,{name:"HSKKit-Exit-Tickets-and-Homework.pdf",data:exits}];const manifest=manifestFor(product,files.map(file=>file.name),selections,generationVersion);return {bytes:packageZip(product,files,manifest),format:"zip" as const,manifest};
+  // Every printed lesson word is the exact authorized catalog object represented by this artifact manifest.
+  const pack=buildTeacherLessonPack(teacherLessonSources(selections));
+  // Fontkit mutates font parsing state; create the PDF files sequentially.
+  const quickStart=await makeTeacherQuickStartPdf(pack,fontBytes);
+  const teacherA4=await makeTeacherPlanPdf(pack,fontBytes,TEACHER_PAGE_SIZES.A4);
+  const teacherLetter=await makeTeacherPlanPdf(pack,fontBytes,TEACHER_PAGE_SIZES.LETTER);
+  const studentA4=await makeStudentHandoutPdf(pack,fontBytes,TEACHER_PAGE_SIZES.A4);
+  const studentLetter=await makeStudentHandoutPdf(pack,fontBytes,TEACHER_PAGE_SIZES.LETTER);
+  const exitA4=await makeTeacherCutPdf(pack,fontBytes,TEACHER_PAGE_SIZES.A4,"exit");
+  const exitLetter=await makeTeacherCutPdf(pack,fontBytes,TEACHER_PAGE_SIZES.LETTER,"exit");
+  const homework=await makeHomeworkPdf(pack,fontBytes);
+  const cardsA4=await makeTeacherCutPdf(pack,fontBytes,TEACHER_PAGE_SIZES.A4,"activity");
+  const cardsLetter=await makeTeacherCutPdf(pack,fontBytes,TEACHER_PAGE_SIZES.LETTER,"activity");
+  const editableSlides=await generateTeacherLessonPptx(pack);
+  const files=[
+    {name:"HSKKit-Teacher-Pack-Quick-Start.pdf",data:quickStart},
+    {name:"HSKKit-Teacher-Lesson-Plans-A4.pdf",data:teacherA4},
+    {name:"HSKKit-Teacher-Lesson-Plans-US-Letter.pdf",data:teacherLetter},
+    {name:"HSKKit-Student-Handouts-A4.pdf",data:studentA4},
+    {name:"HSKKit-Student-Handouts-US-Letter.pdf",data:studentLetter},
+    {name:"HSKKit-Exit-Tickets-A4.pdf",data:exitA4},
+    {name:"HSKKit-Exit-Tickets-US-Letter.pdf",data:exitLetter},
+    {name:"HSKKit-Homework-Answers-Rubrics.pdf",data:homework},
+    {name:"HSKKit-Activity-Cards-A4.pdf",data:cardsA4},
+    {name:"HSKKit-Activity-Cards-US-Letter.pdf",data:cardsLetter},
+    {name:"HSKKit-Editable-Lesson-Plans.docx",data:generateTeacherLessonDocx(pack)},
+    {name:"HSKKit-Editable-Classroom-Slides.pptx",data:editableSlides},
+  ];
+  const manifest=manifestFor(product,files.map(file=>file.name),selections,generationVersion);return {bytes:packageZip(product,files,manifest),format:"zip" as const,manifest};
 }

@@ -43,11 +43,11 @@ PDF_SAMPLES = {
         ("HSKKit-Practice-Assessment-Facilitator-Transcripts.pdf", 1, "facilitator-script"),
     ],
     "teacher-lesson-plan-pack": [
-        ("HSKKit-Teacher-Quick-Start.pdf", 1, "teacher-quick-start"),
-        ("HSKKit-Lesson-Plans-45-Minutes.pdf", 2, "teacher-modelling"),
-        ("HSKKit-Lesson-Plans-60-Minutes.pdf", 3, "guided-practice"),
-        ("HSKKit-Lesson-Plans-90-Minutes.pdf", 7, "independent-check"),
-        ("HSKKit-Exit-Tickets-and-Homework.pdf", 2, "exit-ticket-homework"),
+        ("HSKKit-Teacher-Pack-Quick-Start.pdf", 1, "teacher-quick-start"),
+        ("HSKKit-Teacher-Lesson-Plans-A4.pdf", 1, "teacher-modelling"),
+        ("HSKKit-Teacher-Lesson-Plans-A4.pdf", 2, "guided-practice"),
+        ("HSKKit-Teacher-Lesson-Plans-A4.pdf", 3, "independent-check"),
+        ("HSKKit-Exit-Tickets-A4.pdf", 1, "exit-ticket-homework"),
     ],
 }
 CSV_SAMPLES = {

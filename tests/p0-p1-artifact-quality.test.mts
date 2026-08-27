@@ -9,7 +9,7 @@ import {generatePackPdf} from "../src/lib/commercial/generator.ts";
 function zipEntries(zip:Uint8Array){const result=new Map<string,Uint8Array>();const view=new DataView(zip.buffer,zip.byteOffset,zip.byteLength);let offset=0;while(offset+30<=zip.length&&view.getUint32(offset,true)===0x04034b50){const compressed=view.getUint32(offset+18,true),nameLength=view.getUint16(offset+26,true),extraLength=view.getUint16(offset+28,true);const name=new TextDecoder().decode(zip.slice(offset+30,offset+30+nameLength));const start=offset+30+nameLength+extraLength;result.set(name,zip.slice(start,start+compressed));offset=start+compressed;}return result;}
 
 const products=["worksheet-pack","assessment-tracker","30-day-planner","mock-exam-pack","teacher-lesson-plan-pack"] as const;
-const expectedAssetCounts:Record<(typeof products)[number],number>={"worksheet-pack":371,"assessment-tracker":840,"30-day-planner":0,"mock-exam-pack":0,"teacher-lesson-plan-pack":42};
+const expectedAssetCounts:Record<(typeof products)[number],number>={"worksheet-pack":371,"assessment-tracker":840,"30-day-planner":0,"mock-exam-pack":0,"teacher-lesson-plan-pack":52};
 const [assessmentAudioA,assessmentAudioB,assessmentAudioC]=await Promise.all([
  readFile(new URL("../assets/audio/mock-assessment-v2/form-A.mp3",import.meta.url)),
  readFile(new URL("../assets/audio/mock-assessment-v2/form-B.mp3",import.meta.url)),
@@ -24,7 +24,7 @@ test("P1 artifacts contain parseable non-placeholder PDFs, CSV data, manifests a
   const pdfs=[...files.entries()].filter(([name])=>name.endsWith(".pdf"));assert.ok(pdfs.length>=1,productId);for(const [name,bytes] of pdfs){assert.ok(bytes.byteLength>2_000,name);const pdf=await PDFDocument.load(bytes);assert.ok(pdf.getPageCount()>=1,name);assert.match(pdf.getTitle()??"",/HSK/,name);}
   if(productId==="assessment-tracker"){const csv=files.get("HSKKit-Assessment-Tracker.csv");assert.ok(csv);const text=new TextDecoder().decode(csv);assert.match(text,/level,source_band,source_level,word_id,hanzi,pinyin,meaning/);assert.match(text,/unified-levels-7-9/);assert.ok(text.split("\n").length>=1_081);}
   if(productId==="mock-exam-pack")assert.deepEqual([...files.keys()].filter(name=>name.endsWith(".pdf")).sort(),["HSKKit-Practice-Assessment-A-Student.pdf","HSKKit-Practice-Assessment-Answer-Sheets.pdf","HSKKit-Practice-Assessment-Answers-Explanations.pdf","HSKKit-Practice-Assessment-B-Student.pdf","HSKKit-Practice-Assessment-C-Student.pdf","HSKKit-Practice-Assessment-Facilitator-Transcripts.pdf","HSKKit-Practice-Assessment-Score-Report.pdf"]);
-  if(productId==="teacher-lesson-plan-pack")assert.deepEqual([...files.keys()].filter(name=>name.endsWith(".pdf")).sort(),["HSKKit-Exit-Tickets-and-Homework.pdf","HSKKit-Lesson-Plans-45-Minutes.pdf","HSKKit-Lesson-Plans-60-Minutes.pdf","HSKKit-Lesson-Plans-90-Minutes.pdf","HSKKit-Teacher-Quick-Start.pdf"]);
+  if(productId==="teacher-lesson-plan-pack")assert.deepEqual([...files.keys()].filter(name=>name.endsWith(".pdf")).sort(),["HSKKit-Activity-Cards-A4.pdf","HSKKit-Activity-Cards-US-Letter.pdf","HSKKit-Exit-Tickets-A4.pdf","HSKKit-Exit-Tickets-US-Letter.pdf","HSKKit-Homework-Answers-Rubrics.pdf","HSKKit-Student-Handouts-A4.pdf","HSKKit-Student-Handouts-US-Letter.pdf","HSKKit-Teacher-Lesson-Plans-A4.pdf","HSKKit-Teacher-Lesson-Plans-US-Letter.pdf","HSKKit-Teacher-Pack-Quick-Start.pdf"]);
  }
 });
 
