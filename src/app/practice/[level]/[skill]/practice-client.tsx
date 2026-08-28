@@ -158,14 +158,56 @@ export default function PracticeClient({ level, skill, dailySessionId, dailyItem
     <div className="mt-8 flex flex-wrap gap-3"><button className="btn" disabled={busy} onClick={start}>Start new session</button><Link className="btn secondary" href="/practice">Change level or skill</Link></div>
   </main>;
 
-  if (session.status === "completed") return <main className="mx-auto min-h-[calc(100vh-64px)] max-w-3xl px-6 py-16 sm:py-24">
-    <span className="text-xs font-extrabold uppercase tracking-[.2em] text-blue-700">Practice summary</span>
-    <h1 className="mt-4 font-serif text-5xl font-bold text-slate-950">Session complete</h1>
-    <p className="mt-5 text-xl text-slate-700">{session.result?.correctCount} of {session.result?.totalCount} correct · HSK 3.0 Level {session.level} {session.skill}</p>
-    {session.result?.weaknessTags.length ? <div className="mt-6 rounded-2xl border border-amber-200 bg-amber-50 p-5"><h2 className="font-bold text-amber-950">Review created</h2><p className="mt-2 text-amber-900">Weakness: {session.result.weaknessTags.join(", ")}. Wrong attempts remain in Mistakes and are scheduled in Review.</p></div> : <div className="mt-6 rounded-2xl border border-emerald-200 bg-emerald-50 p-5 text-emerald-900">No wrong answers in this session.</div>}
-    {error && <Alert text={error} />}
-    <div className="mt-8 flex flex-wrap gap-3"><Link className="btn" href="/mistakes">Open Mistakes</Link><Link className="btn secondary" href="/review">Open Review/SRS</Link><Link className="btn secondary" href={`/planner?source=practice&level=${session.level}&skill=${session.skill}`}>Create or update learning plan</Link><button className="btn secondary" disabled={busy} onClick={start}>Practice again</button><Link className="btn secondary" href="/today">Continue Today</Link></div>
-  </main>;
+  if (session.status === "completed") {
+    const correctCount = session.result?.correctCount ?? session.feedback.filter((entry) => entry.correct).length;
+    const totalCount = session.result?.totalCount ?? session.questions.length;
+    const wrongCount = Math.max(totalCount - correctCount, 0);
+    const percentage = totalCount > 0 ? Math.round((correctCount / totalCount) * 100) : 0;
+    const hasMistakes = wrongCount > 0;
+    const levelDisplay = session.level === 7 ? "7–9" : String(session.level);
+    const skillLabel = SKILL_OVERVIEWS[session.skill as keyof typeof SKILL_OVERVIEWS]?.label ?? session.skill;
+
+    return <main className="mx-auto min-h-[calc(100vh-64px)] max-w-3xl px-4 py-8 sm:px-6 sm:py-14">
+      <span className="text-xs font-extrabold uppercase tracking-[.18em] text-blue-700">Practice summary</span>
+      <section className="mt-3 rounded-3xl border border-slate-200 bg-white p-5 shadow-sm sm:p-8">
+        <h1 className="font-serif text-4xl font-bold leading-tight text-slate-950 sm:text-5xl">Session complete</h1>
+        <p className="mt-4 text-2xl font-black text-slate-900 sm:text-3xl">{correctCount} / {totalCount} correct <span className="text-slate-400">· {percentage}%</span></p>
+        <p className="mt-2 text-base text-slate-600">HSK 3.0 Level {levelDisplay} · {skillLabel}</p>
+
+        {hasMistakes ? <div className="mt-6 rounded-2xl border border-amber-200 bg-amber-50 p-5 text-amber-950">
+          <h2 className="text-lg font-black">{wrongCount} {wrongCount === 1 ? "item" : "items"} ready to review</h2>
+          <p className="mt-2 leading-7">{wrongCount} {wrongCount === 1 ? "missed item was" : "missed items were"} saved to Mistakes and added to Review.</p>
+          <p className="mt-2 text-sm font-bold">Focus area: HSK 3.0 Level {levelDisplay} {skillLabel}</p>
+        </div> : <div className="mt-6 rounded-2xl border border-emerald-200 bg-emerald-50 p-5 text-emerald-950">
+          <h2 className="text-lg font-black">No wrong answers in this session</h2>
+          <p className="mt-2 leading-7">Perfect score — keep the momentum going.</p>
+        </div>}
+
+        {error && <Alert text={error} />}
+
+        <div className="mt-6 flex flex-col items-stretch gap-3 sm:flex-row sm:items-center">
+          {hasMistakes ? <>
+            <Link className="inline-flex min-h-[48px] w-full items-center justify-center rounded-xl bg-blue-600 px-6 py-3 text-base font-bold text-white shadow-sm transition hover:bg-blue-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-700 motion-reduce:transition-none sm:w-auto" href="/review">Review {wrongCount} {wrongCount === 1 ? "mistake" : "mistakes"} now</Link>
+            <button className="min-h-[48px] w-full rounded-xl border border-blue-200 bg-white px-6 py-3 text-base font-bold text-blue-700 transition hover:border-blue-400 hover:bg-blue-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-700 disabled:cursor-wait disabled:opacity-60 motion-reduce:transition-none sm:w-auto" disabled={busy} onClick={start} type="button">Practice again</button>
+          </> : <>
+            <Link className="inline-flex min-h-[48px] w-full items-center justify-center rounded-xl bg-blue-600 px-6 py-3 text-base font-bold text-white shadow-sm transition hover:bg-blue-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-700 motion-reduce:transition-none sm:w-auto" href="/today">Continue today</Link>
+            <Link className="inline-flex min-h-[48px] w-full items-center justify-center rounded-xl border border-blue-200 bg-white px-6 py-3 text-base font-bold text-blue-700 transition hover:border-blue-400 hover:bg-blue-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-700 motion-reduce:transition-none sm:w-auto" href="/practice">Practice another skill</Link>
+          </>}
+        </div>
+
+        <nav aria-label="More practice actions" className="mt-5 flex flex-wrap items-center gap-x-5 gap-y-3 text-sm font-bold text-blue-700">
+          {hasMistakes ? <>
+            <Link className="hover:text-blue-900 hover:underline" href="/mistakes">View mistakes</Link>
+            <Link className="hover:text-blue-900 hover:underline" href={`/planner?source=practice&level=${session.level}&skill=${session.skill}`}>Update learning plan</Link>
+            <Link className="hover:text-blue-900 hover:underline" href="/today">Continue today</Link>
+          </> : <>
+            <button className="hover:text-blue-900 hover:underline" disabled={busy} onClick={start} type="button">Practice again</button>
+            <Link className="hover:text-blue-900 hover:underline" href={`/planner?source=practice&level=${session.level}&skill=${session.skill}`}>Update learning plan</Link>
+          </>}
+        </nav>
+      </section>
+    </main>;
+  }
 
   const question = session.questions[index];
   const feedback = session.feedback.find((entry) => entry.questionId === question.id);
