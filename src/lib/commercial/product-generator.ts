@@ -2,7 +2,7 @@ import fontkit from "@pdf-lib/fontkit";
 import {PDFDocument,rgb,type PDFFont,type PDFPage} from "pdf-lib";
 import {selectPackAssets} from "./catalog.ts";
 import {generateZipFiles} from "./generator.ts";
-import {digitalProduct,generationVersionForProduct,type DigitalProduct,type DigitalProductId} from "./products.ts";
+import {digitalProduct,generationVersionForProduct,productLicenseNotice,type DigitalProduct,type DigitalProductId} from "./products.ts";
 import {assessmentListeningScript,assessmentScenario,type AssessmentForm} from "./mock-assessment-content.ts";
 import {generateAssessmentWorkbook} from "./assessment-workbook.ts";
 import {buildWorksheetLevel,type WorksheetLevel} from "./worksheet-pack.ts";
@@ -87,7 +87,7 @@ function productAssets(product:DigitalProduct,selections:Selection[]){
   return [...unique.values()];
 }
 function manifestFor(product:DigitalProduct,files:string[],selections:Selection[],generationVersion:string):ProductArtifactManifest{
-  return {schemaVersion:"hskkit-product-manifest-v1",productId:product.id,generationVersion,standard:"HSK 3.0",standardVersion:"GF0025-2021",officialExam:false,levels:product.levels,advancedBandDisclosure:"HSK 3.0 defines one unified Levels 7–9 advanced ability band; Level 7, 8 and 9 labels in this resource use the same canonical approved advanced source set.",licenseNotice:"Personal, non-transferable study and print use only.",files,sourceIndependent:product.id==="30-day-planner"||product.id==="mock-exam-pack",assets:productAssets(product,selections),...(product.id==="mock-exam-pack"?{audioProvenance:ASSESSMENT_AUDIO_PROVENANCE}:{})};
+  return {schemaVersion:"hskkit-product-manifest-v1",productId:product.id,generationVersion,standard:"HSK 3.0",standardVersion:"GF0025-2021",officialExam:false,levels:product.levels,advancedBandDisclosure:"HSK 3.0 defines one unified Levels 7–9 advanced ability band; Level 7, 8 and 9 labels in this resource use the same canonical approved advanced source set.",licenseNotice:productLicenseNotice(product.id),files,sourceIndependent:product.id==="30-day-planner"||product.id==="mock-exam-pack",assets:productAssets(product,selections),...(product.id==="mock-exam-pack"?{audioProvenance:ASSESSMENT_AUDIO_PROVENANCE}:{})};
 }
 
 function lines(text:string,font:PDFFont,size:number,width:number){
@@ -134,7 +134,7 @@ function readme(product:DigitalProduct,files:string[],manifest:ProductArtifactMa
     audio?`Audio provenance: ${audio.provider}; voices ${Object.entries(audio.voices).map(([form,voice])=>`${form}=${voice}`).join(", ")}; generated ${audio.generatedOn}.`:"",
     audio?`Audio integrity: each MP3 is pinned by SHA-256 in manifest.json. ${audio.redistributionStatus}`:"",
     "Levels 7–9 use one unified canonical advanced source set.",
-    "Licensed for personal, non-transferable study and print use only."
+    product.id==="teacher-lesson-plan-pack"?`Licensed under this product contract: ${productLicenseNotice(product.id)}`:"Licensed for personal, non-transferable study and print use only."
   ];
   return encoder.encode(lines.filter(Boolean).join("\n"));
 }

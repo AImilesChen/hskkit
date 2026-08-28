@@ -20,6 +20,8 @@ test("Store exposes the complete Level 1–9, Bundle, and resource catalog respo
   assert.match(purchase, /config\.products\.filter/);
   assert.match(purchase, /resource\?resource\.inside\.slice\(0,3\):product\.deliverables/);
   assert.match(purchase, /See what’s inside/);
+  assert.doesNotMatch(purchase, /mt-5 text-3xl font-extrabold/,"product value must lead; price must remain secondary");
+  assert.match(purchase, /mt-4 text-lg font-extrabold text-slate-800/,"all card prices use the same restrained secondary hierarchy");
   assert.doesNotMatch(purchase, /<select/);
   assert.doesNotMatch(purchase, /pack-level/);
 });

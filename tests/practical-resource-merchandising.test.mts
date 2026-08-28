@@ -68,8 +68,13 @@ test("each practical resource provides four to six readable real sample pages an
     assert.ok(detail.fit.notFor.length>=2,`${detail.id}: not for`);
     assert.ok(detail.fit.facts.length>=4,`${detail.id}: decision facts`);
     const facts=detail.fit.facts.join(" ");
-    assert.match(facts,/personal/i,`${detail.id}: personal licence`);
-    assert.match(facts,/non-transferable/i,`${detail.id}: non-transferable licence`);
+    if(detail.id==="teacher-lesson-plan-pack"){
+      assert.match(facts,/single-purchaser classroom licence/i,`${detail.id}: classroom licence`);
+      assert.match(facts,/one teaching site/i,`${detail.id}: classroom boundary`);
+    }else{
+      assert.match(facts,/personal/i,`${detail.id}: personal licence`);
+      assert.match(facts,/non-transferable/i,`${detail.id}: non-transferable licence`);
+    }
     assert.match(facts,/no audio|audio (?:is )?not included|3 .*MP3|MP3 listening/i,`${detail.id}: audio boundary`);
     assert.match(facts,/14-day/i,`${detail.id}: access period`);
     assert.match(facts,/3 successful downloads/i,`${detail.id}: download limit`);
@@ -98,7 +103,13 @@ test("each practical resource ships the promised usable files",async()=>{
     for(const [name,bytes] of files){if(name.endsWith(".pdf")){const pdf=await PDFDocument.load(bytes);if(productId==="teacher-lesson-plan-pack"&&name==="HSKKit-Teacher-Pack-Quick-Start.pdf")assert.equal(pdf.getPageCount(),1,`${productId}: ${name}`);else if(productId==="30-day-planner")assert.equal(pdf.getPageCount(),name.endsWith("Quick-Start.pdf")?1:38,`${productId}: ${name}`);else assert.ok(pdf.getPageCount()>=2,`${productId}: ${name}`);}}
     const readme=new TextDecoder().decode(files.get("README.txt"));
     assert.match(readme,/How to use/i,productId);
-    assert.match(readme,/personal, non-transferable/i,productId);
+    if(productId==="teacher-lesson-plan-pack"){
+      assert.match(readme,/single-purchaser classroom licence/i,productId);
+      assert.match(artifact.manifest.licenseNotice,/one teaching site/i,productId);
+    }else{
+      assert.match(readme,/personal, non-transferable/i,productId);
+      assert.match(artifact.manifest.licenseNotice,/personal, non-transferable/i,productId);
+    }
   }
 });
 

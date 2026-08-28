@@ -4,7 +4,9 @@ export const DIGITAL_REFUND_DAYS=7;
 export const DIGITAL_DOWNLOAD_LIMIT=3;
 export const DEFAULT_PRODUCT_GENERATION_VERSION="p0-p1-v2";
 export const PLANNER_GENERATION_VERSION="p0-p1-v3";
-export const TEACHER_PACK_GENERATION_VERSION="teacher-pack-v2";
+export const TEACHER_PACK_GENERATION_VERSION="teacher-pack-v3";
+export const PERSONAL_PRODUCT_LICENSE="Personal, non-transferable study and print use only.";
+export const TEACHER_CLASSROOM_LICENSE="Single-purchaser classroom licence: the purchaser may adapt editable files and print or share student handouts only with learners they personally teach at one teaching site. No resale, public upload, shared-drive distribution, sublicensing, transfer or use by another teacher.";
 
 export type DigitalProductId=
   |`level-${1|2|3|4|5|6|7|8|9}`
@@ -29,6 +31,7 @@ export const DIGITAL_PRODUCTS:readonly DigitalProduct[]=[
 ] as const;
 
 export function digitalProduct(value:unknown){return DIGITAL_PRODUCTS.find(product=>product.id===value)??null;}
+export function productLicenseNotice(productId:unknown){return productId==="teacher-lesson-plan-pack"?TEACHER_CLASSROOM_LICENSE:PERSONAL_PRODUCT_LICENSE;}
 export function generationVersionForProduct(productId:unknown){return productId==="30-day-planner"?PLANNER_GENERATION_VERSION:productId==="teacher-lesson-plan-pack"?TEACHER_PACK_GENERATION_VERSION:DEFAULT_PRODUCT_GENERATION_VERSION;}
 export function productDeliverableLabels(productId:unknown):string[]{const product=digitalProduct(productId);if(!product)throw new Error("INVALID_PRODUCT");return buildProductDeliveries(product.id).map(delivery=>delivery.artifactType==="level"?`Level ${delivery.level} searchable PDF`:delivery.artifactType==="bundle"?`Combined Levels ${product.levels[0]}–${product.levels.at(-1)} offline ZIP`:delivery.artifactType==="worksheet"?"Workbook, answer key, Quick Start and checklist in one ZIP":delivery.artifactType==="assessment"?"Two CSV trackers, scoring guide and printable records in one ZIP":delivery.artifactType==="planner"?"Printable, fillable and Quick Start PDFs in one ZIP":delivery.artifactType==="mock_exam"?"Forms A/B/C, scripts, answers, rubrics and score tracker in one ZIP":"Teacher plans, student handouts, cuttable tickets/cards, homework key/rubric and editable DOCX/PPTX in one ZIP");}
 export type ProductDelivery={deliveryKey:string;level:number|null;artifactType:"level"|"bundle"|"worksheet"|"assessment"|"planner"|"mock_exam"|"lesson_plan";format:"pdf"|"zip";downloadLimit:number};
