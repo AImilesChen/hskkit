@@ -7,6 +7,29 @@ type Question = { id: string; prompt: string; context?: string; audioSrc?: strin
 type Feedback = { questionId: string; selectedAnswer: string; correct: boolean; correctAnswer: string; correctAnswerText: string; explanation: string; weaknessTag: string };
 type Session = { id: string; status: "in_progress" | "completed" | "expired"; level: number; skill: string; questionVersion: string; expiresAt: string; questions: Question[]; feedback: Feedback[]; result?: { correctCount: number; totalCount: number; weaknessTags: string[] } };
 
+const SKILL_OVERVIEWS = {
+  vocabulary: {
+    label: "Vocabulary",
+    intro: "Match English meanings with the correct Chinese words and get an explanation after every answer.",
+    practice: ["Recognise current-level Chinese words", "Match meanings without hidden hints", "Review the correct word after every answer"],
+  },
+  grammar: {
+    label: "Grammar",
+    intro: "Identify natural Chinese word order and get a clear explanation after every answer.",
+    practice: ["Compare current-level sentence patterns", "Choose natural Chinese word order", "Review why the correct structure works"],
+  },
+  reading: {
+    label: "Reading",
+    intro: "Read short level-appropriate passages and identify the statement supported by the text.",
+    practice: ["Read a short current-level passage", "Find the detail that supports your answer", "Review the source evidence after answering"],
+  },
+  listening: {
+    label: "Listening",
+    intro: "Listen to approved practice audio and choose the statement that matches what you hear.",
+    practice: ["Play current-level approved audio", "Listen for key details and meaning", "Review the matching answer and explanation"],
+  },
+} as const;
+
 function practiceMessage(code: string) {
   if (code === "PRACTICE_SESSION_EXPIRED") return "This Practice Session timed out. Start a new session; no late answer was saved.";
   if (code === "PRACTICE_QUESTION_WITHDRAWN") return "This question was withdrawn after a content review. Start a new session to continue with the current set.";
@@ -82,21 +105,57 @@ export default function PracticeClient({ level, skill, dailySessionId, dailyItem
 
   if (session === undefined) return <State title="Restoring practice…" text="Checking for a resumable server-side session." />;
 
-  if (!session) return <main className="mx-auto min-h-[calc(100vh-64px)] max-w-4xl px-6 py-16 sm:py-24">
-    <span className="text-xs font-extrabold uppercase tracking-[.2em] text-blue-700">HSK 3.0 bounded practice</span>
-    <h1 className="mt-4 max-w-3xl font-serif text-4xl font-bold leading-tight text-slate-950 sm:text-6xl">Level {level} {skill.replaceAll("-", " ")} practice</h1>
-    <p className="mt-5 max-w-2xl text-lg leading-8 text-slate-600">Get immediate feedback. Wrong answers create a recoverable Mistake and SRS review card; refresh restores the same session.</p>
-    {(level >= 1 && level <= 7) ? <p className="mt-6 rounded-2xl border border-emerald-200 bg-emerald-50 p-4 text-sm leading-6 text-emerald-950"><strong>Published scope:</strong> eight version-locked {skill} questions with source, QA, answer, explanation and lifecycle records. Level 7 represents the unified HSK 7–9 advanced ability band.</p> : <p className="mt-6 rounded-2xl border border-slate-200 bg-slate-50 p-4 text-sm leading-6 text-slate-700">Use the unified HSK 7–9 advanced ability band. No separate HSK 8 or 9 official set is published.</p>}
-    {error && <Alert text={error === "PRACTICE_NOT_READY" ? "This practice set is not published. Choose Levels 1–6 or the unified HSK 7–9 advanced ability band." : error} />}
-    <div className="mt-8 flex flex-wrap gap-3"><button className="btn" disabled={busy} onClick={start}>Start practice</button><Link className="btn secondary" href="/practice">Choose another level or skill</Link></div>
-  </main>;
+  if (!session) {
+    const overview = SKILL_OVERVIEWS[skill as keyof typeof SKILL_OVERVIEWS];
+    const levelDisplay = level === 7 ? "7–9" : String(level);
+    return <main className="mx-auto min-h-[calc(100vh-64px)] max-w-3xl px-4 py-4 sm:px-6 sm:py-14">
+      <nav aria-label="Practice breadcrumb" className="text-sm font-semibold text-slate-500">
+        <Link className="hover:text-blue-700" href="/practice">Practice</Link><span aria-hidden="true" className="mx-2">/</span><span>HSK {levelDisplay}</span><span aria-hidden="true" className="mx-2">/</span><span>{overview.label}</span>
+      </nav>
+
+      <section className="mt-3 rounded-3xl border border-slate-200 bg-white p-4 shadow-sm sm:mt-5 sm:p-8">
+        <p className="text-xs font-extrabold uppercase tracking-[.18em] text-blue-700">HSK {levelDisplay} · {overview.label}</p>
+        <h1 className="mt-3 font-serif text-3xl font-bold leading-tight text-slate-950 sm:text-5xl">Practice 8 HSK {levelDisplay} {overview.label.toLowerCase()} questions</h1>
+        <p className="mt-3 max-w-2xl text-base leading-7 text-slate-600 sm:mt-4 sm:text-lg sm:leading-8">{overview.intro}</p>
+
+        <ul aria-label="Practice facts" className="mt-4 grid grid-cols-2 gap-2 sm:mt-6 sm:grid-cols-4 sm:gap-3">
+          {["8 questions", "Immediate feedback", "Progress autosaved", "Mistakes added to Review"].map((fact) => <li className="flex min-h-[56px] items-center rounded-xl bg-slate-50 px-3 py-2 text-sm font-bold leading-5 text-slate-700 sm:min-h-[64px]" key={fact}><span aria-hidden="true" className="mr-2 text-blue-600">✓</span>{fact}</li>)}
+        </ul>
+
+        {error && <Alert text={error === "PRACTICE_NOT_READY" ? "This practice set is not published. Choose Levels 1–6 or the unified HSK 7–9 advanced ability band." : error} />}
+        <div className="mt-5 flex flex-col items-stretch gap-3 sm:mt-7 sm:flex-row sm:items-center">
+          <button className="min-h-[48px] w-full rounded-xl bg-blue-600 px-6 py-3 text-base font-bold text-white shadow-sm transition hover:bg-blue-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-700 disabled:cursor-wait disabled:opacity-60 motion-reduce:transition-none sm:w-auto" disabled={busy} onClick={start} type="button">{busy ? "Starting…" : "Start 8-question practice"}</button>
+          <Link className="inline-flex min-h-[48px] items-center justify-center px-3 text-sm font-bold text-blue-700 hover:text-blue-900 focus-visible:rounded-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-700" href="/practice">Change level or skill</Link>
+        </div>
+      </section>
+
+      <section aria-labelledby="what-you-will-practice" className="mt-5 rounded-2xl border border-slate-200 bg-white p-5 sm:p-6">
+        <h2 className="text-xl font-black text-slate-950" id="what-you-will-practice">What you’ll practice</h2>
+        <ul className="mt-4 grid gap-3 sm:grid-cols-3">{overview.practice.map((item) => <li className="flex gap-3 text-sm leading-6 text-slate-600" key={item}><span aria-hidden="true" className="mt-1 grid h-5 w-5 shrink-0 place-items-center rounded-full bg-blue-50 text-xs font-bold text-blue-700">✓</span>{item}</li>)}</ul>
+      </section>
+
+      <section aria-labelledby="how-it-works" className="mt-5 rounded-2xl border border-slate-200 bg-white p-5 sm:p-6">
+        <h2 className="text-xl font-black text-slate-950" id="how-it-works">How it works</h2>
+        <ol className="mt-4 grid gap-3 sm:grid-cols-3">
+          <li className="text-sm leading-6 text-slate-600"><strong className="block text-slate-900">1. Answer</strong>Choose one answer for each question.</li>
+          <li className="text-sm leading-6 text-slate-600"><strong className="block text-slate-900">2. Check</strong>See the correct answer and explanation immediately.</li>
+          <li className="text-sm leading-6 text-slate-600"><strong className="block text-slate-900">3. Review</strong>Wrong answers stay available in Mistakes and Review.</li>
+        </ol>
+      </section>
+
+      <details className="mt-5 rounded-2xl border border-slate-200 bg-slate-50 px-5 py-4 text-sm text-slate-600">
+        <summary className="cursor-pointer font-bold text-slate-800 focus-visible:rounded focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-700">About this question set</summary>
+        <p className="mt-3 leading-6">This published set contains eight version-locked {skill} questions with source, QA, answer, explanation and lifecycle records. {level === 7 ? "HSK 7–9 uses one unified advanced ability band; no separate HSK 8 or 9 official set is published." : "The set is tied to the selected HSK level."}</p>
+      </details>
+    </main>;
+  }
 
   if (session.status === "expired") return <main className="mx-auto min-h-[calc(100vh-64px)] max-w-3xl px-6 py-16 sm:py-24">
     <span className="text-xs font-extrabold uppercase tracking-[.2em] text-amber-700">Practice Session expired</span>
     <h1 className="mt-4 font-serif text-5xl font-bold text-slate-950">Start a fresh session</h1>
     <p className="mt-5 max-w-2xl text-lg leading-8 text-slate-600">The 24-hour answer window ended. Your earlier saved attempts remain in Mistakes and Review; no late answer was recorded.</p>
     {error && <Alert text={error} />}
-    <div className="mt-8 flex flex-wrap gap-3"><button className="btn" disabled={busy} onClick={start}>Start new session</button><Link className="btn secondary" href="/practice">Choose another level or skill</Link></div>
+    <div className="mt-8 flex flex-wrap gap-3"><button className="btn" disabled={busy} onClick={start}>Start new session</button><Link className="btn secondary" href="/practice">Change level or skill</Link></div>
   </main>;
 
   if (session.status === "completed") return <main className="mx-auto min-h-[calc(100vh-64px)] max-w-3xl px-6 py-16 sm:py-24">

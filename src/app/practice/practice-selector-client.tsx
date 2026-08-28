@@ -82,11 +82,11 @@ export default function PracticeSelectorClient() {
       <div>
         <p className="text-sm font-bold text-blue-700">Step 2</p>
         <h2 className="mt-[4px] text-3xl font-black text-slate-950" id="choose-skill">Practice HSK {level.display}</h2>
-        <p className="mt-[8px] text-slate-600">Choose a skill. The whole card opens that practice.</p>
+        <p className="mt-[8px] text-slate-600">Choose a skill. The whole card opens its practice overview.</p>
       </div>
 
       <div className="mt-[16px] grid gap-[12px] sm:grid-cols-2 sm:gap-[16px]">{SKILLS.map((item) => <Link
-        aria-label={`Start HSK ${level.display} ${item.label} practice`}
+        aria-label={`View HSK ${level.display} ${item.label} practice`}
         className="group flex min-h-[156px] flex-col rounded-2xl border border-slate-200 bg-white p-[16px] shadow-sm transition hover:-translate-y-0.5 hover:border-blue-400 hover:shadow-md focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-blue-700 active:translate-y-0 active:bg-blue-50 motion-reduce:transform-none motion-reduce:transition-none sm:p-[20px]"
         href={`/practice/${selectedLevel}/${item.slug}`}
         key={item.slug}
@@ -98,7 +98,7 @@ export default function PracticeSelectorClient() {
         <p className="mt-[12px] text-base font-semibold text-slate-700">{item.detail}</p>
         <p className="mt-[4px] text-sm text-slate-500">{item.support}</p>
         <span className="mt-auto pt-[20px] text-sm font-extrabold text-blue-700 group-hover:text-blue-800">
-          Start HSK {level.display} {item.label} <span aria-hidden="true">→</span>
+          View HSK {level.display} {item.label} <span aria-hidden="true">→</span>
         </span>
       </Link>)}</div>
     </section>

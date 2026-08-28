@@ -20,8 +20,8 @@ test("Practice uses a compact, explicit level filter with immediate selected-sta
 test("each Practice skill is one whole-card link for the selected level", () => {
   assert.match(selector, /SKILLS\.map\(\(item\) => <Link/);
   assert.match(selector, /href=\{`\/practice\/\$\{selectedLevel\}\/\$\{item\.slug\}`\}/);
-  assert.match(selector, /aria-label=\{`Start HSK \$\{level\.display\} \$\{item\.label\} practice`\}/);
-  assert.match(selector, /Start HSK \{level\.display\} \{item\.label\}/);
+  assert.match(selector, /aria-label=\{`View HSK \$\{level\.display\} \$\{item\.label\} practice`\}/);
+  assert.match(selector, /View HSK \{level\.display\} \{item\.label\}/);
   assert.match(selector, /8 questions/);
   assert.doesNotMatch(selector, /selectedSkill/);
   assert.doesNotMatch(selector, />Ready</);
