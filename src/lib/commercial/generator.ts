@@ -2,16 +2,31 @@ import fontkit from "@pdf-lib/fontkit";
 import { PDFDocument, rgb, type PDFFont, type PDFPage } from "pdf-lib";
 import type { PackManifest, PackSelection } from "./catalog.ts";
 
-function fitLines(text: string, font: PDFFont, size: number, width: number) {
+export function fitLines(text: string, font: PDFFont, size: number, width: number) {
   const lines: string[] = [];
-  let current = "";
-  for (const char of text.replaceAll("\n", " \n ")) {
-    if (char === "\n") { if (current) lines.push(current.trim()); current = ""; continue; }
-    const next = current + char;
-    if (current && font.widthOfTextAtSize(next, size) > width) { lines.push(current.trim()); current = char; }
-    else current = next;
+  const fits = (value: string) => font.widthOfTextAtSize(value, size) <= width;
+  const pushLongToken = (token: string) => {
+    let chunk = "";
+    for (const char of token) {
+      if (chunk && !fits(chunk + char)) { lines.push(chunk); chunk = char; }
+      else chunk += char;
+    }
+    return chunk;
+  };
+  for (const paragraph of text.split("\n")) {
+    let current = "";
+    for (const token of paragraph.match(/\S+|\s+/g) ?? []) {
+      if (/^\s+$/.test(token)) {
+        if (current && !current.endsWith(" ")) current += " ";
+        continue;
+      }
+      const next = current + token;
+      if (fits(next)) { current = next; continue; }
+      if (current.trim()) lines.push(current.trim());
+      current = fits(token) ? token : pushLongToken(token);
+    }
+    if (current.trim()) lines.push(current.trim());
   }
-  if (current.trim()) lines.push(current.trim());
   return lines;
 }
 

@@ -50,3 +50,17 @@ test("real PDF and offline ZIP bytes are generated", async () => {
   assert.equal(new TextDecoder().decode(zip.slice(0, 2)), "PK");
   assert.ok(zip.byteLength > pdf.byteLength);
 });
+
+test("export client idempotency keys remain within the API's 80-character limit", async () => {
+  const client = await readFile("src/app/exports/exports-client.tsx", "utf8");
+  assert.doesNotMatch(client, /idempotencyKey:`export-\$\{String\(input\.productEntitlementId/);
+  assert.match(client, /idempotencyKey:`export-\$\{String\(input\.kind\)\}-\$\{crypto\.randomUUID\(\)\}`/);
+  assert.ok(`export-offline_pack-${"x".repeat(36)}`.length <= 80);
+});
+
+test("PDF line fitting wraps English at word boundaries", async () => {
+  const generator = await import("../src/lib/commercial/generator.ts");
+  assert.equal(typeof generator.fitLines, "function");
+  const monospace = { widthOfTextAtSize: (text: string) => text.length };
+  assert.deepEqual(generator.fitLines("sentence for emphasis", monospace as never, 1, 10), ["sentence", "for", "emphasis"]);
+});
