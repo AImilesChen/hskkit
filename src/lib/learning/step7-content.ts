@@ -1,5 +1,6 @@
 import practiceAudioManifest from "../practice/audio-assets.json" with { type: "json" };
 import { isPublishedStep7Content, publishedStep7AudioSrc } from "./step7-release.ts";
+import { LISTENING_LIBRARY_QUESTIONS, listeningQuestionBySlug } from "./listening-library.ts";
 
 export type Step7ContentKind = "grammar" | "reading" | "tone" | "discrimination" | "dictation";
 
@@ -123,7 +124,7 @@ const listen = (slug: string, level: number, title: string, kind: AdvancedListen
 };
 
 export const ADVANCED_LISTENING_LESSONS: AdvancedListeningLesson[] = [
-  listen("hsk1-tone-pairs", 1, "HSK 1 tone pairs", "tone", "tone", "everyday", "买。", formalAudio("hsk3.audio.word-mai"), "Listen to the single syllable and identify its tone.", "Which tone did you hear?", { A: "First tone", B: "Second tone", C: "Third tone", D: "Fourth tone" }, "C", "买 is pronounced mǎ with the third tone."),
+  listen("hsk1-tone-pairs", 1, "HSK 1 single-syllable tone recognition", "tone", "tone", "everyday", "买。", formalAudio("hsk3.audio.word-mai"), "Listen to the single syllable and identify its tone.", "Which tone did you hear?", { A: "First tone", B: "Second tone", C: "Third tone", D: "Fourth tone" }, "C", "买 is pronounced mǎi with the third tone."),
   listen("hsk2-syllable-discrimination", 2, "HSK 2 syllable discrimination", "discrimination", "syllable", "everyday", "老师让我们练习发音。", formalAudio("hsk3.audio.sentence-pronunciation"), "Focus on the middle phrase and distinguish lǎoshī from lǎoshǔ.", "Which phrase did you hear?", { A: "老师让我们练习发音。", B: "老鼠让我们练习发音。", C: "老师让我们联系发音。" }, "A", "The sentence uses 老师 (teacher) and 练习 (practise)."),
   listen("hsk3-sentence-dictation", 3, "HSK 3 basic dictation", "dictation", "basic-dictation", "everyday", "每天早上，林月先复习十个生词，再听十五分钟中文。她把不懂的句子写在本子上，晚上再看一遍。", formalAudio("hsk3.audio.context-morning-study"), "Listen to the full context, then type the first sentence. Punctuation and spaces are ignored.", "Type the first sentence you hear.", undefined, "每天早上林月先复习十个生词再听十五分钟中文", "The first sentence is 每天早上，林月先复习十个生词，再听十五分钟中文。"),
   listen("hsk4-sentence-detail", 4, "HSK 4 sentence detail", "discrimination", "sentence", "formal", "各位乘客请注意，开往上海的列车晚点二十分钟，新的检票时间是九点十分。", practiceAudio("hsk3.practice.audio.level-4-1.v1"), "Listen for a changed time in a public announcement.", "What is the new ticket-check time?", { A: "8:50", B: "9:10", C: "9:20" }, "B", "The announcement states 新的检票时间是九点十分."),
@@ -138,7 +139,7 @@ function releasedGrammar(lesson: GrammarLesson) { return isPublishedStep7Content
 function releasedReading(lesson: ReadingLesson) { return isPublishedStep7Content(`hsk3.reading.${lesson.slug}`) ? lesson : undefined; }
 export const grammarLessonBySlug = (slug: string) => { const lesson = GRAMMAR_LESSONS.find((item) => item.slug === slug); return lesson ? releasedGrammar(lesson) : undefined; };
 export const readingLessonBySlug = (slug: string) => { const lesson = READING_LESSONS.find((item) => item.slug === slug); return lesson ? releasedReading(lesson) : undefined; };
-export const advancedListeningBySlug = (slug: string) => ADVANCED_LISTENING_LESSONS.find((item) => item.slug === slug);
+export const advancedListeningBySlug = (slug: string) => listeningQuestionBySlug(slug) ?? ADVANCED_LISTENING_LESSONS.find((item) => item.slug === slug);
 export const publishedGrammarLessons = GRAMMAR_LESSONS.filter(releasedGrammar);
 export const publishedReadingLessons = READING_LESSONS.filter(releasedReading);
 export const grammarBySlug = grammarLessonBySlug;
@@ -149,5 +150,6 @@ const trustedExercises = new Map<string, Step7Exercise>([
   ...GRAMMAR_LESSONS.filter(releasedGrammar).map((lesson) => [lesson.exercise.id, lesson.exercise] as const),
   ...READING_LESSONS.filter(releasedReading).map((lesson) => [lesson.exercise.id, lesson.exercise] as const),
   ...ADVANCED_LISTENING_LESSONS.map((lesson) => [lesson.exercise.id, lesson.exercise] as const),
+  ...LISTENING_LIBRARY_QUESTIONS.map((lesson) => [lesson.exercise.id, lesson.exercise] as const),
 ]);
 export const trustedStep7Exercise = (id: string) => trustedExercises.get(id);

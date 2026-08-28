@@ -1,13 +1,14 @@
 "use client";
 
 import Link from "next/link";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import AiAssist from "@/app/components/ai-assist";
 import { normalizeStep7Answer, type Step7Exercise } from "@/lib/learning/step7-content";
 
-type Props = { exercise: Step7Exercise; voiceText?: string; audioSrc?: string; nextHref?: string; nextLabel?: string };
+type ListeningSessionState = { level: number; size: 10 | 20; seed: string; position: number };
+type Props = { exercise: Step7Exercise; voiceText?: string; audioSrc?: string; nextHref?: string; nextLabel?: string; listeningSession?: ListeningSessionState };
 
-export default function Step7ExerciseClient({ exercise, voiceText, audioSrc, nextHref, nextLabel }: Props) {
+export default function Step7ExerciseClient({ exercise, voiceText, audioSrc, nextHref, nextLabel, listeningSession }: Props) {
   const [answer, setAnswer] = useState("");
   const [played, setPlayed] = useState(!voiceText);
   const [playing, setPlaying] = useState(false);
@@ -19,11 +20,18 @@ export default function Step7ExerciseClient({ exercise, voiceText, audioSrc, nex
   const audio = useRef<HTMLAudioElement | undefined>(undefined);
   const correct = saved && normalizeStep7Answer(answer) === normalizeStep7Answer(exercise.correctAnswer);
 
+  useEffect(() => {
+    if (!listeningSession) return;
+    try {
+      localStorage.setItem("hskkit:listening:resume", JSON.stringify({ href: window.location.pathname + window.location.search, label: `Continue HSK ${listeningSession.level} · ${listeningSession.position + 1} of ${listeningSession.size}` }));
+    } catch { /* storage is optional */ }
+  }, [listeningSession]);
+
   async function play() {
     setError("");
     setPlayed(false);
     playbackTicket.current = undefined;
-    if (!voiceText || (!audioSrc && !("speechSynthesis" in window))) { setError("Audio is unavailable in this browser. No learning result was saved."); return; }
+    if (!voiceText || !audioSrc) { setError("Formal audio is unavailable. No learning result was saved."); return; }
     let ticketResponse: Response;
     try {
       ticketResponse = await fetch("/api/v1/learning", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ action: "step7_playback_start", payload: { idempotencyKey: crypto.randomUUID(), exerciseId: exercise.id } }) });
@@ -50,22 +58,12 @@ export default function Step7ExerciseClient({ exercise, voiceText, audioSrc, nex
       }
     };
     const fail = () => { playbackTicket.current = undefined; setPlaying(false); setPlayed(false); setError("Audio failed. Nothing was written to mastery; play it again before answering."); };
-    if (audioSrc) {
-      audio.current?.pause();
-      const player = new Audio(audioSrc);
-      audio.current = player;
-      player.onended = () => { void finish(); };
-      player.onerror = fail;
-      try { await player.play(); } catch { fail(); }
-      return;
-    }
-    window.speechSynthesis.cancel();
-    const utterance = new SpeechSynthesisUtterance(voiceText);
-    utterance.lang = "zh-CN";
-    utterance.rate = exercise.kind === "dictation" ? 0.78 : 0.86;
-    utterance.onend = () => { void finish(); };
-    utterance.onerror = fail;
-    window.speechSynthesis.speak(utterance);
+    audio.current?.pause();
+    const player = new Audio(audioSrc);
+    audio.current = player;
+    player.onended = () => { void finish(); };
+    player.onerror = fail;
+    try { await player.play(); } catch { fail(); }
   }
 
   async function submit(value = answer) {
@@ -84,12 +82,20 @@ export default function Step7ExerciseClient({ exercise, voiceText, audioSrc, nex
     setSaving(false);
     if (!response?.ok) { setError("We couldn't save this exercise. Your progress was not advanced; retry the same answer."); return; }
     setAnswer(value); setSaved(true); key.current = undefined;
+    if (listeningSession) {
+      try {
+        const storageKey = `hskkit:listening:result:${listeningSession.level}:${listeningSession.size}:${listeningSession.seed}`;
+        const stored = JSON.parse(localStorage.getItem(storageKey) ?? "{}") as Record<string, boolean>;
+        stored[String(listeningSession.position)] = normalizeStep7Answer(value) === normalizeStep7Answer(exercise.correctAnswer);
+        localStorage.setItem(storageKey, JSON.stringify(stored));
+      } catch { /* the server learning record remains authoritative */ }
+    }
   }
 
   return <section className="step7-exercise" aria-labelledby="exercise-heading">
     <span className="eyebrow">Linked practice</span>
     <h2 id="exercise-heading">{exercise.prompt}</h2>
-    {voiceText && <><p>Finish playback before answering. Playback failure never changes mastery.</p><button className="btn secondary" disabled={playing} onClick={play}>{playing ? "Playing…" : played ? "Play again" : "Play audio"}</button></>}
+    {voiceText && <><p>Finish playback before answering. Playback failure never changes mastery or usage.</p><button className="audio-play-button inline-flex size-12 items-center justify-center rounded-full border border-blue-300 bg-blue-50 text-blue-700 transition hover:bg-blue-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:opacity-60" type="button" aria-label={played ? "Replay audio" : "Play audio"} aria-pressed={playing} disabled={playing} onClick={play}><svg className="audio-play-icon size-5" viewBox="0 0 24 24" aria-hidden="true" fill="currentColor">{playing ? <><rect x="6" y="5" width="4" height="14" rx="1"/><rect x="14" y="5" width="4" height="14" rx="1"/></> : <path d="M8 5.5v13l10-6.5z"/>}</svg><span className="sr-only">{playing ? "Playing audio" : played ? "Replay audio" : "Play audio"}</span></button></>}
     {error && <p className="step7-alert error" role="alert">{error}</p>}
     {exercise.options ? <div className="step7-options">
       {Object.entries(exercise.options).map(([letter, text]) => <button key={letter} className="btn secondary" disabled={!played || saving || saved} onClick={() => { setAnswer(letter); void submit(letter); }}>{letter}. {text}</button>)}

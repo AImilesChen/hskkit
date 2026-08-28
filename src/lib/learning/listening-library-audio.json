@@ -1,0 +1,4629 @@
+{
+  "version": "hskkit-listening-library-v1",
+  "assets": [
+    {
+      "id": "hsk1-001",
+      "storageKey": "audio/listening-library/hsk1-001.mp3",
+      "text": "买",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "3da4b5df728b4040ab123eb7449624b6e651c11d089736c4b684eaf9e30d402f",
+      "durationSeconds": 1.776,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk1-002",
+      "storageKey": "audio/listening-library/hsk1-002.mp3",
+      "text": "半天",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "b6001d4d46d7831a5a8cafebb48e0a72afb4aabf3970ccc6b646c3c6a2f51155",
+      "durationSeconds": 1.776,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk1-003",
+      "storageKey": "audio/listening-library/hsk1-003.mp3",
+      "text": "比",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "9df5ca451cccbb1ba560f634e6c6f550e9820ec7e3f9f264e38c01434e8b3d62",
+      "durationSeconds": 1.776,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk1-004",
+      "storageKey": "audio/listening-library/hsk1-004.mp3",
+      "text": "茶",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "556bb14390836de04ae2f201c079ab4c687e2a7d750476d60aae45ff73a9d625",
+      "durationSeconds": 1.776,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk1-005",
+      "storageKey": "audio/listening-library/hsk1-005.mp3",
+      "text": "出",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "eb5a1053038524f02f8fb1cc5a67ffc5ab74afec17c79435416c3a601c37dd0e",
+      "durationSeconds": 1.776,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk1-006",
+      "storageKey": "audio/listening-library/hsk1-006.mp3",
+      "text": "打球",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "3b918192d9400ba2e0a7aaedb61b518bdcd21b5f0a259f6c583b3824b2850e25",
+      "durationSeconds": 1.776,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk1-007",
+      "storageKey": "audio/listening-library/hsk1-007.mp3",
+      "text": "地上",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "61dbe6a268d15a9f745a8f2ff8010d770676e5cace0f079db94508c0dc221337",
+      "durationSeconds": 1.776,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk1-008",
+      "storageKey": "audio/listening-library/hsk1-008.mp3",
+      "text": "东",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "ad0e94d38b4a4b667038e8db57f81df531f14867384a3a19ac852dbd91d772c9",
+      "durationSeconds": 1.776,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk1-009",
+      "storageKey": "audio/listening-library/hsk1-009.mp3",
+      "text": "饿",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "84259fbbd26bf886d0122339931921fc5163b0daca062cb4060abd148bc2d762",
+      "durationSeconds": 1.776,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk1-010",
+      "storageKey": "audio/listening-library/hsk1-010.mp3",
+      "text": "非常",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "09e959d79e8f1cc9051f0fc33a459894b4056a865eecdf4c77e13cee5ee5c88e",
+      "durationSeconds": 1.776,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk1-011",
+      "storageKey": "audio/listening-library/hsk1-011.mp3",
+      "text": "个",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "b8f104dd9dae5563395b0ed7b544d02bddcda7814d4803f3574639f3b4c07f7b",
+      "durationSeconds": 1.776,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk1-012",
+      "storageKey": "audio/listening-library/hsk1-012.mp3",
+      "text": "还",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "b55357aab52cde826149bbdf24f7d0157ede06c07531cc62dbd34af94d387d9c",
+      "durationSeconds": 1.776,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk1-013",
+      "storageKey": "audio/listening-library/hsk1-013.mp3",
+      "text": "喝",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "47c638ef016af7a2a4e63271506e04561b03f026abb3b4b870b62c334f4a9143",
+      "durationSeconds": 1.776,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk1-014",
+      "storageKey": "audio/listening-library/hsk1-014.mp3",
+      "text": "回到",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "419fe310352cb8eda7eeb189b1f22a7a96b623142b3c3268c876e8ae40b39523",
+      "durationSeconds": 1.776,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk1-015",
+      "storageKey": "audio/listening-library/hsk1-015.mp3",
+      "text": "记住",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "2758c77ed3a0363684817eb408d551ad52850a5d5f92426fbcbfada001b2d77e",
+      "durationSeconds": 1.776,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk1-016",
+      "storageKey": "audio/listening-library/hsk1-016.mp3",
+      "text": "今年",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "277feae551bdb46331697c5068bf9539df1ffef1caaa62c2c32e434b7f01827b",
+      "durationSeconds": 1.776,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk1-017",
+      "storageKey": "audio/listening-library/hsk1-017.mp3",
+      "text": "看",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "53a80f2dcdd4d4cde1a28e6e09688011fb555d970a75c87ed93d58a3ccf82ba4",
+      "durationSeconds": 1.776,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk1-018",
+      "storageKey": "audio/listening-library/hsk1-018.mp3",
+      "text": "快",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "4a5ad840255509b9b106d12faaa111524d3cdd8e487793e66af7794077f28a68",
+      "durationSeconds": 1.776,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk1-019",
+      "storageKey": "audio/listening-library/hsk1-019.mp3",
+      "text": "零|〇",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "3d1af1fcbfdb3fc4329df0fcdfd5624b36ee53f5b02f25da7ded8dd2af4b67a9",
+      "durationSeconds": 1.776,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk1-020",
+      "storageKey": "audio/listening-library/hsk1-020.mp3",
+      "text": "慢",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "06f3cbf0d86827f516d43ff6320bc5a97475fd4551c2f6358832ae6c9e3149ca",
+      "durationSeconds": 1.776,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk1-021",
+      "storageKey": "audio/listening-library/hsk1-021.mp3",
+      "text": "们（朋友们）",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "1f7b5e7a101a00492de5457bae6ebabd98c683ce72da698450bc1a935f7ef98f",
+      "durationSeconds": 1.824,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk1-022",
+      "storageKey": "audio/listening-library/hsk1-022.mp3",
+      "text": "哪些",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "093dbfdce9a0f83b74d68e639dabf5bc46a2a0f62529bf5cdffd3b69c7eb50d1",
+      "durationSeconds": 1.776,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk1-023",
+      "storageKey": "audio/listening-library/hsk1-023.mp3",
+      "text": "男生",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "20caa0f30531cbcd49403f843a3d639e6a62afa13e0ead9f7b790ddc8cfd67ee",
+      "durationSeconds": 1.776,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk1-024",
+      "storageKey": "audio/listening-library/hsk1-024.mp3",
+      "text": "女儿",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "41dd7473a7f73f982f0e102f633d00b1e7714bc5554f32cbe1e95d4c7862624d",
+      "durationSeconds": 1.776,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk1-025",
+      "storageKey": "audio/listening-library/hsk1-025.mp3",
+      "text": "起来",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "cca89a255e9ebc51929be8501db2e37b9e91ec620fa5da415154ce4d2237d54b",
+      "durationSeconds": 1.776,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk1-026",
+      "storageKey": "audio/listening-library/hsk1-026.mp3",
+      "text": "球",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "50dcae56e1fdc50449c07b9593f4ee94ee0023a1f57f4fa2fc28718fc9e2b3b2",
+      "durationSeconds": 1.776,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk1-027",
+      "storageKey": "audio/listening-library/hsk1-027.mp3",
+      "text": "商场",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "71224122b9f6bcfe09ee7d2f6a2e83dc9462c01080f26e3086a5759e9c6e891b",
+      "durationSeconds": 1.776,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk1-028",
+      "storageKey": "audio/listening-library/hsk1-028.mp3",
+      "text": "谁",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "6536937c3110910bb58c1add51a4f8458b47540167867de7eea76e1949d339f7",
+      "durationSeconds": 1.776,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk1-029",
+      "storageKey": "audio/listening-library/hsk1-029.mp3",
+      "text": "是",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "57f71c57ace7e8db04321f9d961a0277398d8c25c11c4803c87bedebfc2f0bae",
+      "durationSeconds": 1.776,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk1-030",
+      "storageKey": "audio/listening-library/hsk1-030.mp3",
+      "text": "说",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "18159919a0d1e12f7c6147d7ef9db6fd68707eafe1aa22ededfaec6b9f229b0b",
+      "durationSeconds": 1.776,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk1-031",
+      "storageKey": "audio/listening-library/hsk1-031.mp3",
+      "text": "听",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "8b170e402b3c35868b1cc539ed2ddc5671cc90cc7aa7469942c93535c3a99892",
+      "durationSeconds": 1.776,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk1-032",
+      "storageKey": "audio/listening-library/hsk1-032.mp3",
+      "text": "晚饭",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "078a826488f7fad1c457c7f9a1a9200104634485da0c6b595cad6e0d860a01aa",
+      "durationSeconds": 1.776,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk1-033",
+      "storageKey": "audio/listening-library/hsk1-033.mp3",
+      "text": "西边",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "6fe4ea326cc08c07398272823d29bdd321ab431f90b0191ebee32bf45b6b000d",
+      "durationSeconds": 1.776,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk1-034",
+      "storageKey": "audio/listening-library/hsk1-034.mp3",
+      "text": "先",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "8d07289224d3cba5901f887c7baf44f0c4e63d65b01d191ce23b7cc5772923a1",
+      "durationSeconds": 1.776,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk1-035",
+      "storageKey": "audio/listening-library/hsk1-035.mp3",
+      "text": "写",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "af88a16c75298b406e82828f5ee3fa20a822267f90c757a1f741d3836d5f7803",
+      "durationSeconds": 1.776,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk1-036",
+      "storageKey": "audio/listening-library/hsk1-036.mp3",
+      "text": "学校",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "4e9a87c96a95afc57296b45f90e5757ea1c3cc484b3493984ca0841ba8f617be",
+      "durationSeconds": 1.776,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk1-037",
+      "storageKey": "audio/listening-library/hsk1-037.mp3",
+      "text": "一块儿",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "3b689978ef0873e2c7256a6f2aa41c23627e8af450184b764e76155f76a7a3c5",
+      "durationSeconds": 1.776,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk1-038",
+      "storageKey": "audio/listening-library/hsk1-038.mp3",
+      "text": "有（一）些",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "d4bfadc016203b260ac4d21e4934937eaede48b20307df0d302888a7b33d7d43",
+      "durationSeconds": 1.776,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk1-039",
+      "storageKey": "audio/listening-library/hsk1-039.mp3",
+      "text": "早",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "a54be45751dbcab2a76a593e839c28d1544277e68f581f11598a576d6deabc81",
+      "durationSeconds": 1.776,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk1-040",
+      "storageKey": "audio/listening-library/hsk1-040.mp3",
+      "text": "着",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "e1254b310d80561262afa25046e5bac6d4e8a6164e9210baaf23a6fbf448c3bc",
+      "durationSeconds": 1.776,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk2-001",
+      "storageKey": "audio/listening-library/hsk2-001.mp3",
+      "text": "啊",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "458298d29eb1dc4f4d20f27501762d6e34a5dc36d8b6f342f5afc0e6156fcd3c",
+      "durationSeconds": 1.776,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk2-002",
+      "storageKey": "audio/listening-library/hsk2-002.mp3",
+      "text": "笔",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "c015a4ea8162492ab89c3cd6b22afe4ffd21461f10d1223669c03f4fff4194bf",
+      "durationSeconds": 1.776,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk2-003",
+      "storageKey": "audio/listening-library/hsk2-003.mp3",
+      "text": "不如",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "741b369fbddf46d776e69fcee2b3f8327d11c07ce666ed1a81d5af1c7097951f",
+      "durationSeconds": 1.776,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk2-004",
+      "storageKey": "audio/listening-library/hsk2-004.mp3",
+      "text": "场",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "715334777343fa47046a852d066d0c8b9feb79496abcd160e3d564aab88f251f",
+      "durationSeconds": 1.776,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk2-005",
+      "storageKey": "audio/listening-library/hsk2-005.mp3",
+      "text": "船",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "d00602fb1ba1b0ab180cd349215bb38d5d98868bee770730a4b2be2ddc46b681",
+      "durationSeconds": 1.776,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk2-006",
+      "storageKey": "audio/listening-library/hsk2-006.mp3",
+      "text": "大人",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "9bc867ab5944572162f224989910f78da085bc778a399e04d1c3e8db4212d43f",
+      "durationSeconds": 1.776,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk2-007",
+      "storageKey": "audio/listening-library/hsk2-007.mp3",
+      "text": "得",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "57313db107f2299ba75cec66b4d893fdb5a979e2e48976b443ce97fd50cf9c31",
+      "durationSeconds": 1.776,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk2-008",
+      "storageKey": "audio/listening-library/hsk2-008.mp3",
+      "text": "懂",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "673fad992b0e4f2272f7dac01725aa58532fcc5b5e22ff7b02bb7a03e7d820f9",
+      "durationSeconds": 1.776,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk2-009",
+      "storageKey": "audio/listening-library/hsk2-009.mp3",
+      "text": "而且",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "55e04b6fe3f6bf0c6e6d17b4624f96ee1a6c580346fc94f57c71946046ed5e3c",
+      "durationSeconds": 1.776,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk2-010",
+      "storageKey": "audio/listening-library/hsk2-010.mp3",
+      "text": "该",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "ab128a1b152b19747cb30faee809427d7843085b8e7a4664899cdd80c1065fdc",
+      "durationSeconds": 1.776,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk2-011",
+      "storageKey": "audio/listening-library/hsk2-011.mp3",
+      "text": "公里",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "3e427038cdda85e40890e14c2a00083d0b057590a7ebdc52a641a759b6c1fcba",
+      "durationSeconds": 1.776,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk2-012",
+      "storageKey": "audio/listening-library/hsk2-012.mp3",
+      "text": "过",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "4b4df19d70f752b5acf23261b68f1edb34d508f8386e106938d02fdec14b4be7",
+      "durationSeconds": 1.776,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk2-013",
+      "storageKey": "audio/listening-library/hsk2-013.mp3",
+      "text": "忽然",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "614b7743aaa612d052b6d4805eb7a2e1e1c1175b248bfbbe9db2bbb006c233eb",
+      "durationSeconds": 1.776,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk2-014",
+      "storageKey": "audio/listening-library/hsk2-014.mp3",
+      "text": "或者",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "51ea96a298cf6608ce1308dfa7072126a2cf4bce59f9d454e31ddc49dba30a8d",
+      "durationSeconds": 1.776,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk2-015",
+      "storageKey": "audio/listening-library/hsk2-015.mp3",
+      "text": "讲",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "ed847269feb39d6a02e70549123dfabb0b36c985722d24e3844a1ff5ad56ca1e",
+      "durationSeconds": 1.776,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk2-016",
+      "storageKey": "audio/listening-library/hsk2-016.mp3",
+      "text": "接着",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "cc5a02cf1a620316fad3fdce914dbbbfe391672e26c18a14617bbe09c688bcbe",
+      "durationSeconds": 1.776,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk2-017",
+      "storageKey": "audio/listening-library/hsk2-017.mp3",
+      "text": "举手",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "5dbb2e411f8296b51bf49dfbe41f32070b0f66628691f390c66149cb10296e0c",
+      "durationSeconds": 1.776,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk2-018",
+      "storageKey": "audio/listening-library/hsk2-018.mp3",
+      "text": "刻",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "050114fad8e83f98c72c9722856fd0292161fad8c303d04dbeb764121de4c506",
+      "durationSeconds": 1.776,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk2-019",
+      "storageKey": "audio/listening-library/hsk2-019.mp3",
+      "text": "老是",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "cade4ea88632685afc66ee904ae3a41b127ea76998bc2bec44c9ed3d825139dc",
+      "durationSeconds": 1.776,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk2-020",
+      "storageKey": "audio/listening-library/hsk2-020.mp3",
+      "text": "留学生",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "3607ee75567f31801ba2610981295e9a51fa5f139b4d55f22677a3e431c731c9",
+      "durationSeconds": 1.776,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk2-021",
+      "storageKey": "audio/listening-library/hsk2-021.mp3",
+      "text": "名称",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "020e2a506bac79a38d750a8476aec762e9d7e352b32a361ceb0286411844cf83",
+      "durationSeconds": 1.776,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk2-022",
+      "storageKey": "audio/listening-library/hsk2-022.mp3",
+      "text": "年轻",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "25c16052d2c5e6ea9e9d0bbe8e84d6aa1b2ea568659e2857c58689b634fab96c",
+      "durationSeconds": 1.776,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk2-023",
+      "storageKey": "audio/listening-library/hsk2-023.mp3",
+      "text": "平常",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "9672d2f3ed6822c891e3348d6a044d852483627fda121abc928a96c051e2faaa",
+      "durationSeconds": 1.776,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk2-024",
+      "storageKey": "audio/listening-library/hsk2-024.mp3",
+      "text": "青少年",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "fc284d820e27422a3e43dbe63c2c89ce8863d406024ec701e8bbda02bbd14a74",
+      "durationSeconds": 1.776,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk2-025",
+      "storageKey": "audio/listening-library/hsk2-025.mp3",
+      "text": "全身",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "7c37b5762ffc96d3e805aa61adda65275b70caf1e70a7c1302132fef7ac70fe4",
+      "durationSeconds": 1.776,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk2-026",
+      "storageKey": "audio/listening-library/hsk2-026.mp3",
+      "text": "什么样",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "70107edc8cdf62424438520a41aaa98fe033eeec1d9b20a36ddad1ddcadb78d2",
+      "durationSeconds": 1.776,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk2-027",
+      "storageKey": "audio/listening-library/hsk2-027.mp3",
+      "text": "收到",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "69e9e22300b7e3ca449910ac266b3875de8afd77203a35b8a138e3560925f3e4",
+      "durationSeconds": 1.776,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk2-028",
+      "storageKey": "audio/listening-library/hsk2-028.mp3",
+      "text": "所有",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "230272b2bd55cccf48da291c941fb13792883b34de275a70fd1f620fb2f6db7a",
+      "durationSeconds": 1.776,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk2-029",
+      "storageKey": "audio/listening-library/hsk2-029.mp3",
+      "text": "天上",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "f7c73836f96269efb118d98910dcc2afcc803df37a7cd00d9c121775d7cb1426",
+      "durationSeconds": 1.776,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk2-030",
+      "storageKey": "audio/listening-library/hsk2-030.mp3",
+      "text": "图片",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "2dfe60aff8b141a27546d558b9a685984bcaeccf6886f94edac1da071627cf1d",
+      "durationSeconds": 1.776,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk2-031",
+      "storageKey": "audio/listening-library/hsk2-031.mp3",
+      "text": "为什么",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "5db7052e7b5256f9345dd7948c1704f4a6c21672d1cf41e54ff1e144147468f9",
+      "durationSeconds": 1.776,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk2-032",
+      "storageKey": "audio/listening-library/hsk2-032.mp3",
+      "text": "下雪",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "3b2208b61df4ad37655e64a2a10be9122f497b1fdd62969ce847e8638249496d",
+      "durationSeconds": 1.776,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk2-033",
+      "storageKey": "audio/listening-library/hsk2-033.mp3",
+      "text": "校长",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "ddb6964a2b91667d20520bcc1202ba05966da4fcb9346e2e382b6fda073f22fb",
+      "durationSeconds": 1.776,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk2-034",
+      "storageKey": "audio/listening-library/hsk2-034.mp3",
+      "text": "休假",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "f56007871e7dd04c53c30b4179e74f23bc67f3ac310857faf406fbd86c1d4f81",
+      "durationSeconds": 1.776,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk2-035",
+      "storageKey": "audio/listening-library/hsk2-035.mp3",
+      "text": "一定",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "048fc5f21f224afca7d948fcfe8277b14f5a8deff15967801889a0008d342fe4",
+      "durationSeconds": 1.776,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk2-036",
+      "storageKey": "audio/listening-library/hsk2-036.mp3",
+      "text": "意思",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "e72d046ee31caa058bf0a5964bafc9bc882c95a3adc84080338ac677d900594c",
+      "durationSeconds": 1.776,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk2-037",
+      "storageKey": "audio/listening-library/hsk2-037.mp3",
+      "text": "有人",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "b54dd2bdad132b4cba47eb6b1c77671acac42252217eef803dfcedaa28e0cc29",
+      "durationSeconds": 1.776,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk2-038",
+      "storageKey": "audio/listening-library/hsk2-038.mp3",
+      "text": "咱们",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "85a4b4ef73157af90f674b0722545c367af21e710dfd3982a65c4a6b93e50631",
+      "durationSeconds": 1.776,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk2-039",
+      "storageKey": "audio/listening-library/hsk2-039.mp3",
+      "text": "这样",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "3e1967a1257b00e0d82f44001be31bb6e64f36e66129078f499f9de30a69e3b5",
+      "durationSeconds": 1.776,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk2-040",
+      "storageKey": "audio/listening-library/hsk2-040.mp3",
+      "text": "周",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "db634d642b4a4bd4613c25074a14521e3d29ff2b9f6e081b884f0c588d267ba1",
+      "durationSeconds": 1.776,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk3-001",
+      "storageKey": "audio/listening-library/hsk3-001.mp3",
+      "text": "今天要学习的关键词是“爱心”。请再听一遍，注意它的读音和意思。",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "a7f96dab94b0772c69a7140a28cbf9d2635d6e8167ebcc732490846af105c1e0",
+      "durationSeconds": 7.008,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk3-002",
+      "storageKey": "audio/listening-library/hsk3-002.mp3",
+      "text": "今天要学习的关键词是“被子”。请再听一遍，注意它的读音和意思。",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "10aa847687400e4c806b84432fd71dba4e4e7993066dab0807e0868a86d194bc",
+      "durationSeconds": 6.96,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk3-003",
+      "storageKey": "audio/listening-library/hsk3-003.mp3",
+      "text": "今天要学习的关键词是“布”。请再听一遍，注意它的读音和意思。",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "a19e10cdb405b9c5008edfe56149741814b4587b97b019faee6908135245e20f",
+      "durationSeconds": 6.888,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk3-004",
+      "storageKey": "audio/listening-library/hsk3-004.mp3",
+      "text": "今天要学习的关键词是“城市”。请再听一遍，注意它的读音和意思。",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "94c50acf9f7099052e4d9d56450e1b248cd597221dfe2ab2486936f759744477",
+      "durationSeconds": 7.248,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk3-005",
+      "storageKey": "audio/listening-library/hsk3-005.mp3",
+      "text": "今天要学习的关键词是“大约”。请再听一遍，注意它的读音和意思。",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "ae7f73ccb801a7984b0f3571baebd2641008dce3107a3c5ddb7875f99b08d853",
+      "durationSeconds": 6.984,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk3-006",
+      "storageKey": "audio/listening-library/hsk3-006.mp3",
+      "text": "今天要学习的关键词是“短处”。请再听一遍，注意它的读音和意思。",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "449bebb33ca68b0713cd6a4b836f576a6eccd0f266ee010971fb246ac116be35",
+      "durationSeconds": 7.008,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk3-007",
+      "storageKey": "audio/listening-library/hsk3-007.mp3",
+      "text": "今天要学习的关键词是“飞行”。请再听一遍，注意它的读音和意思。",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "cd139f7bd898b642623e8a8dcf9aaca671e5719a04f480542d4f46c7b7e327fa",
+      "durationSeconds": 7.032,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk3-008",
+      "storageKey": "audio/listening-library/hsk3-008.mp3",
+      "text": "今天要学习的关键词是“高速公路”。请再听一遍，注意它的读音和意思。",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "9913e3cad14bf5d09b2f9b87ea8002cc29432c5a9f7117a92ac4f67cf9f45410",
+      "durationSeconds": 7.488,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk3-009",
+      "storageKey": "audio/listening-library/hsk3-009.mp3",
+      "text": "今天要学习的关键词是“古代”。请再听一遍，注意它的读音和意思。",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "178775bfec68f65d1afaa0dfc272223a421dfa31c444e724dcc8f56e4cb3c197",
+      "durationSeconds": 7.176,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk3-010",
+      "storageKey": "audio/listening-library/hsk3-010.mp3",
+      "text": "今天要学习的关键词是“合理”。请再听一遍，注意它的读音和意思。",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "dc61efb7e116861b9324e6ac877e94d0fa7623ae81a03d942874b1f235d5ee5b",
+      "durationSeconds": 7.008,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk3-011",
+      "storageKey": "audio/listening-library/hsk3-011.mp3",
+      "text": "今天要学习的关键词是“计算”。请再听一遍，注意它的读音和意思。",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "58eb1c895e5723dc3a00a44b28e39527fad17642e4c3e5fb4b5f78bdcf1a6988",
+      "durationSeconds": 6.984,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk3-012",
+      "storageKey": "audio/listening-library/hsk3-012.mp3",
+      "text": "今天要学习的关键词是“交往”。请再听一遍，注意它的读音和意思。",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "e6c503081da90ed509f44b93dc6f0b86ad8f7cd00ab95453cece5a0aa86e1df9",
+      "durationSeconds": 6.96,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk3-013",
+      "storageKey": "audio/listening-library/hsk3-013.mp3",
+      "text": "今天要学习的关键词是“精彩”。请再听一遍，注意它的读音和意思。",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "7d0452dfcf5b28d02934559fc70ba80d3d68a5040a291fddefd21a1896aa797a",
+      "durationSeconds": 7.032,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk3-014",
+      "storageKey": "audio/listening-library/hsk3-014.mp3",
+      "text": "今天要学习的关键词是“克服”。请再听一遍，注意它的读音和意思。",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "97e5bcdff98b62fa04aa11abe6520899f8c6f5d7b411470b042d71742577b725",
+      "durationSeconds": 7.08,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk3-015",
+      "storageKey": "audio/listening-library/hsk3-015.mp3",
+      "text": "今天要学习的关键词是“连续”。请再听一遍，注意它的读音和意思。",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "9b5c67abb49fd9cece1cb608c746e69049625532d5b172496d813a74572bc893",
+      "durationSeconds": 7.2,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk3-016",
+      "storageKey": "audio/listening-library/hsk3-016.mp3",
+      "text": "今天要学习的关键词是“美好”。请再听一遍，注意它的读音和意思。",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "a2a57fb91327b019913007d5ddc50c6c24b1d5f09e729ca88b6c79d6c924f797",
+      "durationSeconds": 7.128,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk3-017",
+      "storageKey": "audio/listening-library/hsk3-017.mp3",
+      "text": "今天要学习的关键词是“年纪”。请再听一遍，注意它的读音和意思。",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "667d43f1ab9b89700b31a48424652597c5754d0f9ad7cc7b21826c6dd6345039",
+      "durationSeconds": 7.008,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk3-018",
+      "storageKey": "audio/listening-library/hsk3-018.mp3",
+      "text": "今天要学习的关键词是“齐”。请再听一遍，注意它的读音和意思。",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "b30ac0db0b9e1892ba90e062a51160b9937948b9869b881b6cb3b9137aed3e89",
+      "durationSeconds": 6.864,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk3-019",
+      "storageKey": "audio/listening-library/hsk3-019.mp3",
+      "text": "今天要学习的关键词是“缺”。请再听一遍，注意它的读音和意思。",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "e6ee92ccbf874a8a131ab3ad7fef7c341ea3d378d4954c3bda7c827d235748c6",
+      "durationSeconds": 6.816,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk3-020",
+      "storageKey": "audio/listening-library/hsk3-020.mp3",
+      "text": "今天要学习的关键词是“沙子”。请再听一遍，注意它的读音和意思。",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "f1c5afda28cdd6c11f0ccb1d059a580e2d14356a253d6c16dceb207211d008cc",
+      "durationSeconds": 6.936,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk3-021",
+      "storageKey": "audio/listening-library/hsk3-021.mp3",
+      "text": "今天要学习的关键词是“时”。请再听一遍，注意它的读音和意思。",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "f61d7ae31d4935da8753e8026d96b3184958c74b9ae2275d9630625ea54f2367",
+      "durationSeconds": 6.84,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk3-022",
+      "storageKey": "audio/listening-library/hsk3-022.mp3",
+      "text": "今天要学习的关键词是“首都”。请再听一遍，注意它的读音和意思。",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "e3205448ed80888ebc6ec53b47f0f5d4f851b39918696820d4af1250ffb4144d",
+      "durationSeconds": 7.176,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk3-023",
+      "storageKey": "audio/listening-library/hsk3-023.mp3",
+      "text": "今天要学习的关键词是“体验”。请再听一遍，注意它的读音和意思。",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "4f94bcf92415140305b1121710eb2e71d1d7e11681378481257c4e57c12d821d",
+      "durationSeconds": 7.008,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk3-024",
+      "storageKey": "audio/listening-library/hsk3-024.mp3",
+      "text": "今天要学习的关键词是“推开”。请再听一遍，注意它的读音和意思。",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "43ce210df87fb265db1fea91ff334452a3a5ebb4c418fd9fc3fdc561c7f95a33",
+      "durationSeconds": 7.032,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk3-025",
+      "storageKey": "audio/listening-library/hsk3-025.mp3",
+      "text": "今天要学习的关键词是“舞台”。请再听一遍，注意它的读音和意思。",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "aae6a73bc12d34ff63dfd41e22be8c49ae2ef14e93dd21868ecce1304b48e36f",
+      "durationSeconds": 7.176,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk3-026",
+      "storageKey": "audio/listening-library/hsk3-026.mp3",
+      "text": "今天要学习的关键词是“信封”。请再听一遍，注意它的读音和意思。",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "eb267d2750bee25f195022d3f88cbab6a524b4b1c684bcce70a32f14943a0be3",
+      "durationSeconds": 6.96,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk3-027",
+      "storageKey": "audio/listening-library/hsk3-027.mp3",
+      "text": "今天要学习的关键词是“要是”。请再听一遍，注意它的读音和意思。",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "0084729ee06c3476c8d4d27c0bf217398b373954c563da6caaef63c25a084074",
+      "durationSeconds": 7.128,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk3-028",
+      "storageKey": "audio/listening-library/hsk3-028.mp3",
+      "text": "今天要学习的关键词是“预报”。请再听一遍，注意它的读音和意思。",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "91ff187cf829897b636316cc92dbfea5574283cffd74fc73fac062e852f03bf6",
+      "durationSeconds": 7.104,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk3-029",
+      "storageKey": "audio/listening-library/hsk3-029.mp3",
+      "text": "今天要学习的关键词是“正式”。请再听一遍，注意它的读音和意思。",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "b88c895db791d0821c2f6bddd354cb5c856757bcb877a3e63bcbef0e88a20106",
+      "durationSeconds": 6.984,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk3-030",
+      "storageKey": "audio/listening-library/hsk3-030.mp3",
+      "text": "今天要学习的关键词是“终于”。请再听一遍，注意它的读音和意思。",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "71267f49715e78628e77bac2d360e351be3c1e5b72daeb21bf2d0034df7b4b80",
+      "durationSeconds": 7.152,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk4-001",
+      "storageKey": "audio/listening-library/hsk4-001.mp3",
+      "text": "老师在材料中强调了“阿姨”这个词，并请大家结合上下文理解它。",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "a90990dad596fe21d26e74a2ca478a46f787d659a349a0469702000ae03c3422",
+      "durationSeconds": 7.008,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk4-002",
+      "storageKey": "audio/listening-library/hsk4-002.mp3",
+      "text": "老师在材料中强调了“本科”这个词，并请大家结合上下文理解它。",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "3d14dbf185097079e72371e67c4db69260a3682a5f97f10e1b6f1dbe3c958359",
+      "durationSeconds": 7.008,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk4-003",
+      "storageKey": "audio/listening-library/hsk4-003.mp3",
+      "text": "老师在材料中强调了“操作”这个词，并请大家结合上下文理解它。",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "e97bb30e49854c31350ee218d98aebad68623c9dbd0ef391d4b2ff71f84f6db9",
+      "durationSeconds": 7.104,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk4-004",
+      "storageKey": "audio/listening-library/hsk4-004.mp3",
+      "text": "老师在材料中强调了“充电”这个词，并请大家结合上下文理解它。",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "a14dd6fa765182d12d3b040cfd09dce17a27ffa71f1ead27e0e93197533dea17",
+      "durationSeconds": 7.08,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk4-005",
+      "storageKey": "audio/listening-library/hsk4-005.mp3",
+      "text": "老师在材料中强调了“措施”这个词，并请大家结合上下文理解它。",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "23b40a67ca42e06809152fefad0e13a3d3ade679e9b31876f6cb8d941a9b996f",
+      "durationSeconds": 7.128,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk4-006",
+      "storageKey": "audio/listening-library/hsk4-006.mp3",
+      "text": "老师在材料中强调了“导游”这个词，并请大家结合上下文理解它。",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "9627bb9ecafc01119552691976ca0c3b553b25adc28794ddd10752e3946c3af9",
+      "durationSeconds": 6.984,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk4-007",
+      "storageKey": "audio/listening-library/hsk4-007.mp3",
+      "text": "老师在材料中强调了“独特”这个词，并请大家结合上下文理解它。",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "b54551c4bcba9324fc7ee96763fe92afb5f869eccf399a316740e0da0c209ab7",
+      "durationSeconds": 6.984,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk4-008",
+      "storageKey": "audio/listening-library/hsk4-008.mp3",
+      "text": "老师在材料中强调了“方”这个词，并请大家结合上下文理解它。",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "5b36a0e83ae0b8eb239a85e8f0c87c8c9b2c97df05581b09ffc211d122a4cb87",
+      "durationSeconds": 6.792,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk4-009",
+      "storageKey": "audio/listening-library/hsk4-009.mp3",
+      "text": "老师在材料中强调了“高价”这个词，并请大家结合上下文理解它。",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "cf4dd396dd339d877181bbe44032bf1754ea50f4d6a2a1b5e1678e72d234bcd0",
+      "durationSeconds": 7.056,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk4-010",
+      "storageKey": "audio/listening-library/hsk4-010.mp3",
+      "text": "老师在材料中强调了“规模”这个词，并请大家结合上下文理解它。",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "648143b760f649b42551aa611fe915847004685696861e67ecb7c764bfa6995b",
+      "durationSeconds": 7.032,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk4-011",
+      "storageKey": "audio/listening-library/hsk4-011.mp3",
+      "text": "老师在材料中强调了“怀疑”这个词，并请大家结合上下文理解它。",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "d023e2f9e40b8c790a85a70a463d4b03e9a04007d3a5542dbfe1adbe4ccdf40f",
+      "durationSeconds": 6.936,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk4-012",
+      "storageKey": "audio/listening-library/hsk4-012.mp3",
+      "text": "老师在材料中强调了“系”这个词，并请大家结合上下文理解它。",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "c0ea70cd8e4edec26860371f413869f9dad3194fd20a83c2502b502cfe566921",
+      "durationSeconds": 6.816,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk4-013",
+      "storageKey": "audio/listening-library/hsk4-013.mp3",
+      "text": "老师在材料中强调了“教授”这个词，并请大家结合上下文理解它。",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "e41388ee0f661ae8bf7665a7cf18404962d661d26a85657356a42ac2b303a188",
+      "durationSeconds": 7.08,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk4-014",
+      "storageKey": "audio/listening-library/hsk4-014.mp3",
+      "text": "老师在材料中强调了“角色”这个词，并请大家结合上下文理解它。",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "cda85644549043a6c2be55e7fe93a4e824842a7ee4b18233ffd609b308663199",
+      "durationSeconds": 7.08,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk4-015",
+      "storageKey": "audio/listening-library/hsk4-015.mp3",
+      "text": "老师在材料中强调了“乐趣”这个词，并请大家结合上下文理解它。",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "6c10d109ffccd7dd1448313e67388a6cda78386c6e6cc9f2a5be9b5e4bfc2d9d",
+      "durationSeconds": 7.032,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk4-016",
+      "storageKey": "audio/listening-library/hsk4-016.mp3",
+      "text": "老师在材料中强调了“轮船”这个词，并请大家结合上下文理解它。",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "b32cc31356aee370fff20dda1ceecf902263473abda10e2eb4a5b7956ebf9d80",
+      "durationSeconds": 7.032,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk4-017",
+      "storageKey": "audio/listening-library/hsk4-017.mp3",
+      "text": "老师在材料中强调了“默默”这个词，并请大家结合上下文理解它。",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "d5a3edd72702959c03b073dc6a09a84a2b4a29a9caba137ad56a9677e83964bd",
+      "durationSeconds": 7.008,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk4-018",
+      "storageKey": "audio/listening-library/hsk4-018.mp3",
+      "text": "老师在材料中强调了“平稳”这个词，并请大家结合上下文理解它。",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "426368f70f76b759e854d52706256aebf4737eb6c0ae17c1eda6a42bdfc960d7",
+      "durationSeconds": 7.056,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk4-019",
+      "storageKey": "audio/listening-library/hsk4-019.mp3",
+      "text": "老师在材料中强调了“却”这个词，并请大家结合上下文理解它。",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "ef72ee29b96ae9e15e8c551ad1ce6605a05ebd3097395cca9a694189106632a5",
+      "durationSeconds": 6.912,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk4-020",
+      "storageKey": "audio/listening-library/hsk4-020.mp3",
+      "text": "老师在材料中强调了“身材”这个词，并请大家结合上下文理解它。",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "6e07fa259c14b8101d08f0e5161a87dccc3e03f40b2be719d901571604696788",
+      "durationSeconds": 7.08,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk4-021",
+      "storageKey": "audio/listening-library/hsk4-021.mp3",
+      "text": "老师在材料中强调了“受不了”这个词，并请大家结合上下文理解它。",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "ce24785a6098c9bca2f172606f21df5e2d7329ad9f5f7a54594b9a4d8d22b95b",
+      "durationSeconds": 7.2,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk4-022",
+      "storageKey": "audio/listening-library/hsk4-022.mp3",
+      "text": "老师在材料中强调了“台阶”这个词，并请大家结合上下文理解它。",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "7d931d2058cc721c7acbf3bd2498593d0515e4de5eb66b43fd605116d23b58ae",
+      "durationSeconds": 7.032,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk4-023",
+      "storageKey": "audio/listening-library/hsk4-023.mp3",
+      "text": "老师在材料中强调了“投入”这个词，并请大家结合上下文理解它。",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "df17f7c7988f7732fe7159cfcd0845763536d6e6f080477c25d20943f8202378",
+      "durationSeconds": 6.984,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk4-024",
+      "storageKey": "audio/listening-library/hsk4-024.mp3",
+      "text": "老师在材料中强调了“喂”这个词，并请大家结合上下文理解它。",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "3d0aa39122f2378b068e37d32b2c935f11b8e29074ce8a77a92185489844721b",
+      "durationSeconds": 6.792,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk4-025",
+      "storageKey": "audio/listening-library/hsk4-025.mp3",
+      "text": "老师在材料中强调了“咸”这个词，并请大家结合上下文理解它。",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "23bac09cf72dd875108caeae8b2d67909e9160dcbb4edf860f3f768f1cc3c496",
+      "durationSeconds": 6.792,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk4-026",
+      "storageKey": "audio/listening-library/hsk4-026.mp3",
+      "text": "老师在材料中强调了“兄弟”这个词，并请大家结合上下文理解它。",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "9a908dbd34ec34eb8ae4e4cb492032de0b07dc3ba0d748e6693d8a60226135fc",
+      "durationSeconds": 7.032,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk4-027",
+      "storageKey": "audio/listening-library/hsk4-027.mp3",
+      "text": "老师在材料中强调了“药物”这个词，并请大家结合上下文理解它。",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "6d26caffb6dc360364ecaed408d590669180720b0382318d60ddd8115e61b024",
+      "durationSeconds": 6.96,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk4-028",
+      "storageKey": "audio/listening-library/hsk4-028.mp3",
+      "text": "老师在材料中强调了“用途”这个词，并请大家结合上下文理解它。",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "16bd32124a6197fe4ef5c3f244bab10123612e2e9efbe3010c29aeb2d7678a26",
+      "durationSeconds": 7.032,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk4-029",
+      "storageKey": "audio/listening-library/hsk4-029.mp3",
+      "text": "老师在材料中强调了“赞成”这个词，并请大家结合上下文理解它。",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "2c7d8d781c78256d18388d6e746a0ee085e833e77f17a59fe39d749d211b3847",
+      "durationSeconds": 7.056,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk4-030",
+      "storageKey": "audio/listening-library/hsk4-030.mp3",
+      "text": "老师在材料中强调了“治疗”这个词，并请大家结合上下文理解它。",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "2404bfd24bac24f292be1e47932520e4eab5e4f1738a79068abac140094d86e0",
+      "durationSeconds": 7.008,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk5-001",
+      "storageKey": "audio/listening-library/hsk5-001.mp3",
+      "text": "这段说明的关键词是“安慰”。发言人提醒听众，理解这个概念时既要注意定义，也要注意使用场景。",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "1224ffdff551d9a3d050986ab76057e17f9b9d2d713c47cd898e50b0eb864f6c",
+      "durationSeconds": 10.392,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk5-002",
+      "storageKey": "audio/listening-library/hsk5-002.mp3",
+      "text": "这段说明的关键词是“编辑”。发言人提醒听众，理解这个概念时既要注意定义，也要注意使用场景。",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "496e295a7be0b7578c25dc27904b65324703f8e29621d1bc763027ecfb83d747",
+      "durationSeconds": 10.416,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk5-003",
+      "storageKey": "audio/listening-library/hsk5-003.mp3",
+      "text": "这段说明的关键词是“猜测”。发言人提醒听众，理解这个概念时既要注意定义，也要注意使用场景。",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "922697cd55529ec620c0dc6971c1edf3e7b42873e3d59dcc26d62ffc735d5b0d",
+      "durationSeconds": 10.392,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk5-004",
+      "storageKey": "audio/listening-library/hsk5-004.mp3",
+      "text": "这段说明的关键词是“成语”。发言人提醒听众，理解这个概念时既要注意定义，也要注意使用场景。",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "2c8718753ee7e9eae31d7a056d34b8876c6052f9365411a9d01cad2ff9bd550c",
+      "durationSeconds": 10.464,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk5-005",
+      "storageKey": "audio/listening-library/hsk5-005.mp3",
+      "text": "这段说明的关键词是“此后”。发言人提醒听众，理解这个概念时既要注意定义，也要注意使用场景。",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "04ac58ec8e07a0ccb6cdb19448051e01539580ae3cf85520a2fd0dc7548684aa",
+      "durationSeconds": 10.512,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk5-006",
+      "storageKey": "audio/listening-library/hsk5-006.mp3",
+      "text": "这段说明的关键词是“贷款”。发言人提醒听众，理解这个概念时既要注意定义，也要注意使用场景。",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "6677dfd80890294ef161f2f22ccf772d6cf259ba94a138e0f0ea5d70f0320037",
+      "durationSeconds": 10.44,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk5-007",
+      "storageKey": "audio/listening-library/hsk5-007.mp3",
+      "text": "这段说明的关键词是“冻”。发言人提醒听众，理解这个概念时既要注意定义，也要注意使用场景。",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "b1faec31f48e2b003faad84882c6170396c7114b0fe77b917f3d3d8aaa9cc726",
+      "durationSeconds": 10.128,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk5-008",
+      "storageKey": "audio/listening-library/hsk5-008.mp3",
+      "text": "这段说明的关键词是“封”。发言人提醒听众，理解这个概念时既要注意定义，也要注意使用场景。",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "3ee92d5a7c740e3803b57a37f34ef29830eb18bf4d8530f4f874cbc3f3056aae",
+      "durationSeconds": 10.104,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk5-009",
+      "storageKey": "audio/listening-library/hsk5-009.mp3",
+      "text": "这段说明的关键词是“公告”。发言人提醒听众，理解这个概念时既要注意定义，也要注意使用场景。",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "f435635f5ec033bf1ebd5f363e068d7389509c5f8ac470303f249facd34d3587",
+      "durationSeconds": 10.32,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk5-010",
+      "storageKey": "audio/listening-library/hsk5-010.mp3",
+      "text": "这段说明的关键词是“号召”。发言人提醒听众，理解这个概念时既要注意定义，也要注意使用场景。",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "b22b7fbfca2c4d2a2f1ae67bc3c0f0fd90761ee0bec9fda2d794c9d240ba7321",
+      "durationSeconds": 10.344,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk5-011",
+      "storageKey": "audio/listening-library/hsk5-011.mp3",
+      "text": "这段说明的关键词是“火腿”。发言人提醒听众，理解这个概念时既要注意定义，也要注意使用场景。",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "ee6401d85a541ea9d37d4148a42cf414c2a3daef6a3c8d2545a39e5b2c4349cc",
+      "durationSeconds": 10.392,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk5-012",
+      "storageKey": "audio/listening-library/hsk5-012.mp3",
+      "text": "这段说明的关键词是“健全”。发言人提醒听众，理解这个概念时既要注意定义，也要注意使用场景。",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "deb108a55c9678e1ab2b810925e42814d9221c9abcc7e51cc89deda06f4109c1",
+      "durationSeconds": 10.656,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk5-013",
+      "storageKey": "audio/listening-library/hsk5-013.mp3",
+      "text": "这段说明的关键词是“俱乐部”。发言人提醒听众，理解这个概念时既要注意定义，也要注意使用场景。",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "56d4f2648370e78e00647c2b57670b2b8c3b39013f14071c5bc866da6ef559c8",
+      "durationSeconds": 10.656,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk5-014",
+      "storageKey": "audio/listening-library/hsk5-014.mp3",
+      "text": "这段说明的关键词是“落”。发言人提醒听众，理解这个概念时既要注意定义，也要注意使用场景。",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "65291b5030361f7f958d0fa05d135c125696dbe64fc8d00503590a53a8ce209d",
+      "durationSeconds": 10.152,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk5-015",
+      "storageKey": "audio/listening-library/hsk5-015.mp3",
+      "text": "这段说明的关键词是“买卖”。发言人提醒听众，理解这个概念时既要注意定义，也要注意使用场景。",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "25ec1ab9c51d2a5e3cce99436cef8e734b46eee194204f52ef7419dd2b12b00e",
+      "durationSeconds": 10.488,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk5-016",
+      "storageKey": "audio/listening-library/hsk5-016.mp3",
+      "text": "这段说明的关键词是“能量”。发言人提醒听众，理解这个概念时既要注意定义，也要注意使用场景。",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "eab333a980d1dfe7f141fb530daf5fb12ca439ed7067a1d9c5d83b22aedb097a",
+      "durationSeconds": 10.344,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk5-017",
+      "storageKey": "audio/listening-library/hsk5-017.mp3",
+      "text": "这段说明的关键词是“平坦”。发言人提醒听众，理解这个概念时既要注意定义，也要注意使用场景。",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "a9b3a67a942bd371cc7dbd78fb62e14e6e919c685f488dba1af82351513a8198",
+      "durationSeconds": 10.584,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk5-018",
+      "storageKey": "audio/listening-library/hsk5-018.mp3",
+      "text": "这段说明的关键词是“敲门”。发言人提醒听众，理解这个概念时既要注意定义，也要注意使用场景。",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "dbdaaf4383c41a4c4682bc13ccf19c24d2f4470dff6dbdce3904c309ce71658f",
+      "durationSeconds": 10.56,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk5-019",
+      "storageKey": "audio/listening-library/hsk5-019.mp3",
+      "text": "这段说明的关键词是“如同”。发言人提醒听众，理解这个概念时既要注意定义，也要注意使用场景。",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "9be81892f55fb374a2c87e5de6a9f50d34a09368556950361733894f64835e41",
+      "durationSeconds": 10.56,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk5-020",
+      "storageKey": "audio/listening-library/hsk5-020.mp3",
+      "text": "这段说明的关键词是“深处”。发言人提醒听众，理解这个概念时既要注意定义，也要注意使用场景。",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "bdcac11d930bae2efe0da3f20103c45767300e42a8204416580ecaadd2bc4b45",
+      "durationSeconds": 10.392,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk5-021",
+      "storageKey": "audio/listening-library/hsk5-021.mp3",
+      "text": "这段说明的关键词是“受灾”。发言人提醒听众，理解这个概念时既要注意定义，也要注意使用场景。",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "8e4cc2a6b3421e7e62cb1d8ec5e856e9d061f50cb2b39358efacffc33f34dd98",
+      "durationSeconds": 10.488,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk5-022",
+      "storageKey": "audio/listening-library/hsk5-022.mp3",
+      "text": "这段说明的关键词是“损失”。发言人提醒听众，理解这个概念时既要注意定义，也要注意使用场景。",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "30e622e527d2e9758efc4fac03e89fa5d710dc663067a5e4c4842388fa6661a6",
+      "durationSeconds": 10.608,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk5-023",
+      "storageKey": "audio/listening-library/hsk5-023.mp3",
+      "text": "这段说明的关键词是“土豆”。发言人提醒听众，理解这个概念时既要注意定义，也要注意使用场景。",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "94dc685d00c8a92faa9df2e1563c0effe04f4727286900a5bd4d038c26b2bc20",
+      "durationSeconds": 10.368,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk5-024",
+      "storageKey": "audio/listening-library/hsk5-024.mp3",
+      "text": "这段说明的关键词是“物质”。发言人提醒听众，理解这个概念时既要注意定义，也要注意使用场景。",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "e2f6ec0e9b9c6dcf6767002506706832d99bc1155be40914eb1a1b4c5493cdaf",
+      "durationSeconds": 10.32,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk5-025",
+      "storageKey": "audio/listening-library/hsk5-025.mp3",
+      "text": "这段说明的关键词是“歇”。发言人提醒听众，理解这个概念时既要注意定义，也要注意使用场景。",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "12fcc7c5c9789745775f77d19e1f9361279ca9e95f71f34e4ff68a6333c1b36e",
+      "durationSeconds": 10.128,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk5-026",
+      "storageKey": "audio/listening-library/hsk5-026.mp3",
+      "text": "这段说明的关键词是“眼光”。发言人提醒听众，理解这个概念时既要注意定义，也要注意使用场景。",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "58a1a28e361ae055b7ffef4b9c496cbae65a7869ef085c12d1daa6bf627940c0",
+      "durationSeconds": 10.392,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk5-027",
+      "storageKey": "audio/listening-library/hsk5-027.mp3",
+      "text": "这段说明的关键词是“拥抱”。发言人提醒听众，理解这个概念时既要注意定义，也要注意使用场景。",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "8323f77cf8c5c9a26fceec2e29cd461b4c01e64030a2bed7b2f7c4d658ce3a6e",
+      "durationSeconds": 10.44,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk5-028",
+      "storageKey": "audio/listening-library/hsk5-028.mp3",
+      "text": "这段说明的关键词是“月球”。发言人提醒听众，理解这个概念时既要注意定义，也要注意使用场景。",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "45b6d11da915d742ebd4e368714a3adf9a6ca2b2984fa2912c4b51aa26735203",
+      "durationSeconds": 10.464,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk5-029",
+      "storageKey": "audio/listening-library/hsk5-029.mp3",
+      "text": "这段说明的关键词是“珍贵”。发言人提醒听众，理解这个概念时既要注意定义，也要注意使用场景。",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "6ea57fb53bb5979e7309cd289c9e2314a21de86761bef7558dda3140f3477e36",
+      "durationSeconds": 10.56,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk5-030",
+      "storageKey": "audio/listening-library/hsk5-030.mp3",
+      "text": "这段说明的关键词是“指责”。发言人提醒听众，理解这个概念时既要注意定义，也要注意使用场景。",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "dd237dbf647be978a12062cbc0aa7af41de296c3af6bfdedf9c65497a8735fe2",
+      "durationSeconds": 10.392,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk6-001",
+      "storageKey": "audio/listening-library/hsk6-001.mp3",
+      "text": "报告把“挨着”列为需要重点核对的概念。发言人认为，只有明确它的含义，后续分析才不会偏离证据。",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "d6158b3f8cbcf83fc05f22539d6315cd11f13d624649e3c4f39cc859a5782ac4",
+      "durationSeconds": 10.32,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk6-002",
+      "storageKey": "audio/listening-library/hsk6-002.mp3",
+      "text": "报告把“必修”列为需要重点核对的概念。发言人认为，只有明确它的含义，后续分析才不会偏离证据。",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "c1b7fe92dd3168f1fafcd09eea9d0897c2cec84ada1f3f578f605958399d04b6",
+      "durationSeconds": 10.368,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk6-003",
+      "storageKey": "audio/listening-library/hsk6-003.mp3",
+      "text": "报告把“踩”列为需要重点核对的概念。发言人认为，只有明确它的含义，后续分析才不会偏离证据。",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "9486f13b919ad05abc5a420fa727f8b512908f6306cdba7b7a0ce05dc4cae656",
+      "durationSeconds": 10.224,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk6-004",
+      "storageKey": "audio/listening-library/hsk6-004.mp3",
+      "text": "报告把“炒股”列为需要重点核对的概念。发言人认为，只有明确它的含义，后续分析才不会偏离证据。",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "d5f6ebd1c2ae7742a244066e839429a82ef64c9536937e225872b8f3f0c78910",
+      "durationSeconds": 10.392,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk6-005",
+      "storageKey": "audio/listening-library/hsk6-005.mp3",
+      "text": "报告把“传出”列为需要重点核对的概念。发言人认为，只有明确它的含义，后续分析才不会偏离证据。",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "d0f2e853f5a6402a8b29811f78a352288a25243cfa3add5212b97675cdffaad3",
+      "durationSeconds": 10.32,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk6-006",
+      "storageKey": "audio/listening-library/hsk6-006.mp3",
+      "text": "报告把“大赛”列为需要重点核对的概念。发言人认为，只有明确它的含义，后续分析才不会偏离证据。",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "22b04ea4b59c193b18c98604db11f0afef3d477f0f54f45d86a90cdb3f27ad3c",
+      "durationSeconds": 10.44,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk6-007",
+      "storageKey": "audio/listening-library/hsk6-007.mp3",
+      "text": "报告把“斗争”列为需要重点核对的概念。发言人认为，只有明确它的含义，后续分析才不会偏离证据。",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "5fdbddd8d9655a83c2057876ac9143abf91abc59a85408773f5ba811f6f4841e",
+      "durationSeconds": 10.392,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk6-008",
+      "storageKey": "audio/listening-library/hsk6-008.mp3",
+      "text": "报告把“犯罪”列为需要重点核对的概念。发言人认为，只有明确它的含义，后续分析才不会偏离证据。",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "8435d3e8f608db8ca3f512f013cbdbb2f1f5721f1b9b62ca09cb937a966b5ccb",
+      "durationSeconds": 10.392,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk6-009",
+      "storageKey": "audio/listening-library/hsk6-009.mp3",
+      "text": "报告把“港口”列为需要重点核对的概念。发言人认为，只有明确它的含义，后续分析才不会偏离证据。",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "e725bb86f252fce76b7508e40baa68b0b0a0410827414f1e41bb61d856e97a7d",
+      "durationSeconds": 10.392,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk6-010",
+      "storageKey": "audio/listening-library/hsk6-010.mp3",
+      "text": "报告把“关联”列为需要重点核对的概念。发言人认为，只有明确它的含义，后续分析才不会偏离证据。",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "036bccae2ed1c4d2b0e39248b89eb63749cb27c8c6b6e05ae3df20924be51513",
+      "durationSeconds": 10.392,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk6-011",
+      "storageKey": "audio/listening-library/hsk6-011.mp3",
+      "text": "报告把“洪水”列为需要重点核对的概念。发言人认为，只有明确它的含义，后续分析才不会偏离证据。",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "738c9d5d60006e4001b490ff354ccedbfb069d1009f8293f4c342e6f2de2f57f",
+      "durationSeconds": 10.56,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk6-012",
+      "storageKey": "audio/listening-library/hsk6-012.mp3",
+      "text": "报告把“家园”列为需要重点核对的概念。发言人认为，只有明确它的含义，后续分析才不会偏离证据。",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "9833b0a2ef10e06f5a0a424d65f9e9baa9596fed910344b957dfd06ad32e665d",
+      "durationSeconds": 10.368,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk6-013",
+      "storageKey": "audio/listening-library/hsk6-013.mp3",
+      "text": "报告把“金融”列为需要重点核对的概念。发言人认为，只有明确它的含义，后续分析才不会偏离证据。",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "ad7a7bd8c5da0bca96a6e814abb45551e5989c45ce2a19fffe4e8ee07750502a",
+      "durationSeconds": 10.344,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk6-014",
+      "storageKey": "audio/listening-library/hsk6-014.mp3",
+      "text": "报告把“开设”列为需要重点核对的概念。发言人认为，只有明确它的含义，后续分析才不会偏离证据。",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "fa4fd990b287f9960e83f1846d36fcefa0af8c6d1086befedd057ee7572a1e2e",
+      "durationSeconds": 10.368,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk6-015",
+      "storageKey": "audio/listening-library/hsk6-015.mp3",
+      "text": "报告把“理”列为需要重点核对的概念。发言人认为，只有明确它的含义，后续分析才不会偏离证据。",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "14741128950fb372a09630446a906e3b7ee9adc890b66320d9ded77bc7f3a685",
+      "durationSeconds": 10.128,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk6-016",
+      "storageKey": "audio/listening-library/hsk6-016.mp3",
+      "text": "报告把“梅花”列为需要重点核对的概念。发言人认为，只有明确它的含义，后续分析才不会偏离证据。",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "8fad59f10c8c9bbf526c1760589fc7f7d295eb19f004c0afff9c7f297955d5b6",
+      "durationSeconds": 10.344,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk6-017",
+      "storageKey": "audio/listening-library/hsk6-017.mp3",
+      "text": "报告把“能否”列为需要重点核对的概念。发言人认为，只有明确它的含义，后续分析才不会偏离证据。",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "5428a53539b83dcd19b4bab94f919dbf0dd66bd9416cf21b6486018431770376",
+      "durationSeconds": 10.344,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk6-018",
+      "storageKey": "audio/listening-library/hsk6-018.mp3",
+      "text": "报告把“前方”列为需要重点核对的概念。发言人认为，只有明确它的含义，后续分析才不会偏离证据。",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "c864f7d822d5586e4ec2e5c4353ff0d82e2e5450bfe4a2507038d0443ccab068",
+      "durationSeconds": 10.368,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk6-019",
+      "storageKey": "audio/listening-library/hsk6-019.mp3",
+      "text": "报告把“热点”列为需要重点核对的概念。发言人认为，只有明确它的含义，后续分析才不会偏离证据。",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "b29075b0ef951b9838923bfcfa1da9065360287a37d36c36acab62b57a18ddfd",
+      "durationSeconds": 10.392,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk6-020",
+      "storageKey": "audio/listening-library/hsk6-020.mp3",
+      "text": "报告把“深化”列为需要重点核对的概念。发言人认为，只有明确它的含义，后续分析才不会偏离证据。",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "6343a7184569570929975af8082620cdf3828cba30c91abe8b3fd7694a4ef3a4",
+      "durationSeconds": 10.488,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk6-021",
+      "storageKey": "audio/listening-library/hsk6-021.mp3",
+      "text": "报告把“爽”列为需要重点核对的概念。发言人认为，只有明确它的含义，后续分析才不会偏离证据。",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "a218df205c28550acf15a9cb43ae292f9414dc266c37d55350a78657f7f48f8d",
+      "durationSeconds": 10.176,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk6-022",
+      "storageKey": "audio/listening-library/hsk6-022.mp3",
+      "text": "报告把“天堂”列为需要重点核对的概念。发言人认为，只有明确它的含义，后续分析才不会偏离证据。",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "1bfb6c78f7fcd051fa304adca4c8f0eb62e1ab3d974cdd2198d7d7076d1523dc",
+      "durationSeconds": 10.416,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk6-023",
+      "storageKey": "audio/listening-library/hsk6-023.mp3",
+      "text": "报告把“外出”列为需要重点核对的概念。发言人认为，只有明确它的含义，后续分析才不会偏离证据。",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "e7bd012f2eea38a00a541647a7ad81df21e7b591deb2e86b27ce1e25a4bf297d",
+      "durationSeconds": 10.392,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk6-024",
+      "storageKey": "audio/listening-library/hsk6-024.mp3",
+      "text": "报告把“细胞”列为需要重点核对的概念。发言人认为，只有明确它的含义，后续分析才不会偏离证据。",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "6b6d614e62992c6092044b634bf629a89b29315a375c6ca0c09d59063e67a1ad",
+      "durationSeconds": 10.32,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk6-025",
+      "storageKey": "audio/listening-library/hsk6-025.mp3",
+      "text": "报告把“凶手”列为需要重点核对的概念。发言人认为，只有明确它的含义，后续分析才不会偏离证据。",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "697327ec10b8fdeddacefa3cc0d530c156d5e87f102b3e833fb293bf5eccc23a",
+      "durationSeconds": 10.392,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk6-026",
+      "storageKey": "audio/listening-library/hsk6-026.mp3",
+      "text": "报告把“一道”列为需要重点核对的概念。发言人认为，只有明确它的含义，后续分析才不会偏离证据。",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "f25fe552883efba43e8fb32cc165bda6c7b4a4733954d6dedbaf81a18e2b3b76",
+      "durationSeconds": 10.248,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk6-027",
+      "storageKey": "audio/listening-library/hsk6-027.mp3",
+      "text": "报告把“游人”列为需要重点核对的概念。发言人认为，只有明确它的含义，后续分析才不会偏离证据。",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "0c9cb09675ff2d0682cb6ab6bdcc176722d5e499885c8b5da32e78c709e9ac0a",
+      "durationSeconds": 10.248,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk6-028",
+      "storageKey": "audio/listening-library/hsk6-028.mp3",
+      "text": "报告把“早晚”列为需要重点核对的概念。发言人认为，只有明确它的含义，后续分析才不会偏离证据。",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "f938c4bd40696c35246f2d028e4c7a2b4f9d9d22ec2d46145c946adc0c14fb19",
+      "durationSeconds": 10.488,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk6-029",
+      "storageKey": "audio/listening-library/hsk6-029.mp3",
+      "text": "报告把“支撑”列为需要重点核对的概念。发言人认为，只有明确它的含义，后续分析才不会偏离证据。",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "b35702212577d7b08e302d3413547c68bed290400c49e56a5fc13b2b8e0e5547",
+      "durationSeconds": 10.44,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk6-030",
+      "storageKey": "audio/listening-library/hsk6-030.mp3",
+      "text": "报告把“转”列为需要重点核对的概念。发言人认为，只有明确它的含义，后续分析才不会偏离证据。",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "d17d4ee79c0a71227ad95f0d4dc901687f673dc17480ac8e0128aaffa2d96ddc",
+      "durationSeconds": 10.272,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk7-001",
+      "storageKey": "audio/listening-library/hsk7-001.mp3",
+      "text": "有人把“光滑”视为唯一依据，但发言人提醒，单一概念不足以支持完整结论。",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "3ac4f994d279bea42ca2251629a85d6f546afe4807f16cb8efd759e1a07bb3bc",
+      "durationSeconds": 7.896,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk7-002",
+      "storageKey": "audio/listening-library/hsk7-002.mp3",
+      "text": "报告使用了“历来”这个词。为了避免误解，主持人要求作者说明它在本次讨论中的具体含义。",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "a9395a4d62eac3d827165c9596cb712f973f839e1677b11018ed5c2810e65e6c",
+      "durationSeconds": 9.36,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk7-003",
+      "storageKey": "audio/listening-library/hsk7-003.mp3",
+      "text": "两种观点都涉及“轻微”，但侧重点不同。发言人建议先确认共同定义，再讨论分歧。",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "dd54db0c9bcdf30585d57d884c0eb0b4b2e46b2f4593234045c9c617ddff0d09",
+      "durationSeconds": 9.24,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk7-004",
+      "storageKey": "audio/listening-library/hsk7-004.mp3",
+      "text": "讨论进入关键阶段时，发言人特别提到“完好”。他建议先澄清这个概念，再比较不同方案。",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "b3fb42b2d551bbb049a3e244ff10dae294754ef5254cddad75b60402c5343200",
+      "durationSeconds": 9.72,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk7-005",
+      "storageKey": "audio/listening-library/hsk7-005.mp3",
+      "text": "有人把“赢家”视为唯一依据，但发言人提醒，单一概念不足以支持完整结论。",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "22717b47fec22a9d5259421370723b3a5c0395534f9201b50fb92f6f5b592b62",
+      "durationSeconds": 7.896,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk7-006",
+      "storageKey": "audio/listening-library/hsk7-006.mp3",
+      "text": "报告使用了“朝代”这个词。为了避免误解，主持人要求作者说明它在本次讨论中的具体含义。",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "eb30a4e6c416c7e5db99afb75900e87d840a1d3cea57cc229ec7ca2358b13348",
+      "durationSeconds": 9.432,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk7-007",
+      "storageKey": "audio/listening-library/hsk7-007.mp3",
+      "text": "两种观点都涉及“概论”，但侧重点不同。发言人建议先确认共同定义，再讨论分歧。",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "11485a8c9740dd6be058bf304ca23ed31e7f1ce3bed24b489bc529dee60379f7",
+      "durationSeconds": 9.288,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk7-008",
+      "storageKey": "audio/listening-library/hsk7-008.mp3",
+      "text": "讨论进入关键阶段时，发言人特别提到“胶囊”。他建议先澄清这个概念，再比较不同方案。",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "d601af9e8d36bf7a48e93937ac1d5d9557e7e20357b806132c2f300c835b14f7",
+      "durationSeconds": 9.48,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk7-009",
+      "storageKey": "audio/listening-library/hsk7-009.mp3",
+      "text": "有人把“嫩”视为唯一依据，但发言人提醒，单一概念不足以支持完整结论。",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "a766ef2c9021f6633c7254938a4f308c5a3792b06a3eb41e70ff8aca0b671d45",
+      "durationSeconds": 7.704,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk7-010",
+      "storageKey": "audio/listening-library/hsk7-010.mp3",
+      "text": "报告使用了“诉讼”这个词。为了避免误解，主持人要求作者说明它在本次讨论中的具体含义。",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "522ffe2b63913ef0a250ffa123f17509f7d81bb34ab180a662fde012617efd62",
+      "durationSeconds": 9.384,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk7-011",
+      "storageKey": "audio/listening-library/hsk7-011.mp3",
+      "text": "两种观点都涉及“行走”，但侧重点不同。发言人建议先确认共同定义，再讨论分歧。",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "ea77617d67f6cdbb52664254bc9d341019eaaba50e6c8ac403c835db6e31d441",
+      "durationSeconds": 9.288,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk7-012",
+      "storageKey": "audio/listening-library/hsk7-012.mp3",
+      "text": "讨论进入关键阶段时，发言人特别提到“忠诚”。他建议先澄清这个概念，再比较不同方案。",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "3d47bded994fc7aedbad450b92cfc096ff4e3b7ba8f694fb3004e596736969e1",
+      "durationSeconds": 9.744,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk7-013",
+      "storageKey": "audio/listening-library/hsk7-013.mp3",
+      "text": "有人把“船舶”视为唯一依据，但发言人提醒，单一概念不足以支持完整结论。",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "7dabc296dd7561e1468e30c36a0e9fec5227934b280b3e6d22486e40e67774e0",
+      "durationSeconds": 7.968,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk7-014",
+      "storageKey": "audio/listening-library/hsk7-014.mp3",
+      "text": "报告使用了“改动”这个词。为了避免误解，主持人要求作者说明它在本次讨论中的具体含义。",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "85e4331069d3e206f04b20aff6a6b5a182832f1e9bb5a3c706f7e56b97a1ac16",
+      "durationSeconds": 9.384,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk7-015",
+      "storageKey": "audio/listening-library/hsk7-015.mp3",
+      "text": "两种观点都涉及“界限”，但侧重点不同。发言人建议先确认共同定义，再讨论分歧。",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "d85d2e2d8c0b9033a72bf67f7aedba06cba05b1091eebc4fa0f189b3f3756121",
+      "durationSeconds": 9.336,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk7-016",
+      "storageKey": "audio/listening-library/hsk7-016.mp3",
+      "text": "讨论进入关键阶段时，发言人特别提到“末日”。他建议先澄清这个概念，再比较不同方案。",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "f6029c7df59e8cfc1b58e853689b5ab252e7e695944d3156d62b6fd0e5107150",
+      "durationSeconds": 9.672,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk7-017",
+      "storageKey": "audio/listening-library/hsk7-017.mp3",
+      "text": "有人把“上场”视为唯一依据，但发言人提醒，单一概念不足以支持完整结论。",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "5f5618c8eaf2e79b915f93855091eece70a48f9473ca9fece95a6bcccf51a32b",
+      "durationSeconds": 7.872,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk7-018",
+      "storageKey": "audio/listening-library/hsk7-018.mp3",
+      "text": "报告使用了“无私”这个词。为了避免误解，主持人要求作者说明它在本次讨论中的具体含义。",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "cf9abc6d0086355b6a8d8e3cd409d0f9a2dd941b549093acf7e2927ea4139870",
+      "durationSeconds": 9.432,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk7-019",
+      "storageKey": "audio/listening-library/hsk7-019.mp3",
+      "text": "两种观点都涉及“责怪”，但侧重点不同。发言人建议先确认共同定义，再讨论分歧。",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "8577e5560f6d0c8ed1f11e032643eb2e5949ecb2f416bb78295e8191767f9fc3",
+      "durationSeconds": 9.264,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk7-020",
+      "storageKey": "audio/listening-library/hsk7-020.mp3",
+      "text": "讨论进入关键阶段时，发言人特别提到“呈现”。他建议先澄清这个概念，再比较不同方案。",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "866b858bb5db664bb1237efba8034fa2da457f636e45d8e23690b47a12befa4c",
+      "durationSeconds": 9.696,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk7-021",
+      "storageKey": "audio/listening-library/hsk7-021.mp3",
+      "text": "有人把“奋勇”视为唯一依据，但发言人提醒，单一概念不足以支持完整结论。",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "bd8e4b2d1119af69fe7f01c1050e8dda2cb736198a393926406a68bdeb3dfa06",
+      "durationSeconds": 7.92,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk7-022",
+      "storageKey": "audio/listening-library/hsk7-022.mp3",
+      "text": "报告使用了“计策”这个词。为了避免误解，主持人要求作者说明它在本次讨论中的具体含义。",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "3fb82fd3d43690d8d19fdbf38dc69aa72c611a847d3aa8e28858d5fdfd3f46ef",
+      "durationSeconds": 9.432,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk7-023",
+      "storageKey": "audio/listening-library/hsk7-023.mp3",
+      "text": "两种观点都涉及“领土”，但侧重点不同。发言人建议先确认共同定义，再讨论分歧。",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "f0db63241ed66285fc436deef7793cd2bb3f6e158757c0c93e2efd0607ffc9d9",
+      "durationSeconds": 9.336,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk7-024",
+      "storageKey": "audio/listening-library/hsk7-024.mp3",
+      "text": "讨论进入关键阶段时，发言人特别提到“亲生”。他建议先澄清这个概念，再比较不同方案。",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "9b059c9944a280611fa7341d1f540843402db19a6ff0e7bcfcd3f61f50d09e95",
+      "durationSeconds": 9.696,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk8-001",
+      "storageKey": "audio/listening-library/hsk8-001.mp3",
+      "text": "部分参与者主张以“碰撞”作为主要判断标准。然而报告指出，指标本身也有适用边界，因此还需要结合背景与样本构成。",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "5fbdd09c9735529838774da1c4b9c021bef4a42074fa0141fdec107bc26c52d1",
+      "durationSeconds": 12.768,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk8-002",
+      "storageKey": "audio/listening-library/hsk8-002.mp3",
+      "text": "评审人注意到材料多次使用“声誉”，却没有给出统一定义。他建议补充操作标准，以便不同团队能够复核同一结论。",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "e496dee41a3591d756a73254e2b70ff52257fa2f36c6779cb05d900e516f357d",
+      "durationSeconds": 11.856,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk8-003",
+      "storageKey": "audio/listening-library/hsk8-003.mp3",
+      "text": "两个方案都谈到“细心”，但一个强调短期效果，另一个关注长期影响。发言人提醒，比较之前必须先统一时间尺度。",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "8684173de57967d2bcd4e9a885c665f47bfc73ff485b1654be3b0252569e4f3b",
+      "durationSeconds": 11.976,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk8-004",
+      "storageKey": "audio/listening-library/hsk8-004.mp3",
+      "text": "简报首先肯定现有数据的价值，随后把“召集”列为仍需解释的关键概念。发言人认为，如果定义不清，表面一致的结果可能无法直接比较。",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "cfaf7de4bedf1e133b3da8fa2b915bfc7d18302c13f156cd1c1149a75eca8212",
+      "durationSeconds": 14.208,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk8-005",
+      "storageKey": "audio/listening-library/hsk8-005.mp3",
+      "text": "部分参与者主张以“抵触”作为主要判断标准。然而报告指出，指标本身也有适用边界，因此还需要结合背景与样本构成。",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "d3789eeed87fb51ac890304ac7b05e6dbf9fa39e0198ba77f00e984a4076ee40",
+      "durationSeconds": 12.744,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk8-006",
+      "storageKey": "audio/listening-library/hsk8-006.mp3",
+      "text": "评审人注意到材料多次使用“集结”，却没有给出统一定义。他建议补充操作标准，以便不同团队能够复核同一结论。",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "1d53a24cbac773a63a8a9f91102a06382f4f098de9bdd8d9100b052f1a598136",
+      "durationSeconds": 11.88,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk8-007",
+      "storageKey": "audio/listening-library/hsk8-007.mp3",
+      "text": "两个方案都谈到“骗人”，但一个强调短期效果，另一个关注长期影响。发言人提醒，比较之前必须先统一时间尺度。",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "6c37a7e8ded40528f185bc09530295bdd409844f69f13a02fec709cfba0782cf",
+      "durationSeconds": 12.0,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk8-008",
+      "storageKey": "audio/listening-library/hsk8-008.mp3",
+      "text": "简报首先肯定现有数据的价值，随后把“偷懒”列为仍需解释的关键概念。发言人认为，如果定义不清，表面一致的结果可能无法直接比较。",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "6b4f31c8e7c1c64e362bcf5775e742cb3c6697349c480ea49c80a18597659af7",
+      "durationSeconds": 14.136,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk8-009",
+      "storageKey": "audio/listening-library/hsk8-009.mp3",
+      "text": "部分参与者主张以“邮编”作为主要判断标准。然而报告指出，指标本身也有适用边界，因此还需要结合背景与样本构成。",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "aeaf56d9b1052c29cb4c8649806a7abd5a15de8a3977105bff8847b35033089c",
+      "durationSeconds": 12.6,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk8-010",
+      "storageKey": "audio/listening-library/hsk8-010.mp3",
+      "text": "评审人注意到材料多次使用“畅销”，却没有给出统一定义。他建议补充操作标准，以便不同团队能够复核同一结论。",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "21b9f261c10dee91df1e67830c8f6a8afce49d164a9d9a2d19325ac1b239cc8b",
+      "durationSeconds": 11.856,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk8-011",
+      "storageKey": "audio/listening-library/hsk8-011.mp3",
+      "text": "两个方案都谈到“欢呼”，但一个强调短期效果，另一个关注长期影响。发言人提醒，比较之前必须先统一时间尺度。",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "1ce2cc221ab9884eee8a0a46ab4222111dff012472babeca33795a0795bba376",
+      "durationSeconds": 11.952,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk8-012",
+      "storageKey": "audio/listening-library/hsk8-012.mp3",
+      "text": "简报首先肯定现有数据的价值，随后把“陪伴”列为仍需解释的关键概念。发言人认为，如果定义不清，表面一致的结果可能无法直接比较。",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "43a9209fa8fdef04e8fda05e9dd530aa3c7ebe39c29269e5b87464f0864dfc99",
+      "durationSeconds": 14.064,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk8-013",
+      "storageKey": "audio/listening-library/hsk8-013.mp3",
+      "text": "部分参与者主张以“宪法”作为主要判断标准。然而报告指出，指标本身也有适用边界，因此还需要结合背景与样本构成。",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "10eda055267e39fb54729c5f01a90cb6bb4bc996305e43c785344b9644ee39d2",
+      "durationSeconds": 12.72,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk8-014",
+      "storageKey": "audio/listening-library/hsk8-014.mp3",
+      "text": "评审人注意到材料多次使用“不难”，却没有给出统一定义。他建议补充操作标准，以便不同团队能够复核同一结论。",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "f672bfbf5a8bf1ea8ae18b938c8593ab0417006ad28b5e1f794c4cd84e3c2605",
+      "durationSeconds": 11.832,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk8-015",
+      "storageKey": "audio/listening-library/hsk8-015.mp3",
+      "text": "两个方案都谈到“管辖”，但一个强调短期效果，另一个关注长期影响。发言人提醒，比较之前必须先统一时间尺度。",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "c6bec41a26632d0c42d8da17e07db70d4cfaddf02cd01e8c60c908f17aab5541",
+      "durationSeconds": 11.904,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk8-016",
+      "storageKey": "audio/listening-library/hsk8-016.mp3",
+      "text": "简报首先肯定现有数据的价值，随后把“垄断”列为仍需解释的关键概念。发言人认为，如果定义不清，表面一致的结果可能无法直接比较。",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "c9ffc3061898dd8cfa7cc6640545e61d4633a54a44ac1499ce66e68fa0f06605",
+      "durationSeconds": 14.256,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk8-017",
+      "storageKey": "audio/listening-library/hsk8-017.mp3",
+      "text": "部分参与者主张以“下游”作为主要判断标准。然而报告指出，指标本身也有适用边界，因此还需要结合背景与样本构成。",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "2056eecc658850a1813a10dec101b0f618f6ec4ad264a443193de13e22d04349",
+      "durationSeconds": 12.672,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk8-018",
+      "storageKey": "audio/listening-library/hsk8-018.mp3",
+      "text": "评审人注意到材料多次使用“反击”，却没有给出统一定义。他建议补充操作标准，以便不同团队能够复核同一结论。",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "7210ac0b2b3ddc24abead8e7228f55485f6f8c5a27cbd2ac5ec972e1eb2c9dc9",
+      "durationSeconds": 11.88,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk8-019",
+      "storageKey": "audio/listening-library/hsk8-019.mp3",
+      "text": "两个方案都谈到“农作物”，但一个强调短期效果，另一个关注长期影响。发言人提醒，比较之前必须先统一时间尺度。",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "b71df83650b2a2e65acf259a5993ba1160b265cafca02aff2c2648d59644d151",
+      "durationSeconds": 12.048,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk8-020",
+      "storageKey": "audio/listening-library/hsk8-020.mp3",
+      "text": "简报首先肯定现有数据的价值，随后把“要强”列为仍需解释的关键概念。发言人认为，如果定义不清，表面一致的结果可能无法直接比较。",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "a9f8c5393f8b7adcde4723c2e8e5ea410fc062e719d3ee1f2a5d2f9f5c3cd14a",
+      "durationSeconds": 14.16,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk8-021",
+      "storageKey": "audio/listening-library/hsk8-021.mp3",
+      "text": "部分参与者主张以“服务器”作为主要判断标准。然而报告指出，指标本身也有适用边界，因此还需要结合背景与样本构成。",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "c2a62078732c602e442dbee2bd87bcdfcff43afb460a473ecc669d6458fb9590",
+      "durationSeconds": 12.912,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk8-022",
+      "storageKey": "audio/listening-library/hsk8-022.mp3",
+      "text": "评审人注意到材料多次使用“秘诀”，却没有给出统一定义。他建议补充操作标准，以便不同团队能够复核同一结论。",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "99688ae16731f59097be7cb31a68788e2cd2a0d0a248e06230205ebda722d69a",
+      "durationSeconds": 11.832,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk8-023",
+      "storageKey": "audio/listening-library/hsk8-023.mp3",
+      "text": "两个方案都谈到“献血”，但一个强调短期效果，另一个关注长期影响。发言人提醒，比较之前必须先统一时间尺度。",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "31304ad686fa257739ed1a67acd773485981ee76e4d1b8005a70b3795e752619",
+      "durationSeconds": 11.928,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk8-024",
+      "storageKey": "audio/listening-library/hsk8-024.mp3",
+      "text": "简报首先肯定现有数据的价值，随后把“电网”列为仍需解释的关键概念。发言人认为，如果定义不清，表面一致的结果可能无法直接比较。",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "4975a49871bd347409010986b7e6b2bf9d5749f75d884caabd86524d8ce24273",
+      "durationSeconds": 14.184,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk9-001",
+      "storageKey": "audio/listening-library/hsk9-001.mp3",
+      "text": "有人建议把“夺冠”作为政策成效的决定性指标。反方指出，单一指标可能掩盖影响如何分布，也无法解释长期变化。因此，最终建议是建立多维评估并持续公开数据。",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "b6509d843bf1004fd68bdf82785f5454156dba9f215caae4236ac9dd6d8fe5b3",
+      "durationSeconds": 17.808,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk9-002",
+      "storageKey": "audio/listening-library/hsk9-002.mp3",
+      "text": "报告在结论部分引用“扭头”，但没有说明复杂案例是否被排除。评审人认为，这个遗漏会削弱结果的可推广性，要求作者补充案例构成、执行成本与稳定性分析。",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "461a8c31563685f9dce4791bfcb3c2c925b5df7b5f4ac7d0c4078ffe950ab814",
+      "durationSeconds": 17.328,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk9-003",
+      "storageKey": "audio/listening-library/hsk9-003.mp3",
+      "text": "争议双方都接受“振奋”的重要性，却对它应当如何衡量存在分歧。主持人没有草率选择一方，而是要求先形成可复核定义，再用同一组证据比较两种主张。",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "16bd4f0b4e566544856725f4499fccdcf9bea4f3bd409b35530e9c82e77dcd36",
+      "durationSeconds": 16.104,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk9-004",
+      "storageKey": "audio/listening-library/hsk9-004.mp3",
+      "text": "论证承认现有研究提供了重要线索，却把“凉爽”视为尚未解决的核心概念。由于样本范围与观察周期都有限，发言人反对直接推广结论，并主张公开假设、补充证据后再复核。",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "b92860f69605dad90e47e4663abdb8f5d901eddfae3ee522750fa75a29e5e847",
+      "durationSeconds": 18.12,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk9-005",
+      "storageKey": "audio/listening-library/hsk9-005.mp3",
+      "text": "有人建议把“反感”作为政策成效的决定性指标。反方指出，单一指标可能掩盖影响如何分布，也无法解释长期变化。因此，最终建议是建立多维评估并持续公开数据。",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "e361f8cf8f934f4b28e949f30de7a7dedaf8ddcafb4ac347dd9d56767d6fcf3f",
+      "durationSeconds": 17.856,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk9-006",
+      "storageKey": "audio/listening-library/hsk9-006.mp3",
+      "text": "报告在结论部分引用“取决于”，但没有说明复杂案例是否被排除。评审人认为，这个遗漏会削弱结果的可推广性，要求作者补充案例构成、执行成本与稳定性分析。",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "b08499b4f6d234571cfff72acccfd4be137479590f0a071f8588976208e0db84",
+      "durationSeconds": 17.352,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk9-007",
+      "storageKey": "audio/listening-library/hsk9-007.mp3",
+      "text": "争议双方都接受“代言人”的重要性，却对它应当如何衡量存在分歧。主持人没有草率选择一方，而是要求先形成可复核定义，再用同一组证据比较两种主张。",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "c98e7a471a4a0e198804bef315d04992b162dc3e6db0ac6f60c4be91c67dbc2c",
+      "durationSeconds": 16.2,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk9-008",
+      "storageKey": "audio/listening-library/hsk9-008.mp3",
+      "text": "论证承认现有研究提供了重要线索，却把“养老院”视为尚未解决的核心概念。由于样本范围与观察周期都有限，发言人反对直接推广结论，并主张公开假设、补充证据后再复核。",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "8874202969a2e067d004ae2090c7861df0e3cc6151837399aa194cc01f58a787",
+      "durationSeconds": 18.432,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk9-009",
+      "storageKey": "audio/listening-library/hsk9-009.mp3",
+      "text": "有人建议把“流向”作为政策成效的决定性指标。反方指出，单一指标可能掩盖影响如何分布，也无法解释长期变化。因此，最终建议是建立多维评估并持续公开数据。",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "c9b6dbfa362fd8e0c2879c3a8cb3ca45aaf98ef65b67677c5286e13929f94b8f",
+      "durationSeconds": 17.856,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk9-010",
+      "storageKey": "audio/listening-library/hsk9-010.mp3",
+      "text": "报告在结论部分引用“古人”，但没有说明复杂案例是否被排除。评审人认为，这个遗漏会削弱结果的可推广性，要求作者补充案例构成、执行成本与稳定性分析。",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "250b9df93cbcf1d4d70f82653afb8e732579953079f31ba8c3342fdf191d1380",
+      "durationSeconds": 17.304,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk9-011",
+      "storageKey": "audio/listening-library/hsk9-011.mp3",
+      "text": "争议双方都接受“阿拉伯语”的重要性，却对它应当如何衡量存在分歧。主持人没有草率选择一方，而是要求先形成可复核定义，再用同一组证据比较两种主张。",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "c7d16c76331850ee86c868639cfaa9da6b3604aa20a22b7cb248d3cb5f240ff5",
+      "durationSeconds": 16.488,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk9-012",
+      "storageKey": "audio/listening-library/hsk9-012.mp3",
+      "text": "论证承认现有研究提供了重要线索，却把“缩影”视为尚未解决的核心概念。由于样本范围与观察周期都有限，发言人反对直接推广结论，并主张公开假设、补充证据后再复核。",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "835beb9f871b8a9dad0ba1ef05dfb291c808c6b4f86f5947f7c9515205d233e4",
+      "durationSeconds": 18.072,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk9-013",
+      "storageKey": "audio/listening-library/hsk9-013.mp3",
+      "text": "有人建议把“心灵手巧”作为政策成效的决定性指标。反方指出，单一指标可能掩盖影响如何分布，也无法解释长期变化。因此，最终建议是建立多维评估并持续公开数据。",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "3dd29dcb9e35d6b32c796564678358e40cecc6fb72e684320018ef0a44dca31c",
+      "durationSeconds": 18.288,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk9-014",
+      "storageKey": "audio/listening-library/hsk9-014.mp3",
+      "text": "报告在结论部分引用“小心翼翼”，但没有说明复杂案例是否被排除。评审人认为，这个遗漏会削弱结果的可推广性，要求作者补充案例构成、执行成本与稳定性分析。",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "1f2bb89b399601dfcbfbcfcaf978205eba1edc9c4e94f91a66ab179226fad5c2",
+      "durationSeconds": 17.808,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk9-015",
+      "storageKey": "audio/listening-library/hsk9-015.mp3",
+      "text": "争议双方都接受“犹豫不决”的重要性，却对它应当如何衡量存在分歧。主持人没有草率选择一方，而是要求先形成可复核定义，再用同一组证据比较两种主张。",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "276ad4bb06de9bc296c6a949ab05823a9100a99e3810c2fe71d2333a081010c1",
+      "durationSeconds": 16.416,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk9-016",
+      "storageKey": "audio/listening-library/hsk9-016.mp3",
+      "text": "论证承认现有研究提供了重要线索，却把“爱理不理”视为尚未解决的核心概念。由于样本范围与观察周期都有限，发言人反对直接推广结论，并主张公开假设、补充证据后再复核。",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "2128deaac63dd36dfea85beed0f39c06666031833816cb4a5e732698ea487bcc",
+      "durationSeconds": 18.504,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk9-017",
+      "storageKey": "audio/listening-library/hsk9-017.mp3",
+      "text": "有人建议把“富含”作为政策成效的决定性指标。反方指出，单一指标可能掩盖影响如何分布，也无法解释长期变化。因此，最终建议是建立多维评估并持续公开数据。",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "4103f3778094187355918d1d62799162bba86dc4e56e4cf7e4cf396bf6777664",
+      "durationSeconds": 17.904,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk9-018",
+      "storageKey": "audio/listening-library/hsk9-018.mp3",
+      "text": "报告在结论部分引用“闹着玩儿”，但没有说明复杂案例是否被排除。评审人认为，这个遗漏会削弱结果的可推广性，要求作者补充案例构成、执行成本与稳定性分析。",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "e3982b63a10fafa1b9be29b446bfc5679980cdab8176c5809958411f813d301b",
+      "durationSeconds": 17.304,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk9-019",
+      "storageKey": "audio/listening-library/hsk9-019.mp3",
+      "text": "争议双方都接受“难以想象”的重要性，却对它应当如何衡量存在分歧。主持人没有草率选择一方，而是要求先形成可复核定义，再用同一组证据比较两种主张。",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "041e4d3c924233b310d68bcdda91da52d5a8bb0df6ff38cd5bcffa873c5367c7",
+      "durationSeconds": 16.512,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk9-020",
+      "storageKey": "audio/listening-library/hsk9-020.mp3",
+      "text": "论证承认现有研究提供了重要线索，却把“兴高采烈”视为尚未解决的核心概念。由于样本范围与观察周期都有限，发言人反对直接推广结论，并主张公开假设、补充证据后再复核。",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "afbb9e614dca7e82d884c41c58197a35158537d1fb292872982abcb4e3302e84",
+      "durationSeconds": 18.672,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk9-021",
+      "storageKey": "audio/listening-library/hsk9-021.mp3",
+      "text": "有人建议把“一目了然”作为政策成效的决定性指标。反方指出，单一指标可能掩盖影响如何分布，也无法解释长期变化。因此，最终建议是建立多维评估并持续公开数据。",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "ca559b24c25175d16c8ffba496dd16f04385d9bcd3b6ffb599913cd68b01a313",
+      "durationSeconds": 18.192,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk9-022",
+      "storageKey": "audio/listening-library/hsk9-022.mp3",
+      "text": "报告在结论部分引用“不亦乐乎”，但没有说明复杂案例是否被排除。评审人认为，这个遗漏会削弱结果的可推广性，要求作者补充案例构成、执行成本与稳定性分析。",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "8f2f584c693db270b4e8056187acf0eb0abe0bb372a0ee02c90741c6bcdd3d24",
+      "durationSeconds": 17.664,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk9-023",
+      "storageKey": "audio/listening-library/hsk9-023.mp3",
+      "text": "争议双方都接受“一事无成”的重要性，却对它应当如何衡量存在分歧。主持人没有草率选择一方，而是要求先形成可复核定义，再用同一组证据比较两种主张。",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "e908d9619a0d4ad2a89a7eb03b2d8e33efa961411fa28bb60e9540650d200edd",
+      "durationSeconds": 16.464,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    },
+    {
+      "id": "hsk9-024",
+      "storageKey": "audio/listening-library/hsk9-024.mp3",
+      "text": "论证承认现有研究提供了重要线索，却把“大惊小怪”视为尚未解决的核心概念。由于样本范围与观察周期都有限，发言人反对直接推广结论，并主张公开假设、补充证据后再复核。",
+      "voice": "zh-CN-XiaoxiaoNeural",
+      "rate": "-8%",
+      "checksumSha256": "8f6adc2724fa7257a4562043bf093dc9b044ad20fb76182dd1b96840842de65a",
+      "durationSeconds": 18.624,
+      "authorization": {
+        "status": "authorized",
+        "license": "HSKKit streaming audio license v1",
+        "evidenceUrl": "https://hskkit.com/content-license"
+      },
+      "contentQaStatus": "approved",
+      "technicalQaStatus": "approved",
+      "lifecycleStatus": "published"
+    }
+  ]
+}
