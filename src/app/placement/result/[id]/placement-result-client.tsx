@@ -77,43 +77,49 @@ export default function PlacementResultClient({ resultId }: { resultId: string }
     );
   }
 
-  const weakLabels = result.weakSkills.map((skill) => skill === "reading" ? "reading" : skill === "listening" ? "listening" : "vocabulary & grammar");
+  const weakLabels = result.weakSkills.map((skill) => skill === "reading" ? "Reading" : skill === "listening" ? "Listening" : "Vocabulary & grammar");
+  const primaryWeakSkill = weakLabels[0] ?? "Vocabulary & grammar";
+  const practiceSkill = result.weakSkills.includes("listening") ? "listening" : result.weakSkills.includes("reading") ? "reading" : "vocabulary";
   const todayHref = `/today?level=${result.recommendedLevel}&source=placement&result=${encodeURIComponent(result.id)}`;
   const catalogLevel = result.recommendedLevel;
-  const practiceHref = `/practice/${Math.min(result.recommendedLevel, 7)}/${result.weakSkills.includes("listening") ? "listening" : result.weakSkills.includes("reading") ? "reading" : "vocabulary"}`;
+  const practiceHref = `/practice/${Math.min(result.recommendedLevel, 7)}/${practiceSkill}`;
   return (
-    <main className="mx-auto min-h-[70vh] max-w-4xl px-5 py-12 sm:py-16">
-      <p className="text-sm font-bold uppercase tracking-[0.18em] text-blue-700">Your learning suggestion</p>
-      <div className="mt-4 grid items-start gap-6 lg:grid-cols-[1.2fr_.8fr]">
-        <section className="rounded-3xl border border-blue-200 bg-blue-50 p-7 sm:p-10" aria-labelledby="result-heading">
-          <p className="text-sm font-bold text-blue-800">Recommended starting point</p>
-          <h1 className="mt-2 text-5xl font-black tracking-tight text-slate-950 sm:text-6xl" id="result-heading">Level {result.recommendedLevel}</h1>
-          <span className="mt-5 inline-flex rounded-full bg-amber-100 px-3 py-1 text-sm font-bold text-amber-900">{result.confidence.toUpperCase()} confidence</span>
-          <p className="mt-5 leading-7 text-slate-700">{result.evidenceSummary}</p>
-          <p className="mt-3 text-sm leading-6 text-slate-600">{result.disclaimer}</p>
-        </section>
-        <aside className="rounded-3xl border border-slate-200 bg-white p-7 shadow-sm" aria-label="Evidence summary">
-          <h2 className="text-xl font-black text-slate-950">Evidence used</h2>
-          <dl className="mt-5 space-y-4 text-sm">
-            <div><dt className="font-semibold text-slate-500">Correct</dt><dd className="mt-1 text-lg font-bold text-slate-950">{result.correctCount} / {result.totalCount}</dd></div>
-            <div><dt className="font-semibold text-slate-500">Not measured</dt><dd className="mt-1 font-bold capitalize text-slate-950">{result.missingDimensions.join(", ")}</dd></div>
-            <div><dt className="font-semibold text-slate-500">Needs more practice</dt><dd className="mt-1 font-bold text-slate-950">{weakLabels.length ? weakLabels.join(", ") : "No text-based weakness detected"}</dd></div>
+    <main className="mx-auto min-h-[70vh] max-w-4xl px-5 py-5 sm:py-14">
+      <p className="text-sm font-bold uppercase tracking-[0.18em] text-blue-700">Your placement result</p>
+      <section className="mt-2 rounded-3xl border border-blue-200 bg-blue-50 p-4 sm:mt-4 sm:p-9" aria-labelledby="result-heading">
+        <div className="grid gap-4 lg:grid-cols-[1fr_.8fr] lg:items-start lg:gap-7">
+          <div>
+            <p className="text-sm font-bold text-blue-800">Recommended starting point</p>
+            <h1 className="mt-1 text-3xl font-black tracking-tight text-slate-950 sm:mt-2 sm:text-5xl" id="result-heading">Level {result.recommendedLevel}</h1>
+            <span className="mt-2 inline-flex rounded-full bg-amber-100 px-3 py-1 text-sm font-bold text-amber-900 sm:mt-4">{result.confidence.toUpperCase()} confidence</span>
+            <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-700 sm:mt-4 sm:text-base sm:leading-7">{result.evidenceSummary}</p>
+          </div>
+          <dl className="grid grid-cols-2 gap-2 text-sm sm:gap-3 lg:grid-cols-1">
+            <div className="rounded-2xl bg-white p-3 sm:p-4"><dt className="font-bold text-slate-500">Your strengths</dt><dd className="mt-1 font-black text-slate-950 sm:text-lg">{result.correctCount} / {result.totalCount} correct</dd></div>
+            <div className="rounded-2xl bg-white p-3 sm:p-4"><dt className="font-bold text-slate-500">Focus areas</dt><dd className="mt-1 font-bold text-slate-950">{weakLabels.length ? weakLabels.join(", ") : "Keep building across all measured skills"}</dd></div>
+            {result.missingDimensions.length ? <div className="col-span-2 rounded-2xl bg-white p-3 sm:p-4 lg:col-span-1"><dt className="font-bold text-slate-500">Not measured</dt><dd className="mt-1 font-bold capitalize text-slate-950">{result.missingDimensions.join(", ")}</dd></div> : null}
           </dl>
-        </aside>
-      </div>
-      <div className="mt-8 rounded-3xl border border-slate-200 bg-white p-6 sm:p-8">
-        <h2 className="text-2xl font-black text-slate-950">Your next step</h2>
-        <p className="mt-2 leading-7 text-slate-600">Use Level {result.recommendedLevel} as a starting point. Today will keep the source and can adjust the queue as more evidence becomes available.</p>
-        <div className="mt-6 flex flex-col gap-3 sm:flex-row">
-          <Link className="inline-flex min-h-12 items-center justify-center rounded-xl bg-blue-600 px-6 font-bold text-white" href={todayHref}>Start my Level {result.recommendedLevel} queue</Link>
-          <Link className="inline-flex min-h-12 items-center justify-center rounded-xl border border-blue-300 px-6 font-bold text-blue-800" href={practiceHref}>Start recommended Practice</Link>
-          <Link className="inline-flex min-h-12 items-center justify-center rounded-xl border border-blue-300 px-6 font-bold text-blue-800" href={`/planner?source=placement&level=${result.recommendedLevel}&result=${encodeURIComponent(result.id)}`}>Create or update learning plan</Link>
-          <Link className="inline-flex min-h-12 items-center justify-center rounded-xl border border-blue-300 px-6 font-bold text-blue-800" href={`/vocabulary/${catalogLevel}`}>Open Level {catalogLevel} learning path</Link>
-          <button className="inline-flex min-h-12 items-center justify-center rounded-xl border border-slate-300 px-6 font-bold text-slate-800 disabled:opacity-50" disabled={restarting} onClick={restart} type="button">{restarting ? "Restarting…" : "Retake placement"}</button>
-          <Link className="inline-flex min-h-12 items-center justify-center rounded-xl border border-slate-300 px-5 font-bold text-slate-700 hover:border-blue-400 hover:text-blue-700" href="/levels">Compare levels</Link>
         </div>
-        {error ? <p className="mt-4 text-sm text-red-700" role="alert">{error}</p> : null}
-      </div>
+        <div className="mt-4 border-t border-blue-200 pt-4 sm:mt-7 sm:pt-6">
+          <h2 className="text-lg font-black text-slate-950 sm:text-xl">Continue from this result</h2>
+          <p className="mt-1 text-sm leading-6 text-slate-700 sm:mt-2 sm:text-base sm:leading-7">Begin at Level {result.recommendedLevel}, or work directly on your clearest focus area.</p>
+          <div className="mt-3 flex flex-col gap-2 sm:mt-5 sm:flex-row sm:gap-3">
+            <Link className="inline-flex min-h-12 items-center justify-center rounded-xl bg-blue-600 px-6 font-bold text-white hover:bg-blue-700" href={todayHref}>Start Level {result.recommendedLevel}</Link>
+            <Link className="inline-flex min-h-12 items-center justify-center rounded-xl border border-blue-300 bg-white px-6 font-bold text-blue-800 hover:border-blue-500" href={practiceHref}>Practice {primaryWeakSkill}</Link>
+          </div>
+        </div>
+      </section>
+      <details className="mt-5 rounded-2xl border border-slate-200 bg-white p-5">
+        <summary className="cursor-pointer font-bold text-slate-900">More options</summary>
+        <p className="mt-3 text-sm leading-6 text-slate-600">{result.disclaimer}</p>
+        <div className="mt-4 grid gap-3 sm:grid-cols-2">
+          <Link className="inline-flex min-h-11 items-center justify-center rounded-xl border border-slate-300 px-5 font-bold text-slate-700 hover:border-blue-400 hover:text-blue-700" href={`/planner?source=placement&level=${result.recommendedLevel}&result=${encodeURIComponent(result.id)}`}>Create or update learning plan</Link>
+          <Link className="inline-flex min-h-11 items-center justify-center rounded-xl border border-slate-300 px-5 font-bold text-slate-700 hover:border-blue-400 hover:text-blue-700" href={`/vocabulary/${catalogLevel}`}>Open Level {catalogLevel} learning path</Link>
+          <button className="inline-flex min-h-11 items-center justify-center rounded-xl border border-slate-300 px-5 font-bold text-slate-700 disabled:opacity-50" disabled={restarting} onClick={restart} type="button">{restarting ? "Restarting…" : "Retake placement"}</button>
+          <Link className="inline-flex min-h-11 items-center justify-center rounded-xl border border-slate-300 px-5 font-bold text-slate-700 hover:border-blue-400 hover:text-blue-700" href="/levels">Compare levels</Link>
+        </div>
+      </details>
+      {error ? <p className="mt-4 text-sm text-red-700" role="alert">{error}</p> : null}
     </main>
   );
 }

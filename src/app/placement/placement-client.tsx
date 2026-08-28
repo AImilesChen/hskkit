@@ -166,16 +166,22 @@ export default function PlacementClient() {
     const loadFailed = Boolean(error) && !expired && !noQuestions;
     return (
       <main className="mx-auto min-h-[70vh] max-w-3xl px-5 py-14 sm:py-20">
-        <p className="text-sm font-bold uppercase tracking-[0.18em] text-blue-700">HSKKit diagnostic · multiskill version 2</p>
+        <p className="text-sm font-bold uppercase tracking-[0.18em] text-blue-700">HSKKit placement</p>
         <h1 className="mt-4 text-4xl font-black tracking-tight text-slate-950 sm:text-5xl">
           {expired ? "Your saved placement session expired" : noQuestions ? "Placement is temporarily unavailable" : loadFailed ? "We couldn't load your placement" : "Find a practical starting level"}
         </h1>
         <p className="mt-5 max-w-2xl text-lg leading-8 text-slate-600">
-          {expired ? "Placement sessions stay available for seven days. Start a new version-locked session to continue." : noQuestions ? "No approved versioned diagnostic questions are available right now. No empty or demo result will be generated." : loadFailed ? "Your saved answers have not been changed. Retry loading before starting a new session." : "Answer versioned vocabulary, grammar, reading and approved Listening questions. Your progress is saved after every answer, so you can refresh and continue."}
+          {expired ? "Placement sessions stay available for seven days. Start a new placement to continue." : noQuestions ? "No diagnostic questions are available right now. No empty or demo result will be generated." : loadFailed ? "Your saved answers have not been changed. Retry loading before starting a new session." : "Answer 12 questions across Vocabulary, grammar, reading and listening. Your answers are saved as you go, so you can refresh and continue."}
         </p>
-        {!loadFailed && !noQuestions ? <div className="mt-8 rounded-3xl border border-blue-200 bg-blue-50 p-5 text-sm leading-6 text-blue-950">
-          <strong>Evidence scope:</strong> this diagnostic includes three approved formal Listening items. If approved audio becomes unavailable, the server keeps the honest low-confidence, Listening-missing fallback instead of inventing evidence.
+        {!loadFailed && !noQuestions ? <div className="mt-7 grid gap-3 rounded-2xl border border-blue-200 bg-blue-50 p-5 text-sm text-blue-950 sm:grid-cols-3">
+          <p><strong className="block text-slate-950">12 questions</strong>A focused starting-point check</p>
+          <p><strong className="block text-slate-950">4 skill areas</strong>Vocabulary, grammar, reading and listening</p>
+          <p><strong className="block text-slate-950">Saved as you go</strong>Refresh without losing completed answers</p>
         </div> : null}
+        {!loadFailed && !noQuestions ? <details className="mt-4 rounded-2xl border border-slate-200 bg-white p-4 text-sm leading-6 text-slate-600">
+          <summary className="cursor-pointer font-bold text-slate-800">How this placement works</summary>
+          <p className="mt-3">The diagnostic uses an approved, versioned question set including three listening items. If listening evidence is unavailable, the result lowers confidence and states what was not measured instead of guessing.</p>
+        </details> : null}
         {error && !expired ? <p className="mt-5 rounded-xl bg-red-50 p-4 text-sm text-red-800" role="alert">Could not load or start the diagnostic: {error}</p> : null}
         <div className="mt-8 flex flex-col gap-3 sm:flex-row">
           {loadFailed || noQuestions

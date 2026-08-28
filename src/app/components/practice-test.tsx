@@ -209,84 +209,48 @@ export default function PracticeTest({
     }
 
     return (
-      <div className="max-w-[720px] mx-auto px-8 max-sm:px-4 py-16 max-sm:py-10">
-        <div className="text-center mb-10">
-          <div className="text-[64px] font-bold text-[#2563EB] mb-2">
-            {correctCount}/{total}
+      <div className="mx-auto max-w-[720px] px-4 py-4 sm:px-8 sm:py-12">
+        <section className="rounded-3xl border border-[#DBEAFE] bg-[#EFF6FF] p-4 sm:p-8" aria-labelledby="practice-result-heading">
+          <p className="text-sm font-bold uppercase tracking-[0.14em] text-[#2563EB]">HSK {level} result</p>
+          <div className="mt-3 flex flex-wrap items-end gap-x-5 gap-y-2">
+            <h1 className="text-[40px] font-black leading-none text-[#0F172A] sm:text-[48px]" id="practice-result-heading">{correctCount}/{total}</h1>
+            <p className="pb-1 text-lg font-bold text-[#334155]">{accuracy}% correct</p>
           </div>
-          <p className="text-lg text-[#64748B] mb-2">questions correct</p>
-          <div className="text-[28px] font-bold text-[#0F172A]">{accuracy}%</div>
-        </div>
+          <p className="mt-3 max-w-2xl text-sm leading-6 text-[#334155] sm:mt-4 sm:text-base sm:leading-7">{recommendation}</p>
+          <div className="mt-3 grid grid-cols-2 gap-2 sm:mt-6 sm:gap-3">
+            <div className="rounded-2xl bg-white p-3 sm:p-4"><p className="text-xs font-bold uppercase tracking-wide text-[#64748B]">Correct</p><p className="mt-1 text-xl font-black text-[#0F172A] sm:text-2xl">{correctCount}</p></div>
+            <div className="rounded-2xl bg-white p-3 sm:p-4"><p className="text-xs font-bold uppercase tracking-wide text-[#64748B]">To review</p><p className="mt-1 text-xl font-black text-[#0F172A] sm:text-2xl">{wrongQuestions.length}</p></div>
+          </div>
+          <div className="mt-4 flex flex-col gap-2 sm:mt-6 sm:flex-row sm:gap-3">
+            {wrongQuestions.length > 0 ? <a href="#practice-test-review" className="inline-flex min-h-12 items-center justify-center rounded-xl bg-[#2563EB] px-6 font-bold text-white no-underline hover:bg-[#1D4ED8]">Review {wrongQuestions.length} mistakes</a> : <Link href={vocabHref} className="inline-flex min-h-12 items-center justify-center rounded-xl bg-[#2563EB] px-6 font-bold text-white no-underline hover:bg-[#1D4ED8]">Continue HSK {level} learning</Link>}
+            <button onClick={handleRestart} className="inline-flex min-h-12 items-center justify-center rounded-xl border border-[#2563EB] bg-white px-6 font-bold text-[#2563EB] hover:bg-[#DBEAFE]">Retake HSK {level} test</button>
+            {wrongQuestions.length > 0 ? <Link href={vocabHref} className="inline-flex min-h-12 items-center justify-center rounded-xl px-5 font-bold text-[#2563EB] no-underline hover:bg-white">Continue HSK {level} learning</Link> : null}
+          </div>
+          <details className="mt-4 border-t border-[#DBEAFE] pt-3 text-sm leading-6 text-[#64748B] sm:mt-5 sm:pt-4">
+            <summary className="cursor-pointer font-bold text-[#334155]">More practice options</summary>
+            <div className="mt-3 flex flex-col items-start gap-3">
+              <p>{savedSummary || "Your result is ready to save on this device."}</p>
+              <Link href={nextHref} className="font-semibold text-[#2563EB] no-underline hover:underline">{nextLabel} →</Link>
+              {level === 1 ? <Link href="/hsk-1-reading-practice" className="font-semibold text-[#2563EB] no-underline hover:underline">Read one HSK 1 story →</Link> : null}
+              {level === 1 ? <Link href="/tools/chinese-character-practice-sheet-generator" className="font-semibold text-[#2563EB] no-underline hover:underline">Create a handwriting worksheet →</Link> : null}
+            </div>
+          </details>
+        </section>
 
-        <div className="bg-white border border-[#E2E8F0] rounded-2xl p-8 shadow-[0_4px_12px_rgba(0,0,0,0.06)] mb-8">
-          <h2 className="text-[24px] font-bold text-[#0F172A] mb-3">Result</h2>
-          <p className="text-base leading-relaxed text-[#334155] mb-6">{recommendation}</p>
-          <div className="bg-[#EFF6FF] border border-[#DBEAFE] rounded-xl p-4 mb-6">
-            <div className="flex items-center justify-between gap-4 mb-2 max-sm:flex-col max-sm:items-start">
-              <h3 className="text-base font-bold text-[#0F172A]">Today’s progress summary</h3>
-              <span className="text-sm font-semibold text-[#2563EB]">{accuracy}% complete</span>
-            </div>
-            <div className="w-full h-2 bg-white rounded-full overflow-hidden mb-3">
-              <div className="h-full bg-[#2563EB] rounded-full" style={{ width: `${accuracy}%` }} />
-            </div>
-            <p className="text-sm leading-relaxed text-[#334155] mb-2">
-              Save your progress later: {savedSummary || "Your result is ready to save on this device."}
-            </p>
-            <p className="text-xs leading-relaxed text-[#64748B]">
-              Next loop: review missed words, read one HSK 1 story, then print a Tian Zi Ge worksheet for handwriting practice.
-            </p>
-          </div>
-          <div className="flex flex-col sm:flex-row gap-3">
-            <Link
-              href={nextHref}
-              className="inline-flex items-center justify-center gap-2 bg-[#2563EB] text-white px-6 py-3 rounded-full text-base font-semibold no-underline transition-all duration-200 hover:bg-[#1D4ED8]"
-            >
-              {nextLabel}
-            </Link>
-            {level === 1 && (
-              <Link
-                href="/hsk-1-reading-practice"
-                className="inline-flex items-center justify-center gap-2 bg-[#EFF6FF] text-[#2563EB] px-6 py-3 rounded-full text-base font-semibold no-underline border-[1.5px] border-[#2563EB] transition-all duration-200 hover:bg-[#DBEAFE]"
-              >
-                Read one HSK 1 story
-              </Link>
-            )}
-            <button
-              onClick={handleRestart}
-              className="inline-flex items-center justify-center gap-2 bg-transparent text-[#2563EB] px-6 py-3 rounded-full text-base font-semibold border-[1.5px] border-[#2563EB] cursor-pointer transition-all duration-200 hover:bg-[#EFF6FF]"
-            >
-              Retake Practice Test
-            </button>
-          </div>
-          {level === 1 && (
-            <div className="mt-4">
-              <Link
-                href="/tools/chinese-character-practice-sheet-generator"
-                className="text-sm font-semibold text-[#2563EB] no-underline hover:underline"
-              >
-                Generate a handwriting worksheet from missed words →
-              </Link>
-            </div>
-          )}
-        </div>
-
-        {wrongQuestions.length > 0 && (
-          <div className="mb-8">
-            <h3 className="text-[20px] font-bold text-[#0F172A] mb-4">
-              Review Mistakes ({wrongQuestions.length})
-            </h3>
-            <div className="flex flex-col gap-4">
+        {wrongQuestions.length > 0 ? (
+          <section className="mt-8 scroll-mt-24" id="practice-test-review" aria-labelledby="practice-test-review-heading">
+            <h2 className="text-[22px] font-bold text-[#0F172A]" id="practice-test-review-heading">Review mistakes ({wrongQuestions.length})</h2>
+            <p className="mt-2 text-sm text-[#64748B]">Open a question to compare your answer with the explanation.</p>
+            <div className="mt-4 flex flex-col gap-3">
               {wrongQuestions.map((q) => (
-                <ReviewCard
-                  key={q.id}
-                  q={q}
-                  userAnswer={q.userAnswer}
-                  index={q.index}
-                />
+                <details className="rounded-2xl border border-[#FDE68A] bg-[#FFFBEB] p-4" key={q.id}>
+                  <summary className="cursor-pointer font-bold text-[#0F172A]">Question {q.index + 1} · Review answer</summary>
+                  <div className="mt-4"><ReviewCard q={q} userAnswer={q.userAnswer} index={q.index} /></div>
+                </details>
               ))}
             </div>
-          </div>
-        )}
+          </section>
+        ) : null}
       </div>
     );
   }
