@@ -34,7 +34,7 @@ PDF_SAMPLES = {
         ("HSKKit-30-Day-Planner-Fillable-A4.pdf", 18, "weekly-review"),
         ("HSKKit-30-Day-Planner-Fillable-A4.pdf", 37, "recovery-worksheet"),
     ],
-    "mock-exam-pack": [
+    "practice-assessment-pack": [
         ("HSKKit-Practice-Assessment-A-Student.pdf", 2, "timed-instructions"),
         ("HSKKit-Practice-Assessment-A-Student.pdf", 8, "listening-simulation"),
         ("HSKKit-Practice-Assessment-B-Student.pdf", 15, "reading-section"),

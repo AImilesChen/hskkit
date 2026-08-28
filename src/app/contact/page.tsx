@@ -9,14 +9,14 @@ import {
 export const metadata: Metadata = {
   title: "Contact HSKKit | Get Help & Support",
   description:
-    "Use HSKKit's in-site support paths for billing, PDF Pack, refund, study questions, or feedback.",
+    "Use HSKKit's in-site support paths for billing, Store products, refunds, study questions, or feedback.",
   alternates: {
     canonical: "https://hskkit.com/contact",
   },
   openGraph: {
     title: "Contact HSKKit | Get Help & Support",
     description:
-      "Use HSKKit's in-site support paths for billing, PDF Pack, refund, study questions, or feedback.",
+      "Use HSKKit's in-site support paths for billing, Store products, refunds, study questions, or feedback.",
     url: "https://hskkit.com/contact",
     siteName: "HSKKit",
     type: "website",
@@ -49,8 +49,8 @@ const faqs = [
     a: PUBLIC_FORMAL_CONTENT_SCOPE,
   },
   {
-    q: "Can I buy the PDF Pack now?",
-    a: "Yes in Stripe Test mode. The US$9.99 one-time PackPurchase covers one selected HSK 3.0 level; no live card charge is enabled.",
+    q: "Can I buy a Store product now?",
+    a: "Yes in Stripe Test mode. Complete vocabulary PDFs, Bundles and practical resources are separate one-time purchases from US$3.99; each detail page shows the exact price and contents, and no live card charge is enabled.",
   },
   {
     q: "I forgot my progress. Can you recover it?",

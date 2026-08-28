@@ -10,6 +10,7 @@ const files = {
   pricing: "src/app/pricing/page.tsx",
   packs: "src/app/store/page.tsx",
   purchase: "src/app/store/store-purchase.tsx",
+  productCheckout: "src/app/store/[productId]/resource-product-checkout.tsx",
   contact: "src/app/contact/page.tsx",
   terms: "src/app/terms-of-service/page.tsx",
   reading: "src/app/hsk-1-reading-practice/page.tsx",
@@ -48,10 +49,11 @@ test("public copy keeps one explicit product boundary after the Test-mode Store 
 });
 
 test("Test-mode Store submits the frozen product identity", () => {
-  assert.match(s.pricing, /US\$9\.99 one-time/);
-  assert.match(s.purchase, /commercial\/checkout/);
-  assert.match(s.purchase, /body:JSON\.stringify\(\{productId:selected\.id,idempotencyKey/);
-  assert.doesNotMatch(s.purchase, /live payment|sk_live_/i);
+  assert.match(s.pricing, /From US\$3\.99/);
+  assert.match(s.purchase, /href=\{`\/store\/\$\{product\.id\}`\}/);
+  assert.match(s.productCheckout, /commercial\/checkout/);
+  assert.match(s.productCheckout, /body:JSON\.stringify\(\{productId,idempotencyKey/);
+  assert.doesNotMatch(`${s.purchase}\n${s.productCheckout}`, /live payment|sk_live_/i);
 });
 
 test("P0-5 removes dictionary and account contradictions", () => {

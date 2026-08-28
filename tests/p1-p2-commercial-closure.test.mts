@@ -47,7 +47,7 @@ test("Pricing states the exact Free, shared Pro, and separate PDF Pack capabilit
     "Long-term history, up to 10,000 entries",
     "Sync up to 3 active devices",
     "same Pro entitlement",
-    "US$9.99 one-time",
+    "From US$3.99",
     "3 successful downloads",
     "14-day private access window",
   ]) assert.match(pricing, new RegExp(copy.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), "i"));

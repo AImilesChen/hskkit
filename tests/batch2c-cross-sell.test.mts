@@ -14,7 +14,7 @@ test("2C keeps Pro and one-time Store product cross-sell boundaries explicit", a
   ]);
 
   assert.match(pricing, /Open Store/);
-  assert.match(pricing, /Does not include the Advanced Study PDF Pack/);
+  assert.match(pricing, /Does not include one-time Store products/);
   assert.match(store, /Store product or Pro\?/);
   assert.match(store, /Pro covers ongoing review, Focused mode, device sync and AI learning features/);
 

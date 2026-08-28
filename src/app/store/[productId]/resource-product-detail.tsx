@@ -1,9 +1,9 @@
 import Link from "next/link";
-import type {ResourceProductDetail} from "@/lib/commercial/resource-products";
+import type {StoreProductDetail} from "@/lib/commercial/product-details";
 import ResourceProductCheckout from "./resource-product-checkout";
 import ResourceSampleGallery from "./resource-sample-gallery";
 
-export default function ResourceProductDetail({product}: {product:ResourceProductDetail}){
+export default function ResourceProductDetail({product}: {product:StoreProductDetail}){
   return <>
     <section className="grid gap-10 lg:grid-cols-[minmax(0,0.92fr)_minmax(360px,1.08fr)] lg:items-start">
       <div className="lg:sticky lg:top-6">

@@ -25,7 +25,7 @@ const expected={
   "worksheet-pack":["HSKKit-Worksheet-Quick-Start.pdf","HSKKit-Worksheets-Student-A4.pdf","HSKKit-Worksheets-Student-US-Letter.pdf","HSKKit-Worksheets-Student-A4-Low-Ink.pdf","HSKKit-Worksheets-Student-Fillable.pdf","HSKKit-Worksheets-Answer-Key.pdf","HSKKit-Worksheet-Completed-Samples.pdf","HSKKit-Worksheet-Progress-Checklist.pdf"],
   "assessment-tracker":["HSKKit-Assessment-Tracker-Blank.xlsx","HSKKit-Assessment-Tracker-Example.xlsx","HSKKit-Assessment-Tracker-Raw-Data.csv","HSKKit-Assessment-Tracker.csv","HSKKit-Weekly-Review.csv","HSKKit-Assessment-Dashboard-Guide.pdf","HSKKit-Printable-Assessment-Record.pdf"],
   "30-day-planner":["HSKKit-30-Day-Planner-Quick-Start.pdf","HSKKit-30-Day-Planner-Printable-A4.pdf","HSKKit-30-Day-Planner-Fillable-A4.pdf"],
-  "mock-exam-pack":["HSKKit-Practice-Assessment-A-Student.pdf","HSKKit-Practice-Assessment-B-Student.pdf","HSKKit-Practice-Assessment-C-Student.pdf","HSKKit-Practice-Assessment-A-Listening.mp3","HSKKit-Practice-Assessment-B-Listening.mp3","HSKKit-Practice-Assessment-C-Listening.mp3","HSKKit-Practice-Assessment-Audio-Source-License.txt","HSKKit-Practice-Assessment-Answer-Sheets.pdf","HSKKit-Practice-Assessment-Answers-Explanations.pdf","HSKKit-Practice-Assessment-Facilitator-Transcripts.pdf","HSKKit-Practice-Assessment-Score-Report.pdf","HSKKit-Practice-Assessment-Score-Tracker.csv"],
+  "practice-assessment-pack":["HSKKit-Practice-Assessment-A-Student.pdf","HSKKit-Practice-Assessment-B-Student.pdf","HSKKit-Practice-Assessment-C-Student.pdf","HSKKit-Practice-Assessment-A-Listening.mp3","HSKKit-Practice-Assessment-B-Listening.mp3","HSKKit-Practice-Assessment-C-Listening.mp3","HSKKit-Practice-Assessment-Audio-Source-License.txt","HSKKit-Practice-Assessment-Answer-Sheets.pdf","HSKKit-Practice-Assessment-Answers-Explanations.pdf","HSKKit-Practice-Assessment-Facilitator-Transcripts.pdf","HSKKit-Practice-Assessment-Score-Report.pdf","HSKKit-Practice-Assessment-Score-Tracker.csv"],
   "teacher-lesson-plan-pack":["HSKKit-Teacher-Pack-Quick-Start.pdf","HSKKit-Teacher-Lesson-Plans-A4.pdf","HSKKit-Teacher-Lesson-Plans-US-Letter.pdf","HSKKit-Student-Handouts-A4.pdf","HSKKit-Student-Handouts-US-Letter.pdf","HSKKit-Exit-Tickets-A4.pdf","HSKKit-Exit-Tickets-US-Letter.pdf","HSKKit-Homework-Answers-Rubrics.pdf","HSKKit-Activity-Cards-A4.pdf","HSKKit-Activity-Cards-US-Letter.pdf","HSKKit-Editable-Lesson-Plans.docx","HSKKit-Editable-Classroom-Slides.pptx"]
 } as const;
 
@@ -41,7 +41,7 @@ const assessmentAudio={A:new Uint8Array(audioA),B:new Uint8Array(audioB),C:new U
 test("five practical resources expose complete, reusable merchandising details",async()=>{
   assert.equal(resourceProductDetails.length,5);
   for(const detail of resourceProductDetails){
-    assert.equal(detail.amountCents,999);
+    assert.ok(detail.amountCents>=499&&detail.amountCents<=1999,detail.id);
     assert.ok(detail.outcomes.length>=3,detail.id);
     assert.ok(detail.inside.length>=4,detail.id);
     assert.ok(detail.howToUse.length>=3,detail.id);
@@ -83,7 +83,7 @@ test("each practical resource provides four to six readable real sample pages an
   assert.match(factMatrix["worksheet-pack"],/Levels 1–9.*answer/i);
   assert.match(factMatrix["assessment-tracker"],/Levels 1–9.*scoring/i);
   assert.match(factMatrix["30-day-planner"],/current Level.*target Level/i);
-  assert.match(factMatrix["mock-exam-pack"],/Levels 1–9.*3 Mandarin MP3.*explanations.*rubric.*transcripts/i);
+  assert.match(factMatrix["practice-assessment-pack"],/Levels 1–9.*3 Mandarin MP3.*explanations.*rubric.*transcripts/i);
   assert.match(factMatrix["teacher-lesson-plan-pack"],/Levels 1–9.*teacher guidance/i);
 });
 
@@ -127,11 +127,11 @@ test("Store resource cards lead to one shared detail-page template before checko
     readFile(new URL("../src/app/store/[productId]/resource-product-detail.tsx",import.meta.url),"utf8"),
     readFile(new URL("../src/app/store/[productId]/resource-product-checkout.tsx",import.meta.url),"utf8"),
   ]);
-  assert.match(store,/See what’s inside/);
-  assert.match(store,/resourceProductDetail/);
+  assert.match(store,/View details and samples/);
+  assert.match(store,/storeProductDetail/);
   assert.match(store,/href=\{`\/store\/\$\{product\.id\}`\}/);
   assert.match(detailPage,/generateStaticParams/);
-  assert.match(detailPage,/resourceProductDetail/);
+  assert.match(detailPage,/storeProductDetail/);
   assert.match(detailView,/What’s inside/);
   assert.match(detailView,/How to use it/);
   assert.match(detailView,/Real product preview/);

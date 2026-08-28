@@ -80,14 +80,14 @@ function sourceWords(selection:Selection,wordCount:number,exerciseCount:number){
 function productAssets(product:DigitalProduct,selections:Selection[]){
   const selected=product.id==="assessment-tracker"?selections.flatMap(selection=>selection.words)
     :product.id==="worksheet-pack"?selections.flatMap(selection=>sourceWords(selection,53,0))
-    :product.id==="mock-exam-pack"?[]
+    :product.id==="practice-assessment-pack"?[]
     :product.id==="teacher-lesson-plan-pack"?teacherLessonSources(selections).flatMap(source=>source.words):[];
   const unique=new Map<string,{id:string;version:string;sourceRef:string;licenseRef:string}>();
   for(const asset of selected)unique.set(`${asset.id}:${asset.version}`,{id:asset.id,version:asset.version,sourceRef:asset.sourceRef,licenseRef:asset.licenseRef});
   return [...unique.values()];
 }
 function manifestFor(product:DigitalProduct,files:string[],selections:Selection[],generationVersion:string):ProductArtifactManifest{
-  return {schemaVersion:"hskkit-product-manifest-v1",productId:product.id,generationVersion,standard:"HSK 3.0",standardVersion:"GF0025-2021",officialExam:false,levels:product.levels,advancedBandDisclosure:"HSK 3.0 defines one unified Levels 7–9 advanced ability band; Level 7, 8 and 9 labels in this resource use the same canonical approved advanced source set.",licenseNotice:productLicenseNotice(product.id),files,sourceIndependent:product.id==="30-day-planner"||product.id==="mock-exam-pack",assets:productAssets(product,selections),...(product.id==="mock-exam-pack"?{audioProvenance:ASSESSMENT_AUDIO_PROVENANCE}:{})};
+  return {schemaVersion:"hskkit-product-manifest-v1",productId:product.id,generationVersion,standard:"HSK 3.0",standardVersion:"GF0025-2021",officialExam:false,levels:product.levels,advancedBandDisclosure:"HSK 3.0 defines one unified Levels 7–9 advanced ability band; Level 7, 8 and 9 labels in this resource use the same canonical approved advanced source set.",licenseNotice:productLicenseNotice(product.id),files,sourceIndependent:product.id==="30-day-planner"||product.id==="practice-assessment-pack",assets:productAssets(product,selections),...(product.id==="practice-assessment-pack"?{audioProvenance:ASSESSMENT_AUDIO_PROVENANCE}:{})};
 }
 
 function lines(text:string,font:PDFFont,size:number,width:number){
@@ -290,8 +290,13 @@ function assessmentAnswerSheetSections(selection:Selection,variant:number):PdfSe
 function assessmentReportSections(selection:Selection):PdfSection[]{const spec=mockAssessmentBlueprint(selection.level);return [{heading:`Level ${selection.level} · Score report`,body:["Learner: ____________________   Form: ____   Date: ____________________","Listening ____ / 10   Reading ____ / 10   Writing ____ / 10   Total ____ / 30",`Conversion: listening correct × 2; reading correct × 1; writing follows the printed Level ${selection.level} task allocation.`,`Rubric band: ${spec.band}. Suggested time: ${spec.suggestedMinutes} minutes. This is an unofficial diagnostic result, not an official HSK score.`,`Strongest evidence: ____________________   Weakest skill: listening / reading / writing`,`Weakest task family: detail / sequence / cloze / matching / insertion / inference / synthesis / counterargument`]},{heading:`Level ${selection.level} · Weakness → recommended practice`,body:[`Listening pathway: ${spec.recommendations.listening.join(" ")}`,`Reading pathway: ${spec.recommendations.reading.join(" ")}`,`Writing pathway: ${spec.recommendations.writing.join(" ")}`,"Select only the pathway matching the weakest skill and task family, complete it twice, then use the next form as a fresh check."]}];}
 
 export async function generateDifferentiatedProductArtifact(productId:DigitalProductId|string,fontBytes:Uint8Array,_emojiFontBytes:Uint8Array,generationVersion=generationVersionForProduct(productId),assessmentAudio?:Partial<Record<AssessmentForm,Uint8Array>>){
-  const product=digitalProduct(productId);if(!product||product.category!=="resource")throw new Error("INVALID_DIFFERENTIATED_PRODUCT");
-  const selections=[1,2,3,4,5,6,7,8,9].map(selectPackAssets);
+  const product=digitalProduct(productId);if(!product||!(product.category==="resource"||product.category==="teacher"))throw new Error("INVALID_DIFFERENTIATED_PRODUCT");
+  // Vocabulary truth has six discrete levels plus one canonical Advanced 7–9 band.
+  // Level-driven teaching resources still expose honest Level 8/9 views backed by
+  // that same band; corpus exports include the canonical band only once.
+  const selections=(product.id==="assessment-tracker"||product.id==="30-day-planner"
+    ?[1,2,3,4,5,6,7]
+    :[1,2,3,4,5,6,7,8,9]).map(selectPackAssets);
   if(product.id==="30-day-planner"){
     const plan=buildPlannerPack();
     const quickStart=await makePdf("HSK 30-Day Planner · Quick Start",plan.positioning,[{heading:"Core workflow",body:[plan.workflow.join(" → "),"Before Day 1, record current Level, target Level, exam date or study goal, daily time, weak areas and initial Assessment scores.","Choose one route for seven days. The 20, 30 and 45-minute routes change task quantity, input length and required output—not only the timer."]},{heading:"Use evidence to personalize",body:["Find the lowest Assessment skill and band on the mapping page. Start with its named assignment.","Complete one daily page, record measurable evidence, then use Days 7, 14, 21 and 28 to adjust the next week.","If a day is missed, complete the formal Missed-Day Recovery Worksheet. Keep the next calendar date and move only unfinished retrieval/correction work.","On Day 30, repeat the baseline with fresh material and choose the next-stage plan."]}],fontBytes);
@@ -378,7 +383,7 @@ export async function generateDifferentiatedProductArtifact(productId:DigitalPro
     ];
     const manifest=manifestFor(product,files.map(file=>file.name),selections,generationVersion);return {bytes:packageZip(product,files,manifest),format:"zip" as const,manifest};
   }
-  if(product.id==="mock-exam-pack"){
+  if(product.id==="practice-assessment-pack"){
     const forms=(["A","B","C"] as const);
     await validateAssessmentAudio(assessmentAudio);
     const studentFiles:Array<{name:string;data:Uint8Array}>=[];

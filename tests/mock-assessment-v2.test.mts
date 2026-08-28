@@ -97,7 +97,7 @@ test("mock assessment v2 packages form audio, answer sheets, explanations, score
     readFile(new URL("../assets/audio/mock-assessment-v2/form-C.mp3",import.meta.url)),
   ]);
   const create=generator.generateDifferentiatedProductArtifact as unknown as (productId:string,font:Uint8Array,emoji:Uint8Array,version:string,audio:Record<"A"|"B"|"C",Uint8Array>)=>Promise<{bytes:Uint8Array;manifest:{files:string[]}}>;
-  const artifact=await create("mock-exam-pack",new Uint8Array(font),new Uint8Array(emoji),"mock-v2-test",{A:audioA,B:audioB,C:audioC});
+  const artifact=await create("practice-assessment-pack",new Uint8Array(font),new Uint8Array(emoji),"mock-v2-test",{A:audioA,B:audioB,C:audioC});
   const files=zipEntries(artifact.bytes);
   for(const name of [
     "HSKKit-Practice-Assessment-A-Listening.mp3",
@@ -136,5 +136,5 @@ test("mock assessment v2 fails closed when real listening audio is absent",async
     readFile(new URL("../assets/fonts/HskKitSansSubset.ttf",import.meta.url)),
     readFile(new URL("../assets/fonts/HskKitEmoji.ttf",import.meta.url)),
   ]);
-  await assert.rejects(()=>generator.generateDifferentiatedProductArtifact("mock-exam-pack",new Uint8Array(font),new Uint8Array(emoji),"mock-v2-test"),/ASSESSMENT_AUDIO_REQUIRED/);
+  await assert.rejects(()=>generator.generateDifferentiatedProductArtifact("practice-assessment-pack",new Uint8Array(font),new Uint8Array(emoji),"mock-v2-test"),/ASSESSMENT_AUDIO_REQUIRED/);
 });

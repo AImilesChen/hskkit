@@ -50,7 +50,7 @@ test("Assessment Tracker v2 ships separate blank and example Excel dashboards",a
     assert.match(dashboard,/AVERAGEIF/);
     assert.match(dashboard,/COUNTIFS/);
     assert.match(dashboard,/SUMPRODUCT/);
-    assert.match(dashboard,/I\$2:\$I\$1081&amp;lt;&amp;gt;|I\$2:\$I\$1081&lt;&gt;/);
+    assert.match(dashboard,/I\$2:\$I\$11093&amp;lt;&amp;gt;|I\$2:\$I\$11093&lt;&gt;/);
     assert.doesNotMatch(dashboard,/LET\(|LAMBDA\(|_xlfn\./);
     const tracker=text(workbook.get("xl/worksheets/sheet3.xml"));
     assert.match(tracker,/<autoFilter ref=/);
@@ -61,7 +61,7 @@ test("Assessment Tracker v2 ships separate blank and example Excel dashboards",a
     assert.match(tracker,/dataValidations count="3"/);
     const weekly=text(workbook.get("xl/worksheets/sheet4.xml"));
     assert.match(weekly,/AVERAGEIFS/);
-    assert.match(weekly,/\$N\$2:\$N\$1081/);
+    assert.match(weekly,/\$N\$2:\$N\$11093/);
     assert.match(weekly,/A2\+7/);
     const summary=text(workbook.get("xl/worksheets/sheet5.xml"));
     assert.match(summary,/pageSetup[^>]*orientation="landscape"/);
@@ -83,12 +83,13 @@ test("Assessment Tracker v2 maps Level 1-9 and calculates percentages without ma
   const files=zipEntries(artifact.bytes);
   const csv=text(files.get("HSKKit-Assessment-Tracker-Raw-Data.csv"));
   const rows=csv.trim().split(/\r?\n/);
-  assert.equal(rows.length,1081);
-  for(let level=1;level<=9;level++)assert.equal(rows.filter(row=>row.startsWith(`"${level}",`)).length,120,`Level ${level}`);
+  assert.equal(rows.length,11093,"header plus the complete 11,092-entry canonical vocabulary corpus");
+  const expected={1:500,2:772,3:973,4:1000,5:1071,6:1140,7:5636} as const;
+  for(const [level,count] of Object.entries(expected))assert.equal(rows.filter(row=>row.startsWith(`"${level}",`)).length,count,`Level/band ${level}`);
+  assert.equal(rows.filter(row=>/^"[89]",/.test(row)).length,0,"the unified Advanced 7–9 source band is not duplicated as invented Level 8/9 lists");
   assert.match(csv,/"7","unified-levels-7-9","7"/);
-  assert.match(csv,/"8","unified-levels-7-9","7"/);
-  assert.match(csv,/"9","unified-levels-7-9","7"/);
+  assert.doesNotMatch(csv,/"[89]","unified-levels-7-9","7"/);
 
   const printable=await PDFDocument.load(files.get("HSKKit-Printable-Assessment-Record.pdf")!);
-  assert.ok(printable.getPageCount()>=10,"printable record must provide spacious level pages and summary space");
+  assert.ok(printable.getPageCount()>=8,"printable record must provide one spacious page per canonical level/band plus summary space");
 });

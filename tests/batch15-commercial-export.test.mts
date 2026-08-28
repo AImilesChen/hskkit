@@ -4,16 +4,22 @@ import { readFile } from "node:fs/promises";
 import { selectPackAssets, buildPackManifest, manifestStillAuthorized } from "../src/lib/commercial/catalog.ts";
 import { generatePackPdf, generateOfflineZip } from "../src/lib/commercial/generator.ts";
 
-test("pack selection is one released level, bounded, authorized and excludes audio without offline rights", () => {
+test("commercial vocabulary selection uses the complete canonical HSK 3.0 release", () => {
+  const expected={1:500,2:772,3:973,4:1000,5:1071,6:1140,7:5636} as const;
+  for(const [level,count] of Object.entries(expected)){
+    const selected=selectPackAssets(Number(level));
+    assert.equal(selected.words.length,count,`Level/band ${level}`);
+    assert.equal(new Set(selected.words.map(item=>item.id)).size,count,`Level/band ${level} source IDs`);
+    assert.ok(selected.words.every((item) => item.publishStatus === "published" && item.qaStatus === "approved" && item.authorizationStatus === "authorized"));
+    assert.deepEqual(selected.audio, []);
+  }
   const selected = selectPackAssets(1);
   assert.equal(selected.level, 1);
-  assert.ok(selected.words.length > 0 && selected.words.length <= 120);
   assert.ok(selected.exercises.length <= 20);
-  assert.ok(selected.words.every((item) => item.publishStatus === "published" && item.qaStatus === "approved" && item.authorizationStatus === "authorized"));
-  assert.deepEqual(selected.audio, []);
-  const advanced9=selectPackAssets(9);
-  assert.equal(advanced9.level,9);
-  assert.deepEqual(advanced9.words.map(item=>item.id),selectPackAssets(7).words.map(item=>item.id));
+  assert.equal([1,2,3,4,5,6,7].flatMap(level=>selectPackAssets(level).words).length,11092);
+  const advancedIds=selectPackAssets(7).words.map(word=>word.id);
+  assert.deepEqual(selectPackAssets(8).words.map(word=>word.id),advancedIds);
+  assert.deepEqual(selectPackAssets(9).words.map(word=>word.id),advancedIds);
 });
 
 test("manifest is traceable and deterministic", () => {

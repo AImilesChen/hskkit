@@ -32,7 +32,7 @@ test("export lifecycle is explicit and cancellation cannot become ready", () => 
 });
 
 test("download debit uses a single-use CAS and transactional entitlement reservation", async () => {
-  const [storage, route, webhook, processor, exportsRoute, sitemap, purchaseUi] = await Promise.all([
+  const [storage, route, webhook, processor, exportsRoute, sitemap, purchaseUi, checkoutUi] = await Promise.all([
     readFile("src/lib/commercial/storage.ts", "utf8"),
     readFile("src/app/api/v1/commercial/download/[token]/route.ts", "utf8"),
     readFile("src/app/api/v1/commercial/webhook/route.ts", "utf8"),
@@ -40,6 +40,7 @@ test("download debit uses a single-use CAS and transactional entitlement reserva
     readFile("src/app/api/v1/commercial/exports/route.ts", "utf8"),
     readFile("src/app/sitemap.ts", "utf8"),
     readFile("src/app/store/store-purchase.tsx", "utf8"),
+    readFile("src/app/store/[productId]/resource-product-checkout.tsx", "utf8"),
   ]);
   assert.match(storage, /UPDATE commercial_download_tokens SET consumed_at=\?/);
   assert.match(storage, /claim\.meta\.changes!==1/);
@@ -59,6 +60,6 @@ test("download debit uses a single-use CAS and transactional entitlement reserva
   assert.match(sitemap, /"\/pricing"/);
   assert.match(sitemap, /"\/store"/);
   assert.match(purchaseUi, /fetch\("\/api\/v1\/commercial\/config"/);
-  assert.match(purchaseUi, /disabled=\{!config\.enabled\|\|!accepted\|\|busy\}/);
+  assert.match(checkoutUi, /disabled=\{!available\|\|!accepted\|\|busy\}/);
   assert.match(purchaseUi, /Stripe Test checkout/);
 });

@@ -42,7 +42,7 @@ test("P0-2 homepage and pricing expose truthful entry boundaries", () => {
   assert.match(pricing, /Stripe Test mode/i);
   assert.match(pricing, /account-based Pro entitlement/i);
   assert.match(pricing, /no live card charge is enabled/i);
-  assert.match(pricing, /Advanced Study PDF Pack/i);
+  assert.match(pricing, /Complete vocabulary PDFs/i);
   assert.match(pricing, /one-time/i);
 });
 

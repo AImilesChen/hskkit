@@ -26,7 +26,7 @@ Introductory Test price: US$9.99 each.
 - `worksheet-pack`: all-level printable vocabulary exercises, student worksheets, answer key, and manifest in a ZIP.
 - `assessment-tracker`: CSV tracker usable in spreadsheet software plus a printable assessment record PDF and instructions in a ZIP.
 - `30-day-planner`: one ZIP containing a Quick Start PDF plus printable and AcroForm-fillable A4 editions of the personalized 30-day study system, including Assessment mapping, daily routes, weekly reviews, missed-day recovery, and a final next-stage plan.
-- `mock-exam-pack`: level-labelled sample exam sections, student paper, answer/rubric PDF, and manifest in a ZIP. It is practice material, not an official exam.
+- `practice-assessment-pack`: level-labelled sample exam sections, student paper, answer/rubric PDF, and manifest in a ZIP. It is practice material, not an official exam.
 - `teacher-lesson-plan-pack`: HSK 3.0 lesson-plan templates for 45/60/90-minute classes, differentiation prompts, homework, and assessment notes in a ZIP.
 
 Every generated artifact must be non-empty, have a deterministic manifest, use authorized local content only, and label the HSK standard and unofficial status truthfully.

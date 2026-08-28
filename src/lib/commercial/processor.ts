@@ -19,7 +19,7 @@ export function validateProductArtifactTemplate(product:DigitalProduct,job:Produ
   const artifactIdentity=delivery.artifactType==="level"
     ? manifest.schemaVersion==="hskkit-pack-manifest-v1"&&manifest.level===delivery.level
     : delivery.artifactType==="bundle"
-      ? manifest.schemaVersion==="hskkit-bundle-manifest-v1"&&manifest.productId===product.id
+      ? (manifest.schemaVersion==="hskkit-bundle-manifest-v1"||manifest.schemaVersion==="hskkit-bundle-manifest-v2")&&manifest.productId===product.id
       : manifest.schemaVersion==="hskkit-product-manifest-v1"&&manifest.productId===product.id;
   if(!templateIdentity||!artifactIdentity)throw new Error("PREGENERATED_ARTIFACT_IDENTITY_MISMATCH");
   if(artifactChecksumSha256&&(typeof manifest.templateChecksumSha256!=="string"||manifest.templateChecksumSha256!==artifactChecksumSha256))throw new Error("PREGENERATED_ARTIFACT_CHECKSUM_MISMATCH");
