@@ -79,7 +79,7 @@ test("batch 4 exposes level then skill selection and keeps legacy HSK 1-5 practi
 
   assert.match(selector, /Choose a level/);
   assert.match(selector, /Choose a skill/);
-  assert.match(selector, /href=\{`\/practice\/\$\{selectedLevel\}\/vocabulary`\}/);
+  assert.match(selector, /href=\{`\/practice\/\$\{selectedLevel\}\/\$\{item\.slug\}`\}/);
   assert.match(home, /href: "\/practice"/);
   assert.match(client, /PRACTICE_SESSION_EXPIRED/);
   assert.match(client, /PRACTICE_QUESTION_WITHDRAWN/);
