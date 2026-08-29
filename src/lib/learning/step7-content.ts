@@ -1,6 +1,7 @@
 import practiceAudioManifest from "../practice/audio-assets.json" with { type: "json" };
 import { isPublishedStep7Content, publishedStep7AudioSrc } from "./step7-release.ts";
 import { LISTENING_LIBRARY_QUESTIONS, listeningQuestionBySlug } from "./listening-library.ts";
+import { READING_LIBRARY_QUESTIONS } from "./reading-library.ts";
 
 export type Step7ContentKind = "grammar" | "reading" | "tone" | "discrimination" | "dictation";
 
@@ -27,7 +28,7 @@ export interface GrammarLesson {
   relatedReadingSlug: string;
   exercise: Step7Exercise;
 }
-export type ReadingQuestionType = "detail" | "sequence" | "purpose" | "inference" | "argument" | "critical-evaluation";
+export type ReadingQuestionType = "detail" | "sequence" | "purpose" | "inference" | "argument" | "critical-evaluation" | "reason" | "condition" | "contrast" | "recommendation" | "comparison" | "claim" | "method";
 export type ReadingDifficulty = "easy" | "medium" | "hard" | "advanced";
 export interface ReadingLesson {
   slug: string;
@@ -149,6 +150,7 @@ export const isStep7AnswerAllowed = (exercise: Step7Exercise, answer: string) =>
 const trustedExercises = new Map<string, Step7Exercise>([
   ...GRAMMAR_LESSONS.filter(releasedGrammar).map((lesson) => [lesson.exercise.id, lesson.exercise] as const),
   ...READING_LESSONS.filter(releasedReading).map((lesson) => [lesson.exercise.id, lesson.exercise] as const),
+  ...READING_LIBRARY_QUESTIONS.map((lesson) => [lesson.exercise.id, lesson.exercise] as const),
   ...ADVANCED_LISTENING_LESSONS.map((lesson) => [lesson.exercise.id, lesson.exercise] as const),
   ...LISTENING_LIBRARY_QUESTIONS.map((lesson) => [lesson.exercise.id, lesson.exercise] as const),
 ]);

@@ -5,10 +5,20 @@ import { useEffect, useRef, useState } from "react";
 import AiAssist from "@/app/components/ai-assist";
 import { normalizeStep7Answer, type Step7Exercise } from "@/lib/learning/step7-content";
 
-type ListeningSessionState = { level: number; size: 10 | 20; seed: string; position: number };
-type Props = { exercise: Step7Exercise; voiceText?: string; audioSrc?: string; nextHref?: string; nextLabel?: string; listeningSession?: ListeningSessionState };
+const ANSWER_SAVE_TIMEOUT_MS = 5_000;
+type PracticeSessionState = { level: number; size: 10 | 20; seed: string; position: number };
+type PendingAttempt = { answer: string; idempotencyKey: string };
+type Props = {
+  exercise: Step7Exercise;
+  voiceText?: string;
+  audioSrc?: string;
+  nextHref?: string;
+  nextLabel?: string;
+  listeningSession?: PracticeSessionState;
+  readingSession?: PracticeSessionState;
+};
 
-export default function Step7ExerciseClient({ exercise, voiceText, audioSrc, nextHref, nextLabel, listeningSession }: Props) {
+export default function Step7ExerciseClient({ exercise, voiceText, audioSrc, nextHref, nextLabel, listeningSession, readingSession }: Props) {
   const [answer, setAnswer] = useState("");
   const [played, setPlayed] = useState(!voiceText);
   const [playing, setPlaying] = useState(false);
@@ -18,14 +28,29 @@ export default function Step7ExerciseClient({ exercise, voiceText, audioSrc, nex
   const key = useRef<string | undefined>(undefined);
   const playbackTicket = useRef<string | undefined>(undefined);
   const audio = useRef<HTMLAudioElement | undefined>(undefined);
-  const correct = saved && normalizeStep7Answer(answer) === normalizeStep7Answer(exercise.correctAnswer);
+  const attemptStorageKey = `hskkit:attempt:${exercise.id}`;
+  const session = readingSession ?? listeningSession;
+  const sessionKind = readingSession ? "reading" : "listening";
+  const answered = answer.trim().length > 0;
+  const correct = answered && normalizeStep7Answer(answer) === normalizeStep7Answer(exercise.correctAnswer);
 
   useEffect(() => {
-    if (!listeningSession) return;
     try {
-      localStorage.setItem("hskkit:listening:resume", JSON.stringify({ href: window.location.pathname + window.location.search, label: `Continue HSK ${listeningSession.level} · ${listeningSession.position + 1} of ${listeningSession.size}` }));
+      const pending = JSON.parse(localStorage.getItem(attemptStorageKey) ?? "null") as PendingAttempt | null;
+      if (pending?.answer && pending.idempotencyKey) {
+        key.current = pending.idempotencyKey;
+        setAnswer(pending.answer);
+        setError("Your answer was preserved after an interrupted save. Retry saving to continue.");
+      }
+    } catch { /* invalid optional recovery state is ignored */ }
+  }, [attemptStorageKey]);
+
+  useEffect(() => {
+    if (!session) return;
+    try {
+      localStorage.setItem(`hskkit:${sessionKind}:resume`, JSON.stringify({ href: window.location.pathname + window.location.search, label: `Continue HSK ${session.level} · ${session.position + 1} of ${session.size}` }));
     } catch { /* storage is optional */ }
-  }, [listeningSession]);
+  }, [session, sessionKind]);
 
   async function play() {
     setError("");
@@ -66,27 +91,50 @@ export default function Step7ExerciseClient({ exercise, voiceText, audioSrc, nex
     try { await player.play(); } catch { fail(); }
   }
 
-  async function submit(value = answer) {
+  function rememberPending(value: string, idempotencyKey: string) {
+    try { localStorage.setItem(attemptStorageKey, JSON.stringify({ answer: value, idempotencyKey } satisfies PendingAttempt)); } catch { /* recovery storage is optional */ }
+  }
+
+  async function persistAnswer(value = answer) {
     if (!value || !played || saving || saved) return;
-    setSaving(true); setError("");
     const idempotencyKey = key.current ?? crypto.randomUUID();
     key.current = idempotencyKey;
-    const body = JSON.stringify({ action: "step7_attempt", payload: { idempotencyKey, exerciseId: exercise.id, answer: value, playbackTicket: voiceText ? playbackTicket.current : undefined }, tzOffset: new Date().getTimezoneOffset() });
+    rememberPending(value, idempotencyKey);
+    setSaving(true);
+    setError("");
+    const controller = new AbortController();
+    const timeout = window.setTimeout(() => controller.abort(), ANSWER_SAVE_TIMEOUT_MS);
     let response: Response | undefined;
-    for (let attempt = 0; attempt < 3; attempt += 1) {
-      try {
-        response = await fetch("/api/v1/learning", { method: "POST", headers: { "content-type": "application/json" }, body });
-        if (response.ok || response.status < 500 && response.status !== 409) break;
-      } catch { /* retry with the same key */ }
+    try {
+      response = await fetch("/api/v1/learning", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ action: "step7_attempt", payload: { idempotencyKey, exerciseId: exercise.id, answer: value, playbackTicket: voiceText ? playbackTicket.current : undefined }, tzOffset: new Date().getTimezoneOffset() }),
+        signal: controller.signal,
+      });
+    } catch (caught) {
+      const timedOut = caught instanceof DOMException && caught.name === "AbortError";
+      setError(timedOut ? "Save timed out. Your answer is safe; retry saving with the same attempt." : navigator.onLine ? "The service is temporarily unavailable. Your answer is safe; retry saving." : "You appear offline. Your answer is safe; reconnect and retry saving.");
+      setSaving(false);
+      window.clearTimeout(timeout);
+      return;
     }
+    window.clearTimeout(timeout);
     setSaving(false);
-    if (!response?.ok) { setError("We couldn't save this exercise. Your progress was not advanced; retry the same answer."); return; }
-    setAnswer(value); setSaved(true); key.current = undefined;
-    if (listeningSession) {
+    if (!response.ok) {
+      if (response.status === 409) setError("A progress conflict prevented saving. Your answer is safe; retry saving with the same attempt.");
+      else if (response.status >= 500) setError("The service is temporarily unavailable. Your answer is safe; retry saving.");
+      else setError("Progress could not be saved. Your answer is safe; retry saving.");
+      return;
+    }
+    setSaved(true);
+    key.current = undefined;
+    try { localStorage.removeItem(attemptStorageKey); } catch { /* optional recovery state */ }
+    if (session) {
       try {
-        const storageKey = `hskkit:listening:result:${listeningSession.level}:${listeningSession.size}:${listeningSession.seed}`;
+        const storageKey = `hskkit:${sessionKind}:result:${session.level}:${session.size}:${session.seed}`;
         const stored = JSON.parse(localStorage.getItem(storageKey) ?? "{}") as Record<string, boolean>;
-        stored[String(listeningSession.position)] = normalizeStep7Answer(value) === normalizeStep7Answer(exercise.correctAnswer);
+        stored[String(session.position)] = normalizeStep7Answer(value) === normalizeStep7Answer(exercise.correctAnswer);
         localStorage.setItem(storageKey, JSON.stringify(stored));
       } catch { /* the server learning record remains authoritative */ }
     }
@@ -96,11 +144,13 @@ export default function Step7ExerciseClient({ exercise, voiceText, audioSrc, nex
     <span className="eyebrow">Linked practice</span>
     <h2 id="exercise-heading">{exercise.prompt}</h2>
     {voiceText && <><p>Finish playback before answering. Playback failure never changes mastery or usage.</p><button className="audio-play-button inline-flex size-12 items-center justify-center rounded-full border border-blue-300 bg-blue-50 text-blue-700 transition hover:bg-blue-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:opacity-60" type="button" aria-label={played ? "Replay audio" : "Play audio"} aria-pressed={playing} disabled={playing} onClick={play}><svg className="audio-play-icon size-5" viewBox="0 0 24 24" aria-hidden="true" fill="currentColor">{playing ? <><rect x="6" y="5" width="4" height="14" rx="1"/><rect x="14" y="5" width="4" height="14" rx="1"/></> : <path d="M8 5.5v13l10-6.5z"/>}</svg><span className="sr-only">{playing ? "Playing audio" : played ? "Replay audio" : "Play audio"}</span></button></>}
-    {error && <p className="step7-alert error" role="alert">{error}</p>}
     {exercise.options ? <div className="step7-options">
-      {Object.entries(exercise.options).map(([letter, text]) => <button key={letter} className="btn secondary" disabled={!played || saving || saved} onClick={() => { setAnswer(letter); void submit(letter); }}>{letter}. {text}</button>)}
-    </div> : <div className="step7-dictation"><label htmlFor="dictation-answer">Your dictation</label><input id="dictation-answer" lang="zh-CN" value={answer} disabled={!played || saving || saved} onChange={(event) => setAnswer(event.target.value)} placeholder="Type the Chinese sentence"/><button className="btn" disabled={!played || !answer.trim() || saving || saved} onClick={() => void submit()}>{saving ? "Saving…" : "Check dictation"}</button></div>}
-    {saving && <p role="status">Saving this linked exercise…</p>}
-    {saved && <><div className={`step7-alert ${correct ? "success" : "warning"}`} role="status"><strong>{correct ? "Correct — progress saved." : "Not yet — added to Mistakes and SRS."}</strong><p>{exercise.explanation}</p><p><strong>Correct answer:</strong> {exercise.options?.[exercise.correctAnswer] ?? exercise.correctAnswer}</p><div className="step7-actions">{nextHref && <Link className="btn" href={nextHref}>{nextLabel ?? "Continue"}</Link>}<Link className="btn secondary" href={correct ? "/planner" : "/mistakes"}>{correct ? "Open Planner" : "Open Mistakes"}</Link></div></div><AiAssist feature="explanation" exerciseId={exercise.id}/></>}
+      {Object.entries(exercise.options).map(([letter, text]) => <button key={letter} className="btn secondary" aria-pressed={answer === letter} disabled={!played || answered} onClick={() => { const value = letter; setAnswer(value); void persistAnswer(value); }}>{letter}. {text}</button>)}
+    </div> : <div className="step7-dictation"><label htmlFor="dictation-answer">Your dictation</label><input id="dictation-answer" lang="zh-CN" value={answer} disabled={!played || saving || saved} onChange={(event) => setAnswer(event.target.value)} placeholder="Type the Chinese sentence"/><button className="btn" disabled={!played || !answer.trim() || saving || saved} onClick={() => void persistAnswer()}>{saving ? "Saving…" : "Check dictation"}</button></div>}
+    {answered && <div className={`step7-alert ${correct ? "success" : "warning"}`} role="status"><strong>{correct ? "Correct." : "Not yet."}</strong><p>{exercise.explanation}</p><p><strong>Correct answer:</strong> {exercise.options?.[exercise.correctAnswer] ?? exercise.correctAnswer}</p></div>}
+    {saving && <p role="status">Saving progress…</p>}
+    {saved && <p className="step7-alert success" role="status"><strong>Progress saved.</strong></p>}
+    {error && <div className="step7-alert error" role="alert"><p>{error}</p>{answered && !saved && <button className="btn" type="button" disabled={saving} onClick={() => void persistAnswer()}>{saving ? "Saving progress…" : "Retry saving"}</button>}</div>}
+    {saved && <><div className="step7-actions">{nextHref && <Link className="btn" href={nextHref}>{nextLabel ?? "Continue"}</Link>}<Link className="btn secondary" href="/mistakes">Open Mistakes</Link></div><AiAssist feature="explanation" exerciseId={exercise.id}/></>}
   </section>;
 }
