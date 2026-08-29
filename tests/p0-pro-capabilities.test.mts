@@ -115,7 +115,8 @@ test("P0 is wired into entitlement, learning, sync, AI, account UI and a dedicat
   assert.doesNotMatch(learning, /1_000_000/);
   assert.match(learning, /dailyReviewGrades !== null/);
   assert.match(learning, /dailyNewItems !== null/);
-  assert.match(learning, /action === "grade" \|\| dailyAction/);
+  assert.match(learning, /action === "grade"/);
+  assert.match(learning, /action === "undo_review" \|\| dailyAction/);
   assert.match(learningStorage, /SELECT 1 replayed FROM entitlement_usage_events/);
   assert.match(sync, /DEVICE_LIMIT_REACHED/);
   assert.match(sync, /searchParams\.get\("deviceId"\)/);

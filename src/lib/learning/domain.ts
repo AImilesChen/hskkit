@@ -160,6 +160,15 @@ export interface LearningState {
   audioReviewReady?: Array<{ cardId: string; cardRevision: number }>;
   audioPlaybackKeys?: string[];
   dailyOperationKeys?: string[];
+  lastReviewUndo?: {
+    cardId: string;
+    gradeKey: string;
+    previousCard: SrsCard;
+    previousMistakes: Mistake[];
+    previousDailySessions: DailySession[];
+    previousAudioReviewReady?: Array<{ cardId: string; cardRevision: number }>;
+  };
+  reviewUndoKeys?: string[];
 }
 
 const id = (prefix: string, key: string) => `${prefix}_${createHash("sha256").update(key).digest("base64url")}`;
@@ -281,7 +290,8 @@ export function recordAudioAttempt(state: LearningState, input: Parameters<typeo
   playbackResult: "completed" | "failed";
 }) {
   if (input.playbackResult !== "completed") return { state, recorded: false as const };
-  const { playbackResult: _playbackResult, ...attemptInput } = input;
+  const { playbackResult, ...attemptInput } = input;
+  void playbackResult;
   return { ...recordAttempt(state, attemptInput), recorded: true as const };
 }
 
@@ -320,7 +330,41 @@ export function gradeReview(state: LearningState, input: {
     ...session,
     items: session.items.map((item) => item.id === reviewItemId(old) || item.id === `review:${old.id}` ? { ...item, status: "completed" as const } : item),
   }, input.observedAt));
-  return { state: { ...state, cards: state.cards.map((candidate) => candidate.id === card.id ? card : candidate), mistakes, dailySessions, audioReviewReady: state.audioReviewReady?.filter((ready) => ready.cardId !== old.id) }, card };
+  return {
+    state: {
+      ...state,
+      cards: state.cards.map((candidate) => candidate.id === card.id ? card : candidate),
+      mistakes,
+      dailySessions,
+      audioReviewReady: state.audioReviewReady?.filter((ready) => ready.cardId !== old.id),
+      lastReviewUndo: {
+        cardId: old.id,
+        gradeKey: input.idempotencyKey,
+        previousCard: old,
+        previousMistakes: state.mistakes,
+        previousDailySessions: state.dailySessions,
+        previousAudioReviewReady: state.audioReviewReady,
+      },
+    },
+    card,
+  };
+}
+
+export function undoLastReview(state: LearningState, input: { idempotencyKey: string; cardId: string }) {
+  if ((state.reviewUndoKeys ?? []).includes(input.idempotencyKey)) return state;
+  const snapshot = state.lastReviewUndo;
+  if (!snapshot || snapshot.cardId !== input.cardId) throw new Error("REVIEW_UNDO_UNAVAILABLE");
+  const current = state.cards.find((card) => card.id === input.cardId);
+  if (!current || current.revision !== snapshot.previousCard.revision + 1) throw new Error("REVIEW_UNDO_CONFLICT");
+  return {
+    ...state,
+    cards: state.cards.map((card) => card.id === input.cardId ? snapshot.previousCard : card),
+    mistakes: snapshot.previousMistakes,
+    dailySessions: snapshot.previousDailySessions,
+    audioReviewReady: snapshot.previousAudioReviewReady,
+    lastReviewUndo: undefined,
+    reviewUndoKeys: [...(state.reviewUndoKeys ?? []), input.idempotencyKey].slice(-100),
+  };
 }
 
 export function markAudioReviewReady(state: LearningState, cardId: string, cardRevision: number, idempotencyKey: string) {

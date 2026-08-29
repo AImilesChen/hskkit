@@ -6,6 +6,7 @@ import {
   applyDailyItemAction,
 
   gradeReview,
+  undoLastReview,
   markAudioReviewReady,
   recordAttempt,
   recordAudioAttempt,
@@ -68,6 +69,7 @@ function view(state: LearningState, ownerId: string, offsetMinutes: number, capa
   const startLevel = latestPlacement?.recommendedLevel ?? 1;
   const built = buildDailySession(state, { ownerId, localDay: learningLocalDay(now, offsetMinutes, accountTimezone), ruleVersion: "today-v4", now, dailyContent: selectTodayContent(startLevel) });
   const projected = projectLearningHistory(built.state, capabilities, new Date(now));
+  const openMistakeContent = new Set(projected.mistakes.filter((mistake) => mistake.status === "open").map((mistake) => mistake.contentId));
   const visibleCards = projected.cards;
   const cards = visibleCards.map((card) => {
     const attempt = built.state.attempts.find((candidate) => candidate.id === card.sourceAttemptId);
@@ -79,11 +81,19 @@ function view(state: LearningState, ownerId: string, offsetMinutes: number, capa
     const audio = card.dimension !== "reading"
       ? (assetId ? trustedAudioExercise(assetId, card.dimension as AudioMode) : todayItem ? trustedTodayAudioExercise(todayItem.assetId, card.dimension as AudioMode) : undefined)
       : undefined;
+    const optionMap = question?.options ?? audio?.options ?? advancedListening?.options;
     return {
       ...card,
       prompt: attempt?.prompt ?? (question ? `${question.question_cn} — ${question.question_en}` : audio?.prompt ?? advancedListening?.prompt ?? card.contentId),
       correctAnswer: attempt?.correctAnswerText ?? (question?.options[question.correct_answer] ?? audio?.options[audio.correctAnswer] ?? advancedListening?.correctAnswer ?? attempt?.correctAnswer ?? ""),
       userAnswer: attempt?.userAnswerText ?? (question && attempt ? question.options[attempt.answer] ?? attempt.answer : audio && attempt ? audio.options[attempt.answer] ?? attempt.answer : attempt?.answer ?? ""),
+      priorAnswerLabel: "Answer from your earlier practice",
+      choices: optionMap ? Object.entries(optionMap).map(([key, text]) => ({ key, text })) : [],
+      isMistake: openMistakeContent.has(card.contentId),
+      reviewReason: openMistakeContent.has(card.contentId) ? "You missed this in an earlier practice session." : card.reviewCount === 0 ? "This is your first scheduled memory check." : "This item is due now based on your previous review.",
+      level: question?.level ?? todayItem?.level ?? startLevel,
+      skill: attempt?.skill ?? question?.type ?? (card.dimension === "reading" ? "Reading" : card.dimension === "audio" ? "Listening" : "Listening in context"),
+      explanation: question?.explanation ?? "Compare the prompt with the correct answer, then say the answer once before continuing.",
       audioText: audio?.voiceText ?? (listeningSlug ? advancedListeningBySlug(listeningSlug)?.voiceText : undefined),
       assetId: assetId ?? todayItem?.assetId,
       playbackReady: card.dimension === "reading" || Boolean(built.state.audioReviewReady?.some((ready) => ready.cardId === card.id && ready.cardRevision === card.revision)),
@@ -98,7 +108,6 @@ function view(state: LearningState, ownerId: string, offsetMinutes: number, capa
     audio: built.state.cards.filter((card) => card.dimension === "audio").length,
     context_audio: built.state.cards.filter((card) => card.dimension === "context_audio").length,
   };
-  const openMistakeContent = new Set(mistakes.filter((mistake) => mistake.status === "open").map((mistake) => mistake.contentId));
   const focusedReview = capabilities.focusedReview
     ? cards
       .filter((card) => card.dueAt <= now)
@@ -115,6 +124,7 @@ function view(state: LearningState, ownerId: string, offsetMinutes: number, capa
     mistakes,
     mastery,
     focusedReview,
+    canUndoReview: built.state.lastReviewUndo ? { cardId: built.state.lastReviewUndo.cardId } : null,
     nextAction,
     streak,
     streakBasis: accountTimezone ? `Account timezone: ${accountTimezone}` : "This device's local day",
@@ -122,7 +132,7 @@ function view(state: LearningState, ownerId: string, offsetMinutes: number, capa
 }
 function response(data: ReturnType<typeof view>, fresh: boolean, id: string, revision: number, account: boolean, capabilities: ProductCapabilities, usage: { dailyNewItems: number; dailyReviewGrades: number }, feedback?: { correct: boolean; correctAnswerText: string }) {
   const queueBinding = queueBindingFor(id);
-  const res = NextResponse.json({ session: data.session, cards: data.cards, mistakes: data.mistakes, mastery: data.mastery, focusedReview: data.focusedReview, capabilities, usage, nextAction: data.nextAction, streak: data.streak, streakBasis: data.streakBasis, queueBinding, revision, scope: account ? "account" : "guest", ...(feedback ? { feedback } : {}) });
+  const res = NextResponse.json({ session: data.session, cards: data.cards, mistakes: data.mistakes, mastery: data.mastery, focusedReview: data.focusedReview, canUndoReview: data.canUndoReview, capabilities, usage, nextAction: data.nextAction, streak: data.streak, streakBasis: data.streakBasis, queueBinding, revision, scope: account ? "account" : "guest", ...(feedback ? { feedback } : {}) });
   if (fresh) res.cookies.set(COOKIE, id, { httpOnly: true, sameSite: "lax", secure: true, maxAge: 31_536_000, path: "/" });
   return res;
 }
@@ -142,11 +152,11 @@ export async function POST(req: NextRequest) {
   const identity = await owner();
   const access = await requireLearningAccess(identity, "learning:write");
   if (!access.allowed) return errorResponse(access.code, 403);
-  let body: any;
+  let body: { queueBinding?: string; action?: string; payload?: Record<string, unknown>; tzOffset?: number; clientRevision?: number };
   try {
     const text = await req.text();
     if (text.length > 4096) return errorResponse("PAYLOAD_TOO_LARGE", 413);
-    body = JSON.parse(text);
+    body = JSON.parse(text) as typeof body;
   } catch {
     return errorResponse("INVALID_JSON", 400);
   }
@@ -341,19 +351,29 @@ export async function POST(req: NextRequest) {
       } else if (action === "audio_review_ready") {
         const cardId = short(payload.cardId, 120);
         const playbackTicket = short(payload.playbackTicket, 80);
-        if (!cardId || !Number.isInteger(payload.cardRevision) || !playbackTicket) throw new Error("INVALID_AUDIO_REVIEW");
-        await consumeStep7PlaybackTicket(identity.id, `review:${cardId}:${payload.cardRevision}`, playbackTicket, key);
-        state = markAudioReviewReady(state, cardId, payload.cardRevision, key);
+        const cardRevision = Number(payload.cardRevision);
+        if (!cardId || !Number.isInteger(cardRevision) || !playbackTicket) throw new Error("INVALID_AUDIO_REVIEW");
+        await consumeStep7PlaybackTicket(identity.id, `review:${cardId}:${cardRevision}`, playbackTicket, key);
+        state = markAudioReviewReady(state, cardId, cardRevision, key);
       } else if (action === "grade") {
-        if (!short(payload.cardId, 120) || !["again", "hard", "good", "easy"].includes(payload.grade) || !Number.isInteger(payload.clientRevision)) throw new Error("INVALID_GRADE");
-        state = gradeReview(state, { cardId: payload.cardId, grade: payload.grade, idempotencyKey: key, observedAt: new Date().toISOString(), clientRevision: payload.clientRevision }).state;
+        const cardId = short(payload.cardId, 120);
+        const grade = short(payload.grade, 10);
+        const clientRevision = Number(payload.clientRevision);
+        if (!cardId || !grade || !["again", "hard", "good", "easy"].includes(grade) || !Number.isInteger(clientRevision)) throw new Error("INVALID_GRADE");
+        state = gradeReview(state, { cardId, grade: grade as "again" | "hard" | "good" | "easy", idempotencyKey: key, observedAt: new Date().toISOString(), clientRevision }).state;
         if (capabilities.dailyReviewGrades !== null) usageCharge = { metric: "daily_review_grades", periodKey, idempotencyKey: key, units: 1, limit: capabilities.dailyReviewGrades };
+      } else if (action === "undo_review") {
+        const cardId = short(payload.cardId, 120);
+        if (!cardId) throw new Error("INVALID_REVIEW_UNDO");
+        state = undoLastReview(state, { cardId, idempotencyKey: key });
       } else if (action === "complete_item" || action === "skip_item" || action === "restore_item") {
-        if (!short(payload.sessionId, 120) || !short(payload.itemId, 160)) throw new Error("INVALID_ITEM");
-        const currentItem = state.dailySessions.find((session) => session.id === payload.sessionId)?.items.find((item) => item.id === payload.itemId);
+        const sessionId = short(payload.sessionId, 120);
+        const itemId = short(payload.itemId, 160);
+        if (!sessionId || !itemId) throw new Error("INVALID_ITEM");
+        const currentItem = state.dailySessions.find((session) => session.id === sessionId)?.items.find((item) => item.id === itemId);
         state = applyDailyItemAction(state, {
-          sessionId: payload.sessionId,
-          itemId: payload.itemId,
+          sessionId,
+          itemId,
           action: action === "complete_item" ? "complete" : action === "skip_item" ? "skip" : "restore",
           idempotencyKey: key,
           observedAt: new Date().toISOString(),
@@ -362,10 +382,11 @@ export async function POST(req: NextRequest) {
           usageCharge = { metric: "daily_new_items", periodKey, idempotencyKey: key, units: 1, limit: capabilities.dailyNewItems };
         }
       } else if (action === "configure_today") {
-        if (!Number.isInteger(payload.budgetMinutes) || payload.budgetMinutes < 5 || payload.budgetMinutes > 180) throw new Error("INVALID_TIME_BUDGET");
+        const budgetMinutes = Number(payload.budgetMinutes);
+        if (!Number.isInteger(budgetMinutes) || budgetMinutes < 5 || budgetMinutes > 180) throw new Error("INVALID_TIME_BUDGET");
         const observedAt = new Date().toISOString();
         const latestPlacement = [...(state.placementResults ?? [])].sort((a, b) => b.createdAt.localeCompare(a.createdAt))[0];
-        state = buildDailySession(state, { ownerId: identity.id, localDay: learningLocalDay(observedAt, tz, identity.account?.timezone), ruleVersion: "today-v4", now: observedAt, dailyContent: selectTodayContent(latestPlacement?.recommendedLevel ?? 1), budgetMinutes: payload.budgetMinutes }).state;
+        state = buildDailySession(state, { ownerId: identity.id, localDay: learningLocalDay(observedAt, tz, identity.account?.timezone), ruleVersion: "today-v4", now: observedAt, dailyContent: selectTodayContent(latestPlacement?.recommendedLevel ?? 1), budgetMinutes }).state;
         state = { ...state, dailyOperationKeys: [...(state.dailyOperationKeys ?? []), key].slice(-400) };
       } else {
         return errorResponse("INVALID_ACTION", 422);
@@ -377,7 +398,7 @@ export async function POST(req: NextRequest) {
       return response(data, identity.fresh, identity.id, loaded.revision + 1, Boolean(identity.account), capabilities, usage, feedback);
     } catch (error) {
       const code = error instanceof Error ? error.message : "SAVE_FAILED";
-      const replayable = action === "attempt" || action === "step7_attempt" || action === "audio_attempt" || action === "audio_review_ready" || action === "grade" || dailyAction;
+      const replayable = action === "attempt" || action === "step7_attempt" || action === "audio_attempt" || action === "audio_review_ready" || action === "grade" || action === "undo_review" || dailyAction;
       if (code === "REVISION_CONFLICT" && replayable && turn < 2) continue;
       if (code === "REVISION_CONFLICT") await recordPolicyAudit(createAuditEvent({ subjectId: identity.id, action: String(action), resourceType: "learning", resourceId: identity.id, result: "conflict", idempotencyKey: key }));
       return errorResponse(code, code === "ACCOUNT_DELETED" ? 403 : code === "REVISION_CONFLICT" ? 409 : code.startsWith("FREE_DAILY_") ? 429 : 422, code.startsWith("FREE_DAILY_") ? { upgradeHref: "/pricing" } : {});

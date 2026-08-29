@@ -11,6 +11,7 @@ import {
   recordAudioAttempt,
   resumeDailySession,
   retireContent,
+  undoLastReview,
   type LearningState,
 } from "../src/lib/learning/domain.ts";
 import { selectTodayContent } from "../src/lib/learning/today-content.ts";
@@ -52,6 +53,20 @@ test("review grades schedule distinct due times and replay does not double count
   assert.equal(replay.state.cards[0].reviewCount, 1);
   const good = gradeReview(initial, { cardId: initial.cards[0].id, grade: "good", idempotencyKey: "grade-g", observedAt: now, clientRevision: 0 });
   assert.notEqual(again.card.dueAt, good.card.dueAt);
+});
+
+test("the latest review rating can be undone once without losing the original mistake", () => {
+  const initial = recordAttempt(emptyState(), {
+    idempotencyKey: "attempt-undo", contentId: "word:undo", contentVersion: "v1",
+    dimension: "reading", answer: "B", correctAnswer: "A", observedAt: now,
+  }).state;
+  const graded = gradeReview(initial, { cardId: initial.cards[0].id, grade: "good", idempotencyKey: "grade-undo", observedAt: now, clientRevision: 0 }).state;
+  assert.equal(graded.mistakes[0].status, "resolved");
+  const undone = undoLastReview(graded, { cardId: initial.cards[0].id, idempotencyKey: "undo-1" });
+  assert.equal(undone.cards[0].revision, initial.cards[0].revision);
+  assert.equal(undone.cards[0].dueAt, initial.cards[0].dueAt);
+  assert.equal(undone.mistakes[0].status, "open");
+  assert.equal(undoLastReview(undone, { cardId: initial.cards[0].id, idempotencyKey: "undo-1" }), undone);
 });
 
 test("daily session is idempotent for owner day and rule and resumes unfinished item", () => {
