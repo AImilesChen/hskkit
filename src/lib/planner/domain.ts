@@ -88,6 +88,65 @@ export function plannerSignalsFromLearning(state: LearningState, now: string) {
   };
 }
 
+export interface PlannerCapacityInput {
+  goalLevel: number;
+  targetDate: string;
+  weeklyMinutes: number;
+  preferredDays: number[];
+  placementLevel?: number;
+  dueCards: number;
+  weakPointCount: number;
+  now: string;
+}
+
+export interface PlannerCapacityEstimate {
+  status: "invalid" | "infeasible" | "tight" | "feasible";
+  weeks: number;
+  minutesPerStudyDay: number;
+  minimumWeeklyMinutes: number;
+  suggestedTargetDate?: string;
+  allocation: { srs: number; weakPoints: number; goal: number; open: number };
+}
+
+export function estimatePlannerCapacity(input: PlannerCapacityInput): PlannerCapacityEstimate {
+  const days = uniqueDays(input.preferredDays);
+  const target = Date.parse(`${input.targetDate}T23:59:59.999Z`);
+  const current = Date.parse(input.now);
+  const valid = Number.isInteger(input.goalLevel) && input.goalLevel >= 1 && input.goalLevel <= 9
+    && isStrictDateOnly(input.targetDate) && Number.isFinite(target) && target > current
+    && Number.isInteger(input.weeklyMinutes) && input.weeklyMinutes >= 15 && input.weeklyMinutes <= 2100
+    && days.length > 0 && days.length === input.preferredDays.length;
+  if (!valid) return { status: "invalid", weeks: 0, minutesPerStudyDay: 0, minimumWeeklyMinutes: 15, allocation: { srs: 0, weakPoints: 0, goal: 0, open: Math.max(0, input.weeklyMinutes || 0) } };
+  const weeks = Math.max(1, Math.floor((target - current) / (7 * 86_400_000)));
+  const baseline = Number.isInteger(input.placementLevel) ? Math.max(1, Math.min(9, input.placementLevel!)) : undefined;
+  const remainingLevels = baseline === undefined ? input.goalLevel : Math.max(0, input.goalLevel - baseline);
+  const curriculumMinutes = baseline === undefined ? input.goalLevel * 120 : Math.max(60, remainingLevels * 120);
+  const srs = Math.max(0, input.dueCards) * 2;
+  const weakPoints = Math.min(60, Math.max(0, input.weakPointCount) * 15);
+  const goal = Math.ceil(curriculumMinutes / weeks);
+  const minimumWeeklyMinutes = srs + weakPoints + goal;
+  const goalCapacity = input.weeklyMinutes - srs - weakPoints;
+  const suggestedWeeks = goalCapacity > 0 ? Math.ceil(curriculumMinutes / goalCapacity) : undefined;
+  const suggestedTargetDate = suggestedWeeks ? new Date(current + suggestedWeeks * 7 * 86_400_000).toISOString().slice(0, 10) : undefined;
+  const usedSrs = Math.min(input.weeklyMinutes, srs);
+  const usedWeak = Math.min(Math.max(0, input.weeklyMinutes - usedSrs), weakPoints);
+  const usedGoal = Math.min(Math.max(0, input.weeklyMinutes - usedSrs - usedWeak), goal);
+  const open = Math.max(0, input.weeklyMinutes - usedSrs - usedWeak - usedGoal);
+  const status = minimumWeeklyMinutes > input.weeklyMinutes
+    ? "infeasible"
+    : minimumWeeklyMinutes * 1.1 >= input.weeklyMinutes || srs * 2 >= input.weeklyMinutes
+      ? "tight"
+      : "feasible";
+  return {
+    status,
+    weeks,
+    minutesPerStudyDay: Math.floor(input.weeklyMinutes / days.length),
+    minimumWeeklyMinutes,
+    suggestedTargetDate,
+    allocation: { srs: usedSrs, weakPoints: usedWeak, goal: usedGoal, open },
+  };
+}
+
 export function buildPlannerDraft(input: BuildInput): PlannerResult {
   const days = uniqueDays(input.preferredDays);
   const goalLevel = input.goalLevel;
