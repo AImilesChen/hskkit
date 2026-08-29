@@ -39,6 +39,33 @@ type BuildInput = PlannerInputs & { state: LearningState; now: string; ownerId?:
 
 const uniqueDays = (days: number[]) => [...new Set(days)].filter((day) => Number.isInteger(day) && day >= 0 && day <= 6).sort();
 const DATE_ONLY = /^(\d{4})-(\d{2})-(\d{2})$/;
+export function normalizePlannerCompletions(value: unknown): Record<string, string | null> {
+  if (Array.isArray(value)) {
+    return Object.fromEntries(value.filter((item): item is string => typeof item === "string" && item.length > 0).map((item) => [item, null]));
+  }
+  if (!value || typeof value !== "object") return {};
+  return Object.fromEntries(Object.entries(value as Record<string, unknown>).filter(([taskId, completedOn]) => taskId.length > 0 && (completedOn === null || typeof completedOn === "string" && isStrictDateOnly(completedOn))).map(([taskId, completedOn]) => [taskId, completedOn as string | null]));
+}
+export function calculatePlannerStreak(dates: Array<string | null>, today: string) {
+  const ordinal = (date: string) => {
+    const [year, month, day] = date.split("-").map(Number);
+    return Math.floor(Date.UTC(year, month - 1, day) / 86_400_000);
+  };
+  const todayOrdinal = isStrictDateOnly(today) ? ordinal(today) : Number.NaN;
+  const active = [...new Set(dates.filter((date): date is string => typeof date === "string" && isStrictDateOnly(date) && (!Number.isFinite(todayOrdinal) || ordinal(date) <= todayOrdinal)))].sort();
+  let best = 0;
+  let run = 0;
+  let previous: number | undefined;
+  for (const date of active) {
+    const current = ordinal(date);
+    run = previous !== undefined && current === previous + 1 ? run + 1 : 1;
+    best = Math.max(best, run);
+    previous = current;
+  }
+  const lastOrdinal = active.length ? ordinal(active.at(-1)!) : Number.NaN;
+  const current = Number.isFinite(todayOrdinal) && (lastOrdinal === todayOrdinal || lastOrdinal === todayOrdinal - 1) ? run : 0;
+  return { current, best, activeDays: active.length };
+}
 export function isStrictDateOnly(value: string) {
   const match = DATE_ONLY.exec(value);
   if (!match) return false;

@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useEffect, useMemo, useRef, useState } from "react";
 import AiAssist from "@/app/components/ai-assist";
 import HomeIcon, { type HomeIconName } from "@/app/components/home-icon";
-import { estimatePlannerCapacity, type StudyPlan } from "@/lib/planner/domain";
+import { calculatePlannerStreak, estimatePlannerCapacity, normalizePlannerCompletions, type StudyPlan } from "@/lib/planner/domain";
 
 type PlannerData = {
   latest: StudyPlan | null;
@@ -13,6 +13,7 @@ type PlannerData = {
   scope: "guest" | "account";
 };
 type RequestState = "loading" | "ready" | "saving" | "success" | "error";
+type Celebration = "weekly" | "goal" | null;
 
 const dayNames = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 const sourceLabels: Record<string, string> = { srs: "Due review", "weak-point": "Weak area", goal: "Goal practice" };
@@ -31,6 +32,15 @@ function midpointDate(targetDate: string) {
   const target = new Date(`${targetDate}T12:00:00.000Z`);
   return new Date(start.getTime() + Math.max(0, target.getTime() - start.getTime()) / 2).toISOString().slice(0, 10);
 }
+function localDateKey(date = new Date()) {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+}
+function hasCompleted(record: Record<string, string | null>, taskId: string) {
+  return Object.prototype.hasOwnProperty.call(record, taskId);
+}
 
 export default function PlannerClient() {
   const [data, setData] = useState<PlannerData>();
@@ -43,9 +53,16 @@ export default function PlannerClient() {
   const [errorSource, setErrorSource] = useState<"load" | "save">("load");
   const [minimum, setMinimum] = useState<number>();
   const [suggestedTargetDate, setSuggestedTargetDate] = useState<string>();
-  const [completed, setCompleted] = useState<string[]>([]);
+  const [completed, setCompleted] = useState<Record<string, string | null>>({});
+  const [activityDates, setActivityDates] = useState<string[]>([]);
   const [settingsOpen, setSettingsOpen] = useState(true);
+  const [guideOpen, setGuideOpen] = useState(false);
+  const [taskFeedback, setTaskFeedback] = useState("");
+  const [celebration, setCelebration] = useState<Celebration>(null);
   const key = useRef<string | undefined>(undefined);
+  const feedbackTimer = useRef<number | undefined>(undefined);
+  const celebrationClose = useRef<HTMLButtonElement>(null);
+  const plan = data?.latest ?? null;
 
   async function load(): Promise<boolean> {
     setRequestState("loading");
@@ -56,7 +73,8 @@ export default function PlannerClient() {
       if (!response.ok) throw new Error(safeMessage(payload?.error));
       setData(payload);
       if (payload.latest) {
-        setSettingsOpen(!window.matchMedia("(max-width: 760px)").matches);
+        setSettingsOpen(false);
+        setGuideOpen(localStorage.getItem("planner-how-to-dismissed") !== "true");
         setGoalLevel(payload.latest.inputs.goalLevel);
         setTargetDate(payload.latest.inputs.targetDate);
         setWeeklyMinutes(payload.latest.inputs.weeklyMinutes);
@@ -78,15 +96,39 @@ export default function PlannerClient() {
   }
   useEffect(() => { void load(); }, []);
 
-  const plan = data?.latest ?? null;
   const completionKey = plan ? `planner-task-completion:${plan.id}` : "";
+  const activityKey = plan ? `planner-learning-activity:${plan.ownerId}` : "";
   useEffect(() => {
-    if (!completionKey) { setCompleted([]); return; }
+    if (!completionKey) { setCompleted({}); setActivityDates([]); return; }
     try {
       const stored = JSON.parse(localStorage.getItem(completionKey) ?? "[]");
-      setCompleted(Array.isArray(stored) ? stored.filter((value): value is string => typeof value === "string") : []);
-    } catch { setCompleted([]); }
-  }, [completionKey]);
+      setCompleted(normalizePlannerCompletions(stored));
+    } catch { setCompleted({}); }
+    try {
+      const stored = JSON.parse(localStorage.getItem(activityKey) ?? "[]");
+      setActivityDates(Array.isArray(stored) ? [...new Set(stored.filter((value): value is string => typeof value === "string" && /^\d{4}-\d{2}-\d{2}$/.test(value)))].sort() : []);
+    } catch { setActivityDates([]); }
+  }, [activityKey, completionKey]);
+
+  useEffect(() => {
+    const placement = data?.realSignals.placementLevel;
+    const startingLevel = plan?.signals?.placementLevel;
+    if (!plan || !placement || !startingLevel || startingLevel >= plan.inputs.goalLevel || placement < plan.inputs.goalLevel) return;
+    const rewardKey = `planner-reward:goal:${plan.inputs.goalLevel}`;
+    if (localStorage.getItem(rewardKey) === "shown") return;
+    localStorage.setItem(rewardKey, "shown");
+    setCelebration("goal");
+  }, [data?.realSignals.placementLevel, plan]);
+
+  useEffect(() => {
+    if (!celebration) return;
+    celebrationClose.current?.focus();
+    const closeOnEscape = (event: KeyboardEvent) => { if (event.key === "Escape") setCelebration(null); };
+    window.addEventListener("keydown", closeOnEscape);
+    return () => window.removeEventListener("keydown", closeOnEscape);
+  }, [celebration]);
+
+  useEffect(() => () => { if (feedbackTimer.current) window.clearTimeout(feedbackTimer.current); }, []);
 
   const preview = useMemo(() => estimatePlannerCapacity({
     goalLevel,
@@ -98,16 +140,42 @@ export default function PlannerClient() {
     weakPointCount: data?.realSignals.weakPoints.length ?? 0,
     now: new Date().toISOString(),
   }), [data, goalLevel, preferredDays, targetDate, weeklyMinutes]);
+  const isDirty = !plan || plan.inputs.goalLevel !== goalLevel || plan.inputs.targetDate !== targetDate || plan.inputs.weeklyMinutes !== weeklyMinutes || plan.inputs.preferredDays.join(",") !== preferredDays.join(",");
 
   function toggleDay(day: number) {
     setPreferredDays((current) => current.includes(day) ? current.filter((item) => item !== day) : [...current, day].sort());
   }
   function toggleTask(taskId: string) {
-    setCompleted((current) => {
-      const next = current.includes(taskId) ? current.filter((id) => id !== taskId) : [...current, taskId];
-      if (completionKey) localStorage.setItem(completionKey, JSON.stringify(next));
-      return next;
-    });
+    const next = { ...completed };
+    const wasComplete = hasCompleted(completed, taskId);
+    const removedDate = wasComplete ? next[taskId] : undefined;
+    if (wasComplete) delete next[taskId];
+    else next[taskId] = localDateKey();
+    setCompleted(next);
+    if (completionKey) localStorage.setItem(completionKey, JSON.stringify(next));
+
+    if (wasComplete && removedDate && !Object.values(next).includes(removedDate)) {
+      const nextDates = activityDates.filter((date) => date !== removedDate);
+      setActivityDates(nextDates);
+      if (activityKey) localStorage.setItem(activityKey, JSON.stringify(nextDates));
+    } else if (!wasComplete && activityKey) {
+      const nextDates = [...new Set([...activityDates, localDateKey()])].sort();
+      setActivityDates(nextDates);
+      localStorage.setItem(activityKey, JSON.stringify(nextDates));
+    }
+
+    const taskIds = plan?.sessions.flatMap((session) => session.tasks.map((task) => task.id)) ?? [];
+    const nextCount = taskIds.filter((id) => hasCompleted(next, id)).length;
+    setTaskFeedback(wasComplete ? "Task marked incomplete." : nextCount === 1 ? "First task complete. Your learning streak has started." : "Task complete. Weekly progress updated.");
+    if (feedbackTimer.current) window.clearTimeout(feedbackTimer.current);
+    feedbackTimer.current = window.setTimeout(() => setTaskFeedback(""), 3200);
+    if (!wasComplete && taskIds.length > 0 && nextCount === taskIds.length && plan) {
+      const rewardKey = `planner-reward:weekly:${plan.id}`;
+      if (localStorage.getItem(rewardKey) !== "shown") {
+        localStorage.setItem(rewardKey, "shown");
+        setCelebration("weekly");
+      }
+    }
   }
 
   async function save() {
@@ -167,11 +235,14 @@ export default function PlannerClient() {
   </section>;
 
   const tasks = plan?.sessions.flatMap((session) => session.tasks) ?? [];
-  const completeCount = tasks.filter((task) => completed.includes(task.id)).length;
+  const completeCount = tasks.filter((task) => hasCompleted(completed, task.id)).length;
+  const completedMinutes = tasks.filter((task) => hasCompleted(completed, task.id)).reduce((sum, task) => sum + task.minutes, 0);
+  const scheduledMinutes = tasks.reduce((sum, task) => sum + task.minutes, 0);
   const progress = tasks.length ? Math.round(completeCount / tasks.length * 100) : 0;
-  const nextTask = tasks.find((task) => !completed.includes(task.id));
+  const nextTask = tasks.find((task) => !hasCompleted(completed, task.id));
+  const streak = calculatePlannerStreak(activityDates, localDateKey());
   const midpoint = midpointDate(plan?.inputs.targetDate ?? targetDate);
-  const feasibilityLabel = preview.status === "infeasible" ? "Needs adjustment" : preview.status === "tight" ? "Tight but possible" : preview.status === "feasible" ? "On track" : "Check your inputs";
+  const feasibilityLabel = !plan && !data.realSignals.placementLevel ? "Estimate only" : preview.status === "infeasible" ? "Needs adjustment" : preview.status === "tight" ? "Tight but possible" : preview.status === "feasible" ? "On track" : "Check your inputs";
 
   return <div className={`planner-workspace planner-layout ${plan ? "has-plan" : ""}`}>
     <section className="card planner-form">
@@ -192,15 +263,29 @@ export default function PlannerClient() {
       <fieldset><legend>Study days</legend><div className="planner-days">{dayNames.map((name, day) => <label key={name}><input type="checkbox" checked={preferredDays.includes(day)} onChange={() => toggleDay(day)}/><span>{name}</span></label>)}</div></fieldset>
       {data.realSignals.weakPoints.length > 0 && <details className="planner-weak"><summary>{data.realSignals.weakPoints.length} weak areas will receive extra practice</summary><p>{data.realSignals.weakPoints.join(", ")}</p></details>}
       {error && <div className="step7-alert error" role="alert"><strong>{error}</strong>{minimum && <p>Try at least {minimum} minutes per week.</p>}<div className="step7-actions">{minimum && minimum <= 2100 && <button className="btn secondary" type="button" onClick={() => setWeeklyMinutes(minimum)}>Use {minimum} min/week</button>}{suggestedTargetDate && <button className="btn secondary" type="button" onClick={() => setTargetDate(suggestedTargetDate)}>Move target to {suggestedTargetDate}</button>}<button className="btn secondary" type="button" onClick={() => void (errorSource === "load" ? load() : save())}>Retry</button></div></div>}
-      <button className="btn planner-generate" disabled={requestState === "saving" || preferredDays.length === 0 || preview.status === "invalid"} onClick={() => void save()}>{requestState === "saving" ? <><span className="planner-spinner" aria-hidden="true"/>Checking capacity…</> : <><HomeIcon name="calendar"/>{plan ? "Save new plan version" : "Create my weekly plan"}</>}</button>
-      <p className="planner-save-note">{data.scope === "account" ? "Saved to your account." : "Guests can try Planner and save this plan on this device. Sign in to save it across devices."}</p>
+      <button className="btn planner-generate" disabled={requestState === "saving" || preferredDays.length === 0 || preview.status === "invalid" || (!!plan && !isDirty)} onClick={() => void save()}>{requestState === "saving" ? <><span className="planner-spinner" aria-hidden="true"/>Checking capacity…</> : <><HomeIcon name="calendar"/>{!plan ? "Create my weekly plan" : isDirty ? "Update weekly plan" : "Plan is up to date"}</>}</button>
+      <p className={`planner-save-note ${plan && isDirty ? "unsaved" : ""}`}>{!plan ? data.scope === "account" ? "Preview only. Create the plan to save weekly tasks to your account." : <>Preview only. Guests can try Planner and save weekly tasks on this device. <Link href="/login?returnTo=%2Fplanner">Sign in to save it across devices.</Link></> : isDirty ? "Unsaved changes. Update the plan to rebuild your weekly tasks." : data.scope === "account" ? `Plan v${plan.version} saved to your account.` : `Plan v${plan.version} saved on this device.`}</p>
         </div>
       </details>
     </section>
 
     <section className="planner-result" aria-live="polite">
+      {plan && <>
+        <section className="card planner-progress">
+          <div className="planner-heading"><div><span className="eyebrow">Weekly progress</span><h2>{completeCount} of {tasks.length} tasks complete</h2></div><strong>{progress}%</strong></div>
+          {nextTask ? <div className="planner-next"><span className="planner-task-icon"><HomeIcon name={sourceIcons[nextTask.source] ?? "book"}/></span><div><small>Next task</small><strong>{nextTask.title}</strong></div><Link href={nextTask.href}>Start next task<HomeIcon name="arrow"/></Link></div> : <p className="planner-week-complete"><HomeIcon name="check"/>All weekly tasks complete.</p>}
+          <div className="planner-progress-track" role="progressbar" aria-valuemin={0} aria-valuemax={100} aria-valuenow={progress}><span style={{ width: `${progress}%` }}/></div>
+          <div className="planner-momentum" aria-label="Learning momentum"><div><strong>{completedMinutes}</strong><span>Minutes complete</span><small>of {scheduledMinutes} scheduled</small></div><div><strong>{streak.activeDays}</strong><span>Study days</span><small>with a completed plan task</small></div><div><strong>{streak.current}</strong><span>Learning streak</span><small>consecutive study days</small></div></div>
+          {taskFeedback && <p className="planner-task-feedback" role="status"><HomeIcon name="check"/>{taskFeedback}</p>}
+        </section>
+        <details className="card planner-how" open={guideOpen} onToggle={(event) => { setGuideOpen(event.currentTarget.open); if (!event.currentTarget.open) localStorage.setItem("planner-how-to-dismissed", "true"); }}>
+          <summary><span><HomeIcon name="route"/>How to use this plan</span><small>{guideOpen ? "Hide guide" : "Show guide"}</small></summary>
+          <div className="planner-how-content"><div><span>1</span><strong>Your plan is ready</strong><small>Start from the single next-task action above.</small></div><div><span>2</span><strong>Mark tasks complete</strong><small>Completion updates your real weekly progress.</small></div><div><span>3</span><strong>Return to see progress</strong><small>Your next task and learning streak stay here.</small></div></div>
+        </details>
+        <section className="planner-week"><div className="planner-section-heading"><span className="planner-icon"><HomeIcon name="calendar"/></span><div><span className="eyebrow">This week</span><h2>Your study timeline</h2></div></div><div className="planner-sessions">{plan.sessions.map((session) => <article className="card" key={session.day}><div className="planner-session-head"><div><span>{dayNames[session.day]}</span><h3>{session.minutes} minute session</h3></div><strong>{session.tasks.filter((task) => hasCompleted(completed, task.id)).length}/{session.tasks.length}</strong></div><div className="planner-task-list">{session.tasks.map((task) => <div className={`planner-task ${hasCompleted(completed, task.id) ? "complete" : ""}`} key={task.id}><label><input type="checkbox" checked={hasCompleted(completed, task.id)} onChange={() => toggleTask(task.id)} aria-label={`Mark ${task.title} complete`}/><span className="planner-task-check"><HomeIcon name="check"/></span></label><span className="planner-task-icon"><HomeIcon name={sourceIcons[task.source] ?? "book"}/></span><div><strong>{task.title}</strong><small>{task.minutes} min · {sourceLabels[task.source] ?? "Practice"}</small></div><Link className="planner-task-link" href={task.href} aria-label={`Start ${task.title}`}>Start<HomeIcon name="arrow"/></Link></div>)}</div></article>)}</div></section>
+      </>}
       <div className={`planner-preview card status-${preview.status}`}>
-        <div className="planner-heading"><div><span className="eyebrow">Plan preview</span><h2>{plan ? `HSK ${plan.inputs.goalLevel} plan · v${plan.version}` : `Your path to HSK ${goalLevel}`}</h2></div><span className="planner-feasibility"><HomeIcon name={preview.status === "infeasible" ? "timer" : "check"}/>{feasibilityLabel}</span></div>
+        <div className="planner-heading"><div><span className="eyebrow">{plan ? "Plan details" : "Plan preview"}</span><h2>{plan ? `HSK ${plan.inputs.goalLevel} plan · v${plan.version}` : `Your path to HSK ${goalLevel}`}</h2></div><span className="planner-feasibility"><HomeIcon name={preview.status === "infeasible" ? "timer" : "check"}/>{feasibilityLabel}</span></div>
         <div className="planner-preview-metrics"><div><strong>{preview.weeks || "—"}</strong><span>weeks</span></div><div><strong>{preferredDays.length}</strong><span>days/week</span></div><div><strong>{preview.minutesPerStudyDay || "—"}</strong><span>min/study day</span></div></div>
         <div className="planner-feasibility-copy"><strong>Plan feasibility</strong><p>{preview.status === "infeasible" ? `Your current goal needs about ${preview.minimumWeeklyMinutes} minutes each week.` : `${weeklyMinutes} weekly minutes can cover due reviews, weak areas and goal practice.`}</p></div>
         <div className="planner-allocation" aria-label="Weekly allocation">
@@ -211,14 +296,16 @@ export default function PlannerClient() {
       </div>
 
       {plan ? <div className="planner-execution">
-        <section className="card planner-progress"><div className="planner-heading"><div><span className="eyebrow">Weekly progress</span><h2>{completeCount} of {tasks.length} tasks complete</h2></div><strong>{progress}%</strong></div>{nextTask ? <div className="planner-next"><span className="planner-task-icon"><HomeIcon name={sourceIcons[nextTask.source] ?? "book"}/></span><div><small>Next task</small><strong>{nextTask.title}</strong></div><Link href={nextTask.href}>Start next task<HomeIcon name="arrow"/></Link></div> : <p className="planner-week-complete"><HomeIcon name="check"/>All weekly tasks complete.</p>}<div className="planner-progress-track" role="progressbar" aria-valuemin={0} aria-valuemax={100} aria-valuenow={progress}><span style={{ width: `${progress}%` }}/></div></section>
         <section className="card planner-milestones"><div className="planner-section-heading"><span className="planner-icon"><HomeIcon name="route"/></span><div><span className="eyebrow">Plan milestones</span><h2>Stay oriented from start to target</h2></div></div><ol><li><span/><div><strong>Start this week</strong><small>Complete the first scheduled session.</small></div></li><li><span/><div><strong>Midpoint review</strong><small><time dateTime={midpoint}>{midpoint}</time> · Review completion and adjust your availability.</small></div></li><li><span/><div><strong>Target date</strong><small><time dateTime={plan.inputs.targetDate}>{plan.inputs.targetDate}</time> · Reach your selected HSK goal.</small></div></li></ol></section>
-        <section className="planner-week"><div className="planner-section-heading"><span className="planner-icon"><HomeIcon name="calendar"/></span><div><span className="eyebrow">This week</span><h2>Your study timeline</h2></div></div><div className="planner-sessions">{plan.sessions.map((session) => <article className="card" key={session.day}><div className="planner-session-head"><div><span>{dayNames[session.day]}</span><h3>{session.minutes} minute session</h3></div><strong>{session.tasks.filter((task) => completed.includes(task.id)).length}/{session.tasks.length}</strong></div><div className="planner-task-list">{session.tasks.map((task) => <div className={`planner-task ${completed.includes(task.id) ? "complete" : ""}`} key={task.id}><label><input type="checkbox" checked={completed.includes(task.id)} onChange={() => toggleTask(task.id)} aria-label={`Mark ${task.title} complete`}/><span className="planner-task-check"><HomeIcon name="check"/></span></label><span className="planner-task-icon"><HomeIcon name={sourceIcons[task.source] ?? "book"}/></span><div><strong>{task.title}</strong><small>{task.minutes} min · {sourceLabels[task.source] ?? "Practice"}</small></div><Link className="planner-task-link" href={task.href} aria-label={`Start ${task.title}`}>Start<HomeIcon name="arrow"/></Link></div>)}</div></article>)}</div></section>
         {(plan.warnings.includes("SRS_LOAD_HIGH") || plan.warnings.includes("TARGET_LEVEL_CONTENT_GAP")) && <div className="step7-alert warning" role="alert"><strong>Plan note</strong><p>{plan.warnings.includes("SRS_LOAD_HIGH") ? "Due reviews take a large share of this week. Complete them first or add more study time." : `Your HSK ${plan.inputs.goalLevel} target uses the highest approved foundation currently available.`}</p></div>}
         <details className="planner-history"><summary>Previous plan versions ({data.versions.length})</summary>{data.versions.map((version) => <p key={version.id}><strong>v{version.version}</strong> · {version.inputs.weeklyMinutes} min/week · <time>{new Date(version.createdAt).toLocaleString()}</time></p>)}</details>
         <AiAssist feature="study_plan"/>
       </div> : <section className="card planner-empty"><HomeIcon name="route"/><h2>Your weekly tasks will appear here</h2><p>Adjust the inputs and watch the preview update. Create the plan when the timing feels realistic.</p><Link href="/today">See how Today works<HomeIcon name="arrow"/></Link></section>}
     </section>
-    <p className="planner-live-status" role="status" aria-live="polite">{requestState === "saving" ? "Checking capacity and building your weekly plan…" : requestState === "success" ? "Your plan was saved successfully." : ""}</p>
+    {celebration && <div className="planner-celebration" role="dialog" aria-modal="true" aria-labelledby="planner-celebration-title" onMouseDown={(event) => { if (event.target === event.currentTarget) setCelebration(null); }}>
+      <div className="planner-confetti" aria-hidden="true">{Array.from({ length: 18 }, (_, index) => <i key={index}/>)}</div>
+      <div className="planner-celebration-panel"><span className="planner-celebration-icon"><HomeIcon name={celebration === "goal" ? "target" : "check"}/></span><span className="eyebrow">Milestone reached</span><h2 id="planner-celebration-title">{celebration === "goal" ? `You reached your HSK ${plan?.inputs.goalLevel} goal` : "Weekly goal complete"}</h2><p>{celebration === "goal" ? "Your latest placement result now meets the target in this plan. Choose a new goal when you are ready." : `You completed all ${tasks.length} planned tasks and ${completedMinutes} study minutes this week.`}</p><button ref={celebrationClose} className="btn" type="button" onClick={() => setCelebration(null)}>Continue learning</button></div>
+    </div>}
+    <p className="planner-live-status" role="status" aria-live="polite">{requestState === "saving" ? "Checking capacity and building your weekly plan…" : requestState === "success" ? "Your plan was saved successfully and is ready to use." : taskFeedback}</p>
   </div>;
 }
