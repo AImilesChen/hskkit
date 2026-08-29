@@ -86,6 +86,7 @@ test("planner execution loop tracks weekly task completion and exposes the next 
   assert.match(client, /Next task/);
   assert.match(client, /Weekly progress/);
   assert.match(client, /planner-task-link/);
+  assert.ok(client.indexOf('className="planner-next"') < client.indexOf('className="planner-progress-track"'), "next task must appear before the progress bar in the compact desktop hierarchy");
 });
 
 test("planner provides truthful start, midpoint and target milestones", async () => {
@@ -115,4 +116,16 @@ test("planner responsive workspace protects density, collapsed settings, whole-r
   assert.match(css, /@media\s*\(max-width:\s*760px\)/);
   assert.match(css, /\.planner-settings:not\(\[open\]\)/);
   assert.match(css, /prefers-reduced-motion/);
+  assert.match(css, /@media\s*\(max-width:\s*760px\)[\s\S]*\.planner-page\s*\{[^}]*padding-top:\s*8px/);
+  assert.match(css, /@media\s*\(max-width:\s*760px\)[\s\S]*\.planner-hero\s*\{[^}]*margin-bottom:\s*8px/);
+  assert.match(css, /@media\s*\(max-width:\s*760px\)[\s\S]*\.planner-hero\s+h1\s*\{[^}]*font-size:\s*30px[^}]*line-height:\s*1\.15/);
+  assert.match(css, /@media\s*\(max-width:\s*760px\)[\s\S]*\.planner-hero\s*>\s*p\s*\{[^}]*font-size:\s*15px[^}]*line-height:\s*1\.5/);
+  assert.match(css, /@media\s*\(max-width:\s*760px\)[\s\S]*\.planner-result\s*\{[^}]*gap:\s*8px/);
+  assert.match(css, /@media\s*\(max-width:\s*760px\)[\s\S]*\.planner-preview\s*\{[^}]*padding:\s*16px/);
+  assert.match(css, /@media\s*\(max-width:\s*760px\)[\s\S]*\.planner-preview-metrics\s*\{[^}]*margin:\s*13px\s+0/);
+  assert.match(css, /@media\s*\(max-width:\s*760px\)[\s\S]*\.planner-progress\s*\{[^}]*padding:\s*14px\s+20px/);
+  assert.match(css, /@media\s*\(min-width:\s*761px\)[\s\S]*\.planner-page\s*\{[^}]*padding-top:\s*24px/);
+  assert.match(css, /@media\s*\(min-width:\s*761px\)[\s\S]*\.planner-result\s*\{[^}]*gap:\s*8px/);
+  assert.match(css, /@media\s*\(min-width:\s*761px\)[\s\S]*\.planner-fields\s*\{[^}]*repeat\(3,/);
+  assert.match(css, /@media\s*\(min-width:\s*761px\)[\s\S]*\.planner-preview\s*\{[^}]*grid-template-columns/);
 });

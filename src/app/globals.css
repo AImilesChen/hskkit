@@ -547,10 +547,39 @@
 .ai-output-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; }
 .ai-output ul { margin: 8px 0 0 18px; display: grid; gap: 6px; }
 .ai-output.fallback { border-color: #CBD5E1; background: #F8FAFC; }
+@media (min-width: 761px) {
+  .planner-page { padding-top: 24px; }
+  .planner-hero { max-width: none; margin-bottom: 2px !important; }
+  .planner-hero h1 { font-size: 32px !important; }
+  .planner-hero > p { margin-bottom: 0; }
+  .planner-result { gap: 8px; }
+  .planner-form { padding: 18px !important; }
+  .planner-signals { margin: 10px 0; }
+  .planner-signals div { align-content: center; padding: 7px; }
+  .planner-signals svg { display: none; }
+  .planner-fields { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+  .planner-fields label { font-size: 12px; white-space: nowrap; }
+  .planner-fields label:last-child { grid-column: auto; }
+  .planner-form fieldset { margin: 10px 0; }
+  .planner-preview { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: 12px 18px; padding: 18px !important; }
+  .planner-preview > .planner-heading { grid-column: 1 / -1; }
+  .planner-preview-metrics { grid-row: 2 / 4; margin: 0; align-self: start; }
+  .planner-preview-metrics div { align-content: center; padding: 9px 7px; }
+  .planner-preview-metrics strong { font-size: 21px; }
+  .planner-feasibility-copy { grid-column: 2; grid-row: 2; }
+  .planner-allocation { grid-column: 2; grid-row: 3; margin-top: 0; }
+  .planner-progress { padding: 14px 18px !important; }
+  .planner-progress-track { margin-top: 8px; }
+  .planner-next { margin-top: 10px; padding-top: 10px; }
+}
 @media (max-width: 760px) {
   .step7-grid, .planner-layout { grid-template-columns: 1fr; }
-  .planner-page { padding-left: 16px; padding-right: 16px; }
-  .planner-hero { margin-bottom: 18px !important; }
+  .planner-page { padding-top: 8px; padding-right: 16px; padding-bottom: 80px; padding-left: 16px; }
+  .planner-hero { margin-bottom: 8px !important; }
+  .planner-hero .eyebrow { margin-bottom: 4px; }
+  .planner-hero h1 { font-size: 30px !important; line-height: 1.15; }
+  .planner-hero > p { font-size: 15px; line-height: 1.5; }
+  .planner-result { gap: 8px; }
   .planner-form { position: static; padding: 18px !important; }
   .planner-layout.has-plan .planner-form { padding: 0 !important; overflow: hidden; }
   .planner-layout.has-plan .planner-settings > summary { display: grid; grid-template-columns: 22px minmax(0, 1fr); align-items: center; gap: 0 8px; min-height: 58px; padding: 10px 14px; color: #0F172A; cursor: pointer; }
@@ -564,8 +593,10 @@
   .planner-layout.has-plan .planner-result { order: 1; }
   .planner-layout.has-plan .planner-form { order: 2; }
   .planner-heading { align-items: flex-start; }
-  .planner-preview { padding: 18px !important; }
+  .planner-preview { padding: 16px !important; }
+  .planner-preview-metrics { margin: 13px 0; }
   .planner-preview-metrics strong { font-size: 20px; }
+  .planner-progress { padding: 14px 20px !important; }
   .planner-signals { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   .planner-fields { grid-template-columns: 1fr; }
   .planner-fields label:last-child { grid-column: auto; }
