@@ -5,6 +5,7 @@ import SiteHeader from "@/app/site-header";
 import ReadingLibraryExperience from "@/app/components/reading-library-experience";
 import { READING_LIBRARY_COUNTS, readingQuestionsForLevel } from "@/lib/learning/reading-library";
 import { READING_LESSONS } from "@/lib/learning/step7-content";
+import pageStyles from "./reading-page.module.css";
 
 export const metadata: Metadata = {
   title: "HSK 1–9 Reading Practice | HSKKit",
@@ -24,12 +25,13 @@ const LEVEL_DESCRIPTORS = [
   "The highest HSKKit layer for dense inference and precise interpretation.",
 ];
 
-const levels = READING_LIBRARY_COUNTS.byLevel.map((row) => ({
-  ...row,
-  descriptor: LEVEL_DESCRIPTORS[row.level - 1],
-  examples: readingQuestionsForLevel(row.level)
-    .filter((_, index) => [0, 10, 20].includes(index))
-    .map((question) => ({
+const levels = READING_LIBRARY_COUNTS.byLevel.map((row) => {
+  const questions = readingQuestionsForLevel(row.level);
+  return {
+    ...row,
+    descriptor: LEVEL_DESCRIPTORS[row.level - 1],
+    questionTypes: [...new Set(questions.map((question) => question.questionType))],
+    examples: questions.filter((_, index) => [0, 10, 20].includes(index)).map((question) => ({
       slug: question.slug,
       title: question.title,
       passage: question.passage,
@@ -38,17 +40,18 @@ const levels = READING_LIBRARY_COUNTS.byLevel.map((row) => ({
       questionType: question.questionType,
       options: Object.values(question.exercise.options ?? {}),
     })),
-}));
+  };
+});
 
 export default function ReadingIndex() {
   return <>
     <SiteHeader/>
-    <main className="learn step7-page">
+    <main className={pageStyles.page}>
       <ReadingLibraryExperience levels={levels}/>
 
-      <section className="mb-8 rounded-[20px] border border-slate-200 bg-white p-5 sm:flex sm:items-center sm:justify-between sm:gap-6" aria-labelledby="reading-learning-tools">
-        <div className="mb-4 sm:mb-0"><span className="eyebrow">Your learning</span><h2 id="reading-learning-tools" className="text-xl">Review and plan after you practise</h2></div>
-        <nav aria-label="Learning navigation" className="shrink-0">
+      <section className={pageStyles.learningTools} aria-labelledby="reading-learning-tools">
+        <div><span>Your learning</span><h2 id="reading-learning-tools">Review and plan after you practise</h2></div>
+        <nav aria-label="Learning navigation" className={pageStyles.learningNav}>
           <Link href="/review">Review</Link>
           <Link href="/mistakes">Mistakes</Link>
           <Link href="/today">Today</Link>
@@ -56,11 +59,11 @@ export default function ReadingIndex() {
         </nav>
       </section>
 
-      <p className="step7-alert warning mb-6"><strong>Coverage boundary:</strong> HSKKit-authored practice based on the HSK 3.0 standard; this is not an official exam question bank.</p>
+      <p className={pageStyles.boundary}><strong>Coverage boundary:</strong> HSKKit-authored practice based on the HSK 3.0 standard; this is not an official exam question bank.</p>
 
-      <details>
-        <summary className="cursor-pointer font-semibold text-slate-800">Published single-passage collection</summary>
-        <section className="step7-grid mt-5">{READING_LESSONS.map((lesson) => <article className="card" key={lesson.slug}><span className="eyebrow">HSK {lesson.levelBand} · {lesson.difficulty}</span><h2>{lesson.title}</h2><p>{lesson.questionType.replace("-", " ")}</p><Link className="btn secondary" href={`/reading/${lesson.slug}`}>Open passage</Link></article>)}</section>
+      <details className={pageStyles.collection}>
+        <summary>Published single-passage collection</summary>
+        <section className={pageStyles.collectionGrid}>{READING_LESSONS.map((lesson) => <article className={pageStyles.collectionCard} key={lesson.slug}><span>HSK {lesson.levelBand} · {lesson.difficulty}</span><h2>{lesson.title}</h2><p>{lesson.questionType.replace("-", " ")}</p><Link href={`/reading/${lesson.slug}`}>Open passage</Link></article>)}</section>
       </details>
     </main>
     <SiteFooter/>
