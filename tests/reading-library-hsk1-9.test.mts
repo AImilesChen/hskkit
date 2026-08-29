@@ -80,15 +80,17 @@ test("10/20 reading sessions are deterministic, unique and stay inside the selec
   }
 });
 
-test("reading UI exposes HSK 1–9 level cards, 10/20 starts, progress, same-level next and results", () => {
+test("reading UI exposes HSK 1–9 selector, 10/20 starts, progress, same-level next and results", () => {
   const index = readFileSync(new URL("src/app/reading/page.tsx", root), "utf8");
+  const experience = readFileSync(new URL("src/app/components/reading-library-experience.tsx", root), "utf8");
   const sessionPage = readFileSync(new URL("src/app/reading/session/[slug]/page.tsx", root), "utf8");
   const start = readFileSync(new URL("src/app/reading/start/route.ts", root), "utf8");
   const results = readFileSync(new URL("src/app/reading/results/page.tsx", root), "utf8");
   const resultState = readFileSync(new URL("src/app/components/reading-session-state.tsx", root), "utf8");
-  assert.match(index, /HSKKit levelled reading practice library/);
-  assert.match(index, /10 questions/);
-  assert.match(index, /20 questions/);
+  assert.match(experience, /Read at your level/);
+  assert.match(experience, /Start 10 questions/);
+  assert.match(experience, /Start 20 questions/);
+  assert.match(index, /ReadingLibraryExperience/);
   assert.match(start, /readingSession/);
   assert.match(sessionPage, /Reading · HSK.*of/);
   assert.match(sessionPage, /Continue HSK/);
