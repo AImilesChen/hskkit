@@ -47,6 +47,7 @@
   .learn > header > p { color: #64748B; margin-bottom: 20px; }
   .learn nav { display: flex; gap: 8px; overflow-x: auto; }
   .learn nav a { min-height: 44px; display: inline-flex; align-items: center; padding: 8px 16px; border-radius: 8px; background: #EFF6FF; color: var(--color-primary); font-weight: 700; }
+  .learn nav a[aria-current="page"] { background: #2563EB; color: #FFFFFF; }
   .learn .card, .learn .summary, .learn .state { border: 1px solid #E2E8F0; border-radius: 16px; padding: 24px; background: white; }
   .learn .card h2, .learn .state h2 { font-size: 22px; margin-bottom: 8px; }
   .learn .card p, .learn .state p { color: #64748B; margin-bottom: 18px; }

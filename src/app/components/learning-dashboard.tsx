@@ -8,7 +8,7 @@ import { buildReviewQueue, reviewGradeOptions, type ReviewGrade } from "../../li
 type Dimension = "reading" | "audio" | "context_audio";
 type Item = { id: string; kind: "review" | "learn" | "listen" | "practice" | "summary"; contentId: string; contentVersion?: string; status: "pending" | "completed" | "skipped"; dimension?: Dimension; title?: string; href?: string; estimatedMinutes?: number };
 type Notice = { code: string; message: string; actionHref: string; actionLabel: string };
-type Card = { id: string; contentId: string; dimension: Dimension; dueAt: string; revision: number; prompt: string; correctAnswer: string; userAnswer: string; priorAnswerLabel: string; choices: Array<{ key: string; text: string }>; isMistake: boolean; reviewReason: string; explanation: string; level: number; skill: string; intervalDays: number; ease: number; reviewCount: number; audioText?: string; assetId?: string; playbackReady: boolean };
+type Card = { id: string; contentId: string; dimension: Dimension; dueAt: string; revision: number; prompt: string; correctAnswer: string; userAnswer: string; priorAnswerLabel: string; choices: Array<{ key: string; text: string }>; isMistake: boolean; reviewReason: string; explanation: string; level: number; skill: string; intervalDays: number; ease: number; reviewCount: number; audioText?: string; assetId?: string; pinyin?: string; meaning?: string; example?: { hanzi: string; pinyin: string; meaning: string }; formalAudioSrc?: string; playbackReady: boolean };
 type Mistake = { id: string; contentId: string; status: string; createdAt: string; dimension: Dimension; prompt: string };
 type Data = {
   session: { id: string; startLevel?: number; contentReleaseId?: string; notice?: Notice; budgetMinutes?: number; totalEstimatedMinutes?: number; items: Item[] };
@@ -223,16 +223,39 @@ export default function LearningDashboard({ mode }: { mode: "today" | "review" |
   if (error) return <State title={error.startsWith("Free daily") ? "Daily limit reached" : "Sync paused"} text={error}>{error.startsWith("Free daily") ? <Link href="/pricing" className="btn">Compare Pro</Link> : <button onClick={load} className="btn">Try again</button>}</State>;
   if (!data) return <State title="Loading your learning plan…" text="Restoring your latest progress." />;
   const open = data.mistakes.filter((mistake) => mistake.status === "open");
+  const dueForToday = data.capabilities.focusedReview
+    ? data.focusedReview
+    : data.cards.filter((card) => card.dueAt <= new Date().toISOString());
+  const firstReviewIndex = (() => {
+    const pending = data.session.items.findIndex((item) => item.kind === "review" && item.status === "pending");
+    return pending >= 0 ? pending : data.session.items.findIndex((item) => item.kind === "review");
+  })();
+  const dueLevels = [...new Set(dueForToday.map((card) => card.level))].sort((a, b) => a - b);
+  const dueSkills = [...new Set(dueForToday.map((card) => card.skill))];
 
   if (mode === "today") {
-    const firstPending = data.session.items.findIndex((item) => item.status === "pending");
+    const orderedTodayItems = data.session.items
+      .map((item, index) => ({ item, index }))
+      .sort((a, b) => Number(b.index === firstReviewIndex) - Number(a.index === firstReviewIndex));
+    const firstPending = orderedTodayItems.findIndex(({ item }) => item.status === "pending");
     return <Shell title="Today" sub="Review → Learn → Listen/Practice → Summary">
       <section className="card mb-4"><div className="flex flex-wrap items-end justify-between gap-3"><label>Today&apos;s time budget<select value={data.session.budgetMinutes ?? 30} onChange={(event) => void setBudget(Number(event.target.value))}>{[10, 15, 20, 30, 45, 60].map((minutes) => <option key={minutes} value={minutes}>{minutes} minutes</option>)}</select></label><p><strong>{data.session.totalEstimatedMinutes ?? 0} min planned</strong> · version today-v4</p></div>{data.capabilities.tier === "free" && <p className="account-note">Free daily usage: {data.usage.dailyNewItems}/{data.capabilities.dailyNewItems} new items · {data.usage.dailyReviewGrades}/{data.capabilities.dailyReviewGrades} successful SRS ratings. <Link href="/pricing">Compare Pro</Link></p>}</section>
       {syncState !== "synced" && <div className={`step7-alert ${syncState === "failed" || syncState === "conflict" ? "error" : "warning"}`} role="status"><strong>Offline sync: {syncState.replaceAll("_", " ")}</strong><p>{syncState === "conflict" ? "Another device changed this learning record. The server copy was loaded; retry your pending action." : syncState === "failed" ? "Sync failed. Your pending action remains on this device." : "Your action is stored locally and will sync with the same operation key."}</p><button className="btn secondary" onClick={() => void retryPending()}>Retry sync</button></div>}
       {data.session.notice && <article className="mb-4 rounded-2xl bg-amber-50 p-5 text-amber-950" role="status"><span className="eyebrow">{data.session.notice.code.replaceAll("_", " ")}</span><h2>{data.session.notice.message}</h2><Link className="btn mt-3" href={data.session.notice.actionHref}>{data.session.notice.actionLabel}</Link></article>}
       <div className="grid gap-4">
-        {data.session.items.map((item, index) => {
-          const locked = item.status === "pending" && firstPending >= 0 && index > firstPending;
+        {orderedTodayItems.map(({ item, index }, displayIndex) => {
+          const locked = item.status === "pending" && firstPending >= 0 && displayIndex > firstPending;
+          if (item.kind === "review" && index !== firstReviewIndex) return null;
+          if (item.kind === "review") return <article className={`card ${locked ? "opacity-60" : ""}`} key={item.id}>
+            <span className="eyebrow">Scheduled review</span>
+            <h2>{dueForToday.length > 0 ? `${dueForToday.length} item${dueForToday.length === 1 ? "" : "s"} due` : "Review complete"}</h2>
+            <p>{dueForToday.length > 0 ? `About ${dueForToday.length} min estimated review. Strengthen weak answers first, then refresh scheduled memory.` : "No memory checks remain for today."}</p>
+            {dueForToday.length > 0 && <div className="mt-3 grid gap-2 text-sm text-slate-600 sm:grid-cols-2">
+              <p><strong className="text-slate-900">HSK mix:</strong> {dueLevels.map((level) => `HSK ${level}`).join(", ")}</p>
+              <p><strong className="text-slate-900">Skill mix:</strong> {dueSkills.join(", ")}</p>
+            </div>}
+            {!locked && dueForToday.length > 0 && <div className="mt-4"><Link className="btn" href="/review">Start review</Link></div>}
+          </article>;
           if (item.kind === "summary") return <article className="summary" key={item.id} aria-live="polite">
             <span className="eyebrow">Summary</span>
             <h2>{item.status === "completed" ? "Daily session complete" : "Finish the steps above"}</h2>
@@ -270,7 +293,7 @@ export default function LearningDashboard({ mode }: { mode: "today" | "review" |
   const selectedText = activeCard?.choices.find((choice) => choice.key === selectedAnswer)?.text ?? "";
   const currentAnswerCorrect = Boolean(selectedText && selectedText === activeCard?.correctAnswer);
 
-  return <Shell title="Review" sub="A short memory session that shows one due item at a time.">
+  return <Shell title="Review" sub="A short memory session that shows one due item at a time." compact={Boolean(reviewIds)}>
     <div className="mx-auto max-w-[880px]">
       {!reviewIds && due.length > 0 && <div className="overflow-hidden rounded-[28px] border border-slate-200 bg-white shadow-[0_22px_60px_rgba(15,23,42,0.08)]">
         <div className="border-b border-slate-200 bg-slate-950 px-[24px] py-[24px] text-white sm:px-[32px] sm:py-[32px]">
@@ -293,7 +316,7 @@ export default function LearningDashboard({ mode }: { mode: "today" | "review" |
       {reviewIds && !sessionComplete && activeCard && <div aria-live="polite">
         <div className="mb-4 flex flex-wrap items-end justify-between gap-3">
           <div><p className="text-sm font-semibold text-slate-500">Review progress</p><p className="mt-1 text-lg font-bold text-slate-950">{reviewedCount + 1} of {sessionTotal}</p></div>
-          <p className="text-sm text-slate-500">{Math.max(0, sessionTotal - reviewedCount)} remaining</p>
+          <p className="text-sm text-slate-500">{Math.max(0, sessionTotal - reviewedCount - 1)} after this</p>
         </div>
         <div className="mb-5 h-2 overflow-hidden rounded-full bg-slate-200"><div className="h-full rounded-full bg-blue-600 transition-[width]" style={{ width: `${Math.min(100, reviewedCount / sessionTotal * 100)}%` }} /></div>
         <article className="overflow-hidden rounded-[28px] border border-slate-200 bg-white shadow-[0_22px_60px_rgba(15,23,42,0.08)]">
@@ -319,7 +342,17 @@ export default function LearningDashboard({ mode }: { mode: "today" | "review" |
                 <p><strong>Correct answer:</strong> {activeCard.correctAnswer}</p>
                 <p className="mt-2 text-sm"><strong>{activeCard.priorAnswerLabel}:</strong> {activeCard.userAnswer || "No answer"}</p>
                 <p className="mt-3 text-sm text-slate-600">{activeCard.explanation}</p>
-</div>
+              </div>
+              {(activeCard.pinyin || activeCard.meaning || activeCard.example) && <section className="mt-4 rounded-2xl border border-slate-200 bg-white p-[20px]" aria-label="Vocabulary answer details">
+                {activeCard.pinyin && <p><strong>Pinyin:</strong> {activeCard.pinyin}</p>}
+                {activeCard.meaning && <p className="mt-2"><strong>Meaning:</strong> {activeCard.meaning}</p>}
+                {activeCard.example && <div className="mt-4 border-t border-slate-200 pt-4">
+                  <p><strong>Example:</strong> <span lang="zh-Hans">{activeCard.example.hanzi}</span></p>
+                  <p className="mt-1 text-sm text-blue-700">{activeCard.example.pinyin}</p>
+                  <p className="mt-1 text-sm text-slate-600"><strong>Example translation:</strong> {activeCard.example.meaning}</p>
+                </div>}
+                {activeCard.formalAudioSrc && <div className="mt-4"><p className="mb-2 text-sm font-semibold text-slate-700">Formal recording</p><audio controls preload="none" src={activeCard.formalAudioSrc} className="max-w-full" /></div>}
+              </section>}
               {activeCard.isMistake && answerChecked ? <button disabled={reviewSaving} onClick={() => void grade(activeCard, currentAnswerCorrect ? "good" : "again")} className="mt-5 min-h-[48px] w-full rounded-xl bg-blue-600 px-5 py-3 font-bold text-white disabled:cursor-not-allowed disabled:opacity-50 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-blue-200">{reviewSaving ? "Saving…" : "Continue"}</button> : <div className="mt-5"><p className="font-bold text-slate-950">How well did you remember it now?</p><div className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-4">{reviewGradeOptions(activeCard.ease, activeCard.intervalDays).map((option) => <button disabled={reviewSaving} key={option.grade} onClick={() => void grade(activeCard, option.grade)} className="min-h-[76px] rounded-xl border border-slate-200 bg-white px-3 py-3 text-left transition hover:border-blue-500 hover:bg-blue-50 disabled:cursor-not-allowed disabled:opacity-50 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-blue-200"><strong className="block text-slate-950">{option.label}</strong><span className="mt-1 block text-xs text-slate-500">{option.hint}</span></button>)}</div></div>}
             </div>}
           </div>
@@ -359,8 +392,9 @@ function actionFor(item: Item, complete: (item: Item) => Promise<void>, dailySes
   }
   return null;
 }
-function Shell(props: { title: string; sub: string; children: ReactNode }) {
-  return <main className="learn"><header><span className="eyebrow">HSKKit learning loop</span><h1>{props.title}</h1><p>{props.sub}</p><nav><Link href="/today">Today</Link><Link href="/review">Review</Link><Link href="/mistakes">Mistakes</Link><Link href="/listen">Listen</Link></nav></header>{props.children}</main>;
+function Shell(props: { title: string; sub: string; children: ReactNode; compact?: boolean }) {
+  const links = [{ label: "Today", href: "/today" }, { label: "Review", href: "/review" }, { label: "Mistakes", href: "/mistakes" }, { label: "Listen", href: "/listen" }];
+  return <main className={`learn ${props.compact ? "pt-6 sm:pt-16" : ""}`}><header className={props.compact ? "mb-5 sm:mb-8" : undefined}>{!props.compact && <span className="eyebrow">HSKKit learning loop</span>}<h1 className={props.compact ? "text-2xl sm:text-4xl" : undefined}>{props.title}</h1><p className={props.compact ? "hidden sm:block" : undefined}>{props.sub}</p><nav aria-label="Learning loop">{links.map((link) => <Link key={link.href} href={link.href} aria-current={props.title === link.label ? "page" : undefined} className={`${props.title === link.label ? "border-blue-600 bg-blue-600 text-white" : ""} px-3`}>{link.label}</Link>)}</nav></header>{props.children}</main>;
 }
 function State(props: { title: string; text: string; children?: ReactNode }) { return <div className="state"><h2>{props.title}</h2><p>{props.text}</p>{props.children}</div>; }
 function Mastery({ values, scope }: { values: Record<Dimension, number>; scope: Data["scope"] }) {

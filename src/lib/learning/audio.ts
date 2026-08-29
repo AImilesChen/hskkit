@@ -1,4 +1,5 @@
 import { listPublishedWords, type StudyWord } from "../dictionary/catalog.ts";
+import { formalWordAudioUrlByContentId } from "../content/level-status.ts";
 import { selectTodayContent, todayContentByAssetId } from "./today-content.ts";
 import type { Dimension } from "./domain.ts";
 
@@ -17,7 +18,8 @@ export interface AudioExercise {
 export type PublicAudioExercise = Omit<AudioExercise, "correctAnswer">;
 
 export function publicAudioExercise(exercise: AudioExercise): PublicAudioExercise {
-  const { correctAnswer: _correctAnswer, ...safe } = exercise;
+  const { correctAnswer, ...safe } = exercise;
+  void correctAnswer;
   return safe;
 }
 
@@ -71,6 +73,7 @@ export function trustedTodayAudioExercise(assetId: string, mode: AudioMode): Aud
   candidates.splice(correctIndex, 0, item);
   const optionText = (candidate: typeof item) => mode === "audio" ? candidate.meaning : candidate.example.meaning;
   const options = Object.fromEntries(letters.map((letter, index) => [letter, optionText(candidates[index])])) as Record<string, string>;
+  const formalAudioSrc = formalWordAudioUrlByContentId.get(item.assetId);
   const word: StudyWord = {
     id: item.assetId,
     slug: item.studySlug,
@@ -84,7 +87,7 @@ export function trustedTodayAudioExercise(assetId: string, mode: AudioMode): Aud
     qaStatus: "approved",
     contentVersion: 1,
     sourceVersion: item.contentVersion,
-    audio: { status: "unavailable", locale: "zh-CN" },
+    audio: formalAudioSrc ? { status: "formal", locale: "zh-CN", src: formalAudioSrc } : { status: "unavailable", locale: "zh-CN" },
   };
   return {
     assetId,

@@ -54,3 +54,22 @@ test("review layout stays task-first, responsive, and avoids dashboard-card spra
   assert.match(client, /focus-visible:ring/);
   assert.match(client, /sm:grid-cols-4/);
 });
+
+test("Today presents one truthful review entry with due count, time, level, and skill mix", async () => {
+  const client = await source("src/app/components/learning-dashboard.tsx");
+  for (const token of ["dueForToday", "estimated review", "HSK mix", "Skill mix", "firstReviewIndex", "orderedTodayItems"]) {
+    assert.match(client, new RegExp(token));
+  }
+  assert.match(client, /if \(item\.kind === "review" && index !== firstReviewIndex\) return null/);
+});
+
+test("revealed catalog review content uses published vocabulary details and only formal audio URLs", async () => {
+  const route = await source("src/app/api/v1/learning/route.ts");
+  const audio = await source("src/lib/learning/audio.ts");
+  const client = await source("src/app/components/learning-dashboard.tsx");
+  for (const token of ["pinyin", "meaning", "example", "formalAudioSrc"]) assert.match(route, new RegExp(token));
+  for (const token of ["Pinyin", "Meaning", "Example", "Example translation", "Formal recording"]) assert.match(client, new RegExp(token));
+  assert.match(route, /audio\?\.word\.audio\.status === "formal"/);
+  assert.match(audio, /formalWordAudioUrlByContentId\.get\(item\.assetId\)/);
+  assert.match(client, /<audio[^>]+controls[^>]+src=\{activeCard\.formalAudioSrc\}/);
+});

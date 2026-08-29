@@ -82,6 +82,7 @@ function view(state: LearningState, ownerId: string, offsetMinutes: number, capa
       ? (assetId ? trustedAudioExercise(assetId, card.dimension as AudioMode) : todayItem ? trustedTodayAudioExercise(todayItem.assetId, card.dimension as AudioMode) : undefined)
       : undefined;
     const optionMap = question?.options ?? audio?.options ?? advancedListening?.options;
+    const vocabulary = audio?.word;
     return {
       ...card,
       prompt: attempt?.prompt ?? (question ? `${question.question_cn} — ${question.question_en}` : audio?.prompt ?? advancedListening?.prompt ?? card.contentId),
@@ -92,10 +93,14 @@ function view(state: LearningState, ownerId: string, offsetMinutes: number, capa
       isMistake: openMistakeContent.has(card.contentId),
       reviewReason: openMistakeContent.has(card.contentId) ? "You missed this in an earlier practice session." : card.reviewCount === 0 ? "This is your first scheduled memory check." : "This item is due now based on your previous review.",
       level: question?.level ?? todayItem?.level ?? startLevel,
-      skill: attempt?.skill ?? question?.type ?? (card.dimension === "reading" ? "Reading" : card.dimension === "audio" ? "Listening" : "Listening in context"),
+      skill: attempt?.skill ?? (card.dimension === "reading" ? "Reading" : card.dimension === "audio" ? "Listening" : "Listening in context"),
       explanation: question?.explanation ?? "Compare the prompt with the correct answer, then say the answer once before continuing.",
       audioText: audio?.voiceText ?? (listeningSlug ? advancedListeningBySlug(listeningSlug)?.voiceText : undefined),
       assetId: assetId ?? todayItem?.assetId,
+      pinyin: vocabulary?.pinyin,
+      meaning: vocabulary?.meaning,
+      example: vocabulary?.example,
+      formalAudioSrc: audio?.word.audio.status === "formal" ? audio.word.audio.src : undefined,
       playbackReady: card.dimension === "reading" || Boolean(built.state.audioReviewReady?.some((ready) => ready.cardId === card.id && ready.cardRevision === card.revision)),
     };
   });
