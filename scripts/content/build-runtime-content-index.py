@@ -86,6 +86,7 @@ def main() -> None:
     for level in range(1, 10):
         direct_assets = [asset for asset in published if asset["level"] == level]
         assets = unified_advanced_assets if level in (8, 9) else direct_assets
+        word_assets = [asset for asset in assets if asset["kind"] == "word"]
         audio_count = sum(1 for asset in published_audio if asset["level"] == (7 if level in (8, 9) else level))
         availability = "ready" if assets or audio_count else "gap"
         levels.append({
@@ -96,6 +97,7 @@ def main() -> None:
             "releaseVersion": release["version"],
             "availability": availability,
             "contentCount": len(assets),
+            "wordCount": len(word_assets),
             "audioCount": audio_count,
             "isAdvancedPath": level >= 7,
             "message": "This level maps to the single canonical unified HSK 7–9 advanced ability band."
@@ -105,7 +107,7 @@ def main() -> None:
                 else "QA-approved study content is not yet available for this level.",
         })
         runtime_words[str(level)] = [
-            runtime_word(asset) for asset in assets[: args.runtime_word_limit]
+            runtime_word(asset) for asset in word_assets[: args.runtime_word_limit]
         ]
 
     dictionary_assets = []

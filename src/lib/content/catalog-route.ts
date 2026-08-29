@@ -4,6 +4,7 @@ import {
   searchCatalogWords,
   type CatalogSearchDatabase,
 } from "./catalog-search.ts";
+import { formalWordAudioAssetIds, formalWordAudioUrlByContentId } from "./level-status.ts";
 
 function errorResponse(status: number, error: string, message: string) {
   return Response.json({ error, message }, { status, headers: { "Cache-Control": "no-store" } });
@@ -21,7 +22,14 @@ export async function handleCatalogWordsRequest(request: Request, db: CatalogSea
 
   try {
     const params = parseCatalogSearchParams(url);
-    const body = await searchCatalogWords(db, params);
+    const result = await searchCatalogWords(db, params, formalWordAudioAssetIds);
+    const body = {
+      ...result,
+      contentAssets: result.contentAssets.map((asset) => ({
+        ...asset,
+        formalAudioUrl: formalWordAudioUrlByContentId.get(asset.id) ?? null,
+      })),
+    };
     return Response.json(body, {
       headers: { "Cache-Control": "public, max-age=30, s-maxage=120, stale-while-revalidate=300" },
     });

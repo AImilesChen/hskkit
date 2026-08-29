@@ -8,6 +8,7 @@ export interface LevelPublicationStatus {
   releaseVersion: number;
   availability: "ready" | "gap";
   contentCount: number;
+  wordCount: number;
   audioCount: number;
   isAdvancedPath: boolean;
   message: string;
@@ -20,6 +21,13 @@ type LevelPreview = {
   meaning: string;
   partOfSpeech: string;
   levelBand: string;
+};
+
+type PublishedAudioAsset = {
+  contentAssetId: string;
+  audioKind: string;
+  qaStatus: string;
+  storageKey: string;
 };
 
 const statuses = runtimeIndex.levels as LevelPublicationStatus[];
@@ -43,3 +51,7 @@ export function getHsk3LevelPreview(level: number, limit = 100): LevelPreview[] 
 }
 
 export const formalAudioAssetCount = runtimeIndex.formalAudioAssetCount;
+const formalWordAudioAssets = (runtimeIndex.publishedAudioAssets as PublishedAudioAsset[])
+  .filter((asset) => asset.audioKind === "word" && asset.qaStatus === "approved");
+export const formalWordAudioAssetIds = formalWordAudioAssets.map((asset) => asset.contentAssetId);
+export const formalWordAudioUrlByContentId = new Map(formalWordAudioAssets.map((asset) => [asset.contentAssetId, `/${asset.storageKey}`]));

@@ -78,12 +78,15 @@ test("Dictionary request path loads a shell and fetches paged data instead of im
   assert.doesNotMatch(route, /content\/catalog\.json|queryCatalog|repository\s*=/);
 });
 
-test("Vocabulary and word detail routes use the bounded runtime snapshot instead of the full catalog", () => {
+test("Vocabulary route keeps the bounded runtime status shell and loads paged catalog data through the API", () => {
   const vocabulary = fs.readFileSync(new URL("../src/app/vocabulary/[level]/page.tsx", import.meta.url), "utf8");
+  const vocabularyClient = fs.readFileSync(new URL("../src/app/vocabulary/[level]/vocabulary-catalog.tsx", import.meta.url), "utf8");
   const word = fs.readFileSync(new URL("../src/app/word/[slug]/page.tsx", import.meta.url), "utf8");
   const levelStatus = fs.readFileSync(new URL("../src/lib/content/level-status.ts", import.meta.url), "utf8");
   const dictionaryCatalog = fs.readFileSync(new URL("../src/lib/dictionary/catalog.ts", import.meta.url), "utf8");
-  assert.match(vocabulary, /getHsk3LevelPreview/);
+  assert.match(vocabulary, /getHsk3LevelStatus/);
+  assert.match(vocabulary, /VocabularyCatalog/);
+  assert.match(vocabularyClient, /\/api\/v1\/catalog\/words/);
   assert.match(word, /getWordBySlug/);
   assert.match(levelStatus, /runtime-content-index\.json/);
   assert.match(dictionaryCatalog, /runtime-content-index\.json/);

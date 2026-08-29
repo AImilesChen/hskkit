@@ -2,19 +2,41 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { StudyPage } from "../../components/study-shell";
-import { formalAudioAssetCount, getHsk3LevelPreview, getHsk3LevelStatus } from "@/lib/content/level-status";
+import { getHsk3LevelStatus } from "@/lib/content/level-status";
+import { VocabularyCatalog } from "./vocabulary-catalog";
 
 interface Props { params: Promise<{ level: string }> }
-function parseLevel(value: string) { const level = Number(value); return Number.isInteger(level) && level >= 1 && level <= 9 ? level : null; }
+
+const levelOptions = [
+  { level: 1, label: "HSK 1" },
+  { level: 2, label: "HSK 2" },
+  { level: 3, label: "HSK 3" },
+  { level: 4, label: "HSK 4" },
+  { level: 5, label: "HSK 5" },
+  { level: 6, label: "HSK 6" },
+  { level: 7, label: "HSK 7–9" },
+] as const;
+
+function parseLevel(value: string) {
+  const level = Number(value);
+  return Number.isInteger(level) && level >= 1 && level <= 9 ? level : null;
+}
+
 export const dynamic = "force-dynamic";
+
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const requestedLevel = parseLevel((await params).level);
   if (!requestedLevel) return { title: "Level not found — HSKKit", robots: { index: false, follow: false } };
   const level = requestedLevel >= 8 ? 7 : requestedLevel;
   const status = getHsk3LevelStatus(level);
   if (status.availability !== "ready") return { title: "Level unavailable — HSKKit", robots: { index: false, follow: false } };
-  const label = level === 7 ? "unified HSK 7–9 advanced ability band" : `Level ${level}`;
-  return { title: `HSK 3.0 ${label} vocabulary — HSKKit`, description: `${status.contentCount} source-locked, QA-approved and published HSK 3.0 vocabulary entries.`, alternates: { canonical: `/vocabulary/${level}` }, robots: requestedLevel >= 8 ? { index: false, follow: true } : undefined };
+  const label = level === 7 ? "HSK 7–9" : `HSK ${level}`;
+  return {
+    title: `HSK 3.0 ${label} vocabulary — HSKKit`,
+    description: `Browse all ${status.wordCount} published ${label} vocabulary entries with Chinese, pinyin, English meanings, and parts of speech.`,
+    alternates: { canonical: `/vocabulary/${level}` },
+    robots: requestedLevel >= 8 ? { index: false, follow: true } : undefined,
+  };
 }
 
 export default async function VocabularyPage({ params }: Props) {
@@ -23,16 +45,58 @@ export default async function VocabularyPage({ params }: Props) {
   const level = requestedLevel >= 8 ? 7 : requestedLevel;
   const status = getHsk3LevelStatus(level);
   if (status.availability !== "ready") notFound();
-  const words = getHsk3LevelPreview(level);
-  const label = level === 7 ? "unified HSK 7–9 advanced ability band" : `Level ${level}`;
+
+  const levelLabel = level === 7 ? "HSK 7–9" : `HSK ${level}`;
   return (
     <StudyPage>
-      <main className="mx-auto w-full max-w-[1000px] flex-1 px-5 py-12 md:px-16 md:py-16">
-        <nav className="mb-6 text-sm text-slate-500"><Link href="/levels" className="inline-flex min-h-11 items-center hover:text-blue-600">Levels 1–9</Link> <span aria-hidden="true">/</span> {label}</nav>
-        <header><p className="text-sm font-bold uppercase tracking-[0.15em] text-blue-600">HSK 3.0 · GF0025-2021</p><h1 className="mt-3 text-4xl font-bold md:text-5xl">{label} vocabulary</h1><p className="mt-4 max-w-3xl text-lg leading-8 text-slate-600">This catalog contains only source-locked, license-recorded, QA-approved and published HSK 3.0 entries. HSK 2.0 and demo words are excluded.</p>{requestedLevel >= 8 && <p className="mt-4 rounded-xl border border-amber-200 bg-amber-50 p-4 text-amber-950">HSK 3.0 publishes Levels 7–9 as one unified HSK 7–9 advanced ability band. This route maps to that shared Level 7 catalog; it is not a separate Level {requestedLevel} official word list.</p>}</header>
-        <section className="mt-8 grid gap-4 rounded-2xl border border-green-200 bg-green-50 p-6 sm:grid-cols-3"><div><p className="text-sm text-green-800">Published entries</p><p className="text-2xl font-bold text-green-950">{status.contentCount}</p></div><div><p className="text-sm text-green-800">Release</p><p className="text-lg font-bold text-green-950">{status.releaseId}</p></div><div><p className="text-sm text-green-800">Formal audio assets</p><p className="text-2xl font-bold text-green-950">{formalAudioAssetCount}</p></div></section>
-        <section className="mt-10"><div className="flex flex-wrap items-end justify-between gap-3"><div><h2 className="text-2xl font-bold">Published vocabulary preview</h2><p className="mt-2 text-slate-600">Showing the first {words.length} entries. The catalog API exposes all {status.contentCount} published entries.</p></div><Link href="/content-license" className="inline-flex min-h-11 items-center font-semibold text-blue-700 hover:underline">Sources and licenses</Link></div><ul className="mt-6 grid gap-3 sm:grid-cols-2" aria-label={`${label} vocabulary preview`}>{words.map((word) => <li key={word.id} className="rounded-xl border border-slate-200 bg-white p-4"><div className="flex items-start justify-between gap-3"><div><span className="text-2xl font-bold">{word.hanzi}</span><span className="ml-3 text-slate-600">{word.pinyin}</span></div><span className="rounded-full bg-blue-50 px-2 py-1 text-xs font-bold text-blue-700">{word.levelBand}</span></div><p className="mt-2 text-sm leading-6 text-slate-700">{word.meaning}</p><p className="mt-2 text-xs uppercase tracking-wide text-slate-400">{word.partOfSpeech}</p></li>)}</ul></section>
-        <div className="mt-10 flex flex-wrap gap-3"><Link href="/levels" className="inline-flex min-h-11 items-center rounded-lg border border-blue-600 px-5 py-3 font-semibold text-blue-700 hover:bg-blue-50">Back to Levels</Link><Link href="/placement" className="inline-flex min-h-11 items-center rounded-lg bg-blue-600 px-5 py-3 font-semibold text-white hover:bg-blue-700">Find my starting level</Link></div>
+      <main className="mx-auto w-full max-w-[1200px] flex-1 px-5 py-[24px] sm:px-8 md:py-[32px]">
+        <nav className="flex flex-wrap items-center gap-2 text-sm text-slate-500" aria-label="Breadcrumb">
+          <Link href="/" className="inline-flex min-h-11 items-center hover:text-blue-700">Learn</Link>
+          <span aria-hidden="true">/</span>
+          <Link href="/vocabulary/1" className="inline-flex min-h-11 items-center hover:text-blue-700">Vocabulary</Link>
+          <span aria-hidden="true">/</span>
+          <span className="font-medium text-slate-700">{levelLabel}</span>
+        </nav>
+
+        <header className="mt-[12px] border-b border-slate-200 pb-[24px]">
+          <div className="max-w-3xl">
+            <p className="text-xs font-semibold uppercase tracking-[.14em] text-blue-700">HSK 3.0 · GF0025-2021</p>
+            <h1 className="mt-[8px] text-4xl font-bold tracking-[-.035em] text-slate-950">{levelLabel} Vocabulary</h1>
+            <p className="mt-[10px] text-base leading-7 text-slate-600">Browse all {status.wordCount.toLocaleString("en-US")} published words with Chinese, pinyin, English meanings, and parts of speech.</p>
+          </div>
+
+          <div className="mt-[12px] flex flex-wrap items-center gap-x-3 gap-y-1 text-sm">
+            <span className="font-semibold text-slate-800">{status.wordCount.toLocaleString("en-US")} words</span>
+            <span className="text-slate-400" aria-hidden="true">•</span>
+            <Link href="/content-license" className="inline-flex min-h-11 items-center font-semibold text-blue-700 hover:underline">Verified HSK 3.0 source</Link>
+          </div>
+
+          <nav className="mt-[12px] flex flex-col gap-2 lg:flex-row lg:items-center" aria-label="HSK vocabulary levels">
+            <p className="shrink-0 text-sm font-semibold text-slate-800">Choose a level</p>
+            <div className="flex gap-2 overflow-x-auto pb-2 lg:pb-0">
+              {levelOptions.map((option) => {
+                const current = option.level === level;
+                return <Link
+                  key={option.level}
+                  href={`/vocabulary/${option.level}`}
+                  aria-current={current ? "page" : undefined}
+                  className={`inline-flex min-h-11 shrink-0 items-center justify-center rounded-xl border px-4 text-sm font-semibold transition focus:outline-none focus:ring-4 focus:ring-blue-100 ${current ? "border-blue-600 bg-blue-600 text-white" : "border-slate-300 bg-white text-slate-700 hover:border-blue-500 hover:bg-blue-50 hover:text-blue-700"}`}
+                >{option.label}</Link>;
+              })}
+            </div>
+          </nav>
+
+          {requestedLevel >= 8 && <p className="mt-4 rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm leading-6 text-amber-950">HSK 3.0 publishes Levels 7–9 as one unified HSK 7–9 advanced ability band, not a separate Level {requestedLevel} official word list. This page therefore uses the shared HSK 7–9 catalog.</p>}
+        </header>
+
+        <div className="mt-[20px]">
+          <VocabularyCatalog level={level} levelLabel={levelLabel} publishedCount={status.wordCount} />
+        </div>
+
+        <div className="mt-[40px] flex flex-wrap gap-3 border-t border-slate-200 pt-[24px]">
+          <Link href="/levels" className="inline-flex min-h-11 items-center rounded-lg border border-slate-300 bg-white px-5 py-3 font-semibold text-slate-700 hover:border-blue-600 hover:text-blue-700">View all HSK levels</Link>
+          <Link href="/placement" className="inline-flex min-h-11 items-center rounded-lg bg-blue-600 px-5 py-3 font-semibold text-white hover:bg-blue-700">Find my starting level</Link>
+        </div>
       </main>
     </StudyPage>
   );

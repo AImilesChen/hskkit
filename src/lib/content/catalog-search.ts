@@ -7,6 +7,8 @@ export interface CatalogSearchParams {
   page: number;
   pageSize: number;
   field?: CatalogSearchField;
+  audio?: "formal";
+  sort?: "pinyin";
 }
 
 export interface CatalogSearchRow {
@@ -73,14 +75,36 @@ export function parseCatalogSearchParams(url: URL): CatalogSearchParams {
   }
   const field = rawField as CatalogSearchField;
 
-  return { q, level, partOfSpeech, page, pageSize, ...(field === "all" ? {} : { field }) };
+  const rawAudio = url.searchParams.get("audio") ?? "all";
+  if (!["all", "formal"].includes(rawAudio)) {
+    throw new CatalogQueryError("audio must be all or formal");
+  }
+  const rawSort = url.searchParams.get("sort") ?? "catalog";
+  if (!["catalog", "pinyin"].includes(rawSort)) {
+    throw new CatalogQueryError("sort must be catalog or pinyin");
+  }
+
+  return {
+    q,
+    level,
+    partOfSpeech,
+    page,
+    pageSize,
+    ...(field === "all" ? {} : { field }),
+    ...(rawAudio === "formal" ? { audio: "formal" as const } : {}),
+    ...(rawSort === "pinyin" ? { sort: "pinyin" as const } : {}),
+  };
 }
 
 function escapedLike(value: string): string {
   return value.replace(/[\\%_]/g, "\\$&");
 }
 
-export function buildCatalogQuery(params: CatalogSearchParams, releaseId: string) {
+export function buildCatalogQuery(
+  params: CatalogSearchParams,
+  releaseId: string,
+  formalAudioIds: readonly string[] = [],
+) {
   const conditions = ["release_id = ?"];
   const filterBindings: Array<string | number> = [releaseId];
 
@@ -100,12 +124,20 @@ export function buildCatalogQuery(params: CatalogSearchParams, releaseId: string
     conditions.push(`${fieldColumn} LIKE ? ESCAPE '\\'`);
     filterBindings.push(`%${escapedLike(normalizeCatalogQuery(params.q))}%`);
   }
+  if (params.audio === "formal") {
+    if (formalAudioIds.length === 0) conditions.push("1 = 0");
+    else {
+      conditions.push(`id IN (${formalAudioIds.map(() => "?").join(",")})`);
+      filterBindings.push(...formalAudioIds);
+    }
+  }
 
   const where = conditions.join(" AND ");
   const select = "id,release_id,standard_version,content_version,level_band,hanzi,traditional,pinyin,meaning,part_of_speech";
   const offset = (params.page - 1) * params.pageSize;
+  const orderBy = params.sort === "pinyin" ? "pinyin COLLATE NOCASE, id" : "sort_level, id";
   return {
-    sql: `SELECT ${select} FROM catalog_search_index WHERE ${where} ORDER BY sort_level, id LIMIT ? OFFSET ?`,
+    sql: `SELECT ${select} FROM catalog_search_index WHERE ${where} ORDER BY ${orderBy} LIMIT ? OFFSET ?`,
     bindings: [...filterBindings, params.pageSize + 1, offset],
     countSql: `SELECT COUNT(*) AS total FROM catalog_search_index WHERE ${where}`,
     countBindings: filterBindings,
@@ -118,9 +150,11 @@ export function toCatalogWordResponse(input: {
   releaseId: string;
   releaseVersion?: number;
   params: CatalogSearchParams;
+  formalAudioIds?: readonly string[];
 }) {
   const rows = input.rows.slice(0, input.params.pageSize);
   const totalPages = input.total === 0 ? 0 : Math.ceil(input.total / input.params.pageSize);
+  const formalAudioIds = input.formalAudioIds ?? [];
   return {
     standard: "hsk3" as const,
     releaseId: input.releaseId,
@@ -131,6 +165,8 @@ export function toCatalogWordResponse(input: {
       level: input.params.level ?? null,
       partOfSpeech: input.params.partOfSpeech || null,
       field: input.params.field ?? "all",
+      audio: input.params.audio ?? "all",
+      sort: input.params.sort ?? "catalog",
     },
     pagination: {
       page: input.params.page,
@@ -154,6 +190,7 @@ export function toCatalogWordResponse(input: {
         meaning: row.meaning,
         partOfSpeech: row.part_of_speech,
       },
+      formalAudioAvailable: formalAudioIds.includes(row.id),
     })),
   };
 }
@@ -168,13 +205,17 @@ export interface CatalogSearchDatabase {
   prepare(sql: string): CatalogDbStatement;
 }
 
-export async function searchCatalogWords(db: CatalogSearchDatabase, params: CatalogSearchParams) {
+export async function searchCatalogWords(
+  db: CatalogSearchDatabase,
+  params: CatalogSearchParams,
+  formalAudioIds: readonly string[] = [],
+) {
   const release = await db.prepare(
     "SELECT id,version,published_at,word_count FROM catalog_search_releases WHERE active=1 ORDER BY published_at DESC LIMIT 1",
   ).first<ActiveCatalogSearchRelease>();
   if (!release) throw new Error("No active catalog search release");
 
-  const query = buildCatalogQuery(params, release.id);
+  const query = buildCatalogQuery(params, release.id, formalAudioIds);
   const count = await db.prepare(query.countSql).bind(...query.countBindings).first<{ total: number }>();
   const total = Number(count?.total ?? 0);
   const offset = (params.page - 1) * params.pageSize;
@@ -190,5 +231,6 @@ export async function searchCatalogWords(db: CatalogSearchDatabase, params: Cata
     releaseId: release.id,
     releaseVersion: release.version,
     params,
+    formalAudioIds,
   });
 }
