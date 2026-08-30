@@ -18,6 +18,7 @@ export interface PracticeQuestion {
   prompt: string;
   context?: string;
   audioSrc?: string;
+  audioText?: string;
   options: Record<PracticeAnswerChoice, string>;
   correctAnswer: PracticeAnswerChoice;
   explanation: string;
@@ -162,7 +163,7 @@ function comprehensionQuestions(level: number, skill: "reading" | "listening", s
     const audioId = `hsk3.practice.audio.${bandLabel(level)}-${passageIndex + 1}.v1`;
     const audio = skill === "listening" ? audioManifest.assets.find((asset) => asset.id === audioId) : undefined;
     const arranged = rotateOptions([fact, seed.falseFacts[index], seed.falseFacts[(index + 1) % 4], seed.falseFacts[(index + 2) % 4]], `${level}:${skill}:${passageIndex}:${index}`);
-    return { ...base(level, skill), id: `practice-v2-${bandLabel(level)}-${skill}-${passageIndex + 1}-${index + 1}`, prompt: skill === "reading" ? "Which statement is supported by the passage?" : "Which statement matches what you hear?", context: skill === "reading" ? seed.text : undefined, audioSrc: skill === "listening" ? `/audio/practice/batch11-${bandLabel(level)}-listening-${passageIndex + 1}.mp3` : undefined, ...arranged, explanation: `The source says: ${fact}`, weaknessTag: `${bandLabel(level)}-${skill}-detail`, sourceRef: skill === "listening" ? audioId : `hskkit-batch11-reading:${bandLabel(level)}:${passageIndex + 1}`, sourceUrl: "https://hskkit.com/content-license", authorizationStatus: skill !== "listening" || audio?.authorization.status === "authorized" ? "authorized" : "unavailable", qaStatus: skill !== "listening" || audio?.qaStatus === "approved" ? "approved" : audio?.qaStatus === "rejected" ? "rejected" : "pending", lifecycleStatus: skill !== "listening" || audio?.lifecycleStatus === "published" ? "published" : "withdrawn" };
+    return { ...base(level, skill), id: `practice-v2-${bandLabel(level)}-${skill}-${passageIndex + 1}-${index + 1}`, prompt: skill === "reading" ? "Which statement is supported by the passage?" : "Which statement matches what you hear?", context: skill === "reading" ? seed.text : undefined, audioSrc: skill === "listening" ? `/audio/practice/batch11-${bandLabel(level)}-listening-${passageIndex + 1}.mp3` : undefined, audioText: skill === "listening" ? seed.text : undefined, ...arranged, explanation: `The source says: ${fact}`, weaknessTag: `${bandLabel(level)}-${skill}-detail`, sourceRef: skill === "listening" ? audioId : `hskkit-batch11-reading:${bandLabel(level)}:${passageIndex + 1}`, sourceUrl: "https://hskkit.com/content-license", authorizationStatus: skill !== "listening" || audio?.authorization.status === "authorized" ? "authorized" : "unavailable", qaStatus: skill !== "listening" || audio?.qaStatus === "approved" ? "approved" : audio?.qaStatus === "rejected" ? "rejected" : "pending", lifecycleStatus: skill !== "listening" || audio?.lifecycleStatus === "published" ? "published" : "withdrawn" };
   }));
 }
 

@@ -1,6 +1,7 @@
 import { createHash } from "node:crypto";
 import type { TodayContentPlan } from "./today-content.ts";
 import { practiceQuestionSet } from "../practice/questions.ts";
+import type { ReviewSnapshot } from "./review-content.ts";
 
 export type Grade = "again" | "hard" | "good" | "easy";
 export type Dimension = "reading" | "audio" | "context_audio";
@@ -26,6 +27,7 @@ export interface Attempt {
   questionVersion?: string;
   dailySessionId?: string;
   dailyItemId?: string;
+  reviewSnapshot?: ReviewSnapshot;
 }
 export interface SrsCard {
   id: string;
@@ -40,6 +42,7 @@ export interface SrsCard {
   algorithmVersion: "hskkit-srs-v1";
   sourceAttemptId: string;
   gradeKeys: string[];
+  gradeResults?: Record<string, Grade>;
 }
 export interface Mistake {
   id: string;
@@ -224,6 +227,7 @@ export function recordAttempt(state: LearningState, input: {
   questionVersion?: string;
   dailySessionId?: string;
   dailyItemId?: string;
+  reviewSnapshot?: ReviewSnapshot;
 }) {
   const prior = state.attempts.find((attempt) => attempt.idempotencyKey === input.idempotencyKey);
   if (prior) {
@@ -301,12 +305,15 @@ export function gradeReview(state: LearningState, input: {
   idempotencyKey: string;
   observedAt: string;
   clientRevision: number;
+  requireAudioPlayback?: boolean;
+  resolveMistakes?: boolean;
 }) {
   const old = state.cards.find((card) => card.id === input.cardId);
   if (!old) throw new Error("CARD_NOT_FOUND");
   if (old.gradeKeys.includes(input.idempotencyKey)) return { state, card: old };
   if (old.revision !== input.clientRevision) throw new Error("REVISION_CONFLICT");
-  if (old.dimension !== "reading" && !state.audioReviewReady?.some((ready) => ready.cardId === old.id && ready.cardRevision === old.revision)) throw new Error("AUDIO_PLAYBACK_REQUIRED");
+  const requireAudioPlayback = input.requireAudioPlayback ?? old.dimension !== "reading";
+  if (requireAudioPlayback && !state.audioReviewReady?.some((ready) => ready.cardId === old.id && ready.cardRevision === old.revision)) throw new Error("AUDIO_PLAYBACK_REQUIRED");
   const schedule = {
     again: { days: 0, minutes: 10, ease: -0.2 },
     hard: { days: 1, minutes: 0, ease: -0.1 },
@@ -321,11 +328,14 @@ export function gradeReview(state: LearningState, input: {
     revision: old.revision + 1,
     reviewCount: old.reviewCount + 1,
     gradeKeys: [...old.gradeKeys, input.idempotencyKey],
+    gradeResults: { ...(old.gradeResults ?? {}), [input.idempotencyKey]: input.grade },
   };
-  const mistakes = state.mistakes.map((mistake) =>
-    mistake.contentId === old.contentId && mistake.contentVersion === old.contentVersion && mistake.status === "open" && input.grade !== "again"
+  const mistakes = state.mistakes.map((mistake) => {
+    const sourceAttempt = state.attempts.find((attempt) => attempt.id === mistake.sourceAttemptId);
+    return (input.resolveMistakes ?? true) && mistake.contentId === old.contentId && mistake.contentVersion === old.contentVersion && sourceAttempt?.dimension === old.dimension && mistake.status === "open" && input.grade !== "again"
       ? { ...mistake, status: "resolved" as const, resolvedAt: input.observedAt }
-      : mistake);
+      : mistake;
+  });
   const dailySessions = state.dailySessions.map((session) => reconcileSummary({
     ...session,
     items: session.items.map((item) => item.id === reviewItemId(old) || item.id === `review:${old.id}` ? { ...item, status: "completed" as const } : item),

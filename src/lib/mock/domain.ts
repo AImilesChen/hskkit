@@ -26,10 +26,12 @@ export interface MockQuestion {
   levelBand: string;
   dimension: MockDimension;
   prompt: string;
+  context?: string;
   options?: Record<string, string>;
   correctAnswer: string;
   explanation: string;
   audioSrc?: string;
+  audioText?: string;
   instruction?: string;
   approval: "approved" | "pending";
   authorization: "authorized" | "missing";
@@ -86,13 +88,21 @@ export interface MockSession {
   result?: MockResult;
 }
 
-const fromExercise = (exercise: Step7Exercise, input: Pick<MockQuestion, "band" | "level" | "levelBand" | "dimension"> & Pick<MockQuestion, "audioSrc" | "instruction">): MockQuestion => ({
+const fromExercise = (exercise: Step7Exercise, input: Pick<MockQuestion, "band" | "level" | "levelBand" | "dimension"> & Pick<MockQuestion, "audioSrc" | "audioText" | "instruction">): MockQuestion => ({
   id: exercise.id,
   contentId: exercise.contentId,
   contentVersion: exercise.contentVersion,
   sourceReleaseId: STEP7_RELEASE_ID,
   ...input,
   prompt: exercise.prompt,
+  context: exercise.kind === "reading"
+    ? publishedReadingLessons.find((lesson) => lesson.exercise.id === exercise.id)?.passage
+    : exercise.kind === "grammar"
+      ? (() => {
+          const lesson = publishedGrammarLessons.find((candidate) => candidate.exercise.id === exercise.id);
+          return lesson ? `${lesson.pattern}\n${lesson.examples.map((example) => example.zh).join(" / ")}` : undefined;
+        })()
+      : undefined,
   options: exercise.options,
   correctAnswer: exercise.correctAnswer,
   explanation: exercise.explanation,
@@ -109,7 +119,7 @@ const BASIC_BANK: MockQuestion[] = Array.from({ length: 6 }, (_, index) => index
   return [
     fromExercise(grammar.exercise, { band: "basic", level, levelBand: String(level), dimension: "grammar" }),
     fromExercise(reading.exercise, { band: "basic", level, levelBand: String(level), dimension: "reading" }),
-    fromExercise(listening.exercise, { band: "basic", level, levelBand: String(level), dimension: "listening", audioSrc: listening.audioSrc, instruction: listening.instruction }),
+    fromExercise(listening.exercise, { band: "basic", level, levelBand: String(level), dimension: "listening", audioSrc: listening.audioSrc, audioText: listening.voiceText, instruction: listening.instruction }),
   ];
 });
 const advancedGrammar = publishedGrammarLessons.find((item) => item.levelBand === "7-9");
@@ -118,7 +128,7 @@ const advancedListening = ADVANCED_LISTENING_LESSONS.filter((item) => item.level
 const ADVANCED_BANK: MockQuestion[] = [
   ...(advancedGrammar ? [fromExercise(advancedGrammar.exercise, { band: "advanced" as const, level: 7, levelBand: "7-9", dimension: "pragmatics" as const })] : []),
   ...(advancedReading ? [fromExercise(advancedReading.exercise, { band: "advanced" as const, level: 7, levelBand: "7-9", dimension: "reading" as const })] : []),
-  ...advancedListening.map((item) => fromExercise(item.exercise, { band: "advanced" as const, level: item.level, levelBand: "7-9", dimension: "listening" as const, audioSrc: item.audioSrc, instruction: item.instruction })),
+  ...advancedListening.map((item) => fromExercise(item.exercise, { band: "advanced" as const, level: item.level, levelBand: "7-9", dimension: "listening" as const, audioSrc: item.audioSrc, audioText: item.voiceText, instruction: item.instruction })),
 ];
 
 export const mockBank = (band: MockBand): MockQuestion[] => (band === "basic" ? BASIC_BANK : ADVANCED_BANK).map((question) => ({ ...question, options: question.options ? { ...question.options } : undefined }));
@@ -133,7 +143,7 @@ export function evaluateMockGate(band: MockBand, questions = mockBank(band)): { 
   return { ready: true, reason: null };
 }
 
-const publicQuestion = ({ correctAnswer: _correctAnswer, explanation: _explanation, approval: _approval, authorization: _authorization, lifecycle: _lifecycle, ...question }: MockQuestion) => question;
+const publicQuestion = ({ correctAnswer: _correctAnswer, explanation: _explanation, approval: _approval, authorization: _authorization, lifecycle: _lifecycle, audioText: _audioText, ...question }: MockQuestion) => question;
 export function publicMockSession(session: MockSession) {
   return {
     id: session.id,

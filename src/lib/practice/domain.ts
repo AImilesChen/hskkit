@@ -185,6 +185,21 @@ export function answerPracticeQuestion(state: LearningState, input: {
     questionVersion: session.questionVersion,
     dailySessionId: session.dailySessionId,
     dailyItemId: session.dailyItemId,
+    reviewSnapshot: {
+      level: question.level,
+      levelBand: question.levelBand === "7-9" ? "7–9" : question.levelBand,
+      skillLabel: question.skill[0].toUpperCase() + question.skill.slice(1),
+      topic: question.weaknessTag,
+      context: question.context,
+      prompt: question.prompt,
+      answerMode: "choice",
+      options: { ...question.options },
+      correctAnswer: question.correctAnswer,
+      correctAnswerText: question.options[question.correctAnswer],
+      explanation: question.explanation,
+      audioSrc: question.audioSrc,
+      audioText: question.audioText,
+    },
   });
   const answers = [...session.answers, {
     questionId: question.id,

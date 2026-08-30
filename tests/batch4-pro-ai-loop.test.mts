@@ -183,6 +183,6 @@ test("Batch 4 downgrade changes projection and authorization without deleting le
 test("Batch 4 Focused Review is computed only when the resolved capability permits it", async () => {
   const learningRoute = await read("src/app/api/v1/learning/route.ts");
   assert.match(learningRoute, /const focusedReview = capabilities\.focusedReview/);
-  assert.match(learningRoute, /openMistakeContent/);
+  assert.match(learningRoute, /openMistakeKeys/);
   assert.match(learningRoute, /focusReason/);
 });

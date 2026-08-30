@@ -21,11 +21,13 @@ import { loadState, saveState, usageSnapshot, type UsageCharge } from "../../../
 import { projectLearningHistory } from "../../../../lib/learning/projection";
 import { resolveCapabilities } from "../../../../lib/commercial/storage";
 import { type ProductCapabilities } from "../../../../lib/commercial/capabilities";
-import { selectTodayContent, todayContentByContentId } from "../../../../lib/learning/today-content";
+import { selectTodayContent } from "../../../../lib/learning/today-content";
 import { accessDecision, createAuditEvent, errorContract } from "../../../../lib/account/access-policy";
 import { recordPolicyAudit } from "../../../../lib/account/audit-storage";
 import { computeSessionStreak } from "../../../../lib/account/domain";
 import { computeOffsetSessionStreak, deriveHomeNextStep, learningLocalDay } from "../../../../lib/learning/progress";
+import { checkReviewAnswer, reviewSnapshotFromStep7Exercise } from "../../../../lib/learning/review-content";
+import { resolvedReviewSnapshotForAttempt } from "../../../../lib/learning/review-content-resolver";
 
 const COOKIE = GUEST_COOKIE;
 const queueBindingFor = (ownerId: string) => createHash("sha256").update(`hskkit-learning-queue:${ownerId}`).digest("base64url").slice(0, 24);
@@ -69,44 +71,59 @@ function view(state: LearningState, ownerId: string, offsetMinutes: number, capa
   const startLevel = latestPlacement?.recommendedLevel ?? 1;
   const built = buildDailySession(state, { ownerId, localDay: learningLocalDay(now, offsetMinutes, accountTimezone), ruleVersion: "today-v4", now, dailyContent: selectTodayContent(startLevel) });
   const projected = projectLearningHistory(built.state, capabilities, new Date(now));
-  const openMistakeContent = new Set(projected.mistakes.filter((mistake) => mistake.status === "open").map((mistake) => mistake.contentId));
+  const mistakeKey = (contentId: string, contentVersion: string, dimension: string) => `${contentId}\u0000${contentVersion}\u0000${dimension}`;
+  const openMistakeKeys = new Set(projected.mistakes.filter((mistake) => mistake.status === "open").map((mistake) => {
+    const attempt = built.state.attempts.find((candidate) => candidate.id === mistake.sourceAttemptId);
+    return mistakeKey(mistake.contentId, mistake.contentVersion, attempt?.dimension ?? "reading");
+  }));
   const visibleCards = projected.cards;
   const cards = visibleCards.map((card) => {
     const attempt = built.state.attempts.find((candidate) => candidate.id === card.sourceAttemptId);
-    const question = attempt?.contentId.startsWith("question:") ? trustedQuestion(attempt.contentId.slice(9)) : undefined;
+    const snapshot = attempt ? resolvedReviewSnapshotForAttempt(attempt) : undefined;
     const assetId = attempt?.contentId.startsWith("word:") ? attempt.contentId.slice(5) : undefined;
-    const todayItem = attempt?.contentId.startsWith("catalog:") ? todayContentByContentId(attempt.contentId) : undefined;
-    const listeningSlug = attempt?.contentId.startsWith("listening:") ? attempt.contentId.slice(10) : undefined;
-    const advancedListening = listeningSlug ? trustedStep7Exercise(`exercise:listening:${listeningSlug}`) : undefined;
-    const audio = card.dimension !== "reading"
-      ? (assetId ? trustedAudioExercise(assetId, card.dimension as AudioMode) : todayItem ? trustedTodayAudioExercise(todayItem.assetId, card.dimension as AudioMode) : undefined)
+    const audio = card.dimension !== "reading" && assetId
+      ? (trustedAudioExercise(assetId, card.dimension as AudioMode) ?? trustedTodayAudioExercise(assetId, card.dimension as AudioMode))
       : undefined;
-    const optionMap = question?.options ?? audio?.options ?? advancedListening?.options;
     const vocabulary = audio?.word;
+    const formalAudioSrc = snapshot?.audioSrc ?? (audio?.word.audio.status === "formal" ? audio.word.audio.src : undefined);
+    const formalAudioText = snapshot?.audioText ?? audio?.voiceText;
+    const playbackRequired = card.dimension !== "reading" && Boolean(formalAudioSrc && formalAudioText);
+    const isMistake = openMistakeKeys.has(mistakeKey(card.contentId, card.contentVersion, card.dimension));
     return {
       ...card,
-      prompt: attempt?.prompt ?? (question ? `${question.question_cn} — ${question.question_en}` : audio?.prompt ?? advancedListening?.prompt ?? card.contentId),
-      correctAnswer: attempt?.correctAnswerText ?? (question?.options[question.correct_answer] ?? audio?.options[audio.correctAnswer] ?? advancedListening?.correctAnswer ?? attempt?.correctAnswer ?? ""),
-      userAnswer: attempt?.userAnswerText ?? (question && attempt ? question.options[attempt.answer] ?? attempt.answer : audio && attempt ? audio.options[attempt.answer] ?? attempt.answer : attempt?.answer ?? ""),
+      prompt: snapshot?.prompt ?? attempt?.prompt ?? card.contentId,
+      context: snapshot?.context,
+      instruction: snapshot?.instruction,
+      answerMode: snapshot?.answerMode ?? "self_recall",
+      correctAnswer: snapshot?.correctAnswerText ?? attempt?.correctAnswerText ?? attempt?.correctAnswer ?? "",
+      correctAnswerKey: snapshot?.correctAnswer ?? attempt?.correctAnswer ?? "",
+      userAnswer: attempt?.userAnswerText ?? attempt?.answer ?? "",
       priorAnswerLabel: "Answer from your earlier practice",
-      choices: optionMap ? Object.entries(optionMap).map(([key, text]) => ({ key, text })) : [],
-      isMistake: openMistakeContent.has(card.contentId),
-      reviewReason: openMistakeContent.has(card.contentId) ? "You missed this in an earlier practice session." : card.reviewCount === 0 ? "This is your first scheduled memory check." : "This item is due now based on your previous review.",
-      level: question?.level ?? todayItem?.level ?? startLevel,
-      skill: attempt?.skill ?? (card.dimension === "reading" ? "Reading" : card.dimension === "audio" ? "Listening" : "Listening in context"),
-      explanation: question?.explanation ?? "Compare the prompt with the answer and explanation before rating your recall.",
-      audioText: audio?.voiceText ?? (listeningSlug ? advancedListeningBySlug(listeningSlug)?.voiceText : undefined),
-      assetId: assetId ?? todayItem?.assetId,
+      choices: snapshot?.options ? Object.entries(snapshot.options).map(([key, text]) => ({ key, text })) : [],
+      isMistake,
+      legacyReview: !snapshot,
+      reviewReason: isMistake ? "You missed this in an earlier practice session." : card.reviewCount === 0 ? "This is your first scheduled memory check." : "This item is due now based on your previous review.",
+      level: snapshot?.level,
+      levelBand: snapshot?.levelBand ?? "Legacy",
+      skill: snapshot?.skillLabel ?? (card.dimension === "reading" ? "Reading" : "Listening"),
+      topic: snapshot?.topic,
+      explanation: snapshot?.explanation ?? "This older item does not contain a complete original question snapshot. Use it only as a memory prompt.",
+      audioText: formalAudioText,
+      audioSrc: formalAudioSrc,
+      assetId,
       pinyin: vocabulary?.pinyin,
       meaning: vocabulary?.meaning,
       example: vocabulary?.example,
-      formalAudioSrc: audio?.word.audio.status === "formal" ? audio.word.audio.src : undefined,
-      playbackReady: card.dimension === "reading" || Boolean(built.state.audioReviewReady?.some((ready) => ready.cardId === card.id && ready.cardRevision === card.revision)),
+      formalAudioSrc,
+      playbackRequired,
+      playbackReady: !playbackRequired || Boolean(built.state.audioReviewReady?.some((ready) => ready.cardId === card.id && ready.cardRevision === card.revision)),
     };
   });
   const mistakes = projected.mistakes.map((mistake) => {
     const attempt = built.state.attempts.find((candidate) => candidate.id === mistake.sourceAttemptId);
-    return { ...mistake, dimension: attempt?.dimension ?? "reading", prompt: attempt?.prompt ?? mistake.contentId };
+    const dimension = attempt?.dimension ?? "reading";
+    const cardId = built.state.cards.find((card) => card.contentId === mistake.contentId && card.contentVersion === mistake.contentVersion && card.dimension === dimension)?.id;
+    return { ...mistake, cardId, dimension, prompt: attempt?.prompt ?? mistake.contentId };
   });
   const mastery = {
     reading: built.state.cards.filter((card) => card.dimension === "reading").length,
@@ -116,8 +133,8 @@ function view(state: LearningState, ownerId: string, offsetMinutes: number, capa
   const focusedReview = capabilities.focusedReview
     ? cards
       .filter((card) => card.dueAt <= now)
-      .sort((a, b) => Number(openMistakeContent.has(b.contentId)) - Number(openMistakeContent.has(a.contentId)) || Number(b.dimension !== "reading") - Number(a.dimension !== "reading") || a.dueAt.localeCompare(b.dueAt))
-      .map((card) => ({ ...card, focusReason: openMistakeContent.has(card.contentId) ? "open_mistake" as const : "due" as const }))
+      .sort((a, b) => Number(b.isMistake) - Number(a.isMistake) || Number(b.dimension !== "reading") - Number(a.dimension !== "reading") || a.dueAt.localeCompare(b.dueAt))
+      .map((card) => ({ ...card, focusReason: card.isMistake ? "open_mistake" as const : "due" as const }))
     : [];
   const streak = accountTimezone
     ? computeSessionStreak(built.state.dailySessions, accountTimezone, now)
@@ -268,6 +285,17 @@ export async function POST(req: NextRequest) {
         return response(view(loaded.state, identity.id, tz, capabilities, identity.account?.timezone), identity.fresh, identity.id, loaded.revision, Boolean(identity.account), capabilities, usage);
       }
     }
+    if (action === "retry_review") {
+      const replayCardId = short(payload.cardId, 120);
+      const replayCard = replayCardId ? loaded.state.cards.find((card) => card.id === replayCardId) : undefined;
+      if (replayCard?.gradeKeys.includes(key)) {
+        const attempt = loaded.state.attempts.find((candidate) => candidate.id === replayCard.sourceAttemptId);
+        const snapshot = attempt ? resolvedReviewSnapshotForAttempt(attempt) : undefined;
+        const replayGrade = replayCard.gradeResults?.[key];
+        if (!replayGrade) return errorResponse("IDEMPOTENT_RESULT_UNAVAILABLE", 409);
+        return response(view(loaded.state, identity.id, tz, capabilities, identity.account?.timezone), identity.fresh, identity.id, loaded.revision, Boolean(identity.account), capabilities, usage, snapshot ? { correct: replayGrade !== "again", correctAnswerText: snapshot.correctAnswerText } : undefined);
+      }
+    }
     if (dailyAction && Number.isInteger(body?.clientRevision) && body.clientRevision !== loaded.revision && !(loaded.state.dailyOperationKeys ?? []).includes(key)) {
       await recordPolicyAudit(createAuditEvent({ subjectId: identity.id, action: String(action), resourceType: "learning", resourceId: identity.id, result: "conflict", idempotencyKey: key, metadata: { serverRevision: loaded.revision, clientRevision: body.clientRevision } }));
       return errorResponse("REVISION_CONFLICT", 409, { state: "conflict", serverRevision: loaded.revision, clientRevision: body.clientRevision });
@@ -292,6 +320,18 @@ export async function POST(req: NextRequest) {
           userAnswerText: question.options[answer],
           correctAnswerText: question.options[question.correct_answer],
           observedAt: new Date().toISOString(),
+          reviewSnapshot: {
+            level: question.level,
+            levelBand: String(question.level),
+            skillLabel: "Reading",
+            context: question.passage_cn,
+            prompt: question.question_en || question.question_cn,
+            answerMode: "choice" as const,
+            options: { ...question.options },
+            correctAnswer: question.correct_answer,
+            correctAnswerText: question.options[question.correct_answer],
+            explanation: question.explanation ?? "Compare the supported detail with the other choices.",
+          },
         }).state;
       } else if (action === "step7_attempt") {
         const exerciseId = short(payload.exerciseId, 120);
@@ -318,6 +358,7 @@ export async function POST(req: NextRequest) {
           userAnswerText: rawAnswer,
           correctAnswerText: exercise.options?.[exercise.correctAnswer] ?? exercise.correctAnswer,
           observedAt: new Date().toISOString(),
+          reviewSnapshot: reviewSnapshotFromStep7Exercise(exercise),
         };
         state = listening
           ? recordAudioAttempt(state, { ...input, dimension: "audio", playbackResult: "completed" }).state
@@ -349,6 +390,20 @@ export async function POST(req: NextRequest) {
           mode: "listening",
           dailySessionId,
           dailyItemId,
+          reviewSnapshot: {
+            level: exercise.word.level,
+            levelBand: exercise.word.level >= 7 ? "7–9" : String(exercise.word.level),
+            skillLabel: exercise.dimension === "audio" ? "Listening · word" : "Listening · sentence",
+            topic: exercise.word.partOfSpeech,
+            prompt: exercise.prompt,
+            answerMode: "choice",
+            options: { ...exercise.options },
+            correctAnswer: exercise.correctAnswer,
+            correctAnswerText: exercise.options[exercise.correctAnswer],
+            explanation: `${exercise.word.hanzi} (${exercise.word.pinyin}) means “${exercise.word.meaning}.”`,
+            audioSrc: exercise.word.audio.status === "formal" ? exercise.word.audio.src : undefined,
+            audioText: exercise.voiceText,
+          },
         });
         if (!("attempt" in recorded)) throw new Error("AUDIO_PLAYBACK_REQUIRED");
         state = recorded.state;
@@ -360,12 +415,35 @@ export async function POST(req: NextRequest) {
         if (!cardId || !Number.isInteger(cardRevision) || !playbackTicket) throw new Error("INVALID_AUDIO_REVIEW");
         await consumeStep7PlaybackTicket(identity.id, `review:${cardId}:${cardRevision}`, playbackTicket, key);
         state = markAudioReviewReady(state, cardId, cardRevision, key);
+      } else if (action === "retry_review") {
+        const cardId = short(payload.cardId, 120);
+        const answer = short(payload.answer, 180);
+        const cardRevision = Number(payload.cardRevision);
+        const card = cardId ? state.cards.find((candidate) => candidate.id === cardId) : undefined;
+        const attempt = card ? state.attempts.find((candidate) => candidate.id === card.sourceAttemptId) : undefined;
+        const snapshot = attempt ? resolvedReviewSnapshotForAttempt(attempt) : undefined;
+        const openMistake = card ? state.mistakes.some((mistake) => {
+          const sourceAttempt = state.attempts.find((candidate) => candidate.id === mistake.sourceAttemptId);
+          return mistake.contentId === card.contentId && mistake.contentVersion === card.contentVersion && sourceAttempt?.dimension === card.dimension && mistake.status === "open";
+        }) : false;
+        if (!card || !attempt || !snapshot || !openMistake || snapshot.answerMode === "self_recall" || !answer || !Number.isInteger(cardRevision)) throw new Error("INVALID_REVIEW_RETRY");
+        const correct = checkReviewAnswer(snapshot, answer);
+        const reviewCard = view(state, identity.id, tz, capabilities, identity.account?.timezone).cards.find((candidate) => candidate.id === card.id);
+        state = gradeReview(state, { cardId: card.id, grade: correct ? "good" : "again", idempotencyKey: key, observedAt: new Date().toISOString(), clientRevision: cardRevision, requireAudioPlayback: reviewCard?.playbackRequired, resolveMistakes: true }).state;
+        if (capabilities.dailyReviewGrades !== null) usageCharge = { metric: "daily_review_grades", periodKey, idempotencyKey: key, units: 1, limit: capabilities.dailyReviewGrades };
+        feedback = { correct, correctAnswerText: snapshot.correctAnswerText };
       } else if (action === "grade") {
         const cardId = short(payload.cardId, 120);
         const grade = short(payload.grade, 10);
         const clientRevision = Number(payload.clientRevision);
         if (!cardId || !grade || !["again", "hard", "good", "easy"].includes(grade) || !Number.isInteger(clientRevision)) throw new Error("INVALID_GRADE");
-        state = gradeReview(state, { cardId, grade: grade as "again" | "hard" | "good" | "easy", idempotencyKey: key, observedAt: new Date().toISOString(), clientRevision }).state;
+        const reviewCard = view(state, identity.id, tz, capabilities, identity.account?.timezone).cards.find((candidate) => candidate.id === cardId);
+        const persistedCard = state.cards.find((candidate) => candidate.id === cardId);
+        const hasOpenMistake = persistedCard ? state.mistakes.some((mistake) => {
+          const sourceAttempt = state.attempts.find((candidate) => candidate.id === mistake.sourceAttemptId);
+          return mistake.contentId === persistedCard.contentId && mistake.contentVersion === persistedCard.contentVersion && sourceAttempt?.dimension === persistedCard.dimension && mistake.status === "open";
+        }) : false;
+        state = gradeReview(state, { cardId, grade: grade as "again" | "hard" | "good" | "easy", idempotencyKey: key, observedAt: new Date().toISOString(), clientRevision, requireAudioPlayback: reviewCard?.playbackRequired, resolveMistakes: !hasOpenMistake }).state;
         if (capabilities.dailyReviewGrades !== null) usageCharge = { metric: "daily_review_grades", periodKey, idempotencyKey: key, units: 1, limit: capabilities.dailyReviewGrades };
       } else if (action === "undo_review") {
         const cardId = short(payload.cardId, 120);
@@ -403,7 +481,7 @@ export async function POST(req: NextRequest) {
       return response(data, identity.fresh, identity.id, loaded.revision + 1, Boolean(identity.account), capabilities, usage, feedback);
     } catch (error) {
       const code = error instanceof Error ? error.message : "SAVE_FAILED";
-      const replayable = action === "attempt" || action === "step7_attempt" || action === "audio_attempt" || action === "audio_review_ready" || action === "grade" || action === "undo_review" || dailyAction;
+      const replayable = action === "attempt" || action === "step7_attempt" || action === "audio_attempt" || action === "audio_review_ready" || action === "retry_review" || action === "grade" || action === "undo_review" || dailyAction;
       if (code === "REVISION_CONFLICT" && replayable && turn < 2) continue;
       if (code === "REVISION_CONFLICT") await recordPolicyAudit(createAuditEvent({ subjectId: identity.id, action: String(action), resourceType: "learning", resourceId: identity.id, result: "conflict", idempotencyKey: key }));
       return errorResponse(code, code === "ACCOUNT_DELETED" ? 403 : code === "REVISION_CONFLICT" ? 409 : code.startsWith("FREE_DAILY_") ? 429 : 422, code.startsWith("FREE_DAILY_") ? { upgradeHref: "/pricing" } : {});

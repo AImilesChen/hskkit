@@ -91,7 +91,7 @@ test("Today starts its due queue directly while Mistakes targets the selected mi
 test("review entry links preserve Today and selected-mistake context", async () => {
   const client = await source("src/app/components/learning-dashboard.tsx");
   assert.match(client, /href="\/review\?source=today"/);
-  assert.match(client, /`\/review\?source=mistakes&contentId=\$\{encodeURIComponent\(mistake\.contentId\)\}`/);
+  assert.match(client, /`\/review\?source=mistakes&contentId=\$\{encodeURIComponent\(mistake\.contentId\)\}\$\{mistake\.cardId/);
   assert.match(client, /href: "\/review"/);
 });
 
@@ -110,6 +110,116 @@ test("loading and sync-error states keep the full learning workspace and footer 
   for (const token of ["LearningStatePage", "Preparing your review", "Loading due items and restoring progress", "min-h-\\[70vh\\]", "aria-busy"]) {
     assert.match(client, new RegExp(token));
   }
-  assert.doesNotMatch(client, /if \(!data\) return <State/);
-  assert.doesNotMatch(client, /if \(error\) return <State/);
+  assert.doesNotMatch(client, /if \\(!data\\) return <State/);
+  assert.doesNotMatch(client, /if \\(error\\) return <State/);
+});
+
+test("review snapshots restore original question context, answer mode, real level and learner labels", async () => {
+  const { reviewSnapshotForAttempt } = await import("../src/lib/learning/review-content.ts");
+  const base = { id: "a", idempotencyKey: "k", contentVersion: "2026.08.22-batch13", dimension: "reading", answer: "A", correctAnswer: "B", correct: false, observedAt: "2026-01-01T00:00:00.000Z" } as const;
+  const advanced = reviewSnapshotForAttempt({ ...base, contentId: "grammar:advanced-concession-guran", skill: "mock:pragmatics" });
+  assert.equal(advanced?.level, 7);
+  assert.equal(advanced?.levelBand, "7–9");
+  assert.equal(advanced?.skillLabel, "Grammar");
+  assert.equal(advanced?.answerMode, "choice");
+  assert.equal(advanced?.options?.B, "It introduces the decisive qualification");
+  assert.doesNotMatch(advanced?.skillLabel ?? "", /mock:/);
+
+  const reading = reviewSnapshotForAttempt({ ...base, contentId: "reading:evidence-and-policy-evaluation" });
+  assert.match(reading?.context ?? "", /试点报告/);
+  assert.equal(reading?.levelBand, "7–9");
+});
+
+test("practice and mock attempts persist immutable review snapshots", async () => {
+  const domain = await source("src/lib/learning/domain.ts");
+  const practice = await source("src/lib/practice/domain.ts");
+  const mock = await source("src/lib/mock/learning.ts");
+  assert.match(domain, /reviewSnapshot\?: ReviewSnapshot/);
+  assert.match(practice, /reviewSnapshot:/);
+  assert.match(mock, /reviewSnapshot:/);
+});
+
+test("mistake retries are system-checked and only a correct retry can resolve the mistake", async () => {
+  const { checkReviewAnswer } = await import("../src/lib/learning/review-content.ts");
+  const choice = { answerMode: "choice", correctAnswer: "B", correctAnswerText: "答案", prompt: "题目", skillLabel: "Grammar", level: 3, levelBand: "3", explanation: "解释", options: { A: "错", B: "答案" } } as const;
+  assert.equal(checkReviewAnswer(choice, "A"), false);
+  assert.equal(checkReviewAnswer(choice, "B"), true);
+  const typed = { ...choice, answerMode: "text", options: undefined, correctAnswer: "试点固然取得了进展" } as const;
+  assert.equal(checkReviewAnswer(typed, "  试点 固然，取得了进展。 "), true);
+  const route = await source("src/app/api/v1/learning/route.ts");
+  assert.match(route, /action === "retry_review"/);
+  assert.match(route, /checkReviewAnswer/);
+  assert.match(route, /grade: correct \? "good" : "again"/);
+});
+
+test("review UI separates mistake submission from no-input self-recall memory review", async () => {
+  const client = await source("src/app/components/learning-dashboard.tsx");
+  for (const token of ["Check answer", "Type your answer", "Think of the answer before revealing", "There is no answer field", "older saved item"]) assert.match(client, new RegExp(token));
+  assert.match(client, /reviewDraft\.trim\(\)/);
+  assert.match(client, /setAudioError\(""\)/);
+});
+
+test("mistake links target an exact review card when content IDs repeat", async () => {
+  const { reviewEntryIntent, buildIntentReviewQueue } = await import("../src/lib/learning/review-session.ts");
+  const intent = reviewEntryIntent("?source=mistakes&contentId=shared&cardId=card-b");
+  assert.deepEqual(intent, { kind: "mistake", contentId: "shared", cardId: "card-b" });
+  const cards = [
+    { id: "card-a", contentId: "shared", isMistake: true, dueAt: "2026-01-01T00:00:00.000Z", dimension: "reading" as const },
+    { id: "card-b", contentId: "shared", isMistake: true, dueAt: "2026-01-01T00:00:00.000Z", dimension: "audio" as const },
+  ];
+  assert.deepEqual(buildIntentReviewQueue(cards, intent, 10).map((card) => card.id), ["card-b"]);
+  const client = await source("src/app/components/learning-dashboard.tsx");
+  assert.match(client, /cardId=\$\{encodeURIComponent\(mistake\.cardId\)\}/);
+});
+
+test("review retry identity, replay feedback and audio gating are enforced server-side", async () => {
+  const route = await source("src/app/api/v1/learning/route.ts");
+  const domain = await source("src/lib/learning/domain.ts");
+  assert.match(route, /mistakeKey\(card\.contentId, card\.contentVersion, card\.dimension\)/);
+  assert.match(route, /sourceAttempt\?\.dimension === card\.dimension/);
+  assert.match(route, /action === "retry_review"[\s\S]*gradeKeys\.includes\(key\)[\s\S]*correctAnswerText/);
+  assert.match(route, /playbackRequired = card\.dimension !== "reading" && Boolean\(formalAudioSrc && formalAudioText\)/);
+  assert.match(domain, /requireAudioPlayback\?: boolean/);
+  assert.match(domain, /sourceAttempt\?\.dimension === old\.dimension/);
+});
+
+test("grammar contexts use a real newline and choice retries expose a named fieldset", async () => {
+  const review = await source("src/lib/learning/review-content.ts");
+  const mock = await source("src/lib/mock/domain.ts");
+  const client = await source("src/app/components/learning-dashboard.tsx");
+  assert.doesNotMatch(review, /pattern}\\\\n/);
+  assert.doesNotMatch(mock, /pattern}\\\\n/);
+  assert.match(client, /<fieldset><legend[^>]*>Choose an answer<\/legend>/);
+});
+
+test("ordinary memory grades cannot resolve an open mistake and grade replay stores its original result", async () => {
+  const { gradeReview } = await import("../src/lib/learning/domain.ts");
+  const observedAt = "2026-08-30T00:00:00.000Z";
+  const state = {
+    attempts: [{ id: "attempt-1", idempotencyKey: "attempt-key", contentId: "shared", contentVersion: "v1", dimension: "reading", answer: "a", correctAnswer: "b", correct: false, observedAt }],
+    cards: [{ id: "card-1", contentId: "shared", contentVersion: "v1", dimension: "reading", dueAt: observedAt, intervalDays: 0, ease: 2.5, revision: 0, reviewCount: 0, algorithmVersion: "hskkit-srs-v1", sourceAttemptId: "attempt-1", gradeKeys: [] }],
+    mistakes: [{ id: "mistake-1", contentId: "shared", contentVersion: "v1", sourceAttemptId: "attempt-1", status: "open", createdAt: observedAt }],
+    dailySessions: [],
+  } as const;
+  const graded = gradeReview(state as never, { cardId: "card-1", grade: "good", idempotencyKey: "grade-key", observedAt, clientRevision: 0, resolveMistakes: false });
+  assert.equal(graded.state.mistakes[0].status, "open");
+  assert.equal(graded.card.gradeResults?.["grade-key"], "good");
+});
+
+test("formal listening snapshots retain private playback text without exposing it in public question payloads", async () => {
+  const [practiceQuestions, practiceDomain, mockDomain, mockLearning, route] = await Promise.all([
+    source("src/lib/practice/questions.ts"),
+    source("src/lib/practice/domain.ts"),
+    source("src/lib/mock/domain.ts"),
+    source("src/lib/mock/learning.ts"),
+    source("src/app/api/v1/learning/route.ts"),
+  ]);
+  assert.match(practiceQuestions, /audioText: skill === "listening" \? seed\.text : undefined/);
+  assert.match(practiceDomain, /audioText: question\.audioText/);
+  assert.match(mockDomain, /audioText: listening\.voiceText/);
+  assert.match(mockLearning, /audioText: question\.audioText/);
+  assert.match(mockDomain, /audioText: _audioText/);
+  assert.match(route, /Boolean\(formalAudioSrc && formalAudioText\)/);
+  assert.match(route, /replayCard\.gradeResults\?\.\[key\]/);
+  assert.match(route, /resolveMistakes: !hasOpenMistake/);
 });

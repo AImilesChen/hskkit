@@ -1,5 +1,6 @@
 import type { Attempt, Dimension, LearningState, Mistake, SrsCard } from "../learning/domain.ts";
 import type { MockResult, MockResultItem } from "./domain.ts";
+import type { ReviewSnapshot } from "../learning/review-content.ts";
 
 const dimension = (item: MockResultItem): Dimension => item.dimension === "listening" ? "context_audio" : "reading";
 const plusDay = (iso: string) => new Date(Date.parse(iso) + 86_400_000).toISOString();
@@ -29,6 +30,21 @@ export function applyMockResultToLearning(state: LearningState, result: MockResu
       standardVersion: "HSK 3.0",
       sessionId: result.sessionId,
       questionVersion: result.questionSetVersion,
+      reviewSnapshot: {
+        level: question.level,
+        levelBand: question.levelBand === "7-9" ? "7–9" : question.levelBand,
+        skillLabel: question.dimension === "pragmatics" ? "Grammar" : question.dimension[0].toUpperCase() + question.dimension.slice(1),
+        context: question.context,
+        instruction: question.instruction,
+        prompt: question.prompt,
+        answerMode: question.options ? "choice" : "text",
+        options: question.options ? { ...question.options } : undefined,
+        correctAnswer: question.correctAnswer,
+        correctAnswerText: question.options?.[question.correctAnswer] ?? question.correctAnswer,
+        explanation: question.explanation,
+        audioSrc: question.audioSrc,
+        audioText: question.audioText,
+      } satisfies ReviewSnapshot,
     };
     const cardId = `card_mock:${question.contentId}:${question.contentVersion}:${dimension(item)}`;
     const existing = next.cards.find((card) => card.id === cardId);

@@ -14,14 +14,15 @@ export function buildReviewQueue<T extends ReviewQueueCard>(cards: T[], cap: num
 export type ReviewEntryIntent =
   | { kind: "setup" }
   | { kind: "today" }
-  | { kind: "mistake"; contentId: string };
+  | { kind: "mistake"; contentId: string; cardId?: string };
 
 export function reviewEntryIntent(search: string): ReviewEntryIntent {
   const params = new URLSearchParams(search);
   if (params.get("source") === "today") return { kind: "today" };
   if (params.get("source") === "mistakes") {
     const contentId = params.get("contentId")?.trim();
-    if (contentId) return { kind: "mistake", contentId };
+    const cardId = params.get("cardId")?.trim();
+    if (contentId) return { kind: "mistake", contentId, ...(cardId ? { cardId } : {}) };
   }
   return { kind: "setup" };
 }
@@ -29,7 +30,7 @@ export function reviewEntryIntent(search: string): ReviewEntryIntent {
 export function buildIntentReviewQueue<T extends ReviewQueueCard & { contentId: string }>(cards: T[], intent: ReviewEntryIntent, cap: number): T[] {
   if (intent.kind === "today") return buildReviewQueue(cards, cap);
   if (intent.kind === "mistake") {
-    const target = cards.find((card) => card.isMistake && card.contentId === intent.contentId);
+    const target = cards.find((card) => card.isMistake && card.contentId === intent.contentId && (!intent.cardId || card.id === intent.cardId));
     return target ? [target] : [];
   }
   return [];
