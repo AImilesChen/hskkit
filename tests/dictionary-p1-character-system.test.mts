@@ -117,5 +117,5 @@ test("Dictionary and Vocabulary Level 1–9 provide reciprocal contextual links"
   assert.match(dictionaryClient, /Open HSK.*vocabulary/);
   assert.match(dictionaryClient, /href=\{`\/vocabulary\/\$\{selectedLevel\}`\}/);
   assert.match(vocabularyPage, /Browse this level in Dictionary/);
-  assert.match(vocabularyPage, /\/dictionary\?level=/);
+  assert.match(vocabularyPage, /\/dictionary\?level=\$\{requestedLevel\}/);
 });
