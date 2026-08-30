@@ -110,9 +110,9 @@ export function MockExam({ band }: { band: MockBand }) {
       const pendingKey = `hskkit_mock_pending_start_${band}`;
       const idempotencyKey = localStorage.getItem(pendingKey) ?? requestKey(`start-${band}`);
       localStorage.setItem(pendingKey, idempotencyKey);
-      const created = await call({ action: "start", payload: { band, idempotencyKey } });
+      await call({ action: "start", payload: { band, idempotencyKey } });
       localStorage.removeItem(pendingKey);
-      setIndex(0); setStatus(`Started — ${created.questions.length} approved tasks`); autoSubmitting.current = false;
+      setIndex(0); setStatus("Mock started"); autoSubmitting.current = false;
     } catch (error) { setStatus(error instanceof Error ? error.message : "This Mock remains safely closed."); }
     finally { setBusy(false); }
   }
@@ -145,7 +145,7 @@ export function MockExam({ band }: { band: MockBand }) {
     <p aria-live="polite" className="mt-3 text-sm font-semibold text-slate-600">{status}</p>
     <details className="mt-5 rounded-2xl border border-slate-200 p-4 text-sm leading-6 text-slate-600">
       <summary className="cursor-pointer font-bold text-slate-800">How this Mock works</summary>
-      <p className="mt-3">The question set and scoring rules are versioned. If content count, approval, authorization or scoring checks fail, the Mock stays safely closed rather than producing an unreliable result.</p>
+      <p className="mt-3">The Mock opens only when every question and result rule is ready. If availability checks fail, it stays closed rather than showing an unreliable result.</p>
     </details>
   </section>;
 
@@ -196,26 +196,42 @@ export function MockExam({ band }: { band: MockBand }) {
         })}</div>
         {reviewItems.length === 0 ? <p className="mt-5 rounded-2xl bg-slate-50 p-5 text-slate-600">No questions match this filter.</p> : null}
       </section>
-      <p className="break-words text-xs text-slate-500">Trace: {session.questionSetVersion} · {session.scoringVersion} · attempt {session.id}</p>
     </section>;
   }
 
   if (!current) return null;
   const answered = session.answers.length;
   return <section className="space-y-5" data-mobile-qa-width={MOBILE_QA_WIDTH}>
-    <header className="sticky top-[72px] z-20 rounded-2xl border border-slate-200 bg-white/95 p-4 shadow-sm backdrop-blur">
-      <div className="flex flex-wrap items-center justify-between gap-3"><div><p className="text-xs font-bold uppercase tracking-[.14em] text-blue-700">{advanced ? "Advanced 7–9" : "Basic 1–6"} · {answered}/{session.questions.length} saved</p><p aria-live="polite" className="mt-1 text-sm text-slate-600">{status}</p></div><time className="rounded-xl bg-slate-950 px-4 py-2 font-mono text-xl font-bold text-white" dateTime={session.deadlineAt}>{formatTime(seconds)}</time></div>
+    <header className="mock-exam-status sticky top-[72px] z-20 rounded-2xl border border-slate-200 bg-white/95 p-4 shadow-sm backdrop-blur">
+      <div className="mock-exam-status-grid">
+        <div>
+          <p className="text-lg font-black text-slate-950">Question {index + 1} of {session.questions.length}</p>
+          <p className="mt-1 text-sm font-bold capitalize text-blue-700">{current.dimension} · HSK {current.levelBand}</p>
+        </div>
+        <div className="mock-exam-save-status">
+          <p className="text-sm font-bold text-slate-800">{answered} answers saved</p>
+          <p aria-live="polite" className="mt-1 text-sm text-slate-600">{status}</p>
+        </div>
+        <div className="mock-exam-timer">
+          <span className="text-xs font-bold uppercase tracking-[.12em] text-slate-500">Time remaining</span>
+          <time aria-label={`Time remaining: ${formatTime(seconds)}`} className="mt-1 block rounded-xl bg-slate-950 px-4 py-2 font-mono text-xl font-bold text-white" dateTime={session.deadlineAt}>{formatTime(seconds)}</time>
+        </div>
+      </div>
     </header>
     <nav aria-label="Mock questions" className="flex gap-2 overflow-x-auto pb-2">{session.questions.map((question, questionIndex) => <button key={question.id} className={`min-h-11 min-w-11 rounded-xl border font-bold ${questionIndex === index ? "border-blue-600 bg-blue-600 text-white" : session.answers.some((answer) => answer.questionId === question.id) ? "border-emerald-300 bg-emerald-50" : "border-slate-200 bg-white"}`} onClick={() => setIndex(questionIndex)}>{questionIndex + 1}</button>)}</nav>
     <article className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm sm:p-8">
-      <p className="text-sm font-bold uppercase tracking-[.12em] text-slate-500">Question {index + 1} · {current.dimension} · {current.levelBand}</p>
+      <p className="text-sm font-bold uppercase tracking-[.12em] text-slate-500">{current.dimension} · HSK {current.levelBand}</p>
       {current.instruction && <p className="mt-4 rounded-xl bg-blue-50 p-3 text-sm leading-6 text-blue-950">{current.instruction}</p>}
-      {current.audioSrc && <audio className="mt-4 w-full" controls preload="metadata" src={current.audioSrc}>Audio playback is not supported.</audio>}
+      {current.audioSrc && <audio aria-label={`Question ${index + 1} audio`} className="mt-4 w-full" controls preload="metadata" src={current.audioSrc}>Audio playback is not supported.</audio>}
       {current.context && <p className="mt-5 rounded-2xl bg-slate-50 p-4 text-lg leading-8 text-slate-900" lang="zh-Hans">{current.context}</p>}
       <h2 className="mt-5 text-xl font-bold leading-8 text-slate-950">{current.prompt}</h2>
-      {current.options ? <div className="mt-5 grid gap-3">{Object.entries(current.options).map(([value, label]) => <button key={value} disabled={busy} onClick={() => void save(value)} className={`min-h-12 rounded-xl border px-4 py-3 text-left font-semibold ${saved === value ? "border-blue-600 bg-blue-50 text-blue-950" : "border-slate-200 bg-white hover:border-blue-300"}`}><span className="mr-2 font-bold">{value}.</span>{label}</button>)}</div> : <div className="mt-5"><label className="font-semibold" htmlFor="mock-answer">Type your answer</label><textarea id="mock-answer" maxLength={180} value={draft} onChange={(event) => setDraft(event.target.value)} className="mt-2 min-h-28 w-full rounded-xl border border-slate-300 p-3"/><button className="btn mt-3 min-h-11" disabled={busy || !draft.trim()} onClick={() => void save(draft.trim())}>Save answer</button></div>}
-      <div className="mt-7 flex flex-wrap justify-between gap-3"><button className="btn-secondary min-h-11" disabled={index === 0} onClick={() => setIndex((value) => Math.max(0, value - 1))}>Previous</button>{index < session.questions.length - 1 ? <button className="btn min-h-11" onClick={() => setIndex((value) => Math.min(session.questions.length - 1, value + 1))}>Next</button> : <button className="btn min-h-11" disabled={busy} onClick={() => void submit(false)}>Submit Mock</button>}</div>
+      {current.options ? <div className="mt-5 grid gap-3">{Object.entries(current.options).map(([value, label]) => <button key={value} disabled={busy} onClick={() => void save(value)} className={`min-h-12 rounded-xl border px-4 py-3 text-left font-semibold transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 ${saved === value ? "border-blue-600 bg-blue-50 text-blue-950" : "border-slate-200 bg-white hover:border-blue-300"}`}><span className="mr-2 font-bold">{value}.</span>{label}</button>)}</div> : <div className="mt-5"><label className="font-semibold text-slate-900" htmlFor="mock-answer">Type your answer</label><textarea id="mock-answer" maxLength={180} value={draft} onChange={(event) => setDraft(event.target.value)} className="mt-2 min-h-28 w-full rounded-xl border border-slate-300 p-3 outline-none transition focus:border-blue-600 focus:ring-4 focus:ring-blue-100"/><p className="mt-2 text-sm text-slate-600">Punctuation and spaces are ignored.</p></div>}
+      <div className="mock-exam-actions mt-7 border-t border-slate-200 pt-5">
+        <button className="btn btn-secondary mock-exam-action mock-exam-previous" disabled={index === 0} onClick={() => setIndex((value) => Math.max(0, value - 1))}>Previous</button>
+        <p className="mock-exam-action-status" aria-live="polite">{status}</p>
+        {!current.options ? <button aria-busy={busy} className="btn btn-secondary mock-exam-action mock-exam-save" data-loading={busy ? "true" : undefined} disabled={busy || !draft.trim()} onClick={() => void save(draft.trim())}>{busy ? "Saving…" : "Save answer"}</button> : <span className="mock-exam-save-placeholder" aria-hidden="true" />}
+        {index < session.questions.length - 1 ? <button className="btn btn-primary mock-exam-action mock-exam-next" onClick={() => setIndex((value) => Math.min(session.questions.length - 1, value + 1))}>Next<span aria-hidden="true">→</span></button> : <button aria-busy={busy} className="btn btn-primary mock-exam-action mock-exam-next" data-loading={busy ? "true" : undefined} disabled={busy} onClick={() => void submit(false)}>{busy ? "Submitting…" : "Submit Mock"}</button>}
+      </div>
     </article>
-    <p className="break-words text-xs text-slate-500">Question set {session.questionSetVersion} · scoring {session.scoringVersion} · autosave revision {session.revision}</p>
   </section>;
 }
