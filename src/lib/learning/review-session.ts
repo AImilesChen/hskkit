@@ -11,6 +11,30 @@ export function buildReviewQueue<T extends ReviewQueueCard>(cards: T[], cap: num
     .slice(0, Math.max(1, cap));
 }
 
+export type ReviewEntryIntent =
+  | { kind: "setup" }
+  | { kind: "today" }
+  | { kind: "mistake"; contentId: string };
+
+export function reviewEntryIntent(search: string): ReviewEntryIntent {
+  const params = new URLSearchParams(search);
+  if (params.get("source") === "today") return { kind: "today" };
+  if (params.get("source") === "mistakes") {
+    const contentId = params.get("contentId")?.trim();
+    if (contentId) return { kind: "mistake", contentId };
+  }
+  return { kind: "setup" };
+}
+
+export function buildIntentReviewQueue<T extends ReviewQueueCard & { contentId: string }>(cards: T[], intent: ReviewEntryIntent, cap: number): T[] {
+  if (intent.kind === "today") return buildReviewQueue(cards, cap);
+  if (intent.kind === "mistake") {
+    const target = cards.find((card) => card.isMistake && card.contentId === intent.contentId);
+    return target ? [target] : [];
+  }
+  return [];
+}
+
 export type ReviewGrade = "again" | "hard" | "good" | "easy";
 
 export function reviewGradeOptions(ease: number, intervalDays: number): Array<{ grade: ReviewGrade; label: string; hint: string }> {

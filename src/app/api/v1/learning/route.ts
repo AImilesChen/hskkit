@@ -94,7 +94,7 @@ function view(state: LearningState, ownerId: string, offsetMinutes: number, capa
       reviewReason: openMistakeContent.has(card.contentId) ? "You missed this in an earlier practice session." : card.reviewCount === 0 ? "This is your first scheduled memory check." : "This item is due now based on your previous review.",
       level: question?.level ?? todayItem?.level ?? startLevel,
       skill: attempt?.skill ?? (card.dimension === "reading" ? "Reading" : card.dimension === "audio" ? "Listening" : "Listening in context"),
-      explanation: question?.explanation ?? "Compare the prompt with the correct answer, then say the answer once before continuing.",
+      explanation: question?.explanation ?? "Compare the prompt with the answer and explanation before rating your recall.",
       audioText: audio?.voiceText ?? (listeningSlug ? advancedListeningBySlug(listeningSlug)?.voiceText : undefined),
       assetId: assetId ?? todayItem?.assetId,
       pinyin: vocabulary?.pinyin,

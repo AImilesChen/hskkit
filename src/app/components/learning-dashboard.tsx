@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import type { ReactNode } from "react";
-import { buildReviewQueue, reviewGradeOptions, type ReviewGrade } from "../../lib/learning/review-session";
+import { buildIntentReviewQueue, buildReviewQueue, reviewEntryIntent, reviewGradeOptions, type ReviewEntryIntent, type ReviewGrade } from "../../lib/learning/review-session";
 
 type Dimension = "reading" | "audio" | "context_audio";
 type Item = { id: string; kind: "review" | "learn" | "listen" | "practice" | "summary"; contentId: string; contentVersion?: string; status: "pending" | "completed" | "skipped"; dimension?: Dimension; title?: string; href?: string; estimatedMinutes?: number };
@@ -51,6 +51,8 @@ export default function LearningDashboard({ mode }: { mode: "today" | "review" |
   const [audioError, setAudioError] = useState("");
   const [reviewMinutes, setReviewMinutes] = useState<5 | 10 | 20>(10);
   const [reviewIds, setReviewIds] = useState<string[] | null>(null);
+  const [entryIntent, setEntryIntent] = useState<ReviewEntryIntent>({ kind: "setup" });
+  const [entryResolved, setEntryResolved] = useState(false);
   const [reviewedCount, setReviewedCount] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState("");
   const [answerChecked, setAnswerChecked] = useState(false);
@@ -76,12 +78,25 @@ export default function LearningDashboard({ mode }: { mode: "today" | "review" |
   }
   // The initial restore intentionally runs once; retries use the latest data through dataRef.
   useEffect(() => {
+    setEntryIntent(reviewEntryIntent(window.location.search));
+    setEntryResolved(true);
     void load();
     const online = () => { void retryPending(dataRef.current); };
     window.addEventListener("online", online);
     return () => window.removeEventListener("online", online);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  useEffect(() => {
+    if (mode !== "review" || !data || !entryResolved || entryIntent.kind === "setup" || reviewIds !== null) return;
+    const reviewCards = entryIntent.kind === "mistake"
+      ? data.cards
+      : data.capabilities.focusedReview
+        ? data.focusedReview
+        : data.cards.filter((card) => card.dueAt <= new Date().toISOString());
+    setReviewIds(buildIntentReviewQueue(reviewCards, entryIntent, reviewMinutes).map((card) => card.id));
+    setReviewedCount(0);
+  }, [data, entryIntent, entryResolved, mode, reviewIds, reviewMinutes]);
 
   async function retryPending(current: Data | null = data) {
     if (!current?.queueBinding) return;
@@ -220,8 +235,8 @@ export default function LearningDashboard({ mode }: { mode: "today" | "review" |
     window.speechSynthesis.speak(utterance);
   }
 
-  if (error) return <State title={error.startsWith("Free daily") ? "Daily limit reached" : "Sync paused"} text={error}>{error.startsWith("Free daily") ? <Link href="/pricing" className="btn">Compare Pro</Link> : <button onClick={load} className="btn">Try again</button>}</State>;
-  if (!data) return <State title="Loading your learning plan…" text="Restoring your latest progress." />;
+  if (error) return <LearningStatePage mode={mode} title={error.startsWith("Free daily") ? "Daily limit reached" : "We couldn't load this page"} text={error} error>{error.startsWith("Free daily") ? <Link href="/pricing" className="btn">Compare Pro</Link> : <button onClick={load} className="btn">Try again</button>}</LearningStatePage>;
+  if (!data) return <LearningStatePage mode={mode} title={mode === "review" ? "Preparing your review" : mode === "mistakes" ? "Loading your mistakes" : "Preparing today's plan"} text="Loading due items and restoring progress." loading />;
   const open = data.mistakes.filter((mistake) => mistake.status === "open");
   const dueForToday = data.capabilities.focusedReview
     ? data.focusedReview
@@ -254,7 +269,7 @@ export default function LearningDashboard({ mode }: { mode: "today" | "review" |
               <p><strong className="text-slate-900">HSK mix:</strong> {dueLevels.map((level) => `HSK ${level}`).join(", ")}</p>
               <p><strong className="text-slate-900">Skill mix:</strong> {dueSkills.join(", ")}</p>
             </div>}
-            {!locked && dueForToday.length > 0 && <div className="mt-4"><Link className="btn" href="/review">Start review</Link></div>}
+            {!locked && dueForToday.length > 0 && <div className="mt-4"><Link className="btn" href="/review?source=today">Start today&apos;s review</Link></div>}
           </article>;
           if (item.kind === "summary") return <article className="summary" key={item.id} aria-live="polite">
             <span className="eyebrow">Summary</span>
@@ -280,22 +295,27 @@ export default function LearningDashboard({ mode }: { mode: "today" | "review" |
       <span className="eyebrow">{mistake.dimension.replace("_", " ")}</span>
       <h2>{mistake.prompt}</h2>
       <p>Added {new Date(mistake.createdAt).toLocaleDateString()}</p>
-      <Link className="btn" href="/review">Review now</Link>
+      <Link className="btn" href={`/review?source=mistakes&contentId=${encodeURIComponent(mistake.contentId)}`}>Retry this mistake</Link>
     </article>)}</div> : <State title="No open mistakes" text="Practice and listening mistakes will appear here automatically."><Link className="btn" href="/listen">Start listening</Link></State>}
     <Mastery values={data.mastery} scope={data.scope} />
   </Shell>;
 
   const due = data.capabilities.focusedReview ? data.focusedReview : data.cards.filter((card) => card.dueAt <= new Date().toISOString());
-  const plannedCards = reviewIds ? reviewIds.map((id) => due.find((card) => card.id === id)).filter((card): card is Card => Boolean(card)) : [];
+  const reviewPool = entryIntent.kind === "mistake" ? data.cards : due;
+  const plannedCards = reviewIds ? reviewIds.map((id) => reviewPool.find((card) => card.id === id)).filter((card): card is Card => Boolean(card)) : [];
   const activeCard = plannedCards[0];
   const sessionTotal = reviewIds?.length ?? 0;
-  const sessionComplete = Boolean(reviewIds && (reviewedCount >= sessionTotal || !activeCard));
+  const directEntryPreparing = !entryResolved || (entryIntent.kind !== "setup" && reviewIds === null);
+  const directEntryEmpty = entryIntent.kind !== "setup" && reviewIds !== null && reviewIds.length === 0;
+  const sessionComplete = Boolean(reviewIds?.length && (reviewedCount >= sessionTotal || !activeCard));
   const selectedText = activeCard?.choices.find((choice) => choice.key === selectedAnswer)?.text ?? "";
   const currentAnswerCorrect = Boolean(selectedText && selectedText === activeCard?.correctAnswer);
+  const isMistakeRetry = Boolean(activeCard?.isMistake && activeCard.choices.length > 0);
 
-  return <Shell title="Review" sub="A short memory session that shows one due item at a time." compact={Boolean(reviewIds)}>
+  return <Shell title="Review" sub="Retry mistakes by answering again, or use self-recall for scheduled memory checks." compact={Boolean(reviewIds?.length)}>
     <div className="mx-auto max-w-[880px]">
-      {!reviewIds && due.length > 0 && <div className="overflow-hidden rounded-[28px] border border-slate-200 bg-white shadow-[0_22px_60px_rgba(15,23,42,0.08)]">
+      {directEntryPreparing && <State title="Preparing your review" text="Loading the review items from where you started." />}
+      {!reviewIds && entryResolved && entryIntent.kind === "setup" && due.length > 0 && <div className="overflow-hidden rounded-[28px] border border-slate-200 bg-white shadow-[0_22px_60px_rgba(15,23,42,0.08)]">
         <div className="border-b border-slate-200 bg-slate-950 px-[24px] py-[24px] text-white sm:px-[32px] sm:py-[32px]">
           <p className="text-sm font-semibold text-blue-300">Review setup</p>
           <h2 className="mt-2 text-3xl font-bold tracking-tight text-white sm:text-4xl">Choose a focused session</h2>
@@ -321,7 +341,7 @@ export default function LearningDashboard({ mode }: { mode: "today" | "review" |
         <div className="mb-5 h-2 overflow-hidden rounded-full bg-slate-200"><div className="h-full rounded-full bg-blue-600 transition-[width]" style={{ width: `${Math.min(100, reviewedCount / sessionTotal * 100)}%` }} /></div>
         <article className="overflow-hidden rounded-[28px] border border-slate-200 bg-white shadow-[0_22px_60px_rgba(15,23,42,0.08)]">
           <div className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-200 bg-slate-50 px-[24px] py-[16px] sm:px-[32px]">
-            <p className="text-sm font-bold text-slate-700">HSK {activeCard.level} · {activeCard.skill}</p>
+            <p className="text-sm font-bold text-slate-700">{isMistakeRetry ? "Mistake retry" : "Memory review"} · HSK {activeCard.level} · {activeCard.skill}</p>
             <p className="text-sm text-slate-500">{activeCard.dimension.replace("_", " ")}</p>
           </div>
           <div className="p-[24px] sm:p-[32px]">
@@ -330,17 +350,17 @@ export default function LearningDashboard({ mode }: { mode: "today" | "review" |
             {activeCard.audioText && <button className="mt-5 min-h-[48px] rounded-xl border border-slate-300 bg-white px-5 py-3 font-semibold text-slate-800 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-blue-200" onClick={() => play(activeCard)}>Play audio</button>}
             {!activeCard.playbackReady && activeCard.dimension !== "reading" && <p className="mt-3 text-sm font-semibold text-amber-700">Finish audio playback before answering.</p>}
 
-            {activeCard.isMistake && activeCard.choices.length > 0 && !answerChecked ? <div className="mt-7">
+            {isMistakeRetry && !answerChecked ? <div className="mt-7">
               <p className="font-bold text-slate-950">Choose an answer</p>
               <div className="mt-3 grid gap-3">{activeCard.choices.map((choice) => <label key={choice.key} className={`flex min-h-[52px] cursor-pointer items-center gap-3 rounded-xl border px-4 py-3 transition ${selectedAnswer === choice.key ? "border-blue-600 bg-blue-50" : "border-slate-200 hover:border-slate-400"}`}><input type="radio" name={`review-${activeCard.id}`} value={choice.key} checked={selectedAnswer === choice.key} onChange={() => setSelectedAnswer(choice.key)} /><span><strong className="mr-2">{choice.key}.</strong>{choice.text}</span></label>)}</div>
               <button disabled={!selectedAnswer || !activeCard.playbackReady} onClick={() => setAnswerChecked(true)} className="mt-5 min-h-[48px] w-full rounded-xl bg-blue-600 px-5 py-3 font-bold text-white disabled:cursor-not-allowed disabled:opacity-40 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-blue-200">Check answer</button>
-            </div> : !revealed[activeCard.id] && !answerChecked ? <button className="mt-7 min-h-[48px] w-full rounded-xl bg-blue-600 px-5 py-3 font-bold text-white disabled:cursor-not-allowed disabled:opacity-40 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-blue-200" disabled={!activeCard.playbackReady} onClick={() => setRevealed((current) => ({ ...current, [activeCard.id]: true }))}>Reveal answer</button> : null}
+            </div> : !revealed[activeCard.id] && !answerChecked ? <div className="mt-7"><p className="mb-3 text-sm text-slate-600">Think of the answer before revealing it. There is no answer field in this memory review.</p><button className="min-h-[48px] w-full rounded-xl bg-blue-600 px-5 py-3 font-bold text-white disabled:cursor-not-allowed disabled:opacity-40 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-blue-200" disabled={!activeCard.playbackReady} onClick={() => setRevealed((current) => ({ ...current, [activeCard.id]: true }))}>Reveal answer</button></div> : null}
 
             {(revealed[activeCard.id] || answerChecked) && <div className="mt-7" aria-live="polite">
-              {answerChecked && <div className={`rounded-2xl border p-4 ${currentAnswerCorrect ? "border-emerald-200 bg-emerald-50 text-emerald-950" : "border-rose-200 bg-rose-50 text-rose-950"}`}><p className="font-bold">{currentAnswerCorrect ? "Correct this time" : "Not yet — review the difference"}</p><p className="mt-1"><strong>Your current answer:</strong> {selectedText}</p></div>}
+              {answerChecked && <div className={`rounded-2xl border p-4 ${currentAnswerCorrect ? "border-emerald-200 bg-emerald-50 text-emerald-950" : "border-rose-200 bg-rose-50 text-rose-950"}`}><p className="font-bold">{currentAnswerCorrect ? "Correct this time" : "Not yet — review the difference"}</p><p className="mt-1"><strong>Your answer this time:</strong> {selectedText}</p></div>}
               <div className="mt-4 rounded-2xl bg-slate-50 p-[20px] text-slate-800">
-                <p><strong>Correct answer:</strong> {activeCard.correctAnswer}</p>
-                <p className="mt-2 text-sm"><strong>{activeCard.priorAnswerLabel}:</strong> {activeCard.userAnswer || "No answer"}</p>
+                <p><strong>{isMistakeRetry ? "Correct answer" : "Answer"}:</strong> {activeCard.correctAnswer}</p>
+                {isMistakeRetry && <details className="mt-3 border-t border-slate-200 pt-3 text-sm"><summary className="cursor-pointer font-semibold text-slate-700">Earlier attempt</summary><p className="mt-2"><strong>{activeCard.priorAnswerLabel}:</strong> {activeCard.userAnswer || "No answer"}</p></details>}
                 <p className="mt-3 text-sm text-slate-600">{activeCard.explanation}</p>
               </div>
               {(activeCard.pinyin || activeCard.meaning || activeCard.example) && <section className="mt-4 rounded-2xl border border-slate-200 bg-white p-[20px]" aria-label="Vocabulary answer details">
@@ -353,7 +373,7 @@ export default function LearningDashboard({ mode }: { mode: "today" | "review" |
                 </div>}
                 {activeCard.formalAudioSrc && <div className="mt-4"><p className="mb-2 text-sm font-semibold text-slate-700">Formal recording</p><audio controls preload="none" src={activeCard.formalAudioSrc} className="max-w-full" /></div>}
               </section>}
-              {activeCard.isMistake && answerChecked ? <button disabled={reviewSaving} onClick={() => void grade(activeCard, currentAnswerCorrect ? "good" : "again")} className="mt-5 min-h-[48px] w-full rounded-xl bg-blue-600 px-5 py-3 font-bold text-white disabled:cursor-not-allowed disabled:opacity-50 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-blue-200">{reviewSaving ? "Saving…" : "Continue"}</button> : <div className="mt-5"><p className="font-bold text-slate-950">How well did you remember it now?</p><div className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-4">{reviewGradeOptions(activeCard.ease, activeCard.intervalDays).map((option) => <button disabled={reviewSaving} key={option.grade} onClick={() => void grade(activeCard, option.grade)} className="min-h-[76px] rounded-xl border border-slate-200 bg-white px-3 py-3 text-left transition hover:border-blue-500 hover:bg-blue-50 disabled:cursor-not-allowed disabled:opacity-50 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-blue-200"><strong className="block text-slate-950">{option.label}</strong><span className="mt-1 block text-xs text-slate-500">{option.hint}</span></button>)}</div></div>}
+              {isMistakeRetry && answerChecked ? <button disabled={reviewSaving} onClick={() => void grade(activeCard, currentAnswerCorrect ? "good" : "again")} className="mt-5 min-h-[48px] w-full rounded-xl bg-blue-600 px-5 py-3 font-bold text-white disabled:cursor-not-allowed disabled:opacity-50 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-blue-200">{reviewSaving ? "Saving…" : "Continue"}</button> : <div className="mt-5"><p className="font-bold text-slate-950">How well did you remember it before revealing?</p><div className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-4">{reviewGradeOptions(activeCard.ease, activeCard.intervalDays).map((option) => <button disabled={reviewSaving} key={option.grade} onClick={() => void grade(activeCard, option.grade)} className="min-h-[76px] rounded-xl border border-slate-200 bg-white px-3 py-3 text-left transition hover:border-blue-500 hover:bg-blue-50 disabled:cursor-not-allowed disabled:opacity-50 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-blue-200"><strong className="block text-slate-950">{option.label}</strong><span className="mt-1 block text-xs text-slate-500">{option.hint}</span></button>)}</div></div>}
             </div>}
           </div>
         </article>
@@ -368,7 +388,8 @@ export default function LearningDashboard({ mode }: { mode: "today" | "review" |
         {lastRatedCardId && data.canUndoReview && <button className="mt-4 min-h-[48px] text-sm font-semibold underline underline-offset-4" onClick={() => void undoLastRating()}>Undo last rating</button>}
       </div>}
 
-      {!reviewIds && due.length === 0 && <State title="You're caught up" text="There are no reviews due right now."><Link className="btn" href="/today">Back to Today</Link></State>}
+      {directEntryEmpty && <State title={entryIntent.kind === "mistake" ? "This mistake is no longer open" : "You're caught up"} text={entryIntent.kind === "mistake" ? "It may already have been resolved or is no longer available for review." : "There are no reviews due in today's queue."}><Link className="btn" href={entryIntent.kind === "mistake" ? "/mistakes" : "/today"}>{entryIntent.kind === "mistake" ? "Back to Mistakes" : "Back to Today"}</Link></State>}
+      {entryResolved && entryIntent.kind === "setup" && reviewIds === null && due.length === 0 && <State title="You're caught up" text="There are no reviews due right now."><Link className="btn" href="/today">Back to Today</Link></State>}
       {audioError && <p className="mt-4 rounded-xl bg-red-50 p-4 text-sm text-red-700" role="alert">{audioError}</p>}
     </div>
   </Shell>;
@@ -378,7 +399,7 @@ function label(item: Item) {
   return item.title ?? (item.kind === "learn" ? "Learn new vocabulary" : item.kind === "listen" ? (item.dimension === "audio" ? "Word listening" : "Listening in context") : item.kind === "practice" ? "Vocabulary practice" : `Review ${item.dimension?.replace("_", " ") ?? "item"}`);
 }
 function actionFor(item: Item, complete: (item: Item) => Promise<void>, dailySessionId: string) {
-  if (item.kind === "review") return <Link className="btn" href="/review">Start review</Link>;
+  if (item.kind === "review") return <Link className="btn" href="/review?source=today">Start today&apos;s review</Link>;
   if (item.kind === "learn") return <div className="flex flex-wrap gap-2"><Link className="btn" href={item.href ?? "/levels"}>Open word list</Link><button className="btn secondary" onClick={() => complete(item)}>Mark learned</button></div>;
   if (item.kind === "listen") {
     const href = item.href ?? "/listen";
@@ -395,6 +416,23 @@ function actionFor(item: Item, complete: (item: Item) => Promise<void>, dailySes
 function Shell(props: { title: string; sub: string; children: ReactNode; compact?: boolean }) {
   const links = [{ label: "Today", href: "/today" }, { label: "Review", href: "/review" }, { label: "Mistakes", href: "/mistakes" }, { label: "Listen", href: "/listen" }];
   return <main className={`learn ${props.compact ? "pt-6 sm:pt-16" : ""}`}><header className={props.compact ? "mb-5 sm:mb-8" : undefined}>{!props.compact && <span className="eyebrow">HSKKit learning loop</span>}<h1 className={props.compact ? "text-2xl sm:text-4xl" : undefined}>{props.title}</h1><p className={props.compact ? "hidden sm:block" : undefined}>{props.sub}</p><nav aria-label="Learning loop">{links.map((link) => <Link key={link.href} href={link.href} aria-current={props.title === link.label ? "page" : undefined} className={`${props.title === link.label ? "border-blue-600 bg-blue-600 text-white" : ""} px-3`}>{link.label}</Link>)}</nav></header>{props.children}</main>;
+}
+function LearningStatePage(props: { mode: "today" | "review" | "mistakes"; title: string; text: string; loading?: boolean; error?: boolean; children?: ReactNode }) {
+  const pageTitle = props.mode === "today" ? "Today" : props.mode === "mistakes" ? "Mistakes" : "Review";
+  const links = [{ label: "Today", href: "/today" }, { label: "Review", href: "/review" }, { label: "Mistakes", href: "/mistakes" }, { label: "Listen", href: "/listen" }];
+  return <main className="learn min-h-[70vh]" aria-busy={props.loading || undefined}>
+    <header><span className="eyebrow">HSKKit learning loop</span><h1>{pageTitle}</h1><p>Your learning workspace will stay in place while progress is restored.</p><nav aria-label="Learning loop">{links.map((link) => <Link key={link.href} href={link.href} aria-current={pageTitle === link.label ? "page" : undefined} className={`${pageTitle === link.label ? "border-blue-600 bg-blue-600 text-white" : ""} px-3`}>{link.label}</Link>)}</nav></header>
+    <section className={`mx-auto max-w-[880px] overflow-hidden rounded-[28px] border bg-white shadow-[0_22px_60px_rgba(15,23,42,0.08)] ${props.error ? "border-rose-200" : "border-slate-200"}`} role={props.error ? "alert" : "status"} aria-live="polite">
+      <div className={`border-b px-6 py-6 sm:px-8 ${props.error ? "border-rose-200 bg-rose-50" : "border-slate-200 bg-slate-950 text-white"}`}>
+        <p className={`text-sm font-semibold ${props.error ? "text-rose-700" : "text-blue-300"}`}>{props.error ? "Connection problem" : "Learning data"}</p>
+        <h2 className={`mt-2 text-2xl font-bold tracking-tight sm:text-3xl ${props.error ? "text-rose-950" : "text-white"}`}>{props.title}</h2>
+        <p className={`mt-2 max-w-xl ${props.error ? "text-rose-800" : "text-slate-300"}`}>{props.text}</p>
+      </div>
+      <div className="min-h-[260px] p-6 sm:p-8">
+        {props.loading ? <div className="motion-safe:animate-pulse" aria-hidden="true"><div className="h-3 w-28 rounded bg-blue-200"/><div className="mt-5 h-8 w-3/4 rounded-lg bg-slate-200"/><div className="mt-4 h-4 w-full rounded bg-slate-100"/><div className="mt-2 h-4 w-5/6 rounded bg-slate-100"/><div className="mt-8 grid gap-3 sm:grid-cols-3"><div className="h-16 rounded-xl bg-slate-100"/><div className="h-16 rounded-xl bg-slate-100"/><div className="h-16 rounded-xl bg-slate-100"/></div><div className="mt-6 h-12 rounded-xl bg-blue-100"/></div> : <div><p className="max-w-xl text-slate-600">Your existing progress is unchanged. Retry the request when your connection is ready.</p><div className="mt-6">{props.children}</div></div>}
+      </div>
+    </section>
+  </main>;
 }
 function State(props: { title: string; text: string; children?: ReactNode }) { return <div className="state"><h2>{props.title}</h2><p>{props.text}</p>{props.children}</div>; }
 function Mastery({ values, scope }: { values: Record<Dimension, number>; scope: Data["scope"] }) {

@@ -58,8 +58,8 @@
   @media (max-width: 639px) {
     .learn { padding: 40px 20px 80px; }
     .learn .card, .learn .summary, .learn .state { padding: 20px; }
-    .learn nav { flex-wrap: wrap; overflow-x: visible; }
-    .learn nav a { flex: 0 0 auto; white-space: nowrap; }
+    .learn nav { flex-wrap: nowrap; overflow-x: auto; gap: 6px; }
+    .learn nav a { flex: 0 0 auto; padding-inline: 10px; white-space: nowrap; }
   }
 
   /* Eyebrow */
