@@ -45,7 +45,7 @@ export function DictionarySearch() {
   const searchParams = useSearchParams();
   const applied = useMemo(() => ({
     query: searchParams.get("q")?.trim() ?? "",
-    level: searchParams.get("level") ?? "all",
+    level: searchParams.has("level") ? (searchParams.get("level") ?? "all") : "default",
     partOfSpeech: searchParams.get("pos") ?? "",
     page: safePage(searchParams.get("page")),
   }), [searchParams]);
@@ -66,8 +66,8 @@ export function DictionarySearch() {
     const controller = new AbortController();
     const params = new URLSearchParams({ page: String(applied.page), pageSize: "12" });
     if (applied.query) params.set("q", applied.query);
-    if (applied.level !== "all") params.set("level", applied.level);
-    else if (!applied.query) params.set("level", "1");
+    if (applied.level !== "all" && applied.level !== "default") params.set("level", applied.level);
+    else if (applied.level === "default" && !applied.query) params.set("level", "1");
     if (applied.partOfSpeech) params.set("pos", applied.partOfSpeech);
     setLoading(true);
     setError("");
@@ -100,7 +100,7 @@ export function DictionarySearch() {
       const params = new URLSearchParams({ q: value, page: "1", pageSize: "6" });
       const detected = detectDictionaryQueryType(value);
       if (detected !== "empty") params.set("field", detected);
-      if (applied.level !== "all") params.set("level", applied.level);
+      if (applied.level !== "all" && applied.level !== "default") params.set("level", applied.level);
       setSuggesting(true);
       void fetch(`/api/v1/catalog/words?${params.toString()}`, { signal: controller.signal, cache: "no-store" })
         .then(async (response) => response.ok ? response.json() as Promise<CatalogResponse> : Promise.reject(new Error("suggestions unavailable")))
@@ -129,7 +129,7 @@ export function DictionarySearch() {
     const nextPartOfSpeech = next.partOfSpeech ?? applied.partOfSpeech;
     const nextPage = next.page ?? 1;
     if (nextQuery.trim()) params.set("q", nextQuery.trim());
-    if (nextLevel !== "all") params.set("level", nextLevel);
+    if (nextLevel !== "default") params.set("level", nextLevel);
     if (nextPartOfSpeech) params.set("pos", nextPartOfSpeech);
     if (nextPage > 1) params.set("page", String(nextPage));
     setSuggestionsOpen(false);
@@ -162,9 +162,9 @@ export function DictionarySearch() {
     }
   }
 
-  const selectedLevel = applied.level === "all" && !applied.query ? "1" : applied.level;
-  const defaultBrowse = !applied.query && applied.level === "all" && !applied.partOfSpeech;
-  const hasConditions = Boolean(applied.query || applied.level !== "all" || applied.partOfSpeech);
+  const selectedLevel = applied.level === "default" ? "1" : applied.level;
+  const defaultBrowse = !applied.query && applied.level === "default" && !applied.partOfSpeech;
+  const hasConditions = Boolean(applied.query || applied.level !== "default" || applied.partOfSpeech);
 
   return <div className="w-full">
     <form className="rounded-3xl border border-slate-200 bg-white p-4 shadow-[0_20px_60px_-35px_rgba(15,23,42,0.45)] sm:p-6" onSubmit={submit}>

@@ -34,6 +34,13 @@ test("dictionary landing is browseable on first load and exposes HSK 1–9 direc
   assert.doesNotMatch(client, />Search field</);
 });
 
+test("the explicit All level is distinct from the beginner-first empty landing", () => {
+  const client = read("src/app/components/dictionary-search.tsx");
+  assert.match(client, /searchParams\.has\("level"\)/);
+  assert.match(client, /if \(nextLevel !== "default"\) params\.set\("level", nextLevel\)/);
+  assert.match(client, /navigate\(\{ level: "all", page: 1 \}\)/);
+});
+
 test("instant suggestions are debounced, keyboard accessible and use automatic intent", () => {
   const client = read("src/app/components/dictionary-search.tsx");
   assert.match(client, /setTimeout/);
