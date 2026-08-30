@@ -40,19 +40,29 @@ export function trustedAudioExercise(assetId: string, mode: AudioMode): AudioExe
   const wordIndex = words.findIndex((word) => word.id === assetId);
   if (wordIndex < 0) return undefined;
   const word = words[wordIndex];
+  if (mode === "context_audio" && !word.example) return undefined;
   const correctIndex = wordIndex % letters.length;
-  const distractors = words.filter((candidate) => candidate.id !== word.id).slice(0, 3);
+  const distractors = words
+    .filter(
+      (candidate) =>
+        candidate.id !== word.id &&
+        (mode === "audio" || Boolean(candidate.example)),
+    )
+    .slice(0, 3);
   if (distractors.length < 3) return undefined;
   const choices = [...distractors];
   choices.splice(correctIndex, 0, word);
-  const text = (candidate: StudyWord) => mode === "audio" ? candidate.meaning : candidate.example.meaning;
+  const text = (candidate: StudyWord) =>
+    mode === "audio"
+      ? candidate.meaning
+      : (candidate.example?.meaning ?? candidate.meaning);
   const options = Object.fromEntries(letters.map((letter, index) => [letter, text(choices[index])])) as Record<string, string>;
   return {
     assetId,
     contentId: `word:${assetId}`,
     contentVersion: `catalog-v${word.contentVersion}`,
     dimension: mode,
-    voiceText: mode === "audio" ? word.hanzi : word.example.hanzi,
+    voiceText: mode === "audio" ? word.hanzi : (word.example?.hanzi ?? word.hanzi),
     prompt: mode === "audio" ? "Listen to the word and choose its meaning." : "Listen to the sentence and choose its meaning.",
     options,
     correctAnswer: letters[correctIndex],
@@ -64,14 +74,24 @@ export function trustedTodayAudioExercise(assetId: string, mode: AudioMode): Aud
   const plans = Array.from({ length: 7 }, (_, index) => selectTodayContent(index + 1));
   const item = plans.flatMap((plan) => plan.status === "ready" ? [plan.item] : []).find((candidate) => candidate.assetId === assetId) ?? todayContentByAssetId(assetId);
   if (!item) return undefined;
+  if (mode === "context_audio" && !item.example) return undefined;
   const distractors = plans
-    .flatMap((plan) => plan.status === "ready" && plan.item.assetId !== assetId ? [plan.item] : [])
+    .flatMap((plan) =>
+      plan.status === "ready" &&
+      plan.item.assetId !== assetId &&
+      (mode === "audio" || Boolean(plan.item.example))
+        ? [plan.item]
+        : [],
+    )
     .slice(0, 3);
   if (distractors.length < 3) return undefined;
   const candidates = [...distractors];
   const correctIndex = (item.level - 1) % letters.length;
   candidates.splice(correctIndex, 0, item);
-  const optionText = (candidate: typeof item) => mode === "audio" ? candidate.meaning : candidate.example.meaning;
+  const optionText = (candidate: typeof item) =>
+    mode === "audio"
+      ? candidate.meaning
+      : (candidate.example?.meaning ?? candidate.meaning);
   const options = Object.fromEntries(letters.map((letter, index) => [letter, optionText(candidates[index])])) as Record<string, string>;
   const formalAudioSrc = formalWordAudioUrlByContentId.get(item.assetId);
   const word: StudyWord = {
@@ -94,7 +114,7 @@ export function trustedTodayAudioExercise(assetId: string, mode: AudioMode): Aud
     contentId: item.contentId,
     contentVersion: item.contentVersion,
     dimension: mode,
-    voiceText: mode === "audio" ? item.hanzi : item.example.hanzi,
+    voiceText: mode === "audio" ? item.hanzi : (item.example?.hanzi ?? item.hanzi),
     prompt: mode === "audio" ? "Listen to the word and choose its meaning." : "Listen to the sentence and choose its meaning.",
     options,
     correctAnswer: letters[correctIndex],

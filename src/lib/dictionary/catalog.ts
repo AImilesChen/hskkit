@@ -1,6 +1,12 @@
 import runtimeIndex from "../content/runtime-content-index.json" with { type: "json" };
 
 const dictionaryAssets = runtimeIndex.dictionaryAssets;
+const runtimeWordAssets = Object.values(runtimeIndex.runtimeWords).flat();
+const formalAudioByAssetId = new Map(
+  dictionaryAssets.flatMap((asset) =>
+    asset.audioSrc ? [[asset.id, asset.audioSrc] as const] : [],
+  ),
+);
 
 export type ReleaseStatus = "published" | "withdrawn";
 
@@ -12,7 +18,7 @@ export interface StudyWord {
   pinyin: string;
   meaning: string;
   partOfSpeech: string;
-  example: { hanzi: string; pinyin: string; meaning: string };
+  example?: { hanzi: string; pinyin: string; meaning: string };
   releaseStatus: ReleaseStatus;
   qaStatus: "approved";
   contentVersion: number;
@@ -34,7 +40,7 @@ export interface StudyCharacter {
   sourceVersion: string;
 }
 
-type LookupResult<T> =
+export type LookupResult<T> =
   | { status: "published"; item: T }
   | { status: "withdrawn" }
   | { status: "missing" };
@@ -57,24 +63,40 @@ const curated = [
   { hanzi: "买", slug: "mai", example: ["我去商店买书。", "Wǒ qù shāngdiàn mǎi shū.", "I am going to the shop to buy a book."] },
 ] as const;
 
-export const STUDY_WORDS: StudyWord[] = curated.flatMap((entry) => {
-  const asset = dictionaryAssets.find((candidate) => candidate.hanzi === entry.hanzi);
-  if (!asset) return [];
-  return [{
+function studyWordFromAsset(
+  asset: (typeof runtimeWordAssets)[number],
+  slug: string,
+  example?: StudyWord["example"],
+): StudyWord {
+  return {
     id: asset.id,
-    slug: entry.slug,
+    slug,
     level: asset.level,
     hanzi: asset.hanzi,
     pinyin: asset.pinyin,
     meaning: asset.meaning,
     partOfSpeech: asset.partOfSpeech,
-    example: { hanzi: entry.example[0], pinyin: entry.example[1], meaning: entry.example[2] },
-    releaseStatus: "published" as const,
-    qaStatus: "approved" as const,
+    example,
+    releaseStatus: "published",
+    qaStatus: "approved",
     contentVersion: asset.version,
     sourceVersion: activeReleaseId,
-    audio: asset.audioSrc ? { status: "formal" as const, locale: "zh-CN" as const, src: asset.audioSrc } : { status: "unavailable" as const, locale: "zh-CN" as const },
-  }];
+    audio: formalAudioByAssetId.has(asset.id)
+      ? { status: "formal", locale: "zh-CN", src: formalAudioByAssetId.get(asset.id)! }
+      : { status: "unavailable", locale: "zh-CN" },
+  };
+}
+
+export const STUDY_WORDS: StudyWord[] = curated.flatMap((entry) => {
+  const asset = dictionaryAssets.find((candidate) => candidate.hanzi === entry.hanzi);
+  if (!asset) return [];
+  return [
+    studyWordFromAsset(asset, entry.slug, {
+      hanzi: entry.example[0],
+      pinyin: entry.example[1],
+      meaning: entry.example[2],
+    }),
+  ];
 });
 
 const characterEditorial = [
@@ -101,7 +123,14 @@ export function searchPublishedWords(query: string, options: { level?: number } 
   const words = listPublishedWords(options);
   const needle = normalize(query.trim());
   if (!needle) return words;
-  return words.filter((word) => [word.hanzi, word.pinyin, word.meaning, word.example.hanzi, word.example.meaning].some((value) => normalize(value).includes(needle)));
+  return words.filter((word) => {
+    const exampleValues = word.example
+      ? [word.example.hanzi, word.example.meaning]
+      : [];
+    return [word.hanzi, word.pinyin, word.meaning, ...exampleValues].some(
+      (value) => normalize(value).includes(needle),
+    );
+  });
 }
 
 export function searchPublishedCharacters(query: string, options: { level?: number } = {}): StudyCharacter[] {
@@ -112,8 +141,12 @@ export function searchPublishedCharacters(query: string, options: { level?: numb
 }
 
 export function getWordBySlug(slug: string): LookupResult<StudyWord> {
-  const word = STUDY_WORDS.find((item) => item.slug === slug);
-  return word ? { status: "published", item: word } : { status: "missing" };
+  const curatedWord = STUDY_WORDS.find((item) => item.slug === slug);
+  if (curatedWord) return { status: "published", item: curatedWord };
+  const asset = runtimeWordAssets.find((candidate) => candidate.id === slug);
+  return asset
+    ? { status: "published", item: studyWordFromAsset(asset, asset.id) }
+    : { status: "missing" };
 }
 
 export function getCharacterByHanzi(hanzi: string): LookupResult<StudyCharacter> {
@@ -125,6 +158,31 @@ export function relatedWordsForCharacter(character: StudyCharacter): StudyWord[]
   return character.relatedWordSlugs.flatMap((slug) => {
     const result = getWordBySlug(slug);
     return result.status === "published" ? [result.item] : [];
+  });
+}
+
+const wordRelationships: Record<string, ReadonlyArray<{ slug: string; relationship: string }>> = {
+  "xue-xi": [
+    { slug: "xi-guan", relationship: "Shared character 习 · a learning habit" },
+    { slug: "huan-jing", relationship: "Common context · a learning environment" },
+    { slug: "jiao-liu", relationship: "Next use · communicate in Chinese" },
+  ],
+  "xi-guan": [{ slug: "xue-xi", relationship: "Shared character 习 · build a study habit" }],
+  "huan-jing": [
+    { slug: "xue-xi", relationship: "Common phrase · 学习环境" },
+    { slug: "ze-ren", relationship: "Topic link · environmental responsibility" },
+  ],
+  "jiao-liu": [{ slug: "xue-xi", relationship: "Learning link · use what you study" }],
+  "ze-ren": [{ slug: "huan-jing", relationship: "Topic link · responsibility for the environment" }],
+  "gai-shan": [{ slug: "huan-jing", relationship: "Common phrase · 改善环境" }],
+  "zi-yuan": [{ slug: "huan-jing", relationship: "Topic link · natural resources and environment" }],
+  "chang-dao": [{ slug: "xue-xi", relationship: "Common phrase · 倡导终身学习" }],
+};
+
+export function relatedWordsForWord(word: StudyWord): Array<{ word: StudyWord; relationship: string }> {
+  return (wordRelationships[word.slug] ?? []).flatMap((relation) => {
+    const result = getWordBySlug(relation.slug);
+    return result.status === "published" ? [{ word: result.item, relationship: relation.relationship }] : [];
   });
 }
 

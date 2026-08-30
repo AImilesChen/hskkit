@@ -163,6 +163,7 @@ export interface LearningState {
   audioReviewReady?: Array<{ cardId: string; cardRevision: number }>;
   audioPlaybackKeys?: string[];
   dailyOperationKeys?: string[];
+  savedWordIds?: string[];
   lastReviewUndo?: {
     cardId: string;
     gradeKey: string;
@@ -190,6 +191,47 @@ function reconcileSummary(session: DailySession, completedAt?: string): DailySes
 }
 
 const reviewItemId = (card: Pick<SrsCard, "id" | "revision">) => `review:${card.id}:${card.revision}`;
+
+export function toggleSavedWord(state: LearningState, input: { assetId: string; save: boolean }): LearningState {
+  const saved = new Set(state.savedWordIds ?? []);
+  if (input.save) saved.add(input.assetId);
+  else saved.delete(input.assetId);
+  return { ...state, savedWordIds: [...saved] };
+}
+
+export function addWordToToday(state: LearningState, input: {
+  sessionId: string;
+  assetId: string;
+  contentId: string;
+  contentVersion: string;
+  title: string;
+  href: string;
+}): LearningState {
+  const session = state.dailySessions.find((candidate) => candidate.id === input.sessionId);
+  if (!session) throw new Error("DAILY_SESSION_NOT_FOUND");
+  const itemId = `dictionary:${input.assetId}`;
+  if (session.items.some((item) => item.id === itemId)) return state;
+  const item: DailyItem = {
+    id: itemId,
+    kind: "learn",
+    contentId: input.contentId,
+    contentVersion: input.contentVersion,
+    title: input.title,
+    href: input.href,
+    estimatedMinutes: 2,
+    status: "pending",
+  };
+  const summaryIndex = session.items.findIndex((candidate) => candidate.kind === "summary");
+  const items = summaryIndex < 0
+    ? [...session.items, item]
+    : [...session.items.slice(0, summaryIndex), item, ...session.items.slice(summaryIndex)];
+  return {
+    ...state,
+    dailySessions: state.dailySessions.map((candidate) => candidate.id === session.id
+      ? reconcileSummary({ ...candidate, items })
+      : candidate),
+  };
+}
 
 function applyAttemptToSessions(state: LearningState, attempt: Attempt, card: SrsCard): DailySession[] {
   return state.dailySessions.map((session) => {

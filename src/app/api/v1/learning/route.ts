@@ -1,9 +1,12 @@
 import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 import { createHash } from "node:crypto";
+import { getCloudflareContext } from "@opennextjs/cloudflare";
 import {
   buildDailySession,
   applyDailyItemAction,
+  addWordToToday,
+  toggleSavedWord,
 
   gradeReview,
   undoLastReview,
@@ -21,7 +24,8 @@ import { loadState, saveState, usageSnapshot, type UsageCharge } from "../../../
 import { projectLearningHistory } from "../../../../lib/learning/projection";
 import { resolveCapabilities } from "../../../../lib/commercial/storage";
 import { type ProductCapabilities } from "../../../../lib/commercial/capabilities";
-import { selectTodayContent } from "../../../../lib/learning/today-content";
+import { selectTodayContent, todayContentByAssetId, todayContentFromCatalogRow } from "../../../../lib/learning/today-content";
+import { findActiveCatalogWordById } from "../../../../lib/content/catalog-search";
 import { accessDecision, createAuditEvent, errorContract } from "../../../../lib/account/access-policy";
 import { recordPolicyAudit } from "../../../../lib/account/audit-storage";
 import { computeSessionStreak } from "../../../../lib/account/domain";
@@ -41,6 +45,13 @@ async function owner() {
   return { id, fresh, account: undefined };
 }
 const short = (value: unknown, max = 100) => typeof value === "string" && value.length > 0 && value.length <= max ? value : undefined;
+async function resolveTodayDictionaryItem(assetId: string) {
+  const local = todayContentByAssetId(assetId);
+  if (local) return local;
+  const db = (await getCloudflareContext({ async: true })).env.LEARNING_DB;
+  const row = await findActiveCatalogWordById(db, assetId);
+  return row ? todayContentFromCatalogRow(row) : undefined;
+}
 const offset = (value: unknown) => Number.isInteger(value) && Number(value) >= -840 && Number(value) <= 840 ? Number(value) : 0;
 const errorResponse = (code: string, status: number, extra: Record<string, unknown> = {}) => NextResponse.json({ ...errorContract(code), ...extra }, { status });
 async function requireLearningAccess(identity: Awaited<ReturnType<typeof owner>>, permission: "learning:read" | "learning:write") {
@@ -154,7 +165,7 @@ function view(state: LearningState, ownerId: string, offsetMinutes: number, capa
 }
 function response(data: ReturnType<typeof view>, fresh: boolean, id: string, revision: number, account: boolean, capabilities: ProductCapabilities, usage: { dailyNewItems: number; dailyReviewGrades: number }, feedback?: { correct: boolean; correctAnswerText: string }) {
   const queueBinding = queueBindingFor(id);
-  const res = NextResponse.json({ session: data.session, cards: data.cards, mistakes: data.mistakes, mastery: data.mastery, focusedReview: data.focusedReview, canUndoReview: data.canUndoReview, capabilities, usage, nextAction: data.nextAction, streak: data.streak, streakBasis: data.streakBasis, queueBinding, revision, scope: account ? "account" : "guest", ...(feedback ? { feedback } : {}) });
+  const res = NextResponse.json({ session: data.session, cards: data.cards, mistakes: data.mistakes, savedWordIds: data.state.savedWordIds ?? [], mastery: data.mastery, focusedReview: data.focusedReview, canUndoReview: data.canUndoReview, capabilities, usage, nextAction: data.nextAction, streak: data.streak, streakBasis: data.streakBasis, queueBinding, revision, scope: account ? "account" : "guest", ...(feedback ? { feedback } : {}) });
   if (fresh) res.cookies.set(COOKIE, id, { httpOnly: true, sameSite: "lax", secure: true, maxAge: 31_536_000, path: "/" });
   return res;
 }
@@ -274,7 +285,7 @@ export async function POST(req: NextRequest) {
 
   for (let turn = 0; turn < 3; turn += 1) {
     const loaded = await loadState(identity.id);
-    const dailyAction = action === "complete_item" || action === "skip_item" || action === "restore_item" || action === "configure_today";
+    const dailyAction = action === "complete_item" || action === "skip_item" || action === "restore_item" || action === "configure_today" || action === "save_word" || action === "add_to_today";
     if (dailyAction && (loaded.state.dailyOperationKeys ?? []).includes(key)) {
       return response(view(loaded.state, identity.id, tz, capabilities, identity.account?.timezone), identity.fresh, identity.id, loaded.revision, Boolean(identity.account), capabilities, usage);
     }
@@ -449,6 +460,26 @@ export async function POST(req: NextRequest) {
         const cardId = short(payload.cardId, 120);
         if (!cardId) throw new Error("INVALID_REVIEW_UNDO");
         state = undoLastReview(state, { cardId, idempotencyKey: key });
+      } else if (action === "save_word") {
+        const assetId = short(payload.assetId, 120);
+        const item = assetId ? await resolveTodayDictionaryItem(assetId) : undefined;
+        if (!item || typeof payload.save !== "boolean") throw new Error("INVALID_DICTIONARY_WORD");
+        state = toggleSavedWord(state, { assetId: item.assetId, save: payload.save });
+        state = { ...state, dailyOperationKeys: [...(state.dailyOperationKeys ?? []), key].slice(-400) };
+      } else if (action === "add_to_today") {
+        const assetId = short(payload.assetId, 120);
+        const sessionId = short(payload.sessionId, 120);
+        const item = assetId ? await resolveTodayDictionaryItem(assetId) : undefined;
+        if (!item || !sessionId) throw new Error("INVALID_DICTIONARY_WORD");
+        state = addWordToToday(state, {
+          sessionId,
+          assetId: item.assetId,
+          contentId: item.contentId,
+          contentVersion: item.contentVersion,
+          title: `${item.hanzi} ${item.pinyin}`,
+          href: `/word/${item.studySlug}`,
+        });
+        state = { ...state, dailyOperationKeys: [...(state.dailyOperationKeys ?? []), key].slice(-400) };
       } else if (action === "complete_item" || action === "skip_item" || action === "restore_item") {
         const sessionId = short(payload.sessionId, 120);
         const itemId = short(payload.itemId, 160);

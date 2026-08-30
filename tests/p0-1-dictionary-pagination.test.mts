@@ -87,7 +87,7 @@ test("Vocabulary route keeps the bounded runtime status shell and loads paged ca
   assert.match(vocabulary, /getHsk3LevelStatus/);
   assert.match(vocabulary, /VocabularyCatalog/);
   assert.match(vocabularyClient, /\/api\/v1\/catalog\/words/);
-  assert.match(word, /getWordBySlug/);
+  assert.match(word, /getPublishedWordBySlug/);
   assert.match(levelStatus, /runtime-content-index\.json/);
   assert.match(dictionaryCatalog, /runtime-content-index\.json/);
   assert.doesNotMatch(levelStatus, /catalog\.json|published-content/);

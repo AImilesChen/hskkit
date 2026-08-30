@@ -205,6 +205,24 @@ export interface CatalogSearchDatabase {
   prepare(sql: string): CatalogDbStatement;
 }
 
+export function isCatalogWordAssetId(assetId: string): boolean {
+  return /^hsk3\.word\.l[1-7]\.\d{4}\.v\d+$/.test(assetId);
+}
+
+export async function findActiveCatalogWordById(
+  db: CatalogSearchDatabase,
+  assetId: string,
+): Promise<CatalogSearchRow | null> {
+  if (!isCatalogWordAssetId(assetId)) return null;
+  return db.prepare(
+    `SELECT i.id,i.release_id,i.standard_version,i.content_version,i.level_band,i.hanzi,i.traditional,i.pinyin,i.meaning,i.part_of_speech
+     FROM catalog_search_index i
+     INNER JOIN catalog_search_releases r ON r.id = i.release_id
+     WHERE i.id = ? AND r.active = 1
+     LIMIT 1`,
+  ).bind(assetId).first<CatalogSearchRow>();
+}
+
 export async function searchCatalogWords(
   db: CatalogSearchDatabase,
   params: CatalogSearchParams,

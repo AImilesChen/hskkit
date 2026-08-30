@@ -1,9 +1,11 @@
 import runtimeIndex from "../content/runtime-content-index.json" with { type: "json" };
+import type { CatalogSearchRow } from "../content/catalog-search.ts";
 import { getHsk3LevelStatus } from "../content/level-status.ts";
-import { listPublishedWords, type StudyWord } from "../dictionary/catalog.ts";
+import { getWordBySlug, listPublishedWords, type StudyWord } from "../dictionary/catalog.ts";
 
 const planCache = new Map<number, TodayContentPlan>();
-type RuntimeTodayAsset = (typeof runtimeIndex.dictionaryAssets)[number];
+const runtimeWordAssets = Object.values(runtimeIndex.runtimeWords).flat();
+type RuntimeTodayAsset = (typeof runtimeWordAssets)[number];
 
 export interface TodayContentItem {
   assetId: string;
@@ -100,13 +102,32 @@ export function selectTodayContent(startLevel: number): TodayContentPlan {
 
 export function todayContentByContentId(contentId: string): TodayContentItem | undefined {
   const logicalId = contentId.startsWith("catalog:") ? contentId.slice("catalog:".length) : undefined;
-  const asset = logicalId ? runtimeIndex.dictionaryAssets.find((candidate) => candidate.logicalId === logicalId) : undefined;
+  const asset = logicalId ? runtimeWordAssets.find((candidate) => candidate.logicalId === logicalId) : undefined;
   return asset ? todayContentByAssetId(asset.id) : undefined;
 }
 
 export function todayContentByAssetId(assetId: string): TodayContentItem | undefined {
-  const asset = runtimeIndex.dictionaryAssets.find((candidate) => candidate.id === assetId);
+  const asset = runtimeWordAssets.find((candidate) => candidate.id === assetId);
   if (!asset) return undefined;
-  const word = listPublishedWords({ level: asset.level }).find((candidate) => candidate.hanzi === asset.hanzi);
-  return word ? mapItem(asset, word, runtimeIndex.releaseId) : undefined;
+  const result = getWordBySlug(asset.id);
+  return result.status === "published"
+    ? mapItem(asset, result.item, runtimeIndex.releaseId)
+    : undefined;
+}
+
+export function todayContentFromCatalogRow(row: CatalogSearchRow): TodayContentItem {
+  const logicalId = row.id.replace(/\.v\d+$/, "");
+  return {
+    assetId: row.id,
+    contentId: `catalog:${logicalId}`,
+    contentVersion: `${row.release_id}:${row.content_version}`,
+    releaseId: row.release_id,
+    level: row.level_band === "7-9" ? 7 : Number(row.level_band),
+    hanzi: row.hanzi,
+    pinyin: row.pinyin,
+    meaning: row.meaning,
+    partOfSpeech: row.part_of_speech,
+    studySlug: row.id,
+    example: undefined,
+  };
 }
