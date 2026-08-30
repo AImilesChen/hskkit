@@ -361,7 +361,7 @@ export default function LearningDashboard({ mode }: { mode: "today" | "review" |
               <div className="mt-4 rounded-2xl bg-slate-50 p-[20px] text-slate-800">
                 <p><strong>{isMistakeRetry ? "Correct answer" : "Answer"}:</strong> {activeCard.correctAnswer}</p>
                 {isMistakeRetry && <details className="mt-3 border-t border-slate-200 pt-3 text-sm"><summary className="cursor-pointer font-semibold text-slate-700">Earlier attempt</summary><p className="mt-2"><strong>{activeCard.priorAnswerLabel}:</strong> {activeCard.userAnswer || "No answer"}</p></details>}
-                <p className="mt-3 text-sm text-slate-600">{activeCard.explanation}</p>
+                <p className="mt-3 text-sm text-slate-600"><strong className="mb-1 block text-slate-800">Why the answer fits</strong>{activeCard.explanation}</p>
               </div>
               {(activeCard.pinyin || activeCard.meaning || activeCard.example) && <section className="mt-4 rounded-2xl border border-slate-200 bg-white p-[20px]" aria-label="Vocabulary answer details">
                 {activeCard.pinyin && <p><strong>Pinyin:</strong> {activeCard.pinyin}</p>}

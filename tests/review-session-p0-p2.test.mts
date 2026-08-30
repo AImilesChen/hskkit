@@ -98,7 +98,7 @@ test("review entry links preserve Today and selected-mistake context", async () 
 test("mistake retry and self-recall use distinct truthful interactions", async () => {
   const client = await source("src/app/components/learning-dashboard.tsx");
   const route = await source("src/app/api/v1/learning/route.ts");
-  for (const token of ["Mistake retry", "Memory review", "Your answer this time", "Think of the answer before revealing it", "Earlier attempt"]) {
+  for (const token of ["Mistake retry", "Memory review", "Your answer this time", "Think of the answer before revealing it", "Earlier attempt", "Why the answer fits"]) {
     assert.match(client, new RegExp(token));
   }
   assert.doesNotMatch(route, /say the answer once before continuing/);
