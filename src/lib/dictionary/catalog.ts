@@ -1,4 +1,5 @@
 import runtimeIndex from "../content/runtime-content-index.json" with { type: "json" };
+import { P1_CHARACTER_RECORDS } from "./p1-character-data.ts";
 
 const dictionaryAssets = runtimeIndex.dictionaryAssets;
 const runtimeWordAssets = Object.values(runtimeIndex.runtimeWords).flat();
@@ -19,6 +20,8 @@ export interface StudyWord {
   meaning: string;
   partOfSpeech: string;
   example?: { hanzi: string; pinyin: string; meaning: string };
+  examples: Array<{ hanzi: string; pinyin: string; meaning: string }>;
+  collocations: Array<{ hanzi: string; pinyin: string; meaning: string }>;
   releaseStatus: ReleaseStatus;
   qaStatus: "approved";
   contentVersion: number;
@@ -31,6 +34,8 @@ export interface StudyCharacter {
   pinyin: string[];
   meanings: string[];
   radical: string;
+  radicalExplanation: string;
+  structure: "left-right" | "top-bottom" | "enclosure" | "single-component" | "three-part";
   strokes: number;
   level: number;
   relatedWordSlugs: string[];
@@ -63,11 +68,31 @@ const curated = [
   { hanzi: "买", slug: "mai", example: ["我去商店买书。", "Wǒ qù shāngdiàn mǎi shū.", "I am going to the shop to buy a book."] },
 ] as const;
 
+const wordEditorial: Record<string, {
+  examples?: Array<{ hanzi: string; pinyin: string; meaning: string }>;
+  collocations?: Array<{ hanzi: string; pinyin: string; meaning: string }>;
+}> = {
+  "xue-xi": {
+    examples: [
+      { hanzi: "我每天学习中文。", pinyin: "Wǒ měitiān xuéxí Zhōngwén.", meaning: "I study Chinese every day." },
+      { hanzi: "她在图书馆学习。", pinyin: "Tā zài túshūguǎn xuéxí.", meaning: "She studies in the library." },
+      { hanzi: "我们一起学习新词。", pinyin: "Wǒmen yìqǐ xuéxí xīncí.", meaning: "We learn new words together." },
+    ],
+    collocations: [
+      { hanzi: "学习中文", pinyin: "xuéxí Zhōngwén", meaning: "study Chinese" },
+      { hanzi: "学习方法", pinyin: "xuéxí fāngfǎ", meaning: "study method" },
+      { hanzi: "认真学习", pinyin: "rènzhēn xuéxí", meaning: "study diligently" },
+    ],
+  },
+};
+
 function studyWordFromAsset(
   asset: (typeof runtimeWordAssets)[number],
   slug: string,
   example?: StudyWord["example"],
 ): StudyWord {
+  const editorial = wordEditorial[slug];
+  const examples = editorial?.examples ?? (example ? [example] : []);
   return {
     id: asset.id,
     slug,
@@ -77,6 +102,8 @@ function studyWordFromAsset(
     meaning: asset.meaning,
     partOfSpeech: asset.partOfSpeech,
     example,
+    examples,
+    collocations: editorial?.collocations ?? [],
     releaseStatus: "published",
     qaStatus: "approved",
     contentVersion: asset.version,
@@ -99,16 +126,12 @@ export const STUDY_WORDS: StudyWord[] = curated.flatMap((entry) => {
   ];
 });
 
-const characterEditorial = [
-  { hanzi: "学", pinyin: ["xué"], meanings: ["to study; to learn"], radical: "子 (child)", strokes: 8, relatedWordSlugs: ["xue-xi"] },
-  { hanzi: "习", pinyin: ["xí"], meanings: ["to practise; habit"], radical: "乙", strokes: 3, relatedWordSlugs: ["xue-xi", "xi-guan"] },
-  { hanzi: "买", pinyin: ["mǎi"], meanings: ["to buy; to purchase"], radical: "乙", strokes: 6, relatedWordSlugs: ["mai"] },
-] as const;
+const characterEditorial = P1_CHARACTER_RECORDS;
 
 export const STUDY_CHARACTERS: StudyCharacter[] = characterEditorial.flatMap((entry) => {
   const related = entry.relatedWordSlugs.map((slug) => STUDY_WORDS.find((word) => word.slug === slug)).filter((word): word is StudyWord => Boolean(word));
   if (!related.length) return [];
-  return [{ ...entry, pinyin: [...entry.pinyin], meanings: [...entry.meanings], relatedWordSlugs: related.map((word) => word.slug), level: Math.min(...related.map((word) => word.level)), releaseStatus: "published" as const, qaStatus: "approved" as const, contentVersion: Math.max(...related.map((word) => word.contentVersion)), sourceVersion: activeReleaseId }];
+  return [{ ...entry, pinyin: [...entry.pinyin], meanings: [...entry.meanings], relatedWordSlugs: related.map((word) => word.slug), level: Math.min(...related.map((word) => word.level)), releaseStatus: "published" as const, qaStatus: "approved" as const, contentVersion: 1, sourceVersion: entry.editorialVersion }];
 });
 
 function normalize(value: string): string {

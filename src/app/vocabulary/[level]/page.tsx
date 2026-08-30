@@ -94,6 +94,7 @@ export default async function VocabularyPage({ params }: Props) {
         </div>
 
         <div className="mt-[40px] flex flex-wrap gap-3 border-t border-slate-200 pt-[24px]">
+          <Link href={`/dictionary?level=${level}`} className="inline-flex min-h-11 items-center rounded-lg border border-blue-600 bg-white px-5 py-3 font-semibold text-blue-700 hover:bg-blue-50">Browse this level in Dictionary</Link>
           <Link href="/levels" className="inline-flex min-h-11 items-center rounded-lg border border-slate-300 bg-white px-5 py-3 font-semibold text-slate-700 hover:border-blue-600 hover:text-blue-700">View all HSK levels</Link>
           <Link href="/placement" className="inline-flex min-h-11 items-center rounded-lg bg-blue-600 px-5 py-3 font-semibold text-white hover:bg-blue-700">Find my starting level</Link>
         </div>

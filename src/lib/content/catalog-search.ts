@@ -252,3 +252,72 @@ export async function searchCatalogWords(
     formalAudioIds,
   });
 }
+
+function boundedEditDistance(left: string, right: string): number {
+  const a = left.slice(0, 120);
+  const b = right.slice(0, 120);
+  const row = Array.from({ length: a.length + 1 }, (_, index) => index);
+  for (let column = 1; column <= b.length; column += 1) {
+    let previous = row[0];
+    row[0] = column;
+    for (let index = 1; index <= a.length; index += 1) {
+      const current = row[index];
+      row[index] = a[index - 1] === b[column - 1]
+        ? previous
+        : Math.min(previous + 1, row[index] + 1, row[index - 1] + 1);
+      previous = current;
+    }
+  }
+  return row[a.length];
+}
+
+export async function suggestCatalogWords(
+  db: CatalogSearchDatabase,
+  input: { q: string; level?: number; partOfSpeech?: string; formalAudioIds?: readonly string[]; limit?: number },
+): Promise<CatalogSearchRow[]> {
+  const needle = normalizeCatalogQuery(input.q.trim()).slice(0, 100);
+  if (!needle) return [];
+  const release = await db.prepare(
+    "SELECT id,version,published_at,word_count FROM catalog_search_releases WHERE active=1 ORDER BY published_at DESC LIMIT 1",
+  ).first<ActiveCatalogSearchRelease>();
+  if (!release) return [];
+
+  const conditions = ["release_id = ?"];
+  const bindings: Array<string | number> = [release.id];
+  if (input.level !== undefined) {
+    conditions.push("level_band = ?");
+    bindings.push(input.level >= 7 ? "7-9" : String(input.level));
+  }
+  if (input.partOfSpeech) {
+    conditions.push("('/' || lower(part_of_speech) || '/') LIKE ? ESCAPE '\\'");
+    bindings.push(`%/${escapedLike(input.partOfSpeech.toLowerCase())}/%`);
+  }
+  if (input.formalAudioIds) {
+    if (input.formalAudioIds.length === 0) return [];
+    conditions.push(`id IN (${input.formalAudioIds.map(() => "?").join(",")})`);
+    bindings.push(...input.formalAudioIds);
+  }
+  const firstCharacter = needle[0];
+  conditions.push("(search_hanzi LIKE ? ESCAPE '\\' OR search_pinyin LIKE ? ESCAPE '\\' OR search_english LIKE ? ESCAPE '\\')");
+  const broadMatch = `%${escapedLike(firstCharacter)}%`;
+  bindings.push(broadMatch, broadMatch, broadMatch);
+
+  const select = "id,release_id,standard_version,content_version,level_band,hanzi,traditional,pinyin,meaning,part_of_speech";
+  const result = await db.prepare(
+    `SELECT ${select} FROM catalog_search_index WHERE ${conditions.join(" AND ")} ORDER BY sort_level,id LIMIT 4000`,
+  ).bind(...bindings).all<CatalogSearchRow>();
+  if (!result.success) throw new Error(result.error || "Catalog suggestions failed");
+
+  const limit = Math.max(1, Math.min(input.limit ?? 4, 10));
+  return result.results.map((row) => {
+    const forms = [row.hanzi, row.pinyin, row.meaning].map(normalizeCatalogQuery).filter(Boolean);
+    const score = Math.min(...forms.map((form) => {
+      if (form.includes(needle) || needle.includes(form)) return Math.abs(form.length - needle.length) * 0.2;
+      return boundedEditDistance(needle, form) / Math.max(needle.length, Math.min(form.length, 120), 1);
+    }));
+    return { row, score };
+  }).filter((entry) => entry.score <= 0.55)
+    .sort((left, right) => left.score - right.score || left.row.id.localeCompare(right.row.id))
+    .slice(0, limit)
+    .map((entry) => entry.row);
+}

@@ -24,6 +24,8 @@ export const getPublishedWordBySlug = cache(async (slug: string): Promise<Lookup
       pinyin: row.pinyin,
       meaning: row.meaning,
       partOfSpeech: row.part_of_speech,
+      examples: [],
+      collocations: [],
       releaseStatus: "published",
       qaStatus: "approved",
       contentVersion: Number(row.id.match(/\.v(\d+)$/)?.[1] ?? "1"),

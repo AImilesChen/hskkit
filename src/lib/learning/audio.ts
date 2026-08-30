@@ -103,6 +103,8 @@ export function trustedTodayAudioExercise(assetId: string, mode: AudioMode): Aud
     meaning: item.meaning,
     partOfSpeech: item.partOfSpeech,
     example: item.example,
+    examples: item.example ? [item.example] : [],
+    collocations: [],
     releaseStatus: "published",
     qaStatus: "approved",
     contentVersion: 1,

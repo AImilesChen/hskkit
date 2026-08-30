@@ -69,14 +69,17 @@ export default async function WordPage({ params }: Props) {
 
           <DictionaryWordActions assetId={word.id} hanzi={word.hanzi} level={word.level} audioSrc={word.audio.status === "formal" ? word.audio.src : undefined} />
 
-          {word.example ? (
-            <section className="rounded-2xl border border-slate-200 bg-white p-5 sm:p-7">
-              <p className="text-xs font-bold uppercase tracking-[0.12em] text-blue-700">In a sentence</p>
-              <p className="mt-4 text-xl font-semibold leading-8 text-slate-950 sm:text-2xl">{word.example.hanzi}</p>
-              <p className="mt-2 text-blue-700">{word.example.pinyin}</p>
-              <p className="mt-2 leading-7 text-slate-600">{word.example.meaning}</p>
-            </section>
-          ) : null}
+          {word.collocations.length > 0 && <section className="rounded-2xl border border-slate-200 bg-white p-5 sm:p-7" aria-labelledby="collocations-title">
+            <p className="text-xs font-bold uppercase tracking-[0.12em] text-blue-700">Natural combinations</p>
+            <h2 id="collocations-title" className="mt-2 text-2xl font-bold text-slate-950">Common collocations</h2>
+            <div className="mt-4 grid gap-3 sm:grid-cols-2">{word.collocations.map((item) => <div key={item.hanzi} className="rounded-xl bg-slate-50 p-4"><p className="text-lg font-bold text-slate-950">{item.hanzi}</p><p className="mt-1 text-sm font-semibold text-blue-700">{item.pinyin}</p><p className="mt-2 text-sm text-slate-600">{item.meaning}</p></div>)}</div>
+          </section>}
+
+          {word.examples.length > 0 && <section className="rounded-2xl border border-slate-200 bg-white p-5 sm:p-7" aria-labelledby="examples-title">
+            <p className="text-xs font-bold uppercase tracking-[0.12em] text-blue-700">In context</p>
+            <h2 id="examples-title" className="mt-2 text-2xl font-bold text-slate-950">More real examples</h2>
+            <div className="mt-4 divide-y divide-slate-100">{word.examples.map((example) => <div key={example.hanzi} className="py-4 first:pt-0 last:pb-0"><p className="text-xl font-semibold leading-8 text-slate-950">{example.hanzi}</p><p className="mt-1 text-blue-700">{example.pinyin}</p><p className="mt-1 leading-7 text-slate-600">{example.meaning}</p></div>)}</div>
+          </section>}
 
           {characters.length > 0 && <section className="rounded-2xl border border-slate-200 bg-white p-6" aria-labelledby="characters-title">
             <h2 id="characters-title" className="text-xl font-bold text-slate-950">Explore the characters</h2>
