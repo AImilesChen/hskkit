@@ -43,6 +43,8 @@ test("merge preview is explicit and cancellation can preserve the exact account 
     guestLearningSessions: 0,
     additions: 1,
     sessionAdditions: 0,
+    savedWordAdditions: 0,
+    recentSearchAdditions: 0,
     conflicts: 0,
     strategy: "account_wins_conflicts",
   });

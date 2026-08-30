@@ -2,6 +2,7 @@ import { createHash } from "node:crypto";
 import type { TodayContentPlan } from "./today-content.ts";
 import { practiceQuestionSet } from "../practice/questions.ts";
 import type { ReviewSnapshot } from "./review-content.ts";
+import type { DictionaryPracticeWord } from "../dictionary/p2-learning.ts";
 
 export type Grade = "again" | "hard" | "good" | "easy";
 export type Dimension = "reading" | "audio" | "context_audio";
@@ -164,6 +165,7 @@ export interface LearningState {
   audioPlaybackKeys?: string[];
   dailyOperationKeys?: string[];
   savedWordIds?: string[];
+  recentDictionarySearches?: Array<{ query: string; level?: number; searchedAt: string }>;
   lastReviewUndo?: {
     cardId: string;
     gradeKey: string;
@@ -197,6 +199,68 @@ export function toggleSavedWord(state: LearningState, input: { assetId: string; 
   if (input.save) saved.add(input.assetId);
   else saved.delete(input.assetId);
   return { ...state, savedWordIds: [...saved] };
+}
+
+export function recordDictionarySearch(state: LearningState, input: { query: string; level?: number; searchedAt: string }): LearningState {
+  const query = input.query.trim().replace(/\s+/g, " ").slice(0, 100);
+  if (!query) return state;
+  const level = Number.isInteger(input.level) && Number(input.level) >= 1 && Number(input.level) <= 9 ? Number(input.level) : undefined;
+  const key = `${query.toLocaleLowerCase()}\u0000${level ?? "all"}`;
+  const recent = (state.recentDictionarySearches ?? []).filter((item) => `${item.query.toLocaleLowerCase()}\u0000${item.level ?? "all"}` !== key);
+  return { ...state, recentDictionarySearches: [{ query, ...(level ? { level } : {}), searchedAt: input.searchedAt }, ...recent].slice(0, 10) };
+}
+
+export function addWordToReview(state: LearningState, input: { word: DictionaryPracticeWord; observedAt: string }): LearningState {
+  const existing = state.cards.find((card) => card.contentId === input.word.contentId && card.contentVersion === input.word.contentVersion && card.dimension === "reading");
+  if (existing) return state;
+  const attemptId = id("att", `dictionary-review:${input.word.assetId}:${input.word.contentVersion}`);
+  const cardId = id("card", `${input.word.contentId}:${input.word.contentVersion}:reading`);
+  const answerText = `${input.word.hanzi} · ${input.word.pinyin} · ${input.word.meaning}`;
+  const attempt: Attempt = {
+    id: attemptId,
+    idempotencyKey: `dictionary-review:${input.word.assetId}:${input.word.contentVersion}`,
+    contentId: input.word.contentId,
+    contentVersion: input.word.contentVersion,
+    dimension: "reading",
+    answer: input.word.assetId,
+    correctAnswer: input.word.assetId,
+    prompt: `Recall ${input.word.hanzi}`,
+    userAnswerText: answerText,
+    correctAnswerText: answerText,
+    correct: true,
+    observedAt: input.observedAt,
+    mode: "practice",
+    skill: "vocabulary",
+    standardVersion: "HSK 3.0",
+    reviewSnapshot: {
+      level: input.word.level,
+      levelBand: input.word.levelBand,
+      skillLabel: "Vocabulary",
+      topic: input.word.hanzi,
+      prompt: `Recall the pinyin and meaning of ${input.word.hanzi}.`,
+      answerMode: "self_recall",
+      correctAnswer: input.word.assetId,
+      correctAnswerText: answerText,
+      explanation: `${input.word.hanzi} (${input.word.pinyin}) means “${input.word.meaning}.”`,
+      audioSrc: input.word.formalAudioUrl,
+      audioText: input.word.hanzi,
+    },
+  };
+  const card: SrsCard = {
+    id: cardId,
+    contentId: input.word.contentId,
+    contentVersion: input.word.contentVersion,
+    dimension: "reading",
+    dueAt: input.observedAt,
+    intervalDays: 0,
+    ease: 2.5,
+    revision: 0,
+    reviewCount: 0,
+    algorithmVersion: "hskkit-srs-v1",
+    sourceAttemptId: attemptId,
+    gradeKeys: [],
+  };
+  return { ...state, attempts: [...state.attempts, attempt], cards: [...state.cards, card] };
 }
 
 export function addWordToToday(state: LearningState, input: {
@@ -543,7 +607,10 @@ export function buildDailySession(state: LearningState, input: { ownerId: string
       return previous?.status === "completed" || previous?.status === "skipped" ? { ...item, status: previous.status } : item;
     });
     const archivedCompleted = prior.items.filter((item) => item.kind !== "summary" && item.status === "completed" && !activePlanned.some((plannedItem) => plannedItem.id === item.id));
-    const replacement = [...archivedCompleted, ...retained, summary];
+    const explicitDictionaryItems = prior.items.filter((item) => item.id.startsWith("dictionary:")
+      && !activePlanned.some((plannedItem) => plannedItem.id === item.id)
+      && !archivedCompleted.some((completedItem) => completedItem.id === item.id));
+    const replacement = [...archivedCompleted, ...retained, ...explicitDictionaryItems, summary];
     const refreshed: DailySession = {
       ...prior,
       ruleVersion: input.ruleVersion,

@@ -21,6 +21,7 @@ export const getPublishedWordBySlug = cache(async (slug: string): Promise<Lookup
       slug: row.id,
       level: row.level_band === "7-9" ? 7 : Number(row.level_band),
       hanzi: row.hanzi,
+      traditional: row.traditional || row.hanzi,
       pinyin: row.pinyin,
       meaning: row.meaning,
       partOfSpeech: row.part_of_speech,

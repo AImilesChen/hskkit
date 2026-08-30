@@ -27,6 +27,8 @@ export async function GET() {
         || guest.state.dailySessions.length > 0
         || (guest.state.placementSessions?.length ?? 0) > 0
         || (guest.state.practiceSessions?.length ?? 0) > 0
+        || (guest.state.savedWordIds?.length ?? 0) > 0
+        || (guest.state.recentDictionarySearches?.length ?? 0) > 0
         || guestPlans.length > 0,
       attempts: guest.state.attempts.length,
       learningSessions: (guest.state.placementSessions?.length ?? 0) + (guest.state.practiceSessions?.length ?? 0),

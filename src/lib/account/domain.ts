@@ -45,6 +45,16 @@ function mergeStrings(account: string[] = [], guest: string[] = []) {
   return [...new Set([...account, ...guest])];
 }
 
+function mergeRecentSearches(account: LearningState["recentDictionarySearches"] = [], guest: LearningState["recentDictionarySearches"] = []) {
+  const byKey = new Map<string, NonNullable<LearningState["recentDictionarySearches"]>[number]>();
+  for (const item of [...account, ...guest]) {
+    const key = `${item.query.toLocaleLowerCase()}\u0000${item.level ?? "all"}`;
+    const current = byKey.get(key);
+    if (!current || current.searchedAt < item.searchedAt) byKey.set(key, item);
+  }
+  return [...byKey.values()].sort((a, b) => b.searchedAt.localeCompare(a.searchedAt)).slice(0, 10);
+}
+
 export function mergeLearningStates(account: LearningState, guest: LearningState, accountOwnerId?: string) {
   const attempts = mergeById(account.attempts, guest.attempts);
   const cards = mergeById(account.cards, guest.cards);
@@ -70,6 +80,8 @@ export function mergeLearningStates(account: LearningState, guest: LearningState
       audioReviewReady: [...ready.values()],
       audioPlaybackKeys: mergeStrings(account.audioPlaybackKeys, guest.audioPlaybackKeys),
       dailyOperationKeys: mergeStrings(account.dailyOperationKeys, guest.dailyOperationKeys),
+      savedWordIds: mergeStrings(account.savedWordIds, guest.savedWordIds),
+      recentDictionarySearches: mergeRecentSearches(account.recentDictionarySearches, guest.recentDictionarySearches),
     } satisfies LearningState,
     conflicts: attempts.conflicts + cards.conflicts + mistakes.conflicts + sessions.conflicts + placementSessions.conflicts + placementResults.conflicts + practiceSessions.conflicts + questionReports.conflicts,
   };
@@ -85,6 +97,8 @@ export function previewMerge(account: LearningState, guest: LearningState) {
     guestLearningSessions: sessionCount(guest),
     additions: Math.max(0, merged.state.attempts.length - account.attempts.length),
     sessionAdditions: Math.max(0, sessionCount(merged.state) - sessionCount(account)),
+    savedWordAdditions: Math.max(0, (merged.state.savedWordIds?.length ?? 0) - (account.savedWordIds?.length ?? 0)),
+    recentSearchAdditions: Math.max(0, (merged.state.recentDictionarySearches?.length ?? 0) - (account.recentDictionarySearches?.length ?? 0)),
     conflicts: merged.conflicts,
     strategy: "account_wins_conflicts" as MergeStrategy,
   };

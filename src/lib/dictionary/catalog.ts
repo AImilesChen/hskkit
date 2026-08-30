@@ -16,6 +16,7 @@ export interface StudyWord {
   slug: string;
   level: number;
   hanzi: string;
+  traditional?: string;
   pinyin: string;
   meaning: string;
   partOfSpeech: string;

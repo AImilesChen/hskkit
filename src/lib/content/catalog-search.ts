@@ -223,6 +223,58 @@ export async function findActiveCatalogWordById(
   ).bind(assetId).first<CatalogSearchRow>();
 }
 
+interface CatalogLearningRow extends CatalogSearchRow {
+  search_pinyin: string;
+  sort_level: number;
+}
+
+const learningSelect = "i.id,i.release_id,i.standard_version,i.content_version,i.level_band,i.hanzi,i.traditional,i.pinyin,i.meaning,i.part_of_speech,i.search_pinyin,i.sort_level";
+
+export async function findActiveCatalogWordsByIds(db: CatalogSearchDatabase, assetIds: string[]) {
+  const ids = [...new Set(assetIds)].filter(isCatalogWordAssetId).slice(0, 100);
+  if (!ids.length) return [];
+  const result = await db.prepare(
+    `SELECT ${learningSelect} FROM catalog_search_index i
+     INNER JOIN catalog_search_releases r ON r.id = i.release_id
+     WHERE r.active = 1 AND i.id IN (${ids.map(() => "?").join(",")})
+     ORDER BY i.sort_level,i.id`,
+  ).bind(...ids).all<CatalogLearningRow>();
+  if (!result.success) throw new Error(result.error || "Catalog lookup failed");
+  const byId = new Map(result.results.map((row) => [row.id, row]));
+  return ids.flatMap((id) => byId.has(id) ? [byId.get(id)!] : []);
+}
+
+export async function findCatalogWordLearningContext(db: CatalogSearchDatabase, assetId: string) {
+  if (!isCatalogWordAssetId(assetId)) return null;
+  const current = await db.prepare(
+    `SELECT ${learningSelect} FROM catalog_search_index i
+     INNER JOIN catalog_search_releases r ON r.id = i.release_id
+     WHERE i.id = ? AND r.active = 1 LIMIT 1`,
+  ).bind(assetId).first<CatalogLearningRow>();
+  if (!current) return null;
+
+  const level_band = current.level_band;
+  const search_pinyin = current.search_pinyin;
+  const after = await db.prepare(
+    `SELECT ${learningSelect} FROM catalog_search_index i
+     WHERE i.release_id = ? AND i.level_band = ? AND i.id > ? ORDER BY i.sort_level,i.id LIMIT 8`,
+  ).bind(current.release_id, level_band, current.id).all<CatalogLearningRow>();
+  if (!after.success) throw new Error(after.error || "Catalog learning context failed");
+  const before = after.results.length >= 8 ? { success: true, results: [] as CatalogLearningRow[] } : await db.prepare(
+    `SELECT ${learningSelect} FROM catalog_search_index i
+     WHERE i.release_id = ? AND i.level_band = ? AND i.id <> ? ORDER BY i.sort_level,i.id LIMIT ?`,
+  ).bind(current.release_id, level_band, current.id, 8 - after.results.length).all<CatalogLearningRow>();
+  if (!before.success) throw new Error(before.error || "Catalog learning context failed");
+  const candidates = [...after.results, ...before.results].filter((row, index, rows) => rows.findIndex((candidate) => candidate.id === row.id) === index).slice(0, 8);
+
+  const tones = await db.prepare(
+    `SELECT ${learningSelect} FROM catalog_search_index i
+     WHERE i.release_id = ? AND i.search_pinyin = ? AND i.id <> ? ORDER BY i.sort_level,i.id LIMIT 8`,
+  ).bind(current.release_id, search_pinyin, current.id).all<CatalogLearningRow>();
+  if (!tones.success) throw new Error(tones.error || "Catalog pronunciation comparison failed");
+  return { current, candidates, nextWord: candidates[0] ?? null, toneComparisons: tones.results };
+}
+
 export async function searchCatalogWords(
   db: CatalogSearchDatabase,
   params: CatalogSearchParams,

@@ -6,6 +6,8 @@ import {
   buildDailySession,
   applyDailyItemAction,
   addWordToToday,
+  addWordToReview,
+  recordDictionarySearch,
   toggleSavedWord,
 
   gradeReview,
@@ -32,6 +34,8 @@ import { computeSessionStreak } from "../../../../lib/account/domain";
 import { computeOffsetSessionStreak, deriveHomeNextStep, learningLocalDay } from "../../../../lib/learning/progress";
 import { checkReviewAnswer, reviewSnapshotFromStep7Exercise } from "../../../../lib/learning/review-content";
 import { resolvedReviewSnapshotForAttempt } from "../../../../lib/learning/review-content-resolver";
+import { getDictionaryLearningContext, getDictionaryWordsByIds } from "../../../../lib/dictionary/p2-server";
+import { dictionaryWordProgress, resolveDictionaryPractice } from "../../../../lib/dictionary/p2-learning";
 
 const COOKIE = GUEST_COOKIE;
 const queueBindingFor = (ownerId: string) => createHash("sha256").update(`hskkit-learning-queue:${ownerId}`).digest("base64url").slice(0, 24);
@@ -163,9 +167,33 @@ function view(state: LearningState, ownerId: string, offsetMinutes: number, capa
     streakBasis: accountTimezone ? `Account timezone: ${accountTimezone}` : "This device's local day",
   };
 }
-function response(data: ReturnType<typeof view>, fresh: boolean, id: string, revision: number, account: boolean, capabilities: ProductCapabilities, usage: { dailyNewItems: number; dailyReviewGrades: number }, feedback?: { correct: boolean; correctAnswerText: string }) {
+function response(data: ReturnType<typeof view>, fresh: boolean, id: string, revision: number, account: boolean, capabilities: ProductCapabilities, usage: { dailyNewItems: number; dailyReviewGrades: number }, feedback?: { correct: boolean; correctAnswerText: string }, savedWords: Awaited<ReturnType<typeof getDictionaryWordsByIds>> = []) {
   const queueBinding = queueBindingFor(id);
-  const res = NextResponse.json({ session: data.session, cards: data.cards, mistakes: data.mistakes, savedWordIds: data.state.savedWordIds ?? [], mastery: data.mastery, focusedReview: data.focusedReview, canUndoReview: data.canUndoReview, capabilities, usage, nextAction: data.nextAction, streak: data.streak, streakBasis: data.streakBasis, queueBinding, revision, scope: account ? "account" : "guest", ...(feedback ? { feedback } : {}) });
+  const dictionaryAssetIds = new Set<string>(data.state.savedWordIds ?? []);
+  for (const card of data.state.cards) if (card.contentId.startsWith("word:")) dictionaryAssetIds.add(card.contentId.slice(5));
+  for (const session of data.state.dailySessions) for (const item of session.items) if (item.id.startsWith("dictionary:")) dictionaryAssetIds.add(item.id.slice("dictionary:".length));
+  const dictionaryProgress = Object.fromEntries([...dictionaryAssetIds].map((assetId) => [assetId, dictionaryWordProgress(data.state, assetId, new Date().toISOString())]));
+  const res = NextResponse.json({
+    session: data.session,
+    cards: data.cards,
+    mistakes: data.mistakes,
+    savedWordIds: data.state.savedWordIds ?? [],
+    recentDictionarySearches: data.state.recentDictionarySearches ?? [],
+    dictionaryProgress,
+    savedWords,
+    mastery: data.mastery,
+    focusedReview: data.focusedReview,
+    canUndoReview: data.canUndoReview,
+    capabilities,
+    usage,
+    nextAction: data.nextAction,
+    streak: data.streak,
+    streakBasis: data.streakBasis,
+    queueBinding,
+    revision,
+    scope: account ? "account" : "guest",
+    ...(feedback ? { feedback } : {}),
+  });
   if (fresh) res.cookies.set(COOKIE, id, { httpOnly: true, sameSite: "lax", secure: true, maxAge: 31_536_000, path: "/" });
   return res;
 }
@@ -179,7 +207,8 @@ export async function GET(req: NextRequest) {
   const periodKey = learningLocalDay(new Date().toISOString(), tz, identity.account?.timezone);
   const usage = await usageSnapshot(identity.id, periodKey);
   const data = view(loaded.state, identity.id, tz, capabilities, identity.account?.timezone);
-  return response(data, identity.fresh, identity.id, loaded.revision, Boolean(identity.account), capabilities, usage);
+  const words = await getDictionaryWordsByIds(data.state.savedWordIds ?? []);
+  return response(data, identity.fresh, identity.id, loaded.revision, Boolean(identity.account), capabilities, usage, undefined, words);
 }
 export async function POST(req: NextRequest) {
   const identity = await owner();
@@ -253,6 +282,27 @@ export async function POST(req: NextRequest) {
     }
   }
 
+  if (action === "dictionary_playback_start" || action === "dictionary_playback_complete") {
+    const assetId = short(payload.assetId, 120);
+    const context = assetId ? await getDictionaryLearningContext(assetId) : null;
+    if (!context?.current.formalAudioUrl) return errorResponse("INVALID_DICTIONARY_PLAYBACK", 422);
+    const exerciseKey = `dictionary:${context.current.assetId}:listening`;
+    try {
+      if (action === "dictionary_playback_start") {
+        const ticket = await createStep7PlaybackTicket(identity.id, exerciseKey, context.current.hanzi);
+        const res = NextResponse.json({ playbackTicket: ticket.id, notBefore: ticket.notBefore, expiresAt: ticket.expiresAt }, { status: 201 });
+        if (identity.fresh) res.cookies.set(COOKIE, identity.id, { httpOnly: true, sameSite: "lax", secure: true, maxAge: 31_536_000, path: "/" });
+        return res;
+      }
+      const ticketId = short(payload.playbackTicket, 80);
+      if (!ticketId) throw new Error("AUDIO_PLAYBACK_REQUIRED");
+      await completeStep7PlaybackTicket(identity.id, exerciseKey, ticketId, key);
+      return NextResponse.json({ state: "playback_verified" });
+    } catch (error) {
+      return errorResponse(error instanceof Error ? error.message : "AUDIO_PLAYBACK_INCOMPLETE", 422);
+    }
+  }
+
   if (action === "step7_playback_start") {
     const exerciseId = short(payload.exerciseId, 120);
     const exercise = exerciseId ? trustedStep7Exercise(exerciseId) : undefined;
@@ -285,7 +335,7 @@ export async function POST(req: NextRequest) {
 
   for (let turn = 0; turn < 3; turn += 1) {
     const loaded = await loadState(identity.id);
-    const dailyAction = action === "complete_item" || action === "skip_item" || action === "restore_item" || action === "configure_today" || action === "save_word" || action === "add_to_today";
+    const dailyAction = action === "complete_item" || action === "skip_item" || action === "restore_item" || action === "configure_today" || action === "save_word" || action === "add_to_today" || action === "add_to_review" || action === "dictionary_search" || action === "clear_dictionary_searches";
     if (dailyAction && (loaded.state.dailyOperationKeys ?? []).includes(key)) {
       return response(view(loaded.state, identity.id, tz, capabilities, identity.account?.timezone), identity.fresh, identity.id, loaded.revision, Boolean(identity.account), capabilities, usage);
     }
@@ -344,6 +394,59 @@ export async function POST(req: NextRequest) {
             explanation: question.explanation ?? "Compare the supported detail with the other choices.",
           },
         }).state;
+      } else if (action === "dictionary_practice_attempt") {
+        const assetId = short(payload.assetId, 120);
+        const mode = short(payload.mode, 20);
+        const answer = short(payload.answer, 8);
+        const context = assetId ? await getDictionaryLearningContext(assetId) : null;
+        if (!context || !mode || !answer) throw new Error("INVALID_DICTIONARY_PRACTICE");
+        const exercise = resolveDictionaryPractice(context.current, context.candidates, mode, answer);
+        if (exercise.mode === "listening") {
+          const ticketId = short(payload.playbackTicket, 80);
+          if (!ticketId) throw new Error("AUDIO_PLAYBACK_REQUIRED");
+          await consumeStep7PlaybackTicket(identity.id, `dictionary:${context.current.assetId}:listening`, ticketId, key);
+        }
+        const options = Object.fromEntries(exercise.options.map((option) => [option.key, option.text]));
+        const input = {
+          idempotencyKey: key,
+          contentId: context.current.contentId,
+          contentVersion: context.current.contentVersion,
+          dimension: exercise.mode === "listening" ? "audio" as const : "reading" as const,
+          answer,
+          correctAnswer: exercise.correctAnswer,
+          prompt: exercise.prompt,
+          userAnswerText: options[answer],
+          correctAnswerText: exercise.correctAnswerText,
+          observedAt: new Date().toISOString(),
+          mode: exercise.mode === "listening" ? "listening" as const : "practice" as const,
+          skill: "vocabulary",
+          standardVersion: "HSK 3.0" as const,
+          reviewSnapshot: {
+            level: context.current.level,
+            levelBand: context.current.levelBand === "7-9" ? "7–9" : context.current.levelBand,
+            skillLabel: exercise.mode === "listening" ? "Vocabulary · listening" : exercise.mode === "pinyin" ? "Vocabulary · pinyin" : "Vocabulary · meaning",
+            topic: context.current.hanzi,
+            instruction: exercise.instruction,
+            prompt: exercise.prompt,
+            answerMode: "choice" as const,
+            options,
+            correctAnswer: exercise.correctAnswer,
+            correctAnswerText: exercise.correctAnswerText,
+            explanation: `${context.current.hanzi} (${context.current.pinyin}) means “${context.current.meaning}.”`,
+            audioSrc: exercise.formalAudioUrl,
+            audioText: exercise.mode === "listening" ? context.current.hanzi : undefined,
+          },
+        };
+        if (exercise.mode === "listening") {
+          const recorded = recordAudioAttempt(state, { ...input, dimension: "audio", playbackResult: "completed" });
+          if (!("attempt" in recorded)) throw new Error("AUDIO_PLAYBACK_REQUIRED");
+          state = recorded.state;
+          feedback = { correct: recorded.attempt.correct, correctAnswerText: exercise.correctAnswerText };
+        } else {
+          const recorded = recordAttempt(state, input);
+          state = recorded.state;
+          feedback = { correct: recorded.attempt.correct, correctAnswerText: exercise.correctAnswerText };
+        }
       } else if (action === "step7_attempt") {
         const exerciseId = short(payload.exerciseId, 120);
         const rawAnswer = short(payload.answer, 160);
@@ -460,6 +563,20 @@ export async function POST(req: NextRequest) {
         const cardId = short(payload.cardId, 120);
         if (!cardId) throw new Error("INVALID_REVIEW_UNDO");
         state = undoLastReview(state, { cardId, idempotencyKey: key });
+      } else if (action === "dictionary_search") {
+        const query = short(payload.query, 100);
+        const level = Number.isInteger(payload.level) ? Number(payload.level) : undefined;
+        if (!query) throw new Error("INVALID_DICTIONARY_SEARCH");
+        state = recordDictionarySearch(state, { query, level, searchedAt: new Date().toISOString() });
+        state = { ...state, dailyOperationKeys: [...(state.dailyOperationKeys ?? []), key].slice(-400) };
+      } else if (action === "clear_dictionary_searches") {
+        state = { ...state, recentDictionarySearches: [], dailyOperationKeys: [...(state.dailyOperationKeys ?? []), key].slice(-400) };
+      } else if (action === "add_to_review") {
+        const assetId = short(payload.assetId, 120);
+        const context = assetId ? await getDictionaryLearningContext(assetId) : null;
+        if (!context) throw new Error("INVALID_DICTIONARY_WORD");
+        state = addWordToReview(state, { word: context.current, observedAt: new Date().toISOString() });
+        state = { ...state, dailyOperationKeys: [...(state.dailyOperationKeys ?? []), key].slice(-400) };
       } else if (action === "save_word") {
         const assetId = short(payload.assetId, 120);
         const item = assetId ? await resolveTodayDictionaryItem(assetId) : undefined;
@@ -512,7 +629,7 @@ export async function POST(req: NextRequest) {
       return response(data, identity.fresh, identity.id, loaded.revision + 1, Boolean(identity.account), capabilities, usage, feedback);
     } catch (error) {
       const code = error instanceof Error ? error.message : "SAVE_FAILED";
-      const replayable = action === "attempt" || action === "step7_attempt" || action === "audio_attempt" || action === "audio_review_ready" || action === "retry_review" || action === "grade" || action === "undo_review" || dailyAction;
+      const replayable = action === "attempt" || action === "dictionary_practice_attempt" || action === "step7_attempt" || action === "audio_attempt" || action === "audio_review_ready" || action === "retry_review" || action === "grade" || action === "undo_review" || dailyAction;
       if (code === "REVISION_CONFLICT" && replayable && turn < 2) continue;
       if (code === "REVISION_CONFLICT") await recordPolicyAudit(createAuditEvent({ subjectId: identity.id, action: String(action), resourceType: "learning", resourceId: identity.id, result: "conflict", idempotencyKey: key }));
       return errorResponse(code, code === "ACCOUNT_DELETED" ? 403 : code === "REVISION_CONFLICT" ? 409 : code.startsWith("FREE_DAILY_") ? 429 : 422, code.startsWith("FREE_DAILY_") ? { upgradeHref: "/pricing" } : {});
