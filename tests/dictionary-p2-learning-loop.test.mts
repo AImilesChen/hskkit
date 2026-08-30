@@ -115,6 +115,7 @@ test("P2 UI exposes the complete learner loop and keeps stroke order gated", () 
   const search = read("src/app/components/dictionary-search.tsx");
   const actions = read("src/app/components/dictionary-word-actions.tsx");
   const wordPage = read("src/app/word/[slug]/page.tsx");
+  const scriptToggle = read("src/app/components/word-script-toggle.tsx");
   const practice = read("src/app/word/[slug]/practice/word-practice-client.tsx");
   const saved = read("src/app/saved/saved-words-client.tsx");
   assert.match(search, /Recent searches/);
@@ -124,6 +125,7 @@ test("P2 UI exposes the complete learner loop and keeps stroke order gated", () 
   assert.match(actions, /\/saved/);
   assert.match(wordPage, /Same sound, compare the tones/);
   assert.match(wordPage, /Next in HSK/);
+  assert.match(scriptToggle, /<h1 className="[^"]*text-white/);
   assert.match(practice, /Listen and choose|Choose the meaning|Choose the pinyin/);
   assert.match(saved, /Saved words/);
   assert.doesNotMatch(wordPage, /Stroke order|strokeOrder/);
