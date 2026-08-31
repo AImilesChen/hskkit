@@ -122,7 +122,7 @@ async function issueReward(relationshipId: string, stage: "qualified" | "paid", 
     db.prepare("DELETE FROM referral_reward_assertions WHERE id=?").bind(capAssertion),
   ];
   if (bonusCredits > 0) statements.push(db.prepare("INSERT INTO credit_ledger(id,owner_id,units,source,reward_id,expires_at,created_at) VALUES(?,?,?,?,?,?,?)").bind(crypto.randomUUID(), owner(relationship.referrer_user_id), bonusCredits, stage === "paid" ? "referral_paid" : "referral_qualified", rewardId, yearEnd(now), timestamp));
-  if (promoDays > 0) statements.push(db.prepare("INSERT INTO promotional_entitlements(id,owner_id,kind,status,starts_at,ends_at,source_reward_id,created_at,updated_at) VALUES(?,?,'referral_pass','active',?,?,?,?,?,?)").bind(crypto.randomUUID(), owner(relationship.referrer_user_id), iso(promoStart), addUtcDays(promoStart, promoDays), rewardId, timestamp, timestamp));
+  if (promoDays > 0) statements.push(db.prepare("INSERT INTO promotional_entitlements(id,owner_id,kind,status,starts_at,ends_at,source_reward_id,created_at,updated_at) VALUES(?,?,'referral_pass','active',?,?,?,?,?)").bind(crypto.randomUUID(), owner(relationship.referrer_user_id), iso(promoStart), addUtcDays(promoStart, promoDays), rewardId, timestamp, timestamp));
   try { await db.batch(statements); } catch (error) {
     const raced = await db.prepare("SELECT * FROM reward_issuances WHERE relationship_id=? AND stage=?").bind(relationshipId, stage).first<any>();
     if (raced) return raced;
@@ -197,8 +197,13 @@ export async function trialAndReferralSummary(userId: string, now = new Date()) 
   const db = database();
   await reconcileReferralLearningMilestone(userId, now);
   const referralCode = await codeForUser(userId);
-  const relationshipRows = await db.prepare("SELECT r.id,r.status,r.risk_status,r.created_at,r.qualified_at,r.paid_at,a.display_name referred_name FROM referral_relationships r JOIN accounts a ON a.user_id=r.referred_user_id WHERE r.referrer_user_id=? ORDER BY r.created_at DESC LIMIT 50").bind(userId).all<any>();
-  for (const relationship of relationshipRows.results as any[]) if (relationship.status === "paid_pending") await reconcilePaidReferral(relationship.id, now);
+  const relationshipQuery = "SELECT r.id,r.status,r.risk_status,r.created_at,r.qualified_at,r.paid_at,a.display_name referred_name FROM referral_relationships r JOIN accounts a ON a.user_id=r.referred_user_id WHERE r.referrer_user_id=? ORDER BY r.created_at DESC LIMIT 50";
+  let relationshipRows = await db.prepare(relationshipQuery).bind(userId).all<any>();
+  let reconciled = false;
+  for (const relationship of relationshipRows.results as any[]) {
+    if (relationship.status === "paid_pending" && await reconcilePaidReferral(relationship.id, now)) reconciled = true;
+  }
+  if (reconciled) relationshipRows = await db.prepare(relationshipQuery).bind(userId).all<any>();
   const [trial, rewards, bonus, access] = await Promise.all([
     db.prepare("SELECT status,starts_at,ends_at FROM promotional_entitlements WHERE owner_id=? AND kind='welcome_trial' ORDER BY created_at DESC LIMIT 1").bind(owner(userId)).first<any>(),
     db.prepare("SELECT stage,promo_days,bonus_credits,status,issued_at FROM reward_issuances WHERE referrer_user_id=? ORDER BY issued_at DESC LIMIT 50").bind(userId).all<any>(),

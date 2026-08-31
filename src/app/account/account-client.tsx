@@ -42,12 +42,18 @@ export default function AccountClient() {
       setView(data);
       if (data.account?.timezone) setTimezone(data.account.timezone);
       if (data.account?.status === "active") {
-        const [streakData, syncData, subscriptionData, aiData, referralData] = await Promise.all([json("/api/v1/account/streak"), json(`/api/v1/account/sync?deviceId=${encodeURIComponent(syncDeviceId())}`), json("/api/v1/commercial/subscription"), json("/api/v1/ai"), json("/api/v1/commercial/referrals")]);
-        setStreak(streakData);
-        setSync(syncData);
-        setSubscription(subscriptionData);
-        setAiQuota(aiData);
-        setReferrals(referralData);
+        const results = await Promise.allSettled([
+          json("/api/v1/account/streak"),
+          json(`/api/v1/account/sync?deviceId=${encodeURIComponent(syncDeviceId())}`),
+          json("/api/v1/commercial/subscription"),
+          json("/api/v1/ai"),
+          json("/api/v1/commercial/referrals"),
+        ]);
+        const setters = [setStreak, setSync, setSubscription, setAiQuota, setReferrals];
+        results.forEach((result, index) => {
+          if (result.status === "fulfilled") setters[index](result.value);
+          else setError(current => current || (result.reason instanceof Error ? result.reason.message : "LOAD_FAILED"));
+        });
       }
     } catch (cause) { setError(cause instanceof Error ? cause.message : "LOAD_FAILED"); }
   };

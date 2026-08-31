@@ -76,6 +76,9 @@ test("migration, OAuth, learning, paid webhook and admin contracts are wired", a
   assert.match(referralStorage, /status IN \('signed_up','qualified','paid_pending'\)/);
   assert.match(referralStorage, /relationship\.risk_status !== "clear"/);
   assert.match(referralStorage, /WHERE id=\? AND owner_id=\?/);
+  assert.match(referralStorage, /if \(reconciled\) relationshipRows = await/, "paid referral reconciliation must return the updated relationship status in the same response");
+  assert.match(referralStorage, /VALUES\(\?,\?,'referral_pass','active',\?,\?,\?,\?,\?\)/, "referral-pass insert must bind exactly the seven dynamic columns");
+  assert.match(api, /REFERRAL_SUMMARY_FAILED/, "referral API must serialize transaction failures as JSON");
   assert.match(learning, /new Date\(\)\.toISOString\(\)\.slice\(0, 10\)/);
 });
 
@@ -94,4 +97,5 @@ test("user-facing copy explains unlimited standard study, 500 monthly credits, t
   assert.match(account, /next reset/i);
   assert.match(account, /3 different days/);
   assert.match(account, /30 learning actions/);
+  assert.match(account, /Promise\.allSettled/, "a device-sync failure must not hide trial, subscription, AI, or referral state");
 });
