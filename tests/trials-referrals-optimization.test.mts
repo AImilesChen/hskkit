@@ -13,10 +13,16 @@ const read = (path: string) => readFile(new URL(`../${path}`, import.meta.url), 
 const now = new Date("2026-09-01T00:00:00.000Z");
 const active = (days: number) => ({ status: "active" as const, endsAt: new Date(now.getTime() + days * 86_400_000).toISOString() });
 
-test("welcome trial is exactly seven days with 50 AI credits and no card contract", () => {
+test("new welcome trials are exactly seven days with 20 AI credits and no card contract", () => {
   assert.equal(WELCOME_TRIAL_DAYS, 7);
-  assert.equal(WELCOME_TRIAL_CREDITS, 50);
+  assert.equal(WELCOME_TRIAL_CREDITS, 20);
   assert.deepEqual(resolveAccessSource({ paid: null, trial: active(7), promo: null }, now), {
+    tier: "pro", source: "trial", endsAt: active(7).endsAt, baseAiCredits: 20,
+  });
+});
+
+test("an already-started 50-credit welcome trial keeps its granted allowance", () => {
+  assert.deepEqual(resolveAccessSource({ paid: null, trial: { ...active(7), aiCredits: 50 }, promo: null }, now), {
     tier: "pro", source: "trial", endsAt: active(7).endsAt, baseAiCredits: 50,
   });
 });
@@ -92,7 +98,7 @@ test("user-facing copy explains unlimited standard study, 500 monthly credits, t
   assert.match(pricing, /7-day Pro trial/);
   assert.match(pricing, /no card required/i);
   assert.match(pricing, /500 explanations/);
-  assert.match(login, /50 AI credits/);
+  assert.match(login, /20 AI credits/);
   assert.match(account, /Invite friends/);
   assert.match(account, /next reset/i);
   assert.match(account, /3 different days/);

@@ -1,5 +1,5 @@
 export const WELCOME_TRIAL_DAYS = 7;
-export const WELCOME_TRIAL_CREDITS = 50;
+export const WELCOME_TRIAL_CREDITS = 20;
 export const REFERRAL_QUALIFYING_DAYS = 3;
 export const REFERRAL_QUALIFYING_UNITS = 30;
 export const REFERRAL_ANNUAL_CREDIT_CAP = 600;
@@ -7,14 +7,14 @@ export const REFERRAL_ANNUAL_PROMO_DAY_CAP = 60;
 export const OAUTH_REFERRAL_COOKIE = "hskkit_oauth_referral";
 export const REFERRAL_DEVICE_COOKIE = "hskkit_ref_device";
 
-export type AccessWindow = { status: "active" | "ended" | "revoked"; endsAt: string | null } | null;
+export type AccessWindow = { status: "active" | "ended" | "revoked"; endsAt: string | null; aiCredits?: number | null } | null;
 export type AccessResolution = { tier: "free" | "pro"; source: "free" | "paid" | "trial" | "promo"; endsAt: string | null; baseAiCredits: number };
 
 const live = (window: AccessWindow, now: Date) => window?.status === "active" && (!window.endsAt || Date.parse(window.endsAt) > now.getTime());
 
 export function resolveAccessSource(input: { paid: AccessWindow; trial: AccessWindow; promo: AccessWindow }, now = new Date()): AccessResolution {
   if (live(input.paid, now)) return { tier: "pro", source: "paid", endsAt: input.paid!.endsAt, baseAiCredits: 500 };
-  if (live(input.trial, now)) return { tier: "pro", source: "trial", endsAt: input.trial!.endsAt, baseAiCredits: WELCOME_TRIAL_CREDITS };
+  if (live(input.trial, now)) return { tier: "pro", source: "trial", endsAt: input.trial!.endsAt, baseAiCredits: input.trial!.aiCredits ?? WELCOME_TRIAL_CREDITS };
   if (live(input.promo, now)) return { tier: "pro", source: "promo", endsAt: input.promo!.endsAt, baseAiCredits: 0 };
   return { tier: "free", source: "free", endsAt: null, baseAiCredits: 0 };
 }

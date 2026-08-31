@@ -47,8 +47,8 @@ export async function activateWelcomeTrialAndReferral(input: { userId: string; e
   if (input.emailVerified) {
     const paid = await db.prepare("SELECT 1 ok FROM subscription_orders WHERE user_id=? AND status IN ('completed','refunded') LIMIT 1").bind(input.userId).first<{ ok: number }>();
     if (!paid) {
-      await db.prepare("INSERT OR IGNORE INTO promotional_entitlements(id,owner_id,kind,status,starts_at,ends_at,source_reward_id,created_at,updated_at) VALUES(?,?,'welcome_trial','active',?,?,NULL,?,?)")
-        .bind(crypto.randomUUID(), owner(input.userId), timestamp, addUtcDays(now, WELCOME_TRIAL_DAYS), timestamp, timestamp).run();
+      await db.prepare("INSERT OR IGNORE INTO promotional_entitlements(id,owner_id,kind,status,starts_at,ends_at,source_reward_id,created_at,updated_at,ai_credits) VALUES(?,?,'welcome_trial','active',?,?,NULL,?,?,?)")
+        .bind(crypto.randomUUID(), owner(input.userId), timestamp, addUtcDays(now, WELCOME_TRIAL_DAYS), timestamp, timestamp, WELCOME_TRIAL_CREDITS).run();
     }
   }
   if (referralCode) {
@@ -79,13 +79,13 @@ export async function resolveCommercialAccess(ownerId: string, at = new Date()):
   await db.prepare("UPDATE promotional_entitlements SET status='ended',updated_at=? WHERE owner_id=? AND status='active' AND ends_at<=?").bind(iso(at), ownerId, iso(at)).run();
   const [paid, trial, promo, bonus] = await Promise.all([
     db.prepare("SELECT status,ends_at FROM subscription_entitlements WHERE owner_id=?").bind(ownerId).first<{ status: "active" | "ended" | "revoked"; ends_at: string | null }>(),
-    db.prepare("SELECT status,ends_at FROM promotional_entitlements WHERE owner_id=? AND kind='welcome_trial' ORDER BY created_at DESC LIMIT 1").bind(ownerId).first<{ status: "active" | "ended" | "revoked"; ends_at: string | null }>(),
+    db.prepare("SELECT status,ends_at,ai_credits FROM promotional_entitlements WHERE owner_id=? AND kind='welcome_trial' ORDER BY created_at DESC LIMIT 1").bind(ownerId).first<{ status: "active" | "ended" | "revoked"; ends_at: string | null; ai_credits: number | null }>(),
     db.prepare("SELECT status,MAX(ends_at) ends_at FROM promotional_entitlements WHERE owner_id=? AND kind='referral_pass' AND status='active'").bind(ownerId).first<{ status: "active" | "ended" | "revoked"; ends_at: string | null }>(),
     bonusCreditBalance(ownerId, at),
   ]);
   const access = resolveAccessSource({
     paid: paid ? { status: paid.status, endsAt: paid.ends_at } : null,
-    trial: trial ? { status: trial.status, endsAt: trial.ends_at } : null,
+    trial: trial ? { status: trial.status, endsAt: trial.ends_at, aiCredits: trial.ai_credits } : null,
     promo: promo?.ends_at ? { status: promo.status, endsAt: promo.ends_at } : null,
   }, at);
   if (access.tier === "free") return { capabilities: FREE_CAPABILITIES, access, bonusCredits: bonus };

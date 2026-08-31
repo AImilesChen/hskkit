@@ -7,7 +7,7 @@ const read = (path: string) => readFile(new URL(`../${path}`, import.meta.url), 
 test("pricing makes the welcome trial visible before plan comparison", async () => {
   const pricing = await read("src/app/pricing/page.tsx");
   assert.match(pricing, /Try Pro free for 7 days/);
-  assert.match(pricing, /New verified accounts receive 7 days of Pro and 50 AI credits/);
+  assert.match(pricing, /New verified accounts receive 7 days of Pro and 20 AI credits/);
   assert.match(pricing, /No card required\. It returns to Free automatically\./);
   assert.match(pricing, /Start my free Pro trial/);
   assert.match(pricing, /href="\/login\?returnTo=%2Faccount"/);
@@ -16,21 +16,34 @@ test("pricing makes the welcome trial visible before plan comparison", async () 
 
 test("Free card distinguishes the welcome bonus from post-trial limits", async () => {
   const pricing = await read("src/app/pricing/page.tsx");
-  assert.match(pricing, /New account bonus: 7-day Pro trial \+ 50 AI credits/);
+  assert.match(pricing, /New account bonus: 7-day Pro trial \+ 20 AI credits/);
   assert.match(pricing, /After the trial: no Focused Review or monthly AI credits/);
   assert.doesNotMatch(pricing, /No Focused Review · No AI credits/);
 });
 
 test("pricing publicly explains both referral milestones without changing billing", async () => {
   const pricing = await read("src/app/pricing/page.tsx");
-  assert.match(pricing, /Invite friends\. Earn more AI help\./);
+  assert.match(pricing, /Invite friends, earn up to 200 AI credits/);
   assert.match(pricing, /30 eligible learning actions across 3 different days/);
   assert.match(pricing, /50 AI credits/);
   assert.match(pricing, /3 days of Pro/);
   assert.match(pricing, /150 AI credits/);
   assert.match(pricing, /14 days of Pro/);
   assert.match(pricing, /billing dates never change/);
+  assert.match(pricing, /Annual caps: 600 referral credits and 60 promotional Pro days/);
   assert.match(pricing, /Sign in to get your referral link/);
+  assert.doesNotMatch(pricing, /Invite friends\. Earn more AI help\./);
+});
+
+test("trial credit amount is stored per entitlement so existing 50-credit trials are grandfathered", async () => {
+  const [storage, migration] = await Promise.all([
+    read("src/lib/commercial/referral-storage.ts"),
+    read("migrations/0022_welcome_trial_credit_amount.sql"),
+  ]);
+  assert.match(migration, /ADD COLUMN ai_credits INTEGER/);
+  assert.match(migration, /SET ai_credits = 50/);
+  assert.match(storage, /welcome_trial[^\n]+ai_credits/);
+  assert.match(storage, /SELECT status,ends_at,ai_credits FROM promotional_entitlements/);
 });
 
 test("Account surfaces active trial confirmation and actionable referral progress", async () => {

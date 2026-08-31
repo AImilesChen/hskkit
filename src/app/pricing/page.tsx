@@ -31,7 +31,7 @@ export default function PricingPage() {
     <header className="mx-auto max-w-3xl rounded-[28px] border border-blue-200 bg-gradient-to-br from-blue-50 via-white to-emerald-50 px-6 py-8 text-center sm:px-10 sm:py-11">
       <p className="text-xs font-bold uppercase tracking-[0.16em] text-blue-700">New account welcome offer</p>
       <h1 className="mt-3 text-[34px] font-extrabold leading-tight tracking-tight text-slate-950 sm:text-[48px]">Try Pro free for 7 days</h1>
-      <p className="mx-auto mt-5 max-w-2xl text-lg leading-8 text-slate-700">New verified accounts receive 7 days of Pro and 50 AI credits. No card required. It returns to Free automatically.</p>
+      <p className="mx-auto mt-5 max-w-2xl text-lg leading-8 text-slate-700">New verified accounts receive 7 days of Pro and 20 AI credits. No card required. It returns to Free automatically.</p>
       <div className="mt-6 flex flex-wrap justify-center gap-3"><Link href="/login?returnTo=%2Faccount" className="inline-flex min-h-12 items-center justify-center rounded-xl bg-blue-700 px-5 font-bold text-white">Start my free Pro trial</Link><Link href="#plans" className="inline-flex min-h-12 items-center justify-center rounded-xl border border-slate-300 bg-white px-5 font-bold text-slate-800">Compare plans</Link></div>
       <p className="mt-4 text-sm font-semibold text-amber-800">Checkout uses Stripe Test mode and grants an account-based Pro entitlement only after verified lifecycle events. No live card charge is enabled.</p>
     </header>
@@ -39,7 +39,7 @@ export default function PricingPage() {
     <section id="plans" className="mt-8 grid scroll-mt-24 gap-5 lg:grid-cols-3" aria-label="Plans">
       <article className="flex h-full flex-col rounded-[24px] border border-slate-200 bg-white p-6 sm:p-7">
         <p className="font-bold text-slate-600">FREE</p><h2 className="mt-2 text-4xl font-extrabold text-slate-950">US$0</h2><p className="mt-2 text-sm text-slate-600">No card required.</p>
-        <p className="mt-4 rounded-xl border border-blue-200 bg-blue-50 px-4 py-3 text-sm font-bold leading-6 text-blue-900">New account bonus: 7-day Pro trial + 50 AI credits</p>
+        <p className="mt-4 rounded-xl border border-blue-200 bg-blue-50 px-4 py-3 text-sm font-bold leading-6 text-blue-900">New account bonus: 7-day Pro trial + 20 AI credits</p>
         <ul className="mt-6 grid gap-3 text-sm leading-6 text-slate-700">{freeBenefits.map(item => <li key={item} className="flex gap-2"><span aria-hidden="true" className="font-bold text-emerald-600">✓</span><span>{item}</span></li>)}</ul>
         <Link href="/today" className="mt-auto inline-flex min-h-12 w-full items-center justify-center rounded-xl border border-blue-600 px-5 font-bold text-blue-700">Continue Free</Link>
       </article>
@@ -55,13 +55,11 @@ export default function PricingPage() {
       </article>
     </section>
 
-    <section className="mt-12 overflow-hidden rounded-[28px] border border-emerald-200 bg-white" aria-labelledby="referral-heading">
-      <div className="bg-emerald-50 px-6 py-7 sm:px-9"><p className="text-xs font-bold uppercase tracking-[0.15em] text-emerald-700">Referral rewards</p><h2 id="referral-heading" className="mt-2 text-2xl font-extrabold tracking-tight text-slate-950 sm:text-3xl">Invite friends. Earn more AI help.</h2><p className="mt-3 max-w-3xl leading-7 text-slate-700">Rewards are based on verified learning and a completed first Pro payment—not on sign-ups alone.</p></div>
-      <div className="grid gap-px bg-emerald-100 md:grid-cols-2">
-        <article className="bg-white p-6 sm:p-8"><p className="text-sm font-bold text-emerald-700">1 · FRIEND REACHES A REAL LEARNING MILESTONE</p><h3 className="mt-2 text-xl font-bold text-slate-950">50 AI credits + 3 days of Pro</h3><p className="mt-3 leading-7 text-slate-600">Your verified friend completes 30 eligible learning actions across 3 different days. Free members receive 50 AI credits and 3 days of Pro; paid Pro members receive the credits only.</p></article>
-        <article className="bg-white p-6 sm:p-8"><p className="text-sm font-bold text-blue-700">2 · FRIEND BECOMES A PAYING PRO MEMBER</p><h3 className="mt-2 text-xl font-bold text-slate-950">Another 150 AI credits + 14 days of Pro</h3><p className="mt-3 leading-7 text-slate-600">After the 7-day refund-risk window, Free members receive another 150 AI credits and 14 days of Pro. Existing paid Pro members receive credits only; Stripe billing dates never change.</p></article>
+    <section className="mt-6 rounded-[24px] border border-emerald-300 bg-emerald-50 px-5 py-5 shadow-[0_12px_35px_rgba(5,150,105,0.10)] sm:px-7" aria-labelledby="referral-heading">
+      <div className="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
+        <div className="max-w-3xl"><p className="text-xs font-bold uppercase tracking-[0.15em] text-emerald-700">Referral rewards</p><h2 id="referral-heading" className="mt-1 text-xl font-extrabold tracking-tight text-slate-950 sm:text-2xl">Invite friends, earn up to 200 AI credits</h2><p className="mt-2 text-sm leading-6 text-slate-700">Earn 50 AI credits when a verified friend completes 30 eligible learning actions across 3 different days, then another 150 AI credits after their first Pro payment clears the 7-day refund-risk window.</p><p className="mt-1 text-xs leading-5 text-slate-600">Free members also receive 3 days of Pro at the learning milestone, then 14 days of Pro after the paid milestone. Paid Pro members receive credits only; Stripe billing dates never change. Annual caps: 600 referral credits and 60 promotional Pro days; anti-abuse review applies.</p></div>
+        <Link href="/login?returnTo=%2Faccount" className="inline-flex min-h-12 shrink-0 items-center justify-center rounded-xl bg-emerald-700 px-5 font-bold text-white">Sign in to get your referral link</Link>
       </div>
-      <div className="flex flex-col items-start gap-3 border-t border-emerald-100 px-6 py-6 sm:flex-row sm:items-center sm:justify-between sm:px-9"><p className="max-w-2xl text-sm leading-6 text-slate-600">Annual caps: 600 referral credits and 60 promotional Pro days. Self-referrals, duplicate attribution and unusual activity are reviewed.</p><Link href="/login?returnTo=%2Faccount" className="inline-flex min-h-12 shrink-0 items-center justify-center rounded-xl bg-emerald-700 px-5 font-bold text-white">Sign in to get your referral link</Link></div>
     </section>
 
     <section id="ai-value" className="mt-12 scroll-mt-24 overflow-hidden rounded-[28px] border border-slate-200 bg-white" aria-labelledby="ai-value-heading">

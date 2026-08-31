@@ -27,7 +27,7 @@ export default async function LoginPage({ searchParams }: { searchParams: Promis
       <main className="mx-auto min-h-[70vh] max-w-xl px-5 py-14 sm:py-20">
         <p className="text-sm font-bold uppercase tracking-[0.18em] text-blue-700">HSKKit account</p>
         <h1 className="mt-4 text-4xl font-black tracking-tight text-slate-950 sm:text-5xl">Continue your learning anywhere</h1>
-        <p className="mt-5 text-lg leading-8 text-slate-600">Sign in with a verified Google account to save progress and start a 7-day Pro trial with 50 AI credits. No card required and no automatic charge.</p>
+        <p className="mt-5 text-lg leading-8 text-slate-600">Sign in with a verified Google account to save progress and start a 7-day Pro trial with 20 AI credits. No card required and no automatic charge.</p>
         {message ? <p className="mt-6 rounded-xl border border-red-200 bg-red-50 p-4 text-sm font-semibold text-red-800" role="alert">{message}</p> : null}
         {params.logout === "success" ? <p className="mt-6 rounded-xl border border-emerald-200 bg-emerald-50 p-4 text-sm text-emerald-900" role="status">You are signed out. Private account data is no longer available in this browser.</p> : null}
         {params.deleted === "success" ? <p className="mt-6 rounded-xl border border-emerald-200 bg-emerald-50 p-4 text-sm text-emerald-900" role="status">Account deletion completed. Sessions, Sync Keys, and private exports were revoked.</p> : null}
