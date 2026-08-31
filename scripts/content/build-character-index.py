@@ -77,6 +77,15 @@ def split_pinyin_readings(value: str) -> list[str]:
     return readings
 
 
+def kangxi_radical_strokes(number: int) -> int:
+    """Return the canonical Kangxi radical stroke group for radical 1–214."""
+    upper_bounds = (6, 29, 60, 94, 117, 146, 166, 175, 186, 194, 200, 204, 208, 210, 211, 213, 214)
+    for strokes, upper_bound in enumerate(upper_bounds, start=1):
+        if number <= upper_bound:
+            return strokes
+    raise ValueError(f"Invalid Kangxi radical number: {number}")
+
+
 def main() -> None:
     repository = json.loads(CATALOG.read_text(encoding="utf-8"))
     unihan = json.loads(UNIHAN.read_text(encoding="utf-8"))
@@ -145,6 +154,23 @@ def main() -> None:
             **({"simplified": simplified} if simplified else {}),
         })
 
+    radical_counts: dict[int, int] = defaultdict(int)
+    stroke_counts: dict[int, int] = defaultdict(int)
+    for character in characters:
+        radical_counts[int(character["radicalNumber"])] += 1
+        stroke_counts[int(character["strokes"])] += 1
+
+    radical_directory = []
+    for number in range(1, 215):
+        symbol = chr(0x2F00 + number - 1)
+        radical_directory.append({
+            "number": number,
+            "radical": unicodedata.normalize("NFKC", symbol),
+            "name": unicodedata.name(symbol).removeprefix("KANGXI RADICAL ").lower().replace("-", " "),
+            "strokes": kangxi_radical_strokes(number),
+            "characterCount": radical_counts[number],
+        })
+
     payload = {
         "releaseId": release_id,
         "characterCount": len(characters),
@@ -153,7 +179,16 @@ def main() -> None:
             "license": "Unicode License v3",
             "archiveSha256": unihan["provenance"]["archiveSha256"],
             "catalogFallback": "CC-CEDICT · CC BY-SA 4.0",
+            "radicalDirectory": {
+                "characterNames": f"Python unicodedata UCD {unicodedata.unidata_version}; KANGXI RADICAL names normalized to lowercase learner labels",
+                "strokeGrouping": "Unicode Kangxi Radicals chart canonical 1–17 stroke boundary table",
+            },
         },
+        "radicalDirectory": radical_directory,
+        "strokeDirectory": [
+            {"strokes": strokes, "characterCount": count}
+            for strokes, count in sorted(stroke_counts.items())
+        ],
         "characters": characters,
     }
     OUTPUT.write_text(json.dumps(payload, ensure_ascii=False, separators=(",", ":")) + "\n", encoding="utf-8")

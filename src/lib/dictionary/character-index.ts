@@ -43,6 +43,22 @@ export const characterIndexMetadata = {
   source: characterIndexData.source,
 };
 
+export type RadicalDirectoryItem = {
+  number: number;
+  radical: string;
+  name: string;
+  strokes: number;
+  characterCount: number;
+};
+
+export type StrokeDirectoryItem = {
+  strokes: number;
+  characterCount: number;
+};
+
+export const radicalDirectory = characterIndexData.radicalDirectory as RadicalDirectoryItem[];
+export const strokeDirectory = characterIndexData.strokeDirectory as StrokeDirectoryItem[];
+
 export const characterIndexFacets = (() => {
   const radicalNumbers = new Map<string, number>();
   for (const item of characters) radicalNumbers.set(item.radical, item.radicalNumber);

@@ -211,7 +211,7 @@ export function relatedWordsForWord(word: StudyWord): Array<{ word: StudyWord; r
 }
 
 export function sitemapContentRoutes(): string[] {
-  const routes = ["/levels", "/dictionary"];
+  const routes = ["/levels", "/dictionary", "/dictionary/radicals", "/dictionary/strokes"];
   for (const word of STUDY_WORDS) routes.push(`/word/${word.slug}`);
   for (const character of STUDY_CHARACTERS) routes.push(`/character/${encodeURIComponent(character.hanzi)}`);
   return [...new Set(routes)];
