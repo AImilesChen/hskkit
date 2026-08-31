@@ -2,9 +2,11 @@ import { NextResponse } from "next/server";
 import { OAUTH_RETURN_COOKIE, OAUTH_STATE_COOKIE, OAUTH_VERIFIER_COOKIE } from "@/lib/account/identity";
 import { safeReturnTo } from "@/lib/account/domain";
 import { googleAuthorizationUrl, googleOAuthConfig, pkceChallenge, randomOAuthValue } from "@/lib/account/oauth";
+import { OAUTH_REFERRAL_COOKIE, REFERRAL_DEVICE_COOKIE, safeReferralCode } from "@/lib/commercial/referrals";
 
 export async function GET(request: Request) {
   const returnTo = safeReturnTo(new URL(request.url).searchParams.get("returnTo"));
+  const referralCode = safeReferralCode(new URL(request.url).searchParams.get("ref"));
   try {
     const config = googleOAuthConfig();
     const state = randomOAuthValue();
@@ -15,6 +17,9 @@ export async function GET(request: Request) {
     response.cookies.set(OAUTH_STATE_COOKIE, state, cookie);
     response.cookies.set(OAUTH_VERIFIER_COOKIE, verifier, cookie);
     response.cookies.set(OAUTH_RETURN_COOKIE, returnTo, cookie);
+    if (referralCode) response.cookies.set(OAUTH_REFERRAL_COOKIE, referralCode, cookie);
+    const existingDevice = request.headers.get("cookie")?.match(/(?:^|;\s*)hskkit_ref_device=([^;]+)/)?.[1];
+    response.cookies.set(REFERRAL_DEVICE_COOKIE, existingDevice ?? crypto.randomUUID(), { ...cookie, maxAge: 30 * 24 * 60 * 60 });
     return response;
   } catch {
     return NextResponse.redirect(new URL(`/login?error=oauth_not_configured&returnTo=${encodeURIComponent(returnTo)}`, request.url));

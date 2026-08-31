@@ -13,6 +13,14 @@ export type UsageCharge = {
   limit: number;
 };
 
+export type ReferralLearningActivity = {
+  userId: string;
+  eventType: string;
+  eventId: string;
+  units: number;
+  localDay: string;
+};
+
 export async function usageSnapshot(ownerId: string, periodKey: string): Promise<{ dailyNewItems: number; dailyReviewGrades: number }> {
   const rows = await (await db()).prepare("SELECT metric,used FROM entitlement_usage_counters WHERE owner_id=? AND period_key=?").bind(ownerId, periodKey).all<{ metric: UsageCharge["metric"]; used: number }>();
   const snapshot = { dailyNewItems: 0, dailyReviewGrades: 0 };
@@ -23,7 +31,7 @@ export async function usageSnapshot(ownerId: string, periodKey: string): Promise
   return snapshot;
 }
 
-export async function saveState(ownerId: string, state: LearningState, revision: number, audit?: AuditEvent, usage?: UsageCharge) {
+export async function saveState(ownerId: string, state: LearningState, revision: number, audit?: AuditEvent, usage?: UsageCharge, referralActivity?: ReferralLearningActivity) {
   const now = new Date().toISOString();
   const database = await db();
   const isAccount = ownerId.startsWith("user:");
@@ -32,7 +40,7 @@ export async function saveState(ownerId: string, state: LearningState, revision:
     "INSERT INTO learning_states(owner_id,state_json,revision,updated_at) SELECT ?,?,?,? WHERE (?=0 OR EXISTS(SELECT 1 FROM accounts WHERE user_id=? AND status='active')) AND NOT EXISTS(SELECT 1 FROM guest_merges WHERE guest_owner_id=? AND state='confirmed') ON CONFLICT(owner_id) DO UPDATE SET state_json=excluded.state_json,revision=learning_states.revision+1,updated_at=excluded.updated_at WHERE learning_states.revision=? AND (?=0 OR EXISTS(SELECT 1 FROM accounts WHERE user_id=? AND status='active')) AND NOT EXISTS(SELECT 1 FROM guest_merges WHERE guest_owner_id=? AND state='confirmed')",
   ).bind(ownerId, JSON.stringify(state), 1, now, isAccount ? 1 : 0, userId, ownerId, revision, isAccount ? 1 : 0, userId, ownerId);
   let changes = 0;
-  if (audit || usage) {
+  if (audit || usage || referralActivity) {
     const statements: Array<ReturnType<typeof database.prepare>> = [];
     const accountAssertionId = audit ? crypto.randomUUID() : undefined;
     const usageAssertionId = usage ? crypto.randomUUID() : undefined;
@@ -49,6 +57,7 @@ export async function saveState(ownerId: string, state: LearningState, revision:
     }
     const stateIndex = statements.length;
     statements.push(stateStatement);
+    if (referralActivity) statements.push(database.prepare("INSERT OR IGNORE INTO referral_learning_events(id,relationship_id,referred_user_id,local_day,units,idempotency_key,created_at) SELECT ?,id,?,?,?,?,? FROM referral_relationships WHERE referred_user_id=? AND status='signed_up'").bind(crypto.randomUUID(), referralActivity.userId, referralActivity.localDay, referralActivity.units, referralActivity.eventId, now, referralActivity.userId));
     if (audit) statements.push(database.prepare(POLICY_AUDIT_SQL).bind(...policyAuditBindings(audit)));
     if (usageAssertionId) statements.push(database.prepare("DELETE FROM entitlement_limit_assertions WHERE id=?").bind(usageAssertionId));
     if (accountAssertionId) statements.push(database.prepare("DELETE FROM account_cas_assertions WHERE id=?").bind(accountAssertionId));

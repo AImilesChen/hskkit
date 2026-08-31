@@ -6,6 +6,7 @@ import {normalizeSubscriptionEvent} from "@/lib/commercial/subscription";
 import {applySubscriptionEvent,claimPaymentEvent,clearRevokedExportObjectKey,finalizePaymentEvent,grantPaidPackPurchase,revokeRefundedOrder} from "@/lib/commercial/storage";
 import {sha256Hex} from "@/lib/commercial/signer";
 import {verifyStripeWebhook} from "@/lib/commercial/stripe";
+import {flagRefundedReferralCharge,rewardFirstPaidReferral} from "@/lib/commercial/referral-storage";
 
 async function deleteRevokedObjects(objectKeys:string[],env:CloudflareEnv){for(const objectKey of objectKeys){await env.COMMERCIAL_EXPORTS_R2.delete(objectKey);if(await env.COMMERCIAL_EXPORTS_R2.head(objectKey))throw new Error("REFUND_OBJECT_DELETE_FAILED");await clearRevokedExportObjectKey(objectKey);}}
 type RefundIdentity={paymentIntentId?:string;chargeId?:string;amountRefundedCents?:number;currency?:string};
@@ -20,7 +21,7 @@ export async function POST(req:NextRequest){
     if(claim.state==="duplicate")return NextResponse.json({received:true,duplicate:true});if(claim.state==="busy")return NextResponse.json({error:"WEBHOOK_PROCESSING"},{status:409,headers:{"retry-after":"5"}});claimedEventId=event.id;claimToken=claim.claimToken;const object=event.data.object;
     const normalized=normalizeSubscriptionEvent(event);if(normalized.kind==="invalid")throw new Error("INVALID_SUBSCRIPTION_EVENT");
     if(normalized.kind!=="ignored"){
-      if(normalized.kind==="charge_refunded"){try{await applySubscriptionEvent(normalized);}catch(error){if(!(error instanceof Error)||error.message!=="SUBSCRIPTION_CHARGE_NOT_FOUND")throw error;await revokeOneTimeDelivery({chargeId:normalized.chargeId,paymentIntentId:normalized.paymentIntentId,amountRefundedCents:normalized.amountRefundedCents,currency:normalized.currency},env);}}else await applySubscriptionEvent(normalized);
+      if(normalized.kind==="charge_refunded"){try{await applySubscriptionEvent(normalized);await flagRefundedReferralCharge(normalized.chargeId);}catch(error){if(!(error instanceof Error)||error.message!=="SUBSCRIPTION_CHARGE_NOT_FOUND")throw error;await revokeOneTimeDelivery({chargeId:normalized.chargeId,paymentIntentId:normalized.paymentIntentId,amountRefundedCents:normalized.amountRefundedCents,currency:normalized.currency},env);}}else {await applySubscriptionEvent(normalized);if(normalized.kind==="invoice_paid")await rewardFirstPaidReferral(normalized.subscriptionId);}
       await finalizePaymentEvent(event.id,claimToken,"processed");return NextResponse.json({received:true});
     }
     if(event.type==="checkout.session.completed"&&object.mode==="payment"){

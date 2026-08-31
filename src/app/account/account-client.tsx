@@ -31,6 +31,7 @@ export default function AccountClient() {
   const [sync, setSync] = useState<any>();
   const [subscription, setSubscription] = useState<any>();
   const [aiQuota, setAiQuota] = useState<any>();
+  const [referrals, setReferrals] = useState<any>();
   const [busy, setBusy] = useState(false);
   const [timezone, setTimezone] = useState("UTC");
   const [checkoutSuccess, setCheckoutSuccess] = useState(false);
@@ -41,11 +42,12 @@ export default function AccountClient() {
       setView(data);
       if (data.account?.timezone) setTimezone(data.account.timezone);
       if (data.account?.status === "active") {
-        const [streakData, syncData, subscriptionData, aiData] = await Promise.all([json("/api/v1/account/streak"), json(`/api/v1/account/sync?deviceId=${encodeURIComponent(syncDeviceId())}`), json("/api/v1/commercial/subscription"), json("/api/v1/ai")]);
+        const [streakData, syncData, subscriptionData, aiData, referralData] = await Promise.all([json("/api/v1/account/streak"), json(`/api/v1/account/sync?deviceId=${encodeURIComponent(syncDeviceId())}`), json("/api/v1/commercial/subscription"), json("/api/v1/ai"), json("/api/v1/commercial/referrals")]);
         setStreak(streakData);
         setSync(syncData);
         setSubscription(subscriptionData);
         setAiQuota(aiData);
+        setReferrals(referralData);
       }
     } catch (cause) { setError(cause instanceof Error ? cause.message : "LOAD_FAILED"); }
   };
@@ -140,7 +142,9 @@ export default function AccountClient() {
         {subscription?.capabilities?.tier === "pro" ? <>
           <p className="inline-flex rounded-full bg-blue-50 px-3 py-1 text-sm font-bold text-blue-800">Pro benefit dashboard</p>
           <p>Study without the Free daily limits · Focused Review enabled · long-term history.</p>
-          <p><strong>{aiQuota?.quota?.used ?? 0} credits used</strong> · {aiQuota?.quota?.remaining ?? 0} of 500 AI credits remaining this period.</p>
+          <p><strong>{aiQuota?.quota?.used ?? 0} credits used</strong> · {aiQuota?.quota?.remaining ?? 0} AI credits remaining this period. Paid Pro includes 500 AI credits each month.</p>
+          {referrals?.access?.source === "trial" && <p className="account-note">Your 7-day Pro trial ends {new Date(referrals.access.endsAt).toLocaleString()}. It then returns to Free automatically; no card is stored and no charge is created.</p>}
+          {referrals?.access?.source === "promo" && <p className="account-note">Referral Pro access ends {new Date(referrals.access.endsAt).toLocaleString()} and then returns to Free automatically.</p>}
           <div className="account-actions"><Link className="btn" href="/review">Start Focused Review</Link><Link className="btn secondary" href="/mistakes">Open AI Explanation</Link><Link className="btn secondary" href="/planner">Open Planner AI tips</Link></div>
           <p className="account-note">AI explanations cost 1 credit after a successful response. Saved-plan suggestions cost 5. Failed responses do not use credits.</p>
         </> : <>
@@ -148,6 +152,14 @@ export default function AccountClient() {
           <p>Focused Review and AI credits unlock with Pro.</p>
           <Link className="btn" href="/pricing">Compare Pro</Link>
         </>}
+      </section>
+      <section className="card">
+        <h2>Invite friends</h2>
+        <p>Share your private referral link. A verified friend must complete at least 30 learning actions from real practice or review across 3 different days before the first reward is issued.</p>
+        <div className="account-actions"><button className="btn" disabled={busy || !referrals?.sharePath} onClick={() => void act(async () => { await navigator.clipboard.writeText(`${window.location.origin}${referrals.sharePath}`); return {}; }, "Referral link copied.")}>Copy referral link</button></div>
+        <p><strong>{referrals?.bonusCredits ?? 0} bonus AI credits</strong> available until the next reset on {referrals?.bonusExpiresAt ? new Date(referrals.bonusExpiresAt).toLocaleDateString() : "—"}.</p>
+        <p className="account-note">Qualified learning reward: 50 bonus credits plus 3 Pro days when you do not already have paid Pro. First paid subscription reward: another 150 credits plus 14 Pro days after the 7-day refund-risk window. Paid subscribers receive credits only; Stripe billing dates never change. Annual caps: 600 credits and 60 promotional Pro days.</p>
+        {!!referrals?.referrals?.length && <ul>{referrals.referrals.map((item: any) => <li key={item.id}>{item.referred_name ?? "Friend"} · {item.status}{item.risk_status !== "clear" ? " · under review" : ""}</li>)}</ul>}
       </section>
       <section className="card">
         <h2>Billing</h2>

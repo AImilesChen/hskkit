@@ -14,13 +14,14 @@ export type AiOperation = {
   status: "reserved" | "succeeded" | "failed";
   quotaPeriod: string;
   costUnits: number;
+  baseAllowance: number;
   response?: AiOutput;
   failureCode?: string;
 };
 
 type OperationRow = {
   id: string; owner_id: string; feature: AiFeature; idempotency_key: string; request_hash: string;
-  status: AiOperation["status"]; quota_period: string; cost_units: number; response_json: string | null; failure_code: string | null;
+  status: AiOperation["status"]; quota_period: string; cost_units: number; base_credit_allowance: number; response_json: string | null; failure_code: string | null;
 };
 type BucketRow = { allowance: number; used: number; reserved: number };
 
@@ -28,6 +29,7 @@ const isProductPolicy = (policy: RuntimePolicy): policy is ProductAiRuntimePolic
 const periodKey = (policy: RuntimePolicy, now: Date) => isProductPolicy(policy) ? now.toISOString().slice(0, 7) : now.toISOString().slice(0, 10);
 const requestFloor = (policy: RuntimePolicy, now: Date) => new Date(now.getTime() - (isProductPolicy(policy) ? 3_600_000 : 60_000)).toISOString();
 const allowanceFor = (policy: RuntimePolicy) => isProductPolicy(policy) ? policy.allowance : policy.dailyAllowance;
+const baseAllowanceFor = (policy: RuntimePolicy) => isProductPolicy(policy) ? policy.baseAllowance : policy.dailyAllowance;
 const rateLimitFor = (policy: RuntimePolicy) => isProductPolicy(policy) ? policy.rateLimitPerHour : policy.rateLimitPerMinute;
 async function activeAccountOwner(ownerId: string) {
   if (!ownerId.startsWith("user:")) return true;
@@ -36,13 +38,13 @@ async function activeAccountOwner(ownerId: string) {
 }
 const rowToOperation = (row: OperationRow): AiOperation => ({
   id: row.id, ownerId: row.owner_id, feature: row.feature, idempotencyKey: row.idempotency_key,
-  requestHash: row.request_hash, status: row.status, quotaPeriod: row.quota_period, costUnits: Number(row.cost_units),
+  requestHash: row.request_hash, status: row.status, quotaPeriod: row.quota_period, costUnits: Number(row.cost_units), baseAllowance: Number(row.base_credit_allowance),
   response: row.response_json ? JSON.parse(row.response_json) as AiOutput : undefined,
   failureCode: row.failure_code ?? undefined,
 });
 
 async function operationByKey(ownerId: string, feature: AiFeature, idempotencyKey: string) {
-  const row = await (await db()).prepare("SELECT id,owner_id,feature,idempotency_key,request_hash,status,quota_period,credit_units AS cost_units,response_json,failure_code FROM ai_operations WHERE owner_id=? AND feature=? AND idempotency_key=?")
+  const row = await (await db()).prepare("SELECT id,owner_id,feature,idempotency_key,request_hash,status,quota_period,credit_units AS cost_units,base_credit_allowance,response_json,failure_code FROM ai_operations WHERE owner_id=? AND feature=? AND idempotency_key=?")
     .bind(ownerId, feature, idempotencyKey).first<OperationRow>();
   return row ? rowToOperation(row) : undefined;
 }
@@ -110,15 +112,16 @@ export async function reserveOperation(input: { ownerId: string; feature: AiFeat
   const assertion = crypto.randomUUID();
   const costUnits = aiCreditCost(input.feature);
   const allowance = allowanceFor(policy);
+  const baseAllowance = baseAllowanceFor(policy);
   const rateLimit = rateLimitFor(policy);
   try {
     await database.batch([
-      database.prepare("INSERT INTO ai_quota_buckets(owner_id,period_key,allowance,used,reserved,updated_at) VALUES(?,?,?,?,?,?) ON CONFLICT(owner_id,period_key) DO UPDATE SET allowance=excluded.allowance,updated_at=excluded.updated_at").bind(input.ownerId, period, allowance, 0, 0, timestamp),
+      database.prepare("INSERT INTO ai_quota_buckets(owner_id,period_key,allowance,used,reserved,updated_at) VALUES(?,?,?,?,?,?) ON CONFLICT(owner_id,period_key) DO UPDATE SET allowance=MAX(excluded.allowance,used+reserved),updated_at=excluded.updated_at").bind(input.ownerId, period, allowance, 0, 0, timestamp),
       database.prepare("UPDATE ai_quota_buckets SET reserved=reserved+?,updated_at=? WHERE owner_id=? AND period_key=? AND reserved=0 AND used+reserved+?<=allowance AND (SELECT COUNT(*) FROM ai_operations WHERE owner_id=? AND created_at>=?)<? AND (substr(?,1,5)!='user:' OR EXISTS(SELECT 1 FROM accounts WHERE user_id=substr(?,6) AND status='active'))")
         .bind(costUnits, timestamp, input.ownerId, period, costUnits, input.ownerId, requestFloor(policy, now), rateLimit, input.ownerId, input.ownerId),
       database.prepare("INSERT INTO ai_quota_assertions(id,ok) VALUES(?,CASE changes() WHEN 1 THEN 1 ELSE 0 END)").bind(assertion),
-      database.prepare("INSERT INTO ai_operations(id,owner_id,feature,idempotency_key,request_hash,status,quota_period,cost_units,credit_units,created_at,updated_at) VALUES(?,?,?,?,?,'reserved',?,1,?,?,?)")
-        .bind(id, input.ownerId, input.feature, input.idempotencyKey, input.requestHash, period, costUnits, timestamp, timestamp),
+      database.prepare("INSERT INTO ai_operations(id,owner_id,feature,idempotency_key,request_hash,status,quota_period,cost_units,credit_units,base_credit_allowance,created_at,updated_at) VALUES(?,?,?,?,?,'reserved',?,1,?,?,?,?)")
+        .bind(id, input.ownerId, input.feature, input.idempotencyKey, input.requestHash, period, costUnits, baseAllowance, timestamp, timestamp),
       database.prepare("DELETE FROM ai_quota_assertions WHERE id=?").bind(assertion),
     ]);
   } catch {
@@ -134,7 +137,7 @@ export async function reserveOperation(input: { ownerId: string; feature: AiFeat
     if (quota.recentRequests >= rateLimit) throw new Error("AI_RATE_LIMITED");
     throw new Error("AI_RESERVATION_FAILED");
   }
-  return { operation: { id, ownerId: input.ownerId, feature: input.feature, idempotencyKey: input.idempotencyKey, requestHash: input.requestHash, status: "reserved" as const, quotaPeriod: period, costUnits }, replayed: false };
+  return { operation: { id, ownerId: input.ownerId, feature: input.feature, idempotencyKey: input.idempotencyKey, requestHash: input.requestHash, status: "reserved" as const, quotaPeriod: period, costUnits, baseAllowance }, replayed: false };
 }
 
 export async function finalizeSuccess(input: { operation: AiOperation; output: AiOutput; providerRequestId?: string; promptTokens?: number; completionTokens?: number; now?: Date }) {
@@ -149,6 +152,8 @@ export async function finalizeSuccess(input: { operation: AiOperation; output: A
       database.prepare("UPDATE ai_quota_buckets SET reserved=reserved-?,used=used+?,updated_at=? WHERE owner_id=? AND period_key=? AND reserved>=? AND used+?<=allowance")
         .bind(input.operation.costUnits, input.operation.costUnits, now, input.operation.ownerId, input.operation.quotaPeriod, input.operation.costUnits, input.operation.costUnits),
       database.prepare("INSERT INTO ai_quota_assertions(id,ok) VALUES(?,CASE changes() WHEN 1 THEN 1 ELSE 0 END)").bind(`${assertion}:bucket`),
+      database.prepare("INSERT INTO credit_ledger(id,owner_id,units,source,reward_id,operation_id,expires_at,created_at) SELECT ?,?,-MIN(?,MAX(0,(SELECT used FROM ai_quota_buckets WHERE owner_id=? AND period_key=?)-?)),'referral_spend',NULL,?,?,? WHERE ?>0 AND (SELECT used FROM ai_quota_buckets WHERE owner_id=? AND period_key=?)>?")
+        .bind(crypto.randomUUID(), input.operation.ownerId, input.operation.costUnits, input.operation.ownerId, input.operation.quotaPeriod, input.operation.baseAllowance, input.operation.id, `${new Date(now).getUTCFullYear() + 1}-01-01T00:00:00.000Z`, now, input.operation.costUnits, input.operation.ownerId, input.operation.quotaPeriod, input.operation.baseAllowance),
       database.prepare("DELETE FROM ai_quota_assertions WHERE id IN (?,?)").bind(assertion, `${assertion}:bucket`),
     ]);
   } catch {

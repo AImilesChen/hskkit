@@ -1,7 +1,7 @@
 import { getCloudflareContext } from "@opennextjs/cloudflare";
 import { PDF_PACK_ACCESS_DAYS, PDF_PACK_CURRENCY, PDF_PACK_DOWNLOAD_LIMIT, PDF_PACK_PRICE_CENTS, PDF_PACK_SKU, canIssueDownload, refundEligibility } from "./domain.ts";
 import { SUBSCRIPTION_PLANS, entitlementFromSubscription, refundEligibility as subscriptionRefundEligibility, subscriptionPlan, type NormalizedSubscriptionEvent, type ProviderSubscriptionStatus, type SubscriptionPlanId } from "./subscription.ts";
-import { capabilitiesForEntitlement, type ProductCapabilities } from "./capabilities.ts";
+import { resolveCommercialAccess } from "./referral-storage.ts";
 
 export const commerceDb = (env?: Pick<CloudflareEnv, "LEARNING_DB">) => env?.LEARNING_DB ?? getCloudflareContext().env.LEARNING_DB;
 const nowIso = () => new Date().toISOString();
@@ -297,7 +297,6 @@ export async function requestSubscriptionRefund(input:{ownerId:string;chargeId:s
 }
 export async function activeProEntitlement(ownerId:string,at=nowIso()){return commerceDb().prepare(`SELECT * FROM subscription_entitlements WHERE owner_id=? AND status='active' AND (ends_at IS NULL OR ends_at>?)`).bind(ownerId,at).first<Record<string,unknown>>();}
 
-export async function resolveCapabilities(ownerId: string, at = new Date()): Promise<ProductCapabilities> {
-  const entitlement = await commerceDb().prepare(`SELECT status,ends_at FROM subscription_entitlements WHERE owner_id=?`).bind(ownerId).first<{ status: "active" | "suspended" | "ended" | "revoked"; ends_at: string | null }>();
-  return capabilitiesForEntitlement(entitlement ? { status: entitlement.status, endsAt: entitlement.ends_at } : null, at);
+export async function resolveCapabilities(ownerId: string, at = new Date()) {
+  return (await resolveCommercialAccess(ownerId, at)).capabilities;
 }

@@ -17,8 +17,9 @@ const messages: Record<string, string> = {
   account_deleted: "This HSKKit account was deleted and cannot be reopened with the old identity.",
 };
 
-export default async function LoginPage({ searchParams }: { searchParams: Promise<{ error?: string; logout?: string; deleted?: string; returnTo?: string }> }) {
+export default async function LoginPage({ searchParams }: { searchParams: Promise<{ error?: string; logout?: string; deleted?: string; returnTo?: string; ref?: string }> }) {
   const params = await searchParams;
+  const referralSuffix = params.ref ? `&ref=${encodeURIComponent(params.ref)}` : "";
   const message = params.error ? messages[params.error] ?? messages.google_failed : undefined;
   return (
     <>
@@ -26,12 +27,12 @@ export default async function LoginPage({ searchParams }: { searchParams: Promis
       <main className="mx-auto min-h-[70vh] max-w-xl px-5 py-14 sm:py-20">
         <p className="text-sm font-bold uppercase tracking-[0.18em] text-blue-700">HSKKit account</p>
         <h1 className="mt-4 text-4xl font-black tracking-tight text-slate-950 sm:text-5xl">Continue your learning anywhere</h1>
-        <p className="mt-5 text-lg leading-8 text-slate-600">Guests can use Placement, Today, and Planner. Sign in to save progress privately and sync it across devices.</p>
+        <p className="mt-5 text-lg leading-8 text-slate-600">Sign in with a verified Google account to save progress and start a 7-day Pro trial with 50 AI credits. No card required and no automatic charge.</p>
         {message ? <p className="mt-6 rounded-xl border border-red-200 bg-red-50 p-4 text-sm font-semibold text-red-800" role="alert">{message}</p> : null}
         {params.logout === "success" ? <p className="mt-6 rounded-xl border border-emerald-200 bg-emerald-50 p-4 text-sm text-emerald-900" role="status">You are signed out. Private account data is no longer available in this browser.</p> : null}
         {params.deleted === "success" ? <p className="mt-6 rounded-xl border border-emerald-200 bg-emerald-50 p-4 text-sm text-emerald-900" role="status">Account deletion completed. Sessions, Sync Keys, and private exports were revoked.</p> : null}
         <div className="mt-8 rounded-3xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
-          <a className="inline-flex min-h-12 w-full items-center justify-center rounded-xl bg-blue-600 px-5 text-base font-bold text-white hover:bg-blue-700" href={`/api/v1/auth/google/start?returnTo=${encodeURIComponent(params.returnTo ?? "/account")}`}>
+          <a className="inline-flex min-h-12 w-full items-center justify-center rounded-xl bg-blue-600 px-5 text-base font-bold text-white hover:bg-blue-700" href={`/api/v1/auth/google/start?returnTo=${encodeURIComponent(params.returnTo ?? "/account")}${referralSuffix}`}>
             {params.error ? "Try Google sign-in again" : "Continue with Google"}
           </a>
           <p className="mt-4 text-sm leading-6 text-slate-600">After sign-in, HSKKit previews eligible guest progress. Nothing is merged until you confirm.</p>

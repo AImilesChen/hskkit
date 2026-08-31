@@ -4,12 +4,15 @@ import { OAUTH_RETURN_COOKIE, OAUTH_STATE_COOKIE, OAUTH_VERIFIER_COOKIE, SESSION
 import { safeReturnTo } from "@/lib/account/domain";
 import { exchangeGoogleCode, googleOAuthConfig, loadGoogleProfile } from "@/lib/account/oauth";
 import { createAccountSession, upsertGoogleAccount } from "@/lib/account/storage";
+import { activateWelcomeTrialAndReferral, sha256ReferralDevice } from "@/lib/commercial/referral-storage";
+import { OAUTH_REFERRAL_COOKIE, REFERRAL_DEVICE_COOKIE } from "@/lib/commercial/referrals";
 
 function failure(request: Request, code: string, returnTo: string) {
   const response = NextResponse.redirect(new URL(`/login?error=${encodeURIComponent(code)}&returnTo=${encodeURIComponent(returnTo)}`, request.url));
   response.cookies.delete(OAUTH_STATE_COOKIE);
   response.cookies.delete(OAUTH_VERIFIER_COOKIE);
   response.cookies.delete(OAUTH_RETURN_COOKIE);
+  response.cookies.delete(OAUTH_REFERRAL_COOKIE);
   return response;
 }
 
@@ -29,6 +32,13 @@ export async function GET(request: Request) {
     const accessToken = await exchangeGoogleCode(code, verifier, config);
     const profile = await loadGoogleProfile(accessToken);
     const account = await upsertGoogleAccount(profile);
+    const referralDevice = jar.get(REFERRAL_DEVICE_COOKIE)?.value;
+    await activateWelcomeTrialAndReferral({
+      userId: account.userId,
+      emailVerified: profile.emailVerified,
+      referralCode: jar.get(OAUTH_REFERRAL_COOKIE)?.value,
+      deviceHash: referralDevice ? await sha256ReferralDevice(referralDevice) : undefined,
+    });
     const session = await createAccountSession(account.userId);
     const response = NextResponse.redirect(new URL(returnTo, request.url));
     response.cookies.set(SESSION_COOKIE, session.sessionToken, {
@@ -41,6 +51,7 @@ export async function GET(request: Request) {
     response.cookies.delete(OAUTH_STATE_COOKIE);
     response.cookies.delete(OAUTH_VERIFIER_COOKIE);
     response.cookies.delete(OAUTH_RETURN_COOKIE);
+    response.cookies.delete(OAUTH_REFERRAL_COOKIE);
     return response;
   } catch (reason) {
     const code = reason instanceof Error && reason.message === "ACCOUNT_DELETED" ? "account_deleted" : "google_failed";

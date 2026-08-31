@@ -22,10 +22,11 @@ import { advancedListeningBySlug, isStep7AnswerAllowed, normalizeStep7Answer, tr
 import { completeStep7PlaybackTicket, consumeStep7PlaybackTicket, createStep7PlaybackTicket } from "../../../../lib/learning/step7-playback";
 import { trustedQuestion } from "../../../../lib/learning/questions";
 import { requestIdentity, GUEST_COOKIE } from "../../../../lib/account/identity";
-import { loadState, saveState, usageSnapshot, type UsageCharge } from "../../../../lib/learning/storage";
+import { loadState, saveState, usageSnapshot, type ReferralLearningActivity, type UsageCharge } from "../../../../lib/learning/storage";
 import { projectLearningHistory } from "../../../../lib/learning/projection";
 import { resolveCapabilities } from "../../../../lib/commercial/storage";
 import { type ProductCapabilities } from "../../../../lib/commercial/capabilities";
+import { reconcileReferralLearningMilestone } from "../../../../lib/commercial/referral-storage";
 import { selectTodayContent, todayContentByAssetId, todayContentFromCatalogRow } from "../../../../lib/learning/today-content";
 import { findActiveCatalogWordById } from "../../../../lib/content/catalog-search";
 import { accessDecision, createAuditEvent, errorContract } from "../../../../lib/account/access-policy";
@@ -622,8 +623,15 @@ export async function POST(req: NextRequest) {
       } else {
         return errorResponse("INVALID_ACTION", 422);
       }
+      const qualifyingLearningAction = action === "attempt" || action === "dictionary_practice_attempt" || action === "step7_attempt" || action === "audio_attempt" || action === "retry_review" || action === "grade" || action === "complete_item";
+      const referralActivity: ReferralLearningActivity | undefined = identity.account && qualifyingLearningAction
+        ? { userId: identity.account.userId, eventType: String(action), eventId: key, units: 1, localDay: new Date().toISOString().slice(0, 10) }
+        : undefined;
       const data = view(state, identity.id, tz, capabilities, identity.account?.timezone);
-      await saveState(identity.id, data.state, loaded.revision, createAuditEvent({ subjectId: identity.id, action: String(action), resourceType: "learning", resourceId: data.session.id, result: "success", idempotencyKey: key, metadata: { revision: loaded.revision + 1 } }), usageCharge);
+      await saveState(identity.id, data.state, loaded.revision, createAuditEvent({ subjectId: identity.id, action: String(action), resourceType: "learning", resourceId: data.session.id, result: "success", idempotencyKey: key, metadata: { revision: loaded.revision + 1 } }), usageCharge, referralActivity);
+      if (referralActivity) {
+        try { await reconcileReferralLearningMilestone(referralActivity.userId); } catch { /* activity is committed atomically and the reward reconciles on Account load */ }
+      }
       if (usageCharge?.metric === "daily_new_items") usage = { ...usage, dailyNewItems: usage.dailyNewItems + usageCharge.units };
       if (usageCharge?.metric === "daily_review_grades") usage = { ...usage, dailyReviewGrades: usage.dailyReviewGrades + usageCharge.units };
       return response(data, identity.fresh, identity.id, loaded.revision + 1, Boolean(identity.account), capabilities, usage, feedback);

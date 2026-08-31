@@ -8,7 +8,7 @@ import { PUBLIC_ACCOUNT_SCOPE, PUBLIC_FORMAL_CONTENT_SCOPE } from "@/lib/public-
 export const metadata: Metadata = { title: "Pricing | HSKKit", description: "Compare HSKKit Free with Pro Monthly and Pro Yearly.", alternates: { canonical: "/pricing" } };
 
 const proBenefits = [
-  "No Free daily learning or review limits (anti-abuse safeguards still apply)",
+  "Unlimited learning and reviews (anti-abuse safeguards still apply)",
   "Focused Review prioritizes unresolved mistakes and due weak memories",
   "500 AI credits each month for grounded explanations and plan tips",
   "10 AI requests per hour · 1 concurrent AI request",
@@ -31,7 +31,7 @@ export default function PricingPage() {
     <header className="mx-auto max-w-3xl text-center">
       <p className="text-xs font-bold uppercase tracking-[0.16em] text-blue-700">Free to start · Pro when you need momentum</p>
       <h1 className="mt-3 text-[34px] font-extrabold leading-tight tracking-tight text-slate-950 sm:text-[48px]">Know exactly what Pro changes.</h1>
-      <p className="mt-5 max-w-3xl text-lg leading-8 text-slate-600">Keep the complete learning loop on Free. Upgrade for higher-volume study, mistake-first review, grounded AI help and multi-device continuity.</p>
+      <p className="mt-5 max-w-3xl text-lg leading-8 text-slate-600">Keep the complete learning loop on Free. New verified accounts start with a 7-day Pro trial and 50 AI credits, no card required. Upgrade later for unlimited study, mistake-first review, grounded AI help and multi-device continuity.</p>
       <div className="mt-6 flex flex-wrap justify-center gap-3"><Link href="#plans" className="inline-flex min-h-12 items-center justify-center rounded-xl bg-blue-700 px-5 font-bold text-white">See Pro plans</Link><Link href="/today" className="inline-flex min-h-12 items-center justify-center rounded-xl border border-slate-300 bg-white px-5 font-bold text-slate-800">Continue Free</Link></div>
       <p className="mt-4 text-sm font-semibold text-amber-800">Checkout uses Stripe Test mode and grants an account-based Pro entitlement only after verified lifecycle events. No live card charge is enabled.</p>
     </header>

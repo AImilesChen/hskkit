@@ -23,15 +23,17 @@ export function aiRuntimePolicy(env: Pick<CloudflareEnv, "AI_DAILY_ALLOWANCE" | 
 export type ProductAiRuntimePolicy = AiRuntimePolicy & {
   quotaPeriod: "month";
   allowance: number;
+  baseAllowance: number;
   rateLimitPerHour: number;
   concurrency: number;
 };
 
-export function productAiRuntimePolicy(env: Pick<CloudflareEnv, "AI_DAILY_ALLOWANCE" | "AI_RATE_LIMIT_PER_MINUTE" | "AI_MAX_OUTPUT_TOKENS">, capabilities: ProductCapabilities): ProductAiRuntimePolicy {
+export function productAiRuntimePolicy(env: Pick<CloudflareEnv, "AI_DAILY_ALLOWANCE" | "AI_RATE_LIMIT_PER_MINUTE" | "AI_MAX_OUTPUT_TOKENS">, capabilities: ProductCapabilities, baseAllowance = capabilities.aiMonthlyCredits): ProductAiRuntimePolicy {
   return {
     ...aiRuntimePolicy(env),
     quotaPeriod: "month",
     allowance: capabilities.aiMonthlyCredits,
+    baseAllowance,
     rateLimitPerHour: capabilities.aiRequestsPerHour,
     concurrency: capabilities.aiConcurrency,
   };

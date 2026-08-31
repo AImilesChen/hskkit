@@ -9,7 +9,7 @@ import { loadState } from "@/lib/learning/storage";
 import { trustedStep7Exercise, type Step7Exercise } from "@/lib/learning/step7-content";
 import { reviewSnapshotForAttempt } from "@/lib/learning/review-content";
 import { latestPlan } from "@/lib/planner/storage";
-import { resolveCapabilities } from "@/lib/commercial/storage";
+import { resolveCommercialAccess } from "@/lib/commercial/referral-storage";
 
 async function owner() {
   const identity = await requestIdentity();
@@ -56,8 +56,9 @@ export async function GET() {
   if (!identity.account) return response({ error: "AI_ACCOUNT_REQUIRED", charged: false }, identity, 401);
   if (identity.account?.status === "deleted") return response({ error: "ACCOUNT_DELETED" }, identity, 403);
   const env = (await getCloudflareContext({ async: true })).env;
-  const capabilities = await resolveCapabilities(identity.id);
-  const policy = productAiRuntimePolicy(env, capabilities);
+  const commercial = await resolveCommercialAccess(identity.id);
+  const capabilities = commercial.capabilities;
+  const policy = productAiRuntimePolicy(env, capabilities, commercial.access.baseAiCredits);
   return response({ quota: await quotaView(identity.id, policy), capabilities, scope: identity.account ? "account" : "guest" }, identity);
 }
 
@@ -66,8 +67,9 @@ export async function POST(req: NextRequest) {
   if (!identity.account) return response({ error: "AI_ACCOUNT_REQUIRED", charged: false }, identity, 401);
   if (identity.account?.status === "deleted") return response({ error: "ACCOUNT_DELETED" }, identity, 403);
   const env = (await getCloudflareContext({ async: true })).env;
-  const capabilities = await resolveCapabilities(identity.id);
-  const policy = productAiRuntimePolicy(env, capabilities);
+  const commercial = await resolveCommercialAccess(identity.id);
+  const capabilities = commercial.capabilities;
+  const policy = productAiRuntimePolicy(env, capabilities, commercial.access.baseAiCredits);
   let body: Record<string, unknown>;
   try {
     body = await readBoundedJsonObject(req, 1024);

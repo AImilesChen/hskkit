@@ -106,7 +106,7 @@ test("AI is account-only and keeps deterministic fallback/report actions", async
   });
   assert.match(storage, /dailyAllowance:\s*AI_DAILY_ALLOWANCE/);
   assert.match(storage, /rateLimitPerMinute:\s*AI_RATE_LIMIT_PER_MINUTE/);
-  assert.match(storage, /ON CONFLICT\(owner_id,period_key\) DO UPDATE SET allowance=excluded\.allowance/);
+  assert.match(storage, /ON CONFLICT\(owner_id,period_key\) DO UPDATE SET allowance=MAX\(excluded\.allowance,used\+reserved\)/);
   assert.match(storage, /reserved=0/);
   assert.match(storage, /AI_REQUEST_IN_PROGRESS/);
 });
