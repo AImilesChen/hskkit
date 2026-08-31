@@ -19,6 +19,7 @@ EXPECTED_RELEASE_ID = "hsk3-content-truth-v5"
 HAN = re.compile(r"[\u3400-\u9fff]")
 VARIANT = re.compile(r"U\+([0-9A-F]{4,6})")
 RADICAL_STROKE = re.compile(r"^(\d+)'?\.(-?\d+)")
+PINYIN_READING = re.compile(r"[a-züǖǘǚǜāáǎàēéěèīíǐìōóǒòūúǔù]+", re.IGNORECASE)
 
 
 def active_words(repository: dict) -> tuple[str, list[dict]]:
@@ -66,6 +67,16 @@ def first_variant(value: str, hanzi: str) -> str | None:
     return None
 
 
+def split_pinyin_readings(value: str) -> list[str]:
+    """Return only standalone learner-facing syllables from source variants."""
+    readings: list[str] = []
+    for raw in re.split(r"[\s/|]+", value.strip().lower()):
+        cleaned = raw.strip("()[]{}….,;:!?")
+        if cleaned and PINYIN_READING.fullmatch(cleaned) and cleaned not in readings:
+            readings.append(cleaned)
+    return readings
+
+
 def main() -> None:
     repository = json.loads(CATALOG.read_text(encoding="utf-8"))
     unihan = json.loads(UNIHAN.read_text(encoding="utf-8"))
@@ -93,7 +104,7 @@ def main() -> None:
         syllables = [value for value in re.split(r"\s+", str(word["payload"].get("pinyin", "")).strip()) if value]
         if len(syllables) == len(hanzi):
             for character, syllable in zip(hanzi, syllables):
-                readings_by_hanzi[character].add(syllable.lower())
+                readings_by_hanzi[character].update(split_pinyin_readings(syllable))
 
     cedict = cedict_single_characters()
     characters = []
@@ -107,8 +118,8 @@ def main() -> None:
         strokes_match = re.search(r"\d+", str(source["kTotalStrokes"]))
         if not strokes_match:
             raise SystemExit(f"Missing total strokes for {hanzi}")
-        primary_pinyin = str(source.get("kMandarin") or cedict.get(hanzi, {}).get("pinyin") or "").strip().lower()
-        pinyin = [primary_pinyin] if primary_pinyin else []
+        primary_readings = split_pinyin_readings(str(source.get("kMandarin") or cedict.get(hanzi, {}).get("pinyin") or ""))
+        pinyin = list(dict.fromkeys(primary_readings))
         pinyin.extend(sorted(readings_by_hanzi[hanzi] - set(pinyin)))
         if not pinyin:
             raise SystemExit(f"Missing Mandarin reading for {hanzi}")

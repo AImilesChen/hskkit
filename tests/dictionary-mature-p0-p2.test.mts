@@ -16,6 +16,7 @@ test("the published HSK character index is complete, licensed and reproducible",
   assert.equal(index.releaseId, "hsk3-content-truth-v5");
   assert.equal(index.characters.length, 2971);
   assert.ok(index.characters.every((item: Record<string, unknown>) => item.hanzi && item.radical && item.strokes && Array.isArray(item.pinyin) && item.pinyin.length));
+  assert.ok(index.characters.every((item: { pinyin: string[] }) => item.pinyin.every((reading) => /^[a-züǖǘǚǜāáǎàēéěèīíǐìōóǒòūúǔù]+$/i.test(reading))), "each pinyin facet must be one real syllable, not concatenated Unihan readings");
   assert.equal(new Set(index.characters.map((item: { hanzi: string }) => item.hanzi)).size, 2971);
   const study = index.characters.find((item: { hanzi: string }) => item.hanzi === "学");
   assert.equal(study.radical, "子");
