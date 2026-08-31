@@ -1,6 +1,8 @@
 import characterIndexData from "./character-index.json" with { type: "json" };
 import { parsePinyinSyllable } from "./p1-character-data.ts";
 
+export type CharacterStructure = "left-right" | "top-bottom" | "three-part" | "enclosure" | "overlaid" | "single-component" | "unknown";
+
 export interface IndexedCharacter {
   hanzi: string;
   pinyin: string[];
@@ -9,6 +11,10 @@ export interface IndexedCharacter {
   radicalNumber: number;
   residualStrokes: number;
   strokes: number;
+  structure: CharacterStructure;
+  decomposition: string;
+  decompositionStatus: "complete" | "partial" | "unknown";
+  structureSourceId: string;
   levels: number[];
   firstLevel: number;
   wordCount: number;
@@ -21,6 +27,7 @@ export interface CharacterSearchParams {
   level?: number;
   radical?: string;
   strokes?: number;
+  structure?: CharacterStructure;
   initial?: string;
   final?: string;
   tone?: number;
@@ -41,6 +48,7 @@ export const characterIndexMetadata = {
   releaseId: characterIndexData.releaseId,
   characterCount: characterIndexData.characterCount,
   source: characterIndexData.source,
+  structureDirectory: characterIndexData.structureDirectory,
 };
 
 export type RadicalDirectoryItem = {
@@ -56,8 +64,14 @@ export type StrokeDirectoryItem = {
   characterCount: number;
 };
 
+export type StructureDirectoryItem = {
+  structure: CharacterStructure;
+  characterCount: number;
+};
+
 export const radicalDirectory = characterIndexData.radicalDirectory as RadicalDirectoryItem[];
 export const strokeDirectory = characterIndexData.strokeDirectory as StrokeDirectoryItem[];
+export const structureDirectory = characterIndexData.structureDirectory as StructureDirectoryItem[];
 
 export const characterIndexFacets = (() => {
   const radicalNumbers = new Map<string, number>();
@@ -66,6 +80,7 @@ export const characterIndexFacets = (() => {
   return {
     radicals: [...radicalNumbers].sort((left, right) => left[1] - right[1]).map(([radical]) => radical),
     strokes: [...new Set(characters.map((item) => item.strokes))].sort((a, b) => a - b),
+    structures: structureDirectory.map((item) => item.structure),
     initials: [...new Set(sounds.map((item) => item.initial))].sort(),
     finals: [...new Set(sounds.map((item) => item.final))].sort(),
     tones: [...new Set(sounds.map((item) => item.tone))].sort((a, b) => a - b),
@@ -96,12 +111,14 @@ export function parseCharacterSearchParams(url: URL): CharacterSearchParams {
   const tone = rawTone ? integerParam(rawTone, 0, "tone") : undefined;
   if (tone !== undefined && (tone < 1 || tone > 5)) throw new CharacterQueryError("tone must be between 1 and 5");
   const radical = url.searchParams.get("radical")?.trim() || undefined;
+  const structure = url.searchParams.get("structure")?.trim() || undefined;
   const initial = url.searchParams.get("initial")?.trim() || undefined;
   const final = url.searchParams.get("final")?.trim() || undefined;
   if (radical && !characterIndexFacets.radicals.includes(radical)) throw new CharacterQueryError("radical is not available");
+  if (structure && !characterIndexFacets.structures.includes(structure as CharacterStructure)) throw new CharacterQueryError("structure is not available");
   if (initial && !characterIndexFacets.initials.includes(initial)) throw new CharacterQueryError("initial is not available");
   if (final && !characterIndexFacets.finals.includes(final)) throw new CharacterQueryError("final is not available");
-  return { q, level, radical, strokes, initial, final, tone, page, pageSize };
+  return { q, level, radical, strokes, structure: structure as CharacterStructure | undefined, initial, final, tone, page, pageSize };
 }
 
 function normalize(value: string) {
@@ -119,6 +136,7 @@ export function searchCharacterIndex(params: CharacterSearchParams) {
     if (params.level && !item.levels.includes(params.level)) return false;
     if (params.radical && item.radical !== params.radical) return false;
     if (params.strokes && item.strokes !== params.strokes) return false;
+    if (params.structure && item.structure !== params.structure) return false;
     if (params.initial || params.final || params.tone) {
       const readings = parsedReadings.get(item.hanzi) ?? [];
       if (!readings.some((reading) => (!params.initial || reading.initial === params.initial)

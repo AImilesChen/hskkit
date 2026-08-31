@@ -6,11 +6,11 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { AudioButton } from "./audio-button";
 import { detectDictionaryQueryType, type DictionaryQueryType } from "@/lib/dictionary/search-intent";
 
-export type CharacterBrowseFacets = { radicals: string[]; strokes: number[]; initials: string[]; finals: string[]; tones: number[] };
+export type CharacterBrowseFacets = { radicals: string[]; strokes: number[]; structures: string[]; initials: string[]; finals: string[]; tones: number[] };
 type DictionaryMode = "words" | "levels" | "characters" | "pinyin";
 type CatalogWord = { id: string; level: number; levelBand: string; formalAudioAvailable: boolean; formalAudioUrl?: string; payload: { hanzi: string; traditional: string; pinyin: string; meaning: string; partOfSpeech: string } };
 type CatalogResponse = { contentAssets: CatalogWord[]; pagination: Pagination };
-type CharacterRecord = { hanzi: string; traditional?: string; simplified?: string; pinyin: string[]; meanings: string[]; radical: string; strokes: number; firstLevel: number; levels: number[]; wordCount: number };
+type CharacterRecord = { hanzi: string; traditional?: string; simplified?: string; pinyin: string[]; meanings: string[]; radical: string; strokes: number; structure: string; decomposition: string; firstLevel: number; levels: number[]; wordCount: number };
 type CharacterResponse = { characters: CharacterRecord[]; pagination: Pagination };
 type Pagination = { page: number; pageSize: number; total: number; totalPages: number; hasPrevious: boolean; hasNext: boolean };
 type Alternative = { slug: string; hanzi: string; pinyin: string; meaning: string };
@@ -18,6 +18,15 @@ type LearningView = { recentDictionarySearches: Array<{ query: string; level?: n
 
 const detailSlugs: Record<string, string> = { "学习": "xue-xi", "旅行": "lu-xing", "习惯": "xi-guan", "环境": "huan-jing", "经验": "jing-yan", "交流": "jiao-liu", "责任": "ze-ren", "改善": "gai-shan", "趋势": "qu-shi", "贡献": "gong-xian", "资源": "zi-yuan", "倡导": "chang-dao", "买": "mai" };
 const partOfSpeechOptions = [["", "All word types"], ["N", "Nouns"], ["V", "Verbs"], ["Adj", "Adjectives"], ["Adv", "Adverbs"], ["Pron", "Pronouns"], ["Num", "Numbers"], ["M", "Measure words"]] as const;
+const structureLabels: Record<string, string> = {
+  "left-right": "Left–right",
+  "top-bottom": "Top–bottom",
+  "three-part": "Three-part",
+  enclosure: "Enclosure",
+  overlaid: "Overlaid",
+  "single-component": "Single component",
+  unknown: "Structure unavailable",
+};
 const levelOptions = [
   { value: "1", label: "HSK 1" }, { value: "2", label: "HSK 2" },
   { value: "3", label: "HSK 3" }, { value: "4", label: "HSK 4" },
@@ -48,6 +57,7 @@ export function DictionarySearch({ characterFacets }: { characterFacets: Charact
     const rawPartOfSpeech = searchParams.get("pos") ?? "";
     const rawRadical = searchParams.get("radical") ?? "";
     const rawStrokes = searchParams.get("strokes") ?? "";
+    const rawStructure = searchParams.get("structure") ?? "";
     const rawInitial = searchParams.get("initial") ?? "";
     const rawFinal = searchParams.get("final") ?? "";
     const rawTone = searchParams.get("tone") ?? "";
@@ -61,6 +71,7 @@ export function DictionarySearch({ characterFacets }: { characterFacets: Charact
       audio: searchParams.get("audio") === "formal" ? "formal" : "all",
       radical: characterFacets.radicals.includes(rawRadical) ? rawRadical : "",
       strokes: characterFacets.strokes.some((value) => String(value) === rawStrokes) ? rawStrokes : "",
+      structure: characterFacets.structures.includes(rawStructure) ? rawStructure : "",
       initial: characterFacets.initials.includes(rawInitial) ? rawInitial : "",
       final: characterFacets.finals.includes(rawFinal) ? rawFinal : "",
       tone: characterFacets.tones.some((value) => String(value) === rawTone) ? rawTone : "",
@@ -127,13 +138,14 @@ export function DictionarySearch({ characterFacets }: { characterFacets: Charact
       if (applied.level !== "all" && applied.level !== "default") params.set("level", applied.level);
       if (applied.radical) params.set("radical", applied.radical);
       if (applied.strokes) params.set("strokes", applied.strokes);
+      if (applied.structure) params.set("structure", applied.structure);
       if (applied.initial) params.set("initial", applied.initial);
       if (applied.final) params.set("final", applied.final);
       if (applied.tone) params.set("tone", applied.tone);
       void fetch(`/api/v1/dictionary/characters?${params.toString()}`, { signal: controller.signal, cache: "no-store" }).then(async (response) => { const body = await response.json() as CharacterResponse & { message?: string }; if (!response.ok) throw new Error(body.message || "The character index is temporarily unavailable."); setCharacters(body); setWords(null); }).catch((reason: unknown) => { if (!(reason instanceof DOMException && reason.name === "AbortError")) setError(reason instanceof Error ? reason.message : "The character index is temporarily unavailable."); }).finally(() => { if (!controller.signal.aborted) setLoading(false); });
     }
     return () => controller.abort();
-  }, [applied.audio, applied.final, applied.initial, applied.level, applied.mode, applied.page, applied.partOfSpeech, applied.query, applied.radical, applied.strokes, applied.tone, retryToken]);
+  }, [applied.audio, applied.final, applied.initial, applied.level, applied.mode, applied.page, applied.partOfSpeech, applied.query, applied.radical, applied.strokes, applied.structure, applied.tone, retryToken]);
 
   useEffect(() => {
     const value = query.trim();
@@ -161,6 +173,7 @@ export function DictionarySearch({ characterFacets }: { characterFacets: Charact
     } else {
       if (values.radical) params.set("radical", values.radical);
       if (values.strokes) params.set("strokes", values.strokes);
+      if (values.structure) params.set("structure", values.structure);
       if (values.initial) params.set("initial", values.initial);
       if (values.final) params.set("final", values.final);
       if (values.tone) params.set("tone", values.tone);
@@ -169,7 +182,7 @@ export function DictionarySearch({ characterFacets }: { characterFacets: Charact
     setSuggestionsOpen(false);
     router.push(`${pathname}${params.size ? `?${params.toString()}` : ""}`, { scroll: false });
   }
-  function switchMode(mode: DictionaryMode) { navigate({ mode, page: 1, radical: "", strokes: "", initial: "", final: "", tone: "", partOfSpeech: "", audio: "all" }); }
+  function switchMode(mode: DictionaryMode) { navigate({ mode, page: 1, radical: "", strokes: "", structure: "", initial: "", final: "", tone: "", partOfSpeech: "", audio: "all" }); }
   function submit(event: FormEvent) { event.preventDefault(); navigate({ query, page: 1 }); }
   function chooseSuggestion(word: CatalogWord) { setQuery(word.payload.hanzi); navigate({ query: word.payload.hanzi, page: 1 }); }
   function onQueryKeyDown(event: KeyboardEvent<HTMLInputElement>) {
@@ -187,7 +200,7 @@ export function DictionarySearch({ characterFacets }: { characterFacets: Charact
   const wordResultMode = applied.mode === "words" || applied.mode === "levels";
   const selectedLevel = applied.level === "default" ? (wordResultMode ? "1" : "all") : applied.level;
   const defaultBrowse = applied.mode === "words" && !applied.query && applied.level === "default" && !applied.partOfSpeech && applied.audio === "all";
-  const hasConditions = Boolean(applied.query || applied.level !== "default" || applied.partOfSpeech || applied.audio === "formal" || applied.radical || applied.strokes || applied.initial || applied.final || applied.tone);
+  const hasConditions = Boolean(applied.query || applied.level !== "default" || applied.partOfSpeech || applied.audio === "formal" || applied.radical || applied.strokes || applied.structure || applied.initial || applied.final || applied.tone);
   const activeData = wordResultMode ? words : characters;
 
   return <div className="w-full">
@@ -211,7 +224,7 @@ export function DictionarySearch({ characterFacets }: { characterFacets: Charact
 
         {applied.mode === "words" ? <div className="mt-4 flex flex-col gap-3 border-t border-slate-100 pt-4 sm:flex-row sm:items-end sm:justify-between"><div className="flex flex-col gap-2 sm:flex-row"><label className="text-sm font-semibold text-slate-700">Part of speech<select value={applied.partOfSpeech} onChange={(event) => navigate({ partOfSpeech: event.target.value, page: 1 })} className="mt-1 min-h-11 w-full rounded-lg border border-slate-300 bg-white px-3 sm:w-auto">{partOfSpeechOptions.map(([value, label]) => <option key={value || "all"} value={value}>{label}</option>)}</select></label><label className="flex min-h-11 items-center gap-2 rounded-lg border border-slate-300 px-3 text-sm font-semibold text-slate-700"><input type="checkbox" checked={applied.audio === "formal"} onChange={(event) => navigate({ audio: event.target.checked ? "formal" : "all", page: 1 })} /> Formal audio only</label></div>{selectedLevel !== "all" ? <Link href={`/vocabulary/${selectedLevel}`} className="inline-flex min-h-11 items-center text-sm font-bold text-blue-700 hover:underline">Open HSK {levelLabel(selectedLevel)} vocabulary →</Link> : null}</div> : null}
 
-        {applied.mode === "characters" ? <div className="mt-3 border-t border-slate-100 pt-3"><div className="flex flex-wrap items-center justify-between gap-2"><h2 className="text-sm font-bold text-slate-900 sm:sr-only">Browse by radical or stroke count</h2><div className="flex gap-3 text-sm font-bold"><Link href="/dictionary/radicals" className="inline-flex min-h-11 items-center text-blue-700 hover:underline">All 214 radicals</Link><Link href="/dictionary/strokes" className="inline-flex min-h-11 items-center text-blue-700 hover:underline">All stroke counts</Link></div></div><div className="mt-2 grid grid-cols-2 gap-3"><Facet label="Browse by radical" value={applied.radical} options={characterFacets.radicals} onChange={(value) => navigate({ radical: value, page: 1 })} /><Facet label="Browse by stroke count" value={applied.strokes} options={characterFacets.strokes} onChange={(value) => navigate({ strokes: value, page: 1 })} /></div></div> : null}
+        {applied.mode === "characters" ? <div className="mt-3 border-t border-slate-100 pt-3"><div className="flex flex-wrap items-center justify-between gap-2"><h2 className="text-sm font-bold text-slate-900 sm:sr-only">Browse by radical, stroke count or structure</h2><div className="flex gap-3 text-sm font-bold"><Link href="/dictionary/radicals" className="inline-flex min-h-11 items-center text-blue-700 hover:underline">All 214 radicals</Link><Link href="/dictionary/strokes" className="inline-flex min-h-11 items-center text-blue-700 hover:underline">All stroke counts</Link></div></div><div className="mt-2 grid grid-cols-2 gap-3 [&>label:last-child]:col-span-2 sm:grid-cols-3 sm:[&>label:last-child]:col-span-1"><Facet label="Browse by radical" value={applied.radical} options={characterFacets.radicals} onChange={(value) => navigate({ radical: value, page: 1 })} /><Facet label="Browse by stroke count" value={applied.strokes} options={characterFacets.strokes} onChange={(value) => navigate({ strokes: value, page: 1 })} /><Facet label="Browse by structure" value={applied.structure} options={characterFacets.structures} onChange={(value) => navigate({ structure: value, page: 1 })} labels={structureLabels} /></div></div> : null}
         {applied.mode === "pinyin" ? <div className="mt-4 border-t border-slate-100 pt-4"><h2 className="text-sm font-bold text-slate-900">Browse by pinyin</h2><div className="mt-3 grid gap-3 sm:grid-cols-3"><Facet label="Initial" value={applied.initial} options={characterFacets.initials} onChange={(value) => navigate({ initial: value, page: 1 })} /><Facet label="Final" value={applied.final} options={characterFacets.finals} onChange={(value) => navigate({ final: value, page: 1 })} /><Facet label="Tone" value={applied.tone} options={characterFacets.tones} onChange={(value) => navigate({ tone: value, page: 1 })} tone /></div></div> : null}
       </form>
     </section>
@@ -226,7 +239,7 @@ export function DictionarySearch({ characterFacets }: { characterFacets: Charact
   </div>;
 }
 
-function Facet({ label, value, options, onChange, tone = false }: { label: string; value: string; options: Array<string | number>; onChange: (value: string) => void; tone?: boolean }) { return <label className="text-sm font-semibold text-slate-700">{label}<select value={value} onChange={(event) => onChange(event.target.value)} className="mt-1 min-h-11 w-full rounded-lg border border-slate-300 bg-white px-3"><option value="">All</option>{options.map((option) => <option key={String(option)} value={String(option)}>{tone && option === 5 ? "Neutral" : option}</option>)}</select></label>; }
+function Facet({ label, value, options, onChange, tone = false, labels }: { label: string; value: string; options: Array<string | number>; onChange: (value: string) => void; tone?: boolean; labels?: Record<string, string> }) { return <label className="text-sm font-semibold text-slate-700">{label}<select value={value} onChange={(event) => onChange(event.target.value)} className="mt-1 min-h-11 w-full rounded-lg border border-slate-300 bg-white px-3"><option value="">All</option>{options.map((option) => <option key={String(option)} value={String(option)}>{tone && option === 5 ? "Neutral" : labels?.[String(option)] ?? option}</option>)}</select></label>; }
 function ResultHeader({ eyebrow, title, pagination }: { eyebrow: string; title: string; pagination: Pagination }) { return <div className="flex flex-wrap items-end justify-between gap-3"><div className="sm:flex sm:items-baseline sm:gap-2"><p className="text-xs font-bold uppercase tracking-[.14em] text-blue-700">{eyebrow}</p><h2 className="mt-1 text-xl font-bold text-slate-950 sm:mt-0">{title}</h2></div><p className="text-sm text-slate-500">Page {pagination.page} of {pagination.totalPages}</p></div>; }
 function Pager({ pagination, loading, onPage }: { pagination: Pagination; loading: boolean; onPage: (page: number) => void }) { return <nav className="mt-6 grid grid-cols-[1fr_auto_1fr] items-center gap-3" aria-label="Dictionary result pages"><button type="button" disabled={!pagination.hasPrevious || loading} onClick={() => onPage(pagination.page - 1)} className="min-h-11 justify-self-start rounded-lg border border-blue-600 px-4 font-semibold text-blue-700 disabled:border-slate-300 disabled:text-slate-400">Previous</button><span className="text-sm text-slate-600">{pagination.page} / {pagination.totalPages}</span><button type="button" disabled={!pagination.hasNext || loading} onClick={() => onPage(pagination.page + 1)} className="min-h-11 justify-self-end rounded-lg border border-blue-600 px-4 font-semibold text-blue-700 disabled:border-slate-300 disabled:text-slate-400">Next</button></nav>; }
 function StatePanel({ title, body, action, error = false }: { title: string; body?: string; action?: ReactNode; error?: boolean }) { return <div className={`mt-6 rounded-2xl border p-6 text-center ${error ? "border-red-200 bg-red-50 text-red-950" : "border-slate-200 bg-white text-slate-950"}`} role={error ? "alert" : "status"}><h2 className="text-xl font-bold">{title}</h2>{body ? <p className="mt-2 text-sm opacity-80">{body}</p> : null}{action}</div>; }

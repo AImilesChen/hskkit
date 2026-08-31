@@ -73,7 +73,7 @@ test("dictionary UI exposes full character browse modes, formal audio and whole-
 
 test("dictionary preserves formal-audio and character facet URL state", () => {
   const client = read("src/app/components/dictionary-search.tsx");
-  for (const key of ["audio", "radical", "strokes", "initial", "final", "tone"]) {
+  for (const key of ["audio", "radical", "strokes", "structure", "initial", "final", "tone"]) {
     assert.match(client, new RegExp(`searchParams\\.get\\(\\"${key}\\"\\)`));
   }
   assert.match(client, /params\.set\("audio", "formal"\)/);
@@ -107,6 +107,10 @@ test("character and word pages render P1 learning content", () => {
   assert.match(characterPage, /Same radical/);
   assert.match(characterPage, /Published words containing/);
   assert.match(characterPage, /Same pinyin/);
+  assert.match(characterPage, /Structure/);
+  assert.match(characterPage, /Decomposition/);
+  assert.match(characterPage, /item\.structure/);
+  assert.match(characterPage, /item\.decomposition/);
   assert.doesNotMatch(characterPage, /Stroke order/);
   assert.match(wordPage, /Common collocations/);
   assert.match(wordPage, /More real examples/);

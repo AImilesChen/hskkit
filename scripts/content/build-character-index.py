@@ -12,6 +12,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[2]
 CATALOG = ROOT / "src/lib/content/catalog.json"
 UNIHAN = ROOT / "content/sources/unihan-17.0-hsk-characters.json"
+STRUCTURES = ROOT / "content/sources/makemeahanzi-618dbab8-hsk-structures.json"
 CEDICT = ROOT / "content/sources/cc-cedict-e0d756cb.txt.gz"
 OUTPUT = ROOT / "src/lib/dictionary/character-index.json"
 EXPECTED_CHARACTER_COUNT = 2971
@@ -86,18 +87,48 @@ def kangxi_radical_strokes(number: int) -> int:
     raise ValueError(f"Invalid Kangxi radical number: {number}")
 
 
+def classify_structure(decomposition: str) -> str:
+    """Map the root Unicode IDS operator to a stable learner-facing structure."""
+    if decomposition == "？":
+        return "unknown"
+    if decomposition.startswith("⿰"):
+        return "left-right"
+    if decomposition.startswith("⿱"):
+        return "top-bottom"
+    if decomposition.startswith(("⿲", "⿳")):
+        return "three-part"
+    if decomposition.startswith(("⿴", "⿵", "⿶", "⿷", "⿸", "⿹", "⿺")):
+        return "enclosure"
+    if decomposition.startswith("⿻"):
+        return "overlaid"
+    return "single-component"
+
+
 def main() -> None:
     repository = json.loads(CATALOG.read_text(encoding="utf-8"))
     unihan = json.loads(UNIHAN.read_text(encoding="utf-8"))
+    structures = json.loads(STRUCTURES.read_text(encoding="utf-8"))
     release_id, words = active_words(repository)
     if release_id != EXPECTED_RELEASE_ID:
         raise SystemExit(f"Unapproved active release drift: {release_id}")
 
-    source_by_hanzi = {item["hanzi"]: item for item in unihan["records"]}
+    source_records = unihan.get("records", [])
+    structure_records = structures.get("records", [])
+    source_by_hanzi = {item["hanzi"]: item for item in source_records}
+    structure_by_hanzi = {item["hanzi"]: item for item in structure_records}
     expected_hanzi = sorted({character for word in words for character in str(word["payload"].get("hanzi", "")) if HAN.fullmatch(character)})
-    if len(expected_hanzi) != EXPECTED_CHARACTER_COUNT or set(expected_hanzi) != set(source_by_hanzi):
+    if len(source_records) != len(source_by_hanzi) or len(expected_hanzi) != EXPECTED_CHARACTER_COUNT or set(expected_hanzi) != set(source_by_hanzi):
         raise SystemExit(
             f"Unapproved HSK character count drift: catalog={len(expected_hanzi)}, source={len(source_by_hanzi)}, expected={EXPECTED_CHARACTER_COUNT}"
+        )
+    if (
+        structures.get("characterCount") != EXPECTED_CHARACTER_COUNT
+        or len(structure_records) != EXPECTED_CHARACTER_COUNT
+        or len(structure_records) != len(structure_by_hanzi)
+        or set(expected_hanzi) != set(structure_by_hanzi)
+    ):
+        raise SystemExit(
+            f"Unapproved HSK structure coverage drift: source={len(structure_by_hanzi)}, expected={EXPECTED_CHARACTER_COUNT}"
         )
 
     levels_by_hanzi: dict[str, set[int]] = defaultdict(set)
@@ -119,6 +150,10 @@ def main() -> None:
     characters = []
     for hanzi in expected_hanzi:
         source = source_by_hanzi[hanzi]
+        structure_source = structure_by_hanzi[hanzi]
+        decomposition = str(structure_source.get("decomposition", "")).strip()
+        if not decomposition:
+            raise SystemExit(f"Missing licensed structure decomposition for {hanzi}")
         radical_match = RADICAL_STROKE.match(str(source["kRSUnicode"]).split()[0])
         if not radical_match:
             raise SystemExit(f"Missing radical/stroke data for {hanzi}")
@@ -147,6 +182,10 @@ def main() -> None:
             "radicalNumber": radical_number,
             "residualStrokes": int(radical_match.group(2)),
             "strokes": int(strokes_match.group()),
+            "structure": classify_structure(decomposition),
+            "decomposition": decomposition,
+            "decompositionStatus": "unknown" if decomposition == "？" else "partial" if "？" in decomposition else "complete",
+            "structureSourceId": f"makemeahanzi:{structures['provenance']['commit']}:{ord(hanzi):04X}",
             "levels": sorted(levels_by_hanzi[hanzi]),
             "firstLevel": min(levels_by_hanzi[hanzi]),
             "wordCount": word_count_by_hanzi[hanzi],
@@ -156,9 +195,11 @@ def main() -> None:
 
     radical_counts: dict[int, int] = defaultdict(int)
     stroke_counts: dict[int, int] = defaultdict(int)
+    structure_counts: dict[str, int] = defaultdict(int)
     for character in characters:
         radical_counts[int(character["radicalNumber"])] += 1
         stroke_counts[int(character["strokes"])] += 1
+        structure_counts[str(character["structure"])] += 1
 
     radical_directory = []
     for number in range(1, 215):
@@ -179,6 +220,14 @@ def main() -> None:
             "license": "Unicode License v3",
             "archiveSha256": unihan["provenance"]["archiveSha256"],
             "catalogFallback": "CC-CEDICT · CC BY-SA 4.0",
+            "structure": {
+                "name": structures["provenance"]["name"],
+                "repository": structures["provenance"]["repository"],
+                "commit": structures["provenance"]["commit"],
+                "sourceSha256": structures["provenance"]["sourceSha256"],
+                "license": structures["provenance"]["license"],
+                "licenseFile": structures["provenance"]["licenseFile"],
+            },
             "radicalDirectory": {
                 "characterNames": f"Python unicodedata UCD {unicodedata.unidata_version}; KANGXI RADICAL names normalized to lowercase learner labels",
                 "strokeGrouping": "Unicode Kangxi Radicals chart canonical 1–17 stroke boundary table",
@@ -188,6 +237,10 @@ def main() -> None:
         "strokeDirectory": [
             {"strokes": strokes, "characterCount": count}
             for strokes, count in sorted(stroke_counts.items())
+        ],
+        "structureDirectory": [
+            {"structure": structure, "characterCount": count}
+            for structure, count in sorted(structure_counts.items())
         ],
         "characters": characters,
     }

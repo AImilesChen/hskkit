@@ -54,9 +54,11 @@ export default async function CharacterPage({ params }: Props) {
           <p className="mt-3 text-2xl font-bold text-blue-700">{item.pinyin.join(" · ")}</p>
           <h2 className="mt-3 text-xs font-bold uppercase tracking-[.14em] text-slate-500">Meaning</h2>
           <ul className="mt-2 space-y-2 text-lg leading-7 text-slate-900">{item.meanings.map((meaning) => <li key={meaning}>{meaning}</li>)}</ul>
-          <dl className="mt-5 grid grid-cols-2 gap-px overflow-hidden rounded-xl border border-slate-200 bg-slate-200 sm:grid-cols-4">
+          <dl className="mt-5 grid grid-cols-2 gap-px overflow-hidden rounded-xl border border-slate-200 bg-slate-200 sm:grid-cols-3">
             <div className="bg-slate-50 p-4"><dt className="text-xs font-bold uppercase tracking-wide text-slate-500">Radical</dt><dd className="mt-1 text-xl font-bold text-slate-950">{item.radical}</dd></div>
             <div className="bg-slate-50 p-4"><dt className="text-xs font-bold uppercase tracking-wide text-slate-500">Strokes</dt><dd className="mt-1 text-xl font-bold text-slate-950">{item.strokes}</dd></div>
+            <div className="bg-slate-50 p-4"><dt className="text-xs font-bold uppercase tracking-wide text-slate-500">Structure</dt><dd className="mt-1 text-base font-bold capitalize text-slate-950">{item.structure === "unknown" ? "Unavailable in source" : item.structure.replaceAll("-", " ")}</dd></div>
+            <div className="bg-slate-50 p-4"><dt className="text-xs font-bold uppercase tracking-wide text-slate-500">Decomposition</dt><dd className="mt-1 break-all text-base font-bold text-slate-950">{item.decompositionStatus === "unknown" ? "Unavailable in source" : item.decomposition}</dd>{item.decompositionStatus === "partial" ? <p className="mt-1 text-xs leading-5 text-amber-800">Source decomposition contains an unavailable component.</p> : null}</div>
             <div className="bg-slate-50 p-4"><dt className="text-xs font-bold uppercase tracking-wide text-slate-500">HSK words</dt><dd className="mt-1 text-xl font-bold text-slate-950">{item.wordCount}</dd></div>
             <div className="bg-slate-50 p-4"><dt className="text-xs font-bold uppercase tracking-wide text-slate-500">First level</dt><dd className="mt-1 text-xl font-bold text-slate-950">HSK {item.firstLevel >= 7 ? "7–9" : item.firstLevel}</dd></div>
           </dl>
