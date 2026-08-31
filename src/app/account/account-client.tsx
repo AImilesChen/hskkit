@@ -22,6 +22,18 @@ function syncDeviceId() {
   return created;
 }
 
+function referralProgress(item: any) {
+  if (item.status === "blocked") return "Not eligible";
+  if (item.risk_status !== "clear") return "Under review";
+  if (item.status === "paid") return "Reward issued";
+  if (item.status === "paid_pending") {
+    const availableAt = item.paid_at ? new Date(Date.parse(item.paid_at) + 7 * 86_400_000).toLocaleDateString() : "after the 7-day refund-risk window";
+    return `Paid reward pending · available ${availableAt}`;
+  }
+  if (item.status === "qualified") return "Reward issued · first paid reward not started";
+  return `${Math.min(Number(item.learning_days ?? 0), 3)}/3 learning days · ${Math.min(Number(item.learning_units ?? 0), 30)}/30 learning actions`;
+}
+
 export default function AccountClient() {
   const [view, setView] = useState<AccountView>();
   const [error, setError] = useState("");
@@ -117,6 +129,13 @@ export default function AccountClient() {
       <p className="mt-2 max-w-2xl">{subscription?.capabilities?.tier === "pro" ? "Your Focused Review, AI credits, higher-volume study and three-device sync are active now." : "Stripe accepted the test checkout. We are waiting for the signed webhook to activate the account entitlement; refresh this page shortly."}</p>
       {subscription?.capabilities?.tier === "pro" && <div className="mt-5 flex flex-wrap gap-3"><Link className="btn" href="/review">Start Focused Review</Link><Link className="btn secondary" href="/mistakes">Open AI Explanation</Link><Link className="btn secondary" href="/planner">Open Planner AI tips</Link></div>}
     </section>}
+    {view.account?.status === "active" && referrals?.access?.source === "trial" && <section className="mb-6 rounded-[24px] border border-blue-200 bg-blue-50 p-6 text-blue-950" role="status">
+      <p className="text-sm font-bold text-blue-800">WELCOME TRIAL ACTIVE</p>
+      <h2 className="mt-2 text-2xl font-extrabold">Your 7-day Pro trial is active</h2>
+      <p className="mt-2 max-w-2xl">{typeof aiQuota?.quota?.remaining === "number" && <><strong>{aiQuota.quota.remaining}</strong> trial AI credits available · </>}Pro study and review access enabled until {new Date(referrals.access.endsAt).toLocaleString()}.</p>
+      <p className="mt-2 text-sm font-semibold">No card stored · no automatic charge.</p>
+      <div className="mt-5 flex flex-wrap gap-3"><Link className="btn" href="/review">Start Focused Review</Link><Link className="btn secondary" href="/pricing#ai-value">See what AI credits can do</Link></div>
+    </section>}
 
     {!view.account ? <div className="mx-auto max-w-2xl">
       <section className="card account-form">
@@ -165,7 +184,7 @@ export default function AccountClient() {
         <div className="account-actions"><button className="btn" disabled={busy || !referrals?.sharePath} onClick={() => void act(async () => { await navigator.clipboard.writeText(`${window.location.origin}${referrals.sharePath}`); return {}; }, "Referral link copied.")}>Copy referral link</button></div>
         <p><strong>{referrals?.bonusCredits ?? 0} bonus AI credits</strong> available until the next reset on {referrals?.bonusExpiresAt ? new Date(referrals.bonusExpiresAt).toLocaleDateString() : "—"}.</p>
         <p className="account-note">Qualified learning reward: 50 bonus credits plus 3 Pro days when you do not already have paid Pro. First paid subscription reward: another 150 credits plus 14 Pro days after the 7-day refund-risk window. Paid subscribers receive credits only; Stripe billing dates never change. Annual caps: 600 credits and 60 promotional Pro days.</p>
-        {!!referrals?.referrals?.length && <ul>{referrals.referrals.map((item: any) => <li key={item.id}>{item.referred_name ?? "Friend"} · {item.status}{item.risk_status !== "clear" ? " · under review" : ""}</li>)}</ul>}
+        {!!referrals?.referrals?.length && <ul className="mt-4 grid gap-3">{referrals.referrals.map((item: any) => <li key={item.id} className="rounded-xl border border-slate-200 bg-slate-50 p-3"><strong>{item.referred_name ?? "Friend"}</strong><span className="mt-1 block text-sm text-slate-600">{referralProgress(item)}</span></li>)}</ul>}
       </section>
       <section className="card">
         <h2>Billing</h2>

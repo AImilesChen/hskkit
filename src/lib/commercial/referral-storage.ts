@@ -197,7 +197,7 @@ export async function trialAndReferralSummary(userId: string, now = new Date()) 
   const db = database();
   await reconcileReferralLearningMilestone(userId, now);
   const referralCode = await codeForUser(userId);
-  const relationshipQuery = "SELECT r.id,r.status,r.risk_status,r.created_at,r.qualified_at,r.paid_at,a.display_name referred_name FROM referral_relationships r JOIN accounts a ON a.user_id=r.referred_user_id WHERE r.referrer_user_id=? ORDER BY r.created_at DESC LIMIT 50";
+  const relationshipQuery = "SELECT r.id,r.status,r.risk_status,r.created_at,r.qualified_at,r.paid_at,a.display_name referred_name,COALESCE((SELECT COUNT(DISTINCT e.local_day) FROM referral_learning_events e WHERE e.relationship_id=r.id),0) learning_days,COALESCE((SELECT SUM(e.units) FROM referral_learning_events e WHERE e.relationship_id=r.id),0) learning_units FROM referral_relationships r JOIN accounts a ON a.user_id=r.referred_user_id WHERE r.referrer_user_id=? ORDER BY r.created_at DESC LIMIT 50";
   let relationshipRows = await db.prepare(relationshipQuery).bind(userId).all<any>();
   let reconciled = false;
   for (const relationship of relationshipRows.results as any[]) {
