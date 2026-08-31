@@ -6,9 +6,9 @@ import type { AiFeature, AiOutput } from "@/lib/ai/domain";
 
 type Quota = { allowance: number; used: number; reserved: number; remaining: number; resetAt: string };
 type Fallback = { charged: false; title: string; summary: string; links: Array<{ label: string; href: string }> };
-type Props = { feature: AiFeature; exerciseId?: string };
+type Props = { feature: AiFeature; exerciseId?: string; reviewCardId?: string };
 
-export default function AiAssist({ feature, exerciseId }: Props) {
+export default function AiAssist({ feature, exerciseId, reviewCardId }: Props) {
   const [quota, setQuota] = useState<Quota>();
   const [output, setOutput] = useState<AiOutput>();
   const [fallback, setFallback] = useState<Fallback>();
@@ -29,7 +29,7 @@ export default function AiAssist({ feature, exerciseId }: Props) {
     setBusy(true); setMessage(""); setFallback(undefined);
     const idempotencyKey = key.current ?? crypto.randomUUID(); key.current = idempotencyKey;
     try {
-      const response = await fetch("/api/v1/ai", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ feature, exerciseId, idempotencyKey }) });
+      const response = await fetch("/api/v1/ai", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ feature, exerciseId, reviewCardId, idempotencyKey }) });
       const payload = await response.json();
       if (response.status === 401 && payload.error === "AI_ACCOUNT_REQUIRED") {
         setAccountRequired(true); setMessage("Sign in to use bounded AI help. The standard learning path remains available and no quota was created."); return;

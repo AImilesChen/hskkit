@@ -60,6 +60,8 @@
     .learn .card, .learn .summary, .learn .state { padding: 20px; }
     .learn nav { flex-wrap: nowrap; overflow-x: auto; gap: 6px; }
     .learn nav a { flex: 0 0 auto; padding-inline: 10px; white-space: nowrap; }
+    .account-page nav { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); overflow: visible; }
+    .account-page nav a { min-width: 0; justify-content: center; }
   }
 
   /* Eyebrow */

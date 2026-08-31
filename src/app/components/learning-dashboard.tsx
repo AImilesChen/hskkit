@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import type { ReactNode } from "react";
+import AiAssist from "./ai-assist";
 import { buildIntentReviewQueue, buildReviewQueue, reviewEntryIntent, reviewGradeOptions, type ReviewEntryIntent, type ReviewGrade } from "../../lib/learning/review-session";
 
 type Dimension = "reading" | "audio" | "context_audio";
@@ -293,7 +294,7 @@ export default function LearningDashboard({ mode }: { mode: "today" | "review" |
       .sort((a, b) => Number(b.index === firstReviewIndex) - Number(a.index === firstReviewIndex));
     const firstPending = orderedTodayItems.findIndex(({ item }) => item.status === "pending");
     return <Shell title="Today" sub="Review → Learn → Listen/Practice → Summary">
-      <section className="card mb-4"><div className="flex flex-wrap items-end justify-between gap-3"><label>Today&apos;s time budget<select value={data.session.budgetMinutes ?? 30} onChange={(event) => void setBudget(Number(event.target.value))}>{[10, 15, 20, 30, 45, 60].map((minutes) => <option key={minutes} value={minutes}>{minutes} minutes</option>)}</select></label><p><strong>{data.session.totalEstimatedMinutes ?? 0} min planned</strong> · version today-v4</p></div>{data.capabilities.tier === "free" && <p className="account-note">Free daily usage: {data.usage.dailyNewItems}/{data.capabilities.dailyNewItems} new items · {data.usage.dailyReviewGrades}/{data.capabilities.dailyReviewGrades} successful SRS ratings. <Link href="/pricing">Compare Pro</Link></p>}</section>
+      <section className="card mb-4"><div className="flex flex-wrap items-end justify-between gap-3"><label>Today&apos;s time budget<select value={data.session.budgetMinutes ?? 30} onChange={(event) => void setBudget(Number(event.target.value))}>{[10, 15, 20, 30, 45, 60].map((minutes) => <option key={minutes} value={minutes}>{minutes} minutes</option>)}</select></label><p><strong>{data.session.totalEstimatedMinutes ?? 0} min planned</strong> · version today-v4</p></div>{data.capabilities.tier === "free" && <div className="account-note"><strong>Free remaining today:</strong> {Math.max(0, (data.capabilities.dailyNewItems ?? 0) - data.usage.dailyNewItems)} new items · {Math.max(0, (data.capabilities.dailyReviewGrades ?? 0) - data.usage.dailyReviewGrades)} successful SRS ratings. <Link href="/pricing">Pro removes the Free daily learning and review limits.</Link></div>}</section>
       {syncState !== "synced" && <div className={`step7-alert ${syncState === "failed" || syncState === "conflict" ? "error" : "warning"}`} role="status"><strong>Offline sync: {syncState.replaceAll("_", " ")}</strong><p>{syncState === "conflict" ? "Another device changed this learning record. The server copy was loaded; retry your pending action." : syncState === "failed" ? "Sync failed. Your pending action remains on this device." : "Your action is stored locally and will sync with the same operation key."}</p><button className="btn secondary" onClick={() => void retryPending()}>Retry sync</button></div>}
       {data.session.notice && <article className="mb-4 rounded-2xl bg-amber-50 p-5 text-amber-950" role="status"><span className="eyebrow">{data.session.notice.code.replaceAll("_", " ")}</span><h2>{data.session.notice.message}</h2><Link className="btn mt-3" href={data.session.notice.actionHref}>{data.session.notice.actionLabel}</Link></article>}
       <div className="grid gap-4">
@@ -334,6 +335,7 @@ export default function LearningDashboard({ mode }: { mode: "today" | "review" |
       <span className="eyebrow">{mistake.dimension.replace("_", " ")}</span>
       <h2>{mistake.prompt}</h2>
       <p>Added {new Date(mistake.createdAt).toLocaleDateString()}</p>
+      <p className="text-sm text-slate-600">AI explanation available after you retry and check your answer. A successful explanation uses 1 Pro credit.</p>
       <Link className="btn" href={`/review?source=mistakes&contentId=${encodeURIComponent(mistake.contentId)}${mistake.cardId ? `&cardId=${encodeURIComponent(mistake.cardId)}` : ""}`}>Retry this mistake</Link>
     </article>)}</div> : <State title="No open mistakes" text="Practice and listening mistakes will appear here automatically."><Link className="btn" href="/listen">Start listening</Link></State>}
     <Mastery values={data.mastery} scope={data.scope} />
@@ -343,6 +345,7 @@ export default function LearningDashboard({ mode }: { mode: "today" | "review" |
   const reviewPool = entryIntent.kind === "mistake" ? data.cards : due;
   const plannedCards = reviewIds ? reviewIds.map((id) => reviewPool.find((card) => card.id === id)).filter((card): card is Card => Boolean(card)) : [];
   const activeCard = plannedCards[0];
+  const activeFocusReason = data.focusedReview.find((card) => card.id === activeCard?.id)?.focusReason;
   const sessionTotal = reviewIds?.length ?? 0;
   const directEntryPreparing = !entryResolved || (entryIntent.kind !== "setup" && reviewIds === null);
   const directEntryEmpty = entryIntent.kind !== "setup" && reviewIds !== null && reviewIds.length === 0;
@@ -356,7 +359,7 @@ export default function LearningDashboard({ mode }: { mode: "today" | "review" |
       {directEntryPreparing && <State title="Preparing your review" text="Loading the review items from where you started." />}
       {!reviewIds && entryResolved && entryIntent.kind === "setup" && due.length > 0 && <div className="overflow-hidden rounded-[28px] border border-slate-200 bg-white shadow-[0_22px_60px_rgba(15,23,42,0.08)]">
         <div className="border-b border-slate-200 bg-slate-950 px-[24px] py-[24px] text-white sm:px-[32px] sm:py-[32px]">
-          <p className="text-sm font-semibold text-blue-300">Review setup</p>
+          <p className="text-sm font-semibold text-blue-300">{data.capabilities.focusedReview ? "Focused Review · Pro" : "Review setup"}</p>
           <h2 className="mt-2 text-3xl font-bold tracking-tight text-white sm:text-4xl">Choose a focused session</h2>
           <p className="mt-3 max-w-2xl text-slate-300">{due.length} item{due.length === 1 ? " is" : "s are"} due. Mistakes come first, followed by scheduled memory checks across reading and listening.</p>
         </div>
@@ -368,7 +371,7 @@ export default function LearningDashboard({ mode }: { mode: "today" | "review" |
             </div>
           </fieldset>
           <button className="mt-6 min-h-[48px] w-full rounded-xl bg-blue-600 px-5 py-3 font-bold text-white shadow-sm transition hover:bg-blue-700 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-blue-200" onClick={() => { setReviewIds(buildReviewQueue(due, reviewMinutes).map((card) => card.id)); setReviewedCount(0); }}>Start review</button>
-          {data.capabilities.tier === "free" && <p className="mt-4 text-sm text-slate-500">{data.usage.dailyReviewGrades} of {data.capabilities.dailyReviewGrades} daily reviews used. <Link className="font-semibold text-blue-700 underline-offset-4 hover:underline" href="/pricing">Compare Pro</Link></p>}
+          {data.capabilities.tier === "free" && <p className="mt-4 text-sm text-slate-500"><strong>Free remaining today:</strong> {Math.max(0, (data.capabilities.dailyReviewGrades ?? 0) - data.usage.dailyReviewGrades)} successful SRS ratings. <Link className="font-semibold text-blue-700 underline-offset-4 hover:underline" href="/pricing">Pro removes the Free daily learning and review limits and prioritizes unresolved mistakes.</Link></p>}
         </div>
       </div>}
 
@@ -381,7 +384,7 @@ export default function LearningDashboard({ mode }: { mode: "today" | "review" |
         <article className="overflow-hidden rounded-[28px] border border-slate-200 bg-white shadow-[0_22px_60px_rgba(15,23,42,0.08)]">
           <div className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-200 bg-slate-50 px-[24px] py-[16px] sm:px-[32px]">
             <p className="text-sm font-bold text-slate-700">{isMistakeRetry ? "Mistake retry" : "Memory review"} · {activeCard.level ? `HSK ${activeCard.levelBand}` : "Older saved item"} · {activeCard.skill}</p>
-            {activeCard.topic && <p className="text-sm text-slate-500">{activeCard.topic}</p>}
+            <div className="flex flex-wrap items-center gap-2">{data.capabilities.focusedReview && activeFocusReason && <span className="rounded-full bg-blue-100 px-3 py-1 text-xs font-bold text-blue-800">Focused Review · Pro · {activeFocusReason === "open_mistake" ? "Open mistake prioritized" : "Due memory prioritized"}</span>}{activeCard.topic && <p className="text-sm text-slate-500">{activeCard.topic}</p>}</div>
           </div>
           <div className="p-[24px] sm:p-[32px]">
             <div className="mb-6 border-l-4 border-blue-600 pl-4"><p className="text-xs font-bold uppercase tracking-[0.14em] text-blue-700">Why this is here</p><p className="mt-1 text-sm text-slate-600">{activeCard.reviewReason}</p></div>
@@ -414,6 +417,7 @@ export default function LearningDashboard({ mode }: { mode: "today" | "review" |
                 </div>}
                 {activeCard.formalAudioSrc && activeCard.formalAudioSrc !== activeCard.audioSrc && <div className="mt-4"><p className="mb-2 text-sm font-semibold text-slate-700">Formal recording</p><audio controls preload="none" src={activeCard.formalAudioSrc} className="max-w-full" /></div>}
               </section>}
+              {isMistakeRetry && answerChecked && <AiAssist feature="explanation" reviewCardId={activeCard.id} />}
               {isMistakeRetry && answerChecked ? <button disabled={reviewSaving} onClick={() => continueAfterRetry(activeCard)} className="mt-5 min-h-[48px] w-full rounded-xl bg-blue-600 px-5 py-3 font-bold text-white disabled:cursor-not-allowed disabled:opacity-50 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-blue-200">Continue</button> : <div className="mt-5"><p className="font-bold text-slate-950">How well did you remember it before revealing?</p><div className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-4">{reviewGradeOptions(activeCard.ease, activeCard.intervalDays).map((option) => <button disabled={reviewSaving} key={option.grade} onClick={() => void grade(activeCard, option.grade)} className="min-h-[76px] rounded-xl border border-slate-200 bg-white px-3 py-3 text-left transition hover:border-blue-500 hover:bg-blue-50 disabled:cursor-not-allowed disabled:opacity-50 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-blue-200"><strong className="block text-slate-950">{option.label}</strong><span className="mt-1 block text-xs text-slate-500">{option.hint}</span></button>)}</div></div>}
             </div>}
           </div>

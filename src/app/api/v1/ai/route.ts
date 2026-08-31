@@ -6,7 +6,8 @@ import { callAiProvider, providerConfig } from "@/lib/ai/provider";
 import { readBoundedJsonObject } from "@/lib/ai/request";
 import { finalizeFailure, finalizeSuccess, quotaView, reserveOperation } from "@/lib/ai/storage";
 import { loadState } from "@/lib/learning/storage";
-import { trustedStep7Exercise } from "@/lib/learning/step7-content";
+import { trustedStep7Exercise, type Step7Exercise } from "@/lib/learning/step7-content";
+import { reviewSnapshotForAttempt } from "@/lib/learning/review-content";
 import { latestPlan } from "@/lib/planner/storage";
 import { resolveCapabilities } from "@/lib/commercial/storage";
 
@@ -29,6 +30,26 @@ const normalizedFailure = (error: unknown) => {
   const code = error instanceof Error ? error.message : "AI_PROVIDER_UNAVAILABLE";
   return ["AI_PROVIDER_UNAVAILABLE", "AI_PROVIDER_TIMEOUT", "AI_PROVIDER_RATE_LIMITED", "AI_PROVIDER_INVALID_RESPONSE", "AI_OUTPUT_INVALID", "AI_OUTPUT_UNSAFE", "AI_PROVIDER_CONFIG_INVALID"].includes(code) ? code : "AI_PROVIDER_UNAVAILABLE";
 };
+
+function trustedReviewExplanation(state: Awaited<ReturnType<typeof loadState>>["state"], reviewCardId: string) {
+  const card = state.cards.find((item) => item.id === reviewCardId);
+  if (!card) return { error: "REVIEW_CARD_NOT_FOUND" as const };
+  if (!card.gradeKeys.length) return { error: "REVIEW_EXPLANATION_REQUIRES_FEEDBACK" as const };
+  const attempt = state.attempts.find((item) => item.id === card.sourceAttemptId);
+  const snapshot = attempt ? reviewSnapshotForAttempt(attempt) : undefined;
+  if (!attempt || !snapshot) return { error: "REVIEW_EXPLANATION_UNAVAILABLE" as const };
+  const exercise: Step7Exercise = {
+    id: `review:${card.id}`,
+    contentId: attempt.contentId,
+    contentVersion: attempt.contentVersion,
+    kind: snapshot.skillLabel === "Grammar" ? "grammar" : snapshot.skillLabel === "Listening" ? "discrimination" : "reading",
+    prompt: snapshot.prompt,
+    options: snapshot.options,
+    correctAnswer: snapshot.correctAnswer,
+    explanation: snapshot.explanation,
+  };
+  return { exercise, answer: attempt.answer, anchor: `${card.id}:${card.revision}:${attempt.id}` };
+}
 
 export async function GET() {
   const identity = await owner();
@@ -63,14 +84,23 @@ export async function POST(req: NextRequest) {
   let anchor: string;
   if (feature === "explanation") {
     const exerciseId = safeId(body.exerciseId);
-    const exercise = exerciseId ? trustedStep7Exercise(exerciseId) : undefined;
-    if (!exercise) return response({ error: "EXERCISE_NOT_FOUND" }, identity, 404);
+    const reviewCardId = safeId(body.reviewCardId);
     const learning = await loadState(identity.id);
-    const attempt = [...learning.state.attempts].reverse().find((item) => item.contentId === exercise.contentId && item.contentVersion === exercise.contentVersion);
-    if (!attempt) return response({ error: "EXPLANATION_REQUIRES_ATTEMPT", fallback: nonAiExplanation(exercise) }, identity, 409);
-    prompt = buildExplanationPrompt(exercise, attempt.answer);
-    fallback = nonAiExplanation(exercise);
-    anchor = `${exercise.id}:${exercise.contentVersion}:${attempt.id}`;
+    if (reviewCardId) {
+      const trusted = trustedReviewExplanation(learning.state, reviewCardId);
+      if ("error" in trusted) return response({ error: trusted.error, charged: false }, identity, trusted.error === "REVIEW_CARD_NOT_FOUND" ? 404 : 409);
+      prompt = buildExplanationPrompt(trusted.exercise, trusted.answer);
+      fallback = nonAiExplanation(trusted.exercise);
+      anchor = trusted.anchor;
+    } else {
+      const exercise = exerciseId ? trustedStep7Exercise(exerciseId) : undefined;
+      if (!exercise) return response({ error: "EXERCISE_NOT_FOUND" }, identity, 404);
+      const attempt = [...learning.state.attempts].reverse().find((item) => item.contentId === exercise.contentId && item.contentVersion === exercise.contentVersion);
+      if (!attempt) return response({ error: "EXPLANATION_REQUIRES_ATTEMPT", fallback: nonAiExplanation(exercise) }, identity, 409);
+      prompt = buildExplanationPrompt(exercise, attempt.answer);
+      fallback = nonAiExplanation(exercise);
+      anchor = `${exercise.id}:${exercise.contentVersion}:${attempt.id}`;
+    }
   } else {
     const plan = await latestPlan(identity.id);
     if (!plan) return response({ error: "STUDY_PLAN_REQUIRED", fallback: nonAiStudyPlan() }, identity, 409);

@@ -33,6 +33,7 @@ export default function AccountClient() {
   const [aiQuota, setAiQuota] = useState<any>();
   const [busy, setBusy] = useState(false);
   const [timezone, setTimezone] = useState("UTC");
+  const [checkoutSuccess, setCheckoutSuccess] = useState(false);
 
   const refresh = async () => {
     try {
@@ -48,7 +49,11 @@ export default function AccountClient() {
       }
     } catch (cause) { setError(cause instanceof Error ? cause.message : "LOAD_FAILED"); }
   };
-  useEffect(() => { setTimezone(Intl.DateTimeFormat().resolvedOptions().timeZone || "UTC"); void refresh(); }, []);
+  useEffect(() => {
+    setTimezone(Intl.DateTimeFormat().resolvedOptions().timeZone || "UTC");
+    setCheckoutSuccess(new URLSearchParams(window.location.search).get("checkout") === "success"); // checkout=success onboarding
+    void refresh();
+  }, []);
 
   const act = async (run: () => Promise<any>, success: string) => {
     setBusy(true); setError(""); setMessage("");
@@ -98,6 +103,12 @@ export default function AccountClient() {
   return <>
     {error && <div className="account-alert error" role="alert"><strong>Could not complete that action.</strong><span>{error}</span><button onClick={() => void refresh()}>Retry</button></div>}
     {message && <div className="account-alert success" role="status">{message}</div>}
+    {checkoutSuccess && view.account?.status === "active" && <section className="mb-6 rounded-[24px] border border-emerald-200 bg-emerald-50 p-6 text-emerald-950" role="status">
+      <p className="text-sm font-bold text-emerald-800">CHECKOUT COMPLETE</p>
+      <h2 className="mt-2 text-2xl font-extrabold">{subscription?.capabilities?.tier === "pro" ? "Pro is ready" : "Activating Pro…"}</h2>
+      <p className="mt-2 max-w-2xl">{subscription?.capabilities?.tier === "pro" ? "Your Focused Review, AI credits, higher-volume study and three-device sync are active now." : "Stripe accepted the test checkout. We are waiting for the signed webhook to activate the account entitlement; refresh this page shortly."}</p>
+      {subscription?.capabilities?.tier === "pro" && <div className="mt-5 flex flex-wrap gap-3"><Link className="btn" href="/review">Start Focused Review</Link><Link className="btn secondary" href="/mistakes">Open AI Explanation</Link><Link className="btn secondary" href="/planner">Open Planner AI tips</Link></div>}
+    </section>}
 
     {!view.account ? <div className="mx-auto max-w-2xl">
       <section className="card account-form">
@@ -127,8 +138,11 @@ export default function AccountClient() {
         <h2>Learning access</h2>
         <p><strong>{subscription?.capabilities?.tier === "pro" ? "Pro" : "Free"}</strong></p>
         {subscription?.capabilities?.tier === "pro" ? <>
+          <p className="inline-flex rounded-full bg-blue-50 px-3 py-1 text-sm font-bold text-blue-800">Pro benefit dashboard</p>
           <p>Study without the Free daily limits · Focused Review enabled · long-term history.</p>
-          <p>500 AI credits refresh monthly. <strong>{aiQuota?.quota?.remaining ?? 0}</strong> remaining in this period.</p>
+          <p><strong>{aiQuota?.quota?.used ?? 0} credits used</strong> · {aiQuota?.quota?.remaining ?? 0} of 500 AI credits remaining this period.</p>
+          <div className="account-actions"><Link className="btn" href="/review">Start Focused Review</Link><Link className="btn secondary" href="/mistakes">Open AI Explanation</Link><Link className="btn secondary" href="/planner">Open Planner AI tips</Link></div>
+          <p className="account-note">AI explanations cost 1 credit after a successful response. Saved-plan suggestions cost 5. Failed responses do not use credits.</p>
         </> : <>
           <p>Daily limits: {subscription?.capabilities?.dailyNewItems ?? 10} new items and {subscription?.capabilities?.dailyReviewGrades ?? 20} successful SRS ratings.</p>
           <p>Focused Review and AI credits unlock with Pro.</p>
