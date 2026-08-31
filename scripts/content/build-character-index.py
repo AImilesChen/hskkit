@@ -1,0 +1,153 @@
+#!/usr/bin/env python3
+"""Build the learner-facing HSK character index from frozen, licensed sources."""
+from __future__ import annotations
+
+import gzip
+import json
+import re
+import unicodedata
+from collections import defaultdict
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parents[2]
+CATALOG = ROOT / "src/lib/content/catalog.json"
+UNIHAN = ROOT / "content/sources/unihan-17.0-hsk-characters.json"
+CEDICT = ROOT / "content/sources/cc-cedict-e0d756cb.txt.gz"
+OUTPUT = ROOT / "src/lib/dictionary/character-index.json"
+EXPECTED_CHARACTER_COUNT = 2971
+EXPECTED_RELEASE_ID = "hsk3-content-truth-v5"
+HAN = re.compile(r"[\u3400-\u9fff]")
+VARIANT = re.compile(r"U\+([0-9A-F]{4,6})")
+RADICAL_STROKE = re.compile(r"^(\d+)'?\.(-?\d+)")
+
+
+def active_words(repository: dict) -> tuple[str, list[dict]]:
+    release_id = repository["activeReleaseByStandard"]["hsk3"]
+    release = next(item for item in repository["releases"] if item["id"] == release_id)
+    active_ids = set(release["contentAssetIds"])
+    words = [
+        asset for asset in repository["contentAssets"]
+        if asset["id"] in active_ids
+        and asset["kind"] == "word"
+        and asset.get("qa_status") == "approved"
+        and asset.get("publish_status") == "published"
+        and asset.get("authorization", {}).get("status") == "authorized"
+    ]
+    return release_id, words
+
+
+def cedict_single_characters() -> dict[str, dict[str, object]]:
+    result: dict[str, dict[str, object]] = {}
+    with gzip.open(CEDICT, "rt", encoding="utf-8") as source:
+        for line in source:
+            if not line or line.startswith("#"):
+                continue
+            match = re.match(r"(\S+) (\S+) \[([^]]+)] /(.+)/$", line.rstrip())
+            if not match:
+                continue
+            traditional, simplified, pinyin, definitions = match.groups()
+            if len(simplified) != 1 or not HAN.fullmatch(simplified):
+                continue
+            meanings = [value.strip() for value in definitions.split("/") if value.strip() and not value.startswith("variant of ")]
+            if meanings and simplified not in result:
+                result[simplified] = {
+                    "traditional": traditional,
+                    "pinyin": pinyin,
+                    "meanings": meanings,
+                }
+    return result
+
+
+def first_variant(value: str, hanzi: str) -> str | None:
+    for codepoint in VARIANT.findall(value):
+        candidate = chr(int(codepoint, 16))
+        if candidate != hanzi:
+            return candidate
+    return None
+
+
+def main() -> None:
+    repository = json.loads(CATALOG.read_text(encoding="utf-8"))
+    unihan = json.loads(UNIHAN.read_text(encoding="utf-8"))
+    release_id, words = active_words(repository)
+    if release_id != EXPECTED_RELEASE_ID:
+        raise SystemExit(f"Unapproved active release drift: {release_id}")
+
+    source_by_hanzi = {item["hanzi"]: item for item in unihan["records"]}
+    expected_hanzi = sorted({character for word in words for character in str(word["payload"].get("hanzi", "")) if HAN.fullmatch(character)})
+    if len(expected_hanzi) != EXPECTED_CHARACTER_COUNT or set(expected_hanzi) != set(source_by_hanzi):
+        raise SystemExit(
+            f"Unapproved HSK character count drift: catalog={len(expected_hanzi)}, source={len(source_by_hanzi)}, expected={EXPECTED_CHARACTER_COUNT}"
+        )
+
+    levels_by_hanzi: dict[str, set[int]] = defaultdict(set)
+    word_count_by_hanzi: dict[str, int] = defaultdict(int)
+    readings_by_hanzi: dict[str, set[str]] = defaultdict(set)
+    for word in words:
+        hanzi = [character for character in str(word["payload"].get("hanzi", "")) if HAN.fullmatch(character)]
+        level = int(word["level"])
+        visible_levels = {7, 8, 9} if level >= 7 else {level}
+        for character in set(hanzi):
+            levels_by_hanzi[character].update(visible_levels)
+            word_count_by_hanzi[character] += 1
+        syllables = [value for value in re.split(r"\s+", str(word["payload"].get("pinyin", "")).strip()) if value]
+        if len(syllables) == len(hanzi):
+            for character, syllable in zip(hanzi, syllables):
+                readings_by_hanzi[character].add(syllable.lower())
+
+    cedict = cedict_single_characters()
+    characters = []
+    for hanzi in expected_hanzi:
+        source = source_by_hanzi[hanzi]
+        radical_match = RADICAL_STROKE.match(str(source["kRSUnicode"]).split()[0])
+        if not radical_match:
+            raise SystemExit(f"Missing radical/stroke data for {hanzi}")
+        radical_number = int(radical_match.group(1))
+        radical = unicodedata.normalize("NFKC", chr(0x2F00 + radical_number - 1))
+        strokes_match = re.search(r"\d+", str(source["kTotalStrokes"]))
+        if not strokes_match:
+            raise SystemExit(f"Missing total strokes for {hanzi}")
+        primary_pinyin = str(source.get("kMandarin") or cedict.get(hanzi, {}).get("pinyin") or "").strip().lower()
+        pinyin = [primary_pinyin] if primary_pinyin else []
+        pinyin.extend(sorted(readings_by_hanzi[hanzi] - set(pinyin)))
+        if not pinyin:
+            raise SystemExit(f"Missing Mandarin reading for {hanzi}")
+        definition = str(source.get("kDefinition") or "").strip()
+        fallback_meanings = cedict.get(hanzi, {}).get("meanings", [])
+        meanings = [definition] if definition else [str(item) for item in fallback_meanings][:3] if isinstance(fallback_meanings, list) else []
+        if not meanings:
+            raise SystemExit(f"Missing licensed definition for {hanzi}")
+        traditional = first_variant(str(source.get("kTraditionalVariant", "")), hanzi)
+        simplified = first_variant(str(source.get("kSimplifiedVariant", "")), hanzi)
+        characters.append({
+            "hanzi": hanzi,
+            "pinyin": pinyin,
+            "meanings": meanings,
+            "radical": radical,
+            "radicalNumber": radical_number,
+            "residualStrokes": int(radical_match.group(2)),
+            "strokes": int(strokes_match.group()),
+            "levels": sorted(levels_by_hanzi[hanzi]),
+            "firstLevel": min(levels_by_hanzi[hanzi]),
+            "wordCount": word_count_by_hanzi[hanzi],
+            **({"traditional": traditional} if traditional else {}),
+            **({"simplified": simplified} if simplified else {}),
+        })
+
+    payload = {
+        "releaseId": release_id,
+        "characterCount": len(characters),
+        "source": {
+            "name": "Unicode Unihan 17.0.0",
+            "license": "Unicode License v3",
+            "archiveSha256": unihan["provenance"]["archiveSha256"],
+            "catalogFallback": "CC-CEDICT · CC BY-SA 4.0",
+        },
+        "characters": characters,
+    }
+    OUTPUT.write_text(json.dumps(payload, ensure_ascii=False, separators=(",", ":")) + "\n", encoding="utf-8")
+    print(json.dumps({"output": str(OUTPUT), "releaseId": release_id, "characters": len(characters)}, ensure_ascii=False))
+
+
+if __name__ == "__main__":
+    main()

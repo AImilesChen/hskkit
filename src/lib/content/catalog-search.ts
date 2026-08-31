@@ -223,6 +223,25 @@ export async function findActiveCatalogWordById(
   ).bind(assetId).first<CatalogSearchRow>();
 }
 
+export async function findActiveCatalogWordsContainingCharacter(
+  db: CatalogSearchDatabase,
+  hanzi: string,
+  limit = 30,
+): Promise<CatalogSearchRow[]> {
+  if (!/^[\u3400-\u9fff]$/u.test(hanzi)) return [];
+  const boundedLimit = Math.max(1, Math.min(60, Math.trunc(limit)));
+  const result = await db.prepare(
+    `SELECT i.id,i.release_id,i.standard_version,i.content_version,i.level_band,i.hanzi,i.traditional,i.pinyin,i.meaning,i.part_of_speech
+     FROM catalog_search_index i
+     INNER JOIN catalog_search_releases r ON r.id = i.release_id
+     WHERE r.active = 1 AND instr(i.hanzi, ?) > 0
+     ORDER BY i.sort_level,i.id
+     LIMIT ?`,
+  ).bind(hanzi, boundedLimit).all<CatalogSearchRow>();
+  if (!result.success) throw new Error(result.error || "Character word lookup failed");
+  return result.results;
+}
+
 interface CatalogLearningRow extends CatalogSearchRow {
   search_pinyin: string;
   sort_level: number;

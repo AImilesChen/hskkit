@@ -51,24 +51,24 @@ test("no-result suggestions correct spelling and offer real alternatives", async
   assert.ok(suggestions.length <= 4);
 });
 
-test("dictionary UI exposes beginner browse modes, formal audio and desktop quick preview", () => {
+test("dictionary UI exposes full character browse modes, formal audio and whole-row results", () => {
   const page = read("src/app/dictionary/page.tsx");
   const client = read("src/app/components/dictionary-search.tsx");
-  assert.match(page, /Browse by character shape or sound/);
-  assert.match(client, /Radical/);
-  assert.match(client, /Stroke count/);
+  assert.match(page, /2,971 HSK characters/);
+  assert.match(client, /Browse by radical/);
+  assert.match(client, /Browse by stroke count/);
   assert.match(client, /Initial/);
   assert.match(client, /Final/);
   assert.match(client, /Tone/);
   assert.match(client, /Formal audio only/);
-  assert.match(client, /Quick preview/);
+  assert.doesNotMatch(client, /Quick preview/);
+  assert.match(client, /data-dictionary-word-link/);
   assert.match(client, /No exact matches/);
   assert.match(client, /Did you mean|Try these words/);
   assert.match(client, /formalAudioUrl/);
   assert.match(client, /src=\{word\.formalAudioUrl\}/);
-  assert.match(client, /aria-pressed=\{previewId === word\.id\}/);
   assert.match(client, /aria-live="polite"/);
-  assert.match(client, /character guides currently available/);
+  assert.match(client, /2,971 characters/);
 });
 
 test("dictionary preserves formal-audio and character facet URL state", () => {
@@ -104,9 +104,10 @@ test("catalog-wide spelling suggestions are bounded and use active catalog candi
 test("character and word pages render P1 learning content", () => {
   const characterPage = read("src/app/character/[hanzi]/page.tsx");
   const wordPage = read("src/app/word/[slug]/page.tsx");
-  assert.match(characterPage, /Character structure/);
-  assert.match(characterPage, /Why this radical/);
-  assert.match(characterPage, /Common words/);
+  assert.match(characterPage, /Same radical/);
+  assert.match(characterPage, /Published words containing/);
+  assert.match(characterPage, /Same pinyin/);
+  assert.doesNotMatch(characterPage, /Stroke order/);
   assert.match(wordPage, /Common collocations/);
   assert.match(wordPage, /More real examples/);
 });

@@ -37,5 +37,5 @@ export function AudioButton({ text, src, label }: { text: string; src?: string; 
   }
 
   const unavailable = supported === false;
-  return <button type="button" onClick={play} disabled={supported !== true || playing} aria-label={unavailable ? "Audio unavailable in this browser" : resolvedLabel} className="inline-flex min-h-11 items-center justify-center gap-2 rounded-lg border border-blue-600 bg-white px-4 py-2 text-sm font-semibold text-blue-600 transition hover:bg-blue-50 disabled:cursor-not-allowed disabled:border-slate-300 disabled:text-slate-400"><span aria-hidden="true">{playing ? "◼" : unavailable ? "🔇" : "▶"}</span>{playing ? "Playing…" : unavailable ? "Audio unavailable" : resolvedLabel}</button>;
+  return <button type="button" onClick={play} disabled={supported !== true || playing} aria-label={unavailable ? "Audio unavailable in this browser" : resolvedLabel} className="inline-flex min-h-11 items-center justify-center gap-2 rounded-lg border border-blue-600 bg-white px-4 py-2 text-sm font-semibold text-blue-600 transition hover:bg-blue-50 disabled:cursor-not-allowed disabled:border-slate-300 disabled:text-slate-400">{playing ? "Playing…" : unavailable ? "Audio unavailable" : resolvedLabel}</button>;
 }

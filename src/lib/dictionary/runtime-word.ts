@@ -4,6 +4,11 @@ import { findActiveCatalogWordById, isCatalogWordAssetId } from "../content/cata
 import { formalWordAudioUrlByContentId } from "../content/level-status.ts";
 import { getWordBySlug, type LookupResult, type StudyWord } from "./catalog.ts";
 
+export function splitDictionaryMeanings(meaning: string): string[] {
+  const values = meaning.split(/\s*;\s*|\s*\/\s*/).map((value) => value.trim()).filter(Boolean);
+  return values.length ? values : [meaning];
+}
+
 export const getPublishedWordBySlug = cache(async (slug: string): Promise<LookupResult<StudyWord>> => {
   const local = getWordBySlug(slug);
   if (local.status === "published") return local;

@@ -3,38 +3,74 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { AudioButton } from "../../components/audio-button";
 import { StudyPage } from "../../components/study-shell";
-import { getCharacterByHanzi, relatedWordsForCharacter, STUDY_CHARACTERS } from "@/lib/dictionary/catalog";
+import { getIndexedCharacter } from "@/lib/dictionary/character-index";
+import { getPublishedCharacterByHanzi } from "@/lib/dictionary/runtime-character";
 
 type Props = { params: Promise<{ hanzi: string }> };
-const structureLabels = { "left-right": "Left–right", "top-bottom": "Top–bottom", enclosure: "Enclosure", "single-component": "Single component", "three-part": "Three-part" } as const;
 function clean(value: string) { try { return decodeURIComponent(value); } catch { return value; } }
-export function generateStaticParams() { return STUDY_CHARACTERS.filter((item) => item.releaseStatus === "published").map((item) => ({ hanzi: item.hanzi })); }
+export const dynamic = "force-dynamic";
+
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const hanzi = clean((await params).hanzi);
-  const result = getCharacterByHanzi(hanzi);
-  if (result.status !== "published") return { title: "Character unavailable — HSKKit", robots: { index: false, follow: false } };
-  const item = result.item;
-  return { title: `${item.hanzi} Meaning, Pinyin and Structure — HSKKit`, description: `Explore ${item.hanzi}: ${item.pinyin.join(", ")}, ${item.meanings.join("; ")}, structure, radical, strokes, and common words.`, alternates: { canonical: `/character/${encodeURIComponent(item.hanzi)}` } };
+  const item = getIndexedCharacter(hanzi);
+  if (!item) return { title: "Character unavailable — HSKKit", robots: { index: false, follow: false } };
+  return {
+    title: `${item.hanzi} Meaning, Pinyin, Radical and Strokes — HSKKit`,
+    description: `${item.hanzi}: ${item.pinyin.join(", ")}; ${item.meanings.join("; ")}. Browse its radical, ${item.strokes}-stroke details and HSK words.`,
+    alternates: { canonical: `/character/${encodeURIComponent(item.hanzi)}` },
+  };
+}
+
+function CharacterLinks({ items }: { items: Array<{ hanzi: string; pinyin: string[]; meanings: string[]; firstLevel: number }> }) {
+  return <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-4">{items.map((item) => <Link key={item.hanzi} href={`/character/${encodeURIComponent(item.hanzi)}`} className="group min-w-0 rounded-xl border border-slate-200 bg-white px-3 py-3 transition hover:border-blue-400 hover:bg-blue-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600">
+    <span className="flex items-baseline gap-2"><strong className="text-2xl text-slate-950">{item.hanzi}</strong><span className="truncate text-sm font-semibold text-blue-700">{item.pinyin[0]}</span></span>
+    <span className="mt-1 block truncate text-xs text-slate-600">HSK {item.firstLevel} · {item.meanings[0]}</span>
+  </Link>)}</div>;
 }
 
 export default async function CharacterPage({ params }: Props) {
   const hanzi = clean((await params).hanzi);
-  const result = getCharacterByHanzi(hanzi);
+  const result = await getPublishedCharacterByHanzi(hanzi);
   if (result.status !== "published") notFound();
   const item = result.item;
-  const related = relatedWordsForCharacter(item);
+  const levels = item.levels.filter((level) => level <= 6);
+  const advanced = item.levels.some((level) => level >= 7);
   const schema = { "@context": "https://schema.org", "@type": "DefinedTerm", name: item.hanzi, description: item.meanings.join("; "), url: `https://hskkit.com/character/${encodeURIComponent(item.hanzi)}` };
-  return <StudyPage><main className="mx-auto w-full max-w-[960px] flex-1 px-5 py-10 md:px-16 md:py-16">
+
+  return <StudyPage><main className="mx-auto w-full max-w-[1120px] flex-1 px-4 py-5 sm:px-6 md:py-8 lg:px-10">
     <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }} />
-    <nav className="mb-6 flex flex-wrap items-center gap-2 text-sm text-slate-500" aria-label="Breadcrumb"><Link href="/dictionary" className="inline-flex min-h-11 items-center hover:text-blue-600">Dictionary</Link><span>/</span><span>{item.hanzi}</span></nav>
-    <article className="grid gap-6 rounded-2xl border border-slate-200 bg-white p-6 md:grid-cols-[240px_1fr] md:p-10">
-      <div className="flex min-h-60 flex-col items-center justify-center rounded-2xl border border-blue-100 bg-blue-50"><h1 className="text-8xl font-bold text-slate-900">{item.hanzi}</h1><div className="mt-5"><AudioButton text={item.hanzi} /></div></div>
-      <div><span className="rounded-full bg-blue-50 px-3 py-1 text-xs font-bold text-blue-700">HSK Level {item.level}</span><h2 className="mt-5 text-3xl font-bold">Pronunciation and meaning</h2><p className="mt-4 text-2xl text-blue-600">{item.pinyin.join(" · ")}</p><ul className="mt-4 list-inside list-disc text-lg text-slate-700">{item.meanings.map((meaning) => <li key={meaning}>{meaning}</li>)}</ul>
-        <div className="mt-8 grid gap-4 sm:grid-cols-3"><div className="rounded-xl bg-slate-50 p-4"><p className="text-xs font-bold uppercase tracking-wide text-slate-500">Radical</p><p className="mt-2 text-lg font-semibold">{item.radical}</p></div><div className="rounded-xl bg-slate-50 p-4"><p className="text-xs font-bold uppercase tracking-wide text-slate-500">Strokes</p><p className="mt-2 text-lg font-semibold">{item.strokes}</p></div><div className="rounded-xl bg-slate-50 p-4"><p className="text-xs font-bold uppercase tracking-wide text-slate-500">Character structure</p><p className="mt-2 text-lg font-semibold">{structureLabels[item.structure]}</p></div></div>
+    <nav className="mb-3 flex flex-wrap items-center gap-2 text-sm text-slate-500" aria-label="Breadcrumb"><Link href="/dictionary?mode=characters" className="inline-flex min-h-11 items-center font-semibold hover:text-blue-700">Dictionary</Link><span aria-hidden="true">/</span><span>{item.hanzi}</span></nav>
+
+    <article className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-[0_18px_50px_-38px_rgba(15,23,42,.5)]">
+      <div className="grid md:grid-cols-[300px_minmax(0,1fr)]">
+        <div className="flex min-h-[200px] flex-col items-center justify-center bg-slate-950 px-6 py-6 text-white md:min-h-[360px] md:py-8">
+          <h1 className="text-7xl font-bold leading-none text-white md:text-8xl">{item.hanzi}</h1>
+          {item.traditional ? <p className="mt-3 text-sm text-slate-300">Traditional <strong className="ml-2 text-xl text-white">{item.traditional}</strong></p> : null}
+          {item.simplified ? <p className="mt-4 text-sm text-slate-300">Simplified <strong className="ml-2 text-xl text-white">{item.simplified}</strong></p> : null}
+          <div className="mt-3"><AudioButton text={item.hanzi} label="Play browser voice preview" /></div>
+        </div>
+        <div className="p-4 sm:p-8">
+          <div className="flex flex-wrap gap-2">{levels.map((level) => <Link key={level} href={`/dictionary?mode=characters&level=${level}`} className="inline-flex min-h-11 items-center rounded-full bg-blue-50 px-3 text-xs font-bold text-blue-700">HSK {level}</Link>)}{advanced ? <Link href="/dictionary?mode=characters&level=7" className="inline-flex min-h-11 items-center rounded-full bg-blue-50 px-3 text-xs font-bold text-blue-700">HSK 7–9</Link> : null}</div>
+          <p className="mt-3 text-2xl font-bold text-blue-700">{item.pinyin.join(" · ")}</p>
+          <h2 className="mt-3 text-xs font-bold uppercase tracking-[.14em] text-slate-500">Meaning</h2>
+          <ul className="mt-2 space-y-2 text-lg leading-7 text-slate-900">{item.meanings.map((meaning) => <li key={meaning}>{meaning}</li>)}</ul>
+          <dl className="mt-5 grid grid-cols-2 gap-px overflow-hidden rounded-xl border border-slate-200 bg-slate-200 sm:grid-cols-4">
+            <div className="bg-slate-50 p-4"><dt className="text-xs font-bold uppercase tracking-wide text-slate-500">Radical</dt><dd className="mt-1 text-xl font-bold text-slate-950">{item.radical}</dd></div>
+            <div className="bg-slate-50 p-4"><dt className="text-xs font-bold uppercase tracking-wide text-slate-500">Strokes</dt><dd className="mt-1 text-xl font-bold text-slate-950">{item.strokes}</dd></div>
+            <div className="bg-slate-50 p-4"><dt className="text-xs font-bold uppercase tracking-wide text-slate-500">HSK words</dt><dd className="mt-1 text-xl font-bold text-slate-950">{item.wordCount}</dd></div>
+            <div className="bg-slate-50 p-4"><dt className="text-xs font-bold uppercase tracking-wide text-slate-500">First level</dt><dd className="mt-1 text-xl font-bold text-slate-950">HSK {item.firstLevel >= 7 ? "7–9" : item.firstLevel}</dd></div>
+          </dl>
+        </div>
       </div>
     </article>
-    <section className="mt-8 rounded-2xl border border-slate-200 bg-white p-6 md:p-8" aria-labelledby="radical-explanation"><p className="text-xs font-bold uppercase tracking-[.14em] text-blue-700">Why this radical</p><h2 id="radical-explanation" className="mt-2 text-2xl font-bold text-slate-950">Find {item.hanzi} under {item.radical}</h2><p className="mt-3 leading-7 text-slate-700">{item.radicalExplanation}</p><Link href={`/dictionary?radical=${encodeURIComponent(item.radical)}`} className="mt-4 inline-flex min-h-11 items-center font-bold text-blue-700 hover:underline">Browse this radical →</Link></section>
-    <section className="mt-8" aria-labelledby="common-words"><h2 id="common-words" className="text-2xl font-bold text-slate-950">Common words with {item.hanzi}</h2><div className="mt-4 grid gap-4 md:grid-cols-2">{related.map((word) => <Link key={word.slug} href={`/word/${word.slug}`} className="rounded-xl border border-slate-200 bg-white p-5 hover:border-blue-300"><div className="flex items-baseline gap-3"><strong className="text-2xl">{word.hanzi}</strong><span className="text-blue-600">{word.pinyin}</span></div><p className="mt-2 text-slate-600">{word.meaning}</p></Link>)}</div></section>
-    <div className="mt-10 flex flex-wrap gap-3"><Link href={`/dictionary?q=${encodeURIComponent(item.hanzi)}`} className="inline-flex min-h-11 items-center rounded-lg bg-blue-600 px-5 font-semibold text-white hover:bg-blue-700">Find words with {item.hanzi}</Link><Link href={`/vocabulary/${item.level}`} className="inline-flex min-h-11 items-center rounded-lg border border-blue-600 px-5 font-semibold text-blue-700 hover:bg-blue-50">Open HSK {item.level} vocabulary</Link></div>
+
+    <section className="mt-7" aria-labelledby="containing-words"><div className="flex flex-wrap items-end justify-between gap-3"><div><p className="text-xs font-bold uppercase tracking-[.14em] text-blue-700">Vocabulary connection</p><h2 id="containing-words" className="mt-1 text-2xl font-bold text-slate-950">Published words containing {item.hanzi}</h2></div><Link href={`/dictionary?q=${encodeURIComponent(item.hanzi)}&mode=words`} className="inline-flex min-h-11 items-center font-bold text-blue-700 hover:underline">See all results →</Link></div>
+      <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">{item.wordsContainingCharacter.map((word) => <Link key={word.id} href={`/word/${encodeURIComponent(word.id)}`} className="rounded-xl border border-slate-200 bg-white p-4 transition hover:border-blue-400 hover:bg-blue-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600"><span className="flex items-baseline justify-between gap-3"><strong className="text-xl text-slate-950">{word.hanzi}</strong><span className="shrink-0 text-xs font-bold text-slate-500">HSK {word.levelBand === "7-9" ? "7–9" : word.level}</span></span><span className="mt-1 block font-semibold text-blue-700">{word.pinyin}</span><span className="mt-2 block line-clamp-2 text-sm leading-5 text-slate-600">{word.meaning}</span></Link>)}</div>
+    </section>
+
+    <div className="mt-8 grid gap-6 border-t border-slate-200 pt-6 lg:grid-cols-2">
+      <section aria-labelledby="same-radical"><div className="mb-3 flex items-center justify-between gap-3"><h2 id="same-radical" className="text-xl font-bold text-slate-950">Same radical: {item.radical}</h2><Link href={`/dictionary?mode=characters&radical=${encodeURIComponent(item.radical)}`} className="text-sm font-bold text-blue-700">Browse radical →</Link></div><CharacterLinks items={item.sameRadical} /></section>
+      <section aria-labelledby="same-pinyin"><div className="mb-3 flex items-center justify-between gap-3"><h2 id="same-pinyin" className="text-xl font-bold text-slate-950">Same pinyin: {item.pinyin[0]}</h2><Link href={`/dictionary?mode=pinyin&q=${encodeURIComponent(item.pinyin[0])}`} className="text-sm font-bold text-blue-700">Browse pinyin →</Link></div><CharacterLinks items={item.samePinyin} /></section>
+    </div>
   </main></StudyPage>;
 }
