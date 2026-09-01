@@ -94,6 +94,26 @@ export default function AccountClient() {
   const [checkoutSuccess, setCheckoutSuccess] = useState(false);
   const refreshGeneration = useRef(0);
 
+  const loadAuxiliary = async (generation: number) => {
+    const deviceId = syncDeviceId();
+    const results = await Promise.allSettled([
+      json("/api/v1/account/streak"),
+      json(`/api/v1/account/sync?deviceId=${encodeURIComponent(deviceId)}`),
+      json("/api/v1/commercial/subscription"),
+      json("/api/v1/ai"),
+      json("/api/v1/commercial/referrals"),
+      json("/api/v1/planner"),
+    ]);
+    if (generation !== refreshGeneration.current) return;
+    const keys: AuxiliaryResource[] = ["streak", "sync", "subscription", "ai", "referrals", "planner"];
+    const setters = [setStreak, setSync, setSubscription, setAiQuota, setReferrals, setPlanner];
+    results.forEach((result, index) => {
+      setAuxiliary(current => ({ ...current, [keys[index]]: result.status === "fulfilled" ? "ready" : "error" }));
+      if (result.status === "fulfilled") setters[index](result.value);
+      else setError(current => current || (result.reason instanceof Error ? result.reason.message : "LOAD_FAILED"));
+    });
+  };
+
   const refresh = async () => {
     const generation = ++refreshGeneration.current;
     setError("");
@@ -103,29 +123,15 @@ export default function AccountClient() {
     try {
       const data = await json("/api/v1/account");
       if (generation !== refreshGeneration.current) return;
-      if (data.account?.status !== "active") {
-        setView(data);
-        if (data.account?.timezone) setTimezone(data.account.timezone);
-        return;
-      }
-      const results = await Promise.allSettled([
-        json("/api/v1/account/streak"),
-        json(`/api/v1/account/sync?deviceId=${encodeURIComponent(syncDeviceId())}`),
-        json("/api/v1/commercial/subscription"),
-        json("/api/v1/ai"),
-        json("/api/v1/commercial/referrals"),
-        json("/api/v1/planner"),
-      ]);
-      if (generation !== refreshGeneration.current) return;
       setView(data);
-      if (data.account.timezone) setTimezone(data.account.timezone);
-      const keys: AuxiliaryResource[] = ["streak", "sync", "subscription", "ai", "referrals", "planner"];
-      const setters = [setStreak, setSync, setSubscription, setAiQuota, setReferrals, setPlanner];
-      results.forEach((result, index) => {
-        setAuxiliary(current => ({ ...current, [keys[index]]: result.status === "fulfilled" ? "ready" : "error" }));
-        if (result.status === "fulfilled") setters[index](result.value);
-        else setError(current => current || (result.reason instanceof Error ? result.reason.message : "LOAD_FAILED"));
-      });
+      if (data.account?.timezone) setTimezone(data.account.timezone);
+      if (data.account?.status === "active") {
+        void loadAuxiliary(generation).catch(cause => {
+          if (generation !== refreshGeneration.current) return;
+          setAuxiliary({ streak: "error", sync: "error", subscription: "error", ai: "error", referrals: "error", planner: "error" });
+          setError(cause instanceof Error ? cause.message : "LOAD_FAILED");
+        });
+      }
     } catch (cause) {
       if (generation === refreshGeneration.current) setError(cause instanceof Error ? cause.message : "LOAD_FAILED");
     }

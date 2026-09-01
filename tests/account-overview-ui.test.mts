@@ -78,6 +78,17 @@ test("account redesign preserves the approved account, sync, billing, referral a
   ]) assert.match(client, new RegExp(contract.replace(/[/?#.]/g, "\\$&")), `${contract} must remain wired`);
 });
 
+test("signed-in account renders primary account data before auxiliary resources finish", () => {
+  assert.match(
+    client,
+    /const data = await json\("\/api\/v1\/account"\);[\s\S]*?if \(generation !== refreshGeneration\.current\) return;\s*setView\(data\);\s*if \(data\.account\?\.timezone\) setTimezone\(data\.account\.timezone\);\s*if \(data\.account\?\.status === "active"\) \{\s*void loadAuxiliary\(generation\)\.catch/,
+    "the primary account shell must render and finish refresh without awaiting auxiliary resources",
+  );
+  assert.match(client, /const loadAuxiliary = async \(generation: number\) => \{\s*const deviceId = syncDeviceId\(\);\s*const results = await Promise\.allSettled/);
+  assert.match(client, /void loadAuxiliary\(generation\)\.catch\(cause => \{[\s\S]*?generation !== refreshGeneration\.current/);
+  assert.doesNotMatch(client, /await loadAuxiliary\(generation\)/);
+});
+
 test("account metrics reuse canonical data contracts and hero links open their settings", () => {
   assert.match(client, /normalizePlannerCompletions/);
   assert.match(client, /planner-task-completion:/);
