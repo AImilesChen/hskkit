@@ -52,7 +52,9 @@ test("Account surfaces active trial confirmation and actionable referral progres
     read("src/lib/commercial/referral-storage.ts"),
   ]);
   assert.match(account, /Your 7-day Pro trial is active/);
-  assert.match(account, /aiQuota\?\.quota\?\.remaining[\s\S]*trial AI credits available/);
+  assert.match(account, /auxiliary\.referrals === "ready" && auxiliary\.ai === "ready"/);
+  assert.match(account, /referrals\.access\.baseAiCredits[\s\S]*trial AI credits granted/);
+  assert.match(account, /aiQuota\.quota\.remaining[\s\S]*total AI credits available/);
   assert.match(account, /No card stored · no automatic charge/);
   assert.ok(account.indexOf('item.status === "blocked"') < account.indexOf('item.risk_status !== "clear"'), "blocked referrals must be labelled ineligible before the generic risk-review branch");
   assert.match(account, /Start Focused Review/);

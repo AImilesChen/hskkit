@@ -15,12 +15,31 @@ test("account route presents a focused account overview instead of unrelated stu
   assert.doesNotMatch(page, />Mistakes<\/Link>/);
 });
 
-test("signed-in account UI prioritizes learning, plan value and compact settings destinations", () => {
+test("P0 signed-in account UI leads with identity and the next real study action", () => {
   for (const required of [
-    "Continue today’s learning",
-    "Learning snapshot",
-    "AI credits",
-    "Quick settings",
+    "Member since",
+    "Your next study action",
+    "Continue learning",
+    "Weekly progress",
+    "Due reviews",
+  ]) assert.match(client, new RegExp(required), `${required} must remain visible`);
+  assert.match(client, /\/api\/v1\/planner/);
+  assert.match(client, /account-identity-card/);
+  assert.match(client, /account-study-focus/);
+  assert.match(client, /role="progressbar"/);
+});
+
+test("P1 and P2 present real learning signals, clear access value, rewards and grouped settings", () => {
+  for (const required of [
+    "Learning momentum",
+    "Best streak",
+    "AI credit balance",
+    "How credits work",
+    "Invite & earn",
+    "Next reward",
+    "Learning & devices",
+    "Membership & rewards",
+    "Privacy & account",
     "Profile & sign-in",
     "Devices & sync",
     "Membership & billing",
@@ -28,8 +47,9 @@ test("signed-in account UI prioritizes learning, plan value and compact settings
     "Referral rewards",
   ]) assert.match(client, new RegExp(required.replace(/[&]/g, "\\&")), `${required} must remain visible`);
 
-  assert.match(client, /account-overview-shell/);
-  assert.match(client, /account-hero/);
+  assert.match(client, /account-momentum-grid/);
+  assert.match(client, /account-benefits-grid/);
+  assert.match(client, /account-settings-group/);
   assert.match(client, /account-settings-list/);
   assert.match(client, /account-danger-zone/);
 });
@@ -52,16 +72,46 @@ test("account redesign preserves the approved account, sync, billing, referral a
     "/api/v1/commercial/subscription",
     "/api/v1/commercial/referrals",
     "/api/v1/ai",
+    "/api/v1/planner",
     "/account/data",
     "/pricing#ai-value",
   ]) assert.match(client, new RegExp(contract.replace(/[/?#.]/g, "\\$&")), `${contract} must remain wired`);
 });
 
+test("account metrics reuse canonical data contracts and hero links open their settings", () => {
+  assert.match(client, /normalizePlannerCompletions/);
+  assert.match(client, /planner-task-completion:/);
+  assert.match(client, /aiQuota\?\.quota\?\.used \?\? 0/);
+  assert.match(client, /Credits available/);
+  assert.match(client, /item\.status === "signed_up" && item\.risk_status === "clear"/);
+  assert.match(client, /referrals\?\.access\?\.source === "paid"/);
+  assert.match(client, /type AuxiliaryState/);
+  assert.match(client, /setAuxiliary\(current =>/);
+  assert.match(client, /No plan or credit values are shown until they can be verified/);
+  assert.match(client, /item\.status === "paid_pending" && item\.risk_status === "clear"/);
+  assert.match(client, /refreshGeneration/);
+  assert.match(client, /generation !== refreshGeneration\.current/);
+  assert.match(client, /referrals\.access\.baseAiCredits/);
+  assert.match(client, /auxiliary\.referrals === "ready" && auxiliary\.ai === "ready"/);
+  assert.match(client, /All recorded rewards issued/);
+  assert.match(client, /onClick=\{\(\) => setProfileOpen\(true\)\}/);
+  assert.match(client, /open=\{profileOpen\}/);
+  assert.match(client, /onClick=\{\(\) => setBillingOpen\(true\)\}/);
+  assert.match(client, /open=\{billingOpen\}/);
+  assert.doesNotMatch(client, /creditAllowance - remainingCredits/);
+});
+
 test("account layout has an intentional desktop hierarchy and exact-mobile single-column contract", () => {
   assert.match(css, /\.account-overview-shell\s*\{/);
-  assert.match(css, /\.account-main-grid\s*\{/);
+  assert.match(css, /\.account-profile-overview\s*\{/);
+  assert.match(css, /\.account-momentum-grid\s*\{/);
+  assert.match(css, /\.account-benefits-grid\s*\{/);
   assert.match(css, /\.account-settings-list\s*\{/);
-  assert.match(css, /@media \(max-width: 639px\)[\s\S]*\.account-main-grid\s*\{[^}]*grid-template-columns:\s*1fr/);
+  assert.match(css, /@media \(max-width: 639px\)[\s\S]*\.account-profile-overview\s*\{[^}]*grid-template-columns:\s*1fr/);
+  assert.match(css, /@media \(max-width: 639px\)[\s\S]*\.account-benefits-grid\s*\{[^}]*grid-template-columns:\s*1fr/);
+  assert.match(css, /@media \(max-width: 639px\)[\s\S]*\.account-momentum-grid\s*\{[^}]*grid-template-columns:\s*repeat\(2/);
   assert.match(css, /@media \(max-width: 639px\)[\s\S]*\.account-primary-action/);
+  assert.match(css, /\.account-identity-top > \.account-plan-badge \{ grid-column: 2; justify-self: start; \}/);
+  assert.match(css, /\.account-credit-meta a \{[^}]*min-height: 44px/);
   assert.match(css, /min-height:\s*44px/);
 });
