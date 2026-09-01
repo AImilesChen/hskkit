@@ -38,7 +38,8 @@ import { resolvedReviewSnapshotForAttempt } from "../../../../lib/learning/revie
 import { getDictionaryLearningContext, getDictionaryWordsByIds } from "../../../../lib/dictionary/p2-server";
 import { dictionaryWordProgress, resolveDictionaryPractice } from "../../../../lib/dictionary/p2-learning";
 import { learningTopics } from "../../../../lib/topics/catalog";
-import { getVerifiedTopicForMutation } from "../../../../lib/topics/server";
+import { getTrustedTopicPracticeQuestions, getVerifiedTopicForMutation } from "../../../../lib/topics/server";
+import { answerTopicPracticeQuestion } from "../../../../lib/topics/practice";
 import { recordTopicVisit, topicWordProgressFromState } from "../../../../lib/topics/progress";
 
 const COOKIE = GUEST_COOKIE;
@@ -171,7 +172,7 @@ function view(state: LearningState, ownerId: string, offsetMinutes: number, capa
     streakBasis: accountTimezone ? `Account timezone: ${accountTimezone}` : "This device's local day",
   };
 }
-function response(data: ReturnType<typeof view>, fresh: boolean, id: string, revision: number, account: boolean, capabilities: ProductCapabilities, usage: { dailyNewItems: number; dailyReviewGrades: number }, feedback?: { correct: boolean; correctAnswerText: string }, savedWords: Awaited<ReturnType<typeof getDictionaryWordsByIds>> = []) {
+function response(data: ReturnType<typeof view>, fresh: boolean, id: string, revision: number, account: boolean, capabilities: ProductCapabilities, usage: { dailyNewItems: number; dailyReviewGrades: number }, feedback?: { correct: boolean; correctAnswerText: string; explanation?: string }, savedWords: Awaited<ReturnType<typeof getDictionaryWordsByIds>> = []) {
   const queueBinding = queueBindingFor(id);
   const dictionaryAssetIds = new Set<string>(data.state.savedWordIds ?? []);
   for (const card of data.state.cards) if (card.contentId.startsWith("word:")) dictionaryAssetIds.add(card.contentId.slice(5));
@@ -343,6 +344,28 @@ export async function POST(req: NextRequest) {
     }
   }
 
+  if (action === "topic_practice_playback_start" || action === "topic_practice_playback_complete") {
+    const topicSlug = short(payload.topicSlug, 100);
+    const questionId = short(payload.questionId, 160);
+    const trusted = topicSlug ? await getTrustedTopicPracticeQuestions(topicSlug) : null;
+    const question = trusted?.questions.find((candidate) => candidate.id === questionId && candidate.mode === "listening");
+    if (!question?.audioText || !question.audioSrc) return errorResponse("INVALID_TOPIC_PRACTICE_PLAYBACK", 422);
+    try {
+      if (action === "topic_practice_playback_start") {
+        const ticket = await createStep7PlaybackTicket(identity.id, question.id, question.audioText);
+        const res = NextResponse.json({ playbackTicket: ticket.id, notBefore: ticket.notBefore, expiresAt: ticket.expiresAt }, { status: 201 });
+        if (identity.fresh) res.cookies.set(COOKIE, identity.id, { httpOnly: true, sameSite: "lax", secure: true, maxAge: 31_536_000, path: "/" });
+        return res;
+      }
+      const ticketId = short(payload.playbackTicket, 80);
+      if (!ticketId) throw new Error("AUDIO_PLAYBACK_REQUIRED");
+      await completeStep7PlaybackTicket(identity.id, question.id, ticketId, key);
+      return NextResponse.json({ state: "playback_verified" });
+    } catch (error) {
+      return errorResponse(error instanceof Error ? error.message : "AUDIO_PLAYBACK_INCOMPLETE", 422);
+    }
+  }
+
   for (let turn = 0; turn < 3; turn += 1) {
     const loaded = await loadState(identity.id);
     const dailyAction = action === "complete_item" || action === "skip_item" || action === "restore_item" || action === "configure_today" || action === "save_word" || action === "add_to_today" || action === "add_to_review" || action === "dictionary_search" || action === "clear_dictionary_searches" || topicAction;
@@ -372,7 +395,7 @@ export async function POST(req: NextRequest) {
       return errorResponse("REVISION_CONFLICT", 409, { state: "conflict", serverRevision: loaded.revision, clientRevision: body.clientRevision });
     }
     let state = view(loaded.state, identity.id, tz, capabilities, identity.account?.timezone).state;
-    let feedback: { correct: boolean; correctAnswerText: string } | undefined;
+    let feedback: { correct: boolean; correctAnswerText: string; explanation?: string } | undefined;
     let usageCharge: UsageCharge | undefined;
     try {
       if (action === "attempt") {
@@ -404,6 +427,25 @@ export async function POST(req: NextRequest) {
             explanation: question.explanation ?? "Compare the supported detail with the other choices.",
           },
         }).state;
+      } else if (action === "topic_practice_attempt") {
+        const topicSlug = short(payload.topicSlug, 100);
+        const questionId = short(payload.questionId, 160);
+        const answer = short(payload.answer, 8);
+        const trusted = topicSlug ? await getTrustedTopicPracticeQuestions(topicSlug) : null;
+        const question = trusted?.questions.find((candidate) => candidate.id === questionId);
+        if (!question || !answer) throw new Error("INVALID_TOPIC_PRACTICE_REQUEST");
+        if (question.mode === "listening") {
+          const ticketId = short(payload.playbackTicket, 80);
+          if (!ticketId) throw new Error("AUDIO_PLAYBACK_REQUIRED");
+          await consumeStep7PlaybackTicket(identity.id, question.id, ticketId, key);
+        }
+        const answered = answerTopicPracticeQuestion(state, question, {
+          answer,
+          idempotencyKey: key,
+          observedAt: new Date().toISOString(),
+        });
+        state = answered.state;
+        feedback = answered.feedback;
       } else if (action === "dictionary_practice_attempt") {
         const assetId = short(payload.assetId, 120);
         const mode = short(payload.mode, 20);
@@ -664,7 +706,7 @@ export async function POST(req: NextRequest) {
       } else {
         return errorResponse("INVALID_ACTION", 422);
       }
-      const qualifyingLearningAction = action === "attempt" || action === "dictionary_practice_attempt" || action === "step7_attempt" || action === "audio_attempt" || action === "retry_review" || action === "grade" || action === "complete_item";
+      const qualifyingLearningAction = action === "attempt" || action === "topic_practice_attempt" || action === "dictionary_practice_attempt" || action === "step7_attempt" || action === "audio_attempt" || action === "retry_review" || action === "grade" || action === "complete_item";
       const referralActivity: ReferralLearningActivity | undefined = identity.account && qualifyingLearningAction
         ? { userId: identity.account.userId, eventType: String(action), eventId: key, units: 1, localDay: new Date().toISOString().slice(0, 10) }
         : undefined;
@@ -678,7 +720,7 @@ export async function POST(req: NextRequest) {
       return response(data, identity.fresh, identity.id, loaded.revision + 1, Boolean(identity.account), capabilities, usage, feedback);
     } catch (error) {
       const code = error instanceof Error ? error.message : "SAVE_FAILED";
-      const replayable = action === "attempt" || action === "dictionary_practice_attempt" || action === "step7_attempt" || action === "audio_attempt" || action === "audio_review_ready" || action === "retry_review" || action === "grade" || action === "undo_review" || dailyAction;
+      const replayable = action === "attempt" || action === "topic_practice_attempt" || action === "dictionary_practice_attempt" || action === "step7_attempt" || action === "audio_attempt" || action === "audio_review_ready" || action === "retry_review" || action === "grade" || action === "undo_review" || dailyAction;
       if (code === "REVISION_CONFLICT" && replayable && turn < 2) continue;
       if (code === "REVISION_CONFLICT") await recordPolicyAudit(createAuditEvent({ subjectId: identity.id, action: String(action), resourceType: "learning", resourceId: identity.id, result: "conflict", idempotencyKey: key }));
       return errorResponse(code, code === "ACCOUNT_DELETED" ? 403 : code === "REVISION_CONFLICT" ? 409 : code.startsWith("FREE_DAILY_") ? 429 : 422, code.startsWith("FREE_DAILY_") ? { upgradeHref: "/pricing" } : {});

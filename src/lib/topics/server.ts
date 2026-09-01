@@ -13,6 +13,7 @@ import {
   topicsSourceReleaseId,
   type LearningTopic,
 } from "./catalog";
+import { buildTopicPracticeQuestions, type TopicPracticeWord } from "./practice";
 
 export type VerifiedTopicsSnapshot =
   | { status: "unavailable"; releaseId: null; rows: [] }
@@ -93,4 +94,24 @@ export async function getVerifiedTopicWords(topic: LearningTopic) {
     releaseId: snapshot.releaseId,
     words,
   };
+}
+
+export async function getTrustedTopicPracticeQuestions(slug: string) {
+  const topic = learningTopics.find((candidate) => candidate.slug === slug && candidate.status === "published");
+  if (!topic) return null;
+  const verified = await getVerifiedTopicWords(topic);
+  if (verified.status !== "ready" || verified.releaseId !== topic.sourceReleaseId) return null;
+  const words: TopicPracticeWord[] = verified.words.map((word) => ({
+    assetId: word.assetId,
+    contentId: `word:${word.assetId}`,
+    contentVersion: `${verified.releaseId}:${word.contentVersion}`,
+    level: word.levelBand === "7-9" ? 7 : Number(word.levelBand),
+    levelBand: word.levelBand,
+    hanzi: word.hanzi,
+    pinyin: word.pinyin,
+    meaning: word.meaning,
+    formalAudioUrl: word.formalAudioUrl,
+  }));
+  const questions = buildTopicPracticeQuestions(topic, words);
+  return questions.length >= 4 ? { topic, questions } : null;
 }
