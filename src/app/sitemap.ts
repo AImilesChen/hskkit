@@ -3,11 +3,13 @@ import { sitemapContentRoutes } from "@/lib/dictionary/catalog";
 import { getHsk3LevelStatuses } from "@/lib/content/level-status";
 import { publishedGrammarLessons, publishedReadingLessons } from "@/lib/learning/step7-content";
 import { resourceProductDetails } from "@/lib/commercial/resource-products";
+import { getVerifiedTopicsSnapshot, verifiedTopicRoutesFromSnapshot } from "@/lib/topics/server";
 
-export const dynamic = "force-static";
+export const dynamic = "force-dynamic";
 
-export default function sitemap(): MetadataRoute.Sitemap {
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = "https://hskkit.com";
+  const verifiedTopicRoutes = verifiedTopicRoutesFromSnapshot(await getVerifiedTopicsSnapshot());
   const existingPublicRoutes = [
     "",
     "/hsk-1-vocabulary",
@@ -42,10 +44,10 @@ export default function sitemap(): MetadataRoute.Sitemap {
     ...publishedGrammarLessons.map((lesson) => `/grammar/${lesson.slug}`),
     ...publishedReadingLessons.map((lesson) => `/reading/${lesson.slug}`),
     ...resourceProductDetails.map((product) => `/store/${product.slug}`),
+    ...verifiedTopicRoutes,
   ])];
   return routes.map((route) => ({
     url: `${baseUrl}${route}`,
-    lastModified: new Date(),
     changeFrequency: route.startsWith("/word/") || route.startsWith("/character/") ? "monthly" : "weekly",
   }));
 }

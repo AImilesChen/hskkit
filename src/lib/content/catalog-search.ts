@@ -24,7 +24,7 @@ export interface CatalogSearchRow {
   part_of_speech: string;
 }
 
-interface ActiveCatalogSearchRelease {
+export interface ActiveCatalogSearchRelease {
   id: string;
   version: number;
   published_at: string;
@@ -209,6 +209,20 @@ export function isCatalogWordAssetId(assetId: string): boolean {
   return /^hsk3\.word\.l[1-7]\.\d{4}\.v\d+$/.test(assetId);
 }
 
+export async function getActiveCatalogSearchRelease(db: CatalogSearchDatabase) {
+  return db.prepare(
+    "SELECT id,version,published_at,word_count FROM catalog_search_releases WHERE active=1 ORDER BY published_at DESC LIMIT 1",
+  ).first<ActiveCatalogSearchRelease>();
+}
+
+export async function getUniqueActiveCatalogSearchRelease(db: CatalogSearchDatabase) {
+  const result = await db.prepare(
+    "SELECT id,version,published_at,word_count FROM catalog_search_releases WHERE active=1 ORDER BY published_at DESC LIMIT 2",
+  ).all<ActiveCatalogSearchRelease>();
+  if (!result.success) throw new Error(result.error || "Active catalog release lookup failed");
+  return result.results.length === 1 ? result.results[0] : null;
+}
+
 export async function findActiveCatalogWordById(
   db: CatalogSearchDatabase,
   assetId: string,
@@ -259,6 +273,23 @@ export async function findActiveCatalogWordsByIds(db: CatalogSearchDatabase, ass
      ORDER BY i.sort_level,i.id`,
   ).bind(...ids).all<CatalogLearningRow>();
   if (!result.success) throw new Error(result.error || "Catalog lookup failed");
+  const byId = new Map(result.results.map((row) => [row.id, row]));
+  return ids.flatMap((id) => byId.has(id) ? [byId.get(id)!] : []);
+}
+
+export async function findCatalogWordsByIds(
+  db: CatalogSearchDatabase,
+  assetIds: string[],
+  releaseId: string,
+) {
+  const ids = [...new Set(assetIds)].filter(isCatalogWordAssetId).slice(0, 100);
+  if (!ids.length || !releaseId) return [];
+  const result = await db.prepare(
+    `SELECT ${learningSelect} FROM catalog_search_index i
+     WHERE i.release_id = ? AND i.id IN (${ids.map(() => "?").join(",")})
+     ORDER BY i.sort_level,i.id`,
+  ).bind(releaseId, ...ids).all<CatalogLearningRow>();
+  if (!result.success) throw new Error(result.error || "Catalog release lookup failed");
   const byId = new Map(result.results.map((row) => [row.id, row]));
   return ids.flatMap((id) => byId.has(id) ? [byId.get(id)!] : []);
 }

@@ -1,0 +1,158 @@
+import type { Metadata } from "next";
+import Link from "next/link";
+import { notFound } from "next/navigation";
+import { StudyPage } from "../../components/study-shell";
+import { TopicCard } from "../topic-card";
+import {
+  categoryForTopic,
+  findTopicBySlug,
+  findTopicCategoryBySlug,
+  topicsForCategory,
+} from "@/lib/topics/catalog";
+import { getVerifiedTopicsSnapshot, getVerifiedTopicWords, verifiedTopicsFromSnapshot } from "@/lib/topics/server";
+
+type Props = { params: Promise<{ slug: string }> };
+
+export const dynamic = "force-dynamic";
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const slug = (await params).slug;
+  const category = findTopicCategoryBySlug(slug);
+  if (category) {
+    const verified = verifiedTopicsFromSnapshot(await getVerifiedTopicsSnapshot());
+    const expected = topicsForCategory(category.id);
+    const ready = expected.length > 0 && expected.every((topic) => verified.some((item) => item.id === topic.id));
+    return {
+      title: `${category.title} Chinese Topics — ${category.titleZh} | HSKKit`,
+      description: category.description,
+      alternates: ready ? { canonical: `/topics/${category.slug}` } : undefined,
+      robots: ready ? undefined : { index: false, follow: false },
+      openGraph: ready ? { title: `${category.title} Chinese Topics | HSKKit`, description: category.description, url: `https://hskkit.com/topics/${category.slug}`, type: "website" } : undefined,
+    };
+  }
+  const topic = findTopicBySlug(slug);
+  if (!topic) return { title: "Topic unavailable — HSKKit", robots: { index: false, follow: false } };
+  const verified = await getVerifiedTopicWords(topic);
+  const ready = verified.status === "ready";
+  return {
+    title: topic.seoTitle,
+    description: topic.seoDescription,
+    alternates: ready ? { canonical: `/topics/${topic.slug}` } : undefined,
+    robots: ready ? undefined : { index: false, follow: false },
+    openGraph: ready ? { title: topic.seoTitle, description: topic.seoDescription, url: `https://hskkit.com/topics/${topic.slug}`, type: "article" } : undefined,
+  };
+}
+
+async function CategoryPage({ slug }: { slug: string }) {
+  const category = findTopicCategoryBySlug(slug);
+  if (!category) notFound();
+  const expected = topicsForCategory(category.id);
+  const verified = verifiedTopicsFromSnapshot(await getVerifiedTopicsSnapshot());
+  const topics = expected.filter((topic) => verified.some((item) => item.id === topic.id));
+  const categoryReady = expected.length > 0 && topics.length === expected.length;
+  const breadcrumbSchema = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Home", item: "https://hskkit.com" },
+      { "@type": "ListItem", position: 2, name: "Topics", item: "https://hskkit.com/topics" },
+      { "@type": "ListItem", position: 3, name: category.title, item: `https://hskkit.com/topics/${category.slug}` },
+    ],
+  };
+  return <StudyPage>
+    <main className="mx-auto w-full max-w-[1160px] flex-1 px-4 py-8 sm:px-6 md:py-12 lg:px-10">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }} />
+      <nav className="flex min-h-11 flex-wrap items-center gap-2 text-sm text-slate-500" aria-label="Breadcrumb"><Link href="/" className="inline-flex min-h-11 items-center px-1 font-semibold hover:text-blue-700">Home</Link><span aria-hidden="true">/</span><Link href="/topics" className="inline-flex min-h-11 items-center font-semibold hover:text-blue-700">Topics</Link><span aria-hidden="true">/</span><span className="text-slate-800">{category.title}</span></nav>
+      <header className="mt-5 grid gap-6 rounded-3xl border border-slate-200 bg-white p-6 shadow-[0_22px_55px_-44px_rgba(15,23,42,0.45)] sm:p-8 lg:grid-cols-[100px_minmax(0,1fr)_260px] lg:items-center">
+        <span className="grid size-20 place-items-center rounded-2xl bg-slate-950 text-3xl font-black text-white" lang="zh-Hans" aria-hidden="true">{category.marker}</span>
+        <div><p className="text-sm font-bold text-blue-700">{category.titleZh}</p><h1 className="mt-1 text-3xl font-black tracking-tight text-slate-950 sm:text-4xl">{category.title}</h1><p className="mt-3 max-w-2xl leading-7 text-slate-600">{category.description}</p></div>
+        <div className="rounded-2xl bg-blue-50 p-4"><p className="text-xs font-bold uppercase tracking-[0.12em] text-blue-700">Learning outcome</p><p className="mt-2 text-sm font-semibold leading-6 text-slate-800">{category.outcome}</p>{categoryReady && topics[0] ? <Link href={`/topics/${topics[0].slug}`} className="mt-4 inline-flex min-h-11 w-full items-center justify-between rounded-xl bg-blue-600 px-4 text-sm font-bold text-white hover:bg-blue-700">Start recommended topic <span aria-hidden="true">→</span></Link> : null}</div>
+      </header>
+      {!categoryReady ? <section className="mt-8 rounded-2xl border border-amber-200 bg-amber-50 p-5 text-amber-950"><h2 className="font-black">This category is temporarily unavailable</h2><p className="mt-2 text-sm leading-6">HSKKit could not verify every mapped word against the active release, so incomplete topic collections are hidden.</p></section> : <section className="mt-9" aria-labelledby="category-topics-title"><div className="flex flex-wrap items-end justify-between gap-3"><div><p className="text-xs font-bold uppercase tracking-[0.15em] text-blue-700">Recommended sequence</p><h2 id="category-topics-title" className="mt-2 text-2xl font-black text-slate-950">Choose a focused topic</h2></div><p className="text-sm text-slate-600">{topics.length} original topic collections</p></div><div className="mt-5 grid gap-4 md:grid-cols-2 xl:grid-cols-3">{topics.map((topic) => <TopicCard key={topic.id} topic={topic} />)}</div></section>}
+      <Link href="/topics" className="mt-10 inline-flex min-h-11 items-center rounded-xl border border-slate-300 bg-white px-5 font-bold text-slate-800 hover:border-blue-400 hover:text-blue-700">← All topic categories</Link>
+    </main>
+  </StudyPage>;
+}
+
+async function TopicDetailPage({ slug }: { slug: string }) {
+  const topic = findTopicBySlug(slug);
+  if (!topic) notFound();
+  const category = categoryForTopic(topic);
+  if (!category) notFound();
+
+  const verified = await getVerifiedTopicWords(topic);
+  const wordsAvailable = verified.status === "ready";
+  const words = wordsAvailable ? verified.words : [];
+  const formalAudioCount = words.filter((word) => Boolean(word.formalAudioUrl)).length;
+  const verifiedTopics = verifiedTopicsFromSnapshot(await getVerifiedTopicsSnapshot());
+  const related = topicsForCategory(category.id).filter((item) => item.id !== topic.id && verifiedTopics.some((verifiedTopic) => verifiedTopic.id === item.id));
+  const breadcrumbSchema = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Home", item: "https://hskkit.com" },
+      { "@type": "ListItem", position: 2, name: "Topics", item: "https://hskkit.com/topics" },
+      { "@type": "ListItem", position: 3, name: category.title, item: `https://hskkit.com/topics/${category.slug}` },
+      { "@type": "ListItem", position: 4, name: topic.title, item: `https://hskkit.com/topics/${topic.slug}` },
+    ],
+  };
+  const schema = wordsAvailable ? [
+    breadcrumbSchema,
+    {
+      "@context": "https://schema.org",
+      "@type": "LearningResource",
+      name: topic.title,
+      alternateName: topic.titleZh,
+      description: topic.description,
+      url: `https://hskkit.com/topics/${topic.slug}`,
+      educationalLevel: topic.levelBands.map((level) => `HSK ${level}`).join(", "),
+      learningResourceType: "Vocabulary collection",
+      teaches: topic.learningGoal,
+      timeRequired: `PT${topic.estimatedMinutes}M`,
+      isAccessibleForFree: true,
+    },
+  ] : [breadcrumbSchema];
+
+  return <StudyPage>
+    <main className="mx-auto w-full max-w-[1160px] flex-1 px-4 py-6 sm:px-6 md:py-10 lg:px-10">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }} />
+      <nav className="flex min-h-11 flex-wrap items-center gap-2 text-sm text-slate-500" aria-label="Breadcrumb"><Link href="/" className="inline-flex min-h-11 items-center px-1 font-semibold hover:text-blue-700">Home</Link><span aria-hidden="true">/</span><Link href="/topics" className="inline-flex min-h-11 items-center font-semibold hover:text-blue-700">Topics</Link><span aria-hidden="true">/</span><Link href={`/topics/${category.slug}`} className="inline-flex min-h-11 items-center font-semibold hover:text-blue-700">{category.title}</Link><span aria-hidden="true">/</span><span className="text-slate-800">{topic.title}</span></nav>
+
+      <header className="mt-4 overflow-hidden rounded-3xl bg-slate-950 text-white">
+        <div className="grid gap-7 p-6 sm:p-8 lg:grid-cols-[minmax(0,1fr)_320px] lg:items-end">
+          <div><div className="flex flex-wrap items-center gap-2"><span className="rounded-full bg-blue-500/20 px-3 py-1 text-xs font-bold text-blue-200 ring-1 ring-blue-300/30">HSK {topic.levelBands.join(" · ")}</span><span className="rounded-full bg-white/10 px-3 py-1 text-xs font-bold text-slate-200">{wordsAvailable ? "Published collection" : "Verification unavailable"}</span></div><p className="mt-5 text-base font-bold text-blue-300">{topic.titleZh}</p><h1 className="mt-1 text-3xl font-black tracking-tight text-white sm:text-4xl lg:text-5xl">{topic.title}</h1><p className="mt-4 max-w-2xl text-base leading-7 text-slate-300">{topic.description}</p></div>
+          <dl className="grid grid-cols-3 gap-2 rounded-2xl bg-white/10 p-3 text-center ring-1 ring-white/15"><div className="rounded-xl bg-white/5 px-2 py-3"><dt className="text-xs text-slate-300">Words</dt><dd className="mt-1 text-xl font-black">{wordsAvailable ? words.length : "—"}</dd></div><div className="rounded-xl bg-white/5 px-2 py-3"><dt className="text-xs text-slate-300">Time</dt><dd className="mt-1 text-xl font-black">{topic.estimatedMinutes}<span className="ml-0.5 text-xs">m</span></dd></div><div className="rounded-xl bg-white/5 px-2 py-3"><dt className="text-xs text-slate-300">Audio</dt><dd className="mt-1 text-xl font-black">{wordsAvailable ? formalAudioCount : "—"}</dd></div></dl>
+        </div>
+      </header>
+
+      <div className="mt-6 grid gap-6 lg:grid-cols-[minmax(0,1fr)_280px] lg:items-start">
+        <section className="min-w-0" aria-labelledby="topic-words-title">
+          <div className="flex flex-wrap items-end justify-between gap-3"><div><p className="text-xs font-bold uppercase tracking-[0.15em] text-blue-700">Published HSK 3.0 vocabulary</p><h2 id="topic-words-title" className="mt-2 text-2xl font-black text-slate-950 sm:text-3xl">Core words</h2></div><p className="text-sm text-slate-600">Ordered for this learning situation</p></div>
+          {!wordsAvailable ? <div className="mt-5 rounded-2xl border border-amber-200 bg-amber-50 p-5 text-amber-950"><h3 className="font-bold">Published words are temporarily unavailable</h3><p className="mt-2 text-sm leading-6">The topic remains published, but HSKKit could not verify the active word release for this request. Try again later or open the dictionary.</p></div> : null}
+
+          {wordsAvailable ? <ol className="mt-5 grid gap-3 sm:grid-cols-2">{words.map((word, index) => <li key={word.assetId} className="flex min-w-0 flex-col rounded-2xl border border-slate-200 bg-white p-4 sm:p-5">
+            <div className="flex items-start justify-between gap-3"><div className="min-w-0"><p className="text-3xl font-black text-slate-950" lang="zh-Hans">{word.hanzi}</p><p className="mt-1 font-bold text-blue-700">{word.pinyin}</p></div><span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-bold text-slate-600">{index + 1} · HSK {word.levelBand}</span></div>
+            <p className="mt-3 flex-1 text-sm leading-6 text-slate-600">{word.meaning}</p>
+            {word.formalAudioUrl ? <div className="mt-4 rounded-xl bg-blue-50 p-3"><p className="mb-2 text-xs font-bold uppercase tracking-wide text-blue-800">Formal audio</p><audio className="h-11 w-full" controls preload="metadata" src={word.formalAudioUrl}>Your browser cannot play this approved audio item.</audio></div> : null}
+            <div className="mt-4 grid grid-cols-2 gap-2"><Link href={`/word/${encodeURIComponent(word.assetId)}`} className="inline-flex min-h-11 items-center justify-center rounded-xl border border-slate-300 px-3 text-center text-sm font-bold text-slate-800 hover:border-blue-400 hover:text-blue-700">Word details</Link><Link href={`/word/${encodeURIComponent(word.assetId)}/practice`} className="inline-flex min-h-11 items-center justify-center rounded-xl bg-blue-600 px-3 text-center text-sm font-bold text-white hover:bg-blue-700">Practise word</Link></div>
+          </li>)}</ol> : null}
+        </section>
+
+        <aside className="space-y-4 lg:sticky lg:top-24">
+          <section className="rounded-2xl border border-blue-100 bg-blue-50 p-5"><p className="text-xs font-bold uppercase tracking-[0.12em] text-blue-700">Learning goal</p><h2 className="mt-2 text-lg font-black text-slate-950">Use the words in context</h2><p className="mt-2 text-sm leading-6 text-slate-700">{topic.learningGoal}</p></section>
+          <section className="rounded-2xl border border-slate-200 bg-white p-5"><h2 className="font-black text-slate-950">Continue in HSKKit</h2><div className="mt-3 grid gap-2"><Link href="/today" className="inline-flex min-h-11 items-center justify-between rounded-xl bg-slate-950 px-4 text-sm font-bold text-white hover:bg-slate-800">Open Today <span aria-hidden="true">→</span></Link><Link href="/review" className="inline-flex min-h-11 items-center justify-between rounded-xl border border-slate-300 px-4 text-sm font-bold text-slate-800 hover:border-blue-400">Open Review <span aria-hidden="true">→</span></Link><Link href="/dictionary" className="inline-flex min-h-11 items-center justify-between rounded-xl border border-slate-300 px-4 text-sm font-bold text-slate-800 hover:border-blue-400">Search dictionary <span aria-hidden="true">→</span></Link></div></section>
+          <p className="px-1 text-xs leading-5 text-slate-500">Audio controls appear only for recordings published as formal assets. Other words remain available through their verified detail and practice routes.</p>
+        </aside>
+      </div>
+
+      <section className="mt-12 border-t border-slate-200 pt-8" aria-labelledby="related-topics-title"><div className="flex flex-wrap items-end justify-between gap-3"><div><p className="text-xs font-bold uppercase tracking-[0.15em] text-blue-700">Keep exploring</p><h2 id="related-topics-title" className="mt-2 text-2xl font-black text-slate-950">More in {category.title}</h2></div><Link href={`/topics/${category.slug}`} className="inline-flex min-h-11 items-center font-bold text-blue-700">View category →</Link></div><div className="mt-5 grid gap-4 md:grid-cols-2">{related.map((item) => <TopicCard key={item.id} topic={item} />)}</div></section>
+    </main>
+  </StudyPage>;
+}
+
+export default async function TopicOrCategoryPage({ params }: Props) {
+  const slug = (await params).slug;
+  if (findTopicCategoryBySlug(slug)) return <CategoryPage slug={slug} />;
+  if (findTopicBySlug(slug)) return <TopicDetailPage slug={slug} />;
+  notFound();
+}
