@@ -7,9 +7,11 @@ import {
   categoryForTopic,
   findTopicBySlug,
   findTopicCategoryBySlug,
+  relatedTopicsFor,
   topicsForCategory,
 } from "@/lib/topics/catalog";
 import { getVerifiedTopicsSnapshot, getVerifiedTopicWords, verifiedTopicsFromSnapshot } from "@/lib/topics/server";
+import { TopicLearningPanel } from "../topic-learning-panel";
 
 type Props = { params: Promise<{ slug: string }> };
 
@@ -85,7 +87,7 @@ async function TopicDetailPage({ slug }: { slug: string }) {
   const words = wordsAvailable ? verified.words : [];
   const formalAudioCount = words.filter((word) => Boolean(word.formalAudioUrl)).length;
   const verifiedTopics = verifiedTopicsFromSnapshot(await getVerifiedTopicsSnapshot());
-  const related = topicsForCategory(category.id).filter((item) => item.id !== topic.id && verifiedTopics.some((verifiedTopic) => verifiedTopic.id === item.id));
+  const related = relatedTopicsFor(topic).filter((item) => verifiedTopics.some((verifiedTopic) => verifiedTopic.id === item.id));
   const breadcrumbSchema = {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
@@ -139,13 +141,20 @@ async function TopicDetailPage({ slug }: { slug: string }) {
         </section>
 
         <aside className="space-y-4 lg:sticky lg:top-24">
+          <TopicLearningPanel topic={topic} />
           <section className="rounded-2xl border border-blue-100 bg-blue-50 p-5"><p className="text-xs font-bold uppercase tracking-[0.12em] text-blue-700">Learning goal</p><h2 className="mt-2 text-lg font-black text-slate-950">Use the words in context</h2><p className="mt-2 text-sm leading-6 text-slate-700">{topic.learningGoal}</p></section>
           <section className="rounded-2xl border border-slate-200 bg-white p-5"><h2 className="font-black text-slate-950">Continue in HSKKit</h2><div className="mt-3 grid gap-2"><Link href="/today" className="inline-flex min-h-11 items-center justify-between rounded-xl bg-slate-950 px-4 text-sm font-bold text-white hover:bg-slate-800">Open Today <span aria-hidden="true">→</span></Link><Link href="/review" className="inline-flex min-h-11 items-center justify-between rounded-xl border border-slate-300 px-4 text-sm font-bold text-slate-800 hover:border-blue-400">Open Review <span aria-hidden="true">→</span></Link><Link href="/dictionary" className="inline-flex min-h-11 items-center justify-between rounded-xl border border-slate-300 px-4 text-sm font-bold text-slate-800 hover:border-blue-400">Search dictionary <span aria-hidden="true">→</span></Link></div></section>
           <p className="px-1 text-xs leading-5 text-slate-500">Audio controls appear only for recordings published as formal assets. Other words remain available through their verified detail and practice routes.</p>
         </aside>
       </div>
 
-      <section className="mt-12 border-t border-slate-200 pt-8" aria-labelledby="related-topics-title"><div className="flex flex-wrap items-end justify-between gap-3"><div><p className="text-xs font-bold uppercase tracking-[0.15em] text-blue-700">Keep exploring</p><h2 id="related-topics-title" className="mt-2 text-2xl font-black text-slate-950">More in {category.title}</h2></div><Link href={`/topics/${category.slug}`} className="inline-flex min-h-11 items-center font-bold text-blue-700">View category →</Link></div><div className="mt-5 grid gap-4 md:grid-cols-2">{related.map((item) => <TopicCard key={item.id} topic={item} />)}</div></section>
+      <section className="mt-12 grid gap-5 lg:grid-cols-2" aria-label="Topic expressions and context">
+        <article className="rounded-2xl border border-slate-200 bg-white p-5 sm:p-6"><p className="text-xs font-bold uppercase tracking-[0.15em] text-blue-700">Useful expressions</p><h2 className="mt-2 text-2xl font-black text-slate-950">Say it naturally</h2><ul className="mt-5 space-y-4">{topic.expressions.map((expression) => <li key={expression.hanzi} className="rounded-xl bg-slate-50 p-4"><p className="text-xl font-black text-slate-950" lang="zh-Hans">{expression.hanzi}</p><p className="mt-1 font-bold text-blue-700">{expression.pinyin}</p><p className="mt-1 text-sm leading-6 text-slate-600">{expression.meaning}</p></li>)}</ul></article>
+        <article className="rounded-2xl border border-slate-200 bg-white p-5 sm:p-6"><p className="text-xs font-bold uppercase tracking-[0.15em] text-blue-700">Scene dialogue</p><h2 className="mt-2 text-2xl font-black text-slate-950">A short original exchange</h2><ol className="mt-5 space-y-4">{topic.dialogue.map((turn, index) => <li key={`${turn.speaker}-${index}`} className={`rounded-xl p-4 ${turn.speaker === "A" ? "mr-5 bg-blue-50" : "ml-5 bg-emerald-50"}`}><div className="flex items-start gap-3"><span className={`grid size-8 shrink-0 place-items-center rounded-full text-xs font-black text-white ${turn.speaker === "A" ? "bg-blue-700" : "bg-emerald-700"}`}>{turn.speaker}</span><div><p className="text-lg font-black text-slate-950" lang="zh-Hans">{turn.hanzi}</p><p className="mt-1 text-sm font-bold text-slate-700">{turn.pinyin}</p><p className="mt-1 text-sm text-slate-600">{turn.meaning}</p></div></div></li>)}</ol></article>
+        <article className="rounded-2xl border border-amber-200 bg-amber-50 p-5 sm:p-6 lg:col-span-2"><p className="text-xs font-bold uppercase tracking-[0.15em] text-amber-800">Culture tip</p><h2 className="mt-2 text-xl font-black text-slate-950">Use the language with context</h2><p className="mt-3 max-w-4xl leading-7 text-slate-700">{topic.cultureNote}</p><p className="mt-3 text-xs leading-5 text-slate-500">This HSKKit note provides practical context rather than a universal rule; habits and wording vary by region and situation.</p></article>
+      </section>
+
+      <section className="mt-12 border-t border-slate-200 pt-8" aria-labelledby="related-topics-title"><div className="flex flex-wrap items-end justify-between gap-3"><div><p className="text-xs font-bold uppercase tracking-[0.15em] text-blue-700">Keep exploring</p><h2 id="related-topics-title" className="mt-2 text-2xl font-black text-slate-950">Recommended next topics</h2></div><Link href={`/topics/${category.slug}`} className="inline-flex min-h-11 items-center font-bold text-blue-700">View category →</Link></div><div className="mt-5 grid gap-4 md:grid-cols-2">{related.map((item) => <TopicCard key={item.id} topic={item} />)}</div></section>
     </main>
   </StudyPage>;
 }

@@ -166,6 +166,7 @@ export interface LearningState {
   dailyOperationKeys?: string[];
   savedWordIds?: string[];
   recentDictionarySearches?: Array<{ query: string; level?: number; searchedAt: string }>;
+  topicVisits?: Array<{ topicSlug: string; lastAssetId: string; visitedAt: string }>;
   lastReviewUndo?: {
     cardId: string;
     gradeKey: string;

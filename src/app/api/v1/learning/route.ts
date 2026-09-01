@@ -37,6 +37,9 @@ import { checkReviewAnswer, reviewSnapshotFromStep7Exercise } from "../../../../
 import { resolvedReviewSnapshotForAttempt } from "../../../../lib/learning/review-content-resolver";
 import { getDictionaryLearningContext, getDictionaryWordsByIds } from "../../../../lib/dictionary/p2-server";
 import { dictionaryWordProgress, resolveDictionaryPractice } from "../../../../lib/dictionary/p2-learning";
+import { learningTopics } from "../../../../lib/topics/catalog";
+import { getVerifiedTopicForMutation } from "../../../../lib/topics/server";
+import { recordTopicVisit, topicWordProgressFromState } from "../../../../lib/topics/progress";
 
 const COOKIE = GUEST_COOKIE;
 const queueBindingFor = (ownerId: string) => createHash("sha256").update(`hskkit-learning-queue:${ownerId}`).digest("base64url").slice(0, 24);
@@ -174,12 +177,16 @@ function response(data: ReturnType<typeof view>, fresh: boolean, id: string, rev
   for (const card of data.state.cards) if (card.contentId.startsWith("word:")) dictionaryAssetIds.add(card.contentId.slice(5));
   for (const session of data.state.dailySessions) for (const item of session.items) if (item.id.startsWith("dictionary:")) dictionaryAssetIds.add(item.id.slice("dictionary:".length));
   const dictionaryProgress = Object.fromEntries([...dictionaryAssetIds].map((assetId) => [assetId, dictionaryWordProgress(data.state, assetId, new Date().toISOString())]));
+  const topicAssetIds = [...new Set(learningTopics.flatMap((topic) => topic.wordAssetIds))];
+  const topicProgress = Object.fromEntries(topicAssetIds.map((assetId) => [assetId, topicWordProgressFromState(data.state, assetId)]));
   const res = NextResponse.json({
     session: data.session,
     cards: data.cards,
     mistakes: data.mistakes,
     savedWordIds: data.state.savedWordIds ?? [],
     recentDictionarySearches: data.state.recentDictionarySearches ?? [],
+    topicVisits: data.state.topicVisits ?? [],
+    topicProgress,
     dictionaryProgress,
     savedWords,
     mastery: data.mastery,
@@ -229,6 +236,8 @@ export async function POST(req: NextRequest) {
   const tz = offset(body?.tzOffset);
   const key = short(payload.idempotencyKey, 80);
   if (!key) return errorResponse("INVALID_IDEMPOTENCY_KEY", 422);
+  const topicAction = action === "touch_topic" || action === "topic_batch_today" || action === "topic_batch_review";
+  if (topicAction && !identity.account) return errorResponse("ACCOUNT_REQUIRED", 403);
   const capabilities = await resolveCapabilities(identity.id);
   const periodKey = learningLocalDay(new Date().toISOString(), tz, identity.account?.timezone);
   let usage = await usageSnapshot(identity.id, periodKey);
@@ -336,7 +345,7 @@ export async function POST(req: NextRequest) {
 
   for (let turn = 0; turn < 3; turn += 1) {
     const loaded = await loadState(identity.id);
-    const dailyAction = action === "complete_item" || action === "skip_item" || action === "restore_item" || action === "configure_today" || action === "save_word" || action === "add_to_today" || action === "add_to_review" || action === "dictionary_search" || action === "clear_dictionary_searches";
+    const dailyAction = action === "complete_item" || action === "skip_item" || action === "restore_item" || action === "configure_today" || action === "save_word" || action === "add_to_today" || action === "add_to_review" || action === "dictionary_search" || action === "clear_dictionary_searches" || topicAction;
     if (dailyAction && (loaded.state.dailyOperationKeys ?? []).includes(key)) {
       return response(view(loaded.state, identity.id, tz, capabilities, identity.account?.timezone), identity.fresh, identity.id, loaded.revision, Boolean(identity.account), capabilities, usage);
     }
@@ -572,6 +581,38 @@ export async function POST(req: NextRequest) {
         state = { ...state, dailyOperationKeys: [...(state.dailyOperationKeys ?? []), key].slice(-400) };
       } else if (action === "clear_dictionary_searches") {
         state = { ...state, recentDictionarySearches: [], dailyOperationKeys: [...(state.dailyOperationKeys ?? []), key].slice(-400) };
+      } else if (action === "touch_topic") {
+        const topicSlug = short(payload.topicSlug, 100);
+        const lastAssetId = short(payload.lastAssetId, 120);
+        const topic = topicSlug ? await getVerifiedTopicForMutation(topicSlug) : null;
+        if (!topic || !lastAssetId || !topic.wordAssetIds.includes(lastAssetId)) throw new Error("INVALID_TOPIC_PROGRESS");
+        state = recordTopicVisit(state, { topicSlug: topic.slug, lastAssetId, visitedAt: new Date().toISOString() });
+        state = { ...state, dailyOperationKeys: [...(state.dailyOperationKeys ?? []), key].slice(-400) };
+      } else if (action === "topic_batch_today" || action === "topic_batch_review") {
+        const topicSlug = short(payload.topicSlug, 100);
+        const sessionId = short(payload.sessionId, 120);
+        const topic = topicSlug ? await getVerifiedTopicForMutation(topicSlug) : null;
+        if (!topic || (action === "topic_batch_today" && !sessionId)) throw new Error("INVALID_TOPIC_BATCH");
+        const contexts = await Promise.all(topic.wordAssetIds.map((assetId) => getDictionaryLearningContext(assetId)));
+        if (contexts.some((context) => !context || !context.current.contentVersion.startsWith(`${topic.sourceReleaseId}:`))) throw new Error("INVALID_TOPIC_BATCH");
+        if (action === "topic_batch_today") {
+          for (const context of contexts) {
+            if (!context) continue;
+            state = addWordToToday(state, {
+              sessionId: sessionId!,
+              assetId: context.current.assetId,
+              contentId: context.current.contentId,
+              contentVersion: context.current.contentVersion,
+              title: `${context.current.hanzi} ${context.current.pinyin}`,
+              href: `/word/${context.current.assetId}`,
+            });
+          }
+        } else {
+          const observedAt = new Date().toISOString();
+          for (const context of contexts) if (context) state = addWordToReview(state, { word: context.current, observedAt });
+        }
+        state = recordTopicVisit(state, { topicSlug: topic.slug, lastAssetId: topic.wordAssetIds[0], visitedAt: new Date().toISOString() });
+        state = { ...state, dailyOperationKeys: [...(state.dailyOperationKeys ?? []), key].slice(-400) };
       } else if (action === "add_to_review") {
         const assetId = short(payload.assetId, 120);
         const context = assetId ? await getDictionaryLearningContext(assetId) : null;

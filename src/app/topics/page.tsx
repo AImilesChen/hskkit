@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { StudyPage } from "../components/study-shell";
-import { TopicCard } from "./topic-card";
 import { learningTopics, topicCategories } from "@/lib/topics/catalog";
 import { getVerifiedTopicsSnapshot, verifiedTopicsFromSnapshot } from "@/lib/topics/server";
+import { TopicsBrowser } from "./topics-browser";
 
 export const dynamic = "force-dynamic";
 
@@ -86,7 +86,7 @@ export default async function TopicsPage() {
           })}</div>
         </section>
 
-        {visibleCategories.map((category) => <section key={category.id} className="mt-12" aria-labelledby={`${category.slug}-title`}><div className="flex flex-wrap items-end justify-between gap-3 border-b border-slate-200 pb-4"><div><p className="text-sm font-bold text-blue-700">{category.titleZh}</p><h2 id={`${category.slug}-title`} className="mt-1 text-2xl font-black text-slate-950">{category.title}</h2></div><Link href={`/topics/${category.slug}`} className="inline-flex min-h-11 items-center font-bold text-blue-700 hover:text-blue-900">View category <span className="ml-2" aria-hidden="true">→</span></Link></div><div className="mt-5 grid gap-4 md:grid-cols-2 xl:grid-cols-3">{topicsFor(category.id).map((topic) => <TopicCard key={topic.id} topic={topic} />)}</div></section>)}
+        <TopicsBrowser topics={verifiedTopics} />
       </> : null}
 
       <section className="mt-12 rounded-2xl border border-blue-100 bg-blue-50 p-5 sm:p-7"><h2 className="text-xl font-black text-slate-950">How topic learning connects</h2><p className="mt-2 max-w-3xl leading-7 text-slate-700">Topic pages organise existing published words without creating a second dictionary. Open any word for definitions and approved audio, or practise that word through the existing saved-attempt and review flow.</p><div className="mt-5 flex flex-wrap gap-3"><Link href="/vocabulary/1" className="inline-flex min-h-11 items-center rounded-xl bg-blue-600 px-5 font-bold text-white hover:bg-blue-700">Browse by HSK level</Link><Link href="/dictionary" className="inline-flex min-h-11 items-center rounded-xl border border-blue-300 bg-white px-5 font-bold text-blue-700 hover:bg-blue-100">Search the dictionary</Link></div></section>

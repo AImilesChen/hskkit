@@ -11,6 +11,10 @@ export interface TopicCategory {
   sortOrder: number;
 }
 
+export type TopicDifficulty = "starter" | "developing" | "stretch";
+export type TopicExpression = { hanzi: string; pinyin: string; meaning: string };
+export type TopicDialogueTurn = TopicExpression & { speaker: "A" | "B" };
+
 export interface LearningTopic {
   id: string;
   slug: string;
@@ -23,6 +27,11 @@ export interface LearningTopic {
   wordAssetIds: string[];
   featuredWordAssetIds: string[];
   estimatedMinutes: number;
+  difficulty: TopicDifficulty;
+  expressions: TopicExpression[];
+  dialogue: TopicDialogueTurn[];
+  cultureNote: string;
+  relatedTopicSlugs: string[];
   sortOrder: number;
   status: TopicStatus;
   contentVersion: string;
@@ -84,6 +93,11 @@ export const learningTopics: LearningTopic[] = [
     ],
     featuredWordAssetIds: ["hsk3.word.l1.0459.v1", "hsk3.word.l1.0288.v1", "hsk3.word.l2.0706.v1"],
     estimatedMinutes: 12,
+    difficulty: "starter",
+    expressions: [{"hanzi": "我每天七点起床。", "pinyin": "Wǒ měitiān qī diǎn qǐchuáng.", "meaning": "I get up at seven every day."}, {"hanzi": "吃完早饭，我就出门。", "pinyin": "Chī wán zǎofàn, wǒ jiù chūmén.", "meaning": "After breakfast, I head out."}, {"hanzi": "今天早上有点儿忙。", "pinyin": "Jīntiān zǎoshang yǒudiǎnr máng.", "meaning": "This morning is a little busy."}],
+    dialogue: [{"speaker": "A", "hanzi": "你每天几点起床？", "pinyin": "Nǐ měitiān jǐ diǎn qǐchuáng?", "meaning": "What time do you get up every day?"}, {"speaker": "B", "hanzi": "我七点起床，然后吃早饭。", "pinyin": "Wǒ qī diǎn qǐchuáng, ránhòu chī zǎofàn.", "meaning": "I get up at seven and then eat breakfast."}, {"speaker": "A", "hanzi": "你几点出门？", "pinyin": "Nǐ jǐ diǎn chūmén?", "meaning": "What time do you leave home?"}, {"speaker": "B", "hanzi": "我八点出门去上班。", "pinyin": "Wǒ bā diǎn chūmén qù shàngbān.", "meaning": "I leave at eight to go to work."}],
+    cultureNote: "In Chinese, a daily routine is often told in time order. Words such as 然后 and 就 make the sequence sound natural without repeating the subject.",
+    relatedTopicSlugs: ["time-and-plans", "cooking-at-home"],
     sortOrder: 1,
     status: "published",
     contentVersion: "2026.09-topics-p0",
@@ -109,6 +123,11 @@ export const learningTopics: LearningTopic[] = [
     ],
     featuredWordAssetIds: ["hsk3.word.l1.0334.v1", "hsk3.word.l2.0253.v1", "hsk3.word.l3.0002.v1"],
     estimatedMinutes: 15,
+    difficulty: "developing",
+    expressions: [{"hanzi": "我们明天下午见。", "pinyin": "Wǒmen míngtiān xiàwǔ jiàn.", "meaning": "Let’s meet tomorrow afternoon."}, {"hanzi": "你周末有时间吗？", "pinyin": "Nǐ zhōumò yǒu shíjiān ma?", "meaning": "Do you have time this weekend?"}, {"hanzi": "请准时到。", "pinyin": "Qǐng zhǔnshí dào.", "meaning": "Please arrive on time."}],
+    dialogue: [{"speaker": "A", "hanzi": "你明天有时间吗？", "pinyin": "Nǐ míngtiān yǒu shíjiān ma?", "meaning": "Are you free tomorrow?"}, {"speaker": "B", "hanzi": "下午三点以后可以。", "pinyin": "Xiàwǔ sān diǎn yǐhòu kěyǐ.", "meaning": "After three in the afternoon works."}, {"speaker": "A", "hanzi": "那我们三点半见吧。", "pinyin": "Nà wǒmen sān diǎn bàn jiàn ba.", "meaning": "Then let’s meet at three thirty."}, {"speaker": "B", "hanzi": "好，我会准时到。", "pinyin": "Hǎo, wǒ huì zhǔnshí dào.", "meaning": "Okay, I’ll arrive on time."}],
+    cultureNote: "When arranging a meeting, 吧 softens a suggestion. Confirm the day and time explicitly because Chinese conversation often omits information already understood.",
+    relatedTopicSlugs: ["morning-routine", "departure-and-arrival"],
     sortOrder: 2,
     status: "published",
     contentVersion: "2026.09-topics-p0",
@@ -134,6 +153,11 @@ export const learningTopics: LearningTopic[] = [
     ],
     featuredWordAssetIds: ["hsk3.word.l1.0360.v1", "hsk3.word.l1.0396.v1", "hsk3.word.l2.0590.v1"],
     estimatedMinutes: 16,
+    difficulty: "starter",
+    expressions: [{"hanzi": "今天天气很好。", "pinyin": "Jīntiān tiānqì hěn hǎo.", "meaning": "The weather is nice today."}, {"hanzi": "外面正在下雨。", "pinyin": "Wàimiàn zhèngzài xiàyǔ.", "meaning": "It is raining outside."}, {"hanzi": "冬天比秋天冷。", "pinyin": "Dōngtiān bǐ qiūtiān lěng.", "meaning": "Winter is colder than autumn."}],
+    dialogue: [{"speaker": "A", "hanzi": "今天天气怎么样？", "pinyin": "Jīntiān tiānqì zěnmeyàng?", "meaning": "How is the weather today?"}, {"speaker": "B", "hanzi": "有点儿冷，还刮风。", "pinyin": "Yǒudiǎnr lěng, hái guāfēng.", "meaning": "It is a little cold and windy."}, {"speaker": "A", "hanzi": "下午会下雨吗？", "pinyin": "Xiàwǔ huì xiàyǔ ma?", "meaning": "Will it rain this afternoon?"}, {"speaker": "B", "hanzi": "天气预报说不会。", "pinyin": "Tiānqì yùbào shuō bú huì.", "meaning": "The forecast says it will not."}],
+    cultureNote: "天气怎么样 is a common conversation opener. 有点儿 usually introduces an amount the speaker finds less than ideal, such as too cold or too hot.",
+    relatedTopicSlugs: ["morning-routine", "getting-around-town"],
     sortOrder: 3,
     status: "published",
     contentVersion: "2026.09-topics-p0",
@@ -158,6 +182,11 @@ export const learningTopics: LearningTopic[] = [
     ],
     featuredWordAssetIds: ["hsk3.word.l2.0156.v1", "hsk3.word.l2.0047.v1", "hsk3.word.l1.0139.v1"],
     estimatedMinutes: 12,
+    difficulty: "starter",
+    expressions: [{"hanzi": "请给我看一下菜单。", "pinyin": "Qǐng gěi wǒ kàn yíxià càidān.", "meaning": "Please let me see the menu."}, {"hanzi": "我要一碗米饭。", "pinyin": "Wǒ yào yì wǎn mǐfàn.", "meaning": "I would like a bowl of rice."}, {"hanzi": "这个菜不太辣。", "pinyin": "Zhège cài bú tài là.", "meaning": "This dish is not very spicy."}],
+    dialogue: [{"speaker": "A", "hanzi": "您好，想吃点儿什么？", "pinyin": "Nínhǎo, xiǎng chī diǎnr shénme?", "meaning": "Hello, what would you like to eat?"}, {"speaker": "B", "hanzi": "请给我一份菜单。", "pinyin": "Qǐng gěi wǒ yí fèn càidān.", "meaning": "Please give me a menu."}, {"speaker": "A", "hanzi": "这个菜很受欢迎。", "pinyin": "Zhège cài hěn shòu huānyíng.", "meaning": "This dish is very popular."}, {"speaker": "B", "hanzi": "好，我要这个，再要一碗米饭。", "pinyin": "Hǎo, wǒ yào zhège, zài yào yì wǎn mǐfàn.", "meaning": "Okay, I’ll have this and a bowl of rice."}],
+    cultureNote: "Using 您 and 请 is polite with restaurant staff. 一份 is a useful measure word for an order, while 一碗 is used for a bowl of rice or noodles.",
+    relatedTopicSlugs: ["grocery-shopping", "cooking-at-home"],
     sortOrder: 1,
     status: "published",
     contentVersion: "2026.09-topics-p0",
@@ -183,6 +212,11 @@ export const learningTopics: LearningTopic[] = [
     ],
     featuredWordAssetIds: ["hsk3.word.l2.0060.v1", "hsk3.word.l1.0228.v1", "hsk3.word.l1.0346.v1"],
     estimatedMinutes: 16,
+    difficulty: "developing",
+    expressions: [{"hanzi": "这个多少钱一斤？", "pinyin": "Zhège duōshao qián yì jīn?", "meaning": "How much is this per jin?"}, {"hanzi": "我想买一些新鲜蔬菜。", "pinyin": "Wǒ xiǎng mǎi yìxiē xīnxiān shūcài.", "meaning": "I want to buy some fresh vegetables."}, {"hanzi": "可以便宜一点儿吗？", "pinyin": "Kěyǐ piányi yìdiǎnr ma?", "meaning": "Could it be a little cheaper?"}],
+    dialogue: [{"speaker": "A", "hanzi": "这些苹果怎么卖？", "pinyin": "Zhèxiē píngguǒ zěnme mài?", "meaning": "How are these apples priced?"}, {"speaker": "B", "hanzi": "八块钱一斤。", "pinyin": "Bā kuài qián yì jīn.", "meaning": "Eight yuan per jin."}, {"speaker": "A", "hanzi": "我要两斤，再买一些蔬菜。", "pinyin": "Wǒ yào liǎng jīn, zài mǎi yìxiē shūcài.", "meaning": "I’ll take two jin and some vegetables."}, {"speaker": "B", "hanzi": "好的，我给您称一下。", "pinyin": "Hǎo de, wǒ gěi nín chēng yíxià.", "meaning": "Okay, I’ll weigh them for you."}],
+    cultureNote: "A 斤 is commonly used in mainland Chinese food markets and equals 500 grams. Posted prices may be per 斤, so confirm the unit before comparing prices.",
+    relatedTopicSlugs: ["restaurant-basics", "cooking-at-home"],
     sortOrder: 2,
     status: "published",
     contentVersion: "2026.09-topics-p0",
@@ -208,6 +242,11 @@ export const learningTopics: LearningTopic[] = [
     ],
     featuredWordAssetIds: ["hsk3.word.l2.0772.v1", "hsk3.word.l5.0129.v1", "hsk3.word.l4.0581.v1"],
     estimatedMinutes: 18,
+    difficulty: "stretch",
+    expressions: [{"hanzi": "先把菜洗干净。", "pinyin": "Xiān bǎ cài xǐ gānjìng.", "meaning": "First wash the vegetables clean."}, {"hanzi": "锅热了以后再放油。", "pinyin": "Guō rè le yǐhòu zài fàng yóu.", "meaning": "Add oil after the pan is hot."}, {"hanzi": "最后加一点儿盐。", "pinyin": "Zuìhòu jiā yìdiǎnr yán.", "meaning": "Finally add a little salt."}],
+    dialogue: [{"speaker": "A", "hanzi": "晚饭我们做什么？", "pinyin": "Wǎnfàn wǒmen zuò shénme?", "meaning": "What are we making for dinner?"}, {"speaker": "B", "hanzi": "做一个西红柿炒鸡蛋吧。", "pinyin": "Zuò yí ge xīhóngshì chǎo jīdàn ba.", "meaning": "Let’s make tomato and egg stir-fry."}, {"speaker": "A", "hanzi": "我先洗菜，你来切。", "pinyin": "Wǒ xiān xǐ cài, nǐ lái qiē.", "meaning": "I’ll wash the vegetables first; you cut them."}, {"speaker": "B", "hanzi": "好，炒的时候我来放盐。", "pinyin": "Hǎo, chǎo de shíhou wǒ lái fàng yán.", "meaning": "Okay, I’ll add the salt while we stir-fry."}],
+    cultureNote: "Chinese recipes often use 先…再…最后… to mark the order of steps. Home cooks may describe seasoning approximately rather than with exact measurements.",
+    relatedTopicSlugs: ["grocery-shopping", "restaurant-basics"],
     sortOrder: 3,
     status: "published",
     contentVersion: "2026.09-topics-p0",
@@ -232,6 +271,11 @@ export const learningTopics: LearningTopic[] = [
     ],
     featuredWordAssetIds: ["hsk3.word.l1.0107.v1", "hsk3.word.l2.0231.v1", "hsk3.word.l3.0803.v1"],
     estimatedMinutes: 14,
+    difficulty: "developing",
+    expressions: [{"hanzi": "请问，登机口在哪儿？", "pinyin": "Qǐngwèn, dēngjīkǒu zài nǎr?", "meaning": "Excuse me, where is the boarding gate?"}, {"hanzi": "我想取一下火车票。", "pinyin": "Wǒ xiǎng qǔ yíxià huǒchēpiào.", "meaning": "I would like to collect my train ticket."}, {"hanzi": "飞机准时到达。", "pinyin": "Fēijī zhǔnshí dàodá.", "meaning": "The plane arrives on time."}],
+    dialogue: [{"speaker": "A", "hanzi": "请出示您的护照和机票。", "pinyin": "Qǐng chūshì nín de hùzhào hé jīpiào.", "meaning": "Please show your passport and ticket."}, {"speaker": "B", "hanzi": "好的。我的行李在哪儿托运？", "pinyin": "Hǎo de. Wǒ de xíngli zài nǎr tuōyùn?", "meaning": "Okay. Where do I check my luggage?"}, {"speaker": "A", "hanzi": "在前面的柜台办理。", "pinyin": "Zài qiánmiàn de guìtái bànlǐ.", "meaning": "Handle it at the counter ahead."}, {"speaker": "B", "hanzi": "谢谢，登机口是几号？", "pinyin": "Xièxie, dēngjīkǒu shì jǐ hào?", "meaning": "Thank you. What number is the gate?"}],
+    cultureNote: "At transport hubs, 请问 politely starts a question to staff. Keep passports and tickets ready, and repeat numbers to confirm gates, platforms or departure times.",
+    relatedTopicSlugs: ["getting-around-town", "hotel-stay"],
     sortOrder: 1,
     status: "published",
     contentVersion: "2026.09-topics-p0",
@@ -257,6 +301,11 @@ export const learningTopics: LearningTopic[] = [
     ],
     featuredWordAssetIds: ["hsk3.word.l2.0125.v1", "hsk3.word.l2.0188.v1", "hsk3.word.l2.0076.v1"],
     estimatedMinutes: 15,
+    difficulty: "starter",
+    expressions: [{"hanzi": "请问，地铁站怎么走？", "pinyin": "Qǐngwèn, dìtiězhàn zěnme zǒu?", "meaning": "Excuse me, how do I get to the subway station?"}, {"hanzi": "坐三站以后下车。", "pinyin": "Zuò sān zhàn yǐhòu xiàchē.", "meaning": "Get off after three stops."}, {"hanzi": "我需要换一次车。", "pinyin": "Wǒ xūyào huàn yí cì chē.", "meaning": "I need to transfer once."}],
+    dialogue: [{"speaker": "A", "hanzi": "去市中心坐几路车？", "pinyin": "Qù shì zhōngxīn zuò jǐ lù chē?", "meaning": "Which bus goes downtown?"}, {"speaker": "B", "hanzi": "坐十二路，在第三站下车。", "pinyin": "Zuò shí’èr lù, zài dì-sān zhàn xiàchē.", "meaning": "Take bus 12 and get off at the third stop."}, {"speaker": "A", "hanzi": "需要换车吗？", "pinyin": "Xūyào huàn chē ma?", "meaning": "Do I need to transfer?"}, {"speaker": "B", "hanzi": "不用，直接到。", "pinyin": "Bú yòng, zhíjiē dào.", "meaning": "No, it goes there directly."}],
+    cultureNote: "Bus routes use 路 after the number, while subway lines use 号线. When asking directions, repeat the stop count and transfer point to reduce mistakes.",
+    relatedTopicSlugs: ["departure-and-arrival", "weather-and-seasons"],
     sortOrder: 2,
     status: "published",
     contentVersion: "2026.09-topics-p0",
@@ -281,6 +330,11 @@ export const learningTopics: LearningTopic[] = [
     ],
     featuredWordAssetIds: ["hsk3.word.l2.0302.v1", "hsk3.word.l1.0101.v1", "hsk3.word.l4.0907.v1"],
     estimatedMinutes: 12,
+    difficulty: "developing",
+    expressions: [{"hanzi": "我预订了一个房间。", "pinyin": "Wǒ yùdìng le yí ge fángjiān.", "meaning": "I booked a room."}, {"hanzi": "请问，早餐几点开始？", "pinyin": "Qǐngwèn, zǎocān jǐ diǎn kāishǐ?", "meaning": "Excuse me, what time does breakfast begin?"}, {"hanzi": "房卡打不开门。", "pinyin": "Fángkǎ dǎ bu kāi mén.", "meaning": "The room key card will not open the door."}],
+    dialogue: [{"speaker": "A", "hanzi": "您好，我预订了一个房间。", "pinyin": "Nínhǎo, wǒ yùdìng le yí ge fángjiān.", "meaning": "Hello, I booked a room."}, {"speaker": "B", "hanzi": "请出示您的证件。", "pinyin": "Qǐng chūshì nín de zhèngjiàn.", "meaning": "Please show your identification."}, {"speaker": "A", "hanzi": "这是我的护照。早餐在哪里？", "pinyin": "Zhè shì wǒ de hùzhào. Zǎocān zài nǎli?", "meaning": "Here is my passport. Where is breakfast?"}, {"speaker": "B", "hanzi": "在二楼，早上七点开始。", "pinyin": "Zài èr lóu, zǎoshang qī diǎn kāishǐ.", "meaning": "On the second floor, starting at seven."}],
+    cultureNote: "Hotels commonly ask for identification at check-in. Use 请问 for facility questions and state the room number when requesting help, but do not say it loudly in crowded areas.",
+    relatedTopicSlugs: ["departure-and-arrival", "restaurant-basics"],
     sortOrder: 3,
     status: "published",
     contentVersion: "2026.09-topics-p0",
@@ -326,4 +380,30 @@ export function publishedTopicRoutesForVerifiedAssets(activeReleaseId: string | 
     ...topicCategories.filter((category) => categoryIds.has(category.id)).sort((left, right) => left.sortOrder - right.sortOrder).map((category) => `/topics/${category.slug}`),
     ...verifiedTopics.map((topic) => `/topics/${topic.slug}`),
   ];
+}
+
+export type TopicFilters = {
+  level?: string;
+  difficulty?: TopicDifficulty | "all";
+  duration?: "quick" | "standard" | "deep" | "all";
+};
+
+export function filterPublishedTopics(filters: TopicFilters = {}) {
+  const level = filters.level ?? "all";
+  const difficulty = filters.difficulty ?? "all";
+  const duration = filters.duration ?? "all";
+  return learningTopics.filter((topic) => {
+    if (topic.status !== "published") return false;
+    if (level !== "all" && !topic.levelBands.includes(level)) return false;
+    if (difficulty !== "all" && topic.difficulty !== difficulty) return false;
+    if (duration === "quick" && topic.estimatedMinutes > 12) return false;
+    if (duration === "standard" && (topic.estimatedMinutes < 13 || topic.estimatedMinutes > 15)) return false;
+    if (duration === "deep" && topic.estimatedMinutes < 16) return false;
+    return true;
+  });
+}
+
+export function relatedTopicsFor(topic: LearningTopic) {
+  const requested = new Set(topic.relatedTopicSlugs);
+  return learningTopics.filter((candidate) => candidate.status === "published" && candidate.id !== topic.id && requested.has(candidate.slug));
 }

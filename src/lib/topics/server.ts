@@ -52,6 +52,11 @@ export function verifiedTopicsFromSnapshot(snapshot: VerifiedTopicsSnapshot) {
   );
 }
 
+export async function getVerifiedTopicForMutation(slug: string) {
+  const snapshot = await getVerifiedTopicsSnapshot();
+  return verifiedTopicsFromSnapshot(snapshot).find((topic) => topic.slug === slug) ?? null;
+}
+
 export function verifiedTopicRoutesFromSnapshot(snapshot: VerifiedTopicsSnapshot) {
   return publishedTopicRoutesForVerifiedAssets(
     snapshot.status === "ready" ? snapshot.releaseId : null,
