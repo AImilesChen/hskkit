@@ -1,3 +1,4 @@
+import { publicAudioAsset, type PublishedAudioAsset, type PublicAudioAsset } from "../audio/assets.ts";
 import { createHash } from "node:crypto";
 import { recordAttempt, type LearningState, type Dimension } from "../learning/domain.ts";
 import type { ReviewSnapshot } from "../learning/review-content.ts";
@@ -15,7 +16,7 @@ export type TopicPracticeWord = {
   hanzi: string;
   pinyin: string;
   meaning: string;
-  formalAudioUrl?: string;
+  audioAsset?: PublishedAudioAsset;
 };
 
 export type TrustedTopicPracticeQuestion = {
@@ -26,8 +27,7 @@ export type TrustedTopicPracticeQuestion = {
   instruction: string;
   prompt: string;
   context?: string;
-  audioSrc?: string;
-  audioText?: string;
+  audioAsset?: PublishedAudioAsset;
   options: TopicPracticeChoice[];
   correctAnswer: string;
   explanation: string;
@@ -40,8 +40,8 @@ export type TrustedTopicPracticeQuestion = {
 };
 
 export type PublicTopicPracticeQuestion = Omit<TrustedTopicPracticeQuestion,
-  "correctAnswer" | "explanation" | "contentId" | "contentVersion" | "dimension" | "reviewSnapshot" | "audioText"
->;
+  "correctAnswer" | "explanation" | "contentId" | "contentVersion" | "dimension" | "reviewSnapshot" | "audioAsset"
+> & { audioAsset?: PublicAudioAsset };
 
 const choiceKeys = ["a", "b", "c", "d"];
 const stableId = (value: string) => createHash("sha256").update(value).digest("base64url").slice(0, 20);
@@ -78,8 +78,8 @@ function question(input: Omit<TrustedTopicPracticeQuestion, "id" | "reviewSnapsh
     correctAnswer: input.correctAnswer,
     correctAnswerText,
     explanation: input.explanation,
-    audioSrc: input.audioSrc,
-    audioText: input.audioText,
+    audioSrc: input.audioAsset?.src,
+    audioText: input.audioAsset?.text,
   };
   return { ...input, id, reviewSnapshot };
 }
@@ -88,7 +88,7 @@ export function buildTopicPracticeQuestions(topic: LearningTopic, words: TopicPr
   if (topic.status !== "published" || words.length !== topic.wordAssetIds.length) return [];
   const byId = new Map(words.map((word) => [word.assetId, word]));
   const ordered = topic.wordAssetIds.flatMap((assetId) => byId.get(assetId) ? [byId.get(assetId)!] : []);
-  const audioWords = ordered.filter((word) => Boolean(word.formalAudioUrl));
+  const audioWords = ordered.filter((word) => Boolean(word.audioAsset));
   if (ordered.length < 4 || topic.dialogue.length < 4) return [];
   const result: TrustedTopicPracticeQuestion[] = [];
 
@@ -114,10 +114,10 @@ export function buildTopicPracticeQuestions(topic: LearningTopic, words: TopicPr
   for (const word of audioWords.slice(0, 2)) {
     const distractors = ordered.filter((candidate) => candidate.assetId !== word.assetId);
     const arranged = choicesFor(word.meaning, distractors.map((candidate) => candidate.meaning), `${topic.slug}:${word.assetId}:listening`);
-    if (!arranged || !word.formalAudioUrl) return [];
+    if (!arranged || !word.audioAsset) return [];
     result.push(question({
       topicSlug: topic.slug, topicTitle: topic.title, mode: "listening", instruction: "Listen, then choose the meaning",
-      prompt: "Which meaning matches the formal audio?", audioSrc: word.formalAudioUrl, audioText: word.hanzi, ...arranged,
+      prompt: "Which meaning matches the synthesized pronunciation?", audioAsset: word.audioAsset, ...arranged,
       explanation: `The recording says ${word.hanzi} (${word.pinyin}), meaning “${word.meaning}.”`, contentId: word.contentId,
       contentVersion: word.contentVersion, dimension: "audio", level: word.level, levelBand: word.levelBand,
     }));
@@ -141,9 +141,9 @@ export function buildTopicPracticeQuestions(topic: LearningTopic, words: TopicPr
 }
 
 export function publicTopicPracticeQuestion(question: TrustedTopicPracticeQuestion): PublicTopicPracticeQuestion {
-  const { correctAnswer: _correctAnswer, explanation: _explanation, contentId: _contentId, contentVersion: _contentVersion, dimension: _dimension, reviewSnapshot: _reviewSnapshot, audioText: _audioText, ...safe } = question;
-  void _correctAnswer; void _explanation; void _contentId; void _contentVersion; void _dimension; void _reviewSnapshot; void _audioText;
-  return safe;
+  const { correctAnswer: _correctAnswer, explanation: _explanation, contentId: _contentId, contentVersion: _contentVersion, dimension: _dimension, reviewSnapshot: _reviewSnapshot, audioAsset, ...safe } = question;
+  void _correctAnswer; void _explanation; void _contentId; void _contentVersion; void _dimension; void _reviewSnapshot;
+  return { ...safe, audioAsset: publicAudioAsset(audioAsset) };
 }
 
 export function answerTopicPracticeQuestion(state: LearningState, question: TrustedTopicPracticeQuestion, input: {

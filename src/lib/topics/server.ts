@@ -6,7 +6,7 @@ import {
   getUniqueActiveCatalogSearchRelease,
   type CatalogSearchRow,
 } from "@/lib/content/catalog-search";
-import { formalWordAudioUrlByContentId } from "@/lib/content/level-status";
+import { publicAudioAsset, publishedContentAudioAsset } from "@/lib/audio/assets";
 import {
   learningTopics,
   publishedTopicRoutesForVerifiedAssets,
@@ -75,7 +75,7 @@ function mapWord(row: CatalogSearchRow) {
     pinyin: row.pinyin,
     meaning: row.meaning,
     partOfSpeech: row.part_of_speech,
-    formalAudioUrl: formalWordAudioUrlByContentId.get(row.id),
+    audioAsset: publicAudioAsset(publishedContentAudioAsset(row.id, row.hanzi)),
   };
 }
 
@@ -110,7 +110,7 @@ export async function getTrustedTopicPracticeQuestions(slug: string) {
     hanzi: word.hanzi,
     pinyin: word.pinyin,
     meaning: word.meaning,
-    formalAudioUrl: word.formalAudioUrl,
+    audioAsset: publishedContentAudioAsset(word.assetId, word.hanzi),
   }));
   const questions = buildTopicPracticeQuestions(topic, words);
   return questions.length >= 4 ? { topic, questions } : null;

@@ -13,7 +13,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const { slug } = await params;
   const result = await getPublishedWordBySlug(decodeURIComponent(slug));
   return result.status === "published"
-    ? { title: `Practise ${result.item.hanzi} | HSKKit`, description: `Practise the meaning, pinyin and available formal audio for ${result.item.hanzi}.` }
+    ? { title: `Practise ${result.item.hanzi} | HSKKit`, description: `Practise the meaning, pinyin and available synthesized pronunciation for ${result.item.hanzi}.` }
     : { title: "Word practice | HSKKit" };
 }
 
@@ -34,7 +34,7 @@ export default async function WordPracticePage({ params }: { params: Promise<{ s
       <p className="text-xs font-bold uppercase tracking-[0.16em] text-blue-300">HSK {context.current.levelBand === "7-9" ? "7–9" : context.current.levelBand} · focused word practice</p>
       <div className="mt-3 flex flex-wrap items-end justify-between gap-4">
         <div><h1 className="text-4xl font-black text-white sm:text-5xl">{context.current.hanzi}</h1><p className="mt-2 text-lg text-slate-200">{context.current.pinyin} · {context.current.meaning}</p></div>
-        <p className="max-w-sm text-sm leading-6 text-slate-300">Each answer is saved to your learning history and schedules a real Review card. Listening appears only when formal audio is published.</p>
+        <p className="max-w-sm text-sm leading-6 text-slate-300">Each answer is saved to your learning history and schedules a real Review card. Listening appears only when approved synthesized pronunciation is published.</p>
       </div>
     </header>
     <WordPracticeClient word={context.current} exercises={exercises} />

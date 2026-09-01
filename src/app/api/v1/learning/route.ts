@@ -296,7 +296,7 @@ export async function POST(req: NextRequest) {
   if (action === "dictionary_playback_start" || action === "dictionary_playback_complete") {
     const assetId = short(payload.assetId, 120);
     const context = assetId ? await getDictionaryLearningContext(assetId) : null;
-    if (!context?.current.formalAudioUrl) return errorResponse("INVALID_DICTIONARY_PLAYBACK", 422);
+    if (!context?.current.audioAsset) return errorResponse("INVALID_DICTIONARY_PLAYBACK", 422);
     const exerciseKey = `dictionary:${context.current.assetId}:listening`;
     try {
       if (action === "dictionary_playback_start") {
@@ -349,10 +349,10 @@ export async function POST(req: NextRequest) {
     const questionId = short(payload.questionId, 160);
     const trusted = topicSlug ? await getTrustedTopicPracticeQuestions(topicSlug) : null;
     const question = trusted?.questions.find((candidate) => candidate.id === questionId && candidate.mode === "listening");
-    if (!question?.audioText || !question.audioSrc) return errorResponse("INVALID_TOPIC_PRACTICE_PLAYBACK", 422);
+    if (!question?.audioAsset?.text || !question.audioAsset.src) return errorResponse("INVALID_TOPIC_PRACTICE_PLAYBACK", 422);
     try {
       if (action === "topic_practice_playback_start") {
-        const ticket = await createStep7PlaybackTicket(identity.id, question.id, question.audioText);
+        const ticket = await createStep7PlaybackTicket(identity.id, question.id, question.audioAsset.text);
         const res = NextResponse.json({ playbackTicket: ticket.id, notBefore: ticket.notBefore, expiresAt: ticket.expiresAt }, { status: 201 });
         if (identity.fresh) res.cookies.set(COOKIE, identity.id, { httpOnly: true, sameSite: "lax", secure: true, maxAge: 31_536_000, path: "/" });
         return res;
@@ -485,7 +485,7 @@ export async function POST(req: NextRequest) {
             correctAnswer: exercise.correctAnswer,
             correctAnswerText: exercise.correctAnswerText,
             explanation: `${context.current.hanzi} (${context.current.pinyin}) means “${context.current.meaning}.”`,
-            audioSrc: exercise.formalAudioUrl,
+            audioSrc: exercise.audioAsset?.src,
             audioText: exercise.mode === "listening" ? context.current.hanzi : undefined,
           },
         };

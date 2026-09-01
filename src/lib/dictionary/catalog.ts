@@ -1,4 +1,5 @@
 import runtimeIndex from "../content/runtime-content-index.json" with { type: "json" };
+import { publicAudioAsset, publishedContentAudioAsset, type PublicAudioAsset } from "../audio/assets.ts";
 import { P1_CHARACTER_RECORDS } from "./p1-character-data.ts";
 
 const dictionaryAssets = runtimeIndex.dictionaryAssets;
@@ -28,6 +29,7 @@ export interface StudyWord {
   contentVersion: number;
   sourceVersion: string;
   audio: { status: "formal"; locale: "zh-CN"; src: string } | { status: "unavailable"; locale: "zh-CN" };
+  audioAsset?: PublicAudioAsset;
 }
 
 export interface StudyCharacter {
@@ -112,6 +114,7 @@ function studyWordFromAsset(
     audio: formalAudioByAssetId.has(asset.id)
       ? { status: "formal", locale: "zh-CN", src: formalAudioByAssetId.get(asset.id)! }
       : { status: "unavailable", locale: "zh-CN" },
+    audioAsset: publicAudioAsset(publishedContentAudioAsset(asset.id, asset.hanzi)),
   };
 }
 

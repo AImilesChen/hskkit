@@ -20,6 +20,12 @@ import {
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const read = (relative: string) => fs.readFileSync(path.join(root, relative), "utf8");
 const empty = (): LearningState => ({ attempts: [], cards: [], mistakes: [], dailySessions: [] });
+const audioAsset = {
+  id: "test-word-audio", src: "/audio/word-ai.mp3", kind: "word" as const,
+  sourceType: "synthesized" as const, sourceLabel: "Synthesized pronunciation" as const,
+  provider: "test", authorization: { status: "authorized" as const, license: "test", evidenceUrl: "https://hskkit.com/content-license" },
+  qa: { lifecycle: "published" as const, content: "approved" as const, technical: "approved" as const },
+};
 const word = (overrides: Partial<DictionaryPracticeWord> = {}): DictionaryPracticeWord => ({
   assetId: "hsk3.word.l1.0001.v1",
   contentId: "word:hsk3.word.l1.0001.v1",
@@ -30,14 +36,14 @@ const word = (overrides: Partial<DictionaryPracticeWord> = {}): DictionaryPracti
   traditional: "愛",
   pinyin: "ài",
   meaning: "to love",
-  formalAudioUrl: "/audio/word-ai.mp3",
+  audioAsset,
   ...overrides,
 });
 
 const distractors = [
-  word({ assetId: "hsk3.word.l1.0002.v1", contentId: "word:hsk3.word.l1.0002.v1", hanzi: "八", traditional: "八", pinyin: "bā", meaning: "eight", formalAudioUrl: undefined }),
-  word({ assetId: "hsk3.word.l1.0003.v1", contentId: "word:hsk3.word.l1.0003.v1", hanzi: "爸爸", traditional: "爸爸", pinyin: "bà ba", meaning: "father", formalAudioUrl: undefined }),
-  word({ assetId: "hsk3.word.l1.0004.v1", contentId: "word:hsk3.word.l1.0004.v1", hanzi: "杯子", traditional: "杯子", pinyin: "bēi zi", meaning: "cup", formalAudioUrl: undefined }),
+  word({ assetId: "hsk3.word.l1.0002.v1", contentId: "word:hsk3.word.l1.0002.v1", hanzi: "八", traditional: "八", pinyin: "bā", meaning: "eight", audioAsset: undefined }),
+  word({ assetId: "hsk3.word.l1.0003.v1", contentId: "word:hsk3.word.l1.0003.v1", hanzi: "爸爸", traditional: "爸爸", pinyin: "bà ba", meaning: "father", audioAsset: undefined }),
+  word({ assetId: "hsk3.word.l1.0004.v1", contentId: "word:hsk3.word.l1.0004.v1", hanzi: "杯子", traditional: "杯子", pinyin: "bēi zi", meaning: "cup", audioAsset: undefined }),
 ];
 
 test("dictionary searches are durable, de-duplicated and bounded", () => {
@@ -82,12 +88,12 @@ test("adding a Review card does not remove an explicitly added Today word", () =
   assert.equal(dictionaryWordProgress(rebuilt.state, word().assetId, now).review, "due");
 });
 
-test("word practice provides meaning, pinyin and formal-audio listening without invented audio", () => {
+test("word practice provides meaning, pinyin and published synthesized listening without invented audio", () => {
   const practice = buildDictionaryPractice(word(), distractors);
   assert.deepEqual(practice.map((item) => item.mode), ["meaning", "pinyin", "listening"]);
   assert.ok(practice.every((item) => item.options.length === 4));
-  assert.equal(practice.find((item) => item.mode === "listening")?.formalAudioUrl, "/audio/word-ai.mp3");
-  assert.deepEqual(buildDictionaryPractice(word({ formalAudioUrl: undefined }), distractors).map((item) => item.mode), ["meaning", "pinyin"]);
+  assert.equal(practice.find((item) => item.mode === "listening")?.audioAsset?.src, "/audio/word-ai.mp3");
+  assert.deepEqual(buildDictionaryPractice(word({ audioAsset: undefined }), distractors).map((item) => item.mode), ["meaning", "pinyin"]);
 });
 
 test("learned and due states derive from real attempts, cards, Today and saved state", () => {

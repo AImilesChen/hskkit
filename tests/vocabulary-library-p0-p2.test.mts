@@ -38,10 +38,11 @@ test("vocabulary totals count words rather than unrelated published grammar or r
   assert.doesNotMatch(pageSource, /status\.contentCount/);
 });
 
-test("formal audio controls only render for approved published word recordings", () => {
+test("synthesized pronunciation controls only render for approved published word audio", () => {
   assert.match(routeSource, /formalAudioUrl: formalWordAudioUrlByContentId\.get\(asset\.id\) \?\? null/);
   assert.match(clientSource, /src=\{word\.formalAudioUrl\}/);
-  assert.match(clientSource, /Formal audio unavailable/);
+  assert.match(clientSource, /Audio unavailable/);
+  assert.match(clientSource, /Play synthesized pronunciation/);
   assert.doesNotMatch(clientSource, /label="Play preview"/);
 });
 

@@ -160,7 +160,7 @@ export function VocabularyCatalog({ level, levelLabel, publishedCount }: { level
         <label className="min-w-0 text-sm font-semibold text-slate-700">Audio
           <select value={audio} onChange={(event) => setAudio(event.target.value as AudioFilter)} className="mt-[6px] min-h-11 w-full min-w-0 max-w-full rounded-lg border border-slate-300 bg-white px-3 font-normal">
             <option value="all">All words</option>
-            <option value="formal">Formal audio only</option>
+            <option value="formal">Published synthesized audio only</option>
           </select>
         </label>
         <label className="min-w-0 text-sm font-semibold text-slate-700">Sort
@@ -200,8 +200,8 @@ export function VocabularyCatalog({ level, levelLabel, publishedCount }: { level
             <p><span className="inline-flex rounded-md bg-slate-100 px-2 py-1 text-xs font-bold uppercase tracking-wide text-slate-600">{word.payload.partOfSpeech || "—"}</span></p>
             <div className="flex flex-wrap items-center gap-2 lg:justify-end">
               {word.formalAudioUrl
-                ? <AudioButton text={word.payload.hanzi} src={word.formalAudioUrl} label="Play formal audio" />
-                : <span className="sr-only">Formal audio unavailable</span>}
+                ? <AudioButton text={word.payload.hanzi} src={word.formalAudioUrl} label="Play synthesized pronunciation" />
+                : <span className="sr-only">Audio unavailable</span>}
             </div>
           </li>)}
         </ul>

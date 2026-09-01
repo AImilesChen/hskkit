@@ -1,4 +1,5 @@
 import bankJson from "./listening-library.json" with { type: "json" };
+import { publicAudioAsset, publishedListeningAudioAsset } from "../audio/assets.ts";
 import type { AdvancedListeningLesson, ListeningTrainingType, Step7ContentKind, Step7Exercise } from "./step7-content.ts";
 
 export type ListeningLibrarySize = 10 | 20;
@@ -50,6 +51,8 @@ const QUESTIONS: ListeningLibraryQuestion[] = bank.groups.flatMap((group) => gro
   const number = questionIndex + 1;
   const slug = `${group.id}-q${number}`;
   const id = `listening-library-v1-${group.id}-q${number}`;
+  const asset = publishedListeningAudioAsset(group.id);
+  if (!asset) throw new Error(`LISTENING_AUDIO_ASSET_UNAVAILABLE:${group.id}`);
   const exercise: Step7Exercise = {
     id,
     contentId: `listening:${slug}`,
@@ -71,8 +74,9 @@ const QUESTIONS: ListeningLibraryQuestion[] = bank.groups.flatMap((group) => gro
     trainingType: group.trainingType,
     register: group.register,
     voiceText: group.voiceText,
-    audioSrc: group.audioSrc,
-    instruction: group.level <= 2 ? "Play the formal audio, then identify the sound you hear." : "Play the formal audio, then answer from the key term and context.",
+    audioSrc: asset.src,
+    audioAsset: publicAudioAsset(asset),
+    instruction: group.level <= 2 ? "Play the synthesized listening audio, then identify the sound you hear." : "Play the synthesized listening audio, then answer from the key term and context.",
     guidance: "Playback must complete before an answer can be saved. Audio failure never changes mastery or usage.",
     exercise,
     sourceRef: group.sourceRef,

@@ -16,7 +16,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const topic = findTopicBySlug((await params).slug);
   return topic ? {
     title: `${topic.title} Continuous Practice | HSKKit`,
-    description: `Practise meaning, pinyin and scene understanding inside the ${topic.title} topic, with listening when verified formal audio is available.`,
+    description: `Practise meaning, pinyin and scene understanding inside the ${topic.title} topic, with listening when approved synthesized audio is available.`,
     robots: { index: false, follow: true },
   } : { title: "Topic practice unavailable | HSKKit", robots: { index: false, follow: false } };
 }

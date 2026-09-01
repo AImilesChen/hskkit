@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useMemo, useRef, useState } from "react";
+import { AudioPlaybackControl } from "../../../components/audio-playback-control";
 import type { PublicTopicPracticeQuestion, TopicPracticeMode } from "@/lib/topics/practice";
 import { TopicIcon } from "../../topic-visuals";
 import { topicIconFor, topicVisualFor } from "@/lib/topics/visuals";
@@ -24,7 +25,6 @@ export function TopicPracticeClient({ topicSlug, topicTitle, visualKey, category
   const [playbackTicket, setPlaybackTicket] = useState("");
   const [playbackReady, setPlaybackReady] = useState(false);
   const attemptKeys = useRef<Record<string, string>>({});
-  const audioRef = useRef<HTMLAudioElement>(null);
   const question = questions[index];
   const visual = topicVisualFor(categorySlug);
   const progress = useMemo(() => Math.round(((finished ? questions.length : index) / questions.length) * 100), [finished, index, questions.length]);
@@ -53,8 +53,8 @@ export function TopicPracticeClient({ topicSlug, topicTitle, visualKey, category
     return body;
   }
 
-  async function playFormalAudio() {
-    if (question.mode !== "listening" || !question.audioSrc || busy) return;
+  async function authorizePlayback() {
+    if (question.mode !== "listening" || !question.audioAsset || busy) return false;
     setBusy(true);
     setError("");
     setPlaybackReady(false);
@@ -64,11 +64,11 @@ export function TopicPracticeClient({ topicSlug, topicTitle, visualKey, category
       });
       if (!started.playbackTicket) throw new Error("Playback could not start.");
       setPlaybackTicket(started.playbackTicket);
-      audioRef.current?.load();
-      await audioRef.current?.play();
+      return true;
     } catch (reason) {
       setError(reason instanceof Error ? reason.message : "Playback could not start.");
       setBusy(false);
+      return false;
     }
   }
 
@@ -92,13 +92,13 @@ export function TopicPracticeClient({ topicSlug, topicTitle, visualKey, category
     setPlaybackTicket("");
     setPlaybackReady(false);
     setBusy(false);
-    setError("The formal audio could not be played. Try again; answering remains locked until playback completes.");
+    setError("Audio playback failed. Retry the audio before answering.");
   }
 
   async function submit() {
     if (!question || !selected || busy || feedback) return;
     if (!view) { setError("Learning state is still loading."); return; }
-    if (question.mode === "listening" && !playbackReady) { setError("Play the complete formal audio before answering."); return; }
+    if (question.mode === "listening" && !playbackReady) { setError("Play the complete synthesized listening audio before answering."); return; }
     setBusy(true);
     setError("");
     try {
@@ -148,7 +148,7 @@ export function TopicPracticeClient({ topicSlug, topicTitle, visualKey, category
     <article className="mt-3 rounded-2xl border border-slate-200 bg-white p-4 shadow-[0_22px_55px_-44px_rgba(15,23,42,0.45)] sm:mt-5 sm:rounded-3xl sm:p-[32px]">
       <div className="flex flex-wrap items-center justify-between gap-3"><span className={`inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-xs font-black ${visual.surface} ${visual.mutedText}`}><TopicIcon name={topicIconFor(visualKey)} className="size-4" />{labels[question.mode]}</span><p className="text-sm font-bold text-slate-500">{question.instruction}</p></div>
       {question.context ? <pre className="mt-5 whitespace-pre-wrap rounded-2xl bg-slate-950 p-4 font-sans text-base leading-7 text-slate-100" lang="zh-Hans">{question.context}</pre> : null}
-      {question.audioSrc ? <div className="mt-5 rounded-2xl bg-blue-50 p-4"><p className="mb-3 text-xs font-black uppercase tracking-[0.12em] text-blue-800">Formal listening audio</p><audio ref={audioRef} className="hidden" preload="metadata" src={question.audioSrc} onEnded={() => void finishPlayback()} onError={failPlayback} /><button type="button" onClick={() => void playFormalAudio()} disabled={busy || Boolean(feedback)} className="inline-flex min-h-11 w-full items-center justify-center rounded-xl bg-blue-600 px-5 text-sm font-black text-white hover:bg-blue-700 disabled:bg-slate-400">{busy ? "Playing…" : playbackReady ? "Play again" : "Play complete audio"}</button>{playbackReady ? <p className="mt-2 text-sm font-bold text-emerald-800">Listening verified. Choose your answer.</p> : null}</div> : null}
+      {question.mode === "listening" ? <div className="mt-5"><AudioPlaybackControl asset={question.audioAsset} beforePlay={authorizePlayback} onComplete={() => void finishPlayback()} onFailure={failPlayback} />{playbackReady ? <p className="mt-2 text-sm font-bold text-emerald-800">Listening verified. Choose your answer.</p> : null}</div> : null}
       <h2 id="topic-practice-question" className="mt-4 text-xl font-black leading-tight text-slate-950 sm:mt-[24px] sm:text-3xl">{question.prompt}</h2>
       <div className="mt-4 grid gap-3 sm:mt-[24px] sm:grid-cols-2" role="radiogroup" aria-label="Answer choices">{question.options.map((option) => { const active = selected === option.key; const correctChoice = feedback && option.text === feedback.correctAnswerText; return <button key={option.key} type="button" role="radio" aria-checked={active} disabled={Boolean(feedback) || busy} onClick={() => setSelected(option.key)} className={`min-h-14 rounded-2xl border px-4 py-3 text-left text-sm font-bold transition ${correctChoice ? "border-emerald-500 bg-emerald-50 text-emerald-950" : active ? "border-blue-600 bg-blue-50 text-blue-950" : "border-slate-200 bg-white text-slate-800 hover:border-blue-300"}`}><span className="mr-3 inline-flex h-7 w-7 items-center justify-center rounded-full bg-slate-100 text-xs font-black">{option.key}</span>{option.text}</button>; })}</div>
       {error ? <p className="mt-4 rounded-xl bg-rose-50 p-4 text-sm font-bold text-rose-800" role="alert">{error}</p> : null}

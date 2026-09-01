@@ -1,4 +1,5 @@
 import type { LearningState } from "../learning/domain.ts";
+import type { PublicAudioAsset } from "../audio/assets.ts";
 
 export type DictionaryPracticeMode = "meaning" | "pinyin" | "listening";
 
@@ -12,7 +13,7 @@ export interface DictionaryPracticeWord {
   traditional: string;
   pinyin: string;
   meaning: string;
-  formalAudioUrl?: string;
+  audioAsset?: PublicAudioAsset;
 }
 
 export interface DictionaryPracticeExercise {
@@ -23,7 +24,7 @@ export interface DictionaryPracticeExercise {
   options: Array<{ key: "A" | "B" | "C" | "D"; text: string }>;
   correctAnswer: "A" | "B" | "C" | "D";
   correctAnswerText: string;
-  formalAudioUrl?: string;
+  audioAsset?: PublicAudioAsset;
 }
 
 const optionKeys = ["A", "B", "C", "D"] as const;
@@ -60,13 +61,13 @@ function exercise(
     options,
     correctAnswer: correct.key,
     correctAnswerText: correct.text,
-    ...(mode === "listening" && word.formalAudioUrl ? { formalAudioUrl: word.formalAudioUrl } : {}),
+    ...(mode === "listening" && word.audioAsset ? { audioAsset: word.audioAsset } : {}),
   };
 }
 
 export function buildDictionaryPractice(word: DictionaryPracticeWord, candidates: DictionaryPracticeWord[]) {
   const exercises = [exercise(word, candidates, "meaning"), exercise(word, candidates, "pinyin")];
-  if (word.formalAudioUrl) exercises.push(exercise(word, candidates, "listening"));
+  if (word.audioAsset) exercises.push(exercise(word, candidates, "listening"));
   return exercises.filter((item): item is DictionaryPracticeExercise => Boolean(item));
 }
 

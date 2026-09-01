@@ -13,6 +13,12 @@ import {
 const root = new URL("../", import.meta.url);
 const source = async (path: string) => readFile(new URL(path, root), "utf8");
 const topic = learningTopics[0];
+const topicAudio = (index: number) => ({
+  id: `topic-audio-${index}`, src: `/audio/topic-${index}.mp3`, kind: "word" as const,
+  sourceType: "synthesized" as const, sourceLabel: "Synthesized pronunciation" as const,
+  provider: "test", authorization: { status: "authorized" as const, license: "test", evidenceUrl: "https://hskkit.com/content-license" },
+  qa: { lifecycle: "published" as const, content: "approved" as const, technical: "approved" as const },
+});
 const words: TopicPracticeWord[] = topic.wordAssetIds.map((assetId, index) => ({
   assetId,
   contentId: `word:${assetId}`,
@@ -22,14 +28,14 @@ const words: TopicPracticeWord[] = topic.wordAssetIds.map((assetId, index) => ({
   hanzi: ["起床", "早饭", "出门", "工作", "学校", "今天", "每天", "时间"][index],
   pinyin: ["qǐchuáng", "zǎofàn", "chūmén", "gōngzuò", "xuéxiào", "jīntiān", "měitiān", "shíjiān"][index],
   meaning: ["get up", "breakfast", "leave home", "work", "school", "today", "every day", "time"][index],
-  formalAudioUrl: index < 3 ? `/audio/topic-${index}.mp3` : undefined,
+  audioAsset: index < 3 ? { ...topicAudio(index), text: ["起床", "早饭", "出门"][index] } : undefined,
 }));
 
 test("P2 builds one continuous verified topic set with meaning, pinyin, listening and scene questions", () => {
   const questions = buildTopicPracticeQuestions(topic, words);
   assert.equal(questions.length, 8);
   assert.deepEqual(new Set(questions.map((question) => question.mode)), new Set(["meaning", "pinyin", "listening", "scene"]));
-  assert.equal(questions.filter((question) => question.mode === "listening").every((question) => Boolean(question.audioSrc && question.audioText)), true);
+  assert.equal(questions.filter((question) => question.mode === "listening").every((question) => Boolean(question.audioAsset?.src && question.audioAsset.text)), true);
   assert.equal(questions.every((question) => question.topicSlug === topic.slug && question.options.length === 4), true);
   assert.equal(new Set(questions.map((question) => question.id)).size, questions.length);
 });

@@ -243,7 +243,7 @@ export function addWordToReview(state: LearningState, input: { word: DictionaryP
       correctAnswer: input.word.assetId,
       correctAnswerText: answerText,
       explanation: `${input.word.hanzi} (${input.word.pinyin}) means “${input.word.meaning}.”`,
-      audioSrc: input.word.formalAudioUrl,
+      audioSrc: input.word.audioAsset?.src,
       audioText: input.word.hanzi,
     },
   };

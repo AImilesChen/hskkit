@@ -154,7 +154,7 @@ test("word page removes internal release language and exposes real learning acti
   const actions = read("src/app/components/dictionary-word-actions.tsx");
   assert.doesNotMatch(page, /Study availability|Content QA|Source version|Release/);
   assert.match(page, /DictionaryWordActions/);
-  assert.match(actions, /label="Listen"/);
+  assert.match(actions, /AudioPlaybackControl/);
   assert.match(actions, /"Save"/);
   assert.match(actions, /"Add to Today"/);
   assert.match(actions, />Practice</);
@@ -175,6 +175,6 @@ test("mobile and desktop layouts have dedicated result and action treatments", (
   const actions = read("src/app/components/dictionary-word-actions.tsx");
   assert.match(client, /md:grid-cols/);
   assert.match(client, /min-h-11/);
-  assert.match(actions, /sm:grid-cols-4/);
+  assert.match(actions, /sm:grid-cols-3/);
   assert.match(actions, /min-h-11/);
 });

@@ -93,7 +93,7 @@ export default async function WordPage({ params }: Props) {
             </div>
           </article>
 
-          <DictionaryWordActions assetId={word.id} hanzi={word.hanzi} level={word.level} audioSrc={word.audio.status === "formal" ? word.audio.src : undefined} />
+          <DictionaryWordActions assetId={word.id} level={word.level} audioAsset={word.audioAsset} />
 
           {toneComparisons.length > 0 ? <section className="rounded-2xl border border-slate-200 bg-white p-5 sm:p-6" aria-labelledby="tone-comparison-title">
             <p className="text-xs font-bold uppercase tracking-[0.12em] text-blue-700">Pronunciation contrast</p>
@@ -139,7 +139,7 @@ export default async function WordPage({ params }: Props) {
               <Link href="/today" className="inline-flex min-h-11 items-center justify-between rounded-lg bg-white px-4 font-semibold text-slate-800 ring-1 ring-slate-200 hover:ring-blue-400">Open Today <span aria-hidden="true">→</span></Link>
             </div>
           </section>
-          <p className="px-2 text-xs leading-5 text-slate-500">Formal recordings are labelled “Formal audio.” When one is not available, Listen uses your device’s Chinese voice and labels it as a preview.</p>
+          <p className="px-2 text-xs leading-5 text-slate-500">Published synthesized pronunciation is labelled explicitly. When no approved asset exists, the page reports audio as unavailable.</p>
         </aside>
       </div>
     </main>

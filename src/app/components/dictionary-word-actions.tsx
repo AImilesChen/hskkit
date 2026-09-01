@@ -2,7 +2,8 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { AudioButton } from "./audio-button";
+import { AudioPlaybackControl } from "./audio-playback-control";
+import type { PublicAudioAsset } from "@/lib/audio/assets";
 
 type WordProgress = {
   saved: boolean;
@@ -24,7 +25,7 @@ type LearningView = {
 
 type BusyAction = "save" | "today" | "review";
 
-export function DictionaryWordActions({ assetId, hanzi, level, audioSrc }: { assetId: string; hanzi: string; level: number; audioSrc?: string }) {
+export function DictionaryWordActions({ assetId, level, audioAsset }: { assetId: string; level: number; audioAsset?: PublicAudioAsset }) {
   const [view, setView] = useState<LearningView | null>(null);
   const [busy, setBusy] = useState<BusyAction | null>(null);
   const [message, setMessage] = useState("");
@@ -93,11 +94,11 @@ export function DictionaryWordActions({ assetId, hanzi, level, audioSrc }: { ass
       </div>
       <div className="flex flex-wrap justify-end gap-2">
         <span className={`rounded-full px-3 py-1 text-xs font-bold ${progress?.review === "due" ? "bg-amber-100 text-amber-900" : progress?.learned ? "bg-emerald-100 text-emerald-800" : "bg-slate-100 text-slate-600"}`}>{statusLabel}</span>
-        <span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-600">{audioSrc ? "Formal audio" : "Device voice preview"}</span>
+        <span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-600">{audioAsset?.sourceLabel ?? "Audio unavailable"}</span>
       </div>
     </div>
-    <div className="mt-3 grid grid-cols-3 gap-2 sm:mt-4 sm:grid-cols-4 lg:grid-cols-6">
-      <AudioButton text={hanzi} src={audioSrc} label="Listen" />
+    <AudioPlaybackControl asset={audioAsset} className="mt-3 sm:mt-4" />
+    <div className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-5">
       <button type="button" disabled={!view || Boolean(busy)} onClick={() => void run("save_word")} className={`min-h-11 rounded-lg border px-2 text-xs font-bold sm:px-3 sm:text-sm transition disabled:cursor-not-allowed disabled:opacity-50 ${saved ? "border-blue-600 bg-blue-50 text-blue-800" : "border-slate-300 bg-white text-slate-800 hover:border-blue-500"}`}>{busy === "save" ? "Saving…" : saved ? "Saved" : "Save"}</button>
       <button type="button" disabled={!view || added || Boolean(busy)} onClick={() => void run("add_to_today")} className="min-h-11 rounded-lg border border-slate-300 bg-white px-2 text-xs font-bold sm:px-3 sm:text-sm text-slate-800 transition hover:border-blue-500 disabled:cursor-not-allowed disabled:opacity-50">{busy === "today" ? "Adding…" : added ? "In Today" : "Add to Today"}</button>
       <button type="button" disabled={!view || reviewAdded || Boolean(busy)} onClick={() => void run("add_to_review")} className="min-h-11 rounded-lg border border-slate-300 bg-white px-2 text-xs font-bold sm:px-3 sm:text-sm text-slate-800 transition hover:border-blue-500 disabled:cursor-not-allowed disabled:opacity-50">{busy === "review" ? "Adding…" : reviewAdded ? "In Review" : "Add to Review"}</button>

@@ -137,7 +137,8 @@ test("word details prioritise definitions, learning actions and indexed characte
   assert.match(toggle, /min-h-11/);
   assert.match(toggle, /my-2.*text-6xl/);
   assert.ok(toggle.indexOf("<h1") < toggle.indexOf('role="group"'), "word form must precede the script controls");
-  assert.match(actions, /grid grid-cols-3/);
+  assert.match(actions, /grid grid-cols-2/);
+  assert.match(actions, /AudioPlaybackControl/);
   assert.match(actions, /hidden text-sm.*sm:block/);
   assert.match(actions, /min-h-\[20px\]/);
   assert.doesNotMatch(actions, /min-h-5/);

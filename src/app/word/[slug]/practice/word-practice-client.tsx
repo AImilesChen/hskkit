@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
+import { AudioPlaybackControl } from "../../../components/audio-playback-control";
 import type { DictionaryPracticeExercise, DictionaryPracticeWord } from "../../../../lib/dictionary/p2-learning";
 
 type LearningView = {
@@ -20,7 +21,6 @@ export function WordPracticeClient({ word, exercises }: { word: DictionaryPracti
   const [message, setMessage] = useState("");
   const [playbackTicket, setPlaybackTicket] = useState("");
   const [playbackReady, setPlaybackReady] = useState(false);
-  const audioRef = useRef<HTMLAudioElement>(null);
   const active = exercises.find((exercise) => exercise.id === activeId) ?? exercises[0];
 
   useEffect(() => {
@@ -56,8 +56,8 @@ export function WordPracticeClient({ word, exercises }: { word: DictionaryPracti
     return body;
   }
 
-  async function playFormalAudio() {
-    if (!active?.formalAudioUrl || busy) return;
+  async function authorizePlayback() {
+    if (!active?.audioAsset || busy) return false;
     setBusy(true);
     setMessage("");
     setPlaybackReady(false);
@@ -65,11 +65,11 @@ export function WordPracticeClient({ word, exercises }: { word: DictionaryPracti
       const started = await post("dictionary_playback_start", { assetId: word.assetId, idempotencyKey: `dictionary-play-start-${crypto.randomUUID()}` });
       if (!started.playbackTicket) throw new Error("Playback could not start.");
       setPlaybackTicket(started.playbackTicket);
-      audioRef.current?.load();
-      await audioRef.current?.play();
+      return true;
     } catch (error) {
       setMessage(error instanceof Error ? error.message : "Playback could not start.");
       setBusy(false);
+      return false;
     }
   }
 
@@ -87,9 +87,16 @@ export function WordPracticeClient({ word, exercises }: { word: DictionaryPracti
     }
   }
 
+  function failPlayback() {
+    setPlaybackTicket("");
+    setPlaybackReady(false);
+    setBusy(false);
+    setMessage("Audio playback failed. Retry the audio before answering.");
+  }
+
   async function submit() {
     if (!active || !answer || busy) return;
-    if (active.mode === "listening" && !playbackReady) { setMessage("Play the complete formal audio before answering."); return; }
+    if (active.mode === "listening" && !playbackReady) { setMessage("Play the complete synthesized pronunciation before answering."); return; }
     setBusy(true);
     setMessage("");
     try {
@@ -117,16 +124,13 @@ export function WordPracticeClient({ word, exercises }: { word: DictionaryPracti
       <div className="grid gap-2 sm:grid-cols-3 lg:grid-cols-1" role="tablist" aria-label="Word practice modes">
         {exercises.map((exercise) => <button key={exercise.id} type="button" role="tab" aria-selected={exercise.id === active.id} onClick={() => chooseExercise(exercise.id)} className={`min-h-11 rounded-xl px-3 text-left text-sm font-bold ${exercise.id === active.id ? "bg-blue-600 text-white" : "bg-slate-100 text-slate-700 hover:bg-slate-200"}`}>{exercise.mode === "meaning" ? "Choose the meaning" : exercise.mode === "pinyin" ? "Choose the pinyin" : "Listen and choose"}</button>)}
       </div>
-      {!exercises.some((exercise) => exercise.mode === "listening") ? <p className="mt-3 px-2 text-xs leading-5 text-slate-500">Listening is hidden because this word has no published formal audio.</p> : null}
+      {!exercises.some((exercise) => exercise.mode === "listening") ? <p className="mt-3 px-2 text-xs leading-5 text-slate-500">Listening is hidden because this word has no published synthesized pronunciation.</p> : null}
     </div>
 
     <div className="rounded-2xl border border-slate-200 bg-white p-5 sm:p-7">
       <p className="text-xs font-bold uppercase tracking-[0.12em] text-blue-700">{active.instruction}</p>
       <h2 className="mt-3 text-2xl font-black text-slate-950">{active.prompt}</h2>
-      {active.mode === "listening" && active.formalAudioUrl ? <div className="mt-5">
-        <audio ref={audioRef} src={active.formalAudioUrl} preload="metadata" onEnded={() => void finishPlayback()} onError={() => { setBusy(false); setMessage("Formal audio could not be loaded."); }} />
-        <button type="button" onClick={() => void playFormalAudio()} disabled={!view || busy} className="inline-flex min-h-11 items-center justify-center rounded-xl bg-slate-950 px-5 text-sm font-bold text-white disabled:opacity-50">{busy ? "Playing…" : playbackReady ? "Play again" : "Play formal audio"}</button>
-      </div> : null}
+      {active.mode === "listening" ? <AudioPlaybackControl asset={active.audioAsset} beforePlay={authorizePlayback} onComplete={() => void finishPlayback()} onFailure={failPlayback} className="mt-5" /> : null}
       <fieldset className="mt-6 grid gap-3">
         <legend className="sr-only">Answer choices</legend>
         {active.options.map((option) => <label key={option.key} className={`flex min-h-12 cursor-pointer items-center gap-3 rounded-xl border px-4 py-3 text-sm font-semibold ${answer === option.key ? "border-blue-600 bg-blue-50 text-blue-950" : "border-slate-200 text-slate-800 hover:border-blue-300"}`}>

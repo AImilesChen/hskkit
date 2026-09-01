@@ -2,7 +2,7 @@ import "server-only";
 import { getCloudflareContext } from "@opennextjs/cloudflare";
 import { cache } from "react";
 import { findActiveCatalogWordsByIds, findCatalogWordLearningContext, type CatalogSearchRow } from "../content/catalog-search.ts";
-import { formalWordAudioUrlByContentId } from "../content/level-status.ts";
+import { publicAudioAsset, publishedContentAudioAsset } from "../audio/assets.ts";
 import type { DictionaryPracticeWord } from "./p2-learning.ts";
 
 export function catalogRowToPracticeWord(row: CatalogSearchRow): DictionaryPracticeWord {
@@ -16,7 +16,7 @@ export function catalogRowToPracticeWord(row: CatalogSearchRow): DictionaryPract
     traditional: row.traditional || row.hanzi,
     pinyin: row.pinyin,
     meaning: row.meaning,
-    formalAudioUrl: formalWordAudioUrlByContentId.get(row.id),
+    audioAsset: publicAudioAsset(publishedContentAudioAsset(row.id, row.hanzi)),
   };
 }
 

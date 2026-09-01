@@ -82,11 +82,11 @@ test("HSK 1 truth and labels use mǎi and single-syllable tone recognition", () 
   assert.doesNotMatch(first.title.toLowerCase(), /tone pairs/);
 });
 
-test("listening UI is icon-led, requires formal audio, and states the HSKKit coverage boundary", () => {
+test("listening UI uses the shared synthesized-audio state control and states the HSKKit coverage boundary", () => {
   const player = readFileSync(new URL("src/app/components/step7-exercise.tsx", root), "utf8");
   const page = readFileSync(new URL("src/app/listen/page.tsx", root), "utf8");
-  assert.match(player, /aria-label=\{played \? "Replay audio" : "Play audio"\}/);
-  assert.match(player, /audio-play-icon/);
+  assert.match(player, /AudioPlaybackControl/);
+  assert.match(player, /beforePlay=\{authorizePlayback\}/);
   assert.doesNotMatch(player, /speechSynthesis/);
   assert.match(page, /HSKKit levelled listening practice library/);
   assert.match(page, /10 questions/);

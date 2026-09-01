@@ -1,0 +1,135 @@
+import runtimeIndex from "../content/runtime-content-index.json" with { type: "json" };
+import listeningBank from "../learning/listening-library.json" with { type: "json" };
+import listeningManifest from "../learning/listening-library-audio.json" with { type: "json" };
+import practiceManifest from "../practice/audio-assets.json" with { type: "json" };
+
+export type AudioAssetKind = "word" | "sentence" | "context" | "listening";
+export type AudioSourceType = "synthesized" | "human-recorded";
+
+export type AudioAuthorization = {
+  status: "authorized";
+  license: string;
+  evidenceUrl: string;
+};
+
+export type PublishedAudioAsset = {
+  id: string;
+  src: string;
+  text: string;
+  kind: AudioAssetKind;
+  sourceType: AudioSourceType;
+  sourceLabel: "Synthesized pronunciation" | "Synthesized listening audio" | "Native-speaker recording";
+  provider: string;
+  voice?: string;
+  authorization: AudioAuthorization;
+  qa: {
+    lifecycle: "published";
+    content: "approved";
+    technical: "approved";
+  };
+};
+
+export type PublicAudioAsset = Omit<PublishedAudioAsset, "text">;
+
+const synthesizedLabel = (kind: AudioAssetKind): PublishedAudioAsset["sourceLabel"] =>
+  kind === "word" ? "Synthesized pronunciation" : "Synthesized listening audio";
+
+const publicAsset = (asset: PublishedAudioAsset): PublicAudioAsset => {
+  const { text: _text, ...safe } = asset;
+  void _text;
+  return safe;
+};
+
+const contentAssets = new Map(runtimeIndex.publishedAudioAssets.flatMap((asset) => {
+  if (asset.authorization.status !== "authorized" || asset.qaStatus !== "approved") return [];
+  const kind = asset.audioKind as AudioAssetKind;
+  const published: PublishedAudioAsset = {
+    id: asset.id,
+    src: `/${asset.storageKey}`,
+    text: "",
+    kind,
+    sourceType: "synthesized",
+    sourceLabel: synthesizedLabel(kind),
+    provider: "Microsoft Azure AI Speech",
+    voice: asset.voice.replace(/^Microsoft\s+/, ""),
+    authorization: {
+      status: "authorized",
+      license: asset.authorization.license,
+      evidenceUrl: asset.authorization.evidenceUrl,
+    },
+    qa: { lifecycle: "published", content: "approved", technical: "approved" },
+  };
+  return [[asset.contentAssetId, published] as const];
+}));
+const contentLogicalIdToContentAssetId = new Map(runtimeIndex.publishedAudioAssets.map((asset) => [asset.logicalId, asset.contentAssetId]));
+
+const practiceAssets = new Map(practiceManifest.assets.flatMap((asset) => {
+  if (asset.authorization.status !== "authorized" || asset.qaStatus !== "approved" || asset.lifecycleStatus !== "published") return [];
+  const published: PublishedAudioAsset = {
+    id: asset.id,
+    src: `/${asset.storageKey}`,
+    text: asset.text,
+    kind: "listening",
+    sourceType: "synthesized",
+    sourceLabel: "Synthesized listening audio",
+    provider: "HSKKit synthesized audio pipeline",
+    authorization: {
+      status: "authorized",
+      license: asset.authorization.license,
+      evidenceUrl: asset.authorization.evidenceUrl,
+    },
+    qa: { lifecycle: "published", content: "approved", technical: "approved" },
+  };
+  return [[asset.id, published] as const];
+}));
+
+const listeningGroups = new Map(listeningBank.groups.map((group) => [group.id, group]));
+const listeningAssets = new Map(listeningManifest.assets.flatMap((asset) => {
+  const group = listeningGroups.get(asset.id);
+  if (!group || group.voiceText !== asset.text || group.audioSrc !== `/${asset.storageKey}`) return [];
+  if (
+    asset.authorization.status !== "authorized"
+    || asset.contentQaStatus !== "approved"
+    || asset.technicalQaStatus !== "approved"
+    || asset.lifecycleStatus !== "published"
+  ) return [];
+  const published: PublishedAudioAsset = {
+    id: asset.id,
+    src: `/${asset.storageKey}`,
+    text: asset.text,
+    kind: "listening",
+    sourceType: "synthesized",
+    sourceLabel: "Synthesized listening audio",
+    provider: "Microsoft Azure AI Speech",
+    voice: asset.voice,
+    authorization: {
+      status: "authorized",
+      license: asset.authorization.license,
+      evidenceUrl: asset.authorization.evidenceUrl,
+    },
+    qa: { lifecycle: "published", content: "approved", technical: "approved" },
+  };
+  return [[asset.id, published] as const];
+}));
+
+export function publishedContentAudioAsset(contentAssetId: string, text: string): PublishedAudioAsset | undefined {
+  const asset = contentAssets.get(contentAssetId);
+  return asset ? { ...asset, text } : undefined;
+}
+
+export function publishedContentAudioAssetByLogicalId(logicalId: string, text: string): PublishedAudioAsset | undefined {
+  const contentAssetId = contentLogicalIdToContentAssetId.get(logicalId);
+  return contentAssetId ? publishedContentAudioAsset(contentAssetId, text) : undefined;
+}
+
+export function publishedPracticeAudioAsset(assetId: string): PublishedAudioAsset | undefined {
+  return practiceAssets.get(assetId);
+}
+
+export function publishedListeningAudioAsset(assetId: string): PublishedAudioAsset | undefined {
+  return listeningAssets.get(assetId);
+}
+
+export function publicAudioAsset(asset: PublishedAudioAsset | undefined): PublicAudioAsset | undefined {
+  return asset ? publicAsset(asset) : undefined;
+}

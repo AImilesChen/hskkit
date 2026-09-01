@@ -51,7 +51,7 @@ test("no-result suggestions correct spelling and offer real alternatives", async
   assert.ok(suggestions.length <= 4);
 });
 
-test("dictionary UI exposes full character browse modes, formal audio and whole-row results", () => {
+test("dictionary UI exposes full character browse modes, truthfully labelled synthesized audio and whole-row results", () => {
   const page = read("src/app/dictionary/page.tsx");
   const client = read("src/app/components/dictionary-search.tsx");
   assert.match(page, /2,971 HSK characters/);
@@ -60,7 +60,7 @@ test("dictionary UI exposes full character browse modes, formal audio and whole-
   assert.match(client, /Initial/);
   assert.match(client, /Final/);
   assert.match(client, /Tone/);
-  assert.match(client, /Formal audio only/);
+  assert.match(client, /Published synthesized audio only/);
   assert.doesNotMatch(client, /Quick preview/);
   assert.match(client, /data-dictionary-word-link/);
   assert.match(client, /No exact matches/);

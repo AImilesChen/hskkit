@@ -135,8 +135,8 @@ test("P0 topic pages expose SEO, breadcrumbs, readable production cards, real wo
   assert.match(detail, /BreadcrumbList/);
   assert.match(detail, /getVerifiedTopicWords/);
   assert.match(detail, /robots:\s*ready\s*\?\s*undefined\s*:\s*\{\s*index:\s*false/);
-  assert.match(detail, /formalAudioUrl/);
-  assert.match(detail, /className="h-11 w-full" controls/);
+  assert.match(detail, /audioAsset/);
+  assert.match(detail, /AudioPlaybackControl/);
   assert.match(index, /href="\/" className="inline-flex min-h-11 items-center/);
   assert.ok((detail.match(/href="\/" className="inline-flex min-h-11 items-center/g) ?? []).length >= 2);
   assert.ok((detail.match(/href="\/topics" className="inline-flex min-h-11 items-center/g) ?? []).length >= 2);

@@ -1,5 +1,5 @@
-import practiceAudioManifest from "../practice/audio-assets.json" with { type: "json" };
-import { isPublishedStep7Content, publishedStep7AudioSrc } from "./step7-release.ts";
+import { publicAudioAsset, publishedContentAudioAssetByLogicalId, publishedPracticeAudioAsset, type PublishedAudioAsset, type PublicAudioAsset } from "../audio/assets.ts";
+import { isPublishedStep7Content } from "./step7-release.ts";
 import { LISTENING_LIBRARY_QUESTIONS, listeningQuestionBySlug } from "./listening-library.ts";
 import { READING_LIBRARY_QUESTIONS } from "./reading-library.ts";
 
@@ -59,6 +59,7 @@ export interface AdvancedListeningLesson {
   register: "everyday" | "formal";
   voiceText: string;
   audioSrc: string;
+  audioAsset?: PublicAudioAsset;
   instruction: string;
   guidance: string;
   exercise: Step7Exercise;
@@ -109,25 +110,25 @@ export const READING_LESSONS: ReadingLesson[] = ALL_READING_LESSONS
     vocabulary: lesson.vocabulary.map((item) => ({ ...item, hanzi: item.word })),
   }));
 
-const formalAudio = (logicalId: string) => {
-  const src = publishedStep7AudioSrc(logicalId);
-  if (!src) throw new Error(`LISTENING_AUDIO_NOT_PUBLISHED:${logicalId}`);
-  return src;
+const contentAudio = (logicalId: string, text: string) => {
+  const asset = publishedContentAudioAssetByLogicalId(logicalId, text);
+  if (!asset) throw new Error(`LISTENING_AUDIO_NOT_PUBLISHED:${logicalId}`);
+  return asset;
 };
 const practiceAudio = (id: string) => {
-  const asset = practiceAudioManifest.assets.find((candidate) => candidate.id === id && candidate.authorization.status === "authorized" && candidate.qaStatus === "approved" && candidate.lifecycleStatus === "published");
+  const asset = publishedPracticeAudioAsset(id);
   if (!asset) throw new Error(`LISTENING_AUDIO_NOT_APPROVED:${id}`);
-  return `/${asset.storageKey}`;
+  return asset;
 };
-const listen = (slug: string, level: number, title: string, kind: AdvancedListeningLesson["kind"], trainingType: ListeningTrainingType, register: AdvancedListeningLesson["register"], voiceText: string, audioSrc: string, instruction: string, prompt: string, options: Record<string, string> | undefined, answer: string, explanation: string): AdvancedListeningLesson => {
+const listen = (slug: string, level: number, title: string, kind: AdvancedListeningLesson["kind"], trainingType: ListeningTrainingType, register: AdvancedListeningLesson["register"], voiceText: string, audioAsset: PublishedAudioAsset, instruction: string, prompt: string, options: Record<string, string> | undefined, answer: string, explanation: string): AdvancedListeningLesson => {
   const trustedExercise = exercise(`listening-${slug}-v1`, `listening:${slug}`, kind, prompt, options, answer, explanation);
-  return { slug, level, levelBand: level >= 7 ? "7-9" : String(level), contentVersion: trustedExercise.contentVersion, title, kind, trainingType, register, voiceText, audioSrc, instruction, guidance: instruction, exercise: trustedExercise };
+  return { slug, level, levelBand: level >= 7 ? "7-9" : String(level), contentVersion: trustedExercise.contentVersion, title, kind, trainingType, register, voiceText, audioSrc: audioAsset.src, audioAsset: publicAudioAsset(audioAsset), instruction, guidance: instruction, exercise: trustedExercise };
 };
 
 export const ADVANCED_LISTENING_LESSONS: AdvancedListeningLesson[] = [
-  listen("hsk1-tone-pairs", 1, "HSK 1 single-syllable tone recognition", "tone", "tone", "everyday", "买。", formalAudio("hsk3.audio.word-mai"), "Listen to the single syllable and identify its tone.", "Which tone did you hear?", { A: "First tone", B: "Second tone", C: "Third tone", D: "Fourth tone" }, "C", "买 is pronounced mǎi with the third tone."),
-  listen("hsk2-syllable-discrimination", 2, "HSK 2 syllable discrimination", "discrimination", "syllable", "everyday", "老师让我们练习发音。", formalAudio("hsk3.audio.sentence-pronunciation"), "Focus on the middle phrase and distinguish lǎoshī from lǎoshǔ.", "Which phrase did you hear?", { A: "老师让我们练习发音。", B: "老鼠让我们练习发音。", C: "老师让我们联系发音。" }, "A", "The sentence uses 老师 (teacher) and 练习 (practise)."),
-  listen("hsk3-sentence-dictation", 3, "HSK 3 basic dictation", "dictation", "basic-dictation", "everyday", "每天早上，林月先复习十个生词，再听十五分钟中文。她把不懂的句子写在本子上，晚上再看一遍。", formalAudio("hsk3.audio.context-morning-study"), "Listen to the full context, then type the first sentence. Punctuation and spaces are ignored.", "Type the first sentence you hear.", undefined, "每天早上林月先复习十个生词再听十五分钟中文", "The first sentence is 每天早上，林月先复习十个生词，再听十五分钟中文。"),
+  listen("hsk1-tone-pairs", 1, "HSK 1 single-syllable tone recognition", "tone", "tone", "everyday", "买。", contentAudio("hsk3.audio.word-mai", "买。"), "Listen to the single syllable and identify its tone.", "Which tone did you hear?", { A: "First tone", B: "Second tone", C: "Third tone", D: "Fourth tone" }, "C", "买 is pronounced mǎi with the third tone."),
+  listen("hsk2-syllable-discrimination", 2, "HSK 2 syllable discrimination", "discrimination", "syllable", "everyday", "老师让我们练习发音。", contentAudio("hsk3.audio.sentence-pronunciation", "老师让我们练习发音。"), "Focus on the middle phrase and distinguish lǎoshī from lǎoshǔ.", "Which phrase did you hear?", { A: "老师让我们练习发音。", B: "老鼠让我们练习发音。", C: "老师让我们联系发音。" }, "A", "The sentence uses 老师 (teacher) and 练习 (practise)."),
+  listen("hsk3-sentence-dictation", 3, "HSK 3 basic dictation", "dictation", "basic-dictation", "everyday", "每天早上，林月先复习十个生词，再听十五分钟中文。她把不懂的句子写在本子上，晚上再看一遍。", contentAudio("hsk3.audio.context-morning-study", "每天早上，林月先复习十个生词，再听十五分钟中文。她把不懂的句子写在本子上，晚上再看一遍。"), "Listen to the full context, then type the first sentence. Punctuation and spaces are ignored.", "Type the first sentence you hear.", undefined, "每天早上林月先复习十个生词再听十五分钟中文", "The first sentence is 每天早上，林月先复习十个生词，再听十五分钟中文。"),
   listen("hsk4-sentence-detail", 4, "HSK 4 sentence detail", "discrimination", "sentence", "formal", "各位乘客请注意，开往上海的列车晚点二十分钟，新的检票时间是九点十分。", practiceAudio("hsk3.practice.audio.level-4-1.v1"), "Listen for a changed time in a public announcement.", "What is the new ticket-check time?", { A: "8:50", B: "9:10", C: "9:20" }, "B", "The announcement states 新的检票时间是九点十分."),
   listen("hsk5-paragraph-inference", 5, "HSK 5 paragraph inference", "discrimination", "paragraph", "formal", "调查结果显示，多数用户喜欢新的搜索方式，但希望保留旧版筛选条件作为备用。", practiceAudio("hsk3.practice.audio.level-5-1.v1"), "Listen to the short report and infer the requested product decision.", "What do users most likely want?", { A: "Remove every old filter", B: "Keep old filters as a backup", C: "Stop using search" }, "B", "Users like the new search but explicitly ask to retain the old filters as a backup."),
   listen("hsk6-context-intent", 6, "HSK 6 context and intent", "discrimination", "context", "formal", "专家提醒，相关性并不等于因果关系，在获得更多实验数据之前，不应把初步发现写成确定结论。", practiceAudio("hsk3.practice.audio.level-6-1.v1"), "Identify why the expert gives this warning.", "What is the expert's main purpose?", { A: "To reject all experiments", B: "To prevent an unsupported causal claim", C: "To announce a final conclusion" }, "B", "The expert warns that correlation alone does not establish causation."),
