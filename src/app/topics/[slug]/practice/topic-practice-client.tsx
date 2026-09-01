@@ -3,13 +3,15 @@
 import Link from "next/link";
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { PublicTopicPracticeQuestion, TopicPracticeMode } from "@/lib/topics/practice";
+import { TopicIcon } from "../../topic-visuals";
+import { topicIconFor, topicVisualFor } from "@/lib/topics/visuals";
 
-type Props = { topicSlug: string; topicTitle: string; questions: PublicTopicPracticeQuestion[] };
+type Props = { topicSlug: string; topicTitle: string; visualKey: string; categorySlug: string; questions: PublicTopicPracticeQuestion[] };
 type Feedback = { correct: boolean; correctAnswerText: string; explanation?: string };
 type LearningView = { queueBinding: string; revision: number; feedback?: Feedback; message?: string; playbackTicket?: string };
 const labels: Record<TopicPracticeMode, string> = { meaning: "Meaning", pinyin: "Pinyin", listening: "Listening", scene: "Scene" };
 
-export function TopicPracticeClient({ topicSlug, topicTitle, questions }: Props) {
+export function TopicPracticeClient({ topicSlug, topicTitle, visualKey, categorySlug, questions }: Props) {
   const [view, setView] = useState<LearningView | null>(null);
   const [index, setIndex] = useState(0);
   const [selected, setSelected] = useState("");
@@ -24,6 +26,7 @@ export function TopicPracticeClient({ topicSlug, topicTitle, questions }: Props)
   const attemptKeys = useRef<Record<string, string>>({});
   const audioRef = useRef<HTMLAudioElement>(null);
   const question = questions[index];
+  const visual = topicVisualFor(categorySlug);
   const progress = useMemo(() => Math.round(((finished ? questions.length : index) / questions.length) * 100), [finished, index, questions.length]);
 
   useEffect(() => {
@@ -132,8 +135,8 @@ export function TopicPracticeClient({ topicSlug, topicTitle, questions }: Props)
     setIndex(0); setSelected(""); setFeedback(null); setCorrectCount(0); setMistakeCount(0); setFinished(false); setPlaybackTicket(""); setPlaybackReady(false); setError("");
   }
 
-  if (finished) return <section className="mt-6 rounded-3xl border border-emerald-200 bg-white p-6 shadow-[0_22px_55px_-44px_rgba(15,23,42,0.45)] sm:p-[32px]" aria-live="polite">
-    <p className="text-xs font-black uppercase tracking-[0.15em] text-emerald-700">Session complete</p><h2 className="mt-3 text-3xl font-black text-slate-950">You finished {topicTitle}</h2>
+  if (finished) return <section className={`mt-6 rounded-3xl border bg-white p-6 shadow-[0_22px_55px_-44px_rgba(15,23,42,0.45)] sm:p-[32px] ${visual.border}`} aria-live="polite">
+    <div className="flex items-start gap-4"><span className={`grid size-14 shrink-0 place-items-center rounded-2xl ${visual.iconSurface} ${visual.iconText}`}><TopicIcon name={topicIconFor(visualKey)} className="size-8" title={`${topicTitle} icon`} /></span><div><p className="text-xs font-black uppercase tracking-[0.15em] text-emerald-700">Session complete</p><h2 className="mt-2 text-3xl font-black text-slate-950">You finished {topicTitle}</h2></div></div>
     <div className="mt-6 grid grid-cols-3 gap-3 text-center"><div className="rounded-2xl bg-slate-100 p-4"><p className="text-2xl font-black text-slate-950">{questions.length}</p><p className="mt-1 text-xs font-bold text-slate-600">Answered</p></div><div className="rounded-2xl bg-emerald-50 p-4"><p className="text-2xl font-black text-emerald-800">{correctCount}</p><p className="mt-1 text-xs font-bold text-emerald-700">Correct</p></div><div className="rounded-2xl bg-rose-50 p-4"><p className="text-2xl font-black text-rose-800">{mistakeCount}</p><p className="mt-1 text-xs font-bold text-rose-700">Review mistakes</p></div></div>
     <p className="mt-5 text-sm leading-6 text-slate-600">Results are already in your existing Attempts, spaced review and Mistakes. Repeated word skills share the same review card rather than creating duplicates.</p>
     <div className="mt-6 grid gap-3 sm:grid-cols-2"><Link href="/review" className="inline-flex min-h-11 items-center justify-center rounded-xl bg-blue-600 px-5 text-sm font-black text-white hover:bg-blue-700">Open Review</Link><Link href="/mistakes" className="inline-flex min-h-11 items-center justify-center rounded-xl border border-slate-300 px-5 text-sm font-black text-slate-800 hover:border-blue-400">Review mistakes</Link><button type="button" className="inline-flex min-h-11 items-center justify-center rounded-xl border border-slate-300 px-5 text-sm font-black text-slate-800 hover:border-blue-400" onClick={restart}>Practice again</button><Link href={`/topics/${topicSlug}`} className="inline-flex min-h-11 items-center justify-center rounded-xl border border-slate-300 px-5 text-sm font-black text-slate-800 hover:border-blue-400">Back to topic</Link></div>
@@ -141,9 +144,9 @@ export function TopicPracticeClient({ topicSlug, topicTitle, questions }: Props)
 
   return <section className="mt-4 sm:mt-6" aria-labelledby="topic-practice-question">
     <div className="flex items-center justify-between gap-4"><p className="text-sm font-black text-slate-700">Question {index + 1} of {questions.length}</p><p className="text-sm font-bold text-slate-500">{correctCount} correct</p></div>
-    <div className="mt-3 h-2 overflow-hidden rounded-full bg-slate-200" aria-label={`${progress}% complete`}><div className="h-full rounded-full bg-blue-600 transition-[width] duration-200" style={{ width: `${progress}%` }} /></div>
+    <div className="mt-3 h-2 overflow-hidden rounded-full bg-slate-200" aria-label={`${progress}% complete`}><div className={`h-full rounded-full transition-[width] duration-200 ${visual.line}`} style={{ width: `${progress}%` }} /></div>
     <article className="mt-3 rounded-2xl border border-slate-200 bg-white p-4 shadow-[0_22px_55px_-44px_rgba(15,23,42,0.45)] sm:mt-5 sm:rounded-3xl sm:p-[32px]">
-      <div className="flex flex-wrap items-center justify-between gap-3"><span className="rounded-full bg-blue-50 px-3 py-1.5 text-xs font-black text-blue-700">{labels[question.mode]}</span><p className="text-sm font-bold text-slate-500">{question.instruction}</p></div>
+      <div className="flex flex-wrap items-center justify-between gap-3"><span className={`inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-xs font-black ${visual.surface} ${visual.mutedText}`}><TopicIcon name={topicIconFor(visualKey)} className="size-4" />{labels[question.mode]}</span><p className="text-sm font-bold text-slate-500">{question.instruction}</p></div>
       {question.context ? <pre className="mt-5 whitespace-pre-wrap rounded-2xl bg-slate-950 p-4 font-sans text-base leading-7 text-slate-100" lang="zh-Hans">{question.context}</pre> : null}
       {question.audioSrc ? <div className="mt-5 rounded-2xl bg-blue-50 p-4"><p className="mb-3 text-xs font-black uppercase tracking-[0.12em] text-blue-800">Formal listening audio</p><audio ref={audioRef} className="hidden" preload="metadata" src={question.audioSrc} onEnded={() => void finishPlayback()} onError={failPlayback} /><button type="button" onClick={() => void playFormalAudio()} disabled={busy || Boolean(feedback)} className="inline-flex min-h-11 w-full items-center justify-center rounded-xl bg-blue-600 px-5 text-sm font-black text-white hover:bg-blue-700 disabled:bg-slate-400">{busy ? "Playing…" : playbackReady ? "Play again" : "Play complete audio"}</button>{playbackReady ? <p className="mt-2 text-sm font-bold text-emerald-800">Listening verified. Choose your answer.</p> : null}</div> : null}
       <h2 id="topic-practice-question" className="mt-4 text-xl font-black leading-tight text-slate-950 sm:mt-[24px] sm:text-3xl">{question.prompt}</h2>
