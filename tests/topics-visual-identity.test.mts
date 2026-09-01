@@ -76,8 +76,8 @@ test("topic cards and detail panel expose truthful state-aware CTA labels withou
   assert.match(card, /progress\.learned > 0/);
   assert.doesNotMatch(card, />\s*View topic\s*</);
   assert.match(panel, /Start first word/);
-  assert.match(panel, /Continue where you left off/);
-  assert.match(panel, /Review topic practice/);
+  assert.match(panel, /Continue next word/);
+  assert.match(panel, /Review practice/);
 });
 
 test("mobile Topics keeps browsing and the primary practice action inside a compact first screen", async () => {
@@ -87,7 +87,7 @@ test("mobile Topics keeps browsing and the primary practice action inside a comp
   ]);
   assert.match(index, /py-4[^\n]*md:py-12/);
   assert.match(index, /hidden sm:block/);
-  assert.match(detail, /Start topic practice/);
+  assert.match(detail, /Start practice/);
   assert.match(detail, /href=\{`\/topics\/\$\{topic\.slug\}\/practice`\}/);
 });
 
@@ -102,4 +102,58 @@ test("practice inherits topic identity subtly and completion keeps learning acti
   assert.match(client, /Session complete/);
   assert.match(client, /Open Review/);
   assert.doesNotMatch(client, /<TopicHeroScene/);
+});
+
+test("category cards separate illustration, label and count without competing for title width", async () => {
+  const [visuals, index] = await Promise.all([
+    source("src/app/topics/topic-visuals.tsx"),
+    source("src/app/topics/page.tsx"),
+  ]);
+  assert.match(visuals, /grid-cols-\[64px_minmax\(0,1fr\)\]/);
+  assert.doesNotMatch(visuals, /absolute bottom-3 left-4[^\n]*visual\.label/);
+  assert.match(index, /items-center justify-between[^\n]*category\.titleZh[^\n]*\{count\} topics/);
+  assert.doesNotMatch(index, /items-start justify-between[^\n]*category\.title[^\n]*\{count\} topics/);
+});
+
+test("shared topic detail uses a compact brand-blue hero and gives Chinese equal learning weight", async () => {
+  const [detail, visuals] = await Promise.all([
+    source("src/app/topics/[slug]/page.tsx"),
+    source("src/app/topics/topic-visuals.tsx"),
+  ]);
+  assert.match(detail, /from-\[#0b1f4b\]/);
+  assert.match(detail, /to-\[#123b75\]/);
+  assert.doesNotMatch(detail, /bg-slate-950 text-white/);
+  assert.match(detail, /text-lg font-black[^\n]*sm:text-xl[^\n]*\{topic\.titleZh\}/);
+  assert.match(visuals, /min-h-\[164px\]/);
+});
+
+test("topic word cards use contextual display meanings and one dominant practice action", async () => {
+  const [detail, presentation] = await Promise.all([
+    source("src/app/topics/[slug]/page.tsx"),
+    import("../src/lib/topics/presentation.ts"),
+  ]);
+  assert.equal(presentation.topicMeaningForCard("to wash; to develop photographs; to shuffle cards"), "to wash");
+  assert.equal(presentation.topicMeaningForCard("to leave home"), "to leave home");
+  assert.match(detail, /topicMeaningForCard\(word\.meaning\)/);
+  assert.match(detail, />Word details →<\/Link>/);
+  assert.match(detail, />Practice<\/Link>/);
+  assert.doesNotMatch(detail, /Practise word/);
+  assert.doesNotMatch(detail, /grid grid-cols-2 gap-2[^\n]*Word details/);
+});
+
+test("detail support content is lighter, naturally sized and uses a consistent practice vocabulary", async () => {
+  const detail = await source("src/app/topics/[slug]/page.tsx");
+  assert.match(detail, /Core words<\/h2><p className="mt-2 text-sm[^\n]*Ordered for this learning situation/);
+  assert.match(detail, /divide-y divide-slate-100/);
+  assert.doesNotMatch(detail, /topic\.expressions[^\n]*rounded-xl bg-slate-50 p-4/);
+  assert.match(detail, /grid size-7 shrink-0/);
+  assert.match(detail, /border-slate-200 bg-slate-50\/80[^\n]*Culture tip/);
+  assert.doesNotMatch(detail, /Continuous topic practice/);
+  assert.match(detail, /Continue practice/);
+});
+
+test("recommended topic cards keep metadata compact instead of repeating a heavy three-cell table", async () => {
+  const card = await source("src/app/topics/topic-card.tsx");
+  assert.match(card, /flex flex-wrap items-center gap-x-4 gap-y-2/);
+  assert.doesNotMatch(card, /grid grid-cols-3 gap-2 border-y/);
 });

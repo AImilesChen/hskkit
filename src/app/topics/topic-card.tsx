@@ -36,10 +36,10 @@ export function TopicCard({ topic, progress, progressState = "hidden" }: { topic
     </div>
     <p className="mt-3 flex-1 text-sm leading-6 text-slate-600">{topic.description}</p>
     <div className="mt-3 flex flex-wrap gap-2">{progressState === "ready" && progress ? <span className="rounded-full bg-emerald-50 px-3 py-1 text-xs font-bold text-emerald-800">{progress.learned}/{progress.total} learned · {progress.percent}%</span> : progressState === "error" ? <span className="rounded-full bg-amber-50 px-3 py-1 text-xs font-bold text-amber-900">Progress unavailable</span> : null}</div>
-    <dl className="mt-4 grid grid-cols-3 gap-2 border-y border-slate-100 py-3 text-center">
-      <div><dt className="text-[11px] font-bold uppercase tracking-wide text-slate-400">Words</dt><dd className="mt-1 text-sm font-bold text-slate-800">{topic.wordAssetIds.length}</dd></div>
-      <div><dt className="text-[11px] font-bold uppercase tracking-wide text-slate-400">HSK</dt><dd className="mt-1 text-sm font-bold leading-5 text-slate-800">{topic.levelBands.join(", ")}</dd></div>
-      <div><dt className="text-[11px] font-bold uppercase tracking-wide text-slate-400">Time</dt><dd className="mt-1 text-sm font-bold text-slate-800">{topic.estimatedMinutes} min</dd></div>
+    <dl className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-2 border-t border-slate-100 pt-3 text-sm text-slate-600">
+      <div className="flex items-baseline gap-1.5"><dt className="text-xs font-semibold text-slate-500">Words</dt><dd className="font-bold text-slate-800">{topic.wordAssetIds.length}</dd></div>
+      <div className="flex items-baseline gap-1.5"><dt className="text-xs font-semibold text-slate-500">HSK</dt><dd className="font-bold text-slate-800">{topic.levelBands.join(", ")}</dd></div>
+      <div className="flex items-baseline gap-1.5"><dt className="text-xs font-semibold text-slate-500">Time</dt><dd className="font-bold text-slate-800">{topic.estimatedMinutes} min</dd></div>
     </dl>
     <Link href={`/topics/${topic.slug}`} className={`mt-4 inline-flex min-h-11 items-center justify-between rounded-xl px-4 font-bold transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 ${ctaClass}`}>
       {cta} <span aria-hidden="true">→</span>

@@ -48,11 +48,13 @@ export function TopicIcon({ name, className = "size-6", title }: IconProps) {
 
 export function CategoryVisual({ categorySlug, title }: { categorySlug: string; title: string }) {
   const visual = topicVisualFor(categorySlug);
-  return <div className={`relative h-[92px] overflow-hidden rounded-2xl border ${visual.border} ${visual.softSurface}`} aria-hidden="true">
-    <span className={`absolute -right-5 -top-8 size-24 rounded-full opacity-70 ${visual.iconSurface}`} />
-    <span className={`absolute bottom-3 right-8 h-2 w-20 rounded-full opacity-50 ${visual.line}`} />
-    <span className={`absolute left-4 top-4 grid size-14 place-items-center rounded-2xl bg-white/85 shadow-sm ${visual.iconText}`}><TopicIcon name={categoryIconNames[categorySlug]} className="size-8" /></span>
-    <span className={`absolute bottom-3 left-4 text-[11px] font-black uppercase tracking-[0.14em] ${visual.mutedText}`}>{visual.label}</span>
+  return <div className={`relative grid h-[92px] grid-cols-[64px_minmax(0,1fr)] items-center gap-4 overflow-hidden rounded-2xl border px-4 ${visual.border} ${visual.softSurface}`} aria-hidden="true">
+    <span className={`absolute -right-5 -top-8 size-24 rounded-full opacity-55 ${visual.iconSurface}`} />
+    <span className={`relative grid size-14 place-items-center rounded-2xl bg-white/90 shadow-sm ${visual.iconText}`}><TopicIcon name={categoryIconNames[categorySlug]} className="size-8" /></span>
+    <span className="relative min-w-0">
+      <span className={`block text-[11px] font-black uppercase tracking-[0.14em] ${visual.mutedText}`}>{visual.label}</span>
+      <span className={`mt-2 block h-1.5 w-16 rounded-full opacity-55 ${visual.line}`} />
+    </span>
     <span className="sr-only">{title} scene</span>
   </div>;
 }
@@ -70,12 +72,12 @@ export function TopicScene({ topicSlug, categorySlug, title }: { topicSlug: stri
 
 export function TopicHeroScene({ visualKey, categorySlug, title, titleZh }: { visualKey: string; categorySlug: string; title: string; titleZh: string }) {
   const visual = topicVisualFor(categorySlug);
-  return <div className={`relative min-h-[190px] overflow-hidden rounded-3xl border p-5 ${visual.border} ${visual.softSurface}`} aria-label={`${title} learning scene`}>
-    <span className={`absolute -right-10 -top-10 size-40 rounded-full opacity-70 ${visual.iconSurface}`} aria-hidden="true" />
-    <span className={`absolute -bottom-12 left-12 size-32 rounded-full opacity-40 ${visual.iconSurface}`} aria-hidden="true" />
-    <div className="relative flex h-full min-h-[150px] flex-col justify-between">
-      <div className="flex items-start justify-between gap-4"><span className={`grid size-16 place-items-center rounded-2xl bg-white/90 shadow-sm ${visual.iconText}`}><TopicIcon name={topicIconFor(visualKey)} className="size-9" title={`${title} icon`} /></span><span className={`rounded-full bg-white/75 px-3 py-1 text-xs font-black ${visual.mutedText}`}>{visual.label}</span></div>
-      <div><p className={`text-2xl font-black ${visual.text}`} lang="zh-Hans">{titleZh}</p><p className={`mt-1 text-sm font-bold ${visual.mutedText}`}>{title}</p></div>
+  return <div className={`relative min-h-[164px] overflow-hidden rounded-3xl border p-4 ${visual.border} ${visual.softSurface}`} aria-label={`${title} learning scene`}>
+    <span className={`absolute -right-10 -top-10 size-36 rounded-full opacity-60 ${visual.iconSurface}`} aria-hidden="true" />
+    <span className={`absolute -bottom-12 left-12 size-28 rounded-full opacity-30 ${visual.iconSurface}`} aria-hidden="true" />
+    <div className="relative flex h-full min-h-[130px] flex-col justify-between">
+      <div className="flex items-start justify-between gap-4"><span className={`grid size-14 place-items-center rounded-2xl bg-white/90 shadow-sm ${visual.iconText}`}><TopicIcon name={topicIconFor(visualKey)} className="size-8" title={`${title} icon`} /></span><span className={`rounded-full bg-white/75 px-3 py-1 text-xs font-black ${visual.mutedText}`}>{visual.label}</span></div>
+      <div><p className={`text-xl font-black ${visual.text}`} lang="zh-Hans">{titleZh}</p><p className={`mt-1 text-sm font-bold ${visual.mutedText}`}>{title}</p></div>
     </div>
   </div>;
 }
