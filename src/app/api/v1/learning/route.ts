@@ -632,10 +632,13 @@ export async function POST(req: NextRequest) {
         state = { ...state, dailyOperationKeys: [...(state.dailyOperationKeys ?? []), key].slice(-400) };
       } else if (action === "topic_batch_today" || action === "topic_batch_review") {
         const topicSlug = short(payload.topicSlug, 100);
+        const lessonId = short(payload.lessonId, 100);
         const sessionId = short(payload.sessionId, 120);
         const topic = topicSlug ? await getVerifiedTopicForMutation(topicSlug) : null;
-        if (!topic || (action === "topic_batch_today" && !sessionId)) throw new Error("INVALID_TOPIC_BATCH");
-        const contexts = await Promise.all(topic.wordAssetIds.map((assetId) => getDictionaryLearningContext(assetId)));
+        const lesson = lessonId ? topic?.lessons?.find((candidate) => candidate.id === lessonId) : undefined;
+        if (!topic || (lessonId && !lesson) || (action === "topic_batch_today" && !sessionId)) throw new Error("INVALID_TOPIC_BATCH");
+        const assetIds = lesson?.wordAssetIds ?? topic.wordAssetIds;
+        const contexts = await Promise.all(assetIds.map((assetId) => getDictionaryLearningContext(assetId)));
         if (contexts.some((context) => !context || !context.current.contentVersion.startsWith(`${topic.sourceReleaseId}:`))) throw new Error("INVALID_TOPIC_BATCH");
         if (action === "topic_batch_today") {
           for (const context of contexts) {

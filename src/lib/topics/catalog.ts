@@ -14,6 +14,16 @@ export interface TopicCategory {
 export type TopicDifficulty = "starter" | "developing" | "stretch";
 export type TopicExpression = { hanzi: string; pinyin: string; meaning: string };
 export type TopicDialogueTurn = TopicExpression & { speaker: "A" | "B" };
+export interface TopicLesson {
+  id: string;
+  title: string;
+  titleZh: string;
+  outcome: string;
+  wordAssetIds: string[];
+  expressions: TopicExpression[];
+  dialogue: TopicDialogueTurn[];
+  task: { title: string; scenario: string; successCriteria: string[] };
+}
 
 export interface LearningTopic {
   id: string;
@@ -30,6 +40,7 @@ export interface LearningTopic {
   difficulty: TopicDifficulty;
   expressions: TopicExpression[];
   dialogue: TopicDialogueTurn[];
+  lessons?: TopicLesson[];
   cultureNote: string;
   relatedTopicSlugs: string[];
   sortOrder: number;
@@ -200,29 +211,54 @@ export const learningTopics: LearningTopic[] = [
     slug: "grocery-shopping",
     categoryId: "topic-category.food-drink",
     title: "Grocery Shopping",
-    titleZh: "购买食材",
-    description: "Compare prices and choose everyday food in a shop or supermarket.",
-    learningGoal: "Ask about price and identify common fresh ingredients.",
-    levelBands: ["1", "2", "4", "5"],
+    titleZh: "超市购物",
+    description: "Complete a real supermarket trip in three short lessons: find what you need, compare quantity and price, then pay and leave with the right receipt or bag.",
+    learningGoal: "Find groceries, compare price and quantity, and complete checkout in a natural exchange.",
+    levelBands: ["1", "2", "3", "4", "5", "7"],
     wordAssetIds: [
-      "hsk3.word.l2.0060.v1", "hsk3.word.l1.0314.v1", "hsk3.word.l1.0228.v1",
-      "hsk3.word.l2.0372.v1", "hsk3.word.l1.0294.v1", "hsk3.word.l2.0414.v1",
-      "hsk3.word.l1.0127.v1", "hsk3.word.l4.0816.v1", "hsk3.word.l5.0707.v1",
-      "hsk3.word.l1.0346.v1", "hsk3.word.l1.0164.v1",
+      "hsk3.word.l1.0314.v1", "hsk3.word.l2.0060.v1", "hsk3.word.l4.0283.v1", "hsk3.word.l1.0228.v1", "hsk3.word.l2.0372.v1",
+      "hsk3.word.l3.0816.v1", "hsk3.word.l1.0346.v1", "hsk3.word.l5.0707.v1", "hsk3.word.l3.0539.v1", "hsk3.word.l1.0275.v1",
+      "hsk3.word.l4.0816.v1", "hsk3.word.l3.0334.v1", "hsk3.word.l3.0335.v1", "hsk3.word.l2.0414.v1", "hsk3.word.l1.0127.v1",
+      "hsk3.word.l1.0095.v1", "hsk3.word.l1.0294.v1", "hsk3.word.l2.0190.v1", "hsk3.word.l2.0293.v1", "hsk3.word.l2.0422.v1",
+      "hsk3.word.l4.0139.v1", "hsk3.word.l3.0782.v1", "hsk3.word.l2.0621.v1", "hsk3.word.l3.0904.v1", "hsk3.word.l7.3760.v1",
+      "hsk3.word.l2.0408.v1", "hsk3.word.l4.0686.v1", "hsk3.word.l4.0220.v1", "hsk3.word.l4.0991.v1", "hsk3.word.l3.0309.v1",
     ],
-    featuredWordAssetIds: ["hsk3.word.l2.0060.v1", "hsk3.word.l1.0228.v1", "hsk3.word.l1.0346.v1"],
-    estimatedMinutes: 16,
+    featuredWordAssetIds: ["hsk3.word.l2.0060.v1", "hsk3.word.l1.0346.v1", "hsk3.word.l3.0334.v1", "hsk3.word.l3.0904.v1"],
+    estimatedMinutes: 45,
     difficulty: "developing",
-    expressions: [{"hanzi": "这个多少钱一斤？", "pinyin": "Zhège duōshao qián yì jīn?", "meaning": "How much is this per jin?"}, {"hanzi": "我想买一些新鲜蔬菜。", "pinyin": "Wǒ xiǎng mǎi yìxiē xīnxiān shūcài.", "meaning": "I want to buy some fresh vegetables."}, {"hanzi": "可以便宜一点儿吗？", "pinyin": "Kěyǐ piányi yìdiǎnr ma?", "meaning": "Could it be a little cheaper?"}],
-    dialogue: [{"speaker": "A", "hanzi": "这些苹果怎么卖？", "pinyin": "Zhèxiē píngguǒ zěnme mài?", "meaning": "How are these apples priced?"}, {"speaker": "B", "hanzi": "八块钱一斤。", "pinyin": "Bā kuài qián yì jīn.", "meaning": "Eight yuan per jin."}, {"speaker": "A", "hanzi": "我要两斤，再买一些蔬菜。", "pinyin": "Wǒ yào liǎng jīn, zài mǎi yìxiē shūcài.", "meaning": "I’ll take two jin and some vegetables."}, {"speaker": "B", "hanzi": "好的，我给您称一下。", "pinyin": "Hǎo de, wǒ gěi nín chēng yíxià.", "meaning": "Okay, I’ll weigh them for you."}],
-    cultureNote: "A 斤 is commonly used in mainland Chinese food markets and equals 500 grams. Posted prices may be per 斤, so confirm the unit before comparing prices.",
+    expressions: [{"hanzi": "请问，牛奶在哪儿？", "pinyin": "Qǐngwèn, niúnǎi zài nǎr?", "meaning": "Excuse me, where is the milk?"}, {"hanzi": "这个多少钱一斤？", "pinyin": "Zhège duōshao qián yì jīn?", "meaning": "How much is this per jin?"}, {"hanzi": "我用信用卡支付。", "pinyin": "Wǒ yòng xìnyòngkǎ zhīfù.", "meaning": "I’ll pay by credit card."}, {"hanzi": "请给我收据。", "pinyin": "Qǐng gěi wǒ shōujù.", "meaning": "Please give me the receipt."}],
+    dialogue: [{"speaker": "A", "hanzi": "请问，新鲜蔬菜在哪儿？", "pinyin": "Qǐngwèn, xīnxiān shūcài zài nǎr?", "meaning": "Excuse me, where are the fresh vegetables?"}, {"speaker": "B", "hanzi": "在水果旁边。今天苹果打折。", "pinyin": "Zài shuǐguǒ pángbiān. Jīntiān píngguǒ dǎzhé.", "meaning": "Beside the fruit. Apples are discounted today."}, {"speaker": "A", "hanzi": "我要一公斤苹果和一瓶牛奶，总共多少钱？", "pinyin": "Wǒ yào yì gōngjīn píngguǒ hé yì píng niúnǎi, zǒnggòng duōshao qián?", "meaning": "I’d like one kilogram of apples and a bottle of milk. How much altogether?"}, {"speaker": "B", "hanzi": "三十二块。您用现金还是信用卡？", "pinyin": "Sānshí'èr kuài. Nín yòng xiànjīn háishi xìnyòngkǎ?", "meaning": "Thirty-two yuan. Cash or card?"}],
+    lessons: [
+      {
+        id: "find-and-buy", title: "Find what you need", titleZh: "找到并购买商品", outcome: "Ask where an item is and choose ten common grocery words.",
+        wordAssetIds: ["hsk3.word.l1.0314.v1", "hsk3.word.l2.0060.v1", "hsk3.word.l4.0283.v1", "hsk3.word.l1.0228.v1", "hsk3.word.l2.0372.v1", "hsk3.word.l3.0816.v1", "hsk3.word.l1.0346.v1", "hsk3.word.l5.0707.v1", "hsk3.word.l3.0539.v1", "hsk3.word.l1.0275.v1"],
+        expressions: [{"hanzi": "我需要买水果和蔬菜。", "pinyin": "Wǒ xūyào mǎi shuǐguǒ hé shūcài.", "meaning": "I need to buy fruit and vegetables."}, {"hanzi": "请问，牛奶在哪儿？", "pinyin": "Qǐngwèn, niúnǎi zài nǎr?", "meaning": "Excuse me, where is the milk?"}, {"hanzi": "这个商店卖苹果吗？", "pinyin": "Zhège shāngdiàn mài píngguǒ ma?", "meaning": "Does this shop sell apples?"}],
+        dialogue: [{"speaker": "A", "hanzi": "请问，水果在哪儿？", "pinyin": "Qǐngwèn, shuǐguǒ zài nǎr?", "meaning": "Excuse me, where is the fruit?"}, {"speaker": "B", "hanzi": "在前面，蔬菜旁边。", "pinyin": "Zài qiánmiàn, shūcài pángbiān.", "meaning": "Ahead, beside the vegetables."}, {"speaker": "A", "hanzi": "这里卖牛奶吗？", "pinyin": "Zhèlǐ mài niúnǎi ma?", "meaning": "Do you sell milk here?"}, {"speaker": "B", "hanzi": "卖，在右边的冰箱里。", "pinyin": "Mài, zài yòubiān de bīngxiāng lǐ.", "meaning": "Yes, in the refrigerator on the right."}],
+        task: { title: "Find four items", scenario: "You enter an unfamiliar supermarket with a list: apples, vegetables, fruit and milk. Ask a clerk where two items are, then say what you need to buy.", successCriteria: ["Ask where an item is", "Name at least four groceries", "Use 需要 and 买 in one natural sentence"] },
+      },
+      {
+        id: "compare-and-measure", title: "Compare price and quantity", titleZh: "比较价格和数量", outcome: "Check freshness, ask a price, and choose the right unit or container.",
+        wordAssetIds: ["hsk3.word.l4.0816.v1", "hsk3.word.l3.0334.v1", "hsk3.word.l3.0335.v1", "hsk3.word.l2.0414.v1", "hsk3.word.l1.0127.v1", "hsk3.word.l1.0095.v1", "hsk3.word.l1.0294.v1", "hsk3.word.l2.0190.v1", "hsk3.word.l2.0293.v1", "hsk3.word.l2.0422.v1"],
+        expressions: [{"hanzi": "这些苹果新鲜吗？", "pinyin": "Zhèxiē píngguǒ xīnxiān ma?", "meaning": "Are these apples fresh?"}, {"hanzi": "这个多少钱一斤？", "pinyin": "Zhège duōshao qián yì jīn?", "meaning": "How much is this per jin?"}, {"hanzi": "我要一公斤，再要一瓶牛奶。", "pinyin": "Wǒ yào yì gōngjīn, zài yào yì píng niúnǎi.", "meaning": "I’ll take one kilogram, plus a bottle of milk."}],
+        dialogue: [{"speaker": "A", "hanzi": "这些苹果新鲜吗？", "pinyin": "Zhèxiē píngguǒ xīnxiān ma?", "meaning": "Are these apples fresh?"}, {"speaker": "B", "hanzi": "很新鲜，八块钱一斤。", "pinyin": "Hěn xīnxiān, bā kuài qián yì jīn.", "meaning": "Very fresh, eight yuan per jin."}, {"speaker": "A", "hanzi": "旁边的价格更便宜吗？", "pinyin": "Pángbiān de jiàgé gèng piányi ma?", "meaning": "Is the price of the ones beside them cheaper?"}, {"speaker": "B", "hanzi": "对，但是那些苹果小一点儿。", "pinyin": "Duì, dànshì nàxiē píngguǒ xiǎo yìdiǎnr.", "meaning": "Yes, but those apples are a little smaller."}],
+        task: { title: "Choose the better buy", scenario: "Two apple displays use different prices and units. Ask the price, confirm whether it is per jin or kilogram, and choose one kilogram without confusing the total.", successCriteria: ["Ask 多少钱", "Use 斤 or 公斤 correctly", "Compare 便宜 and 贵 before choosing"] },
+      },
+      {
+        id: "pay-and-leave", title: "Pay and finish checkout", titleZh: "付款并完成结账", outcome: "Understand a discount, choose a payment method, and ask for checkout documents.",
+        wordAssetIds: ["hsk3.word.l4.0139.v1", "hsk3.word.l3.0782.v1", "hsk3.word.l2.0621.v1", "hsk3.word.l3.0904.v1", "hsk3.word.l7.3760.v1", "hsk3.word.l2.0408.v1", "hsk3.word.l4.0686.v1", "hsk3.word.l4.0220.v1", "hsk3.word.l4.0991.v1", "hsk3.word.l3.0309.v1"],
+        expressions: [{"hanzi": "这个会员价打折吗？", "pinyin": "Zhège huìyuán jià dǎzhé ma?", "meaning": "Is this member price discounted?"}, {"hanzi": "我用信用卡支付。", "pinyin": "Wǒ yòng xìnyòngkǎ zhīfù.", "meaning": "I’ll pay by credit card."}, {"hanzi": "请给我收据和发票。", "pinyin": "Qǐng gěi wǒ shōujù hé fāpiào.", "meaning": "Please give me the receipt and invoice."}],
+        dialogue: [{"speaker": "A", "hanzi": "您好，会员商品今天打折。", "pinyin": "Nínhǎo, huìyuán shāngpǐn jīntiān dǎzhé.", "meaning": "Hello, member items are discounted today."}, {"speaker": "B", "hanzi": "好的，总共多少钱？", "pinyin": "Hǎo de, zǒnggòng duōshao qián?", "meaning": "Okay, how much is it altogether?"}, {"speaker": "A", "hanzi": "五十八块。用现金还是信用卡？", "pinyin": "Wǔshíbā kuài. Yòng xiànjīn háishi xìnyòngkǎ?", "meaning": "Fifty-eight yuan. Cash or card?"}, {"speaker": "B", "hanzi": "信用卡。请给我一个塑料袋和收据。", "pinyin": "Xìnyòngkǎ. Qǐng gěi wǒ yí ge sùliàodài hé shōujù.", "meaning": "Card. Please give me a plastic bag and the receipt."}],
+        task: { title: "Complete checkout", scenario: "You reach a staffed checkout after waiting in line. Confirm the discounted total, choose cash or card, pay, and request the document and bag you need.", successCriteria: ["Confirm the total with 总共", "State a payment method", "Ask for a 收据, 发票 or 塑料袋"] },
+      },
+    ],
+    cultureNote: "A 斤 is commonly used in mainland Chinese food markets and equals 500 grams. Supermarkets usually show fixed prices, while 会员价 marks a member price. A 收据 is a receipt; 发票 usually refers to an official invoice, so ask for the one you actually need.",
     relatedTopicSlugs: ["restaurant-basics", "cooking-at-home"],
     sortOrder: 2,
     status: "published",
-    contentVersion: "2026.09-topics-p0",
+    contentVersion: "2026.09-grocery-sample-p1",
     sourceReleaseId: topicsSourceReleaseId,
     seoTitle: "Grocery Shopping Chinese Vocabulary | HSKKit",
-    seoDescription: "Learn published HSK 3.0 words for supermarkets, prices, fruit, vegetables and fresh food.",
+    seoDescription: "Learn 30 published HSK 3.0 grocery words in three practical lessons, with pronunciation, price questions, checkout dialogue and SRS practice.",
     marker: "购",
   },
   {

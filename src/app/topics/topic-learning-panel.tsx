@@ -19,7 +19,7 @@ type LearningView = {
 export function TopicLearningPanel({ topic }: { topic: LearningTopic }) {
   const [view, setView] = useState<LearningView | null>(null);
   const [state, setState] = useState<"loading" | "ready" | "error">("loading");
-  const [busy, setBusy] = useState<"today" | "review" | null>(null);
+  const [busy, setBusy] = useState<string | null>(null);
   const [message, setMessage] = useState("");
 
   useEffect(() => {
@@ -58,9 +58,10 @@ export function TopicLearningPanel({ topic }: { topic: LearningTopic }) {
     return () => controller.abort();
   }, [topic]);
 
-  async function run(action: "topic_batch_today" | "topic_batch_review") {
+  async function run(action: "topic_batch_today" | "topic_batch_review", lessonId?: string) {
     if (!view || view.scope !== "account" || busy) return;
-    setBusy(action === "topic_batch_today" ? "today" : "review");
+    const target = action === "topic_batch_today" ? "today" : "review";
+    setBusy(lessonId ? `${target}:${lessonId}` : target);
     setMessage("");
     try {
       const response = await fetch("/api/v1/learning", {
@@ -70,7 +71,7 @@ export function TopicLearningPanel({ topic }: { topic: LearningTopic }) {
           action,
           queueBinding: view.queueBinding,
           clientRevision: view.revision,
-          payload: { topicSlug: topic.slug, sessionId: view.session.id, idempotencyKey: `topic-batch-${crypto.randomUUID()}` },
+          payload: { topicSlug: topic.slug, lessonId, sessionId: view.session.id, idempotencyKey: `topic-batch-${crypto.randomUUID()}` },
         }),
       });
       const body = await response.json() as LearningView;
@@ -90,7 +91,9 @@ export function TopicLearningPanel({ topic }: { topic: LearningTopic }) {
         throw new Error(body.error || "The topic could not be added.");
       }
       setView(body);
-      setMessage(action === "topic_batch_today" ? "All available topic words are now in Today." : "All available topic words are now ready in Review.");
+      setMessage(lessonId
+        ? `This lesson is now ${action === "topic_batch_today" ? "in Today" : "ready in Review"}.`
+        : action === "topic_batch_today" ? "All available topic words are now in Today." : "All available topic words are now ready in Review.");
     } catch (error) {
       setMessage(error instanceof Error ? error.message : "The topic could not be added.");
     } finally {
@@ -110,7 +113,8 @@ export function TopicLearningPanel({ topic }: { topic: LearningTopic }) {
     <div className="mt-2 flex items-end justify-between gap-3"><div><h2 id="topic-progress-title" className="text-xl font-black text-slate-950">{progress.learned} of {progress.total} words learned</h2><p className="mt-1 text-sm text-slate-700">Based only on saved learning records for this account.</p></div><strong className="text-2xl text-emerald-800">{progress.percent}%</strong></div>
     <div className="mt-3 h-2 overflow-hidden rounded-full bg-emerald-100" role="progressbar" aria-label="Topic word progress" aria-valuemin={0} aria-valuemax={100} aria-valuenow={progress.percent}><span className="block h-full rounded-full bg-emerald-600" style={{ width: `${progress.percent}%` }} /></div>
     {nextAsset ? <Link href={`/word/${encodeURIComponent(nextAsset)}/practice`} className="mt-4 inline-flex min-h-11 w-full items-center justify-between rounded-xl bg-blue-600 px-4 text-sm font-bold text-white hover:bg-blue-700">{progress.learned > 0 ? "Continue next word" : "Start first word"} <span aria-hidden="true">→</span></Link> : <Link href={`/topics/${topic.slug}/practice`} className="mt-4 inline-flex min-h-11 w-full items-center justify-between rounded-xl bg-blue-600 px-4 text-sm font-bold text-white hover:bg-blue-700">Review practice <span aria-hidden="true">→</span></Link>}
-    <div className="mt-3 grid gap-2 sm:grid-cols-2"><button className="min-h-11 rounded-xl border border-emerald-300 bg-white px-3 text-sm font-bold text-emerald-900 disabled:opacity-50" disabled={Boolean(busy)} type="button" onClick={() => void run("topic_batch_today")}>{busy === "today" ? "Adding…" : "Add all to Today"}</button><button className="min-h-11 rounded-xl border border-emerald-300 bg-white px-3 text-sm font-bold text-emerald-900 disabled:opacity-50" disabled={Boolean(busy)} type="button" onClick={() => void run("topic_batch_review")}>{busy === "review" ? "Adding…" : "Add all to Review"}</button></div>
+    {topic.lessons ? <div className="mt-4 space-y-3" aria-label="Lesson actions">{topic.lessons.map((lesson, index) => <div key={lesson.id} className="rounded-xl border border-emerald-200 bg-white p-3"><p className="text-xs font-black uppercase tracking-[0.1em] text-emerald-800">Lesson {index + 1}</p><p className="mt-1 text-sm font-bold text-slate-900">{lesson.title}</p><div className="mt-2 grid gap-2"><button className="min-h-11 rounded-lg border border-emerald-300 px-3 text-sm font-bold text-emerald-900 disabled:opacity-50" disabled={Boolean(busy)} type="button" onClick={() => void run("topic_batch_today", lesson.id)}>{busy === `today:${lesson.id}` ? "Adding…" : "Add lesson to Today"}</button><button className="min-h-11 rounded-lg border border-emerald-300 px-3 text-sm font-bold text-emerald-900 disabled:opacity-50" disabled={Boolean(busy)} type="button" onClick={() => void run("topic_batch_review", lesson.id)}>{busy === `review:${lesson.id}` ? "Adding…" : "Add lesson to Review"}</button></div></div>)}</div> : null}
+    {!topic.lessons ? <div className="mt-3 grid gap-2 sm:grid-cols-2"><button className="min-h-11 rounded-xl border border-emerald-300 bg-white px-3 text-sm font-bold text-emerald-900 disabled:opacity-50" disabled={Boolean(busy)} type="button" onClick={() => void run("topic_batch_today")}>{busy === "today" ? "Adding…" : "Add all to Today"}</button><button className="min-h-11 rounded-xl border border-emerald-300 bg-white px-3 text-sm font-bold text-emerald-900 disabled:opacity-50" disabled={Boolean(busy)} type="button" onClick={() => void run("topic_batch_review")}>{busy === "review" ? "Adding…" : "Add all to Review"}</button></div> : null}
     <p className="mt-3 min-h-5 text-sm font-semibold text-slate-700" aria-live="polite">{message}</p>
   </section>;
 }

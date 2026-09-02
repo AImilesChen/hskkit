@@ -80,7 +80,7 @@ test("P0 topic catalog uses original published collections backed by active HSK 
   assert.deepEqual(topicCategories.map((category) => category.slug), ["daily-life", "food-drink", "travel-transport"]);
   assert.equal(learningTopics.length, 9);
   assert.equal(learningTopics.every((topic) => topic.status === "published"), true);
-  assert.equal(learningTopics.every((topic) => topic.contentVersion === "2026.09-topics-p0"), true);
+  assert.equal(learningTopics.every((topic) => topic.contentVersion === (topic.slug === "grocery-shopping" ? "2026.09-grocery-sample-p1" : "2026.09-topics-p0")), true);
   assert.equal(learningTopics.every((topic) => topic.sourceReleaseId === topicsSourceReleaseId), true);
   assert.equal(learningTopics.every((topic) => topic.wordAssetIds.length >= 8), true);
   assert.equal(new Set(learningTopics.map((topic) => topic.slug)).size, learningTopics.length);

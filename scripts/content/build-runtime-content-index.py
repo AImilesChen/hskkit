@@ -15,7 +15,13 @@ from pathlib import Path
 
 CURATED_HANZI = {
     "学习", "旅行", "习惯", "环境", "经验", "交流", "责任", "改善",
-    "趋势", "贡献", "资源", "倡导", "买",
+    "趋势", "贡献", "资源", "倡导",
+    # Grocery Shopping is the frozen P1 sample. Keep all 30 verified words in
+    # the bounded runtime snapshot so Topics, Dictionary, Today and Review use
+    # the same released content records.
+    "商店", "超市", "购物", "买", "卖", "需要", "水果", "蔬菜", "苹果", "牛奶",
+    "新鲜", "价格", "价钱", "便宜", "贵", "多少", "钱", "公斤", "斤", "瓶",
+    "打折", "现金", "信用卡", "支付", "收据", "排队", "塑料袋", "发票", "总共", "会员",
 }
 
 

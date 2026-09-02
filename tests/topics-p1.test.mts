@@ -1,5 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
+import { createHash } from "node:crypto";
+import { readFileSync } from "node:fs";
 import { readFile } from "node:fs/promises";
 import {
   learningTopics,
@@ -122,4 +124,69 @@ test("P1 UI exposes filters, signed-in truth states, resume and atomic bulk acti
   assert.match(route, /topicProgress/);
   assert.match(topicServer, /snapshot\.status !== "ready"/);
   assert.match(panel, /body\.error === "REVISION_CONFLICT"/);
+});
+
+test("P1 Grocery Shopping freezes one complete three-lesson sample with 30 unique words", () => {
+  const grocery = learningTopics.find((topic) => topic.slug === "grocery-shopping") as (typeof learningTopics)[number] & {
+    lessons?: Array<{
+      id: string;
+      title: string;
+      titleZh: string;
+      outcome: string;
+      wordAssetIds: string[];
+      expressions: Array<{ hanzi: string; pinyin: string; meaning: string }>;
+      dialogue: Array<{ speaker: "A" | "B"; hanzi: string; pinyin: string; meaning: string }>;
+      task: { title: string; scenario: string; successCriteria: string[] };
+    }>;
+  };
+  assert.ok(grocery);
+  assert.equal(grocery.lessons?.length, 3);
+  assert.equal(grocery.wordAssetIds.length, 30);
+  assert.ok(grocery.wordAssetIds.length >= 24 && grocery.wordAssetIds.length <= 34);
+  assert.equal(new Set(grocery.wordAssetIds).size, grocery.wordAssetIds.length);
+  const lessonWords = grocery.lessons!.flatMap((lesson) => lesson.wordAssetIds);
+  assert.deepEqual(lessonWords, grocery.wordAssetIds);
+  for (const lesson of grocery.lessons!) {
+    assert.equal(lesson.wordAssetIds.length, 10, lesson.id);
+    assert.ok(lesson.expressions.length >= 3, lesson.id);
+    assert.ok(lesson.dialogue.length >= 4, lesson.id);
+    assert.ok(lesson.task.scenario.length >= 40, lesson.id);
+    assert.ok(lesson.task.successCriteria.length >= 3, lesson.id);
+  }
+});
+
+test("P1 Grocery Shopping publishes canonical audio for every sample word", () => {
+  const grocery = learningTopics.find((topic) => topic.slug === "grocery-shopping")!;
+  const runtime = JSON.parse(readFileSync(new URL("../src/lib/content/runtime-content-index.json", import.meta.url), "utf8"));
+  const runtimeWords = runtime.dictionaryAssets as Array<{ id: string; hanzi: string }>;
+  const audioAssets = runtime.publishedAudioAssets as Array<{ contentAssetId: string; storageKey: string; checksumSha256: string; qaStatus: string; authorization: { status: string }; usageRights: { streaming: boolean } }>;
+  for (const assetId of grocery.wordAssetIds) {
+    assert.ok(runtimeWords.some((word) => word.id === assetId), `runtime word ${assetId}`);
+    const audio = audioAssets.find((asset) => asset.contentAssetId === assetId);
+    assert.ok(audio, `audio ${assetId}`);
+    assert.equal(audio.qaStatus, "approved", assetId);
+    assert.equal(audio.authorization.status, "authorized", assetId);
+    assert.equal(audio.usageRights.streaming, true, assetId);
+    assert.match(audio.checksumSha256, /^[a-f0-9]{64}$/);
+    const bytes = readFileSync(new URL(`../public/${audio.storageKey}`, import.meta.url));
+    assert.ok(bytes.byteLength >= 1000, audio.storageKey);
+    assert.equal(createHash("sha256").update(bytes).digest("hex"), audio.checksumSha256, audio.storageKey);
+  }
+});
+
+test("P1 Grocery Shopping UI exposes lessons, listening, practice, and SRS continuation", async () => {
+  const [detail, learningPanel, practice] = await Promise.all([
+    source("src/app/topics/[slug]/page.tsx"),
+    source("src/app/topics/topic-learning-panel.tsx"),
+    source("src/app/topics/[slug]/practice/topic-practice-client.tsx"),
+  ]);
+  assert.match(detail, /Three practical lessons/);
+  assert.match(detail, /Real-world task/);
+  assert.match(detail, /Listen and learn/);
+  assert.match(detail, /lesson\.wordAssetIds/);
+  assert.match(learningPanel, /Add lesson to Today/);
+  assert.match(learningPanel, /lessonId/);
+  assert.match(practice, /Listening/);
+  assert.match(practice, /Open Review/);
+  assert.match(detail, /href="\/review"/);
 });
