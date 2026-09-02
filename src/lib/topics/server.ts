@@ -29,8 +29,8 @@ export const getVerifiedTopicsSnapshot = cache(async (): Promise<VerifiedTopicsS
       return { status: "unavailable", releaseId: null, rows: [] };
     }
     const rows: CatalogSearchRow[] = [];
-    for (let start = 0; start < allMappedAssetIds.length; start += 100) {
-      rows.push(...await findCatalogWordsByIds(db, allMappedAssetIds.slice(start, start + 100), release.id));
+    for (let start = 0; start < allMappedAssetIds.length; start += 90) {
+      rows.push(...await findCatalogWordsByIds(db, allMappedAssetIds.slice(start, start + 90), release.id));
     }
     const returnedIds = new Set(rows.map((row) => row.id));
     if (
