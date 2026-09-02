@@ -118,16 +118,16 @@ export function WordPracticeClient({ word, exercises }: { word: DictionaryPracti
 
   if (!active) return <p className="rounded-2xl border border-amber-200 bg-amber-50 p-5 text-sm text-amber-900">This word does not yet have enough same-level published alternatives for a reliable exercise.</p>;
 
-  return <section className="grid gap-5 lg:grid-cols-[240px_minmax(0,1fr)]">
-    <div className="self-start rounded-2xl border border-slate-200 bg-white p-3">
-      <h2 className="px-2 pb-2 text-sm font-bold text-slate-950">Practice modes</h2>
-      <div className="grid gap-2 sm:grid-cols-3 lg:grid-cols-1" role="tablist" aria-label="Word practice modes">
-        {exercises.map((exercise) => <button key={exercise.id} type="button" role="tab" aria-selected={exercise.id === active.id} onClick={() => chooseExercise(exercise.id)} className={`min-h-11 rounded-xl px-3 text-left text-sm font-bold ${exercise.id === active.id ? "bg-blue-600 text-white" : "bg-slate-100 text-slate-700 hover:bg-slate-200"}`}>{exercise.mode === "meaning" ? "Choose the meaning" : exercise.mode === "pinyin" ? "Choose the pinyin" : "Listen and choose"}</button>)}
+  return <section className="mx-auto max-w-3xl">
+    <div className="mb-3">
+      <h2 className="text-sm font-bold text-slate-950">Practice modes</h2>
+      <div className={`mt-2 grid gap-1 rounded-2xl bg-slate-100 p-1 ${exercises.length === 3 ? "grid-cols-3" : "grid-cols-2"}`} role="tablist" aria-label="Word practice modes">
+        {exercises.map((exercise) => <button key={exercise.id} type="button" role="tab" aria-selected={exercise.id === active.id} aria-label={exercise.mode === "meaning" ? "Choose the meaning" : exercise.mode === "pinyin" ? "Choose the pinyin" : "Listen and choose"} onClick={() => chooseExercise(exercise.id)} className={`min-h-11 rounded-xl px-2 text-center text-xs font-bold transition-colors sm:text-sm ${exercise.id === active.id ? "bg-white text-blue-700 shadow-sm ring-1 ring-slate-200" : "text-slate-600 hover:bg-white/70 hover:text-slate-950"}`}>{exercise.mode === "meaning" ? "Meaning" : exercise.mode === "pinyin" ? "Pinyin" : "Listening"}</button>)}
       </div>
-      {!exercises.some((exercise) => exercise.mode === "listening") ? <p className="mt-3 px-2 text-xs leading-5 text-slate-500">Listening is hidden because this word has no published synthesized pronunciation.</p> : null}
+      {!exercises.some((exercise) => exercise.mode === "listening") ? <p className="mt-2 text-xs leading-5 text-slate-500">Listening is unavailable because this word has no published synthesized pronunciation.</p> : null}
     </div>
 
-    <div className="rounded-2xl border border-slate-200 bg-white p-5 sm:p-7">
+    <div className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm sm:p-7">
       <p className="text-xs font-bold uppercase tracking-[0.12em] text-blue-700">{active.instruction}</p>
       <h2 className="mt-3 text-2xl font-black text-slate-950">{active.prompt}</h2>
       {active.mode === "listening" ? <AudioPlaybackControl asset={active.audioAsset} beforePlay={authorizePlayback} onComplete={() => void finishPlayback()} onFailure={failPlayback} className="mt-5" /> : null}
@@ -138,9 +138,13 @@ export function WordPracticeClient({ word, exercises }: { word: DictionaryPracti
           <span className="font-black text-slate-500">{option.key}</span><span>{option.text}</span>
         </label>)}
       </fieldset>
-      <button type="button" onClick={() => void submit()} disabled={!view || !answer || busy || (active.mode === "listening" && !playbackReady)} className="mt-5 min-h-11 w-full rounded-xl bg-blue-600 px-5 text-sm font-bold text-white hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto">{busy ? "Saving…" : "Check and save"}</button>
+      <button type="button" onClick={() => void submit()} disabled={!view || !answer || busy || (active.mode === "listening" && !playbackReady)} className="mt-5 min-h-11 w-full rounded-xl bg-blue-600 px-5 text-sm font-bold text-white hover:bg-blue-700 disabled:cursor-not-allowed disabled:bg-slate-200 disabled:text-slate-500 sm:w-auto">{busy ? "Saving…" : "Check answer"}</button>
       <div className="mt-4 min-h-12" aria-live="polite">
-        {feedback ? <p className={`rounded-xl px-4 py-3 text-sm font-semibold ${feedback.correct ? "bg-emerald-50 text-emerald-900" : "bg-amber-50 text-amber-950"}`}>{feedback.correct ? "Correct." : `Not quite. Correct answer: ${feedback.correctAnswerText}.`} This attempt is now connected to Review.</p> : message ? <p className="text-sm text-slate-600">{message}</p> : null}
+        {feedback ? <div className={`rounded-xl px-4 py-3 text-sm ${feedback.correct ? "bg-emerald-50 text-emerald-900" : "bg-amber-50 text-amber-950"}`}>
+          <p className="font-bold">{feedback.correct ? "Correct." : `Not quite. Correct answer: ${feedback.correctAnswerText}.`}</p>
+          <p className="mt-1 font-semibold">{word.hanzi} · {word.pinyin} · {word.meaning}</p>
+          <p className="mt-1">This attempt is now connected to Review.</p>
+        </div> : message ? <p className="text-sm text-slate-600">{message}</p> : null}
       </div>
       <div className="mt-4 flex flex-wrap gap-3 border-t border-slate-100 pt-4 text-sm font-bold">
         <Link href={`/word/${encodeURIComponent(word.assetId)}`} className="text-blue-700 hover:underline">Back to word</Link>
