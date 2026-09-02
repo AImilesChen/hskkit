@@ -1,3 +1,6 @@
+import { p2TopicExpansions } from "./p2-expansions.ts";
+import { p3AdditionalTopics } from "./p3-additional-topics.ts";
+
 export type TopicStatus = "draft" | "published" | "withdrawn";
 
 export interface TopicCategory {
@@ -87,7 +90,7 @@ export const topicCategories: TopicCategory[] = [
   },
 ];
 
-export const learningTopics: LearningTopic[] = [
+const baseLearningTopics: LearningTopic[] = [
   {
     id: "topic.daily-life.morning-routine",
     slug: "morning-routine",
@@ -380,6 +383,11 @@ export const learningTopics: LearningTopic[] = [
     marker: "宿",
   },
 ];
+
+export const learningTopics: LearningTopic[] = baseLearningTopics.map((topic) => {
+  const expansion = p2TopicExpansions[topic.slug];
+  return expansion ? { ...topic, ...expansion } : topic;
+}).concat(p3AdditionalTopics);
 
 export function findTopicCategoryBySlug(slug: string) {
   return topicCategories.find((category) => category.slug === slug) ?? null;

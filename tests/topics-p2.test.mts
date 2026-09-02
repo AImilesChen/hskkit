@@ -12,14 +12,14 @@ import {
 
 const root = new URL("../", import.meta.url);
 const source = async (path: string) => readFile(new URL(path, root), "utf8");
-const topic = learningTopics[0];
+const topic = { ...learningTopics[0], wordAssetIds: learningTopics[0].wordAssetIds.slice(0, 8) };
 const topicAudio = (index: number) => ({
   id: `topic-audio-${index}`, src: `/audio/topic-${index}.mp3`, kind: "word" as const,
   sourceType: "synthesized" as const, sourceLabel: "Synthesized pronunciation" as const,
   provider: "test", authorization: { status: "authorized" as const, license: "test", evidenceUrl: "https://hskkit.com/content-license" },
   qa: { lifecycle: "published" as const, content: "approved" as const, technical: "approved" as const },
 });
-const words: TopicPracticeWord[] = topic.wordAssetIds.map((assetId, index) => ({
+const words: TopicPracticeWord[] = topic.wordAssetIds.slice(0, 8).map((assetId, index) => ({
   assetId,
   contentId: `word:${assetId}`,
   contentVersion: `${topic.sourceReleaseId}:1`,

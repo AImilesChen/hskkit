@@ -2,6 +2,7 @@ import Link from "next/link";
 import { categoryForTopic, type LearningTopic } from "@/lib/topics/catalog";
 import { topicVisualFor } from "@/lib/topics/visuals";
 import { TopicScene } from "./topic-visuals";
+import { publishedContentAudioAsset } from "@/lib/audio/assets";
 
 type Progress = { learned: number; total: number; percent: number };
 type ProgressState = "ready" | "error" | "hidden";
@@ -19,6 +20,7 @@ export function TopicCard({ topic, progress, progressState = "hidden" }: { topic
   const categorySlug = category?.slug ?? "daily-life";
   const visual = topicVisualFor(categorySlug);
   const cta = topicCta(progress, progressState);
+  const audioCount = topic.wordAssetIds.filter((assetId) => Boolean(publishedContentAudioAsset(assetId, ""))).length;
   const ctaClass = cta === "Continue topic"
     ? "bg-blue-600 text-white hover:bg-blue-700"
     : cta === "Review topic"
@@ -35,7 +37,7 @@ export function TopicCard({ topic, progress, progressState = "hidden" }: { topic
       <span className={`rounded-full px-3 py-1 text-xs font-black capitalize ${visual.surface} ${visual.mutedText}`}>{topic.difficulty}</span>
     </div>
     <p className="mt-3 flex-1 text-sm leading-6 text-slate-600">{topic.description}</p>
-    <div className="mt-3 flex flex-wrap gap-2">{progressState === "ready" && progress ? <span className="rounded-full bg-emerald-50 px-3 py-1 text-xs font-bold text-emerald-800">{progress.learned}/{progress.total} learned · {progress.percent}%</span> : progressState === "error" ? <span className="rounded-full bg-amber-50 px-3 py-1 text-xs font-bold text-amber-900">Progress unavailable</span> : null}</div>
+    <div className="mt-3 flex flex-wrap gap-2"><span className={`rounded-full px-3 py-1 text-xs font-bold ${audioCount === topic.wordAssetIds.length ? "bg-emerald-50 text-emerald-800" : "bg-amber-50 text-amber-900"}`} aria-label={`Audio coverage ${audioCount} of ${topic.wordAssetIds.length}`}>{audioCount === topic.wordAssetIds.length ? "Audio complete" : `Audio ${audioCount}/${topic.wordAssetIds.length}`}</span>{progressState === "ready" && progress ? <span className="rounded-full bg-emerald-50 px-3 py-1 text-xs font-bold text-emerald-800">{progress.learned}/{progress.total} learned · {progress.percent}%</span> : progressState === "error" ? <span className="rounded-full bg-amber-50 px-3 py-1 text-xs font-bold text-amber-900">Progress unavailable</span> : null}</div>
     <dl className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-2 border-t border-slate-100 pt-3 text-sm text-slate-600">
       <div className="flex items-baseline gap-1.5"><dt className="text-xs font-semibold text-slate-500">Words</dt><dd className="font-bold text-slate-800">{topic.wordAssetIds.length}</dd></div>
       <div className="flex items-baseline gap-1.5"><dt className="text-xs font-semibold text-slate-500">HSK</dt><dd className="font-bold text-slate-800">{topic.levelBands.join(", ")}</dd></div>

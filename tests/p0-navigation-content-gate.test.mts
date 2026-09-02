@@ -17,7 +17,7 @@ test("the active formal release reports published Level 1 content", () => {
   const status = getHsk3LevelStatus(1);
   assert.equal(status.availability, "ready");
   assert.equal(status.contentCount, 502);
-  assert.equal(status.audioCount, 7);
+  assert.equal(status.audioCount, 74);
   assert.equal(status.releaseId, "hsk3-content-truth-v5");
   assert.equal(status.releaseVersion, 5);
   assert.match(status.message, /available/i);

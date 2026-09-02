@@ -21,7 +21,7 @@ const root = new URL("../", import.meta.url);
 const source = async (path: string) => readFile(new URL(path, root), "utf8");
 
 test("P1 topic metadata includes filters and original contextual learning content", () => {
-  assert.equal(learningTopics.length, 9);
+  assert.equal(learningTopics.length, 12);
   for (const topic of learningTopics) {
     assert.ok(["starter", "developing", "stretch"].includes(topic.difficulty));
     assert.ok(topic.expressions.length >= 3, `${topic.slug} expressions`);
@@ -36,13 +36,13 @@ test("P1 topic metadata includes filters and original contextual learning conten
 });
 
 test("HSK, difficulty and time filters compose without leaking unpublished topics", () => {
-  const filtered = filterPublishedTopics({ level: "1", difficulty: "starter", duration: "quick" });
+  const filtered = filterPublishedTopics({ level: "1", difficulty: "starter", duration: "deep" });
   assert.ok(filtered.length > 0);
   assert.ok(filtered.every((topic) => topic.status === "published"));
   assert.ok(filtered.every((topic) => topic.levelBands.includes("1")));
   assert.ok(filtered.every((topic) => topic.difficulty === "starter"));
-  assert.ok(filtered.every((topic) => topic.estimatedMinutes <= 12));
-  assert.equal(filterPublishedTopics({ level: "all", difficulty: "all", duration: "all" }).length, 9);
+  assert.ok(filtered.every((topic) => topic.estimatedMinutes > 20));
+  assert.equal(filterPublishedTopics({ level: "all", difficulty: "all", duration: "all" }).length, 12);
 });
 
 test("topic progress uses verified learned word state and never invents completion", () => {

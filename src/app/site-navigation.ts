@@ -20,7 +20,7 @@ export const siteNavigation: NavigationEntry[] = [
       { href: "/topics", label: "Topics", description: "Learn published HSK 3.0 vocabulary through practical themes." },
       { href: "/grammar", label: "Grammar", description: "Study published grammar patterns and exercises." },
       { href: "/reading", label: "Reading", description: "Open levelled reading passages and exercises." },
-      { href: "/listen", label: "Listening", description: "Practise published word and context audio." },
+      { href: "/listen", label: "Listening library", description: "Build listening momentum with level sessions and continuous topic audio." },
     ],
   },
   {

@@ -78,9 +78,11 @@ test("P0 topic browsing has a versioned catalog plus index and detail routes", (
 test("P0 topic catalog uses original published collections backed by active HSK word assets", async () => {
   const { topicCategories, learningTopics, publishedTopicRoutesForVerifiedAssets, topicsSourceReleaseId } = await import("../src/lib/topics/catalog.ts");
   assert.deepEqual(topicCategories.map((category) => category.slug), ["daily-life", "food-drink", "travel-transport"]);
-  assert.equal(learningTopics.length, 9);
+  assert.equal(learningTopics.length, 12);
   assert.equal(learningTopics.every((topic) => topic.status === "published"), true);
-  assert.equal(learningTopics.every((topic) => topic.contentVersion === (topic.slug === "grocery-shopping" ? "2026.09-grocery-sample-p1" : "2026.09-topics-p0")), true);
+  const p2Slugs = new Set(["restaurant-basics", "cooking-at-home", "morning-routine", "time-and-plans", "weather-and-seasons", "departure-and-arrival", "getting-around-town", "hotel-stay"]);
+  const p3Slugs = new Set(["home-chores", "cafe-and-drinks", "travel-problems"]);
+  assert.equal(learningTopics.every((topic) => topic.contentVersion === (topic.slug === "grocery-shopping" ? "2026.09-grocery-sample-p1" : p2Slugs.has(topic.slug) ? "2026.09-topics-p2" : p3Slugs.has(topic.slug) ? "2026.09-topics-p3" : "2026.09-topics-p0")), true);
   assert.equal(learningTopics.every((topic) => topic.sourceReleaseId === topicsSourceReleaseId), true);
   assert.equal(learningTopics.every((topic) => topic.wordAssetIds.length >= 8), true);
   assert.equal(new Set(learningTopics.map((topic) => topic.slug)).size, learningTopics.length);
@@ -150,7 +152,7 @@ test("P0 topic pages expose SEO, breadcrumbs, readable production cards, real wo
 test("P0 Learn navigation places Topics between Vocabulary and Grammar", async () => {
   const { siteNavigation } = await import("../src/app/site-navigation.ts");
   assert.deepEqual(siteNavigation[0].items?.map((item) => item.label), [
-    "Today", "Planner", "Levels", "Vocabulary", "Topics", "Grammar", "Reading", "Listening",
+    "Today", "Planner", "Levels", "Vocabulary", "Topics", "Grammar", "Reading", "Listening library",
   ]);
   assert.equal(siteNavigation[0].items?.find((item) => item.label === "Topics")?.href, "/topics");
 });

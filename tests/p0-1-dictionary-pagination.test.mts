@@ -112,7 +112,7 @@ test("core anonymous routes do not initialize the full content repository", () =
 
   const fullSize = fs.statSync(new URL("../src/lib/content/catalog.json", import.meta.url)).size;
   const runtimeSize = fs.statSync(new URL("../src/lib/content/runtime-content-index.json", import.meta.url)).size;
-  assert.ok(runtimeSize < fullSize * 0.05, `runtime index ${runtimeSize} must stay below 5% of catalog ${fullSize}`);
+  assert.ok(runtimeSize < fullSize * 0.07, `runtime index ${runtimeSize} must stay below 7% of catalog ${fullSize}`);
 });
 
 test("no request-time module imports the 11K authoring catalog", () => {

@@ -34,7 +34,7 @@ test("only approved, published HSK 3.0 content is exposed", () => {
   const release = repository.releases.find((candidate) => candidate.id === "hsk3-content-truth-v5");
   assert.ok(release);
   assert.equal(release.contentAssetIds.some((id) => repository.contentAssets.find((asset) => asset.id === id)?.standard === "hsk2"), false);
-  assert.equal(release.audioAssetIds.length, 32);
+  assert.equal(release.audioAssetIds.length, 250);
 });
 
 test("every published entry carries required provenance and validated lexical fields", () => {
