@@ -15,7 +15,7 @@ const fallback: NextAction = {
   kind: "placement",
   label: "Find my starting level",
   href: "/placement",
-  explanation: "Find an evidence-based starting level before building today's queue.",
+  explanation: "Find an evidence-based starting level before building today’s queue.",
 };
 
 const actionLabels: Record<NextAction["kind"], string> = {
@@ -42,19 +42,22 @@ export default function HomeNextStep() {
     return () => { active = false; };
   }, []);
 
-  return <div className="home-cta-panel" aria-live="polite">
+  const href = unavailable ? "/today" : action.href;
+  const label = unavailable ? "Continue today’s study" : loaded ? actionLabels[action.kind] : "Find my starting level";
+  const explanation = unavailable
+    ? "We couldn’t check saved status. Continue in Today to restore the latest server copy without guessing your next step."
+    : loaded ? action.explanation : fallback.explanation;
+
+  return <div className="home-cta-stack" aria-live="polite">
     <div className="home-cta-actions">
-      <Link href={unavailable ? "/today" : action.href} className="home-cta-primary">
+      <Link href={href} className="home-cta-primary">
         <HomeIcon name="route" className="h-5 w-5" />
-        <span>{unavailable ? "Continue today’s study" : loaded ? actionLabels[action.kind] : "Find my starting level"}</span>
+        <span>{label}</span>
         <HomeIcon name="arrow" className="home-cta-arrow h-5 w-5" />
       </Link>
-      <Link href="/levels" className="home-cta-secondary">
-        <span>Browse HSK 3.0 levels</span>
-        <HomeIcon name="arrow" className="home-cta-arrow h-4 w-4" />
-      </Link>
+      <Link href="/levels" className="home-cta-secondary">Browse HSK 3.0 levels <HomeIcon name="arrow" className="h-4 w-4" /></Link>
     </div>
-    <p className="home-cta-explanation">{unavailable ? "We couldn't check your saved status. Continue in Today to restore the latest server copy without guessing your next step." : loaded ? action.explanation : fallback.explanation}</p>
+    <p className="home-cta-explanation">{explanation}</p>
     <ul className="home-cta-trust" aria-label="Before you start">
       {["Start as a guest", "Placement is a learning suggestion", "Sign in later to sync"].map((item) => <li key={item}><span className="home-cta-check"><HomeIcon name="check" className="h-3.5 w-3.5" /></span>{item}</li>)}
     </ul>

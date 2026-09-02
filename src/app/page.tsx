@@ -5,7 +5,11 @@ import SiteHeader from "./site-header";
 import HomeNextStep from "./components/home-next-step";
 import HomeIcon, { type HomeIconName } from "./components/home-icon";
 import "./homepage.css";
-import { getHsk3LevelPreview, getHsk3LevelStatuses } from "@/lib/content/level-status";
+import {
+  formalWordAudioUrlByContentId,
+  getHsk3LevelPreview,
+  getHsk3LevelStatuses,
+} from "@/lib/content/level-status";
 import {
   PUBLIC_ACCOUNT_SCOPE,
   PUBLIC_DICTIONARY_SCOPE,
@@ -13,8 +17,8 @@ import {
 } from "@/lib/public-copy";
 
 export const metadata: Metadata = {
-  title: "HSKKit — Find your HSK 3.0 level and study path",
-  description: "Find your starting level, follow today's study plan, and keep published HSK 3.0 vocabulary, listening, practice, mistakes, and review connected.",
+  title: "HSKKit — Find your HSK level and know what to study next",
+  description: "Find a suggested HSK 3.0 starting level, then connect vocabulary, listening, practice, mistakes and spaced review in one daily study path.",
   alternates: { canonical: "/" },
 };
 
@@ -29,92 +33,191 @@ type Tool = {
 
 const toolGroups: { title: string; description: string; tools: Tool[] }[] = [
   {
-    title: "Core study",
-    description: "Move through the connected daily learning loop.",
+    title: "Start",
+    description: "Choose an evidence-based starting point and see today’s next task.",
     tools: [
+      { title: "Placement", text: "Get a suggested HSK 3.0 starting level.", href: "/placement", icon: "target", core: true },
       { title: "Today", text: "Open due review and the next focused task.", href: "/today", icon: "calendar", core: true },
-      { title: "Vocabulary", text: "Browse the published catalog by level.", href: "/vocabulary/1", icon: "book" },
-      { title: "Listening", text: "Build word and context listening mastery.", href: "/listen", icon: "headphones" },
-      { title: "Practice", text: "Keep attempts and mistakes in your record.", href: "/practice", icon: "pencil" },
     ],
   },
   {
-    title: "Skills",
-    description: "Work on focused language skills with linked exercises.",
+    title: "Learn",
+    description: "Build vocabulary through published levels and real situations.",
     tools: [
+      { title: "Topics", text: "Learn linked words through practical situations.", href: "/topics", icon: "route", core: true },
+      { title: "Vocabulary", text: "Browse the published catalog by HSK level.", href: "/vocabulary/1", icon: "book" },
       { title: "Reading", text: "Use levelled passages and review actions.", href: "/reading/morning-study-routine", icon: "reading", status: "Limited" },
-      { title: "Grammar", text: "Study a pattern, examples and an exercise.", href: "/grammar/ba-sentence-basics", icon: "grammar", status: "Limited" },
     ],
   },
   {
-    title: "Tests",
-    description: "Check a starting point or practise under timed conditions.",
+    title: "Practise",
+    description: "Turn recall, listening and mistakes into saved review evidence.",
     tools: [
-      { title: "Basic Mock", text: "Take the published HSK 1–6 timed mock.", href: "/mock/basic", icon: "timer" },
-      { title: "Advanced Mock", text: "Assess the unified HSK 7–9 ability band.", href: "/mock/advanced", icon: "target" },
+      { title: "Listening", text: "Practise approved word and context audio.", href: "/listen", icon: "headphones", core: true },
+      { title: "Practice", text: "Check meaning, pinyin and listening recall.", href: "/practice", icon: "pencil" },
+      { title: "Mistakes", text: "Return to unresolved answers before they fade.", href: "/mistakes", icon: "review" },
     ],
   },
   {
     title: "Reference",
-    description: "Look up published words without leaving the study system.",
+    description: "Look up published material or choose a test without leaving the system.",
     tools: [
       { title: "Dictionary", text: "Search the published HSK 3.0 catalog.", href: "/dictionary", icon: "search" },
-      { title: "Worksheet generator", text: "Create printable Chinese character practice sheets.", href: "/tools/chinese-character-practice-sheet-generator", icon: "file" },
+      { title: "Basic Mock", text: "Take the published HSK 1–6 timed mock.", href: "/mock/basic", icon: "timer" },
+      { title: "Advanced Mock", text: "Assess the unified HSK 7–9 ability band.", href: "/mock/advanced", icon: "target" },
     ],
   },
 ];
 
 const learningSteps: { number: string; title: string; text: string; href: string; action: string; icon: HomeIconName }[] = [
-  { number: "01", title: "Find your starting level", text: "Use placement as a learning suggestion, not an official examination result.", href: "/placement", action: "Start level check", icon: "target" },
-  { number: "02", title: "Follow Today’s queue", text: "Return to due review and the next focused learning task.", href: "/today", action: "Open Today", icon: "calendar" },
-  { number: "03", title: "Practise real skills", text: "Move through vocabulary, listening, practice and published skill content.", href: "/practice", action: "Practise skills", icon: "pencil" },
-  { number: "04", title: "Review what you missed", text: "Keep attempts, mistakes and due review in the same learning record.", href: "/mistakes", action: "Review mistakes", icon: "review" },
+  { number: "01", title: "Find your starting level", text: "Use placement as learning guidance, never as an official examination result.", href: "/placement", action: "Start level check", icon: "target" },
+  { number: "02", title: "Learn focused vocabulary", text: "Open the next published words by level or through a practical topic.", href: "/topics", action: "Browse topics", icon: "book" },
+  { number: "03", title: "Practise listening", text: "Hear approved audio, answer in context and keep the attempt in your record.", href: "/listen", action: "Open listening", icon: "headphones" },
+  { number: "04", title: "Complete today’s review", text: "Bring mistakes and due memories back through the connected SRS loop.", href: "/review", action: "Review due items", icon: "review" },
 ];
+
+const faqItems = [
+  {
+    question: "What is HSK 3.0?",
+    answer: "HSK 3.0 is the nine-level Chinese proficiency framework used by HSKKit to organise its published vocabulary and study routes. Levels 1–6 are shown separately; Levels 7–9 form one unified advanced ability band.",
+    href: "/hsk-3-0",
+    linkLabel: "Read the HSK 3.0 guide",
+  },
+  {
+    question: "How does the starting-level check work?",
+    answer: "Placement checks responses across published material and suggests a practical starting level. You can use that suggestion to open the matching level or continue into Today’s queue.",
+    href: "/placement",
+    linkLabel: "Open Placement",
+  },
+  {
+    question: "Is the placement result an official HSK score?",
+    answer: "No. It is general learning guidance, not an official examination result, certification or guarantee of exam performance.",
+    href: "/disclaimer",
+    linkLabel: "Read the learning disclaimer",
+  },
+  {
+    question: "What can I use for free?",
+    answer: "Free includes the published catalog, Placement and Today path, up to 10 new items and 20 successful SRS ratings daily, standard practice and review, one active device, and the most recent 7 days up to 100 history entries.",
+    href: "/pricing",
+    linkLabel: "Compare current plans",
+  },
+  {
+    question: "What does Pro include?",
+    answer: "Pro adds unlimited learning and reviews subject to anti-abuse safeguards, Focused Review, 500 monthly AI credits, up to 10,000 history entries and sync across 3 active devices. AI is limited to 10 requests per hour and one concurrent request.",
+    href: "/pricing",
+    linkLabel: "See Pro details",
+  },
+  {
+    question: "Does every published word have audio?",
+    answer: "No. Not every word in the published catalog has audio. When a learning route includes audio, HSKKit uses a QA-approved synthesized Mandarin asset with source, version and QA records; withdrawn or unapproved audio is not presented as published content.",
+    href: "/content-license",
+    linkLabel: "See audio provenance",
+  },
+  {
+    question: "Why are Levels 7–9 shown as one advanced band?",
+    answer: "The advanced examination framework is assessed as one unified ability band, so HSKKit keeps Levels 7–9 together instead of presenting three independent exams or separate claims.",
+    href: "/levels",
+    linkLabel: "Browse all levels",
+  },
+  {
+    question: "Can I start as a guest and sync later?",
+    answer: "Yes. You can begin studying as a guest. A verified account is used to restore and sync eligible progress across supported devices; account and plan limits still apply.",
+    href: "/login?returnTo=%2Ftoday",
+    linkLabel: "Sign in when ready",
+  },
+] as const;
+
+const sceneItems = [
+  {
+    asset: "desk-practice",
+    label: "Desktop practice",
+    title: "Grocery shopping in context",
+    text: "Work through a real eight-question topic session with server-checked answers and saved results.",
+    href: "/topics/grocery-shopping/practice",
+  },
+  {
+    asset: "mobile-listening",
+    label: "Listening practice",
+    title: "Short listening rounds between plans",
+    text: "Choose a level and a bounded question set when audio practice fits the moment.",
+    href: "/listen",
+  },
+  {
+    asset: "tablet-review",
+    label: "Today’s queue",
+    title: "One plan keeps the loop moving",
+    text: "See real time budgets, learning tasks and SRS limits together before choosing the next action.",
+    href: "/today",
+  },
+] as const;
+
+function ResponsiveSceneImage({ asset, alt }: { asset: string; alt: string }) {
+  const sizes = asset === "desk-practice"
+    ? "(min-width: 1024px) 52vw, (min-width: 640px) 100vw, calc(100vw - 36px)"
+    : "(min-width: 1024px) 30vw, (min-width: 640px) 50vw, calc(100vw - 36px)";
+  return <picture>
+    <source type="image/avif" srcSet={`/home/${asset}-640.avif 640w, /home/${asset}-1200.avif 1200w`} sizes={sizes} />
+    <source type="image/webp" srcSet={`/home/${asset}-640.webp 640w, /home/${asset}-1200.webp 1200w`} sizes={sizes} />
+    <img src={`/home/${asset}-640.webp`} alt={alt} width="640" height="360" loading="lazy" decoding="async" />
+  </picture>;
+}
 
 export default function HomePage() {
   const levels = getHsk3LevelStatuses();
   const foundationLevels = levels.slice(0, 6);
   const advancedLevel = levels.find((entry) => entry.level === 7);
-  const previewWord = getHsk3LevelPreview(1, 1)[0];
+  const levelOnePreviewWords = getHsk3LevelPreview(1, 120);
+  const previewWord = levelOnePreviewWords.find((word) => formalWordAudioUrlByContentId.has(word.id)) ?? levelOnePreviewWords[0];
+  const previewWords = previewWord
+    ? [previewWord, ...levelOnePreviewWords.filter((word) => word.id !== previewWord.id).slice(0, 2)]
+    : [];
+  const previewAudioUrl = previewWord ? formalWordAudioUrlByContentId.get(previewWord.id) : undefined;
   const foundationCount = foundationLevels.reduce((total, entry) => total + entry.contentCount, 0);
-  const maxFoundationCount = Math.max(...foundationLevels.map((entry) => entry.contentCount));
   const maxCatalogCount = Math.max(...levels.map((entry) => entry.contentCount));
+  const faqSchema = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: faqItems.map((item) => ({
+      "@type": "Question",
+      name: item.question,
+      acceptedAnswer: { "@type": "Answer", text: item.answer },
+    })),
+  };
 
-  return <><SiteHeader/><main className="mx-auto w-full max-w-[1204px] flex-1 px-5 sm:px-8">
-    <section className="home-hero grid items-center gap-12 border-b border-slate-200 py-14 sm:py-20 lg:grid-cols-[.88fr_1.12fr] lg:gap-16 lg:py-24">
-      <div>
-        <p className="text-xs font-semibold uppercase tracking-[.14em] text-blue-700">HSK 3.0 · Levels 1–9</p>
-        <h1 className="mt-5 max-w-[650px] text-[40px] font-extrabold leading-[1.04] tracking-[-.04em] sm:text-[54px] lg:text-[64px]">
-          <span className="text-blue-700">Find your HSK 3.0 level.</span><br/>Study the next useful task.
-        </h1>
-        <p className="mt-6 max-w-[620px] text-lg leading-8 text-slate-600">Start with a level check, follow a focused daily queue, and keep vocabulary, listening, practice mistakes, and review connected.</p>
+  return <><SiteHeader/><main className="home-main mx-auto w-full max-w-[1204px] flex-1 px-5 sm:px-8">
+    <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
+
+    <section className="home-hero" aria-labelledby="home-title">
+      <div className="home-hero-copy">
+        <p className="home-eyebrow">HSK 3.0 · Levels 1–9</p>
+        <h1 id="home-title"><span>Find your HSK level.</span><br/>Know what to study next.</h1>
+        <p className="home-lede">Start with a suggested level, then keep vocabulary, listening, checked practice, mistakes and spaced review in one connected study path.</p>
         <HomeNextStep />
       </div>
 
-      <div className="home-product-stage" role="group" aria-labelledby="home-product-preview-title">
-        <div className="home-product-card">
-          <div className="flex items-center justify-between gap-4 border-b border-slate-200 pb-4">
-            <div><p id="home-product-preview-title" className="text-xs font-semibold uppercase tracking-[.12em] text-blue-700">A connected daily path</p><h2 className="mt-1 text-2xl font-bold">Today</h2></div>
-            <span className="rounded-xl bg-slate-100 px-3 py-1 text-sm font-semibold text-slate-600">Example queue</span>
-          </div>
-          <ol className="mt-5 grid gap-3">
-            {["Review due items", "Learn focused content", "Listen or practise", "See the daily summary"].map((task, index) => <li key={task} className="flex items-center gap-3 rounded-xl border border-slate-200 bg-slate-50/80 px-4 py-3"><span className={`grid h-8 w-8 shrink-0 place-items-center rounded-lg text-sm font-bold ${index===0?"bg-blue-700 text-white":"bg-white text-slate-500"}`}>{index + 1}</span><span className="font-semibold text-slate-800">{task}</span>{index===0&&<span className="ml-auto text-xs font-semibold text-blue-700">NEXT</span>}</li>)}
-          </ol>
-          <div role="progressbar" aria-label="Example queue progress" aria-valuemin={0} aria-valuemax={4} aria-valuenow={1} className="mt-5 h-2 overflow-hidden rounded-full bg-slate-100"><div className="home-progress h-full w-1/4 rounded-full bg-blue-700"/></div>
+      <div className="home-product-shell" role="group" aria-labelledby="home-product-preview-title">
+        <div className="home-product-heading">
+          <div><p id="home-product-preview-title" className="home-product-kicker">Example learning path</p><h2>Today’s next task</h2></div>
+          <span>Real published data</span>
         </div>
-
-        {previewWord && <Link href="/vocabulary/1" className="home-word-card" aria-label={`Open Level 1 vocabulary, preview word ${previewWord.hanzi}`}>
-          <div className="flex items-center justify-between gap-3"><span className="text-xs font-bold uppercase tracking-[.1em] text-slate-500">Published word</span><span className="text-xs font-semibold text-blue-700">HSK 1</span></div>
-          <p lang="zh-Hans" className="mt-4 font-[var(--font-chinese)] text-4xl font-bold text-slate-950">{previewWord.hanzi}</p>
-          <p className="mt-1 font-semibold text-blue-700">{previewWord.pinyin}</p>
-          <p className="mt-2 text-sm leading-6 text-slate-600 sm:line-clamp-2">{previewWord.meaning}</p>
-          <span className="mt-4 inline-flex min-h-11 items-center font-semibold text-slate-900">Open vocabulary <span aria-hidden="true" className="ml-2 text-blue-700">→</span></span>
-        </Link>}
+        <ol className="home-product-route" aria-label="Example connected study path">
+          {["Level", "Word", "Listen", "Answer", "Review"].map((label, index) => <li key={label} className={index < 3 ? "is-active" : ""}><span>{index + 1}</span>{label}</li>)}
+        </ol>
+        {previewWord ? <div className="home-product-task">
+          <div className="home-product-task-meta"><span>Published HSK 1 word</span><span>Meaning recall</span></div>
+          <div className="home-product-word">
+            <div><p lang="zh-Hans">{previewWord.hanzi}</p><span>{previewWord.pinyin}</span></div>
+            {previewAudioUrl ? <audio controls preload="none" src={previewAudioUrl}>Your browser does not support published word audio.</audio> : null}
+          </div>
+          <p className="home-product-question">Which meaning matches this word?</p>
+          <ol className="home-product-options">{previewWords.map((word, index) => <li key={word.id} className={index === 0 ? "is-correct" : ""}><span>{String.fromCharCode(65 + index)}</span><p>{word.meaning}</p></li>)}</ol>
+          <Link href={`/word/${previewWord.id}/practice`} className="home-product-link">Try this practice <HomeIcon name="arrow" className="h-4 w-4" /></Link>
+        </div> : null}
       </div>
     </section>
 
-    <section className="border-b border-slate-200 py-16 sm:py-20">
-      <div className="max-w-2xl"><p className="text-xs font-semibold uppercase tracking-[.14em] text-blue-700">How HSKKit connects study</p><h2 className="mt-3 text-[34px] font-bold leading-tight tracking-[-.025em] sm:text-[42px]">One connected path from level check to daily review.</h2><p className="mt-4 text-lg leading-8 text-slate-600">Each step leads into the next useful action instead of leaving placement, practice and review as separate tools.</p></div>
+    <section className="home-section" aria-labelledby="path-heading">
+      <div className="home-section-copy"><p className="home-eyebrow">How HSKKit connects study</p><h2 id="path-heading">One connected path from level check to daily review.</h2><p>Each completed action leaves a clear next step instead of turning placement, listening, practice and review into unrelated tools.</p></div>
       <ol className="home-learning-path">{learningSteps.map((step, index) => <li key={step.number} className="home-flow-node">
         <Link href={step.href} className="home-flow-card">
           <span className="home-flow-icon"><HomeIcon name={step.icon} className="h-6 w-6" /></span>
@@ -123,45 +226,43 @@ export default function HomePage() {
           <p>{step.text}</p>
           <span className="home-flow-action">{step.action}<HomeIcon name="arrow" className="h-4 w-4" /></span>
         </Link>
-        {index < learningSteps.length - 1 && <span className="home-flow-connector" aria-hidden="true"><HomeIcon name="arrow" className="h-4 w-4" /></span>}
+        {index < learningSteps.length - 1 ? <span className="home-flow-connector" aria-hidden="true"><HomeIcon name="arrow" className="h-4 w-4" /></span> : null}
       </li>)}</ol>
     </section>
 
-    <section className="border-b border-slate-200 py-16 sm:py-20">
-      <div className="flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between"><div className="max-w-2xl"><p className="text-xs font-semibold uppercase tracking-[.14em] text-blue-700">Published HSK 3.0 catalog</p><h2 className="mt-3 text-[34px] font-bold leading-tight tracking-[-.025em] sm:text-[42px]">Explore the published HSK 3.0 catalog.</h2><p className="mt-4 text-base leading-7 text-slate-600">Browse QA-approved vocabulary by level. Levels 7–9 share one unified advanced ability band.</p></div><Link href="/levels" className="inline-flex min-h-11 items-center font-semibold text-slate-900">Browse all level details <span aria-hidden="true" className="ml-2 text-blue-700">→</span></Link></div>
-      <div className="mt-9 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">{foundationLevels.map((entry) => <Link key={entry.level} href={`/vocabulary/${entry.level}`} className="home-level-card">
-        <span className="text-sm font-semibold text-slate-500">HSK 3.0</span>
-        <div className="mt-3 flex items-end justify-between gap-3"><h3 className="text-2xl font-bold">Level {entry.level}</h3><span className="text-sm font-semibold text-slate-600">{entry.contentCount.toLocaleString("en-US")} words</span></div>
-        <div className="home-level-density" role="meter" aria-label={`Word-list size within Levels 1–6: ${entry.contentCount.toLocaleString("en-US")} words`} aria-valuemin={0} aria-valuemax={maxFoundationCount} aria-valuenow={entry.contentCount}><span style={{ width: `${Math.round(entry.contentCount / maxFoundationCount * 100)}%` }} /></div>
-        <span className="home-level-action">Open catalog<HomeIcon name="arrow" className="h-4 w-4" /></span>
-      </Link>)}
-        {advancedLevel && <Link href="/vocabulary/7" className="home-level-card home-level-card-advanced sm:col-span-2">
-          <span className="text-sm font-semibold text-blue-700">Unified advanced band</span>
-          <div className="mt-3 flex flex-col gap-1 sm:flex-row sm:items-end sm:justify-between"><h3 className="text-2xl font-bold">Levels 7–9</h3><span className="text-sm font-semibold text-slate-600">{advancedLevel.contentCount.toLocaleString("en-US")} words</span></div>
-          <div className="home-level-density" role="meter" aria-label={`Word-list size: ${advancedLevel.contentCount.toLocaleString("en-US")} words`} aria-valuemin={0} aria-valuemax={maxCatalogCount} aria-valuenow={advancedLevel.contentCount}><span style={{ width: `${Math.round(advancedLevel.contentCount / maxCatalogCount * 100)}%` }} /></div>
-          <p className="mt-3 text-sm leading-6 text-slate-600">One shared advanced ability catalog, not three separate level lists.</p>
-          <span className="home-level-action">Open advanced catalog<HomeIcon name="arrow" className="h-4 w-4" /></span>
-        </Link>}
-      </div>
+    <section className="home-section home-scenes" aria-labelledby="scenes-heading">
+      <div className="home-section-copy"><p className="home-eyebrow">Built around real study moments</p><h2 id="scenes-heading">Study fits the rhythm of real life.</h2><p>HSKKit works across focused topic practice, short listening rounds and the Today queue that keeps the learning loop moving.</p></div>
+      <div className="home-scene-grid">{sceneItems.map((scene, index) => <Link key={scene.asset} href={scene.href} className={`home-scene home-scene-${index + 1}`}>
+        <ResponsiveSceneImage asset={scene.asset} alt={`Real HSKKit ${scene.label.toLowerCase()} screen`} />
+        <span className="home-scene-copy"><span>{scene.label}</span><strong>{scene.title}</strong><small>{scene.text}</small></span>
+      </Link>)}</div>
     </section>
 
-    <section className="border-b border-slate-200 py-16 sm:py-20">
-      <div className="max-w-2xl"><p className="text-xs font-semibold uppercase tracking-[.14em] text-blue-700">Study tools</p><h2 className="mt-3 text-[34px] font-bold leading-tight tracking-[-.025em] sm:text-[42px]">Choose a tool for the task in front of you.</h2><p className="mt-4 text-lg leading-8 text-slate-600">The main study path comes first; focused skills, tests and reference tools stay easy to find.</p></div>
-      <div className="mt-9 grid gap-5 lg:grid-cols-2">{toolGroups.map((group) => <section key={group.title} className="home-tool-group">
-        <div><h3 className="text-xl font-bold">{group.title}</h3><p className="mt-1 text-sm leading-6 text-slate-600">{group.description}</p></div>
-        <div className="mt-5 grid gap-2">{group.tools.map((tool) => <Link key={tool.title} href={tool.href} className={`home-tool-card ${tool.core ? "home-tool-card-core" : ""}`}>
-          <span className="home-tool-icon"><HomeIcon name={tool.icon} className="h-5 w-5" /></span>
-          <span className="min-w-0 flex-1"><span className="flex flex-wrap items-center gap-2"><strong className="text-slate-950">{tool.title}</strong>{tool.status&&<span className="text-xs font-semibold text-amber-700">{tool.status} public release</span>}</span><span className="mt-0.5 block text-sm leading-5 text-slate-600">{tool.text}</span></span>
-          <span aria-hidden="true" className="home-tool-arrow"><HomeIcon name="arrow" className="h-4 w-4" /></span>
-        </Link>)}</div>
-      </section>)}</div>
+    <section className="home-section" aria-labelledby="catalog-heading">
+      <div className="home-section-heading"><div className="home-section-copy"><p className="home-eyebrow">Published HSK 3.0 catalog</p><h2 id="catalog-heading">Explore the published HSK 3.0 catalog.</h2><p>Browse QA-approved vocabulary by level. Levels 7–9 share one Unified advanced band.</p></div><Link href="/levels" className="home-text-link">Browse level details <HomeIcon name="arrow" className="h-4 w-4" /></Link></div>
+      <div className="home-level-grid">{foundationLevels.map((entry) => <Link key={entry.level} href={`/vocabulary/${entry.level}`} className="home-level-card">
+        <span>HSK 3.0</span><div><h3>Level {entry.level}</h3><strong>{entry.contentCount.toLocaleString("en-US")}</strong></div>
+        <div className="home-level-density" aria-hidden="true"><span style={{width:`${Math.max(4,Math.round(entry.contentCount/maxCatalogCount*100))}%`}}/></div>
+        <span className="home-level-action">Open vocabulary <HomeIcon name="arrow" className="h-4 w-4" /></span>
+      </Link>)}{advancedLevel ? <Link href="/vocabulary/7" className="home-level-card home-level-card-advanced"><span>HSK 3.0</span><div><h3>Levels 7–9</h3><strong>{advancedLevel.contentCount.toLocaleString("en-US")}</strong></div><p>Unified advanced band</p><span className="home-level-action">Open advanced catalog <HomeIcon name="arrow" className="h-4 w-4" /></span></Link> : null}</div>
     </section>
 
-    <section className="border-b border-slate-200 py-16 sm:py-20"><div className="grid gap-8 lg:grid-cols-[.75fr_1.25fr] lg:items-start"><div><p className="text-xs font-semibold uppercase tracking-[.14em] text-blue-700">Content transparency</p><h2 className="mt-3 text-[32px] font-bold tracking-[-.02em]">Current public scope</h2><p className="mt-4 text-base leading-7 text-slate-600">The homepage keeps the summary compact; the published source and standards pages retain the detailed record.</p></div><div>
-      <div className="grid gap-3 sm:grid-cols-3"><div className="rounded-2xl border border-slate-200 bg-white p-5"><strong className="text-2xl text-slate-950">{foundationCount.toLocaleString("en-US")}</strong><span className="mt-1 block text-sm text-slate-600">Level 1–6 entries</span></div><div className="rounded-2xl border border-slate-200 bg-white p-5"><strong className="text-2xl text-slate-950">{advancedLevel?.contentCount.toLocaleString("en-US")}</strong><span className="mt-1 block text-sm text-slate-600">Unified Level 7–9 entries</span></div><div className="rounded-2xl border border-slate-200 bg-white p-5"><strong className="text-2xl text-slate-950">Guest study</strong><span className="mt-1 block text-sm text-slate-600">Account used for sync</span></div></div>
-      <details className="mt-4 rounded-2xl border border-slate-200 bg-white p-5"><summary className="cursor-pointer font-semibold text-slate-950">Read the detailed public-scope notes</summary><div className="mt-4 space-y-3 text-sm leading-6 text-slate-600"><p>{PUBLIC_FORMAL_CONTENT_SCOPE}</p><p>{PUBLIC_DICTIONARY_SCOPE}</p><p>{PUBLIC_ACCOUNT_SCOPE}</p><p><strong>Stripe Test Store is open.</strong> Complete vocabulary PDFs, Bundles and practical resources are separate one-time purchases from US$3.99; no live card charge is enabled.</p></div></details>
-    </div></div></section>
+    <section className="home-section" aria-labelledby="tools-heading">
+      <div className="home-section-copy"><p className="home-eyebrow">Focused tools</p><h2 id="tools-heading">Choose a tool for the task in front of you.</h2><p>The connected study path stays first. Tests, skill practice and reference routes remain easy to find without competing with the main action.</p></div>
+      <div className="home-tool-grid">{toolGroups.map((group) => <section key={group.title} className="home-tool-group"><div><h3>{group.title}</h3><p>{group.description}</p></div><div className="home-tool-list">{group.tools.map((tool) => <Link key={tool.title} href={tool.href} className={`home-tool-card ${tool.core ? "home-tool-card-core" : ""}`}><span className="home-tool-icon"><HomeIcon name={tool.icon} className="h-5 w-5" /></span><span className="home-tool-copy"><span><strong>{tool.title}</strong>{tool.status ? <em>{tool.status}</em> : null}</span><small>{tool.text}</small></span><span aria-hidden="true" className="home-tool-arrow"><HomeIcon name="arrow" className="h-4 w-4" /></span></Link>)}</div></section>)}</div>
+    </section>
 
-    <section className="my-16 rounded-[24px] bg-slate-950 px-6 py-12 text-center text-white shadow-[0_24px_60px_rgba(15,23,42,.18)] sm:my-20 sm:px-12 sm:py-16"><p className="text-xs font-semibold uppercase tracking-[.14em] text-blue-300">Your next useful step</p><h2 className="mt-3 text-[34px] font-bold text-white sm:text-[42px]">Start with the right level.</h2><p className="mx-auto mt-4 max-w-2xl text-lg leading-8 text-slate-300">Use a learning suggestion to choose the starting point, then keep Today, practice, mistakes and review connected.</p><Link href="/placement" className="mt-7 inline-flex min-h-12 items-center rounded-xl bg-white px-7 font-semibold text-slate-950 transition hover:-translate-y-0.5 hover:bg-blue-50 motion-reduce:transform-none">Find my starting level</Link></section>
+    <section className="home-section home-transparency" aria-labelledby="scope-heading">
+      <div className="home-section-copy"><p className="home-eyebrow">Content transparency</p><h2 id="scope-heading">Published and transparent</h2><p>Summary counts stay visible here. Detailed source, rights and account notes remain available when you need them.</p></div>
+      <div><div className="home-scope-stats"><div><strong>{foundationCount.toLocaleString("en-US")}</strong><span>Level 1–6 entries</span></div><div><strong>{advancedLevel?.contentCount.toLocaleString("en-US")}</strong><span>Unified Level 7–9 entries</span></div><div><strong>Guest study</strong><span>Account used for sync</span></div></div>
+      <details className="home-scope-details"><summary>Read the detailed public-scope notes</summary><div><p>{PUBLIC_FORMAL_CONTENT_SCOPE}</p><p>{PUBLIC_DICTIONARY_SCOPE}</p><p>{PUBLIC_ACCOUNT_SCOPE}</p><p><strong>Stripe Test Store is open.</strong> Store resources are separate one-time purchases; no live card charge is enabled.</p></div></details></div>
+    </section>
+
+    <section className="home-section home-faq" aria-labelledby="faq-heading">
+      <div className="home-section-copy"><p className="home-eyebrow">Before you begin</p><h2 id="faq-heading">Frequently asked questions</h2><p>Core study, account, audio and plan rules in one place, aligned with the current product pages.</p></div>
+      <div className="home-faq-list">{faqItems.map((item, index) => <details key={item.question} open={index === 0}><summary><span>{item.question}</span><HomeIcon name="arrow" className="h-5 w-5" /></summary><div><p>{item.answer}</p><Link href={item.href}>{item.linkLabel} <span aria-hidden="true">→</span></Link>{item.question === "What can I use for free?" ? <Link href="/refund-policy" className="home-faq-secondary-link">Refund policy</Link> : null}</div></details>)}</div>
+    </section>
+
+    <section className="home-final-cta"><p className="home-eyebrow">Your next useful step</p><h2>Start with the right level.</h2><p>Use a learning suggestion to choose the starting point, then keep vocabulary, listening, mistakes and review connected.</p><Link href="/placement">Find my starting level</Link></section>
   </main><SiteFooter/></>;
 }
