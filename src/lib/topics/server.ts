@@ -28,7 +28,10 @@ export const getVerifiedTopicsSnapshot = cache(async (): Promise<VerifiedTopicsS
     if (!release || release.id !== topicsSourceReleaseId) {
       return { status: "unavailable", releaseId: null, rows: [] };
     }
-    const rows = await findCatalogWordsByIds(db, allMappedAssetIds, release.id);
+    const rows: CatalogSearchRow[] = [];
+    for (let start = 0; start < allMappedAssetIds.length; start += 100) {
+      rows.push(...await findCatalogWordsByIds(db, allMappedAssetIds.slice(start, start + 100), release.id));
+    }
     const returnedIds = new Set(rows.map((row) => row.id));
     if (
       rows.some((row) => row.release_id !== release.id)
