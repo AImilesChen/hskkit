@@ -27,6 +27,12 @@ function expectInOrder(source: string, markers: string[]) {
 test("homepage leads with a concise result and a complete dynamic learning scene", () => {
   assert.match(home, /Learn the published HSK 3\.0 vocabulary\./);
   assert.match(home, /Review each word when it matters\./);
+  assert.match(home, /home-title-primary/);
+  assert.match(home, /home-title-secondary/);
+  assert.equal((home.match(/home-title-line/g) ?? []).length, 4, "hero title must use four intentional semantic lines");
+  assert.match(styles, /\.home-title-line\s*\{[^}]*display:\s*block/s);
+  assert.match(styles, /\.home-title-primary\s*\{[^}]*color:\s*var\(--home-blue\)/s);
+  assert.match(styles, /\.home-title-secondary\s*\{[^}]*color:\s*var\(--home-ink\)/s);
   assert.match(home, /Browse \{publishedWordCount\.toLocaleString\("en-US"\)\} published HSK 3\.0 words/);
   assert.match(home, /Formal audio appears only where it has been published and approved\./);
   assert.match(home, /Study flow preview/);

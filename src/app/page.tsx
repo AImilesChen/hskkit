@@ -137,7 +137,16 @@ export default function HomePage() {
     <section className="home-hero" aria-labelledby="home-title">
       <div className="home-hero-copy">
         <p className="home-eyebrow">HSK 3.0 · Levels 1–9</p>
-        <h1 id="home-title"><span>Learn the published HSK 3.0 vocabulary.</span><br/>Review each word when it matters.</h1>
+        <h1 id="home-title" aria-label="Learn the published HSK 3.0 vocabulary. Review each word when it matters.">
+          <span className="home-title-primary" aria-hidden="true">
+            <span className="home-title-line">Learn the published</span>
+            <span className="home-title-line">HSK 3.0 vocabulary.</span>
+          </span>
+          <span className="home-title-secondary" aria-hidden="true">
+            <span className="home-title-line">Review each word</span>
+            <span className="home-title-line">when it matters.</span>
+          </span>
+        </h1>
         <p className="home-lede">Browse {publishedWordCount.toLocaleString("en-US")} published HSK 3.0 words with pinyin and English meanings. Formal audio appears only where it has been published and approved.</p>
         <HomeNextStep />
       </div>

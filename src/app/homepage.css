@@ -28,8 +28,8 @@
 
 .home-hero {
   display: grid;
-  grid-template-columns: minmax(0, .92fr) minmax(440px, 1.08fr);
-  gap: clamp(34px, 5vw, 70px);
+  grid-template-columns: minmax(0, 1.03fr) minmax(440px, .97fr);
+  gap: clamp(32px, 4vw, 54px);
   align-items: center;
   min-height: 610px;
   padding: 52px 0 60px;
@@ -37,15 +37,18 @@
 }
 .home-hero-copy { min-width: 0; }
 .home-hero h1 {
-  max-width: 640px;
+  max-width: 660px;
   margin: 15px 0 0;
   color: var(--home-ink);
-  font-size: clamp(43px, 5vw, 67px);
+  font-size: clamp(40px, 4.15vw, 56px);
   font-weight: 850;
-  letter-spacing: -.055em;
-  line-height: .99;
+  letter-spacing: -.05em;
+  line-height: 1.01;
 }
-.home-hero h1 span { color: var(--home-blue); }
+.home-title-primary, .home-title-secondary { display: block; }
+.home-title-primary { color: var(--home-blue); }
+.home-title-secondary { margin-top: .16em; color: var(--home-ink); font-size: .88em; letter-spacing: -.04em; }
+.home-title-line { display: block; white-space: nowrap; }
 .home-lede {
   max-width: 600px;
   margin: 22px 0 0;
@@ -263,7 +266,9 @@
   .home-main { padding-inline: 18px !important; }
   .home-hero { gap: 30px; padding: 35px 0 43px; }
   .home-hero-copy, .home-hero h1, .home-lede, .home-cta-stack, .home-product-shell { min-width: 0; max-width: 100%; }
-  .home-hero h1 { font-size: 40px; line-height: 1.04; letter-spacing: -.04em; overflow-wrap: normal; }
+  .home-hero h1 { font-size: clamp(34px, 9.5vw, 38px); line-height: 1.04; letter-spacing: -.04em; overflow-wrap: normal; }
+  .home-title-secondary { margin-top: .18em; }
+  .home-title-line { white-space: normal; }
   .home-lede { margin-top: 17px; font-size: 16px; line-height: 1.55; }
   .home-cta-stack { margin-top: 22px; }
   .home-cta-actions { display: grid; align-items: stretch; gap: 7px; }
