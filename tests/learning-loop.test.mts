@@ -43,6 +43,41 @@ test("wrong practice answer creates one versioned attempt, mistake and due revie
   assert.equal(replay.state.cards[0].sourceAttemptId, first.attempt.id);
 });
 
+test("a wrong Daily answer inserts a truthful budgeted review item", () => {
+  const state: LearningState = {
+    ...emptyState(),
+    dailySessions: [{
+      id: "day-review-metadata",
+      ownerId: "guest-review-metadata",
+      localDay: "2026-08-20",
+      ruleVersion: "today-v5",
+      createdAt: now,
+      budgetMinutes: 3,
+      totalEstimatedMinutes: 3,
+      items: [
+        { id: "practice:1:vocabulary:v1", kind: "practice", contentId: "practice:1:vocabulary", contentVersion: "v1", dimension: "reading", status: "pending", estimatedMinutes: 3 },
+        { id: "summary", kind: "summary", contentId: "summary", status: "pending", estimatedMinutes: 0 },
+      ],
+    }],
+  };
+  const result = recordAttempt(state, {
+    idempotencyKey: "daily-wrong-review-metadata",
+    contentId: "question:daily-wrong",
+    contentVersion: "v1",
+    dimension: "reading",
+    answer: "B",
+    correctAnswer: "A",
+    observedAt: now,
+    mode: "practice",
+    dailySessionId: "day-review-metadata",
+  });
+  const review = result.state.dailySessions[0].items.find((item) => item.kind === "review");
+  assert.equal(review?.reviewCardId, result.state.cards[0].id);
+  assert.equal(review?.estimatedMinutes, 3);
+  assert.equal(review?.deferred, true);
+  assert.equal(result.state.dailySessions[0].totalEstimatedMinutes, 3);
+});
+
 test("review grades schedule distinct due times and replay does not double count", () => {
   const initial = recordAttempt(emptyState(), {
     idempotencyKey: "attempt-2", contentId: "word:ni-hao", contentVersion: "hsk3-v1",
@@ -159,7 +194,14 @@ test("only the current learn item can be manually completed", () => {
   const earlyAudio = recordAudioAttempt(daily.state, { idempotencyKey: "early-audio", contentId: "word:word-ni-hao", contentVersion: "catalog-v1", dimension: "audio", answer: "A", correctAnswer: "A", observedAt: now, playbackResult: "completed" }).state;
   assert.equal(earlyAudio.dailySessions[0].items.find((item) => item.id === listen.id)?.status, "pending");
   const learn = daily.session.items.find((item) => item.kind === "learn")!;
-  const completed = completeDailyItem(daily.state, daily.session.id, learn.id);
+  const deferredFirst = {
+    ...daily.state,
+    dailySessions: daily.state.dailySessions.map((session) => session.id === daily.session.id ? {
+      ...session,
+      items: [{ id: "dictionary:deferred", kind: "learn" as const, contentId: "word:deferred", status: "pending" as const, estimatedMinutes: 2, deferred: true }, ...session.items],
+    } : session),
+  };
+  const completed = completeDailyItem(deferredFirst, daily.session.id, learn.id);
   assert.equal(completed.state.dailySessions.find((session) => session.id === daily.session.id)?.items.find((item) => item.id === learn.id)?.status, "completed");
 });
 
@@ -226,15 +268,18 @@ test("next local day creates a new session at the same Placement-selected start"
   assert.equal(next.state.dailySessions.length, 2);
 });
 
-test("unified advanced-band content without contextual audio exposes the correct recovery action", () => {
+test("unified advanced-band content without contextual audio keeps available Today work", () => {
   const gap = selectTodayContent(9);
-  assert.equal(gap.status, "empty");
-  if (gap.status !== "empty") return;
+  assert.equal(gap.status, "ready");
+  if (gap.status !== "ready") return;
   const built = buildDailySession(emptyState(), { ownerId: "guest-gap", localDay: "2026-08-20", ruleVersion: "today-v3", now, dailyContent: gap });
   assert.equal(built.session.startLevel, 9);
-  assert.equal(built.session.items.some((item) => item.kind === "learn"), false);
-  assert.equal(built.session.notice?.code, "CONTEXT_AUDIO_UNAVAILABLE");
-  assert.ok(built.session.notice?.actionHref);
+  assert.equal(gap.levelBand, "7-9");
+  assert.deepEqual(gap.unavailableCapabilities, ["context_audio", "practice"]);
+  assert.equal(built.session.items.some((item) => item.kind === "learn"), true);
+  assert.equal(built.session.items.some((item) => item.dimension === "audio"), true);
+  assert.equal(built.session.items.some((item) => item.dimension === "context_audio"), false);
+  assert.equal(built.session.notice, undefined);
 });
 
 test("a listening attempt only completes the bound Daily item with the exact content version", () => {
@@ -279,13 +324,13 @@ test("same-day Placement change refreshes pending work without creating another 
   assert.equal(refreshed.session.items.some((item) => item.id === `learn:${level1.item.contentId}:${level1.item.contentVersion}`), false);
 });
 
-test("empty formal-content queue is already summarized and has no inaccessible pending item", () => {
+test("advanced partial-capability queue stays resumable and summarizes after its available work", () => {
   const gap = selectTodayContent(9);
-  assert.equal(gap.status, "empty");
-  if (gap.status !== "empty") return;
+  assert.equal(gap.status, "ready");
+  if (gap.status !== "ready") return;
   const built = buildDailySession(emptyState(), { ownerId: "guest-empty-summary", localDay: "2026-08-20", ruleVersion: "today-v3", now, dailyContent: gap });
-  assert.equal(built.session.items.find((item) => item.kind === "summary")?.status, "completed");
-  assert.equal(resumeDailySession(built.state, built.session.id), undefined);
+  assert.equal(built.session.items.find((item) => item.kind === "summary")?.status, "pending");
+  assert.equal(resumeDailySession(built.state, built.session.id)?.kind, "learn");
 });
 
 test("Daily Practice item is bound to the exact trusted question version", () => {

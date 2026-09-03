@@ -18,18 +18,19 @@ export interface TodayContentItem {
   meaning: string;
   partOfSpeech: string;
   studySlug: string;
-  example: StudyWord["example"];
+  example?: StudyWord["example"];
 }
 
 export type TodayContentPlan =
-  | { status: "ready"; startLevel: number; releaseId: string; item: TodayContentItem; practiceHref?: string }
+  | { status: "ready"; startLevel: number; levelBand: string; releaseId: string; item: TodayContentItem; practiceHref?: string; unavailableCapabilities?: Array<"context_audio" | "practice"> }
   | { status: "empty"; startLevel: number; releaseId?: string; code: "EMPTY_CONTENT_QUEUE" | "CONTEXT_AUDIO_UNAVAILABLE"; message: string; actionHref: string; actionLabel: string };
 
 function activeLevel(level: number) {
   const status = getHsk3LevelStatus(level);
+  const catalogLevel = level >= 7 ? 7 : level;
   return {
     releaseId: runtimeIndex.releaseId,
-    contentAssets: runtimeIndex.dictionaryAssets.filter((asset) => asset.level === level),
+    contentAssets: runtimeIndex.dictionaryAssets.filter((asset) => asset.level === catalogLevel),
     availability: status.availability,
   };
 }
@@ -43,7 +44,7 @@ function versionFor(asset: RuntimeTodayAsset, releaseId: string) {
   return `${releaseId}:${asset.contentVersion}`;
 }
 
-function mapItem(asset: RuntimeTodayAsset, word: StudyWord, releaseId: string): TodayContentItem {
+function mapItem(asset: RuntimeTodayAsset, word: StudyWord | undefined, releaseId: string): TodayContentItem {
   return {
     assetId: asset.id,
     contentId: `catalog:${asset.logicalId}`,
@@ -54,8 +55,8 @@ function mapItem(asset: RuntimeTodayAsset, word: StudyWord, releaseId: string): 
     pinyin: asset.pinyin,
     meaning: asset.meaning,
     partOfSpeech: asset.partOfSpeech,
-    studySlug: word.slug,
-    example: word.example,
+    studySlug: word?.slug ?? asset.id,
+    example: word?.example,
   };
 }
 
@@ -79,13 +80,19 @@ export function selectTodayContent(startLevel: number): TodayContentPlan {
     const words = listPublishedWords();
     const joined = result.contentAssets
       .map((asset) => compatibleAsset(asset, words))
-      .find(Boolean);
+      .find(Boolean)
+      ?? (result.contentAssets[0] ? { asset: result.contentAssets[0], word: undefined } : undefined);
     plan = joined ? {
       status: "ready",
       startLevel: level,
+      levelBand: level >= 7 ? "7-9" : String(level),
       releaseId: result.releaseId,
       item: mapItem(joined.asset, joined.word, result.releaseId),
       practiceHref: level <= 6 ? `/practice/${level}/vocabulary` : undefined,
+      unavailableCapabilities: [
+        ...(!joined.word?.example ? ["context_audio" as const] : []),
+        ...(level > 6 ? ["practice" as const] : []),
+      ],
     } : {
       status: "empty",
       startLevel: level,
@@ -110,9 +117,7 @@ export function todayContentByAssetId(assetId: string): TodayContentItem | undef
   const asset = runtimeWordAssets.find((candidate) => candidate.id === assetId);
   if (!asset) return undefined;
   const result = getWordBySlug(asset.id);
-  return result.status === "published"
-    ? mapItem(asset, result.item, runtimeIndex.releaseId)
-    : undefined;
+  return mapItem(asset, result.status === "published" ? result.item : undefined, runtimeIndex.releaseId);
 }
 
 export function todayContentFromCatalogRow(row: CatalogSearchRow): TodayContentItem {
