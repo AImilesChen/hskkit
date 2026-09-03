@@ -192,7 +192,7 @@ export default function HomePage() {
 
     <section className="home-section home-transparency" aria-labelledby="scope-heading">
       <div className="home-transparency-heading"><p className="home-eyebrow">Content transparency</p><h2 id="scope-heading">Published. Clear. Ready to start.</h2><p>See what the product covers before you begin.</p><Link href="/content-license">How content and audio are published <HomeIcon name="arrow" className="h-4 w-4" /></Link></div>
-      <div className="home-scope-stats"><div><strong>HSK 3.0 Levels 1–9</strong><span>Six foundation levels and one Unified advanced band.</span></div><div><strong>Published vocabulary catalog</strong><span>{foundationCount.toLocaleString("en-US")} Level 1–6 entries plus the published advanced catalog.</span></div><div><strong>Guest start</strong><span>Begin without an account; sign in later for eligible sync.</span></div></div>
+      <div className="home-scope-stats"><div><strong>HSK 3.0 Levels 1–9</strong><span>Six foundation levels and one Unified advanced band.</span></div><div><strong>Published vocabulary catalog</strong><span>{foundationCount.toLocaleString("en-US")} Level 1–6 entries plus the published advanced catalog.</span></div><div><strong>Guest start and optional account sync</strong><span>Begin without an account; sign in later for eligible sync.</span></div></div>
       <p className="home-sr-only">{PUBLIC_FORMAL_CONTENT_SCOPE}{" "}{PUBLIC_DICTIONARY_SCOPE}{" "}{PUBLIC_ACCOUNT_SCOPE}</p>
     </section>
 

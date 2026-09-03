@@ -153,7 +153,7 @@ test("homepage trust section is a dark factual band rather than another white ca
   assert.match(home, /advancedLevel\.wordCount\.toLocaleString/);
   assert.match(home, /total \+ entry\.wordCount/);
   assert.doesNotMatch(home, /entry\.contentCount\.toLocaleString|total \+ entry\.contentCount/);
-  assert.match(home, /Guest start/);
+  assert.match(home, /Guest start and optional account sync/);
   assert.match(home, /href="\/content-license"/);
   assert.match(styles, /\.home-transparency\s*\{[^}]*background:\s*#102b4d/s);
   assert.doesNotMatch(home, /home-scope-details/);
