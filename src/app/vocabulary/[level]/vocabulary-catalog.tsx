@@ -70,8 +70,8 @@ function visiblePages(current: number, total: number): PageItem[] {
   return result;
 }
 
-export function VocabularyCatalog({ level, levelLabel, publishedCount }: { level: number; levelLabel: string; publishedCount: number }) {
-  const [mode, setMode] = useState<"browse" | "flashcards">("browse");
+export function VocabularyCatalog({ level, levelLabel, publishedCount, initialMode = "browse" }: { level: number; levelLabel: string; publishedCount: number; initialMode?: "browse" | "flashcards" }) {
+  const [mode, setMode] = useState<"browse" | "flashcards">(initialMode);
   const [query, setQuery] = useState("");
   const [partOfSpeech, setPartOfSpeech] = useState("");
   const [audio, setAudio] = useState<AudioFilter>("all");
@@ -141,12 +141,12 @@ export function VocabularyCatalog({ level, levelLabel, publishedCount }: { level
   return <section ref={resultsRef} className="scroll-mt-24" aria-label={`${levelLabel} vocabulary activities`}>
     <div className="mb-[20px] flex flex-col gap-3 border-b border-slate-200 pb-[16px] sm:flex-row sm:items-end sm:justify-between">
       <div>
-        <p className="text-xs font-bold uppercase tracking-[.14em] text-blue-700">Choose how to use this level</p>
-        <p className="mt-1 text-sm leading-6 text-slate-600">Search the complete catalog or run a short recognition set.</p>
+        <p className="text-xs font-bold uppercase tracking-[.14em] text-slate-500">Vocabulary workspace</p>
+        <p className="mt-1 text-sm leading-6 text-slate-600">Switch between the full catalog and your current card set.</p>
       </div>
-      <div className="grid grid-cols-2 gap-2 rounded-xl bg-slate-100 p-1" role="group" aria-label="Vocabulary activity mode">
-        <button type="button" aria-pressed={mode === "browse"} onClick={() => setMode("browse")} className={`inline-flex min-h-11 items-center justify-center rounded-lg px-4 text-sm font-bold transition focus:outline-none focus:ring-4 focus:ring-blue-100 ${mode === "browse" ? "bg-white text-slate-950 shadow-sm" : "text-slate-600 hover:text-blue-700"}`}>Browse vocabulary</button>
-        <button type="button" aria-pressed={mode === "flashcards"} onClick={() => setMode("flashcards")} className={`inline-flex min-h-11 items-center justify-center rounded-lg px-4 text-sm font-bold transition focus:outline-none focus:ring-4 focus:ring-blue-100 ${mode === "flashcards" ? "bg-blue-600 text-white shadow-sm" : "text-slate-600 hover:text-blue-700"}`}>Quick Flashcards</button>
+      <div className="grid grid-cols-2 gap-1 rounded-xl border border-slate-200 bg-slate-100 p-1" role="group" aria-label="Vocabulary activity mode">
+        <button type="button" aria-pressed={mode === "browse"} onClick={() => setMode("browse")} className={`inline-flex min-h-11 items-center justify-center rounded-lg px-4 text-sm font-bold transition focus:outline-none focus:ring-4 focus:ring-slate-200 ${mode === "browse" ? "bg-white text-slate-950 shadow-sm ring-1 ring-slate-200" : "text-slate-600 hover:text-slate-950"}`}>Browse vocabulary</button>
+        <button type="button" aria-pressed={mode === "flashcards"} onClick={() => setMode("flashcards")} className={`inline-flex min-h-11 items-center justify-center rounded-lg px-4 text-sm font-bold transition focus:outline-none focus:ring-4 focus:ring-slate-200 ${mode === "flashcards" ? "bg-white text-slate-950 shadow-sm ring-1 ring-slate-200" : "text-slate-600 hover:text-slate-950"}`}>Quick Flashcards</button>
       </div>
     </div>
 
@@ -213,7 +213,7 @@ export function VocabularyCatalog({ level, levelLabel, publishedCount }: { level
               <div className="lg:hidden">
                 {word.formalAudioUrl
                   ? <AudioButton text={word.payload.hanzi} src={word.formalAudioUrl} label={`Play pronunciation for ${word.payload.hanzi}`} variant="icon" />
-                  : <AudioButton text={word.payload.hanzi} variant="icon" unavailable />}
+                  : null}
               </div>
             </div>
             <p className="text-base font-medium text-blue-700">{word.payload.pinyin}</p>
@@ -222,7 +222,7 @@ export function VocabularyCatalog({ level, levelLabel, publishedCount }: { level
             <div className="hidden items-center justify-end lg:flex">
               {word.formalAudioUrl
                 ? <AudioButton text={word.payload.hanzi} src={word.formalAudioUrl} label={`Play pronunciation for ${word.payload.hanzi}`} variant="icon" />
-                : <AudioButton text={word.payload.hanzi} variant="icon" unavailable />}
+                : null}
             </div>
           </li>)}
         </ul>

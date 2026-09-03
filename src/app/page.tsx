@@ -3,10 +3,10 @@ import Link from "next/link";
 import SiteFooter from "./site-footer";
 import SiteHeader from "./site-header";
 import HomeNextStep from "./components/home-next-step";
+import HomeQuickFlashcards from "./components/home-quick-flashcards";
 import HomeIcon, { type HomeIconName } from "./components/home-icon";
 import "./homepage.css";
 import {
-  formalWordAudioUrlByContentId,
   getHsk3LevelPreview,
   getHsk3LevelStatuses,
 } from "@/lib/content/level-status";
@@ -117,8 +117,8 @@ export default function HomePage() {
   const foundationLevels = levels.slice(0, 6);
   const advancedLevel = levels.find((entry) => entry.level === 7);
   const levelOnePreviewWords = getHsk3LevelPreview(1, 120);
-  const previewWord = levelOnePreviewWords.find((word) => formalWordAudioUrlByContentId.has(word.id)) ?? levelOnePreviewWords[0];
-  const previewAudioUrl = previewWord ? formalWordAudioUrlByContentId.get(previewWord.id) : undefined;
+  const previewWord = levelOnePreviewWords[0];
+  const demoCards = levelOnePreviewWords.slice(0, 5).map((word) => ({ id: word.id, hanzi: word.hanzi, pinyin: word.pinyin, meaning: word.meaning }));
   const foundationCount = foundationLevels.reduce((total, entry) => total + entry.wordCount, 0);
   const faqSchema = {
     "@context": "https://schema.org",
@@ -141,22 +141,30 @@ export default function HomePage() {
         <HomeNextStep />
       </div>
 
-      <div className="home-product-shell" role="group" aria-labelledby="home-product-preview-title">
+      <div className="home-product-shell home-study-scene" role="group" aria-labelledby="home-product-preview-title">
         <div className="home-product-heading">
-          <div><p className="home-product-kicker">Real product preview</p><h2 id="home-product-preview-title">Your first vocabulary task</h2></div>
-          <span>Published HSK 1</span>
+          <div><p className="home-product-kicker">Study flow preview</p><h2 id="home-product-preview-title">A complete learning moment</h2></div>
+          <span>HSK 1 · Example</span>
         </div>
-        {previewWord ? <div className="home-product-task">
-          <p className="home-product-instruction">Read the word. Hear its approved audio. Then continue into practice.</p>
-          <div className="home-product-word">
-            <div><p lang="zh-Hans">{previewWord.hanzi}</p><span>{previewWord.pinyin}</span></div>
-            {previewAudioUrl ? <audio controls preload="none" src={previewAudioUrl}>Your browser does not support published word audio.</audio> : null}
+        {previewWord ? <div className="home-study-stage">
+          <div className="home-study-meta"><span>Step 2 of 3</span><span>Illustrative flow</span></div>
+          <div className="home-study-progress" aria-hidden="true"><span /></div>
+          <div className="home-study-card">
+            <span className="home-study-badge">Learn in context</span>
+            <div className="home-product-word"><div><p lang="zh-Hans">{previewWord.hanzi}</p><span>{previewWord.pinyin}</span></div><span className="home-study-check" aria-hidden="true">✓</span></div>
+            <p className="home-product-meaning">{previewWord.meaning}</p>
+            <p className="home-study-example">Recognize the word, reveal its meaning, then continue into a short listening check.</p>
           </div>
-          <p className="home-product-meaning">{previewWord.meaning}</p>
-          <Link href={`/word/${previewWord.id}/practice`} className="home-product-link">Open this word <HomeIcon name="arrow" className="h-4 w-4" /></Link>
+          <ol className="home-study-flow" aria-label="Preview learning flow">
+            <li className="is-complete"><span>1</span><div><strong>Learn</strong><small>Word and meaning</small></div></li>
+            <li className="is-active"><span>2</span><div><strong>Listen</strong><small>Approved audio when available</small></div></li>
+            <li><span>3</span><div><strong>Review</strong><small>Bring it back when due</small></div></li>
+          </ol>
         </div> : null}
       </div>
     </section>
+
+    <HomeQuickFlashcards cards={demoCards} />
 
     <section className="home-section home-path-section" aria-labelledby="path-heading">
       <div className="home-section-copy"><p className="home-eyebrow">How HSKKit works</p><h2 id="path-heading">One connected path from level check to daily review.</h2><p>Every action points to the next one, so the product feels like a study route rather than a directory of separate tools.</p></div>

@@ -24,39 +24,34 @@ function expectInOrder(source: string, markers: string[]) {
   }
 }
 
-test("homepage leads with a concise result and one edited authentic product scene", () => {
+test("homepage leads with a concise result and a complete dynamic learning scene", () => {
   assert.match(home, /Find your HSK level\./);
   assert.match(home, /Know what to study next\./);
-  assert.match(home, /Real product preview/);
-  assert.match(home, /Your first vocabulary task/);
+  assert.match(home, /Study flow preview/);
+  assert.match(home, /Illustrative flow/);
+  assert.doesNotMatch(home, /Live study preview|HSK 1 · Today|About 4 min/);
+  assert.match(home, /A complete learning moment/);
   assert.match(home, /Learn focused vocabulary/);
   assert.match(home, /Practise listening/);
   assert.match(home, /Complete today’s review/);
   assert.match(home, /getHsk3LevelPreview\(1, 120\)/);
-  assert.match(home, /formalWordAudioUrlByContentId/);
-  assert.match(home, /find\(\(word\) => formalWordAudioUrlByContentId\.has\(word\.id\)\)/);
-  assert.match(home, /<audio/);
-  assert.match(home, /Open this word/);
-  assert.match(home, /href=\{`\/word\/\$\{previewWord\.id\}\/practice`\}/);
+  assert.match(home, /Learn in context/);
+  assert.match(home, /Approved audio when available/);
+  assert.match(home, /Bring it back when due/);
+  assert.doesNotMatch(home, /<audio/);
   assert.doesNotMatch(home, /home-product-route|home-product-options|Which meaning matches this word\?|home-word-card/);
   assert.doesNotMatch(styles, /\.home-word-card\s*\{[^}]*position:\s*absolute/s);
 });
 
-test("homepage hero resolves an approved readable audio asset and practice route", () => {
-  const approvedWordAudio = new Map(runtimeIndex.publishedAudioAssets
-    .filter((asset) => asset.audioKind === "word" && asset.qaStatus === "approved")
-    .map((asset) => [asset.contentAssetId, asset]));
-  const previewWord = runtimeIndex.runtimeWords["1"]?.slice(0, 120).find((word) => approvedWordAudio.has(word.id));
-  assert.ok(previewWord, "the Level 1 preview window must contain an approved word-audio item");
-  const audio = approvedWordAudio.get(previewWord.id);
-  assert.ok(audio);
-  assert.ok(fs.statSync(new URL(`../public/${audio.storageKey}`, import.meta.url)).size > 0, "the approved audio file must be readable");
-  assert.ok(fs.existsSync(new URL("../src/app/word/[slug]/practice/page.tsx", import.meta.url)), "the preview practice route must exist");
+test("homepage demo resolves exactly five real published HSK 1 words", () => {
+  assert.ok(runtimeIndex.runtimeWords["1"]?.length >= 5);
+  assert.match(home, /levelOnePreviewWords\.slice\(0, 5\)/);
+  assert.match(home, /<HomeQuickFlashcards cards=\{demoCards\}/);
 });
 
 test("homepage CTA has one primary action while preserving dynamic return-user behavior", () => {
   assert.match(nextStep, /Find my starting level/);
-  assert.match(nextStep, /Browse HSK 3\.0 levels/);
+  assert.match(nextStep, /Try quick flashcards/);
   assert.match(nextStep, /Continue today’s study/);
   assert.match(nextStep, /Review due items/);
   assert.match(nextStep, /home-cta-primary/);
@@ -71,6 +66,7 @@ test("homepage CTA has one primary action while preserving dynamic return-user b
 test("homepage tells one learning story before compact catalog, tools, trust, FAQ and final action", () => {
   expectInOrder(home, [
     "Find your HSK level.",
+    "<HomeQuickFlashcards cards={demoCards}",
     "One connected path from level check to daily review.",
     "Study fits the rhythm of real life.",
     "Explore the published HSK 3.0 catalog.",

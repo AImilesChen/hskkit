@@ -146,13 +146,13 @@ export function QuickFlashcards({ level, levelLabel, publishedCount }: { level: 
           </button>
 
           {revealed ? <div className="mt-4 flex min-h-11 items-center justify-between gap-3 rounded-2xl border border-slate-200 bg-white px-3 py-2 sm:px-4">
-            <div className="flex items-center gap-3"><AudioButton text={currentWord.payload.hanzi} src={currentWord.formalAudioUrl ?? undefined} variant="icon" unavailable={!currentWord.formalAudioUrl} /><span className="text-sm text-slate-600">{currentWord.formalAudioUrl ? "Published pronunciation" : "Audio not available yet"}</span></div>
+            <div className="flex items-center gap-3">{currentWord.formalAudioUrl ? <><AudioButton text={currentWord.payload.hanzi} src={currentWord.formalAudioUrl} variant="icon" /><span className="text-sm text-slate-600">Published pronunciation</span></> : <span className="text-sm text-slate-500">Pronunciation is not published for this word.</span>}</div>
             <Link href={`/word/${encodeURIComponent(currentWord.id)}`} className="inline-flex min-h-11 items-center px-2 text-sm font-bold text-blue-700 hover:underline">View word details</Link>
           </div> : null}
 
           <div className="mt-5 grid grid-cols-3 gap-2 sm:gap-3">
             <button type="button" onClick={previous} disabled={currentIndex === 0} className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-xl border border-slate-300 bg-white px-2 text-sm font-bold text-slate-700 hover:border-blue-500 hover:text-blue-700 disabled:cursor-not-allowed disabled:opacity-40 sm:px-4">Previous</button>
-            <button type="button" onClick={() => setRevealed((value) => !value)} className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-xl border border-blue-600 bg-white px-2 text-sm font-bold text-blue-700 hover:bg-blue-50 sm:px-4">{revealed ? "Hide answer" : "Show answer"}</button>
+            <button type="button" onClick={() => setRevealed((value) => !value)} className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-xl border border-amber-400 bg-amber-300 px-2 text-sm font-extrabold text-slate-950 shadow-sm hover:bg-amber-200 focus:outline-none focus:ring-4 focus:ring-amber-100 sm:px-4">{revealed ? "Hide answer" : "Show answer"}</button>
             <button type="button" onClick={next} className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-xl bg-blue-600 px-2 text-sm font-bold text-white hover:bg-blue-700 sm:px-4">{currentIndex === words.length - 1 ? "Finish" : "Next"}</button>
           </div>
           <div className="mt-4 flex justify-center"><button type="button" onClick={() => newRandomSet()} className="inline-flex min-h-11 items-center justify-center px-4 text-sm font-bold text-blue-700 hover:underline">New random set</button></div>

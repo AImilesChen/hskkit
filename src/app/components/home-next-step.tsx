@@ -55,7 +55,7 @@ export default function HomeNextStep() {
         <span>{label}</span>
         <HomeIcon name="arrow" className="home-cta-arrow h-5 w-5" />
       </Link>
-      <Link href="/levels" className="home-cta-secondary">Browse HSK 3.0 levels <HomeIcon name="arrow" className="h-4 w-4" /></Link>
+      <a href="#quick-flashcards-demo" className="home-cta-secondary">Try quick flashcards <HomeIcon name="arrow" className="h-4 w-4" /></a>
     </div>
     <p className="home-cta-explanation">{explanation}</p>
     <ul className="home-cta-trust" aria-label="Before you start">

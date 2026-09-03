@@ -157,11 +157,10 @@ export function buildCatalogQuery(
     filterBindings.push(`%${escapedLike(normalizeCatalogQuery(params.q))}%`);
   }
   if (params.audio === "formal") {
-    if (formalAudioIds.length === 0) conditions.push("1 = 0");
-    else {
-      conditions.push(`id IN (${formalAudioIds.map(() => "?").join(",")})`);
-      filterBindings.push(...formalAudioIds);
-    }
+    // D1 enforces a low per-statement binding limit. Keep the published,
+    // QA-approved ID set as one JSON binding and expand it inside SQLite.
+    conditions.push("id IN (SELECT value FROM json_each(?))");
+    filterBindings.push(JSON.stringify(formalAudioIds));
   }
 
   const where = conditions.join(" AND ");
