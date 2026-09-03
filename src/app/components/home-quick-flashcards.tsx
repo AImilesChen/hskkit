@@ -40,9 +40,9 @@ export default function HomeQuickFlashcards({ cards }: { cards: DemoCard[] }) {
 
   return <section id="quick-flashcards-demo" className="home-section home-demo" aria-labelledby="home-demo-title">
     <div className="home-demo-copy">
-      <p className="home-eyebrow">No sign-in demo</p>
-      <h2 id="home-demo-title">Try five real HSK 1 flashcards now.</h2>
-      <p>Reveal each answer and finish a short recognition round. These cards come from the published HSK 3.0 catalog.</p>
+      <p className="home-eyebrow">No-sign-in preview</p>
+      <h2 id="home-demo-title">Preview the review experience</h2>
+      <p>Try five published HSK 1 cards before creating an account. This short preview demonstrates the interaction; your free trial and daily Free allowance continue beyond it.</p>
       <ul aria-label="Demo details"><li>5 cards</li><li>HSK 1</li><li>Guest start</li></ul>
     </div>
 
@@ -55,8 +55,8 @@ export default function HomeQuickFlashcards({ cards }: { cards: DemoCard[] }) {
       {complete ? <div className="home-demo-complete" aria-live="polite">
         <span aria-hidden="true">✓</span>
         <h3>You completed all five cards.</h3>
-        <p>Continue with a full 10, 20, or 50-card set, or choose another published level.</p>
-        <div><Link href="/vocabulary/1?mode=flashcards#vocabulary-activities">Open full flashcards</Link><Link href="/levels">Choose a level</Link></div>
+        <p>Continue with a full 10, 20, or 50-card set, or start the complete 7-day Pro trial.</p>
+        <div><Link href="/login?returnTo=%2Faccount">Start my 7-day Pro trial</Link><Link href="/vocabulary/1?mode=flashcards#vocabulary-activities">Continue with Free</Link></div>
         <button type="button" onClick={reset}>Repeat this demo</button>
       </div> : <>
         <button type="button" className={`home-demo-card ${revealed ? "is-revealed" : ""}`} onClick={() => setRevealed((value) => !value)} aria-pressed={revealed} aria-label={revealed ? `Hide answer for ${card.hanzi}` : `Show answer for ${card.hanzi}`}>

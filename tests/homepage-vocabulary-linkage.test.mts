@@ -9,15 +9,28 @@ const styles = read("../src/app/homepage.css");
 const vocabularyPage = read("../src/app/vocabulary/[level]/page.tsx");
 const vocabularyCatalog = read("../src/app/vocabulary/[level]/vocabulary-catalog.tsx");
 
-test("homepage links the hero to a real five-card guest demo and full flashcards", () => {
+test("homepage leads with the approved trial value proposition and keeps five cards as a preview", () => {
   const demo = read("../src/app/components/home-quick-flashcards.tsx");
-  assert.match(nextStep, /Try quick flashcards/);
+  assert.match(home, /Learn the published HSK 3\.0 vocabulary\./);
+  assert.match(home, /Review each word when it matters\./);
+  assert.match(home, /publishedWordCount\.toLocaleString/);
+  assert.match(nextStep, /Start my free Pro trial/);
+  assert.match(nextStep, /\/login\?returnTo=%2Faccount/);
+  assert.match(nextStep, /7-day Pro trial/);
+  assert.match(nextStep, /No card required/);
+  assert.match(nextStep, /Returns to Free automatically/);
+  assert.match(nextStep, /10 new items and 20 successful SRS ratings daily/);
+  assert.match(nextStep, /scope\?: "account" \| "guest"/);
+  assert.match(nextStep, /data\.scope === "account"/);
   assert.match(nextStep, /href="#quick-flashcards-demo"/);
   assert.match(demo, /id="quick-flashcards-demo"/);
   assert.match(home, /<HomeQuickFlashcards/);
-  assert.match(demo, /Try five real HSK 1 flashcards now\./);
+  assert.match(demo, /Preview the review experience/);
+  assert.match(demo, /Try five published HSK 1 cards before creating an account\./);
   assert.match(demo, /Show answer/);
   assert.match(demo, /Next card/);
+  assert.match(demo, /Start my 7-day Pro trial/);
+  assert.match(demo, /Continue with Free/);
   assert.match(demo, /\/vocabulary\/1\?mode=flashcards#vocabulary-activities/);
   assert.doesNotMatch(demo, /fetch\(/, "the homepage demo must use server-supplied published words");
 });

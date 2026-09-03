@@ -25,8 +25,10 @@ function expectInOrder(source: string, markers: string[]) {
 }
 
 test("homepage leads with a concise result and a complete dynamic learning scene", () => {
-  assert.match(home, /Find your HSK level\./);
-  assert.match(home, /Know what to study next\./);
+  assert.match(home, /Learn the published HSK 3\.0 vocabulary\./);
+  assert.match(home, /Review each word when it matters\./);
+  assert.match(home, /Browse \{publishedWordCount\.toLocaleString\("en-US"\)\} published HSK 3\.0 words/);
+  assert.match(home, /Formal audio appears only where it has been published and approved\./);
   assert.match(home, /Study flow preview/);
   assert.match(home, /Illustrative flow/);
   assert.doesNotMatch(home, /Live study preview|HSK 1 · Today|About 4 min/);
@@ -50,22 +52,22 @@ test("homepage demo resolves exactly five real published HSK 1 words", () => {
 });
 
 test("homepage CTA has one primary action while preserving dynamic return-user behavior", () => {
-  assert.match(nextStep, /Find my starting level/);
-  assert.match(nextStep, /Try quick flashcards/);
+  assert.match(nextStep, /Start my free Pro trial/);
+  assert.match(nextStep, /Preview five flashcards/);
   assert.match(nextStep, /Continue today’s study/);
   assert.match(nextStep, /Review due items/);
   assert.match(nextStep, /home-cta-primary/);
   assert.match(nextStep, /home-cta-secondary/);
-  assert.match(nextStep, /Start as a guest/);
-  assert.match(nextStep, /Placement is a learning suggestion/);
-  assert.match(nextStep, /Sign in later to sync/);
+  assert.match(nextStep, /Try Pro free for 7 days/);
+  assert.match(nextStep, /No card required/);
+  assert.match(nextStep, /Returns to Free automatically/);
+  assert.match(nextStep, /After the trial: Free includes 10 new items and 20 successful SRS ratings daily\./);
   assert.doesNotMatch(nextStep, /home-cta-panel/);
-  assert.match(home, /Find my starting level/);
 });
 
 test("homepage tells one learning story before compact catalog, tools, trust, FAQ and final action", () => {
   expectInOrder(home, [
-    "Find your HSK level.",
+    "Learn the published HSK 3.0 vocabulary.",
     "<HomeQuickFlashcards cards={demoCards}",
     "One connected path from level check to daily review.",
     "Study fits the rhythm of real life.",

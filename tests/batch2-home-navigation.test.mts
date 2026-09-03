@@ -23,7 +23,7 @@ function expectInOrder(source: string, markers: string[]) {
 
 test("homepage follows the approved result-first HSK 3.0 information order", () => {
   expectInOrder(home, [
-    "Find your HSK level.",
+    "Learn the published HSK 3.0 vocabulary.",
     "One connected path from level check to daily review.",
     "Study fits the rhythm of real life.",
     "Explore the published HSK 3.0 catalog.",

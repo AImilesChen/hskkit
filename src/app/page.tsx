@@ -17,8 +17,8 @@ import {
 } from "@/lib/public-copy";
 
 export const metadata: Metadata = {
-  title: "HSKKit — Find your HSK level and know what to study next",
-  description: "Find a suggested HSK 3.0 starting level, then connect vocabulary, listening, practice, mistakes and spaced review in one daily study path.",
+  title: "HSKKit — Learn the published HSK 3.0 vocabulary",
+  description: "Browse the published HSK 3.0 vocabulary, start a 7-day Pro trial without a card, and follow one connected path through learning and spaced review.",
   alternates: { canonical: "/" },
 };
 
@@ -120,6 +120,7 @@ export default function HomePage() {
   const previewWord = levelOnePreviewWords[0];
   const demoCards = levelOnePreviewWords.slice(0, 5).map((word) => ({ id: word.id, hanzi: word.hanzi, pinyin: word.pinyin, meaning: word.meaning }));
   const foundationCount = foundationLevels.reduce((total, entry) => total + entry.wordCount, 0);
+  const publishedWordCount = foundationCount + (advancedLevel?.wordCount ?? 0);
   const faqSchema = {
     "@context": "https://schema.org",
     "@type": "FAQPage",
@@ -136,8 +137,8 @@ export default function HomePage() {
     <section className="home-hero" aria-labelledby="home-title">
       <div className="home-hero-copy">
         <p className="home-eyebrow">HSK 3.0 · Levels 1–9</p>
-        <h1 id="home-title"><span>Find your HSK level.</span><br/>Know what to study next.</h1>
-        <p className="home-lede">Start with a suggested level, then connect vocabulary, listening, checked practice, mistakes and spaced review in one clear study path.</p>
+        <h1 id="home-title"><span>Learn the published HSK 3.0 vocabulary.</span><br/>Review each word when it matters.</h1>
+        <p className="home-lede">Browse {publishedWordCount.toLocaleString("en-US")} published HSK 3.0 words with pinyin and English meanings. Formal audio appears only where it has been published and approved.</p>
         <HomeNextStep />
       </div>
 

@@ -82,6 +82,7 @@
 .home-cta-trust { display: flex; flex-wrap: wrap; gap: 7px 17px; margin-top: 15px !important; color: #40536a; font-size: 12px; font-weight: 650; }
 .home-cta-trust li { display: flex; align-items: center; gap: 6px; }
 .home-cta-check { display: grid; width: 18px; height: 18px; flex: none; place-items: center; border-radius: 50%; background: var(--home-blue-soft); color: var(--home-blue); }
+.home-cta-free { max-width: 570px; margin: 10px 0 0; color: #40536a; font-size: 12px; font-weight: 650; line-height: 1.55; }
 
 .home-product-shell {
   min-width: 0;

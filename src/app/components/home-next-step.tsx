@@ -26,6 +26,7 @@ const actionLabels: Record<NextAction["kind"], string> = {
 
 export default function HomeNextStep() {
   const [action, setAction] = useState<NextAction>(fallback);
+  const [scope, setScope] = useState<"account" | "guest" | null>(null);
   const [loaded, setLoaded] = useState(false);
   const [unavailable, setUnavailable] = useState(false);
 
@@ -34,19 +35,23 @@ export default function HomeNextStep() {
     fetch(`/api/v1/learning?tzOffset=${new Date().getTimezoneOffset()}`, { cache: "no-store" })
       .then(async (response) => {
         if (!response.ok) throw new Error("LEARNING_STATUS_UNAVAILABLE");
-        const data = await response.json() as { nextAction?: NextAction };
-        if (active && data.nextAction) setAction(data.nextAction);
+        const data = await response.json() as { nextAction?: NextAction; scope?: "account" | "guest" };
+        if (active) {
+          setScope(data.scope ?? null);
+          if (data.scope === "account" && data.nextAction) setAction(data.nextAction);
+        }
       })
       .catch(() => active && setUnavailable(true))
       .finally(() => active && setLoaded(true));
     return () => { active = false; };
   }, []);
 
-  const href = unavailable ? "/today" : action.href;
-  const label = unavailable ? "Continue today’s study" : loaded ? actionLabels[action.kind] : "Find my starting level";
+  const returningAccount = loaded && scope === "account";
+  const href = returningAccount ? action.href : "/login?returnTo=%2Faccount";
+  const label = returningAccount ? actionLabels[action.kind] : "Start my free Pro trial";
   const explanation = unavailable
-    ? "We couldn’t check saved status. Continue in Today to restore the latest server copy without guessing your next step."
-    : loaded ? action.explanation : fallback.explanation;
+    ? "We couldn’t check saved status. New verified accounts can still start the free Pro trial."
+    : returningAccount ? action.explanation : "Try Pro free for 7 days. No card required. Returns to Free automatically.";
 
   return <div className="home-cta-stack" aria-live="polite">
     <div className="home-cta-actions">
@@ -55,11 +60,12 @@ export default function HomeNextStep() {
         <span>{label}</span>
         <HomeIcon name="arrow" className="home-cta-arrow h-5 w-5" />
       </Link>
-      <a href="#quick-flashcards-demo" className="home-cta-secondary">Try quick flashcards <HomeIcon name="arrow" className="h-4 w-4" /></a>
+      <a href="#quick-flashcards-demo" className="home-cta-secondary">Preview five flashcards <HomeIcon name="arrow" className="h-4 w-4" /></a>
     </div>
     <p className="home-cta-explanation">{explanation}</p>
     <ul className="home-cta-trust" aria-label="Before you start">
-      {["Start as a guest", "Placement is a learning suggestion", "Sign in later to sync"].map((item) => <li key={item}><span className="home-cta-check"><HomeIcon name="check" className="h-3.5 w-3.5" /></span>{item}</li>)}
+      {["7-day Pro trial", "No card required", "Returns to Free automatically"].map((item) => <li key={item}><span className="home-cta-check"><HomeIcon name="check" className="h-3.5 w-3.5" /></span>{item}</li>)}
     </ul>
+    <p className="home-cta-free">After the trial: Free includes 10 new items and 20 successful SRS ratings daily.</p>
   </div>;
 }
