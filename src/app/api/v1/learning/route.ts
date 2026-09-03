@@ -79,7 +79,7 @@ function assertDailyAudioBinding(state: LearningState, dailySessionId: string | 
   if (!dailySessionId && !dailyItemId) return;
   const session = dailySessionId ? state.dailySessions.find((candidate) => candidate.id === dailySessionId) : undefined;
   const item = session && dailyItemId ? session.items.find((candidate) => candidate.id === dailyItemId) : undefined;
-  const firstPending = session?.items.find((candidate) => candidate.status === "pending");
+  const firstPending = session?.items.find((candidate) => !candidate.deferred && candidate.status === "pending");
   if (!session || !item || firstPending?.id !== item.id || item.kind !== "listen" || item.contentId !== exercise.contentId || item.contentVersion !== exercise.contentVersion || item.dimension !== exercise.dimension) {
     throw new Error("DAILY_ITEM_MISMATCH");
   }
@@ -88,8 +88,8 @@ function view(state: LearningState, ownerId: string, offsetMinutes: number, capa
   const now = new Date().toISOString();
   const nextAction = deriveHomeNextStep(state, now);
   const latestPlacement = [...(state.placementResults ?? [])].sort((a, b) => b.createdAt.localeCompare(a.createdAt))[0];
-  const startLevel = latestPlacement?.recommendedLevel ?? 1;
-  const built = buildDailySession(state, { ownerId, localDay: learningLocalDay(now, offsetMinutes, accountTimezone), ruleVersion: "today-v4", now, dailyContent: selectTodayContent(startLevel) });
+  const startLevel = state.preferredLearningLevel ?? latestPlacement?.recommendedLevel ?? 1;
+  const built = buildDailySession(state, { ownerId, localDay: learningLocalDay(now, offsetMinutes, accountTimezone), ruleVersion: "today-v5", now, dailyContent: selectTodayContent(startLevel) });
   const projected = projectLearningHistory(built.state, capabilities, new Date(now));
   const mistakeKey = (contentId: string, contentVersion: string, dimension: string) => `${contentId}\u0000${contentVersion}\u0000${dimension}`;
   const openMistakeKeys = new Set(projected.mistakes.filter((mistake) => mistake.status === "open").map((mistake) => {
@@ -143,7 +143,8 @@ function view(state: LearningState, ownerId: string, offsetMinutes: number, capa
     const attempt = built.state.attempts.find((candidate) => candidate.id === mistake.sourceAttemptId);
     const dimension = attempt?.dimension ?? "reading";
     const cardId = built.state.cards.find((card) => card.contentId === mistake.contentId && card.contentVersion === mistake.contentVersion && card.dimension === dimension)?.id;
-    return { ...mistake, cardId, dimension, prompt: attempt?.prompt ?? mistake.contentId };
+    const snapshot = attempt ? resolvedReviewSnapshotForAttempt(attempt) : undefined;
+    return { ...mistake, cardId, dimension, prompt: attempt?.prompt ?? mistake.contentId, level: snapshot?.level, skill: snapshot?.skillLabel ?? (dimension === "reading" ? "Reading" : "Listening") };
   });
   const mastery = {
     reading: built.state.cards.filter((card) => card.dimension === "reading").length,
@@ -702,9 +703,13 @@ export async function POST(req: NextRequest) {
       } else if (action === "configure_today") {
         const budgetMinutes = Number(payload.budgetMinutes);
         if (!Number.isInteger(budgetMinutes) || budgetMinutes < 5 || budgetMinutes > 180) throw new Error("INVALID_TIME_BUDGET");
+        const requestedLevel = payload.startLevel === undefined ? state.preferredLearningLevel : Number(payload.startLevel);
+        if (requestedLevel !== undefined && (!Number.isInteger(requestedLevel) || requestedLevel < 1 || requestedLevel > 9)) throw new Error("INVALID_LEARNING_LEVEL");
         const observedAt = new Date().toISOString();
         const latestPlacement = [...(state.placementResults ?? [])].sort((a, b) => b.createdAt.localeCompare(a.createdAt))[0];
-        state = buildDailySession(state, { ownerId: identity.id, localDay: learningLocalDay(observedAt, tz, identity.account?.timezone), ruleVersion: "today-v4", now: observedAt, dailyContent: selectTodayContent(latestPlacement?.recommendedLevel ?? 1), budgetMinutes }).state;
+        const startLevel = requestedLevel ?? latestPlacement?.recommendedLevel ?? 1;
+        state = { ...state, ...(requestedLevel ? { preferredLearningLevel: requestedLevel } : {}) };
+        state = buildDailySession(state, { ownerId: identity.id, localDay: learningLocalDay(observedAt, tz, identity.account?.timezone), ruleVersion: "today-v5", now: observedAt, dailyContent: selectTodayContent(startLevel), budgetMinutes }).state;
         state = { ...state, dailyOperationKeys: [...(state.dailyOperationKeys ?? []), key].slice(-400) };
       } else {
         return errorResponse("INVALID_ACTION", 422);
