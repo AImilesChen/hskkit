@@ -53,6 +53,9 @@ test("published pronunciation controls use compact icon states without hiding mi
   assert.match(audioButtonSource, /Audio failed for .*Try again/);
   assert.match(audioButtonSource, /animate-spin/);
   assert.match(audioButtonSource, /animate-pulse/);
+  assert.match(audioButtonSource, /Pause pronunciation for/);
+  assert.match(audioButtonSource, /const disabled = unavailable \|\| supported !== true;/);
+  assert.match(audioButtonSource, /aria-busy/);
   assert.match(audioButtonSource, /aria-hidden="true"/);
   assert.match(audioButtonSource, /min-h-11 min-w-11/);
 });

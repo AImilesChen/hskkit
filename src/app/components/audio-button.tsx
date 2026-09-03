@@ -41,7 +41,17 @@ export function AudioButton({ text, src, label, variant = "text", unavailable = 
   }, [src, unavailable]);
 
   async function play() {
-    if (!supported || unavailable || phase === "loading" || phase === "playing") return;
+    if (!supported || unavailable || phase === "loading") return;
+    if (phase === "playing") {
+      if (src && audio.current) {
+        audio.current.pause();
+        audio.current.currentTime = 0;
+      } else {
+        window.speechSynthesis.cancel();
+      }
+      setPhase("idle");
+      return;
+    }
     setPhase("loading");
     if (src) {
       audio.current?.pause();
@@ -75,17 +85,19 @@ export function AudioButton({ text, src, label, variant = "text", unavailable = 
       : phase === "loading"
         ? `Loading pronunciation for ${text}`
         : phase === "playing"
-          ? `Playing pronunciation for ${text}`
+          ? `Pause pronunciation for ${text} (playing)`
           : phase === "error"
             ? `Audio failed for ${text}. Try again`
             : resolvedLabel;
-  const disabled = unavailable || supported !== true || phase === "loading" || phase === "playing";
+  const disabled = unavailable || supported !== true;
 
   if (variant === "icon") {
     return <button
       type="button"
       onClick={play}
       disabled={disabled}
+      aria-busy={phase === "loading"}
+      aria-disabled={phase === "loading" || undefined}
       aria-label={stateLabel}
       title={stateLabel}
       className={`inline-flex min-h-11 min-w-11 shrink-0 items-center justify-center rounded-full border transition focus:outline-none focus:ring-4 ${
@@ -100,5 +112,5 @@ export function AudioButton({ text, src, label, variant = "text", unavailable = 
     </button>;
   }
 
-  return <button type="button" onClick={play} disabled={disabled} aria-label={stateLabel} title={stateLabel} className="inline-flex min-h-11 items-center justify-center gap-2 rounded-lg border border-blue-600 bg-white px-4 py-2 text-sm font-semibold text-blue-600 transition hover:bg-blue-50 disabled:cursor-not-allowed disabled:border-slate-300 disabled:text-slate-400">{phase === "loading" ? "Loading…" : phase === "playing" ? "Playing…" : phase === "error" ? "Try audio again" : unavailable || unsupported ? "Audio unavailable" : resolvedLabel}</button>;
+  return <button type="button" onClick={play} disabled={disabled} aria-busy={phase === "loading"} aria-disabled={phase === "loading" || undefined} aria-label={stateLabel} title={stateLabel} className="inline-flex min-h-11 items-center justify-center gap-2 rounded-lg border border-blue-600 bg-white px-4 py-2 text-sm font-semibold text-blue-600 transition hover:bg-blue-50 disabled:cursor-not-allowed disabled:border-slate-300 disabled:text-slate-400">{phase === "loading" ? "Loading…" : phase === "playing" ? "Pause" : phase === "error" ? "Try audio again" : unavailable || unsupported ? "Audio unavailable" : resolvedLabel}</button>;
 }
