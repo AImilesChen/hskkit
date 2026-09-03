@@ -30,9 +30,11 @@ test("homepage follows the approved result-first HSK 3.0 information order", () 
     "Choose a tool for the task in front of you.",
     "Start with the right level.",
   ]);
-  for (const href of ["/placement", "/today", "/levels", "/dictionary", "/listen", "/practice", "/vocabulary/1"]) {
+  for (const href of ["/placement", "/today", "/levels", "/dictionary", "/listen", "/practice"]) {
     assert.ok(home.includes(`href: "${href}"`) || home.includes(`href="${href}"`), `homepage must link ${href}`);
   }
+  assert.match(home, /const foundationLevels = levels\.slice\(0, 6\)/);
+  assert.match(home, /href=\{`\/vocabulary\/\$\{entry\.level\}`\}/);
   assert.doesNotMatch(home, /HSK 1[–-]5 available now|HSK 6 Planned|no QA-approved level assets|not yet published/i);
   assert.match(home, /levels\.find\(\(entry\) => entry\.level === 7\)/);
   assert.match(home, /Unified advanced band/);

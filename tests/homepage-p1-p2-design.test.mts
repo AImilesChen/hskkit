@@ -24,11 +24,11 @@ function expectInOrder(source: string, markers: string[]) {
   }
 }
 
-test("homepage leads with a concise result and one authentic learning-path proof", () => {
+test("homepage leads with a concise result and one edited authentic product scene", () => {
   assert.match(home, /Find your HSK level\./);
   assert.match(home, /Know what to study next\./);
-  assert.match(home, /Example learning path/);
-  assert.match(home, /Review due items/);
+  assert.match(home, /Real product preview/);
+  assert.match(home, /Your first vocabulary task/);
   assert.match(home, /Learn focused vocabulary/);
   assert.match(home, /Practise listening/);
   assert.match(home, /Complete today’s review/);
@@ -36,8 +36,9 @@ test("homepage leads with a concise result and one authentic learning-path proof
   assert.match(home, /formalWordAudioUrlByContentId/);
   assert.match(home, /find\(\(word\) => formalWordAudioUrlByContentId\.has\(word\.id\)\)/);
   assert.match(home, /<audio/);
-  assert.match(home, /Try this practice/);
-  assert.doesNotMatch(home, /home-word-card/);
+  assert.match(home, /Open this word/);
+  assert.match(home, /href=\{`\/word\/\$\{previewWord\.id\}\/practice`\}/);
+  assert.doesNotMatch(home, /home-product-route|home-product-options|Which meaning matches this word\?|home-word-card/);
   assert.doesNotMatch(styles, /\.home-word-card\s*\{[^}]*position:\s*absolute/s);
 });
 
@@ -67,25 +68,24 @@ test("homepage CTA has one primary action while preserving dynamic return-user b
   assert.match(home, /Find my starting level/);
 });
 
-test("homepage tells one learning story before compact catalog, tools, FAQ and final action", () => {
+test("homepage tells one learning story before compact catalog, tools, trust, FAQ and final action", () => {
   expectInOrder(home, [
     "Find your HSK level.",
     "One connected path from level check to daily review.",
     "Study fits the rhythm of real life.",
     "Explore the published HSK 3.0 catalog.",
     "Choose a tool for the task in front of you.",
-    "Published and transparent",
+    "Published. Clear. Ready to start.",
     "Frequently asked questions",
     "Start with the right level.",
   ]);
-  for (const group of ["Start", "Learn", "Practise", "Reference"]) assert.match(home, new RegExp(`title: \"${group}\"`));
+  for (const tool of ["Topics", "Listening", "Practice", "Today", "Mistakes", "Dictionary"]) assert.match(home, new RegExp(`title: \"${tool}\"`));
+  for (const lowFrequencyTool of ["Basic Mock", "Advanced Mock", "Reading"]) assert.doesNotMatch(home, new RegExp(`title: \"${lowFrequencyTool}\"`));
   assert.match(home, /Unified advanced band/);
 });
 
-test("learning atmosphere uses three responsive optimized local scene assets and does not invent proof", async () => {
-  for (const asset of ["desk-practice", "mobile-listening", "tablet-review"]) {
-    assert.match(home, new RegExp(asset));
-  }
+test("learning atmosphere uses two responsive optimized local product captures and does not invent proof", async () => {
+  for (const asset of ["desk-practice", "mobile-listening"]) assert.match(home, new RegExp(asset));
   assert.match(home, /<picture>/);
   assert.match(home, /type="image\/avif"/);
   assert.match(home, /type="image\/webp"/);
@@ -93,7 +93,7 @@ test("learning atmosphere uses three responsive optimized local scene assets and
   assert.match(home, /-1200\.webp/);
   assert.match(home, /Desktop practice/);
   assert.match(home, /Listening practice/);
-  assert.match(home, /Today’s queue/);
+  assert.doesNotMatch(home, /tablet-review/);
   assert.match(home, /\/topics\/grocery-shopping\/practice/);
   assert.ok(fs.existsSync(new URL("../src/app/topics/[slug]/practice/page.tsx", import.meta.url)), "the topic practice route must exist");
   const groceryStart = topicCatalog.indexOf('slug: "grocery-shopping"');
@@ -104,7 +104,7 @@ test("learning atmosphere uses three responsive optimized local scene assets and
   assert.doesNotMatch(styles, /\.home-scene-1 picture\s*\{[^}]*min-height/s);
   assert.match(home, /\(min-width: 1024px\) 52vw/);
   assert.match(home, /\(min-width: 1024px\) 30vw/);
-  for (const asset of ["desk-practice", "mobile-listening", "tablet-review"]) {
+  for (const asset of ["desk-practice", "mobile-listening"]) {
     for (const width of [640, 1200]) {
       for (const extension of ["avif", "webp"]) {
         const file = new URL(`../public/home/${asset}-${width}.${extension}`, import.meta.url);
@@ -117,39 +117,58 @@ test("learning atmosphere uses three responsive optimized local scene assets and
       }
     }
   }
-  assert.doesNotMatch(home, /learners|pass rate|five-star|testimonial/i);
+  const fabricatedProof = /\b(?:\d[\d,.]*(?:\s*(?:k|m|million|thousand))?\+?\s+learners|(?:thousands?|millions?) of learners|rated\s+\d(?:\.\d+)?|\d(?:\.\d+)?(?:\/5)?\s+(?:star\s+)?ratings?|ratings?|pass rate|success rate|five-star|testimonial(?:s)?)\b/i;
+  assert.doesNotMatch(home, fabricatedProof);
+  for (const claim of ["Join 12,000 learners", "Trusted by 1.5 million learners", "Rated 4.9", "4.9 rating", "Five-star reviews", "92% pass rate", "Customer testimonials"]) {
+    assert.match(claim, fabricatedProof, `must reject fabricated proof: ${claim}`);
+  }
+  assert.doesNotMatch("learningSteps", fabricatedProof);
 });
 
-test("homepage FAQ has eight truthful questions and FAQ structured data", () => {
+test("homepage FAQ has six concise truthful questions and FAQ structured data", () => {
   assert.match(home, /"@type": "FAQPage"/);
   assert.match(home, /Frequently asked questions/);
   const questions = [
-    "What is HSK 3.0?",
-    "How does the starting-level check work?",
-    "Is the placement result an official HSK score?",
-    "What can I use for free?",
-    "What does Pro include?",
-    "Does every published word have audio?",
-    "Why are Levels 7–9 shown as one advanced band?",
-    "Can I start as a guest and sync later?",
+    "Which version of HSK does HSKKit use?",
+    "Is Placement an official HSK result?",
+    "What is included in Free and Pro?",
+    "Can I start without signing in?",
+    "How much of the catalog has audio?",
+    "How do subscriptions, cancellation and refunds work?",
   ];
   for (const question of questions) assert.match(home, new RegExp(question.replace(/[?.]/g, "\\$&")));
+  assert.equal((home.match(/question:/g) ?? []).length, 6);
   assert.match(home, /<details/);
   assert.match(home, /<summary/);
   assert.match(home, /href: "\/pricing"/);
-  assert.match(home, /No\. Not every word in the published catalog has audio\./);
+  assert.match(home, /Not every published word has audio/);
   assert.match(home, /href: "\/hsk-3-0"/);
-  assert.match(home, /href="\/refund-policy"/);
+  assert.match(home, /href: "\/refund-policy"/);
+});
+
+test("homepage trust section is a dark factual band rather than another white card stack", () => {
+  assert.match(home, /HSK 3\.0 Levels 1–9/);
+  assert.match(home, /Published vocabulary catalog/);
+  assert.match(home, /entry\.wordCount\.toLocaleString/);
+  assert.match(home, /advancedLevel\.wordCount\.toLocaleString/);
+  assert.match(home, /total \+ entry\.wordCount/);
+  assert.doesNotMatch(home, /entry\.contentCount\.toLocaleString|total \+ entry\.contentCount/);
+  assert.match(home, /Guest start/);
+  assert.match(home, /href="\/content-license"/);
+  assert.match(styles, /\.home-transparency\s*\{[^}]*background:\s*#102b4d/s);
+  assert.doesNotMatch(home, /home-scope-details/);
 });
 
 test("visual system is scoped, responsive, accessible and motion-safe", () => {
-  for (const className of ["home-hero", "home-product-shell", "home-scene-grid", "home-faq-list", "home-flow-card", "home-level-card", "home-tool-card"]) {
+  for (const className of ["home-hero", "home-product-shell", "home-scene-grid", "home-faq-list", "home-flow-card", "home-level-row", "home-tool-card"]) {
     assert.match(styles, new RegExp(`\\.${className}`));
   }
   assert.match(styles, /@media \(max-width: 639px\)/);
   assert.match(styles, /@media \(prefers-reduced-motion: reduce\)/);
   assert.match(styles, /focus-visible/);
   assert.match(styles, /overflow-wrap/);
+  assert.match(styles, /\.home-faq-list summary\s*\{[^}]*font-size:\s*18px/s);
+  assert.match(styles, /@media \(max-width: 639px\)[\s\S]*\.home-faq-list summary\s*\{[^}]*font-size:\s*17px/s);
   assert.match(footer, /footer-density-shell/);
   assert.match(footer, /pb-\[32px\]/);
 });
