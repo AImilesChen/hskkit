@@ -160,7 +160,7 @@ export function VocabularyCatalog({ level, levelLabel, publishedCount }: { level
         <label className="min-w-0 text-sm font-semibold text-slate-700">Audio
           <select value={audio} onChange={(event) => setAudio(event.target.value as AudioFilter)} className="mt-[6px] min-h-11 w-full min-w-0 max-w-full rounded-lg border border-slate-300 bg-white px-3 font-normal">
             <option value="all">All words</option>
-            <option value="formal">Published synthesized audio only</option>
+            <option value="formal">Words with audio</option>
           </select>
         </label>
         <label className="min-w-0 text-sm font-semibold text-slate-700">Sort
@@ -194,14 +194,21 @@ export function VocabularyCatalog({ level, levelLabel, publishedCount }: { level
         </div>
         <ul className={`mt-2 overflow-hidden rounded-2xl border border-slate-200 bg-white transition ${loading ? "opacity-55" : ""}`} aria-label={`${levelLabel} vocabulary results`}>
           {data.contentAssets.map((word) => <li key={word.id} className="grid gap-3 border-b border-slate-200 px-[16px] py-[14px] last:border-b-0 sm:px-[20px] lg:grid-cols-[minmax(9rem,.75fr)_minmax(9rem,.7fr)_minmax(0,2fr)_7rem_9rem] lg:items-center lg:gap-4">
-            <div className="flex flex-wrap items-baseline gap-2 lg:block"><span className="text-2xl font-bold text-slate-950">{word.payload.hanzi}</span>{word.payload.traditional && word.payload.traditional !== word.payload.hanzi && <span className="text-sm text-slate-500">{word.payload.traditional}</span>}</div>
+            <div className="flex items-start justify-between gap-3 lg:block">
+              <div className="flex flex-wrap items-baseline gap-2"><span className="text-2xl font-bold text-slate-950">{word.payload.hanzi}</span>{word.payload.traditional && word.payload.traditional !== word.payload.hanzi && <span className="text-sm text-slate-500">{word.payload.traditional}</span>}</div>
+              <div className="lg:hidden">
+                {word.formalAudioUrl
+                  ? <AudioButton text={word.payload.hanzi} src={word.formalAudioUrl} label={`Play pronunciation for ${word.payload.hanzi}`} variant="icon" />
+                  : <AudioButton text={word.payload.hanzi} variant="icon" unavailable />}
+              </div>
+            </div>
             <p className="text-base font-medium text-blue-700">{word.payload.pinyin}</p>
             <p className="text-sm leading-6 text-slate-700 sm:text-base">{word.payload.meaning}</p>
             <p><span className="inline-flex rounded-md bg-slate-100 px-2 py-1 text-xs font-bold uppercase tracking-wide text-slate-600">{word.payload.partOfSpeech || "—"}</span></p>
-            <div className="flex flex-wrap items-center gap-2 lg:justify-end">
+            <div className="hidden items-center justify-end lg:flex">
               {word.formalAudioUrl
-                ? <AudioButton text={word.payload.hanzi} src={word.formalAudioUrl} label="Play synthesized pronunciation" />
-                : <span className="sr-only">Audio unavailable</span>}
+                ? <AudioButton text={word.payload.hanzi} src={word.formalAudioUrl} label={`Play pronunciation for ${word.payload.hanzi}`} variant="icon" />
+                : <AudioButton text={word.payload.hanzi} variant="icon" unavailable />}
             </div>
           </li>)}
         </ul>
