@@ -9,6 +9,8 @@ export interface CatalogSearchParams {
   field?: CatalogSearchField;
   audio?: "formal";
   sort?: "pinyin";
+  mode?: "flashcards";
+  seed?: number;
 }
 
 export interface CatalogSearchRow {
@@ -83,6 +85,35 @@ export function parseCatalogSearchParams(url: URL): CatalogSearchParams {
   if (!["catalog", "pinyin"].includes(rawSort)) {
     throw new CatalogQueryError("sort must be catalog or pinyin");
   }
+  const modeValue = url.searchParams.get("mode");
+  const rawMode = modeValue ?? "browse";
+  if (modeValue !== null && modeValue !== "flashcards") {
+    throw new CatalogQueryError("mode must be flashcards when provided");
+  }
+  const rawSeed = url.searchParams.get("seed");
+  const seed = rawSeed === null || rawSeed === "" ? undefined : integerParam(rawSeed, 0, "seed");
+  if (seed !== undefined && (seed < 0 || seed > 2_147_483_647)) {
+    throw new CatalogQueryError("seed must be between 0 and 2147483647");
+  }
+  if (rawMode === "flashcards") {
+    if (level === undefined) {
+      throw new CatalogQueryError("level is required for flashcards mode");
+    }
+    if (seed === undefined) {
+      throw new CatalogQueryError("seed is required for flashcards mode");
+    }
+    if (![10, 20, 50].includes(pageSize)) {
+      throw new CatalogQueryError("pageSize must be 10, 20, or 50 for flashcards mode");
+    }
+    if (page !== 1) {
+      throw new CatalogQueryError("page must be 1 for flashcards mode");
+    }
+    if (["q", "pos", "field", "audio", "sort"].some((key) => url.searchParams.has(key))) {
+      throw new CatalogQueryError("search, filters, and sort are not valid for flashcards mode");
+    }
+  } else if (seed !== undefined) {
+    throw new CatalogQueryError("seed is only valid for flashcards mode");
+  }
 
   return {
     q,
@@ -93,6 +124,7 @@ export function parseCatalogSearchParams(url: URL): CatalogSearchParams {
     ...(field === "all" ? {} : { field }),
     ...(rawAudio === "formal" ? { audio: "formal" as const } : {}),
     ...(rawSort === "pinyin" ? { sort: "pinyin" as const } : {}),
+    ...(rawMode === "flashcards" ? { mode: "flashcards" as const, seed: seed ?? 0 } : {}),
   };
 }
 
@@ -136,6 +168,14 @@ export function buildCatalogQuery(
   const select = "id,release_id,standard_version,content_version,level_band,hanzi,traditional,pinyin,meaning,part_of_speech";
   const offset = (params.page - 1) * params.pageSize;
   const orderBy = params.sort === "pinyin" ? "pinyin COLLATE NOCASE, id" : "sort_level, id";
+  if (params.mode === "flashcards") {
+    return {
+      sql: `SELECT ${select} FROM catalog_search_index WHERE ${where} ORDER BY ((((CAST(substr(id, -7, 4) AS INTEGER) + ?) * 1103515245 + 12345) & 2147483647)), id LIMIT ?`,
+      bindings: [...filterBindings, params.seed ?? 0, params.pageSize + 1],
+      countSql: `SELECT COUNT(*) AS total FROM catalog_search_index WHERE ${where}`,
+      countBindings: filterBindings,
+    };
+  }
   return {
     sql: `SELECT ${select} FROM catalog_search_index WHERE ${where} ORDER BY ${orderBy} LIMIT ? OFFSET ?`,
     bindings: [...filterBindings, params.pageSize + 1, offset],
@@ -167,6 +207,7 @@ export function toCatalogWordResponse(input: {
       field: input.params.field ?? "all",
       audio: input.params.audio ?? "all",
       sort: input.params.sort ?? "catalog",
+      mode: input.params.mode ?? "browse",
     },
     pagination: {
       page: input.params.page,

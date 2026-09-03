@@ -31,7 +31,11 @@ export async function handleCatalogWordsRequest(request: Request, db: CatalogSea
       })),
     };
     return Response.json(body, {
-      headers: { "Cache-Control": "public, max-age=30, s-maxage=120, stale-while-revalidate=300" },
+      headers: {
+        "Cache-Control": params.mode === "flashcards"
+          ? "no-store"
+          : "public, max-age=30, s-maxage=120, stale-while-revalidate=300",
+      },
     });
   } catch (error) {
     if (error instanceof CatalogQueryError) {
