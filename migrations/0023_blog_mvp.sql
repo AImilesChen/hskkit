@@ -8,6 +8,7 @@ CREATE TABLE IF NOT EXISTS blog_posts (
   featured_image_alt TEXT,
   status TEXT NOT NULL DEFAULT 'draft' CHECK(status IN ('draft','published','withdrawn')),
   revision INTEGER NOT NULL DEFAULT 1 CHECK(revision > 0),
+  published_version_number INTEGER,
   author_user_id TEXT NOT NULL,
   published_at TEXT,
   created_at TEXT NOT NULL,

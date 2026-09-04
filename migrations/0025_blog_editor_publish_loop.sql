@@ -1,4 +1,6 @@
-ALTER TABLE blog_posts ADD COLUMN published_version_number INTEGER;
+-- published_version_number INTEGER is part of the 0023 table definition. Keeping it there
+-- makes this renumbered migration chain safe on environments where the earlier A/B draft
+-- migrations (0020-0022) had already created the equivalent column.
 CREATE INDEX IF NOT EXISTS idx_blog_posts_public_version ON blog_posts(status, published_at, published_version_number);
 
 CREATE TABLE blog_audit_logs_v2 (
