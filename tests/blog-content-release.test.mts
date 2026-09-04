@@ -19,7 +19,10 @@ type Article = {
 
 const root = process.cwd();
 const manifest = JSON.parse(readFileSync(join(root, "content/blog/manifest.json"), "utf8")) as { release: string; articles: Article[] };
-const migration = readFileSync(join(root, "migrations/0027_blog_content_release.sql"), "utf8");
+const migration = [
+  readFileSync(join(root, "migrations/0027_blog_content_release.sql"), "utf8"),
+  readFileSync(join(root, "migrations/0028_blog_tones_title_editorial_fix.sql"), "utf8"),
+].join("\n");
 const freezeCommit = "83883c8536c1a99b9da78e09f910b6070860836d";
 
 const wordCount = (value: string) => value.match(/\b[\w’'-]+\b/g)?.length ?? 0;
@@ -91,6 +94,9 @@ test("migration publishes every article with immutable v1 snapshot and audit ent
   }
   assert.match(migration, /'published', 1, 1/);
   assert.match(migration, /INSERT OR IGNORE INTO blog_posts/g);
+  assert.match(migration, /blog-chinese-tones-guide-v2/);
+  assert.match(migration, /Chinese Tones Guide: Hear and Produce Mandarin Tones More Reliably/);
+  assert.match(migration, /published_version_number = 2/);
 });
 
 test("release remains an additive blog-only change from the frozen production commit", () => {

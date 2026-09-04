@@ -1,4 +1,4 @@
-# Chinese Tones Guide: Hear and Produce Mandarin Tone More Reliably
+# Chinese Tones Guide: Hear and Produce Mandarin Tones More Reliably
 
 Mandarin tones help distinguish words and make speech understandable. Learners often know the four-tone diagram but still miss tones in conversation because recognizing an isolated contour is different from hearing and producing tones inside real phrases.
 
