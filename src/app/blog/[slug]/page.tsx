@@ -31,9 +31,9 @@ export default async function BlogArticlePage({ params }: { params: Promise<{ sl
   const { slug } = await params;
   const post = await getPublishedBlogPostBySlug(slug);
   if (!post) notFound();
-  const headings = extractBlogHeadings(post.contentMarkdown).filter((heading) => heading.text.toLowerCase() !== "faq" && heading.text.toLowerCase() !== "frequently asked questions");
   const faqs = extractBlogFaqs(post.contentMarkdown);
   const bodyMarkdown = post.contentMarkdown.replace(/^#\s+.+\n+/, "").split(/\n##\s+(?:FAQ|Frequently asked questions)\s*\n/i)[0].trim();
+  const headings = extractBlogHeadings(bodyMarkdown);
   const bodyHtml = markdownToSafeHtml(bodyMarkdown);
   const related = await listRelatedBlogPosts(post);
   const actions = blogLearningActions(post.hskLevel);
@@ -78,7 +78,7 @@ export default async function BlogArticlePage({ params }: { params: Promise<{ sl
         </div>
       </article>
 
-      <section className="blog-related" aria-labelledby="related-heading"><div className="blog-results-heading"><div><p className="blog-eyebrow">Keep learning</p><h2 id="related-heading">Related articles</h2></div><Link href="/blog">View all articles</Link></div>{related.length ? <div className="blog-related-grid">{related.map((item) => <article key={item.id}><div><span>{item.category}</span>{item.hskLevel && <span>HSK {item.hskLevel >= 7 ? "7–9" : item.hskLevel}</span>}</div><h3><Link href={`/blog/${item.slug}`}>{item.title}</Link></h3><p>{item.excerpt}</p></article>)}</div> : <p className="blog-related-empty">More published guides will appear here as the library grows.</p>}</section>
+      {related.length ? <section className="blog-related" aria-labelledby="related-heading"><div className="blog-results-heading"><div><p className="blog-eyebrow">Keep learning</p><h2 id="related-heading">Related articles</h2></div><Link href="/blog">View all articles</Link></div><div className="blog-related-grid">{related.map((item) => <article key={item.id}><div><span>{item.category}</span>{item.hskLevel && <span>HSK {item.hskLevel >= 7 ? "7–9" : item.hskLevel}</span>}</div><h3><Link href={`/blog/${item.slug}`}>{item.title}</Link></h3><p>{item.excerpt}</p></article>)}</div></section> : null}
     </main>
   </StudyPage>;
 }

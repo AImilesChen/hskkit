@@ -78,6 +78,8 @@ test("Stage C public routes provide navigation, discovery, full reading and mobi
   for (const marker of ["On this page", "Related articles", "Frequently asked questions"]) assert.match(detail, new RegExp(marker));
   assert.match(css, /@media \(max-width:\s*640px\)/);
   assert.match(css, /min-height:\s*44px/);
+  assert.match(detail, /extractBlogHeadings\(bodyMarkdown\)/);
+  assert.match(detail, /related\.length \? <section className="blog-related"/);
   assert.match(css, /overflow-x:\s*auto/);
 });
 
