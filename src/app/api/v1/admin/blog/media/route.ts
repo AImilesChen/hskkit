@@ -1,0 +1,4 @@
+import { blogError, requireBlogAdmin, requireSameOrigin } from "@/lib/blog/access";
+import { saveBlogMedia } from "@/lib/blog/repository";
+export const dynamic="force-dynamic";
+export async function POST(request:Request){try{requireSameOrigin(request);const admin=await requireBlogAdmin();const lengthHeader=request.headers.get("content-length");const length=Number(lengthHeader);if(!lengthHeader||!Number.isSafeInteger(length)||length<1||length>2.5*1024*1024)return Response.json({error:"PAYLOAD_TOO_LARGE"},{status:413});const form=await request.formData();const file=form.get("file");if(!(file instanceof File))return Response.json({error:"IMAGE_REQUIRED"},{status:422});return Response.json(await saveBlogMedia(file,admin.account.userId,admin.email),{status:201,headers:{"cache-control":"private, no-store"}});}catch(error){return blogError(error);}}

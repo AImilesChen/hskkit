@@ -31,6 +31,7 @@ export default function AccountClient() {
   const [sync, setSync] = useState<any>();
   const [subscription, setSubscription] = useState<any>();
   const [aiQuota, setAiQuota] = useState<any>();
+  const [blogAdmin, setBlogAdmin] = useState(false);
   const [busy, setBusy] = useState(false);
   const [timezone, setTimezone] = useState("UTC");
 
@@ -45,6 +46,10 @@ export default function AccountClient() {
         setSync(syncData);
         setSubscription(subscriptionData);
         setAiQuota(aiData);
+        const blogAccess = await fetch("/api/v1/admin/blog/access", { cache: "no-store" }).catch(() => undefined);
+        setBlogAdmin(Boolean(blogAccess?.ok));
+      } else {
+        setBlogAdmin(false);
       }
     } catch (cause) { setError(cause instanceof Error ? cause.message : "LOAD_FAILED"); }
   };
@@ -155,6 +160,11 @@ export default function AccountClient() {
         <p>Request an export, cancel a pending request, retry a failure, or delete account learning data.</p>
         <Link className="btn secondary" href="/account/data">Manage account data</Link>
       </section>
+      {blogAdmin && <section className="card">
+        <h2>Blog publishing</h2>
+        <p>Create, preview, schedule, publish, restore, and withdraw versioned HSKKit articles.</p>
+        <Link className="btn secondary" href="/admin/blog">Open Blog studio</Link>
+      </section>}
       {view.guest.hasData && <section className="card account-merge">
         <h2>Guest progress found</h2>
         <p>{view.guest.attempts} guest attempt(s), {view.guest.learningSessions} Placement/Practice session(s), and {view.guest.plannerVersions} Planner version(s) are available. Nothing changes until you confirm.</p>
