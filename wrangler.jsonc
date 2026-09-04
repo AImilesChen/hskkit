@@ -42,6 +42,9 @@
 	"r2_buckets": [{
 		"binding": "COMMERCIAL_EXPORTS_R2",
 		"bucket_name": "hskkit-commercial-exports"
+	}, {
+		"binding": "BLOG_MEDIA_R2",
+		"bucket_name": "hskkit-blog-media"
 	}],
 	"queues": {
 		"producers": [{

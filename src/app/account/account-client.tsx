@@ -84,6 +84,7 @@ export default function AccountClient() {
   const [aiQuota, setAiQuota] = useState<any>();
   const [referrals, setReferrals] = useState<any>();
   const [planner, setPlanner] = useState<any>();
+  const [blogAdmin, setBlogAdmin] = useState(false);
   const [auxiliary, setAuxiliary] = useState<AuxiliaryState>(loadingAuxiliaryState);
   const [profileOpen, setProfileOpen] = useState(false);
   const [billingOpen, setBillingOpen] = useState(false);
@@ -131,7 +132,10 @@ export default function AccountClient() {
           setAuxiliary({ streak: "error", sync: "error", subscription: "error", ai: "error", referrals: "error", planner: "error" });
           setError(cause instanceof Error ? cause.message : "LOAD_FAILED");
         });
-      }
+        void fetch("/api/v1/admin/blog/access", { cache: "no-store" })
+          .then(response => { if (generation === refreshGeneration.current) setBlogAdmin(response.ok); })
+          .catch(() => { if (generation === refreshGeneration.current) setBlogAdmin(false); });
+      } else setBlogAdmin(false);
     } catch (cause) {
       if (generation === refreshGeneration.current) setError(cause instanceof Error ? cause.message : "LOAD_FAILED");
     }
@@ -369,6 +373,11 @@ export default function AccountClient() {
             </details>
           </div>
         </div>
+
+        {blogAdmin && <div className="account-settings-group">
+          <div className="account-group-heading"><span className="account-icon-tile"><AccountIcon name="learn"/></span><div><h3>Blog publishing</h3><p>Private versioned publishing studio</p></div></div>
+          <div className="account-settings-list"><div className="account-setting-content"><p>Create, preview, schedule, publish, restore and withdraw HSKKit articles.</p><Link className="btn secondary" href="/admin/blog">Open Blog studio</Link></div></div>
+        </div>}
 
         <div className="account-settings-group">
           <div className="account-group-heading"><span className="account-icon-tile privacy"><AccountIcon name="privacy"/></span><div><h3>Privacy & account</h3><p>Export, deletion and sign-out controls</p></div></div>
