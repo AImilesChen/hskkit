@@ -2,11 +2,14 @@ import type { MetadataRoute } from "next";
 import { sitemapContentRoutes } from "@/lib/dictionary/catalog";
 import { getHsk3LevelStatuses } from "@/lib/content/level-status";
 import { publishedGrammarLessons, publishedReadingLessons } from "@/lib/learning/step7-content";
+import { blogPublicEnabled, listPublishedBlogPosts } from "@/lib/blog/repository";
 
-export const dynamic = "force-static";
+export const dynamic = "force-dynamic";
 
-export default function sitemap(): MetadataRoute.Sitemap {
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = "https://hskkit.com";
+  const blogEnabled = blogPublicEnabled();
+  const blogPosts = await listPublishedBlogPosts(100);
   const existingPublicRoutes = [
     "",
     "/hsk-1-vocabulary",
@@ -40,6 +43,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     ...getHsk3LevelStatuses().filter((entry) => entry.availability === "ready").map((entry) => `/vocabulary/${entry.level}`),
     ...publishedGrammarLessons.map((lesson) => `/grammar/${lesson.slug}`),
     ...publishedReadingLessons.map((lesson) => `/reading/${lesson.slug}`),
+    ...(blogEnabled ? ["/blog", ...blogPosts.map((post) => `/blog/${post.slug}`)] : []),
   ])];
   return routes.map((route) => ({
     url: `${baseUrl}${route}`,

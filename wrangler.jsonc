@@ -31,6 +31,7 @@
 		"AI_RATE_LIMIT_PER_MINUTE": "6",
 		"AI_MAX_OUTPUT_TOKENS": "500",
 		"COMMERCE_MODE": "test",
+		"BLOG_PUBLIC_ENABLED": "false",
 		"GOOGLE_REDIRECT_URI": "https://hskkit.com/api/v1/auth/google/callback"
 	},
 	"d1_databases": [{
@@ -42,6 +43,9 @@
 	"r2_buckets": [{
 		"binding": "COMMERCIAL_EXPORTS_R2",
 		"bucket_name": "hskkit-commercial-exports"
+	}, {
+		"binding": "BLOG_MEDIA_R2",
+		"bucket_name": "hskkit-blog-media"
 	}],
 	"queues": {
 		"producers": [{

@@ -215,6 +215,12 @@ export async function getAccount(userId: string) {
   return row ? account(row) : undefined;
 }
 
+export async function getVerifiedGoogleEmail(userId: string) {
+  const row = await db().prepare("SELECT email FROM account_oauth_identities WHERE user_id=? AND provider='google' AND email_verified=1 ORDER BY updated_at DESC LIMIT 1")
+    .bind(userId).first<{ email: string | null }>();
+  return row?.email?.trim().toLowerCase() || undefined;
+}
+
 export async function createMergePreview(userId: string, guestOwnerId: string) {
   const existing = await db().prepare("SELECT * FROM guest_merges WHERE user_id=? AND guest_owner_id=?").bind(userId, guestOwnerId).first<any>();
   if (existing?.state === "confirmed") throw new Error("GUEST_ALREADY_MERGED");

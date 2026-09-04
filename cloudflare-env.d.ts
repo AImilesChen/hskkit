@@ -1,6 +1,7 @@
 interface CloudflareEnv {
   LEARNING_DB: D1Database;
   COMMERCIAL_EXPORTS_R2: R2Bucket;
+  BLOG_MEDIA_R2: R2Bucket;
   COMMERCIAL_EXPORT_QUEUE: Queue<{ jobId: string }>;
   COMMERCE_MODE?: string;
   STRIPE_SECRET_KEY?: string;
@@ -13,6 +14,8 @@ interface CloudflareEnv {
   AI_DAILY_ALLOWANCE?: string;
   AI_RATE_LIMIT_PER_MINUTE?: string;
   AI_MAX_OUTPUT_TOKENS?: string;
+  BLOG_ADMIN_EMAILS?: string;
+  BLOG_PUBLIC_ENABLED?: string;
   ASSETS: Fetcher;
   WORKER_SELF_REFERENCE: Fetcher;
   IMAGES: ImagesBinding;
