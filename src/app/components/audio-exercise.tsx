@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useRef, useState } from "react";
 import type { AudioMode, PublicAudioExercise } from "@/lib/learning/audio";
 
-type Props = { exercises: Record<AudioMode, PublicAudioExercise>; initialMode: AudioMode; dailySessionId?: string; dailyItemId?: string };
+type Props = { exercises: Partial<Record<AudioMode, PublicAudioExercise>>; initialMode: AudioMode; dailySessionId?: string; dailyItemId?: string };
 
 export default function AudioExerciseClient({ exercises, initialMode, dailySessionId, dailyItemId }: Props) {
   const [mode, setMode] = useState<AudioMode>(initialMode);
@@ -16,9 +16,10 @@ export default function AudioExerciseClient({ exercises, initialMode, dailySessi
   const keys = useRef<Partial<Record<AudioMode, string>>>({});
   const tickets = useRef<Partial<Record<AudioMode, string>>>({});
   const ticketNotBefore = useRef<Partial<Record<AudioMode, number>>>({});
-  const exercise = exercises[mode];
+  const exercise = exercises[mode]!;
+  const availableModes = (["audio", "context_audio"] as AudioMode[]).filter((candidate) => Boolean(exercises[candidate]));
 
-  function selectMode(next: AudioMode) { setMode(next); setError(""); }
+  function selectMode(next: AudioMode) { if (exercises[next]) setMode(next); setError(""); }
   async function play() {
     setError("");
     setPlayed((current) => ({ ...current, [mode]: false }));
@@ -115,11 +116,11 @@ export default function AudioExerciseClient({ exercises, initialMode, dailySessi
   }
 
   const result = saved[mode];
-  return <main className="learn"><header><span className="eyebrow">Audio SRS · HSK {exercise.word.level}</span><h1>{exercise.word.hanzi}</h1><p>{exercise.word.pinyin} · Complete word audio and context audio separately.</p><nav><Link href="/today">Today</Link><Link href="/review">Review</Link><Link href="/mistakes">Mistakes</Link><Link href="/listen">Listen</Link></nav></header>
+  return <main className="learn"><header><span className="eyebrow">Audio SRS · HSK {exercise.word.level}</span><h1>{exercise.word.hanzi}</h1><p>{exercise.word.pinyin} · {exercises.context_audio ? "Complete word audio and context audio separately." : "Complete the available word-audio task."}</p><nav><Link href="/today">Today</Link><Link href="/review">Review</Link><Link href="/mistakes">Mistakes</Link><Link href="/listen">Listen</Link></nav></header>
     <article className="card">
-      {!dailyItemId && <div className="mb-5 flex flex-wrap gap-2" role="tablist" aria-label="Listening mode">
-        <button className={`btn ${mode === "audio" ? "" : "secondary"}`} onClick={() => selectMode("audio")}>Word audio</button>
-        <button className={`btn ${mode === "context_audio" ? "" : "secondary"}`} onClick={() => selectMode("context_audio")}>Context audio</button>
+      {!dailyItemId && availableModes.length > 1 && <div className="mb-5 flex flex-wrap gap-2" role="tablist" aria-label="Listening mode">
+        {exercises.audio && <button className={`btn ${mode === "audio" ? "" : "secondary"}`} onClick={() => selectMode("audio")}>Word audio</button>}
+        {exercises.context_audio && <button className={`btn ${mode === "context_audio" ? "" : "secondary"}`} onClick={() => selectMode("context_audio")}>Context audio</button>}
       </div>}
       <span className="eyebrow">{mode.replace("_", " ")}</span>
       <h2>{exercise.prompt}</h2>
@@ -130,7 +131,7 @@ export default function AudioExerciseClient({ exercises, initialMode, dailySessi
         {Object.entries(exercise.options).map(([letter, text]) => <button key={letter} className="btn secondary text-left" disabled={!played[mode] || saving || Boolean(result)} onClick={() => answer(letter)}>{letter}. {text}</button>)}
       </div>
       {saving && <p className="mt-4 text-sm font-semibold text-blue-700" role="status">Saving mastery…</p>}
-      {result && <div className={`mt-5 rounded-xl p-4 ${result.correct ? "bg-emerald-50 text-emerald-800" : "bg-amber-50 text-amber-900"}`} role="status"><strong>{result.correct ? "Correct — mastery saved." : "Not yet — added to Mistakes and Review."}</strong><p className="mt-2">Correct answer: {result.correctAnswerText}</p><div className="mt-4 flex flex-wrap gap-2">{mode === "audio" && !saved.context_audio && !dailyItemId && <button className="btn" onClick={() => selectMode("context_audio")}>Continue to context audio</button>}<Link className="btn secondary" href={result.correct ? "/today" : "/mistakes"}>{result.correct ? "Return to Today" : "Open Mistakes"}</Link></div></div>}
+      {result && <div className={`mt-5 rounded-xl p-4 ${result.correct ? "bg-emerald-50 text-emerald-800" : "bg-amber-50 text-amber-900"}`} role="status"><strong>{result.correct ? "Correct — mastery saved." : "Not yet — added to Mistakes and Review."}</strong><p className="mt-2">Correct answer: {result.correctAnswerText}</p><div className="mt-4 flex flex-wrap gap-2">{mode === "audio" && exercises.context_audio && !saved.context_audio && !dailyItemId && <button className="btn" onClick={() => selectMode("context_audio")}>Continue to context audio</button>}<Link className="btn secondary" href={result.correct ? "/today" : "/mistakes"}>{result.correct ? "Return to Today" : "Open Mistakes"}</Link></div></div>}
     </article>
   </main>;
 }

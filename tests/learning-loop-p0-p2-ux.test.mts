@@ -94,6 +94,17 @@ test("review planning supports composition, difficult-only queues, recommendatio
   assert.deepEqual(continuous.map((card) => card.id), ["c", "a"]);
 });
 
+test("Today listening opens an available advanced word-audio task without requiring context audio", async () => {
+  const [page, client] = await Promise.all([
+    source("src/app/listen/today/[assetId]/page.tsx"),
+    source("src/app/components/audio-exercise.tsx"),
+  ]);
+  assert.match(page, /if \(!exercises\[initialMode\]\) notFound\(\)/);
+  assert.doesNotMatch(page, /if \(!audio \|\| !contextAudio\) notFound\(\)/);
+  assert.match(client, /Partial<Record<AudioMode, PublicAudioExercise>>/);
+  assert.match(client, /exercises\.context_audio/);
+});
+
 test("Today, Review and Mistakes expose the approved P0-P2 interaction contract", async () => {
   const [client, route] = await Promise.all([source("src/app/components/learning-dashboard.tsx"), source("src/app/api/v1/learning/route.ts")]);
   for (const token of [

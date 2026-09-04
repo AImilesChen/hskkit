@@ -25,11 +25,15 @@ export default async function TodayListenPage({ params, searchParams }: Props) {
   const initialMode: AudioMode = query.mode === "context_audio" ? "context_audio" : "audio";
   const audio = trustedTodayAudioExercise(assetId, "audio");
   const contextAudio = trustedTodayAudioExercise(assetId, "context_audio");
-  if (!audio || !contextAudio) notFound();
+  const exercises = {
+    ...(audio ? { audio: publicAudioExercise(audio) } : {}),
+    ...(contextAudio ? { context_audio: publicAudioExercise(contextAudio) } : {}),
+  };
+  if (!exercises[initialMode]) notFound();
   return <>
     <SiteHeader />
     <AudioExerciseClient
-      exercises={{ audio: publicAudioExercise(audio), context_audio: publicAudioExercise(contextAudio) }}
+      exercises={exercises}
       initialMode={initialMode}
       dailySessionId={query.dailySessionId}
       dailyItemId={query.dailyItemId}
