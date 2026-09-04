@@ -1,0 +1,113 @@
+{
+  "release": "blog9-20260904",
+  "articles": [
+    {
+      "id": "blog-hsk-3-levels-explained",
+      "slug": "hsk-3-0-levels-explained",
+      "title": "HSK 3.0 Levels Explained: What to Learn from Level 1 to 9",
+      "excerpt": "Understand the HSK 3.0 elementary, intermediate, and advanced bands—and turn Levels 1–9 into a practical vocabulary, practice, and review plan.",
+      "category": "Study Guides",
+      "hskLevel": null,
+      "imageKey": "blog/launch-20260904/hsk-3-0-levels-explained.webp",
+      "imageAlt": "Chinese learner planning a path through HSK Levels 1 to 9 with study cards and a notebook",
+      "publishedAt": "2026-09-04T15:30:00.000Z",
+      "file": "hsk-3-0-levels-explained.md"
+    },
+    {
+      "id": "blog-chinese-learning-timeline",
+      "slug": "how-long-does-it-take-to-learn-chinese",
+      "title": "How Long Does It Take to Learn Chinese? A Realistic HSK Roadmap",
+      "excerpt": "Estimate your Chinese learning timeline using clear goals, sustainable weekly hours, HSK milestones, and evidence from real listening, reading, and recall tasks.",
+      "category": "Study Guides",
+      "hskLevel": null,
+      "imageKey": "blog/launch-20260904/how-long-does-it-take-to-learn-chinese.webp",
+      "imageAlt": "Chinese learner mapping a realistic study timeline across a calendar, notebook, and vocabulary cards",
+      "publishedAt": "2026-09-04T15:31:00.000Z",
+      "file": "how-long-does-it-take-to-learn-chinese.md"
+    },
+    {
+      "id": "blog-is-chinese-hard",
+      "slug": "is-chinese-hard-to-learn",
+      "title": "Is Chinese Hard to Learn? What Is Difficult—and What Is Simpler Than You Think",
+      "excerpt": "A practical breakdown of Chinese tones, listening, characters, and grammar—with focused ways to make each difficult part easier to train.",
+      "category": "Study Guides",
+      "hskLevel": 1,
+      "imageKey": "blog/launch-20260904/is-chinese-hard-to-learn.webp",
+      "imageAlt": "Beginner learning Chinese with character cards, headphones, and a clear step-by-step study path",
+      "publishedAt": "2026-09-04T15:32:00.000Z",
+      "file": "is-chinese-hard-to-learn.md"
+    },
+    {
+      "id": "blog-chinese-pinyin-guide",
+      "slug": "chinese-pinyin-guide",
+      "title": "Chinese Pinyin Guide: Initials, Finals, Tones, and Better Pronunciation",
+      "excerpt": "Learn how pinyin initials, finals, tone marks, and spelling rules map to Mandarin sound—and practise pronunciation without relying on English letter habits.",
+      "category": "Listening",
+      "hskLevel": 1,
+      "imageKey": "blog/launch-20260904/chinese-pinyin-guide.webp",
+      "imageAlt": "Chinese pronunciation practice scene with headphones, sound waves, pinyin notes, and vocabulary cards",
+      "publishedAt": "2026-09-04T15:33:00.000Z",
+      "file": "chinese-pinyin-guide.md"
+    },
+    {
+      "id": "blog-chinese-tones-guide",
+      "slug": "chinese-tones-guide",
+      "title": "Chinese Tones Guide: Hear and Produce Mandarin Tone More Reliably",
+      "excerpt": "Understand the four Mandarin tones, neutral tone, common tone changes, and a practical routine for better listening and pronunciation.",
+      "category": "Listening",
+      "hskLevel": 1,
+      "imageKey": "blog/launch-20260904/chinese-tones-guide.webp",
+      "imageAlt": "Mandarin tone practice scene showing a learner listening, speaking, and comparing pitch contours",
+      "publishedAt": "2026-09-04T15:34:00.000Z",
+      "file": "chinese-tones-guide.md"
+    },
+    {
+      "id": "blog-memorize-chinese-characters",
+      "slug": "how-to-memorize-chinese-characters",
+      "title": "How to Memorize Chinese Characters Without Endless Copying",
+      "excerpt": "Build durable character memory by combining components, words, retrieval, handwriting diagnosis, contrast sets, and spaced review.",
+      "category": "Vocabulary",
+      "hskLevel": 2,
+      "imageKey": "blog/launch-20260904/how-to-memorize-chinese-characters.webp",
+      "imageAlt": "Chinese learner recalling characters from memory beside word cards and a handwriting practice notebook",
+      "publishedAt": "2026-09-04T15:35:00.000Z",
+      "file": "how-to-memorize-chinese-characters.md"
+    },
+    {
+      "id": "blog-chinese-radicals-guide",
+      "slug": "chinese-radicals-guide",
+      "title": "Chinese Radicals Guide: Use Character Components Without Memorizing Myths",
+      "excerpt": "Learn the practical difference between radicals and components, recognize high-value forms, and use them to read, remember, and look up Chinese characters.",
+      "category": "Vocabulary",
+      "hskLevel": 2,
+      "imageKey": "blog/launch-20260904/chinese-radicals-guide.webp",
+      "imageAlt": "Chinese character components arranged around a learner analysing radicals in a study notebook",
+      "publishedAt": "2026-09-04T15:36:00.000Z",
+      "file": "chinese-radicals-guide.md"
+    },
+    {
+      "id": "blog-prepare-for-hsk",
+      "slug": "how-to-prepare-for-the-hsk",
+      "title": "How to Prepare for the HSK: A Practical Study Plan",
+      "excerpt": "Build an HSK preparation plan from diagnostic evidence, weekly time, vocabulary, listening, reading, mock tests, and a real mistake-correction loop.",
+      "category": "Exam Preparation",
+      "hskLevel": 3,
+      "imageKey": "blog/launch-20260904/how-to-prepare-for-the-hsk.webp",
+      "imageAlt": "HSK learner preparing with a weekly plan, timed practice, headphones, and vocabulary review cards",
+      "publishedAt": "2026-09-04T15:37:00.000Z",
+      "file": "how-to-prepare-for-the-hsk.md"
+    },
+    {
+      "id": "blog-common-learning-mistakes",
+      "slug": "common-chinese-learning-mistakes",
+      "title": "9 Common Chinese Learning Mistakes—and How to Fix Them",
+      "excerpt": "Identify nine recurring Chinese learning mistakes—from pinyin and tones to passive review—and turn each one into a focused correction task.",
+      "category": "Study Guides",
+      "hskLevel": 3,
+      "imageKey": "blog/launch-20260904/common-chinese-learning-mistakes.webp",
+      "imageAlt": "Chinese learner reviewing corrected mistakes with focused notes, vocabulary cards, and a clear next action",
+      "publishedAt": "2026-09-04T15:38:00.000Z",
+      "file": "common-chinese-learning-mistakes.md"
+    }
+  ]
+}
