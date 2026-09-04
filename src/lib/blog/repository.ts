@@ -1,8 +1,9 @@
 import { getCloudflareContext } from "@opennextjs/cloudflare";
-import { displayStatus, normalizeBlogInput, normalizePublishAt, type BlogDisplayStatus, type BlogInput, type BlogStatus } from "./domain";
+import { displayStatus, normalizeBlogInput, normalizePublishAt, type BlogDisplayStatus, type BlogInput, type BlogStatus, type PublicBlogQuery } from "./domain";
 
 type BlogRow = {
   id: string; slug: string; title: string; excerpt: string; content_markdown: string;
+  category: string | null; hsk_level: number | null;
   featured_image_key: string | null; featured_image_alt: string | null; status: BlogStatus;
   revision: number; published_version_number: number | null; author_user_id: string;
   published_at: string | null; created_at: string; updated_at: string;
@@ -22,6 +23,7 @@ const context = () => getCloudflareContext().env;
 const db = () => context().LEARNING_DB;
 const mapPost = (row: BlogRow): BlogPost => ({
   id: row.id, slug: row.slug, title: row.title, excerpt: row.excerpt, contentMarkdown: row.content_markdown,
+  category: row.category || "Study Guides", hskLevel: row.hsk_level === null ? undefined : Number(row.hsk_level),
   featuredImageKey: row.featured_image_key ?? undefined, featuredImageAlt: row.featured_image_alt ?? undefined,
   status: row.status, displayStatus: displayStatus(row.status, row.published_at ?? undefined), revision: Number(row.revision),
   publishedVersionNumber: row.published_version_number === null ? undefined : Number(row.published_version_number),
@@ -29,7 +31,7 @@ const mapPost = (row: BlogRow): BlogPost => ({
   authorUserId: row.author_user_id, publishedAt: row.published_at ?? undefined, createdAt: row.created_at, updatedAt: row.updated_at,
 });
 const snapshot = (post: BlogPost) => JSON.stringify(post);
-const summary = (post: BlogPost): AdminBlogPostSummary => { const { contentMarkdown: _, ...value } = post; return value; };
+const summary = (post: BlogPost): AdminBlogPostSummary => { const value = { ...post } as Partial<BlogPost>; delete value.contentMarkdown; return value as AdminBlogPostSummary; };
 
 export const blogMediaUrl = (key: string) => `/api/v1/blog/media/${key.split("/").map(encodeURIComponent).join("/")}`;
 export async function listAdminBlogPosts(): Promise<AdminBlogPostSummary[]> {
@@ -50,8 +52,8 @@ export async function createBlogPost(raw: Record<string, unknown>, actorUserId: 
   const post: BlogPost = { ...input, id, status: "draft", displayStatus: "draft", revision: 1, pendingChanges: false, authorUserId: actorUserId, createdAt: timestamp, updatedAt: timestamp };
   try {
     await db().batch([
-      db().prepare("INSERT INTO blog_posts(id,slug,title,excerpt,content_markdown,featured_image_key,featured_image_alt,status,revision,published_version_number,author_user_id,created_at,updated_at) VALUES(?,?,?,?,?,?,?,'draft',1,NULL,?,?,?)")
-        .bind(id,input.slug,input.title,input.excerpt,input.contentMarkdown,input.featuredImageKey??null,input.featuredImageAlt??null,actorUserId,timestamp,timestamp),
+      db().prepare("INSERT INTO blog_posts(id,slug,title,excerpt,content_markdown,category,hsk_level,featured_image_key,featured_image_alt,status,revision,published_version_number,author_user_id,created_at,updated_at) VALUES(?,?,?,?,?,?,?,?,?,'draft',1,NULL,?,?,?)")
+        .bind(id,input.slug,input.title,input.excerpt,input.contentMarkdown,input.category,input.hskLevel??null,input.featuredImageKey??null,input.featuredImageAlt??null,actorUserId,timestamp,timestamp),
       db().prepare("INSERT INTO blog_post_versions(id,post_id,version_number,snapshot_json,created_by_user_id,created_at) VALUES(?,?,1,?,?,?)")
         .bind(crypto.randomUUID(),id,snapshot(post),actorUserId,timestamp),
       db().prepare("INSERT INTO blog_audit_logs(id,actor_user_id,actor_email,action,post_id,metadata_json,created_at) VALUES(?,?,?,'create',?,'{}',?)")
@@ -68,7 +70,7 @@ export async function saveBlogPost(id: string, raw: Record<string, unknown>, int
   if (current.revision !== expectedRevision) throw new Error("BLOG_EDIT_CONFLICT");
   const input = normalizeBlogInput(raw);
   if (current.publishedVersionNumber && input.slug !== current.slug) throw new Error("SLUG_LOCKED_AFTER_PUBLISH");
-  const sameContent = input.title===current.title && input.slug===current.slug && input.excerpt===current.excerpt && input.contentMarkdown===current.contentMarkdown && input.featuredImageKey===current.featuredImageKey && input.featuredImageAlt===current.featuredImageAlt;
+  const sameContent = input.title===current.title && input.slug===current.slug && input.excerpt===current.excerpt && input.contentMarkdown===current.contentMarkdown && input.category===current.category && input.hskLevel===current.hskLevel && input.featuredImageKey===current.featuredImageKey && input.featuredImageAlt===current.featuredImageAlt;
   if ((intent === "save" || intent === "autosave") && sameContent) return current;
   const timestamp = new Date().toISOString(); const revision = current.revision + 1;
   let status = current.status; let publishedAt = current.publishedAt; let publishedVersionNumber = current.publishedVersionNumber; let action: AuditAction = intent === "autosave" ? "autosave" : "edit";
@@ -81,8 +83,8 @@ export async function saveBlogPost(id: string, raw: Record<string, unknown>, int
   const post: BlogPost = { ...current, ...input, status, displayStatus: displayStatus(status,publishedAt), revision, publishedVersionNumber, pendingChanges: publishedVersionNumber !== undefined && publishedVersionNumber !== revision, publishedAt, updatedAt: timestamp };
   try {
     const results = await db().batch([
-      db().prepare("UPDATE blog_posts SET slug=?,title=?,excerpt=?,content_markdown=?,featured_image_key=?,featured_image_alt=?,status=?,revision=?,published_version_number=?,published_at=?,updated_at=? WHERE id=? AND revision=?")
-        .bind(input.slug,input.title,input.excerpt,input.contentMarkdown,input.featuredImageKey??null,input.featuredImageAlt??null,status,revision,publishedVersionNumber??null,publishedAt??null,timestamp,id,expectedRevision),
+      db().prepare("UPDATE blog_posts SET slug=?,title=?,excerpt=?,content_markdown=?,category=?,hsk_level=?,featured_image_key=?,featured_image_alt=?,status=?,revision=?,published_version_number=?,published_at=?,updated_at=? WHERE id=? AND revision=?")
+        .bind(input.slug,input.title,input.excerpt,input.contentMarkdown,input.category,input.hskLevel??null,input.featuredImageKey??null,input.featuredImageAlt??null,status,revision,publishedVersionNumber??null,publishedAt??null,timestamp,id,expectedRevision),
       db().prepare("INSERT INTO blog_post_versions(id,post_id,version_number,snapshot_json,created_by_user_id,created_at) SELECT ?,?,?,?,?,? WHERE changes()=1")
         .bind(crypto.randomUUID(),id,revision,snapshot(post),actorUserId,timestamp),
       db().prepare("INSERT INTO blog_audit_logs(id,actor_user_id,actor_email,action,post_id,metadata_json,created_at) SELECT ?,?,?,?,?,?,? WHERE changes()=1")
@@ -104,8 +106,8 @@ export async function restoreBlogVersion(postId: string, versionNumber: number, 
   const timestamp=new Date().toISOString(); const revision=current.revision+1;
   const restored: BlogPost={...current,...input,revision,updatedAt:timestamp,pendingChanges:current.publishedVersionNumber!==undefined};
   const results=await db().batch([
-    db().prepare("UPDATE blog_posts SET title=?,excerpt=?,content_markdown=?,featured_image_key=?,featured_image_alt=?,revision=?,updated_at=? WHERE id=? AND revision=?")
-      .bind(input.title,input.excerpt,input.contentMarkdown,input.featuredImageKey??null,input.featuredImageAlt??null,revision,timestamp,postId,expectedRevision),
+    db().prepare("UPDATE blog_posts SET title=?,excerpt=?,content_markdown=?,category=?,hsk_level=?,featured_image_key=?,featured_image_alt=?,revision=?,updated_at=? WHERE id=? AND revision=?")
+      .bind(input.title,input.excerpt,input.contentMarkdown,input.category,input.hskLevel??null,input.featuredImageKey??null,input.featuredImageAlt??null,revision,timestamp,postId,expectedRevision),
     db().prepare("INSERT INTO blog_post_versions(id,post_id,version_number,snapshot_json,created_by_user_id,created_at) SELECT ?,?,?,?,?,? WHERE changes()=1")
       .bind(crypto.randomUUID(),postId,revision,snapshot(restored),actorUserId,timestamp),
     db().prepare("INSERT INTO blog_audit_logs(id,actor_user_id,actor_email,action,post_id,metadata_json,created_at) SELECT ?,?,?, 'restore',?,?,? WHERE changes()=1")
@@ -113,6 +115,71 @@ export async function restoreBlogVersion(postId: string, versionNumber: number, 
   ]);
   if(Number(results[0]?.meta?.changes??0)!==1) throw new Error("BLOG_EDIT_CONFLICT");
   const saved=await getAdminBlogPost(postId); if(!saved||saved.revision!==revision) throw new Error("BLOG_EDIT_CONFLICT"); return saved;
+}
+
+export type PublicBlogPost = Pick<BlogPost, "id" | "slug" | "title" | "excerpt" | "contentMarkdown" | "category" | "hskLevel" | "featuredImageKey" | "featuredImageAlt" | "publishedAt" | "updatedAt">;
+export type PublicBlogPostSummary = Omit<PublicBlogPost, "contentMarkdown">;
+type PublishedVersionRow = { id: string; slug: string; published_at: string; updated_at: string; snapshot_json: string };
+
+function mapPublishedVersion(row: PublishedVersionRow): PublicBlogPost {
+  const value = JSON.parse(row.snapshot_json) as Partial<BlogPost>;
+  return {
+    id: row.id,
+    slug: value.slug || row.slug,
+    title: String(value.title || "Untitled article"),
+    excerpt: String(value.excerpt || ""),
+    contentMarkdown: String(value.contentMarkdown || ""),
+    category: String(value.category || "Study Guides"),
+    hskLevel: value.hskLevel && Number(value.hskLevel) >= 1 && Number(value.hskLevel) <= 9 ? Number(value.hskLevel) : undefined,
+    featuredImageKey: value.featuredImageKey,
+    featuredImageAlt: value.featuredImageAlt,
+    publishedAt: row.published_at,
+    updatedAt: row.updated_at,
+  };
+}
+function publicSummary(post: PublicBlogPost): PublicBlogPostSummary {
+  const value = { ...post } as Partial<PublicBlogPost>;
+  delete value.contentMarkdown;
+  return value as PublicBlogPostSummary;
+}
+const PUBLIC_JOIN = " FROM blog_posts p JOIN blog_post_versions v ON v.post_id=p.id AND v.version_number=p.published_version_number ";
+const PUBLIC_WHERE = " p.status='published' AND p.published_at<=? AND p.published_version_number IS NOT NULL ";
+const publicColumns = "SELECT p.id,p.slug,p.published_at,p.updated_at,v.snapshot_json";
+const likeValue = (value: string) => `%${value.replace(/[\\%_]/g, "\\$&").toLowerCase()}%`;
+
+export async function listPublishedBlogPosts(query: PublicBlogQuery): Promise<{ posts: PublicBlogPostSummary[]; hasMore: boolean }> {
+  const conditions = [PUBLIC_WHERE];
+  const bindings: unknown[] = [new Date().toISOString()];
+  if (query.category) { conditions.push("COALESCE(json_extract(v.snapshot_json,'$.category'),'Study Guides')=?"); bindings.push(query.category); }
+  if (query.q) {
+    conditions.push("(lower(json_extract(v.snapshot_json,'$.title')) LIKE ? ESCAPE '\\' OR lower(json_extract(v.snapshot_json,'$.excerpt')) LIKE ? ESCAPE '\\' OR lower(json_extract(v.snapshot_json,'$.contentMarkdown')) LIKE ? ESCAPE '\\')");
+    const search = likeValue(query.q); bindings.push(search, search, search);
+  }
+  const order = query.sort === "oldest" ? "p.published_at ASC" : query.sort === "title" ? "lower(json_extract(v.snapshot_json,'$.title')) ASC" : "p.published_at DESC";
+  const take = query.page * query.limit;
+  const rows = await db().prepare(`${publicColumns}${PUBLIC_JOIN}WHERE ${conditions.join(" AND ")} ORDER BY ${order},p.id DESC LIMIT ?`).bind(...bindings, take + 1).all<PublishedVersionRow>();
+  return { posts: rows.results.slice(0, take).map(mapPublishedVersion).map(publicSummary), hasMore: rows.results.length > take };
+}
+
+export async function getPublishedBlogPostBySlug(slug: string): Promise<PublicBlogPost | undefined> {
+  const row = await db().prepare(`${publicColumns}${PUBLIC_JOIN}WHERE ${PUBLIC_WHERE} AND p.slug=? LIMIT 1`).bind(new Date().toISOString(), slug).first<PublishedVersionRow>();
+  return row ? mapPublishedVersion(row) : undefined;
+}
+
+export async function listRelatedBlogPosts(post: PublicBlogPost, limit = 3): Promise<PublicBlogPostSummary[]> {
+  const rows = await db().prepare(`${publicColumns}${PUBLIC_JOIN}WHERE ${PUBLIC_WHERE} AND p.slug<>? ORDER BY CASE WHEN COALESCE(json_extract(v.snapshot_json,'$.category'),'Study Guides')=? THEN 0 WHEN json_extract(v.snapshot_json,'$.hskLevel')=? THEN 1 ELSE 2 END,p.published_at DESC LIMIT ?`)
+    .bind(new Date().toISOString(), post.slug, post.category, post.hskLevel ?? -1, Math.max(1, Math.min(6, limit))).all<PublishedVersionRow>();
+  return rows.results.map(mapPublishedVersion).map(publicSummary);
+}
+
+export async function listPublishedBlogSlugs(): Promise<Array<{ slug: string; published_at: string; updated_at: string }>> {
+  const rows = await db().prepare("SELECT slug,published_at,updated_at FROM blog_posts WHERE status='published' AND published_at<=? AND published_version_number IS NOT NULL ORDER BY published_at DESC LIMIT 1000").bind(new Date().toISOString()).all<{ slug: string; published_at: string; updated_at: string }>();
+  return rows.results;
+}
+
+export async function listPublishedBlogFeed(limit = 100): Promise<PublicBlogPostSummary[]> {
+  const rows = await db().prepare(`${publicColumns}${PUBLIC_JOIN}WHERE ${PUBLIC_WHERE} ORDER BY p.published_at DESC LIMIT ?`).bind(new Date().toISOString(), Math.max(1, Math.min(100, limit))).all<PublishedVersionRow>();
+  return rows.results.map(mapPublishedVersion).map(publicSummary);
 }
 
 function imageDimensions(bytes: Uint8Array, extension: string) {

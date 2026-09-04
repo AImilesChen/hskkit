@@ -5,11 +5,14 @@ export const GA_ID = process.env.NEXT_PUBLIC_GA_ID || "";
 export const CLARITY_ID = process.env.NEXT_PUBLIC_CLARITY_ID || "";
 export const AHREFS_ID = process.env.NEXT_PUBLIC_AHREFS_ID || "";
 
-const PLAUSIBLE_DOMAIN = process.env.NEXT_PUBLIC_PLAUSIBLE_DOMAIN || "hskkit.com";
+type AnalyticsWindow = Window & {
+  plausible?: (eventName: string, options?: { props?: Record<string, string | number | boolean>; u?: string }) => void;
+  gtag?: (command: string, eventName: string, params?: Record<string, string | number | boolean>) => void;
+};
 
 function getPlausible() {
   if (typeof window === "undefined") return null;
-  return (window as any).plausible || null;
+  return (window as AnalyticsWindow).plausible || null;
 }
 
 /**
@@ -29,7 +32,7 @@ export function trackEvent(
   }
 
   // Google Analytics 4 (fallback)
-  const gtag = (window as any).gtag;
+  const gtag = (window as AnalyticsWindow).gtag;
   if (gtag) {
     gtag("event", eventName, params);
   }
@@ -54,7 +57,7 @@ export function trackPageView(url: string) {
   }
 
   // GA4 fallback
-  const gtag = (window as any).gtag;
+  const gtag = (window as AnalyticsWindow).gtag;
   if (gtag && GA_ID) {
     gtag("config", GA_ID, { page_path: url });
   }
@@ -82,4 +85,6 @@ export const AnalyticsEvents = {
   flashcard_flip: "flashcard_flip",
   // Tool card clicks
   tool_card_click: "tool_card_click",
+  // Public blog learning actions
+  blog_learning_action: "blog_learning_action",
 } as const;

@@ -1,0 +1,131 @@
+{
+  "baseline_commit": "26dd3c6a47d00a7bcd8149a8c6bbbf0f68080dd8",
+  "purpose": "Freeze established homepage, learning, account and commercial behavior before Stage C/D/E increment",
+  "entries": [
+    {
+      "path": "src/app/page.tsx",
+      "baseline_git_blob": "42f38cffc437fb146de044bc687d65df9b6c0132",
+      "current_sha256": "d0e475374bd343822922767d5d45549531a3d10f54b02f2d2224b901d008d729",
+      "changed": false,
+      "change_policy": "frozen: no change"
+    },
+    {
+      "path": "src/app/homepage.css",
+      "baseline_git_blob": "58ad463ead0b275a2686ad7a69258a7edfe4f3ea",
+      "current_sha256": "316d83170e9ef6d905ace67b35bebefcb793d4b940d3141cbf5483a3e4ac9b9c",
+      "changed": false,
+      "change_policy": "frozen: no change"
+    },
+    {
+      "path": "src/app/globals.css",
+      "baseline_git_blob": "8cb6ab1824e5a6c9215ce52c17bdc808efa419e7",
+      "current_sha256": "cfb351e4b36e6eb68b30522ae2ffa34dc613fceadda7d4c126ef92b597e913e7",
+      "changed": false,
+      "change_policy": "frozen: no change"
+    },
+    {
+      "path": "src/app/site-header.tsx",
+      "baseline_git_blob": "f41c3875c983582159e4993c024c6b47ad2f0a76",
+      "current_sha256": "9cd753c338d4fe0efecffd08cd7d2a22167af75d60e4e69b023c893898224680",
+      "changed": false,
+      "change_policy": "frozen: no change"
+    },
+    {
+      "path": "src/app/site-footer.tsx",
+      "baseline_git_blob": "91ad012f49552a492abf4d073550655c412b31dd",
+      "current_sha256": "f458aafd7225bf892c057ee813fe71d85e59346bc393b956228d2a30586f4191",
+      "changed": false,
+      "change_policy": "frozen: no change"
+    },
+    {
+      "path": "src/app/site-navigation.ts",
+      "baseline_git_blob": "8060e98d986ad251869bae9ac0c4a0be22dd51ee",
+      "current_sha256": "0d39ef9b35ff67174736955030361fd4790364b01f97a8e36d18245a356b520d",
+      "changed": true,
+      "change_policy": "approved additive Blog navigation entry only"
+    },
+    {
+      "path": "src/app/today/page.tsx",
+      "baseline_git_blob": "4cc1efff5a24f34a71228465a47bb3a1d216259c",
+      "current_sha256": "0245a95cf50d2ab1ff02b1121ceaf43ac8405ef8c229e9535b767a7a1223176b",
+      "changed": false,
+      "change_policy": "frozen: no change"
+    },
+    {
+      "path": "src/app/review/page.tsx",
+      "baseline_git_blob": "d18de26bd4563a3da96c8fae6c2fc869026432a4",
+      "current_sha256": "b7133087114696b29af1ef5c2b220d705fe2c2fa42a1622dcf8a32a02640ef88",
+      "changed": false,
+      "change_policy": "frozen: no change"
+    },
+    {
+      "path": "src/app/mistakes/page.tsx",
+      "baseline_git_blob": "1b0bf296b3712194e722388069f2f7fbcc2ee0e1",
+      "current_sha256": "959bc90a198684ea3268132ebd96654f56c8f14f997f5feae81b3247bb382e44",
+      "changed": false,
+      "change_policy": "frozen: no change"
+    },
+    {
+      "path": "src/app/components/learning-dashboard.tsx",
+      "baseline_git_blob": "97319ea3279a4da785e0298e35bce4834bfd1444",
+      "current_sha256": "6074f7da60ea0493786778db55cd17d11c4561ed16deb864d375aeaf82858998",
+      "changed": false,
+      "change_policy": "frozen: no change"
+    },
+    {
+      "path": "src/lib/learning/review-session.ts",
+      "baseline_git_blob": "2cf451db4e3ab4ed9b0ef44f5fc82ef4a40ec430",
+      "current_sha256": "f6881d517c5219f18e892050ad28f698db46cd9e755364cf4ca9abf3d134cc49",
+      "changed": false,
+      "change_policy": "frozen: no change"
+    },
+    {
+      "path": "src/lib/learning/today-content.ts",
+      "baseline_git_blob": "4c19b635f470327c9421f0a2f745034c15544905",
+      "current_sha256": "270ef7787b8f08b01d624e6a9598c0e35371c3d3eadba2ec3d60bb5fa07023ea",
+      "changed": false,
+      "change_policy": "frozen: no change"
+    },
+    {
+      "path": "src/app/account/page.tsx",
+      "baseline_git_blob": null,
+      "current_sha256": "908fbc8ce9362f865216ffe0d42b7eeb8c3e0e47ad34c05d8a750e4f1aba0df7",
+      "changed": false,
+      "change_policy": "frozen: no change"
+    },
+    {
+      "path": "src/app/account/account-client.tsx",
+      "baseline_git_blob": null,
+      "current_sha256": "ab9d6d550578b8807e5c62dba609077b6aea5c356a866fce76fa3f5c349a5b0c",
+      "changed": false,
+      "change_policy": "frozen: no change"
+    },
+    {
+      "path": "src/app/pricing/page.tsx",
+      "baseline_git_blob": "e56bb98e96cdf14e604ce85c6bf29d37d5fe1818",
+      "current_sha256": "52c3b1b746ff845f750db84bdece169cf5322a54e5ede3b91e9c98f276d6944d",
+      "changed": false,
+      "change_policy": "frozen: no change"
+    },
+    {
+      "path": "src/app/store/page.tsx",
+      "baseline_git_blob": "07c8c0564235eb244388709e50048b09ae2bf7f1",
+      "current_sha256": "e1c5dff7760dee79ca1d00b083c7067969aef860b937dd36f4d54e44a8ae6e92",
+      "changed": false,
+      "change_policy": "frozen: no change"
+    },
+    {
+      "path": "src/lib/commercial/products.ts",
+      "baseline_git_blob": "134a244083e70f3188e91518147e1f76105236ce",
+      "current_sha256": "ea7cb09880368d1b6497975ddd93f24e87ad531ba11f9b1d3cd5e617203ffa2a",
+      "changed": false,
+      "change_policy": "frozen: no change"
+    }
+  ],
+  "verification": {
+    "unexpected_changes": [],
+    "approved_additive_changes": [
+      "src/app/site-navigation.ts"
+    ]
+  }
+}
