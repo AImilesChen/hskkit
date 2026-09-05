@@ -1,10 +1,14 @@
 import runtimeIndex from "../content/runtime-content-index.json" with { type: "json" };
 import type { ContentRepository } from "../content/repository.ts";
+import { PRACTICE_QUESTIONS, type PracticeSkill } from "../practice/questions.ts";
 
-export const PLACEMENT_VERSION = "hskkit-placement-multiskill-v2";
+export const PLACEMENT_VERSION = "hskkit-placement-adaptive-v3";
+export const PREVIOUS_PLACEMENT_VERSION = "hskkit-placement-multiskill-v2";
 export const LEGACY_PLACEMENT_VERSION = "hskkit-placement-v1";
+export const ADAPTIVE_PLACEMENT_MIN_QUESTIONS = 18;
+export const ADAPTIVE_PLACEMENT_MAX_QUESTIONS = 24;
 
-export type PlacementSkill = "vocabulary_grammar" | "reading" | "listening";
+export type PlacementSkill = "vocabulary" | "grammar" | "vocabulary_grammar" | "reading" | "listening";
 
 export interface PlacementQuestion {
   id: string;
@@ -29,7 +33,7 @@ const PLACEMENT_TEXT_QUESTIONS: Array<Omit<PlacementQuestion, "sourceRef" | "sou
   {
     id: "placement-v1-l1-vocab",
     standardVersion: "HSK 3.0",
-    contentVersion: PLACEMENT_VERSION,
+    contentVersion: PREVIOUS_PLACEMENT_VERSION,
     level: 1,
     skill: "vocabulary_grammar",
     prompt: "Which Chinese expression means “hello”?",
@@ -40,7 +44,7 @@ const PLACEMENT_TEXT_QUESTIONS: Array<Omit<PlacementQuestion, "sourceRef" | "sou
   {
     id: "placement-v1-l2-grammar",
     standardVersion: "HSK 3.0",
-    contentVersion: PLACEMENT_VERSION,
+    contentVersion: PREVIOUS_PLACEMENT_VERSION,
     level: 2,
     skill: "vocabulary_grammar",
     prompt: "Choose the most natural word for the blank.",
@@ -52,7 +56,7 @@ const PLACEMENT_TEXT_QUESTIONS: Array<Omit<PlacementQuestion, "sourceRef" | "sou
   {
     id: "placement-v1-l3-grammar",
     standardVersion: "HSK 3.0",
-    contentVersion: PLACEMENT_VERSION,
+    contentVersion: PREVIOUS_PLACEMENT_VERSION,
     level: 3,
     skill: "vocabulary_grammar",
     prompt: "Choose the connector that completes the sentence.",
@@ -64,7 +68,7 @@ const PLACEMENT_TEXT_QUESTIONS: Array<Omit<PlacementQuestion, "sourceRef" | "sou
   {
     id: "placement-v1-l4-reading",
     standardVersion: "HSK 3.0",
-    contentVersion: PLACEMENT_VERSION,
+    contentVersion: PREVIOUS_PLACEMENT_VERSION,
     level: 4,
     skill: "reading",
     prompt: "What is the main reason Xiao Li changed his plan?",
@@ -76,7 +80,7 @@ const PLACEMENT_TEXT_QUESTIONS: Array<Omit<PlacementQuestion, "sourceRef" | "sou
   {
     id: "placement-v1-l5-reading",
     standardVersion: "HSK 3.0",
-    contentVersion: PLACEMENT_VERSION,
+    contentVersion: PREVIOUS_PLACEMENT_VERSION,
     level: 5,
     skill: "reading",
     prompt: "Which statement best matches the passage?",
@@ -88,7 +92,7 @@ const PLACEMENT_TEXT_QUESTIONS: Array<Omit<PlacementQuestion, "sourceRef" | "sou
   {
     id: "placement-v1-l6-grammar",
     standardVersion: "HSK 3.0",
-    contentVersion: PLACEMENT_VERSION,
+    contentVersion: PREVIOUS_PLACEMENT_VERSION,
     level: 6,
     skill: "vocabulary_grammar",
     prompt: "Choose the most precise word for the blank.",
@@ -100,7 +104,7 @@ const PLACEMENT_TEXT_QUESTIONS: Array<Omit<PlacementQuestion, "sourceRef" | "sou
   {
     id: "placement-v1-l7-reading",
     standardVersion: "HSK 3.0",
-    contentVersion: PLACEMENT_VERSION,
+    contentVersion: PREVIOUS_PLACEMENT_VERSION,
     level: 7,
     skill: "reading",
     prompt: "What concern does the author emphasize?",
@@ -112,7 +116,7 @@ const PLACEMENT_TEXT_QUESTIONS: Array<Omit<PlacementQuestion, "sourceRef" | "sou
   {
     id: "placement-v1-l8-vocab",
     standardVersion: "HSK 3.0",
-    contentVersion: PLACEMENT_VERSION,
+    contentVersion: PREVIOUS_PLACEMENT_VERSION,
     level: 8,
     skill: "vocabulary_grammar",
     prompt: "Which word best completes the formal sentence?",
@@ -124,7 +128,7 @@ const PLACEMENT_TEXT_QUESTIONS: Array<Omit<PlacementQuestion, "sourceRef" | "sou
   {
     id: "placement-v1-l9-reading",
     standardVersion: "HSK 3.0",
-    contentVersion: PLACEMENT_VERSION,
+    contentVersion: PREVIOUS_PLACEMENT_VERSION,
     level: 9,
     skill: "reading",
     prompt: "Which inference is best supported?",
@@ -138,19 +142,19 @@ const PLACEMENT_TEXT_QUESTIONS: Array<Omit<PlacementQuestion, "sourceRef" | "sou
 const PLACEMENT_LISTENING_QUESTIONS: Array<Omit<PlacementQuestion, "sourceRef" | "sourceUrl" | "qaStatus" | "lifecycleStatus">> = [
   {
     id: "placement-v2-l1-listening-word-mai",
-    standardVersion: "HSK 3.0", contentVersion: PLACEMENT_VERSION, level: 1, skill: "listening",
+    standardVersion: "HSK 3.0", contentVersion: PREVIOUS_PLACEMENT_VERSION, level: 1, skill: "listening",
     prompt: "Which pinyin matches the word you hear?", audioSrc: "/audio/formal/word-mai-v1.mp3",
     options: { a: "mǎi", b: "mài", c: "māi", d: "mái" }, correctAnswer: "a", publicationStatus: "diagnostic-only",
   },
   {
     id: "placement-v2-l2-listening-sentence",
-    standardVersion: "HSK 3.0", contentVersion: PLACEMENT_VERSION, level: 2, skill: "listening",
+    standardVersion: "HSK 3.0", contentVersion: PREVIOUS_PLACEMENT_VERSION, level: 2, skill: "listening",
     prompt: "Which sentence did you hear?", audioSrc: "/audio/formal/sentence-pronunciation-v1.mp3",
     options: { a: "老师让我们练习发音。", b: "老鼠让我们联系发言。", c: "老师让他们练习写字。", d: "老师让我们复习语法。" }, correctAnswer: "a", publicationStatus: "diagnostic-only",
   },
   {
     id: "placement-v2-l3-listening-context",
-    standardVersion: "HSK 3.0", contentVersion: PLACEMENT_VERSION, level: 3, skill: "listening",
+    standardVersion: "HSK 3.0", contentVersion: PREVIOUS_PLACEMENT_VERSION, level: 3, skill: "listening",
     prompt: "What does Lin Yue do at night?", audioSrc: "/audio/formal/context-morning-study-v1.mp3",
     options: { a: "She reads the difficult sentences again.", b: "She goes to the station.", c: "She learns ten new songs.", d: "She stops studying completely." }, correctAnswer: "a", publicationStatus: "diagnostic-only",
   },
@@ -181,7 +185,7 @@ const isEligibleAudio = (audioAssetId: string | undefined, source: ContentReposi
   return Boolean(release?.audioAssetIds.includes(audioAssetId) && asset && !asset.withdrawnAt && asset.authorization.status === "authorized" && asset.qaStatus === "approved" && asset.usageRights.streaming);
 };
 
-const ALL_PLACEMENT_QUESTIONS: PlacementQuestion[] = [...PLACEMENT_TEXT_QUESTIONS, ...PLACEMENT_LISTENING_QUESTIONS].map((question) => {
+const V2_PLACEMENT_QUESTIONS: PlacementQuestion[] = [...PLACEMENT_TEXT_QUESTIONS, ...PLACEMENT_LISTENING_QUESTIONS].map((question) => {
   const audioAssetId = question.skill === "listening" ? AUDIO_ASSET_BY_PATH[question.audioSrc ?? ""] : undefined;
   return {
     ...question,
@@ -193,7 +197,36 @@ const ALL_PLACEMENT_QUESTIONS: PlacementQuestion[] = [...PLACEMENT_TEXT_QUESTION
   };
 });
 
-export const PLACEMENT_QUESTIONS = ALL_PLACEMENT_QUESTIONS.filter((question) => question.skill !== "listening" || isEligibleAudio(question.audioAssetId, repository));
+const levelForAdaptiveQuestion = (level: number, skill: PracticeSkill, id: string) => {
+  if (level !== 7) return level;
+  const matches = PRACTICE_QUESTIONS.filter((question) => question.level === 7 && question.skill === skill);
+  const index = Math.max(0, matches.findIndex((question) => question.id === id));
+  return 7 + (index % 3);
+};
+
+const ADAPTIVE_PLACEMENT_QUESTIONS: PlacementQuestion[] = PRACTICE_QUESTIONS.map((question) => {
+  const level = levelForAdaptiveQuestion(question.level, question.skill, question.id);
+  return {
+    id: `placement-v3-l${level}-${question.skill}-${question.id}`,
+    standardVersion: "HSK 3.0",
+    contentVersion: PLACEMENT_VERSION,
+    level,
+    skill: question.skill,
+    prompt: question.prompt,
+    context: question.context,
+    audioSrc: question.audioSrc,
+    audioAssetId: question.skill === "listening" ? question.sourceRef : undefined,
+    options: question.options,
+    correctAnswer: question.correctAnswer,
+    sourceRef: question.sourceRef,
+    sourceUrl: question.sourceUrl,
+    qaStatus: "approved",
+    lifecycleStatus: "published",
+    publicationStatus: "diagnostic-only",
+  };
+});
+
+export const PLACEMENT_QUESTIONS = ADAPTIVE_PLACEMENT_QUESTIONS;
 const LEGACY_PLACEMENT_QUESTIONS: PlacementQuestion[] = PLACEMENT_TEXT_QUESTIONS.map((question) => ({
   ...question,
   contentVersion: LEGACY_PLACEMENT_VERSION,
@@ -205,10 +238,14 @@ const LEGACY_PLACEMENT_QUESTIONS: PlacementQuestion[] = PLACEMENT_TEXT_QUESTIONS
 
 const PLACEMENT_CATALOGS: Record<string, PlacementQuestion[]> = {
   [LEGACY_PLACEMENT_VERSION]: LEGACY_PLACEMENT_QUESTIONS,
+  [PREVIOUS_PLACEMENT_VERSION]: V2_PLACEMENT_QUESTIONS.filter((question) => question.skill !== "listening" || isEligibleAudio(question.audioAssetId, repository)),
 };
 
 export function placementCatalog(version = PLACEMENT_VERSION, source: ContentRepository = repository) {
-  if (version === PLACEMENT_VERSION) return ALL_PLACEMENT_QUESTIONS.filter((question) => question.skill !== "listening" || isEligibleAudio(question.audioAssetId, source));
+  if (version === PLACEMENT_VERSION) {
+    if (source === repository) return ADAPTIVE_PLACEMENT_QUESTIONS;
+    return ADAPTIVE_PLACEMENT_QUESTIONS.filter((question) => question.skill !== "listening" || isEligibleAudio(question.audioAssetId, source));
+  }
   return PLACEMENT_CATALOGS[version] ?? [];
 }
 
@@ -217,6 +254,7 @@ export function trustedPlacementQuestion(id: string, version = PLACEMENT_VERSION
 }
 
 export function publicPlacementQuestion(question: PlacementQuestion) {
-  const { correctAnswer: _correctAnswer, ...safe } = question;
-  return safe;
+  return Object.fromEntries(
+    Object.entries(question).filter(([key]) => key !== "correctAnswer"),
+  ) as Omit<PlacementQuestion, "correctAnswer">;
 }

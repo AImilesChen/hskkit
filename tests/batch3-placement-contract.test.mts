@@ -12,6 +12,17 @@ const start = (now = "2026-08-21T00:00:00.000Z") => createPlacementSession(empty
   now,
 });
 
+function finishAdaptive(state: ReturnType<typeof emptyLearningState>, sessionId: string, answer: "correct" | "wrong") {
+  for (let index = 0; index < 24; index += 1) {
+    const session = state.placementSessions!.find((candidate) => candidate.id === sessionId)!;
+    if (session.adaptiveComplete) return state;
+    const questionId = session.questionIds[session.answers.length];
+    const question = trustedPlacementQuestion(questionId, session.questionVersion)!;
+    state = answerPlacementQuestion(state, { sessionId, questionId, answer: answer === "correct" ? question.correctAnswer : "__wrong__", idempotencyKey: `${answer}-${index}`, now: "2026-08-21T01:00:00.000Z" }).state;
+  }
+  return state;
+}
+
 const source = (path: string) => {
   const url = new URL(path, import.meta.url);
   return fs.existsSync(url) ? fs.readFileSync(url, "utf8") : "";
@@ -52,9 +63,7 @@ test("placement refuses to create a misleading empty diagnostic", () => {
 test("duplicate final submission is idempotent, private, and can recommend both ends of Level 1–9", () => {
   let lowState = start().state;
   const lowSessionId = lowState.placementSessions![0].id;
-  for (const [index, question] of PLACEMENT_QUESTIONS.entries()) {
-    lowState = answerPlacementQuestion(lowState, { sessionId: lowSessionId, questionId: question.id, answer: "__wrong__", idempotencyKey: `low-${index}`, now: "2026-08-21T01:00:00.000Z" }).state;
-  }
+  lowState = finishAdaptive(lowState, lowSessionId, "wrong");
   const low = submitPlacement(lowState, { sessionId: lowSessionId, idempotencyKey: "low-submit", now: "2026-08-21T02:00:00.000Z" });
   const replay = submitPlacement(low.state, { sessionId: lowSessionId, idempotencyKey: "low-submit", now: "2026-08-21T02:01:00.000Z" });
   assert.equal(low.result.id, replay.result.id);
@@ -64,9 +73,7 @@ test("duplicate final submission is idempotent, private, and can recommend both 
 
   let highState = createPlacementSession(emptyLearningState(), { ownerId: "batch3-high", idempotencyKey: "high-start", now: "2026-08-21T00:00:00.000Z" }).state;
   const highSessionId = highState.placementSessions![0].id;
-  for (const [index, question] of PLACEMENT_QUESTIONS.entries()) {
-    highState = answerPlacementQuestion(highState, { sessionId: highSessionId, questionId: question.id, answer: question.correctAnswer, idempotencyKey: `high-${index}`, now: "2026-08-21T01:00:00.000Z" }).state;
-  }
+  highState = finishAdaptive(highState, highSessionId, "correct");
   const high = submitPlacement(highState, { sessionId: highSessionId, idempotencyKey: "high-submit", now: "2026-08-21T02:00:00.000Z" });
   assert.equal(high.result.recommendedLevel, 9);
 });

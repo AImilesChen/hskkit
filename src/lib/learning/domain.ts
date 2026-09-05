@@ -100,6 +100,9 @@ export interface PlacementSession {
   expiresAt?: string;
   submittedAt?: string;
   resultId?: string;
+  adaptiveComplete?: boolean;
+  adaptiveMinQuestions?: number;
+  adaptiveMaxQuestions?: number;
 }
 export interface PlacementResult {
   id: string;

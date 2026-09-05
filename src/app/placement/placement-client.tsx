@@ -9,7 +9,7 @@ type Question = {
   standardVersion: string;
   contentVersion: string;
   level: number;
-  skill: "vocabulary_grammar" | "reading" | "listening";
+  skill: "vocabulary" | "grammar" | "vocabulary_grammar" | "reading" | "listening";
   prompt: string;
   context?: string;
   audioSrc?: string;
@@ -23,6 +23,9 @@ type Session = {
   answers: Array<{ questionId: string; answer: string }>;
   status: "in_progress" | "submitted" | "abandoned";
   expiresAt: string;
+  adaptiveComplete?: boolean;
+  adaptiveMinQuestions?: number;
+  adaptiveMaxQuestions?: number;
   questions: Question[];
 };
 
@@ -171,10 +174,10 @@ export default function PlacementClient() {
           {expired ? "Your saved placement session expired" : noQuestions ? "Placement is temporarily unavailable" : loadFailed ? "We couldn't load your placement" : "Find a practical starting level"}
         </h1>
         <p className="mt-5 max-w-2xl text-lg leading-8 text-slate-600">
-          {expired ? "Placement sessions stay available for seven days. Start a new placement to continue." : noQuestions ? "No diagnostic questions are available right now. No empty or demo result will be generated." : loadFailed ? "Your saved answers have not been changed. Retry loading before starting a new session." : "Answer 12 questions across Vocabulary, grammar, reading and listening. Your answers are saved as you go, so you can refresh and continue."}
+          {expired ? "Placement sessions stay available for seven days. Start a new placement to continue." : noQuestions ? "No diagnostic questions are available right now. No empty or demo result will be generated." : loadFailed ? "Your saved answers have not been changed. Retry loading before starting a new session." : "Answer 18–24 adaptive questions across vocabulary, grammar, reading and listening. Difficulty adjusts to your answers, and progress is saved as you go."}
         </p>
         {!loadFailed && !noQuestions ? <div className="mt-7 grid gap-3 rounded-2xl border border-blue-200 bg-blue-50 p-5 text-sm text-blue-950 sm:grid-cols-3">
-          <p><strong className="block text-slate-950">12 questions</strong>A focused starting-point check</p>
+          <p><strong className="block text-slate-950">18–24 questions</strong>Difficulty adapts to your answers</p>
           <p><strong className="block text-slate-950">4 skill areas</strong>Vocabulary, grammar, reading and listening</p>
           <p><strong className="block text-slate-950">Saved as you go</strong>Refresh without losing completed answers</p>
         </div> : null}
@@ -195,18 +198,21 @@ export default function PlacementClient() {
 
   if (!question) return null;
   const selected = answered.get(question.id);
-  const progress = Math.round(((index + 1) / session.questions.length) * 100);
+  const adaptiveTotal = session.adaptiveMaxQuestions ?? session.questions.length;
+  const progress = session.adaptiveComplete && index === session.questions.length - 1
+    ? 100
+    : Math.round(((index + 1) / adaptiveTotal) * 100);
   return (
     <main className="mx-auto min-h-[70vh] max-w-3xl px-5 py-10 sm:py-14">
       <div className="flex items-center justify-between gap-4 text-sm font-semibold text-slate-600">
-        <span>Question {index + 1} of {session.questions.length}</span>
+        <span>{session.adaptiveMaxQuestions ? `Question ${index + 1} of up to ${session.adaptiveMaxQuestions}` : `Question ${index + 1} of ${session.questions.length}`}</span>
         <span>{progress}%</span>
       </div>
       <div className="mt-3 h-2 overflow-hidden rounded-full bg-slate-200" aria-label={`${progress}% complete`} role="progressbar" aria-valuemin={0} aria-valuemax={100} aria-valuenow={progress}>
         <div className="h-full rounded-full bg-blue-600" style={{ width: `${progress}%` }} />
       </div>
       <section className="mt-8 rounded-3xl border border-slate-200 bg-white p-6 shadow-sm sm:p-9" aria-labelledby="placement-question">
-        <div className="flex flex-wrap gap-2 text-xs font-bold uppercase tracking-wider text-blue-700"><span>HSK 3.0 diagnostic</span><span aria-hidden="true">·</span><span>{question.skill === "reading" ? "Reading" : question.skill === "listening" ? "Listening" : "Vocabulary & grammar"}</span></div>
+        <div className="flex flex-wrap gap-2 text-xs font-bold uppercase tracking-wider text-blue-700"><span>HSK 3.0 diagnostic</span><span aria-hidden="true">·</span><span>{question.skill === "reading" ? "Reading" : question.skill === "listening" ? "Listening" : question.skill === "grammar" ? "Grammar" : question.skill === "vocabulary" ? "Vocabulary" : "Vocabulary & grammar"}</span></div>
         <h1 className="mt-4 text-2xl font-black leading-tight text-slate-950 sm:text-3xl" id="placement-question">{question.prompt}</h1>
         {question.context ? <p className="mt-5 rounded-2xl bg-slate-50 p-5 text-lg leading-8 text-slate-900" lang="zh-Hans">{question.context}</p> : null}
         {question.audioSrc ? <div className="mt-5 rounded-2xl border border-blue-100 bg-blue-50 p-4"><audio className="w-full" controls preload="metadata" src={question.audioSrc}>Your browser cannot play this approved audio item.</audio><p className="mt-2 text-xs text-blue-800">Playback failures never submit an answer or change your learning state.</p></div> : null}

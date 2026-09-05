@@ -12,7 +12,19 @@ import {
   PLACEMENT_QUESTIONS,
   PLACEMENT_VERSION,
   publicPlacementQuestion,
+  trustedPlacementQuestion,
 } from "../src/lib/placement/questions.ts";
+
+function finishAdaptive(state: ReturnType<typeof emptyLearningState>, sessionId: string, answer: "correct" | "wrong") {
+  for (let index = 0; index < 24; index += 1) {
+    const session = state.placementSessions!.find((candidate) => candidate.id === sessionId)!;
+    if (session.adaptiveComplete) return state;
+    const questionId = session.questionIds[session.answers.length];
+    const question = trustedPlacementQuestion(questionId, session.questionVersion)!;
+    state = answerPlacementQuestion(state, { sessionId, questionId, answer: answer === "correct" ? question.correctAnswer : "__wrong__", idempotencyKey: `adaptive-${answer}-${index}`, now: "2026-08-21T00:01:00.000Z" }).state;
+  }
+  return state;
+}
 
 test("public placement payload never exposes correct answers", () => {
   const publicQuestion = publicPlacementQuestion(PLACEMENT_QUESTIONS[0]);
@@ -27,12 +39,14 @@ test("placement creates one resumable versioned session for an idempotency key",
   assert.equal(first.session.id, replay.session.id);
   assert.equal(replay.state.placementSessions?.length, 1);
   assert.equal(first.session.questionVersion, PLACEMENT_VERSION);
-  assert.deepEqual(first.session.questionIds, PLACEMENT_QUESTIONS.map((question) => question.id));
+  assert.equal(first.session.questionIds.length, 1);
+  assert.equal(first.session.adaptiveMinQuestions, 18);
+  assert.equal(first.session.adaptiveMaxQuestions, 24);
 });
 
 test("placement answers persist without exposing scoring and replay idempotently", () => {
   const created = createPlacementSession(emptyLearningState(), { ownerId: "guest-1", idempotencyKey: "start-2", now: "2026-08-21T00:00:00.000Z" });
-  const question = PLACEMENT_QUESTIONS[0];
+  const question = trustedPlacementQuestion(created.session.questionIds[0], created.session.questionVersion)!;
   const answered = answerPlacementQuestion(created.state, { sessionId: created.session.id, questionId: question.id, answer: "a", idempotencyKey: "answer-1", now: "2026-08-21T00:01:00.000Z" });
   const replay = answerPlacementQuestion(answered.state, { sessionId: created.session.id, questionId: question.id, answer: "b", idempotencyKey: "answer-1", now: "2026-08-21T00:02:00.000Z" });
   assert.equal(replay.session.answers[0].answer, "a");
@@ -47,14 +61,12 @@ test("placement refuses an incomplete submission", () => {
 test("placement result is deterministic, idempotent and uses the current measured-dimensions confidence contract", () => {
   let state = createPlacementSession(emptyLearningState(), { ownerId: "guest-1", idempotencyKey: "start-4", now: "2026-08-21T00:00:00.000Z" }).state;
   const sessionId = state.placementSessions![0].id;
-  PLACEMENT_QUESTIONS.forEach((question, index) => {
-    state = answerPlacementQuestion(state, { sessionId, questionId: question.id, answer: index < 4 ? question.correctAnswer : "__wrong__", idempotencyKey: `answer-${index}`, now: "2026-08-21T00:01:00.000Z" }).state;
-  });
+  state = finishAdaptive(state, sessionId, "correct");
   const first = submitPlacement(state, { sessionId, idempotencyKey: "submit-2", now: "2026-08-21T00:05:00.000Z" });
   const replay = submitPlacement(first.state, { sessionId, idempotencyKey: "submit-2", now: "2026-08-21T00:06:00.000Z" });
   assert.equal(first.result.id, replay.result.id);
-  assert.equal(first.result.recommendedLevel, 4);
-  assert.equal(first.result.confidence, "medium");
+  assert.equal(first.result.recommendedLevel, 9);
+  assert.equal(first.result.confidence, "high");
   assert.deepEqual(first.result.missingDimensions, []);
   assert.equal(first.result.disclaimer.includes("not an official"), true);
 });
