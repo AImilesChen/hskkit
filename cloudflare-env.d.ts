@@ -1,5 +1,8 @@
 interface CloudflareEnv {
   LEARNING_DB: D1Database;
+  FEEDBACK_EMAIL: SendEmail;
+  FEEDBACK_HASH_SECRET?: string;
+  FEEDBACK_TO_EMAIL?: string;
   COMMERCIAL_EXPORTS_R2: R2Bucket;
   BLOG_MEDIA_R2: R2Bucket;
   COMMERCIAL_EXPORT_QUEUE: Queue<{ jobId: string }>;
@@ -18,4 +21,14 @@ interface CloudflareEnv {
   ASSETS: Fetcher;
   WORKER_SELF_REFERENCE: Fetcher;
   IMAGES: ImagesBinding;
+}
+
+interface SendEmail {
+  send(message: import("cloudflare:email").EmailMessage): Promise<void>;
+}
+
+declare module "cloudflare:email" {
+  export class EmailMessage {
+    constructor(from: string, to: string, raw: string | ReadableStream);
+  }
 }

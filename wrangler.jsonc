@@ -1,6 +1,6 @@
 {
 	"$schema": "node_modules/wrangler/config-schema.json",
-	"main": ".open-next/worker.js",
+	"main": "workers/hskkit-entry.mjs",
 	"name": "hskkit",
 	"compatibility_date": "2026-05-24",
 	"compatibility_flags": [
@@ -38,6 +38,9 @@
 		"database_name": "hskkit-learning",
 		"database_id": "214d11f8-3cb2-46b7-b7b1-0dfb602dc6e7",
 		"migrations_dir": "migrations"
+	}],
+	"send_email": [{
+		"name": "FEEDBACK_EMAIL"
 	}],
 	"r2_buckets": [{
 		"binding": "COMMERCIAL_EXPORTS_R2",

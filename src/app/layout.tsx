@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Inter, Noto_Sans_SC, Noto_Serif_SC, Source_Serif_4 } from "next/font/google";
 import { PlausibleAnalytics } from "./components/plausible-analytics";
+import { FeedbackWidget } from "./components/feedback-widget";
 import "./globals.css";
 
 const PLAUSIBLE_DOMAIN = process.env.NEXT_PUBLIC_PLAUSIBLE_DOMAIN || "hskkit.com";
@@ -85,6 +86,7 @@ export default function RootLayout({
       </head>
       <body>
         {children}
+        <FeedbackWidget />
         <PlausibleAnalytics domain={PLAUSIBLE_DOMAIN} endpoint={PLAUSIBLE_ENDPOINT} />
       </body>
     </html>
