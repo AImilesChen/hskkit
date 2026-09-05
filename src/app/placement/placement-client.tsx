@@ -233,7 +233,7 @@ export default function PlacementClient() {
         {error ? <p className="mt-5 rounded-xl bg-red-50 p-4 text-sm text-red-800" role="alert">Your answer was not saved: {error}. Try again.</p> : null}
         <div className="mt-8 flex items-center justify-between gap-3">
           <button className="min-h-11 rounded-xl px-4 font-bold text-slate-600 disabled:opacity-40" disabled={index === 0 || saving} onClick={() => setManualIndex(Math.max(0, index - 1))} type="button">Back</button>
-          <button className="min-h-12 rounded-xl bg-blue-600 px-6 font-bold text-white disabled:cursor-not-allowed disabled:opacity-50" disabled={!selected || saving} onClick={next} type="button">{saving ? "Saving…" : index === session.questions.length - 1 ? "See my result" : "Next"}</button>
+          <button className="min-h-12 rounded-xl bg-blue-600 px-6 font-bold text-white disabled:cursor-not-allowed disabled:opacity-50" disabled={!selected || saving} onClick={next} type="button">{saving ? "Saving…" : session.adaptiveMaxQuestions ? session.adaptiveComplete ? "See my result" : "Next" : index === session.questions.length - 1 ? "See my result" : "Next"}</button>
         </div>
       </section>
       <p className="mt-5 text-center text-sm text-slate-500">Answers are saved to this guest session. <Link className="font-bold text-blue-700 underline-offset-2 hover:underline" href="/login">Sign in later</Link> to preview and confirm eligible progress before it is merged.</p>
