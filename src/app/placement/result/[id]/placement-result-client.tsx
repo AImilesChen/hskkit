@@ -80,7 +80,7 @@ export default function PlacementResultClient({ resultId }: { resultId: string }
   const weakLabels = result.weakSkills.map((skill) => skill === "reading" ? "Reading" : skill === "listening" ? "Listening" : "Vocabulary & grammar");
   const primaryWeakSkill = weakLabels[0] ?? "Vocabulary & grammar";
   const practiceSkill = result.weakSkills.includes("listening") ? "listening" : result.weakSkills.includes("reading") ? "reading" : "vocabulary";
-  const todayHref = `/today?level=${result.recommendedLevel}&source=placement&result=${encodeURIComponent(result.id)}`;
+  const learningHref = `/vocabulary/${result.recommendedLevel}?mode=flashcards#vocabulary-activities`;
   const catalogLevel = result.recommendedLevel;
   const practiceHref = `/practice/${Math.min(result.recommendedLevel, 7)}/${practiceSkill}`;
   return (
@@ -104,7 +104,7 @@ export default function PlacementResultClient({ resultId }: { resultId: string }
           <h2 className="text-lg font-black text-slate-950 sm:text-xl">Continue from this result</h2>
           <p className="mt-1 text-sm leading-6 text-slate-700 sm:mt-2 sm:text-base sm:leading-7">Begin at Level {result.recommendedLevel}, or work directly on your clearest focus area.</p>
           <div className="mt-3 flex flex-col gap-2 sm:mt-5 sm:flex-row sm:gap-3">
-            <Link className="inline-flex min-h-12 items-center justify-center rounded-xl bg-blue-600 px-6 font-bold text-white hover:bg-blue-700" href={todayHref}>Start Level {result.recommendedLevel}</Link>
+            <Link className="inline-flex min-h-12 items-center justify-center rounded-xl bg-blue-600 px-6 font-bold text-white hover:bg-blue-700" href={learningHref}>Start learning HSK {result.recommendedLevel}</Link>
             <Link className="inline-flex min-h-12 items-center justify-center rounded-xl border border-blue-300 bg-white px-6 font-bold text-blue-800 hover:border-blue-500" href={practiceHref}>Practice {primaryWeakSkill}</Link>
           </div>
         </div>

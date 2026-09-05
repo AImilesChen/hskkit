@@ -23,7 +23,8 @@ test("Placement result keeps the recommendation and next action in one first-fol
   assert.match(client, /Continue from this result/);
   assert.match(client, /max-w-4xl px-5 py-5 sm:py-14/);
   assert.match(client, /bg-blue-50 p-4 sm:mt-4 sm:p-9/);
-  assert.match(client, /Start Level \{result\.recommendedLevel\}/);
+  assert.match(client, /Start learning HSK \{result\.recommendedLevel\}/);
+  assert.match(client, /mode=flashcards#vocabulary-activities/);
   assert.match(client, /Practice \{primaryWeakSkill\}/);
   assert.match(client, /<details/);
   assert.match(client, /More options/);

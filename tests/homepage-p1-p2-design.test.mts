@@ -57,10 +57,11 @@ test("homepage demo resolves exactly five real published HSK 1 words", () => {
   assert.match(home, /<HomeQuickFlashcards cards=\{demoCards\}/);
 });
 
-test("homepage CTA uses one learning label while preserving internal return-user routing", () => {
+test("homepage CTA uses one learning label and the server-side learning dispatcher", () => {
   assert.match(nextStep, /Start learning/);
   assert.match(nextStep, /Preview five flashcards/);
-  assert.match(nextStep, /returningAccount \? action\.href : "\/placement"/);
+  assert.match(nextStep, /href="\/start"/);
+  assert.doesNotMatch(nextStep, /action\.href|returningAccount|\/api\/v1\/learning/);
   assert.match(nextStep, /Start with published HSK 3\.0 vocabulary and build your review plan as you learn\./);
   assert.doesNotMatch(nextStep, /Start my free Pro trial/);
   assert.doesNotMatch(nextStep, /Continue today’s study/);

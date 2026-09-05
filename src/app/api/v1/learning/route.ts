@@ -171,6 +171,8 @@ function view(state: LearningState, ownerId: string, offsetMinutes: number, capa
     nextAction,
     streak,
     streakBasis: accountTimezone ? `Account timezone: ${accountTimezone}` : "This device's local day",
+    currentLevel: startLevel,
+    dueCount: built.state.cards.filter((card) => card.dueAt <= now).length,
   };
 }
 function response(data: ReturnType<typeof view>, fresh: boolean, id: string, revision: number, account: boolean, capabilities: ProductCapabilities, usage: { dailyNewItems: number; dailyReviewGrades: number }, feedback?: { correct: boolean; correctAnswerText: string; explanation?: string }, savedWords: Awaited<ReturnType<typeof getDictionaryWordsByIds>> = []) {
@@ -199,6 +201,8 @@ function response(data: ReturnType<typeof view>, fresh: boolean, id: string, rev
     nextAction: data.nextAction,
     streak: data.streak,
     streakBasis: data.streakBasis,
+    currentLevel: data.currentLevel,
+    dueCount: data.dueCount,
     queueBinding,
     revision,
     scope: account ? "account" : "guest",
