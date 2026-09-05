@@ -17,11 +17,25 @@ type Article = {
   file: string;
 };
 
+type ImageSource = {
+  slug: string;
+  kind: "photo" | "illustration";
+  asset: string;
+  source: string;
+  license?: string;
+  licenseUrl?: string;
+};
+
 const root = process.cwd();
 const manifest = JSON.parse(readFileSync(join(root, "content/blog/manifest.json"), "utf8")) as { release: string; articles: Article[] };
+const imageSources = JSON.parse(readFileSync(join(root, "content/blog/image-sources.json"), "utf8")) as {
+  release: string;
+  assets: ImageSource[];
+};
 const migration = [
   readFileSync(join(root, "migrations/0027_blog_content_release.sql"), "utf8"),
   readFileSync(join(root, "migrations/0028_blog_tones_title_editorial_fix.sql"), "utf8"),
+  readFileSync(join(root, "migrations/0029_blog_visual_variety.sql"), "utf8"),
 ].join("\n");
 const freezeCommit = "83883c8536c1a99b9da78e09f910b6070860836d";
 
@@ -80,7 +94,30 @@ test("every article has a responsive, lightweight, topic-matched scene image", (
     const dimensions = webpSize(image);
     assert.deepEqual(dimensions, { width: 1440, height: 810 });
     assert.ok(image.byteLength < 250_000, `${article.slug}: image is too large`);
-    assert.equal(article.imageKey, `blog/launch-20260904/${article.slug}.webp`);
+    assert.match(article.imageKey, new RegExp(`^blog/(?:launch-20260904|visual-20260905)/${article.slug}\\.webp$`));
+  }
+});
+
+test("blog covers mix five licensed photographs with four original illustrations", () => {
+  assert.equal(imageSources.release, "2026-09-05-blog-visual-variety");
+  assert.equal(imageSources.assets.length, manifest.articles.length);
+  assert.equal(new Set(imageSources.assets.map((asset) => asset.slug)).size, manifest.articles.length);
+  assert.equal(imageSources.assets.filter((asset) => asset.kind === "photo").length, 5);
+  assert.equal(imageSources.assets.filter((asset) => asset.kind === "illustration").length, 4);
+
+  for (const [index, article] of manifest.articles.entries()) {
+    const source = imageSources.assets.find((asset) => asset.slug === article.slug);
+    if (!source) assert.fail(`${article.slug}: image source metadata is missing`);
+    assert.equal(source.asset, `content/blog/illustrations/generated/${String(index + 1).padStart(2, "0")}-scene-${article.slug}.webp`);
+    const expectedPrefix = source.kind === "photo" ? "blog/visual-20260905" : "blog/launch-20260904";
+    assert.equal(article.imageKey, `${expectedPrefix}/${article.slug}.webp`);
+    if (source.kind === "photo") {
+      assert.match(source.source, /^https:\/\//);
+      assert.ok(source.license, `${article.slug}: photo license is missing`);
+      assert.match(source.licenseUrl ?? "", /^https:\/\//);
+      assert.ok(migration.includes(article.imageKey), `${article.slug}: production image key migration is missing`);
+      assert.ok(migration.includes(article.imageAlt), `${article.slug}: production image alt migration is missing`);
+    }
   }
 });
 
@@ -106,4 +143,9 @@ test("release remains an additive blog-only change from the frozen production co
   assert.match(appCss, /\.blog-prose table/);
   assert.match(appCss, /\.blog-prose blockquote/);
   assert.match(appCss, /@media \(max-width: 640px\)/);
+  assert.match(appCss, /\.blog-card h3\{[^}]*text-align:left/);
+  assert.match(appCss, /\.blog-article-header\{[^}]*text-align:left/);
+  assert.match(appCss, /\.blog-article-header h1\{[^}]*text-align:left/);
+  assert.match(appCss, /\.blog-article-kicker\{[^}]*justify-content:flex-start/);
+  assert.match(appCss, /\.blog-byline\{[^}]*justify-content:flex-start/);
 });

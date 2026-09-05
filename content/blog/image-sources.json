@@ -1,0 +1,77 @@
+{
+  "release": "2026-09-05-blog-visual-variety",
+  "assets": [
+    {
+      "slug": "hsk-3-0-levels-explained",
+      "kind": "illustration",
+      "asset": "content/blog/illustrations/generated/01-scene-hsk-3-0-levels-explained.webp",
+      "source": "Original HSKKit illustration"
+    },
+    {
+      "slug": "how-long-does-it-take-to-learn-chinese",
+      "kind": "illustration",
+      "asset": "content/blog/illustrations/generated/02-scene-how-long-does-it-take-to-learn-chinese.webp",
+      "source": "Original HSKKit illustration"
+    },
+    {
+      "slug": "is-chinese-hard-to-learn",
+      "kind": "photo",
+      "asset": "content/blog/illustrations/generated/03-scene-is-chinese-hard-to-learn.webp",
+      "source": "https://commons.wikimedia.org/wiki/File:Aidan_Meyer_2017-01-03_(Unsplash).jpg",
+      "creator": "Aidan Meyer",
+      "license": "CC0 1.0",
+      "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "changes": "Cropped, resized, and color graded for the HSKKit card format."
+    },
+    {
+      "slug": "chinese-pinyin-guide",
+      "kind": "photo",
+      "asset": "content/blog/illustrations/generated/04-scene-chinese-pinyin-guide.webp",
+      "source": "https://commons.wikimedia.org/wiki/File:Katelen%27s_Frustration_(3547750190).jpg",
+      "creator": "Ally.J.",
+      "license": "CC BY 2.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/2.0/",
+      "changes": "Cropped, resized, color graded, and overlaid with the accurate Mandarin tone sequence mā, má, mǎ, mà."
+    },
+    {
+      "slug": "chinese-tones-guide",
+      "kind": "illustration",
+      "asset": "content/blog/illustrations/generated/05-scene-chinese-tones-guide.webp",
+      "source": "Original HSKKit illustration"
+    },
+    {
+      "slug": "how-to-memorize-chinese-characters",
+      "kind": "photo",
+      "asset": "content/blog/illustrations/generated/06-scene-how-to-memorize-chinese-characters.webp",
+      "source": "https://commons.wikimedia.org/wiki/File:Flash_cards_for_language_learning.jpg",
+      "creator": "jomegat",
+      "license": "CC BY-SA 2.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.0/",
+      "changes": "Cropped, resized, color graded, and adapted with accurate Chinese character and spaced-review card content. This derivative is distributed under CC BY-SA 2.0."
+    },
+    {
+      "slug": "chinese-radicals-guide",
+      "kind": "illustration",
+      "asset": "content/blog/illustrations/generated/07-scene-chinese-radicals-guide.webp",
+      "source": "Original HSKKit illustration"
+    },
+    {
+      "slug": "how-to-prepare-for-the-hsk",
+      "kind": "photo",
+      "asset": "content/blog/illustrations/generated/08-scene-how-to-prepare-for-the-hsk.webp",
+      "source": "https://www.pexels.com/photo/5905710/",
+      "license": "Pexels License",
+      "licenseUrl": "https://www.pexels.com/license/",
+      "changes": "Cropped, resized, and color graded for the HSKKit card format."
+    },
+    {
+      "slug": "common-chinese-learning-mistakes",
+      "kind": "photo",
+      "asset": "content/blog/illustrations/generated/09-scene-common-chinese-learning-mistakes.webp",
+      "source": "https://www.pexels.com/photo/4145190/",
+      "license": "Pexels License",
+      "licenseUrl": "https://www.pexels.com/license/",
+      "changes": "Cropped, resized, and color graded for the HSKKit card format."
+    }
+  ]
+}
