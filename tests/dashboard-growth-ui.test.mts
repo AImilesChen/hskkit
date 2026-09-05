@@ -17,6 +17,7 @@ test("stage 3 dashboard presents calendar, 7/30-day curve, truthful HSK bands an
   assert.match(growth, /No tracked vocabulary yet/);
   assert.match(growth, /grid-cols-7/);
   assert.match(growth, /gridTemplateColumns: "repeat\(7, minmax\(0, 1fr\)\)"/);
+  assert.match(growth, /style={{ height: "2.25rem" }}/);
   assert.match(growth, /className={`flex h-9 items-center/);
   assert.doesNotMatch(growth, /aspect-square/);
   assert.doesNotMatch(growth, /sample|placeholder|demo data/i);
