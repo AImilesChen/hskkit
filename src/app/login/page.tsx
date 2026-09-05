@@ -21,6 +21,7 @@ export default async function LoginPage({ searchParams }: { searchParams: Promis
   const params = await searchParams;
   const referralSuffix = params.ref ? `&ref=${encodeURIComponent(params.ref)}` : "";
   const message = params.error ? messages[params.error] ?? messages.google_failed : undefined;
+  const guestHref = params.returnTo === "/start" ? "/placement?onboarding=1" : "/today";
   return (
     <>
       <SiteHeader />
@@ -37,7 +38,7 @@ export default async function LoginPage({ searchParams }: { searchParams: Promis
           </a>
           <p className="mt-4 text-sm leading-6 text-slate-600">After sign-in, HSKKit previews eligible guest progress. Nothing is merged until you confirm.</p>
         </div>
-        <Link className="mt-6 inline-flex min-h-11 items-center font-bold text-blue-700" href="/today">Continue as a guest</Link>
+        <Link className="mt-6 inline-flex min-h-11 items-center font-bold text-blue-700" href={guestHref}>Continue as a guest</Link>
       </main>
       <SiteFooter />
     </>

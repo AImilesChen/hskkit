@@ -7,6 +7,7 @@ const page = read("../src/app/dashboard/page.tsx");
 const dashboard = read("../src/app/dashboard/dashboard-core.tsx");
 const start = read("../src/app/start/page.tsx");
 const learningRoute = read("../src/app/api/v1/learning/route.ts");
+const login = read("../src/app/login/page.tsx");
 
 test("server dispatcher and dashboard protect the approved new-versus-established flow", () => {
   assert.match(start, /learningEntryDestination/);
@@ -14,6 +15,7 @@ test("server dispatcher and dashboard protect the approved new-versus-establishe
   assert.match(page, /hasEstablishedLearning/);
   assert.match(page, /\/placement\?onboarding=1/);
   assert.match(page, /\/login\?returnTo=%2Fdashboard/);
+  assert.match(login, /params\.returnTo === "\/start" \? "\/placement\?onboarding=1" : "\/today"/);
 });
 
 test("dashboard core contains only the approved stage-two learning signals", () => {
