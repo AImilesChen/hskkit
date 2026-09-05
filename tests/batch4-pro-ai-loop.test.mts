@@ -78,6 +78,8 @@ test("Batch 4 persists payment failure, terminal and refund revocation without d
   db.exec(`CREATE TABLE payment_events(event_id TEXT PRIMARY KEY,event_type TEXT,livemode INTEGER,payload_sha256 TEXT,processed_at TEXT,outcome TEXT,claim_token TEXT);`);
   const migration = await read("migrations/0015_batch2a_subscriptions.sql");
   db.exec(migration.slice(migration.indexOf("CREATE TABLE IF NOT EXISTS subscription_orders")));
+  db.exec(`CREATE TABLE promotional_entitlements(owner_id TEXT,kind TEXT,status TEXT,updated_at TEXT,starts_at TEXT,ends_at TEXT,ai_credits INTEGER,created_at TEXT);`);
+  db.exec(await read("migrations/0032_welcome_credit_rollover.sql"));
   db.exec(`CREATE TABLE learning_history(id TEXT PRIMARY KEY,payload TEXT NOT NULL); INSERT INTO learning_history VALUES('history-1','preserve-me');`);
   const at = "2026-08-25T00:00:00.000Z";
   db.prepare(`INSERT INTO subscription_orders(id,owner_id,user_id,plan_id,amount_cents,currency,status,idempotency_key,provider_customer_id,provider_subscription_id,created_at,updated_at) VALUES(?,?,?,?,?,?,'completed',?,?,?,?,?)`)
@@ -165,7 +167,7 @@ test("Batch 4 settlement is success-only and failures release credits and concur
   assert.match(storage, /status='reserved'/);
   assert.match(storage, /AI_REQUEST_IN_PROGRESS/);
   assert.match(storage, /AI_RATE_LIMITED/);
-  assert.match(storage, /allowance=MAX\(excluded\.allowance,used\+reserved\)/);
+  assert.match(storage, /allowance=MAX\(ai_quota_buckets\.allowance,excluded\.allowance,used\+reserved\)/);
 });
 
 test("Batch 4 downgrade changes projection and authorization without deleting learning history", async () => {

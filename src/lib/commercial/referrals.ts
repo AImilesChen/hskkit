@@ -12,6 +12,23 @@ export type AccessResolution = { tier: "free" | "pro"; source: "free" | "paid" |
 
 const live = (window: AccessWindow, now: Date) => window?.status === "active" && (!window.endsAt || Date.parse(window.endsAt) > now.getTime());
 
+export type WelcomeCreditRollover = { remainingCredits: number; conversionPeriod: string; spentInConversionPeriod: number };
+
+export function welcomeCreditRollover(input: { grantedCredits: number; spentBeforePaid: number; conversionPeriod: string; spentInConversionPeriod: number }): WelcomeCreditRollover {
+  return {
+    remainingCredits: Math.max(0, input.grantedCredits - input.spentBeforePaid),
+    conversionPeriod: input.conversionPeriod,
+    spentInConversionPeriod: Math.max(0, Math.min(input.spentBeforePaid, input.spentInConversionPeriod)),
+  };
+}
+
+export function paidCreditAllowance(input: { rollover: WelcomeCreditRollover | null; currentPeriod: string }) {
+  const bonusCredits = input.rollover?.remainingCredits ?? 0;
+  const conversionUsage = input.rollover?.conversionPeriod === input.currentPeriod ? input.rollover.spentInConversionPeriod : 0;
+  const baseAllowance = 500;
+  return { baseAllowance, bonusCredits, totalAllowance: baseAllowance + bonusCredits + conversionUsage, bonusSpendThreshold: baseAllowance + conversionUsage };
+}
+
 export function resolveAccessSource(input: { paid: AccessWindow; trial: AccessWindow; promo: AccessWindow }, now = new Date()): AccessResolution {
   if (live(input.paid, now)) return { tier: "pro", source: "paid", endsAt: input.paid!.endsAt, baseAiCredits: 500 };
   if (live(input.trial, now)) return { tier: "pro", source: "trial", endsAt: input.trial!.endsAt, baseAiCredits: input.trial!.aiCredits ?? WELCOME_TRIAL_CREDITS };

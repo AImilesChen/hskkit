@@ -7,6 +7,8 @@ import {
   referralQualification,
   referralReward,
   resolveAccessSource,
+  paidCreditAllowance,
+  welcomeCreditRollover,
 } from "../src/lib/commercial/referrals.ts";
 
 const read = (path: string) => readFile(new URL(`../${path}`, import.meta.url), "utf8");
@@ -25,6 +27,33 @@ test("an already-started 50-credit welcome trial keeps its granted allowance", (
   assert.deepEqual(resolveAccessSource({ paid: null, trial: { ...active(7), aiCredits: 50 }, promo: null }, now), {
     tier: "pro", source: "trial", endsAt: active(7).endsAt, baseAiCredits: 50,
   });
+});
+
+test("paid Pro preserves unused welcome credits without repeating spent credits next month", () => {
+  const rollover = welcomeCreditRollover({ grantedCredits: 50, spentBeforePaid: 1, conversionPeriod: "2026-09", spentInConversionPeriod: 1 });
+  assert.deepEqual(rollover, { remainingCredits: 49, conversionPeriod: "2026-09", spentInConversionPeriod: 1 });
+  assert.deepEqual(paidCreditAllowance({ rollover, currentPeriod: "2026-09" }), { baseAllowance: 500, bonusCredits: 49, totalAllowance: 550, bonusSpendThreshold: 501 });
+  assert.deepEqual(paidCreditAllowance({ rollover, currentPeriod: "2026-10" }), { baseAllowance: 500, bonusCredits: 49, totalAllowance: 549, bonusSpendThreshold: 500 });
+});
+
+test("welcome-credit rollover is persisted, accumulated, and spent once", async () => {
+  const [migration, commerceStorage, referralStorage, aiStorage] = await Promise.all([
+    read("migrations/0032_welcome_credit_rollover.sql"),
+    read("src/lib/commercial/storage.ts"),
+    read("src/lib/commercial/referral-storage.ts"),
+    read("src/lib/ai/storage.ts"),
+  ]);
+  assert.match(migration, /CREATE TABLE IF NOT EXISTS welcome_credit_rollovers/);
+  assert.match(migration, /remaining_units INTEGER NOT NULL/);
+  assert.match(commerceStorage, /spentBeforePaid:Number\(spent\?\.total\?\?0\)/);
+  assert.match(commerceStorage, /INSERT OR IGNORE INTO welcome_credit_rollovers/);
+  assert.match(commerceStorage, /firstPaidWindow/);
+  assert.match(commerceStorage, /kind='welcome_trial' AND status='active'/);
+  assert.match(referralStorage, /remaining_units,conversion_period,conversion_period_used FROM welcome_credit_rollovers/);
+  assert.match(referralStorage, /paidCredits\.totalAllowance \+ bonus/);
+  assert.equal([...aiStorage.matchAll(/MAX\(ai_quota_buckets\.allowance,excluded\.allowance,used\+reserved\)/g)].length, 2, "quota reads and reservations must both preserve the current-period grant");
+  assert.match(aiStorage, /UPDATE welcome_credit_rollovers SET remaining_units=remaining_units-\?/);
+  assert.match(aiStorage, /bonusSpend - welcomeSpend/);
 });
 
 test("paid entitlement wins; expired trial and promo downgrade safely", () => {

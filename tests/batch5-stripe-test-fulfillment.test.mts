@@ -50,6 +50,8 @@ async function subscriptionDb(){
   db.exec("CREATE TABLE payment_events(event_id TEXT PRIMARY KEY,event_type TEXT,livemode INTEGER,payload_sha256 TEXT,processed_at TEXT,outcome TEXT,claim_token TEXT);");
   const migration=await read("migrations/0015_batch2a_subscriptions.sql");
   db.exec(migration.slice(migration.indexOf("CREATE TABLE IF NOT EXISTS subscription_orders")));
+  db.exec("CREATE TABLE promotional_entitlements(owner_id TEXT,kind TEXT,status TEXT,updated_at TEXT,starts_at TEXT,ends_at TEXT,ai_credits INTEGER,created_at TEXT);");
+  db.exec(await read("migrations/0032_welcome_credit_rollover.sql"));
   return db;
 }
 async function activate(db:DatabaseSync,planId:"pro_monthly"|"pro_yearly",suffix:string){
@@ -80,7 +82,7 @@ test("monthly and yearly activate, cancel at period end, fail, renew and refund 
     assert.equal((db.prepare("SELECT status FROM subscription_entitlements").get() as {status:string}).status,"suspended");
     const paid={kind:"invoice_paid" as const,eventId:`evt_paid_${suffix}`,invoiceId:`in_paid_${suffix}`,subscriptionId:`sub_${suffix}`,customerId:`cus_${suffix}`,paymentIntentId:`pi_${suffix}`,chargeId:`ch_${suffix}`,amountCents:plan.amountCents,currency:"usd",chargedAt:at};
     await applySubscriptionEvent(paid,env); await applySubscriptionEvent(paid,env);
-    assert.equal((db.prepare("SELECT status FROM subscription_entitlements").get() as {status:string}).status,"suspended");
+    assert.equal((db.prepare("SELECT status FROM subscription_entitlements").get() as {status:string}).status,"active");
     await applySubscriptionEvent({...event,eventId:`evt_renewed_${suffix}`,currentPeriodStart:"2026-09-25T00:00:00.000Z",currentPeriodEnd:"2026-10-25T00:00:00.000Z"},env);
     assert.equal((db.prepare("SELECT status FROM subscription_entitlements").get() as {status:string}).status,"active");
     assert.equal((db.prepare("SELECT COUNT(*) n FROM subscription_charges WHERE status='paid'").get() as {n:number}).n,1);

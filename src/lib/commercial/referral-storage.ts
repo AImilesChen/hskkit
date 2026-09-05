@@ -9,6 +9,7 @@ import {
   referralQualification,
   referralReward,
   resolveAccessSource,
+  paidCreditAllowance,
   safeReferralCode,
 } from "./referrals.ts";
 
@@ -70,18 +71,19 @@ export async function activateWelcomeTrialAndReferral(input: { userId: string; e
 }
 
 export async function bonusCreditBalance(ownerId: string, at = new Date()) {
-  const row = await database().prepare("SELECT COALESCE(SUM(units),0) balance FROM credit_ledger WHERE owner_id=? AND expires_at>?").bind(ownerId, iso(at)).first<{ balance: number }>();
+  const row = await database().prepare("SELECT MAX(0,COALESCE(SUM(units),0)) balance FROM credit_ledger WHERE owner_id=? AND expires_at>?").bind(ownerId, iso(at)).first<{ balance: number }>();
   return Math.max(0, Number(row?.balance ?? 0));
 }
 
 export async function resolveCommercialAccess(ownerId: string, at = new Date()): Promise<{ capabilities: ProductCapabilities; access: ReturnType<typeof resolveAccessSource>; bonusCredits: number }> {
   const db = database();
   await db.prepare("UPDATE promotional_entitlements SET status='ended',updated_at=? WHERE owner_id=? AND status='active' AND ends_at<=?").bind(iso(at), ownerId, iso(at)).run();
-  const [paid, trial, promo, bonus] = await Promise.all([
+  const [paid, trial, promo, bonus, rolloverRow] = await Promise.all([
     db.prepare("SELECT status,ends_at FROM subscription_entitlements WHERE owner_id=?").bind(ownerId).first<{ status: "active" | "ended" | "revoked"; ends_at: string | null }>(),
     db.prepare("SELECT status,ends_at,ai_credits FROM promotional_entitlements WHERE owner_id=? AND kind='welcome_trial' ORDER BY created_at DESC LIMIT 1").bind(ownerId).first<{ status: "active" | "ended" | "revoked"; ends_at: string | null; ai_credits: number | null }>(),
     db.prepare("SELECT status,MAX(ends_at) ends_at FROM promotional_entitlements WHERE owner_id=? AND kind='referral_pass' AND status='active'").bind(ownerId).first<{ status: "active" | "ended" | "revoked"; ends_at: string | null }>(),
     bonusCreditBalance(ownerId, at),
+    db.prepare("SELECT remaining_units,conversion_period,conversion_period_used FROM welcome_credit_rollovers WHERE owner_id=?").bind(ownerId).first<{ remaining_units: number; conversion_period: string; conversion_period_used: number }>(),
   ]);
   const access = resolveAccessSource({
     paid: paid ? { status: paid.status, endsAt: paid.ends_at } : null,
@@ -89,6 +91,11 @@ export async function resolveCommercialAccess(ownerId: string, at = new Date()):
     promo: promo?.ends_at ? { status: promo.status, endsAt: promo.ends_at } : null,
   }, at);
   if (access.tier === "free") return { capabilities: FREE_CAPABILITIES, access, bonusCredits: bonus };
+  if (access.source === "paid") {
+    const rollover = rolloverRow ? { remainingCredits: Number(rolloverRow.remaining_units), conversionPeriod: rolloverRow.conversion_period, spentInConversionPeriod: Number(rolloverRow.conversion_period_used) } : null;
+    const paidCredits = paidCreditAllowance({ rollover, currentPeriod: at.toISOString().slice(0, 7) });
+    return { capabilities: { ...PRO_CAPABILITIES, aiMonthlyCredits: paidCredits.totalAllowance + bonus }, access, bonusCredits: bonus + paidCredits.bonusCredits };
+  }
   return { capabilities: { ...PRO_CAPABILITIES, aiMonthlyCredits: access.baseAiCredits + bonus }, access, bonusCredits: bonus };
 }
 

@@ -50,7 +50,7 @@ async function operationByKey(ownerId: string, feature: AiFeature, idempotencyKe
 }
 
 async function ensureBucket(ownerId: string, period: string, now: string, allowance: number) {
-  await (await db()).prepare("INSERT INTO ai_quota_buckets(owner_id,period_key,allowance,used,reserved,updated_at) VALUES(?,?,?,?,?,?) ON CONFLICT(owner_id,period_key) DO UPDATE SET allowance=MAX(excluded.allowance,used+reserved),updated_at=excluded.updated_at")
+  await (await db()).prepare("INSERT INTO ai_quota_buckets(owner_id,period_key,allowance,used,reserved,updated_at) VALUES(?,?,?,?,?,?) ON CONFLICT(owner_id,period_key) DO UPDATE SET allowance=MAX(ai_quota_buckets.allowance,excluded.allowance,used+reserved),updated_at=excluded.updated_at")
     .bind(ownerId, period, allowance, 0, 0, now).run();
 }
 
@@ -116,7 +116,7 @@ export async function reserveOperation(input: { ownerId: string; feature: AiFeat
   const rateLimit = rateLimitFor(policy);
   try {
     await database.batch([
-      database.prepare("INSERT INTO ai_quota_buckets(owner_id,period_key,allowance,used,reserved,updated_at) VALUES(?,?,?,?,?,?) ON CONFLICT(owner_id,period_key) DO UPDATE SET allowance=MAX(excluded.allowance,used+reserved),updated_at=excluded.updated_at").bind(input.ownerId, period, allowance, 0, 0, timestamp),
+      database.prepare("INSERT INTO ai_quota_buckets(owner_id,period_key,allowance,used,reserved,updated_at) VALUES(?,?,?,?,?,?) ON CONFLICT(owner_id,period_key) DO UPDATE SET allowance=MAX(ai_quota_buckets.allowance,excluded.allowance,used+reserved),updated_at=excluded.updated_at").bind(input.ownerId, period, allowance, 0, 0, timestamp),
       database.prepare("UPDATE ai_quota_buckets SET reserved=reserved+?,updated_at=? WHERE owner_id=? AND period_key=? AND reserved=0 AND used+reserved+?<=allowance AND (SELECT COUNT(*) FROM ai_operations WHERE owner_id=? AND created_at>=?)<? AND (substr(?,1,5)!='user:' OR EXISTS(SELECT 1 FROM accounts WHERE user_id=substr(?,6) AND status='active'))")
         .bind(costUnits, timestamp, input.ownerId, period, costUnits, input.ownerId, requestFloor(policy, now), rateLimit, input.ownerId, input.ownerId),
       database.prepare("INSERT INTO ai_quota_assertions(id,ok) VALUES(?,CASE changes() WHEN 1 THEN 1 ELSE 0 END)").bind(assertion),
@@ -144,18 +144,32 @@ export async function finalizeSuccess(input: { operation: AiOperation; output: A
   const database = await db();
   const now = (input.now ?? new Date()).toISOString();
   const assertion = crypto.randomUUID();
+  const welcomeAssertion = `${assertion}:welcome`;
+  const [bucket, rollover] = await Promise.all([
+    database.prepare("SELECT used FROM ai_quota_buckets WHERE owner_id=? AND period_key=?").bind(input.operation.ownerId, input.operation.quotaPeriod).first<{ used: number }>(),
+    database.prepare("SELECT w.remaining_units,w.conversion_period,w.conversion_period_used FROM welcome_credit_rollovers w JOIN subscription_entitlements e ON e.owner_id=w.owner_id AND e.status='active' AND (e.ends_at IS NULL OR e.ends_at>?) WHERE w.owner_id=?").bind(now, input.operation.ownerId).first<{ remaining_units: number; conversion_period: string; conversion_period_used: number }>(),
+  ]);
+  const spendThreshold = input.operation.baseAllowance + (rollover?.conversion_period === input.operation.quotaPeriod ? Number(rollover.conversion_period_used) : 0);
+  const bonusSpend = Math.min(input.operation.costUnits, Math.max(0, Number(bucket?.used ?? 0) + input.operation.costUnits - spendThreshold));
+  const welcomeSpend = Math.min(bonusSpend, Number(rollover?.remaining_units ?? 0));
+  const referralSpend = bonusSpend - welcomeSpend;
+  const statements = [
+    database.prepare("UPDATE ai_operations SET status='succeeded',response_json=?,provider_request_id=?,prompt_tokens=?,completion_tokens=?,updated_at=? WHERE id=? AND owner_id=? AND status='reserved' AND (substr(?,1,5)!='user:' OR EXISTS(SELECT 1 FROM accounts WHERE user_id=substr(?,6) AND status='active'))")
+      .bind(JSON.stringify(input.output), input.providerRequestId ?? null, input.promptTokens ?? null, input.completionTokens ?? null, now, input.operation.id, input.operation.ownerId, input.operation.ownerId, input.operation.ownerId),
+    database.prepare("INSERT INTO ai_quota_assertions(id,ok) VALUES(?,CASE changes() WHEN 1 THEN 1 ELSE 0 END)").bind(assertion),
+    database.prepare("UPDATE ai_quota_buckets SET reserved=reserved-?,used=used+?,updated_at=? WHERE owner_id=? AND period_key=? AND reserved>=? AND used+?<=allowance")
+      .bind(input.operation.costUnits, input.operation.costUnits, now, input.operation.ownerId, input.operation.quotaPeriod, input.operation.costUnits, input.operation.costUnits),
+    database.prepare("INSERT INTO ai_quota_assertions(id,ok) VALUES(?,CASE changes() WHEN 1 THEN 1 ELSE 0 END)").bind(`${assertion}:bucket`),
+  ];
+  if (referralSpend > 0) statements.push(database.prepare("INSERT INTO credit_ledger(id,owner_id,units,source,reward_id,operation_id,expires_at,created_at) VALUES(?,?,?,'referral_spend',NULL,?,?,?)")
+    .bind(crypto.randomUUID(), input.operation.ownerId, -referralSpend, input.operation.id, `${new Date(now).getUTCFullYear() + 1}-01-01T00:00:00.000Z`, now));
+  if (welcomeSpend > 0) statements.push(
+    database.prepare("UPDATE welcome_credit_rollovers SET remaining_units=remaining_units-? WHERE owner_id=? AND remaining_units>=? AND EXISTS(SELECT 1 FROM subscription_entitlements WHERE owner_id=? AND status='active' AND (ends_at IS NULL OR ends_at>?))").bind(welcomeSpend, input.operation.ownerId, welcomeSpend, input.operation.ownerId, now),
+    database.prepare("INSERT INTO ai_quota_assertions(id,ok) VALUES(?,CASE changes() WHEN 1 THEN 1 ELSE 0 END)").bind(welcomeAssertion),
+  );
+  statements.push(database.prepare("DELETE FROM ai_quota_assertions WHERE id IN (?,?,?)").bind(assertion, `${assertion}:bucket`, welcomeAssertion));
   try {
-    await database.batch([
-      database.prepare("UPDATE ai_operations SET status='succeeded',response_json=?,provider_request_id=?,prompt_tokens=?,completion_tokens=?,updated_at=? WHERE id=? AND owner_id=? AND status='reserved' AND (substr(?,1,5)!='user:' OR EXISTS(SELECT 1 FROM accounts WHERE user_id=substr(?,6) AND status='active'))")
-        .bind(JSON.stringify(input.output), input.providerRequestId ?? null, input.promptTokens ?? null, input.completionTokens ?? null, now, input.operation.id, input.operation.ownerId, input.operation.ownerId, input.operation.ownerId),
-      database.prepare("INSERT INTO ai_quota_assertions(id,ok) VALUES(?,CASE changes() WHEN 1 THEN 1 ELSE 0 END)").bind(assertion),
-      database.prepare("UPDATE ai_quota_buckets SET reserved=reserved-?,used=used+?,updated_at=? WHERE owner_id=? AND period_key=? AND reserved>=? AND used+?<=allowance")
-        .bind(input.operation.costUnits, input.operation.costUnits, now, input.operation.ownerId, input.operation.quotaPeriod, input.operation.costUnits, input.operation.costUnits),
-      database.prepare("INSERT INTO ai_quota_assertions(id,ok) VALUES(?,CASE changes() WHEN 1 THEN 1 ELSE 0 END)").bind(`${assertion}:bucket`),
-      database.prepare("INSERT INTO credit_ledger(id,owner_id,units,source,reward_id,operation_id,expires_at,created_at) SELECT ?,?,-MIN(?,MAX(0,(SELECT used FROM ai_quota_buckets WHERE owner_id=? AND period_key=?)-?)),'referral_spend',NULL,?,?,? WHERE ?>0 AND (SELECT used FROM ai_quota_buckets WHERE owner_id=? AND period_key=?)>?")
-        .bind(crypto.randomUUID(), input.operation.ownerId, input.operation.costUnits, input.operation.ownerId, input.operation.quotaPeriod, input.operation.baseAllowance, input.operation.id, `${new Date(now).getUTCFullYear() + 1}-01-01T00:00:00.000Z`, now, input.operation.costUnits, input.operation.ownerId, input.operation.quotaPeriod, input.operation.baseAllowance),
-      database.prepare("DELETE FROM ai_quota_assertions WHERE id IN (?,?)").bind(assertion, `${assertion}:bucket`),
-    ]);
+    await database.batch(statements);
   } catch {
     if (!await activeAccountOwner(input.operation.ownerId)) throw new Error("ACCOUNT_DELETED");
     const current = await operationByKey(input.operation.ownerId, input.operation.feature, input.operation.idempotencyKey);

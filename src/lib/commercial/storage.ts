@@ -2,6 +2,7 @@ import { getCloudflareContext } from "@opennextjs/cloudflare";
 import { PDF_PACK_ACCESS_DAYS, PDF_PACK_CURRENCY, PDF_PACK_DOWNLOAD_LIMIT, PDF_PACK_PRICE_CENTS, PDF_PACK_SKU, canIssueDownload, refundEligibility } from "./domain.ts";
 import { SUBSCRIPTION_PLANS, entitlementFromSubscription, refundEligibility as subscriptionRefundEligibility, subscriptionPlan, type NormalizedSubscriptionEvent, type ProviderSubscriptionStatus, type SubscriptionPlanId } from "./subscription.ts";
 import { resolveCommercialAccess } from "./referral-storage.ts";
+import { welcomeCreditRollover } from "./referrals.ts";
 
 export const commerceDb = (env?: Pick<CloudflareEnv, "LEARNING_DB">) => env?.LEARNING_DB ?? getCloudflareContext().env.LEARNING_DB;
 const nowIso = () => new Date().toISOString();
@@ -262,10 +263,28 @@ export async function applySubscriptionEvent(event:NormalizedSubscriptionEvent, 
     const plan=subscriptionPlan(sub.plan_id); if(!plan||event.customerId!==sub.provider_customer_id||event.amountCents!==plan.amountCents||event.currency!==plan.currency) throw new Error("SUBSCRIPTION_INVOICE_MISMATCH");
     const chargeId=`charge_${event.invoiceId}`; const status=event.kind==="invoice_paid"?"paid":"failed";
     const statements=[db.prepare(`INSERT INTO subscription_charges(id,subscription_id,owner_id,provider_invoice_id,provider_payment_intent_id,provider_charge_id,amount_cents,amount_refunded_cents,currency,status,charged_at,created_at,updated_at) VALUES(?,?,?,?,?,?,?,0,?,?,?,?,?) ON CONFLICT(provider_invoice_id) DO UPDATE SET provider_payment_intent_id=excluded.provider_payment_intent_id,provider_charge_id=excluded.provider_charge_id,amount_cents=excluded.amount_cents,status=excluded.status,charged_at=excluded.charged_at,updated_at=excluded.updated_at`).bind(chargeId,sub.id,sub.owner_id,event.invoiceId,event.paymentIntentId??null,event.chargeId??null,event.amountCents,event.currency,status,event.chargedAt??null,at,at)];
-    if(event.kind==="invoice_paid") statements.push(
-      db.prepare(`UPDATE subscriptions SET status='active',updated_at=? WHERE id=? AND NOT EXISTS (SELECT 1 FROM subscription_orders WHERE id=subscriptions.source_order_id AND status='refunded')`).bind(at,sub.id),
-      db.prepare(`UPDATE subscription_entitlements SET status='active',revoked_at=NULL,revocation_reason=NULL,updated_at=? WHERE owner_id=? AND subscription_id=? AND revocation_reason IS NULL AND NOT EXISTS (SELECT 1 FROM subscriptions s JOIN subscription_orders o ON o.id=s.source_order_id WHERE s.id=? AND o.status='refunded')`).bind(at,sub.owner_id,sub.id,sub.id),
-    );
+    if(event.kind==="invoice_paid") {
+      const chargedAt=event.chargedAt??at;
+      const firstPaidWindow=Math.abs(Date.parse(chargedAt)-Date.parse(sub.created_at))<=7*86_400_000;
+      const existingRollover=await db.prepare(`SELECT 1 ok FROM welcome_credit_rollovers WHERE owner_id=?`).bind(sub.owner_id).first<{ok:number}>();
+      if(!existingRollover&&firstPaidWindow){
+        const trial=await db.prepare(`SELECT starts_at,ends_at,ai_credits FROM promotional_entitlements WHERE owner_id=? AND kind='welcome_trial' ORDER BY created_at DESC LIMIT 1`).bind(sub.owner_id).first<{starts_at:string;ends_at:string;ai_credits:number|null}>();
+        if(trial){
+          const trialCutoff=new Date(Math.min(Date.parse(chargedAt),Date.parse(trial.ends_at))).toISOString();
+          const spent=await db.prepare(`SELECT COALESCE(SUM(COALESCE(credit_units,cost_units)),0) total,COALESCE(SUM(CASE WHEN quota_period=? THEN COALESCE(credit_units,cost_units) ELSE 0 END),0) period_total FROM ai_operations WHERE owner_id=? AND status='succeeded' AND created_at>=? AND created_at<?`).bind(chargedAt.slice(0,7),sub.owner_id,trial.starts_at,trialCutoff).first<{total:number;period_total:number}>();
+          const rollover=welcomeCreditRollover({grantedCredits:Number(trial.ai_credits??0),spentBeforePaid:Number(spent?.total??0),conversionPeriod:chargedAt.slice(0,7),spentInConversionPeriod:Number(spent?.period_total??0)});
+          if(rollover.remainingCredits>0) statements.push(
+            db.prepare(`INSERT OR IGNORE INTO welcome_credit_rollovers(owner_id,subscription_id,granted_units,spent_before_paid,initial_remaining_units,remaining_units,conversion_period,conversion_period_used,created_at) VALUES(?,?,?,?,?,?,?,?,?)`).bind(sub.owner_id,sub.id,Number(trial.ai_credits??0),Math.min(Number(trial.ai_credits??0),Number(spent?.total??0)),rollover.remainingCredits,rollover.remainingCredits,rollover.conversionPeriod,rollover.spentInConversionPeriod,chargedAt),
+            db.prepare(`UPDATE welcome_credit_rollovers SET spent_before_paid=MIN(granted_units,COALESCE((SELECT SUM(COALESCE(credit_units,cost_units)) FROM ai_operations WHERE owner_id=? AND status='succeeded' AND created_at>=? AND created_at<?),0)),initial_remaining_units=MAX(0,granted_units-MIN(granted_units,COALESCE((SELECT SUM(COALESCE(credit_units,cost_units)) FROM ai_operations WHERE owner_id=? AND status='succeeded' AND created_at>=? AND created_at<?),0))),remaining_units=MAX(0,granted_units-MIN(granted_units,COALESCE((SELECT SUM(COALESCE(credit_units,cost_units)) FROM ai_operations WHERE owner_id=? AND status='succeeded' AND created_at>=? AND created_at<?),0))),conversion_period_used=COALESCE((SELECT SUM(COALESCE(credit_units,cost_units)) FROM ai_operations WHERE owner_id=? AND status='succeeded' AND quota_period=? AND created_at>=? AND created_at<?),0) WHERE owner_id=? AND subscription_id=? AND created_at=? AND remaining_units=initial_remaining_units`).bind(sub.owner_id,trial.starts_at,trialCutoff,sub.owner_id,trial.starts_at,trialCutoff,sub.owner_id,trial.starts_at,trialCutoff,sub.owner_id,chargedAt.slice(0,7),trial.starts_at,trialCutoff,sub.owner_id,sub.id,chargedAt),
+          );
+        }
+      }
+      statements.push(
+        db.prepare(`UPDATE promotional_entitlements SET status='ended',updated_at=? WHERE owner_id=? AND kind='welcome_trial' AND status='active'`).bind(chargedAt,sub.owner_id),
+        db.prepare(`UPDATE subscriptions SET status='active',updated_at=? WHERE id=? AND NOT EXISTS (SELECT 1 FROM subscription_orders WHERE id=subscriptions.source_order_id AND status='refunded')`).bind(at,sub.id),
+        db.prepare(`UPDATE subscription_entitlements SET status='active',revoked_at=NULL,revocation_reason=NULL,updated_at=? WHERE owner_id=? AND subscription_id=? AND revocation_reason IS NULL AND NOT EXISTS (SELECT 1 FROM subscriptions s JOIN subscription_orders o ON o.id=s.source_order_id WHERE s.id=? AND o.status='refunded')`).bind(at,sub.owner_id,sub.id,sub.id),
+      );
+    }
     if(event.kind==="invoice_payment_failed") statements.push(db.prepare(`UPDATE subscriptions SET status='past_due',updated_at=? WHERE id=? AND NOT EXISTS (SELECT 1 FROM subscription_orders WHERE id=subscriptions.source_order_id AND status='refunded')`).bind(at,sub.id),db.prepare(`UPDATE subscription_entitlements SET status='suspended',updated_at=? WHERE owner_id=? AND subscription_id=? AND NOT EXISTS (SELECT 1 FROM subscriptions s JOIN subscription_orders o ON o.id=s.source_order_id WHERE s.id=? AND o.status='refunded')`).bind(at,sub.owner_id,sub.id,sub.id));
     await db.batch(statements); return;
   }
