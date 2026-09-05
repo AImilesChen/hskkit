@@ -22,6 +22,7 @@ test("dashboard core contains only the approved stage-two learning signals", () 
   for (const label of ["Today’s learning", "Today’s focus", "Due reviews", "Current level", "New words today", "Learning streak"]) {
     assert.match(dashboard, new RegExp(label.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")));
   }
+  assert.match(dashboard, /id="today-focus-title" className="[^"]*text-white/);
   assert.match(dashboard, /dashboardPrimaryAction/);
   assert.match(dashboard, /data\.currentLevel/);
   assert.match(learningRoute, /currentLevel: data\.currentLevel/);

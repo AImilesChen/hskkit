@@ -74,7 +74,7 @@ export default function DashboardCore() {
       <div className="grid gap-7 p-6 sm:p-8 lg:grid-cols-[1.2fr_.8fr] lg:items-center">
         <div>
           <p className="text-sm font-bold uppercase tracking-[0.16em] text-blue-300">Today’s focus</p>
-          <h2 id="today-focus-title" className="mt-2 text-3xl font-black tracking-tight sm:text-4xl">{primary.label}</h2>
+          <h2 id="today-focus-title" className="mt-2 text-3xl font-black tracking-tight text-white sm:text-4xl">{primary.label}</h2>
           <p className="mt-3 max-w-2xl leading-7 text-slate-300">{pendingTasks > 0 ? `${pendingTasks} task item${pendingTasks === 1 ? "" : "s"} remain in today’s queue.` : dueReviews > 0 ? `${dueReviews} memory item${dueReviews === 1 ? " is" : "s are"} ready to review.` : `Your next new-word session is ready at ${levelLabel(currentLevel)}.`}</p>
           <Link className="mt-6 inline-flex min-h-12 items-center justify-center rounded-xl bg-blue-500 px-6 font-black text-white transition hover:bg-blue-400 focus:outline-none focus:ring-4 focus:ring-blue-300/40" href={primary.href}>{primary.label}<span className="ml-2" aria-hidden="true">→</span></Link>
         </div>
