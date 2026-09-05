@@ -27,6 +27,7 @@ import { projectLearningHistory } from "../../../../lib/learning/projection";
 import { resolveCapabilities } from "../../../../lib/commercial/storage";
 import { type ProductCapabilities } from "../../../../lib/commercial/capabilities";
 import { reconcileReferralLearningMilestone } from "../../../../lib/commercial/referral-storage";
+import { learningRewardLocalDay } from "@/lib/engagement/storage";
 import { selectTodayContent, todayContentByAssetId, todayContentFromCatalogRow } from "../../../../lib/learning/today-content";
 import { findActiveCatalogWordById } from "../../../../lib/content/catalog-search";
 import { accessDecision, createAuditEvent, errorContract } from "../../../../lib/account/access-policy";
@@ -722,8 +723,11 @@ export async function POST(req: NextRequest) {
       const referralActivity: ReferralLearningActivity | undefined = identity.account && qualifyingLearningAction
         ? { userId: identity.account.userId, eventType: String(action), eventId: key, units: 1, localDay: new Date().toISOString().slice(0, 10) }
         : undefined;
+      const engagementActivity = identity.account && qualifyingLearningAction
+        ? { localDay: await learningRewardLocalDay(identity.id, identity.account.timezone || "UTC"), action: String(action), idempotencyKey: key }
+        : undefined;
       const data = view(state, identity.id, tz, capabilities, identity.account?.timezone);
-      await saveState(identity.id, data.state, loaded.revision, createAuditEvent({ subjectId: identity.id, action: String(action), resourceType: "learning", resourceId: data.session.id, result: "success", idempotencyKey: key, metadata: { revision: loaded.revision + 1 } }), usageCharge, referralActivity);
+      await saveState(identity.id, data.state, loaded.revision, createAuditEvent({ subjectId: identity.id, action: String(action), resourceType: "learning", resourceId: data.session.id, result: "success", idempotencyKey: key, metadata: { revision: loaded.revision + 1 } }), usageCharge, referralActivity, engagementActivity);
       if (referralActivity) {
         try { await reconcileReferralLearningMilestone(referralActivity.userId); } catch { /* activity is committed atomically and the reward reconciles on Account load */ }
       }

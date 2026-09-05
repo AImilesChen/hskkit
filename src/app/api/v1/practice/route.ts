@@ -4,6 +4,7 @@ import { requestIdentity, GUEST_COOKIE } from "@/lib/account/identity";
 import { loadState, saveState } from "@/lib/learning/storage";
 import { answerPracticeQuestion, createPracticeSession, publicPracticeSession, reportPracticeQuestion, selectPracticeSession } from "@/lib/practice/domain";
 import { practiceQuestionLifecycle, trustedPracticeQuestion } from "@/lib/practice/questions";
+import { learningRewardLocalDay } from "@/lib/engagement/storage";
 
 async function owner() {
   const identity = await requestIdentity();
@@ -97,7 +98,10 @@ export async function POST(req: NextRequest) {
         return response(req, { error: "INVALID_ACTION" }, identity, 422);
       }
       const changed = state !== loaded.state;
-      if (changed) await saveState(identity.id, state, loaded.revision);
+      const engagementActivity = changed && action === "answer" && identity.account
+        ? { localDay: await learningRewardLocalDay(identity.id, identity.account.timezone || "UTC"), action: "practice_answer", idempotencyKey: key }
+        : undefined;
+      if (changed) await saveState(identity.id, state, loaded.revision, undefined, undefined, undefined, engagementActivity);
       return response(req, { ...data, scope: identity.account ? "account" : "guest", revision: loaded.revision + (changed ? 1 : 0) }, identity, action === "start" ? 201 : 200);
     } catch (error) {
       const code = error instanceof Error ? error.message : "PRACTICE_SAVE_FAILED";

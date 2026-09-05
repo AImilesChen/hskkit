@@ -2,6 +2,7 @@ import { getCloudflareContext } from "@opennextjs/cloudflare";
 import { POLICY_AUDIT_SQL, policyAuditBindings } from "../account/audit-storage";
 import type { AuditEvent } from "../account/access-policy";
 import type { LearningState } from "./domain";
+import { engagementTaskStatements, type LearningEngagementActivity } from "../engagement/storage";
 const emptyLearningState = (): LearningState => ({ attempts: [], cards: [], mistakes: [], dailySessions: [] });
 export async function db(){return (await getCloudflareContext({async:true})).env.LEARNING_DB;}
 export async function loadState(ownerId:string){const row=await (await db()).prepare("SELECT state_json,revision FROM learning_states WHERE owner_id=?").bind(ownerId).first<{state_json:string;revision:number}>();return row?{state:JSON.parse(row.state_json) as LearningState,revision:row.revision}:{state:emptyLearningState(),revision:0};}
@@ -38,7 +39,7 @@ export async function learningActivitySince(ownerId: string, sinceIso: string): 
   return (rows.results as Array<{ action: string; created_at: string }>).map((row) => ({ action: row.action, createdAt: row.created_at }));
 }
 
-export async function saveState(ownerId: string, state: LearningState, revision: number, audit?: AuditEvent, usage?: UsageCharge, referralActivity?: ReferralLearningActivity) {
+export async function saveState(ownerId: string, state: LearningState, revision: number, audit?: AuditEvent, usage?: UsageCharge, referralActivity?: ReferralLearningActivity, engagementActivity?: LearningEngagementActivity) {
   const now = new Date().toISOString();
   const database = await db();
   const isAccount = ownerId.startsWith("user:");
@@ -47,7 +48,7 @@ export async function saveState(ownerId: string, state: LearningState, revision:
     "INSERT INTO learning_states(owner_id,state_json,revision,updated_at) SELECT ?,?,?,? WHERE (?=0 OR EXISTS(SELECT 1 FROM accounts WHERE user_id=? AND status='active')) AND NOT EXISTS(SELECT 1 FROM guest_merges WHERE guest_owner_id=? AND state='confirmed') ON CONFLICT(owner_id) DO UPDATE SET state_json=excluded.state_json,revision=learning_states.revision+1,updated_at=excluded.updated_at WHERE learning_states.revision=? AND (?=0 OR EXISTS(SELECT 1 FROM accounts WHERE user_id=? AND status='active')) AND NOT EXISTS(SELECT 1 FROM guest_merges WHERE guest_owner_id=? AND state='confirmed')",
   ).bind(ownerId, JSON.stringify(state), 1, now, isAccount ? 1 : 0, userId, ownerId, revision, isAccount ? 1 : 0, userId, ownerId);
   let changes = 0;
-  if (audit || usage || referralActivity) {
+  if (audit || usage || referralActivity || engagementActivity) {
     const statements: Array<ReturnType<typeof database.prepare>> = [];
     const accountAssertionId = audit ? crypto.randomUUID() : undefined;
     const usageAssertionId = usage ? crypto.randomUUID() : undefined;
@@ -65,6 +66,7 @@ export async function saveState(ownerId: string, state: LearningState, revision:
     const stateIndex = statements.length;
     statements.push(stateStatement);
     if (referralActivity) statements.push(database.prepare("INSERT OR IGNORE INTO referral_learning_events(id,relationship_id,referred_user_id,local_day,units,idempotency_key,created_at) SELECT ?,id,?,?,?,?,? FROM referral_relationships WHERE referred_user_id=? AND status='signed_up'").bind(crypto.randomUUID(), referralActivity.userId, referralActivity.localDay, referralActivity.units, referralActivity.eventId, now, referralActivity.userId));
+    if (engagementActivity) statements.push(...engagementTaskStatements(database, ownerId, engagementActivity, now));
     if (audit) statements.push(database.prepare(POLICY_AUDIT_SQL).bind(...policyAuditBindings(audit)));
     if (usageAssertionId) statements.push(database.prepare("DELETE FROM entitlement_limit_assertions WHERE id=?").bind(usageAssertionId));
     if (accountAssertionId) statements.push(database.prepare("DELETE FROM account_cas_assertions WHERE id=?").bind(accountAssertionId));

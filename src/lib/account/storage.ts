@@ -431,7 +431,7 @@ export async function actOnDataRequest(userId: string, requestId: string, action
   const processing = await persistTransition(userId, current, "process");
   try {
     if (processing.type === "export") {
-      const [learning, accountRow, requests, audits, plans, aiOperations, aiQuota] = await Promise.all([
+      const [learning, accountRow, requests, audits, plans, aiOperations, aiQuota, rewardDays, rewardTasks, rewardPoints, rewardBadges, rewardProfile] = await Promise.all([
         loadState(ownerId(userId)),
         getAccount(userId),
         listAccountDataRequests(userId),
@@ -439,8 +439,13 @@ export async function actOnDataRequest(userId: string, requestId: string, action
         listAllPlans(ownerId(userId)),
         db().prepare("SELECT feature,status,quota_period,cost_units,response_json,failure_code,created_at,updated_at FROM ai_operations WHERE owner_id=? ORDER BY created_at").bind(ownerId(userId)).all(),
         db().prepare("SELECT period_key,allowance,used,reserved,updated_at FROM ai_quota_buckets WHERE owner_id=? ORDER BY period_key").bind(ownerId(userId)).all(),
+        db().prepare("SELECT local_day,active_seconds,last_heartbeat_at,created_at,updated_at FROM learning_engagement_days WHERE owner_id=? ORDER BY local_day").bind(ownerId(userId)).all(),
+        db().prepare("SELECT local_day,action,created_at FROM learning_qualifying_tasks WHERE owner_id=? ORDER BY created_at").bind(ownerId(userId)).all(),
+        db().prepare("SELECT local_day,period_key,units,source,created_at FROM learning_point_ledger WHERE owner_id=? ORDER BY local_day").bind(ownerId(userId)).all(),
+        db().prepare("SELECT badge_key,awarded_at FROM learning_badges WHERE owner_id=? ORDER BY awarded_at").bind(ownerId(userId)).all(),
+        db().prepare("SELECT timezone,created_at FROM learning_reward_profiles WHERE owner_id=?").bind(ownerId(userId)).first(),
       ]);
-      const resultJson = JSON.stringify({ schemaVersion: "account-export-v1", generatedAt: now(), account: accountRow, learning: learning.state, plans, ai: { operations: aiOperations.results, quota: aiQuota.results }, requests, audit: audits.results });
+      const resultJson = JSON.stringify({ schemaVersion: "account-export-v1", generatedAt: now(), account: accountRow, learning: learning.state, rewards: { profile: rewardProfile, days: rewardDays.results, qualifyingTasks: rewardTasks.results, points: rewardPoints.results, badges: rewardBadges.results }, plans, ai: { operations: aiOperations.results, quota: aiQuota.results }, requests, audit: audits.results });
       const completed = transitionDataRequest(processing, "complete", now());
       const expiresAt = new Date(Date.now() + 24 * 60 * 60_000).toISOString();
       const assertionId = crypto.randomUUID();
@@ -457,6 +462,13 @@ export async function actOnDataRequest(userId: string, requestId: string, action
     await db().batch([
       db().prepare("INSERT INTO account_cas_assertions(id,ok) VALUES(?, CASE WHEN EXISTS(SELECT 1 FROM account_data_requests WHERE id=? AND user_id=? AND state='processing') AND EXISTS(SELECT 1 FROM accounts WHERE user_id=? AND status='active') THEN 1 ELSE 0 END)").bind(assertionId, requestId, userId, userId),
       db().prepare("DELETE FROM learning_states WHERE owner_id=?").bind(ownerId(userId)),
+      db().prepare("DELETE FROM learning_engagement_sessions WHERE owner_id=?").bind(ownerId(userId)),
+      db().prepare("DELETE FROM learning_engagement_heartbeats WHERE owner_id=?").bind(ownerId(userId)),
+      db().prepare("DELETE FROM learning_qualifying_tasks WHERE owner_id=?").bind(ownerId(userId)),
+      db().prepare("DELETE FROM learning_badges WHERE owner_id=?").bind(ownerId(userId)),
+      db().prepare("DELETE FROM learning_point_ledger WHERE owner_id=?").bind(ownerId(userId)),
+      db().prepare("DELETE FROM learning_engagement_days WHERE owner_id=?").bind(ownerId(userId)),
+      db().prepare("DELETE FROM learning_reward_profiles WHERE owner_id=?").bind(ownerId(userId)),
       db().prepare("DELETE FROM study_plan_versions WHERE owner_id=?").bind(ownerId(userId)),
       db().prepare("DELETE FROM step7_playback_tickets WHERE owner_id=?").bind(ownerId(userId)),
       db().prepare("DELETE FROM ai_operations WHERE owner_id=?").bind(ownerId(userId)),

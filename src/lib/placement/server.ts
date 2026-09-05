@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { requestIdentity, GUEST_COOKIE } from "@/lib/account/identity";
 import { loadState, saveState } from "@/lib/learning/storage";
 import type { PlacementSession } from "@/lib/learning/domain";
+import { learningRewardLocalDay } from "@/lib/engagement/storage";
 import {
   answerPlacementQuestion,
   createPlacementSession,
@@ -155,7 +156,10 @@ export async function runPlacementAction(req: NextRequest, action: PlacementActi
         data = { session: sessionView(restarted.session) };
       }
       const changed = nextState !== loaded.state;
-      if (changed) await saveState(identity.id, nextState, loaded.revision);
+      const engagementActivity = changed && action === "submit" && identity.account
+        ? { localDay: await learningRewardLocalDay(identity.id, identity.account.timezone || "UTC"), action: "placement_submit", idempotencyKey }
+        : undefined;
+      if (changed) await saveState(identity.id, nextState, loaded.revision, undefined, undefined, undefined, engagementActivity);
       return response(req, {
         ...data,
         scope: identity.account ? "account" : "guest",

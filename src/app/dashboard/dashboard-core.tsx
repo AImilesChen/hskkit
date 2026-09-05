@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { dashboardPrimaryAction } from "@/lib/learning/dashboard";
 import DashboardGrowth, { type DashboardGrowthData } from "./dashboard-growth";
+import DashboardRewards, { type LearningRewardData } from "./dashboard-rewards";
 
 type DashboardItem = {
   kind: "review" | "learn" | "listen" | "practice" | "summary";
@@ -27,31 +28,40 @@ const levelLabel = (level: number) => level >= 7 ? "HSK 7–9" : `HSK ${level}`;
 export default function DashboardCore() {
   const [data, setData] = useState<DashboardData | null>(null);
   const [growth, setGrowth] = useState<DashboardGrowthData | null>(null);
+  const [rewards, setRewards] = useState<LearningRewardData | null>(null);
   const [error, setError] = useState("");
 
   async function load() {
     setError("");
     try {
-      const [response, growthResponse] = await Promise.all([
+      const [response, growthResponse, rewardResponse] = await Promise.all([
         fetch(`/api/v1/learning?tzOffset=${timezoneOffset()}`, { cache: "no-store" }),
         fetch("/api/v1/dashboard/growth", { cache: "no-store" }),
+        fetch("/api/v1/account/learning-rewards", { cache: "no-store" }),
       ]);
-      if (!response.ok || !growthResponse.ok) throw new Error("DASHBOARD_UNAVAILABLE");
-      const [payload, growthPayload] = await Promise.all([
+      if (!response.ok || !growthResponse.ok || !rewardResponse.ok) throw new Error("DASHBOARD_UNAVAILABLE");
+      const [payload, growthPayload, rewardPayload] = await Promise.all([
         response.json() as Promise<DashboardData>,
         growthResponse.json() as Promise<DashboardGrowthData>,
+        rewardResponse.json() as Promise<LearningRewardData>,
       ]);
       if (payload.scope !== "account") throw new Error("ACCOUNT_REQUIRED");
       setData(payload);
       setGrowth(growthPayload);
+      setRewards(rewardPayload);
     } catch {
       setError("We couldn’t load your current learning data. Try again.");
     }
   }
 
-  useEffect(() => { void load(); }, []);
+  useEffect(() => {
+    void load();
+    const updateRewards = (event: Event) => setRewards((event as CustomEvent<LearningRewardData>).detail);
+    window.addEventListener("hskkit:learning-reward", updateRewards);
+    return () => window.removeEventListener("hskkit:learning-reward", updateRewards);
+  }, []);
 
-  if (!data || !growth) {
+  if (!data || !growth || !rewards) {
     return <main className="mx-auto min-h-[70vh] max-w-6xl px-5 py-12 sm:py-16">
       {error
         ? <div className="rounded-2xl border border-red-200 bg-red-50 p-6" role="alert"><h1 className="text-2xl font-black text-slate-950">Dashboard unavailable</h1><p className="mt-2 text-slate-700">{error}</p><button className="mt-5 min-h-12 rounded-xl bg-blue-600 px-6 font-bold text-white" onClick={() => void load()}>Retry</button></div>
@@ -110,6 +120,7 @@ export default function DashboardCore() {
       </div>
     </section>
 
+    <DashboardRewards rewards={rewards} />
     <DashboardGrowth growth={growth} />
   </main>;
 }
