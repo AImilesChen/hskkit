@@ -7,8 +7,11 @@ import type {
 import {
   ADAPTIVE_PLACEMENT_MAX_QUESTIONS,
   ADAPTIVE_PLACEMENT_MIN_QUESTIONS,
+  PLACEMENT_INITIAL_QUESTIONS,
   PLACEMENT_QUESTIONS,
   PLACEMENT_VERSION,
+  PREVIOUS_ADAPTIVE_PLACEMENT_VERSION,
+  placementCatalog,
   trustedPlacementQuestion,
   type PlacementQuestion,
   type PlacementSkill,
@@ -20,7 +23,9 @@ const stableId = (prefix: string, key: string) =>
 const sessions = (state: LearningState) => state.placementSessions ?? [];
 const results = (state: LearningState) => state.placementResults ?? [];
 const PLACEMENT_SESSION_TTL_MS = 7 * 24 * 60 * 60_000;
+const PLACEMENT_RETAKE_COOLDOWN_MS = 24 * 60 * 60_000;
 const ADAPTIVE_SKILLS: PlacementSkill[] = ["vocabulary", "grammar", "reading", "listening"];
+const INITIAL_TIERS = [[1, 2], [3, 4], [5, 6, 7]] as const;
 
 type EvaluatedAnswer = { question: PlacementQuestion; correct: boolean };
 
@@ -31,37 +36,79 @@ function evaluatedAnswers(session: PlacementSession) {
   });
 }
 
-export function adaptivePlacementEstimate(evaluated: EvaluatedAnswer[]) {
-  let estimate = 5;
-  for (const entry of evaluated) {
-    const expected = 1 / (1 + Math.exp(entry.question.level - estimate));
-    estimate += 1.4 * ((entry.correct ? 1 : 0) - expected);
-    estimate = Math.min(9, Math.max(1, estimate));
+export function adaptivePlacementEstimate(evaluated: EvaluatedAnswer[], maxLevel = 9) {
+  if (evaluated.length === 0) return Math.ceil(maxLevel / 2);
+  let bestLevel = 1;
+  let bestLikelihood = Number.NEGATIVE_INFINITY;
+  for (let candidate = 1; candidate <= maxLevel * 20; candidate += 1) {
+    const ability = candidate / 20;
+    const likelihood = evaluated.reduce((sum, entry) => {
+      const probability = 1 / (1 + Math.exp((entry.question.level - ability) * 1.35));
+      return sum + Math.log(entry.correct ? probability : 1 - probability);
+    }, 0);
+    if (likelihood > bestLikelihood) {
+      bestLikelihood = likelihood;
+      bestLevel = ability;
+    }
   }
-  return estimate;
+  return Math.min(maxLevel, Math.max(1, bestLevel));
 }
 
-function adaptivePlacementComplete(evaluated: EvaluatedAnswer[]) {
+const rank = (seed: string, value: string) => createHash("sha256").update(`${seed}:${value}`).digest("hex");
+
+function recentPlacementQuestionIds(state: LearningState, ownerId: string) {
+  return new Set(sessions(state)
+    .filter((session) => session.ownerId === ownerId)
+    .slice(-2)
+    .flatMap((session) => session.questionIds));
+}
+
+function stratifiedInitialQuestions(catalog: PlacementQuestion[], seed: string, recent: Set<string>) {
+  const selected: PlacementQuestion[] = [];
+  for (const tier of INITIAL_TIERS) {
+    for (const skill of ADAPTIVE_SKILLS) {
+      const candidates = catalog.filter((question) => question.skill === skill && tier.some((level) => level === question.level));
+      const fresh = candidates.filter((question) => !recent.has(question.id));
+      const pool = fresh.length ? fresh : candidates;
+      const question = [...pool].sort((a, b) => rank(seed, a.id).localeCompare(rank(seed, b.id)))[0];
+      if (!question) throw new Error("PLACEMENT_NO_QUESTIONS");
+      selected.push(question);
+    }
+  }
+  return selected;
+}
+
+function adaptivePlacementComplete(evaluated: EvaluatedAnswer[], maxLevel = 7) {
   if (evaluated.length < ADAPTIVE_PLACEMENT_MIN_QUESTIONS) return false;
   if (evaluated.length >= ADAPTIVE_PLACEMENT_MAX_QUESTIONS) return true;
   const skillCounts = ADAPTIVE_SKILLS.map((skill) => evaluated.filter((entry) => entry.question.skill === skill).length);
   if (skillCounts.some((count) => count < 4)) return false;
-  const estimate = adaptivePlacementEstimate(evaluated);
-  const recentLevels = evaluated.slice(-6).map((entry) => entry.question.level);
-  return estimate <= 1.25 || estimate >= 8.75 || Math.max(...recentLevels) - Math.min(...recentLevels) <= 2;
+  const estimate = adaptivePlacementEstimate(evaluated, maxLevel);
+  if (estimate <= 1.15 || estimate >= maxLevel - 0.15) return true;
+  const unexpected = evaluated.filter((entry) =>
+    entry.correct ? entry.question.level > estimate + 1.5 : entry.question.level < estimate - 1.5).length;
+  return unexpected <= 3;
 }
 
-function nextAdaptiveQuestion(evaluated: EvaluatedAnswer[], catalog: PlacementQuestion[]) {
+function nextAdaptiveQuestion(
+  evaluated: EvaluatedAnswer[],
+  catalog: PlacementQuestion[],
+  seed = "adaptive",
+  recent = new Set<string>(),
+  maxLevel = 7,
+) {
   const used = new Set(evaluated.map((entry) => entry.question.id));
   const counts = new Map(ADAPTIVE_SKILLS.map((skill) => [skill, evaluated.filter((entry) => entry.question.skill === skill).length]));
   const minimum = Math.min(...counts.values());
   const offset = evaluated.length % ADAPTIVE_SKILLS.length;
   const skill = [...ADAPTIVE_SKILLS.slice(offset), ...ADAPTIVE_SKILLS.slice(0, offset)]
     .find((candidate) => counts.get(candidate) === minimum) ?? ADAPTIVE_SKILLS[0];
-  const targetLevel = Math.round(adaptivePlacementEstimate(evaluated));
-  return catalog
-    .filter((question) => question.skill === skill && !used.has(question.id))
-    .sort((a, b) => Math.abs(a.level - targetLevel) - Math.abs(b.level - targetLevel) || a.level - b.level || a.id.localeCompare(b.id))[0];
+  const targetLevel = Math.round(adaptivePlacementEstimate(evaluated, maxLevel));
+  const candidates = catalog.filter((question) => question.skill === skill && !used.has(question.id));
+  const fresh = candidates.filter((question) => !recent.has(question.id));
+  return [...(fresh.length ? fresh : candidates)]
+    .sort((a, b) => Math.abs(a.level - targetLevel) - Math.abs(b.level - targetLevel)
+      || rank(seed, a.id).localeCompare(rank(seed, b.id)))[0];
 }
 
 export function placementSessionExpiresAt(session: PlacementSession) {
@@ -89,9 +136,28 @@ export function createPlacementSession(
   );
   if (prior) return { state, session: prior };
 
+  if (!input.catalog) {
+    const latestSubmitted = [...sessions(state)].reverse().find(
+      (session) => session.ownerId === input.ownerId && session.status === "submitted",
+    );
+    const latestResult = latestSubmitted?.resultId
+      ? results(state).find((result) => result.id === latestSubmitted.resultId)
+      : undefined;
+    const retakeAvailableAt = latestResult?.retakeAvailableAt
+      ?? (latestSubmitted?.submittedAt
+        ? new Date(Date.parse(latestSubmitted.submittedAt) + PLACEMENT_RETAKE_COOLDOWN_MS).toISOString()
+        : undefined);
+    if (retakeAvailableAt && Date.parse(input.now) < Date.parse(retakeAvailableAt)) {
+      throw new Error("PLACEMENT_RETAKE_COOLDOWN");
+    }
+  }
+
   const adaptive = !input.catalog && questionVersion === PLACEMENT_VERSION;
-  const firstQuestion = adaptive ? nextAdaptiveQuestion([], catalog) : undefined;
-  if (adaptive && !firstQuestion) throw new Error("PLACEMENT_NO_QUESTIONS");
+  const recent = recentPlacementQuestionIds(state, input.ownerId);
+  const initialQuestions = adaptive
+    ? stratifiedInitialQuestions(catalog, `${input.ownerId}:${input.idempotencyKey}`, recent)
+    : [];
+  if (adaptive && initialQuestions.length !== PLACEMENT_INITIAL_QUESTIONS) throw new Error("PLACEMENT_NO_QUESTIONS");
   const session: PlacementSession = {
     id: stableId(
       "placement_session",
@@ -100,7 +166,7 @@ export function createPlacementSession(
     ownerId: input.ownerId,
     idempotencyKey: input.idempotencyKey,
     questionVersion,
-    questionIds: adaptive ? [firstQuestion!.id] : catalog.map((question) => question.id),
+    questionIds: adaptive ? initialQuestions.map((question) => question.id) : catalog.map((question) => question.id),
     answers: [],
     status: "in_progress",
     createdAt: input.now,
@@ -171,10 +237,20 @@ export function answerPlacementQuestion(
       nextAnswer,
     ],
   };
-  if (session.adaptiveMinQuestions && session.questionVersion === PLACEMENT_VERSION) {
+  const adaptiveVersion = session.questionVersion === PLACEMENT_VERSION
+    || session.questionVersion === PREVIOUS_ADAPTIVE_PLACEMENT_VERSION;
+  if (session.adaptiveMinQuestions && adaptiveVersion
+    && updated.answers.length === updated.questionIds.length) {
     const evaluated = evaluatedAnswers(updated);
-    const complete = adaptivePlacementComplete(evaluated);
-    const next = complete ? undefined : nextAdaptiveQuestion(evaluated, PLACEMENT_QUESTIONS);
+    const maxLevel = session.questionVersion === PLACEMENT_VERSION ? 7 : 9;
+    const complete = adaptivePlacementComplete(evaluated, maxLevel);
+    const next = complete ? undefined : nextAdaptiveQuestion(
+      evaluated,
+      placementCatalog(session.questionVersion),
+      updated.id,
+      recentPlacementQuestionIds(state, session.ownerId),
+      maxLevel,
+    );
     if (!complete && !next) throw new Error("PLACEMENT_NO_QUESTIONS");
     updated = {
       ...updated,
@@ -216,18 +292,30 @@ export function submitPlacement(
   });
   const correctCount = evaluated.filter((entry) => entry.correct).length;
   const correctTextCount = evaluated.filter((entry) => entry.question.skill !== "listening" && entry.correct).length;
+  const currentAdaptive = session.questionVersion === PLACEMENT_VERSION;
   const recommendedLevel = session.adaptiveMinQuestions
-    ? Math.round(adaptivePlacementEstimate(evaluated))
+    ? Math.round(adaptivePlacementEstimate(evaluated, currentAdaptive ? 7 : 9))
     : Math.min(9, Math.max(1, correctTextCount));
   const hasListeningEvidence = evaluated.some((entry) => entry.question.skill === "listening");
   const listeningCorrect = evaluated.filter((entry) => entry.question.skill === "listening" && entry.correct).length;
-  const weakSkills = [...new Set(
-    evaluated.filter((entry) => !entry.correct).map((entry) => entry.question.skill),
-  )];
+  const skillPerformance = Object.fromEntries(ADAPTIVE_SKILLS.map((skill) => {
+    const measured = evaluated.filter((entry) => entry.question.skill === skill);
+    const correct = measured.filter((entry) => entry.correct).length;
+    return [skill, { correct, total: measured.length, accuracy: measured.length ? Math.round(correct / measured.length * 100) : 0 }];
+  }));
+  const weakSkills = ADAPTIVE_SKILLS.filter((skill) => {
+    const performance = skillPerformance[skill];
+    return performance.total > 0 && performance.accuracy < 65;
+  });
   const adaptiveMeasuredSkills = ADAPTIVE_SKILLS.filter((skill) => evaluated.some((entry) => entry.question.skill === skill));
+  const estimate = currentAdaptive ? adaptivePlacementEstimate(evaluated, 7) : 0;
+  const boundaryConfidence = currentAdaptive && (estimate <= 1.15 || estimate >= 6.85);
+  const unexpected = currentAdaptive ? evaluated.filter((entry) =>
+    entry.correct ? entry.question.level > estimate + 1.5 : entry.question.level < estimate - 1.5).length : 0;
   const adaptiveHighConfidence = Boolean(session.adaptiveComplete)
     && evaluated.length >= ADAPTIVE_PLACEMENT_MIN_QUESTIONS
-    && adaptiveMeasuredSkills.length === ADAPTIVE_SKILLS.length;
+    && adaptiveMeasuredSkills.length === ADAPTIVE_SKILLS.length
+    && (boundaryConfidence || unexpected <= 3);
   const result: PlacementResult = {
     id: stableId("placement_result", `${session.id}:${input.idempotencyKey}`),
     sessionId: session.id,
@@ -239,11 +327,13 @@ export function submitPlacement(
     confidence: !hasListeningEvidence ? "low" : adaptiveHighConfidence ? "high" : "medium",
     missingDimensions: hasListeningEvidence ? [] : ["listening"],
     weakSkills,
+    skillPerformance,
     evidenceSummary: hasListeningEvidence
       ? `${correctCount} of ${evaluated.length} diagnostic items were answered correctly. Listening was measured with ${listeningCorrect} of ${evaluated.filter((entry) => entry.question.skill === "listening").length} approved audio items correct.`
       : `${correctCount} of ${evaluated.length} diagnostic items were answered correctly. Listening was not measured.`,
     disclaimer: "This is a learning suggestion, not an official HSK score, certificate, or guarantee.",
     createdAt: input.now,
+    retakeAvailableAt: new Date(Date.parse(input.now) + PLACEMENT_RETAKE_COOLDOWN_MS).toISOString(),
   };
   const updated: PlacementSession = {
     ...session,
@@ -272,6 +362,14 @@ export function restartPlacement(
   const prior = sessions(state).find((session) => session.id === input.previousSessionId);
   if (!prior || prior.ownerId !== input.ownerId) {
     throw new Error("PLACEMENT_SESSION_NOT_FOUND");
+  }
+  const priorResult = prior.resultId
+    ? results(state).find((result) => result.id === prior.resultId)
+    : undefined;
+  const retakeAvailableAt = priorResult?.retakeAvailableAt
+    ?? (prior.submittedAt ? new Date(Date.parse(prior.submittedAt) + PLACEMENT_RETAKE_COOLDOWN_MS).toISOString() : undefined);
+  if (retakeAvailableAt && Date.parse(input.now) < Date.parse(retakeAvailableAt)) {
+    throw new Error("PLACEMENT_RETAKE_COOLDOWN");
   }
   const abandoned = sessions(state).map((session) =>
     session.id === prior.id && session.status === "in_progress"

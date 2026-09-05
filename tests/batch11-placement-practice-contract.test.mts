@@ -117,5 +117,5 @@ test("Practice and Placement results expose explicit create/update Planner entry
   assert.match(practice, /Update learning plan/);
   assert.match(placement, /<audio/);
   assert.match(placementResult, /Create or update learning plan/);
-  assert.match(placementResult, /\/practice\/\$\{Math\.min\(result\.recommendedLevel, 7\)\}/);
+  assert.match(placementResult, /\/practice\/\$\{Math\.min\(learningLevel, 7\)\}/);
 });

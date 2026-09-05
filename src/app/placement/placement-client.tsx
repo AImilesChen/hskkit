@@ -174,12 +174,12 @@ export default function PlacementClient() {
           {expired ? "Your saved placement session expired" : noQuestions ? "Placement is temporarily unavailable" : loadFailed ? "We couldn't load your placement" : "Find a practical starting level"}
         </h1>
         <p className="mt-5 max-w-2xl text-lg leading-8 text-slate-600">
-          {expired ? "Placement sessions stay available for seven days. Start a new placement to continue." : noQuestions ? "No diagnostic questions are available right now. No empty or demo result will be generated." : loadFailed ? "Your saved answers have not been changed. Retry loading before starting a new session." : "Answer 18–24 adaptive questions across vocabulary, grammar, reading and listening. Difficulty adjusts to your answers, and progress is saved as you go."}
+          {expired ? "Placement sessions stay available for seven days. Start a new placement to continue." : noQuestions ? "No diagnostic questions are available right now. No empty or demo result will be generated." : loadFailed ? "Your saved answers have not been changed. Retry loading before starting a new session." : "Start with 12 questions across vocabulary, grammar, reading and listening. The test then adapts to your answers and finishes in 18–24 questions, with progress saved as you go."}
         </p>
         {!loadFailed && !noQuestions ? <div className="mt-7 grid gap-3 rounded-2xl border border-blue-200 bg-blue-50 p-5 text-sm text-blue-950 sm:grid-cols-3">
-          <p><strong className="block text-slate-950">18–24 questions</strong>Difficulty adapts to your answers</p>
+          <p><strong className="block text-slate-950">First 12 questions</strong>Balanced across skills and difficulty</p>
           <p><strong className="block text-slate-950">4 skill areas</strong>Vocabulary, grammar, reading and listening</p>
-          <p><strong className="block text-slate-950">Saved as you go</strong>Refresh without losing completed answers</p>
+          <p><strong className="block text-slate-950">Saved as you go</strong>Your answers are saved as you go</p>
         </div> : null}
         {!loadFailed && !noQuestions ? <details className="mt-4 rounded-2xl border border-slate-200 bg-white p-4 text-sm leading-6 text-slate-600">
           <summary className="cursor-pointer font-bold text-slate-800">How this placement works</summary>

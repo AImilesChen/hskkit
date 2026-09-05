@@ -39,7 +39,7 @@ test("placement creates one resumable versioned session for an idempotency key",
   assert.equal(first.session.id, replay.session.id);
   assert.equal(replay.state.placementSessions?.length, 1);
   assert.equal(first.session.questionVersion, PLACEMENT_VERSION);
-  assert.equal(first.session.questionIds.length, 1);
+  assert.equal(first.session.questionIds.length, 12);
   assert.equal(first.session.adaptiveMinQuestions, 18);
   assert.equal(first.session.adaptiveMaxQuestions, 24);
 });
@@ -65,7 +65,7 @@ test("placement result is deterministic, idempotent and uses the current measure
   const first = submitPlacement(state, { sessionId, idempotencyKey: "submit-2", now: "2026-08-21T00:05:00.000Z" });
   const replay = submitPlacement(first.state, { sessionId, idempotencyKey: "submit-2", now: "2026-08-21T00:06:00.000Z" });
   assert.equal(first.result.id, replay.result.id);
-  assert.equal(first.result.recommendedLevel, 9);
+  assert.equal(first.result.recommendedLevel, 7);
   assert.equal(first.result.confidence, "high");
   assert.deepEqual(first.result.missingDimensions, []);
   assert.equal(first.result.disclaimer.includes("not an official"), true);

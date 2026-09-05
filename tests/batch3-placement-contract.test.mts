@@ -30,7 +30,7 @@ const source = (path: string) => {
 
 test("production diagnostic catalog is versioned and covers the confirmed Level 1–9 path", () => {
   assert.equal(PLACEMENT_VERSION.length > 0, true);
-  assert.deepEqual([...new Set(PLACEMENT_QUESTIONS.map((question) => question.level))], [1,2,3,4,5,6,7,8,9]);
+  assert.deepEqual([...new Set(PLACEMENT_QUESTIONS.map((question) => question.level))], [1, 2, 3, 4, 5, 6, 7]);
   assert.equal(PLACEMENT_QUESTIONS.every((question) => question.contentVersion === PLACEMENT_VERSION && question.standardVersion === "HSK 3.0"), true);
   assert.equal(trustedPlacementQuestion(PLACEMENT_QUESTIONS[0].id, "retired-version"), undefined);
 });
@@ -75,7 +75,7 @@ test("duplicate final submission is idempotent, private, and can recommend both 
   const highSessionId = highState.placementSessions![0].id;
   highState = finishAdaptive(highState, highSessionId, "correct");
   const high = submitPlacement(highState, { sessionId: highSessionId, idempotencyKey: "high-submit", now: "2026-08-21T02:00:00.000Z" });
-  assert.equal(high.result.recommendedLevel, 9);
+  assert.equal(high.result.recommendedLevel, 7);
 });
 
 test("batch 3 REST entry points exist and the placement UI uses them", () => {

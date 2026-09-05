@@ -19,11 +19,11 @@ import {
 const NOW = "2026-09-05T12:00:00.000Z";
 const SKILLS = ["vocabulary", "grammar", "reading", "listening"];
 
-test("adaptive Placement publishes a deep, versioned Level 1–9 four-skill bank", () => {
-  assert.equal(PLACEMENT_VERSION, "hskkit-placement-adaptive-v3");
+test("adaptive Placement publishes a deep, versioned seven-band four-skill bank", () => {
+  assert.equal(PLACEMENT_VERSION, "hskkit-placement-accuracy-v4");
   assert.equal(ADAPTIVE_PLACEMENT_MIN_QUESTIONS, 18);
   assert.equal(ADAPTIVE_PLACEMENT_MAX_QUESTIONS, 24);
-  for (const level of [1, 2, 3, 4, 5, 6, 7, 8, 9]) {
+  for (const level of [1, 2, 3, 4, 5, 6, 7]) {
     for (const skill of SKILLS) {
       const questions = PLACEMENT_QUESTIONS.filter((question) => question.level === level && question.skill === skill);
       assert.ok(questions.length >= 2, `Level ${level} ${skill} needs at least two approved diagnostic questions`);
@@ -40,7 +40,7 @@ function finish(answerFor: (question: (typeof PLACEMENT_QUESTIONS)[number], turn
   const created = createPlacementSession(state, { ownerId: "adaptive-owner", idempotencyKey: `start-${Math.random()}`, now: NOW });
   state = created.state;
   let session = created.session;
-  assert.equal(session.questionIds.length, 1, "adaptive sessions reveal only the current path, not a fixed test");
+  assert.equal(session.questionIds.length, 12, "adaptive sessions preselect the approved stratified first round");
   for (let turn = 0; turn < ADAPTIVE_PLACEMENT_MAX_QUESTIONS; turn += 1) {
     const questionId = session.questionIds[session.answers.length];
     assert.ok(questionId, "an unfinished adaptive session must expose its next question");
@@ -65,7 +65,7 @@ function finish(answerFor: (question: (typeof PLACEMENT_QUESTIONS)[number], turn
 
 test("adaptive Placement raises and lowers difficulty while reaching both recommendation boundaries", () => {
   const high = finish((question) => question.correctAnswer);
-  assert.equal(high.result.recommendedLevel, 9);
+  assert.equal(high.result.recommendedLevel, 7);
   assert.equal(high.result.confidence, "high");
   assert.deepEqual(high.result.missingDimensions, []);
 

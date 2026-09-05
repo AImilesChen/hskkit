@@ -115,9 +115,11 @@ export interface PlacementResult {
   confidence: "low" | "medium" | "high";
   missingDimensions: string[];
   weakSkills: string[];
+  skillPerformance?: Record<string, { correct: number; total: number; accuracy: number }>;
   evidenceSummary: string;
   disclaimer: string;
   createdAt: string;
+  retakeAvailableAt?: string;
 }
 export interface PracticeAnswer {
   questionId: string;
