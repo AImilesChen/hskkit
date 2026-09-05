@@ -117,6 +117,8 @@ test("blog covers mix five licensed photographs with four original illustrations
       assert.match(source.licenseUrl ?? "", /^https:\/\//);
       assert.ok(migration.includes(article.imageKey), `${article.slug}: production image key migration is missing`);
       assert.ok(migration.includes(article.imageAlt), `${article.slug}: production image alt migration is missing`);
+      assert.ok(migration.includes("p.id || '-v2'"), `${article.slug}: immutable v2 snapshot strategy is missing`);
+      assert.ok(migration.includes("p.id || '-audit-v2'"), `${article.slug}: v2 audit strategy is missing`);
     }
   }
 });
@@ -144,8 +146,8 @@ test("release remains an additive blog-only change from the frozen production co
   assert.match(appCss, /\.blog-prose blockquote/);
   assert.match(appCss, /@media \(max-width: 640px\)/);
   assert.match(appCss, /\.blog-card h3\{[^}]*text-align:left/);
-  assert.match(appCss, /\.blog-article-header\{[^}]*text-align:left/);
   assert.match(appCss, /\.blog-article-header h1\{[^}]*text-align:left/);
-  assert.match(appCss, /\.blog-article-kicker\{[^}]*justify-content:flex-start/);
-  assert.match(appCss, /\.blog-byline\{[^}]*justify-content:flex-start/);
+  assert.match(appCss, /\.blog-article-header\{[^}]*text-align:center/);
+  assert.match(appCss, /\.blog-article-kicker\{[^}]*justify-content:center/);
+  assert.match(appCss, /\.blog-byline\{[^}]*justify-content:center/);
 });
