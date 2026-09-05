@@ -46,7 +46,8 @@ test("real SQLite migration enforces one daily award and computes monthly tiers 
   for (let day = 1; day <= 22; day += 1) award(db, "user:1", `2026-09-${String(day).padStart(2, "0")}`);
   const units = db.prepare("SELECT units FROM learning_point_ledger ORDER BY local_day").all().map((row) => Number(row.units));
   assert.deepEqual(units, [...Array(7).fill(2), ...Array(7).fill(4), ...Array(7).fill(6), 10]);
-  assert.throws(() => award(db, "user:1", "2026-09-22"));
+  assert.doesNotThrow(() => award(db, "user:1", "2026-09-22"));
+  assert.equal(db.prepare("SELECT COUNT(*) count FROM learning_point_ledger WHERE owner_id=? AND local_day=?").get("user:1", "2026-09-22")!.count, 1);
   assert.equal(db.prepare("SELECT SUM(units) total FROM learning_point_ledger").get()!.total, 94);
 });
 
@@ -87,6 +88,21 @@ test("Stage 7 export queries and deletion statements match the migrated schema",
     db.prepare(`DELETE FROM ${table} WHERE owner_id=?`).run(owner);
   }
   assert.equal(db.prepare("SELECT COUNT(*) count FROM learning_reward_profiles WHERE owner_id=?").get(owner)!.count, 0);
+});
+
+test("Stage 7 storage guards writes against concurrent account deletion and exports raw sessions and heartbeats", () => {
+  const engagementStorage = readFileSync(new URL("../src/lib/engagement/storage.ts", import.meta.url), "utf8");
+  const accountStorage = readFileSync(new URL("../src/lib/account/storage.ts", import.meta.url), "utf8");
+  assert.match(engagementStorage, /account_cas_assertions/);
+  assert.match(engagementStorage, /status='active'/);
+  assert.equal((engagementStorage.match(/guardedBatch\(db, ownerId/g) ?? []).length, 4);
+  assert.match(engagementStorage, /SELECT created_at FROM learning_engagement_sessions/);
+  assert.match(engagementStorage, /creditedHeartbeatSeconds\(input\.seconds, new Date\(session\.created_at\), now\)/);
+  assert.match(engagementStorage, /credited_seconds,created_at\)[^\n]+creditedSeconds/);
+  assert.match(accountStorage, /learning_engagement_sessions/);
+  assert.match(accountStorage, /learning_engagement_heartbeats/);
+  assert.match(accountStorage, /sessions:\s*rewardSessions\.results/);
+  assert.match(accountStorage, /heartbeats:\s*rewardHeartbeats\.results/);
 });
 
 test("real SQLite heartbeat batch is replay-safe and concurrent tabs cannot multiply wall time", () => {

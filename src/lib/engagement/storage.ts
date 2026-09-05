@@ -1,9 +1,25 @@
 import { getCloudflareContext } from "@opennextjs/cloudflare";
-import { badgeMilestones, buildRewardSnapshot, isEligibleLearningPath } from "./domain.ts";
+import { badgeMilestones, buildRewardSnapshot, creditedHeartbeatSeconds, isEligibleLearningPath } from "./domain.ts";
 import { LEARNING_HEARTBEAT_DAY_SQL, LEARNING_POINT_AWARD_SQL } from "./sql.ts";
 
 const database = () => getCloudflareContext().env.LEARNING_DB;
 const iso = (date: Date) => date.toISOString();
+const accountUserId = (ownerId: string) => ownerId.startsWith("user:") ? ownerId.slice(5) : null;
+
+function accountGuardStatements(db: ReturnType<typeof database>, ownerId: string) {
+  const assertionId = crypto.randomUUID();
+  const userId = accountUserId(ownerId);
+  return {
+    before: db.prepare("INSERT INTO account_cas_assertions(id,ok) VALUES(?,CASE WHEN (?=0 OR EXISTS(SELECT 1 FROM accounts WHERE user_id=? AND status='active')) THEN 1 ELSE 0 END)")
+      .bind(assertionId, userId ? 1 : 0, userId ?? ""),
+    after: db.prepare("DELETE FROM account_cas_assertions WHERE id=?").bind(assertionId),
+  };
+}
+
+async function guardedBatch(db: ReturnType<typeof database>, ownerId: string, statements: Array<ReturnType<typeof db.prepare>>) {
+  const guard = accountGuardStatements(db, ownerId);
+  return db.batch([guard.before, ...statements, guard.after]);
+}
 
 export function localDayInTimezone(date: Date, timezone: string) {
   const parts = new Intl.DateTimeFormat("en-CA", {
@@ -20,10 +36,11 @@ export function localDayInTimezone(date: Date, timezone: string) {
 async function rewardProfile(ownerId: string, suggestedTimezone: string, now = new Date()) {
   localDayInTimezone(now, suggestedTimezone);
   const db = database();
-  await db.prepare("INSERT OR IGNORE INTO learning_reward_profiles(owner_id,timezone,created_at) VALUES(?,?,?)")
-    .bind(ownerId, suggestedTimezone, iso(now)).run();
-  const profile = await db.prepare("SELECT timezone FROM learning_reward_profiles WHERE owner_id=?")
-    .bind(ownerId).first<{ timezone: string }>();
+  const userId = accountUserId(ownerId);
+  await db.prepare("INSERT OR IGNORE INTO learning_reward_profiles(owner_id,timezone,created_at) SELECT ?,?,? WHERE (?=0 OR EXISTS(SELECT 1 FROM accounts WHERE user_id=? AND status='active'))")
+    .bind(ownerId, suggestedTimezone, iso(now), userId ? 1 : 0, userId ?? "").run();
+  const profile = await db.prepare("SELECT timezone FROM learning_reward_profiles WHERE owner_id=? AND (?=0 OR EXISTS(SELECT 1 FROM accounts WHERE user_id=? AND status='active'))")
+    .bind(ownerId, userId ? 1 : 0, userId ?? "").first<{ timezone: string }>();
   if (!profile?.timezone) throw new Error("REWARD_PROFILE_UNAVAILABLE");
   return profile.timezone;
 }
@@ -45,13 +62,16 @@ export function engagementTaskStatements(
   createdAt: string,
 ) {
   const periodKey = activity.localDay.slice(0, 7);
+  const guard = accountGuardStatements(db, ownerId);
   return [
+    guard.before,
     db.prepare("INSERT OR IGNORE INTO learning_qualifying_tasks(id,owner_id,local_day,action,idempotency_key,created_at) VALUES(?,?,?,?,?,?)")
       .bind(crypto.randomUUID(), ownerId, activity.localDay, activity.action, activity.idempotencyKey, createdAt),
     db.prepare("INSERT INTO learning_engagement_days(owner_id,local_day,active_seconds,last_heartbeat_at,created_at,updated_at) VALUES(?,?,0,?,?,?) ON CONFLICT(owner_id,local_day) DO UPDATE SET updated_at=excluded.updated_at")
       .bind(ownerId, activity.localDay, createdAt, createdAt, createdAt),
     db.prepare(LEARNING_POINT_AWARD_SQL)
       .bind(crypto.randomUUID(), ownerId, activity.localDay, periodKey, ownerId, periodKey, ownerId, periodKey, ownerId, periodKey, `effective-day:${activity.localDay}`, createdAt, ownerId, activity.localDay, ownerId, activity.localDay),
+    guard.after,
   ];
 }
 
@@ -64,13 +84,10 @@ async function reconcileReward(ownerId: string, localDay: string, now: Date) {
   ]);
   if (!existing && Number(day?.active_seconds ?? 0) >= 900 && Number(task?.count ?? 0) >= 1) {
     const periodKey = localDay.slice(0, 7);
-    try {
-      await db.prepare(LEARNING_POINT_AWARD_SQL)
-        .bind(crypto.randomUUID(), ownerId, localDay, periodKey, ownerId, periodKey, ownerId, periodKey, ownerId, periodKey, `effective-day:${localDay}`, iso(now), ownerId, localDay, ownerId, localDay).run();
-    } catch (error) {
-      const raced = await db.prepare("SELECT units FROM learning_point_ledger WHERE owner_id=? AND local_day=?").bind(ownerId, localDay).first<{ units: number }>();
-      if (!raced) throw error;
-    }
+    await guardedBatch(db, ownerId, [
+      db.prepare(LEARNING_POINT_AWARD_SQL)
+        .bind(crypto.randomUUID(), ownerId, localDay, periodKey, ownerId, periodKey, ownerId, periodKey, ownerId, periodKey, `effective-day:${localDay}`, iso(now), ownerId, localDay, ownerId, localDay),
+    ]);
   }
 }
 
@@ -78,7 +95,7 @@ async function persistUnlockedBadges(ownerId: string, snapshot: ReturnType<typeo
   const unlocked = badgeMilestones.filter((days) => snapshot.longestStreak >= days);
   if (!unlocked.length) return;
   const db = database();
-  await db.batch(unlocked.map((days) => db.prepare("INSERT OR IGNORE INTO learning_badges(id,owner_id,badge_key,milestone_days,awarded_at) VALUES(?,?,?,?,?)")
+  await guardedBatch(db, ownerId, unlocked.map((days) => db.prepare("INSERT OR IGNORE INTO learning_badges(id,owner_id,badge_key,milestone_days,awarded_at) VALUES(?,?,?,?,?)")
     .bind(crypto.randomUUID(), ownerId, `streak-${days}`, days, iso(now))));
 }
 
@@ -111,7 +128,7 @@ export async function startLearningEngagement(ownerId: string, suggestedTimezone
   const sessionToken = crypto.randomUUID();
   const expiresAt = new Date(now.getTime() + 5 * 60_000);
   const db = database();
-  await db.batch([
+  await guardedBatch(db, ownerId, [
     db.prepare("INSERT INTO learning_engagement_sessions(id,owner_id,local_day,route,expires_at,created_at) VALUES(?,?,?,?,?,?)")
       .bind(sessionToken, ownerId, localDay, route, iso(expiresAt), iso(now)),
     db.prepare("DELETE FROM learning_engagement_sessions WHERE owner_id=? AND expires_at<?")
@@ -134,13 +151,14 @@ export async function recordForegroundHeartbeat(
   const localDay = localDayInTimezone(now, timezone);
   const db = database();
   const timestamp = iso(now);
-  const session = await db.prepare("SELECT 1 ok FROM learning_engagement_sessions WHERE id=? AND owner_id=? AND local_day=? AND route=? AND expires_at>=?")
-    .bind(input.sessionToken, ownerId, localDay, input.route, timestamp).first<{ ok: number }>();
+  const session = await db.prepare("SELECT created_at FROM learning_engagement_sessions WHERE id=? AND owner_id=? AND local_day=? AND route=? AND expires_at>=?")
+    .bind(input.sessionToken, ownerId, localDay, input.route, timestamp).first<{ created_at: string }>();
   if (!session) throw new Error("ENGAGEMENT_SESSION_EXPIRED");
+  const creditedSeconds = creditedHeartbeatSeconds(input.seconds, new Date(session.created_at), now);
   try {
-    await db.batch([
-      db.prepare("INSERT INTO learning_engagement_heartbeats(id,owner_id,local_day,credited_seconds,created_at) VALUES(?,?,?,?,?)").bind(input.heartbeatId, ownerId, localDay, input.seconds, timestamp),
-      db.prepare(LEARNING_HEARTBEAT_DAY_SQL).bind(ownerId, localDay, input.seconds, timestamp, timestamp, timestamp),
+    await guardedBatch(db, ownerId, [
+      db.prepare("INSERT INTO learning_engagement_heartbeats(id,owner_id,local_day,credited_seconds,created_at) VALUES(?,?,?,?,?)").bind(input.heartbeatId, ownerId, localDay, creditedSeconds, timestamp),
+      db.prepare(LEARNING_HEARTBEAT_DAY_SQL).bind(ownerId, localDay, creditedSeconds, timestamp, timestamp, timestamp),
     ]);
   } catch (error) {
     const replay = await db.prepare("SELECT 1 ok FROM learning_engagement_heartbeats WHERE id=? AND owner_id=?").bind(input.heartbeatId, ownerId).first<{ ok: number }>();

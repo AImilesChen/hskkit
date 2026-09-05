@@ -12,6 +12,11 @@ export type RewardedLearningDay = { localDay: string; points: number };
 const dayNumber = (day: string) => Math.floor(Date.parse(`${day}T00:00:00.000Z`) / 86_400_000);
 const monthKey = (day: string) => day.slice(0, 7);
 
+export function creditedHeartbeatSeconds(claimedSeconds: number, sessionCreatedAt: Date, now: Date) {
+  const elapsedSeconds = Math.max(0, Math.floor((now.getTime() - sessionCreatedAt.getTime()) / 1000));
+  return Math.min(30, Math.max(0, Math.trunc(claimedSeconds)), elapsedSeconds);
+}
+
 export function learningPointsForMonthlyDay(day: number) {
   if (!Number.isInteger(day) || day < 1) throw new Error("INVALID_MONTHLY_LEARNING_DAY");
   if (day <= 7) return 2;

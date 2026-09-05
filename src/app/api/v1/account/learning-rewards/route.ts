@@ -5,6 +5,21 @@ import { learningRewardSnapshot, recordForegroundHeartbeat, startLearningEngagem
 export const dynamic = "force-dynamic";
 const noStore = { "Cache-Control": "no-store" };
 
+function publicRewardError(error: unknown) {
+  if (!(error instanceof Error)) return "LEARNING_REWARDS_FAILED";
+  switch (error.message) {
+    case "INVALID_TIMEZONE":
+    case "INVALID_HEARTBEAT_ID":
+    case "INVALID_ENGAGEMENT_SESSION":
+    case "INVALID_ACTIVE_SECONDS":
+    case "INELIGIBLE_LEARNING_ROUTE":
+    case "ENGAGEMENT_SESSION_EXPIRED":
+      return error.message;
+    default:
+      return "LEARNING_REWARDS_FAILED";
+  }
+}
+
 function verifiedPageRoute(request: NextRequest, claimedRoute: string) {
   try {
     const referrer = new URL(request.headers.get("referer") ?? "");
@@ -23,7 +38,7 @@ export async function GET() {
     const snapshot = await learningRewardSnapshot(accountOwnerId(identity.account.userId), identity.account.timezone || "UTC");
     return NextResponse.json(snapshot, { headers: noStore });
   } catch (error) {
-    const code = error instanceof Error ? error.message : "LEARNING_REWARDS_FAILED";
+    const code = publicRewardError(error);
     return NextResponse.json({ error: code }, { status: code === "INVALID_TIMEZONE" ? 422 : 500, headers: noStore });
   }
 }
@@ -58,7 +73,7 @@ export async function POST(request: NextRequest) {
         });
     return NextResponse.json(result, { headers: noStore });
   } catch (error) {
-    const code = error instanceof Error ? error.message : "LEARNING_REWARDS_FAILED";
+    const code = publicRewardError(error);
     const status = code.startsWith("INVALID_") || code === "INELIGIBLE_LEARNING_ROUTE" ? 422 : code === "ENGAGEMENT_SESSION_EXPIRED" ? 409 : 500;
     return NextResponse.json({ error: code }, { status, headers: noStore });
   }

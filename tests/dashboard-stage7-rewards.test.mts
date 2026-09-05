@@ -4,6 +4,7 @@ import test from "node:test";
 import {
   badgeMilestones,
   buildRewardSnapshot,
+  creditedHeartbeatSeconds,
   isEligibleLearningPath,
   learningPointsForMonthlyDay,
 } from "../src/lib/engagement/domain.ts";
@@ -33,6 +34,13 @@ test("reward snapshot requires 15 active foreground minutes and one real task", 
   });
   assert.equal(noTask.todayQualified, false);
   assert.equal(noTask.needsTask, true);
+});
+
+test("the server never credits more heartbeat time than has elapsed since session creation", () => {
+  const createdAt = new Date("2026-09-05T12:00:00.000Z");
+  assert.equal(creditedHeartbeatSeconds(30, createdAt, new Date("2026-09-05T12:00:00.000Z")), 0);
+  assert.equal(creditedHeartbeatSeconds(30, createdAt, new Date("2026-09-05T12:00:07.900Z")), 7);
+  assert.equal(creditedHeartbeatSeconds(30, createdAt, new Date("2026-09-05T12:00:45.000Z")), 30);
 });
 
 test("natural-month ordinal resets while lifetime points do not", () => {
@@ -112,4 +120,5 @@ test("stage 7 ships server reconciliation, foreground heartbeat and dashboard re
   assert.match(accountStorage, /rewards:\s*\{/);
   assert.match(accountStorage, /DELETE FROM learning_reward_profiles/);
   assert.doesNotMatch(route, /credit_ledger/);
+  assert.doesNotMatch(route, /error instanceof Error \? error\.message/);
 });
