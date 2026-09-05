@@ -43,7 +43,7 @@ export default function DashboardGrowth({ growth }: { growth: DashboardGrowthDat
           <h3 id="study-calendar-heading" className="text-xl font-black text-slate-950">Study calendar</h3>
           <span className="text-sm font-bold text-slate-500">{growth.calendar.monthLabel}</span>
         </div>
-        <div className="mt-5 grid grid-cols-7 gap-1.5 text-center" aria-label={`${growth.calendar.monthLabel} study activity`}>
+        <div className="mt-5 grid grid-cols-7 gap-1.5 text-center" style={{ gridTemplateColumns: "repeat(7, minmax(0, 1fr))" }} aria-label={`${growth.calendar.monthLabel} study activity`}>
           {weekdays.map((day) => <span key={day} className="pb-1 text-[11px] font-bold uppercase text-slate-400">{day.slice(0, 1)}</span>)}
           {Array.from({ length: growth.calendar.firstWeekday }, (_, index) => <span key={`blank-${index}`} aria-hidden="true" />)}
           {growth.calendar.days.map((day) => <div key={day.date} title={`${day.date}: ${day.count} completed learning action${day.count === 1 ? "" : "s"}`} className={`flex aspect-square min-h-9 items-center justify-center rounded-xl border text-sm font-bold ${day.active ? "border-emerald-300 bg-emerald-100 text-emerald-900" : day.isToday ? "border-blue-300 bg-blue-50 text-blue-900" : "border-slate-100 bg-slate-50 text-slate-500"}`} aria-label={`${day.date}, ${day.count} completed learning action${day.count === 1 ? "" : "s"}`}>{day.day}</div>)}

@@ -16,6 +16,7 @@ test("stage 3 dashboard presents calendar, 7/30-day curve, truthful HSK bands an
   assert.match(growth, /No completed learning activity yet/);
   assert.match(growth, /No tracked vocabulary yet/);
   assert.match(growth, /grid-cols-7/);
+  assert.match(growth, /gridTemplateColumns: "repeat\(7, minmax\(0, 1fr\)\)"/);
   assert.doesNotMatch(growth, /sample|placeholder|demo data/i);
 });
 
