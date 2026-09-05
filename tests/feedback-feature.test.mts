@@ -161,7 +161,7 @@ test("email notification uses the Cloudflare binding with safe feedback metadata
 });
 
 test("global widget, API route, D1 schema, email binding, and privacy disclosure are wired", async () => {
-  const [layout, widget, css, route, migration, wrangler, privacy, workerEntry] = await Promise.all([
+  const [layout, widget, css, route, migration, wrangler, privacy, patchScript, packageJson] = await Promise.all([
     readFile(new URL("../src/app/layout.tsx", import.meta.url), "utf8"),
     readFile(new URL("../src/app/components/feedback-widget.tsx", import.meta.url), "utf8"),
     readFile(new URL("../src/app/globals.css", import.meta.url), "utf8"),
@@ -169,7 +169,8 @@ test("global widget, API route, D1 schema, email binding, and privacy disclosure
     readFile(new URL("../migrations/0031_feedback_submissions.sql", import.meta.url), "utf8"),
     readFile(new URL("../wrangler.jsonc", import.meta.url), "utf8"),
     readFile(new URL("../src/app/privacy-policy/page.tsx", import.meta.url), "utf8"),
-    readFile(new URL("../workers/hskkit-entry.mjs", import.meta.url), "utf8"),
+    readFile(new URL("../scripts/patch-open-next-email.mjs", import.meta.url), "utf8"),
+    readFile(new URL("../package.json", import.meta.url), "utf8"),
   ]);
   assert.match(layout, /<FeedbackWidget\s*\/>/);
   assert.match(widget, /\/api\/feedback/);
@@ -181,7 +182,10 @@ test("global widget, API route, D1 schema, email binding, and privacy disclosure
   assert.match(migration, /CREATE TABLE feedback_submissions/);
   assert.match(migration, /CREATE TABLE feedback_rate_limits/);
   assert.match(wrangler, /"send_email"/);
-  assert.match(wrangler, /workers\/hskkit-entry\.mjs/);
-  assert.match(workerEntry, /cloudflare:email/);
+  assert.match(wrangler, /\.open-next\/worker\.js/);
+  assert.match(patchScript, /cloudflare:email/);
+  assert.match(patchScript, /middlewareManifestPath/);
+  assert.match(patchScript, /getMiddlewareManifest\(\)\{return null\}/);
+  assert.match(packageJson, /patch-open-next-email\.mjs/);
   assert.match(privacy, /feedback message/i);
 });

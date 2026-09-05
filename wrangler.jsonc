@@ -1,6 +1,6 @@
 {
 	"$schema": "node_modules/wrangler/config-schema.json",
-	"main": "workers/hskkit-entry.mjs",
+	"main": ".open-next/worker.js",
 	"name": "hskkit",
 	"compatibility_date": "2026-05-24",
 	"compatibility_flags": [
