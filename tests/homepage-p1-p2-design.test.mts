@@ -57,14 +57,16 @@ test("homepage demo resolves exactly five real published HSK 1 words", () => {
   assert.match(home, /<HomeQuickFlashcards cards=\{demoCards\}/);
 });
 
-test("homepage CTA has one primary action while preserving dynamic return-user behavior", () => {
-  assert.match(nextStep, /Start my free Pro trial/);
+test("homepage CTA uses one learning label while preserving internal return-user routing", () => {
+  assert.match(nextStep, /Start learning/);
   assert.match(nextStep, /Preview five flashcards/);
-  assert.match(nextStep, /Continue today’s study/);
-  assert.match(nextStep, /Review due items/);
+  assert.match(nextStep, /returningAccount \? action\.href : "\/placement"/);
+  assert.match(nextStep, /Start with published HSK 3\.0 vocabulary and build your review plan as you learn\./);
+  assert.doesNotMatch(nextStep, /Start my free Pro trial/);
+  assert.doesNotMatch(nextStep, /Continue today’s study/);
+  assert.doesNotMatch(nextStep, /Review due items/);
   assert.match(nextStep, /home-cta-primary/);
   assert.match(nextStep, /home-cta-secondary/);
-  assert.match(nextStep, /Try Pro free for 7 days/);
   assert.match(nextStep, /No card required/);
   assert.match(nextStep, /Returns to Free automatically/);
   assert.match(nextStep, /After the trial: Free includes 10 new items and 20 successful SRS ratings daily\./);
