@@ -118,7 +118,7 @@ export default function PlacementClient() {
       const data = await placementRequest(`/api/v1/attempts/${encodeURIComponent(session.id)}/submit`, {
         questionId: question.id,
         answer,
-        idempotencyKey: `placement-answer:${session.id.slice(-24)}:${question.id}:${answer}`,
+        idempotencyKey: `placement-answer:${session.id.slice(-24)}:${question.id.slice(-48)}:${answer}`,
       });
       setSession(data.session ?? session);
       setManualIndex(index);

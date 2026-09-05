@@ -32,6 +32,7 @@ test("adaptive Placement publishes a deep, versioned Level 1–9 four-skill bank
     }
   }
   assert.ok(placementCatalog("hskkit-placement-multiskill-v2").length >= 12, "v2 sessions must remain resumable");
+  assert.equal(Math.max(...PLACEMENT_QUESTIONS.map((question) => `placement-answer:${"s".repeat(24)}:${question.id.slice(-48)}:${Object.keys(question.options)[0]}`.length)) <= 100, true);
 });
 
 function finish(answerFor: (question: (typeof PLACEMENT_QUESTIONS)[number], turn: number) => string) {
