@@ -70,6 +70,15 @@ test("Stripe subscription events normalize without granting on Checkout alone", 
   assert.equal(normalizeSubscriptionEvent({ id: "evt_bad_money", type: "invoice.paid", data: { object: { id: "in_1", customer: "cus_1", subscription: "sub_1", amount_paid: -1, currency: "usd" } } }).kind, "invalid");
 });
 
+test("a paid invoice repairs an incomplete subscription and suspended entitlement after webhook reordering", async () => {
+  const storage = await read("src/lib/commercial/storage.ts");
+  const paidBranch = storage.slice(storage.indexOf('if(event.kind==="invoice_paid"||event.kind==="invoice_payment_failed")'), storage.indexOf('if(event.kind==="charge_refunded")'));
+  assert.match(paidBranch, /event\.kind==="invoice_paid"/);
+  assert.match(paidBranch, /UPDATE subscriptions SET status='active'/);
+  assert.match(paidBranch, /UPDATE subscription_entitlements SET status='active'/);
+  assert.match(paidBranch, /revocation_reason IS NULL/);
+});
+
 test("refund eligibility follows seven UTC days, at most ten credits, once per charge", () => {
   const now = new Date("2026-08-30T00:00:00Z");
   assert.deepEqual(refundEligibility({ chargedAt: "2026-08-24T00:00:00Z", aiCreditsUsed: 10, alreadyRefunded: false }, now), { eligible: true });
