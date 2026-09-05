@@ -156,6 +156,10 @@ export default function AccountClient() {
     catch (cause) { setError(cause instanceof Error ? cause.message : "REQUEST_FAILED"); }
     finally { setBusy(false); }
   };
+  const signOut = async () => {
+    const result = await act(() => json("/api/v1/account", { method: "POST", body: JSON.stringify({ action: "logout" }) }), "You are signed out.");
+    if (result?.state === "logged_out") window.dispatchEvent(new Event("hskkit:auth-changed"));
+  };
 
   const preview = async () => {
     const result = await act(() => json("/api/v1/account/merge", { method: "POST", body: JSON.stringify({ action: "preview" }) }), "Review the merge before confirming.");
@@ -386,7 +390,7 @@ export default function AccountClient() {
               <summary><span className="account-icon-tile privacy"><AccountIcon name="privacy"/></span><span><strong>Privacy & data</strong><small>Export, deletion and account access</small></span><span className="account-setting-action">Manage</span></summary>
               <div className="account-setting-content">
                 <p>Download your account data, check request status or start account deletion from the dedicated data page.</p>
-                <div className="account-actions"><Link className="btn secondary" href="/account/data">Manage account data</Link><button className="btn secondary" disabled={busy} onClick={() => void act(() => json("/api/v1/account", { method: "POST", body: JSON.stringify({ action: "logout" }) }), "You are signed out.")}>Sign out</button></div>
+                <div className="account-actions"><Link className="btn secondary" href="/account/data">Manage account data</Link><button className="btn secondary" disabled={busy} onClick={() => void signOut()}>Sign out</button></div>
                 <div className="account-danger-zone"><strong>Need to delete your account?</strong><span>The confirmation and request history live on the data page so this action cannot be triggered accidentally.</span><Link href="/account/data">Review deletion options</Link></div>
               </div>
             </details>

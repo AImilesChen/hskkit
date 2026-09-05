@@ -30,7 +30,7 @@ export default function DashboardGrowth({ growth }: { growth: DashboardGrowthDat
     return `${x},${y}`;
   }).join(" ");
 
-  return <section className="mt-10 space-y-6" aria-labelledby="growth-heading">
+  return <section data-dashboard-layer="3-growth" className="mt-10 space-y-6" aria-labelledby="growth-heading">
     <header>
       <p className="text-sm font-black uppercase tracking-[0.18em] text-blue-700">Growth data</p>
       <h2 id="growth-heading" className="mt-2 text-3xl font-black tracking-tight text-slate-950">Your real learning growth</h2>
@@ -72,7 +72,7 @@ export default function DashboardGrowth({ growth }: { growth: DashboardGrowthDat
       </article>
     </div>
 
-    <article className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6" aria-labelledby="hsk-progress-heading">
+    <article data-dashboard-layer="4-level-progress" className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6" aria-labelledby="hsk-progress-heading">
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div><h3 id="hsk-progress-heading" className="text-xl font-black text-slate-950">HSK 1–9 progress</h3><p className="mt-1 text-sm leading-6 text-slate-600">Unique words with a saved learning record. HSK 7–9 uses the published unified advanced band.</p></div>
         <strong className="text-sm text-slate-700">{growth.totalTrackedWords} tracked word{growth.totalTrackedWords === 1 ? "" : "s"}</strong>

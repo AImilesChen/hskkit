@@ -14,6 +14,7 @@ export const legacyRoutePattern = /^\/(?:hsk-[1-6]-(?:vocabulary|practice-test)|
 
 export default function SiteHeader() {
   const pathname = usePathname();
+  const [authState, setAuthState] = useState<"loading" | "guest" | "account">("loading");
   const [desktopGroup, setDesktopGroup] = useState<string | null>(null);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [mobileGroup, setMobileGroup] = useState<string | null>(null);
@@ -21,6 +22,14 @@ export default function SiteHeader() {
   const mobileTriggerRef = useRef<HTMLButtonElement | null>(null);
   const groupTriggerRefs = useRef<Record<string, HTMLButtonElement | null>>({});
   const isTraditionalRoute = legacyRoutePattern.test(pathname);
+  const signedIn = authState === "account";
+  const dashboardEntry = { href: "/dashboard", label: "Dashboard", description: "Open your saved learning dashboard and next task." };
+  const navigation = authState === "loading"
+    ? siteNavigation.filter((entry) => isNavigationGroup(entry) || entry.href !== "/account")
+    : signedIn ? [dashboardEntry, ...siteNavigation] : siteNavigation;
+  const navigationDescription = (entry: { href: string; description: string }) => entry.href === "/account" && signedIn
+    ? "Manage your synced account, access, billing, and private exports."
+    : entry.description;
 
   function closeNavigation() {
     setDesktopGroup(null);
@@ -31,6 +40,26 @@ export default function SiteHeader() {
   useEffect(() => {
     closeNavigation();
   }, [pathname]);
+
+  useEffect(() => {
+    const controller = new AbortController();
+    const refreshAuth = () => {
+      void fetch("/api/v1/account", { cache: "no-store", signal: controller.signal })
+        .then((response) => response.ok ? response.json() : Promise.reject(new Error("ACCOUNT_STATUS_UNAVAILABLE")))
+        .then((payload: { account: { userId: string } | null }) => setAuthState(payload.account?.userId ? "account" : "guest"))
+        .catch(() => undefined);
+    };
+    refreshAuth();
+    window.addEventListener("hskkit:auth-changed", refreshAuth);
+    window.addEventListener("pageshow", refreshAuth);
+    window.addEventListener("focus", refreshAuth);
+    return () => {
+      controller.abort();
+      window.removeEventListener("hskkit:auth-changed", refreshAuth);
+      window.removeEventListener("pageshow", refreshAuth);
+      window.removeEventListener("focus", refreshAuth);
+    };
+  }, []);
 
   useEffect(() => {
     document.body.style.overflow = mobileOpen ? "hidden" : "";
@@ -81,7 +110,7 @@ export default function SiteHeader() {
         </Link>
 
         <div className="hidden items-center gap-1 [@media(min-width:1040px)]:flex">
-          {siteNavigation.map((entry) => isNavigationGroup(entry) ? (
+          {navigation.map((entry) => isNavigationGroup(entry) ? (
             <div key={entry.label} className="relative">
               <button
                 ref={(node) => { groupTriggerRefs.current[entry.label] = node; }}
@@ -106,8 +135,8 @@ export default function SiteHeader() {
               )}
             </div>
           ) : (
-            <Link key={entry.href} href={entry.href} aria-label={`${entry.label} — ${entry.description}`} aria-current={isNavigationItemActive(pathname, entry) ? "page" : undefined} className={entry.href === "/account" ? "ml-5 inline-flex h-[40px] min-h-[40px] items-center rounded-lg border border-blue-200 bg-white px-4 text-sm font-semibold text-blue-700 hover:border-blue-300 hover:bg-blue-50 hover:text-blue-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 aria-[current=page]:border-blue-400 aria-[current=page]:bg-blue-50" : "inline-flex min-h-11 items-center border-b-2 border-transparent px-3 text-sm font-semibold text-slate-600 hover:border-blue-200 hover:text-blue-700 aria-[current=page]:border-blue-600 aria-[current=page]:text-blue-700"} onClick={closeNavigation}>
-              {entry.label}
+            <Link key={entry.href} href={entry.href} aria-label={`${entry.href === "/account" && signedIn ? "Account" : entry.label} — ${navigationDescription(entry)}`} aria-current={isNavigationItemActive(pathname, entry) ? "page" : undefined} className={entry.href === "/account" ? "ml-5 inline-flex h-[40px] min-h-[40px] items-center rounded-lg border border-blue-200 bg-white px-4 text-sm font-semibold text-blue-700 hover:border-blue-300 hover:bg-blue-50 hover:text-blue-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 aria-[current=page]:border-blue-400 aria-[current=page]:bg-blue-50" : "inline-flex min-h-11 items-center border-b-2 border-transparent px-3 text-sm font-semibold text-slate-600 hover:border-blue-200 hover:text-blue-700 aria-[current=page]:border-blue-600 aria-[current=page]:text-blue-700"} onClick={closeNavigation}>
+              {entry.href === "/account" ? (signedIn ? "Account" : entry.label) : entry.label}
             </Link>
           ))}
         </div>
@@ -128,7 +157,7 @@ export default function SiteHeader() {
       {mobileOpen && (
         <div id="mobile-menu" className="fixed inset-x-0 bottom-0 top-[72px] z-[90] overflow-y-auto border-t border-slate-200 bg-white [@media(min-width:1040px)]:hidden">
           <nav aria-label="Mobile navigation" className="grid gap-2 px-4 py-5">
-            {siteNavigation.map((entry) => isNavigationGroup(entry) ? (
+            {navigation.map((entry) => isNavigationGroup(entry) ? (
               <div key={entry.label} className="rounded-xl border border-slate-200 bg-white">
                 <button type="button" aria-expanded={mobileGroup === entry.label} aria-controls={`mobile-${entry.label.toLowerCase()}-menu`} className="flex min-h-12 w-full items-center justify-between rounded-xl px-4 text-left font-bold text-slate-900" onClick={() => setMobileGroup((current) => current === entry.label ? null : entry.label)}>
                   {entry.label}<span aria-hidden="true">{mobileGroup === entry.label ? "−" : "+"}</span>
@@ -145,9 +174,9 @@ export default function SiteHeader() {
                 )}
               </div>
             ) : (
-              <Link key={entry.href} href={entry.href} aria-label={`${entry.label} — ${entry.description}`} aria-current={isNavigationItemActive(pathname, entry) ? "page" : undefined} className={entry.href === "/account" ? "flex min-h-12 flex-col justify-center rounded-xl border border-blue-200 bg-blue-50 px-4 py-3 text-blue-700 hover:border-blue-300 hover:bg-blue-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2" : "flex min-h-16 flex-col justify-center rounded-xl border border-slate-200 px-4 py-2 hover:bg-blue-50 aria-[current=page]:border-blue-300 aria-[current=page]:bg-blue-50"} onClick={closeNavigation}>
-                <span className={entry.href === "/account" ? "font-bold text-blue-700" : "font-bold text-slate-900"}>{entry.label}</span>
-                <span className="mt-0.5 text-xs leading-5 text-slate-500">{entry.description}</span>
+              <Link key={entry.href} href={entry.href} aria-label={`${entry.href === "/account" && signedIn ? "Account" : entry.label} — ${navigationDescription(entry)}`} aria-current={isNavigationItemActive(pathname, entry) ? "page" : undefined} className={entry.href === "/account" ? "flex min-h-12 flex-col justify-center rounded-xl border border-blue-200 bg-blue-50 px-4 py-3 text-blue-700 hover:border-blue-300 hover:bg-blue-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2" : "flex min-h-16 flex-col justify-center rounded-xl border border-slate-200 px-4 py-2 hover:bg-blue-50 aria-[current=page]:border-blue-300 aria-[current=page]:bg-blue-50"} onClick={closeNavigation}>
+                <span className={entry.href === "/account" ? "font-bold text-blue-700" : "font-bold text-slate-900"}>{entry.href === "/account" ? (signedIn ? "Account" : entry.label) : entry.label}</span>
+                <span className="mt-0.5 text-xs leading-5 text-slate-500">{navigationDescription(entry)}</span>
               </Link>
             ))}
           </nav>
