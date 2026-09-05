@@ -36,6 +36,7 @@ const migration = [
   readFileSync(join(root, "migrations/0027_blog_content_release.sql"), "utf8"),
   readFileSync(join(root, "migrations/0028_blog_tones_title_editorial_fix.sql"), "utf8"),
   readFileSync(join(root, "migrations/0029_blog_visual_variety.sql"), "utf8"),
+  readFileSync(join(root, "migrations/0030_blog_visual_variety_snapshot_repair.sql"), "utf8"),
 ].join("\n");
 const freezeCommit = "83883c8536c1a99b9da78e09f910b6070860836d";
 
