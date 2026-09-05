@@ -31,6 +31,13 @@ export async function usageSnapshot(ownerId: string, periodKey: string): Promise
   return snapshot;
 }
 
+export async function learningActivitySince(ownerId: string, sinceIso: string): Promise<Array<{ action: string; createdAt: string }>> {
+  const rows = await (await db()).prepare(
+    "SELECT action,created_at FROM policy_audit_events WHERE subject_id=? AND resource_type='learning' AND result='success' AND created_at>=? ORDER BY created_at ASC",
+  ).bind(ownerId, sinceIso).all<{ action: string; created_at: string }>();
+  return (rows.results as Array<{ action: string; created_at: string }>).map((row) => ({ action: row.action, createdAt: row.created_at }));
+}
+
 export async function saveState(ownerId: string, state: LearningState, revision: number, audit?: AuditEvent, usage?: UsageCharge, referralActivity?: ReferralLearningActivity) {
   const now = new Date().toISOString();
   const database = await db();
