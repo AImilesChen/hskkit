@@ -3,7 +3,8 @@ export const DIGITAL_ACCESS_DAYS=14;
 export const DIGITAL_REFUND_DAYS=7;
 export const DIGITAL_DOWNLOAD_LIMIT=3;
 export const DEFAULT_PRODUCT_GENERATION_VERSION="complete-vocabulary-v1";
-export const PLANNER_GENERATION_VERSION="p0-p1-v3";
+export const PLANNER_GENERATION_VERSION="planner-progress-xlsx-v4";
+export const PRACTICE_ASSESSMENT_GENERATION_VERSION="practice-score-xlsx-v2";
 export const TEACHER_PACK_GENERATION_VERSION="teacher-pack-v3";
 export const PERSONAL_PRODUCT_LICENSE="Personal, non-transferable study and print use only.";
 export const TEACHER_CLASSROOM_LICENSE="Single-purchaser classroom licence: the purchaser may adapt editable files and print or share student handouts only with learners they personally teach at one teaching site. No resale, public upload, shared-drive distribution, sublicensing, transfer or use by another teacher.";
@@ -45,7 +46,7 @@ export const DIGITAL_PRODUCTS:readonly DigitalProduct[]=[
 
 export function digitalProduct(value:unknown){return DIGITAL_PRODUCTS.find(product=>product.id===value)??null;}
 export function productLicenseNotice(productId:unknown){return productId==="teacher-lesson-plan-pack"?TEACHER_CLASSROOM_LICENSE:PERSONAL_PRODUCT_LICENSE;}
-export function generationVersionForProduct(productId:unknown){return productId==="30-day-planner"?PLANNER_GENERATION_VERSION:productId==="teacher-lesson-plan-pack"?TEACHER_PACK_GENERATION_VERSION:DEFAULT_PRODUCT_GENERATION_VERSION;}
+export function generationVersionForProduct(productId:unknown){return productId==="30-day-planner"?PLANNER_GENERATION_VERSION:productId==="practice-assessment-pack"?PRACTICE_ASSESSMENT_GENERATION_VERSION:productId==="teacher-lesson-plan-pack"?TEACHER_PACK_GENERATION_VERSION:DEFAULT_PRODUCT_GENERATION_VERSION;}
 export function productDeliverableLabels(productId:unknown):string[]{
   const product=digitalProduct(productId);if(!product)throw new Error("INVALID_PRODUCT");
   if(product.category==="level")return [`${product.vocabularyCount?.toLocaleString("en-US")} canonical entries in one searchable PDF`,`Manifest and README/licence information`];
