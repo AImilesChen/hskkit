@@ -63,7 +63,8 @@ async function resolveTodayDictionaryItem(assetId: string) {
   return row ? todayContentFromCatalogRow(row) : undefined;
 }
 const offset = (value: unknown) => Number.isInteger(value) && Number(value) >= -840 && Number(value) <= 840 ? Number(value) : 0;
-const errorResponse = (code: string, status: number, extra: Record<string, unknown> = {}) => NextResponse.json({ ...errorContract(code), ...extra }, { status });
+const PRIVATE_RESPONSE_HEADERS = { "Cache-Control": "private, no-store" } as const;
+const errorResponse = (code: string, status: number, extra: Record<string, unknown> = {}) => NextResponse.json({ ...errorContract(code), ...extra }, { status, headers: PRIVATE_RESPONSE_HEADERS });
 async function requireLearningAccess(identity: Awaited<ReturnType<typeof owner>>, permission: "learning:read" | "learning:write") {
   const decision = accessDecision({ accountStatus: identity.account?.status ?? "guest", permission });
   if (!decision.allowed) {
@@ -208,7 +209,7 @@ function response(data: ReturnType<typeof view>, fresh: boolean, id: string, rev
     revision,
     scope: account ? "account" : "guest",
     ...(feedback ? { feedback } : {}),
-  });
+  }, { headers: PRIVATE_RESPONSE_HEADERS });
   if (fresh) res.cookies.set(COOKIE, id, { httpOnly: true, sameSite: "lax", secure: true, maxAge: 31_536_000, path: "/" });
   return res;
 }
