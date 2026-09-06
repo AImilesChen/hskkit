@@ -5,6 +5,30 @@ export class AdminDomainError extends Error {
   constructor(status: number, code: string) { super(code); this.status = status; }
 }
 
+export class AdminStorageUnavailableError extends Error {
+  constructor() { super("ADMIN_TEMPORARILY_UNAVAILABLE"); this.name = "AdminStorageUnavailableError"; }
+}
+
+function isD1Overload(error: unknown) {
+  const message = error instanceof Error ? error.message : String(error);
+  return message.includes("D1_ERROR") && (message.includes("D1 DB is overloaded") || message.includes("Requests queued for too long") || message.includes("7429"));
+}
+
+export async function withAdminD1Retry<T>(
+  operation: () => Promise<T>,
+  wait: (milliseconds: number) => Promise<void> = (milliseconds) => new Promise((resolve) => setTimeout(resolve, milliseconds)),
+) {
+  const delays = [40, 120];
+  for (let attempt = 0; attempt <= delays.length; attempt += 1) {
+    try { return await operation(); } catch (error) {
+      if (!isD1Overload(error)) throw error;
+      if (attempt === delays.length) throw new AdminStorageUnavailableError();
+      await wait(delays[attempt]);
+    }
+  }
+  throw new AdminStorageUnavailableError();
+}
+
 export function parseAdminUserIds(value: string | undefined) {
   return new Set((value || "").split(",").map((item) => item.trim()).filter(Boolean));
 }

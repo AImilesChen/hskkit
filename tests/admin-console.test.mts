@@ -122,3 +122,42 @@ test("admin navigation disables automatic route prefetch to prevent D1 request b
     for (const link of links) assert.match(link, /prefetch=\{false\}/, `${name} link must not prefetch: ${link}`);
   }
 });
+
+test("admin D1 retry is bounded and only retries overload errors", async () => {
+  const [{ withAdminD1Retry, AdminStorageUnavailableError }] = await adminModules();
+  assert.equal(typeof withAdminD1Retry, "function");
+  const waits: number[] = [];
+  let attempts = 0;
+  const result = await withAdminD1Retry(async () => {
+    attempts += 1;
+    if (attempts < 3) throw new Error("D1_ERROR: D1 DB is overloaded. Requests queued for too long.");
+    return "ok";
+  }, async (milliseconds: number) => { waits.push(milliseconds); });
+  assert.equal(result, "ok");
+  assert.equal(attempts, 3);
+  assert.deepEqual(waits, [40, 120]);
+
+  attempts = 0;
+  await assert.rejects(
+    withAdminD1Retry(async () => {
+      attempts += 1;
+      throw new Error("D1_ERROR: D1 DB is overloaded. Requests queued for too long.");
+    }, async () => {}),
+    AdminStorageUnavailableError,
+  );
+  assert.equal(attempts, 3);
+
+  attempts = 0;
+  await assert.rejects(withAdminD1Retry(async () => {
+    attempts += 1;
+    throw new Error("D1_ERROR: no such column");
+  }, async () => {}), /no such column/);
+  assert.equal(attempts, 1);
+});
+
+test("admin renders a retryable fallback when D1 remains unavailable", async () => {
+  const source = await readFile(new URL("../src/app/admin/error.tsx", import.meta.url), "utf8").catch(() => "");
+  assert.match(source, /Admin data is temporarily unavailable/);
+  assert.match(source, /reset\(\)/);
+  assert.match(source, /Try again/);
+});

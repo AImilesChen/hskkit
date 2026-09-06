@@ -1,6 +1,6 @@
 import { getCloudflareContext } from "@opennextjs/cloudflare";
 import { requestIdentity } from "@/lib/account/identity";
-import { AdminDomainError, authorizeAdminIdentity } from "./domain.ts";
+import { AdminDomainError, AdminStorageUnavailableError, authorizeAdminIdentity, withAdminD1Retry } from "./domain.ts";
 
 export const ADMIN_PRIVATE_HEADERS = {
   "Cache-Control": "private, no-store",
@@ -10,7 +10,7 @@ export const ADMIN_PRIVATE_HEADERS = {
 } as const;
 
 export async function requireAdmin() {
-  const identity = await requestIdentity({ touchSession: false });
+  const identity = await withAdminD1Retry(() => requestIdentity({ touchSession: false }));
   const env = getCloudflareContext().env;
   const admin = authorizeAdminIdentity(identity.account ? { userId: identity.account.userId, connection: identity.connection } : undefined, env.ADMIN_USER_IDS);
   return { ...admin, env };
@@ -37,6 +37,7 @@ export function adminJson(data: unknown, init: ResponseInit = {}) {
 
 export function adminError(error: unknown) {
   if (error instanceof AdminDomainError) return adminJson({ error: error.message }, { status: error.status });
+  if (error instanceof AdminStorageUnavailableError) return adminJson({ error: error.message }, { status: 503, headers: { "Retry-After": "1" } });
   if (error instanceof Error && error.message === "FEEDBACK_NOT_FOUND") return adminJson({ error: error.message }, { status: 404 });
   console.error("admin_request_failed", error instanceof Error ? error.message : "unknown");
   return adminJson({ error: "ADMIN_REQUEST_FAILED" }, { status: 500 });
