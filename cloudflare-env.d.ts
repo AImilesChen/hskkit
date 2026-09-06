@@ -19,6 +19,7 @@ interface CloudflareEnv {
   EXPORT_SIGNING_SECRET?: string;
   ADMIN_REFUND_TOKEN?: string;
   BLOG_ADMIN_EMAILS?: string;
+  ADMIN_USER_IDS?: string;
   DEEPSEEK_API_KEY?: string;
   DEEPSEEK_BASE_URL?: string;
   DEEPSEEK_MODEL?: string;
