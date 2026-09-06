@@ -1,4 +1,4 @@
-import { escapeLike, maskEmail, maskReference, pageMeta, type ReviewStatus, withAdminD1Retry } from "./domain.ts";
+import { AdminDomainError, escapeLike, maskEmail, maskReference, pageMeta, type ReviewStatus, withAdminD1Retry } from "./domain.ts";
 
 type AdminStatement = {
   bind(...values: unknown[]): AdminStatement;
@@ -11,7 +11,7 @@ export type AdminDb = {
   batch(statements: AdminStatement[]): Promise<unknown[]>;
 };
 
-type ListOptions = { page: number; pageSize: number; query: string; status?: string; access?: string; mode?: string; type?: string };
+type ListOptions = { page: number; pageSize: number; query: string; status?: string; access?: string; mode?: string; type?: string; retention?: string };
 type CountRow = { count: number };
 
 async function count(db: AdminDb, sql: string, values: unknown[] = []) {
@@ -45,13 +45,29 @@ export async function getAdminOverview(db: AdminDb, now = new Date().toISOString
 }
 
 function userCte() {
-  return `WITH user_access AS (
+  return `WITH latest_oauth AS (
+    SELECT user_id,email,ROW_NUMBER() OVER (PARTITION BY user_id ORDER BY updated_at DESC) row_number
+    FROM account_oauth_identities
+    WHERE provider='google' AND email_verified=1
+  ), latest_live_subscription AS (
+    SELECT user_id,plan_id,cancel_at_period_end,ROW_NUMBER() OVER (PARTITION BY user_id ORDER BY updated_at DESC) row_number
+    FROM subscriptions
+    WHERE stripe_livemode=1 AND status IN ('active','trialing')
+  ), active_trials AS (
+    SELECT owner_id,MAX(ends_at) trial_ends_at
+    FROM promotional_entitlements
+    WHERE kind='welcome_trial' AND status='active'
+    GROUP BY owner_id
+  ), user_access AS (
     SELECT a.user_id,a.display_name,a.timezone,a.status,a.created_at,a.updated_at,
-      (SELECT email FROM account_oauth_identities oi WHERE oi.user_id=a.user_id AND oi.provider='google' AND oi.email_verified=1 ORDER BY oi.updated_at DESC LIMIT 1) email,
-      (SELECT s.plan_id FROM subscriptions s WHERE s.user_id=a.user_id AND s.stripe_livemode=1 AND s.status IN ('active','trialing') ORDER BY s.updated_at DESC LIMIT 1) live_plan,
-      (SELECT s.cancel_at_period_end FROM subscriptions s WHERE s.user_id=a.user_id AND s.stripe_livemode=1 AND s.status IN ('active','trialing') ORDER BY s.updated_at DESC LIMIT 1) cancel_at_period_end,
-      (SELECT p.ends_at FROM promotional_entitlements p WHERE p.owner_id='user:'||a.user_id AND p.kind='welcome_trial' AND p.status='active' ORDER BY p.ends_at DESC LIMIT 1) trial_ends_at
+      oi.email,
+      subscription.plan_id live_plan,
+      subscription.cancel_at_period_end,
+      trial.trial_ends_at
     FROM accounts a
+    LEFT JOIN latest_oauth oi ON oi.user_id=a.user_id AND oi.row_number=1
+    LEFT JOIN latest_live_subscription subscription ON subscription.user_id=a.user_id AND subscription.row_number=1
+    LEFT JOIN active_trials trial ON trial.owner_id='user:'||a.user_id
   )`;
 }
 function accessExpression() { return "CASE WHEN live_plan='pro_yearly' THEN 'pro_yearly' WHEN live_plan='pro_monthly' THEN 'pro_monthly' WHEN trial_ends_at>? THEN 'trial' ELSE 'free' END"; }
@@ -106,16 +122,30 @@ export async function listAdminSubscriptions(db: AdminDb, options: ListOptions) 
 }
 
 export async function listAdminFeedback(db: AdminDb, options: ListOptions) {
-  const total = await count(db, "SELECT COUNT(*) count FROM feedback_submissions", []);
+  const values: unknown[] = [];
+  const where: string[] = [];
+  if (options.query) {
+    const q = `%${escapeLike(options.query)}%`;
+    where.push("(f.message LIKE ? ESCAPE '\\' OR f.email LIKE ? ESCAPE '\\' OR f.page_path LIKE ? ESCAPE '\\')");
+    values.push(q, q, q);
+  }
+  if (options.status && ["unread", "read", "resolved"].includes(options.status)) { where.push("f.review_status=?"); values.push(options.status); }
+  if (options.type && ["bug", "suggestion", "other"].includes(options.type)) { where.push("f.type=?"); values.push(options.type); }
+  if (options.retention && ["kept", "archived"].includes(options.retention)) { where.push("f.retention_status=?"); values.push(options.retention); }
+  const clause = where.length ? `WHERE ${where.join(" AND ")}` : "";
+  const total = await count(db, `SELECT COUNT(*) count FROM feedback_submissions f ${clause}`, values);
   const result = await withAdminD1Retry(() => db.prepare(`
-    SELECT f.id,f.message,f.email,f.created_at,MAX(oi.user_id) account_user_id
+    SELECT f.id,f.type,f.message,f.email,f.page_path,f.browser_category,f.device_category,
+      f.review_status,f.reviewed_at,f.admin_note,f.retention_status,f.archived_at,f.created_at,
+      MAX(oi.user_id) account_user_id
     FROM feedback_submissions f
     LEFT JOIN account_oauth_identities oi
       ON oi.email_verified=1 AND lower(oi.email)=lower(f.email)
+    ${clause}
     GROUP BY f.id
     ORDER BY f.created_at DESC
     LIMIT ? OFFSET ?
-  `).bind(options.pageSize, (options.page - 1) * options.pageSize).all<Record<string, unknown>>());
+  `).bind(...values, options.pageSize, (options.page - 1) * options.pageSize).all<Record<string, unknown>>());
   return { items: result.results, meta: pageMeta(total, options.page, options.pageSize) };
 }
 
@@ -135,4 +165,44 @@ export async function reviewFeedback(
     .bind(generateId(), adminUserId, feedbackId, JSON.stringify({ reviewStatus: before.review_status, adminNote: before.admin_note }), JSON.stringify(review), timestamp);
   await withAdminD1Retry(() => db.batch([update, audit]));
   return { id: feedbackId, reviewStatus: review.reviewStatus, adminNote: review.adminNote, reviewedAt: timestamp };
+}
+
+export async function setFeedbackRetention(
+  db: Pick<AdminDb, "prepare" | "batch">,
+  feedbackId: string,
+  retentionStatus: "kept" | "archived",
+  adminUserId: string,
+  generateId = () => crypto.randomUUID(),
+  clock = () => new Date().toISOString(),
+) {
+  const before = await withAdminD1Retry(() => db.prepare("SELECT id,retention_status,archived_at FROM feedback_submissions WHERE id=?").bind(feedbackId).first<{ id: string; retention_status: "kept" | "archived"; archived_at: string | null }>());
+  if (!before) throw new Error("FEEDBACK_NOT_FOUND");
+  const timestamp = clock();
+  const archived = retentionStatus === "archived";
+  const update = db.prepare("UPDATE feedback_submissions SET retention_status=?,archived_at=?,archived_by=? WHERE id=?").bind(retentionStatus, archived ? timestamp : null, archived ? adminUserId : null, feedbackId);
+  const action = archived ? "feedback_archived" : "feedback_restored";
+  const after = { retentionStatus, archivedAt: archived ? timestamp : null };
+  const audit = db.prepare("INSERT INTO admin_audit_logs(id,admin_user_id,action,target_type,target_id,before_json,after_json,created_at) VALUES(?,?,?,?,?,?,?,?)")
+    .bind(generateId(), adminUserId, action, "feedback", feedbackId, JSON.stringify({ retentionStatus: before.retention_status, archivedAt: before.archived_at }), JSON.stringify(after), timestamp);
+  await withAdminD1Retry(() => db.batch([update, audit]));
+  return { id: feedbackId, ...after };
+}
+
+export async function deleteArchivedFeedback(
+  db: Pick<AdminDb, "prepare" | "batch">,
+  feedbackId: string,
+  adminUserId: string,
+  generateId = () => crypto.randomUUID(),
+  clock = () => new Date().toISOString(),
+) {
+  const before = await withAdminD1Retry(() => db.prepare("SELECT id,type,review_status,retention_status,created_at,email FROM feedback_submissions WHERE id=?").bind(feedbackId).first<Record<string, unknown>>());
+  if (!before) throw new Error("FEEDBACK_NOT_FOUND");
+  if (before.retention_status !== "archived") throw new AdminDomainError(409, "FEEDBACK_MUST_BE_ARCHIVED");
+  const timestamp = clock();
+  const deletion = db.prepare("DELETE FROM feedback_submissions WHERE id=? AND retention_status='archived'").bind(feedbackId);
+  const auditBefore = { type: before.type, reviewStatus: before.review_status, retentionStatus: before.retention_status, createdAt: before.created_at, hadEmail: Boolean(before.email) };
+  const audit = db.prepare("INSERT INTO admin_audit_logs(id,admin_user_id,action,target_type,target_id,before_json,after_json,created_at) VALUES(?,?,?,?,?,?,?,?)")
+    .bind(generateId(), adminUserId, "feedback_deleted", "feedback", feedbackId, JSON.stringify(auditBefore), JSON.stringify({ deleted: true }), timestamp);
+  await withAdminD1Retry(() => db.batch([deletion, audit]));
+  return { id: feedbackId, deleted: true };
 }

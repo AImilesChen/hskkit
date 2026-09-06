@@ -99,8 +99,8 @@ test("admin pages, protected APIs, migration and mobile containment are wired wi
   assert.match(overviewRoute, /requireAdmin/);
   assert.match(feedbackRoute, /PATCH/);
   const fullSurface = files.join("\n");
-  assert.match(fullSurface, /s\.user_id=a\.user_id/);
-  assert.match(fullSurface, /p\.owner_id='user:'\|\|a\.user_id/);
+  assert.match(fullSurface, /subscription\.user_id=a\.user_id/);
+  assert.match(fullSurface, /trial\.owner_id='user:'\|\|a\.user_id/);
   assert.match(fullSurface, /const ownerId = `user:\$\{userId\}`/);
   assert.match(nextConfig, /source: "\/admin\/:path\*"/);
   assert.match(nextConfig, /X-Frame-Options[\s\S]*DENY/);
@@ -172,30 +172,58 @@ test("admin D1 retry is bounded and only retries overload errors", async () => {
   assert.equal(attempts, 1);
 });
 
-test("admin renders a retryable fallback when D1 remains unavailable", async () => {
+test("admin renders a visible retrying state before reloading an unavailable route", async () => {
   const source = await readFile(new URL("../src/app/admin/error.tsx", import.meta.url), "utf8").catch(() => "");
   assert.match(source, /Admin data is temporarily unavailable/);
+  assert.match(source, /setRetrying\(true\)/);
+  assert.match(source, /Retrying…/);
   assert.match(source, /window\.location\.reload\(\)/);
-  assert.match(source, /Try again/);
+  assert.match(source, /disabled=\{retrying\}/);
 });
 
-test("admin feedback is a compact read-only list and hides identity fields for anonymous messages", async () => {
-  const [page, repository] = await Promise.all([
-    readFile(new URL("../src/app/admin/(console)/feedback/page.tsx", import.meta.url), "utf8"),
-    readFile(new URL("../src/lib/admin/repository.ts", import.meta.url), "utf8"),
+test("admin deduplicates authorization and provides a scoped navigation loading state", async () => {
+  const [access, loading] = await Promise.all([
+    readFile(new URL("../src/lib/admin/access.ts", import.meta.url), "utf8"),
+    readFile(new URL("../src/app/admin/(console)/loading.tsx", import.meta.url), "utf8").catch(() => ""),
   ]);
+  assert.match(access, /import \{ cache \} from "react"/);
+  assert.match(access, /export const requireAdmin = cache/);
+  assert.match(loading, /admin-loading/);
+  assert.match(loading, /Loading admin data/);
+});
 
-  assert.match(page, /email\s*&&/);
-  assert.match(page, /accountUserId\s*&&/);
-  assert.match(page, />Account</);
-  assert.match(page, />Email</);
-  assert.match(page, /admin-feedback-message/);
-  assert.doesNotMatch(page, /Search feedback|Review status|Internal note|Save review|<Badge|>Page<|>Device<|Anonymous/);
-  assert.match(repository, /LEFT JOIN account_oauth_identities/);
-  assert.match(repository, /account_user_id/);
-  const feedbackRepository = repository.slice(
-    repository.indexOf("export async function listAdminFeedback"),
-    repository.indexOf("export async function reviewFeedback"),
-  );
-  assert.doesNotMatch(feedbackRepository, /maskEmail\(row\.email/);
+test("admin users query avoids per-user correlated subscription scans", async () => {
+  const [repository, migration] = await Promise.all([
+    readFile(new URL("../src/lib/admin/repository.ts", import.meta.url), "utf8"),
+    readFile(new URL("../migrations/0036_admin_performance_feedback_retention.sql", import.meta.url), "utf8").catch(() => ""),
+  ]);
+  const usersRepository = repository.slice(repository.indexOf("function userCte"), repository.indexOf("export async function getAdminUser"));
+  assert.doesNotMatch(usersRepository, /CORRELATED|SELECT s\.plan_id FROM subscriptions|SELECT s\.cancel_at_period_end FROM subscriptions/);
+  assert.match(usersRepository, /ROW_NUMBER\(\) OVER/);
+  assert.match(migration, /idx_subscriptions_admin_user_state/);
+});
+
+test("admin feedback supports search, review, retention filtering and audited deletion", async () => {
+  const [page, form, repository, route, migration] = await Promise.all([
+    readFile(new URL("../src/app/admin/(console)/feedback/page.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../src/app/admin/(console)/feedback/feedback-review-form.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../src/lib/admin/repository.ts", import.meta.url), "utf8"),
+    readFile(new URL("../src/app/api/v1/admin/feedback/[id]/route.ts", import.meta.url), "utf8"),
+    readFile(new URL("../migrations/0036_admin_performance_feedback_retention.sql", import.meta.url), "utf8").catch(() => ""),
+  ]);
+  assert.match(page, /Search feedback/);
+  assert.match(page, /Review status/);
+  assert.match(page, /Feedback type/);
+  assert.match(page, /Retention/);
+  assert.match(page, /FeedbackReviewForm/);
+  assert.match(form, /Archive/);
+  assert.match(form, /Restore/);
+  assert.match(form, /Delete permanently/);
+  assert.match(form, /window\.confirm/);
+  assert.match(repository, /retention_status/);
+  assert.match(repository, /feedback_archived/);
+  assert.match(repository, /feedback_deleted/);
+  assert.match(route, /export async function DELETE/);
+  assert.match(migration, /retention_status/);
+  assert.match(migration, /feedback_deleted/);
 });

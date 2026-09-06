@@ -1,3 +1,4 @@
+import { cache } from "react";
 import { getCloudflareContext } from "@opennextjs/cloudflare";
 import { requestIdentity } from "@/lib/account/identity";
 import { AdminDomainError, AdminStorageUnavailableError, authorizeAdminIdentity, withAdminD1Retry } from "./domain.ts";
@@ -9,12 +10,12 @@ export const ADMIN_PRIVATE_HEADERS = {
   "Content-Security-Policy": "frame-ancestors 'none'",
 } as const;
 
-export async function requireAdmin() {
+export const requireAdmin = cache(async function requireAdmin() {
   const identity = await withAdminD1Retry(() => requestIdentity({ touchSession: false }));
   const env = getCloudflareContext().env;
   const admin = authorizeAdminIdentity(identity.account ? { userId: identity.account.userId, connection: identity.connection } : undefined, env.ADMIN_USER_IDS);
   return { ...admin, env };
-}
+});
 
 export function requireAdminSameOrigin(request: Request) {
   const origin = request.headers.get("origin");

@@ -64,6 +64,7 @@ export function parseListQuery(search: URLSearchParams) {
 }
 
 export type ReviewStatus = "unread" | "read" | "resolved";
+export type FeedbackRetentionStatus = "kept" | "archived";
 export function validateFeedbackReview(input: unknown): { reviewStatus: ReviewStatus; adminNote: string | null } {
   if (!input || typeof input !== "object") throw new AdminDomainError(400, "INVALID_REVIEW_INPUT");
   const candidate = input as Record<string, unknown>;
@@ -74,6 +75,13 @@ export function validateFeedbackReview(input: unknown): { reviewStatus: ReviewSt
   const adminNote = typeof candidate.adminNote === "string" ? candidate.adminNote.trim() : "";
   if (adminNote.length > 1000) throw new AdminDomainError(422, "ADMIN_NOTE_TOO_LONG");
   return { reviewStatus: candidate.reviewStatus as ReviewStatus, adminNote: adminNote || null };
+}
+
+export function validateFeedbackRetention(input: unknown): FeedbackRetentionStatus {
+  if (!input || typeof input !== "object") throw new AdminDomainError(400, "INVALID_RETENTION_INPUT");
+  const retentionStatus = (input as Record<string, unknown>).retentionStatus;
+  if (retentionStatus !== "kept" && retentionStatus !== "archived") throw new AdminDomainError(422, "INVALID_RETENTION_STATUS");
+  return retentionStatus;
 }
 
 export function escapeLike(value: string) {
