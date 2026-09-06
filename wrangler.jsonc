@@ -30,8 +30,8 @@
 		"AI_DAILY_ALLOWANCE": "10",
 		"AI_RATE_LIMIT_PER_MINUTE": "6",
 		"AI_MAX_OUTPUT_TOKENS": "500",
-		"COMMERCE_MODE": "test",
-		"STRIPE_PAID_CHECKOUT_ENABLED": "false",
+		"COMMERCE_MODE": "live",
+		"STRIPE_PAID_CHECKOUT_ENABLED": "true",
 		"GOOGLE_REDIRECT_URI": "https://hskkit.com/api/v1/auth/google/callback"
 	},
 	"d1_databases": [{
