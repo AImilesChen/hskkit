@@ -152,7 +152,7 @@ test("admin D1 retry is bounded and only retries overload errors", async () => {
   }, async (milliseconds: number) => { waits.push(milliseconds); });
   assert.equal(result, "ok");
   assert.equal(attempts, 3);
-  assert.deepEqual(waits, [40, 120]);
+  assert.deepEqual(waits, [250, 750]);
 
   attempts = 0;
   await assert.rejects(
@@ -162,7 +162,7 @@ test("admin D1 retry is bounded and only retries overload errors", async () => {
     }, async () => {}),
     AdminStorageUnavailableError,
   );
-  assert.equal(attempts, 3);
+  assert.equal(attempts, 5);
 
   attempts = 0;
   await assert.rejects(withAdminD1Retry(async () => {
@@ -175,7 +175,7 @@ test("admin D1 retry is bounded and only retries overload errors", async () => {
 test("admin renders a retryable fallback when D1 remains unavailable", async () => {
   const source = await readFile(new URL("../src/app/admin/error.tsx", import.meta.url), "utf8").catch(() => "");
   assert.match(source, /Admin data is temporarily unavailable/);
-  assert.match(source, /reset\(\)/);
+  assert.match(source, /window\.location\.reload\(\)/);
   assert.match(source, /Try again/);
 });
 

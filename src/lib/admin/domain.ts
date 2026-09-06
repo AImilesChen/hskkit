@@ -18,7 +18,7 @@ export async function withAdminD1Retry<T>(
   operation: () => Promise<T>,
   wait: (milliseconds: number) => Promise<void> = (milliseconds) => new Promise((resolve) => setTimeout(resolve, milliseconds)),
 ) {
-  const delays = [40, 120];
+  const delays = [250, 750, 1_500, 3_000];
   for (let attempt = 0; attempt <= delays.length; attempt += 1) {
     try { return await operation(); } catch (error) {
       if (!isD1Overload(error)) throw error;
