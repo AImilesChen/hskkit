@@ -110,17 +110,34 @@ test("admin pages, protected APIs, migration and mobile containment are wired wi
 });
 
 test("admin navigation disables automatic route prefetch to prevent D1 request bursts", async () => {
-  const [layout, users, components] = await Promise.all([
-    readFile(new URL("../src/app/admin/(console)/layout.tsx", import.meta.url), "utf8"),
+  const [navigation, users, components] = await Promise.all([
+    readFile(new URL("../src/app/admin/(console)/admin-navigation.tsx", import.meta.url), "utf8"),
     readFile(new URL("../src/app/admin/(console)/users/page.tsx", import.meta.url), "utf8"),
     readFile(new URL("../src/app/admin/(console)/components.tsx", import.meta.url), "utf8"),
   ]);
 
-  for (const [name, source] of [["layout", layout], ["users", users], ["components", components]] as const) {
+  for (const [name, source] of [["navigation", navigation], ["users", users], ["components", components]] as const) {
     const links = source.match(/<Link\b[^>]*>/g) || [];
     assert.ok(links.length > 0, `${name} should contain admin links`);
     for (const link of links) assert.match(link, /prefetch=\{false\}/, `${name} link must not prefetch: ${link}`);
   }
+});
+
+test("admin navigation exposes the current section and immediate pending feedback", async () => {
+  const [layout, navigation, css] = await Promise.all([
+    readFile(new URL("../src/app/admin/(console)/layout.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../src/app/admin/(console)/admin-navigation.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../src/app/admin/(console)/admin.css", import.meta.url), "utf8"),
+  ]);
+
+  assert.match(layout, /<AdminNavigation\s*\/>/);
+  assert.match(navigation, /usePathname/);
+  assert.match(navigation, /aria-current=\{isCurrent \? "page" : undefined\}/);
+  assert.match(navigation, /aria-busy=\{!!pendingHref\}/);
+  assert.match(navigation, /setPendingHref\(item\.href\)/);
+  assert.match(navigation, /Loading…/);
+  assert.match(css, /admin-nav a\[aria-current="page"\]/);
+  assert.match(css, /admin-nav a\.is-pending/);
 });
 
 test("admin D1 retry is bounded and only retries overload errors", async () => {
