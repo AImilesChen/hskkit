@@ -14,11 +14,15 @@ test("signed-in navigation exposes Dashboard directly without removing the guest
   assert.match(header, /account:\s*\{[^}]*userId/);
   assert.match(header, /href:\s*"\/dashboard"/);
   assert.match(header, /label:\s*"Dashboard"/);
-  assert.match(header, /authState === "loading"/);
   assert.match(header, /hskkit:auth-changed/);
   assert.match(header, /Manage your synced account, access, billing, and private exports/);
   assert.match(header, /entry\.href === "\/account"/);
   assert.match(header, /signedIn \? "Account" : entry\.label/);
+});
+
+test("guest Sign in remains visible while account status is loading or unavailable", () => {
+  assert.match(header, /const navigation = signedIn\s*\? \[dashboardEntry, \.\.\.siteNavigation\] : siteNavigation;/);
+  assert.doesNotMatch(header, /siteNavigation\.filter\(\(entry\) => isNavigationGroup\(entry\) \|\| entry\.href !== "\/account"\)/);
 });
 
 test("dashboard presents the approved four visual layers in order", () => {

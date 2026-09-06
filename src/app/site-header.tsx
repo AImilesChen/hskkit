@@ -24,9 +24,7 @@ export default function SiteHeader() {
   const isTraditionalRoute = legacyRoutePattern.test(pathname);
   const signedIn = authState === "account";
   const dashboardEntry = { href: "/dashboard", label: "Dashboard", description: "Open your saved learning dashboard and next task." };
-  const navigation = authState === "loading"
-    ? siteNavigation.filter((entry) => isNavigationGroup(entry) || entry.href !== "/account")
-    : signedIn ? [dashboardEntry, ...siteNavigation] : siteNavigation;
+  const navigation = signedIn ? [dashboardEntry, ...siteNavigation] : siteNavigation;
   const navigationDescription = (entry: { href: string; description: string }) => entry.href === "/account" && signedIn
     ? "Manage your synced account, access, billing, and private exports."
     : entry.description;
