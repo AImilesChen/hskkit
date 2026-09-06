@@ -51,6 +51,8 @@ type AiMergeSnapshot = { operationCount: number; operationMax: string; bucketCou
 
 const db = () => getCloudflareContext().env.LEARNING_DB;
 const now = () => new Date().toISOString();
+const SESSION_TOUCH_INTERVAL_MS = 15 * 60_000;
+const sessionTouchThreshold = (timestamp: string) => new Date(Date.parse(timestamp) - SESSION_TOUCH_INTERVAL_MS).toISOString();
 
 async function stableSyncConflictId(userId: string, deviceId: string, clientRevision: number, serverRevision: number) {
   const input = new TextEncoder().encode(`${userId}\u0000${deviceId}\u0000${clientRevision}\u0000${serverRevision}`);
@@ -121,7 +123,8 @@ export async function authenticateAccount(syncKey: string | undefined, touchSess
   const tokenHash = await hash(syncKey);
   const row = await db().prepare("SELECT a.* FROM account_tokens t JOIN accounts a ON a.user_id=t.user_id WHERE t.token_hash=? AND t.revoked_at IS NULL AND a.status='active'").bind(tokenHash).first<AccountRow>();
   if (!row) return undefined;
-  if (touchSession) await db().prepare("UPDATE account_tokens SET last_used_at=? WHERE token_hash=?").bind(now(), tokenHash).run().catch(() => undefined);
+  const timestamp = now();
+  if (touchSession) await db().prepare("UPDATE account_tokens SET last_used_at=? WHERE token_hash=? AND (last_used_at IS NULL OR last_used_at < ?)").bind(timestamp, tokenHash, sessionTouchThreshold(timestamp)).run().catch(() => undefined);
   return account(row);
 }
 
@@ -131,7 +134,7 @@ export async function authenticateSession(sessionToken: string | undefined, touc
   const timestamp = now();
   const row = await db().prepare("SELECT a.* FROM account_sessions s JOIN accounts a ON a.user_id=s.user_id WHERE s.token_hash=? AND s.revoked_at IS NULL AND s.expires_at>? AND a.status='active'").bind(tokenHash, timestamp).first<AccountRow>();
   if (!row) return undefined;
-  if (touchSession) await db().prepare("UPDATE account_sessions SET last_used_at=? WHERE token_hash=?").bind(timestamp, tokenHash).run().catch(() => undefined);
+  if (touchSession) await db().prepare("UPDATE account_sessions SET last_used_at=? WHERE token_hash=? AND (last_used_at IS NULL OR last_used_at < ?)").bind(timestamp, tokenHash, sessionTouchThreshold(timestamp)).run().catch(() => undefined);
   return account(row);
 }
 

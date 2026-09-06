@@ -133,6 +133,7 @@ export function DictionarySearch({ characterFacets, initialWords }: { characterF
     setLoading(!keepInitialVisible); setError(""); setAlternatives([]);
     if (applied.mode === "words" || applied.mode === "levels") {
       setCharacters(null);
+      if (!keepInitialVisible) setWords(null);
       const params = new URLSearchParams({ page: String(applied.page), pageSize: "12" });
       if (applied.query) params.set("q", applied.query);
       if (applied.level !== "all" && applied.level !== "default") params.set("level", applied.level);
@@ -142,6 +143,7 @@ export function DictionarySearch({ characterFacets, initialWords }: { characterF
       void fetch(`/api/v1/catalog/words?${params.toString()}`, { signal, cache: "default" }).then(async (response) => {
         const body = await response.json() as CatalogResponse & { message?: string };
         if (!response.ok) throw new Error(body.message || "The dictionary is temporarily unavailable.");
+        if (signal.aborted) return;
         setWords(body); setCharacters(null);
         if (body.contentAssets.length === 0 && applied.query) {
           const suggestionParams = new URLSearchParams({ q: applied.query });
@@ -150,6 +152,7 @@ export function DictionarySearch({ characterFacets, initialWords }: { characterF
       }).catch((reason: unknown) => { if (!controller.signal.aborted && !keepInitialVisible) setError(reason instanceof DOMException && reason.name === "TimeoutError" ? "The dictionary took too long to respond. Please try again." : reason instanceof Error ? reason.message : "The dictionary is temporarily unavailable."); }).finally(() => { if (!controller.signal.aborted) setLoading(false); });
     } else {
       setWords(null);
+      setCharacters(null);
       const params = new URLSearchParams({ page: String(applied.page), pageSize: "48" });
       if (applied.query) params.set("q", applied.query);
       if (applied.level !== "all" && applied.level !== "default") params.set("level", applied.level);
@@ -159,7 +162,7 @@ export function DictionarySearch({ characterFacets, initialWords }: { characterF
       if (applied.initial) params.set("initial", applied.initial);
       if (applied.final) params.set("final", applied.final);
       if (applied.tone) params.set("tone", applied.tone);
-      void fetch(`/api/v1/dictionary/characters?${params.toString()}`, { signal, cache: "default" }).then(async (response) => { const body = await response.json() as CharacterResponse & { message?: string }; if (!response.ok) throw new Error(body.message || "The character index is temporarily unavailable."); setCharacters(body); setWords(null); }).catch((reason: unknown) => { if (!controller.signal.aborted) setError(reason instanceof DOMException && reason.name === "TimeoutError" ? "The character index took too long to respond. Please try again." : reason instanceof Error ? reason.message : "The character index is temporarily unavailable."); }).finally(() => { if (!controller.signal.aborted) setLoading(false); });
+      void fetch(`/api/v1/dictionary/characters?${params.toString()}`, { signal, cache: "default" }).then(async (response) => { const body = await response.json() as CharacterResponse & { message?: string }; if (!response.ok) throw new Error(body.message || "The character index is temporarily unavailable."); if (signal.aborted) return; setCharacters(body); setWords(null); }).catch((reason: unknown) => { if (!controller.signal.aborted) setError(reason instanceof DOMException && reason.name === "TimeoutError" ? "The character index took too long to respond. Please try again." : reason instanceof Error ? reason.message : "The character index is temporarily unavailable."); }).finally(() => { if (!controller.signal.aborted) setLoading(false); });
     }
     return () => controller.abort();
   }, [applied.audio, applied.final, applied.initial, applied.level, applied.mode, applied.page, applied.partOfSpeech, applied.query, applied.radical, applied.strokes, applied.structure, applied.tone, retryToken]);

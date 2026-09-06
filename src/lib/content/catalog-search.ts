@@ -1,3 +1,5 @@
+import { withCatalogD1ReadRetries } from "./catalog-retry.ts";
+
 export type CatalogSearchField = "all" | "hanzi" | "pinyin" | "english";
 
 export interface CatalogSearchParams {
@@ -250,12 +252,14 @@ export function isCatalogWordAssetId(assetId: string): boolean {
 }
 
 export async function getActiveCatalogSearchRelease(db: CatalogSearchDatabase) {
+  db = withCatalogD1ReadRetries(db);
   return db.prepare(
     "SELECT id,version,published_at,word_count FROM catalog_search_releases WHERE active=1 ORDER BY published_at DESC LIMIT 1",
   ).first<ActiveCatalogSearchRelease>();
 }
 
 export async function getUniqueActiveCatalogSearchRelease(db: CatalogSearchDatabase) {
+  db = withCatalogD1ReadRetries(db);
   const result = await db.prepare(
     "SELECT id,version,published_at,word_count FROM catalog_search_releases WHERE active=1 ORDER BY published_at DESC LIMIT 2",
   ).all<ActiveCatalogSearchRelease>();
@@ -268,11 +272,12 @@ export async function findActiveCatalogWordById(
   assetId: string,
 ): Promise<CatalogSearchRow | null> {
   if (!isCatalogWordAssetId(assetId)) return null;
+  db = withCatalogD1ReadRetries(db);
   return db.prepare(
     `SELECT i.id,i.release_id,i.standard_version,i.content_version,i.level_band,i.hanzi,i.traditional,i.pinyin,i.meaning,i.part_of_speech
      FROM catalog_search_index i
-     INNER JOIN catalog_search_releases r ON r.id = i.release_id
-     WHERE i.id = ? AND r.active = 1
+     WHERE i.release_id = (SELECT id FROM catalog_search_releases WHERE active = 1 ORDER BY published_at DESC LIMIT 1)
+       AND i.id = ?
      LIMIT 1`,
   ).bind(assetId).first<CatalogSearchRow>();
 }
@@ -283,13 +288,15 @@ export async function findActiveCatalogWordsContainingCharacter(
   limit = 30,
 ): Promise<CatalogSearchRow[]> {
   if (!/^[\u3400-\u9fff]$/u.test(hanzi)) return [];
+  db = withCatalogD1ReadRetries(db);
   const boundedLimit = Math.max(1, Math.min(60, Math.trunc(limit)));
   const result = await db.prepare(
     `SELECT i.id,i.release_id,i.standard_version,i.content_version,i.level_band,i.hanzi,i.traditional,i.pinyin,i.meaning,i.part_of_speech
-     FROM catalog_search_index i
-     INNER JOIN catalog_search_releases r ON r.id = i.release_id
-     WHERE r.active = 1 AND instr(i.hanzi, ?) > 0
-     ORDER BY i.sort_level,i.id
+     FROM catalog_character_words cw
+     INNER JOIN catalog_search_index i ON i.release_id = cw.release_id AND i.id = cw.word_id
+     WHERE cw.release_id = (SELECT id FROM catalog_search_releases WHERE active = 1 ORDER BY published_at DESC LIMIT 1)
+       AND cw.character = ?
+     ORDER BY cw.sort_level,cw.word_id
      LIMIT ?`,
   ).bind(hanzi, boundedLimit).all<CatalogSearchRow>();
   if (!result.success) throw new Error(result.error || "Character word lookup failed");
@@ -306,11 +313,11 @@ const learningSelect = "i.id,i.release_id,i.standard_version,i.content_version,i
 export async function findActiveCatalogWordsByIds(db: CatalogSearchDatabase, assetIds: string[]) {
   const ids = [...new Set(assetIds)].filter(isCatalogWordAssetId).slice(0, 100);
   if (!ids.length) return [];
+  db = withCatalogD1ReadRetries(db);
   const result = await db.prepare(
     `SELECT ${learningSelect} FROM catalog_search_index i
-     INNER JOIN catalog_search_releases r ON r.id = i.release_id
-     WHERE r.active = 1 AND i.id IN (${ids.map(() => "?").join(",")})
-     ORDER BY i.sort_level,i.id`,
+     WHERE i.release_id = (SELECT id FROM catalog_search_releases WHERE active = 1 ORDER BY published_at DESC LIMIT 1)
+       AND i.id IN (${ids.map(() => "?").join(",")})`,
   ).bind(...ids).all<CatalogLearningRow>();
   if (!result.success) throw new Error(result.error || "Catalog lookup failed");
   const byId = new Map(result.results.map((row) => [row.id, row]));
@@ -324,10 +331,10 @@ export async function findCatalogWordsByIds(
 ) {
   const ids = [...new Set(assetIds)].filter(isCatalogWordAssetId).slice(0, 100);
   if (!ids.length || !releaseId) return [];
+  db = withCatalogD1ReadRetries(db);
   const result = await db.prepare(
     `SELECT ${learningSelect} FROM catalog_search_index i
-     WHERE i.release_id = ? AND i.id IN (${ids.map(() => "?").join(",")})
-     ORDER BY i.sort_level,i.id`,
+     WHERE i.release_id = ? AND i.id IN (${ids.map(() => "?").join(",")})`,
   ).bind(releaseId, ...ids).all<CatalogLearningRow>();
   if (!result.success) throw new Error(result.error || "Catalog release lookup failed");
   const byId = new Map(result.results.map((row) => [row.id, row]));
@@ -336,10 +343,11 @@ export async function findCatalogWordsByIds(
 
 export async function findCatalogWordLearningContext(db: CatalogSearchDatabase, assetId: string) {
   if (!isCatalogWordAssetId(assetId)) return null;
+  db = withCatalogD1ReadRetries(db);
   const current = await db.prepare(
     `SELECT ${learningSelect} FROM catalog_search_index i
-     INNER JOIN catalog_search_releases r ON r.id = i.release_id
-     WHERE i.id = ? AND r.active = 1 LIMIT 1`,
+     WHERE i.release_id = (SELECT id FROM catalog_search_releases WHERE active = 1 ORDER BY published_at DESC LIMIT 1)
+       AND i.id = ? LIMIT 1`,
   ).bind(assetId).first<CatalogLearningRow>();
   if (!current) return null;
 
@@ -370,6 +378,7 @@ export async function searchCatalogWords(
   params: CatalogSearchParams,
   formalAudioIds: readonly string[] = [],
 ) {
+  db = withCatalogD1ReadRetries(db);
   const release = await db.prepare(
     "SELECT id,version,published_at,word_count FROM catalog_search_releases WHERE active=1 ORDER BY published_at DESC LIMIT 1",
   ).first<ActiveCatalogSearchRelease>();
@@ -419,6 +428,7 @@ export async function suggestCatalogWords(
 ): Promise<CatalogSearchRow[]> {
   const needle = normalizeCatalogQuery(input.q.trim()).slice(0, 100);
   if (!needle) return [];
+  db = withCatalogD1ReadRetries(db);
   const release = await db.prepare(
     "SELECT id,version,published_at,word_count FROM catalog_search_releases WHERE active=1 ORDER BY published_at DESC LIMIT 1",
   ).first<ActiveCatalogSearchRelease>();
