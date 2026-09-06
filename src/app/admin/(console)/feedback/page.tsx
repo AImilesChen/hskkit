@@ -56,8 +56,6 @@ export default async function AdminFeedbackPage({ searchParams }: Props) {
               <dl>
                 {accountUserId ? <div><dt>Account</dt><dd>{accountUserId}</dd></div> : null}
                 <div><dt>Email</dt><dd>{email || "Anonymous"}</dd></div>
-                <div><dt>Page</dt><dd>{String(row.page_path || "—")}</dd></div>
-                <div><dt>Device</dt><dd>{String(row.device_category || "—")} · {String(row.browser_category || "—")}</dd></div>
               </dl>
               <FeedbackReviewForm
                 id={String(row.id)}
