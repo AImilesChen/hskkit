@@ -80,12 +80,12 @@ const subscriptionStatuses = new Set<ProviderSubscriptionStatus>(["trialing","ac
 export type NormalizedSubscriptionEvent =
   | { kind: "checkout_completed"; eventId: string; orderId: string; ownerId: string; userId: string; planId: SubscriptionPlanId; checkoutSessionId: string; customerId: string; subscriptionId: string; amountCents: number; currency: string }
   | { kind: "subscription_updated"; eventId: string; orderId?: string; ownerId: string; userId: string; planId: SubscriptionPlanId; subscriptionId: string; customerId: string; status: ProviderSubscriptionStatus; cancelAtPeriodEnd: boolean; amountCents: number; currency: string; currentPeriodStart?: string; currentPeriodEnd?: string }
-  | { kind: "invoice_paid" | "invoice_payment_failed"; eventId: string; invoiceId: string; subscriptionId: string; customerId: string; paymentIntentId?: string; chargeId?: string; amountCents: number; currency: string; chargedAt?: string }
+  | { kind: "invoice_paid" | "invoice_payment_failed"; eventId: string; invoiceId: string; subscriptionId: string; customerId: string; paymentIntentId?: string; chargeId?: string; amountCents: number; currency: string; chargedAt?: string; billingReason?: string }
   | { kind: "charge_refunded"; eventId: string; chargeId: string; paymentIntentId?: string; amountRefundedCents: number; currency: string }
   | { kind: "invalid"; eventId: string; eventType: string }
   | { kind: "ignored"; eventId: string; eventType: string };
 
-export function normalizeSubscriptionEvent(event: { id?: unknown; type?: unknown; data?: { object?: unknown } }): NormalizedSubscriptionEvent {
+export function normalizeSubscriptionEvent(event: { id?: unknown; type?: unknown; livemode?:unknown; data?: { object?: unknown } },planByPriceId:Record<string,SubscriptionPlanId>={}): NormalizedSubscriptionEvent {
   const eventId = text(event.id) ?? "";
   const eventType = text(event.type) ?? "";
   const object = event.data?.object && typeof event.data.object === "object" ? event.data.object as Record<string, unknown> : {};
@@ -106,11 +106,11 @@ export function normalizeSubscriptionEvent(event: { id?: unknown; type?: unknown
   if (["customer.subscription.created", "customer.subscription.updated", "customer.subscription.deleted"].includes(eventType)) {
     const ownerId = text(meta.owner_id);
     const userId = text(meta.user_id);
-    const plan = subscriptionPlan(meta.plan_id);
     const subscriptionId = text(object.id);
     const customerId = text(object.customer);
     const providerStatus = text(object.status) as ProviderSubscriptionStatus | undefined;
     const items=metadata(object.items); const firstItem=Array.isArray(items.data)&&items.data[0]&&typeof items.data[0]==="object"?items.data[0] as Record<string,unknown>:{}; const price=metadata(firstItem.price);
+    const plan = subscriptionPlan(planByPriceId[text(price.id)??""]??meta.plan_id);
     const amountCents=money(price.unit_amount); const currency=text(price.currency);
     if (eventId && ownerId && userId && plan && subscriptionId && customerId && providerStatus && subscriptionStatuses.has(providerStatus) && amountCents !== undefined && currency) return {
       kind: "subscription_updated", eventId, orderId: text(meta.order_id), ownerId, userId, planId: plan.id, subscriptionId, customerId,
@@ -130,7 +130,7 @@ export function normalizeSubscriptionEvent(event: { id?: unknown; type?: unknown
       kind: eventType === "invoice.paid" ? "invoice_paid" : "invoice_payment_failed", eventId, invoiceId, subscriptionId,
       customerId, paymentIntentId: text(object.payment_intent)??text(paymentRef.payment_intent), chargeId: text(object.charge),
       amountCents, currency,
-      chargedAt: iso(metadata(object.status_transitions).paid_at),
+      chargedAt: iso(metadata(object.status_transitions).paid_at), billingReason:text(object.billing_reason),
     };
     return { kind: "invalid", eventId, eventType };
   }

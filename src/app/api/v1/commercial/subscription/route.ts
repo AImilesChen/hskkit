@@ -1,9 +1,9 @@
 import { getCloudflareContext } from "@opennextjs/cloudflare";
 import { NextRequest, NextResponse } from "next/server";
 import { accountOwnerId, requestIdentity } from "@/lib/account/identity";
-import { stripeModeFromSecret,stripeSecretForMode,subscriptionCommercePolicy } from "@/lib/commercial/domain";
+import { stripeModeFromSecret,stripePriceId,stripeSecretForMode,subscriptionCommercePolicy } from "@/lib/commercial/domain";
 import { markSubscriptionCancelAtPeriodEnd, requestSubscriptionRefund, resolveCapabilities, subscriptionSummaryForOwner } from "@/lib/commercial/storage";
-import { cancelStripeSubscriptionAtPeriodEnd } from "@/lib/commercial/stripe";
+import { cancelStripeSubscriptionAtPeriodEnd,createStripeYearlyUpgradePortal } from "@/lib/commercial/stripe";
 
 async function context(){
   const identity=await requestIdentity();
@@ -30,6 +30,15 @@ export async function POST(req:NextRequest){
     const body=JSON.parse(await req.text()) as Record<string,unknown>; const action=String(body.action??"");
     const livemode=getCloudflareContext().env.COMMERCE_MODE==="live";
     const summary=await subscriptionSummaryForOwner(identity.ownerId,livemode);
+    if(action==="switch_to_yearly"){
+      if(!summary.subscription||summary.subscription.plan_id!=="pro_monthly"||!["active","trialing"].includes(summary.subscription.status)||summary.subscription.cancel_at_period_end) return NextResponse.json({error:"MONTHLY_SUBSCRIPTION_REQUIRED"},{status:409});
+      const key=String(body.idempotencyKey??""); if(!key||key.length>80) return NextResponse.json({error:"INVALID_IDEMPOTENCY_KEY"},{status:422});
+      const env=getCloudflareContext().env;const policy=subscriptionCommercePolicy(env);if(!policy.enabled)return NextResponse.json({error:policy.code},{status:503});
+      const stripeMode=Number(summary.subscription.stripe_livemode)===1?"live":"test";if(stripeMode!=="live")return NextResponse.json({error:"LIVE_SUBSCRIPTION_REQUIRED"},{status:409});
+      const stripeSecret=stripeSecretForMode(env,stripeMode);if(stripeModeFromSecret(stripeSecret)!==stripeMode)return NextResponse.json({error:"STRIPE_MODE_MISMATCH"},{status:503});
+      const portal=await createStripeYearlyUpgradePortal({subscriptionId:summary.subscription.provider_subscription_id,customerId:summary.subscription.provider_customer_id,monthlyPriceId:stripePriceId(env.STRIPE_PRICE_MAP,"subscription:pro_monthly"),yearlyPriceId:stripePriceId(env.STRIPE_PRICE_MAP,"subscription:pro_yearly"),returnUrl:`${req.nextUrl.origin}/pricing?plan=updated`,secret:stripeSecret!,idempotencyKey:key});
+      return NextResponse.json({portalUrl:portal.url});
+    }
     if(action==="cancel"){
       if(!summary.subscription||!["active","trialing"].includes(summary.subscription.status)) return NextResponse.json({error:"ACTIVE_SUBSCRIPTION_REQUIRED"},{status:409});
       if(summary.subscription.cancel_at_period_end) return NextResponse.json({...publicSummary(summary),reused:true});

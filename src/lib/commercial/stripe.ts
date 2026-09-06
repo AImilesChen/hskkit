@@ -37,7 +37,7 @@ async function verifyFixedPrice(input:{priceId:string;secret:string;amountCents:
     ? value.type==="recurring"&&recurring?.interval===input.recurring.interval&&Number(recurring?.interval_count)===input.recurring.intervalCount
     : value.type==="one_time"&&!recurring;
   if(value.id!==input.priceId||value.active!==true||value.currency!==input.currency||Number(value.unit_amount)!==input.amountCents||!recurringMatches)throw new Error("STRIPE_PRICE_MISMATCH");
-  return mode;
+  return {mode,productId:typeof value.product==="string"?value.product:undefined};
 }
 
 export async function createStripeTestCheckout(input:{orderId:string;userId:string;selectedLevel:number;successUrl:string;cancelUrl:string;secret:string}){
@@ -86,6 +86,45 @@ export async function createStripeSubscriptionCheckout(input:{orderId:string;own
   const {value}=await stripeRequest("checkout/sessions",input.secret,{form,idempotencyKey:`subscription-checkout:${input.orderId}`});
   const prefix=mode==="live"?"cs_live_":"cs_test_";
   if(typeof value.id!=="string"||typeof value.url!=="string"||!value.id.startsWith(prefix))throw new Error("STRIPE_SUBSCRIPTION_CHECKOUT_INVALID");
+  return {id:value.id,url:value.url};
+}
+
+export async function createStripeYearlyUpgradePortal(input:{subscriptionId:string;customerId:string;monthlyPriceId:string;yearlyPriceId:string;returnUrl:string;secret:string;idempotencyKey:string}){
+  const [monthly,yearly]=await Promise.all([
+    verifyFixedPrice({priceId:input.monthlyPriceId,secret:input.secret,amountCents:599,currency:"usd",recurring:{interval:"month",intervalCount:1}}),
+    verifyFixedPrice({priceId:input.yearlyPriceId,secret:input.secret,amountCents:4900,currency:"usd",recurring:{interval:"year",intervalCount:1}}),
+  ]);
+  if(!monthly.productId||monthly.productId!==yearly.productId)throw new Error("STRIPE_SUBSCRIPTION_PRODUCT_MISMATCH");
+  const {value:subscription}=await stripeRequest(`subscriptions/${encodeURIComponent(input.subscriptionId)}`,input.secret,{method:"GET"});
+  const items=subscription.items as {data?:Array<Record<string,unknown>>}|undefined;
+  const item=items?.data?.[0];const price=item?.price as Record<string,unknown>|undefined;
+  if(subscription.id!==input.subscriptionId||subscription.customer!==input.customerId||!["active","trialing"].includes(String(subscription.status))||subscription.cancel_at_period_end===true||items?.data?.length!==1||typeof item?.id!=="string"||price?.id!==input.monthlyPriceId)throw new Error("MONTHLY_SUBSCRIPTION_REQUIRED");
+  const marker=`${input.monthlyPriceId}:${input.yearlyPriceId}`;
+  const {value:list}=await stripeRequest("billing_portal/configurations?active=true&limit=100",input.secret,{method:"GET"});
+  const configurations=Array.isArray(list.data)?list.data as Array<Record<string,unknown>>:[];
+  let configuration=configurations.find(entry=>{
+    const metadata=entry.metadata as Record<string,unknown>|undefined;
+    return entry.active===true&&metadata?.hskkit_yearly_upgrade===marker;
+  });
+  if(!configuration){
+    const form=new URLSearchParams();
+    form.set("features[payment_method_update][enabled]","true");
+    form.set("features[subscription_cancel][enabled]","true");
+    form.set("features[subscription_cancel][mode]","at_period_end");
+    form.set("features[subscription_update][enabled]","true");
+    form.append("features[subscription_update][default_allowed_updates][]","price");
+    form.set("features[subscription_update][proration_behavior]","always_invoice");
+    form.set("features[subscription_update][products][0][product]",monthly.productId);
+    form.append("features[subscription_update][products][0][prices][]",input.monthlyPriceId);
+    form.append("features[subscription_update][products][0][prices][]",input.yearlyPriceId);
+    form.set("metadata[hskkit_yearly_upgrade]",marker);
+    const created=await stripeRequest("billing_portal/configurations",input.secret,{form,idempotencyKey:`hskkit-yearly-upgrade-config:${input.monthlyPriceId}:${input.yearlyPriceId}`});
+    configuration=created.value;
+  }
+  if(typeof configuration.id!=="string")throw new Error("STRIPE_PORTAL_CONFIGURATION_INVALID");
+  const form=new URLSearchParams({customer:input.customerId,configuration:configuration.id,return_url:input.returnUrl,"flow_data[type]":"subscription_update_confirm","flow_data[subscription_update_confirm][subscription]":input.subscriptionId,"flow_data[subscription_update_confirm][items][0][id]":String(item.id),"flow_data[subscription_update_confirm][items][0][price]":input.yearlyPriceId,"flow_data[subscription_update_confirm][items][0][quantity]":String(Number(item.quantity??1)),"flow_data[after_completion][type]":"redirect","flow_data[after_completion][redirect][return_url]":input.returnUrl});
+  const {value}=await stripeRequest("billing_portal/sessions",input.secret,{form,idempotencyKey:`hskkit-yearly-upgrade:${input.idempotencyKey}`});
+  if(typeof value.id!=="string"||typeof value.url!=="string")throw new Error("STRIPE_PORTAL_SESSION_INVALID");
   return {id:value.id,url:value.url};
 }
 

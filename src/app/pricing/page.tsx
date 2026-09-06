@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import SiteHeader from "../site-header";
 import SiteFooter from "../site-footer";
-import SubscriptionCheckout from "./subscription-checkout";
+import SubscriptionCheckout,{FreePlanAction} from "./subscription-checkout";
 import { PUBLIC_ACCOUNT_SCOPE, PUBLIC_FORMAL_CONTENT_SCOPE } from "@/lib/public-copy";
 
 export const metadata: Metadata = { title: "Pricing | HSKKit", description: "Compare HSKKit Free with Pro Monthly and Pro Yearly.", alternates: { canonical: "/pricing" } };
@@ -41,7 +41,7 @@ export default function PricingPage() {
         <p className="font-bold text-slate-600">FREE</p><h2 className="mt-2 text-4xl font-extrabold text-slate-950">US$0</h2><p className="mt-2 text-sm text-slate-600">No card required.</p>
         <p className="mt-4 rounded-xl border border-blue-200 bg-blue-50 px-4 py-3 text-sm font-bold leading-6 text-blue-900">New account bonus: 7-day Pro trial + 20 AI credits</p>
         <ul className="mt-6 grid gap-3 text-sm leading-6 text-slate-700">{freeBenefits.map(item => <li key={item} className="flex gap-2"><span aria-hidden="true" className="font-bold text-emerald-600">✓</span><span>{item}</span></li>)}</ul>
-        <Link href="/today" className="mt-auto inline-flex min-h-12 w-full items-center justify-center rounded-xl border border-blue-600 px-5 font-bold text-blue-700">Continue Free</Link>
+        <FreePlanAction />
       </article>
       <article className="relative flex h-full flex-col rounded-[24px] border-2 border-blue-600 bg-slate-950 p-6 text-white shadow-[0_18px_50px_rgba(37,99,235,0.18)] sm:p-7">
         <p className="font-bold text-blue-300">PRO MONTHLY</p><h2 className="mt-2 text-4xl font-extrabold text-white">US$5.99 <span className="text-base font-medium text-slate-300">/ month</span></h2><p className="mt-2 text-sm text-slate-300">Same Pro entitlement. Renews monthly.</p>

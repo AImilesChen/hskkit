@@ -246,8 +246,11 @@ export async function applySubscriptionEvent(event:NormalizedSubscriptionEvent, 
   }
   if(event.kind==="subscription_updated"){
     const order=await db.prepare(`SELECT * FROM subscription_orders WHERE (id=? AND ?<>'') OR provider_subscription_id=? ORDER BY CASE WHEN id=? THEN 0 ELSE 1 END LIMIT 1`).bind(event.orderId??"",event.orderId??"",event.subscriptionId,event.orderId??"").first<SubscriptionOrderRow>();
+    const existingSubscription=await db.prepare(`SELECT * FROM subscriptions WHERE provider_subscription_id=?`).bind(event.subscriptionId).first<SubscriptionRow>();
     const plan=SUBSCRIPTION_PLANS[event.planId];
-    if(!order||Boolean(order.stripe_livemode)!==livemode||order.user_id!==event.userId||order.owner_id!==event.ownerId||order.owner_id!==`user:${event.userId}`||order.plan_id!==event.planId||order.amount_cents!==plan.amountCents||order.amount_cents!==event.amountCents||order.currency!==plan.currency||order.currency!==event.currency||(order.provider_customer_id&&order.provider_customer_id!==event.customerId)||(order.provider_subscription_id&&order.provider_subscription_id!==event.subscriptionId)) throw new Error("SUBSCRIPTION_ORDER_METADATA_MISMATCH");
+    const yearlyUpgrade=order?.plan_id==="pro_monthly"&&event.planId==="pro_yearly";
+    const currentPlanMatches=order?.plan_id===event.planId||existingSubscription?.plan_id===event.planId||yearlyUpgrade;
+    if(!order||Boolean(order.stripe_livemode)!==livemode||order.user_id!==event.userId||order.owner_id!==event.ownerId||order.owner_id!==`user:${event.userId}`||!currentPlanMatches||plan.amountCents!==event.amountCents||order.currency!==plan.currency||order.currency!==event.currency||(order.provider_customer_id&&order.provider_customer_id!==event.customerId)||(order.provider_subscription_id&&order.provider_subscription_id!==event.subscriptionId)) throw new Error("SUBSCRIPTION_ORDER_METADATA_MISMATCH");
     if(order.status==="refunded") return;
     const ownerId=order.owner_id; const subId=`sub_${event.subscriptionId}`; const entitlement=entitlementFromSubscription({status:event.status,currentPeriodEnd:event.currentPeriodEnd,cancelAtPeriodEnd:event.cancelAtPeriodEnd},new Date(at));
     await db.batch([
@@ -260,7 +263,8 @@ export async function applySubscriptionEvent(event:NormalizedSubscriptionEvent, 
     const sub=await db.prepare(`SELECT s.*,o.status source_order_status,o.stripe_livemode source_order_livemode FROM subscriptions s LEFT JOIN subscription_orders o ON o.id=s.source_order_id WHERE s.provider_subscription_id=?`).bind(event.subscriptionId).first<SubscriptionRow & {source_order_status:string|null;source_order_livemode:number|null}>(); if(!sub) throw new Error("SUBSCRIPTION_NOT_FOUND");
     if(sub.source_order_status==="refunded") return;
     if(Boolean(sub.source_order_livemode)!==livemode)throw new Error("SUBSCRIPTION_EVENT_MODE_MISMATCH");
-    const plan=subscriptionPlan(sub.plan_id); if(!plan||event.customerId!==sub.provider_customer_id||event.amountCents!==plan.amountCents||event.currency!==plan.currency) throw new Error("SUBSCRIPTION_INVOICE_MISMATCH");
+    const plan=subscriptionPlan(sub.plan_id); const validProration=event.billingReason==="subscription_update"&&event.amountCents>=0;
+    if(!plan||event.customerId!==sub.provider_customer_id||(!validProration&&event.amountCents!==plan.amountCents)||event.currency!==plan.currency) throw new Error("SUBSCRIPTION_INVOICE_MISMATCH");
     const chargeId=`charge_${event.invoiceId}`; const status=event.kind==="invoice_paid"?"paid":"failed";
     const statements=[db.prepare(`INSERT INTO subscription_charges(id,subscription_id,owner_id,provider_invoice_id,provider_payment_intent_id,provider_charge_id,amount_cents,amount_refunded_cents,currency,status,stripe_livemode,charged_at,created_at,updated_at) VALUES(?,?,?,?,?,?,?,0,?,?,?,?,?,?) ON CONFLICT(provider_invoice_id) DO UPDATE SET provider_payment_intent_id=excluded.provider_payment_intent_id,provider_charge_id=excluded.provider_charge_id,amount_cents=excluded.amount_cents,status=excluded.status,stripe_livemode=excluded.stripe_livemode,charged_at=excluded.charged_at,updated_at=excluded.updated_at`).bind(chargeId,sub.id,sub.owner_id,event.invoiceId,event.paymentIntentId??null,event.chargeId??null,event.amountCents,event.currency,status,livemode?1:0,event.chargedAt??null,at,at)];
     if(event.kind==="invoice_paid") {

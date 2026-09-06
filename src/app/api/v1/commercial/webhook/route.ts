@@ -1,6 +1,6 @@
 import {getCloudflareContext} from "@opennextjs/cloudflare";
 import {NextRequest,NextResponse} from "next/server";
-import {activeStripeWebhookSecret,normalizeDigitalProductCheckoutEvent,normalizePackCheckoutEvent} from "@/lib/commercial/domain";
+import {activeStripeWebhookSecret,normalizeDigitalProductCheckoutEvent,normalizePackCheckoutEvent,stripePriceId} from "@/lib/commercial/domain";
 import {grantDigitalProductOrder,revokeRefundedDigitalProductOrder} from "@/lib/commercial/digital-storage";
 import {normalizeSubscriptionEvent} from "@/lib/commercial/subscription";
 import {applySubscriptionEvent,claimPaymentEvent,clearRevokedExportObjectKey,finalizePaymentEvent,grantPaidPackPurchase,revokeRefundedOrder} from "@/lib/commercial/storage";
@@ -21,7 +21,9 @@ export async function POST(req:NextRequest){
     const event=await verifyStripeWebhook(raw,req.headers.get("stripe-signature"),webhookSecret,Date.now(),mode);livemode=event.livemode;
     const claim=await claimPaymentEvent({eventId:event.id,eventType:event.type,livemode:event.livemode,payloadSha256:await sha256Hex(raw)});
     if(claim.state==="duplicate")return NextResponse.json({received:true,duplicate:true});if(claim.state==="busy")return NextResponse.json({error:"WEBHOOK_PROCESSING"},{status:409,headers:{"retry-after":"5"}});claimedEventId=event.id;claimToken=claim.claimToken;const object=event.data.object;
-    const normalized=normalizeSubscriptionEvent(event);if(normalized.kind==="invalid")throw new Error("INVALID_SUBSCRIPTION_EVENT");
+    const subscriptionPricePlans:Record<string,"pro_monthly"|"pro_yearly">={};
+    if(mode==="live")for(const planId of ["pro_monthly","pro_yearly"] as const)subscriptionPricePlans[stripePriceId(env.STRIPE_PRICE_MAP,`subscription:${planId}`)]=planId;
+    const normalized=normalizeSubscriptionEvent(event,subscriptionPricePlans);if(normalized.kind==="invalid")throw new Error("INVALID_SUBSCRIPTION_EVENT");
     if(normalized.kind!=="ignored"){
       if(normalized.kind==="charge_refunded"){try{await applySubscriptionEvent(normalized,undefined,livemode);await flagRefundedReferralCharge(normalized.chargeId,livemode);}catch(error){if(!(error instanceof Error)||error.message!=="SUBSCRIPTION_CHARGE_NOT_FOUND")throw error;await revokeOneTimeDelivery({chargeId:normalized.chargeId,paymentIntentId:normalized.paymentIntentId,amountRefundedCents:normalized.amountRefundedCents,currency:normalized.currency,livemode},env);}}else{await applySubscriptionEvent(normalized,undefined,livemode);if(normalized.kind==="invoice_paid")await rewardFirstPaidReferral(normalized.subscriptionId,livemode);}
       await finalizePaymentEvent(event.id,claimToken,"processed",undefined,livemode);return NextResponse.json({received:true});
