@@ -50,6 +50,7 @@ async function subscriptionDb(){
   db.exec("CREATE TABLE payment_events(event_id TEXT PRIMARY KEY,event_type TEXT,livemode INTEGER,payload_sha256 TEXT,processed_at TEXT,outcome TEXT,claim_token TEXT);");
   const migration=await read("migrations/0015_batch2a_subscriptions.sql");
   db.exec(migration.slice(migration.indexOf("CREATE TABLE IF NOT EXISTS subscription_orders")));
+  db.exec("ALTER TABLE subscription_orders ADD COLUMN stripe_livemode INTEGER NOT NULL DEFAULT 0 CHECK(stripe_livemode IN (0,1)); ALTER TABLE subscriptions ADD COLUMN stripe_livemode INTEGER NOT NULL DEFAULT 0 CHECK(stripe_livemode IN (0,1)); ALTER TABLE subscription_entitlements ADD COLUMN stripe_livemode INTEGER NOT NULL DEFAULT 0 CHECK(stripe_livemode IN (0,1)); CREATE UNIQUE INDEX subscription_entitlements_test_mode_idx ON subscription_entitlements(owner_id,stripe_livemode); ALTER TABLE subscription_charges ADD COLUMN stripe_livemode INTEGER NOT NULL DEFAULT 0 CHECK(stripe_livemode IN (0,1));");
   db.exec("CREATE TABLE promotional_entitlements(owner_id TEXT,kind TEXT,status TEXT,updated_at TEXT,starts_at TEXT,ends_at TEXT,ai_credits INTEGER,created_at TEXT);");
   db.exec(await read("migrations/0032_welcome_credit_rollover.sql"));
   return db;
@@ -116,6 +117,8 @@ async function packDb(){
   db.exec(await read("migrations/0012_batch15_commercial_exports.sql"));
   db.exec(await read("migrations/0016_batch2b_pack_purchases.sql"));
   db.exec(await read("migrations/0020_p0_p1_digital_products.sql"));
+  const liveMigration=await read("migrations/0034_stripe_live_readiness.sql");
+  db.exec(`BEGIN;\n${liveMigration.slice(0,liveMigration.indexOf("ALTER TABLE subscription_orders"))}\nCOMMIT;`);
   return db;
 }
 
@@ -189,6 +192,18 @@ test("P0 bundles grant exact deliveries, meter successful downloads, block repea
   assert.equal((db.prepare("SELECT status FROM digital_product_orders WHERE id=?").get(complete.id) as {status:string}).status,"refunded");
   assert.equal((db.prepare("SELECT COUNT(*) n FROM digital_product_entitlements WHERE order_id=? AND status='refunded'").get(complete.id) as {n:number}).n,8);
   assert.equal(await downloadContext("complete-hash",env),null);
+});
+
+test("Test and Live digital orders keep independent purchase and entitlement state",async()=>{
+  const db=await packDb();const env=envFor(db);const productId="level-6";const userId="mode-user";
+  db.prepare("INSERT INTO accounts(user_id) VALUES(?)").run(userId);
+  const testOrder=await createDigitalProductOrder(userId,productId,"mode-shared",env,false);db.prepare("UPDATE digital_product_orders SET stripe_checkout_session_id='cs_test_mode' WHERE id=?").run(testOrder.id);
+  const testRights=await grantDigitalProductOrder({sessionId:"cs_test_mode",expectedUserId:userId,expectedProductId:productId,livemode:false},env);
+  const liveOrder=await createDigitalProductOrder(userId,productId,"mode-shared",env,true);db.prepare("UPDATE digital_product_orders SET stripe_checkout_session_id='cs_live_mode' WHERE id=?").run(liveOrder.id);
+  const liveRights=await grantDigitalProductOrder({sessionId:"cs_live_mode",expectedUserId:userId,expectedProductId:productId,livemode:true},env);
+  assert.equal((db.prepare("SELECT COUNT(DISTINCT stripe_livemode) n FROM digital_product_orders WHERE user_id=? AND product_id=?").get(userId,productId) as {n:number}).n,2);
+  assert.ok(await activeDigitalEntitlement(userId,testRights[0].id,env,false));assert.equal(await activeDigitalEntitlement(userId,testRights[0].id,env,true),null);
+  assert.ok(await activeDigitalEntitlement(userId,liveRights[0].id,env,true));assert.equal(await activeDigitalEntitlement(userId,liveRights[0].id,env,false),null);
 });
 
 test("digital checkout retries failed orders, blocks parallel pending checkout, freezes refunds and ignores partial refund revocation",async()=>{

@@ -11,6 +11,30 @@ async function migratedDb() {
   return db;
 }
 
+async function migratedBeforeStripeLiveDb() {
+  const db = new DatabaseSync(":memory:");
+  const files = (await readdir("migrations")).filter((name) => /^\d+.*\.sql$/.test(name) && name < "0034_stripe_live_readiness.sql").sort();
+  for (const file of files) db.exec(await readFile(path.join("migrations", file), "utf8"));
+  return db;
+}
+
+test("Stripe Live migration preserves historical digital orders, entitlements, and refund requests", async () => {
+  const db=await migratedBeforeStripeLiveDb();const at="2026-09-01T00:00:00.000Z";
+  db.exec("PRAGMA foreign_keys=ON");
+  db.prepare("INSERT INTO accounts(user_id,display_name,timezone,created_at,updated_at) VALUES(?,?,?,?,?)").run("history-user","History","UTC",at,at);
+  db.prepare("INSERT INTO digital_product_orders(id,user_id,product_id,sku,amount_cents,currency,status,stripe_mode,stripe_checkout_session_id,stripe_payment_intent_id,stripe_charge_id,idempotency_key,created_at,paid_at,updated_at) VALUES(?,?,?,?,?,?,'refund_requested','test',?,?,?,?,?,?,?)")
+    .run("history-order","history-user","level-6","hsk6",1799,"usd","cs_test_history","pi_test_history","ch_test_history","history-idem",at,at,at);
+  db.prepare("INSERT INTO digital_product_entitlements(id,user_id,order_id,product_id,delivery_key,level,artifact_type,format,status,starts_at,expires_at,updated_at) VALUES(?,?,?,?,?,?,?,?,'refund_pending',?,?,?)")
+    .run("history-entitlement","history-user","history-order","level-6","pdf",6,"study_pack","pdf",at,"2026-10-01T00:00:00.000Z",at);
+  db.prepare("INSERT INTO digital_product_refund_requests(id,order_id,user_id,status,eligibility_code,requested_at) VALUES(?,?,?,'pending_review','ELIGIBLE',?)")
+    .run("history-refund","history-order","history-user",at);
+  db.exec(await readFile("migrations/0034_stripe_live_readiness.sql","utf8"));
+  assert.equal(db.prepare("SELECT stripe_livemode FROM digital_product_orders WHERE id='history-order'").get()?.stripe_livemode,0);
+  assert.equal(db.prepare("SELECT stripe_livemode FROM digital_product_entitlements WHERE id='history-entitlement'").get()?.stripe_livemode,0);
+  assert.equal(db.prepare("SELECT count(*) count FROM digital_product_refund_requests WHERE id='history-refund'").get()?.count,1);
+  assert.equal(db.prepare("PRAGMA foreign_key_check").all().length,0);
+});
+
 test("admin PackPurchase revocation matches the migrated D1 schema and preserves consumed audit tokens", async () => {
   const db = await migratedDb();
   const at = "2026-08-24T12:00:00.000Z";

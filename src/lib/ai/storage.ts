@@ -1,8 +1,10 @@
 import { db } from "@/lib/learning/storage";
+import { getCloudflareContext } from "@opennextjs/cloudflare";
 import { AI_DAILY_ALLOWANCE, AI_RATE_LIMIT_PER_MINUTE, type AiFeature, type AiOutput, type AiRuntimePolicy, type ProductAiRuntimePolicy } from "./domain";
 import { aiCreditCost } from "../commercial/capabilities";
 
 const defaultPolicy: AiRuntimePolicy = { dailyAllowance: AI_DAILY_ALLOWANCE, rateLimitPerMinute: AI_RATE_LIMIT_PER_MINUTE, maxOutputTokens: 500 };
+const activeStripeLivemode = () => getCloudflareContext().env.COMMERCE_MODE === "live" ? 1 : 0;
 type RuntimePolicy = AiRuntimePolicy | ProductAiRuntimePolicy;
 
 export type AiOperation = {
@@ -147,7 +149,7 @@ export async function finalizeSuccess(input: { operation: AiOperation; output: A
   const welcomeAssertion = `${assertion}:welcome`;
   const [bucket, rollover] = await Promise.all([
     database.prepare("SELECT used FROM ai_quota_buckets WHERE owner_id=? AND period_key=?").bind(input.operation.ownerId, input.operation.quotaPeriod).first<{ used: number }>(),
-    database.prepare("SELECT w.remaining_units,w.conversion_period,w.conversion_period_used FROM welcome_credit_rollovers w JOIN subscription_entitlements e ON e.owner_id=w.owner_id AND e.status='active' AND (e.ends_at IS NULL OR e.ends_at>?) WHERE w.owner_id=?").bind(now, input.operation.ownerId).first<{ remaining_units: number; conversion_period: string; conversion_period_used: number }>(),
+    database.prepare("SELECT w.remaining_units,w.conversion_period,w.conversion_period_used FROM welcome_credit_rollovers w JOIN subscription_entitlements e ON e.owner_id=w.owner_id AND e.stripe_livemode=? AND e.status='active' AND (e.ends_at IS NULL OR e.ends_at>?) WHERE w.owner_id=?").bind(activeStripeLivemode(), now, input.operation.ownerId).first<{ remaining_units: number; conversion_period: string; conversion_period_used: number }>(),
   ]);
   const spendThreshold = input.operation.baseAllowance + (rollover?.conversion_period === input.operation.quotaPeriod ? Number(rollover.conversion_period_used) : 0);
   const bonusSpend = Math.min(input.operation.costUnits, Math.max(0, Number(bucket?.used ?? 0) + input.operation.costUnits - spendThreshold));
@@ -164,7 +166,7 @@ export async function finalizeSuccess(input: { operation: AiOperation; output: A
   if (referralSpend > 0) statements.push(database.prepare("INSERT INTO credit_ledger(id,owner_id,units,source,reward_id,operation_id,expires_at,created_at) VALUES(?,?,?,'referral_spend',NULL,?,?,?)")
     .bind(crypto.randomUUID(), input.operation.ownerId, -referralSpend, input.operation.id, `${new Date(now).getUTCFullYear() + 1}-01-01T00:00:00.000Z`, now));
   if (welcomeSpend > 0) statements.push(
-    database.prepare("UPDATE welcome_credit_rollovers SET remaining_units=remaining_units-? WHERE owner_id=? AND remaining_units>=? AND EXISTS(SELECT 1 FROM subscription_entitlements WHERE owner_id=? AND status='active' AND (ends_at IS NULL OR ends_at>?))").bind(welcomeSpend, input.operation.ownerId, welcomeSpend, input.operation.ownerId, now),
+    database.prepare("UPDATE welcome_credit_rollovers SET remaining_units=remaining_units-? WHERE owner_id=? AND remaining_units>=? AND EXISTS(SELECT 1 FROM subscription_entitlements WHERE owner_id=? AND stripe_livemode=? AND status='active' AND (ends_at IS NULL OR ends_at>?))").bind(welcomeSpend, input.operation.ownerId, welcomeSpend, input.operation.ownerId, activeStripeLivemode(), now),
     database.prepare("INSERT INTO ai_quota_assertions(id,ok) VALUES(?,CASE changes() WHEN 1 THEN 1 ELSE 0 END)").bind(welcomeAssertion),
   );
   statements.push(database.prepare("DELETE FROM ai_quota_assertions WHERE id IN (?,?,?)").bind(assertion, `${assertion}:bucket`, welcomeAssertion));

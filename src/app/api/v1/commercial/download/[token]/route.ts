@@ -39,8 +39,9 @@ export async function GET(_:Request,{params}:{params:Promise<{token:string}>}) {
       throw new Error("EXPORT_EXPIRED");
     }
     if(context.state!=="ready"||!context.object_key) throw new Error("EXPORT_NOT_READY");
+    if(env.COMMERCE_MODE==="live"&&context.pack_purchase_id) throw new Error("DOWNLOAD_NOT_ALLOWED");
     if(context.pack_purchase_id&&(context.pack_purchase_status!=="active"||!context.pack_purchase_expires_at||Date.parse(String(context.pack_purchase_expires_at))<=Date.now()||Number(context.successful_downloads)>=Number(context.download_limit))) throw new Error("DOWNLOAD_NOT_ALLOWED");
-    if(context.product_entitlement_id&&(context.product_entitlement_status!=="active"||!context.product_entitlement_expires_at||Date.parse(String(context.product_entitlement_expires_at))<=Date.now()||Number(context.product_successful_downloads)>=Number(context.product_download_limit))) throw new Error("DOWNLOAD_NOT_ALLOWED");
+    if(context.product_entitlement_id&&(Boolean(context.product_entitlement_livemode)!==(env.COMMERCE_MODE==="live")||context.product_entitlement_status!=="active"||!context.product_entitlement_expires_at||Date.parse(String(context.product_entitlement_expires_at))<=Date.now()||Number(context.product_successful_downloads)>=Number(context.product_download_limit))) throw new Error("DOWNLOAD_NOT_ALLOWED");
     if(context.kind!=="account_data"&&!manifestStillAuthorized(String(context.manifest_json??""))){
       await revokePackExportDelivery(String(context.id),"CONTENT_RIGHTS_CHANGED",env);
       throw new Error("CONTENT_RIGHTS_CHANGED");

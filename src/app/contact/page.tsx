@@ -50,7 +50,7 @@ const faqs = [
   },
   {
     q: "Can I buy a Store product now?",
-    a: "Yes in Stripe Test mode. Complete vocabulary PDFs, Bundles and practical resources are separate one-time purchases from US$3.99; each detail page shows the exact price and contents, and no live card charge is enabled.",
+    a: "Yes. Secure payment is processed by Stripe. Complete vocabulary PDFs, Bundles and practical resources are separate one-time purchases from US$3.99; each detail page shows the exact price and contents.",
   },
   {
     q: "I forgot my progress. Can you recover it?",

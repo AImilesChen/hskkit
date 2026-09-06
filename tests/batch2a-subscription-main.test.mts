@@ -22,9 +22,9 @@ test("2A freezes exactly Monthly and Yearly recurring Pro plans", () => {
   });
 });
 
-test("subscription Test commerce is independent from the future PDF export secret", () => {
+test("subscription commerce accepts mode-matched standard or restricted keys", () => {
   assert.equal(subscriptionCommercePolicy({ COMMERCE_MODE: "test", STRIPE_SECRET_KEY: "sk_test_123" }).enabled, true);
-  assert.equal(subscriptionCommercePolicy({ COMMERCE_MODE: "test", STRIPE_SECRET_KEY: "rk_test_123" }).enabled, false);
+  assert.equal(subscriptionCommercePolicy({ COMMERCE_MODE: "test", STRIPE_SECRET_KEY: "rk_test_123" }).enabled, true);
 });
 
 test("subscription Checkout is recurring, account-scoped and idempotent", () => {

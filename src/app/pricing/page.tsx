@@ -33,7 +33,7 @@ export default function PricingPage() {
       <h1 className="mt-3 text-[34px] font-extrabold leading-tight tracking-tight text-slate-950 sm:text-[48px]">Try Pro free for 7 days</h1>
       <p className="mx-auto mt-5 max-w-2xl text-lg leading-8 text-slate-700">New verified accounts receive 7 days of Pro and 20 AI credits. No card required. It returns to Free automatically.</p>
       <div className="mt-6 flex flex-wrap justify-center gap-3"><Link href="/login?returnTo=%2Faccount" className="inline-flex min-h-12 items-center justify-center rounded-xl bg-blue-700 px-5 font-bold text-white">Start my free Pro trial</Link><Link href="#plans" className="inline-flex min-h-12 items-center justify-center rounded-xl border border-slate-300 bg-white px-5 font-bold text-slate-800">Compare plans</Link></div>
-      <p className="mt-4 text-sm font-semibold text-amber-800">Checkout uses Stripe Test mode and grants an account-based Pro entitlement only after verified lifecycle events. No live card charge is enabled.</p>
+      <p className="mt-4 text-sm font-semibold text-amber-800">Secure checkout is powered by Stripe. Pro access is granted only after verified payment lifecycle events.</p>
     </header>
 
     <section id="plans" className="mt-8 grid scroll-mt-24 gap-5 lg:grid-cols-3" aria-label="Plans">

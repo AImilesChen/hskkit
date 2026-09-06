@@ -1,5 +1,27 @@
-import {getCloudflareContext} from "@opennextjs/cloudflare";
 import {NextResponse} from "next/server";
-import {commercialPolicy,PDF_PACK_ACCESS_DAYS,PDF_PACK_CURRENCY,PDF_PACK_DOWNLOAD_LIMIT,PDF_PACK_PRICE_CENTS,PDF_PACK_REFUND_DAYS,PDF_PACK_SKU} from "@/lib/commercial/domain";
-import {DIGITAL_PRODUCTS,productDeliverableLabels} from "@/lib/commercial/products";
-export async function GET(){const policy=commercialPolicy(getCloudflareContext().env);return NextResponse.json({enabled:policy.enabled,mode:policy.enabled?"test":"disabled",stripeLive:"NO-GO",sku:PDF_PACK_SKU,amountCents:PDF_PACK_PRICE_CENTS,currency:PDF_PACK_CURRENCY,accessDays:PDF_PACK_ACCESS_DAYS,successfulDownloadLimit:PDF_PACK_DOWNLOAD_LIMIT,refundDays:PDF_PACK_REFUND_DAYS,refundCondition:"No successful download in any delivery; manual review",levelsAvailable:[1,2,3,4,5,6,7,8,9],levelsUnavailable:[],products:DIGITAL_PRODUCTS.map(product=>({...product,deliverables:productDeliverableLabels(product.id)}))},{headers:{"cache-control":"no-store"}});}
+import {getCloudflareContext} from "@opennextjs/cloudflare";
+import {commercialPolicy,stripePriceId} from "@/lib/commercial/domain";
+import {DIGITAL_ACCESS_DAYS,DIGITAL_DOWNLOAD_LIMIT,DIGITAL_PRODUCTS,DIGITAL_REFUND_DAYS} from "@/lib/commercial/products";
+import {SUBSCRIPTION_PLANS} from "@/lib/commercial/subscription";
+
+export async function GET(){
+  const env=(await getCloudflareContext({async:true})).env;
+  const policy=commercialPolicy(env);
+  let pricesReady=policy.enabled;
+  if(policy.enabled&&policy.mode==="live"){
+    try{
+      for(const product of DIGITAL_PRODUCTS)stripePriceId(env.STRIPE_PRICE_MAP,`product:${product.id}`);
+      for(const plan of Object.values(SUBSCRIPTION_PLANS))stripePriceId(env.STRIPE_PRICE_MAP,`subscription:${plan.id}`);
+    }catch{pricesReady=false;}
+  }
+  return NextResponse.json({
+    enabled:policy.enabled,
+    checkoutEnabled:Boolean(policy.enabled&&policy.checkoutEnabled&&pricesReady),
+    mode:policy.enabled?policy.mode:null,
+    accessDays:DIGITAL_ACCESS_DAYS,
+    successfulDownloadLimit:DIGITAL_DOWNLOAD_LIMIT,
+    refundDays:DIGITAL_REFUND_DAYS,
+    products:DIGITAL_PRODUCTS,
+    subscriptions:Object.values(SUBSCRIPTION_PLANS),
+  },{headers:{"cache-control":"no-store"}});
+}

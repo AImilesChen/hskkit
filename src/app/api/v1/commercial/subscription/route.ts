@@ -1,7 +1,7 @@
 import { getCloudflareContext } from "@opennextjs/cloudflare";
 import { NextRequest, NextResponse } from "next/server";
 import { accountOwnerId, requestIdentity } from "@/lib/account/identity";
-import { subscriptionCommercePolicy } from "@/lib/commercial/domain";
+import { stripeModeFromSecret,stripeSecretForMode,subscriptionCommercePolicy } from "@/lib/commercial/domain";
 import { markSubscriptionCancelAtPeriodEnd, requestSubscriptionRefund, resolveCapabilities, subscriptionSummaryForOwner } from "@/lib/commercial/storage";
 import { cancelStripeSubscriptionAtPeriodEnd } from "@/lib/commercial/stripe";
 
@@ -19,7 +19,8 @@ const publicSummary=(value:Awaited<ReturnType<typeof subscriptionSummaryForOwner
 
 export async function GET(){
   const identity=await context(); if(!identity) return NextResponse.json({error:"ACCOUNT_REQUIRED"},{status:401});
-  const [summary,capabilities]=await Promise.all([subscriptionSummaryForOwner(identity.ownerId),resolveCapabilities(identity.ownerId)]);
+  const livemode=getCloudflareContext().env.COMMERCE_MODE==="live";
+  const [summary,capabilities]=await Promise.all([subscriptionSummaryForOwner(identity.ownerId,livemode),resolveCapabilities(identity.ownerId)]);
   return NextResponse.json({...publicSummary(summary),capabilities},{headers:{"cache-control":"no-store"}});
 }
 
@@ -27,15 +28,17 @@ export async function POST(req:NextRequest){
   const identity=await context(); if(!identity) return NextResponse.json({error:"ACCOUNT_REQUIRED"},{status:401});
   try{
     const body=JSON.parse(await req.text()) as Record<string,unknown>; const action=String(body.action??"");
-    const summary=await subscriptionSummaryForOwner(identity.ownerId);
+    const livemode=getCloudflareContext().env.COMMERCE_MODE==="live";
+    const summary=await subscriptionSummaryForOwner(identity.ownerId,livemode);
     if(action==="cancel"){
       if(!summary.subscription||!["active","trialing"].includes(summary.subscription.status)) return NextResponse.json({error:"ACTIVE_SUBSCRIPTION_REQUIRED"},{status:409});
       if(summary.subscription.cancel_at_period_end) return NextResponse.json({...publicSummary(summary),reused:true});
       const env=getCloudflareContext().env; const policy=subscriptionCommercePolicy(env); if(!policy.enabled) return NextResponse.json({error:policy.code},{status:503});
       const key=String(body.idempotencyKey??""); if(!key||key.length>80) return NextResponse.json({error:"INVALID_IDEMPOTENCY_KEY"},{status:422});
-      const cancelled=await cancelStripeSubscriptionAtPeriodEnd({subscriptionId:summary.subscription.provider_subscription_id,secret:env.STRIPE_SECRET_KEY!,idempotencyKey:`subscription-cancel:${key}`});
+      const stripeMode=Number(summary.subscription.stripe_livemode)===1?"live":"test";const stripeSecret=stripeSecretForMode(env,stripeMode);if(stripeModeFromSecret(stripeSecret)!==stripeMode)return NextResponse.json({error:"STRIPE_MODE_MISMATCH"},{status:503});
+      const cancelled=await cancelStripeSubscriptionAtPeriodEnd({subscriptionId:summary.subscription.provider_subscription_id,secret:stripeSecret!,idempotencyKey:`subscription-cancel:${key}`});
       await markSubscriptionCancelAtPeriodEnd(cancelled.id,cancelled.periodEnd);
-      return NextResponse.json({...publicSummary(await subscriptionSummaryForOwner(identity.ownerId)),cancelled:true});
+      return NextResponse.json({...publicSummary(await subscriptionSummaryForOwner(identity.ownerId,livemode)),cancelled:true});
     }
     if(action==="request_refund"){
       if(!summary.latestCharge) return NextResponse.json({error:"SUBSCRIPTION_CHARGE_NOT_ELIGIBLE"},{status:409});

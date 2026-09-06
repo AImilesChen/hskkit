@@ -8,7 +8,14 @@ interface CloudflareEnv {
   COMMERCIAL_EXPORT_QUEUE: Queue<{ jobId: string }>;
   COMMERCE_MODE?: string;
   STRIPE_SECRET_KEY?: string;
+  STRIPE_TEST_SECRET_KEY?: string;
+  STRIPE_LIVE_SECRET_KEY?: string;
   STRIPE_WEBHOOK_SECRET?: string;
+  STRIPE_TEST_WEBHOOK_SECRET?: string;
+  STRIPE_LIVE_WEBHOOK_SECRET?: string;
+  STRIPE_PAID_CHECKOUT_ENABLED?: string;
+  STRIPE_PRICE_MAP?: string;
+  STRIPE_TEST_PRO_PRICE_ID?: string;
   EXPORT_SIGNING_SECRET?: string;
   ADMIN_REFUND_TOKEN?: string;
   BLOG_ADMIN_EMAILS?: string;

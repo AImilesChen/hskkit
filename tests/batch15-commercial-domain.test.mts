@@ -3,9 +3,9 @@ import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 import { commercialPolicy, refundEligibility, canIssueDownload, transitionExport } from "../src/lib/commercial/domain.ts";
 
-test("commercial policy is Stripe Test only and freezes live mode", () => {
-  assert.equal(commercialPolicy({ COMMERCE_MODE: "test", STRIPE_SECRET_KEY: "sk_test_redacted", EXPORT_SIGNING_SECRET: "x".repeat(32) }).enabled, true);
-  assert.equal(commercialPolicy({ COMMERCE_MODE: "live", STRIPE_SECRET_KEY: "sk_live_redacted", EXPORT_SIGNING_SECRET: "x".repeat(32) }).enabled, false);
+test("commercial policy supports exact Test/Live key pairing", () => {
+  assert.equal(commercialPolicy({ COMMERCE_MODE: "test", STRIPE_SECRET_KEY: "sk_test_123", EXPORT_SIGNING_SECRET: "x".repeat(32) }).enabled, true);
+  assert.equal(commercialPolicy({ COMMERCE_MODE: "live", STRIPE_LIVE_SECRET_KEY: "sk_live_123", EXPORT_SIGNING_SECRET: "x".repeat(32) }).enabled, true);
   assert.equal(commercialPolicy({ COMMERCE_MODE: "test", STRIPE_SECRET_KEY: "", EXPORT_SIGNING_SECRET: "x".repeat(32) }).enabled, false);
 });
 
@@ -61,5 +61,5 @@ test("download debit uses a single-use CAS and transactional entitlement reserva
   assert.match(sitemap, /"\/store"/);
   assert.match(purchaseUi, /fetch\("\/api\/v1\/commercial\/config"/);
   assert.match(checkoutUi, /disabled=\{!available\|\|!accepted\|\|busy\}/);
-  assert.match(purchaseUi, /Stripe Test checkout/);
+  assert.match(purchaseUi,/secure Stripe checkout/);
 });

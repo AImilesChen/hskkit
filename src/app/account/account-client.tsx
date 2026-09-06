@@ -232,7 +232,7 @@ export default function AccountClient() {
     {message && <div className="account-alert success" role="status">{message}</div>}
 
     {checkoutSuccess && view.account?.status === "active" && <section className="account-banner success" role="status">
-      <div><p className="account-kicker">Checkout complete</p><h2>{tier === "Pro" ? "Pro is ready" : "Activating Pro…"}</h2><p>{tier === "Pro" ? "Focused Review, AI credits and expanded sync are active." : "Stripe accepted the test checkout. Refresh shortly while the signed webhook activates access."}</p></div>
+      <div><p className="account-kicker">Checkout complete</p><h2>{tier === "Pro" ? "Pro is ready" : "Activating Pro…"}</h2><p>{tier === "Pro" ? "Focused Review, AI credits and expanded sync are active." : "Stripe accepted the checkout. Refresh shortly while the signed webhook activates access."}</p></div>
       {tier === "Pro" && <Link className="btn" href="/review">Start Focused Review</Link>}
     </section>}
 

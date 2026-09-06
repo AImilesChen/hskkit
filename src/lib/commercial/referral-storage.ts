@@ -14,6 +14,7 @@ import {
 } from "./referrals.ts";
 
 const database = () => getCloudflareContext().env.LEARNING_DB;
+const activeStripeLivemode = () => getCloudflareContext().env.COMMERCE_MODE === "live" ? 1 : 0;
 const owner = (userId: string) => `user:${userId}`;
 const iso = (date = new Date()) => date.toISOString();
 const yearEnd = (date: Date) => `${date.getUTCFullYear() + 1}-01-01T00:00:00.000Z`;
@@ -79,7 +80,7 @@ export async function resolveCommercialAccess(ownerId: string, at = new Date()):
   const db = database();
   await db.prepare("UPDATE promotional_entitlements SET status='ended',updated_at=? WHERE owner_id=? AND status='active' AND ends_at<=?").bind(iso(at), ownerId, iso(at)).run();
   const [paid, trial, promo, bonus, rolloverRow] = await Promise.all([
-    db.prepare("SELECT status,ends_at FROM subscription_entitlements WHERE owner_id=?").bind(ownerId).first<{ status: "active" | "ended" | "revoked"; ends_at: string | null }>(),
+    db.prepare("SELECT status,ends_at FROM subscription_entitlements WHERE owner_id=? AND stripe_livemode=?").bind(ownerId,activeStripeLivemode()).first<{ status: "active" | "ended" | "revoked"; ends_at: string | null }>(),
     db.prepare("SELECT status,ends_at,ai_credits FROM promotional_entitlements WHERE owner_id=? AND kind='welcome_trial' ORDER BY created_at DESC LIMIT 1").bind(ownerId).first<{ status: "active" | "ended" | "revoked"; ends_at: string | null; ai_credits: number | null }>(),
     db.prepare("SELECT status,MAX(ends_at) ends_at FROM promotional_entitlements WHERE owner_id=? AND kind='referral_pass' AND status='active'").bind(ownerId).first<{ status: "active" | "ended" | "revoked"; ends_at: string | null }>(),
     bonusCreditBalance(ownerId, at),
@@ -100,7 +101,7 @@ export async function resolveCommercialAccess(ownerId: string, at = new Date()):
 }
 
 async function hasPaidPro(userId: string, at: Date) {
-  const row = await database().prepare("SELECT 1 ok FROM subscription_entitlements WHERE owner_id=? AND status='active' AND (ends_at IS NULL OR ends_at>?)").bind(owner(userId), iso(at)).first<{ ok: number }>();
+  const row = await database().prepare("SELECT 1 ok FROM subscription_entitlements WHERE owner_id=? AND stripe_livemode=? AND status='active' AND (ends_at IS NULL OR ends_at>?)").bind(owner(userId), activeStripeLivemode(), iso(at)).first<{ ok: number }>();
   return Boolean(row);
 }
 
@@ -166,13 +167,14 @@ export async function recordReferralLearningActivity(ownerId: string, idempotenc
   return qualifyReferral(relationship.id, now);
 }
 
-export async function rewardFirstPaidReferral(subscriptionId: string, now = new Date()) {
+export async function rewardFirstPaidReferral(subscriptionId: string, livemode = false, now = new Date()) {
   const db = database();
-  const subscription = await db.prepare("SELECT user_id FROM subscriptions WHERE provider_subscription_id=?").bind(subscriptionId).first<{ user_id: string }>();
+  const mode=livemode?1:0;
+  const subscription = await db.prepare("SELECT user_id FROM subscriptions WHERE provider_subscription_id=? AND stripe_livemode=?").bind(subscriptionId,mode).first<{ user_id: string }>();
   if (!subscription) return null;
   const relationship = await db.prepare("SELECT id,status,risk_status FROM referral_relationships WHERE referred_user_id=? AND status IN ('signed_up','qualified','paid_pending')").bind(subscription.user_id).first<{ id: string; status: string; risk_status: string }>();
   if (!relationship || relationship.risk_status !== "clear") return null;
-  const charge = await db.prepare("SELECT c.id,c.charged_at FROM subscription_charges c JOIN subscriptions s ON s.id=c.subscription_id WHERE s.user_id=? AND c.status='paid' ORDER BY COALESCE(c.charged_at,c.created_at) ASC LIMIT 1").bind(subscription.user_id).first<{ id: string; charged_at: string | null }>();
+  const charge = await db.prepare("SELECT c.id,c.charged_at FROM subscription_charges c JOIN subscriptions s ON s.id=c.subscription_id WHERE s.user_id=? AND c.status='paid' AND c.stripe_livemode=? AND s.stripe_livemode=? ORDER BY COALESCE(c.charged_at,c.created_at) ASC LIMIT 1").bind(subscription.user_id,mode,mode).first<{ id: string; charged_at: string | null }>();
   if (!charge) return null;
   await db.prepare("UPDATE referral_relationships SET status=CASE WHEN status='qualified' THEN 'paid_pending' ELSE status END,paid_at=?,paid_charge_id=?,updated_at=? WHERE id=? AND status IN ('signed_up','qualified','paid_pending')")
     .bind(charge.charged_at ?? iso(now), charge.id, iso(now), relationship.id).run();
@@ -188,9 +190,9 @@ export async function reconcilePaidReferral(relationshipId: string, now = new Da
   return issueReward(relationshipId, "paid", now);
 }
 
-export async function flagRefundedReferralCharge(providerChargeId: string, now = new Date()) {
+export async function flagRefundedReferralCharge(providerChargeId: string, livemode = false, now = new Date()) {
   const db = database();
-  const relationship = await db.prepare("SELECT r.id FROM referral_relationships r JOIN subscription_charges c ON c.id=r.paid_charge_id WHERE c.provider_charge_id=?").bind(providerChargeId).first<{ id: string }>();
+  const relationship = await db.prepare("SELECT r.id FROM referral_relationships r JOIN subscription_charges c ON c.id=r.paid_charge_id WHERE c.provider_charge_id=? AND c.stripe_livemode=?").bind(providerChargeId,livemode?1:0).first<{ id: string }>();
   if (!relationship) return null;
   const timestamp = iso(now);
   await db.batch([

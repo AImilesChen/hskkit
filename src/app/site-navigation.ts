@@ -42,7 +42,7 @@ export const siteNavigation: NavigationEntry[] = [
   { href: "/dictionary", label: "Dictionary", description: "Search the published HSK 3.0 catalog." },
   { href: "/blog", label: "Blog", description: "Read practical HSK 3.0 study guides and learning tips." },
   { href: "/pricing", label: "Pricing", description: "Compare Free and Pro subscription billing." },
-  { href: "/store", label: "Store", description: "Buy one selected-level PDF Pack through Stripe Test checkout." },
+  { href: "/store", label: "Store", description: "Buy complete HSK learning resources through secure Stripe checkout." },
   { href: "/account", label: "Sign in", description: "Sign in with Google or manage your synced account and private exports." },
 ];
 
