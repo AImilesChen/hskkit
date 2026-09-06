@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-/* eslint-disable @next/next/no-img-element */
+import Image from "next/image";
 import Link from "next/link";
 import { StudyPage } from "@/app/components/study-shell";
 import { BLOG_CATEGORIES, normalizePublicBlogQuery } from "@/lib/blog/domain";
@@ -44,8 +44,8 @@ export default async function BlogPage({ searchParams }: { searchParams: Promise
 
       <section className="blog-results" aria-labelledby="articles-heading">
         <div className="blog-results-heading"><div><p className="blog-eyebrow">Published and ready to read</p><h2 id="articles-heading">Articles</h2></div>{(query.q || query.category) && <Link href="/blog">Clear filters</Link>}</div>
-        {posts.length ? <div className="blog-card-grid">{posts.map((post) => <article className="blog-card" key={post.id}>
-          {post.featuredImageKey ? <img src={blogMediaUrl(post.featuredImageKey)} alt={post.featuredImageAlt || ""} /> : <div className="blog-card-graphic" aria-hidden="true"><span>HSK {post.hskLevel ?? "3.0"}</span><b>{post.category}</b></div>}
+        {posts.length ? <div className="blog-card-grid">{posts.map((post, index) => <article className="blog-card" key={post.id}>
+          {post.featuredImageKey ? <Image src={blogMediaUrl(post.featuredImageKey)} alt={post.featuredImageAlt || ""} width={640} height={380} sizes="(max-width: 640px) 100vw, (max-width: 900px) 50vw, 33vw" priority={index < 3} loading={index < 3 ? "eager" : "lazy"} /> : <div className="blog-card-graphic" aria-hidden="true"><span>HSK {post.hskLevel ?? "3.0"}</span><b>{post.category}</b></div>}
           <div className="blog-card-body">
             <div className="blog-card-meta"><span>{post.category}</span>{post.hskLevel && <span>HSK {post.hskLevel >= 7 ? "7–9" : post.hskLevel}</span>}<time dateTime={post.publishedAt}>{dateLabel(post.publishedAt)}</time></div>
             <h3><Link href={`/blog/${post.slug}`}>{post.title}</Link></h3>

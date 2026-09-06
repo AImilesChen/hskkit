@@ -14,11 +14,25 @@ const sectionCopy={
   resource_bundle:{eyebrow:"Connected resource Bundles",title:"Combine practice and review",copy:"Complete component products packaged together at a lower one-time price; no shortened Bundle editions."},
   teacher:{eyebrow:"For independent teachers",title:"Teach from ready-to-edit files",copy:"Classroom plans, handouts, checks and editable office files under a bounded single-purchaser classroom licence."},
 } as const;
+const skeletonCategoryCounts:Record<(typeof categories)[number],number>={level:6,bundle:4,resource:4,resource_bundle:2,teacher:1};
+
+function StoreCatalogSkeleton({message}:{message:string}){
+  return <section className="mt-10 space-y-16" aria-busy="true" aria-live="polite">
+    <p className="sr-only">Loading product catalog…</p>
+    {message?<p role="alert" className="rounded-xl border border-red-200 bg-red-50 p-4 text-sm font-semibold text-red-700">{message}</p>:null}
+    {categories.map(category=><section key={category} aria-hidden="true">
+      <div className="grid gap-3 md:grid-cols-[0.75fr_1.25fr] md:items-end"><div><div className="h-3 w-44 rounded bg-slate-200"/><div className="mt-3 h-8 w-64 max-w-full rounded bg-slate-200"/></div><div className="h-12 max-w-2xl rounded bg-slate-100"/></div>
+      <div className={`mt-6 grid gap-5 ${category==="bundle"||category==="resource_bundle"?"md:grid-cols-2":"sm:grid-cols-2 lg:grid-cols-3"}`}>
+        {Array.from({length:skeletonCategoryCounts[category]},(_,index)=><article key={index} className="min-h-[360px] overflow-hidden rounded-xl border border-slate-200 bg-white"><div className="aspect-[4/3] bg-slate-100"/><div className="space-y-4 p-5"><div className="h-4 w-24 rounded bg-slate-200"/><div className="h-7 w-3/4 rounded bg-slate-200"/><div className="h-16 rounded bg-slate-100"/><div className="h-11 rounded-lg bg-slate-200"/></div></article>)}
+      </div>
+    </section>)}
+  </section>;
+}
 
 export default function StorePurchase(){
   const [config,setConfig]=useState<CommerceConfig|null>(null),[message,setMessage]=useState("");
   useEffect(()=>{void fetch("/api/v1/commercial/config",{cache:"no-store"}).then(async response=>{if(!response.ok)throw new Error();return response.json();}).then((data:CommerceConfig)=>setConfig(data)).catch(()=>setMessage("Product catalog could not be loaded. Please refresh and try again."));},[]);
-  if(!config)return <section className="mt-10" aria-live="polite"><p className="text-sm text-slate-600">Loading product catalog…</p>{message&&<p role="alert" className="mt-3 text-sm font-semibold text-red-700">{message}</p>}</section>;
+  if(!config)return <StoreCatalogSkeleton message={message}/>;
   return <section aria-label="Digital product catalog" className="mt-10 space-y-16">
     {categories.map(category=>{const products=config.products.filter(product=>product.category===category);if(!products.length)return null;const copy=sectionCopy[category];return <section key={category} aria-labelledby={`${category}-catalog-heading`}>
       <div className="grid gap-3 md:grid-cols-[0.75fr_1.25fr] md:items-end"><div><p className="text-xs font-bold uppercase tracking-[0.16em] text-blue-700">{copy.eyebrow}</p><h2 id={`${category}-catalog-heading`} className="mt-2 text-2xl font-extrabold tracking-tight text-slate-950 sm:text-3xl">{copy.title}</h2></div><p className="max-w-2xl text-sm leading-6 text-slate-600">{copy.copy}</p></div>

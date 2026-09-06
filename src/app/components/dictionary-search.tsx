@@ -9,7 +9,7 @@ import { detectDictionaryQueryType, type DictionaryQueryType } from "@/lib/dicti
 export type CharacterBrowseFacets = { radicals: string[]; strokes: number[]; structures: string[]; initials: string[]; finals: string[]; tones: number[] };
 type DictionaryMode = "words" | "levels" | "characters" | "pinyin";
 type CatalogWord = { id: string; level: number; levelBand: string; formalAudioAvailable: boolean; formalAudioUrl?: string; payload: { hanzi: string; traditional: string; pinyin: string; meaning: string; partOfSpeech: string } };
-type CatalogResponse = { contentAssets: CatalogWord[]; pagination: Pagination };
+export type CatalogResponse = { contentAssets: CatalogWord[]; pagination: Pagination };
 type CharacterRecord = { hanzi: string; traditional?: string; simplified?: string; pinyin: string[]; meanings: string[]; radical: string; strokes: number; structure: string; decomposition: string; firstLevel: number; levels: number[]; wordCount: number };
 type CharacterResponse = { characters: CharacterRecord[]; pagination: Pagination };
 type Pagination = { page: number; pageSize: number; total: number; totalPages: number; hasPrevious: boolean; hasNext: boolean };
@@ -34,6 +34,7 @@ const levelOptions = [
   { value: "7", label: "HSK 7–9" },
 ] as const;
 const intentLabels: Record<DictionaryQueryType, string> = { empty: "Hanzi, pinyin, or English", hanzi: "Chinese characters detected", pinyin: "Pinyin detected", english: "English detected" };
+const DICTIONARY_REQUEST_TIMEOUT_MS = 8_000;
 const modeCopy: Record<DictionaryMode, { label: string; placeholder: string; description: string; action: string }> = {
   words: { label: "Words", placeholder: "Search 学习, xue xi, or to study", description: "Search 11,092 published words by Hanzi, pinyin or English.", action: "Search words" },
   levels: { label: "HSK levels", placeholder: "Search within an HSK level", description: "Browse the complete published vocabulary from HSK 1 through the unified HSK 7–9 band.", action: "Search level" },
@@ -45,7 +46,7 @@ function safePage(value: string | null) { const page = Number(value ?? "1"); ret
 function wordSlug(word: CatalogWord) { return detailSlugs[word.payload.hanzi] ?? word.id; }
 function levelLabel(level: string | number) { return Number(level) >= 7 ? "7–9" : String(level); }
 
-export function DictionarySearch({ characterFacets }: { characterFacets: CharacterBrowseFacets }) {
+export function DictionarySearch({ characterFacets, initialWords }: { characterFacets: CharacterBrowseFacets; initialWords: CatalogResponse }) {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -79,26 +80,38 @@ export function DictionarySearch({ characterFacets }: { characterFacets: Charact
     };
   }, [characterFacets, searchParams]);
   const [query, setQuery] = useState(applied.query);
-  const [words, setWords] = useState<CatalogResponse | null>(null);
+  const [words, setWords] = useState<CatalogResponse | null>(initialWords);
   const [characters, setCharacters] = useState<CharacterResponse | null>(null);
   const [suggestions, setSuggestions] = useState<CatalogWord[]>([]);
   const [alternatives, setAlternatives] = useState<Alternative[]>([]);
   const [suggestionsOpen, setSuggestionsOpen] = useState(false);
   const [activeSuggestion, setActiveSuggestion] = useState(-1);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [suggesting, setSuggesting] = useState(false);
   const [error, setError] = useState("");
   const [retryToken, setRetryToken] = useState(0);
   const [learning, setLearning] = useState<LearningView | null>(null);
   const [script, setScript] = useState<"simplified" | "traditional">("simplified");
   const recordedSearch = useRef("");
+  const firstRequest = useRef(true);
   const intent = detectDictionaryQueryType(query);
 
   useEffect(() => setQuery(applied.query), [applied.query]);
   useEffect(() => {
     const controller = new AbortController();
-    void fetch("/api/v1/learning", { cache: "no-store", signal: controller.signal }).then(async (response) => { const body = await response.json() as LearningView; if (response.ok) setLearning(body); }).catch(() => undefined);
-    return () => controller.abort();
+    const loadLearning = () => { void fetch("/api/v1/learning", { cache: "no-store", signal: controller.signal }).then(async (response) => { const body = await response.json() as LearningView; if (response.ok) setLearning(body); }).catch(() => undefined); };
+    const idleApi = window as unknown as {
+      requestIdleCallback?: (callback: () => void, options?: { timeout: number }) => number;
+      cancelIdleCallback?: (handle: number) => void;
+    };
+    const idleId = idleApi.requestIdleCallback
+      ? idleApi.requestIdleCallback(loadLearning, { timeout: 1_500 })
+      : window.setTimeout(loadLearning, 500);
+    return () => {
+      controller.abort();
+      if (idleApi.cancelIdleCallback) idleApi.cancelIdleCallback(idleId as number);
+      else window.clearTimeout(idleId);
+    };
   }, []);
   useEffect(() => {
     if (!learning || !applied.query) return;
@@ -113,7 +126,11 @@ export function DictionarySearch({ characterFacets }: { characterFacets: Charact
 
   useEffect(() => {
     const controller = new AbortController();
-    setLoading(true); setError(""); setAlternatives([]);
+    const timeoutSignal = AbortSignal.timeout(DICTIONARY_REQUEST_TIMEOUT_MS);
+    const signal = AbortSignal.any([controller.signal, timeoutSignal]);
+    const keepInitialVisible = firstRequest.current && applied.mode === "words" && !applied.query && applied.level === "default" && !applied.partOfSpeech && applied.audio === "all";
+    firstRequest.current = false;
+    setLoading(!keepInitialVisible); setError(""); setAlternatives([]);
     if (applied.mode === "words" || applied.mode === "levels") {
       setCharacters(null);
       const params = new URLSearchParams({ page: String(applied.page), pageSize: "12" });
@@ -122,15 +139,15 @@ export function DictionarySearch({ characterFacets }: { characterFacets: Charact
       else if (applied.level === "default" && !applied.query) params.set("level", "1");
       if (applied.partOfSpeech) params.set("pos", applied.partOfSpeech);
       if (applied.audio === "formal") params.set("audio", "formal");
-      void fetch(`/api/v1/catalog/words?${params.toString()}`, { signal: controller.signal, cache: "no-store" }).then(async (response) => {
+      void fetch(`/api/v1/catalog/words?${params.toString()}`, { signal, cache: "default" }).then(async (response) => {
         const body = await response.json() as CatalogResponse & { message?: string };
         if (!response.ok) throw new Error(body.message || "The dictionary is temporarily unavailable.");
         setWords(body); setCharacters(null);
         if (body.contentAssets.length === 0 && applied.query) {
           const suggestionParams = new URLSearchParams({ q: applied.query });
-          return fetch(`/api/v1/dictionary/suggestions?${suggestionParams.toString()}`, { signal: controller.signal, cache: "no-store" }).then((result) => result.ok ? result.json() as Promise<{ suggestions: Alternative[] }> : { suggestions: [] }).then((result) => setAlternatives(result.suggestions));
+          return fetch(`/api/v1/dictionary/suggestions?${suggestionParams.toString()}`, { signal, cache: "default" }).then((result) => result.ok ? result.json() as Promise<{ suggestions: Alternative[] }> : { suggestions: [] }).then((result) => setAlternatives(result.suggestions));
         }
-      }).catch((reason: unknown) => { if (!(reason instanceof DOMException && reason.name === "AbortError")) setError(reason instanceof Error ? reason.message : "The dictionary is temporarily unavailable."); }).finally(() => { if (!controller.signal.aborted) setLoading(false); });
+      }).catch((reason: unknown) => { if (!controller.signal.aborted && !keepInitialVisible) setError(reason instanceof DOMException && reason.name === "TimeoutError" ? "The dictionary took too long to respond. Please try again." : reason instanceof Error ? reason.message : "The dictionary is temporarily unavailable."); }).finally(() => { if (!controller.signal.aborted) setLoading(false); });
     } else {
       setWords(null);
       const params = new URLSearchParams({ page: String(applied.page), pageSize: "48" });
@@ -142,7 +159,7 @@ export function DictionarySearch({ characterFacets }: { characterFacets: Charact
       if (applied.initial) params.set("initial", applied.initial);
       if (applied.final) params.set("final", applied.final);
       if (applied.tone) params.set("tone", applied.tone);
-      void fetch(`/api/v1/dictionary/characters?${params.toString()}`, { signal: controller.signal, cache: "no-store" }).then(async (response) => { const body = await response.json() as CharacterResponse & { message?: string }; if (!response.ok) throw new Error(body.message || "The character index is temporarily unavailable."); setCharacters(body); setWords(null); }).catch((reason: unknown) => { if (!(reason instanceof DOMException && reason.name === "AbortError")) setError(reason instanceof Error ? reason.message : "The character index is temporarily unavailable."); }).finally(() => { if (!controller.signal.aborted) setLoading(false); });
+      void fetch(`/api/v1/dictionary/characters?${params.toString()}`, { signal, cache: "default" }).then(async (response) => { const body = await response.json() as CharacterResponse & { message?: string }; if (!response.ok) throw new Error(body.message || "The character index is temporarily unavailable."); setCharacters(body); setWords(null); }).catch((reason: unknown) => { if (!controller.signal.aborted) setError(reason instanceof DOMException && reason.name === "TimeoutError" ? "The character index took too long to respond. Please try again." : reason instanceof Error ? reason.message : "The character index is temporarily unavailable."); }).finally(() => { if (!controller.signal.aborted) setLoading(false); });
     }
     return () => controller.abort();
   }, [applied.audio, applied.final, applied.initial, applied.level, applied.mode, applied.page, applied.partOfSpeech, applied.query, applied.radical, applied.strokes, applied.structure, applied.tone, retryToken]);
@@ -155,7 +172,7 @@ export function DictionarySearch({ characterFacets }: { characterFacets: Charact
       const params = new URLSearchParams({ q: value, page: "1", pageSize: "6" });
       const detected = detectDictionaryQueryType(value); if (detected !== "empty") params.set("field", detected);
       setSuggesting(true);
-      void fetch(`/api/v1/catalog/words?${params.toString()}`, { signal: controller.signal, cache: "no-store" }).then((response) => response.ok ? response.json() as Promise<CatalogResponse> : Promise.reject(new Error("suggestions unavailable"))).then((body) => { setSuggestions(body.contentAssets); setSuggestionsOpen(true); setActiveSuggestion(-1); }).catch((reason: unknown) => { if (!(reason instanceof DOMException && reason.name === "AbortError")) setSuggestions([]); }).finally(() => { if (!controller.signal.aborted) setSuggesting(false); });
+      void fetch(`/api/v1/catalog/words?${params.toString()}`, { signal: controller.signal, cache: "default" }).then((response) => response.ok ? response.json() as Promise<CatalogResponse> : Promise.reject(new Error("suggestions unavailable"))).then((body) => { setSuggestions(body.contentAssets); setSuggestionsOpen(true); setActiveSuggestion(-1); }).catch((reason: unknown) => { if (!(reason instanceof DOMException && reason.name === "AbortError")) setSuggestions([]); }).finally(() => { if (!controller.signal.aborted) setSuggesting(false); });
     }, 180);
     return () => { window.clearTimeout(timer); controller.abort(); };
   }, [applied.mode, query]);
@@ -203,7 +220,7 @@ export function DictionarySearch({ characterFacets }: { characterFacets: Charact
   const hasConditions = Boolean(applied.query || applied.level !== "default" || applied.partOfSpeech || applied.audio === "formal" || applied.radical || applied.strokes || applied.structure || applied.initial || applied.final || applied.tone);
   const activeData = wordResultMode ? words : characters;
 
-  return <div className="w-full">
+  return <div className="min-h-[640px] w-full">
     <section className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-[0_18px_50px_-38px_rgba(15,23,42,.55)]" aria-label="Dictionary search and browse controls">
       <div className="grid grid-cols-4 border-b border-slate-200 bg-slate-50" role="group" aria-label="Dictionary task">
         {(Object.keys(modeCopy) as DictionaryMode[]).map((mode) => <button key={mode} type="button" aria-pressed={applied.mode === mode} onClick={() => switchMode(mode)} className={`min-h-12 border-b-2 px-1.5 text-xs font-bold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-blue-600 sm:px-3 sm:text-sm ${applied.mode === mode ? "border-blue-600 bg-white text-blue-700" : "border-transparent text-slate-600 hover:bg-white hover:text-slate-950"}`}>{modeCopy[mode].label}</button>)}

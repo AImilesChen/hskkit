@@ -6,7 +6,7 @@ import { formalWordAudioAssetIds } from "@/lib/content/level-status";
 export async function GET(request: Request) {
   try {
     const params = parseCatalogSearchParams(new URL(request.url));
-    if (!params.q) return NextResponse.json({ suggestions: [] });
+    if (!params.q) return NextResponse.json({ suggestions: [] }, { headers: { "Cache-Control": "public, max-age=300, s-maxage=3600" } });
     const db = getCloudflareContext().env.LEARNING_DB;
     const rows = await suggestCatalogWords(db, {
       q: params.q,
@@ -22,7 +22,7 @@ export async function GET(request: Request) {
         pinyin: row.pinyin,
         meaning: row.meaning,
       })),
-    }, { headers: { "Cache-Control": "public, max-age=300" } });
+    }, { headers: { "Cache-Control": "public, max-age=300, s-maxage=3600" } });
   } catch (error) {
     if (error instanceof CatalogQueryError) {
       return NextResponse.json({ suggestions: [] }, { status: 400, headers: { "Cache-Control": "no-store" } });
