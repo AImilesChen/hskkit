@@ -108,3 +108,17 @@ test("admin pages, protected APIs, migration and mobile containment are wired wi
   assert.doesNotMatch(fullSurface, /s\.owner_id=a\.user_id/);
   assert.doesNotMatch(fullSurface, /refund subscription|cancel subscription|adjust entitlement/i);
 });
+
+test("admin navigation disables automatic route prefetch to prevent D1 request bursts", async () => {
+  const [layout, users, components] = await Promise.all([
+    readFile(new URL("../src/app/admin/(console)/layout.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../src/app/admin/(console)/users/page.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../src/app/admin/(console)/components.tsx", import.meta.url), "utf8"),
+  ]);
+
+  for (const [name, source] of [["layout", layout], ["users", users], ["components", components]] as const) {
+    const links = source.match(/<Link\b[^>]*>/g) || [];
+    assert.ok(links.length > 0, `${name} should contain admin links`);
+    for (const link of links) assert.match(link, /prefetch=\{false\}/, `${name} link must not prefetch: ${link}`);
+  }
+});

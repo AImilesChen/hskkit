@@ -15,8 +15,8 @@ export default async function AdminConsoleLayout({ children }: { children: React
     throw error;
   }
   return <main className="admin-console">
-    <header className="admin-header"><div><span className="admin-kicker">HSKKit operations</span><h1>Admin console</h1><p>Read-only account and subscription visibility with an audited feedback workflow.</p></div><Link href="/account">Back to account</Link></header>
-    <nav className="admin-nav" aria-label="Admin sections"><Link href="/admin">Overview</Link><Link href="/admin/users">Users</Link><Link href="/admin/subscriptions">Subscriptions</Link><Link href="/admin/feedback">Feedback</Link></nav>
+    <header className="admin-header"><div><span className="admin-kicker">HSKKit operations</span><h1>Admin console</h1><p>Read-only account and subscription visibility with an audited feedback workflow.</p></div><Link href="/account" prefetch={false}>Back to account</Link></header>
+    <nav className="admin-nav" aria-label="Admin sections"><Link href="/admin" prefetch={false}>Overview</Link><Link href="/admin/users" prefetch={false}>Users</Link><Link href="/admin/subscriptions" prefetch={false}>Subscriptions</Link><Link href="/admin/feedback" prefetch={false}>Feedback</Link></nav>
     {children}
   </main>;
 }
