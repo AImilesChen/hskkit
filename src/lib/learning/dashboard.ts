@@ -15,6 +15,34 @@ type DashboardItemSignal = {
   status: string;
 };
 
+const dashboardRetryDelaysMs = [50, 150] as const;
+const sleep = (delayMs: number) => new Promise<void>((resolve) => setTimeout(resolve, delayMs));
+
+export function isTransientDashboardStorageError(error: unknown): boolean {
+  const record = error && typeof error === "object" ? error as { code?: unknown; message?: unknown; cause?: unknown } : undefined;
+  const message = String(record?.message ?? error ?? "").toLowerCase();
+  if (record?.code === 7429 || record?.code === "7429") return true;
+  if (/\b7429\b|d1 db is overloaded|requests queued for too long|d1_error.*overload/.test(message)) return true;
+  return record?.cause ? isTransientDashboardStorageError(record.cause) : false;
+}
+
+export async function loadDashboardServerData<T>(
+  load: () => Promise<T>,
+  wait: (delayMs: number) => Promise<void> = sleep,
+): Promise<{ status: "ready"; data: T } | { status: "temporarily_unavailable" }> {
+  for (let attempt = 0; attempt <= dashboardRetryDelaysMs.length; attempt += 1) {
+    try {
+      return { status: "ready", data: await load() };
+    } catch (error) {
+      if (!isTransientDashboardStorageError(error)) throw error;
+      const delayMs = dashboardRetryDelaysMs[attempt];
+      if (delayMs === undefined) return { status: "temporarily_unavailable" };
+      await wait(delayMs);
+    }
+  }
+  return { status: "temporarily_unavailable" };
+}
+
 export function hasEstablishedLearning(state: LearningEntryState) {
   return Boolean(
     state.placementResults?.length
