@@ -76,8 +76,9 @@ test("dictionary filter failures cannot render data from the previous filter", (
 
 test("catalog GET responses use the Cloudflare edge cache while flashcards stay private", () => {
   const route = read("src/app/api/v1/catalog/words/route.ts");
-  assert.match(route, /cloudflareCaches\?\.default/);
-  assert.match(route, /mode\"\) !== \"flashcards\"/);
+  assert.match(route, /edgeCache\.match\(request\.url\)/);
+  assert.match(route, /edgeCache\.put\(request\.url, response\.clone\(\)\)/);
+  assert.match(route, /get\("mode"\) !== "flashcards"/);
   assert.match(route, /ctx\.waitUntil/);
 });
 

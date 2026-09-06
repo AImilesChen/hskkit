@@ -9,11 +9,11 @@ export async function GET(request: Request) {
     : null;
   const edgeCache = cacheable ? cloudflareCaches?.default ?? null : null;
   if (edgeCache) {
-    const cached = await edgeCache.match(request);
+    const cached = await edgeCache.match(request.url);
     if (cached) return cached;
   }
 
   const response = await handleCatalogWordsRequest(request, env.LEARNING_DB);
-  if (edgeCache && response.ok) ctx.waitUntil(edgeCache.put(request, response.clone()));
+  if (edgeCache && response.ok) ctx.waitUntil(edgeCache.put(request.url, response.clone()));
   return response;
 }
