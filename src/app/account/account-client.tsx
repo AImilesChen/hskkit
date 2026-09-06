@@ -2,6 +2,8 @@
 
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
+import { settleInBatches } from "@/lib/account/auxiliary";
+import { clearAccountSnapshot, loadAccountSnapshot } from "@/lib/account/browser";
 import { normalizePlannerCompletions } from "@/lib/planner/domain";
 
 type Account = { userId: string; displayName: string; timezone: string; status: "active" | "deleted"; createdAt: string };
@@ -97,14 +99,14 @@ export default function AccountClient() {
 
   const loadAuxiliary = async (generation: number) => {
     const deviceId = syncDeviceId();
-    const results = await Promise.allSettled([
-      json("/api/v1/account/streak"),
-      json(`/api/v1/account/sync?deviceId=${encodeURIComponent(deviceId)}`),
-      json("/api/v1/commercial/subscription"),
-      json("/api/v1/ai"),
-      json("/api/v1/commercial/referrals"),
-      json("/api/v1/planner"),
-    ]);
+    const results = await settleInBatches([
+      () => json("/api/v1/account/streak"),
+      () => json(`/api/v1/account/sync?deviceId=${encodeURIComponent(deviceId)}`),
+      () => json("/api/v1/commercial/subscription"),
+      () => json("/api/v1/ai"),
+      () => json("/api/v1/commercial/referrals"),
+      () => json("/api/v1/planner"),
+    ], 3);
     if (generation !== refreshGeneration.current) return;
     const keys: AuxiliaryResource[] = ["streak", "sync", "subscription", "ai", "referrals", "planner"];
     const setters = [setStreak, setSync, setSubscription, setAiQuota, setReferrals, setPlanner];
@@ -115,14 +117,14 @@ export default function AccountClient() {
     });
   };
 
-  const refresh = async () => {
+  const refresh = async (force = false) => {
     const generation = ++refreshGeneration.current;
     setError("");
     setView(undefined);
     setAuxiliary(loadingAuxiliaryState());
     [setStreak, setSync, setSubscription, setAiQuota, setReferrals, setPlanner].forEach(setter => setter(undefined));
     try {
-      const data = await json("/api/v1/account");
+      const data = await loadAccountSnapshot<AccountView>({ force });
       if (generation !== refreshGeneration.current) return;
       setView(data);
       if (data.account?.timezone) setTimezone(data.account.timezone);
@@ -152,7 +154,7 @@ export default function AccountClient() {
 
   const act = async (run: () => Promise<any>, success: string) => {
     setBusy(true); setError(""); setMessage("");
-    try { const result = await run(); setMessage(success); await refresh(); return result; }
+    try { const result = await run(); setMessage(success); clearAccountSnapshot(); await refresh(); return result; }
     catch (cause) { setError(cause instanceof Error ? cause.message : "REQUEST_FAILED"); }
     finally { setBusy(false); }
   };
@@ -195,7 +197,7 @@ export default function AccountClient() {
     await act(() => json("/api/v1/commercial/subscription", { method: "POST", body: JSON.stringify({ action, idempotencyKey: crypto.randomUUID(), reason: "Requested from Account billing" }) }), success);
   };
 
-  if (!view) return error ? <div className="state account-loading" role="alert"><h2>Account details unavailable</h2><p>{error}</p><button className="btn" onClick={() => void refresh()}>Retry account details</button></div> : <div className="state account-loading" role="status"><span className="account-loader"/><h2>Loading your account…</h2><p>Bringing your learning progress and access together.</p></div>;
+  if (!view) return error ? <div className="state account-loading" role="alert"><h2>Account details unavailable</h2><p>{error === "ACCOUNT_STATUS_TIMEOUT" ? "The account service took too long to respond. Your data is safe." : error}</p><button className="btn" onClick={() => void refresh(true)}>Retry account details</button></div> : <div className="state account-loading" role="status"><span className="account-loader"/><h2>Loading your account…</h2><p>Bringing your learning progress and access together.</p></div>;
 
   const tier = auxiliary.subscription === "ready" ? subscription?.capabilities?.tier === "pro" ? "Pro" : "Free" : undefined;
   const currentDeviceId = typeof window === "undefined" ? "" : localStorage.getItem("hskkit_device") ?? "";

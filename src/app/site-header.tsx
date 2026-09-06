@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
+import { loadAccountSnapshot } from "@/lib/account/browser";
 import {
   isNavigationEntryActive,
   isNavigationGroup,
@@ -40,10 +41,8 @@ export default function SiteHeader() {
   }, [pathname]);
 
   useEffect(() => {
-    const controller = new AbortController();
     const refreshAuth = () => {
-      void fetch("/api/v1/account", { cache: "no-store", signal: controller.signal })
-        .then((response) => response.ok ? response.json() : Promise.reject(new Error("ACCOUNT_STATUS_UNAVAILABLE")))
+      void loadAccountSnapshot<{ account: { userId: string } | null }>()
         .then((payload: { account: { userId: string } | null }) => setAuthState(payload.account?.userId ? "account" : "guest"))
         .catch(() => undefined);
     };
@@ -52,7 +51,6 @@ export default function SiteHeader() {
     window.addEventListener("pageshow", refreshAuth);
     window.addEventListener("focus", refreshAuth);
     return () => {
-      controller.abort();
       window.removeEventListener("hskkit:auth-changed", refreshAuth);
       window.removeEventListener("pageshow", refreshAuth);
       window.removeEventListener("focus", refreshAuth);

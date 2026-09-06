@@ -116,22 +116,22 @@ export async function createAccount(displayName: string, timezone: string) {
   return { account: { userId, displayName: displayName.trim(), timezone, status: "active", createdAt: timestamp, updatedAt: timestamp } satisfies Account, syncKey };
 }
 
-export async function authenticateAccount(syncKey: string | undefined) {
+export async function authenticateAccount(syncKey: string | undefined, touchSession = false) {
   if (!syncKey || syncKey.length < 20 || syncKey.length > 100) return undefined;
   const tokenHash = await hash(syncKey);
   const row = await db().prepare("SELECT a.* FROM account_tokens t JOIN accounts a ON a.user_id=t.user_id WHERE t.token_hash=? AND t.revoked_at IS NULL AND a.status='active'").bind(tokenHash).first<AccountRow>();
   if (!row) return undefined;
-  await db().prepare("UPDATE account_tokens SET last_used_at=? WHERE token_hash=?").bind(now(), tokenHash).run();
+  if (touchSession) await db().prepare("UPDATE account_tokens SET last_used_at=? WHERE token_hash=?").bind(now(), tokenHash).run().catch(() => undefined);
   return account(row);
 }
 
-export async function authenticateSession(sessionToken: string | undefined) {
+export async function authenticateSession(sessionToken: string | undefined, touchSession = false) {
   if (!sessionToken || sessionToken.length < 20 || sessionToken.length > 100) return undefined;
   const tokenHash = await hash(sessionToken);
   const timestamp = now();
   const row = await db().prepare("SELECT a.* FROM account_sessions s JOIN accounts a ON a.user_id=s.user_id WHERE s.token_hash=? AND s.revoked_at IS NULL AND s.expires_at>? AND a.status='active'").bind(tokenHash, timestamp).first<AccountRow>();
   if (!row) return undefined;
-  await db().prepare("UPDATE account_sessions SET last_used_at=? WHERE token_hash=?").bind(timestamp, tokenHash).run();
+  if (touchSession) await db().prepare("UPDATE account_sessions SET last_used_at=? WHERE token_hash=?").bind(timestamp, tokenHash).run().catch(() => undefined);
   return account(row);
 }
 

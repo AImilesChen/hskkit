@@ -10,7 +10,7 @@ export const OAUTH_RETURN_COOKIE = "hskkit_oauth_return";
 
 export type AccountConnection = "google" | "sync_key";
 
-export async function requestIdentity(): Promise<{
+export async function requestIdentity(options: { touchSession?: boolean } = {}): Promise<{
   account?: Account;
   sessionToken?: string;
   syncKey?: string;
@@ -19,7 +19,7 @@ export async function requestIdentity(): Promise<{
 }> {
   const jar = await cookies();
   const sessionToken = jar.get(SESSION_COOKIE)?.value;
-  const sessionAccount = await authenticateSession(sessionToken);
+  const sessionAccount = await authenticateSession(sessionToken, options.touchSession);
   if (sessionAccount) {
     return {
       account: sessionAccount,
@@ -29,7 +29,7 @@ export async function requestIdentity(): Promise<{
     };
   }
   const syncKey = jar.get(ACCOUNT_COOKIE)?.value;
-  const account = await authenticateAccount(syncKey);
+  const account = await authenticateAccount(syncKey, options.touchSession);
   return {
     account,
     syncKey: account ? syncKey : undefined,

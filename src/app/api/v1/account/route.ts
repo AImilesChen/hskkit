@@ -17,7 +17,7 @@ const safeBody = async (req: NextRequest) => {
 const statusFor = (code: string) => code === "ACCOUNT_REQUIRED" ? 401 : code.startsWith("INVALID") ? 422 : 400;
 
 export async function GET() {
-  const identity = await requestIdentity();
+  const identity = await requestIdentity({ touchSession: true });
   const [guest, guestPlans] = identity.guestId ? await Promise.all([loadState(identity.guestId), listAllPlans(identity.guestId)]) : [undefined, []];
   return NextResponse.json({
     account: identity.account ?? null,
