@@ -161,3 +161,24 @@ test("admin renders a retryable fallback when D1 remains unavailable", async () 
   assert.match(source, /reset\(\)/);
   assert.match(source, /Try again/);
 });
+
+test("admin feedback is a compact read-only list and hides identity fields for anonymous messages", async () => {
+  const [page, repository] = await Promise.all([
+    readFile(new URL("../src/app/admin/(console)/feedback/page.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../src/lib/admin/repository.ts", import.meta.url), "utf8"),
+  ]);
+
+  assert.match(page, /email\s*&&/);
+  assert.match(page, /accountUserId\s*&&/);
+  assert.match(page, />Account</);
+  assert.match(page, />Email</);
+  assert.match(page, /admin-feedback-message/);
+  assert.doesNotMatch(page, /Search feedback|Review status|Internal note|Save review|<Badge|>Page<|>Device<|Anonymous/);
+  assert.match(repository, /LEFT JOIN account_oauth_identities/);
+  assert.match(repository, /account_user_id/);
+  const feedbackRepository = repository.slice(
+    repository.indexOf("export async function listAdminFeedback"),
+    repository.indexOf("export async function reviewFeedback"),
+  );
+  assert.doesNotMatch(feedbackRepository, /maskEmail\(row\.email/);
+});

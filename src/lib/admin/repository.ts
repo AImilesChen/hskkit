@@ -106,16 +106,17 @@ export async function listAdminSubscriptions(db: AdminDb, options: ListOptions) 
 }
 
 export async function listAdminFeedback(db: AdminDb, options: ListOptions) {
-  const values: unknown[] = [];
-  const where: string[] = [];
-  if (options.query) { const q = `%${escapeLike(options.query)}%`; where.push("(message LIKE ? ESCAPE '\\' OR email LIKE ? ESCAPE '\\' OR page_path LIKE ? ESCAPE '\\')"); values.push(q, q, q); }
-  if (options.status && ["unread", "read", "resolved"].includes(options.status)) { where.push("review_status=?"); values.push(options.status); }
-  if (options.type && ["bug", "suggestion", "other"].includes(options.type)) { where.push("type=?"); values.push(options.type); }
-  const clause = where.length ? `WHERE ${where.join(" AND ")}` : "";
-  const total = await count(db, `SELECT COUNT(*) count FROM feedback_submissions ${clause}`, values);
-  const result = await withAdminD1Retry(() => db.prepare(`SELECT id,type,message,email,page_path,browser_category,device_category,notification_status,review_status,reviewed_at,reviewed_by,admin_note,created_at FROM feedback_submissions ${clause} ORDER BY created_at DESC LIMIT ? OFFSET ?`)
-    .bind(...values, options.pageSize, (options.page - 1) * options.pageSize).all<Record<string, unknown>>());
-  return { items: result.results.map((row) => ({ ...row, email: maskEmail(row.email as string | null), reviewed_by: maskReference(row.reviewed_by as string | null) }) as Record<string, unknown>), meta: pageMeta(total, options.page, options.pageSize) };
+  const total = await count(db, "SELECT COUNT(*) count FROM feedback_submissions", []);
+  const result = await withAdminD1Retry(() => db.prepare(`
+    SELECT f.id,f.message,f.email,f.created_at,MAX(oi.user_id) account_user_id
+    FROM feedback_submissions f
+    LEFT JOIN account_oauth_identities oi
+      ON oi.email_verified=1 AND lower(oi.email)=lower(f.email)
+    GROUP BY f.id
+    ORDER BY f.created_at DESC
+    LIMIT ? OFFSET ?
+  `).bind(options.pageSize, (options.page - 1) * options.pageSize).all<Record<string, unknown>>());
+  return { items: result.results, meta: pageMeta(total, options.page, options.pageSize) };
 }
 
 export async function reviewFeedback(
