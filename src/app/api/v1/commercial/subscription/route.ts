@@ -2,7 +2,8 @@ import { getCloudflareContext } from "@opennextjs/cloudflare";
 import { NextRequest, NextResponse } from "next/server";
 import { accountOwnerId, requestIdentity } from "@/lib/account/identity";
 import { stripeModeFromSecret,stripePriceId,stripeSecretForMode,subscriptionCommercePolicy } from "@/lib/commercial/domain";
-import { markSubscriptionCancelAtPeriodEnd, requestSubscriptionRefund, resolveCapabilities, subscriptionSummaryForOwner } from "@/lib/commercial/storage";
+import { markSubscriptionCancelAtPeriodEnd, requestSubscriptionRefund, subscriptionSummaryForOwner } from "@/lib/commercial/storage";
+import { resolveCommercialAccess } from "@/lib/commercial/referral-storage";
 import { cancelStripeSubscriptionAtPeriodEnd,createStripeYearlyUpgradePortal } from "@/lib/commercial/stripe";
 
 async function context(){
@@ -20,8 +21,8 @@ const publicSummary=(value:Awaited<ReturnType<typeof subscriptionSummaryForOwner
 export async function GET(){
   const identity=await context(); if(!identity) return NextResponse.json({error:"ACCOUNT_REQUIRED"},{status:401});
   const livemode=getCloudflareContext().env.COMMERCE_MODE==="live";
-  const [summary,capabilities]=await Promise.all([subscriptionSummaryForOwner(identity.ownerId,livemode),resolveCapabilities(identity.ownerId)]);
-  return NextResponse.json({...publicSummary(summary),capabilities},{headers:{"cache-control":"no-store"}});
+  const [summary,commercialAccess]=await Promise.all([subscriptionSummaryForOwner(identity.ownerId,livemode),resolveCommercialAccess(identity.ownerId)]);
+  return NextResponse.json({...publicSummary(summary),access:commercialAccess.access,capabilities:commercialAccess.capabilities},{headers:{"cache-control":"no-store"}});
 }
 
 export async function POST(req:NextRequest){

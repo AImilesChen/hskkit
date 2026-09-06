@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import SiteHeader from "../site-header";
 import SiteFooter from "../site-footer";
-import SubscriptionCheckout,{FreePlanAction} from "./subscription-checkout";
+import SubscriptionCheckout,{FreePlanAction,WelcomeTrialAction} from "./subscription-checkout";
 import { PUBLIC_ACCOUNT_SCOPE, PUBLIC_FORMAL_CONTENT_SCOPE } from "@/lib/public-copy";
 
 export const metadata: Metadata = { title: "Pricing | HSKKit", description: "Compare HSKKit Free with Pro Monthly and Pro Yearly.", alternates: { canonical: "/pricing" } };
@@ -31,8 +31,8 @@ export default function PricingPage() {
     <header className="mx-auto max-w-3xl rounded-[28px] border border-blue-200 bg-gradient-to-br from-blue-50 via-white to-emerald-50 px-6 py-8 text-center sm:px-10 sm:py-11">
       <p className="text-xs font-bold uppercase tracking-[0.16em] text-blue-700">New account welcome offer</p>
       <h1 className="mt-3 text-[34px] font-extrabold leading-tight tracking-tight text-slate-950 sm:text-[48px]">Try Pro free for 7 days</h1>
-      <p className="mx-auto mt-5 max-w-2xl text-lg leading-8 text-slate-700">New verified accounts receive 7 days of Pro and 20 AI credits. No card required. It returns to Free automatically.</p>
-      <div className="mt-6 flex flex-wrap justify-center gap-3"><Link href="/login?returnTo=%2Faccount" className="inline-flex min-h-12 items-center justify-center rounded-xl bg-blue-700 px-5 font-bold text-white">Start my free Pro trial</Link><Link href="#plans" className="inline-flex min-h-12 items-center justify-center rounded-xl border border-slate-300 bg-white px-5 font-bold text-slate-800">Compare plans</Link></div>
+      <p className="mx-auto mt-5 max-w-2xl text-lg leading-8 text-slate-700">Your 7-day Pro trial starts automatically after sign-up and includes 20 AI credits. No card required. It returns to Free automatically.</p>
+      <div className="mt-6 flex flex-wrap justify-center gap-3"><WelcomeTrialAction /><Link href="#plans" className="inline-flex min-h-12 items-center justify-center rounded-xl border border-slate-300 bg-white px-5 font-bold text-slate-800">Compare plans</Link></div>
       <p className="mt-4 text-sm font-semibold text-amber-800">Secure checkout is powered by Stripe. Pro access is granted only after verified payment lifecycle events.</p>
     </header>
 

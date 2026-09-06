@@ -4,13 +4,13 @@ import { readFile } from "node:fs/promises";
 
 const read = (path: string) => readFile(new URL(`../${path}`, import.meta.url), "utf8");
 
-test("pricing makes the welcome trial visible before plan comparison", async () => {
+test("pricing makes the automatic welcome trial visible before plan comparison", async () => {
   const pricing = await read("src/app/pricing/page.tsx");
   assert.match(pricing, /Try Pro free for 7 days/);
-  assert.match(pricing, /New verified accounts receive 7 days of Pro and 20 AI credits/);
+  assert.match(pricing, /Your 7-day Pro trial starts automatically after sign-up and includes 20 AI credits/);
   assert.match(pricing, /No card required\. It returns to Free automatically\./);
-  assert.match(pricing, /Start my free Pro trial/);
-  assert.match(pricing, /href="\/login\?returnTo=%2Faccount"/);
+  assert.match(pricing, /<WelcomeTrialAction \/>/);
+  assert.doesNotMatch(pricing, /Start my free Pro trial/);
   assert.match(pricing, /Compare plans/);
 });
 
