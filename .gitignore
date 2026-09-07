@@ -18,3 +18,6 @@ tsconfig.tsbuildinfo
 .wrangler
 .dev.vars*
 !.dev.vars.example
+
+# Local Placement migration exports contain production user state
+.placement-migration/

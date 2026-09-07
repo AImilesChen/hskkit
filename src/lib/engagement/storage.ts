@@ -75,6 +75,11 @@ export function engagementTaskStatements(
   ];
 }
 
+export async function recordLearningTask(ownerId: string, activity: LearningEngagementActivity, createdAt = new Date().toISOString()) {
+  const db = database();
+  await db.batch(engagementTaskStatements(db, ownerId, activity, createdAt));
+}
+
 async function reconcileReward(ownerId: string, localDay: string, now: Date) {
   const db = database();
   const [day, task, existing] = await Promise.all([

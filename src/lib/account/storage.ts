@@ -1,6 +1,7 @@
 import { getCloudflareContext } from "@opennextjs/cloudflare";
 import type { LearningState } from "../learning/domain";
 import { loadState } from "../learning/storage";
+import { deletePlacementOwner, loadPlacementState, mergePlacementOwners, placementDbMode, restorePlacementOwnerAfterFailedDeletion } from "../placement/storage";
 import { listAllPlans } from "../planner/storage";
 import { aiRuntimePolicy } from "../ai/domain";
 import { AI_MERGE_BUCKET_SQL } from "../ai/merge";
@@ -223,18 +224,20 @@ export async function getAccount(userId: string) {
 export async function createMergePreview(userId: string, guestOwnerId: string) {
   const existing = await db().prepare("SELECT * FROM guest_merges WHERE user_id=? AND guest_owner_id=?").bind(userId, guestOwnerId).first<any>();
   if (existing?.state === "confirmed") throw new Error("GUEST_ALREADY_MERGED");
-  const [accountState, guestState, accountPlans, guestPlans, accountAi, guestAi] = await Promise.all([
-    loadState(ownerId(userId)), loadState(guestOwnerId), listAllPlans(ownerId(userId)), listAllPlans(guestOwnerId), aiMergeSnapshot(ownerId(userId)), aiMergeSnapshot(guestOwnerId),
+  const [accountState, guestState, accountPlacement, guestPlacement, accountPlans, guestPlans, accountAi, guestAi] = await Promise.all([
+    loadState(ownerId(userId)), loadState(guestOwnerId), loadPlacementState(ownerId(userId)), loadPlacementState(guestOwnerId), listAllPlans(ownerId(userId)), listAllPlans(guestOwnerId), aiMergeSnapshot(ownerId(userId)), aiMergeSnapshot(guestOwnerId),
   ]);
-  const guestHasLearningData = guestState.state.attempts.length > 0
-    || guestState.state.dailySessions.length > 0
-    || (guestState.state.placementSessions?.length ?? 0) > 0
-    || (guestState.state.placementResults?.length ?? 0) > 0
-    || (guestState.state.practiceSessions?.length ?? 0) > 0
-    || (guestState.state.questionReports?.length ?? 0) > 0;
+  const effectiveAccountState = { ...accountState.state, placementSessions: accountPlacement.state.placementSessions, placementResults: accountPlacement.state.placementResults };
+  const effectiveGuestState = { ...guestState.state, placementSessions: guestPlacement.state.placementSessions, placementResults: guestPlacement.state.placementResults };
+  const guestHasLearningData = effectiveGuestState.attempts.length > 0
+    || effectiveGuestState.dailySessions.length > 0
+    || (effectiveGuestState.placementSessions?.length ?? 0) > 0
+    || (effectiveGuestState.placementResults?.length ?? 0) > 0
+    || (effectiveGuestState.practiceSessions?.length ?? 0) > 0
+    || (effectiveGuestState.questionReports?.length ?? 0) > 0;
   if (!guestHasLearningData && guestPlans.length === 0 && guestAi.operationCount === 0 && guestAi.bucketCount === 0) throw new Error("NO_GUEST_DATA");
-  const preview = previewMerge(accountState.state, guestState.state);
-  const storedPreview = { ...preview, plannerVersions: guestPlans.length, accountPlannerCount: accountPlans.length, accountPlannerMax: accountPlans[0]?.version ?? 0, guestPlannerCount: guestPlans.length, guestPlannerMax: guestPlans[0]?.version ?? 0, accountAi, guestAi };
+  const preview = previewMerge(effectiveAccountState, effectiveGuestState);
+  const storedPreview = { ...preview, plannerVersions: guestPlans.length, accountPlannerCount: accountPlans.length, accountPlannerMax: accountPlans[0]?.version ?? 0, guestPlannerCount: guestPlans.length, guestPlannerMax: guestPlans[0]?.version ?? 0, accountAi, guestAi, accountPlacementRevision: accountPlacement.revision, guestPlacementRevision: guestPlacement.revision };
   const id = existing?.id ?? crypto.randomUUID();
   const mergeKey = secret();
   const mergeTokenHash = await hash(mergeKey);
@@ -266,7 +269,13 @@ export async function createMergePreview(userId: string, guestOwnerId: string) {
 export async function closeMerge(userId: string, mergeId: string, mergeKey: string, action: "confirm" | "cancel") {
   const row = await db().prepare("SELECT * FROM guest_merges WHERE id=? AND user_id=?").bind(mergeId, userId).first<any>();
   if (!row || row.merge_token_hash !== await hash(mergeKey)) throw new Error("MERGE_NOT_FOUND");
-  if (row.state !== "previewed") throw new Error(row.state === "confirmed" ? "GUEST_ALREADY_MERGED" : "MERGE_ALREADY_CLOSED");
+  if (row.state === "confirmed" && action === "confirm") {
+    await mergePlacementOwners(ownerId(userId), row.guest_owner_id);
+    const current = await loadState(ownerId(userId));
+    const preview = JSON.parse(row.preview_json) as { conflicts?: number };
+    return { state: "confirmed" as const, revision: current.revision, conflicts: Number(preview.conflicts ?? 0) };
+  }
+  if (row.state !== "previewed") throw new Error("MERGE_ALREADY_CLOSED");
   if (Date.parse(row.expires_at) <= Date.now()) {
     await db().prepare("UPDATE guest_merges SET state='expired',updated_at=? WHERE id=? AND state='previewed'").bind(now(), mergeId).run();
     throw new Error("MERGE_EXPIRED");
@@ -283,10 +292,25 @@ export async function closeMerge(userId: string, mergeId: string, mergeKey: stri
     ]);
     return { state: "cancelled" as const };
   }
-  const [accountState, guestState] = await Promise.all([loadState(ownerId(userId)), loadState(row.guest_owner_id)]);
+  const [accountState, guestState, accountPlacement, guestPlacement] = await Promise.all([
+    loadState(ownerId(userId)), loadState(row.guest_owner_id), loadPlacementState(ownerId(userId)), loadPlacementState(row.guest_owner_id),
+  ]);
   if (accountState.revision !== row.account_revision || guestState.revision !== row.guest_revision) throw new Error("MERGE_PREVIEW_STALE");
-  const merged = mergeLearningStates(accountState.state, guestState.state, ownerId(userId));
-  const plannerSnapshot = JSON.parse(row.preview_json) as { accountPlannerMax?: number; accountPlannerCount?: number; guestPlannerMax?: number; guestPlannerCount?: number; accountAi?: AiMergeSnapshot; guestAi?: AiMergeSnapshot };
+  const effectiveAccountState = { ...accountState.state, placementSessions: accountPlacement.state.placementSessions, placementResults: accountPlacement.state.placementResults };
+  const effectiveGuestState = { ...guestState.state, placementSessions: guestPlacement.state.placementSessions, placementResults: guestPlacement.state.placementResults };
+  const mergedWithPlacement = mergeLearningStates(effectiveAccountState, effectiveGuestState, ownerId(userId));
+  const mode = placementDbMode(getCloudflareContext().env);
+  const mergedResults = mergedWithPlacement.state.placementResults ?? [];
+  const mergedSessionsById = new Map((mergedWithPlacement.state.placementSessions ?? []).map((session) => [session.id, session]));
+  const projectedSessions = mergedResults.flatMap((result) => {
+    const session = mergedSessionsById.get(result.sessionId);
+    return session ? [{ ...session, answers: [] }] : [];
+  });
+  const merged = mode === "primary"
+    ? { ...mergedWithPlacement, state: { ...mergedWithPlacement.state, placementSessions: projectedSessions, placementResults: mergedResults } }
+    : mergedWithPlacement;
+  const plannerSnapshot = JSON.parse(row.preview_json) as { accountPlannerMax?: number; accountPlannerCount?: number; guestPlannerMax?: number; guestPlannerCount?: number; accountAi?: AiMergeSnapshot; guestAi?: AiMergeSnapshot; accountPlacementRevision?: number; guestPlacementRevision?: number };
+  if (accountPlacement.revision !== plannerSnapshot.accountPlacementRevision || guestPlacement.revision !== plannerSnapshot.guestPlacementRevision) throw new Error("MERGE_PREVIEW_STALE");
   const accountPlanVersion = Number(plannerSnapshot.accountPlannerMax ?? -1);
   const accountPlanCount = Number(plannerSnapshot.accountPlannerCount ?? -1);
   const guestPlanVersion = Number(plannerSnapshot.guestPlannerMax ?? -1);
@@ -324,6 +348,7 @@ export async function closeMerge(userId: string, mergeId: string, mergeKey: stri
     if (String(error).includes("account_cas_assertions") || String(error).includes("CHECK constraint")) throw new Error("MERGE_PREVIEW_STALE");
     throw error;
   }
+  await mergePlacementOwners(ownerId(userId), row.guest_owner_id);
   return { state: "confirmed" as const, revision: accountState.revision + 1, conflicts: merged.conflicts };
 }
 
@@ -436,8 +461,9 @@ export async function actOnDataRequest(userId: string, requestId: string, action
   const processing = await persistTransition(userId, current, "process");
   try {
     if (processing.type === "export") {
-      const [learning, accountRow, requests, audits, plans, aiOperations, aiQuota, rewardSessions, rewardHeartbeats, rewardDays, rewardTasks, rewardPoints, rewardBadges, rewardProfile] = await Promise.all([
+      const [learning, placement, accountRow, requests, audits, plans, aiOperations, aiQuota, rewardSessions, rewardHeartbeats, rewardDays, rewardTasks, rewardPoints, rewardBadges, rewardProfile] = await Promise.all([
         loadState(ownerId(userId)),
+        loadPlacementState(ownerId(userId)),
         getAccount(userId),
         listAccountDataRequests(userId),
         db().prepare("SELECT action,resource_type,resource_id,result,created_at FROM account_audit WHERE user_id=? ORDER BY created_at").bind(userId).all(),
@@ -452,7 +478,8 @@ export async function actOnDataRequest(userId: string, requestId: string, action
         db().prepare("SELECT badge_key,awarded_at FROM learning_badges WHERE owner_id=? ORDER BY awarded_at").bind(ownerId(userId)).all(),
         db().prepare("SELECT timezone,created_at FROM learning_reward_profiles WHERE owner_id=?").bind(ownerId(userId)).first(),
       ]);
-      const resultJson = JSON.stringify({ schemaVersion: "account-export-v1", generatedAt: now(), account: accountRow, learning: learning.state, rewards: { profile: rewardProfile, sessions: rewardSessions.results, heartbeats: rewardHeartbeats.results, days: rewardDays.results, qualifyingTasks: rewardTasks.results, points: rewardPoints.results, badges: rewardBadges.results }, plans, ai: { operations: aiOperations.results, quota: aiQuota.results }, requests, audit: audits.results });
+      const exportedLearning = { ...learning.state, placementSessions: placement.state.placementSessions, placementResults: placement.state.placementResults };
+      const resultJson = JSON.stringify({ schemaVersion: "account-export-v1", generatedAt: now(), account: accountRow, learning: exportedLearning, rewards: { profile: rewardProfile, sessions: rewardSessions.results, heartbeats: rewardHeartbeats.results, days: rewardDays.results, qualifyingTasks: rewardTasks.results, points: rewardPoints.results, badges: rewardBadges.results }, plans, ai: { operations: aiOperations.results, quota: aiQuota.results }, requests, audit: audits.results });
       const completed = transitionDataRequest(processing, "complete", now());
       const expiresAt = new Date(Date.now() + 24 * 60 * 60_000).toISOString();
       const assertionId = crypto.randomUUID();
@@ -465,32 +492,38 @@ export async function actOnDataRequest(userId: string, requestId: string, action
       return completed;
     }
     const completed = transitionDataRequest(processing, "complete", now());
-    const assertionId = crypto.randomUUID();
-    await db().batch([
-      db().prepare("INSERT INTO account_cas_assertions(id,ok) VALUES(?, CASE WHEN EXISTS(SELECT 1 FROM account_data_requests WHERE id=? AND user_id=? AND state='processing') AND EXISTS(SELECT 1 FROM accounts WHERE user_id=? AND status='active') THEN 1 ELSE 0 END)").bind(assertionId, requestId, userId, userId),
-      db().prepare("DELETE FROM learning_states WHERE owner_id=?").bind(ownerId(userId)),
-      db().prepare("DELETE FROM learning_engagement_sessions WHERE owner_id=?").bind(ownerId(userId)),
-      db().prepare("DELETE FROM learning_engagement_heartbeats WHERE owner_id=?").bind(ownerId(userId)),
-      db().prepare("DELETE FROM learning_qualifying_tasks WHERE owner_id=?").bind(ownerId(userId)),
-      db().prepare("DELETE FROM learning_badges WHERE owner_id=?").bind(ownerId(userId)),
-      db().prepare("DELETE FROM learning_point_ledger WHERE owner_id=?").bind(ownerId(userId)),
-      db().prepare("DELETE FROM learning_engagement_days WHERE owner_id=?").bind(ownerId(userId)),
-      db().prepare("DELETE FROM learning_reward_profiles WHERE owner_id=?").bind(ownerId(userId)),
-      db().prepare("DELETE FROM study_plan_versions WHERE owner_id=?").bind(ownerId(userId)),
-      db().prepare("DELETE FROM step7_playback_tickets WHERE owner_id=?").bind(ownerId(userId)),
-      db().prepare("DELETE FROM ai_operations WHERE owner_id=?").bind(ownerId(userId)),
-      db().prepare("DELETE FROM ai_quota_buckets WHERE owner_id=?").bind(ownerId(userId)),
-      db().prepare("UPDATE account_data_requests SET result_json=NULL,expires_at=NULL WHERE user_id=?").bind(userId),
-      db().prepare("UPDATE account_tokens SET revoked_at=? WHERE user_id=? AND revoked_at IS NULL").bind(completed.updatedAt, userId),
-      db().prepare("UPDATE account_sessions SET revoked_at=? WHERE user_id=? AND revoked_at IS NULL").bind(completed.updatedAt, userId),
-      db().prepare("UPDATE pack_purchases SET status='revoked',revoked_reason='account_deleted',version=version+1,updated_at=? WHERE user_id=? AND status='active'").bind(completed.updatedAt, userId),
-      db().prepare("UPDATE commercial_export_jobs SET state='revoked',error_code='ACCOUNT_DELETED',lease_owner=NULL,lease_expires_at=NULL,updated_at=? WHERE user_id=? AND state!='revoked'").bind(completed.updatedAt,userId),
-      db().prepare("DELETE FROM commercial_download_tokens WHERE user_id=? AND consumed_at IS NULL").bind(userId),
-      db().prepare("UPDATE accounts SET status='deleted',deleted_at=?,updated_at=? WHERE user_id=? AND status='active'").bind(completed.completedAt, completed.updatedAt, userId),
-      db().prepare("UPDATE account_data_requests SET state='completed',updated_at=?,completed_at=?,failure_code=NULL WHERE id=? AND user_id=? AND state='processing'").bind(completed.updatedAt, completed.completedAt, requestId, userId),
-      db().prepare("INSERT INTO account_audit(id,user_id,action,resource_type,resource_id,result,idempotency_key,created_at) VALUES(?,?,'delete_complete','account_data_request',?,'completed',?,?)").bind(crypto.randomUUID(), userId, requestId, `${requestId}:complete:${processing.attempt}`, completed.updatedAt),
-      db().prepare("DELETE FROM account_cas_assertions WHERE id=?").bind(assertionId),
-    ]);
+    await deletePlacementOwner(ownerId(userId));
+    const completionAssertionId = crypto.randomUUID();
+    try {
+      await db().batch([
+        db().prepare("INSERT INTO account_cas_assertions(id,ok) VALUES(?, CASE WHEN EXISTS(SELECT 1 FROM account_data_requests WHERE id=? AND user_id=? AND state='processing') AND EXISTS(SELECT 1 FROM accounts WHERE user_id=? AND status='active') THEN 1 ELSE 0 END)").bind(completionAssertionId, requestId, userId, userId),
+        db().prepare("DELETE FROM learning_states WHERE owner_id=?").bind(ownerId(userId)),
+        db().prepare("DELETE FROM learning_engagement_sessions WHERE owner_id=?").bind(ownerId(userId)),
+        db().prepare("DELETE FROM learning_engagement_heartbeats WHERE owner_id=?").bind(ownerId(userId)),
+        db().prepare("DELETE FROM learning_qualifying_tasks WHERE owner_id=?").bind(ownerId(userId)),
+        db().prepare("DELETE FROM learning_badges WHERE owner_id=?").bind(ownerId(userId)),
+        db().prepare("DELETE FROM learning_point_ledger WHERE owner_id=?").bind(ownerId(userId)),
+        db().prepare("DELETE FROM learning_engagement_days WHERE owner_id=?").bind(ownerId(userId)),
+        db().prepare("DELETE FROM learning_reward_profiles WHERE owner_id=?").bind(ownerId(userId)),
+        db().prepare("DELETE FROM study_plan_versions WHERE owner_id=?").bind(ownerId(userId)),
+        db().prepare("DELETE FROM step7_playback_tickets WHERE owner_id=?").bind(ownerId(userId)),
+        db().prepare("DELETE FROM ai_operations WHERE owner_id=?").bind(ownerId(userId)),
+        db().prepare("DELETE FROM ai_quota_buckets WHERE owner_id=?").bind(ownerId(userId)),
+        db().prepare("UPDATE account_data_requests SET result_json=NULL,expires_at=NULL WHERE user_id=?").bind(userId),
+        db().prepare("UPDATE account_tokens SET revoked_at=? WHERE user_id=? AND revoked_at IS NULL").bind(completed.updatedAt, userId),
+        db().prepare("UPDATE account_sessions SET revoked_at=? WHERE user_id=? AND revoked_at IS NULL").bind(completed.updatedAt, userId),
+        db().prepare("UPDATE pack_purchases SET status='revoked',revoked_reason='account_deleted',version=version+1,updated_at=? WHERE user_id=? AND status='active'").bind(completed.updatedAt, userId),
+        db().prepare("UPDATE commercial_export_jobs SET state='revoked',error_code='ACCOUNT_DELETED',lease_owner=NULL,lease_expires_at=NULL,updated_at=? WHERE user_id=? AND state!='revoked'").bind(completed.updatedAt,userId),
+        db().prepare("DELETE FROM commercial_download_tokens WHERE user_id=? AND consumed_at IS NULL").bind(userId),
+        db().prepare("UPDATE accounts SET status='deleted',deleted_at=?,updated_at=? WHERE user_id=? AND status='active'").bind(completed.completedAt, completed.updatedAt, userId),
+        db().prepare("UPDATE account_data_requests SET state='completed',updated_at=?,completed_at=?,failure_code=NULL WHERE id=? AND user_id=? AND state='processing'").bind(completed.updatedAt, completed.completedAt, requestId, userId),
+        db().prepare("INSERT INTO account_audit(id,user_id,action,resource_type,resource_id,result,idempotency_key,created_at) VALUES(?,?,'delete_complete','account_data_request',?,'completed',?,?)").bind(crypto.randomUUID(), userId, requestId, `${requestId}:complete:${processing.attempt}`, completed.updatedAt),
+        db().prepare("DELETE FROM account_cas_assertions WHERE id=?").bind(completionAssertionId),
+      ]);
+    } catch (error) {
+      await restorePlacementOwnerAfterFailedDeletion(ownerId(userId));
+      throw error;
+    }
     return completed;
   } catch (error) {
     const code = error instanceof Error ? error.message.slice(0, 80) : "PROCESSING_FAILED";

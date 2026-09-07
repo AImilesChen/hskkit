@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { ACCOUNT_COOKIE, SESSION_COOKIE, requestIdentity } from "../../../../lib/account/identity";
 import { authenticateAccount, createAccount, revokeAccountSession, revokeSyncKeys, rotateSyncKey, updateTimezone } from "../../../../lib/account/storage";
 import { loadState } from "../../../../lib/learning/storage";
+import { loadPlacementState } from "../../../../lib/placement/storage";
 import { countPlans } from "../../../../lib/planner/storage";
 import { d1UnavailableResponse, withUserD1ReadProtection } from "@/lib/d1/user-protection";
 
@@ -19,20 +20,21 @@ const statusFor = (code: string) => code === "ACCOUNT_REQUIRED" ? 401 : code.sta
 
 async function getAccount() {
   const identity = await requestIdentity({ touchSession: true });
-  const [guest, guestPlanCount] = identity.guestId ? await Promise.all([loadState(identity.guestId), countPlans(identity.guestId)]) : [undefined, 0];
+  const [guest, guestPlacement, guestPlanCount] = identity.guestId ? await Promise.all([loadState(identity.guestId), loadPlacementState(identity.guestId), countPlans(identity.guestId)]) : [undefined, undefined, 0];
+  const placementSessions = guestPlacement?.state.placementSessions ?? guest?.state.placementSessions ?? [];
   return NextResponse.json({
     account: identity.account ?? null,
     connection: identity.connection ?? null,
     guest: guest ? {
       hasData: guest.state.attempts.length > 0
         || guest.state.dailySessions.length > 0
-        || (guest.state.placementSessions?.length ?? 0) > 0
+        || placementSessions.length > 0
         || (guest.state.practiceSessions?.length ?? 0) > 0
         || (guest.state.savedWordIds?.length ?? 0) > 0
         || (guest.state.recentDictionarySearches?.length ?? 0) > 0
         || guestPlanCount > 0,
       attempts: guest.state.attempts.length,
-      learningSessions: (guest.state.placementSessions?.length ?? 0) + (guest.state.practiceSessions?.length ?? 0),
+      learningSessions: placementSessions.length + (guest.state.practiceSessions?.length ?? 0),
       plannerVersions: guestPlanCount,
       revision: guest.revision,
     } : { hasData: false, attempts: 0, learningSessions: 0, plannerVersions: 0, revision: 0 },

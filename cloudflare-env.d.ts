@@ -1,5 +1,7 @@
 interface CloudflareEnv {
   LEARNING_DB: D1Database;
+  PLACEMENT_DB: D1Database;
+  PLACEMENT_DB_MODE?: string;
   FEEDBACK_EMAIL: SendEmail;
   FEEDBACK_HASH_SECRET?: string;
   FEEDBACK_TO_EMAIL?: string;

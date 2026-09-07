@@ -1,9 +1,9 @@
 import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 import { requestIdentity, GUEST_COOKIE } from "@/lib/account/identity";
-import { loadState, saveState } from "@/lib/learning/storage";
 import type { PlacementSession } from "@/lib/learning/domain";
 import { learningRewardLocalDay } from "@/lib/engagement/storage";
+import { loadPlacementState, savePlacementState } from "@/lib/placement/storage";
 import {
   answerPlacementQuestion,
   createPlacementSession,
@@ -110,7 +110,7 @@ export async function placementFailure(req: NextRequest, code: string) {
 async function getPlacementSessionInner(req: NextRequest) {
   const identity = await owner();
   if (identity.account?.status === "deleted") return response(req, { error: "ACCOUNT_DELETED" }, identity, 403);
-  const loaded = await loadState(identity.id);
+  const loaded = await loadPlacementState(identity.id);
   const now = new Date().toISOString();
   const active = resumePlacement(loaded.state, identity.id, now);
   const expired = active ? undefined : expiredPlacement(loaded.state, identity.id, now);
@@ -133,7 +133,7 @@ export async function getPlacementSession(req: NextRequest) {
 async function getPlacementResultInner(req: NextRequest, resultId: string) {
   const identity = await owner();
   if (identity.account?.status === "deleted") return response(req, { error: "ACCOUNT_DELETED" }, identity, 403);
-  const loaded = await loadState(identity.id);
+  const loaded = await loadPlacementState(identity.id);
   const result = placementResult(loaded.state, identity.id, resultId);
   return result
     ? response(req, { result, scope: identity.account ? "account" : "guest" }, identity)
@@ -155,7 +155,7 @@ async function runPlacementActionInner(req: NextRequest, action: PlacementAction
   if (!idempotencyKey) return response(req, { error: "INVALID_PLACEMENT_REQUEST" }, identity, 422);
 
   for (let turn = 0; turn < 3; turn += 1) {
-    const loaded = await loadState(identity.id);
+    const loaded = await loadPlacementState(identity.id, { initializeIfMissing: action === "start" });
     try {
       const now = new Date().toISOString();
       let nextState = loaded.state;
@@ -189,10 +189,10 @@ async function runPlacementActionInner(req: NextRequest, action: PlacementAction
         data = { session: sessionView(restarted.session) };
       }
       const changed = nextState !== loaded.state;
-      const engagementActivity = changed && action === "submit" && identity.account
+      const engagementActivity = action === "submit" && identity.account
         ? { localDay: await learningRewardLocalDay(identity.id, identity.account.timezone || "UTC"), action: "placement_submit", idempotencyKey }
         : undefined;
-      if (changed) await saveState(identity.id, nextState, loaded.revision, undefined, undefined, undefined, engagementActivity);
+      await savePlacementState(identity.id, loaded.state, nextState, loaded.revision, engagementActivity, action === "submit");
       return response(req, {
         ...data,
         scope: identity.account ? "account" : "guest",
