@@ -154,7 +154,13 @@ export function suggestPublicCatalogWords(input: {
   const first = needle[0];
   const isHanQuery = /\p{Script=Han}/u.test(first);
   if (!isHanQuery && !/[a-z0-9]/.test(first)) return [];
-  const source = isHanQuery ? wordsByCharacter.get(first) ?? [] : suggestionCandidates.get(first) ?? [];
+  const prefixCandidates = isHanQuery ? wordsByCharacter.get(first) ?? [] : suggestionCandidates.get(first) ?? [];
+  const directCandidates = words.filter((word) =>
+    word.search_hanzi.includes(needle)
+    || word.search_pinyin.includes(needle)
+    || word.search_english.includes(needle),
+  );
+  const source = [...new Set([...directCandidates, ...prefixCandidates])];
   const levelBand = input.level === undefined ? undefined : input.level >= 7 ? "7-9" : String(input.level);
   const formalAudioSet = input.formalAudioIds ? new Set(input.formalAudioIds) : null;
   if (formalAudioSet?.size === 0) return [];
@@ -167,7 +173,9 @@ export function suggestPublicCatalogWords(input: {
   ).map((word) => {
     const forms = [word.hanzi, word.pinyin, word.meaning].map(normalizeCatalogQuery).filter(Boolean);
     const score = Math.min(...forms.map((form) => {
-      if (form.includes(needle) || needle.includes(form)) return Math.abs(form.length - needle.length) * 0.2;
+      if (form === needle) return 0;
+      if (form.startsWith(needle)) return 0.05 + Math.min(Math.abs(form.length - needle.length) * 0.005, 0.2);
+      if (form.includes(needle)) return 0.15 + Math.min(form.indexOf(needle) * 0.01, 0.2);
       return boundedEditDistance(needle, form) / Math.max(needle.length, Math.min(form.length, 120), 1);
     }));
     return { word, score };

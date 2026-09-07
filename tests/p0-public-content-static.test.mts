@@ -24,6 +24,8 @@ test("public static catalog supports Hanzi, pinyin, English, detail, and charact
   assert.ok(searchPublicCatalogWords({ q: "xue xi", page: 1, pageSize: 20 }).contentAssets.some((word) => word.payload.hanzi === "学习"));
   assert.ok(searchPublicCatalogWords({ q: "learn", page: 1, pageSize: 20 }).contentAssets.some((word) => word.payload.hanzi === "学习"));
   assert.ok(suggestPublicCatalogWords({ q: "xue xi", limit: 4 }).some((word) => word.hanzi === "学习"));
+  const englishSuggestions = suggestPublicCatalogWords({ q: "learn", limit: 4 });
+  assert.match(englishSuggestions[0]?.meaning ?? "", /learn/i);
   assert.ok(findPublicCatalogWordsContainingCharacter("学", 36).some((word) => word.hanzi.includes("学")));
 });
 
@@ -40,6 +42,7 @@ test("public catalog request paths do not bind or query D1", async () => {
     const source = await read(file);
     assert.doesNotMatch(source, /LEARNING_DB|CatalogSearchDatabase|findActiveCatalog|findCatalogWordLearningContext|searchCatalogWords\(/);
   }
+  assert.match(await read("../src/app/api/v1/dictionary/suggestions/route.ts"), /id: row\.id/);
 });
 
 test("learning page load does not create a reward session before real interaction", async () => {

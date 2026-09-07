@@ -16,6 +16,7 @@ export async function GET(request: Request) {
     });
     return NextResponse.json({
       suggestions: rows.map((row) => ({
+        id: row.id,
         slug: row.id,
         hanzi: row.hanzi,
         pinyin: row.pinyin,
