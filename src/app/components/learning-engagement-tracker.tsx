@@ -40,9 +40,9 @@ export function LearningEngagementTracker() {
 
     const timer = window.setInterval(async () => {
       const now = Date.now();
-      const elapsed = Math.min(30, Math.max(1, Math.round((now - lastTickAt) / 1000)));
+      const elapsed = Math.min(60, Math.max(1, Math.round((now - lastTickAt) / 1000)));
       lastTickAt = now;
-      if (stopped || document.visibilityState !== "visible" || now - lastActivityAt > 45_000) return;
+      if (stopped || document.visibilityState !== "visible" || now - lastActivityAt > 90_000) return;
       try {
         if (!sessionToken || sessionExpiresAt - now < 35_000) {
           const started = await begin();
@@ -66,7 +66,7 @@ export function LearningEngagementTracker() {
           window.dispatchEvent(new CustomEvent("hskkit:learning-reward", { detail: snapshot }));
         }
       } catch { /* learning remains available if reward telemetry is temporarily unavailable */ }
-    }, 30_000);
+    }, 60_000);
 
     return () => {
       stopped = true;

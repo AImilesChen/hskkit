@@ -52,7 +52,9 @@ type AiMergeSnapshot = { operationCount: number; operationMax: string; bucketCou
 const db = () => getCloudflareContext().env.LEARNING_DB;
 const now = () => new Date().toISOString();
 const SESSION_TOUCH_INTERVAL_MS = 15 * 60_000;
+const DEVICE_TOUCH_INTERVAL_MS = 15 * 60_000;
 const sessionTouchThreshold = (timestamp: string) => new Date(Date.parse(timestamp) - SESSION_TOUCH_INTERVAL_MS).toISOString();
+const deviceTouchThreshold = (timestamp: string) => new Date(Date.parse(timestamp) - DEVICE_TOUCH_INTERVAL_MS).toISOString();
 
 async function stableSyncConflictId(userId: string, deviceId: string, clientRevision: number, serverRevision: number) {
   const input = new TextEncoder().encode(`${userId}\u0000${deviceId}\u0000${clientRevision}\u0000${serverRevision}`);
@@ -332,7 +334,7 @@ export async function registerSyncDevice(userId: string, deviceId: string, limit
   await database.prepare("UPDATE account_devices SET revoked_at=? WHERE user_id=? AND revoked_at IS NULL AND device_id NOT IN (SELECT device_id FROM account_devices WHERE user_id=? AND revoked_at IS NULL ORDER BY first_seen_at ASC,device_id ASC LIMIT ?)").bind(timestamp, userId, userId, limit).run();
   const existing = await database.prepare("SELECT device_id FROM account_devices WHERE user_id=? AND device_id=? AND revoked_at IS NULL").bind(userId, deviceId).first<{ device_id: string }>();
   if (existing) {
-    await database.prepare("UPDATE account_devices SET last_seen_at=? WHERE user_id=? AND device_id=? AND revoked_at IS NULL").bind(timestamp, userId, deviceId).run();
+    await database.prepare("UPDATE account_devices SET last_seen_at=? WHERE user_id=? AND device_id=? AND revoked_at IS NULL AND last_seen_at<=?").bind(timestamp, userId, deviceId, deviceTouchThreshold(timestamp)).run();
     return { deviceId, active: true, limit, existing: true };
   }
   const assertion = crypto.randomUUID();

@@ -78,7 +78,7 @@ export async function bonusCreditBalance(ownerId: string, at = new Date()) {
 
 export async function resolveCommercialAccess(ownerId: string, at = new Date()): Promise<{ capabilities: ProductCapabilities; access: ReturnType<typeof resolveAccessSource>; bonusCredits: number }> {
   const db = database();
-  await db.prepare("UPDATE promotional_entitlements SET status='ended',updated_at=? WHERE owner_id=? AND status='active' AND ends_at<=?").bind(iso(at), ownerId, iso(at)).run();
+  // Expiry is derived from ends_at at read time; request-path reads do not perform maintenance writes.
   const [paid, trial, promo, bonus, rolloverRow] = await Promise.all([
     db.prepare("SELECT status,ends_at FROM subscription_entitlements WHERE owner_id=? AND stripe_livemode=?").bind(ownerId,activeStripeLivemode()).first<{ status: "active" | "ended" | "revoked"; ends_at: string | null }>(),
     db.prepare("SELECT status,ends_at,ai_credits FROM promotional_entitlements WHERE owner_id=? AND kind='welcome_trial' ORDER BY created_at DESC LIMIT 1").bind(ownerId).first<{ status: "active" | "ended" | "revoked"; ends_at: string | null; ai_credits: number | null }>(),
@@ -220,6 +220,20 @@ export async function trialAndReferralSummary(userId: string, now = new Date()) 
     resolveCommercialAccess(owner(userId), now),
   ]);
   return { referralCode, sharePath: `/login?ref=${referralCode}`, trial, access: access.access, bonusCredits: bonus, bonusExpiresAt: yearEnd(now), referrals: relationshipRows.results, rewards: rewards.results };
+}
+
+export async function trialAndReferralSnapshot(userId: string, now = new Date(), resolvedAccess?: Awaited<ReturnType<typeof resolveCommercialAccess>>) {
+  const db = database();
+  const code = await db.prepare("SELECT code FROM referral_codes WHERE user_id=? AND status='active'").bind(userId).first<{ code: string }>();
+  const [relationshipRows, trial, rewards, bonus] = await Promise.all([
+    db.prepare("SELECT r.id,r.status,r.risk_status,r.created_at,r.qualified_at,r.paid_at,a.display_name referred_name,COALESCE((SELECT COUNT(DISTINCT e.local_day) FROM referral_learning_events e WHERE e.relationship_id=r.id),0) learning_days,COALESCE((SELECT SUM(e.units) FROM referral_learning_events e WHERE e.relationship_id=r.id),0) learning_units FROM referral_relationships r JOIN accounts a ON a.user_id=r.referred_user_id WHERE r.referrer_user_id=? ORDER BY r.created_at DESC LIMIT 50").bind(userId).all<any>(),
+    db.prepare("SELECT status,starts_at,ends_at FROM promotional_entitlements WHERE owner_id=? AND kind='welcome_trial' ORDER BY created_at DESC LIMIT 1").bind(owner(userId)).first<any>(),
+    db.prepare("SELECT stage,promo_days,bonus_credits,status,issued_at FROM reward_issuances WHERE referrer_user_id=? ORDER BY issued_at DESC LIMIT 50").bind(userId).all<any>(),
+    bonusCreditBalance(owner(userId), now),
+  ]);
+  const access = resolvedAccess ?? await resolveCommercialAccess(owner(userId), now);
+  const referralCode = code?.code ?? null;
+  return { referralCode, sharePath: referralCode ? `/login?ref=${referralCode}` : null, trial, access: access.access, bonusCredits: bonus, bonusExpiresAt: yearEnd(now), referrals: relationshipRows.results, rewards: rewards.results };
 }
 
 export async function adminReferralAction(action: "block_referral" | "revoke_reward", id: string, reason: string, now = new Date()) {

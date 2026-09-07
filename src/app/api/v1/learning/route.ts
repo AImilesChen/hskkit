@@ -1,5 +1,6 @@
 import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
+import { d1UnavailableResponse, withUserD1ReadProtection } from "@/lib/d1/user-protection";
 import { createHash } from "node:crypto";
 
 import {
@@ -212,7 +213,7 @@ function response(data: ReturnType<typeof view>, fresh: boolean, id: string, rev
   if (fresh) res.cookies.set(COOKIE, id, { httpOnly: true, sameSite: "lax", secure: true, maxAge: 31_536_000, path: "/" });
   return res;
 }
-export async function GET(req: NextRequest) {
+async function getLearning(req: NextRequest) {
   const identity = await owner();
   const access = await requireLearningAccess(identity, "learning:read");
   if (!access.allowed) return errorResponse(access.code, 403);
@@ -225,7 +226,11 @@ export async function GET(req: NextRequest) {
   const words = await getDictionaryWordsByIds(data.state.savedWordIds ?? []);
   return response(data, identity.fresh, identity.id, loaded.revision, Boolean(identity.account), capabilities, usage, undefined, words);
 }
-export async function POST(req: NextRequest) {
+export async function GET(req: NextRequest) {
+  try { return await withUserD1ReadProtection(() => getLearning(req)); }
+  catch (error) { const unavailable = d1UnavailableResponse(error); if (unavailable) return unavailable; throw error; }
+}
+async function postLearning(req: NextRequest) {
   const identity = await owner();
   const access = await requireLearningAccess(identity, "learning:write");
   if (!access.allowed) return errorResponse(access.code, 403);
@@ -735,6 +740,8 @@ export async function POST(req: NextRequest) {
       if (usageCharge?.metric === "daily_review_grades") usage = { ...usage, dailyReviewGrades: usage.dailyReviewGrades + usageCharge.units };
       return response(data, identity.fresh, identity.id, loaded.revision + 1, Boolean(identity.account), capabilities, usage, feedback);
     } catch (error) {
+      const unavailable = d1UnavailableResponse(error);
+      if (unavailable) return unavailable;
       const code = error instanceof Error ? error.message : "SAVE_FAILED";
       const replayable = action === "attempt" || action === "topic_practice_attempt" || action === "dictionary_practice_attempt" || action === "step7_attempt" || action === "audio_attempt" || action === "audio_review_ready" || action === "retry_review" || action === "grade" || action === "undo_review" || dailyAction;
       if (code === "REVISION_CONFLICT" && replayable && turn < 2) continue;
@@ -743,4 +750,9 @@ export async function POST(req: NextRequest) {
     }
   }
   return errorResponse("REVISION_CONFLICT", 409);
+}
+
+export async function POST(req: NextRequest) {
+  try { return await postLearning(req); }
+  catch (error) { const unavailable = d1UnavailableResponse(error); if (unavailable) return unavailable; throw error; }
 }

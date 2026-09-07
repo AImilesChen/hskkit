@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
-import { settleInBatches } from "@/lib/account/auxiliary";
+
 import { clearAccountSnapshot, loadAccountSnapshot } from "@/lib/account/browser";
 import { normalizePlannerCompletions } from "@/lib/planner/domain";
 
@@ -99,22 +99,15 @@ export default function AccountClient() {
 
   const loadAuxiliary = async (generation: number) => {
     const deviceId = syncDeviceId();
-    const results = await settleInBatches([
-      () => json("/api/v1/account/streak"),
-      () => json(`/api/v1/account/sync?deviceId=${encodeURIComponent(deviceId)}`),
-      () => json("/api/v1/commercial/subscription"),
-      () => json("/api/v1/ai"),
-      () => json("/api/v1/commercial/referrals"),
-      () => json("/api/v1/planner"),
-    ], 3);
+    const data = await json(`/api/v1/account/overview?deviceId=${encodeURIComponent(deviceId)}`);
     if (generation !== refreshGeneration.current) return;
-    const keys: AuxiliaryResource[] = ["streak", "sync", "subscription", "ai", "referrals", "planner"];
-    const setters = [setStreak, setSync, setSubscription, setAiQuota, setReferrals, setPlanner];
-    results.forEach((result, index) => {
-      setAuxiliary(current => ({ ...current, [keys[index]]: result.status === "fulfilled" ? "ready" : "error" }));
-      if (result.status === "fulfilled") setters[index](result.value);
-      else setError(current => current || (result.reason instanceof Error ? result.reason.message : "LOAD_FAILED"));
-    });
+    setStreak(data.streak);
+    setSync(data.sync);
+    setSubscription(data.subscription);
+    setAiQuota(data.ai);
+    setReferrals(data.referrals);
+    setPlanner(data.planner);
+    setAuxiliary({ streak: "ready", sync: "ready", subscription: "ready", ai: "ready", referrals: "ready", planner: "ready" });
   };
 
   const refresh = async (force = false) => {

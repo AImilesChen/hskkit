@@ -6,6 +6,7 @@ import { recordPolicyAudit } from "@/lib/account/audit-storage";
 import { loadState } from "@/lib/learning/storage";
 import { buildPlannerDraft, plannerInputsFromJson, plannerSignalsFromLearning, type WeakPoint } from "@/lib/planner/domain";
 import { findPlanByIdempotency, latestPlan, listPlans, persistPlan } from "@/lib/planner/storage";
+import { d1UnavailableResponse, withUserD1ReadProtection } from "@/lib/d1/user-protection";
 
 async function owner() {
   const identity = await requestIdentity();
@@ -27,16 +28,39 @@ async function requirePlannerAccess(identity: Awaited<ReturnType<typeof owner>>,
   return decision;
 }
 
-export async function GET() {
-  const identity = await owner();
-  const access = await requirePlannerAccess(identity, "planner:read");
+export async function GET(req: NextRequest) {
+  let identity: Awaited<ReturnType<typeof owner>>;
+  try {
+    identity = await owner();
+  } catch (error) {
+    return d1UnavailableResponse(error);
+  }
+  let access: Awaited<ReturnType<typeof requirePlannerAccess>>;
+  try {
+    access = await requirePlannerAccess(identity, "planner:read");
+  } catch (error) {
+    return d1UnavailableResponse(error);
+  }
   if (!access.allowed) return errorResponse(access.code, identity, 403);
-  const [plans, learning] = await Promise.all([listPlans(identity.id), loadState(identity.id)]);
-  const realSignals = plannerSignalsFromLearning(learning.state, new Date().toISOString());
-  return response({ latest: plans[0] ?? null, versions: plans, realSignals, scope: identity.account ? "account" : "guest" }, identity);
+  const rawLimit = Number(req.nextUrl.searchParams.get("limit") ?? 20);
+  const limit = Number.isInteger(rawLimit) ? Math.min(Math.max(rawLimit, 1), 50) : 20;
+  const rawCursor = Number(req.nextUrl.searchParams.get("beforeVersion"));
+  const beforeVersion = Number.isInteger(rawCursor) && rawCursor > 0 ? rawCursor : undefined;
+  try {
+    return await withUserD1ReadProtection(async () => {
+      const [plans, learning, latest] = await Promise.all([listPlans(identity.id, limit, beforeVersion), loadState(identity.id), beforeVersion ? latestPlan(identity.id) : Promise.resolve(undefined)]);
+      const realSignals = plannerSignalsFromLearning(learning.state, new Date().toISOString());
+      const nextCursor = plans.length === limit ? plans.at(-1)?.version ?? null : null;
+      return response({ latest: latest ?? plans[0] ?? null, versions: plans, nextCursor, realSignals, scope: identity.account ? "account" : "guest" }, identity);
+    });
+  } catch (error) {
+    const unavailable = d1UnavailableResponse(error);
+    if (unavailable) return unavailable;
+    throw error;
+  }
 }
 
-export async function POST(req: NextRequest) {
+async function postPlanner(req: NextRequest) {
   const identity = await owner();
   const access = await requirePlannerAccess(identity, "planner:write");
   if (!access.allowed) return errorResponse(access.code, identity, 403);
@@ -76,6 +100,8 @@ export async function POST(req: NextRequest) {
       const saved = await persistPlan(result.plan, key, current?.version ?? 0, createAuditEvent({ subjectId: identity.id, action, resourceType: "planner", resourceId: result.plan.id, result: "success", idempotencyKey: key, metadata: { version: result.plan.version } }));
       return response({ plan: saved, replayed: false, realSignals: { weakPoints, dueCards: result.plan.srsLoad.dueCards } }, identity, 201);
     } catch (error) {
+      const unavailable = d1UnavailableResponse(error);
+      if (unavailable) return unavailable;
       if (error instanceof Error && error.message === "REVISION_CONFLICT" && turn < 2) continue;
       const code = error instanceof Error ? error.message : "PLAN_SAVE_FAILED";
       if (code === "REVISION_CONFLICT") await recordPolicyAudit(createAuditEvent({ subjectId: identity.id, action, resourceType: "planner", resourceId: identity.id, result: "conflict", idempotencyKey: key }));
@@ -83,4 +109,9 @@ export async function POST(req: NextRequest) {
     }
   }
   return errorResponse("REVISION_CONFLICT", identity, 409);
+}
+
+export async function POST(req: NextRequest) {
+  try { return await postPlanner(req); }
+  catch (error) { const unavailable = d1UnavailableResponse(error); if (unavailable) return unavailable; throw error; }
 }

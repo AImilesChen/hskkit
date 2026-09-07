@@ -97,6 +97,27 @@ export async function quotaView(ownerId: string, requestedPolicy: RuntimePolicy 
   return { period, allowance, used, reserved, remaining: Math.max(0, allowance - used - reserved), rateLimitPerMinute: policy.rateLimitPerMinute, rateLimitPerHour: isProductPolicy(policy) ? policy.rateLimitPerHour : null, recentRequests: recent?.count ?? 0, resetAt: reset };
 }
 
+export async function quotaSnapshot(ownerId: string, requestedPolicy: RuntimePolicy = defaultPolicy, now = new Date()) {
+  const policy = fixedPolicy(requestedPolicy);
+  const allowanceConfigured = allowanceFor(policy);
+  const reset = isProductPolicy(policy)
+    ? new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth() + 1, 1)).toISOString()
+    : new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() + 1)).toISOString();
+  if (!await activeAccountOwner(ownerId)) {
+    return { period: periodKey(policy, now), allowance: allowanceConfigured, used: 0, reserved: 0, remaining: 0, rateLimitPerMinute: policy.rateLimitPerMinute, rateLimitPerHour: isProductPolicy(policy) ? policy.rateLimitPerHour : null, recentRequests: 0, resetAt: reset, accountDeleted: true };
+  }
+  const database = await db();
+  const period = periodKey(policy, now);
+  const [bucket, recent] = await Promise.all([
+    database.prepare("SELECT allowance,used,reserved FROM ai_quota_buckets WHERE owner_id=? AND period_key=?").bind(ownerId, period).first<BucketRow>(),
+    database.prepare("SELECT COUNT(*) AS count FROM ai_operations WHERE owner_id=? AND created_at>=?").bind(ownerId, requestFloor(policy, now)).first<{ count: number }>(),
+  ]);
+  const allowance = bucket?.allowance ?? allowanceConfigured;
+  const used = bucket?.used ?? 0;
+  const reserved = bucket?.reserved ?? 0;
+  return { period, allowance, used, reserved, remaining: Math.max(0, allowance - used - reserved), rateLimitPerMinute: policy.rateLimitPerMinute, rateLimitPerHour: isProductPolicy(policy) ? policy.rateLimitPerHour : null, recentRequests: recent?.count ?? 0, resetAt: reset };
+}
+
 export async function reserveOperation(input: { ownerId: string; feature: AiFeature; idempotencyKey: string; requestHash: string; policy?: RuntimePolicy; now?: Date }) {
   const now = input.now ?? new Date();
   const policy = fixedPolicy(input.policy ?? defaultPolicy);

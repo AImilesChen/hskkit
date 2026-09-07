@@ -14,7 +14,7 @@ const monthKey = (day: string) => day.slice(0, 7);
 
 export function creditedHeartbeatSeconds(claimedSeconds: number, sessionCreatedAt: Date, now: Date) {
   const elapsedSeconds = Math.max(0, Math.floor((now.getTime() - sessionCreatedAt.getTime()) / 1000));
-  return Math.min(30, Math.max(0, Math.trunc(claimedSeconds)), elapsedSeconds);
+  return Math.min(60, Math.max(0, Math.trunc(claimedSeconds)), elapsedSeconds);
 }
 
 export function learningPointsForMonthlyDay(day: number) {

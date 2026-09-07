@@ -2,7 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { ACCOUNT_COOKIE, SESSION_COOKIE, requestIdentity } from "../../../../lib/account/identity";
 import { authenticateAccount, createAccount, revokeAccountSession, revokeSyncKeys, rotateSyncKey, updateTimezone } from "../../../../lib/account/storage";
 import { loadState } from "../../../../lib/learning/storage";
-import { listAllPlans } from "../../../../lib/planner/storage";
+import { countPlans } from "../../../../lib/planner/storage";
+import { d1UnavailableResponse, withUserD1ReadProtection } from "@/lib/d1/user-protection";
 
 const cookie = (response: NextResponse, value: string, maxAge = 31_536_000) => {
   response.cookies.set(ACCOUNT_COOKIE, value, { httpOnly: true, sameSite: "strict", secure: true, maxAge, path: "/" });
@@ -16,9 +17,9 @@ const safeBody = async (req: NextRequest) => {
 };
 const statusFor = (code: string) => code === "ACCOUNT_REQUIRED" ? 401 : code.startsWith("INVALID") ? 422 : 400;
 
-export async function GET() {
+async function getAccount() {
   const identity = await requestIdentity({ touchSession: true });
-  const [guest, guestPlans] = identity.guestId ? await Promise.all([loadState(identity.guestId), listAllPlans(identity.guestId)]) : [undefined, []];
+  const [guest, guestPlanCount] = identity.guestId ? await Promise.all([loadState(identity.guestId), countPlans(identity.guestId)]) : [undefined, 0];
   return NextResponse.json({
     account: identity.account ?? null,
     connection: identity.connection ?? null,
@@ -29,13 +30,18 @@ export async function GET() {
         || (guest.state.practiceSessions?.length ?? 0) > 0
         || (guest.state.savedWordIds?.length ?? 0) > 0
         || (guest.state.recentDictionarySearches?.length ?? 0) > 0
-        || guestPlans.length > 0,
+        || guestPlanCount > 0,
       attempts: guest.state.attempts.length,
       learningSessions: (guest.state.placementSessions?.length ?? 0) + (guest.state.practiceSessions?.length ?? 0),
-      plannerVersions: guestPlans.length,
+      plannerVersions: guestPlanCount,
       revision: guest.revision,
     } : { hasData: false, attempts: 0, learningSessions: 0, plannerVersions: 0, revision: 0 },
   });
+}
+
+export async function GET() {
+  try { return await withUserD1ReadProtection(getAccount); }
+  catch (error) { const unavailable = d1UnavailableResponse(error); if (unavailable) return unavailable; throw error; }
 }
 
 export async function POST(req: NextRequest) {
@@ -83,6 +89,8 @@ export async function POST(req: NextRequest) {
     }
     return NextResponse.json({ error: "INVALID_ACTION" }, { status: 422 });
   } catch (error) {
+    const unavailable = d1UnavailableResponse(error);
+    if (unavailable) return unavailable;
     const code = error instanceof Error ? error.message : "ACCOUNT_FAILED";
     return NextResponse.json({ error: code }, { status: statusFor(code) });
   }

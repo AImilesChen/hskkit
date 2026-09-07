@@ -50,9 +50,17 @@ function plan(row: PlanRow): StudyPlan {
   };
 }
 
-export async function listPlans(ownerId: string, limit = 20) {
-  const result = await db().prepare("SELECT * FROM study_plan_versions WHERE owner_id=? ORDER BY version DESC LIMIT ?").bind(ownerId, Math.min(Math.max(limit, 1), 50)).all<PlanRow>();
+export async function listPlans(ownerId: string, limit = 20, beforeVersion?: number) {
+  const boundedLimit = Math.min(Math.max(limit, 1), 50);
+  const result = beforeVersion
+    ? await db().prepare("SELECT * FROM study_plan_versions WHERE owner_id=? AND version<? ORDER BY version DESC LIMIT ?").bind(ownerId, beforeVersion, boundedLimit).all<PlanRow>()
+    : await db().prepare("SELECT * FROM study_plan_versions WHERE owner_id=? ORDER BY version DESC LIMIT ?").bind(ownerId, boundedLimit).all<PlanRow>();
   return result.results.map(plan);
+}
+
+export async function countPlans(ownerId: string) {
+  const row = await db().prepare("SELECT COUNT(*) count FROM study_plan_versions WHERE owner_id=?").bind(ownerId).first<{ count: number }>();
+  return Number(row?.count ?? 0);
 }
 
 export async function listAllPlans(ownerId: string) {

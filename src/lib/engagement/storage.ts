@@ -146,7 +146,7 @@ export async function recordForegroundHeartbeat(
   if (!/^[a-zA-Z0-9_-]{16,80}$/.test(input.heartbeatId)) throw new Error("INVALID_HEARTBEAT_ID");
   if (!/^[a-f0-9-]{36}$/.test(input.sessionToken)) throw new Error("INVALID_ENGAGEMENT_SESSION");
   if (!isEligibleLearningPath(input.route)) throw new Error("INELIGIBLE_LEARNING_ROUTE");
-  if (!Number.isInteger(input.seconds) || input.seconds < 1 || input.seconds > 30) throw new Error("INVALID_ACTIVE_SECONDS");
+  if (!Number.isInteger(input.seconds) || input.seconds < 1 || input.seconds > 60) throw new Error("INVALID_ACTIVE_SECONDS");
   const timezone = await rewardProfile(ownerId, suggestedTimezone, now);
   const localDay = localDayInTimezone(now, timezone);
   const db = database();
