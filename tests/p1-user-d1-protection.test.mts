@@ -56,12 +56,12 @@ test("Account dashboard uses one read-only aggregate instead of six component re
   assert.match(overview, /withUserD1ReadProtection/);
 });
 
-test("Account, Learning and Planner return explicit bounded D1 overload responses", () => {
+test("primary user-state APIs return explicit bounded D1 overload responses", () => {
   const protection = read("src/lib/d1/user-protection.ts");
   const retry = read("src/lib/d1/user-retry.ts");
   assert.match(retry, /MAX_D1_READ_ATTEMPTS\s*=\s*2/);
   assert.match(retry, /D1_RETRY_CONCURRENCY\s*=\s*2/);
-  assert.match(retry, /USER_D1_READ_TIMEOUT_MS\s*=\s*8_000/);
+  assert.match(retry, /USER_D1_READ_TIMEOUT_MS\s*=\s*2_500/);
   assert.match(retry, /7429/);
   assert.match(protection, /D1_TEMPORARILY_UNAVAILABLE/);
   assert.match(retry, /circuitOpenUntil/);
@@ -70,6 +70,12 @@ test("Account, Learning and Planner return explicit bounded D1 overload response
     assert.match(route, /withUserD1ReadProtection/);
     assert.match(route, /d1UnavailableResponse/);
   }
+  const placement = read("src/lib/placement/server.ts");
+  assert.match(placement, /withUserD1ReadProtection/);
+  assert.match(placement, /d1UnavailableResponse/);
+  const mock = read("src/app/api/v1/mock/route.ts");
+  assert.match(mock, /withUserD1ReadProtection/);
+  assert.match(mock, /d1UnavailableResponse/);
 });
 
 test("D1 retry stops at the bound, skips permanent failures and opens the circuit", async () => {

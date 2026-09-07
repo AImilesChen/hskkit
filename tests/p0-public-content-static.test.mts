@@ -50,3 +50,21 @@ test("learning page load does not create a reward session before real interactio
   assert.doesNotMatch(source, /void begin\(\);/);
   assert.match(source, /const markActive = [\s\S]*begin\(\)/);
 });
+
+test("practice, listening, placement and Mock question banks are versioned runtime assets", async () => {
+  for (const file of [
+    "../src/lib/learning/questions.ts",
+    "../src/lib/learning/audio.ts",
+    "../src/lib/learning/step7-content.ts",
+    "../src/lib/placement/questions.ts",
+    "../src/lib/mock/domain.ts",
+  ]) {
+    const source = await read(file);
+    assert.doesNotMatch(source, /LEARNING_DB|\.prepare\s*\(/, file);
+  }
+  const mockRoute = await read("../src/app/api/v1/mock/route.ts");
+  assert.doesNotMatch(mockRoute, /withdrawnMockQuestionIds/);
+  assert.match(mockRoute, /evaluateMockGate/);
+  assert.ok(mockRoute.indexOf("if (!sessionId)") < mockRoute.indexOf("const identity = await owner()", mockRoute.indexOf("async function getMock")));
+  assert.match(mockRoute, /cache-control": "public, max-age=300, s-maxage=3600/);
+});

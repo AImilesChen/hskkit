@@ -4,7 +4,8 @@ import { GUEST_COOKIE, requestIdentity } from "@/lib/account/identity";
 import { loadState, saveState } from "@/lib/learning/storage";
 import { evaluateMockGate, mockBank, publicMockSession, saveMockAnswer, startMock, submitMock, type MockBand } from "@/lib/mock/domain";
 import { applyMockResultToLearning } from "@/lib/mock/learning";
-import { createMockSession, findMockByStartKey, loadMockSession, saveMockProgress, saveMockSubmission, withdrawnMockQuestionIds } from "@/lib/mock/storage";
+import { createMockSession, findMockByStartKey, loadMockSession, saveMockProgress, saveMockSubmission } from "@/lib/mock/storage";
+import { d1UnavailableResponse, withUserD1ReadProtection } from "@/lib/d1/user-protection";
 
 async function owner() {
   const identity = await requestIdentity();
@@ -39,26 +40,36 @@ async function persistLearning(ownerId: string, result: ReturnType<typeof submit
   }
 }
 
-export async function GET(req: NextRequest) {
-  const identity = await owner();
+async function getMock(req: NextRequest) {
   const sessionId = short(req.nextUrl.searchParams.get("sessionId"));
   if (!sessionId) {
-    const availability = async (requestedBand: MockBand) => {
+    const availability = (requestedBand: MockBand) => {
       const questions = mockBank(requestedBand);
-      const gate = evaluateMockGate(requestedBand, questions);
-      if (!gate.ready) return gate;
-      const withdrawn = await withdrawnMockQuestionIds(questions.map((question) => question.id));
-      return withdrawn.size ? { ready: false, reason: "CONTENT_WITHDRAWAL_GATE" } : gate;
+      return evaluateMockGate(requestedBand, questions);
     };
-    const [basic, advanced] = await Promise.all([availability("basic"), availability("advanced")]);
-    return response(req, { availability: { basic, advanced } }, identity);
+    const [basic, advanced] = [availability("basic"), availability("advanced")];
+    return NextResponse.json(
+      { availability: { basic, advanced } },
+      { headers: { "cache-control": "public, max-age=300, s-maxage=3600" } },
+    );
   }
+  const identity = await owner();
   const session = await loadMockSession(identity.id, sessionId);
   if (!session) return response(req, { error: "MOCK_SESSION_NOT_FOUND" }, identity, 404);
   return response(req, { session: publicMockSession(session), scope: identity.account ? "account" : "guest" }, identity);
 }
 
-export async function POST(req: NextRequest) {
+export async function GET(req: NextRequest) {
+  try {
+    return await withUserD1ReadProtection(() => getMock(req));
+  } catch (error) {
+    const unavailable = d1UnavailableResponse(error);
+    if (unavailable) return unavailable;
+    throw error;
+  }
+}
+
+async function postMock(req: NextRequest) {
   const identity = await owner();
   let body: Record<string, unknown>;
   try {
@@ -76,9 +87,6 @@ export async function POST(req: NextRequest) {
       if (!requestedBand) throw new Error("INVALID_MOCK_BAND");
       const prior = await findMockByStartKey(identity.id, requestedBand, idempotencyKey);
       if (prior) return response(req, { session: publicMockSession(prior), scope: identity.account ? "account" : "guest" }, identity);
-      const questions = mockBank(requestedBand);
-      const withdrawn = await withdrawnMockQuestionIds(questions.map((question) => question.id));
-      if (questions.some((question) => withdrawn.has(question.id))) throw new Error("CONTENT_WITHDRAWAL_GATE");
       const session = await createMockSession(startMock({ band: requestedBand, ownerId: identity.id, idempotencyKey, now: new Date().toISOString() }));
       return response(req, { session: publicMockSession(session), scope: identity.account ? "account" : "guest" }, identity, 201);
     }
@@ -103,7 +111,19 @@ export async function POST(req: NextRequest) {
     }
     return response(req, { error: "INVALID_ACTION" }, identity, 422);
   } catch (error) {
+    const unavailable = d1UnavailableResponse(error);
+    if (unavailable) return unavailable;
     const code = error instanceof Error ? error.message : "MOCK_REQUEST_FAILED";
     return response(req, { error: code }, identity, errorStatus(code));
+  }
+}
+
+export async function POST(req: NextRequest) {
+  try {
+    return await postMock(req);
+  } catch (error) {
+    const unavailable = d1UnavailableResponse(error);
+    if (unavailable) return unavailable;
+    throw error;
   }
 }

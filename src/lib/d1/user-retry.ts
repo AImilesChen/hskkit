@@ -1,6 +1,6 @@
 export const MAX_D1_READ_ATTEMPTS = 2;
 export const D1_RETRY_CONCURRENCY = 2;
-export const USER_D1_READ_TIMEOUT_MS = 8_000;
+export const USER_D1_READ_TIMEOUT_MS = 2_500;
 const CIRCUIT_FAILURE_THRESHOLD = 3;
 const CIRCUIT_OPEN_MS = 10_000;
 const RETRY_DELAYS_MS = [40] as const;

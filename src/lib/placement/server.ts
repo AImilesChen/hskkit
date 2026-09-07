@@ -15,6 +15,7 @@ import {
   submitPlacement,
 } from "@/lib/placement/domain";
 import { publicPlacementQuestion, trustedPlacementQuestion } from "@/lib/placement/questions";
+import { d1UnavailableResponse, withUserD1ReadProtection } from "@/lib/d1/user-protection";
 
 export type PlacementAction = "start" | "answer" | "submit" | "restart";
 
@@ -74,6 +75,12 @@ function response(req: NextRequest, data: unknown, identity: PlacementOwner, sta
   return result;
 }
 
+function unavailableOrThrow(error: unknown) {
+  const unavailable = d1UnavailableResponse(error);
+  if (unavailable) return unavailable;
+  throw error;
+}
+
 export function placementStatus(code: string) {
   if (code === "ACCOUNT_DELETED") return 403;
   if (code === "PLACEMENT_SESSION_NOT_FOUND" || code === "PLACEMENT_RESULT_NOT_FOUND") return 404;
@@ -86,11 +93,15 @@ export function placementStatus(code: string) {
 }
 
 export async function placementFailure(req: NextRequest, code: string) {
-  const identity = await owner();
-  return response(req, { error: code }, identity, placementStatus(code));
+  try {
+    const identity = await owner();
+    return response(req, { error: code }, identity, placementStatus(code));
+  } catch (error) {
+    return unavailableOrThrow(error);
+  }
 }
 
-export async function getPlacementSession(req: NextRequest) {
+async function getPlacementSessionInner(req: NextRequest) {
   const identity = await owner();
   if (identity.account?.status === "deleted") return response(req, { error: "ACCOUNT_DELETED" }, identity, 403);
   const loaded = await loadState(identity.id);
@@ -105,7 +116,15 @@ export async function getPlacementSession(req: NextRequest) {
   }, identity);
 }
 
-export async function getPlacementResult(req: NextRequest, resultId: string) {
+export async function getPlacementSession(req: NextRequest) {
+  try {
+    return await withUserD1ReadProtection(() => getPlacementSessionInner(req));
+  } catch (error) {
+    return unavailableOrThrow(error);
+  }
+}
+
+async function getPlacementResultInner(req: NextRequest, resultId: string) {
   const identity = await owner();
   if (identity.account?.status === "deleted") return response(req, { error: "ACCOUNT_DELETED" }, identity, 403);
   const loaded = await loadState(identity.id);
@@ -115,7 +134,15 @@ export async function getPlacementResult(req: NextRequest, resultId: string) {
     : response(req, { error: "PLACEMENT_RESULT_NOT_FOUND" }, identity, 404);
 }
 
-export async function runPlacementAction(req: NextRequest, action: PlacementAction, payload: Record<string, unknown>) {
+export async function getPlacementResult(req: NextRequest, resultId: string) {
+  try {
+    return await withUserD1ReadProtection(() => getPlacementResultInner(req, resultId));
+  } catch (error) {
+    return unavailableOrThrow(error);
+  }
+}
+
+async function runPlacementActionInner(req: NextRequest, action: PlacementAction, payload: Record<string, unknown>) {
   const identity = await owner();
   if (identity.account?.status === "deleted") return response(req, { error: "ACCOUNT_DELETED" }, identity, 403);
   const idempotencyKey = shortPlacementValue(payload.idempotencyKey, 100);
@@ -166,10 +193,20 @@ export async function runPlacementAction(req: NextRequest, action: PlacementActi
         revision: loaded.revision + (changed ? 1 : 0),
       }, identity, action === "start" ? 201 : 200);
     } catch (error) {
+      const unavailable = d1UnavailableResponse(error);
+      if (unavailable) return unavailable;
       const code = error instanceof Error ? error.message : "PLACEMENT_SAVE_FAILED";
       if (code === "REVISION_CONFLICT" && turn < 2) continue;
       return response(req, { error: code }, identity, placementStatus(code));
     }
   }
   return response(req, { error: "REVISION_CONFLICT" }, identity, 409);
+}
+
+export async function runPlacementAction(req: NextRequest, action: PlacementAction, payload: Record<string, unknown>) {
+  try {
+    return await runPlacementActionInner(req, action, payload);
+  } catch (error) {
+    return unavailableOrThrow(error);
+  }
 }
