@@ -218,7 +218,7 @@ export default function PlacementClient() {
         <h1 className="mt-4 text-2xl font-black leading-tight text-slate-950 sm:text-3xl" id="placement-question">{question.prompt}</h1>
         {question.context ? <p className="mt-5 rounded-2xl bg-slate-50 p-5 text-lg leading-8 text-slate-900" lang="zh-Hans">{question.context}</p> : null}
         {question.audioSrc ? <div className="mt-5 rounded-2xl border border-blue-100 bg-blue-50 p-4"><audio className="w-full" controls preload="metadata" src={question.audioSrc}>Your browser cannot play this approved audio item.</audio><p className="mt-2 text-xs text-blue-800">Playback failures never submit an answer or change your learning state.</p></div> : null}
-        <fieldset className="mt-6 grid gap-3" disabled={saving || Boolean(selected)}>
+        <fieldset className="mt-6 grid gap-3" disabled={saving}>
           <legend className="sr-only">Choose one answer</legend>
           {Object.entries(question.options).map(([option, label]) => (
             <button
@@ -232,7 +232,7 @@ export default function PlacementClient() {
             </button>
           ))}
         </fieldset>
-        {selected && !error ? <p className="mt-5 text-sm font-bold text-emerald-700" role="status">Answer saved</p> : null}
+        {selected && !error ? <p className="mt-5 text-sm font-bold text-emerald-700" role="status">Progress saved</p> : null}
         {error ? <p className="mt-5 rounded-xl bg-red-50 p-4 text-sm text-red-800" role="alert">{placementPublicError(error)}</p> : null}
         <div className="mt-8 flex items-center justify-between gap-3">
           <button className="min-h-11 rounded-xl px-4 font-bold text-slate-600 disabled:opacity-40" disabled={index === 0 || saving} onClick={() => setManualIndex(Math.max(0, index - 1))} type="button">Back</button>

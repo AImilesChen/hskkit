@@ -220,7 +220,8 @@ export function answerPlacementQuestion(
     (answer) => answer.idempotencyKey === input.idempotencyKey,
   );
   if (replay) return { state, session };
-  if (session.adaptiveMinQuestions && session.questionIds[session.answers.length] !== input.questionId) {
+  const existingAnswer = session.answers.find((answer) => answer.questionId === input.questionId);
+  if (session.adaptiveMinQuestions && !existingAnswer && session.questionIds[session.answers.length] !== input.questionId) {
     throw new Error("PLACEMENT_QUESTION_OUT_OF_SEQUENCE");
   }
 

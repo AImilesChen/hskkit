@@ -53,6 +53,17 @@ test("placement answers persist without exposing scoring and replay idempotently
   assert.equal(replay.session.answers.length, 1);
 });
 
+test("placement lets a learner replace a saved answer before continuing", () => {
+  const created = createPlacementSession(emptyLearningState(), { ownerId: "guest-1", idempotencyKey: "start-revise", now: "2026-08-21T00:00:00.000Z" });
+  const question = trustedPlacementQuestion(created.session.questionIds[0], created.session.questionVersion)!;
+  const first = answerPlacementQuestion(created.state, { sessionId: created.session.id, questionId: question.id, answer: "a", idempotencyKey: "answer-revise-a", now: "2026-08-21T00:01:00.000Z" });
+  const revised = answerPlacementQuestion(first.state, { sessionId: created.session.id, questionId: question.id, answer: "b", idempotencyKey: "answer-revise-b", now: "2026-08-21T00:02:00.000Z" });
+
+  assert.equal(revised.session.answers.length, 1);
+  assert.equal(revised.session.answers[0].answer, "b");
+  assert.equal(revised.session.answers[0].idempotencyKey, "answer-revise-b");
+});
+
 test("placement refuses an incomplete submission", () => {
   const created = createPlacementSession(emptyLearningState(), { ownerId: "guest-1", idempotencyKey: "start-3", now: "2026-08-21T00:00:00.000Z" });
   assert.throws(() => submitPlacement(created.state, { sessionId: created.session.id, idempotencyKey: "submit-1", now: "2026-08-21T00:03:00.000Z" }), /PLACEMENT_INCOMPLETE/);

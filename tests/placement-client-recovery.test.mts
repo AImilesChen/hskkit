@@ -128,11 +128,13 @@ test("placement load does not retry non-D1 failures", async () => {
   assert.equal(attempts, 1);
 });
 
-test("placement UI locks saved answers and never renders internal error codes", () => {
+test("placement UI keeps saved answers editable and never renders internal error codes", () => {
   const client = fs.readFileSync(new URL("../src/app/placement/placement-client.tsx", import.meta.url), "utf8");
 
-  assert.match(client, /disabled=\{saving \|\| Boolean\(selected\)\}/);
-  assert.match(client, /Answer saved/);
+  assert.match(client, /disabled=\{saving\}/);
+  assert.doesNotMatch(client, /disabled=\{saving \|\| Boolean\(selected\)\}/);
+  assert.match(client, /Progress saved/);
+  assert.doesNotMatch(client, /Answer saved/);
   assert.match(client, /reconnecting \? "Restoring your placement session…"/);
   assert.match(client, /placementPublicError\(error\)/);
   assert.doesNotMatch(client, /diagnostic: \{error\}/);
