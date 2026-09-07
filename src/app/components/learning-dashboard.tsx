@@ -4,6 +4,8 @@ import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import type { ReactNode } from "react";
 import AiAssist from "./ai-assist";
+import LearningLoopNav, { type LearningLoopLabel } from "./learning-loop-nav";
+import { LearningLoadError, loadLearningData, type LearningLoadErrorCode } from "../../lib/learning/client-load";
 import { buildIntentReviewQueue, buildReviewQueue, filterReviewCards, recommendReviewCount, reviewComposition, reviewEntryIntent, reviewGradeOptions, reviewTip, type ReviewEntryIntent, type ReviewGrade } from "../../lib/learning/review-session";
 
 type Dimension = "reading" | "audio" | "context_audio";
@@ -48,6 +50,8 @@ function appendPending(operation: PendingOperation) {
 export default function LearningDashboard({ mode }: { mode: "today" | "review" | "mistakes" }) {
   const [data, setData] = useState<Data | null>(null);
   const [error, setError] = useState("");
+  const [loadFailure, setLoadFailure] = useState<LearningLoadErrorCode | "">("");
+  const [retryingLoad, setRetryingLoad] = useState(false);
   const [revealed, setRevealed] = useState<Record<string, boolean>>({});
   const [audioError, setAudioError] = useState("");
   const [reviewMinutes, setReviewMinutes] = useState<5 | 10 | 20>(10);
@@ -72,18 +76,30 @@ export default function LearningDashboard({ mode }: { mode: "today" | "review" |
   const dataRef = useRef<Data | null>(null);
   const playbackTickets = useRef<Record<string, { playbackTicket: string; notBefore?: string }>>({});
 
-  async function load() {
+  async function load(manualRetry = false) {
     setError("");
+    setLoadFailure("");
+    setRetryingLoad(manualRetry);
     try {
-      const response = await fetch(`/api/v1/learning?tzOffset=${tz()}`, { cache: "no-store" });
-      if (!response.ok) throw new Error("SYNC_FAILED");
-      const loaded = await response.json();
+      const loaded = await loadLearningData<Data>(
+        () => fetch(`/api/v1/learning?tzOffset=${tz()}`, { cache: "no-store" }),
+        {
+          isOnline: () => navigator.onLine,
+          onTransientRetry: () => {
+            setLoadFailure("temporarily_unavailable");
+            setRetryingLoad(true);
+          },
+        },
+      );
       dataRef.current = loaded;
       setData(loaded);
+      setLoadFailure("");
       if (pendingQueue(loaded.queueBinding).length) void retryPending(loaded);
       else setSyncState("synced");
-    } catch {
-      setError("We couldn't sync your learning data. Check your connection and try again.");
+    } catch (caught) {
+      setLoadFailure(caught instanceof LearningLoadError ? caught.code : navigator.onLine ? "unavailable" : "offline");
+    } finally {
+      setRetryingLoad(false);
     }
   }
   // The initial restore intentionally runs once; retries use the latest data through dataRef.
@@ -285,7 +301,20 @@ export default function LearningDashboard({ mode }: { mode: "today" | "review" |
     } catch { setAudioError("Playback could not be verified. Replay it before answering; no mastery was changed."); }
   }
 
-  if (error) return <LearningStatePage mode={mode} title={error.startsWith("Free daily") ? "Daily limit reached" : "We couldn't load this page"} text={error} error>{error.startsWith("Free daily") ? <Link href="/pricing" className="btn">Compare Pro</Link> : <button onClick={load} className="btn">Try again</button>}</LearningStatePage>;
+  if (loadFailure) {
+    const offline = loadFailure === "offline";
+    const temporarilyUnavailable = loadFailure === "temporarily_unavailable";
+    const title = offline ? "You're offline" : temporarilyUnavailable ? "Learning data is temporarily busy" : "We couldn't load this page";
+    const text = offline
+      ? "Reconnect and try again. Your progress is unchanged."
+      : temporarilyUnavailable
+        ? retryingLoad ? "We're reconnecting automatically. Your progress is unchanged." : "Please try again in a moment. Your progress is unchanged."
+        : "We couldn't load your learning data right now. Your progress is unchanged.";
+    return <LearningStatePage mode={mode} title={title} text={text} eyebrow={offline ? "Offline" : "Service temporarily busy"} note="Your existing progress is unchanged.">
+      <button onClick={() => void load(true)} className="btn" disabled={retryingLoad}>{retryingLoad ? "Retrying…" : "Try again"}</button>
+    </LearningStatePage>;
+  }
+  if (error) return <LearningStatePage mode={mode} title={error.startsWith("Free daily") ? "Daily limit reached" : "We couldn't load this page"} text={error} error>{error.startsWith("Free daily") ? <Link href="/pricing" className="btn">Compare Pro</Link> : <button onClick={() => void load(true)} className="btn">Try again</button>}</LearningStatePage>;
   if (!data) return <LearningStatePage mode={mode} title={mode === "review" ? "Preparing your review" : mode === "mistakes" ? "Loading your mistakes" : "Preparing today's plan"} text="Loading due items and restoring progress." loading />;
   const open = data.mistakes.filter((mistake) => mistake.status === "open");
   const filteredOpen = open.filter((mistake) =>
@@ -313,7 +342,7 @@ export default function LearningDashboard({ mode }: { mode: "today" | "review" |
       .filter((card): card is Card => Boolean(card));
     const orderedTodayItems = currentTodayItems.sort((a, b) => Number(b.index === firstReviewIndex) - Number(a.index === firstReviewIndex));
     const firstPending = orderedTodayItems.findIndex(({ item }) => item.status === "pending");
-    return <Shell title="Today" sub="Review → Learn → Listen/Practice → Summary">
+    return <Shell title="Today" active="Today" sub="Review → Learn → Listen/Practice → Summary">
       <section className="mb-5 overflow-hidden rounded-[28px] border border-slate-200 bg-white shadow-sm">
         <div className="bg-slate-950 p-5 text-white sm:p-7"><p className="text-sm font-semibold text-blue-300">Today&apos;s plan</p><h2 className="mt-1 text-2xl font-bold text-white">Choose a level and a realistic session</h2></div>
         <div className="grid gap-5 p-5 sm:grid-cols-2 sm:p-7">
@@ -359,7 +388,7 @@ export default function LearningDashboard({ mode }: { mode: "today" | "review" |
     </Shell>;
   }
 
-  if (mode === "mistakes") return <Shell title="Mistakes" sub="Correct wrong answers continuously; they leave this list only after a successful retry.">
+  if (mode === "mistakes") return <Shell title="Mistakes" active="Mistakes" sub="Correct wrong answers continuously; they leave this list only after a successful retry.">
     {open.length ? <>
       <section className="card mb-4" aria-label="Mistake filters"><h2>Filter corrections</h2><div className="mt-4 grid gap-3 sm:grid-cols-3">
         <label>HSK level<select aria-label="Filter by HSK level" className="min-h-[44px] rounded-lg border border-slate-300 bg-white px-3" value={mistakeLevel} onChange={(event) => setMistakeLevel(Number(event.target.value))}><option value={0}>All levels</option>{Array.from({ length: 9 }, (_, index) => index + 1).map((level) => <option key={level} value={level}>HSK {level}</option>)}</select></label>
@@ -395,7 +424,7 @@ export default function LearningDashboard({ mode }: { mode: "today" | "review" |
   const currentAnswerCorrect = retryFeedback?.correct ?? false;
   const isMistakeRetry = Boolean(activeCard?.isMistake && !activeCard.legacyReview && activeCard.answerMode !== "self_recall");
 
-  return <Shell title={entryIntent.kind === "mistake" ? "Mistake correction" : "Review"} sub={entryIntent.kind === "mistake" ? "Correct the original wrong answer, understand it, and continue or return to Mistakes." : "Review due memories with a short, explained rating flow."} compact={Boolean(reviewIds?.length)}>
+  return <Shell title={entryIntent.kind === "mistake" ? "Mistake correction" : "Review"} active="Review" sub={entryIntent.kind === "mistake" ? "Correct the original wrong answer, understand it, and continue or return to Mistakes." : "Review due memories with a short, explained rating flow."} compact={Boolean(reviewIds?.length)}>
     <div className="mx-auto max-w-[880px]">
       {directEntryPreparing && <State title="Preparing your review" text="Loading the review items from where you started." />}
       {!reviewIds && entryResolved && entryIntent.kind === "setup" && due.length > 0 && <div className="overflow-hidden rounded-[28px] border border-slate-200 bg-white shadow-[0_22px_60px_rgba(15,23,42,0.08)]">
@@ -504,23 +533,21 @@ function actionFor(item: Item, complete: (item: Item) => Promise<void>, dailySes
   }
   return null;
 }
-function Shell(props: { title: string; sub: string; children: ReactNode; compact?: boolean }) {
-  const links = [{ label: "Today", href: "/today" }, { label: "Review", href: "/review" }, { label: "Mistakes", href: "/mistakes" }, { label: "Listen", href: "/listen" }];
-  return <main className={`learn ${props.compact ? "pt-6 sm:pt-16" : ""}`}><header className={props.compact ? "mb-5 sm:mb-8" : undefined}>{!props.compact && <span className="eyebrow">HSKKit learning loop</span>}<h1 className={props.compact ? "text-2xl sm:text-4xl" : undefined}>{props.title}</h1><p className={props.compact ? "hidden sm:block" : undefined}>{props.sub}</p><nav aria-label="Learning loop">{links.map((link) => <Link key={link.href} href={link.href} prefetch={false} aria-current={props.title === link.label ? "page" : undefined} className={`${props.title === link.label ? "border-blue-600 bg-blue-600 text-white" : ""} px-3`}>{link.label}</Link>)}</nav></header>{props.children}</main>;
+function Shell(props: { title: string; active: LearningLoopLabel; sub: string; children: ReactNode; compact?: boolean }) {
+  return <main className={`learn ${props.compact ? "pt-6 sm:pt-16" : ""}`}><header className={props.compact ? "mb-5 sm:mb-8" : undefined}>{!props.compact && <span className="eyebrow">HSKKit learning loop</span>}<h1 className={props.compact ? "text-2xl sm:text-4xl" : undefined}>{props.title}</h1><p className={props.compact ? "hidden sm:block" : undefined}>{props.sub}</p><LearningLoopNav active={props.active}/></header>{props.children}</main>;
 }
-function LearningStatePage(props: { mode: "today" | "review" | "mistakes"; title: string; text: string; loading?: boolean; error?: boolean; children?: ReactNode }) {
+function LearningStatePage(props: { mode: "today" | "review" | "mistakes"; title: string; text: string; eyebrow?: string; note?: string; loading?: boolean; error?: boolean; children?: ReactNode }) {
   const pageTitle = props.mode === "today" ? "Today" : props.mode === "mistakes" ? "Mistakes" : "Review";
-  const links = [{ label: "Today", href: "/today" }, { label: "Review", href: "/review" }, { label: "Mistakes", href: "/mistakes" }, { label: "Listen", href: "/listen" }];
   return <main className="learn min-h-[70vh]" aria-busy={props.loading || undefined}>
-    <header><span className="eyebrow">HSKKit learning loop</span><h1>{pageTitle}</h1><p>Your learning workspace will stay in place while progress is restored.</p><nav aria-label="Learning loop">{links.map((link) => <Link key={link.href} href={link.href} prefetch={false} aria-current={pageTitle === link.label ? "page" : undefined} className={`${pageTitle === link.label ? "border-blue-600 bg-blue-600 text-white" : ""} px-3`}>{link.label}</Link>)}</nav></header>
+    <header><span className="eyebrow">HSKKit learning loop</span><h1>{pageTitle}</h1><p>Your learning workspace will stay in place while progress is restored.</p><LearningLoopNav active={pageTitle}/></header>
     <section className={`mx-auto max-w-[880px] overflow-hidden rounded-[28px] border bg-white shadow-[0_22px_60px_rgba(15,23,42,0.08)] ${props.error ? "border-rose-200" : "border-slate-200"}`} role={props.error ? "alert" : "status"} aria-live="polite">
       <div className={`border-b px-6 py-6 sm:px-8 ${props.error ? "border-rose-200 bg-rose-50" : "border-slate-200 bg-slate-950 text-white"}`}>
-        <p className={`text-sm font-semibold ${props.error ? "text-rose-700" : "text-blue-300"}`}>{props.error ? "Connection problem" : "Learning data"}</p>
+        <p className={`text-sm font-semibold ${props.error ? "text-rose-700" : "text-blue-300"}`}>{props.eyebrow ?? (props.error ? "Connection problem" : "Learning data")}</p>
         <h2 className={`mt-2 text-2xl font-bold tracking-tight sm:text-3xl ${props.error ? "text-rose-950" : "text-white"}`}>{props.title}</h2>
         <p className={`mt-2 max-w-xl ${props.error ? "text-rose-800" : "text-slate-300"}`}>{props.text}</p>
       </div>
       <div className="min-h-[260px] p-6 sm:p-8">
-        {props.loading ? <div className="motion-safe:animate-pulse" aria-hidden="true"><div className="h-3 w-28 rounded bg-blue-200"/><div className="mt-5 h-8 w-3/4 rounded-lg bg-slate-200"/><div className="mt-4 h-4 w-full rounded bg-slate-100"/><div className="mt-2 h-4 w-5/6 rounded bg-slate-100"/><div className="mt-8 grid gap-3 sm:grid-cols-3"><div className="h-16 rounded-xl bg-slate-100"/><div className="h-16 rounded-xl bg-slate-100"/><div className="h-16 rounded-xl bg-slate-100"/></div><div className="mt-6 h-12 rounded-xl bg-blue-100"/></div> : <div><p className="max-w-xl text-slate-600">Your existing progress is unchanged. Retry the request when your connection is ready.</p><div className="mt-6">{props.children}</div></div>}
+        {props.loading ? <div className="motion-safe:animate-pulse" aria-hidden="true"><div className="h-3 w-28 rounded bg-blue-200"/><div className="mt-5 h-8 w-3/4 rounded-lg bg-slate-200"/><div className="mt-4 h-4 w-full rounded bg-slate-100"/><div className="mt-2 h-4 w-5/6 rounded bg-slate-100"/><div className="mt-8 grid gap-3 sm:grid-cols-3"><div className="h-16 rounded-xl bg-slate-100"/><div className="h-16 rounded-xl bg-slate-100"/><div className="h-16 rounded-xl bg-slate-100"/></div><div className="mt-6 h-12 rounded-xl bg-blue-100"/></div> : <div><p className="max-w-xl text-slate-600">{props.note ?? "Your existing progress is unchanged. Retry the request when your connection is ready."}</p><div className="mt-6">{props.children}</div></div>}
       </div>
     </section>
   </main>;
