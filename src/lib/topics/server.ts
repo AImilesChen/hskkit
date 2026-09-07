@@ -1,11 +1,10 @@
 import "server-only";
-import { getCloudflareContext } from "@opennextjs/cloudflare";
 import { cache } from "react";
 import {
-  findCatalogWordsByIds,
-  getUniqueActiveCatalogSearchRelease,
-  type CatalogSearchRow,
-} from "@/lib/content/catalog-search";
+  findPublicCatalogWordsByIds,
+  publicCatalogReleaseId,
+} from "@/lib/content/public-catalog-index";
+import type { CatalogSearchRow } from "@/lib/content/catalog-search";
 import { publicAudioAsset, publishedContentAudioAsset } from "@/lib/audio/assets";
 import {
   learningTopics,
@@ -22,28 +21,19 @@ export type VerifiedTopicsSnapshot =
 const allMappedAssetIds = [...new Set(learningTopics.flatMap((topic) => topic.wordAssetIds))];
 
 export const getVerifiedTopicsSnapshot = cache(async (): Promise<VerifiedTopicsSnapshot> => {
-  try {
-    const db = (await getCloudflareContext({ async: true })).env.LEARNING_DB;
-    const release = await getUniqueActiveCatalogSearchRelease(db);
-    if (!release || release.id !== topicsSourceReleaseId) {
-      return { status: "unavailable", releaseId: null, rows: [] };
-    }
-    const rows: CatalogSearchRow[] = [];
-    for (let start = 0; start < allMappedAssetIds.length; start += 90) {
-      rows.push(...await findCatalogWordsByIds(db, allMappedAssetIds.slice(start, start + 90), release.id));
-    }
-    const returnedIds = new Set(rows.map((row) => row.id));
-    if (
-      rows.some((row) => row.release_id !== release.id)
-      || returnedIds.size !== allMappedAssetIds.length
-      || allMappedAssetIds.some((assetId) => !returnedIds.has(assetId))
-    ) {
-      return { status: "unavailable", releaseId: null, rows: [] };
-    }
-    return { status: "ready", releaseId: release.id, rows };
-  } catch {
+  if (publicCatalogReleaseId !== topicsSourceReleaseId) {
     return { status: "unavailable", releaseId: null, rows: [] };
   }
+  const rows = findPublicCatalogWordsByIds(allMappedAssetIds);
+  const returnedIds = new Set(rows.map((row) => row.id));
+  if (
+    rows.some((row) => row.release_id !== publicCatalogReleaseId)
+    || returnedIds.size !== allMappedAssetIds.length
+    || allMappedAssetIds.some((assetId) => !returnedIds.has(assetId))
+  ) {
+    return { status: "unavailable", releaseId: null, rows: [] };
+  }
+  return { status: "ready", releaseId: publicCatalogReleaseId, rows };
 });
 
 export function verifiedTopicsFromSnapshot(snapshot: VerifiedTopicsSnapshot) {

@@ -30,6 +30,7 @@ type IndexedWord = CatalogSearchRow & {
 };
 
 const packedWords = publicCatalog.words as PackedWord[];
+export const publicCatalogReleaseId = publicCatalog.releaseId;
 const words: IndexedWord[] = packedWords.map((packed) => ({
   id: packed[0],
   release_id: publicCatalog.releaseId,

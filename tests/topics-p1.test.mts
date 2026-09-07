@@ -123,8 +123,8 @@ test("P1 UI exposes filters, signed-in truth states, resume and atomic bulk acti
   assert.match(route, /getVerifiedTopicForMutation/);
   assert.match(route, /topicProgress/);
   assert.match(topicServer, /snapshot\.status !== "ready"/);
-  assert.match(topicServer, /start \+= 90/);
-  assert.match(topicServer, /allMappedAssetIds\.slice\(start, start \+ 90\)/);
+  assert.match(topicServer, /findPublicCatalogWordsByIds\(allMappedAssetIds\)/);
+  assert.doesNotMatch(topicServer, /LEARNING_DB|getCloudflareContext|start \+= 90/);
   assert.match(panel, /body\.error === "REVISION_CONFLICT"/);
 });
 

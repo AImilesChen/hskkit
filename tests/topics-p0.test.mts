@@ -144,8 +144,9 @@ test("P0 topic pages expose SEO, breadcrumbs, readable production cards, real wo
   assert.ok((detail.match(/href="\/topics" className="inline-flex min-h-11 items-center/g) ?? []).length >= 2);
   assert.match(detail, /\/word\/\$\{encodeURIComponent\(word\.assetId\)\}/);
   assert.match(detail, /\/word\/\$\{encodeURIComponent\(word\.assetId\)\}\/practice/);
-  assert.match(sitemap, /verifiedTopicRoutesFromSnapshot/);
-  assert.match(sitemap, /force-dynamic/);
+  assert.match(sitemap, /publishedTopicRoutesForVerifiedAssets/);
+  assert.match(sitemap, /topicsSourceReleaseId/);
+  assert.doesNotMatch(sitemap, /force-dynamic|getCloudflareContext|LEARNING_DB/);
   assert.doesNotMatch(sitemap, /lastModified:\s*new Date\(\)/);
 });
 
