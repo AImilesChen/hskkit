@@ -32,7 +32,7 @@
 		"AI_MAX_OUTPUT_TOKENS": "500",
 		"COMMERCE_MODE": "live",
 		"STRIPE_PAID_CHECKOUT_ENABLED": "true",
-		"PLACEMENT_DB_MODE": "shadow",
+		"PLACEMENT_DB_MODE": "primary",
 		"GOOGLE_REDIRECT_URI": "https://hskkit.com/api/v1/auth/google/callback"
 	},
 	"d1_databases": [{
