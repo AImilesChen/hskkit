@@ -37,7 +37,7 @@ export default function SiteFooter() {
       <div className="footer-density-container mx-auto max-w-[1060px] px-[20px] sm:px-[32px]">
         <div className="footer-density-main grid gap-y-[32px] border-b border-slate-200 lg:grid-cols-[320px_320px_180px] lg:gap-x-[64px] pb-[48px] md:grid-cols-[320px_180px] md:justify-between">
           <div className="max-w-[320px] md:col-span-2 lg:col-span-1">
-            <Link href="/" className="inline-flex min-h-11 items-center gap-3 text-2xl font-bold text-slate-900">
+            <Link prefetch={false} href="/" className="inline-flex min-h-11 items-center gap-3 text-2xl font-bold text-slate-900">
               <span aria-hidden="true" className="grid h-[32px] w-[32px] place-items-center rounded-[8px] bg-blue-600 text-sm font-bold text-white">学</span>
               HSKKit
             </Link>
@@ -50,7 +50,7 @@ export default function SiteFooter() {
             <h2 className={headingClass}>Study</h2>
             <div className="footer-study-links grid grid-cols-2 gap-x-[24px] gap-y-0 sm:grid-cols-[repeat(2,130px)] sm:gap-x-[32px] lg:gap-y-[14px]">
               {studyLinks.map((item) => (
-                <Link key={item.href} href={item.href} className={navLinkClass}>{item.label}</Link>
+                <Link prefetch={false} key={item.href} href={item.href} className={navLinkClass}>{item.label}</Link>
               ))}
             </div>
           </nav>
@@ -59,7 +59,7 @@ export default function SiteFooter() {
             <h2 className={headingClass}>Standards</h2>
             <div className="footer-standards-links grid gap-y-0 lg:gap-y-[14px]">
               {guideLinks.map((item) => (
-                <Link key={item.href} href={item.href} className={navLinkClass}>{item.label}</Link>
+                <Link prefetch={false} key={item.href} href={item.href} className={navLinkClass}>{item.label}</Link>
               ))}
             </div>
           </nav>
@@ -67,7 +67,7 @@ export default function SiteFooter() {
 
         <div className="footer-legal-links mt-[28px] flex flex-wrap items-center justify-center gap-x-[28px] gap-y-[10px]">
           {legalLinks.map((item) => (
-            <Link key={item.href} href={item.href} className={legalLinkClass}>{item.label}</Link>
+            <Link prefetch={false} key={item.href} href={item.href} className={legalLinkClass}>{item.label}</Link>
           ))}
         </div>
         <p className="footer-copyright mt-[24px] text-center text-[13px] leading-[18px] text-slate-500">© 2026 HSKKit</p>
