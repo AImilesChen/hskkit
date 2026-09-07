@@ -15,7 +15,7 @@ import {
   submitPlacement,
 } from "@/lib/placement/domain";
 import { publicPlacementQuestion, trustedPlacementQuestion } from "@/lib/placement/questions";
-import { d1UnavailableResponse, withUserD1ReadProtection } from "@/lib/d1/user-protection";
+import { d1UnavailableResponse, userD1RetryAfterSeconds, withUserD1ReadProtection } from "@/lib/d1/user-protection";
 
 export type PlacementAction = "start" | "answer" | "submit" | "restart";
 
@@ -81,6 +81,12 @@ function unavailableOrThrow(error: unknown) {
   throw error;
 }
 
+function placementLoadUnavailableOrThrow(error: unknown) {
+  const unavailable = d1UnavailableResponse(error, userD1RetryAfterSeconds());
+  if (unavailable) return unavailable;
+  throw error;
+}
+
 export function placementStatus(code: string) {
   if (code === "ACCOUNT_DELETED") return 403;
   if (code === "PLACEMENT_SESSION_NOT_FOUND" || code === "PLACEMENT_RESULT_NOT_FOUND") return 404;
@@ -120,7 +126,7 @@ export async function getPlacementSession(req: NextRequest) {
   try {
     return await withUserD1ReadProtection(() => getPlacementSessionInner(req));
   } catch (error) {
-    return unavailableOrThrow(error);
+    return placementLoadUnavailableOrThrow(error);
   }
 }
 

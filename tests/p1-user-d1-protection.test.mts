@@ -4,6 +4,7 @@ import { readFileSync } from "node:fs";
 import {
   MAX_D1_READ_ATTEMPTS,
   resetUserD1ProtectionForTest,
+  userD1RetryAfterSeconds,
   withUserD1ReadProtection,
 } from "../src/lib/d1/user-retry.ts";
 
@@ -73,6 +74,7 @@ test("primary user-state APIs return explicit bounded D1 overload responses", ()
   const placement = read("src/lib/placement/server.ts");
   assert.match(placement, /withUserD1ReadProtection/);
   assert.match(placement, /d1UnavailableResponse/);
+  assert.match(placement, /userD1RetryAfterSeconds\(\)/);
   const mock = read("src/app/api/v1/mock/route.ts");
   assert.match(mock, /withUserD1ReadProtection/);
   assert.match(mock, /d1UnavailableResponse/);
@@ -116,6 +118,7 @@ test("D1 retry stops at the bound, skips permanent failures and opens the circui
   for (let failure = 0; failure < 3; failure += 1) {
     await assert.rejects(withUserD1ReadProtection(overload), /D1_TEMPORARILY_UNAVAILABLE/);
   }
+  assert.equal(userD1RetryAfterSeconds(), 10);
   const beforeOpenCircuitCall = circuitAttempts;
   await assert.rejects(withUserD1ReadProtection(overload), /D1_TEMPORARILY_UNAVAILABLE/);
   assert.equal(circuitAttempts, beforeOpenCircuitCall);

@@ -3,11 +3,17 @@ export const D1_RETRY_CONCURRENCY = 2;
 export const USER_D1_READ_TIMEOUT_MS = 2_500;
 const CIRCUIT_FAILURE_THRESHOLD = 3;
 const CIRCUIT_OPEN_MS = 10_000;
+const DEFAULT_RETRY_AFTER_SECONDS = 2;
 const RETRY_DELAYS_MS = [40] as const;
 
 let activeRetries = 0;
 let consecutiveFailures = 0;
 let circuitOpenUntil = 0;
+
+export function userD1RetryAfterSeconds(now = Date.now()) {
+  if (circuitOpenUntil <= now) return DEFAULT_RETRY_AFTER_SECONDS;
+  return Math.max(1, Math.ceil((circuitOpenUntil - now) / 1_000));
+}
 
 export class UserD1UnavailableError extends Error {
   constructor() {

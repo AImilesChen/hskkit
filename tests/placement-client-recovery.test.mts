@@ -25,18 +25,37 @@ test("placement load retries bounded D1 503 responses and preserves the recovere
   const data = await loadPlacementSession({
     request: async () => {
       attempts += 1;
-      return attempts < 3
-        ? jsonResponse(503, { error: "D1_TEMPORARILY_UNAVAILABLE", retryable: true }, "1")
+      return attempts < 2
+        ? jsonResponse(503, { error: "D1_TEMPORARILY_UNAVAILABLE", retryable: true }, "10")
         : jsonResponse(200, { session, expired: false });
     },
     wait: async (delayMs) => { waits.push(delayMs); },
     onRetry: (attempt) => { retryAttempts.push(attempt); },
   });
 
-  assert.equal(attempts, 3);
-  assert.deepEqual(waits, [1_000, 1_000]);
-  assert.deepEqual(retryAttempts, [1, 2]);
+  assert.equal(attempts, 2);
+  assert.deepEqual(waits, [10_000]);
+  assert.deepEqual(retryAttempts, [1]);
   assert.deepEqual(data.session, session);
+});
+
+test("placement load caps the total circuit recovery wait at fifteen seconds", async () => {
+  let attempts = 0;
+  const waits: number[] = [];
+
+  const data = await loadPlacementSession({
+    request: async () => {
+      attempts += 1;
+      return attempts < 3
+        ? jsonResponse(503, { error: "D1_TEMPORARILY_UNAVAILABLE", retryable: true }, "10")
+        : jsonResponse(200, { session: { id: "placement-after-budget" }, expired: false });
+    },
+    wait: async (delayMs) => { waits.push(delayMs); },
+  });
+
+  assert.equal(attempts, 3);
+  assert.deepEqual(waits, [10_000, 5_000]);
+  assert.deepEqual(data.session, { id: "placement-after-budget" });
 });
 
 test("placement load stops after bounded D1 retries with a typed temporary failure", async () => {
@@ -76,7 +95,7 @@ test("placement UI locks saved answers and never renders internal error codes", 
 
   assert.match(client, /disabled=\{saving \|\| Boolean\(selected\)\}/);
   assert.match(client, /Answer saved/);
-  assert.match(client, /reconnecting \? "Reconnecting…"/);
+  assert.match(client, /reconnecting \? "Restoring your placement session…"/);
   assert.match(client, /placementPublicError\(error\)/);
   assert.doesNotMatch(client, /diagnostic: \{error\}/);
   assert.doesNotMatch(client, /not saved: \{error\}/);

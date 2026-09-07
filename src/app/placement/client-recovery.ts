@@ -12,7 +12,8 @@ type PlacementLoadOptions = {
 
 const MAX_PLACEMENT_LOAD_ATTEMPTS = 3;
 const DEFAULT_RETRY_DELAY_MS = 250;
-const MAX_RETRY_DELAY_MS = 2_000;
+const MAX_RETRY_DELAY_MS = 10_000;
+const MAX_TOTAL_RETRY_DELAY_MS = 15_000;
 
 export class PlacementClientError extends Error {
   readonly code: "temporarily_unavailable" | "no_questions" | "unavailable";
@@ -36,6 +37,7 @@ export async function loadPlacementSession<TSession = unknown>({
   wait = waitFor,
   onRetry,
 }: PlacementLoadOptions = {}): Promise<PlacementLoadResponse<TSession>> {
+  let totalRetryDelayMs = 0;
   for (let attempt = 1; attempt <= MAX_PLACEMENT_LOAD_ATTEMPTS; attempt += 1) {
     const response = await request();
     const data = await response.json().catch(() => ({})) as PlacementLoadResponse<TSession>;
@@ -48,7 +50,9 @@ export async function loadPlacementSession<TSession = unknown>({
     if (attempt === MAX_PLACEMENT_LOAD_ATTEMPTS) throw new PlacementClientError("temporarily_unavailable");
 
     onRetry?.(attempt);
-    await wait(retryDelay(response));
+    const delayMs = Math.min(retryDelay(response), MAX_TOTAL_RETRY_DELAY_MS - totalRetryDelayMs);
+    totalRetryDelayMs += delayMs;
+    await wait(delayMs);
   }
   throw new PlacementClientError("temporarily_unavailable");
 }

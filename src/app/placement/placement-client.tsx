@@ -162,7 +162,7 @@ export default function PlacementClient() {
   }
 
   if (loading) {
-    return <main className="mx-auto min-h-[70vh] max-w-3xl px-5 py-16"><p role="status">{reconnecting ? "Reconnecting…" : "Loading your placement session…"}</p></main>;
+    return <main className="mx-auto min-h-[70vh] max-w-3xl px-5 py-16"><p role="status">{reconnecting ? "Restoring your placement session…" : "Loading your placement session…"}</p></main>;
   }
 
   if (!session) {
