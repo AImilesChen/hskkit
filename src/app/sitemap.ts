@@ -3,15 +3,18 @@ import { sitemapContentRoutes } from "@/lib/dictionary/catalog";
 import { getHsk3LevelStatuses } from "@/lib/content/level-status";
 import { publishedGrammarLessons, publishedReadingLessons } from "@/lib/learning/step7-content";
 import { resourceProductDetails } from "@/lib/commercial/resource-products";
-import { getVerifiedTopicsSnapshot, verifiedTopicRoutesFromSnapshot } from "@/lib/topics/server";
-import { listPublishedBlogSlugs } from "@/lib/blog/repository";
+import {
+  learningTopics,
+  publishedTopicRoutesForVerifiedAssets,
+  topicsSourceReleaseId,
+} from "@/lib/topics/catalog";
+import blogManifest from "../../content/blog/manifest.json";
 
-export const dynamic = "force-dynamic";
-
-export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+export default function sitemap(): MetadataRoute.Sitemap {
   const baseUrl = "https://hskkit.com";
-  const verifiedTopicRoutes = verifiedTopicRoutesFromSnapshot(await getVerifiedTopicsSnapshot());
-  const publishedBlogRoutes = await listPublishedBlogSlugs();
+  const topicAssetIds = [...new Set(learningTopics.flatMap((topic) => topic.wordAssetIds))];
+  const verifiedTopicRoutes = publishedTopicRoutesForVerifiedAssets(topicsSourceReleaseId, topicAssetIds);
+  const publishedBlogRoutes = blogManifest.articles.filter((post) => Date.parse(post.publishedAt) <= Date.now());
   const existingPublicRoutes = [
     "",
     "/hsk-1-vocabulary",
@@ -55,7 +58,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   }));
   const blogEntries: MetadataRoute.Sitemap = publishedBlogRoutes.map((post) => ({
     url: `${baseUrl}/blog/${post.slug}`,
-    lastModified: new Date(post.updated_at),
+    lastModified: new Date(post.publishedAt),
     changeFrequency: "monthly",
   }));
   return [...staticEntries, ...blogEntries];
