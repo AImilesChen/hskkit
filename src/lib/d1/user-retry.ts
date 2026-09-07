@@ -1,5 +1,6 @@
 export const MAX_D1_READ_ATTEMPTS = 2;
 export const D1_RETRY_CONCURRENCY = 2;
+export const USER_D1_READ_TIMEOUT_MS = 8_000;
 const CIRCUIT_FAILURE_THRESHOLD = 3;
 const CIRCUIT_OPEN_MS = 10_000;
 const RETRY_DELAYS_MS = [40] as const;
@@ -14,6 +15,26 @@ export class UserD1UnavailableError extends Error {
   }
 }
 
+class UserD1AttemptTimeoutError extends Error {
+  constructor() {
+    super("D1_READ_ATTEMPT_TIMED_OUT");
+  }
+}
+
+async function runAttempt<T>(operation: () => Promise<T>, timeoutMs: number) {
+  let timer: ReturnType<typeof setTimeout> | undefined;
+  try {
+    return await Promise.race([
+      operation(),
+      new Promise<never>((_, reject) => {
+        timer = setTimeout(() => reject(new UserD1AttemptTimeoutError()), timeoutMs);
+      }),
+    ]);
+  } finally {
+    if (timer) clearTimeout(timer);
+  }
+}
+
 export function isUserD1TemporaryError(error: unknown) {
   const value = error as { message?: unknown; code?: unknown; cause?: { message?: unknown; code?: unknown } } | null;
   const text = [value?.message, value?.code, value?.cause?.message, value?.cause?.code].filter(Boolean).join(" ").toLowerCase();
@@ -25,7 +46,7 @@ function recordTemporaryFailure() {
   if (consecutiveFailures >= CIRCUIT_FAILURE_THRESHOLD) circuitOpenUntil = Date.now() + CIRCUIT_OPEN_MS;
 }
 
-export async function withUserD1ReadProtection<T>(operation: () => Promise<T>): Promise<T> {
+export async function withUserD1ReadProtection<T>(operation: () => Promise<T>, timeoutMs = USER_D1_READ_TIMEOUT_MS): Promise<T> {
   if (Date.now() < circuitOpenUntil) throw new UserD1UnavailableError();
   for (let attempt = 1; attempt <= MAX_D1_READ_ATTEMPTS; attempt += 1) {
     let retrySlot = false;
@@ -39,10 +60,14 @@ export async function withUserD1ReadProtection<T>(operation: () => Promise<T>): 
       await new Promise((resolve) => setTimeout(resolve, RETRY_DELAYS_MS[attempt - 2]));
     }
     try {
-      const result = await operation();
+      const result = await runAttempt(operation, timeoutMs);
       consecutiveFailures = 0;
       return result;
     } catch (error) {
+      if (error instanceof UserD1AttemptTimeoutError) {
+        recordTemporaryFailure();
+        throw new UserD1UnavailableError();
+      }
       if (!isUserD1TemporaryError(error)) throw error;
       if (attempt === MAX_D1_READ_ATTEMPTS) {
         recordTemporaryFailure();

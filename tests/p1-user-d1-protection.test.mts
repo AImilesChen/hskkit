@@ -59,8 +59,9 @@ test("Account dashboard uses one read-only aggregate instead of six component re
 test("Account, Learning and Planner return explicit bounded D1 overload responses", () => {
   const protection = read("src/lib/d1/user-protection.ts");
   const retry = read("src/lib/d1/user-retry.ts");
-  assert.match(retry, /MAX_D1_READ_ATTEMPTS = 2/);
-  assert.match(retry, /D1_RETRY_CONCURRENCY = 2/);
+  assert.match(retry, /MAX_D1_READ_ATTEMPTS\s*=\s*2/);
+  assert.match(retry, /D1_RETRY_CONCURRENCY\s*=\s*2/);
+  assert.match(retry, /USER_D1_READ_TIMEOUT_MS\s*=\s*8_000/);
   assert.match(retry, /7429/);
   assert.match(protection, /D1_TEMPORARILY_UNAVAILABLE/);
   assert.match(retry, /circuitOpenUntil/);
@@ -79,6 +80,18 @@ test("D1 retry stops at the bound, skips permanent failures and opens the circui
     throw new Error("D1 DB is overloaded. Requests queued for too long (7429)");
   }), /D1_TEMPORARILY_UNAVAILABLE/);
   assert.equal(attempts, MAX_D1_READ_ATTEMPTS);
+
+  resetUserD1ProtectionForTest();
+  let timedAttempts = 0;
+  await assert.rejects(
+    () => withUserD1ReadProtection(async () => {
+      timedAttempts += 1;
+      await new Promise((resolve) => setTimeout(resolve, 25));
+      return "late";
+    }, 5),
+    /D1_TEMPORARILY_UNAVAILABLE/,
+  );
+  assert.equal(timedAttempts, 1);
 
   resetUserD1ProtectionForTest();
   attempts = 0;
