@@ -14,10 +14,7 @@ export function LearningEngagementTracker() {
     let stopped = false;
     let sessionToken = "";
     let sessionExpiresAt = 0;
-
-    const markActive = () => { lastActivityAt = Date.now(); };
-    const activityEvents: Array<keyof DocumentEventMap> = ["pointerdown", "keydown", "touchstart", "timeupdate"];
-    for (const event of activityEvents) document.addEventListener(event, markActive, { capture: true, passive: true });
+    let beginInFlight: Promise<boolean> | null = null;
 
     const begin = async () => {
       const response = await fetch("/api/v1/account/learning-rewards", {
@@ -33,7 +30,14 @@ export function LearningEngagementTracker() {
       return true;
     };
 
-    void begin();
+    const markActive = () => {
+      lastActivityAt = Date.now();
+      if (stopped || sessionToken || beginInFlight) return;
+      beginInFlight = begin().finally(() => { beginInFlight = null; });
+    };
+    const activityEvents: Array<keyof DocumentEventMap> = ["pointerdown", "keydown", "touchstart", "timeupdate"];
+    for (const event of activityEvents) document.addEventListener(event, markActive, { capture: true, passive: true });
+
     const timer = window.setInterval(async () => {
       const now = Date.now();
       const elapsed = Math.min(30, Math.max(1, Math.round((now - lastTickAt) / 1000)));

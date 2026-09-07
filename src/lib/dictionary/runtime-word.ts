@@ -1,6 +1,6 @@
-import { getCloudflareContext } from "@opennextjs/cloudflare";
 import { cache } from "react";
-import { findActiveCatalogWordById, isCatalogWordAssetId } from "../content/catalog-search.ts";
+import { isCatalogWordAssetId } from "../content/catalog-search.ts";
+import { findPublicCatalogWordById } from "../content/public-catalog-index.ts";
 import { formalWordAudioUrlByContentId } from "../content/level-status.ts";
 import { getWordBySlug, type LookupResult, type StudyWord } from "./catalog.ts";
 
@@ -14,8 +14,7 @@ export const getPublishedWordBySlug = cache(async (slug: string): Promise<Lookup
   if (local.status === "published") return local;
   if (!isCatalogWordAssetId(slug)) return local;
 
-  const db = (await getCloudflareContext({ async: true })).env.LEARNING_DB;
-  const row = await findActiveCatalogWordById(db, slug);
+  const row = findPublicCatalogWordById(slug);
   if (!row) return { status: "missing" };
 
   const audioSrc = formalWordAudioUrlByContentId.get(row.id);

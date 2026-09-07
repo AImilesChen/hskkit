@@ -6,7 +6,8 @@ import { fileURLToPath } from "node:url";
 import { detectDictionaryQueryType } from "../src/lib/dictionary/search-intent.ts";
 import { addWordToToday, toggleSavedWord, type LearningState } from "../src/lib/learning/domain.ts";
 import { getWordBySlug } from "../src/lib/dictionary/catalog.ts";
-import { findActiveCatalogWordById, isCatalogWordAssetId } from "../src/lib/content/catalog-search.ts";
+import { isCatalogWordAssetId } from "../src/lib/content/catalog-search.ts";
+import { findPublicCatalogWordById } from "../src/lib/content/public-catalog-index.ts";
 import { todayContentByAssetId, todayContentFromCatalogRow } from "../src/lib/learning/today-content.ts";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
@@ -107,39 +108,11 @@ test("a word beyond the bounded runtime index maps to the same Today identity co
   assert.match(learningRoute, /await resolveTodayDictionaryItem\(assetId\)/);
 });
 
-test("D1 fallback qualifies catalog columns and requires an active release", async () => {
-  let sql = "";
-  let boundId = "";
-  const row = {
-    id: "hsk3.word.l7.5636.v1",
-    release_id: "hsk3-content-truth-v5",
-    standard_version: "3.0",
-    content_version: "2026.08.21-batch1",
-    level_band: "7-9",
-    hanzi: "做证",
-    traditional: "作證",
-    pinyin: "zuòzhèng",
-    meaning: "variant of 作证",
-    part_of_speech: "verb",
-  };
-  const database = {
-    prepare(query: string) {
-      sql = query;
-      return {
-        bind(id: string) {
-          boundId = id;
-          return { first: async () => row };
-        },
-      };
-    },
-  };
-
-  const result = await findActiveCatalogWordById(database as never, row.id);
-  assert.equal(result?.id, row.id);
-  assert.equal(boundId, row.id);
-  assert.match(sql, /SELECT i\.id,i\.release_id,i\.standard_version/);
-  assert.match(sql, /INNER JOIN catalog_search_releases r ON r\.id = i\.release_id/);
-  assert.match(sql, /r\.active = 1/);
+test("catalog detail fallback resolves the active full release without D1", () => {
+  const result = findPublicCatalogWordById("hsk3.word.l7.5636.v1");
+  assert.equal(result?.id, "hsk3.word.l7.5636.v1");
+  assert.equal(result?.release_id, "hsk3-content-truth-v5");
+  assert.equal(result?.level_band, "7-9");
 });
 
 test("the unified advanced band accepts canonical l7 IDs without inventing l8 or l9 catalogs", () => {

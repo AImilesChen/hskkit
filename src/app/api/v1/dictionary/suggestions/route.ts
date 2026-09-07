@@ -1,14 +1,13 @@
-import { getCloudflareContext } from "@opennextjs/cloudflare";
 import { NextResponse } from "next/server";
-import { CatalogQueryError, parseCatalogSearchParams, suggestCatalogWords } from "@/lib/content/catalog-search";
+import { CatalogQueryError, parseCatalogSearchParams } from "@/lib/content/catalog-search";
+import { suggestPublicCatalogWords } from "@/lib/content/public-catalog-index";
 import { formalWordAudioAssetIds } from "@/lib/content/level-status";
 
 export async function GET(request: Request) {
   try {
     const params = parseCatalogSearchParams(new URL(request.url));
     if (!params.q) return NextResponse.json({ suggestions: [] }, { headers: { "Cache-Control": "public, max-age=300, s-maxage=3600" } });
-    const db = getCloudflareContext().env.LEARNING_DB;
-    const rows = await suggestCatalogWords(db, {
+    const rows = suggestPublicCatalogWords({
       q: params.q,
       level: params.level,
       partOfSpeech: params.partOfSpeech || undefined,

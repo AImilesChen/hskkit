@@ -1,7 +1,7 @@
 import "server-only";
-import { getCloudflareContext } from "@opennextjs/cloudflare";
 import { cache } from "react";
-import { findActiveCatalogWordsByIds, findCatalogWordLearningContext, type CatalogSearchRow } from "../content/catalog-search.ts";
+import type { CatalogSearchRow } from "../content/catalog-search.ts";
+import { findPublicCatalogWordLearningContext, findPublicCatalogWordsByIds } from "../content/public-catalog-index.ts";
 import { publicAudioAsset, publishedContentAudioAsset } from "../audio/assets.ts";
 import type { DictionaryPracticeWord } from "./p2-learning.ts";
 
@@ -21,8 +21,7 @@ export function catalogRowToPracticeWord(row: CatalogSearchRow): DictionaryPract
 }
 
 export const getDictionaryLearningContext = cache(async (assetId: string) => {
-  const db = (await getCloudflareContext({ async: true })).env.LEARNING_DB;
-  const context = await findCatalogWordLearningContext(db, assetId);
+  const context = findPublicCatalogWordLearningContext(assetId);
   if (!context) return null;
   return {
     current: catalogRowToPracticeWord(context.current),
@@ -33,6 +32,5 @@ export const getDictionaryLearningContext = cache(async (assetId: string) => {
 });
 
 export async function getDictionaryWordsByIds(assetIds: string[]) {
-  const db = (await getCloudflareContext({ async: true })).env.LEARNING_DB;
-  return (await findActiveCatalogWordsByIds(db, assetIds)).map(catalogRowToPracticeWord);
+  return findPublicCatalogWordsByIds(assetIds).map(catalogRowToPracticeWord);
 }

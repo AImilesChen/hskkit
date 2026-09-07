@@ -2,7 +2,7 @@ import { getCloudflareContext } from "@opennextjs/cloudflare";
 import { handleCatalogWordsRequest } from "@/lib/content/catalog-route";
 
 export async function GET(request: Request) {
-  const { env, ctx } = getCloudflareContext();
+  const { ctx } = getCloudflareContext();
   const cacheable = new URL(request.url).searchParams.get("mode") !== "flashcards";
   const cloudflareCaches = typeof caches !== "undefined"
     ? caches as CacheStorage & { default: Cache }
@@ -13,7 +13,7 @@ export async function GET(request: Request) {
     if (cached) return cached;
   }
 
-  const response = await handleCatalogWordsRequest(request, env.LEARNING_DB);
+  const response = await handleCatalogWordsRequest(request);
   if (edgeCache && response.ok) ctx.waitUntil(edgeCache.put(request.url, response.clone()));
   return response;
 }

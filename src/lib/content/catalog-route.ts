@@ -1,16 +1,15 @@
 import {
   CatalogQueryError,
   parseCatalogSearchParams,
-  searchCatalogWords,
-  type CatalogSearchDatabase,
 } from "./catalog-search.ts";
+import { searchPublicCatalogWords } from "./public-catalog-index.ts";
 import { formalWordAudioAssetIds, formalWordAudioUrlByContentId } from "./level-status.ts";
 
 function errorResponse(status: number, error: string, message: string) {
   return Response.json({ error, message }, { status, headers: { "Cache-Control": "no-store" } });
 }
 
-export async function handleCatalogWordsRequest(request: Request, db: CatalogSearchDatabase) {
+export async function handleCatalogWordsRequest(request: Request, _legacyDatabase?: unknown) {
   const url = new URL(request.url);
   const standard = url.searchParams.get("standard") ?? "hsk3";
   if (standard !== "hsk3" && standard !== "hsk2") {
@@ -22,7 +21,7 @@ export async function handleCatalogWordsRequest(request: Request, db: CatalogSea
 
   try {
     const params = parseCatalogSearchParams(url);
-    const result = await searchCatalogWords(db, params, formalWordAudioAssetIds);
+    const result = searchPublicCatalogWords(params, formalWordAudioAssetIds);
     const body = {
       ...result,
       contentAssets: result.contentAssets.map((asset) => ({

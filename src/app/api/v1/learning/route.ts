@@ -1,7 +1,7 @@
 import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 import { createHash } from "node:crypto";
-import { getCloudflareContext } from "@opennextjs/cloudflare";
+
 import {
   buildDailySession,
   applyDailyItemAction,
@@ -29,7 +29,7 @@ import { type ProductCapabilities } from "../../../../lib/commercial/capabilitie
 import { reconcileReferralLearningMilestone } from "../../../../lib/commercial/referral-storage";
 import { learningRewardLocalDay } from "@/lib/engagement/storage";
 import { selectTodayContent, todayContentByAssetId, todayContentFromCatalogRow } from "../../../../lib/learning/today-content";
-import { findActiveCatalogWordById } from "../../../../lib/content/catalog-search";
+import { findPublicCatalogWordById } from "../../../../lib/content/public-catalog-index";
 import { accessDecision, createAuditEvent, errorContract } from "../../../../lib/account/access-policy";
 import { recordPolicyAudit } from "../../../../lib/account/audit-storage";
 import { computeSessionStreak } from "../../../../lib/account/domain";
@@ -58,8 +58,7 @@ const short = (value: unknown, max = 100) => typeof value === "string" && value.
 async function resolveTodayDictionaryItem(assetId: string) {
   const local = todayContentByAssetId(assetId);
   if (local) return local;
-  const db = (await getCloudflareContext({ async: true })).env.LEARNING_DB;
-  const row = await findActiveCatalogWordById(db, assetId);
+  const row = findPublicCatalogWordById(assetId);
   return row ? todayContentFromCatalogRow(row) : undefined;
 }
 const offset = (value: unknown) => Number.isInteger(value) && Number(value) >= -840 && Number(value) <= 840 ? Number(value) : 0;
