@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { shouldBlockCrawler } from "./lib/traffic/bot-guard";
 
 const consolidatedRoutes: Record<string, string> = {
   "/hsk-levels": "/levels",
@@ -13,6 +14,16 @@ function gonePage(item: string) {
 
 export function middleware(request: NextRequest) {
   const path = decodeURIComponent(request.nextUrl.pathname);
+  if (path !== "/robots.txt" && shouldBlockCrawler(request.headers.get("user-agent"))) {
+    return new NextResponse("Crawler access denied.\n", {
+      status: 403,
+      headers: {
+        "content-type": "text/plain; charset=utf-8",
+        "x-robots-tag": "noindex, nofollow",
+        "cache-control": "public, max-age=86400",
+      },
+    });
+  }
   const consolidated = consolidatedRoutes[path];
   if (consolidated) {
     const target = request.nextUrl.clone();
@@ -33,11 +44,5 @@ export function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: [
-    "/word/:path*",
-    "/character/:path*",
-    "/hsk-levels",
-    "/hsk-level-test",
-    "/new-hsk-3-0",
-  ],
+  matcher: ["/((?!api|_next/static|_next/image|favicon.ico).*)"],
 };
