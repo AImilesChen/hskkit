@@ -16,6 +16,19 @@ test("catalog overload migration adds targeted indexes and a maintained characte
   assert.match(migration, /CREATE TRIGGER catalog_character_words_after_delete/);
 });
 
+test("catalog suggestions use bounded indexed candidates instead of scanning every catalog row", () => {
+  const source = read("src/lib/content/catalog-search.ts");
+  const migration = read("migrations/0038_catalog_suggestion_indexes.sql");
+  assert.match(source, /catalog_character_words cw INDEXED BY idx_catalog_character_words_release_character_sort/);
+  assert.match(source, /cw\.character = \?/);
+  assert.match(source, /\["search_pinyin", "idx_catalog_search_release_pinyin_sort"\]/);
+  assert.match(source, /\["search_english", "idx_catalog_search_release_english_sort"\]/);
+  assert.match(source, /INDEXED BY \$\{index\}/);
+  assert.doesNotMatch(source, /const broadMatch = `%\$\{escapedLike\(firstCharacter\)\}%`/);
+  assert.match(migration, /idx_catalog_search_release_english_sort/);
+  assert.match(migration, /idx_catalog_search_release_hanzi_sort/);
+});
+
 test("hot catalog lookups use release-scoped indexes and never scan hanzi with instr", () => {
   const source = read("src/lib/content/catalog-search.ts");
   assert.doesNotMatch(source, /instr\(i\.hanzi/);
