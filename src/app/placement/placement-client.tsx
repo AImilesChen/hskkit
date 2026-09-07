@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
+import { loadPlacementSession, placementPublicError } from "./client-recovery";
 
 type Question = {
   id: string;
@@ -44,46 +45,46 @@ async function placementRequest(url: string, payload: Record<string, unknown>) {
   return data;
 }
 
-async function loadPlacementSession() {
-  const response = await fetch("/api/v1/placement/sessions", { cache: "no-store" });
-  const data = await response.json() as { session: Session | null; expired?: boolean; error?: string };
-  if (!response.ok) throw new Error(data.error ?? "PLACEMENT_LOAD_FAILED");
-  return data;
-}
-
 export default function PlacementClient() {
   const router = useRouter();
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [reconnecting, setReconnecting] = useState(false);
   const [expired, setExpired] = useState(false);
   const [error, setError] = useState<string>();
 
   async function load() {
     setLoading(true);
+    setReconnecting(false);
     setError(undefined);
     try {
-      const data = await loadPlacementSession();
+      const data = await loadPlacementSession<Session>({ onRetry: () => setReconnecting(true) });
       setSession(data.session);
       setExpired(Boolean(data.expired));
     } catch (reason) {
       setSession(null);
       setError(reason instanceof Error ? reason.message : "PLACEMENT_LOAD_FAILED");
     } finally {
+      setReconnecting(false);
       setLoading(false);
     }
   }
 
   useEffect(() => {
     let active = true;
-    loadPlacementSession()
+    loadPlacementSession<Session>({ onRetry: () => active && setReconnecting(true) })
       .then((data) => {
         if (!active) return;
         setSession(data.session);
         setExpired(Boolean(data.expired));
       })
       .catch((reason: Error) => active && setError(reason.message))
-      .finally(() => active && setLoading(false));
+      .finally(() => {
+        if (!active) return;
+        setReconnecting(false);
+        setLoading(false);
+      });
     return () => { active = false; };
   }, []);
 
@@ -161,20 +162,21 @@ export default function PlacementClient() {
   }
 
   if (loading) {
-    return <main className="mx-auto min-h-[70vh] max-w-3xl px-5 py-16"><p role="status">Loading your placement session…</p></main>;
+    return <main className="mx-auto min-h-[70vh] max-w-3xl px-5 py-16"><p role="status">{reconnecting ? "Reconnecting…" : "Loading your placement session…"}</p></main>;
   }
 
   if (!session) {
-    const noQuestions = error === "PLACEMENT_NO_QUESTIONS";
+    const noQuestions = error === "no_questions";
+    const temporarilyUnavailable = error === "temporarily_unavailable";
     const loadFailed = Boolean(error) && !expired && !noQuestions;
     return (
       <main className="mx-auto min-h-[70vh] max-w-3xl px-5 py-14 sm:py-20">
         <p className="text-sm font-bold uppercase tracking-[0.18em] text-blue-700">HSKKit placement</p>
         <h1 className="mt-4 text-4xl font-black tracking-tight text-slate-950 sm:text-5xl">
-          {expired ? "Your saved placement session expired" : noQuestions ? "Placement is temporarily unavailable" : loadFailed ? "We couldn't load your placement" : "Find a practical starting level"}
+          {expired ? "Your saved placement session expired" : noQuestions ? "Placement is temporarily unavailable" : temporarilyUnavailable ? "Placement is temporarily busy" : loadFailed ? "We couldn't load your placement" : "Find a practical starting level"}
         </h1>
         <p className="mt-5 max-w-2xl text-lg leading-8 text-slate-600">
-          {expired ? "Placement sessions stay available for seven days. Start a new placement to continue." : noQuestions ? "No diagnostic questions are available right now. No empty or demo result will be generated." : loadFailed ? "Your saved answers have not been changed. Retry loading before starting a new session." : "Start with 12 questions across vocabulary, grammar, reading and listening. The test then adapts to your answers and finishes in 18–24 questions, with progress saved as you go."}
+          {expired ? "Placement sessions stay available for seven days. Start a new placement to continue." : noQuestions ? "No diagnostic questions are available right now. No empty or demo result will be generated." : temporarilyUnavailable ? "Your saved answers are safe. Please try again." : loadFailed ? "Your saved answers have not been changed. Retry loading before starting a new session." : "Start with 12 questions across vocabulary, grammar, reading and listening. The test then adapts to your answers and finishes in 18–24 questions, with progress saved as you go."}
         </p>
         {!loadFailed && !noQuestions ? <div className="mt-7 grid gap-3 rounded-2xl border border-blue-200 bg-blue-50 p-5 text-sm text-blue-950 sm:grid-cols-3">
           <p><strong className="block text-slate-950">First 12 questions</strong>Balanced across skills and difficulty</p>
@@ -185,7 +187,7 @@ export default function PlacementClient() {
           <summary className="cursor-pointer font-bold text-slate-800">How this placement works</summary>
           <p className="mt-3">The diagnostic uses an approved, versioned question set including three listening items. If listening evidence is unavailable, the result lowers confidence and states what was not measured instead of guessing.</p>
         </details> : null}
-        {error && !expired ? <p className="mt-5 rounded-xl bg-red-50 p-4 text-sm text-red-800" role="alert">Could not load or start the diagnostic: {error}</p> : null}
+        {error && !expired && !noQuestions ? <p className="mt-5 rounded-xl bg-red-50 p-4 text-sm text-red-800" role="alert">{placementPublicError(error)}</p> : null}
         <div className="mt-8 flex flex-col gap-3 sm:flex-row">
           {loadFailed || noQuestions
             ? <button className="inline-flex min-h-12 items-center justify-center rounded-xl bg-blue-600 px-6 font-bold text-white hover:bg-blue-700 disabled:opacity-60" disabled={loading} onClick={load} type="button">Try loading again</button>
@@ -216,7 +218,7 @@ export default function PlacementClient() {
         <h1 className="mt-4 text-2xl font-black leading-tight text-slate-950 sm:text-3xl" id="placement-question">{question.prompt}</h1>
         {question.context ? <p className="mt-5 rounded-2xl bg-slate-50 p-5 text-lg leading-8 text-slate-900" lang="zh-Hans">{question.context}</p> : null}
         {question.audioSrc ? <div className="mt-5 rounded-2xl border border-blue-100 bg-blue-50 p-4"><audio className="w-full" controls preload="metadata" src={question.audioSrc}>Your browser cannot play this approved audio item.</audio><p className="mt-2 text-xs text-blue-800">Playback failures never submit an answer or change your learning state.</p></div> : null}
-        <fieldset className="mt-6 grid gap-3" disabled={saving}>
+        <fieldset className="mt-6 grid gap-3" disabled={saving || Boolean(selected)}>
           <legend className="sr-only">Choose one answer</legend>
           {Object.entries(question.options).map(([option, label]) => (
             <button
@@ -230,7 +232,8 @@ export default function PlacementClient() {
             </button>
           ))}
         </fieldset>
-        {error ? <p className="mt-5 rounded-xl bg-red-50 p-4 text-sm text-red-800" role="alert">Your answer was not saved: {error}. Try again.</p> : null}
+        {selected && !error ? <p className="mt-5 text-sm font-bold text-emerald-700" role="status">Answer saved</p> : null}
+        {error ? <p className="mt-5 rounded-xl bg-red-50 p-4 text-sm text-red-800" role="alert">{placementPublicError(error)}</p> : null}
         <div className="mt-8 flex items-center justify-between gap-3">
           <button className="min-h-11 rounded-xl px-4 font-bold text-slate-600 disabled:opacity-40" disabled={index === 0 || saving} onClick={() => setManualIndex(Math.max(0, index - 1))} type="button">Back</button>
           <button className="min-h-12 rounded-xl bg-blue-600 px-6 font-bold text-white disabled:cursor-not-allowed disabled:opacity-50" disabled={!selected || saving} onClick={next} type="button">{saving ? "Saving…" : session.adaptiveMaxQuestions ? session.adaptiveComplete ? "See my result" : "Next" : index === session.questions.length - 1 ? "See my result" : "Next"}</button>

@@ -82,6 +82,7 @@ test("batch 3 REST entry points exist and the placement UI uses them", () => {
   const sessionsRoute = source("../src/app/api/v1/placement/sessions/route.ts");
   const attemptsRoute = source("../src/app/api/v1/attempts/[id]/submit/route.ts");
   const client = source("../src/app/placement/placement-client.tsx");
+  const clientRecovery = source("../src/app/placement/client-recovery.ts");
   const resultClient = source("../src/app/placement/result/[id]/placement-result-client.tsx");
   assert.match(sessionsRoute, /export async function GET/);
   assert.match(sessionsRoute, /export async function POST/);
@@ -92,6 +93,6 @@ test("batch 3 REST entry points exist and the placement UI uses them", () => {
   assert.doesNotMatch(client, /placement-answer:\$\{session\.id\}:/);
   assert.match(client, /setManualIndex\(index\)/);
   assert.match(client, /PLACEMENT_SESSION_EXPIRED/);
-  assert.match(client, /PLACEMENT_NO_QUESTIONS/);
+  assert.match(clientRecovery, /PLACEMENT_NO_QUESTIONS/);
   assert.match(resultClient, /\/vocabulary\/\$\{catalogLevel\}/);
 });
