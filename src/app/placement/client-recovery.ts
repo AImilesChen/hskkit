@@ -10,8 +10,8 @@ type PlacementLoadOptions = {
   onRetry?: (attempt: number) => void;
 };
 
-const MAX_PLACEMENT_LOAD_ATTEMPTS = 3;
-const DEFAULT_RETRY_DELAY_MS = 250;
+const MAX_PLACEMENT_LOAD_ATTEMPTS = 4;
+const MIN_RETRY_DELAY_MS = 5_000;
 const MAX_RETRY_DELAY_MS = 10_000;
 const MAX_TOTAL_RETRY_DELAY_MS = 15_000;
 
@@ -28,8 +28,8 @@ const waitFor = (delayMs: number) => new Promise<void>((resolve) => setTimeout(r
 
 function retryDelay(response: Response) {
   const seconds = Number(response.headers.get("retry-after"));
-  if (!Number.isFinite(seconds) || seconds < 0) return DEFAULT_RETRY_DELAY_MS;
-  return Math.min(seconds * 1_000, MAX_RETRY_DELAY_MS);
+  const requestedDelay = Number.isFinite(seconds) && seconds >= 0 ? seconds * 1_000 : MIN_RETRY_DELAY_MS;
+  return Math.min(Math.max(requestedDelay, MIN_RETRY_DELAY_MS), MAX_RETRY_DELAY_MS);
 }
 
 export async function loadPlacementSession<TSession = unknown>({
@@ -49,8 +49,10 @@ export async function loadPlacementSession<TSession = unknown>({
     }
     if (attempt === MAX_PLACEMENT_LOAD_ATTEMPTS) throw new PlacementClientError("temporarily_unavailable");
 
+    const remainingRetryDelayMs = MAX_TOTAL_RETRY_DELAY_MS - totalRetryDelayMs;
+    if (remainingRetryDelayMs < MIN_RETRY_DELAY_MS) throw new PlacementClientError("temporarily_unavailable");
     onRetry?.(attempt);
-    const delayMs = Math.min(retryDelay(response), MAX_TOTAL_RETRY_DELAY_MS - totalRetryDelayMs);
+    const delayMs = Math.min(retryDelay(response), remainingRetryDelayMs);
     totalRetryDelayMs += delayMs;
     await wait(delayMs);
   }

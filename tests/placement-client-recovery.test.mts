@@ -58,20 +58,58 @@ test("placement load caps the total circuit recovery wait at fifteen seconds", a
   assert.deepEqual(data.session, { id: "placement-after-budget" });
 });
 
-test("placement load stops after bounded D1 retries with a typed temporary failure", async () => {
+test("placement load stops after a fifteen-second bounded D1 recovery window", async () => {
   let attempts = 0;
+  const waits: number[] = [];
 
   await assert.rejects(
     () => loadPlacementSession({
       request: async () => {
         attempts += 1;
-        return jsonResponse(503, { error: "D1_TEMPORARILY_UNAVAILABLE", retryable: true }, "0");
+        return jsonResponse(503, { error: "D1_TEMPORARILY_UNAVAILABLE", retryable: true }, "2");
       },
-      wait: async () => undefined,
+      wait: async (delayMs) => { waits.push(delayMs); },
+    }),
+    (error: unknown) => error instanceof PlacementClientError && error.code === "temporarily_unavailable",
+  );
+  assert.equal(attempts, 4);
+  assert.deepEqual(waits, [5_000, 5_000, 5_000]);
+});
+
+test("placement load does not issue a zero-delay request after exhausting the wait budget", async () => {
+  let attempts = 0;
+  const waits: number[] = [];
+
+  await assert.rejects(
+    () => loadPlacementSession({
+      request: async () => {
+        attempts += 1;
+        return jsonResponse(503, { error: "D1_TEMPORARILY_UNAVAILABLE", retryable: true }, "10");
+      },
+      wait: async (delayMs) => { waits.push(delayMs); },
     }),
     (error: unknown) => error instanceof PlacementClientError && error.code === "temporarily_unavailable",
   );
   assert.equal(attempts, 3);
+  assert.deepEqual(waits, [10_000, 5_000]);
+});
+
+test("placement load never schedules a final retry below the minimum spacing", async () => {
+  let attempts = 0;
+  const waits: number[] = [];
+
+  await assert.rejects(
+    () => loadPlacementSession({
+      request: async () => {
+        attempts += 1;
+        return jsonResponse(503, { error: "D1_TEMPORARILY_UNAVAILABLE", retryable: true }, "6");
+      },
+      wait: async (delayMs) => { waits.push(delayMs); },
+    }),
+    (error: unknown) => error instanceof PlacementClientError && error.code === "temporarily_unavailable",
+  );
+  assert.equal(attempts, 3);
+  assert.deepEqual(waits, [6_000, 6_000]);
 });
 
 test("placement load does not retry non-D1 failures", async () => {
