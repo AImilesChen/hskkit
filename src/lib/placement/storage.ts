@@ -107,11 +107,7 @@ export async function loadPlacementState(ownerId: string, options: { initializeI
     return legacy;
   }
   const normalized = await loadNormalizedPlacement(ownerId);
-  if (normalized) return normalized;
-  if (options.initializeIfMissing) return { state: empty(), revision: 0 };
-  const legacy = await loadLegacyPlacement(ownerId);
-  await importPlacementState(ownerId, legacy.state, 0);
-  return (await loadNormalizedPlacement(ownerId)) ?? { state: empty(), revision: 0 };
+  return normalized ?? { state: empty(), revision: 0 };
 }
 
 function changedById<T extends { id: string }>(before: T[], after: T[]) {

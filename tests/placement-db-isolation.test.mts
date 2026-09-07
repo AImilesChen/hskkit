@@ -53,6 +53,8 @@ test("Placement writes preserve CAS and idempotency contracts", () => {
   assert.match(repository, /idempotency_key/);
   assert.match(repository, /const \[revisionRows, sessionRows, answerRows, resultRows\] = await db\.batch/);
   assert.match(server, /engagementActivity, action === "submit"/);
+  assert.match(repository, /const normalized = await loadNormalizedPlacement\(ownerId\);\s*return normalized \?\? \{ state: empty\(\), revision: 0 \};/);
+  assert.doesNotMatch(repository, /if \(options\.initializeIfMissing\)[\s\S]*loadLegacyPlacement\(ownerId\)/);
   assert.match(repository, /rollback-safe legacy copy[\s\S]*await syncLegacyPlacementProjection[\s\S]*if \(changed\) await saveNormalizedPlacement/);
 });
 
