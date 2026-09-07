@@ -14,14 +14,15 @@ test("normal learners and approved search engines are not blocked", () => {
   assert.equal(shouldBlockCrawler(""), false);
 });
 
-test("middleware rejects MJ12bot before public page rendering and leaves robots.txt reachable", async () => {
+test("middleware rejects MJ12bot before page or API rendering and leaves robots.txt reachable", async () => {
   const source = await readFile(new URL("../src/middleware.ts", import.meta.url), "utf8");
   assert.match(source, /shouldBlockCrawler\(request\.headers\.get\("user-agent"\)\)/);
   assert.match(source, /path !== "\/robots\.txt"/);
   assert.match(source, /status:\s*403/);
   assert.match(source, /"x-robots-tag":\s*"noindex, nofollow"/);
   assert.match(source, /"cache-control":\s*"public, max-age=86400"/);
-  assert.match(source, /\/\(\(\?!api\|_next\/static\|_next\/image\|favicon\.ico\)\.\*\)/);
+  assert.match(source, /\/\(\(\?!_next\/static\|_next\/image\|favicon\.ico\)\.\*\)/);
+  assert.doesNotMatch(source, /\(\?!api\|/);
 });
 
 test("robots policy tells MJ12bot to stop crawling without weakening normal indexing", async () => {

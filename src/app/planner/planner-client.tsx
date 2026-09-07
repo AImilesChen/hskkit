@@ -27,6 +27,15 @@ function defaultDate() {
 function safeMessage(value: unknown) {
   return typeof value === "string" && value.length < 180 && !/^[A-Z0-9_]+$/.test(value) ? value : "Planner is temporarily unavailable.";
 }
+async function readJsonResponse(response: Response) {
+  const body = await response.text();
+  if (!body) throw new Error("Planner is temporarily unavailable. Please retry.");
+  try {
+    return JSON.parse(body);
+  } catch {
+    throw new Error("Planner is temporarily unavailable. Please retry.");
+  }
+}
 function midpointDate(targetDate: string) {
   const start = new Date();
   const target = new Date(`${targetDate}T12:00:00.000Z`);
@@ -69,7 +78,7 @@ export default function PlannerClient() {
     setError("");
     try {
       const response = await fetch("/api/v1/planner", { cache: "no-store", signal: AbortSignal.timeout(12_000) });
-      const payload = await response.json();
+      const payload = await readJsonResponse(response);
       if (!response.ok) throw new Error(safeMessage(payload?.error));
       setData(payload);
       if (payload.latest) {
@@ -87,10 +96,10 @@ export default function PlannerClient() {
       }
       setRequestState("ready");
       return true;
-    } catch (caught) {
+    } catch {
       setRequestState("error");
       setErrorSource("load");
-      setError(caught instanceof Error ? caught.message : "Planner is temporarily unavailable.");
+      setError("Planner is temporarily unavailable. Please retry.");
       return false;
     }
   }
@@ -203,7 +212,7 @@ export default function PlannerClient() {
           preferredDays,
         }),
       });
-      const payload = await response.json();
+      const payload = await readJsonResponse(response);
       if (!response.ok) {
         if (payload.error === "PLAN_INFEASIBLE") {
           setMinimum(payload.minimumWeeklyMinutes);
