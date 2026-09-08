@@ -12,7 +12,7 @@ type Dimension = "reading" | "audio" | "context_audio";
 type Item = { id: string; kind: "review" | "learn" | "listen" | "practice" | "summary"; contentId: string; contentVersion?: string; status: "pending" | "completed" | "skipped"; dimension?: Dimension; title?: string; href?: string; estimatedMinutes?: number; deferred?: boolean; reviewCardId?: string };
 type Notice = { code: string; message: string; actionHref: string; actionLabel: string };
 type Card = { id: string; contentId: string; dimension: Dimension; dueAt: string; revision: number; prompt: string; context?: string; instruction?: string; answerMode: "choice" | "text" | "self_recall"; correctAnswer: string; correctAnswerKey: string; userAnswer: string; priorAnswerLabel: string; choices: Array<{ key: string; text: string }>; isMistake: boolean; legacyReview: boolean; reviewReason: string; explanation: string; level?: number; levelBand: string; skill: string; topic?: string; intervalDays: number; ease: number; reviewCount: number; audioText?: string; audioSrc?: string; assetId?: string; pinyin?: string; meaning?: string; example?: { hanzi: string; pinyin: string; meaning: string }; formalAudioSrc?: string; playbackRequired: boolean; playbackReady: boolean };
-type Mistake = { id: string; contentId: string; cardId?: string; status: string; createdAt: string; dimension: Dimension; prompt: string; level?: number; skill: string };
+type Mistake = { id: string; contentId: string; cardId?: string; status: string; createdAt: string; resolvedAt?: string; dimension: Dimension; prompt: string; level?: number; skill: string };
 type Data = {
   session: { id: string; startLevel?: number; contentReleaseId?: string; notice?: Notice; budgetMinutes?: number; totalEstimatedMinutes?: number; items: Item[] };
   cards: Card[];
@@ -317,6 +317,9 @@ export default function LearningDashboard({ mode }: { mode: "today" | "review" |
   if (error) return <LearningStatePage mode={mode} title={error.startsWith("Free daily") ? "Daily limit reached" : "We couldn't load this page"} text={error} error>{error.startsWith("Free daily") ? <Link href="/pricing" className="btn">Compare Pro</Link> : <button onClick={() => void load(true)} className="btn">Try again</button>}</LearningStatePage>;
   if (!data) return <LearningStatePage mode={mode} title={mode === "review" ? "Preparing your review" : mode === "mistakes" ? "Loading your mistakes" : "Preparing today's plan"} text="Loading due items and restoring progress." loading />;
   const open = data.mistakes.filter((mistake) => mistake.status === "open");
+  const corrected = data.mistakes
+    .filter((mistake) => mistake.status === "resolved")
+    .sort((a, b) => (b.resolvedAt ?? b.createdAt).localeCompare(a.resolvedAt ?? a.createdAt));
   const filteredOpen = open.filter((mistake) =>
     (!mistakeLevel || mistake.level === mistakeLevel)
     && (mistakeType === "all" || mistake.dimension === mistakeType)
@@ -402,7 +405,16 @@ export default function LearningDashboard({ mode }: { mode: "today" | "review" |
         <p className="text-sm text-slate-600">Retry, check the answer, then continue to the next correction or return here.</p>
         <Link className="btn" href={`/review?source=mistakes&contentId=${encodeURIComponent(mistake.contentId)}${mistake.cardId ? `&cardId=${encodeURIComponent(mistake.cardId)}` : ""}`}>Correct this mistake</Link>
       </article>)}</div> : <State title="No mistakes match these filters" text="Change a level, question type, or error-time filter to see other corrections." />}
-    </> : <State title="No open mistakes" text="Practice and listening mistakes will appear here automatically."><Link className="btn" href="/listen">Start listening</Link></State>}
+    </> : corrected.length ? <State title="All mistakes corrected" text="There are no open corrections. Your corrected history remains below as a record of completed work." /> : <State title="No mistake history yet" text="A wrong answer in Practice or Listening will appear here immediately with the original question and a real retry."><div className="flex flex-wrap gap-2"><Link className="btn" href="/practice">Start practice</Link><Link className="btn secondary" href="/listen">Start listening</Link></div></State>}
+    {corrected.length > 0 && <section className="mt-5" aria-label="Corrected mistakes">
+      <div className="mb-3"><span className="eyebrow">Correction history</span><h2>Corrected mistakes</h2><p className="text-slate-600">These records stay visible after a successful retry.</p></div>
+      <div className="grid gap-3">{corrected.map((mistake) => <article className="card" key={mistake.id}>
+        <span className="eyebrow">Corrected · {mistake.dimension.replace("_", " ")}</span>
+        <h3 className="text-xl font-bold text-slate-950">{mistake.prompt}</h3>
+        <p>{mistake.level ? `HSK ${mistake.level} · ` : ""}{mistake.skill}</p>
+        <p className="text-sm text-emerald-700"><strong>Corrected on</strong> {new Date(mistake.resolvedAt ?? mistake.createdAt).toLocaleString()}</p>
+      </article>)}</div>
+    </section>}
     <Mastery values={data.mastery} scope={data.scope} />
   </Shell>;
 
@@ -412,7 +424,7 @@ export default function LearningDashboard({ mode }: { mode: "today" | "review" |
   const recommendedCount = recommendReviewCount(due);
   const reviewedSessionCards = (reviewIds ?? []).map((id) => data.cards.find((card) => card.id === id)).filter((card): card is Card => Boolean(card));
   const nextReviewAt = reviewedSessionCards.map((card) => card.dueAt).filter((dueAt) => new Date(dueAt).getTime() > Date.now()).sort()[0];
-  const reviewPool = entryIntent.kind === "mistake" ? data.cards.filter((card) => card.isMistake && !ratedLegacyMistakeIds.includes(card.id)) : due;
+  const reviewPool = entryIntent.kind === "mistake" ? data.cards.filter((card) => card.isMistake && !ratedLegacyMistakeIds.includes(card.id)) : entryIntent.kind === "setup" ? data.cards : due;
   const plannedCards = reviewIds ? reviewIds.map((id) => reviewPool.find((card) => card.id === id)).filter((card): card is Card => Boolean(card)) : [];
   const activeCard = plannedCards[0];
   const activeFocusReason = data.focusedReview.find((card) => card.id === activeCard?.id)?.focusReason;
@@ -509,7 +521,11 @@ export default function LearningDashboard({ mode }: { mode: "today" | "review" |
       </div>}
 
       {directEntryEmpty && <State title={entryIntent.kind === "mistake" ? "This mistake is no longer open" : "You're caught up"} text={entryIntent.kind === "mistake" ? "It may already have been resolved or is no longer available for review." : "There are no reviews due in today's queue."}><Link className="btn" href={entryIntent.kind === "mistake" ? "/mistakes" : "/today"}>{entryIntent.kind === "mistake" ? "Back to Mistakes" : "Back to Today"}</Link></State>}
-      {entryResolved && entryIntent.kind === "setup" && reviewIds === null && due.length === 0 && <State title="You're caught up" text="There are no reviews due right now."><Link className="btn" href="/today">Back to Today</Link></State>}
+      {entryResolved && entryIntent.kind === "setup" && reviewIds === null && due.length === 0 && data.cards.length > 0 && <section className="overflow-hidden rounded-[28px] border border-slate-200 bg-white shadow-[0_22px_60px_rgba(15,23,42,0.08)]">
+        <div className="border-b border-slate-200 bg-slate-950 px-6 py-6 text-white sm:px-8"><p className="text-sm font-semibold text-blue-300">Schedule clear</p><h2 className="mt-2 text-3xl font-bold text-white">Upcoming reviews</h2><p className="mt-2 text-slate-300">Nothing is due now. You can inspect the schedule or complete one real review early here.</p></div>
+        <div className="p-6 sm:p-8"><div className="grid gap-3">{[...data.cards].sort((a, b) => a.dueAt.localeCompare(b.dueAt)).slice(0, 3).map((card) => <article className="rounded-2xl border border-slate-200 p-4" key={card.id}><p className="font-bold text-slate-950">{card.prompt}</p><p className="mt-1 text-sm text-slate-600">{card.skill} · Scheduled {new Date(card.dueAt).toLocaleString()}</p></article>)}</div><button className="mt-5 min-h-[48px] w-full rounded-xl bg-blue-600 px-5 py-3 font-bold text-white focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-blue-200" onClick={() => { setReviewIds([[...data.cards].sort((a, b) => a.dueAt.localeCompare(b.dueAt))[0].id]); setReviewedCount(0); setRatedLegacyMistakeIds([]); }}>Review one early</button></div>
+      </section>}
+      {entryResolved && entryIntent.kind === "setup" && reviewIds === null && due.length === 0 && data.cards.length === 0 && <State title="No review history yet" text="A completed Practice or Listening answer creates your first scheduled memory card. Wrong answers become due immediately."><div className="flex flex-wrap gap-2"><Link className="btn" href="/practice">Start practice</Link><Link className="btn secondary" href="/listen">Start listening</Link></div></State>}
       {audioError && <p className="mt-4 rounded-xl bg-red-50 p-4 text-sm text-red-700" role="alert">{audioError}</p>}
     </div>
   </Shell>;
@@ -554,5 +570,5 @@ function LearningStatePage(props: { mode: "today" | "review" | "mistakes"; title
 }
 function State(props: { title: string; text: string; children?: ReactNode }) { return <div className="state"><h2>{props.title}</h2><p>{props.text}</p>{props.children}</div>; }
 function Mastery({ values, scope }: { values: Record<Dimension, number>; scope: Data["scope"] }) {
-  return <section className="summary"><h2>Mastery</h2><p>Reading {values.reading} · Audio {values.audio} · Context audio {values.context_audio}</p><p>{scope === "account" ? "Saved to your private account learning record and available across synced devices." : "Saved for this guest browser; sign in to merge it explicitly into your account."}</p></section>;
+  return <section className="summary"><h2>Mastery</h2><p className="text-sm font-semibold">Mastered after successful review</p><p>Reading {values.reading} · Audio {values.audio} · Context audio {values.context_audio}</p><p>{scope === "account" ? "Saved to your private account learning record and available across synced devices." : "Saved for this guest browser; sign in to merge it explicitly into your account."}</p></section>;
 }

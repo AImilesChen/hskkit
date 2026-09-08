@@ -186,6 +186,16 @@ export interface LearningState {
   preferredLearningLevel?: number;
 }
 
+export function masterySnapshot(state: LearningState): Record<Dimension, number> {
+  const mastery: Record<Dimension, number> = { reading: 0, audio: 0, context_audio: 0 };
+  for (const card of state.cards) {
+    const latestGradeKey = card.gradeKeys.at(-1);
+    const latestGrade = latestGradeKey ? card.gradeResults?.[latestGradeKey] : undefined;
+    if (latestGrade && latestGrade !== "again") mastery[card.dimension] += 1;
+  }
+  return mastery;
+}
+
 const id = (prefix: string, key: string) => `${prefix}_${createHash("sha256").update(key).digest("base64url")}`;
 const add = (iso: string, days: number, minutes = 0) => new Date(new Date(iso).getTime() + days * 86_400_000 + minutes * 60_000).toISOString();
 

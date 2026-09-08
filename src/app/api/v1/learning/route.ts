@@ -14,6 +14,7 @@ import {
   gradeReview,
   undoLastReview,
   markAudioReviewReady,
+  masterySnapshot,
   recordAttempt,
   recordAudioAttempt,
   type LearningState,
@@ -148,11 +149,7 @@ function view(state: LearningState, ownerId: string, offsetMinutes: number, capa
     const snapshot = attempt ? resolvedReviewSnapshotForAttempt(attempt) : undefined;
     return { ...mistake, cardId, dimension, prompt: attempt?.prompt ?? mistake.contentId, level: snapshot?.level, skill: snapshot?.skillLabel ?? (dimension === "reading" ? "Reading" : "Listening") };
   });
-  const mastery = {
-    reading: built.state.cards.filter((card) => card.dimension === "reading").length,
-    audio: built.state.cards.filter((card) => card.dimension === "audio").length,
-    context_audio: built.state.cards.filter((card) => card.dimension === "context_audio").length,
-  };
+  const mastery = masterySnapshot(built.state);
   const focusedReview = capabilities.focusedReview
     ? cards
       .filter((card) => card.dueAt <= now)
