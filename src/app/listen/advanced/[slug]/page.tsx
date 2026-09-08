@@ -16,7 +16,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 export default async function AdvancedListeningPage({ params, searchParams }: Props) {
   const slug = (await params).slug;
   const lesson = advancedListeningBySlug(slug);
-  if (!lesson) notFound();
+  if (!lesson) return notFound();
   const libraryQuestion = listeningQuestionBySlug(slug);
   const query = await searchParams;
   const size: ListeningLibrarySize = query.size === "20" ? 20 : 10;
@@ -26,8 +26,11 @@ export default async function AdvancedListeningPage({ params, searchParams }: Pr
   const session = listeningSession(lesson.level, size, seed);
   const sessionPosition = libraryQuestion && session.questions[position]?.slug === slug ? position : libraryQuestion ? session.questions.findIndex((question) => question.slug === slug) : -1;
   const activePosition = sessionPosition >= 0 ? sessionPosition : 0;
+  const previous = libraryQuestion && activePosition > 0 ? session.questions[activePosition - 1] : undefined;
   const next = libraryQuestion ? session.questions[activePosition + 1] : session.questions[0];
+  const previousHref = previous ? `/listen/advanced/${previous.slug}?size=${size}&seed=${seed}&position=${activePosition - 1}` : undefined;
+  const previousLabel = previous ? `Previous HSK ${lesson.level} · ${activePosition} of ${size}` : undefined;
   const nextHref = next ? `/listen/advanced/${next.slug}?size=${size}&seed=${seed}&position=${libraryQuestion ? activePosition + 1 : 0}` : `/listen/results?level=${lesson.level}&size=${size}&seed=${seed}`;
   const nextLabel = next ? `Continue HSK ${lesson.level} · ${libraryQuestion ? activePosition + 2 : 1} of ${size}` : "View session result";
-  return <><SiteHeader/><main className="learn step7-page"><header><span className="eyebrow">Listening · HSK {lesson.level}{libraryQuestion ? ` · ${activePosition + 1} of ${size}` : ""}</span><h1>{lesson.title}</h1><p>{lesson.instruction}</p><nav aria-label="Learning navigation"><Link href="/listen">All listening</Link><Link href="/review">Review</Link><Link href="/mistakes">Mistakes</Link><Link href="/planner">Planner</Link></nav></header><Step7ExerciseClient exercise={lesson.exercise} audioAsset={lesson.audioAsset} nextHref={nextHref} nextLabel={nextLabel} listeningSession={libraryQuestion ? { level: lesson.level, size, seed, position: activePosition } : undefined}/></main><SiteFooter/></>;
+  return <><SiteHeader/><main className="learn step7-page"><header><span className="eyebrow">Listening · HSK {lesson.level}{libraryQuestion ? ` · ${activePosition + 1} of ${size}` : ""}</span><h1>{lesson.title}</h1><p>{lesson.instruction}</p><nav aria-label="Learning navigation"><Link href="/listen">All listening</Link><Link href="/review">Review</Link><Link href="/mistakes">Mistakes</Link><Link href="/planner">Planner</Link></nav></header><Step7ExerciseClient exercise={lesson.exercise} audioAsset={lesson.audioAsset} previousHref={previousHref} previousLabel={previousLabel} nextHref={nextHref} nextLabel={nextLabel} listeningSession={libraryQuestion ? { level: lesson.level, size, seed, position: activePosition } : undefined}/></main><SiteFooter/></>;
 }

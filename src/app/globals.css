@@ -719,6 +719,16 @@
 .step7-alert.success { color: #166534; border: 1px solid #BBF7D0; background: #F0FDF4; }
 .step7-alert.warning { color: #92400E; border: 1px solid #FDE68A; background: #FFFBEB; }
 .step7-actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 14px; }
+.step7-answer-guidance { margin: 14px 0 0 !important; color: #334155 !important; font-size: 14px; font-weight: 700; }
+.step7-options.locked .listening-option { border-color: #CBD5E1; background: #F1F5F9; color: #64748B; opacity: .78; }
+.step7-options .listening-option { display: grid; grid-template-columns: 30px minmax(0, 1fr); width: 100%; min-height: 52px; align-items: center; gap: 10px; }
+.step7-options .listening-option.selected { border-color: #1D4ED8; background: #DBEAFE; color: #1E3A8A; box-shadow: 0 0 0 2px rgb(37 99 235 / 18%); }
+.listening-option-letter { display: inline-grid; width: 28px; height: 28px; place-items: center; border-radius: 999px; background: #EFF6FF; color: #1D4ED8; font-weight: 800; }
+.listening-option.selected .listening-option-letter { background: #1D4ED8; color: #FFFFFF; }
+.step7-listening-actions { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; margin-top: 18px; }
+.step7-listening-actions .btn { width: 100%; min-width: 0; text-align: center; }
+.step7-listening-actions .btn:disabled { border-color: #CBD5E1; background: #E2E8F0; color: #64748B; cursor: not-allowed; opacity: 1; }
+.step7-next-reason { margin: 8px 0 0 !important; color: #64748B !important; text-align: right; font-size: 13px; }
 .planner-page { max-width: 1180px; }
 .planner-hero { max-width: 760px; margin-bottom: 24px !important; }
 .planner-hero .eyebrow { margin-bottom: 8px; }
@@ -982,6 +992,9 @@
   .ai-assist-heading { align-items: flex-start; }
   .step7-vocab { grid-template-columns: 1fr; }
   .step7-actions .btn { width: 100%; }
+  .step7-listening-actions { gap: 6px; }
+  .step7-listening-actions .btn { min-height: 48px; padding: 8px 5px; font-size: 12px; line-height: 1.25; }
+  .step7-next-reason { text-align: left; }
 }
 @media (prefers-reduced-motion: reduce) {
   .planner-spinner { animation: none; }

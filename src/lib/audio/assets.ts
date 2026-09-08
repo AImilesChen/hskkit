@@ -16,6 +16,7 @@ export type PublishedAudioAsset = {
   id: string;
   src: string;
   text: string;
+  durationSeconds?: number;
   kind: AudioAssetKind;
   sourceType: AudioSourceType;
   sourceLabel: "Synthesized pronunciation" | "Synthesized listening audio" | "Native-speaker recording";
@@ -97,6 +98,7 @@ const listeningAssets = new Map(listeningManifest.assets.flatMap((asset) => {
     id: asset.id,
     src: `/${asset.storageKey}`,
     text: asset.text,
+    durationSeconds: asset.durationSeconds,
     kind: "listening",
     sourceType: "synthesized",
     sourceLabel: "Synthesized listening audio",

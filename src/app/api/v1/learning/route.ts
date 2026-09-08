@@ -328,8 +328,8 @@ async function postLearning(req: NextRequest) {
     const listening = exercise && (exercise.kind === "tone" || exercise.kind === "discrimination" || exercise.kind === "dictation");
     if (!exercise || !listening) return errorResponse("INVALID_STEP7_PLAYBACK", 422);
     const lesson = advancedListeningBySlug(exercise.contentId.slice("listening:".length));
-    if (!lesson) return errorResponse("INVALID_STEP7_PLAYBACK", 422);
-    const ticket = await createStep7PlaybackTicket(identity.id, exercise.id, lesson.voiceText);
+    if (!lesson?.audioAsset) return errorResponse("INVALID_STEP7_PLAYBACK", 422);
+    const ticket = await createStep7PlaybackTicket(identity.id, exercise.id, lesson.voiceText, new Date(), lesson.audioAsset.durationSeconds);
     const res = NextResponse.json({ playbackTicket: ticket.id, notBefore: ticket.notBefore, expiresAt: ticket.expiresAt }, { status: 201 });
     if (identity.fresh) res.cookies.set(COOKIE, identity.id, { httpOnly: true, sameSite: "lax", secure: true, maxAge: 31_536_000, path: "/" });
     return res;

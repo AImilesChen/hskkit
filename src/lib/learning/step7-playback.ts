@@ -7,11 +7,14 @@ export function estimateStep7PlaybackMs(voiceText: string) {
   return Math.min(30_000, Math.max(2_000, spokenUnits * 380));
 }
 
-export async function createStep7PlaybackTicket(ownerId: string, exerciseId: string, voiceText: string, now = new Date()) {
+export async function createStep7PlaybackTicket(ownerId: string, exerciseId: string, voiceText: string, now = new Date(), trustedDurationSeconds?: number) {
   const id = crypto.randomUUID();
   const assertionId = crypto.randomUUID();
   const createdAt = now.toISOString();
-  const notBefore = new Date(now.getTime() + estimateStep7PlaybackMs(voiceText)).toISOString();
+  const trustedPlaybackMs = trustedDurationSeconds && Number.isFinite(trustedDurationSeconds)
+    ? Math.min(30_000, Math.max(500, Math.ceil(trustedDurationSeconds * 1_000)))
+    : estimateStep7PlaybackMs(voiceText);
+  const notBefore = new Date(now.getTime() + trustedPlaybackMs).toISOString();
   const expiresAt = new Date(now.getTime() + 10 * 60_000).toISOString();
   try {
     await db().batch([

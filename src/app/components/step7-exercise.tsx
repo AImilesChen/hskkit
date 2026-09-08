@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
-import { AudioPlaybackControl } from "@/app/components/audio-playback-control";
+import { AudioPlaybackControl, type AudioPlaybackState } from "@/app/components/audio-playback-control";
 import type { PublicAudioAsset } from "@/lib/audio/assets";
 import AiAssist from "@/app/components/ai-assist";
 import { normalizeStep7Answer, type Step7Exercise } from "@/lib/learning/step7-content";
@@ -13,26 +13,56 @@ type PendingAttempt = { answer: string; idempotencyKey: string };
 type Props = {
   exercise: Step7Exercise;
   audioAsset?: PublicAudioAsset;
+  previousHref?: string;
+  previousLabel?: string;
   nextHref?: string;
   nextLabel?: string;
   listeningSession?: PracticeSessionState;
   readingSession?: PracticeSessionState;
 };
 
-export default function Step7ExerciseClient({ exercise, audioAsset, nextHref, nextLabel, listeningSession, readingSession }: Props) {
+export default function Step7ExerciseClient({ exercise, audioAsset, previousHref, previousLabel, nextHref, nextLabel, listeningSession, readingSession }: Props) {
   const [answer, setAnswer] = useState("");
   const [played, setPlayed] = useState(!audioAsset);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
   const [error, setError] = useState("");
+  const [audioState, setAudioState] = useState<AudioPlaybackState>(audioAsset ? "loading" : "unavailable");
+  const [verificationState, setVerificationState] = useState<"idle" | "verifying" | "verified">("idle");
   const key = useRef<string | undefined>(undefined);
   const playbackTicket = useRef<string | undefined>(undefined);
   const playbackNotBefore = useRef<string | undefined>(undefined);
   const attemptStorageKey = `hskkit:attempt:${exercise.id}`;
   const session = readingSession ?? listeningSession;
   const sessionKind = readingSession ? "reading" : "listening";
+  const listeningAnswersStorageKey = listeningSession
+    ? `hskkit:listening:answers:${listeningSession.level}:${listeningSession.size}:${listeningSession.seed}`
+    : undefined;
   const answered = answer.trim().length > 0;
   const correct = answered && normalizeStep7Answer(answer) === normalizeStep7Answer(exercise.correctAnswer);
+
+  useEffect(() => {
+    if (!listeningSession || !listeningAnswersStorageKey) return;
+    setAnswer("");
+    setPlayed(false);
+    setSaving(false);
+    setSaved(false);
+    setError("");
+    setVerificationState("idle");
+    key.current = undefined;
+    playbackTicket.current = undefined;
+    playbackNotBefore.current = undefined;
+    try {
+      const storedAnswers = JSON.parse(localStorage.getItem(listeningAnswersStorageKey) ?? "{}") as Record<string, string>;
+      const storedAnswer = storedAnswers[String(listeningSession.position)];
+      if (storedAnswer) {
+        setAnswer(storedAnswer);
+        setSaved(true);
+        setPlayed(true);
+        setVerificationState("verified");
+      }
+    } catch { /* invalid optional session state is ignored */ }
+  }, [exercise.id, listeningAnswersStorageKey, listeningSession]);
 
   useEffect(() => {
     try {
@@ -54,7 +84,9 @@ export default function Step7ExerciseClient({ exercise, audioAsset, nextHref, ne
 
   async function authorizePlayback() {
     setError("");
+    if (listeningSession && saved) return true;
     setPlayed(false);
+    setVerificationState("idle");
     playbackTicket.current = undefined;
     playbackNotBefore.current = undefined;
     if (!audioAsset) { setError("Audio is unavailable. No learning result was saved."); return false; }
@@ -73,17 +105,21 @@ export default function Step7ExerciseClient({ exercise, audioAsset, nextHref, ne
   }
 
   async function completePlayback() {
+    if (listeningSession && saved) return;
     const ticketId = playbackTicket.current;
     if (!ticketId) return;
+    setVerificationState("verifying");
     try {
       const waitMs = Math.max(0, Date.parse(playbackNotBefore.current ?? "") - Date.now());
       if (waitMs > 0) await new Promise((resolve) => window.setTimeout(resolve, waitMs));
       const verified = await fetch("/api/v1/learning", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ action: "step7_playback_complete", payload: { idempotencyKey: crypto.randomUUID(), exerciseId: exercise.id, playbackTicket: ticketId } }) });
       if (!verified.ok) throw new Error("PLAYBACK_NOT_VERIFIED");
       setPlayed(true);
+      setVerificationState("verified");
     } catch {
       playbackTicket.current = undefined;
       setPlayed(false);
+      setVerificationState("idle");
       setError("Playback could not be verified. Nothing was written to mastery; play it again before answering.");
     }
   }
@@ -133,21 +169,58 @@ export default function Step7ExerciseClient({ exercise, audioAsset, nextHref, ne
         const stored = JSON.parse(localStorage.getItem(storageKey) ?? "{}") as Record<string, boolean>;
         stored[String(session.position)] = normalizeStep7Answer(value) === normalizeStep7Answer(exercise.correctAnswer);
         localStorage.setItem(storageKey, JSON.stringify(stored));
+        if (listeningSession && listeningAnswersStorageKey) {
+          const storedAnswers = JSON.parse(localStorage.getItem(listeningAnswersStorageKey) ?? "{}") as Record<string, string>;
+          storedAnswers[String(listeningSession.position)] = value;
+          localStorage.setItem(listeningAnswersStorageKey, JSON.stringify(storedAnswers));
+        }
       } catch { /* the server learning record remains authoritative */ }
     }
   }
 
+  const listeningGuidance = verificationState === "verifying"
+    ? "Playback finished — unlocking answers…"
+    : played
+      ? saved ? "Answer checked. You can continue or play the audio again." : "Select one answer, then check it."
+      : audioState === "playing"
+        ? "Keep listening — answers unlock when playback finishes."
+        : audioState === "loading"
+          ? "Loading audio…"
+          : audioState === "error"
+            ? "Audio could not be loaded. Retry audio to unlock the answers."
+            : "Play the audio to unlock the answers.";
+
   return <section className="step7-exercise" aria-labelledby="exercise-heading">
     <span className="eyebrow">Linked practice</span>
     <h2 id="exercise-heading">{exercise.prompt}</h2>
-    {audioAsset ? <><p>Finish playback before answering. Playback failure never changes mastery or usage.</p><AudioPlaybackControl asset={audioAsset} beforePlay={authorizePlayback} onComplete={() => void completePlayback()} /></> : <AudioPlaybackControl asset={undefined} />}
-    {exercise.options ? <div className="step7-options">
-      {Object.entries(exercise.options).map(([letter, text]) => <button key={letter} className="btn secondary" aria-pressed={answer === letter} disabled={!played || answered} onClick={() => { const value = letter; setAnswer(value); void persistAnswer(value); }}>{letter}. {text}</button>)}
-    </div> : <div className="step7-dictation"><label htmlFor="dictation-answer">Your dictation</label><input id="dictation-answer" lang="zh-CN" value={answer} disabled={!played || saving || saved} onChange={(event) => setAnswer(event.target.value)} placeholder="Type the Chinese sentence"/><button className="btn" disabled={!played || !answer.trim() || saving || saved} onClick={() => void persistAnswer()}>{saving ? "Saving…" : "Check dictation"}</button></div>}
-    {answered && <div className={`step7-alert ${correct ? "success" : "warning"}`} role="status"><strong>{correct ? "Correct." : "Not yet."}</strong><p>{exercise.explanation}</p><p><strong>Correct answer:</strong> {exercise.options?.[exercise.correctAnswer] ?? exercise.correctAnswer}</p></div>}
+    {audioAsset ? <>
+      <p>{listeningSession ? "Listen to the complete audio, choose an answer, then check it." : "Finish playback before answering. Playback failure never changes mastery or usage."}</p>
+      <AudioPlaybackControl
+        asset={audioAsset}
+        beforePlay={authorizePlayback}
+        onComplete={() => void completePlayback()}
+        onStateChange={setAudioState}
+        showProgress={Boolean(listeningSession)}
+        verificationState={listeningSession ? verificationState : "idle"}
+      />
+    </> : <AudioPlaybackControl asset={undefined} />}
+    {listeningSession && <p className="step7-answer-guidance" aria-live="polite">{listeningGuidance}</p>}
+    {exercise.options ? <div className={`step7-options ${listeningSession && !played ? "locked" : ""}`.trim()} aria-disabled={listeningSession ? !played : undefined}>
+      {Object.entries(exercise.options).map(([letter, text]) => listeningSession
+        ? <button key={letter} type="button" className={`btn secondary listening-option ${answer === letter ? "selected" : ""}`.trim()} aria-pressed={answer === letter} disabled={!played || saving || saved} onClick={() => setAnswer(letter)}><span className="listening-option-letter">{letter}</span><span>{text}</span></button>
+        : <button key={letter} className="btn secondary" aria-pressed={answer === letter} disabled={!played || answered} onClick={() => { const value = letter; setAnswer(value); void persistAnswer(value); }}>{letter}. {text}</button>)}
+    </div> : <div className="step7-dictation"><label htmlFor="dictation-answer">Your dictation</label><input id="dictation-answer" lang="zh-CN" value={answer} disabled={!played || saving || saved} onChange={(event) => setAnswer(event.target.value)} placeholder="Type the Chinese sentence"/>{!listeningSession && <button className="btn" disabled={!played || !answer.trim() || saving || saved} onClick={() => void persistAnswer()}>{saving ? "Saving…" : "Check dictation"}</button>}</div>}
+    {(listeningSession ? saved : answered) && <div className={`step7-alert ${correct ? "success" : "warning"}`} role="status"><strong>{correct ? "Correct." : "Not yet."}</strong><p>{exercise.explanation}</p><p><strong>Correct answer:</strong> {exercise.options?.[exercise.correctAnswer] ?? exercise.correctAnswer}</p>{listeningSession && <p><strong>Progress saved.</strong></p>}</div>}
     {saving && <p role="status">Saving progress…</p>}
-    {saved && <p className="step7-alert success" role="status"><strong>Progress saved.</strong></p>}
+    {!listeningSession && saved && <p className="step7-alert success" role="status"><strong>Progress saved.</strong></p>}
     {error && <div className="step7-alert error" role="alert"><p>{error}</p>{answered && !saved && <button className="btn" type="button" disabled={saving} onClick={() => void persistAnswer()}>{saving ? "Saving progress…" : "Retry saving"}</button>}</div>}
-    {saved && <><div className="step7-actions">{nextHref && <Link className="btn" href={nextHref}>{nextLabel ?? "Continue"}</Link>}<Link className="btn secondary" href="/mistakes">Open Mistakes</Link></div><AiAssist feature="explanation" exerciseId={exercise.id}/></>}
+    {listeningSession && <div className="step7-listening-actions" aria-label="Listening question actions">
+      {previousHref ? <Link className="btn secondary" href={previousHref} aria-label={previousLabel ?? "Previous question"}>Previous question</Link> : <button className="btn secondary" type="button" disabled aria-disabled="true">Previous question</button>}
+      <button className="btn" type="button" disabled={!played || !answered || saving || saved} onClick={() => void persistAnswer()}>{saving ? "Saving…" : saved ? "Answer checked" : "Check answer"}</button>
+      {saved && nextHref ? <Link className="btn secondary" href={nextHref} aria-label={nextLabel ?? "Next question"}>{nextLabel === "View session result" ? "View session result" : "Next question"}</Link> : <button className="btn secondary" type="button" disabled aria-disabled="true" title="Answer this question first">Next question</button>}
+    </div>}
+    {listeningSession && !saved && <p className="step7-next-reason">Next: Answer this question first.</p>}
+    {!listeningSession && saved && <><div className="step7-actions">{nextHref && <Link className="btn" href={nextHref}>{nextLabel ?? "Continue"}</Link>}<Link className="btn secondary" href="/mistakes">Open Mistakes</Link></div><AiAssist feature="explanation" exerciseId={exercise.id}/></>}
+    {listeningSession && saved && <AiAssist feature="explanation" exerciseId={exercise.id}/>}
   </section>;
 }
