@@ -37,9 +37,10 @@ export async function GET(req: NextRequest) {
   const dailyItemId = short(req.nextUrl.searchParams.get("dailyItemId"), 180);
   if (!requestedLevel || !skill) return response(req, { error: "INVALID_PRACTICE_REQUEST" }, identity, 422);
   const loaded = await loadState(identity.id);
-  const session = selectPracticeSession(loaded.state, { ownerId: identity.id, level: requestedLevel, skill, dailySessionId, dailyItemId });
+  const now = new Date().toISOString();
+  const session = selectPracticeSession(loaded.state, { ownerId: identity.id, level: requestedLevel, skill, dailySessionId, dailyItemId }, now);
   try {
-    return response(req, { session: session ? publicPracticeSession(session, new Date().toISOString()) : null, scope: identity.account ? "account" : "guest", revision: loaded.revision }, identity);
+    return response(req, { session: session ? publicPracticeSession(session, now) : null, scope: identity.account ? "account" : "guest", revision: loaded.revision }, identity);
   } catch (error) {
     const code = error instanceof Error ? error.message : "PRACTICE_LOAD_FAILED";
     return response(req, { error: code }, identity, errorStatus(code));

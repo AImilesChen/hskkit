@@ -37,10 +37,16 @@ function practiceMessage(code: string) {
   return code;
 }
 
+class PracticeRequestError extends Error {
+  constructor(readonly code: string) {
+    super(practiceMessage(code));
+  }
+}
+
 async function json(url: string, init?: RequestInit) {
   const response = await fetch(url, { ...init, headers: { "content-type": "application/json", ...(init?.headers ?? {}) }, cache: "no-store" });
   const data = await response.json();
-  if (!response.ok) throw new Error(practiceMessage(data.error ?? "PRACTICE_REQUEST_FAILED"));
+  if (!response.ok) throw new PracticeRequestError(data.error ?? "PRACTICE_REQUEST_FAILED");
   return data;
 }
 
@@ -88,7 +94,13 @@ export default function PracticeClient({ level, skill, dailySessionId, dailyItem
     try {
       const data = await post("answer", { sessionId: session.id, questionId: question.id, answer }, `answer:${session.id}:${question.id}`);
       setSession(data.session);
-    } catch (cause) { setError(cause instanceof Error ? cause.message : "PRACTICE_SAVE_FAILED"); }
+    } catch (cause) {
+      if (cause instanceof PracticeRequestError && cause.code === "PRACTICE_SESSION_EXPIRED") {
+        setSession({ ...session, status: "expired" });
+      } else {
+        setError(cause instanceof Error ? cause.message : "PRACTICE_SAVE_FAILED");
+      }
+    }
     finally { setBusy(false); }
   };
 
@@ -150,12 +162,17 @@ export default function PracticeClient({ level, skill, dailySessionId, dailyItem
     </main>;
   }
 
-  if (session.status === "expired") return <main className="mx-auto min-h-[calc(100vh-64px)] max-w-3xl px-6 py-16 sm:py-24">
-    <span className="text-xs font-extrabold uppercase tracking-[.2em] text-amber-700">Practice Session expired</span>
-    <h1 className="mt-4 font-serif text-5xl font-bold text-slate-950">Start a fresh session</h1>
-    <p className="mt-5 max-w-2xl text-lg leading-8 text-slate-600">The 24-hour answer window ended. Your earlier saved attempts remain in Mistakes and Review; no late answer was recorded.</p>
-    {error && <Alert text={error} />}
-    <div className="mt-8 flex flex-wrap gap-3"><button className="btn" disabled={busy} onClick={start}>Start new session</button><Link className="btn secondary" href="/practice">Change level or skill</Link></div>
+  if (session.status === "expired") return <main className="mx-auto min-h-[calc(100vh-64px)] max-w-3xl px-4 py-4 sm:px-6 sm:py-14">
+    <section className="rounded-3xl border border-amber-200 bg-white p-5 shadow-sm sm:p-8">
+      <span className="text-xs font-extrabold uppercase tracking-[.18em] text-amber-700">Practice session expired</span>
+      <h1 className="mt-3 font-serif text-3xl font-bold leading-tight text-slate-950 sm:text-5xl">Start a fresh session</h1>
+      <p className="mt-3 max-w-2xl text-base leading-7 text-slate-600 sm:mt-4 sm:text-lg sm:leading-8">The 24-hour answer window ended. Your earlier saved attempts remain in Mistakes and Review; no late answer was recorded.</p>
+      {error && <Alert text={error} />}
+      <div className="mt-5 flex flex-col items-stretch gap-3 sm:mt-7 sm:flex-row sm:items-center">
+        <button className="min-h-[48px] w-full rounded-xl bg-blue-600 px-6 py-3 text-base font-bold text-white shadow-sm transition hover:bg-blue-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-700 disabled:cursor-wait disabled:opacity-60 motion-reduce:transition-none sm:w-auto" disabled={busy} onClick={start} type="button">Start new session</button>
+        <Link className="inline-flex min-h-[48px] w-full items-center justify-center rounded-xl border border-blue-200 bg-white px-6 py-3 text-base font-bold text-blue-700 transition hover:border-blue-400 hover:bg-blue-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-700 motion-reduce:transition-none sm:w-auto" href="/practice">Change level or skill</Link>
+      </div>
+    </section>
   </main>;
 
   if (session.status === "completed") {

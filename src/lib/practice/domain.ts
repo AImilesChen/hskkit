@@ -73,13 +73,14 @@ export function selectPracticeSession(state: LearningState, input: {
   skill: string;
   dailySessionId?: string;
   dailyItemId?: string;
-}) {
-  return [...sessions(state)].reverse().find((session) => session.ownerId === input.ownerId
+}, now?: string) {
+  const selected = [...sessions(state)].reverse().find((session) => session.ownerId === input.ownerId
     && session.level === input.level
     && session.skill === input.skill
     && session.dailySessionId === input.dailySessionId
     && session.dailyItemId === input.dailyItemId
     && isPracticeSessionCurrent(session));
+  return selected && (!now || !isExpired(selected, now)) ? selected : undefined;
 }
 
 function feedbackFor(session: PracticeSession) {
