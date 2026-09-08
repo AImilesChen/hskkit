@@ -6,6 +6,7 @@ import {
   PlacementClientError,
   loadPlacementSession,
   placementPublicError,
+  placementRetakeLocked,
 } from "../src/app/placement/client-recovery.ts";
 
 const jsonResponse = (status: number, body: unknown, retryAfter?: string) => new Response(JSON.stringify(body), {
@@ -14,6 +15,13 @@ const jsonResponse = (status: number, body: unknown, retryAfter?: string) => new
     "content-type": "application/json",
     ...(retryAfter ? { "retry-after": retryAfter } : {}),
   },
+});
+
+test("authoritative cooldown and explicit denial always keep retake locked", () => {
+  assert.equal(placementRetakeLocked("cooldown", true), true);
+  assert.equal(placementRetakeLocked("cooldown", undefined), true);
+  assert.equal(placementRetakeLocked("ready", false), true);
+  assert.equal(placementRetakeLocked("ready", true), false);
 });
 
 test("placement load retries bounded D1 503 responses and preserves the recovered session", async () => {
@@ -136,7 +144,9 @@ test("placement UI keeps saved answers editable and never renders internal error
   assert.match(client, /Progress saved/);
   assert.doesNotMatch(client, /Answer saved/);
   assert.match(client, /reconnecting \? "Restoring your placement session…"/);
-  assert.match(client, /placementPublicError\(error\)/);
+  assert.match(client, /placementPublicError\(loadError\)/);
+  assert.match(client, /placementPublicError\(startError\)/);
+  assert.match(client, /placementPublicError\(answerError\)/);
   assert.doesNotMatch(client, /diagnostic: \{error\}/);
   assert.doesNotMatch(client, /not saved: \{error\}/);
 

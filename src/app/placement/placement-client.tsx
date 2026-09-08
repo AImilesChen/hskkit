@@ -1,9 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
-import { loadPlacementSession, placementPublicError } from "./client-recovery";
+import { loadPlacementSession, placementPublicError, placementRetakeLocked } from "./client-recovery";
 
 type Question = {
   id: string;
@@ -32,7 +32,26 @@ type Session = {
 
 const key = (prefix: string) => `${prefix}:${crypto.randomUUID()}`;
 
-type PlacementResponse = { session?: Session; result?: { id: string }; error?: string };
+type PlacementStatus = "active" | "cooldown" | "ready" | "expired";
+type PlacementResponse = {
+  session?: Session;
+  result?: { id: string };
+  error?: string;
+  status?: PlacementStatus;
+  latestResultId?: string | null;
+  retakeAvailableAt?: string | null;
+  canRetake?: boolean;
+  serverNow?: string;
+};
+
+class PlacementRequestError extends Error {
+  readonly details: PlacementResponse;
+
+  constructor(details: PlacementResponse) {
+    super(details.error ?? "PLACEMENT_REQUEST_FAILED");
+    this.details = details;
+  }
+}
 
 async function placementRequest(url: string, payload: Record<string, unknown>) {
   const response = await fetch(url, {
@@ -41,8 +60,17 @@ async function placementRequest(url: string, payload: Record<string, unknown>) {
     body: JSON.stringify(payload),
   });
   const data = await response.json() as PlacementResponse;
-  if (!response.ok) throw new Error(data.error ?? "PLACEMENT_REQUEST_FAILED");
+  if (!response.ok) throw new PlacementRequestError(data);
   return data;
+}
+
+function retakeCountdown(availableAt: string, nowMs: number) {
+  const remainingMinutes = Math.max(0, Math.ceil((Date.parse(availableAt) - nowMs) / 60_000));
+  if (remainingMinutes === 0) return "now";
+  const hours = Math.floor(remainingMinutes / 60);
+  const minutes = remainingMinutes % 60;
+  if (hours === 0) return `in ${minutes} min`;
+  return `in ${hours} hr${hours === 1 ? "" : "s"}${minutes ? ` ${minutes} min` : ""}`;
 }
 
 export default function PlacementClient() {
@@ -52,41 +80,84 @@ export default function PlacementClient() {
   const [saving, setSaving] = useState(false);
   const [reconnecting, setReconnecting] = useState(false);
   const [expired, setExpired] = useState(false);
-  const [error, setError] = useState<string>();
+  const [placementStatus, setPlacementStatus] = useState<PlacementStatus>("ready");
+  const [latestResultId, setLatestResultId] = useState<string>();
+  const [retakeAvailableAt, setRetakeAvailableAt] = useState<string>();
+  const [canRetake, setCanRetake] = useState(true);
+  const [serverClockOffsetMs, setServerClockOffsetMs] = useState(0);
+  const [loadError, setLoadError] = useState<string>();
+  const [startError, setStartError] = useState<string>();
+  const [answerError, setAnswerError] = useState<string>();
+  const [nowMs, setNowMs] = useState(() => Date.now());
 
-  async function load() {
+  const applyOverview = useCallback((data: {
+    session: Session | null;
+    expired?: boolean;
+    status?: PlacementStatus;
+    latestResultId?: string | null;
+    retakeAvailableAt?: string | null;
+    canRetake?: boolean;
+    serverNow?: string;
+  }) => {
+    setSession(data.session);
+    setExpired(Boolean(data.expired));
+    setPlacementStatus(data.status ?? (data.expired ? "expired" : data.session ? "active" : "ready"));
+    setLatestResultId(data.latestResultId ?? undefined);
+    setRetakeAvailableAt(data.retakeAvailableAt ?? undefined);
+    setCanRetake(data.canRetake ?? data.status !== "cooldown");
+    const serverNowMs = data.serverNow ? Date.parse(data.serverNow) : Number.NaN;
+    if (Number.isFinite(serverNowMs)) {
+      setServerClockOffsetMs(serverNowMs - Date.now());
+      setNowMs(serverNowMs);
+    }
+  }, []);
+
+  const load = useCallback(async () => {
     setLoading(true);
     setReconnecting(false);
-    setError(undefined);
+    setLoadError(undefined);
+    setStartError(undefined);
     try {
       const data = await loadPlacementSession<Session>({ onRetry: () => setReconnecting(true) });
-      setSession(data.session);
-      setExpired(Boolean(data.expired));
+      applyOverview(data);
     } catch (reason) {
       setSession(null);
-      setError(reason instanceof Error ? reason.message : "PLACEMENT_LOAD_FAILED");
+      setLoadError(reason instanceof Error ? reason.message : "PLACEMENT_LOAD_FAILED");
     } finally {
       setReconnecting(false);
       setLoading(false);
     }
-  }
+  }, [applyOverview]);
 
   useEffect(() => {
     let active = true;
     loadPlacementSession<Session>({ onRetry: () => active && setReconnecting(true) })
       .then((data) => {
         if (!active) return;
-        setSession(data.session);
-        setExpired(Boolean(data.expired));
+        applyOverview(data);
       })
-      .catch((reason: Error) => active && setError(reason.message))
+      .catch((reason: Error) => active && setLoadError(reason.message))
       .finally(() => {
         if (!active) return;
         setReconnecting(false);
         setLoading(false);
       });
     return () => { active = false; };
-  }, []);
+  }, [applyOverview]);
+
+  useEffect(() => {
+    if (placementStatus !== "cooldown" || !retakeAvailableAt) return;
+    const tick = () => setNowMs(Date.now() + serverClockOffsetMs);
+    const timer = window.setInterval(tick, 60_000);
+    const remainingMs = Date.parse(retakeAvailableAt) - (Date.now() + serverClockOffsetMs);
+    const boundaryTimer = Number.isFinite(remainingMs)
+      ? window.setTimeout(() => { void load(); }, Math.max(1_000, remainingMs + 1_000))
+      : undefined;
+    return () => {
+      window.clearInterval(timer);
+      if (boundaryTimer !== undefined) window.clearTimeout(boundaryTimer);
+    };
+  }, [load, placementStatus, retakeAvailableAt, serverClockOffsetMs]);
 
   const answered = useMemo(() => new Map(
     session?.answers.map((answer) => [answer.questionId, answer.answer]) ?? [],
@@ -98,14 +169,20 @@ export default function PlacementClient() {
 
   async function start() {
     setSaving(true);
-    setError(undefined);
+    setStartError(undefined);
+    setAnswerError(undefined);
     try {
       const data = await placementRequest("/api/v1/placement/sessions", { idempotencyKey: key("placement-start") });
       setSession(data.session ?? null);
       setExpired(false);
+      setPlacementStatus("active");
       setManualIndex(0);
     } catch (reason) {
-      setError(reason instanceof Error ? reason.message : "PLACEMENT_START_FAILED");
+      if (reason instanceof PlacementRequestError && reason.details.status === "cooldown") {
+        applyOverview({ session: null, ...reason.details });
+      } else {
+        setStartError(reason instanceof Error ? reason.message : "PLACEMENT_START_FAILED");
+      }
     } finally {
       setSaving(false);
     }
@@ -114,7 +191,7 @@ export default function PlacementClient() {
   async function choose(answer: string) {
     if (!session || !question) return;
     setSaving(true);
-    setError(undefined);
+    setAnswerError(undefined);
     try {
       const data = await placementRequest(`/api/v1/attempts/${encodeURIComponent(session.id)}/submit`, {
         questionId: question.id,
@@ -128,8 +205,9 @@ export default function PlacementClient() {
       if (code === "PLACEMENT_SESSION_EXPIRED") {
         setSession(null);
         setExpired(true);
+        setPlacementStatus("expired");
       }
-      setError(code);
+      setAnswerError(code);
     } finally {
       setSaving(false);
     }
@@ -142,7 +220,7 @@ export default function PlacementClient() {
       return;
     }
     setSaving(true);
-    setError(undefined);
+    setAnswerError(undefined);
     try {
       const data = await placementRequest(`/api/v1/attempts/${encodeURIComponent(session.id)}/submit`, {
         finalize: true,
@@ -155,8 +233,9 @@ export default function PlacementClient() {
       if (code === "PLACEMENT_SESSION_EXPIRED") {
         setSession(null);
         setExpired(true);
+        setPlacementStatus("expired");
       }
-      setError(code);
+      setAnswerError(code);
       setSaving(false);
     }
   }
@@ -166,32 +245,46 @@ export default function PlacementClient() {
   }
 
   if (!session) {
-    const noQuestions = error === "no_questions";
-    const temporarilyUnavailable = error === "temporarily_unavailable";
-    const loadFailed = Boolean(error) && !expired && !noQuestions;
+    const noQuestions = loadError === "no_questions";
+    const temporarilyUnavailable = loadError === "temporarily_unavailable";
+    const loadFailed = Boolean(loadError) && !noQuestions;
+    const retakeAtMs = retakeAvailableAt ? Date.parse(retakeAvailableAt) : Number.NaN;
+    const cooldownActive = placementStatus === "cooldown";
+    const retakeLocked = placementRetakeLocked(placementStatus, canRetake);
+    const latestReady = placementStatus === "ready" && Boolean(latestResultId) && !loadError;
+    const retakeAtLabel = Number.isFinite(retakeAtMs)
+      ? new Intl.DateTimeFormat(undefined, { dateStyle: "medium", timeStyle: "short" }).format(new Date(retakeAtMs))
+      : undefined;
     return (
       <main className="mx-auto min-h-[70vh] max-w-3xl px-5 py-14 sm:py-20">
         <p className="text-sm font-bold uppercase tracking-[0.18em] text-blue-700">HSKKit placement</p>
         <h1 className="mt-4 text-4xl font-black tracking-tight text-slate-950 sm:text-5xl">
-          {expired ? "Your saved placement session expired" : noQuestions ? "Placement is temporarily unavailable" : temporarilyUnavailable ? "Placement is temporarily busy" : loadFailed ? "We couldn't load your placement" : "Find a practical starting level"}
+          {cooldownActive || latestReady ? "Your latest placement is ready" : expired ? "Your saved placement session expired" : noQuestions ? "Placement is temporarily unavailable" : temporarilyUnavailable ? "Placement is temporarily busy" : loadFailed ? "We couldn't load your placement" : "Find a practical starting level"}
         </h1>
         <p className="mt-5 max-w-2xl text-lg leading-8 text-slate-600">
-          {expired ? "Placement sessions stay available for seven days. Start a new placement to continue." : noQuestions ? "No diagnostic questions are available right now. No empty or demo result will be generated." : temporarilyUnavailable ? "Your saved answers are safe. Please try again." : loadFailed ? "Your saved answers have not been changed. Retry loading before starting a new session." : "Start with 12 questions across vocabulary, grammar, reading and listening. The test then adapts to your answers and finishes in 18–24 questions, with progress saved as you go."}
+          {cooldownActive ? `View your latest result now. You can retake the placement ${retakeAvailableAt ? retakeCountdown(retakeAvailableAt, nowMs) : "after the 24-hour cooldown"}.` : latestReady ? "Review your latest result or start a new placement when you are ready." : expired ? "Placement sessions stay available for seven days. Start a new placement to continue." : noQuestions ? "No diagnostic questions are available right now. No empty or demo result will be generated." : temporarilyUnavailable ? "Your saved answers are safe. Please try again." : loadFailed ? "Your saved answers have not been changed. Retry loading before starting a new session." : "Start with 12 questions across vocabulary, grammar, reading and listening. The test then adapts to your answers and finishes in 18–24 questions, with progress saved as you go."}
         </p>
-        {!loadFailed && !noQuestions ? <div className="mt-7 grid gap-3 rounded-2xl border border-blue-200 bg-blue-50 p-5 text-sm text-blue-950 sm:grid-cols-3">
+        {cooldownActive && retakeAtLabel ? <p className="mt-4 rounded-xl border border-blue-200 bg-blue-50 p-4 text-sm font-semibold text-blue-950" id="placement-retake-availability" role="status">Retake available {retakeAtLabel} ({retakeCountdown(retakeAvailableAt!, nowMs)}).</p> : null}
+        {!loadFailed && !noQuestions && !latestResultId ? <div className="mt-7 grid gap-3 rounded-2xl border border-blue-200 bg-blue-50 p-5 text-sm text-blue-950 sm:grid-cols-3">
           <p><strong className="block text-slate-950">First 12 questions</strong>Balanced across skills and difficulty</p>
           <p><strong className="block text-slate-950">4 skill areas</strong>Vocabulary, grammar, reading and listening</p>
           <p><strong className="block text-slate-950">Saved as you go</strong>Your answers are saved as you go</p>
         </div> : null}
-        {!loadFailed && !noQuestions ? <details className="mt-4 rounded-2xl border border-slate-200 bg-white p-4 text-sm leading-6 text-slate-600">
+        {!loadFailed && !noQuestions && !latestResultId ? <details className="mt-4 rounded-2xl border border-slate-200 bg-white p-4 text-sm leading-6 text-slate-600">
           <summary className="cursor-pointer font-bold text-slate-800">How this placement works</summary>
           <p className="mt-3">The diagnostic uses an approved, versioned question set including three listening items. If listening evidence is unavailable, the result lowers confidence and states what was not measured instead of guessing.</p>
         </details> : null}
-        {error && !expired && !noQuestions ? <p className="mt-5 rounded-xl bg-red-50 p-4 text-sm text-red-800" role="alert">{placementPublicError(error)}</p> : null}
+        {loadError && !expired && !noQuestions ? <p className="mt-5 rounded-xl bg-red-50 p-4 text-sm text-red-800" role="alert">{placementPublicError(loadError)}</p> : null}
+        {startError ? <p className="mt-5 rounded-xl bg-red-50 p-4 text-sm text-red-800" role="alert">{placementPublicError(startError)}</p> : null}
         <div className="mt-8 flex flex-col gap-3 sm:flex-row">
           {loadFailed || noQuestions
             ? <button className="inline-flex min-h-12 items-center justify-center rounded-xl bg-blue-600 px-6 font-bold text-white hover:bg-blue-700 disabled:opacity-60" disabled={loading} onClick={load} type="button">Try loading again</button>
-            : <button className="inline-flex min-h-12 items-center justify-center rounded-xl bg-blue-600 px-6 font-bold text-white hover:bg-blue-700 disabled:opacity-60" disabled={saving} onClick={start} type="button">{saving ? "Starting…" : expired ? "Start a new placement" : "Start placement"}</button>}
+            : latestResultId
+              ? <>
+                  <Link className="inline-flex min-h-12 items-center justify-center rounded-xl bg-blue-600 px-6 font-bold text-white hover:bg-blue-700" href={`/placement/result/${encodeURIComponent(latestResultId)}`}>View my result</Link>
+                  <button aria-describedby={cooldownActive && retakeAtLabel ? "placement-retake-availability" : undefined} className="inline-flex min-h-12 items-center justify-center rounded-xl border border-slate-300 bg-white px-6 font-bold text-slate-800 hover:border-blue-400 disabled:cursor-not-allowed disabled:bg-slate-100 disabled:text-slate-500" disabled={saving || retakeLocked} onClick={start} type="button">{saving ? "Starting…" : cooldownActive ? `Retake available ${retakeAvailableAt ? retakeCountdown(retakeAvailableAt, nowMs) : "later"}` : "Retake placement"}</button>
+                </>
+              : <button className="inline-flex min-h-12 items-center justify-center rounded-xl bg-blue-600 px-6 font-bold text-white hover:bg-blue-700 disabled:opacity-60" disabled={saving || retakeLocked} onClick={start} type="button">{saving ? "Starting…" : expired ? "Start a new placement" : "Start placement"}</button>}
           <Link className="inline-flex min-h-12 items-center justify-center rounded-xl border border-slate-300 px-6 font-bold text-slate-800" href="/levels">Choose a level instead</Link>
         </div>
       </main>
@@ -232,8 +325,8 @@ export default function PlacementClient() {
             </button>
           ))}
         </fieldset>
-        {selected && !error ? <p className="mt-5 text-sm font-bold text-emerald-700" role="status">Progress saved</p> : null}
-        {error ? <p className="mt-5 rounded-xl bg-red-50 p-4 text-sm text-red-800" role="alert">{placementPublicError(error)}</p> : null}
+        {selected && !answerError ? <p className="mt-5 text-sm font-bold text-emerald-700" role="status">Progress saved</p> : null}
+        {answerError ? <p className="mt-5 rounded-xl bg-red-50 p-4 text-sm text-red-800" role="alert">{placementPublicError(answerError)}</p> : null}
         <div className="mt-8 flex items-center justify-between gap-3">
           <button className="min-h-11 rounded-xl px-4 font-bold text-slate-600 disabled:opacity-40" disabled={index === 0 || saving} onClick={() => setManualIndex(Math.max(0, index - 1))} type="button">Back</button>
           <button className="min-h-12 rounded-xl bg-blue-600 px-6 font-bold text-white disabled:cursor-not-allowed disabled:opacity-50" disabled={!selected || saving} onClick={next} type="button">{saving ? "Saving…" : session.adaptiveMaxQuestions ? session.adaptiveComplete ? "See my result" : "Next" : index === session.questions.length - 1 ? "See my result" : "Next"}</button>

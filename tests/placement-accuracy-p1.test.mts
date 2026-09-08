@@ -6,6 +6,7 @@ import { emptyLearningState, type LearningState, type PlacementSession } from ".
 import {
   answerPlacementQuestion,
   createPlacementSession,
+  placementOverview,
   restartPlacement,
   submitPlacement,
 } from "../src/lib/placement/domain.ts";
@@ -106,9 +107,47 @@ test("inconsistent evidence extends the test but never exceeds 24 questions", ()
   assert.ok(result.result.totalCount <= 24);
 });
 
+test("placement overview distinguishes ready, active and expired states", () => {
+  assert.deepEqual(placementOverview(emptyLearningState(), "overview-owner", NOW), {
+    status: "ready",
+    canRetake: true,
+  });
+  const created = createPlacementSession(emptyLearningState(), {
+    ownerId: "overview-owner",
+    idempotencyKey: "overview-start",
+    now: NOW,
+  });
+  assert.deepEqual(placementOverview(created.state, "overview-owner", "2026-09-05T13:00:00.000Z"), {
+    status: "active",
+    canRetake: false,
+  });
+  assert.deepEqual(placementOverview(created.state, "overview-owner", "2026-09-13T12:00:01.000Z"), {
+    status: "expired",
+    canRetake: true,
+  });
+});
+
 test("short retakes show a cooldown and later retakes avoid the prior first round", () => {
   const completed = finish("retake-owner", (question) => question.correctAnswer);
   assert.ok(completed.result.retakeAvailableAt);
+  assert.deepEqual(placementOverview(completed.state, "retake-owner", "2026-09-05T13:00:00.000Z"), {
+    status: "cooldown",
+    latestResultId: completed.result.id,
+    retakeAvailableAt: completed.result.retakeAvailableAt,
+    canRetake: false,
+  });
+  const active = createPlacementSession(completed.state, {
+    ownerId: "retake-owner",
+    idempotencyKey: "overlapping-active",
+    now: "2026-09-05T13:01:00.000Z",
+    catalog: PLACEMENT_QUESTIONS,
+  });
+  assert.deepEqual(placementOverview(active.state, "retake-owner", "2026-09-05T13:02:00.000Z"), {
+    status: "active",
+    latestResultId: completed.result.id,
+    retakeAvailableAt: completed.result.retakeAvailableAt,
+    canRetake: false,
+  });
   assert.throws(() => restartPlacement(completed.state, {
     ownerId: "retake-owner",
     previousSessionId: completed.session.id,
@@ -127,6 +166,51 @@ test("short retakes show a cooldown and later retakes avoid the prior first roun
     now: "2026-09-06T13:00:00.000Z",
   });
   assert.equal(restarted.session.questionIds.some((id) => completed.session.questionIds.includes(id)), false);
+  assert.deepEqual(placementOverview(completed.state, "retake-owner", "2026-09-06T13:00:00.000Z"), {
+    status: "ready",
+    latestResultId: completed.result.id,
+    retakeAvailableAt: completed.result.retakeAvailableAt,
+    canRetake: true,
+  });
+});
+
+test("placement overview selects the latest submission instead of array order", () => {
+  const completed = finish("latest-result-owner", (question) => question.correctAnswer);
+  const olderSession = {
+    ...completed.session,
+    id: "placement-older-submission",
+    resultId: "placement-result-older",
+    submittedAt: "2026-09-05T12:10:00.000Z",
+  };
+  const newerSession = {
+    ...completed.session,
+    id: "placement-newer-submission",
+    resultId: "placement-result-newer",
+    submittedAt: "2026-09-05T13:10:00.000Z",
+  };
+  const olderResult = {
+    ...completed.result,
+    id: olderSession.resultId,
+    sessionId: olderSession.id,
+    retakeAvailableAt: "2026-09-06T12:10:00.000Z",
+  };
+  const newerResult = {
+    ...completed.result,
+    id: newerSession.resultId,
+    sessionId: newerSession.id,
+    retakeAvailableAt: "2026-09-06T13:10:00.000Z",
+  };
+  const reordered: LearningState = {
+    ...completed.state,
+    placementSessions: [newerSession, olderSession],
+    placementResults: [newerResult, olderResult],
+  };
+  assert.deepEqual(placementOverview(reordered, "latest-result-owner", "2026-09-05T14:00:00.000Z"), {
+    status: "cooldown",
+    latestResultId: newerResult.id,
+    retakeAvailableAt: newerResult.retakeAvailableAt,
+    canRetake: false,
+  });
 });
 
 test("v3 in-progress sessions remain resumable after the accuracy upgrade", () => {

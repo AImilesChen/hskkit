@@ -120,6 +120,49 @@ export function placementSessionExpired(session: PlacementSession, now: string) 
   return Date.parse(placementSessionExpiresAt(session)) <= Date.parse(now);
 }
 
+export type PlacementOverview = {
+  status: "active" | "cooldown" | "ready" | "expired";
+  latestResultId?: string;
+  retakeAvailableAt?: string;
+  canRetake: boolean;
+};
+
+export function placementOverview(
+  state: LearningState,
+  ownerId: string,
+  now = new Date().toISOString(),
+): PlacementOverview {
+  const latestSubmitted = sessions(state)
+    .filter((session) => session.ownerId === ownerId && session.status === "submitted")
+    .sort((left, right) => {
+      const bySubmission = Date.parse(right.submittedAt ?? right.createdAt)
+        - Date.parse(left.submittedAt ?? left.createdAt);
+      return bySubmission || right.id.localeCompare(left.id);
+    })[0];
+  const latestResult = latestSubmitted?.resultId
+    ? results(state).find((result) => result.id === latestSubmitted.resultId)
+    : undefined;
+  const retakeAvailableAt = latestResult?.retakeAvailableAt
+    ?? (latestSubmitted?.submittedAt
+      ? new Date(Date.parse(latestSubmitted.submittedAt) + PLACEMENT_RETAKE_COOLDOWN_MS).toISOString()
+      : undefined);
+  const resultDetails = {
+    ...(latestResult ? { latestResultId: latestResult.id } : {}),
+    ...(retakeAvailableAt ? { retakeAvailableAt } : {}),
+  };
+
+  const active = resumePlacement(state, ownerId, now);
+  if (active) return { status: "active" as const, ...resultDetails, canRetake: false };
+
+  if (retakeAvailableAt && Date.parse(now) < Date.parse(retakeAvailableAt)) {
+    return { status: "cooldown" as const, ...resultDetails, canRetake: false };
+  }
+  if (expiredPlacement(state, ownerId, now)) {
+    return { status: "expired" as const, ...resultDetails, canRetake: true };
+  }
+  return { status: "ready" as const, ...resultDetails, canRetake: true };
+}
+
 export function createPlacementSession(
   state: LearningState,
   input: { ownerId: string; idempotencyKey: string; now: string; catalog?: PlacementQuestion[] },
@@ -137,17 +180,7 @@ export function createPlacementSession(
   if (prior) return { state, session: prior };
 
   if (!input.catalog) {
-    const latestSubmitted = [...sessions(state)].reverse().find(
-      (session) => session.ownerId === input.ownerId && session.status === "submitted",
-    );
-    const latestResult = latestSubmitted?.resultId
-      ? results(state).find((result) => result.id === latestSubmitted.resultId)
-      : undefined;
-    const retakeAvailableAt = latestResult?.retakeAvailableAt
-      ?? (latestSubmitted?.submittedAt
-        ? new Date(Date.parse(latestSubmitted.submittedAt) + PLACEMENT_RETAKE_COOLDOWN_MS).toISOString()
-        : undefined);
-    if (retakeAvailableAt && Date.parse(input.now) < Date.parse(retakeAvailableAt)) {
+    if (placementOverview(state, input.ownerId, input.now).status === "cooldown") {
       throw new Error("PLACEMENT_RETAKE_COOLDOWN");
     }
   }

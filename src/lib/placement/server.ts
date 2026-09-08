@@ -7,7 +7,7 @@ import { loadPlacementState, savePlacementState } from "@/lib/placement/storage"
 import {
   answerPlacementQuestion,
   createPlacementSession,
-  expiredPlacement,
+  placementOverview,
   placementResult,
   placementSessionExpiresAt,
   restartPlacement,
@@ -113,10 +113,15 @@ async function getPlacementSessionInner(req: NextRequest) {
   const loaded = await loadPlacementState(identity.id);
   const now = new Date().toISOString();
   const active = resumePlacement(loaded.state, identity.id, now);
-  const expired = active ? undefined : expiredPlacement(loaded.state, identity.id, now);
+  const overview = placementOverview(loaded.state, identity.id, now);
   return response(req, {
     session: active ? sessionView(active) : null,
-    expired: Boolean(expired),
+    expired: overview.status === "expired",
+    status: overview.status,
+    latestResultId: overview.latestResultId ?? null,
+    retakeAvailableAt: overview.retakeAvailableAt ?? null,
+    canRetake: overview.canRetake,
+    serverNow: now,
     scope: identity.account ? "account" : "guest",
     revision: loaded.revision,
   }, identity);
@@ -156,8 +161,8 @@ async function runPlacementActionInner(req: NextRequest, action: PlacementAction
 
   for (let turn = 0; turn < 3; turn += 1) {
     const loaded = await loadPlacementState(identity.id, { initializeIfMissing: action === "start" });
+    const now = new Date().toISOString();
     try {
-      const now = new Date().toISOString();
       let nextState = loaded.state;
       let data: Record<string, unknown>;
       if (action === "start") {
@@ -203,7 +208,14 @@ async function runPlacementActionInner(req: NextRequest, action: PlacementAction
       if (unavailable) return unavailable;
       const code = error instanceof Error ? error.message : "PLACEMENT_SAVE_FAILED";
       if (code === "REVISION_CONFLICT" && turn < 2) continue;
-      return response(req, { error: code }, identity, placementStatus(code));
+      const cooldown = code === "PLACEMENT_RETAKE_COOLDOWN"
+        ? placementOverview(loaded.state, identity.id, now)
+        : undefined;
+      return response(req, {
+        error: code,
+        ...cooldown,
+        ...(cooldown ? { serverNow: now } : {}),
+      }, identity, placementStatus(code));
     }
   }
   return response(req, { error: "REVISION_CONFLICT" }, identity, 409);

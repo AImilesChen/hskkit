@@ -80,12 +80,16 @@ test("duplicate final submission is idempotent, private, and can recommend both 
 
 test("batch 3 REST entry points exist and the placement UI uses them", () => {
   const sessionsRoute = source("../src/app/api/v1/placement/sessions/route.ts");
+  const placementServer = source("../src/lib/placement/server.ts");
   const attemptsRoute = source("../src/app/api/v1/attempts/[id]/submit/route.ts");
   const client = source("../src/app/placement/placement-client.tsx");
   const clientRecovery = source("../src/app/placement/client-recovery.ts");
   const resultClient = source("../src/app/placement/result/[id]/placement-result-client.tsx");
   assert.match(sessionsRoute, /export async function GET/);
   assert.match(sessionsRoute, /export async function POST/);
+  for (const field of ["status", "latestResultId", "retakeAvailableAt", "canRetake", "serverNow"]) {
+    assert.match(placementServer, new RegExp(field));
+  }
   assert.match(attemptsRoute, /export async function POST/);
   assert.match(client, /\/api\/v1\/placement\/sessions/);
   assert.match(client, /\/api\/v1\/attempts\/\$\{encodeURIComponent\(session\.id\)\}\/submit/);
@@ -93,6 +97,17 @@ test("batch 3 REST entry points exist and the placement UI uses them", () => {
   assert.doesNotMatch(client, /placement-answer:\$\{session\.id\}:/);
   assert.match(client, /setManualIndex\(index\)/);
   assert.match(client, /PLACEMENT_SESSION_EXPIRED/);
+  assert.match(client, /const \[loadError, setLoadError\]/);
+  assert.match(client, /const \[startError, setStartError\]/);
+  assert.match(client, /const \[answerError, setAnswerError\]/);
+  assert.match(client, /Your latest placement is ready/);
+  assert.match(client, /View my result/);
+  assert.match(client, /Retake available/);
+  assert.match(client, /const cooldownActive = placementStatus === "cooldown"/);
+  assert.match(client, /placementRetakeLocked\(placementStatus, canRetake\)/);
+  assert.match(client, /serverClockOffsetMs/);
+  assert.match(client, /void load\(\)/);
+  assert.doesNotMatch(client, /const \[error, setError\]/);
   assert.match(clientRecovery, /PLACEMENT_NO_QUESTIONS/);
   assert.match(resultClient, /\/vocabulary\/\$\{catalogLevel\}/);
 });

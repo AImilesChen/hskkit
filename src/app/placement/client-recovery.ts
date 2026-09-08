@@ -1,8 +1,20 @@
 export type PlacementLoadResponse<TSession = unknown> = {
   session: TSession | null;
   expired?: boolean;
+  status?: "active" | "cooldown" | "ready" | "expired";
+  latestResultId?: string | null;
+  retakeAvailableAt?: string | null;
+  canRetake?: boolean;
+  serverNow?: string;
   error?: string;
 };
+
+export function placementRetakeLocked(
+  status: PlacementLoadResponse["status"],
+  canRetake: boolean | undefined,
+) {
+  return status === "cooldown" || canRetake === false;
+}
 
 type PlacementLoadOptions = {
   request?: () => Promise<Response>;
