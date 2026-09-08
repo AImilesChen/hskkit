@@ -600,7 +600,7 @@ export function buildDailySession(state: LearningState, input: { ownerId: string
       ? `empty:${content.releaseId}:${content.startLevel}:${content.code}`
       : "legacy";
   const practiceVersion = content?.status === "ready" && content.practiceHref
-    ? practiceQuestionSet(content.startLevel, "vocabulary")[0]?.contentVersion
+    ? practiceQuestionSet(content.startLevel, "vocabulary")[0]?.setVersion
     : undefined;
   const core: DailyItem[] = content?.status === "ready" ? [
     { id: `learn:${content.item.contentId}:${content.item.contentVersion}`, kind: "learn", contentId: content.item.contentId, contentVersion: content.item.contentVersion, title: `Learn ${content.item.hanzi}`, href: `/vocabulary/${content.startLevel}`, status: "pending" },
@@ -614,7 +614,7 @@ export function buildDailySession(state: LearningState, input: { ownerId: string
     { id: "learn:word:ni-hao", kind: "learn", contentId: "word:ni-hao", status: "pending" },
     { id: "listen:word:word-ni-hao:audio", kind: "listen", contentId: "word:word-ni-hao", dimension: "audio", status: "pending" },
     { id: "listen:word:word-ni-hao:context_audio", kind: "listen", contentId: "word:word-ni-hao", dimension: "context_audio", status: "pending" },
-    { id: "practice:1:vocabulary", kind: "practice", contentId: "practice:1:vocabulary", contentVersion: practiceQuestionSet(1, "vocabulary")[0]?.contentVersion, dimension: "reading", status: "pending" },
+    { id: "practice:1:vocabulary", kind: "practice", contentId: "practice:1:vocabulary", contentVersion: practiceQuestionSet(1, "vocabulary")[0]?.setVersion, dimension: "reading", status: "pending" },
     { id: "summary", kind: "summary", contentId: "summary", status: "pending" },
   ];
 

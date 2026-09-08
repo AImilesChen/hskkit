@@ -339,7 +339,7 @@ test("Daily Practice item is bound to the exact trusted question version", () =>
   if (plan.status !== "ready") return;
   const built = buildDailySession(emptyState(), { ownerId: "guest-practice-version", localDay: "2026-08-20", ruleVersion: "today-v3", now, dailyContent: plan });
   const item = built.session.items.find((candidate) => candidate.kind === "practice");
-  assert.equal(item?.contentVersion, practiceQuestionSet(2, "vocabulary")[0].contentVersion);
+  assert.equal(item?.contentVersion, practiceQuestionSet(2, "vocabulary")[0].setVersion);
 });
 
 test("audio attempt idempotency binds both Daily Session and Daily item", () => {
@@ -413,5 +413,5 @@ test("same-level Practice version refresh keeps history without suppressing curr
   const refreshed = buildDailySession(oldState, { ownerId: "guest:practice-refresh", localDay: "2026-08-21", ruleVersion: "today-v3", now, dailyContent: plan });
   const practices = refreshed.session.items.filter((item) => item.kind === "practice");
   assert.ok(practices.some((item) => item.contentVersion === "old-version" && item.status === "completed"));
-  assert.ok(practices.some((item) => item.contentVersion === practiceQuestionSet(2, "vocabulary")[0].contentVersion && item.status === "pending"));
+  assert.ok(practices.some((item) => item.contentVersion === practiceQuestionSet(2, "vocabulary")[0].setVersion && item.status === "pending"));
 });

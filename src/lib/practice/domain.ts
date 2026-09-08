@@ -1,6 +1,6 @@
 import { createHash } from "node:crypto";
 import { recordAttempt, type LearningState, type PracticeSession, type QuestionReport } from "../learning/domain.ts";
-import { practiceQuestionLifecycle, practiceQuestionSet, publicPracticeQuestion, trustedPracticeQuestionVersion } from "./questions.ts";
+import { PRACTICE_SESSION_SIZE, practiceQuestionLifecycle, practiceQuestionSet, publicPracticeQuestion, trustedPracticeQuestionVersion, type PracticeQuestion } from "./questions.ts";
 
 const stableId = (prefix: string, key: string) => `${prefix}_${createHash("sha256").update(key).digest("base64url")}`;
 const PRACTICE_SESSION_TTL_MS = 24 * 60 * 60 * 1000;
@@ -15,6 +15,67 @@ export function isPracticeSessionCurrent(session: PracticeSession) {
   return session.questionIds.every((id) => practiceQuestionLifecycle(id) === "published");
 }
 
+function seededQuestions(questions: PracticeQuestion[], seed: string) {
+  return [...questions].sort((left, right) => {
+    const leftKey = createHash("sha256").update(`${seed}:${left.id}`).digest("hex");
+    const rightKey = createHash("sha256").update(`${seed}:${right.id}`).digest("hex");
+    return leftKey.localeCompare(rightKey);
+  });
+}
+
+function selectSessionQuestions(state: LearningState, input: { ownerId: string; level: number; skill: string; idempotencyKey: string }, pool: PracticeQuestion[]) {
+  const recentIds = new Set(sessions(state)
+    .map((session, index) => ({ session, index }))
+    .filter(({ session }) => session.ownerId === input.ownerId && session.level === input.level && session.skill === input.skill && session.status === "completed")
+    .sort((left, right) => (right.session.completedAt ?? right.session.createdAt).localeCompare(left.session.completedAt ?? left.session.createdAt) || right.index - left.index)
+    .slice(0, 2)
+    .flatMap(({ session }) => session.questionIds));
+  const seed = `${input.ownerId}:${input.level}:${input.skill}:${pool[0].setVersion}:${input.idempotencyKey}`;
+  const preferred = seededQuestions(pool.filter((question) => !recentIds.has(question.id)), seed);
+  const fallback = seededQuestions(pool.filter((question) => recentIds.has(question.id)), `${seed}:fallback`);
+  const selected: PracticeQuestion[] = [];
+  const usedQuestions = new Set<string>();
+  const usedGroups = new Set<string>();
+  const add = (question: PracticeQuestion) => {
+    const group = question.sourceGroupId ?? question.id;
+    if (usedQuestions.has(question.id) || usedGroups.has(group)) return false;
+    usedQuestions.add(question.id);
+    usedGroups.add(group);
+    selected.push(question);
+    return true;
+  };
+
+  if (input.level === 7) {
+    const completedCount = sessions(state).filter((session) => session.ownerId === input.ownerId
+      && session.level === input.level
+      && session.skill === input.skill
+      && session.questionVersion === pool[0].setVersion
+      && session.status === "completed").length;
+    const levels = [7, 8, 9];
+    const lowQuotaLevel = levels[completedCount % levels.length];
+    for (const sourceLevel of levels) {
+      const quota = sourceLevel === lowQuotaLevel ? 2 : 3;
+      for (const source of [preferred, fallback]) {
+        for (const question of source) {
+          if (selected.filter((item) => item.sourceLevel === sourceLevel).length >= quota) break;
+          if (question.sourceLevel === sourceLevel) add(question);
+        }
+        if (selected.filter((item) => item.sourceLevel === sourceLevel).length >= quota) break;
+      }
+    }
+  }
+  for (const question of preferred) {
+    if (selected.length >= PRACTICE_SESSION_SIZE) break;
+    add(question);
+  }
+  for (const question of fallback) {
+    if (selected.length >= PRACTICE_SESSION_SIZE) break;
+    add(question);
+  }
+  if (selected.length !== PRACTICE_SESSION_SIZE) throw new Error("PRACTICE_POOL_TOO_SMALL");
+  return selected;
+}
+
 export function createPracticeSession(state: LearningState, input: {
   ownerId: string;
   level: number;
@@ -25,11 +86,11 @@ export function createPracticeSession(state: LearningState, input: {
   dailyItemId?: string;
 }) {
   if ((input.dailySessionId && !input.dailyItemId) || (!input.dailySessionId && input.dailyItemId)) throw new Error("INVALID_DAILY_PRACTICE_BINDING");
-  const questions = practiceQuestionSet(input.level, input.skill);
-  if (!questions.length) throw new Error("PRACTICE_NOT_READY");
-  const questionVersion = questions[0].contentVersion;
-  if (questions.some((question) => question.contentVersion !== questionVersion)) throw new Error("PRACTICE_CONTENT_VERSION_MISMATCH");
-  const currentQuestionIds = new Set(questions.map((question) => question.id));
+  const pool = practiceQuestionSet(input.level, input.skill);
+  if (pool.length < PRACTICE_SESSION_SIZE) throw new Error("PRACTICE_NOT_READY");
+  const questionVersion = pool[0].setVersion;
+  if (pool.some((question) => question.setVersion !== questionVersion)) throw new Error("PRACTICE_SET_VERSION_MISMATCH");
+  const currentQuestionIds = new Set(pool.map((question) => question.id));
   const priorByKey = sessions(state).find((session) => session.ownerId === input.ownerId && session.idempotencyKey === input.idempotencyKey);
   if (priorByKey) {
     if (priorByKey.level !== input.level || priorByKey.skill !== input.skill || priorByKey.dailySessionId !== input.dailySessionId || priorByKey.dailyItemId !== input.dailyItemId) throw new Error("IDEMPOTENCY_KEY_REUSED");
@@ -43,6 +104,7 @@ export function createPracticeSession(state: LearningState, input: {
   }
   const active = [...sessions(state)].reverse().find((session) => session.ownerId === input.ownerId && session.level === input.level && session.skill === input.skill && session.questionVersion === questionVersion && session.questionIds.every((id) => currentQuestionIds.has(id)) && isPracticeSessionCurrent(session) && session.dailySessionId === input.dailySessionId && session.dailyItemId === input.dailyItemId && session.status === "in_progress" && !isExpired(session, input.now));
   if (active) return { state, session: active };
+  const questions = selectSessionQuestions(state, input, pool);
   const session: PracticeSession = {
     id: stableId("practice_session", `${input.ownerId}:${questionVersion}:${input.idempotencyKey}`),
     ownerId: input.ownerId,
@@ -164,7 +226,7 @@ export function answerPracticeQuestion(state: LearningState, input: {
   }
   if (isExpired(session, input.now)) throw new Error("PRACTICE_SESSION_EXPIRED");
   const question = trustedPracticeQuestionVersion(input.questionId, session.questionVersion);
-  if (practiceQuestionLifecycle(input.questionId) !== "published" || !question || !session.questionIds.includes(question.id) || question.contentVersion !== session.questionVersion) throw new Error("PRACTICE_QUESTION_WITHDRAWN");
+  if (practiceQuestionLifecycle(input.questionId) !== "published" || !question || !session.questionIds.includes(question.id) || question.setVersion !== session.questionVersion) throw new Error("PRACTICE_QUESTION_WITHDRAWN");
   if (!Object.hasOwn(question.options, input.answer)) throw new Error("INVALID_PRACTICE_ANSWER");
   if (session.status !== "in_progress") throw new Error("PRACTICE_SESSION_CLOSED");
   if (session.answers.some((answer) => answer.questionId === question.id)) throw new Error("PRACTICE_QUESTION_ALREADY_ANSWERED");

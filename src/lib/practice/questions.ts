@@ -1,8 +1,17 @@
 import { createHash } from "node:crypto";
 import runtimeIndex from "../content/runtime-content-index.json" with { type: "json" };
+import hsk1QuestionBank from "../data/hsk1.json" with { type: "json" };
+import hsk2QuestionBank from "../data/hsk2.json" with { type: "json" };
+import hsk3QuestionBank from "../data/hsk3.json" with { type: "json" };
+import hsk4QuestionBank from "../data/hsk4.json" with { type: "json" };
+import hsk5QuestionBank from "../data/hsk5.json" with { type: "json" };
+import { LISTENING_LIBRARY_QUESTIONS } from "../learning/listening-library.ts";
+import { READING_LIBRARY_QUESTIONS } from "../learning/reading-library.ts";
 import practiceAudioManifest from "./audio-assets.json" with { type: "json" };
 
-export const PRACTICE_VERSION = "hskkit-practice-multiskill-v2";
+export const PRACTICE_VERSION = "hskkit-practice-randomized-v3";
+const LEGACY_MULTISKILL_VERSION = "hskkit-practice-multiskill-v2";
+export const PRACTICE_SESSION_SIZE = 8;
 export const PRACTICE_SKILLS = ["vocabulary", "grammar", "reading", "listening"] as const;
 export type PracticeSkill = typeof PRACTICE_SKILLS[number];
 export type PracticeAnswerChoice = "a" | "b" | "c" | "d";
@@ -12,8 +21,11 @@ export interface PracticeQuestion {
   standardVersion: "HSK 3.0";
   standardRef: "GF0025-2021";
   contentVersion: string;
+  setVersion: string;
   level: number;
   levelBand: string;
+  sourceLevel?: number;
+  sourceGroupId?: string;
   skill: PracticeSkill;
   prompt: string;
   context?: string;
@@ -130,14 +142,14 @@ const audioManifest = practiceAudioManifest as {
 };
 const choices = ["a", "b", "c", "d"] as const;
 const bandLabel = (level: number) => level === 7 ? "advanced-7-9" : `level-${level}`;
-const versionFor = (level: number, skill: PracticeSkill) => `${PRACTICE_VERSION}:${bandLabel(level)}:${skill}`;
+const versionFor = (level: number, skill: PracticeSkill) => `${LEGACY_MULTISKILL_VERSION}:${bandLabel(level)}:${skill}`;
 const rotateOptions = (values: string[], key: string) => {
   const correctIndex = createHash("sha256").update(key).digest()[0] % 4;
   const ordered = values.slice(1, 4);
   ordered.splice(correctIndex, 0, values[0]);
   return { options: { a: ordered[0], b: ordered[1], c: ordered[2], d: ordered[3] }, correctAnswer: choices[correctIndex] };
 };
-const base = (level: number, skill: PracticeSkill) => ({ standardVersion: "HSK 3.0" as const, standardRef: "GF0025-2021" as const, contentVersion: versionFor(level, skill), level, levelBand: bandLabel(level), skill, authorizationStatus: "authorized" as const, qaStatus: "approved" as const, publicationStatus: "formal-practice" as const, lifecycleStatus: "published" as const });
+const base = (level: number, skill: PracticeSkill) => ({ standardVersion: "HSK 3.0" as const, standardRef: "GF0025-2021" as const, contentVersion: versionFor(level, skill), setVersion: versionFor(level, skill), level, levelBand: bandLabel(level), sourceLevel: level, skill, authorizationStatus: "authorized" as const, qaStatus: "approved" as const, publicationStatus: "formal-practice" as const, lifecycleStatus: "published" as const });
 
 function vocabularyQuestions(level: number): PracticeQuestion[] {
   const words = [...new Map(wordsForLevel(level).map((word) => [word.hanzi.normalize("NFC"), word])).values()].slice(0, 12);
@@ -177,14 +189,238 @@ const ALL_V2_QUESTIONS: PracticeQuestion[] = Object.entries(BANDS).flatMap(([raw
   ];
 });
 
-export const PRACTICE_QUESTIONS: PracticeQuestion[] = ALL_V2_QUESTIONS.filter((question) => question.authorizationStatus === "authorized" && question.qaStatus === "approved" && question.lifecycleStatus === "published");
+type AuthoredBankQuestion = {
+  id: string;
+  level: number;
+  type: string;
+  question_cn: string;
+  question_en?: string;
+  options: Record<string, string>;
+  correct_answer: string;
+  explanation: string;
+};
+
+const AUTHORED_BANKS = new Map<number, AuthoredBankQuestion[]>([
+  [1, hsk1QuestionBank as AuthoredBankQuestion[]],
+  [2, hsk2QuestionBank as AuthoredBankQuestion[]],
+  [3, hsk3QuestionBank as AuthoredBankQuestion[]],
+  [4, hsk4QuestionBank as AuthoredBankQuestion[]],
+  [5, hsk5QuestionBank as AuthoredBankQuestion[]],
+]);
+
+const GRAMMAR_SUPPLEMENTS: Record<number, Array<{ sentence: string; sourceLevel?: number }>> = {
+  1: [{ sentence: "他今天没有去学校。" }],
+  6: [
+    { sentence: "无论证据是否符合预期，研究者都应如实记录。" },
+    { sentence: "与其仓促扩大样本，不如先验证测量工具。" },
+    { sentence: "哪怕成本有所上升，也不能省略安全检查。" },
+    { sentence: "之所以暂缓发布，是因为核心数据仍需复核。" },
+    { sentence: "只有在控制其他变量后，才能讨论因果关系。" },
+    { sentence: "就现有证据而言，这一解释尚不足以成立。" },
+    { sentence: "该方案一方面提高效率，另一方面增加协调成本。" },
+    { sentence: "结果未必支持假设，却为后续研究提供了线索。" },
+    { sentence: "除非获得明确授权，否则不得公开个人信息。" },
+    { sentence: "不仅样本规模有限，观察时间也相对较短。" },
+    { sentence: "即便两组均值相同，数据分布也可能明显不同。" },
+    { sentence: "与原计划不同，本次调整仅涉及测试环节。" },
+    { sentence: "凡是无法追溯来源的数据，都不应进入正式报告。" },
+    { sentence: "鉴于风险尚未排除，项目决定延长试运行期。" },
+    { sentence: "无论采用哪种方法，都必须说明适用条件。" },
+    { sentence: "所谓显著改善，仍需结合基线和误差范围判断。" },
+  ],
+  7: [
+    { sentence: "固然自动化能提高速度，然而关键判断仍需人工复核。", sourceLevel: 8 },
+    { sentence: "与其争论单一指标的高低，不如检验指标是否衡量了真正目标。", sourceLevel: 8 },
+    { sentence: "若非前提发生变化，模型的预测不应出现如此剧烈的波动。", sourceLevel: 8 },
+    { sentence: "诚然局部样本表现良好，但这不足以证明结论可以普遍推广。", sourceLevel: 8 },
+    { sentence: "其结论之所以引发争议，恰恰在于因果链条尚未得到验证。", sourceLevel: 8 },
+    { sentence: "不论短期收益多么可观，制度成本都不应被排除在评估之外。", sourceLevel: 8 },
+    { sentence: "表面上两种方案差异不大，实则风险分布截然不同。", sourceLevel: 8 },
+    { sentence: "与其说政策失效，不如说原有评价框架遗漏了关键结果。", sourceLevel: 8 },
+    { sentence: "即便所有观察值都准确无误，解释过程仍可能受到选择偏差影响。", sourceLevel: 9 },
+    { sentence: "唯有把反例纳入分析，论证才不至于成为自我验证。", sourceLevel: 9 },
+    { sentence: "倘若公开标准在执行中不断改变，跨期比较便失去基础。", sourceLevel: 9 },
+    { sentence: "该结论既不能由相关性单独推出，也不能靠个别案例证成。", sourceLevel: 9 },
+    { sentence: "凡涉及群体差异的判断，均应报告分布而非只给平均值。", sourceLevel: 9 },
+    { sentence: "除非后续样本重现同一趋势，否则当前发现只能视为初步证据。", sourceLevel: 9 },
+    { sentence: "虽说技术限制可以解释部分误差，却无法解释方向相反的结果。", sourceLevel: 9 },
+    { sentence: "从程序正义的角度看，效率提升并不能替代知情与申诉机制。", sourceLevel: 9 },
+  ],
+};
+
+const normalizeChoices = (options: Record<string, string>) => {
+  const values = Object.values(options);
+  while (values.length < 4) values.push("None of the above.");
+  return { a: values[0], b: values[1], c: values[2], d: values[3] };
+};
+const answerChoice = (answer: string): PracticeAnswerChoice => {
+  const normalized = answer.toLowerCase();
+  if (!choices.includes(normalized as PracticeAnswerChoice)) throw new Error(`INVALID_PRACTICE_SOURCE_ANSWER:${answer}`);
+  return normalized as PracticeAnswerChoice;
+};
+const itemDigest = (value: string) => createHash("sha256").update(value).digest("base64url").slice(0, 16);
+const v3Base = (level: number, skill: PracticeSkill, contentVersion: string, sourceLevel = level) => ({
+  standardVersion: "HSK 3.0" as const,
+  standardRef: "GF0025-2021" as const,
+  contentVersion,
+  setVersion: "",
+  level,
+  levelBand: bandLabel(level),
+  sourceLevel,
+  skill,
+  authorizationStatus: "authorized" as const,
+  qaStatus: "approved" as const,
+  publicationStatus: "formal-practice" as const,
+  lifecycleStatus: "published" as const,
+});
+
+function v3VocabularyQuestions(level: number): PracticeQuestion[] {
+  const sources = level === 7
+    ? (() => {
+      const seen = new Set<string>();
+      const advanced: Array<{ word: RuntimeWord; sourceLevel: number }> = [];
+      for (const sourceLevel of [7, 8, 9]) {
+        let added = 0;
+        for (const word of wordsForLevel(sourceLevel)) {
+          const key = word.hanzi.normalize("NFC");
+          if (seen.has(key)) continue;
+          seen.add(key);
+          advanced.push({ word, sourceLevel });
+          added += 1;
+          if (added === 8) break;
+        }
+      }
+      return advanced;
+    })()
+    : wordsForLevel(level).slice(0, 32).map((word) => ({ word, sourceLevel: level }));
+  const unique = [...new Map(sources.map((entry) => [entry.word.hanzi.normalize("NFC"), entry])).values()].slice(0, level === 7 ? 24 : 32);
+  if (unique.length < 24) return [];
+  return unique.slice(0, 24).map(({ word, sourceLevel }, index) => {
+    const distractors = [unique[(index + 5) % unique.length].word, unique[(index + 11) % unique.length].word, unique[(index + 17) % unique.length].word];
+    const arranged = rotateOptions([word.hanzi, ...distractors.map((item) => item.hanzi)], `v3:${word.logicalId}:${word.contentVersion}`);
+    return {
+      ...v3Base(level, "vocabulary", `${PRACTICE_VERSION}:word:${word.logicalId}:${word.contentVersion}`, sourceLevel),
+      id: `practice-v3-${bandLabel(level)}-vocabulary-${itemDigest(`${sourceLevel}:${word.logicalId}`)}`,
+      prompt: `Which Chinese entry means “${word.meaning}”?`,
+      ...arranged,
+      explanation: `${word.hanzi} (${word.pinyin}) means “${word.meaning}.”`,
+      weaknessTag: `${bandLabel(level)}-vocabulary`,
+      sourceRef: `${runtimeIndex.releaseId}:${word.id}`,
+      sourceUrl: "https://hskkit.com/content-license",
+    };
+  });
+}
+
+function generatedGrammarQuestion(level: number, sentence: string, index: number, sourceLevel = level): PracticeQuestion {
+  const pieces = sentence.replace(/[。？！]/g, "").split("");
+  const wrong = [pieces.slice().reverse().join("") + "。", pieces.slice(1).join("") + pieces[0] + "。", pieces.filter((_, i) => i % 2 === 0).join("") + pieces.filter((_, i) => i % 2 === 1).join("") + "。"];
+  const id = `practice-v3-${bandLabel(level)}-grammar-${itemDigest(`${sourceLevel}:${sentence}`)}`;
+  const arranged = rotateOptions([sentence, ...wrong], id);
+  return {
+    ...v3Base(level, "grammar", `${PRACTICE_VERSION}:grammar:${itemDigest(sentence)}`, sourceLevel),
+    id,
+    prompt: "Choose the sentence with natural Chinese word order.",
+    ...arranged,
+    explanation: `The natural order is: ${sentence}`,
+    weaknessTag: `${bandLabel(level)}-grammar-order`,
+    sourceRef: `hskkit-practice-v3-editorial:grammar:${bandLabel(level)}:${index + 1}`,
+    sourceUrl: "https://hskkit.com/content-license",
+  };
+}
+
+function v3GrammarQuestions(level: number): PracticeQuestion[] {
+  const authored = (AUTHORED_BANKS.get(level) ?? []).filter((question) => question.type === "grammar").map((question) => {
+    const options = normalizeChoices(question.options);
+    const sourceDigest = itemDigest(JSON.stringify({
+      prompt: question.question_en?.trim() || "Choose the grammatically correct answer.",
+      context: question.question_cn,
+      options,
+      correctAnswer: question.correct_answer.toLowerCase(),
+      explanation: question.explanation,
+    }));
+    return {
+      ...v3Base(level, "grammar", `${PRACTICE_VERSION}:authored:${question.id}:${sourceDigest}`),
+      id: `practice-v3-${bandLabel(level)}-grammar-${question.id}`,
+      prompt: question.question_en?.trim() || "Choose the grammatically correct answer.",
+      context: question.question_cn,
+      options,
+      correctAnswer: answerChoice(question.correct_answer),
+      explanation: question.explanation,
+      weaknessTag: `${bandLabel(level)}-grammar`,
+      sourceRef: `hskkit-authored-question-bank:${question.id}`,
+      sourceUrl: "https://hskkit.com/content-license",
+    };
+  });
+  const editorial = [
+    ...BANDS[level].grammar.map((sentence) => ({ sentence, sourceLevel: level })),
+    ...(GRAMMAR_SUPPLEMENTS[level] ?? []).map((entry) => ({ sentence: entry.sentence, sourceLevel: entry.sourceLevel ?? level })),
+  ].map((entry, index) => generatedGrammarQuestion(level, entry.sentence, index, entry.sourceLevel));
+  return [...authored, ...editorial].slice(0, Math.max(24, authored.length + editorial.length));
+}
+
+function v3ReadingQuestions(level: number): PracticeQuestion[] {
+  const sources = READING_LIBRARY_QUESTIONS.filter((question) => level === 7 ? question.level >= 7 : question.level === level);
+  return sources.map((question) => ({
+    ...v3Base(level, "reading", question.contentVersion, question.level),
+    id: `practice-v3-${bandLabel(level)}-reading-${question.id}`,
+    sourceGroupId: question.passageId,
+    prompt: question.exercise.prompt,
+    context: question.passage,
+    options: normalizeChoices(question.exercise.options ?? {}),
+    correctAnswer: answerChoice(question.exercise.correctAnswer),
+    explanation: question.exercise.explanation,
+    weaknessTag: `${bandLabel(level)}-reading-${question.questionType}`,
+    sourceRef: question.sourceRef,
+    sourceUrl: "https://hskkit.com/content-license",
+  }));
+}
+
+function v3ListeningQuestions(level: number): PracticeQuestion[] {
+  const sources = LISTENING_LIBRARY_QUESTIONS.filter((question) => level === 7 ? question.level >= 7 : question.level === level);
+  return sources.map((question) => ({
+    ...v3Base(level, "listening", question.contentVersion, question.level),
+    id: `practice-v3-${bandLabel(level)}-listening-${question.id}`,
+    sourceGroupId: question.audioSrc,
+    prompt: question.exercise.prompt,
+    audioSrc: question.audioSrc,
+    audioText: question.voiceText,
+    options: normalizeChoices(question.exercise.options ?? {}),
+    correctAnswer: answerChoice(question.exercise.correctAnswer),
+    explanation: question.exercise.explanation,
+    weaknessTag: question.weaknessTag,
+    sourceRef: question.sourceRef,
+    sourceUrl: "https://hskkit.com/content-license",
+  }));
+}
+
+function attachSetVersion(questions: PracticeQuestion[]) {
+  const bySet = new Map<string, PracticeQuestion[]>();
+  for (const question of questions) {
+    const key = `${question.level}:${question.skill}`;
+    bySet.set(key, [...(bySet.get(key) ?? []), question]);
+  }
+  return [...bySet.values()].flatMap((set) => {
+    const digest = createHash("sha256").update(JSON.stringify(set.map((question) => [question.id, question.contentVersion]))).digest("base64url").slice(0, 20);
+    const setVersion = `${PRACTICE_VERSION}:${bandLabel(set[0].level)}:${set[0].skill}:${digest}`;
+    return set.map((question) => ({ ...question, setVersion }));
+  });
+}
+
+const ALL_V3_QUESTIONS = attachSetVersion([1, 2, 3, 4, 5, 6, 7].flatMap((level) => [
+  ...v3VocabularyQuestions(level),
+  ...v3GrammarQuestions(level),
+  ...v3ReadingQuestions(level),
+  ...v3ListeningQuestions(level),
+]));
+
+export const PRACTICE_QUESTIONS: PracticeQuestion[] = ALL_V3_QUESTIONS.filter((question) => question.authorizationStatus === "authorized" && question.qaStatus === "approved" && question.lifecycleStatus === "published");
 
 const LEGACY_PRACTICE_VERSION = "hskkit-practice-l1-vocabulary-v1";
 export function practiceSetContentVersion(releaseId: string, sources: Array<{ logicalId: string; version: string | number }>) {
   const digest = createHash("sha256").update(JSON.stringify(sources.map((source) => [source.logicalId, String(source.version)]))).digest("base64url").slice(0, 24);
   return `${releaseId}:practice-set-${digest}`;
 }
-const legacyBase = (level: number, contentVersion: string) => ({ ...base(level, "vocabulary" as const), contentVersion, levelBand: `level-${level}` });
+const legacyBase = (level: number, contentVersion: string) => ({ ...base(level, "vocabulary" as const), contentVersion, setVersion: contentVersion, levelBand: `level-${level}` });
 const LEGACY_LEVEL_ONE: PracticeQuestion[] = [
   { ...legacyBase(1, LEGACY_PRACTICE_VERSION), id: "practice-v1-l1-vocab-hello", prompt: "Which Chinese expression means “hello”?", options: { a: "你好", b: "谢谢", c: "再见", d: "对不起" }, correctAnswer: "a", explanation: "你好 is the standard greeting for “hello.”", weaknessTag: "basic-greetings", sourceRef: "hskkit-practice-v1:hello", sourceUrl: "https://hskkit.com/content-license" },
   { ...legacyBase(1, LEGACY_PRACTICE_VERSION), id: "practice-v1-l1-vocab-thanks", prompt: "Which expression means “thank you”?", options: { a: "谢谢", b: "你好", c: "再见", d: "没关系" }, correctAnswer: "a", explanation: "谢谢 is used to express thanks.", weaknessTag: "basic-greetings", sourceRef: "hskkit-practice-v1:thanks", sourceUrl: "https://hskkit.com/content-license" },
@@ -204,13 +440,13 @@ function legacyCatalogQuestions(level: number): PracticeQuestion[] {
 const LEGACY_PRACTICE_QUESTIONS = [...LEGACY_LEVEL_ONE, ...[2, 3, 4, 5, 6].flatMap(legacyCatalogQuestions)];
 
 export const WITHDRAWN_PRACTICE_QUESTION_ID = "practice-v1-l1-vocab-retired-sample";
-const WITHDRAWN_SNAPSHOT: PracticeQuestion = { ...base(1, "vocabulary"), id: WITHDRAWN_PRACTICE_QUESTION_ID, contentVersion: "hskkit-practice-l1-vocabulary-v1", prompt: "Retired sample", options: { a: "甲", b: "乙", c: "丙", d: "丁" }, correctAnswer: "a", explanation: "Retained only for historical audit.", weaknessTag: "retired", sourceRef: "hskkit-retired-sample", sourceUrl: "https://hskkit.com/content-license", lifecycleStatus: "withdrawn" };
-const HISTORY = [...ALL_V2_QUESTIONS, ...LEGACY_PRACTICE_QUESTIONS, WITHDRAWN_SNAPSHOT];
+const WITHDRAWN_SNAPSHOT: PracticeQuestion = { ...base(1, "vocabulary"), id: WITHDRAWN_PRACTICE_QUESTION_ID, contentVersion: "hskkit-practice-l1-vocabulary-v1", setVersion: "hskkit-practice-l1-vocabulary-v1", prompt: "Retired sample", options: { a: "甲", b: "乙", c: "丙", d: "丁" }, correctAnswer: "a", explanation: "Retained only for historical audit.", weaknessTag: "retired", sourceRef: "hskkit-retired-sample", sourceUrl: "https://hskkit.com/content-license", lifecycleStatus: "withdrawn" };
+const HISTORY = [...ALL_V3_QUESTIONS, ...ALL_V2_QUESTIONS, ...LEGACY_PRACTICE_QUESTIONS, WITHDRAWN_SNAPSHOT];
 
 export function practiceQuestionLifecycle(id: string) { return HISTORY.find((question) => question.id === id)?.lifecycleStatus; }
 export function practiceQuestionSet(level: number, skill: string) { return PRACTICE_QUESTIONS.filter((question) => question.level === level && question.skill === skill && question.lifecycleStatus === "published"); }
 export function trustedPracticeQuestion(id: string) { return HISTORY.find((question) => question.id === id); }
-export function trustedPracticeQuestionVersion(id: string, contentVersion: string) { return HISTORY.find((question) => question.id === id && question.contentVersion === contentVersion); }
+export function trustedPracticeQuestionVersion(id: string, version: string) { return HISTORY.find((question) => question.id === id && (question.setVersion === version || question.contentVersion === version)); }
 export function publicPracticeQuestion(question: PracticeQuestion) {
   return { id: question.id, standardVersion: question.standardVersion, standardRef: question.standardRef, contentVersion: question.contentVersion, level: question.level, levelBand: question.levelBand, skill: question.skill, prompt: question.prompt, context: question.context, audioSrc: question.audioSrc, options: question.options };
 }

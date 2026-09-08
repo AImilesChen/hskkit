@@ -10,7 +10,7 @@ import {
   resumePracticeSession,
   selectPracticeSession,
 } from "../src/lib/practice/domain.ts";
-import { PRACTICE_VERSION, WITHDRAWN_PRACTICE_QUESTION_ID, practiceQuestionSet, practiceSetContentVersion, trustedPracticeQuestion } from "../src/lib/practice/questions.ts";
+import { PRACTICE_SESSION_SIZE, PRACTICE_VERSION, WITHDRAWN_PRACTICE_QUESTION_ID, practiceQuestionSet, practiceSetContentVersion, trustedPracticeQuestion } from "../src/lib/practice/questions.ts";
 
 const now = "2026-08-21T10:00:00.000Z";
 
@@ -29,18 +29,172 @@ test("practice creates one resumable versioned HSK 3.0 session", () => {
   assert.equal(resumePracticeSession(first.state, "guest-1", now)?.id, first.session.id);
 });
 
+test("Practice v3 exposes a deep formal pool but persists exactly eight unique questions per session", () => {
+  for (const level of [1, 2, 3, 4, 5, 6, 7]) {
+    for (const skill of ["vocabulary", "grammar", "reading", "listening"] as const) {
+      const pool = practiceQuestionSet(level, skill);
+      assert.ok(pool.length >= 24, `HSK ${level} ${skill} should have at least 24 questions`);
+      const created = createPracticeSession(emptyLearningState(), {
+        ownerId: `guest-pool-${level}-${skill}`, level, skill,
+        idempotencyKey: `pool-${level}-${skill}`, now,
+      });
+      assert.equal(created.session.questionIds.length, PRACTICE_SESSION_SIZE);
+      assert.equal(new Set(created.session.questionIds).size, PRACTICE_SESSION_SIZE);
+      assert.ok(created.session.questionIds.every((id) => pool.some((question) => question.id === id)));
+    }
+  }
+});
+
+test("the same idempotent create and a restored state preserve the exact Practice order", () => {
+  const first = createPracticeSession(emptyLearningState(), {
+    ownerId: "guest-stable-order", level: 3, skill: "reading", idempotencyKey: "stable-create", now,
+  });
+  const replay = createPracticeSession(structuredClone(first.state), {
+    ownerId: "guest-stable-order", level: 3, skill: "reading", idempotencyKey: "stable-create", now,
+  });
+  const restored = selectPracticeSession(structuredClone(first.state), {
+    ownerId: "guest-stable-order", level: 3, skill: "reading",
+  }, now);
+  assert.deepEqual(replay.session.questionIds, first.session.questionIds);
+  assert.deepEqual(restored?.questionIds, first.session.questionIds);
+  assert.deepEqual(publicPracticeSession(restored!), publicPracticeSession(first.session));
+});
+
+test("Practice again draws a different set and avoids the two most recent completed sets", () => {
+  let state = emptyLearningState();
+  const sets: string[][] = [];
+  for (let run = 0; run < 3; run += 1) {
+    let created = createPracticeSession(state, {
+      ownerId: "guest-no-repeat", level: 2, skill: "vocabulary", idempotencyKey: `repeat-${run}`, now,
+    });
+    sets.push(created.session.questionIds);
+    state = created.state;
+    for (const [index, questionId] of created.session.questionIds.entries()) {
+      const question = trustedPracticeQuestion(questionId)!;
+      const answered = answerPracticeQuestion(state, {
+        ownerId: "guest-no-repeat", sessionId: created.session.id, questionId,
+        answer: question.correctAnswer, idempotencyKey: `repeat-${run}-answer-${index}`, now,
+      });
+      state = answered.state;
+      created = { state: answered.state, session: answered.session };
+    }
+  }
+  assert.equal(sets[0].some((id) => sets[1].includes(id)), false);
+  assert.equal(sets[0].some((id) => sets[2].includes(id)), false);
+  assert.equal(sets[1].some((id) => sets[2].includes(id)), false);
+});
+
+test("Advanced vocabulary and grammar avoid the prior two completed sets across randomized seeds", () => {
+  for (const skill of ["vocabulary", "grammar"] as const) {
+    for (let probe = 0; probe < 8; probe += 1) {
+      const ownerId = `guest-advanced-repeat-${skill}-${probe}`;
+      let state = emptyLearningState();
+      const sets: string[][] = [];
+      for (let run = 0; run < 4; run += 1) {
+        const runNow = `2026-08-21T10:0${run}:00.000Z`;
+        const created = createPracticeSession(state, {
+          ownerId, level: 7, skill, idempotencyKey: `advanced-repeat-${probe}-${run}`, now: runNow,
+        });
+        const recent = sets.slice(-2).flat();
+        assert.equal(created.session.questionIds.some((id) => recent.includes(id)), false, `${skill} probe ${probe} run ${run}`);
+        const sourceLevels = created.session.questionIds.map((id) => trustedPracticeQuestion(id)?.sourceLevel);
+        for (const sourceLevel of [7, 8, 9]) {
+          assert.ok(sourceLevels.filter((value) => value === sourceLevel).length >= 2, `${skill} probe ${probe} run ${run} source ${sourceLevel}`);
+        }
+        sets.push(created.session.questionIds);
+        state = created.state;
+        for (const [index, questionId] of created.session.questionIds.entries()) {
+          const question = trustedPracticeQuestion(questionId)!;
+          state = answerPracticeQuestion(state, {
+            ownerId, sessionId: created.session.id, questionId, answer: question.correctAnswer,
+            idempotencyKey: `advanced-repeat-${probe}-${run}-${index}`, now: runNow,
+          }).state;
+        }
+      }
+    }
+  }
+});
+
+test("recent completed Practice sets are chosen by completion time after merged history is reordered", () => {
+  const ownerId = "guest-merged-history";
+  let state = emptyLearningState();
+  const completedSessions = [];
+  for (let run = 0; run < 4; run += 1) {
+    const runNow = `2026-08-21T11:0${run}:00.000Z`;
+    const created = createPracticeSession(state, {
+      ownerId, level: 3, skill: "vocabulary", idempotencyKey: `merged-${run}`, now: runNow,
+    });
+    state = created.state;
+    for (const [index, questionId] of created.session.questionIds.entries()) {
+      const question = trustedPracticeQuestion(questionId)!;
+      state = answerPracticeQuestion(state, {
+        ownerId, sessionId: created.session.id, questionId, answer: question.correctAnswer,
+        idempotencyKey: `merged-${run}-${index}`, now: runNow,
+      }).state;
+    }
+    completedSessions.push(state.practiceSessions!.find((session) => session.id === created.session.id)!);
+  }
+  state.practiceSessions = [completedSessions[2], completedSessions[3], completedSessions[0], completedSessions[1]];
+  const next = createPracticeSession(state, {
+    ownerId, level: 3, skill: "vocabulary", idempotencyKey: "merged-next", now: "2026-08-21T11:05:00.000Z",
+  });
+  const actualRecent = [...completedSessions[2].questionIds, ...completedSessions[3].questionIds];
+  assert.equal(next.session.questionIds.some((id) => actualRecent.includes(id)), false);
+});
+
+test("Reading and Listening never repeat one passage or audio source within a session", () => {
+  for (const skill of ["reading", "listening"] as const) {
+    const created = createPracticeSession(emptyLearningState(), {
+      ownerId: `guest-source-${skill}`, level: 4, skill, idempotencyKey: `source-${skill}`, now,
+    });
+    const groups = created.session.questionIds.map((id) => trustedPracticeQuestion(id)?.sourceGroupId);
+    assert.equal(groups.every(Boolean), true);
+    assert.equal(new Set(groups).size, PRACTICE_SESSION_SIZE);
+  }
+});
+
+test("Advanced Practice balances HSK 7, 8 and 9 sources", () => {
+  for (const skill of ["vocabulary", "grammar", "reading", "listening"] as const) {
+    const created = createPracticeSession(emptyLearningState(), {
+      ownerId: `guest-advanced-${skill}`, level: 7, skill, idempotencyKey: `advanced-${skill}`, now,
+    });
+    const levels = created.session.questionIds.map((id) => trustedPracticeQuestion(id)?.sourceLevel);
+    for (const level of [7, 8, 9]) assert.ok(levels.filter((value) => value === level).length >= 2);
+  }
+});
+
+test("Practice keeps the set version separate from item versions and can still restore a v2 session", () => {
+  const current = createPracticeSession(emptyLearningState(), {
+    ownerId: "guest-version-contract", level: 3, skill: "reading", idempotencyKey: "version-contract", now,
+  });
+  const itemVersions = current.session.questionIds.map((id) => trustedPracticeQuestion(id)?.contentVersion);
+  assert.ok(itemVersions.every((version) => version && version !== current.session.questionVersion));
+
+  const old = trustedPracticeQuestion("practice-v2-level-2-vocabulary-1")!;
+  const state = emptyLearningState();
+  state.practiceSessions = [{
+    id: "v2-session", ownerId: "guest-v2", idempotencyKey: "v2-start", mode: "practice",
+    standardVersion: "HSK 3.0", level: 2, skill: "vocabulary", questionVersion: old.setVersion,
+    questionIds: [old.id], answers: [], status: "in_progress", createdAt: now,
+    expiresAt: "2026-08-22T10:00:00.000Z",
+  }];
+  assert.equal(isPracticeSessionCurrent(state.practiceSessions[0]), true);
+  assert.equal(publicPracticeSession(state.practiceSessions[0]).questions[0].id, old.id);
+});
+
 test("Practice levels 2-6 use versioned questions derived from the active formal content release", () => {
   for (let level = 2; level <= 6; level += 1) {
     const questions = practiceQuestionSet(level, "vocabulary");
     assert.ok(questions.length >= 3);
     assert.ok(questions.every((question) => question.level === level));
-    assert.ok(questions.every((question) => question.id.startsWith(`practice-v2-level-${level}-vocabulary-`)));
-    assert.ok(questions.every((question) => question.contentVersion.startsWith("hskkit-practice-multiskill-v2:")));
+    assert.ok(questions.every((question) => question.id.startsWith(`practice-v3-level-${level}-vocabulary-`)));
+    assert.ok(questions.every((question) => question.setVersion.startsWith("hskkit-practice-randomized-v3:")));
     const created = createPracticeSession(emptyLearningState(), {
       ownerId: `guest-l${level}`, level, skill: "vocabulary", idempotencyKey: `create-l${level}`, now,
     });
-    assert.equal(created.session.questionVersion, questions[0].contentVersion);
-    assert.deepEqual(created.session.questionIds, questions.map((question) => question.id));
+    assert.equal(created.session.questionVersion, questions[0].setVersion);
+    assert.equal(created.session.questionIds.length, PRACTICE_SESSION_SIZE);
+    assert.ok(created.session.questionIds.every((id) => questions.some((question) => question.id === id)));
     assert.equal(JSON.stringify(publicPracticeSession(created.session)).includes("correctAnswer"), false);
   }
   const answerKeys = [2, 3, 4, 5, 6].flatMap((level) => practiceQuestionSet(level, "vocabulary").map((question) => question.correctAnswer));
@@ -241,25 +395,36 @@ test("Today-bound Practice changes only its bound daily session", () => {
   assert.ok(state.dailySessions[1].items.some((item) => item.kind === "review"));
 });
 
-test("a new wrong attempt makes an existing SRS card due now with current source", () => {
-  let first = createPracticeSession(emptyLearningState(), {
+test("a later wrong attempt makes an existing SRS card due now with current source", () => {
+  let created = createPracticeSession(emptyLearningState(), {
     ownerId: "guest:card", level: 1, skill: "vocabulary", idempotencyKey: "card-start-1", now,
   });
-  let state = first.state;
-  for (const [index, questionId] of first.session.questionIds.entries()) {
-    state = answerPracticeQuestion(state, {
-      ownerId: "guest:card", sessionId: first.session.id, questionId, answer: "a",
-      idempotencyKey: `card-correct-${index}`, now,
-    }).state;
+  let state = created.state;
+  for (let run = 0; run < 3; run += 1) {
+    if (run > 0) created = createPracticeSession(state, {
+      ownerId: "guest:card", level: 1, skill: "vocabulary", idempotencyKey: `card-start-${run + 1}`, now,
+    });
+    state = created.state;
+    for (const [index, questionId] of created.session.questionIds.entries()) {
+      const question = trustedPracticeQuestion(questionId)!;
+      state = answerPracticeQuestion(state, {
+        ownerId: "guest:card", sessionId: created.session.id, questionId, answer: question.correctAnswer,
+        idempotencyKey: `card-${run}-correct-${index}`, now,
+      }).state;
+    }
   }
   const oldCard = state.cards[0];
-  const second = createPracticeSession(state, {
-    ownerId: "guest:card", level: 1, skill: "vocabulary", idempotencyKey: "card-start-2", now,
+  const oldQuestionId = oldCard.contentId.replace(/^practice:/, "");
+  const fourth = createPracticeSession(state, {
+    ownerId: "guest:card", level: 1, skill: "vocabulary", idempotencyKey: "card-start-4", now,
   });
+  assert.ok(fourth.session.questionIds.includes(oldQuestionId));
+  const question = trustedPracticeQuestion(oldQuestionId)!;
+  const wrongAnswer = Object.keys(question.options).find((answer) => answer !== question.correctAnswer)!;
   const wrongAt = "2026-08-21T11:00:00.000Z";
-  const wrong = answerPracticeQuestion(second.state, {
-    ownerId: "guest:card", sessionId: second.session.id, questionId: second.session.questionIds[0],
-    answer: "b", idempotencyKey: "card-wrong", now: wrongAt,
+  const wrong = answerPracticeQuestion(fourth.state, {
+    ownerId: "guest:card", sessionId: fourth.session.id, questionId: oldQuestionId,
+    answer: wrongAnswer, idempotencyKey: "card-wrong", now: wrongAt,
   });
   const updated = wrong.state.cards.find((card) => card.id === oldCard.id)!;
   assert.equal(updated.dueAt, wrongAt);

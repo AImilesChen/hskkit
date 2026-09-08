@@ -13,7 +13,7 @@ export function resolvedReviewSnapshotForAttempt(attempt: Attempt): ReviewSnapsh
   if (storedOrStep7) return storedOrStep7;
 
   if (attempt.contentId.startsWith("practice:")) {
-    const question = trustedPracticeQuestionVersion(attempt.contentId.slice("practice:".length), attempt.contentVersion);
+    const question = trustedPracticeQuestionVersion(attempt.contentId.slice("practice:".length), attempt.questionVersion ?? attempt.contentVersion);
     if (question) return {
       level: question.level,
       levelBand: band(question.level, question.levelBand),

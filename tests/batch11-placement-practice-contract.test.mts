@@ -73,8 +73,8 @@ test("formal Practice publishes four skills for Levels 1–6 and one unified Adv
   for (const level of [1, 2, 3, 4, 5, 6, 7]) {
     for (const skill of PRACTICE_SKILLS) {
       const set = practiceQuestionSet(level, skill);
-      assert.ok(set.length >= 8, `Level/band ${level} ${skill} must have at least 8 formal questions`);
-      assert.equal(new Set(set.map((question) => question.contentVersion)).size, 1);
+      assert.ok(set.length >= 24, `Level/band ${level} ${skill} must have at least 24 formal questions`);
+      assert.equal(new Set(set.map((question) => question.setVersion)).size, 1);
       assert.ok(set.every((question) => question.standardVersion === "HSK 3.0" && question.sourceRef && question.qaStatus === "approved" && question.lifecycleStatus === "published"));
       if (skill === "listening") assert.ok(set.every((question) => question.audioSrc));
     }
@@ -87,11 +87,13 @@ test("formal Practice publishes four skills for Levels 1–6 and one unified Adv
 });
 
 test("Practice snapshots remain traceable and wrong Listening answers enter audio Mistakes and SRS exactly once", () => {
-  const question = practiceQuestionSet(7, "listening")[0];
-  assert.equal(trustedPracticeQuestionVersion(question.id, question.contentVersion)?.id, question.id);
-  assert.equal(trustedPracticeQuestionVersion(question.id, "retired-version"), undefined);
+  const versionProbe = practiceQuestionSet(7, "listening")[0];
+  assert.equal(trustedPracticeQuestionVersion(versionProbe.id, versionProbe.contentVersion)?.id, versionProbe.id);
+  assert.equal(trustedPracticeQuestionVersion(versionProbe.id, versionProbe.setVersion)?.id, versionProbe.id);
+  assert.equal(trustedPracticeQuestionVersion(versionProbe.id, "retired-version"), undefined);
 
   const created = createPracticeSession(emptyLearningState(), { ownerId: "batch11-practice", level: 7, skill: "listening", idempotencyKey: "start", now: NOW });
+  const question = trustedPracticeQuestionVersion(created.session.questionIds[0], created.session.questionVersion)!;
   const wrong = Object.keys(question.options).find((answer) => answer !== question.correctAnswer)!;
   const input = { ownerId: "batch11-practice", sessionId: created.session.id, questionId: question.id, answer: wrong, idempotencyKey: "answer", now: NOW };
   const answered = answerPracticeQuestion(created.state, input);
@@ -100,7 +102,7 @@ test("Practice snapshots remain traceable and wrong Listening answers enter audi
   assert.equal(replay.state.mistakes.length, 1);
   assert.equal(replay.state.cards.length, 1);
   assert.equal(replay.state.attempts[0].dimension, "audio");
-  assert.equal(replay.state.attempts[0].questionVersion, question.contentVersion);
+  assert.equal(replay.state.attempts[0].questionVersion, question.setVersion);
 });
 
 test("Practice and Placement results expose explicit create/update Planner entry points and listening playback", () => {
