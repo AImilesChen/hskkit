@@ -56,6 +56,7 @@ export default function PracticeClient({ level, skill, dailySessionId, dailyItem
   const [error, setError] = useState("");
   const [notice, setNotice] = useState("");
   const [busy, setBusy] = useState(false);
+  const [selectedAnswer, setSelectedAnswer] = useState("");
   const keys = useRef<Record<string, string>>({});
 
   useEffect(() => {
@@ -65,6 +66,7 @@ export default function PracticeClient({ level, skill, dailySessionId, dailyItem
     void json(`/api/v1/practice?${query.toString()}`)
       .then((data) => {
         setSession(data.session);
+        setSelectedAnswer("");
         if (data.session?.status === "in_progress") setIndex(Math.min(data.session.feedback.length, data.session.questions.length - 1));
       })
       .catch((cause) => { setError(cause instanceof Error ? cause.message : "PRACTICE_LOAD_FAILED"); setSession(null); });
@@ -82,17 +84,17 @@ export default function PracticeClient({ level, skill, dailySessionId, dailyItem
     setBusy(true); setError(""); setNotice("");
     try {
       const data = await post("start", { level, skill, dailySessionId, dailyItemId }, `start:${crypto.randomUUID()}`);
-      setSession(data.session); setIndex(0);
+      setSession(data.session); setIndex(0); setSelectedAnswer("");
     } catch (cause) { setError(cause instanceof Error ? cause.message : "PRACTICE_NOT_READY"); }
     finally { setBusy(false); }
   };
 
-  const answer = async (answer: string) => {
-    if (!session) return;
+  const answer = async () => {
+    if (!session || !selectedAnswer) return;
     const question = session.questions[index];
     setBusy(true); setError("");
     try {
-      const data = await post("answer", { sessionId: session.id, questionId: question.id, answer }, `answer:${session.id}:${question.id}`);
+      const data = await post("answer", { sessionId: session.id, questionId: question.id, answer: selectedAnswer }, `answer:${session.id}:${question.id}`);
       setSession(data.session);
     } catch (cause) {
       if (cause instanceof PracticeRequestError && cause.code === "PRACTICE_SESSION_EXPIRED") {
@@ -237,15 +239,20 @@ export default function PracticeClient({ level, skill, dailySessionId, dailyItem
       {question.audioSrc && <div className="mt-5 rounded-2xl border border-blue-100 bg-blue-50 p-4"><p className="mb-3 text-sm font-bold text-blue-950">Listen before answering</p><audio className="w-full" controls preload="metadata" src={question.audioSrc}>Your browser cannot play this approved audio item.</audio><p className="mt-2 text-xs text-blue-800">A playback error does not submit an answer or change Mistakes/SRS state.</p></div>}
       <h2 className="mt-5 font-serif text-2xl font-bold leading-tight text-slate-950 sm:text-3xl">{question.prompt}</h2>
       <div className="mt-6 grid gap-3">{Object.entries(question.options).map(([key, value]) => {
-        const selected = feedback?.selectedAnswer === key;
+        const selected = feedback?.selectedAnswer === key || (!feedback && selectedAnswer === key);
         const correct = feedback?.correctAnswer === key;
-        const tone = feedback ? correct ? "border-emerald-500 bg-emerald-50" : selected ? "border-red-400 bg-red-50" : "border-slate-200 bg-white" : "border-slate-200 bg-white hover:border-blue-400 hover:bg-blue-50";
-        return <button key={key} disabled={busy || Boolean(feedback)} onClick={() => void answer(key)} className={`min-h-[64px] rounded-2xl border-2 px-4 py-3 text-left font-semibold text-slate-900 ${tone}`}><span className="mr-3 inline-flex h-8 w-8 items-center justify-center rounded-full bg-slate-100 uppercase">{key}</span>{value}</button>;
+        const tone = feedback ? correct ? "border-emerald-500 bg-emerald-50" : selected ? "border-red-400 bg-red-50" : "border-slate-200 bg-white" : selected ? "border-blue-600 bg-blue-50" : "border-slate-200 bg-white hover:border-blue-400 hover:bg-blue-50";
+        return <button key={key} disabled={busy || Boolean(feedback)} onClick={() => setSelectedAnswer(key)} className={`min-h-[64px] rounded-2xl border-2 px-4 py-3 text-left font-semibold text-slate-900 ${tone}`}><span className="mr-3 inline-flex h-8 w-8 items-center justify-center rounded-full bg-slate-100 uppercase">{key}</span>{value}</button>;
       })}</div>
       {feedback && <div className={`mt-6 rounded-2xl p-5 ${feedback.correct ? "bg-emerald-50 text-emerald-950" : "bg-amber-50 text-amber-950"}`} role="status"><h3 className="font-bold">{feedback.correct ? "Correct" : `Correct answer: ${feedback.correctAnswerText}`}</h3><p className="mt-2 leading-6">{feedback.explanation}</p><button className="mt-3 text-sm font-bold underline" disabled={busy} onClick={() => void report()}>Report this question</button></div>}
       {notice && <p className="mt-4 rounded-xl bg-blue-50 p-4 text-sm text-blue-900" role="status">{notice}</p>}
       {error && <Alert text={error} />}
-      <div className="mt-7 flex items-center justify-between gap-3"><button className="btn secondary" disabled={index === 0 || busy} onClick={() => { setIndex((value) => value - 1); setNotice(""); }}>Back</button>{feedback && index < session.questions.length - 1 && <button className="btn" onClick={() => { setIndex((value) => value + 1); setNotice(""); }}>Next</button>}</div>
+      <div className="mt-7 flex flex-wrap items-center justify-between gap-3">
+        <button className="btn btn-secondary min-h-11 disabled:cursor-not-allowed disabled:opacity-50" disabled={index === 0 || busy} onClick={() => { setSelectedAnswer(""); setIndex((value) => value - 1); setNotice(""); }} type="button">Back</button>
+        {feedback && index < session.questions.length - 1
+          ? <button className="btn btn-primary min-h-11" onClick={() => { setSelectedAnswer(""); setIndex((value) => value + 1); setNotice(""); }} type="button">Next question</button>
+          : !feedback && <button className="btn btn-primary min-h-11 disabled:cursor-not-allowed disabled:opacity-50" disabled={busy || !selectedAnswer} onClick={() => void answer()} type="button">{busy ? "Checking…" : "Check answer"}</button>}
+      </div>
     </section>
     <p className="mt-5 text-sm leading-6 text-slate-500">Answers save to the server after each response. Refreshing restores this session; repeated requests do not duplicate attempts, Mistakes, or SRS cards.</p>
   </main>;
