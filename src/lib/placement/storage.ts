@@ -2,6 +2,7 @@ import { getCloudflareContext } from "@opennextjs/cloudflare";
 import type { LearningState, PlacementAnswer, PlacementResult, PlacementSession } from "../learning/domain";
 import { loadState, saveState } from "../learning/storage";
 import { recordLearningTask, type LearningEngagementActivity } from "../engagement/storage";
+import { diffPlacementAnswers } from "./storage-diff";
 
 export type PlacementDbMode = "legacy" | "shadow" | "primary";
 export type PlacementState = {
@@ -115,13 +116,22 @@ function changedById<T extends { id: string }>(before: T[], after: T[]) {
   return after.filter((value) => prior.get(value.id) !== JSON.stringify(value));
 }
 
-function sessionStatements(db: Awaited<ReturnType<typeof placementDb>>, session: PlacementSession, now: string) {
+function sessionStatements(
+  db: Awaited<ReturnType<typeof placementDb>>,
+  session: PlacementSession,
+  now: string,
+  previous?: PlacementSession,
+) {
   const statements: Array<ReturnType<typeof db.prepare>> = [
     db.prepare("INSERT INTO placement_sessions(id,owner_id,idempotency_key,question_version,question_ids_json,status,created_at,expires_at,submitted_at,result_id,adaptive_complete,adaptive_min_questions,adaptive_max_questions,updated_at) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?) ON CONFLICT(id) DO UPDATE SET owner_id=excluded.owner_id,idempotency_key=excluded.idempotency_key,question_version=excluded.question_version,question_ids_json=excluded.question_ids_json,status=excluded.status,expires_at=excluded.expires_at,submitted_at=excluded.submitted_at,result_id=excluded.result_id,adaptive_complete=excluded.adaptive_complete,adaptive_min_questions=excluded.adaptive_min_questions,adaptive_max_questions=excluded.adaptive_max_questions,updated_at=excluded.updated_at")
       .bind(session.id, session.ownerId, session.idempotencyKey, session.questionVersion, JSON.stringify(session.questionIds), session.status, session.createdAt, session.expiresAt ?? session.createdAt, session.submittedAt ?? null, session.resultId ?? null, session.adaptiveComplete === undefined ? null : session.adaptiveComplete ? 1 : 0, session.adaptiveMinQuestions ?? null, session.adaptiveMaxQuestions ?? null, now),
-    db.prepare("DELETE FROM placement_answers WHERE session_id=?").bind(session.id),
   ];
-  for (const answer of session.answers) {
+  const priorAnswers = previous?.answers ?? [];
+  const { removedQuestionIds, changedAnswers } = diffPlacementAnswers(priorAnswers, session.answers);
+  for (const questionId of removedQuestionIds) {
+    statements.push(db.prepare("DELETE FROM placement_answers WHERE session_id=? AND question_id=?").bind(session.id, questionId));
+  }
+  for (const answer of changedAnswers) {
     statements.push(db.prepare("INSERT INTO placement_answers(session_id,question_id,answer,idempotency_key,answered_at) VALUES(?,?,?,?,?) ON CONFLICT(session_id,question_id) DO UPDATE SET answer=excluded.answer,idempotency_key=excluded.idempotency_key,answered_at=excluded.answered_at")
       .bind(session.id, answer.questionId, answer.answer, answer.idempotencyKey, answer.answeredAt));
   }
@@ -170,7 +180,10 @@ async function saveNormalizedPlacement(ownerId: string, before: LearningState, a
   ];
   const afterSessionIds = new Set(afterSessions.map((session) => session.id));
   for (const session of beforeSessions) if (!afterSessionIds.has(session.id)) statements.push(db.prepare("DELETE FROM placement_sessions WHERE id=? AND owner_id=?").bind(session.id, ownerId));
-  for (const session of changedById(beforeSessions, afterSessions)) statements.push(...sessionStatements(db, session, now));
+  const beforeSessionById = new Map(beforeSessions.map((session) => [session.id, session]));
+  for (const session of changedById(beforeSessions, afterSessions)) {
+    statements.push(...sessionStatements(db, session, now, beforeSessionById.get(session.id)));
+  }
   for (const result of changedById(beforeResults, afterResults)) {
     statements.push(db.prepare("INSERT INTO placement_results(id,owner_id,session_id,submit_idempotency_key,result_json,created_at) VALUES(?,?,?,?,?,?) ON CONFLICT(id) DO UPDATE SET owner_id=excluded.owner_id,session_id=excluded.session_id,submit_idempotency_key=excluded.submit_idempotency_key,result_json=excluded.result_json")
       .bind(result.id, ownerId, result.sessionId, result.submitIdempotencyKey, JSON.stringify(result), result.createdAt));

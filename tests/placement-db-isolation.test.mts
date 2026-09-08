@@ -58,6 +58,13 @@ test("Placement writes preserve CAS and idempotency contracts", () => {
   assert.match(repository, /rollback-safe legacy copy[\s\S]*await syncLegacyPlacementProjection[\s\S]*if \(changed\) await saveNormalizedPlacement/);
 });
 
+test("Answer saves update only the changed answer instead of rewriting the whole session", () => {
+  const repository = read("src/lib/placement/storage.ts");
+  assert.doesNotMatch(repository, /DELETE FROM placement_answers WHERE session_id=\?"\)\.bind\(session\.id\)/);
+  assert.match(repository, /DELETE FROM placement_answers WHERE session_id=\? AND question_id=\?/);
+  assert.match(repository, /changedAnswers/);
+});
+
 test("Account export, merge and erasure explicitly include isolated Placement data", () => {
   const account = read("src/lib/account/storage.ts");
   assert.match(account, /loadPlacementState/);

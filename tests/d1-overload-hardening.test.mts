@@ -38,6 +38,14 @@ test("hot catalog lookups use release-scoped indexes and never scan hanzi with i
   assert.doesNotMatch(source, /WHERE i\.release_id = \? AND i\.id IN[\s\S]{0,160}ORDER BY i\.sort_level/);
 });
 
+test("current housekeeping Top SQL has partial indexes for expiry and cleanup scans", () => {
+  const migration = read("migrations/0040_current_top_sql_indexes.sql");
+  assert.match(migration, /idx_commercial_export_jobs_expiry_cleanup[\s\S]*ON commercial_export_jobs\(expires_at\)[\s\S]*WHERE state IN \('queued','generating','ready','failed'\)/);
+  assert.match(migration, /idx_commercial_export_jobs_object_cleanup[\s\S]*ON commercial_export_jobs\(updated_at\)[\s\S]*WHERE state IN \('expired','revoked'\) AND object_key IS NOT NULL/);
+  assert.match(migration, /idx_digital_product_entitlements_active_expiry[\s\S]*ON digital_product_entitlements\(expires_at\)[\s\S]*WHERE status='active'/);
+  assert.match(migration, /idx_pack_purchases_active_expiry[\s\S]*ON pack_purchases\(expires_at\)[\s\S]*WHERE status='active'/);
+});
+
 test("catalog retry is bounded to explicit D1 overload errors", async () => {
   const { withCatalogD1ReadRetry } = await import("../src/lib/content/catalog-retry.ts");
   let attempts = 0;
