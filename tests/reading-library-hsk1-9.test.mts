@@ -13,20 +13,23 @@ type RawPassage = {
   questions: RawQuestion[];
 };
 
-test("reading library publishes 10 verified passages and 30 scored questions for every HSK 1–9 level", () => {
+test("reading library publishes the approved V2 passage scale for every HSK 1–9 level", () => {
   assert.equal(existsSync(libraryPath), true, "reading-library.json must exist");
   const bank = JSON.parse(readFileSync(libraryPath, "utf8")) as {
     version: string;
     passages: RawPassage[];
   };
-  assert.equal(bank.version, "hskkit-reading-library-v1");
-  assert.equal(bank.passages.length, 90);
-  assert.equal(new Set(bank.passages.map((passage) => passage.id)).size, 90);
-  assert.equal(new Set(bank.passages.map((passage) => passage.slug)).size, 90);
+  assert.equal(bank.version, "hskkit-reading-library-v2");
+  assert.equal(bank.passages.length, 180);
+  assert.equal(new Set(bank.passages.map((passage) => passage.id)).size, 180);
+  assert.equal(new Set(bank.passages.map((passage) => passage.slug)).size, 180);
   for (let level = 1; level <= 9; level += 1) {
     const passages = bank.passages.filter((passage) => passage.level === level);
-    assert.equal(passages.length, 10, `HSK ${level} passage count`);
-    assert.equal(passages.flatMap((passage) => passage.questions).length, 30, `HSK ${level} question count`);
+    const expectedPassages = level <= 6 ? 24 : 12;
+    assert.equal(passages.length, expectedPassages, `HSK ${level} passage count`);
+    assert.equal(new Set(passages.map((passage) => passage.title)).size, expectedPassages, `HSK ${level} independent title count`);
+    assert.equal(new Set(passages.map((passage) => passage.translation)).size, expectedPassages, `HSK ${level} independent translation count`);
+    assert.equal(passages.flatMap((passage) => passage.questions).length, expectedPassages * 3, `HSK ${level} question count`);
     assert.ok(passages.every((passage) => passage.levelBand === (level >= 7 ? "7-9" : String(level))));
   }
 });
@@ -36,14 +39,14 @@ test("every reading item has stable publication metadata and internally consiste
   const bank = JSON.parse(readFileSync(libraryPath, "utf8")) as { passages: RawPassage[] };
   const exerciseIds = new Set<string>();
   for (const passage of bank.passages) {
-    assert.match(passage.id, /^reading-library-v1-hsk[1-9]-\d{2}$/);
+    assert.match(passage.id, /^reading-library-v2-hsk[1-9]-\d{2}$/);
     assert.match(passage.slug, /^hsk[1-9]-reading-\d{2}$/);
     assert.ok(passage.title.length >= 4);
     assert.ok(passage.passage.length >= 12);
     assert.ok(passage.translation.length >= 12);
     assert.ok(passage.vocabulary.length >= 3);
-    assert.equal(passage.sourceRef, "HSKKit-original-editorial-reading-v1");
-    assert.equal(passage.sourceLicense, "HSKKit-original-editorial-v1");
+    assert.equal(passage.sourceRef, "HSKKit-original-editorial-reading-v2");
+    assert.equal(passage.sourceLicense, "HSKKit-original-editorial-v2");
     assert.equal(passage.authorizationStatus, "authorized");
     assert.equal(passage.qaStatus, "approved");
     assert.equal(passage.lifecycleStatus, "published");
@@ -60,7 +63,7 @@ test("every reading item has stable publication metadata and internally consiste
       assert.ok(question.explanation.includes(question.options[question.correctAnswer]), `${passage.slug} q${index + 1}`);
     }
   }
-  assert.equal(exerciseIds.size, 270);
+  assert.equal(exerciseIds.size, 540);
 });
 
 test("10/20 reading sessions are deterministic, unique and stay inside the selected level", async () => {

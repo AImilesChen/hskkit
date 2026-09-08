@@ -22,7 +22,7 @@ export interface ListeningLibrarySession {
 }
 
 type RawQuestion = {
-  kind: Step7ContentKind;
+  kind: string;
   prompt: string;
   options: Record<string, string>;
   correctAnswer: string;
@@ -50,14 +50,15 @@ const bank = bankJson as { version: string; label: string; coverageNotice: strin
 const QUESTIONS: ListeningLibraryQuestion[] = bank.groups.flatMap((group) => group.questions.map((raw, questionIndex) => {
   const number = questionIndex + 1;
   const slug = `${group.id}-q${number}`;
-  const id = `listening-library-v1-${group.id}-q${number}`;
+  const id = `${bank.version.replace(/^hskkit-/, "")}-${group.id}-q${number}`;
   const asset = publishedListeningAudioAsset(group.id);
   if (!asset) throw new Error(`LISTENING_AUDIO_ASSET_UNAVAILABLE:${group.id}`);
+  const exerciseKind: Step7ContentKind = raw.kind === "tone" ? "tone" : "discrimination";
   const exercise: Step7Exercise = {
     id,
     contentId: `listening:${slug}`,
     contentVersion: `${bank.version}:${group.id}:q${number}`,
-    kind: raw.kind,
+    kind: exerciseKind,
     prompt: raw.prompt,
     options: raw.options,
     correctAnswer: raw.correctAnswer,
@@ -70,13 +71,13 @@ const QUESTIONS: ListeningLibraryQuestion[] = bank.groups.flatMap((group) => gro
     levelBand: group.levelBand,
     contentVersion: exercise.contentVersion,
     title: group.level === 1 ? `HSK 1 single-syllable tone recognition · Set ${group.id.slice(-3)}` : `${group.title} · Question ${number}`,
-    kind: raw.kind === "tone" ? "tone" : "discrimination",
+    kind: exerciseKind,
     trainingType: group.trainingType,
     register: group.register,
     voiceText: group.voiceText,
     audioSrc: asset.src,
     audioAsset: publicAudioAsset(asset),
-    instruction: group.level <= 2 ? "Play the synthesized listening audio, then identify the sound you hear." : "Play the synthesized listening audio, then answer from the key term and context.",
+    instruction: group.level <= 2 ? "Play the synthesized listening audio, then identify the sound or short message you hear." : "Play the synthesized listening audio, then answer from the recording's details and context.",
     guidance: "Playback must complete before an answer can be saved. Audio failure never changes mastery or usage.",
     exercise,
     sourceRef: group.sourceRef,

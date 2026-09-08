@@ -50,8 +50,8 @@ test("reading workspace separates session setup from authentic product proof", (
 });
 
 test("reading level choice, proof, and actions stay truthful", () => {
-  assert.match(experience, /value: "90", label: "verified passages"/);
-  assert.match(experience, /value: "270", label: "scored questions"/);
+  assert.match(experience, /value: "180", label: "verified passages"/);
+  assert.match(experience, /value: "540", label: "scored questions"/);
   assert.match(experience, /value: "9", label: "independent HSK levels"/);
   assert.match(experience, /value: "Immediate", label: "feedback & explanations"/);
   assert.match(experience, /active\.passages/);
@@ -62,7 +62,7 @@ test("reading level choice, proof, and actions stay truthful", () => {
 
   for (let level = 1; level <= 9; level += 1) {
     const passages = library.passages.filter((passage: { level: number }) => passage.level === level);
-    assert.equal(passages.length, 10);
+    assert.equal(passages.length, level <= 6 ? 24 : 12);
     assert.ok(passages.every((passage: { passage: string; questions: unknown[] }) => passage.passage.length > 0 && passage.questions.length === 3));
   }
 });

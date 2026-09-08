@@ -8,8 +8,9 @@ import hsk5QuestionBank from "../data/hsk5.json" with { type: "json" };
 import { LISTENING_LIBRARY_QUESTIONS } from "../learning/listening-library.ts";
 import { READING_LIBRARY_QUESTIONS } from "../learning/reading-library.ts";
 import practiceAudioManifest from "./audio-assets.json" with { type: "json" };
+import practiceV3History from "./practice-v3-history.json" with { type: "json" };
 
-export const PRACTICE_VERSION = "hskkit-practice-randomized-v3";
+export const PRACTICE_VERSION = "hskkit-practice-authored-v4";
 const LEGACY_MULTISKILL_VERSION = "hskkit-practice-multiskill-v2";
 export const PRACTICE_SESSION_SIZE = 8;
 export const PRACTICE_SKILLS = ["vocabulary", "grammar", "reading", "listening"] as const;
@@ -297,33 +298,59 @@ function v3VocabularyQuestions(level: number): PracticeQuestion[] {
   if (unique.length < 24) return [];
   return unique.slice(0, 24).map(({ word, sourceLevel }, index) => {
     const distractors = [unique[(index + 5) % unique.length].word, unique[(index + 11) % unique.length].word, unique[(index + 17) % unique.length].word];
-    const arranged = rotateOptions([word.hanzi, ...distractors.map((item) => item.hanzi)], `v3:${word.logicalId}:${word.contentVersion}`);
+    const family = index % 5;
+    const values = family === 1 ? [word.meaning, ...distractors.map((item) => item.meaning)] : family === 3 ? [word.pinyin, ...distractors.map((item) => item.pinyin)] : [word.hanzi, ...distractors.map((item) => item.hanzi)];
+    const arranged = rotateOptions(values, `v4:${word.logicalId}:${word.contentVersion}:${family}`);
+    const prompts = [`Which Chinese entry means “${word.meaning}”?`, `What does “${word.hanzi}” mean?`, `Which Chinese entry is pronounced “${word.pinyin}”?`, `Which pinyin matches “${word.hanzi}”?`, `Which entry matches both “${word.pinyin}” and “${word.meaning}”?`];
+    const tags = ["meaning-to-hanzi", "hanzi-to-meaning", "pinyin-to-hanzi", "hanzi-to-pinyin", "combined-recognition"];
     return {
       ...v3Base(level, "vocabulary", `${PRACTICE_VERSION}:word:${word.logicalId}:${word.contentVersion}`, sourceLevel),
-      id: `practice-v3-${bandLabel(level)}-vocabulary-${itemDigest(`${sourceLevel}:${word.logicalId}`)}`,
-      prompt: `Which Chinese entry means “${word.meaning}”?`,
+      id: `practice-v4-${bandLabel(level)}-vocabulary-${itemDigest(`${sourceLevel}:${word.logicalId}:${family}`)}`,
+      prompt: prompts[family],
       ...arranged,
       explanation: `${word.hanzi} (${word.pinyin}) means “${word.meaning}.”`,
-      weaknessTag: `${bandLabel(level)}-vocabulary`,
+      weaknessTag: `${bandLabel(level)}-vocabulary-${tags[family]}`,
       sourceRef: `${runtimeIndex.releaseId}:${word.id}`,
       sourceUrl: "https://hskkit.com/content-license",
     };
   });
 }
 
-function generatedGrammarQuestion(level: number, sentence: string, index: number, sourceLevel = level): PracticeQuestion {
-  const pieces = sentence.replace(/[。？！]/g, "").split("");
-  const wrong = [pieces.slice().reverse().join("") + "。", pieces.slice(1).join("") + pieces[0] + "。", pieces.filter((_, i) => i % 2 === 0).join("") + pieces.filter((_, i) => i % 2 === 1).join("") + "。"];
-  const id = `practice-v3-${bandLabel(level)}-grammar-${itemDigest(`${sourceLevel}:${sentence}`)}`;
-  const arranged = rotateOptions([sentence, ...wrong], id);
+const GRAMMAR_MARKERS: Record<number, string[]> = {
+  1: ["是", "有", "不", "在", "没有", "请", "吗", "上"],
+  2: ["比", "正在", "已经", "越来越", "因为", "每天", "又", "可以"],
+  3: ["把", "虽然", "只要", "除了", "是", "一边", "让", "以后"],
+  4: ["无论", "与其", "不仅", "即使", "只有", "之所以", "随着", "由"],
+  5: ["既然", "尽管", "取决于", "一旦", "并非", "应当", "经过", "相比"],
+  6: ["无论", "与其", "哪怕", "之所以", "只有", "而言", "一方面", "未必", "除非", "不仅", "即便", "凡是", "鉴于", "所谓"],
+  7: ["固然", "与其", "若非", "诚然", "之所以", "不论", "实则", "即便", "唯有", "倘若", "既", "凡", "除非", "虽说", "从"],
+};
+
+const GRAMMAR_EXTRA_TARGETS: Record<number, string[]> = {
+  1: ["什么", "去"],
+  6: ["面对", "有待", "相比", "反而", "就", "倘若", "既", "并不能", "与"],
+  7: ["越", "倘若", "实则", "与其", "固然", "唯有", "并非", "即便"],
+};
+
+function reviewedGrammarQuestion(level: number, sentence: string, index: number, sourceLevel = level): PracticeQuestion {
+  const markers = GRAMMAR_MARKERS[level];
+  const candidates = [...(GRAMMAR_EXTRA_TARGETS[level] ?? []), ...markers].sort((left, right) => right.length - left.length);
+  const target = candidates.find((marker) => sentence.includes(marker));
+  if (!target) throw new Error(`REVIEWED_GRAMMAR_TARGET_MISSING:${level}:${sentence}`);
+  const distractors = [...markers.slice(index + 1), ...markers.slice(0, index + 1), ...(GRAMMAR_EXTRA_TARGETS[level] ?? [])].filter((marker) => marker !== target).slice(0, 3);
+  const context = sentence.includes(target) ? sentence.replace(target, "____") : `____，${sentence}`;
+  const prompts = ["Choose the expression that completes the sentence naturally.", "Which connector best preserves the sentence logic?", "Complete the sentence with the grammatically appropriate form.", "Select the expression that fits this context."];
+  const id = `practice-v4-${bandLabel(level)}-grammar-${itemDigest(`${sourceLevel}:${sentence}:${target}`)}`;
+  const arranged = rotateOptions([target, ...distractors], id);
   return {
     ...v3Base(level, "grammar", `${PRACTICE_VERSION}:grammar:${itemDigest(sentence)}`, sourceLevel),
     id,
-    prompt: "Choose the sentence with natural Chinese word order.",
+    prompt: prompts[index % prompts.length],
+    context,
     ...arranged,
-    explanation: `The natural order is: ${sentence}`,
-    weaknessTag: `${bandLabel(level)}-grammar-order`,
-    sourceRef: `hskkit-practice-v3-editorial:grammar:${bandLabel(level)}:${index + 1}`,
+    explanation: `${target} completes the sentence naturally: ${sentence}`,
+    weaknessTag: `${bandLabel(level)}-grammar-context-${index % prompts.length + 1}`,
+    sourceRef: `hskkit-reviewed-grammar-v4:${bandLabel(level)}:${index + 1}`,
     sourceUrl: "https://hskkit.com/content-license",
   };
 }
@@ -340,7 +367,7 @@ function v3GrammarQuestions(level: number): PracticeQuestion[] {
     }));
     return {
       ...v3Base(level, "grammar", `${PRACTICE_VERSION}:authored:${question.id}:${sourceDigest}`),
-      id: `practice-v3-${bandLabel(level)}-grammar-${question.id}`,
+      id: `practice-v4-${bandLabel(level)}-grammar-${question.id}`,
       prompt: question.question_en?.trim() || "Choose the grammatically correct answer.",
       context: question.question_cn,
       options,
@@ -354,7 +381,7 @@ function v3GrammarQuestions(level: number): PracticeQuestion[] {
   const editorial = [
     ...BANDS[level].grammar.map((sentence) => ({ sentence, sourceLevel: level })),
     ...(GRAMMAR_SUPPLEMENTS[level] ?? []).map((entry) => ({ sentence: entry.sentence, sourceLevel: entry.sourceLevel ?? level })),
-  ].map((entry, index) => generatedGrammarQuestion(level, entry.sentence, index, entry.sourceLevel));
+  ].map((entry, index) => reviewedGrammarQuestion(level, entry.sentence, index, entry.sourceLevel));
   return [...authored, ...editorial].slice(0, Math.max(24, authored.length + editorial.length));
 }
 
@@ -362,7 +389,7 @@ function v3ReadingQuestions(level: number): PracticeQuestion[] {
   const sources = READING_LIBRARY_QUESTIONS.filter((question) => level === 7 ? question.level >= 7 : question.level === level);
   return sources.map((question) => ({
     ...v3Base(level, "reading", question.contentVersion, question.level),
-    id: `practice-v3-${bandLabel(level)}-reading-${question.id}`,
+    id: `practice-v4-${bandLabel(level)}-reading-${question.id}`,
     sourceGroupId: question.passageId,
     prompt: question.exercise.prompt,
     context: question.passage,
@@ -379,7 +406,7 @@ function v3ListeningQuestions(level: number): PracticeQuestion[] {
   const sources = LISTENING_LIBRARY_QUESTIONS.filter((question) => level === 7 ? question.level >= 7 : question.level === level);
   return sources.map((question) => ({
     ...v3Base(level, "listening", question.contentVersion, question.level),
-    id: `practice-v3-${bandLabel(level)}-listening-${question.id}`,
+    id: `practice-v4-${bandLabel(level)}-listening-${question.id}`,
     sourceGroupId: question.audioSrc,
     prompt: question.exercise.prompt,
     audioSrc: question.audioSrc,
@@ -441,7 +468,7 @@ const LEGACY_PRACTICE_QUESTIONS = [...LEGACY_LEVEL_ONE, ...[2, 3, 4, 5, 6].flatM
 
 export const WITHDRAWN_PRACTICE_QUESTION_ID = "practice-v1-l1-vocab-retired-sample";
 const WITHDRAWN_SNAPSHOT: PracticeQuestion = { ...base(1, "vocabulary"), id: WITHDRAWN_PRACTICE_QUESTION_ID, contentVersion: "hskkit-practice-l1-vocabulary-v1", setVersion: "hskkit-practice-l1-vocabulary-v1", prompt: "Retired sample", options: { a: "甲", b: "乙", c: "丙", d: "丁" }, correctAnswer: "a", explanation: "Retained only for historical audit.", weaknessTag: "retired", sourceRef: "hskkit-retired-sample", sourceUrl: "https://hskkit.com/content-license", lifecycleStatus: "withdrawn" };
-const HISTORY = [...ALL_V3_QUESTIONS, ...ALL_V2_QUESTIONS, ...LEGACY_PRACTICE_QUESTIONS, WITHDRAWN_SNAPSHOT];
+const HISTORY = [...ALL_V3_QUESTIONS, ...(practiceV3History as PracticeQuestion[]), ...ALL_V2_QUESTIONS, ...LEGACY_PRACTICE_QUESTIONS, WITHDRAWN_SNAPSHOT];
 
 export function practiceQuestionLifecycle(id: string) { return HISTORY.find((question) => question.id === id)?.lifecycleStatus; }
 export function practiceQuestionSet(level: number, skill: string) { return PRACTICE_QUESTIONS.filter((question) => question.level === level && question.skill === skill && question.lifecycleStatus === "published"); }

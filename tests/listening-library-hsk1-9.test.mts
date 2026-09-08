@@ -16,7 +16,7 @@ const root = new URL("..", import.meta.url);
 const expectedAudio = [40, 40, 30, 30, 30, 30, 24, 24, 24];
 const expectedQuestions = [40, 40, 60, 60, 60, 60, 72, 72, 72];
 
-test("HSKKit listening library publishes the approved HSK 1–9 V1 scale", () => {
+test("HSKKit listening library publishes the approved HSK 1–9 V2 scale", () => {
   assert.equal(LISTENING_LIBRARY_COUNTS.audioGroups, 272);
   assert.equal(LISTENING_LIBRARY_COUNTS.questions, 536);
   assert.deepEqual(LISTENING_LIBRARY_COUNTS.byLevel.map((row) => row.audioGroups), expectedAudio);
@@ -34,23 +34,25 @@ test("every scored question has stable truth, approved audio, source and publica
   assert.equal(new Set(all.map((question) => question.id)).size, 536);
   assert.equal(new Set(all.map((question) => question.slug)).size, 536);
   for (const question of all) {
-    assert.match(question.id, /^listening-library-v1-hsk[1-9]-/);
-    assert.match(question.contentVersion, /^hskkit-listening-library-v1:/);
-    assert.match(question.audioSrc, /^\/audio\/listening-library\/hsk[1-9]-\d{3}\.mp3$/);
+    assert.match(question.id, /^listening-library-v2-hsk[1-9]-/);
+    assert.match(question.contentVersion, /^hskkit-listening-library-v2:/);
+    assert.match(question.audioSrc, /^\/audio\/listening-library\/v2\/hsk[1-9]-\d{3}\.mp3$/);
     assert.equal(question.authorizationStatus, "authorized");
     assert.equal(question.qaStatus, "approved");
     assert.equal(question.lifecycleStatus, "published");
     assert.equal(question.sourceRef.length > 10, true);
     assert.equal(question.voiceText.length > 0, true);
     assert.equal(Object.hasOwn(question.exercise.options ?? {}, question.exercise.correctAnswer), true);
+    assert.ok(Object.values(question.exercise.options ?? {}).every((option) => option.trim().length > 0));
     assert.deepEqual(listeningQuestionBySlug(question.slug), question);
   }
 });
 
-test("all 272 formal audio files pass checksum, duration, authorization and technical QA", () => {
+test("all 272 disclosed synthesized audio files pass checksum, duration, authorization and technical QA", () => {
   assert.equal(audioManifest.assets.length, 272);
   assert.equal(new Set(audioManifest.assets.map((asset) => asset.id)).size, 272);
   for (const asset of audioManifest.assets) {
+    assert.match(asset.storageKey, /^audio\/listening-library\/v2\/hsk[1-9]-\d{3}\.mp3$/);
     const path = new URL(`../public/${asset.storageKey}`, import.meta.url);
     assert.equal(existsSync(path), true, asset.storageKey);
     assert.ok(statSync(path).size > 1_000, asset.storageKey);

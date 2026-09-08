@@ -187,8 +187,8 @@ test("Practice levels 2-6 use versioned questions derived from the active formal
     const questions = practiceQuestionSet(level, "vocabulary");
     assert.ok(questions.length >= 3);
     assert.ok(questions.every((question) => question.level === level));
-    assert.ok(questions.every((question) => question.id.startsWith(`practice-v3-level-${level}-vocabulary-`)));
-    assert.ok(questions.every((question) => question.setVersion.startsWith("hskkit-practice-randomized-v3:")));
+    assert.ok(questions.every((question) => question.id.startsWith(`practice-v4-level-${level}-vocabulary-`)));
+    assert.ok(questions.every((question) => question.setVersion.startsWith("hskkit-practice-authored-v4:")));
     const created = createPracticeSession(emptyLearningState(), {
       ownerId: `guest-l${level}`, level, skill: "vocabulary", idempotencyKey: `create-l${level}`, now,
     });

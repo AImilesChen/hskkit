@@ -37,8 +37,8 @@ function ReadingIcon({ name, className }: { name: IconName; className?: string }
 }
 
 const PROOF = [
-  { icon: "book" as const, value: "90", label: "verified passages" },
-  { icon: "question" as const, value: "270", label: "scored questions" },
+  { icon: "book" as const, value: "180", label: "verified passages" },
+  { icon: "question" as const, value: "540", label: "scored questions" },
   { icon: "levels" as const, value: "9", label: "independent HSK levels" },
   { icon: "feedback" as const, value: "Immediate", label: "feedback & explanations" },
 ];

@@ -21,7 +21,7 @@ function start(ownerId = "batch4-guest") {
 
 test("Practice Session freezes the question version, exposes an expiry, and resumes only while active", () => {
   const created = start();
-  assert.equal(created.session.questionVersion, PRACTICE_QUESTIONS[0].contentVersion);
+  assert.equal(created.session.questionVersion, PRACTICE_QUESTIONS[0].setVersion);
   assert.equal(typeof created.session.expiresAt, "string");
   assert.equal(resumePracticeSession(created.state, "batch4-guest", "2026-08-21T12:00:00.000Z")?.id, created.session.id);
   assert.equal(resumePracticeSession(created.state, "batch4-guest", "2026-08-22T00:00:01.000Z"), undefined);

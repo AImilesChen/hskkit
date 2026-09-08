@@ -28,7 +28,7 @@ export interface GrammarLesson {
   relatedReadingSlug: string;
   exercise: Step7Exercise;
 }
-export type ReadingQuestionType = "detail" | "sequence" | "purpose" | "inference" | "argument" | "critical-evaluation" | "reason" | "condition" | "contrast" | "recommendation" | "comparison" | "claim" | "method";
+export type ReadingQuestionType = "detail" | "location" | "participant" | "destination" | "note-taking" | "time" | "policy-detail" | "sequence" | "purpose" | "inference" | "argument" | "critical-evaluation" | "reason" | "condition" | "contrast" | "recommendation" | "comparison" | "claim" | "method";
 export type ReadingDifficulty = "easy" | "medium" | "hard" | "advanced";
 export interface ReadingLesson {
   slug: string;
