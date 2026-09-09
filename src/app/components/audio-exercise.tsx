@@ -107,13 +107,22 @@ export default function AudioExerciseClient({ exercises, initialMode, dailySessi
       setError("We couldn't save this answer. Your mastery was not advanced; retry with the same option.");
       return;
     }
-    const payload = await response.json() as { feedback?: { correct?: boolean; correctAnswerText?: string } };
+    const payload = await response.json() as {
+      feedback?: { correct?: boolean; correctAnswerText?: string };
+      revision?: number;
+      session?: { id: string; items: Array<{ id: string; kind?: string; status: string }> };
+    };
     if (typeof payload.feedback?.correct !== "boolean" || !payload.feedback.correctAnswerText) {
       setError("The answer was saved, but feedback could not be loaded. Return to Today to continue.");
       return;
     }
     delete keys.current[mode];
-    if (dailySessionId && dailyItemId) sessionStorage.setItem(todayCompletionProofKey(dailySessionId, dailyItemId), "armed");
+    if (dailySessionId && dailyItemId) sessionStorage.setItem(todayCompletionProofKey(dailySessionId, dailyItemId), JSON.stringify({
+      dailySessionId,
+      dailyItemId,
+      revision: payload.revision ?? 0,
+      summaryComplete: payload.session?.items.some((item) => item.kind === "summary" && item.status === "completed") ?? false,
+    }));
     setSaved((current) => ({ ...current, [mode]: { answer: letter, correct: payload.feedback!.correct!, correctAnswerText: payload.feedback!.correctAnswerText! } }));
   }
 

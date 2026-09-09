@@ -98,7 +98,17 @@ export default function PracticeClient({ level, skill, dailySessionId, dailyItem
     setBusy(true); setError("");
     try {
       const data = await post("answer", { sessionId: session.id, questionId: question.id, answer: selectedAnswer }, `answer:${session.id}:${question.id}`);
-      if (data.session?.status === "completed" && dailySessionId && dailyItemId) sessionStorage.setItem(todayCompletionProofKey(dailySessionId, dailyItemId), "armed");
+      if (data.session?.status === "completed" && dailySessionId && dailyItemId) {
+        const proof = data.dailyCompletion;
+        if (proof?.dailySessionId === dailySessionId && proof.dailyItemId === dailyItemId && typeof proof.revision === "number") {
+          sessionStorage.setItem(todayCompletionProofKey(dailySessionId, dailyItemId), JSON.stringify({
+            dailySessionId,
+            dailyItemId,
+            revision: proof.revision,
+            summaryComplete: proof.summaryComplete === true,
+          }));
+        }
+      }
       setSession(data.session);
     } catch (cause) {
       if (cause instanceof PracticeRequestError && cause.code === "PRACTICE_SESSION_EXPIRED") {

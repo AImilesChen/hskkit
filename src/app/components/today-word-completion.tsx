@@ -14,10 +14,16 @@ export default function TodayWordCompletion({ assetId, dailySessionId, dailyItem
     setError("");
     try {
       const stateResponse = await fetch(`/api/v1/learning?tzOffset=${new Date().getTimezoneOffset()}`, { cache: "no-store" });
-      const state = await stateResponse.json() as { revision?: number; queueBinding?: string; error?: string; session?: { id: string; items: Array<{ id: string; status: string }> } };
+      const state = await stateResponse.json() as { revision?: number; queueBinding?: string; error?: string; session?: { id: string; items: Array<{ id: string; kind?: string; status: string }> } };
       if (!stateResponse.ok) throw new Error(state.error ?? "LEARNING_LOAD_FAILED");
       const restoredItem = state.session?.id === dailySessionId ? state.session.items.find((item) => item.id === dailyItemId) : undefined;
       if (restoredItem?.status === "completed") {
+        sessionStorage.setItem(todayCompletionProofKey(dailySessionId, dailyItemId), JSON.stringify({
+          dailySessionId,
+          dailyItemId,
+          revision: state.revision ?? 0,
+          summaryComplete: state.session?.items.some((item) => item.kind === "summary" && item.status === "completed") ?? false,
+        }));
         sessionStorage.removeItem(`today-learn:${dailySessionId}:${dailyItemId}`);
         window.location.assign(`/today?resume=1&completed=learn&completedSession=${encodeURIComponent(dailySessionId)}&completedItem=${encodeURIComponent(dailyItemId)}`);
         return;
@@ -40,10 +46,15 @@ export default function TodayWordCompletion({ assetId, dailySessionId, dailyItem
         } catch { /* retry with the same idempotency key */ }
       }
       if (!response) throw new Error("LEARN_COMPLETION_UNCONFIRMED");
-      const result = await response.json() as { error?: string };
+      const result = await response.json() as { error?: string; revision?: number; session?: { id: string; items: Array<{ id: string; kind?: string; status: string }> } };
       if (!response.ok) throw new Error(result.error ?? "LEARN_COMPLETION_FAILED");
       sessionStorage.removeItem(storageKey);
-      sessionStorage.setItem(todayCompletionProofKey(dailySessionId, dailyItemId), "armed");
+      sessionStorage.setItem(todayCompletionProofKey(dailySessionId, dailyItemId), JSON.stringify({
+        dailySessionId,
+        dailyItemId,
+        revision: result.revision ?? state.revision ?? 0,
+        summaryComplete: result.session?.items.some((item) => item.kind === "summary" && item.status === "completed") ?? false,
+      }));
       window.location.assign(`/today?resume=1&completed=learn&completedSession=${encodeURIComponent(dailySessionId)}&completedItem=${encodeURIComponent(dailyItemId)}`);
     } catch (cause) {
       setError(cause instanceof Error && cause.message === "FREE_DAILY_NEW_ITEM_LIMIT" ? "Your Free new-item limit is reached; no new completion was recorded." : cause instanceof Error && cause.message === "TODAY_LEARN_WORD_MISMATCH" ? "This is not the word saved in your current Today step. Return to Today to restore the correct word." : "We could not confirm whether this step reached the server. Return to Today to restore the authoritative progress before retrying.");

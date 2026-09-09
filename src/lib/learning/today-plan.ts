@@ -1,5 +1,5 @@
 export const TODAY_BUDGET_OPTIONS = [5, 10, 15, 20, 30] as const;
-export const TODAY_NEW_WORD_OPTIONS = [1, 2, 3] as const;
+export const TODAY_NEW_WORD_OPTIONS = [1, 2, 3, 5] as const;
 export const TODAY_FOCUS_OPTIONS = ["balanced", "review_first", "fix_mistakes", "listening_focus"] as const;
 export type TodayBudgetMinutes = typeof TODAY_BUDGET_OPTIONS[number];
 export type TodayNewWordCount = typeof TODAY_NEW_WORD_OPTIONS[number];
@@ -17,24 +17,23 @@ export type TodayJourneyProgressItem = {
   id: string;
   kind: "review" | "learn" | "listen" | "practice" | "summary";
   status: "pending" | "completed" | "skipped";
+  dimension?: "reading" | "audio" | "context_audio";
 };
 
 export function todayJourneyProgress(items: readonly TodayJourneyProgressItem[]) {
   const phases: TodayJourneyProgressItem[][] = [];
-  let reviewPhase: TodayJourneyProgressItem[] | undefined;
+  const phaseIndexes = new Map<string, number>();
   for (const item of items) {
     if (item.kind === "summary") continue;
-    if (item.kind === "review") {
-      if (!reviewPhase) {
-        reviewPhase = [];
-        phases.push(reviewPhase);
-      }
-      reviewPhase.push(item);
-    } else {
+    const phaseKey = item.kind === "listen" && !item.dimension ? `listen:${item.id}` : `${item.kind}:${item.dimension ?? "default"}`;
+    const existingIndex = phaseIndexes.get(phaseKey);
+    if (existingIndex !== undefined) phases[existingIndex].push(item);
+    else {
+      phaseIndexes.set(phaseKey, phases.length);
       phases.push([item]);
     }
   }
-  const completedPhases = phases.filter((phase) => phase.every((item) => item.status !== "pending")).length;
+  const completedPhases = phases.filter((phase) => phase.every((item) => item.status === "completed")).length;
   const pendingIndex = phases.findIndex((phase) => phase.some((item) => item.status === "pending"));
   return {
     currentPhase: pendingIndex >= 0 ? pendingIndex + 1 : phases.length,
@@ -76,6 +75,51 @@ export function todayCompletionProofKey(dailySessionId: string, dailyItemId: str
   return `today-completion:${dailySessionId}:${dailyItemId}`;
 }
 
+export type TodayCompletionProof = {
+  dailySessionId: string;
+  dailyItemId: string;
+  revision: number;
+  summaryComplete: boolean;
+};
+
+export function todayCompletionProof(proof: TodayCompletionProof) {
+  return JSON.stringify(proof);
+}
+
+export function parseTodayCompletionProof(value: string | null): TodayCompletionProof | null {
+  if (!value) return null;
+  try {
+    const proof = JSON.parse(value) as Partial<TodayCompletionProof>;
+    if (typeof proof.dailySessionId !== "string" || !proof.dailySessionId || typeof proof.dailyItemId !== "string" || !proof.dailyItemId || !Number.isInteger(proof.revision) || Number(proof.revision) < 0 || typeof proof.summaryComplete !== "boolean") return null;
+    return proof as TodayCompletionProof;
+  } catch {
+    return null;
+  }
+}
+
+export function completionProofNeedsSync(proof: TodayCompletionProof | null, current: {
+  sessionId: string;
+  revision: number;
+  completedItemId: string;
+  completedItem: boolean;
+  summaryComplete: boolean;
+}) {
+  if (!proof || proof.dailySessionId !== current.sessionId || proof.dailyItemId !== current.completedItemId) return false;
+  return current.revision < proof.revision || !current.completedItem || (proof.summaryComplete && !current.summaryComplete);
+}
+
+export function todaySummaryStats(items: readonly TodayJourneyProgressItem[]) {
+  const completed = items.filter((item) => item.kind !== "summary" && item.status === "completed");
+  return {
+    completedTasks: completed.length,
+    skippedTasks: items.filter((item) => item.kind !== "summary" && item.status === "skipped").length,
+    reviewsCompleted: completed.filter((item) => item.kind === "review").length,
+    wordsLearned: completed.filter((item) => item.kind === "learn").length,
+    listeningCompleted: completed.filter((item) => item.kind === "listen").length,
+    practiceCompleted: completed.filter((item) => item.kind === "practice").length,
+  };
+}
+
 export function isTodayBudgetMinutes(value: unknown): value is TodayBudgetMinutes {
   return typeof value === "number" && Number.isInteger(value) && TODAY_BUDGET_OPTIONS.includes(value as TodayBudgetMinutes);
 }
@@ -99,4 +143,11 @@ export function recommendTodayMinutes(input: {
   if (input.openMistakes >= 3 || (input.cardCount >= 6 && weakestMastery <= 1)) return 30;
   if (input.openMistakes > 0 || input.monthPoints >= 100 || input.currentStreak >= 3) return 20;
   return 15;
+}
+
+export function recommendTodayNewWordCount(minutes: TodayBudgetMinutes): TodayNewWordCount {
+  if (minutes <= 5) return 1;
+  if (minutes <= 10) return 2;
+  if (minutes <= 20) return 3;
+  return 5;
 }

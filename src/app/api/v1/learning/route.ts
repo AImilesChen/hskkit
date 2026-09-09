@@ -21,7 +21,7 @@ import {
   recordAudioAttempt,
   type LearningState,
 } from "../../../../lib/learning/domain";
-import { isTodayBudgetMinutes, isTodayFocus, isTodayNewWordCount } from "../../../../lib/learning/today-plan";
+import { isTodayBudgetMinutes, isTodayFocus, isTodayNewWordCount, recommendTodayNewWordCount } from "../../../../lib/learning/today-plan";
 import { audioPlaybackSubject, trustedAudioExercise, trustedTodayAudioExercise, type AudioMode } from "../../../../lib/learning/audio";
 import { advancedListeningBySlug, isStep7AnswerAllowed, normalizeStep7Answer, trustedStep7Exercise } from "../../../../lib/learning/step7-content";
 import { completeStep7PlaybackTicket, consumeStep7PlaybackTicket, createStep7PlaybackTicket } from "../../../../lib/learning/step7-playback";
@@ -95,8 +95,17 @@ function view(state: LearningState, ownerId: string, offsetMinutes: number, capa
   const nextAction = deriveHomeNextStep(state, now);
   const latestPlacement = [...(state.placementResults ?? [])].sort((a, b) => b.createdAt.localeCompare(a.createdAt))[0];
   const startLevel = state.preferredLearningLevel ?? latestPlacement?.recommendedLevel ?? 1;
-  const preferences = state.todayPreferences ?? { newWordCount: 1 as const, listeningEnabled: true, focus: "balanced" as const };
-  const built = buildDailySession(state, { ownerId, localDay: learningLocalDay(now, offsetMinutes, accountTimezone), ruleVersion: "today-v8", now, dailyContent: selectTodayContent(startLevel, preferences.newWordCount), ...preferences });
+  const localDay = learningLocalDay(now, offsetMinutes, accountTimezone);
+  const prior = state.dailySessions.find((session) => session.ownerId === ownerId && session.localDay === localDay);
+  const budgetMinutes = isTodayBudgetMinutes(prior?.budgetMinutes) ? prior.budgetMinutes : 20;
+  const legacySingleWordPlan = prior?.ruleVersion === "today-v8" && prior.newWordCount === 1 && budgetMinutes >= 10;
+  const savedPreferences = state.todayPreferences;
+  const preferences = {
+    newWordCount: legacySingleWordPlan ? recommendTodayNewWordCount(budgetMinutes) : savedPreferences?.newWordCount ?? recommendTodayNewWordCount(budgetMinutes),
+    listeningEnabled: savedPreferences?.listeningEnabled ?? true,
+    focus: savedPreferences?.focus ?? "balanced" as const,
+  };
+  const built = buildDailySession(state, { ownerId, localDay, ruleVersion: "today-v9", now, dailyContent: selectTodayContent(startLevel, preferences.newWordCount), budgetMinutes, ...preferences });
   const projected = projectLearningHistory(built.state, capabilities, new Date(now));
   const mistakeKey = (contentId: string, contentVersion: string, dimension: string) => `${contentId}\u0000${contentVersion}\u0000${dimension}`;
   const openMistakeKeys = new Set(projected.mistakes.filter((mistake) => mistake.status === "open").map((mistake) => {
@@ -185,6 +194,9 @@ function view(state: LearningState, ownerId: string, offsetMinutes: number, capa
     streakBasis: accountTimezone ? `Account timezone: ${accountTimezone}` : "This device's local day",
     currentLevel: startLevel,
     dueCount: built.state.cards.filter((card) => card.dueAt <= now).length,
+    practiceQuestionsCompleted: (built.state.practiceSessions ?? [])
+      .filter((practice) => practice.dailySessionId === session.id)
+      .reduce((count, practice) => Math.max(count, practice.answers.length), 0),
   };
 }
 function response(data: ReturnType<typeof view>, fresh: boolean, id: string, revision: number, account: boolean, capabilities: ProductCapabilities, usage: { dailyNewItems: number; dailyReviewGrades: number }, feedback?: { correct: boolean; correctAnswerText: string; explanation?: string }, savedWords: Awaited<ReturnType<typeof getDictionaryWordsByIds>> = []) {
@@ -215,6 +227,7 @@ function response(data: ReturnType<typeof view>, fresh: boolean, id: string, rev
     streakBasis: data.streakBasis,
     currentLevel: data.currentLevel,
     dueCount: data.dueCount,
+    practiceQuestionsCompleted: data.practiceQuestionsCompleted,
     queueBinding,
     revision,
     scope: account ? "account" : "guest",
@@ -748,7 +761,7 @@ async function postLearning(req: NextRequest) {
         const startLevel = requestedLevel ?? latestPlacement?.recommendedLevel ?? 1;
         const todayPreferences = { newWordCount, listeningEnabled, focus };
         state = { ...state, ...(requestedLevel ? { preferredLearningLevel: requestedLevel } : {}), todayPreferences };
-        state = buildDailySession(state, { ownerId: identity.id, localDay: learningLocalDay(observedAt, tz, identity.account?.timezone), ruleVersion: "today-v8", now: observedAt, dailyContent: selectTodayContent(startLevel, newWordCount), budgetMinutes, ...todayPreferences }).state;
+        state = buildDailySession(state, { ownerId: identity.id, localDay: learningLocalDay(observedAt, tz, identity.account?.timezone), ruleVersion: "today-v9", now: observedAt, dailyContent: selectTodayContent(startLevel, newWordCount), budgetMinutes, ...todayPreferences }).state;
         state = { ...state, dailyOperationKeys: [...(state.dailyOperationKeys ?? []), key].slice(-400) };
       } else {
         return errorResponse("INVALID_ACTION", 422);

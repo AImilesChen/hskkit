@@ -64,7 +64,7 @@ function mapItem(asset: RuntimeTodayAsset, word: StudyWord | undefined, releaseI
 
 export function selectTodayContent(startLevel: number, requestedCount = 1): TodayContentPlan {
   const level = Number.isInteger(startLevel) && startLevel >= 1 && startLevel <= 9 ? startLevel : 1;
-  const count = Number.isInteger(requestedCount) ? Math.min(3, Math.max(1, requestedCount)) : 1;
+  const count = Number.isInteger(requestedCount) ? Math.min(5, Math.max(1, requestedCount)) : 1;
   const cacheKey = `${level}:${count}`;
   const cached = planCache.get(cacheKey);
   if (cached) return cached;

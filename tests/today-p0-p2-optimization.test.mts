@@ -4,7 +4,7 @@ import test from "node:test";
 
 import { assertCurrentDailySession, assertTodayLearnItemMatches, buildDailySession, emptyLearningState, gradeReview } from "../src/lib/learning/domain.ts";
 import { selectTodayContent, todayContentByAssetId, todayContentByContentId } from "../src/lib/learning/today-content.ts";
-import { isTodayBudgetMinutes, isTodayFocus, isTodayNewWordCount, recommendTodayMinutes, resolveTodayCelebration, todayJourneyProgress, TODAY_BUDGET_OPTIONS, TODAY_FOCUS_OPTIONS, TODAY_NEW_WORD_OPTIONS } from "../src/lib/learning/today-plan.ts";
+import { completionProofNeedsSync, isTodayBudgetMinutes, isTodayFocus, isTodayNewWordCount, parseTodayCompletionProof, recommendTodayMinutes, recommendTodayNewWordCount, resolveTodayCelebration, todayCompletionProof, todayJourneyProgress, todaySummaryStats, TODAY_BUDGET_OPTIONS, TODAY_FOCUS_OPTIONS, TODAY_NEW_WORD_OPTIONS } from "../src/lib/learning/today-plan.ts";
 
 const root = new URL("../", import.meta.url);
 const source = (path: string) => readFile(new URL(path, root), "utf8");
@@ -21,6 +21,83 @@ test("Today keeps the completed review as one stable journey phase and advances 
     { id: "practice", kind: "practice", status: "pending" },
   ] as const;
   assert.deepEqual(todayJourneyProgress(route), { currentPhase: 2, totalPhases: 5, completedPhases: 1 });
+});
+
+test("Today groups three words into one Learn phase and keeps listening and context as stable phases", () => {
+  const route = [
+    { id: "review-1", kind: "review", status: "completed" },
+    ...Array.from({ length: 3 }, (_, index) => ({ id: `learn-${index}`, kind: "learn" as const, status: "completed" as const })),
+    ...Array.from({ length: 3 }, (_, index) => ({ id: `audio-${index}`, kind: "listen" as const, dimension: "audio" as const, status: "completed" as const })),
+    ...Array.from({ length: 3 }, (_, index) => ({ id: `context-${index}`, kind: "listen" as const, dimension: "context_audio" as const, status: "completed" as const })),
+    { id: "practice", kind: "practice", status: "pending" },
+  ] as const;
+  assert.deepEqual(todayJourneyProgress(route), { currentPhase: 5, totalPhases: 5, completedPhases: 4 });
+});
+
+test("Today derives a useful default word count from the selected time budget", () => {
+  assert.deepEqual(TODAY_NEW_WORD_OPTIONS, [1, 2, 3, 5]);
+  assert.equal(recommendTodayNewWordCount(5), 1);
+  assert.equal(recommendTodayNewWordCount(10), 2);
+  assert.equal(recommendTodayNewWordCount(15), 3);
+  assert.equal(recommendTodayNewWordCount(20), 3);
+  assert.equal(recommendTodayNewWordCount(30), 5);
+});
+
+test("a 20 minute plan contains the complete three-word learning loop", () => {
+  const plan = selectTodayContent(3, 3);
+  assert.equal(plan.status, "ready");
+  const built = buildDailySession(emptyLearningState(), {
+    ownerId: "today-three-words",
+    localDay: "2026-09-09",
+    ruleVersion: "today-v9",
+    now: "2026-09-09T08:00:00.000Z",
+    dailyContent: plan,
+    budgetMinutes: 20,
+    newWordCount: 3,
+    listeningEnabled: true,
+    focus: "balanced",
+  });
+  const active = built.session.items.filter((item) => !item.deferred && item.kind !== "summary");
+  assert.equal(active.filter((item) => item.kind === "learn").length, 3);
+  assert.equal(active.filter((item) => item.kind === "listen").length, 6);
+  assert.equal(active.filter((item) => item.kind === "practice").length, 1);
+  assert.deepEqual(active.slice(0, 9).map((item) => item.kind === "listen" ? `${item.kind}:${item.dimension}` : item.kind), [
+    "learn", "learn", "learn",
+    "listen:audio", "listen:audio", "listen:audio",
+    "listen:context_audio", "listen:context_audio", "listen:context_audio",
+  ]);
+});
+
+test("Today completion proof holds the server revision and blocks stale locked rendering", () => {
+  const encoded = todayCompletionProof({ dailySessionId: "day-1", dailyItemId: "practice-1", revision: 12, summaryComplete: true });
+  const proof = parseTodayCompletionProof(encoded);
+  assert.deepEqual(proof, { dailySessionId: "day-1", dailyItemId: "practice-1", revision: 12, summaryComplete: true });
+  assert.equal(completionProofNeedsSync(proof, { sessionId: "day-1", revision: 11, completedItemId: "practice-1", completedItem: false, summaryComplete: false }), true);
+  assert.equal(completionProofNeedsSync(proof, { sessionId: "day-1", revision: 12, completedItemId: "practice-1", completedItem: true, summaryComplete: true }), false);
+});
+
+test("Today summary reports real completed work including archived review items", () => {
+  const stats = todaySummaryStats([
+    { id: "review-archived", kind: "review", status: "completed", estimatedMinutes: 0 },
+    { id: "learn-1", kind: "learn", status: "completed" },
+    { id: "learn-2", kind: "learn", status: "completed" },
+    { id: "learn-3", kind: "learn", status: "completed" },
+    { id: "audio-1", kind: "listen", dimension: "audio", status: "completed" },
+    { id: "context-1", kind: "listen", dimension: "context_audio", status: "skipped" },
+    { id: "practice", kind: "practice", status: "completed" },
+    { id: "summary", kind: "summary", status: "completed" },
+  ]);
+  assert.deepEqual(stats, { completedTasks: 6, skippedTasks: 1, reviewsCompleted: 1, wordsLearned: 3, listeningCompleted: 1, practiceCompleted: 1 });
+});
+
+test("Today stage progress does not report skipped work as completed", () => {
+  assert.deepEqual(todayJourneyProgress([
+    { id: "review", kind: "review", status: "completed" },
+    { id: "learn", kind: "learn", status: "skipped" },
+    { id: "audio", kind: "listen", dimension: "audio", status: "pending" },
+    { id: "context", kind: "listen", dimension: "context_audio", status: "pending" },
+    { id: "practice", kind: "practice", status: "pending" },
+  ]), { currentPhase: 3, totalPhases: 5, completedPhases: 1 });
 });
 
 test("Today renders the saved Learn word inline and completes it before unlocking listening", async () => {
@@ -110,7 +187,7 @@ test("Today budget is restricted to the approved presets and personalization use
 });
 
 test("Adjust Today exposes and validates every confirmed plan control in a responsive modal", async () => {
-  assert.deepEqual(TODAY_NEW_WORD_OPTIONS, [1, 2, 3]);
+  assert.deepEqual(TODAY_NEW_WORD_OPTIONS, [1, 2, 3, 5]);
   assert.deepEqual(TODAY_FOCUS_OPTIONS, ["balanced", "review_first", "fix_mistakes", "listening_focus"]);
   for (const count of TODAY_NEW_WORD_OPTIONS) assert.equal(isTodayNewWordCount(count), true);
   for (const rejected of [0, 4, 1.5, "2"]) assert.equal(isTodayNewWordCount(rejected), false);
@@ -221,18 +298,25 @@ test("Today subpages preserve Today Session context and finish through the saved
   }
 });
 
-test("completed Today renders a truthful summary, recovery path, personalization reason and bonus task", async () => {
+test("completed Today renders truthful statistics, recovery, personalization and three next-step entries", async () => {
   const dashboard = await source("src/app/components/learning-dashboard.tsx");
   for (const token of [
     "Daily Summary",
+    "Stage progress",
     "Completed tasks",
     "Skipped tasks",
-    "Open mistakes",
+    "open mistakes",
+    "review questions completed",
+    "new words learned",
+    "listening checks completed",
+    "practice questions completed",
     "Recommended focus",
     "Monthly learning score",
-    "Bonus task",
+    "Learn {data.session.newWordCount",
+    "Review {open.length} open mistake",
+    "Done for today",
     "Current streak",
-  ]) assert.match(dashboard, new RegExp(token));
+  ]) assert.match(dashboard, new RegExp(token.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")));
   assert.match(dashboard, /Back to Today/);
 });
 
@@ -285,25 +369,29 @@ test("Today journey makes current, completed, locked and skipped states unmistak
 });
 
 test("every Today-bound completion route returns a celebration signal without changing completion authority", async () => {
-  const [wordAction, audio, practice, dashboard] = await Promise.all([
+  const [wordAction, audio, practice, dashboard, practiceRoute] = await Promise.all([
     source("src/app/components/today-word-completion.tsx"),
     source("src/app/components/audio-exercise.tsx"),
     source("src/app/practice/[level]/[skill]/practice-client.tsx"),
     source("src/app/components/learning-dashboard.tsx"),
+    source("src/app/api/v1/learning/route.ts"),
   ]);
   assert.match(wordAction, /completed=learn&completedSession=.*completedItem=/);
   assert.match(audio, /completed=listen&completedSession=.*completedItem=/);
   assert.match(practice, /completed=practice&completedSession=.*completedItem=/);
   assert.match(dashboard, /completed=review&completedSession=.*completedItem=/);
-  assert.match(wordAction, /sessionStorage\.setItem\(todayCompletionProofKey\(dailySessionId, dailyItemId\), "armed"\)[\s\S]*window\.location\.assign/);
-  assert.match(audio, /if \(dailySessionId && dailyItemId\) sessionStorage\.setItem\(todayCompletionProofKey/);
-  assert.match(practice, /data\.session\?\.status === "completed"[\s\S]*sessionStorage\.setItem\(todayCompletionProofKey/);
+  assert.match(wordAction, /sessionStorage\.setItem\(todayCompletionProofKey\(dailySessionId, dailyItemId\), JSON\.stringify\([\s\S]*revision:[\s\S]*summaryComplete:[\s\S]*window\.location\.assign/);
+  assert.match(audio, /if \(dailySessionId && dailyItemId\) sessionStorage\.setItem\(todayCompletionProofKey[\s\S]*JSON\.stringify/);
+  assert.match(practice, /proof\?\.dailySessionId === dailySessionId[\s\S]*proof\.dailyItemId === dailyItemId[\s\S]*typeof proof\.revision === "number"[\s\S]*sessionStorage\.setItem\(todayCompletionProofKey/);
+  assert.match(practiceRoute, /practice\.dailySessionId === session\.id[\s\S]*reduce\(\(count, practice\) => Math\.max\(count, practice\.answers\.length\)/);
+  assert.doesNotMatch(practiceRoute, /practice\.dailySessionId === session\.id && practice\.status === "completed"/);
   assert.match(dashboard, /targetBefore\.reviewCardId === card\.id/);
   assert.match(dashboard, /targetBefore\.status === "pending"/);
   assert.match(dashboard, /targetAfter\?\.status === "completed"/);
-  assert.match(dashboard, /sessionStorage\.setItem\(todayCompletionProofKey\(entryTodaySessionId, entryTodayItemId\), "armed"\)/);
+  assert.match(dashboard, /sessionStorage\.setItem\(todayCompletionProofKey\(entryTodaySessionId, entryTodayItemId\), JSON\.stringify/);
   assert.match(dashboard, /returnedSessionId !== data\.session\.id \|\| !returnedItemId/);
-  assert.match(dashboard, /sessionStorage\.getItem\(completionProofKey\) !== "armed"/);
+  assert.match(dashboard, /completionProofNeedsSync/);
+  assert.match(dashboard, /Syncing your completed session/);
   assert.match(dashboard, /sessionStorage\.removeItem\(completionProofKey\)/);
   assert.match(dashboard, /cleanUrl\.searchParams\.delete\("completedSession"\)/);
   assert.match(dashboard, /cleanUrl\.searchParams\.delete\("completedItem"\)/);

@@ -328,7 +328,7 @@ export function addWordToToday(state: LearningState, input: {
   };
 }
 
-const estimateDailyItem = (item: DailyItem) => item.kind === "summary" ? 0 : item.kind === "review" || item.kind === "listen" ? 3 : item.kind === "learn" ? 5 : 8;
+const estimateDailyItem = (item: DailyItem) => item.kind === "summary" ? 0 : item.kind === "review" || item.kind === "listen" ? 1 : item.kind === "learn" ? 2 : 5;
 
 function applyAttemptToSessions(state: LearningState, attempt: Attempt, card: SrsCard): DailySession[] {
   return state.dailySessions.map((session) => {
@@ -676,13 +676,17 @@ export function buildDailySession(state: LearningState, input: { ownerId: string
     : undefined;
   const contentCore: DailyItem[] = [];
   if (content?.status === "ready") {
+    const learnItems: DailyItem[] = [];
+    const audioItems: DailyItem[] = [];
+    const contextItems: DailyItem[] = [];
     for (const item of contentItems) {
-      contentCore.push({ id: `learn:${item.contentId}:${item.contentVersion}`, kind: "learn", contentId: item.contentId, contentVersion: item.contentVersion, title: `Learn ${item.hanzi}`, href: `/word/${item.studySlug}`, status: "pending" });
+      learnItems.push({ id: `learn:${item.contentId}:${item.contentVersion}`, kind: "learn", contentId: item.contentId, contentVersion: item.contentVersion, title: `Learn ${item.hanzi}`, href: `/word/${item.studySlug}`, status: "pending" });
       if (listeningEnabled) {
-        contentCore.push({ id: `listen:${item.contentId}:${item.contentVersion}:audio`, kind: "listen", contentId: item.contentId, contentVersion: item.contentVersion, dimension: "audio", title: `Listen to ${item.hanzi}`, href: `/listen/today/${item.assetId}?mode=audio`, status: "pending" });
-        if (item.example) contentCore.push({ id: `listen:${item.contentId}:${item.contentVersion}:context_audio`, kind: "listen", contentId: item.contentId, contentVersion: item.contentVersion, dimension: "context_audio", title: "Listen in context", href: `/listen/today/${item.assetId}?mode=context_audio`, status: "pending" });
+        audioItems.push({ id: `listen:${item.contentId}:${item.contentVersion}:audio`, kind: "listen", contentId: item.contentId, contentVersion: item.contentVersion, dimension: "audio", title: `Listen to ${item.hanzi}`, href: `/listen/today/${item.assetId}?mode=audio`, status: "pending" });
+        if (item.example) contextItems.push({ id: `listen:${item.contentId}:${item.contentVersion}:context_audio`, kind: "listen", contentId: item.contentId, contentVersion: item.contentVersion, dimension: "context_audio", title: "Listen in context", href: `/listen/today/${item.assetId}?mode=context_audio`, status: "pending" });
       }
     }
+    contentCore.push(...learnItems, ...audioItems, ...contextItems);
   }
   const core: DailyItem[] = content?.status === "ready" ? [
     ...contentCore,

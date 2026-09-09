@@ -84,6 +84,7 @@ export async function POST(req: NextRequest) {
       const now = new Date().toISOString();
       let state = loaded.state;
       let data: Record<string, unknown>;
+      let dailyCompletion: { dailySessionId: string; dailyItemId: string; summaryComplete: boolean } | undefined;
       if (action === "start") {
         const requestedLevel = level(payload.level);
         const skill = short(payload.skill, 40);
@@ -105,6 +106,15 @@ export async function POST(req: NextRequest) {
         assertCurrentDailyPracticeBinding(state, identity.id, practiceSession?.dailySessionId, practiceSession?.dailyItemId, now, tz, identity.account?.timezone);
         const updated = answerPracticeQuestion(state, { ownerId: identity.id, sessionId, questionId: question.id, answer, idempotencyKey: key, now });
         state = updated.state;
+        if (updated.session.status === "completed" && practiceSession?.dailySessionId && practiceSession.dailyItemId) {
+          const dailySession = state.dailySessions.find((candidate) => candidate.id === practiceSession.dailySessionId);
+          const dailyItem = dailySession?.items.find((item) => item.id === practiceSession.dailyItemId);
+          if (dailySession && dailyItem?.status === "completed") dailyCompletion = {
+            dailySessionId: dailySession.id,
+            dailyItemId: dailyItem.id,
+            summaryComplete: dailySession.items.some((item) => item.kind === "summary" && item.status === "completed"),
+          };
+        }
         data = { session: publicPracticeSession(updated.session, now), feedback: updated.feedback };
       } else if (action === "report") {
         const sessionId = short(payload.sessionId, 180);
@@ -122,7 +132,8 @@ export async function POST(req: NextRequest) {
         ? { localDay: await learningRewardLocalDay(identity.id, identity.account.timezone || "UTC"), action: "practice_answer", idempotencyKey: key }
         : undefined;
       if (changed) await saveState(identity.id, state, loaded.revision, undefined, undefined, undefined, engagementActivity);
-      return response(req, { ...data, scope: identity.account ? "account" : "guest", revision: loaded.revision + (changed ? 1 : 0) }, identity, action === "start" ? 201 : 200);
+      const revision = loaded.revision + (changed ? 1 : 0);
+      return response(req, { ...data, ...(dailyCompletion ? { dailyCompletion: { ...dailyCompletion, revision } } : {}), scope: identity.account ? "account" : "guest", revision }, identity, action === "start" ? 201 : 200);
     } catch (error) {
       const code = error instanceof Error ? error.message : "PRACTICE_SAVE_FAILED";
       if (code === "REVISION_CONFLICT" && turn < 2) continue;

@@ -8,7 +8,7 @@ import HomeIcon, { type HomeIconName } from "./home-icon";
 import LearningLoopNav, { type LearningLoopLabel } from "./learning-loop-nav";
 import { LearningLoadError, loadLearningData, type LearningLoadErrorCode } from "../../lib/learning/client-load";
 import { buildIntentReviewQueue, buildReviewQueue, filterReviewCards, recommendReviewCount, reviewComposition, reviewEntryIntent, reviewGradeOptions, reviewTip, type ReviewEntryIntent, type ReviewGrade } from "../../lib/learning/review-session";
-import { recommendTodayMinutes, resolveTodayCelebration, todayCompletionProofKey, todayJourneyProgress, TODAY_BUDGET_OPTIONS, TODAY_FOCUS_OPTIONS, TODAY_NEW_WORD_OPTIONS, type TodayCelebration, type TodayCompletedKind, type TodayFocus, type TodayNewWordCount } from "../../lib/learning/today-plan";
+import { completionProofNeedsSync, parseTodayCompletionProof, recommendTodayMinutes, recommendTodayNewWordCount, resolveTodayCelebration, todayCompletionProofKey, todaySummaryStats, todayJourneyProgress, TODAY_BUDGET_OPTIONS, TODAY_FOCUS_OPTIONS, TODAY_NEW_WORD_OPTIONS, type TodayBudgetMinutes, type TodayCelebration, type TodayCompletedKind, type TodayFocus, type TodayNewWordCount } from "../../lib/learning/today-plan";
 
 type Dimension = "reading" | "audio" | "context_audio";
 type LearnContent = { assetId: string; hanzi: string; pinyin: string; meaning: string; partOfSpeech: string; example?: { hanzi: string; pinyin: string; meaning: string }; audioSrc?: string };
@@ -28,6 +28,7 @@ type Data = {
   mastery: Record<Dimension, number>;
   streak: { current: number; longest: number; lastLearningDay: string | null };
   streakBasis: string;
+  practiceQuestionsCompleted: number;
   scope: "guest" | "account";
   queueBinding: string;
   revision: number;
@@ -62,6 +63,8 @@ export default function LearningDashboard({ mode }: { mode: "today" | "review" |
   const [returnedKind, setReturnedKind] = useState<TodayCompletedKind | null>(null);
   const [returnedSessionId, setReturnedSessionId] = useState("");
   const [returnedItemId, setReturnedItemId] = useState("");
+  const [completionSyncState, setCompletionSyncState] = useState<"idle" | "syncing" | "failed">("idle");
+  const completionSyncAttempts = useRef(0);
   const celebrationPanelRef = useRef<HTMLDivElement | null>(null);
   const [reviewMinutes, setReviewMinutes] = useState<5 | 10 | 20>(10);
   const [difficultOnly, setDifficultOnly] = useState(false);
@@ -84,9 +87,9 @@ export default function LearningDashboard({ mode }: { mode: "today" | "review" |
   const [reviewSaving, setReviewSaving] = useState(false);
   const [learnSavingId, setLearnSavingId] = useState("");
   const [syncState, setSyncState] = useState<"synced" | "local_pending" | "syncing" | "conflict" | "failed">("synced");
-  const [planDraftMinutes, setPlanDraftMinutes] = useState(30);
+  const [planDraftMinutes, setPlanDraftMinutes] = useState<TodayBudgetMinutes>(20);
   const [planDraftLevel, setPlanDraftLevel] = useState(1);
-  const [planDraftNewWords, setPlanDraftNewWords] = useState<TodayNewWordCount>(1);
+  const [planDraftNewWords, setPlanDraftNewWords] = useState<TodayNewWordCount>(3);
   const [planDraftListening, setPlanDraftListening] = useState(true);
   const [planDraftFocus, setPlanDraftFocus] = useState<TodayFocus>("balanced");
   const [planOpen, setPlanOpen] = useState(false);
@@ -114,9 +117,9 @@ export default function LearningDashboard({ mode }: { mode: "today" | "review" |
       );
       dataRef.current = loaded;
       setData(loaded);
-      setPlanDraftMinutes(loaded.session.budgetMinutes ?? 30);
+      setPlanDraftMinutes((loaded.session.budgetMinutes ?? 20) as TodayBudgetMinutes);
       setPlanDraftLevel(loaded.session.startLevel ?? 1);
-      setPlanDraftNewWords(loaded.session.newWordCount ?? 1);
+      setPlanDraftNewWords(loaded.session.newWordCount ?? recommendTodayNewWordCount((loaded.session.budgetMinutes ?? 20) as TodayBudgetMinutes));
       setPlanDraftListening(loaded.session.listeningEnabled ?? true);
       setPlanDraftFocus(loaded.session.focus ?? "balanced");
       if (loaded.scope === "account") {
@@ -142,9 +145,12 @@ export default function LearningDashboard({ mode }: { mode: "today" | "review" |
     setEntryTodayItemId(search.get("dailyItemId") ?? "");
     const completed = search.get("completed");
     if (completed === "review" || completed === "learn" || completed === "listen" || completed === "practice") {
+      const completedSession = search.get("completedSession") ?? "";
+      const completedItem = search.get("completedItem") ?? "";
       setReturnedKind(completed);
-      setReturnedSessionId(search.get("completedSession") ?? "");
-      setReturnedItemId(search.get("completedItem") ?? "");
+      setReturnedSessionId(completedSession);
+      setReturnedItemId(completedItem);
+      if (completedSession && completedItem && sessionStorage.getItem(todayCompletionProofKey(completedSession, completedItem))) setCompletionSyncState("syncing");
     }
     setEntryResolved(true);
     void load();
@@ -156,16 +162,45 @@ export default function LearningDashboard({ mode }: { mode: "today" | "review" |
 
   useEffect(() => {
     if (mode !== "today" || !data || !returnedKind) return;
+    if (returnedSessionId !== data.session.id || !returnedItemId) {
+      setCompletionSyncState("idle");
+      return;
+    }
+    const completionProofKey = todayCompletionProofKey(returnedSessionId, returnedItemId);
+    const rawProof = sessionStorage.getItem(completionProofKey);
+    const proof = parseTodayCompletionProof(rawProof) ?? (rawProof === "armed" ? {
+      dailySessionId: returnedSessionId,
+      dailyItemId: returnedItemId,
+      revision: 0,
+      summaryComplete: false,
+    } : null);
+    const returnedItem = data.session.items.find((item) => item.id === returnedItemId);
+    const summaryIsComplete = data.session.items.some((item) => item.kind === "summary" && item.status === "completed");
+    if (proof && completionProofNeedsSync(proof, {
+      sessionId: data.session.id,
+      revision: data.revision,
+      completedItemId: returnedItemId,
+      completedItem: returnedItem?.status === "completed",
+      summaryComplete: summaryIsComplete,
+    })) {
+      if (completionSyncAttempts.current >= 8) {
+        setCompletionSyncState("failed");
+        return;
+      }
+      setCompletionSyncState("syncing");
+      completionSyncAttempts.current += 1;
+      const timer = window.setTimeout(() => void load(), 350);
+      return () => window.clearTimeout(timer);
+    }
     const cleanUrl = new URL(window.location.href);
     cleanUrl.searchParams.delete("completed");
     cleanUrl.searchParams.delete("completedSession");
     cleanUrl.searchParams.delete("completedItem");
     window.history.replaceState({}, "", `${cleanUrl.pathname}${cleanUrl.search}${cleanUrl.hash}`);
-    if (returnedSessionId !== data.session.id || !returnedItemId) return;
+    setCompletionSyncState("idle");
+    completionSyncAttempts.current = 0;
     const completedItem = data.session.items.find((item) => item.id === returnedItemId && item.kind === returnedKind && item.status === "completed");
-    if (!completedItem) return;
-    const completionProofKey = todayCompletionProofKey(returnedSessionId, returnedItemId);
-    if (sessionStorage.getItem(completionProofKey) !== "armed") return;
+    if (!completedItem || !proof) return;
     sessionStorage.removeItem(completionProofKey);
     const completedCount = data.session.items.filter((item) => item.kind === returnedKind && item.status === "completed").length;
     const summaryComplete = data.session.items.some((item) => item.kind === "summary" && item.status === "completed");
@@ -176,6 +211,8 @@ export default function LearningDashboard({ mode }: { mode: "today" | "review" |
     sessionStorage.setItem(celebrationKey, "shown");
     const animate = !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     setCelebration({ ...resolved, animate });
+    // load is stable for this client component; data changes drive bounded completion reconciliation.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data, mode, returnedItemId, returnedKind, returnedSessionId]);
 
   useEffect(() => {
@@ -345,7 +382,7 @@ export default function LearningDashboard({ mode }: { mode: "today" | "review" |
       const result = await post("grade", { cardId: card.id, grade: gradeName, clientRevision: card.revision }, `grade:${card.id}:${gradeName}`) as Data | false;
       if (result) {
         const targetAfter = result.session.id === entryTodaySessionId ? result.session.items.find((item) => item.id === entryTodayItemId) : undefined;
-        if (entryIntent.kind === "today" && targetBefore?.kind === "review" && targetBefore.status === "pending" && targetBefore.reviewCardId === card.id && targetAfter?.status === "completed") sessionStorage.setItem(todayCompletionProofKey(entryTodaySessionId, entryTodayItemId), "armed");
+        if (entryIntent.kind === "today" && targetBefore?.kind === "review" && targetBefore.status === "pending" && targetBefore.reviewCardId === card.id && targetAfter?.status === "completed") sessionStorage.setItem(todayCompletionProofKey(entryTodaySessionId, entryTodayItemId), JSON.stringify({ dailySessionId: entryTodaySessionId, dailyItemId: entryTodayItemId, revision: result.revision, summaryComplete: result.session.items.some((item) => item.kind === "summary" && item.status === "completed") }));
         setRevealed((current) => ({ ...current, [card.id]: false }));
         setSelectedAnswer("");
         setReviewDraft("");
@@ -369,7 +406,7 @@ export default function LearningDashboard({ mode }: { mode: "today" | "review" |
       const result = await post("retry_review", { cardId: card.id, answer, cardRevision: card.revision }, `retry-review:${card.id}:${card.revision}`, false) as (Data & { feedback?: { correct: boolean; correctAnswerText: string } }) | false;
       if (result && result.feedback) {
         const targetAfter = result.session.id === entryTodaySessionId ? result.session.items.find((item) => item.id === entryTodayItemId) : undefined;
-        if (entryIntent.kind === "today" && targetBefore?.kind === "review" && targetBefore.status === "pending" && targetBefore.reviewCardId === card.id && targetAfter?.status === "completed") sessionStorage.setItem(todayCompletionProofKey(entryTodaySessionId, entryTodayItemId), "armed");
+        if (entryIntent.kind === "today" && targetBefore?.kind === "review" && targetBefore.status === "pending" && targetBefore.reviewCardId === card.id && targetAfter?.status === "completed") sessionStorage.setItem(todayCompletionProofKey(entryTodaySessionId, entryTodayItemId), JSON.stringify({ dailySessionId: entryTodaySessionId, dailyItemId: entryTodayItemId, revision: result.revision, summaryComplete: result.session.items.some((item) => item.kind === "summary" && item.status === "completed") }));
         setRetryFeedback(result.feedback);
         setRetryResult(result);
         setAnswerChecked(true);
@@ -462,6 +499,9 @@ export default function LearningDashboard({ mode }: { mode: "today" | "review" |
     </LearningStatePage>;
   }
   if (error) return <LearningStatePage mode={mode} title={error.startsWith("Free daily") ? "Daily limit reached" : "We couldn't load this page"} text={error} error>{error.startsWith("Free daily") ? <Link href="/pricing" className="btn">Compare Pro</Link> : <button onClick={() => void load(true)} className="btn">Try again</button>}</LearningStatePage>;
+  if (mode === "today" && completionSyncState !== "idle") return <LearningStatePage mode={mode} title={completionSyncState === "syncing" ? "Syncing your completed session…" : "Your completion is saved, but the latest session is still syncing"} text={completionSyncState === "syncing" ? "Checking the latest server progress before showing your next step." : "We will not show an outdated locked step. Retry to load the latest saved session."} loading={completionSyncState === "syncing"}>
+    {completionSyncState === "failed" && <button className="btn" onClick={() => { completionSyncAttempts.current = 0; setCompletionSyncState("syncing"); void load(true); }}>Retry sync</button>}
+  </LearningStatePage>;
   if (!data) return <LearningStatePage mode={mode} title={mode === "review" ? "Preparing your review" : mode === "mistakes" ? "Loading your mistakes" : "Preparing today's plan"} text="Loading due items and restoring progress." loading />;
   const open = data.mistakes.filter((mistake) => mistake.status === "open");
   const corrected = data.mistakes
@@ -495,17 +535,18 @@ export default function LearningDashboard({ mode }: { mode: "today" | "review" |
       .filter((card): card is Card => Boolean(card));
     const orderedTodayItems = [...currentTodayItems];
     const activeToday = orderedTodayItems.find(({ item }) => item.kind !== "summary" && item.status === "pending")?.item;
-    const completedTasks = plannedTodayTasks.filter((item) => item.status === "completed").length;
-    const skippedTasks = plannedTodayTasks.filter((item) => item.status === "skipped").length;
+    const completionSummary = todaySummaryStats(data.session.items);
+    const completedTasks = completionSummary.completedTasks;
+    const skippedTasks = completionSummary.skippedTasks;
     const remainingMinutes = plannedTodayTasks.filter((item) => item.status === "pending").reduce((sum, item) => sum + (item.estimatedMinutes ?? 0), 0);
     const journeyProgress = todayJourneyProgress(plannedTodayTasks);
     const currentStep = journeyProgress.currentPhase;
-    const gapMinutes = Math.max(0, (data.session.budgetMinutes ?? 30) - (data.session.totalEstimatedMinutes ?? 0));
+    const gapMinutes = Math.max(0, (data.session.budgetMinutes ?? 20) - (data.session.totalEstimatedMinutes ?? 0));
     const weakest = Object.entries(data.mastery).sort((a, b) => a[1] - b[1])[0]?.[0]?.replace("context_audio", "context listening").replace("audio", "listening") ?? "vocabulary";
     const recommendedMinutes = recommendTodayMinutes({ monthPoints: reward?.monthPoints ?? 0, openMistakes: open.length, currentStreak: data.streak.current, mastery: data.mastery, cardCount: data.cards.length });
     const summaryComplete = data.session.items.some((item) => item.kind === "summary" && item.status === "completed");
     const progressPercent = journeyProgress.totalPhases ? Math.round((journeyProgress.completedPhases / journeyProgress.totalPhases) * 100) : 0;
-    return <Shell title="Today" active="Today" sub="One guided session: review what matters, learn one exact word, practise it, then see your result.">
+    return <Shell title="Today" active="Today" sub="One guided session: review what matters, learn distinct new words, practise them, then see your result.">
       <div className="today-page">
       <section className="mb-5 overflow-hidden rounded-[28px] border border-blue-200 bg-gradient-to-br from-slate-950 via-blue-950 to-blue-900 text-white shadow-[0_24px_70px_rgba(30,64,175,0.18)]">
         <div className="grid items-center gap-6 p-5 sm:grid-cols-[minmax(0,1fr)_240px] sm:p-7">
@@ -522,7 +563,7 @@ export default function LearningDashboard({ mode }: { mode: "today" | "review" |
       </section>
       {activeToday && activeToday.kind !== "learn" && <div className="today-mobile-action sticky z-30 mb-5 rounded-2xl border border-blue-200 bg-white/95 p-2 shadow-[0_16px_42px_rgba(15,23,42,0.2)] backdrop-blur md:hidden" style={{ bottom: "calc(76px + env(safe-area-inset-bottom))" }}>{primaryTodayAction(activeToday, data.session.id, currentStep, journeyProgress.totalPhases, selectedReviewItems, selectedReviewCards)}</div>}
       <section className="mb-5 flex min-h-[72px] items-center justify-between gap-4 rounded-2xl border border-slate-200 bg-white px-5 py-3 shadow-sm">
-        <span className="min-w-0"><strong className="block text-slate-950">Today’s plan</strong><span className="block truncate text-sm text-slate-600">HSK {data.session.startLevel ?? 1} · {data.session.budgetMinutes ?? 30} min · {data.session.newWordCount ?? 1} new · {(data.session.listeningEnabled ?? true) ? "Listening on" : "Listening off"} · {({ balanced: "Balanced", review_first: "Review first", fix_mistakes: "Fix mistakes", listening_focus: "Listening focus" } as const)[data.session.focus ?? "balanced"]}</span></span>
+        <span className="min-w-0"><strong className="block text-slate-950">Today’s plan</strong><span className="block truncate text-sm text-slate-600">HSK {data.session.startLevel ?? 1} · {data.session.budgetMinutes ?? 20} min · {data.session.newWordCount ?? 3} new · {(data.session.listeningEnabled ?? true) ? "Listening on" : "Listening off"} · {({ balanced: "Balanced", review_first: "Review first", fix_mistakes: "Fix mistakes", listening_focus: "Listening focus" } as const)[data.session.focus ?? "balanced"]}</span></span>
         <button className="min-h-[48px] flex-none rounded-xl px-4 font-bold text-blue-700 hover:bg-blue-50 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-blue-100" onClick={() => setPlanOpen(true)}>Adjust today’s plan</button>
       </section>
       {planFeedback && <p className="mb-5 rounded-xl bg-emerald-50 px-4 py-3 text-sm font-bold text-emerald-700" role="status">{planFeedback}</p>}
@@ -555,11 +596,12 @@ export default function LearningDashboard({ mode }: { mode: "today" | "review" |
           if (item.kind === "summary") return <article className={`relative z-[1] grid grid-cols-[48px_minmax(0,1fr)] gap-4 rounded-2xl border p-4 sm:p-5 ${item.status === "completed" ? "border-emerald-200 bg-emerald-50" : "border-slate-200 bg-slate-50"}`} key={item.id} aria-live="polite">
             <TodayJourneyIcon item={item} state={item.status === "completed" ? "completed" : "locked"} />
             <div className="min-w-0"><div className="flex flex-wrap items-center justify-between gap-2"><span className="text-xs font-extrabold uppercase tracking-[.14em] text-emerald-700">Daily Summary</span><TodayStatus state={item.status === "completed" ? "completed" : "locked"} /></div><h2 className="mt-1 text-xl font-bold text-slate-950">{item.status === "completed" ? "Daily session complete" : "Finish the steps above"}</h2>
-              <div className="mt-4 grid gap-3 sm:grid-cols-3"><p><strong>Completed tasks</strong><br />{completedTasks}</p><p><strong>Skipped tasks</strong><br />{skippedTasks}</p><p><strong>Open mistakes</strong><br />{open.length}</p></div>
+              <div className="mt-4 grid gap-3 sm:grid-cols-3"><p><strong>Stage progress</strong><br />{journeyProgress.completedPhases}/{journeyProgress.totalPhases} stages complete</p><p><strong>Completed tasks</strong><br />{completedTasks}</p><p><strong>Skipped tasks</strong><br />{skippedTasks}</p></div>
+              <div className="mt-3 grid gap-2 rounded-2xl bg-white/80 p-4 text-sm sm:grid-cols-2"><p><strong>{completionSummary.reviewsCompleted}</strong> review questions completed</p><p><strong>{completionSummary.wordsLearned}</strong> new words learned</p><p><strong>{completionSummary.listeningCompleted}</strong> listening checks completed</p><p><strong>{Math.max(completionSummary.practiceCompleted, data.practiceQuestionsCompleted)}</strong> practice questions completed</p><p><strong>{open.length}</strong> open mistakes</p></div>
               <div className="mt-4 rounded-2xl bg-white/80 p-4 text-sm"><p><strong>Monthly learning score:</strong> {reward ? `${reward.monthPoints} Learning Points across ${reward.monthLearningDays} qualified days` : data.scope === "guest" ? "Sign in to track Learning Points." : "Score is temporarily unavailable."}</p><p className="mt-2"><strong>Today&apos;s learning reward:</strong> {reward ? reward.todayAwarded ? `+${reward.todayAward} Learning Points earned today.` : reward.todayQualified ? `${reward.todayAward} Learning Points are ready to be recorded.` : `${Math.ceil(reward.remainingSeconds / 60)} active minutes remain; day ${reward.nextMonthLearningDay} is worth ${reward.nextAward} points.` : "Reward status is unavailable; no points are being claimed here."}</p>{reward && item.status === "completed" && <p className="mt-2 font-bold text-blue-800">Learning Points track qualified learning days. Conversion is not open yet; subscription AI credits stay separate.</p>}</div>
               <p className="mt-4"><strong>Recommended focus:</strong> {open.length ? "Correct open mistakes before adding more new material." : `Continue HSK ${data.session.startLevel ?? 1}, with extra ${weakest} practice.`}</p>
               <p><strong>Current streak:</strong> {data.streak.current} day{data.streak.current === 1 ? "" : "s"} · longest {data.streak.longest}. {reward && reward.remainingSeconds > 0 ? `${Math.ceil(reward.remainingSeconds / 60)} active minutes remain for today’s qualification.` : data.streakBasis}</p>
-              {item.status === "completed" && <div className="mt-5 flex flex-wrap gap-3"><Link className="btn secondary" href={`/practice/${data.session.startLevel ?? 1}/vocabulary`}>Bonus task</Link>{open.length > 0 && <Link className="btn secondary" href="/mistakes">Correct open mistakes</Link>}</div>}
+              {item.status === "completed" && <div className="mt-5 flex flex-wrap gap-3"><Link className="btn" href={`/vocabulary/${data.session.startLevel ?? 1}`}>Learn {data.session.newWordCount ?? 3} more words</Link><Link className="btn secondary" href="/mistakes">Review {open.length} open mistakes</Link><Link className="btn secondary" href="/dashboard">Done for today</Link></div>}
             </div>
           </article>;
           return <article data-today-item-id={item.id} className={`relative z-[1] grid grid-cols-[48px_minmax(0,1fr)] gap-4 rounded-2xl border p-4 sm:p-5 ${todayJourneyTone(item.kind, journeyState)}`} key={item.id}>
@@ -587,7 +629,7 @@ export default function LearningDashboard({ mode }: { mode: "today" | "review" |
           <form className="today-plan-form" onSubmit={(event) => { event.preventDefault(); void configureToday(); }}>
             <p className="today-plan-recommendation"><strong>Recommended time:</strong> {recommendedMinutes} minutes, based on your score, streak, open mistakes and recent mastery.</p>
             <div className="today-plan-grid"><label>HSK level<select aria-label="Learning level" value={planDraftLevel} onChange={(event) => setPlanDraftLevel(Number(event.target.value))}>{Array.from({ length: 9 }, (_, index) => index + 1).map((level) => <option key={level} value={level}>{level >= 7 ? `HSK ${level} · Advanced 7–9 band` : `HSK ${level}`}</option>)}</select></label>
-              <label>Learning time<select aria-label="Today&apos;s time budget" value={planDraftMinutes} onChange={(event) => setPlanDraftMinutes(Number(event.target.value))}>{TODAY_BUDGET_OPTIONS.map((minutes) => <option key={minutes} value={minutes}>{minutes} minutes{minutes === recommendedMinutes ? " · Recommended" : ""}</option>)}</select></label></div>
+              <label>Learning time<select aria-label="Today&apos;s time budget" value={planDraftMinutes} onChange={(event) => { const minutes = Number(event.target.value) as TodayBudgetMinutes; setPlanDraftMinutes(minutes); setPlanDraftNewWords(recommendTodayNewWordCount(minutes)); }}>{TODAY_BUDGET_OPTIONS.map((minutes) => <option key={minutes} value={minutes}>{minutes} minutes{minutes === recommendedMinutes ? " · Recommended" : ""}</option>)}</select></label></div>
             <fieldset><legend>New words</legend><div className="today-plan-segments">{TODAY_NEW_WORD_OPTIONS.map((count) => <label key={count} className={planDraftNewWords === count ? "selected" : ""}><input type="radio" name="new-words" value={count} checked={planDraftNewWords === count} onChange={() => setPlanDraftNewWords(count)} /><strong>{count}</strong><span>{count === 1 ? "word" : "words"}</span></label>)}</div></fieldset>
             <label className="today-plan-switch"><span><strong>Include listening</strong><small>Add available word and context audio to today’s route.</small></span><input type="checkbox" checked={planDraftListening} onChange={(event) => setPlanDraftListening(event.target.checked)} /></label>
             <fieldset><legend>Priority</legend><div className="today-plan-focus">{TODAY_FOCUS_OPTIONS.map((focus) => { const copy = { balanced: ["Balanced", "Mix due memory and new work."], review_first: ["Review first", "Clear all due reviews before new work."], fix_mistakes: ["Fix mistakes", "Put unresolved mistakes first."], listening_focus: ["Listening focus", "Lead with available listening tasks."] }[focus]; return <label key={focus} className={planDraftFocus === focus ? "selected" : ""}><input type="radio" name="today-focus" value={focus} checked={planDraftFocus === focus} onChange={() => setPlanDraftFocus(focus)} /><strong>{copy[0]}</strong><span>{copy[1]}</span></label>; })}</div></fieldset>
