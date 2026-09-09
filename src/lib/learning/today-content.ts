@@ -116,7 +116,10 @@ export function selectTodayContent(startLevel: number, requestedCount = 1): Toda
 
 export function todayContentByContentId(contentId: string): TodayContentItem | undefined {
   const logicalId = contentId.startsWith("catalog:") ? contentId.slice("catalog:".length) : undefined;
-  const asset = logicalId ? runtimeWordAssets.find((candidate) => candidate.logicalId === logicalId) : undefined;
+  const asset = logicalId
+    ? runtimeWordAssets.find((candidate) => candidate.logicalId === logicalId)
+      ?? runtimeIndex.dictionaryAssets.find((candidate) => candidate.logicalId === logicalId)
+    : undefined;
   return asset ? todayContentByAssetId(asset.id) : undefined;
 }
 

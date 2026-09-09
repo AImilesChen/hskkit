@@ -3,7 +3,7 @@ import { readFile } from "node:fs/promises";
 import test from "node:test";
 
 import { assertCurrentDailySession, assertTodayLearnItemMatches, buildDailySession, emptyLearningState, gradeReview } from "../src/lib/learning/domain.ts";
-import { selectTodayContent, todayContentByAssetId } from "../src/lib/learning/today-content.ts";
+import { selectTodayContent, todayContentByAssetId, todayContentByContentId } from "../src/lib/learning/today-content.ts";
 import { isTodayBudgetMinutes, isTodayFocus, isTodayNewWordCount, recommendTodayMinutes, resolveTodayCelebration, todayJourneyProgress, TODAY_BUDGET_OPTIONS, TODAY_FOCUS_OPTIONS, TODAY_NEW_WORD_OPTIONS } from "../src/lib/learning/today-plan.ts";
 
 const root = new URL("../", import.meta.url);
@@ -43,6 +43,7 @@ test("Today renders the saved Learn word inline and completes it before unlockin
   assert.match(route, /learnContent/);
   assert.match(content, /audioSrc/);
   const travel = todayContentByAssetId("hsk3.word.l2.0368.v1");
+  assert.equal(todayContentByContentId("catalog:hsk3.word.l2.0368")?.hanzi, "旅行");
   assert.deepEqual(travel && { hanzi: travel.hanzi, pinyin: travel.pinyin, meaning: travel.meaning, audio: Boolean(travel.audioSrc), example: travel.example?.hanzi }, {
     hanzi: "旅行",
     pinyin: "lǚxíng",
