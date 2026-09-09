@@ -21,7 +21,7 @@ import {
   recordAudioAttempt,
   type LearningState,
 } from "../../../../lib/learning/domain";
-import { isTodayBudgetMinutes } from "../../../../lib/learning/today-plan";
+import { isTodayBudgetMinutes, isTodayFocus, isTodayNewWordCount } from "../../../../lib/learning/today-plan";
 import { audioPlaybackSubject, trustedAudioExercise, trustedTodayAudioExercise, type AudioMode } from "../../../../lib/learning/audio";
 import { advancedListeningBySlug, isStep7AnswerAllowed, normalizeStep7Answer, trustedStep7Exercise } from "../../../../lib/learning/step7-content";
 import { completeStep7PlaybackTicket, consumeStep7PlaybackTicket, createStep7PlaybackTicket } from "../../../../lib/learning/step7-playback";
@@ -95,7 +95,8 @@ function view(state: LearningState, ownerId: string, offsetMinutes: number, capa
   const nextAction = deriveHomeNextStep(state, now);
   const latestPlacement = [...(state.placementResults ?? [])].sort((a, b) => b.createdAt.localeCompare(a.createdAt))[0];
   const startLevel = state.preferredLearningLevel ?? latestPlacement?.recommendedLevel ?? 1;
-  const built = buildDailySession(state, { ownerId, localDay: learningLocalDay(now, offsetMinutes, accountTimezone), ruleVersion: "today-v5", now, dailyContent: selectTodayContent(startLevel) });
+  const preferences = state.todayPreferences ?? { newWordCount: 1 as const, listeningEnabled: true, focus: "balanced" as const };
+  const built = buildDailySession(state, { ownerId, localDay: learningLocalDay(now, offsetMinutes, accountTimezone), ruleVersion: "today-v7", now, dailyContent: selectTodayContent(startLevel, preferences.newWordCount), ...preferences });
   const projected = projectLearningHistory(built.state, capabilities, new Date(now));
   const mistakeKey = (contentId: string, contentVersion: string, dimension: string) => `${contentId}\u0000${contentVersion}\u0000${dimension}`;
   const openMistakeKeys = new Set(projected.mistakes.filter((mistake) => mistake.status === "open").map((mistake) => {
@@ -725,13 +726,20 @@ async function postLearning(req: NextRequest) {
       } else if (action === "configure_today") {
         const budgetMinutes = Number(payload.budgetMinutes);
         if (!isTodayBudgetMinutes(budgetMinutes)) throw new Error("INVALID_TIME_BUDGET");
+        const newWordCount = Number(payload.newWordCount);
+        if (!isTodayNewWordCount(newWordCount)) throw new Error("INVALID_NEW_WORD_COUNT");
+        const listeningEnabled = payload.listeningEnabled;
+        if (typeof listeningEnabled !== "boolean") throw new Error("INVALID_LISTENING_PREFERENCE");
+        const focus = payload.focus;
+        if (!isTodayFocus(focus)) throw new Error("INVALID_TODAY_FOCUS");
         const requestedLevel = payload.startLevel === undefined ? state.preferredLearningLevel : Number(payload.startLevel);
         if (requestedLevel !== undefined && (!Number.isInteger(requestedLevel) || requestedLevel < 1 || requestedLevel > 9)) throw new Error("INVALID_LEARNING_LEVEL");
         const observedAt = new Date().toISOString();
         const latestPlacement = [...(state.placementResults ?? [])].sort((a, b) => b.createdAt.localeCompare(a.createdAt))[0];
         const startLevel = requestedLevel ?? latestPlacement?.recommendedLevel ?? 1;
-        state = { ...state, ...(requestedLevel ? { preferredLearningLevel: requestedLevel } : {}) };
-        state = buildDailySession(state, { ownerId: identity.id, localDay: learningLocalDay(observedAt, tz, identity.account?.timezone), ruleVersion: "today-v5", now: observedAt, dailyContent: selectTodayContent(startLevel), budgetMinutes }).state;
+        const todayPreferences = { newWordCount, listeningEnabled, focus };
+        state = { ...state, ...(requestedLevel ? { preferredLearningLevel: requestedLevel } : {}), todayPreferences };
+        state = buildDailySession(state, { ownerId: identity.id, localDay: learningLocalDay(observedAt, tz, identity.account?.timezone), ruleVersion: "today-v7", now: observedAt, dailyContent: selectTodayContent(startLevel, newWordCount), budgetMinutes, ...todayPreferences }).state;
         state = { ...state, dailyOperationKeys: [...(state.dailyOperationKeys ?? []), key].slice(-400) };
       } else {
         return errorResponse("INVALID_ACTION", 422);

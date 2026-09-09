@@ -4,7 +4,7 @@ import test from "node:test";
 
 import { assertCurrentDailySession, assertTodayLearnItemMatches, buildDailySession, emptyLearningState } from "../src/lib/learning/domain.ts";
 import { selectTodayContent } from "../src/lib/learning/today-content.ts";
-import { isTodayBudgetMinutes, recommendTodayMinutes, resolveTodayCelebration, TODAY_BUDGET_OPTIONS } from "../src/lib/learning/today-plan.ts";
+import { isTodayBudgetMinutes, isTodayFocus, isTodayNewWordCount, recommendTodayMinutes, resolveTodayCelebration, TODAY_BUDGET_OPTIONS, TODAY_FOCUS_OPTIONS, TODAY_NEW_WORD_OPTIONS } from "../src/lib/learning/today-plan.ts";
 
 const root = new URL("../", import.meta.url);
 const source = (path: string) => readFile(new URL(path, root), "utf8");
@@ -44,7 +44,7 @@ test("Today has one dominant start action, explicit plan save feedback, progress
     "of {plannedTodayTasks.length}",
     "min remaining",
     "Why this plan",
-    "Update plan",
+    "Save changes",
     "Plan updated",
     "Plan change is pending. Use Retry sync",
     "Recommended time",
@@ -63,6 +63,79 @@ test("Today budget is restricted to the approved presets and personalization use
   assert.equal(recommendTodayMinutes({ monthPoints: 100, openMistakes: 0, currentStreak: 0, mastery: { reading: 4, audio: 4, context_audio: 4 }, cardCount: 4 }), 20);
   assert.equal(recommendTodayMinutes({ monthPoints: 0, openMistakes: 3, currentStreak: 0, mastery: { reading: 4, audio: 4, context_audio: 4 }, cardCount: 4 }), 30);
   assert.equal(recommendTodayMinutes({ monthPoints: 0, openMistakes: 0, currentStreak: 0, mastery: { reading: 5, audio: 1, context_audio: 5 }, cardCount: 6 }), 30);
+});
+
+test("Adjust Today exposes and validates every confirmed plan control in a responsive modal", async () => {
+  assert.deepEqual(TODAY_NEW_WORD_OPTIONS, [1, 2, 3]);
+  assert.deepEqual(TODAY_FOCUS_OPTIONS, ["balanced", "review_first", "fix_mistakes", "listening_focus"]);
+  for (const count of TODAY_NEW_WORD_OPTIONS) assert.equal(isTodayNewWordCount(count), true);
+  for (const rejected of [0, 4, 1.5, "2"]) assert.equal(isTodayNewWordCount(rejected), false);
+  for (const focus of TODAY_FOCUS_OPTIONS) assert.equal(isTodayFocus(focus), true);
+  for (const rejected of ["review", "mistakes", "listen", 1]) assert.equal(isTodayFocus(rejected), false);
+  const [dashboard, css, route] = await Promise.all([
+    source("src/app/components/learning-dashboard.tsx"),
+    source("src/app/globals.css"),
+    source("src/app/api/v1/learning/route.ts"),
+  ]);
+  for (const token of ["Adjust today’s plan", "New words", "Include listening", "Balanced", "Review first", "Fix mistakes", "Listening focus", "Save changes", "Cancel"]) {
+    assert.match(dashboard, new RegExp(token.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")));
+  }
+  assert.match(dashboard, /role="dialog"/);
+  assert.match(dashboard, /aria-modal="true"/);
+  assert.match(dashboard, /event\.key === "Escape"/);
+  assert.match(css, /\.today-plan-overlay/);
+  assert.match(css, /@media \(min-width: 768px\)[\s\S]*\.today-plan-dialog[\s\S]*margin-left: auto/);
+  assert.match(css, /@media \(max-width: 767px\)[\s\S]*\.today-plan-overlay[\s\S]*align-items: end/);
+  assert.match(css, /padding-bottom: calc\([^;]*env\(safe-area-inset-bottom\)/);
+  assert.match(route, /newWordCount/);
+  assert.match(route, /listeningEnabled/);
+  assert.match(route, /focus/);
+});
+
+test("Today plan preferences change the saved plan rather than acting as decorative controls", () => {
+  const content = selectTodayContent(1, 3);
+  assert.equal(content.status, "ready");
+  if (content.status !== "ready") return;
+  assert.ok(content.items.length >= 2 && content.items.length <= 3);
+  const withoutListening = buildDailySession(emptyLearningState(), {
+    ownerId: "today-controls",
+    localDay: "2026-09-09",
+    ruleVersion: "today-v7",
+    now,
+    dailyContent: content,
+    budgetMinutes: 30,
+    newWordCount: 3,
+    listeningEnabled: false,
+    focus: "fix_mistakes",
+  });
+  assert.equal(withoutListening.session.newWordCount, 3);
+  assert.equal(withoutListening.session.listeningEnabled, false);
+  assert.equal(withoutListening.session.focus, "fix_mistakes");
+  assert.equal(withoutListening.session.items.some((item) => item.kind === "listen"), false);
+  assert.ok(withoutListening.session.items.filter((item) => item.kind === "learn").length >= 2);
+});
+
+test("each Today priority changes the route order", () => {
+  const content = selectTodayContent(1, 1);
+  assert.equal(content.status, "ready");
+  if (content.status !== "ready") return;
+  const state = emptyLearningState();
+  state.attempts = [{ id: "attempt-mistake", idempotencyKey: "attempt-mistake", contentId: "due-mistake", contentVersion: "v1", dimension: "reading", answer: "x", correctAnswer: "y", correct: false, observedAt: "2026-09-08T00:00:00.000Z" }];
+  state.mistakes = [{ id: "mistake-1", contentId: "due-mistake", contentVersion: "v1", sourceAttemptId: "attempt-mistake", status: "open", createdAt: "2026-09-08T00:00:00.000Z" }];
+  state.cards = [
+    { id: "card-old", contentId: "due-old", contentVersion: "v1", dimension: "reading", dueAt: "2026-09-06T00:00:00.000Z", intervalDays: 1, ease: 2.5, revision: 1, reviewCount: 1, algorithmVersion: "hskkit-srs-v1", sourceAttemptId: "attempt-old", gradeKeys: [] },
+    { id: "card-middle", contentId: "due-middle", contentVersion: "v1", dimension: "audio", dueAt: "2026-09-07T00:00:00.000Z", intervalDays: 1, ease: 2.5, revision: 1, reviewCount: 1, algorithmVersion: "hskkit-srs-v1", sourceAttemptId: "attempt-middle", gradeKeys: [] },
+    { id: "card-mistake", contentId: "due-mistake", contentVersion: "v1", dimension: "reading", dueAt: "2026-09-08T00:00:00.000Z", intervalDays: 1, ease: 2.5, revision: 1, reviewCount: 1, algorithmVersion: "hskkit-srs-v1", sourceAttemptId: "attempt-mistake", gradeKeys: [] },
+  ];
+  const route = (focus: "balanced" | "review_first" | "fix_mistakes" | "listening_focus") => buildDailySession(state, { ownerId: `priority-${focus}`, localDay: "2026-09-09", ruleVersion: "today-v7", now, dailyContent: content, budgetMinutes: 30, newWordCount: 1, listeningEnabled: true, focus }).session.items.filter((item) => item.kind !== "summary");
+  const balanced = route("balanced");
+  const reviewFirst = route("review_first");
+  const fixMistakes = route("fix_mistakes");
+  const listeningFocus = route("listening_focus");
+  assert.equal(balanced[2]?.kind, "learn");
+  assert.equal(reviewFirst[2]?.kind, "review");
+  assert.equal(fixMistakes[0]?.contentId, "due-mistake");
+  assert.equal(listeningFocus[0]?.kind, "listen");
 });
 
 test("Today Learn completion is bound to the exact planned content and version", () => {
@@ -156,10 +229,12 @@ test("Today journey makes current, completed, locked and skipped states unmistak
     "Moved to tomorrow",
     "today-mobile-action",
     "Learning Points",
+    "Conversion is not open yet",
+    "subscription AI credits stay separate",
     "Correct open mistakes",
   ]) assert.match(dashboard, new RegExp(token.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")));
   assert.match(dashboard, /primaryTodayAction\(item,/);
-  assert.match(dashboard, /min-h-\[64px\][\s\S]{0,500}Today’s plan/);
+  assert.match(dashboard, /min-h-\[72px\][\s\S]{0,500}Today’s plan/);
   assert.match(todayPlan, /Today’s session wrapped up!/);
   assert.match(dashboard, /event\.key === "Escape"/);
   assert.match(dashboard, /querySelectorAll<HTMLElement>/);

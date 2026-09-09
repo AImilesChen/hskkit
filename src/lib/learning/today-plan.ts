@@ -1,5 +1,9 @@
 export const TODAY_BUDGET_OPTIONS = [5, 10, 15, 20, 30] as const;
+export const TODAY_NEW_WORD_OPTIONS = [1, 2, 3] as const;
+export const TODAY_FOCUS_OPTIONS = ["balanced", "review_first", "fix_mistakes", "listening_focus"] as const;
 export type TodayBudgetMinutes = typeof TODAY_BUDGET_OPTIONS[number];
+export type TodayNewWordCount = typeof TODAY_NEW_WORD_OPTIONS[number];
+export type TodayFocus = typeof TODAY_FOCUS_OPTIONS[number];
 export type TodayCompletedKind = "review" | "learn" | "listen" | "practice";
 export type TodayCelebration = {
   kind: "step" | "session";
@@ -44,6 +48,14 @@ export function todayCompletionProofKey(dailySessionId: string, dailyItemId: str
 
 export function isTodayBudgetMinutes(value: unknown): value is TodayBudgetMinutes {
   return typeof value === "number" && Number.isInteger(value) && TODAY_BUDGET_OPTIONS.includes(value as TodayBudgetMinutes);
+}
+
+export function isTodayNewWordCount(value: unknown): value is TodayNewWordCount {
+  return typeof value === "number" && Number.isInteger(value) && TODAY_NEW_WORD_OPTIONS.includes(value as TodayNewWordCount);
+}
+
+export function isTodayFocus(value: unknown): value is TodayFocus {
+  return typeof value === "string" && TODAY_FOCUS_OPTIONS.includes(value as TodayFocus);
 }
 
 export function recommendTodayMinutes(input: {

@@ -3,7 +3,7 @@ import type { TodayContentPlan } from "./today-content.ts";
 import { practiceQuestionSet } from "../practice/questions.ts";
 import type { ReviewSnapshot } from "./review-content.ts";
 import type { DictionaryPracticeWord } from "../dictionary/p2-learning.ts";
-import { isTodayBudgetMinutes } from "./today-plan.ts";
+import { isTodayBudgetMinutes, isTodayFocus, isTodayNewWordCount, type TodayFocus, type TodayNewWordCount } from "./today-plan.ts";
 
 export type Grade = "again" | "hard" | "good" | "easy";
 export type Dimension = "reading" | "audio" | "context_audio";
@@ -80,6 +80,9 @@ export interface DailySession {
   planFingerprint?: string;
   notice?: { code: string; message: string; actionHref: string; actionLabel: string };
   budgetMinutes?: number;
+  newWordCount?: TodayNewWordCount;
+  listeningEnabled?: boolean;
+  focus?: TodayFocus;
   totalEstimatedMinutes?: number;
   items: DailyItem[];
 }
@@ -185,6 +188,7 @@ export interface LearningState {
   };
   reviewUndoKeys?: string[];
   preferredLearningLevel?: number;
+  todayPreferences?: { newWordCount: TodayNewWordCount; listeningEnabled: boolean; focus: TodayFocus };
 }
 
 export function masterySnapshot(state: LearningState): Record<Dimension, number> {
@@ -605,41 +609,76 @@ export function assertCurrentDailySession(currentSession: DailySession | undefin
   return currentSession;
 }
 
-export function buildDailySession(state: LearningState, input: { ownerId: string; localDay: string; ruleVersion: string; now: string; dailyContent?: TodayContentPlan; budgetMinutes?: number }) {
+export function buildDailySession(state: LearningState, input: { ownerId: string; localDay: string; ruleVersion: string; now: string; dailyContent?: TodayContentPlan; budgetMinutes?: number; newWordCount?: number; listeningEnabled?: boolean; focus?: TodayFocus }) {
   const prior = state.dailySessions.find((session) => session.ownerId === input.ownerId && session.localDay === input.localDay);
+  const newWordCount = isTodayNewWordCount(input.newWordCount) ? input.newWordCount : isTodayNewWordCount(prior?.newWordCount) ? prior.newWordCount : 1;
+  const listeningEnabled = typeof input.listeningEnabled === "boolean" ? input.listeningEnabled : prior?.listeningEnabled ?? true;
+  const focus = isTodayFocus(input.focus) ? input.focus : isTodayFocus(prior?.focus) ? prior.focus : "balanced";
+  const openMistakeKeys = new Set(state.mistakes.filter((mistake) => mistake.status === "open").map((mistake) => {
+    const attempt = state.attempts.find((candidate) => candidate.id === mistake.sourceAttemptId);
+    return `${mistake.contentId}\u0000${mistake.contentVersion}\u0000${attempt?.dimension ?? "reading"}`;
+  }));
   const due: DailyItem[] = state.cards
     .filter((card) => card.dueAt <= input.now)
-    .slice(0, 20)
-    .map((card) => ({ id: reviewItemId(card), kind: "review", contentId: card.contentId, reviewCardId: card.id, dimension: card.dimension, status: "pending" }));
+    .sort((a, b) => {
+      const aMistake = openMistakeKeys.has(`${a.contentId}\u0000${a.contentVersion}\u0000${a.dimension}`);
+      const bMistake = openMistakeKeys.has(`${b.contentId}\u0000${b.contentVersion}\u0000${b.dimension}`);
+      if (focus === "fix_mistakes") return Number(bMistake) - Number(aMistake) || a.dueAt.localeCompare(b.dueAt);
+      if (focus === "listening_focus") return Number(b.dimension !== "reading") - Number(a.dimension !== "reading") || a.dueAt.localeCompare(b.dueAt);
+      return a.dueAt.localeCompare(b.dueAt);
+    })
+    .slice(0, focus === "balanced" ? 6 : 20)
+    .map((card) => ({ id: reviewItemId(card), kind: "review", contentId: card.contentId, contentVersion: card.contentVersion, reviewCardId: card.id, dimension: card.dimension, status: "pending" }));
   const content = input.dailyContent;
+  const contentItems = content?.status === "ready" ? content.items.slice(0, newWordCount) : [];
   const planFingerprint = content?.status === "ready"
-    ? `ready:${content.releaseId}:${content.startLevel}:${content.item.contentId}:${content.item.contentVersion}`
+    ? `ready:${content.releaseId}:${content.startLevel}:${contentItems.map((item) => `${item.contentId}:${item.contentVersion}`).join("|")}:${newWordCount}:${listeningEnabled}:${focus}`
     : content?.status === "empty"
-      ? `empty:${content.releaseId}:${content.startLevel}:${content.code}`
-      : "legacy";
+      ? `empty:${content.releaseId}:${content.startLevel}:${content.code}:${newWordCount}:${listeningEnabled}:${focus}`
+      : `legacy:${newWordCount}:${listeningEnabled}:${focus}`;
   const practiceVersion = content?.status === "ready" && content.practiceHref
     ? practiceQuestionSet(content.startLevel, "vocabulary")[0]?.setVersion
     : undefined;
+  const contentCore: DailyItem[] = [];
+  if (content?.status === "ready") {
+    for (const item of contentItems) {
+      contentCore.push({ id: `learn:${item.contentId}:${item.contentVersion}`, kind: "learn", contentId: item.contentId, contentVersion: item.contentVersion, title: `Learn ${item.hanzi}`, href: `/word/${item.studySlug}`, status: "pending" });
+      if (listeningEnabled) {
+        contentCore.push({ id: `listen:${item.contentId}:${item.contentVersion}:audio`, kind: "listen", contentId: item.contentId, contentVersion: item.contentVersion, dimension: "audio", title: `Listen to ${item.hanzi}`, href: `/listen/today/${item.assetId}?mode=audio`, status: "pending" });
+        if (item.example) contentCore.push({ id: `listen:${item.contentId}:${item.contentVersion}:context_audio`, kind: "listen", contentId: item.contentId, contentVersion: item.contentVersion, dimension: "context_audio", title: "Listen in context", href: `/listen/today/${item.assetId}?mode=context_audio`, status: "pending" });
+      }
+    }
+  }
   const core: DailyItem[] = content?.status === "ready" ? [
-    { id: `learn:${content.item.contentId}:${content.item.contentVersion}`, kind: "learn", contentId: content.item.contentId, contentVersion: content.item.contentVersion, title: `Learn ${content.item.hanzi}`, href: `/word/${content.item.studySlug}`, status: "pending" },
-    { id: `listen:${content.item.contentId}:${content.item.contentVersion}:audio`, kind: "listen", contentId: content.item.contentId, contentVersion: content.item.contentVersion, dimension: "audio", title: `Listen to ${content.item.hanzi}`, href: `/listen/today/${content.item.assetId}?mode=audio`, status: "pending" },
-    ...(content.item.example ? [{ id: `listen:${content.item.contentId}:${content.item.contentVersion}:context_audio`, kind: "listen" as const, contentId: content.item.contentId, contentVersion: content.item.contentVersion, dimension: "context_audio" as const, title: "Listen in context", href: `/listen/today/${content.item.assetId}?mode=context_audio`, status: "pending" as const }] : []),
+    ...contentCore,
     ...(content.practiceHref && practiceVersion ? [{ id: `practice:${content.startLevel}:vocabulary:${practiceVersion}`, kind: "practice" as const, contentId: `practice:${content.startLevel}:vocabulary`, contentVersion: practiceVersion, dimension: "reading" as const, title: `Level ${content.startLevel} vocabulary practice`, href: content.practiceHref, status: "pending" as const }] : []),
     { id: "summary", kind: "summary", contentId: "summary", status: "pending" },
   ] : content?.status === "empty" ? [
     { id: "summary", kind: "summary", contentId: "summary", status: "pending" },
   ] : [
     { id: "learn:word:ni-hao", kind: "learn", contentId: "word:ni-hao", status: "pending" },
-    { id: "listen:word:word-ni-hao:audio", kind: "listen", contentId: "word:word-ni-hao", dimension: "audio", status: "pending" },
-    { id: "listen:word:word-ni-hao:context_audio", kind: "listen", contentId: "word:word-ni-hao", dimension: "context_audio", status: "pending" },
+    ...(listeningEnabled ? [
+      { id: "listen:word:word-ni-hao:audio", kind: "listen" as const, contentId: "word:word-ni-hao", dimension: "audio" as const, status: "pending" as const },
+      { id: "listen:word:word-ni-hao:context_audio", kind: "listen" as const, contentId: "word:word-ni-hao", dimension: "context_audio" as const, status: "pending" as const },
+    ] : []),
     { id: "practice:1:vocabulary", kind: "practice", contentId: "practice:1:vocabulary", contentVersion: practiceQuestionSet(1, "vocabulary")[0]?.setVersion, dimension: "reading", status: "pending" },
     { id: "summary", kind: "summary", contentId: "summary", status: "pending" },
   ];
 
   const budgetMinutes = isTodayBudgetMinutes(input.budgetMinutes) ? input.budgetMinutes : isTodayBudgetMinutes(prior?.budgetMinutes) ? prior.budgetMinutes : 30;
   const carriedDictionaryItems = (prior?.items ?? []).filter((item) => item.id.startsWith("dictionary:") && item.status !== "completed");
+  const coreTasks = core.filter((item) => item.kind !== "summary");
+  const dueMistakes = due.filter((item) => openMistakeKeys.has(`${item.contentId}\u0000${item.contentVersion}\u0000${item.dimension}`));
+  const dueOther = due.filter((item) => !dueMistakes.some((mistake) => mistake.id === item.id));
+  const orderedCandidates = focus === "listening_focus"
+    ? [...coreTasks.filter((item) => item.kind === "listen"), ...due, ...carriedDictionaryItems, ...coreTasks.filter((item) => item.kind !== "listen")]
+    : focus === "fix_mistakes"
+      ? [...dueMistakes, ...coreTasks, ...dueOther, ...carriedDictionaryItems]
+      : focus === "review_first"
+        ? [...due, ...carriedDictionaryItems, ...coreTasks]
+        : [...due.slice(0, 2), ...coreTasks, ...due.slice(2), ...carriedDictionaryItems];
   const candidateIds = new Set<string>();
-  const candidates = [...due, ...carriedDictionaryItems, ...core.filter((item) => item.kind !== "summary")]
+  const candidates = orderedCandidates
     .filter((item) => !candidateIds.has(item.id) && Boolean(candidateIds.add(item.id)))
     .map((item) => ({ ...item, deferred: false, estimatedMinutes: item.estimatedMinutes ?? estimateDailyItem(item) }));
   let used = 0;
@@ -659,6 +698,9 @@ export function buildDailySession(state: LearningState, input: { ownerId: string
     const samePlan = prior.ruleVersion === input.ruleVersion
       && prior.planFingerprint === planFingerprint
       && (prior.budgetMinutes ?? 30) === budgetMinutes
+      && (prior.newWordCount ?? 1) === newWordCount
+      && (prior.listeningEnabled ?? true) === listeningEnabled
+      && (prior.focus ?? "balanced") === focus
       && prior.items.every((item) => item.kind !== "review" || (Boolean(item.reviewCardId) && typeof item.estimatedMinutes === "number"))
       && duePlanMatches;
     if (samePlan) return { state, session: prior };
@@ -678,6 +720,9 @@ export function buildDailySession(state: LearningState, input: { ownerId: string
       ...prior,
       ruleVersion: input.ruleVersion,
       budgetMinutes,
+      newWordCount,
+      listeningEnabled,
+      focus,
       totalEstimatedMinutes: retained.reduce((sum, item) => sum + (item.estimatedMinutes ?? estimateDailyItem(item)), 0),
       startLevel: content?.startLevel,
       contentReleaseId: content?.releaseId,
@@ -700,6 +745,9 @@ export function buildDailySession(state: LearningState, input: { ownerId: string
     contentReleaseId: content?.releaseId,
     planFingerprint,
     budgetMinutes,
+    newWordCount,
+    listeningEnabled,
+    focus,
     totalEstimatedMinutes: plannedItems.reduce((sum, item) => sum + (item.estimatedMinutes ?? estimateDailyItem(item)), 0),
     notice: content?.status === "empty" ? { code: content.code, message: content.message, actionHref: content.actionHref, actionLabel: content.actionLabel } : undefined,
     items: plannedItems,

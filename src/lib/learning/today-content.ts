@@ -3,7 +3,7 @@ import type { CatalogSearchRow } from "../content/catalog-search.ts";
 import { getHsk3LevelStatus } from "../content/level-status.ts";
 import { getWordBySlug, listPublishedWords, type StudyWord } from "../dictionary/catalog.ts";
 
-const planCache = new Map<number, TodayContentPlan>();
+const planCache = new Map<string, TodayContentPlan>();
 const runtimeWordAssets = Object.values(runtimeIndex.runtimeWords).flat();
 type RuntimeTodayAsset = (typeof runtimeWordAssets)[number];
 
@@ -22,7 +22,7 @@ export interface TodayContentItem {
 }
 
 export type TodayContentPlan =
-  | { status: "ready"; startLevel: number; levelBand: string; releaseId: string; item: TodayContentItem; practiceHref?: string; unavailableCapabilities?: Array<"context_audio" | "practice"> }
+  | { status: "ready"; startLevel: number; levelBand: string; releaseId: string; item: TodayContentItem; items: TodayContentItem[]; practiceHref?: string; unavailableCapabilities?: Array<"context_audio" | "practice"> }
   | { status: "empty"; startLevel: number; releaseId?: string; code: "EMPTY_CONTENT_QUEUE" | "CONTEXT_AUDIO_UNAVAILABLE"; message: string; actionHref: string; actionLabel: string };
 
 function activeLevel(level: number) {
@@ -60,9 +60,11 @@ function mapItem(asset: RuntimeTodayAsset, word: StudyWord | undefined, releaseI
   };
 }
 
-export function selectTodayContent(startLevel: number): TodayContentPlan {
+export function selectTodayContent(startLevel: number, requestedCount = 1): TodayContentPlan {
   const level = Number.isInteger(startLevel) && startLevel >= 1 && startLevel <= 9 ? startLevel : 1;
-  const cached = planCache.get(level);
+  const count = Number.isInteger(requestedCount) ? Math.min(3, Math.max(1, requestedCount)) : 1;
+  const cacheKey = `${level}:${count}`;
+  const cached = planCache.get(cacheKey);
   if (cached) return cached;
   const result = activeLevel(level);
   let plan: TodayContentPlan;
@@ -80,17 +82,20 @@ export function selectTodayContent(startLevel: number): TodayContentPlan {
     const words = listPublishedWords();
     const joined = result.contentAssets
       .map((asset) => compatibleAsset(asset, words))
-      .find(Boolean)
-      ?? (result.contentAssets[0] ? { asset: result.contentAssets[0], word: undefined } : undefined);
-    plan = joined ? {
+      .filter((value): value is { asset: RuntimeTodayAsset; word: StudyWord } => Boolean(value))
+      .slice(0, count);
+    if (!joined.length && result.contentAssets[0]) joined.push({ asset: result.contentAssets[0], word: undefined as unknown as StudyWord });
+    const items = joined.map(({ asset, word }) => mapItem(asset, word, result.releaseId));
+    plan = items.length ? {
       status: "ready",
       startLevel: level,
       levelBand: level >= 7 ? "7-9" : String(level),
       releaseId: result.releaseId,
-      item: mapItem(joined.asset, joined.word, result.releaseId),
+      item: items[0],
+      items,
       practiceHref: level <= 6 ? `/practice/${level}/vocabulary` : undefined,
       unavailableCapabilities: [
-        ...(!joined.word?.example ? ["context_audio" as const] : []),
+        ...(items.some((item) => !item.example) ? ["context_audio" as const] : []),
         ...(level > 6 ? ["practice" as const] : []),
       ],
     } : {
@@ -103,7 +108,7 @@ export function selectTodayContent(startLevel: number): TodayContentPlan {
       actionLabel: `Open Level ${level} vocabulary`,
     };
   }
-  planCache.set(level, plan);
+  planCache.set(cacheKey, plan);
   return plan;
 }
 

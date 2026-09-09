@@ -68,3 +68,19 @@ test("AI reservations accept promotional base allowances above 500 without losin
     { name: "idx_ai_operations_status" },
   ]);
 });
+
+test("AI credits move from reserved to used only after a successful provider response", () => {
+  const storage = readFileSync(new URL("../src/lib/ai/storage.ts", import.meta.url), "utf8");
+  const route = readFileSync(new URL("../src/app/api/v1/ai/route.ts", import.meta.url), "utf8");
+  const failureStart = storage.indexOf("export async function finalizeFailure");
+  assert.ok(failureStart >= 0);
+  const failurePath = storage.slice(failureStart);
+
+  assert.match(storage, /UPDATE ai_quota_buckets SET reserved=reserved-\?,used=used\+\?/);
+  assert.match(failurePath, /UPDATE ai_quota_buckets SET reserved=reserved-\?/);
+  assert.doesNotMatch(failurePath, /used=used\+/);
+  assert.match(route, /await finalizeSuccess\(\{ operation, output/);
+  assert.match(route, /charged: true/);
+  assert.match(route, /await finalizeFailure\(operation, failureCode\)/);
+  assert.match(route, /status: "fallback", charged: false/);
+});

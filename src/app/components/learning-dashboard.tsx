@@ -8,7 +8,7 @@ import HomeIcon, { type HomeIconName } from "./home-icon";
 import LearningLoopNav, { type LearningLoopLabel } from "./learning-loop-nav";
 import { LearningLoadError, loadLearningData, type LearningLoadErrorCode } from "../../lib/learning/client-load";
 import { buildIntentReviewQueue, buildReviewQueue, filterReviewCards, recommendReviewCount, reviewComposition, reviewEntryIntent, reviewGradeOptions, reviewTip, type ReviewEntryIntent, type ReviewGrade } from "../../lib/learning/review-session";
-import { recommendTodayMinutes, resolveTodayCelebration, todayCompletionProofKey, TODAY_BUDGET_OPTIONS, type TodayCelebration, type TodayCompletedKind } from "../../lib/learning/today-plan";
+import { recommendTodayMinutes, resolveTodayCelebration, todayCompletionProofKey, TODAY_BUDGET_OPTIONS, TODAY_FOCUS_OPTIONS, TODAY_NEW_WORD_OPTIONS, type TodayCelebration, type TodayCompletedKind, type TodayFocus, type TodayNewWordCount } from "../../lib/learning/today-plan";
 
 type Dimension = "reading" | "audio" | "context_audio";
 type Item = { id: string; kind: "review" | "learn" | "listen" | "practice" | "summary"; contentId: string; contentVersion?: string; status: "pending" | "completed" | "skipped"; dimension?: Dimension; title?: string; href?: string; estimatedMinutes?: number; deferred?: boolean; reviewCardId?: string };
@@ -17,7 +17,7 @@ type Card = { id: string; contentId: string; dimension: Dimension; dueAt: string
 type Mistake = { id: string; contentId: string; cardId?: string; status: string; createdAt: string; resolvedAt?: string; dimension: Dimension; prompt: string; level?: number; skill: string };
 type RewardSnapshot = { monthLearningDays: number; monthPoints: number; currentStreak: number; remainingSeconds: number; nextAward: number; nextMonthLearningDay: number; todayQualified: boolean; todayAwarded: boolean; todayAward: number };
 type Data = {
-  session: { id: string; startLevel?: number; contentReleaseId?: string; notice?: Notice; budgetMinutes?: number; totalEstimatedMinutes?: number; items: Item[] };
+  session: { id: string; startLevel?: number; contentReleaseId?: string; notice?: Notice; budgetMinutes?: number; newWordCount?: TodayNewWordCount; listeningEnabled?: boolean; focus?: TodayFocus; totalEstimatedMinutes?: number; items: Item[] };
   cards: Card[];
   focusedReview: (Card & { focusReason: "open_mistake" | "due" })[];
   canUndoReview: { cardId: string } | null;
@@ -84,6 +84,11 @@ export default function LearningDashboard({ mode }: { mode: "today" | "review" |
   const [syncState, setSyncState] = useState<"synced" | "local_pending" | "syncing" | "conflict" | "failed">("synced");
   const [planDraftMinutes, setPlanDraftMinutes] = useState(30);
   const [planDraftLevel, setPlanDraftLevel] = useState(1);
+  const [planDraftNewWords, setPlanDraftNewWords] = useState<TodayNewWordCount>(1);
+  const [planDraftListening, setPlanDraftListening] = useState(true);
+  const [planDraftFocus, setPlanDraftFocus] = useState<TodayFocus>("balanced");
+  const [planOpen, setPlanOpen] = useState(false);
+  const planDialogRef = useRef<HTMLDivElement | null>(null);
   const [planFeedback, setPlanFeedback] = useState("");
   const [reward, setReward] = useState<RewardSnapshot | null>(null);
   const operationKeys = useRef<Record<string, string>>({});
@@ -109,6 +114,9 @@ export default function LearningDashboard({ mode }: { mode: "today" | "review" |
       setData(loaded);
       setPlanDraftMinutes(loaded.session.budgetMinutes ?? 30);
       setPlanDraftLevel(loaded.session.startLevel ?? 1);
+      setPlanDraftNewWords(loaded.session.newWordCount ?? 1);
+      setPlanDraftListening(loaded.session.listeningEnabled ?? true);
+      setPlanDraftFocus(loaded.session.focus ?? "balanced");
       if (loaded.scope === "account") {
         void fetch("/api/v1/account/learning-rewards", { cache: "no-store" })
           .then((response) => response.ok ? response.json() : null)
@@ -167,6 +175,28 @@ export default function LearningDashboard({ mode }: { mode: "today" | "review" |
     const animate = !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     setCelebration({ ...resolved, animate });
   }, [data, mode, returnedItemId, returnedKind, returnedSessionId]);
+
+  useEffect(() => {
+    if (!planOpen) return;
+    const previousFocus = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+    const panel = planDialogRef.current;
+    const focusable = () => Array.from(panel?.querySelectorAll<HTMLElement>("button:not([disabled]), input:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex='-1'])") ?? []);
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    (focusable()[0] ?? panel)?.focus();
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") { event.preventDefault(); setPlanOpen(false); return; }
+      if (event.key !== "Tab") return;
+      const controls = focusable();
+      if (!controls.length) { event.preventDefault(); panel?.focus(); return; }
+      const first = controls[0];
+      const last = controls[controls.length - 1];
+      if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last.focus(); }
+      else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first.focus(); }
+    };
+    document.addEventListener("keydown", handleKeyDown);
+    return () => { document.body.style.overflow = previousOverflow; document.removeEventListener("keydown", handleKeyDown); previousFocus?.focus(); };
+  }, [planOpen]);
 
   useEffect(() => {
     if (!celebration) return;
@@ -373,10 +403,12 @@ export default function LearningDashboard({ mode }: { mode: "today" | "review" |
   }
   async function skip(item: Item) { await post("skip_item", { sessionId: data!.session.id, itemId: item.id }, `skip:${data!.session.id}:${item.id}`); }
   async function restore(item: Item) { await post("restore_item", { sessionId: data!.session.id, itemId: item.id }, `restore:${data!.session.id}:${item.id}`); }
-  async function configureToday(minutes: number, startLevel = data!.session.startLevel ?? 1) {
+  async function configureToday() {
     setPlanFeedback("");
-    const result = await post("configure_today", { budgetMinutes: minutes, startLevel }, `today-plan:${data!.session.id}:${minutes}:${startLevel}`);
-    setPlanFeedback(result === "queued_conflict" ? "Plan change is pending. Use Retry sync to apply it to the latest server copy." : result === true ? "Plan change saved on this device. It will apply after sync." : result ? `Plan updated to ${minutes} minutes for HSK ${startLevel}.` : "Plan was not updated. Reload the server copy and try again.");
+    const payload = { budgetMinutes: planDraftMinutes, startLevel: planDraftLevel, newWordCount: planDraftNewWords, listeningEnabled: planDraftListening, focus: planDraftFocus };
+    const result = await post("configure_today", payload, `today-plan:${data!.session.id}:${planDraftMinutes}:${planDraftLevel}:${planDraftNewWords}:${planDraftListening}:${planDraftFocus}`);
+    setPlanFeedback(result === "queued_conflict" ? "Plan change is pending. Use Retry sync to apply it to the latest server copy." : result === true ? "Plan change saved on this device. It will apply after sync." : result ? `Plan updated: HSK ${planDraftLevel}, ${planDraftMinutes} minutes, ${planDraftNewWords} new word${planDraftNewWords === 1 ? "" : "s"}.` : "Plan was not updated. Reload the server copy and try again.");
+    if (result) setPlanOpen(false);
   }
   async function startFormalPlayback(card: Card) {
     setAudioError("");
@@ -443,7 +475,7 @@ export default function LearningDashboard({ mode }: { mode: "today" | "review" |
     const selectedReviewCards = selectedReviewItems
       .map((item) => dueForToday.find((card) => card.id === item.reviewCardId || (!item.reviewCardId && card.contentId === item.contentId && card.dimension === item.dimension)))
       .filter((card): card is Card => Boolean(card));
-    const orderedTodayItems = currentTodayItems.sort((a, b) => Number(b.index === firstReviewIndex) - Number(a.index === firstReviewIndex));
+    const orderedTodayItems = [...currentTodayItems];
     const activeToday = orderedTodayItems.find(({ item }) => item.kind !== "summary" && item.status === "pending")?.item;
     const completedTasks = plannedTodayTasks.filter((item) => item.status === "completed").length;
     const skippedTasks = plannedTodayTasks.filter((item) => item.status === "skipped").length;
@@ -470,21 +502,11 @@ export default function LearningDashboard({ mode }: { mode: "today" | "review" |
         </div>
       </section>
       {activeToday && <div className="today-mobile-action sticky z-30 mb-5 rounded-2xl border border-blue-200 bg-white/95 p-2 shadow-[0_16px_42px_rgba(15,23,42,0.2)] backdrop-blur md:hidden" style={{ bottom: "calc(76px + env(safe-area-inset-bottom))" }}>{primaryTodayAction(activeToday, data.session.id, currentStep, plannedTodayTasks.length, selectedReviewItems, selectedReviewCards)}</div>}
-      <section className="mb-5 rounded-2xl border border-slate-200 bg-white shadow-sm">
-        <details className="group">
-          <summary className="flex min-h-[64px] cursor-pointer list-none items-center justify-between gap-4 px-5 py-3 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-inset focus-visible:ring-blue-100 [&::-webkit-details-marker]:hidden">
-            <span className="min-w-0"><strong className="block text-slate-950">Today’s plan</strong><span className="block truncate text-sm text-slate-600">HSK {data.session.startLevel ?? 1} · {data.session.budgetMinutes ?? 30} min · Balanced</span></span>
-            <span className="inline-flex min-h-[48px] flex-none items-center gap-2 font-bold text-blue-700">Adjust <HomeIcon name="arrow" className="h-4 w-4 transition-transform group-open:rotate-90 motion-reduce:transition-none" /></span>
-          </summary>
-          <div className="border-t border-slate-200 px-5 pb-5 pt-4">
-            <p className="text-sm text-slate-600"><strong>Recommended time:</strong> {recommendedMinutes} minutes, based on your learning score, streak, open mistakes and lowest recent mastery. Today remains Balanced unless your saved performance makes one area urgent.</p>
-            <div className="mt-4 grid gap-4 sm:grid-cols-2"><label className="font-semibold text-slate-950">Learning level<select aria-label="Learning level" className="mt-2 min-h-[48px] w-full rounded-xl border border-slate-300 bg-white px-4" value={planDraftLevel} onChange={(event) => { setPlanDraftLevel(Number(event.target.value)); setPlanFeedback(""); }}>{Array.from({ length: 9 }, (_, index) => index + 1).map((level) => <option key={level} value={level}>{level >= 7 ? `HSK ${level} · Advanced 7–9 band` : `HSK ${level}`}</option>)}</select></label>
-              <label className="font-semibold text-slate-950">Time budget<select aria-label="Today&apos;s time budget" className="mt-2 min-h-[48px] w-full rounded-xl border border-slate-300 bg-white px-4" value={planDraftMinutes} onChange={(event) => { setPlanDraftMinutes(Number(event.target.value)); setPlanFeedback(""); }}>{TODAY_BUDGET_OPTIONS.map((minutes) => <option key={minutes} value={minutes}>{minutes} minutes</option>)}</select></label></div>
-            <button className="mt-4 min-h-[48px] rounded-xl border border-blue-600 bg-white px-5 py-3 font-bold text-blue-700" onClick={() => void configureToday(planDraftMinutes, planDraftLevel)}>Update plan</button>
-            {planFeedback && <p className="mt-3 text-sm font-bold text-emerald-700" role="status">{planFeedback}</p>}
-          </div>
-        </details>
+      <section className="mb-5 flex min-h-[72px] items-center justify-between gap-4 rounded-2xl border border-slate-200 bg-white px-5 py-3 shadow-sm">
+        <span className="min-w-0"><strong className="block text-slate-950">Today’s plan</strong><span className="block truncate text-sm text-slate-600">HSK {data.session.startLevel ?? 1} · {data.session.budgetMinutes ?? 30} min · {data.session.newWordCount ?? 1} new · {(data.session.listeningEnabled ?? true) ? "Listening on" : "Listening off"} · {({ balanced: "Balanced", review_first: "Review first", fix_mistakes: "Fix mistakes", listening_focus: "Listening focus" } as const)[data.session.focus ?? "balanced"]}</span></span>
+        <button className="min-h-[48px] flex-none rounded-xl px-4 font-bold text-blue-700 hover:bg-blue-50 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-blue-100" onClick={() => setPlanOpen(true)}>Adjust today’s plan</button>
       </section>
+      {planFeedback && <p className="mb-5 rounded-xl bg-emerald-50 px-4 py-3 text-sm font-bold text-emerald-700" role="status">{planFeedback}</p>}
       <section className="mb-5 rounded-2xl border border-blue-100 bg-blue-50/70 p-5">
         <p><strong>{plannedTodayTasks.length} tasks · {data.session.totalEstimatedMinutes ?? 0} min planned</strong></p>
         <p className="mt-1 text-sm text-slate-600"><strong>Why this plan:</strong> mistakes and due memory come first, then the exact new word, its available listening, and a saved practice result.</p>
@@ -531,6 +553,20 @@ export default function LearningDashboard({ mode }: { mode: "today" | "review" |
         })}
       </div>
       <Mastery values={data.mastery} scope={data.scope} />
+      {planOpen && <div className="today-plan-overlay" role="presentation" onMouseDown={(event) => { if (event.target === event.currentTarget) setPlanOpen(false); }}>
+        <div ref={planDialogRef} tabIndex={-1} className="today-plan-dialog" role="dialog" aria-modal="true" aria-labelledby="today-plan-title">
+          <header className="today-plan-header"><div><span className="eyebrow">Today settings</span><h2 id="today-plan-title">Adjust today’s plan</h2><p>Change today’s workload and priority. Your completed steps stay saved.</p></div><button type="button" className="today-plan-close" aria-label="Close plan settings" onClick={() => setPlanOpen(false)}>×</button></header>
+          <form className="today-plan-form" onSubmit={(event) => { event.preventDefault(); void configureToday(); }}>
+            <p className="today-plan-recommendation"><strong>Recommended time:</strong> {recommendedMinutes} minutes, based on your score, streak, open mistakes and recent mastery.</p>
+            <div className="today-plan-grid"><label>HSK level<select aria-label="Learning level" value={planDraftLevel} onChange={(event) => setPlanDraftLevel(Number(event.target.value))}>{Array.from({ length: 9 }, (_, index) => index + 1).map((level) => <option key={level} value={level}>{level >= 7 ? `HSK ${level} · Advanced 7–9 band` : `HSK ${level}`}</option>)}</select></label>
+              <label>Learning time<select aria-label="Today&apos;s time budget" value={planDraftMinutes} onChange={(event) => setPlanDraftMinutes(Number(event.target.value))}>{TODAY_BUDGET_OPTIONS.map((minutes) => <option key={minutes} value={minutes}>{minutes} minutes{minutes === recommendedMinutes ? " · Recommended" : ""}</option>)}</select></label></div>
+            <fieldset><legend>New words</legend><div className="today-plan-segments">{TODAY_NEW_WORD_OPTIONS.map((count) => <label key={count} className={planDraftNewWords === count ? "selected" : ""}><input type="radio" name="new-words" value={count} checked={planDraftNewWords === count} onChange={() => setPlanDraftNewWords(count)} /><strong>{count}</strong><span>{count === 1 ? "word" : "words"}</span></label>)}</div></fieldset>
+            <label className="today-plan-switch"><span><strong>Include listening</strong><small>Add available word and context audio to today’s route.</small></span><input type="checkbox" checked={planDraftListening} onChange={(event) => setPlanDraftListening(event.target.checked)} /></label>
+            <fieldset><legend>Priority</legend><div className="today-plan-focus">{TODAY_FOCUS_OPTIONS.map((focus) => { const copy = { balanced: ["Balanced", "Mix due memory and new work."], review_first: ["Review first", "Clear all due reviews before new work."], fix_mistakes: ["Fix mistakes", "Put unresolved mistakes first."], listening_focus: ["Listening focus", "Lead with available listening tasks."] }[focus]; return <label key={focus} className={planDraftFocus === focus ? "selected" : ""}><input type="radio" name="today-focus" value={focus} checked={planDraftFocus === focus} onChange={() => setPlanDraftFocus(focus)} /><strong>{copy[0]}</strong><span>{copy[1]}</span></label>; })}</div></fieldset>
+            <footer className="today-plan-actions"><button type="button" className="btn secondary" onClick={() => setPlanOpen(false)}>Cancel</button><button type="submit" className="btn">Save changes</button></footer>
+          </form>
+        </div>
+      </div>}
       {celebration && <div className="today-celebration" role="dialog" aria-modal="true" aria-labelledby="today-celebration-title" onMouseDown={(event) => { if (event.target === event.currentTarget) setCelebration(null); }}>
         {celebration.animate && <div className="today-confetti" aria-hidden="true">{Array.from({ length: 18 }, (_, index) => <i key={index} />)}</div>}
         <div ref={celebrationPanelRef} tabIndex={-1} className="today-celebration-panel"><span className="today-celebration-icon"><HomeIcon name={celebration.icon} /></span><span className="eyebrow">{celebration.eyebrow}</span><h2 id="today-celebration-title">{celebration.title}</h2><p>{celebration.message}</p>
