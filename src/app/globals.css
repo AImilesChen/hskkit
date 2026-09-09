@@ -903,6 +903,25 @@
 .planner-confetti i:nth-child(6n) { left: 91%; background: #0EA5E9; animation-delay: .2s; }
 .planner-confetti i:nth-child(n + 7) { top: -60px; animation-duration: 2.15s; }
 @keyframes planner-confetti { 0% { opacity: 0; transform: translate3d(0, -20px, 0) rotate(0); } 12% { opacity: 1; } 100% { opacity: 0; transform: translate3d(35px, 95vh, 0) rotate(520deg); } }
+.today-celebration { position: fixed; z-index: 1000; inset: 0; display: grid; place-items: center; padding: 20px; background: rgba(15, 23, 42, .62); }
+.today-celebration-panel { position: relative; z-index: 2; display: grid; justify-items: center; width: min(100%, 460px); max-height: calc(100dvh - 32px); overflow-y: auto; border: 1px solid #BFDBFE; border-radius: 24px; padding: 32px; background: white; box-shadow: 0 24px 72px rgba(15, 23, 42, .3); text-align: center; animation: today-celebration-in .28s ease-out both; }
+.today-celebration-icon { display: grid; width: 58px; height: 58px; place-items: center; margin-bottom: 13px; border-radius: 18px; background: #DBEAFE; color: #1D4ED8; transform: rotate(-4deg); }
+.today-celebration-icon svg { width: 30px; height: 30px; }
+.today-celebration-panel h2 { margin-top: 4px; font-size: 28px; line-height: 1.2; }
+.today-celebration-panel > p { max-width: 360px; margin-top: 10px; color: #475569; line-height: 1.55; }
+.today-celebration-panel .btn, .today-celebration-panel > div:last-child a { width: 100%; justify-content: center; }
+.today-reward { display: flex; width: 100%; align-items: center; justify-content: space-between; gap: 12px; margin-top: 18px; border: 1px solid #D1FAE5; border-radius: 14px; padding: 12px 14px; background: #ECFDF5; color: #065F46; text-align: left; }
+.today-reward span { font-size: 13px; font-weight: 700; }
+.today-confetti { position: fixed; z-index: 1; inset: 0; overflow: hidden; pointer-events: none; }
+.today-confetti i { position: absolute; top: -24px; left: 7%; width: 9px; height: 16px; border-radius: 2px; background: #2563EB; animation: today-confetti-fall 1.05s ease-out both; }
+.today-confetti i:nth-child(6n + 2) { left: 23%; background: #06B6D4; animation-delay: .06s; }
+.today-confetti i:nth-child(6n + 3) { left: 40%; background: #F59E0B; animation-delay: .12s; }
+.today-confetti i:nth-child(6n + 4) { left: 58%; background: #8B5CF6; animation-delay: .03s; }
+.today-confetti i:nth-child(6n + 5) { left: 76%; background: #10B981; animation-delay: .09s; }
+.today-confetti i:nth-child(6n) { left: 92%; background: #FB7185; animation-delay: .15s; }
+.today-confetti i:nth-child(n + 7) { top: -56px; }
+@keyframes today-confetti-fall { 0% { opacity: 0; transform: translate3d(0, -16px, 0) rotate(0); } 12% { opacity: 1; } 100% { opacity: 0; transform: translate3d(28px, 92vh, 0) rotate(440deg); } }
+@keyframes today-celebration-in { from { opacity: 0; transform: translateY(10px) scale(.98); } to { opacity: 1; transform: translateY(0) scale(1); } }
 .ai-assist { margin-top: 0; border: 1px solid #C7D2FE; border-radius: 16px; padding: 20px; background: linear-gradient(145deg, #F8FAFF, #EEF2FF); }
 .ai-assist-heading { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
 .ai-assist h3 { margin: 2px 0 0; font-size: 21px; }
@@ -988,6 +1007,12 @@
   .planner-celebration { padding: 16px; }
   .planner-celebration-panel { border-radius: 16px; padding: 26px 20px; }
   .planner-celebration-panel h2 { font-size: 24px; }
+  .today-page { padding-bottom: 64px; }
+  .today-mobile-action a { width: 100%; justify-content: center; }
+  .today-celebration { align-items: end; padding: 12px 12px calc(12px + env(safe-area-inset-bottom)); }
+  .today-celebration-panel { width: 100%; border-radius: 22px; padding: 26px 20px; }
+  .today-celebration-panel h2 { font-size: 24px; }
+  .today-reward { align-items: flex-start; flex-direction: column; gap: 3px; }
   .ai-output-grid { grid-template-columns: 1fr; }
   .ai-assist-heading { align-items: flex-start; }
   .step7-vocab { grid-template-columns: 1fr; }
@@ -999,7 +1024,8 @@
 @media (prefers-reduced-motion: reduce) {
   .planner-spinner { animation: none; }
   .planner-days span, .planner-progress-track span { transition: none; }
-  .planner-confetti i { animation: none; opacity: 0; }
+  .planner-confetti i, .today-confetti i { animation: none; opacity: 0; }
+  .today-celebration-panel { animation: none; }
 }
 
 /* Feedback widget: fixed global surface, isolated from page layouts. */

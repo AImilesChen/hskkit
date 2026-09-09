@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
+import { todayCompletionProofKey } from "@/lib/learning/today-plan";
 
 type Question = { id: string; prompt: string; context?: string; audioSrc?: string; options: Record<string, string>; level: number; skill: string; contentVersion: string };
 type Feedback = { questionId: string; selectedAnswer: string; correct: boolean; correctAnswer: string; correctAnswerText: string; explanation: string; weaknessTag: string };
@@ -97,6 +98,7 @@ export default function PracticeClient({ level, skill, dailySessionId, dailyItem
     setBusy(true); setError("");
     try {
       const data = await post("answer", { sessionId: session.id, questionId: question.id, answer: selectedAnswer }, `answer:${session.id}:${question.id}`);
+      if (data.session?.status === "completed" && dailySessionId && dailyItemId) sessionStorage.setItem(todayCompletionProofKey(dailySessionId, dailyItemId), "armed");
       setSession(data.session);
     } catch (cause) {
       if (cause instanceof PracticeRequestError && cause.code === "PRACTICE_SESSION_EXPIRED") {
@@ -208,7 +210,7 @@ export default function PracticeClient({ level, skill, dailySessionId, dailyItem
 
         {dailyItemId && <div className="mt-5 rounded-2xl border border-blue-200 bg-blue-50 p-4"><p className="text-xs font-bold uppercase tracking-[0.14em] text-blue-700">Today Session</p><p className="mt-1 text-sm text-slate-700">This scored result completed the saved Today step. Continue to the next task; mistakes remain available for correction.</p></div>}
         <div className="mt-6 flex flex-col items-stretch gap-3 sm:flex-row sm:items-center">
-          {dailyItemId ? <Link className="inline-flex min-h-[48px] w-full items-center justify-center rounded-xl bg-blue-600 px-6 py-3 text-base font-bold text-white shadow-sm transition hover:bg-blue-700 sm:w-auto" href="/today?resume=1">Continue Today Session</Link> : hasMistakes ? <>
+          {dailyItemId ? <Link className="inline-flex min-h-[48px] w-full items-center justify-center rounded-xl bg-blue-600 px-6 py-3 text-base font-bold text-white shadow-sm transition hover:bg-blue-700 sm:w-auto" href={`/today?resume=1&completed=practice&completedSession=${encodeURIComponent(dailySessionId ?? "")}&completedItem=${encodeURIComponent(dailyItemId ?? "")}`}>Continue Today Session</Link> : hasMistakes ? <>
             <Link className="inline-flex min-h-[48px] w-full items-center justify-center rounded-xl bg-blue-600 px-6 py-3 text-base font-bold text-white shadow-sm transition hover:bg-blue-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-700 motion-reduce:transition-none sm:w-auto" href="/review">Review {wrongCount} {wrongCount === 1 ? "mistake" : "mistakes"} now</Link>
             <button className="min-h-[48px] w-full rounded-xl border border-blue-200 bg-white px-6 py-3 text-base font-bold text-blue-700 transition hover:border-blue-400 hover:bg-blue-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-700 disabled:cursor-wait disabled:opacity-60 motion-reduce:transition-none sm:w-auto" disabled={busy} onClick={start} type="button">Practice again</button>
           </> : <>

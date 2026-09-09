@@ -4,7 +4,7 @@ import test from "node:test";
 
 import { assertCurrentDailySession, assertTodayLearnItemMatches, buildDailySession, emptyLearningState } from "../src/lib/learning/domain.ts";
 import { selectTodayContent } from "../src/lib/learning/today-content.ts";
-import { isTodayBudgetMinutes, recommendTodayMinutes, TODAY_BUDGET_OPTIONS } from "../src/lib/learning/today-plan.ts";
+import { isTodayBudgetMinutes, recommendTodayMinutes, resolveTodayCelebration, TODAY_BUDGET_OPTIONS } from "../src/lib/learning/today-plan.ts";
 
 const root = new URL("../", import.meta.url);
 const source = (path: string) => readFile(new URL(path, root), "utf8");
@@ -89,7 +89,7 @@ test("Today subpages preserve Today Session context and finish through the saved
   assert.match(wordAction, /action: "complete_item"/);
   assert.match(wordAction, /assetId, idempotencyKey: idempotencyKey\.current/);
   assert.match(wordAction, /sessionStorage\.getItem\(storageKey\)/);
-  assert.match(wordAction, /window\.location\.assign\("\/today\?resume=1"\)/);
+  assert.match(wordAction, /completed=learn&completedSession=/);
   const learningRoute = await source("src/app/api/v1/learning/route.ts");
   const practiceRoute = await source("src/app/api/v1/practice/route.ts");
   assert.match(learningRoute, /assertCurrentDailySession\(activeToday\.session, sessionId\)/);
@@ -117,4 +117,78 @@ test("completed Today renders a truthful summary, recovery path, personalization
     "Current streak",
   ]) assert.match(dashboard, new RegExp(token));
   assert.match(dashboard, /Back to Today/);
+});
+
+test("Today return celebration is truthful and upgrades the final step to a whole-session celebration", () => {
+  assert.equal(resolveTodayCelebration({ returnedKind: null, completedCount: 1, summaryComplete: false }), null);
+  assert.equal(resolveTodayCelebration({ returnedKind: "listen", completedCount: 0, summaryComplete: false }), null);
+  assert.deepEqual(resolveTodayCelebration({ returnedKind: "review", completedCount: 2, summaryComplete: false }), {
+    kind: "step",
+    icon: "review",
+    eyebrow: "Step complete",
+    title: "Review complete!",
+    message: "2 review items saved. Your next Today step is ready.",
+  });
+  assert.deepEqual(resolveTodayCelebration({ returnedKind: "practice", completedCount: 1, summaryComplete: true }), {
+    kind: "session",
+    icon: "target",
+    eyebrow: "Today complete",
+    title: "Today’s session wrapped up!",
+    message: "Completed work is saved, and any skipped steps remain visible to restore.",
+  });
+});
+
+test("Today journey makes current, completed, locked and skipped states unmistakable with local actions", async () => {
+  const [dashboard, todayPlan] = await Promise.all([
+    source("src/app/components/learning-dashboard.tsx"),
+    source("src/lib/learning/today-plan.ts"),
+  ]);
+  for (const token of [
+    "HomeIcon",
+    "TodayHeroArtwork",
+    "TodayJourneyIcon",
+    "Today’s plan",
+    "Balanced",
+    "Adjust",
+    "Locked",
+    "Complete the previous step to unlock",
+    "Step complete",
+    "Moved to tomorrow",
+    "today-mobile-action",
+    "Learning Points",
+    "Correct open mistakes",
+  ]) assert.match(dashboard, new RegExp(token.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")));
+  assert.match(dashboard, /primaryTodayAction\(item,/);
+  assert.match(dashboard, /min-h-\[64px\][\s\S]{0,500}Today’s plan/);
+  assert.match(todayPlan, /Today’s session wrapped up!/);
+  assert.match(dashboard, /event\.key === "Escape"/);
+  assert.match(dashboard, /querySelectorAll<HTMLElement>/);
+});
+
+test("every Today-bound completion route returns a celebration signal without changing completion authority", async () => {
+  const [wordAction, audio, practice, dashboard] = await Promise.all([
+    source("src/app/components/today-word-completion.tsx"),
+    source("src/app/components/audio-exercise.tsx"),
+    source("src/app/practice/[level]/[skill]/practice-client.tsx"),
+    source("src/app/components/learning-dashboard.tsx"),
+  ]);
+  assert.match(wordAction, /completed=learn&completedSession=.*completedItem=/);
+  assert.match(audio, /completed=listen&completedSession=.*completedItem=/);
+  assert.match(practice, /completed=practice&completedSession=.*completedItem=/);
+  assert.match(dashboard, /completed=review&completedSession=.*completedItem=/);
+  assert.match(wordAction, /sessionStorage\.setItem\(todayCompletionProofKey\(dailySessionId, dailyItemId\), "armed"\)[\s\S]*window\.location\.assign/);
+  assert.match(audio, /if \(dailySessionId && dailyItemId\) sessionStorage\.setItem\(todayCompletionProofKey/);
+  assert.match(practice, /data\.session\?\.status === "completed"[\s\S]*sessionStorage\.setItem\(todayCompletionProofKey/);
+  assert.match(dashboard, /targetBefore\.reviewCardId === card\.id/);
+  assert.match(dashboard, /targetBefore\.status === "pending"/);
+  assert.match(dashboard, /targetAfter\?\.status === "completed"/);
+  assert.match(dashboard, /sessionStorage\.setItem\(todayCompletionProofKey\(entryTodaySessionId, entryTodayItemId\), "armed"\)/);
+  assert.match(dashboard, /returnedSessionId !== data\.session\.id \|\| !returnedItemId/);
+  assert.match(dashboard, /sessionStorage\.getItem\(completionProofKey\) !== "armed"/);
+  assert.match(dashboard, /sessionStorage\.removeItem\(completionProofKey\)/);
+  assert.match(dashboard, /cleanUrl\.searchParams\.delete\("completedSession"\)/);
+  assert.match(dashboard, /cleanUrl\.searchParams\.delete\("completedItem"\)/);
+  assert.match(dashboard, /calc\(76px \+ env\(safe-area-inset-bottom\)\)/);
+  assert.match(dashboard, /sessionStorage\.setItem\(celebrationKey/);
+  assert.match(dashboard, /prefers-reduced-motion/);
 });

@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useRef, useState } from "react";
 import type { AudioMode, PublicAudioExercise } from "@/lib/learning/audio";
+import { todayCompletionProofKey } from "@/lib/learning/today-plan";
 
 type Props = { exercises: Partial<Record<AudioMode, PublicAudioExercise>>; initialMode: AudioMode; dailySessionId?: string; dailyItemId?: string };
 
@@ -112,6 +113,7 @@ export default function AudioExerciseClient({ exercises, initialMode, dailySessi
       return;
     }
     delete keys.current[mode];
+    if (dailySessionId && dailyItemId) sessionStorage.setItem(todayCompletionProofKey(dailySessionId, dailyItemId), "armed");
     setSaved((current) => ({ ...current, [mode]: { answer: letter, correct: payload.feedback!.correct!, correctAnswerText: payload.feedback!.correctAnswerText! } }));
   }
 
@@ -132,7 +134,7 @@ export default function AudioExerciseClient({ exercises, initialMode, dailySessi
         {Object.entries(exercise.options).map(([letter, text]) => <button key={letter} className="btn secondary text-left" disabled={!played[mode] || saving || Boolean(result)} onClick={() => answer(letter)}>{letter}. {text}</button>)}
       </div>
       {saving && <p className="mt-4 text-sm font-semibold text-blue-700" role="status">Saving mastery…</p>}
-      {result && <div className={`mt-5 rounded-xl p-4 ${result.correct ? "bg-emerald-50 text-emerald-800" : "bg-amber-50 text-amber-900"}`} role="status"><strong>{result.correct ? "Correct — mastery saved." : "Not yet — added to Mistakes and Review."}</strong><p className="mt-2">Correct answer: {result.correctAnswerText}</p><div className="mt-4 flex flex-wrap gap-2">{mode === "audio" && exercises.context_audio && !saved.context_audio && !dailyItemId && <button className="btn" onClick={() => selectMode("context_audio")}>Continue to context audio</button>}{dailyItemId ? <Link className="btn" href="/today?resume=1">Continue Today Session</Link> : <Link className="btn secondary" href={result.correct ? "/today" : "/mistakes"}>{result.correct ? "Return to Today" : "Open Mistakes"}</Link>}</div></div>}
+      {result && <div className={`mt-5 rounded-xl p-4 ${result.correct ? "bg-emerald-50 text-emerald-800" : "bg-amber-50 text-amber-900"}`} role="status"><strong>{result.correct ? "Correct — mastery saved." : "Not yet — added to Mistakes and Review."}</strong><p className="mt-2">Correct answer: {result.correctAnswerText}</p><div className="mt-4 flex flex-wrap gap-2">{mode === "audio" && exercises.context_audio && !saved.context_audio && !dailyItemId && <button className="btn" onClick={() => selectMode("context_audio")}>Continue to context audio</button>}{dailyItemId ? <Link className="btn" href={`/today?resume=1&completed=listen&completedSession=${encodeURIComponent(dailySessionId ?? "")}&completedItem=${encodeURIComponent(dailyItemId ?? "")}`}>Continue Today Session</Link> : <Link className="btn secondary" href={result.correct ? "/today" : "/mistakes"}>{result.correct ? "Return to Today" : "Open Mistakes"}</Link>}</div></div>}
     </article>
   </main>;
 }

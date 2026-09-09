@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useRef, useState } from "react";
+import { todayCompletionProofKey } from "../../lib/learning/today-plan";
 
 export default function TodayWordCompletion({ assetId, dailySessionId, dailyItemId, step, total }: { assetId: string; dailySessionId: string; dailyItemId: string; step?: string; total?: string }) {
   const [busy, setBusy] = useState(false);
@@ -18,7 +19,7 @@ export default function TodayWordCompletion({ assetId, dailySessionId, dailyItem
       const restoredItem = state.session?.id === dailySessionId ? state.session.items.find((item) => item.id === dailyItemId) : undefined;
       if (restoredItem?.status === "completed") {
         sessionStorage.removeItem(`today-learn:${dailySessionId}:${dailyItemId}`);
-        window.location.assign("/today?resume=1");
+        window.location.assign(`/today?resume=1&completed=learn&completedSession=${encodeURIComponent(dailySessionId)}&completedItem=${encodeURIComponent(dailyItemId)}`);
         return;
       }
       const storageKey = `today-learn:${dailySessionId}:${dailyItemId}`;
@@ -42,7 +43,8 @@ export default function TodayWordCompletion({ assetId, dailySessionId, dailyItem
       const result = await response.json() as { error?: string };
       if (!response.ok) throw new Error(result.error ?? "LEARN_COMPLETION_FAILED");
       sessionStorage.removeItem(storageKey);
-      window.location.assign("/today?resume=1");
+      sessionStorage.setItem(todayCompletionProofKey(dailySessionId, dailyItemId), "armed");
+      window.location.assign(`/today?resume=1&completed=learn&completedSession=${encodeURIComponent(dailySessionId)}&completedItem=${encodeURIComponent(dailyItemId)}`);
     } catch (cause) {
       setError(cause instanceof Error && cause.message === "FREE_DAILY_NEW_ITEM_LIMIT" ? "Your Free new-item limit is reached; no new completion was recorded." : cause instanceof Error && cause.message === "TODAY_LEARN_WORD_MISMATCH" ? "This is not the word saved in your current Today step. Return to Today to restore the correct word." : "We could not confirm whether this step reached the server. Return to Today to restore the authoritative progress before retrying.");
       setBusy(false);
