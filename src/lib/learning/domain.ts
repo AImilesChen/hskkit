@@ -81,6 +81,7 @@ export interface DailySession {
   notice?: { code: string; message: string; actionHref: string; actionLabel: string };
   budgetMinutes?: number;
   newWordCount?: TodayNewWordCount;
+  plannedNewWordCount?: number;
   listeningEnabled?: boolean;
   focus?: TodayFocus;
   totalEstimatedMinutes?: number;
@@ -666,6 +667,7 @@ export function buildDailySession(state: LearningState, input: { ownerId: string
   const due: DailyItem[] = dueCards
     .map((card) => ({ id: reviewItemId(card), kind: "review", contentId: card.contentId, contentVersion: card.contentVersion, reviewCardId: card.id, dimension: card.dimension, status: "pending" }));
   const contentItems = content?.status === "ready" ? content.items.slice(0, newWordCount) : [];
+  const actualNewWordCount = content ? contentItems.length : newWordCount;
   const planFingerprint = content?.status === "ready"
     ? `ready:${content.releaseId}:${content.startLevel}:${contentItems.map((item) => `${item.contentId}:${item.contentVersion}`).join("|")}:${newWordCount}:${listeningEnabled}:${focus}`
     : content?.status === "empty"
@@ -738,6 +740,7 @@ export function buildDailySession(state: LearningState, input: { ownerId: string
       && prior.planFingerprint === planFingerprint
       && (prior.budgetMinutes ?? 30) === budgetMinutes
       && (prior.newWordCount ?? 1) === newWordCount
+      && prior.plannedNewWordCount === actualNewWordCount
       && (prior.listeningEnabled ?? true) === listeningEnabled
       && (prior.focus ?? "balanced") === focus
       && Boolean(prior.reviewBatchId)
@@ -762,6 +765,7 @@ export function buildDailySession(state: LearningState, input: { ownerId: string
       ruleVersion: input.ruleVersion,
       budgetMinutes,
       newWordCount,
+      plannedNewWordCount: actualNewWordCount,
       listeningEnabled,
       focus,
       totalEstimatedMinutes: retained.reduce((sum, item) => sum + (item.estimatedMinutes ?? estimateDailyItem(item)), 0),
@@ -790,6 +794,7 @@ export function buildDailySession(state: LearningState, input: { ownerId: string
     planFingerprint,
     budgetMinutes,
     newWordCount,
+    plannedNewWordCount: actualNewWordCount,
     listeningEnabled,
     focus,
     totalEstimatedMinutes: plannedItems.reduce((sum, item) => sum + (item.estimatedMinutes ?? estimateDailyItem(item)), 0),

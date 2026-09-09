@@ -68,6 +68,26 @@ test("a 20 minute plan contains the complete three-word learning loop", () => {
   ]);
 });
 
+test("a constrained level reports the real number of available new words", () => {
+  const plan = selectTodayContent(1, 3);
+  assert.equal(plan.status, "ready");
+  if (plan.status !== "ready") return;
+  assert.equal(plan.items.length, 2);
+  const built = buildDailySession(emptyLearningState(), {
+    ownerId: "learner-l1",
+    localDay: "2026-09-09",
+    ruleVersion: "today-v9",
+    now: "2026-09-09T10:00:00.000Z",
+    dailyContent: plan,
+    budgetMinutes: 20,
+    newWordCount: 3,
+    listeningEnabled: true,
+    focus: "balanced",
+  });
+  assert.equal(built.session.newWordCount, 3);
+  assert.equal(built.session.plannedNewWordCount, 2);
+});
+
 test("Today completion proof holds the server revision and blocks stale locked rendering", () => {
   const encoded = todayCompletionProof({ dailySessionId: "day-1", dailyItemId: "practice-1", revision: 12, summaryComplete: true });
   const proof = parseTodayCompletionProof(encoded);
@@ -214,7 +234,7 @@ test("Adjust Today exposes and validates every confirmed plan control in a respo
 });
 
 test("Today plan preferences change the saved plan rather than acting as decorative controls", () => {
-  const content = selectTodayContent(1, 3);
+  const content = selectTodayContent(3, 3);
   assert.equal(content.status, "ready");
   if (content.status !== "ready") return;
   assert.ok(content.items.length >= 2 && content.items.length <= 3);
@@ -312,7 +332,7 @@ test("completed Today renders truthful statistics, recovery, personalization and
     "practice questions completed",
     "Recommended focus",
     "Monthly learning score",
-    "Learn {data.session.newWordCount",
+    "Learn {data.session.plannedNewWordCount ?? data.session.newWordCount",
     "Review {open.length} open mistake",
     "Done for today",
     "Current streak",
