@@ -362,12 +362,13 @@ test("Daily playback subjects cannot be replayed across standalone or other Dail
   assert.throws(() => audioPlaybackSubject(exercise, "day-1", undefined), /INVALID_DAILY_AUDIO_BINDING/);
 });
 
-test("same-day synchronization inserts newly due review work without duplicating the Daily Session", () => {
+test("same-day synchronization keeps the saved review batch stable when new work becomes due", () => {
   const first = buildDailySession(emptyState(), { ownerId: "guest:sync", localDay: "2026-08-21", ruleVersion: "today-v3", now });
   const withDue = { ...first.state, cards: [{ id: "card-sync", contentId: "word:sync", contentVersion: "v1", dimension: "reading" as const, dueAt: now, intervalDays: 0, ease: 2.5, revision: 0, reviewCount: 0, algorithmVersion: "hskkit-srs-v1" as const, sourceAttemptId: "attempt-sync", gradeKeys: [] }] };
   const refreshed = buildDailySession(withDue, { ownerId: "guest:sync", localDay: "2026-08-21", ruleVersion: "today-v3", now });
   assert.equal(refreshed.state.dailySessions.length, 1);
-  assert.equal(refreshed.session.items[0].id, "review:card-sync:0");
+  assert.equal(refreshed.session.id, first.session.id);
+  assert.equal(refreshed.session.items.some((item) => item.reviewCardId === "card-sync"), false);
 });
 
 test("ready-to-empty refresh removes stale pending actions and exposes the current recovery notice", () => {
@@ -395,13 +396,13 @@ test("refreshing a completed same-day plan clears completion while replacement w
   assert.ok(refreshed.session.items.some((item) => item.status === "pending"));
 });
 
-test("a review graded again can become due again later on the same local day", () => {
+test("a review graded again stays out of the frozen batch when it becomes due later that day", () => {
   const card = { id: "card-repeat", contentId: "word:repeat", contentVersion: "v1", dimension: "reading" as const, dueAt: now, intervalDays: 0, ease: 2.5, revision: 0, reviewCount: 0, algorithmVersion: "hskkit-srs-v1" as const, sourceAttemptId: "attempt-repeat", gradeKeys: [] };
   const first = buildDailySession({ ...emptyState(), cards: [card] }, { ownerId: "guest:repeat", localDay: "2026-08-21", ruleVersion: "today-v3", now });
   const progressed = { ...first.state, cards: [{ ...card, revision: 1, dueAt: "2026-08-21T10:10:00.000Z" }], dailySessions: first.state.dailySessions.map((session) => ({ ...session, items: session.items.map((item) => item.kind === "review" ? { ...item, status: "completed" as const } : item) })) };
   const refreshed = buildDailySession(progressed, { ownerId: "guest:repeat", localDay: "2026-08-21", ruleVersion: "today-v3", now: "2026-08-21T10:11:00.000Z" });
-  assert.equal(refreshed.session.items.filter((item) => item.kind === "review" && item.status === "pending").length, 1);
-  assert.equal(refreshed.session.items.find((item) => item.kind === "review" && item.status === "pending")?.id, "review:card-repeat:1");
+  assert.equal(refreshed.session.items.filter((item) => item.kind === "review" && item.status === "pending").length, 0);
+  assert.equal(refreshed.session.reviewCardIds?.includes("card-repeat"), true);
 });
 
 test("same-level Practice version refresh keeps history without suppressing current pending work", () => {

@@ -96,7 +96,7 @@ function view(state: LearningState, ownerId: string, offsetMinutes: number, capa
   const latestPlacement = [...(state.placementResults ?? [])].sort((a, b) => b.createdAt.localeCompare(a.createdAt))[0];
   const startLevel = state.preferredLearningLevel ?? latestPlacement?.recommendedLevel ?? 1;
   const preferences = state.todayPreferences ?? { newWordCount: 1 as const, listeningEnabled: true, focus: "balanced" as const };
-  const built = buildDailySession(state, { ownerId, localDay: learningLocalDay(now, offsetMinutes, accountTimezone), ruleVersion: "today-v7", now, dailyContent: selectTodayContent(startLevel, preferences.newWordCount), ...preferences });
+  const built = buildDailySession(state, { ownerId, localDay: learningLocalDay(now, offsetMinutes, accountTimezone), ruleVersion: "today-v8", now, dailyContent: selectTodayContent(startLevel, preferences.newWordCount), ...preferences });
   const projected = projectLearningHistory(built.state, capabilities, new Date(now));
   const mistakeKey = (contentId: string, contentVersion: string, dimension: string) => `${contentId}\u0000${contentVersion}\u0000${dimension}`;
   const openMistakeKeys = new Set(projected.mistakes.filter((mistake) => mistake.status === "open").map((mistake) => {
@@ -739,7 +739,7 @@ async function postLearning(req: NextRequest) {
         const startLevel = requestedLevel ?? latestPlacement?.recommendedLevel ?? 1;
         const todayPreferences = { newWordCount, listeningEnabled, focus };
         state = { ...state, ...(requestedLevel ? { preferredLearningLevel: requestedLevel } : {}), todayPreferences };
-        state = buildDailySession(state, { ownerId: identity.id, localDay: learningLocalDay(observedAt, tz, identity.account?.timezone), ruleVersion: "today-v7", now: observedAt, dailyContent: selectTodayContent(startLevel, newWordCount), budgetMinutes, ...todayPreferences }).state;
+        state = buildDailySession(state, { ownerId: identity.id, localDay: learningLocalDay(observedAt, tz, identity.account?.timezone), ruleVersion: "today-v8", now: observedAt, dailyContent: selectTodayContent(startLevel, newWordCount), budgetMinutes, ...todayPreferences }).state;
         state = { ...state, dailyOperationKeys: [...(state.dailyOperationKeys ?? []), key].slice(-400) };
       } else {
         return errorResponse("INVALID_ACTION", 422);

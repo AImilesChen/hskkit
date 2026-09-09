@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 import test from "node:test";
 
-import { assertCurrentDailySession, assertTodayLearnItemMatches, buildDailySession, emptyLearningState } from "../src/lib/learning/domain.ts";
+import { assertCurrentDailySession, assertTodayLearnItemMatches, buildDailySession, emptyLearningState, gradeReview } from "../src/lib/learning/domain.ts";
 import { selectTodayContent } from "../src/lib/learning/today-content.ts";
 import { isTodayBudgetMinutes, isTodayFocus, isTodayNewWordCount, recommendTodayMinutes, resolveTodayCelebration, TODAY_BUDGET_OPTIONS, TODAY_FOCUS_OPTIONS, TODAY_NEW_WORD_OPTIONS } from "../src/lib/learning/today-plan.ts";
 
@@ -266,4 +266,92 @@ test("every Today-bound completion route returns a celebration signal without ch
   assert.match(dashboard, /calc\(76px \+ env\(safe-area-inset-bottom\)\)/);
   assert.match(dashboard, /sessionStorage\.setItem\(celebrationKey/);
   assert.match(dashboard, /prefers-reduced-motion/);
+});
+
+function todayReviewState() {
+  const state = emptyLearningState();
+  const definitions = [
+    { id: "one-v1", level: 1, prompt: "What does 你好 mean?", answer: "hello", version: "v1" },
+    { id: "one-v2", level: 1, prompt: " What does 你好 mean? ", answer: "hello", version: "v2" },
+    { id: "two", level: 1, prompt: "Which pinyin matches 班?", answer: "bān", version: "v1" },
+    { id: "three", level: 1, prompt: "Which Chinese entry is pronounced běnzi?", answer: "本子", version: "v1" },
+    { id: "four", level: 1, prompt: "What does 白天 mean?", answer: "daytime", version: "v1" },
+    { id: "advanced", level: 8, prompt: "Advanced policy inference", answer: "qualification", version: "v1" },
+  ];
+  state.attempts = definitions.map((item, index) => ({
+    id: `attempt-${item.id}`, idempotencyKey: `attempt-${item.id}`, contentId: `practice:level-${item.level}:${item.id}`, contentVersion: item.version,
+    dimension: "reading" as const, answer: "x", correctAnswer: item.answer, correct: false, observedAt: `2026-09-08T00:00:0${index}.000Z`,
+    reviewSnapshot: { level: item.level, levelBand: String(item.level), skillLabel: "Vocabulary", prompt: item.prompt, answerMode: "choice" as const, options: { a: "x", b: item.answer }, correctAnswer: "b", correctAnswerText: item.answer, explanation: "fixture" },
+  }));
+  state.cards = definitions.map((item, index) => ({
+    id: `card-${item.id}`, contentId: `practice:level-${item.level}:${item.id}`, contentVersion: item.version, dimension: "reading" as const,
+    dueAt: `2026-09-08T00:00:0${index}.000Z`, intervalDays: 1, ease: 2.5, revision: 0, reviewCount: 0, algorithmVersion: "hskkit-srs-v1", sourceAttemptId: `attempt-${item.id}`, gradeKeys: [],
+  }));
+  state.mistakes = definitions.map((item, index) => ({ id: `mistake-${item.id}`, contentId: `practice:level-${item.level}:${item.id}`, contentVersion: item.version, sourceAttemptId: `attempt-${item.id}`, status: "open" as const, createdAt: `2026-09-08T00:00:0${index}.000Z` }));
+  return state;
+}
+
+test("Today freezes a deduplicated three-card review batch aligned to the selected HSK level", () => {
+  const content = selectTodayContent(1, 1);
+  assert.equal(content.status, "ready");
+  if (content.status !== "ready") return;
+  const first = buildDailySession(todayReviewState(), { ownerId: "batch", localDay: "2026-09-09", ruleVersion: "today-v8", now, dailyContent: content, budgetMinutes: 30, focus: "review_first" });
+  const reviewItems = first.session.items.filter((item) => item.kind === "review");
+  assert.equal(reviewItems.length, 3);
+  assert.ok(first.session.reviewBatchId);
+  assert.deepEqual(first.session.reviewCardIds, reviewItems.map((item) => item.reviewCardId));
+  assert.equal(reviewItems.some((item) => item.contentId.includes("advanced")), false);
+  assert.equal(reviewItems.filter((item) => item.contentId.includes("one-")).length, 1);
+
+  const withNewDue = structuredClone(first.state);
+  withNewDue.cards.push({ id: "card-late", contentId: "practice:level-1:late", contentVersion: "v1", dimension: "reading", dueAt: "2026-09-09T09:30:00.000Z", intervalDays: 1, ease: 2.5, revision: 0, reviewCount: 0, algorithmVersion: "hskkit-srs-v1", sourceAttemptId: "attempt-late", gradeKeys: [] });
+  withNewDue.attempts.push({ id: "attempt-late", idempotencyKey: "attempt-late", contentId: "practice:level-1:late", contentVersion: "v1", dimension: "reading", answer: "x", correctAnswer: "y", correct: false, observedAt: "2026-09-09T09:30:00.000Z", reviewSnapshot: { level: 1, levelBand: "1", skillLabel: "Vocabulary", prompt: "Late due card", answerMode: "choice", options: { a: "x", b: "y" }, correctAnswer: "b", correctAnswerText: "y", explanation: "fixture" } });
+  const resumed = buildDailySession(withNewDue, { ownerId: "batch", localDay: "2026-09-09", ruleVersion: "today-v8", now: "2026-09-09T10:00:00.000Z", dailyContent: content, budgetMinutes: 30, focus: "review_first" });
+  assert.deepEqual(resumed.session.reviewCardIds, first.session.reviewCardIds);
+  assert.equal(resumed.session.items.some((item) => item.reviewCardId === "card-late"), false);
+});
+
+test("three valid Today review submissions unlock Learn even when one answer is wrong and replay cannot double count", () => {
+  const content = selectTodayContent(1, 1);
+  assert.equal(content.status, "ready");
+  if (content.status !== "ready") return;
+  let built = buildDailySession(todayReviewState(), { ownerId: "unlock", localDay: "2026-09-09", ruleVersion: "today-v8", now, dailyContent: content, budgetMinutes: 30, focus: "review_first" });
+  const ids = built.session.reviewCardIds ?? [];
+  ids.forEach((cardId, index) => {
+    const card = built.state.cards.find((candidate) => candidate.id === cardId)!;
+    const key = `grade-${index}`;
+    const graded = gradeReview(built.state, { cardId, grade: index === 0 ? "again" : "good", idempotencyKey: key, observedAt: `2026-09-09T09:0${index}:00.000Z`, clientRevision: card.revision });
+    if (index === 0) {
+      const replay = gradeReview(graded.state, { cardId, grade: "again", idempotencyKey: key, observedAt: `2026-09-09T09:0${index}:01.000Z`, clientRevision: card.revision });
+      assert.equal(replay.state.cards.find((candidate) => candidate.id === cardId)?.reviewCount, 1);
+    }
+    built = { ...built, state: graded.state, session: graded.state.dailySessions.find((session) => session.id === built.session.id)! };
+  });
+  assert.equal(built.session.items.filter((item) => item.kind === "review").every((item) => item.status === "completed"), true);
+  assert.equal(built.session.items.find((item) => item.kind === "learn")?.status, "pending");
+  assert.equal(built.session.items.find((item) => !item.deferred && item.status === "pending")?.kind, "learn");
+  assert.equal(built.state.mistakes.find((mistake) => mistake.sourceAttemptId === "attempt-one-v1")?.status, "open");
+});
+
+test("three correct Today reviews unlock Learn immediately after the third saved grade", () => {
+  const content = selectTodayContent(1, 1);
+  assert.equal(content.status, "ready");
+  if (content.status !== "ready") return;
+  let built = buildDailySession(todayReviewState(), { ownerId: "all-correct", localDay: "2026-09-09", ruleVersion: "today-v8", now, dailyContent: content, budgetMinutes: 30, focus: "review_first" });
+  for (const [index, cardId] of (built.session.reviewCardIds ?? []).entries()) {
+    const card = built.state.cards.find((candidate) => candidate.id === cardId)!;
+    const graded = gradeReview(built.state, { cardId, grade: "good", idempotencyKey: `all-correct-${index}`, observedAt: `2026-09-09T09:1${index}:00.000Z`, clientRevision: card.revision });
+    built = { ...built, state: graded.state, session: graded.state.dailySessions.find((session) => session.id === built.session.id)! };
+  }
+  assert.equal(built.session.items.find((item) => !item.deferred && item.status === "pending")?.kind, "learn");
+});
+
+test("Today review completion feedback is explicit and API failures cannot advance local review progress", async () => {
+  const dashboard = await source("src/app/components/learning-dashboard.tsx");
+  assert.match(dashboard, /Saved for later review/);
+  assert.match(dashboard, /today’s step still counts/);
+  assert.match(dashboard, /Continue Today —/);
+  assert.match(dashboard, /reviewCardIds/);
+  assert.match(dashboard, /if \(response\?\.ok\)/);
+  assert.doesNotMatch(dashboard, /\["complete_item", "skip_item", "restore_item", "configure_today", "retry_review"\]/);
 });

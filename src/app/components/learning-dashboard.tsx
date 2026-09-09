@@ -17,7 +17,7 @@ type Card = { id: string; contentId: string; dimension: Dimension; dueAt: string
 type Mistake = { id: string; contentId: string; cardId?: string; status: string; createdAt: string; resolvedAt?: string; dimension: Dimension; prompt: string; level?: number; skill: string };
 type RewardSnapshot = { monthLearningDays: number; monthPoints: number; currentStreak: number; remainingSeconds: number; nextAward: number; nextMonthLearningDay: number; todayQualified: boolean; todayAwarded: boolean; todayAward: number };
 type Data = {
-  session: { id: string; startLevel?: number; contentReleaseId?: string; notice?: Notice; budgetMinutes?: number; newWordCount?: TodayNewWordCount; listeningEnabled?: boolean; focus?: TodayFocus; totalEstimatedMinutes?: number; items: Item[] };
+  session: { id: string; startLevel?: number; contentReleaseId?: string; notice?: Notice; budgetMinutes?: number; newWordCount?: TodayNewWordCount; listeningEnabled?: boolean; focus?: TodayFocus; totalEstimatedMinutes?: number; reviewBatchId?: string; reviewCardIds?: string[]; reviewItemIds?: string[]; items: Item[] };
   cards: Card[];
   focusedReview: (Card & { focusReason: "open_mistake" | "due" })[];
   canUndoReview: { cardId: string } | null;
@@ -239,11 +239,11 @@ export default function LearningDashboard({ mode }: { mode: "today" | "review" |
     const reviewCards = entryIntent.kind === "mistake"
       ? data.cards
       : entryIntent.kind === "today"
-        ? data.cards.filter((card) => card.dueAt <= new Date().toISOString())
+        ? (data.session.reviewCardIds ?? []).map((id) => data.cards.find((card) => card.id === id)).filter((card): card is Card => Boolean(card))
       : data.capabilities.focusedReview
         ? data.focusedReview
         : data.cards.filter((card) => card.dueAt <= new Date().toISOString());
-    setReviewIds(buildIntentReviewQueue(reviewCards, entryIntent, reviewMinutes).map((card) => card.id));
+    setReviewIds(entryIntent.kind === "today" ? (data.session.reviewCardIds ?? []) : buildIntentReviewQueue(reviewCards, entryIntent, reviewMinutes).map((card) => card.id));
     setReviewedCount(0);
     setRatedLegacyMistakeIds([]);
   }, [data, entryIntent, entryResolved, mode, reviewIds, reviewMinutes]);
@@ -367,7 +367,7 @@ export default function LearningDashboard({ mode }: { mode: "today" | "review" |
       const result = await post("retry_review", { cardId: card.id, answer, cardRevision: card.revision }, `retry-review:${card.id}:${card.revision}`, false) as (Data & { feedback?: { correct: boolean; correctAnswerText: string } }) | false;
       if (result && result.feedback) {
         const targetAfter = result.session.id === entryTodaySessionId ? result.session.items.find((item) => item.id === entryTodayItemId) : undefined;
-        if (result.feedback.correct && entryIntent.kind === "today" && targetBefore?.kind === "review" && targetBefore.status === "pending" && targetBefore.reviewCardId === card.id && targetAfter?.status === "completed") sessionStorage.setItem(todayCompletionProofKey(entryTodaySessionId, entryTodayItemId), "armed");
+        if (entryIntent.kind === "today" && targetBefore?.kind === "review" && targetBefore.status === "pending" && targetBefore.reviewCardId === card.id && targetAfter?.status === "completed") sessionStorage.setItem(todayCompletionProofKey(entryTodaySessionId, entryTodayItemId), "armed");
         setRetryFeedback(result.feedback);
         setRetryResult(result);
         setAnswerChecked(true);
@@ -378,7 +378,7 @@ export default function LearningDashboard({ mode }: { mode: "today" | "review" |
     if (!retryResult) return;
     dataRef.current = retryResult;
     setData(retryResult);
-    if (retryFeedback?.correct) setReviewedCount((count) => count + 1);
+    if (retryFeedback?.correct || entryIntent.kind === "today") setReviewedCount((count) => count + 1);
     setLastRatedCardId(card.id);
     setSelectedAnswer("");
     setReviewDraft("");
@@ -612,13 +612,19 @@ export default function LearningDashboard({ mode }: { mode: "today" | "review" |
   const reviewedSessionCards = (reviewIds ?? []).map((id) => data.cards.find((card) => card.id === id)).filter((card): card is Card => Boolean(card));
   const nextReviewAt = reviewedSessionCards.map((card) => card.dueAt).filter((dueAt) => new Date(dueAt).getTime() > Date.now()).sort()[0];
   const reviewPool = entryIntent.kind === "mistake" ? data.cards.filter((card) => card.isMistake && !ratedLegacyMistakeIds.includes(card.id)) : entryIntent.kind === "setup" ? data.cards : due;
-  const plannedCards = reviewIds ? reviewIds.map((id) => reviewPool.find((card) => card.id === id)).filter((card): card is Card => Boolean(card)) : [];
+  const todayReviewItemIds = new Set(data.session.reviewItemIds ?? []);
+  const todayCompletedReviewIds = new Set(data.session.items.filter((item) => todayReviewItemIds.has(item.id) && item.kind === "review" && item.status === "completed").map((item) => item.reviewCardId));
+  const plannedCards = reviewIds
+    ? reviewIds.map((id) => (entryIntent.kind === "today" ? data.cards : reviewPool).find((card) => card.id === id)).filter((card): card is Card => Boolean(card)).filter((card) => entryIntent.kind !== "today" || !todayCompletedReviewIds.has(card.id))
+    : [];
   const activeCard = plannedCards[0];
   const activeFocusReason = data.focusedReview.find((card) => card.id === activeCard?.id)?.focusReason;
   const sessionTotal = reviewIds?.length ?? 0;
+  const todayReviewedCount = entryIntent.kind === "today" ? (reviewIds ?? []).filter((id) => todayCompletedReviewIds.has(id)).length : reviewedCount;
+  const displayReviewedCount = entryIntent.kind === "today" ? todayReviewedCount : reviewedCount;
   const directEntryPreparing = !entryResolved || (entryIntent.kind !== "setup" && reviewIds === null);
   const directEntryEmpty = entryIntent.kind !== "setup" && reviewIds !== null && reviewIds.length === 0;
-  const sessionComplete = Boolean(reviewIds?.length && (reviewedCount >= sessionTotal || !activeCard));
+  const sessionComplete = Boolean(reviewIds?.length && (displayReviewedCount >= sessionTotal || !activeCard));
   const selectedText = activeCard?.choices.find((choice) => choice.key === selectedAnswer)?.text ?? reviewDraft;
   const currentAnswerCorrect = retryFeedback?.correct ?? false;
   const isMistakeRetry = Boolean(activeCard?.isMistake && !activeCard.legacyReview && activeCard.answerMode !== "self_recall");
@@ -651,10 +657,10 @@ export default function LearningDashboard({ mode }: { mode: "today" | "review" |
 
       {reviewIds && !sessionComplete && activeCard && <div aria-live="polite">
         <div className="mb-4 flex flex-wrap items-end justify-between gap-3">
-          <div><p className="text-sm font-semibold text-slate-500">Review progress</p><p className="mt-1 text-lg font-bold text-slate-950">{reviewedCount + 1} of {sessionTotal}</p></div>
-          <p className="text-sm text-slate-500">{Math.max(0, sessionTotal - reviewedCount - 1)} after this</p>
+          <div><p className="text-sm font-semibold text-slate-500">Review progress</p><p className="mt-1 text-lg font-bold text-slate-950">{displayReviewedCount + 1} of {sessionTotal}</p></div>
+          <p className="text-sm text-slate-500">{Math.max(0, sessionTotal - displayReviewedCount - 1)} after this</p>
         </div>
-        <div className="mb-5 h-2 overflow-hidden rounded-full bg-slate-200"><div className="h-full rounded-full bg-blue-600 transition-[width]" style={{ width: `${Math.min(100, reviewedCount / sessionTotal * 100)}%` }} /></div>
+        <div className="mb-5 h-2 overflow-hidden rounded-full bg-slate-200"><div className="h-full rounded-full bg-blue-600 transition-[width]" style={{ width: `${Math.min(100, displayReviewedCount / sessionTotal * 100)}%` }} /></div>
         <article className="overflow-hidden rounded-[28px] border border-slate-200 bg-white shadow-[0_22px_60px_rgba(15,23,42,0.08)]">
           <div className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-200 bg-slate-50 px-[24px] py-[16px] sm:px-[32px]">
             <p className="text-sm font-bold text-slate-700">{isMistakeRetry ? "Mistake retry" : "Memory review"} · {activeCard.level ? `HSK ${activeCard.levelBand}` : "Older saved item"} · {activeCard.skill}</p>
@@ -675,7 +681,7 @@ export default function LearningDashboard({ mode }: { mode: "today" | "review" |
             </div> : !revealed[activeCard.id] && !answerChecked ? <div className="mt-7">{activeCard.legacyReview && <p className="mb-3 rounded-xl bg-amber-50 p-3 text-sm text-amber-900">This older saved item has no complete original question. It is available only as a memory prompt and will not be presented as a real mistake retry.</p>}<p className="mb-3 text-sm text-slate-600">Think of the answer before revealing it. There is no answer field in this memory review.</p><button className="min-h-[48px] w-full rounded-xl bg-blue-600 px-5 py-3 font-bold text-white disabled:cursor-not-allowed disabled:opacity-40 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-blue-200" disabled={!activeCard.playbackReady} onClick={() => setRevealed((current) => ({ ...current, [activeCard.id]: true }))}>Reveal answer</button></div> : null}
 
             {(revealed[activeCard.id] || answerChecked) && <div className="mt-7" aria-live="polite">
-              {answerChecked && <div className={`rounded-2xl border p-4 ${currentAnswerCorrect ? "border-emerald-200 bg-emerald-50 text-emerald-950" : "border-rose-200 bg-rose-50 text-rose-950"}`}><p className="font-bold">{currentAnswerCorrect ? "Correct this time" : "Not yet — review the difference"}</p><p className="mt-1"><strong>Your answer this time:</strong> {selectedText}</p></div>}
+              {answerChecked && <div className={`rounded-2xl border p-4 ${currentAnswerCorrect ? "border-emerald-200 bg-emerald-50 text-emerald-950" : "border-rose-200 bg-rose-50 text-rose-950"}`}><p className="font-bold">{currentAnswerCorrect ? "Correct this time — this mistake is resolved" : entryIntent.kind === "today" ? "Saved for later review — today’s step still counts" : "Not yet — review the difference"}</p><p className="mt-1"><strong>Your answer this time:</strong> {selectedText}</p>{entryIntent.kind === "today" && !currentAnswerCorrect && <p className="mt-2 text-sm">This mistake stays open and will return later without blocking the next Today step.</p>}</div>}
               <div className="mt-4 rounded-2xl bg-slate-50 p-[20px] text-slate-800">
                 <p><strong>{isMistakeRetry ? "Correct answer" : "Answer"}:</strong> {activeCard.correctAnswer}</p>
                 {isMistakeRetry && <details className="mt-3 border-t border-slate-200 pt-3 text-sm"><summary className="cursor-pointer font-semibold text-slate-700">Earlier attempt</summary><p className="mt-2"><strong>{activeCard.priorAnswerLabel}:</strong> {activeCard.userAnswer || "No answer"}</p></details>}
@@ -701,10 +707,10 @@ export default function LearningDashboard({ mode }: { mode: "today" | "review" |
 
       {sessionComplete && <div className="rounded-[28px] border border-emerald-200 bg-emerald-50 p-6 text-emerald-950 sm:p-9" aria-live="polite">
         <p className="text-sm font-bold text-emerald-800">Review report · Session complete</p>
-        <h2 className="mt-2 text-3xl font-bold tracking-tight">You reviewed {reviewedCount} item{reviewedCount === 1 ? "" : "s"}.</h2>
-        <p className="mt-3 max-w-xl text-emerald-900">This report uses the {reviewedCount} answers and memory ratings saved in this session.</p>
-        <div className="mt-5 grid gap-3 rounded-2xl bg-white/70 p-4 sm:grid-cols-3"><p><strong>Reviewed</strong><br />{reviewedCount}</p><p><strong>Open mistakes now</strong><br />{open.length}</p><p><strong>Next review</strong><br />{nextReviewAt ? new Date(nextReviewAt).toLocaleString() : "Nothing scheduled"}</p></div>
-        <div className="mt-6 flex flex-col gap-3 sm:flex-row">{entryIntent.kind === "mistake" && open.length > 0 && <Link href="/mistakes" className="min-h-[48px] rounded-xl bg-blue-600 px-5 py-3 text-center font-bold text-white">Continue correcting</Link>}<Link href={entryIntent.kind === "today" && entryTodaySessionId && entryTodayItemId ? `/today?resume=1&completed=review&completedSession=${encodeURIComponent(entryTodaySessionId)}&completedItem=${encodeURIComponent(entryTodayItemId)}` : "/today"} className="min-h-[48px] rounded-xl bg-emerald-900 px-5 py-3 text-center font-bold text-white focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-emerald-200">{entryIntent.kind === "today" ? "Continue Today Session" : "Back to Today"}</Link>{entryIntent.kind !== "today" && <><Link href="/mistakes" className="min-h-[48px] rounded-xl border border-emerald-800 px-5 py-3 text-center font-bold text-emerald-950 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-emerald-200">Back to Mistakes</Link><Link href="/practice" className="min-h-[48px] rounded-xl border border-emerald-800 px-5 py-3 text-center font-bold text-emerald-950 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-emerald-200">Continue practice</Link></>}</div>
+        <h2 className="mt-2 text-3xl font-bold tracking-tight">You reviewed {displayReviewedCount} item{displayReviewedCount === 1 ? "" : "s"}.</h2>
+        <p className="mt-3 max-w-xl text-emerald-900">This report uses the {displayReviewedCount} answers and memory ratings saved in this session.</p>
+        <div className="mt-5 grid gap-3 rounded-2xl bg-white/70 p-4 sm:grid-cols-3"><p><strong>Reviewed</strong><br />{displayReviewedCount}</p><p><strong>Open mistakes now</strong><br />{open.length}</p><p><strong>Next review</strong><br />{nextReviewAt ? new Date(nextReviewAt).toLocaleString() : "Nothing scheduled"}</p></div>
+        <div className="mt-6 flex flex-col gap-3 sm:flex-row">{entryIntent.kind === "mistake" && open.length > 0 && <Link href="/mistakes" className="min-h-[48px] rounded-xl bg-blue-600 px-5 py-3 text-center font-bold text-white">Continue correcting</Link>}<Link href={entryIntent.kind === "today" && entryTodaySessionId && entryTodayItemId ? `/today?resume=1&completed=review&completedSession=${encodeURIComponent(entryTodaySessionId)}&completedItem=${encodeURIComponent(entryTodayItemId)}` : "/today"} className="min-h-[48px] rounded-xl bg-emerald-900 px-5 py-3 text-center font-bold text-white focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-emerald-200">{entryIntent.kind === "today" ? `Continue Today — ${data.session.items.find((item) => !item.deferred && item.status === "pending")?.title ?? "next step"}` : "Back to Today"}</Link>{entryIntent.kind !== "today" && <><Link href="/mistakes" className="min-h-[48px] rounded-xl border border-emerald-800 px-5 py-3 text-center font-bold text-emerald-950 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-emerald-200">Back to Mistakes</Link><Link href="/practice" className="min-h-[48px] rounded-xl border border-emerald-800 px-5 py-3 text-center font-bold text-emerald-950 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-emerald-200">Continue practice</Link></>}</div>
         {lastRatedCardId && data.canUndoReview && <button className="mt-4 min-h-[48px] text-sm font-semibold underline underline-offset-4" onClick={() => void undoLastRating()}>Undo last rating</button>}
       </div>}
 

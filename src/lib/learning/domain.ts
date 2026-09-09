@@ -84,6 +84,9 @@ export interface DailySession {
   listeningEnabled?: boolean;
   focus?: TodayFocus;
   totalEstimatedMinutes?: number;
+  reviewBatchId?: string;
+  reviewCardIds?: string[];
+  reviewItemIds?: string[];
   items: DailyItem[];
 }
 export interface PlacementAnswer {
@@ -609,6 +612,37 @@ export function assertCurrentDailySession(currentSession: DailySession | undefin
   return currentSession;
 }
 
+function todayReviewLevel(state: LearningState, card: SrsCard) {
+  const attempt = state.attempts.find((candidate) => candidate.id === card.sourceAttemptId);
+  const snapshotLevel = attempt?.reviewSnapshot?.level;
+  if (snapshotLevel && snapshotLevel >= 1 && snapshotLevel <= 9) return snapshotLevel;
+  const match = card.contentId.match(/(?:level-|hsk-?)([1-9])(?:\D|$)/i);
+  return match ? Number(match[1]) : undefined;
+}
+
+function normalizedReviewText(value: string | undefined) {
+  return (value ?? "").normalize("NFKC").trim().replace(/\s+/g, " ").toLocaleLowerCase("en");
+}
+
+function todayReviewKey(state: LearningState, card: SrsCard) {
+  const attempt = state.attempts.find((candidate) => candidate.id === card.sourceAttemptId);
+  const snapshot = attempt?.reviewSnapshot;
+  if (snapshot) return [snapshot.level ?? "", card.dimension, normalizedReviewText(snapshot.prompt), normalizedReviewText(snapshot.correctAnswerText)].join("|");
+  return [todayReviewLevel(state, card) ?? "", card.dimension, card.contentId.replace(/(?:^|[:_-])v\d+(?=[:_-]|$)/gi, "")].join("|");
+}
+
+function selectTodayReviewCards(state: LearningState, cards: SrsCard[], startLevel: number) {
+  const seen = new Set<string>();
+  return cards.filter((card) => {
+    const level = todayReviewLevel(state, card);
+    if (level !== undefined && level !== startLevel) return false;
+    const key = todayReviewKey(state, card);
+    if (seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  }).slice(0, 3);
+}
+
 export function buildDailySession(state: LearningState, input: { ownerId: string; localDay: string; ruleVersion: string; now: string; dailyContent?: TodayContentPlan; budgetMinutes?: number; newWordCount?: number; listeningEnabled?: boolean; focus?: TodayFocus }) {
   const prior = state.dailySessions.find((session) => session.ownerId === input.ownerId && session.localDay === input.localDay);
   const newWordCount = isTodayNewWordCount(input.newWordCount) ? input.newWordCount : isTodayNewWordCount(prior?.newWordCount) ? prior.newWordCount : 1;
@@ -618,7 +652,9 @@ export function buildDailySession(state: LearningState, input: { ownerId: string
     const attempt = state.attempts.find((candidate) => candidate.id === mistake.sourceAttemptId);
     return `${mistake.contentId}\u0000${mistake.contentVersion}\u0000${attempt?.dimension ?? "reading"}`;
   }));
-  const due: DailyItem[] = state.cards
+  const content = input.dailyContent;
+  const todayLevel = content?.status === "ready" || content?.status === "empty" ? content.startLevel : prior?.startLevel ?? 1;
+  const dueCards = selectTodayReviewCards(state, state.cards
     .filter((card) => card.dueAt <= input.now)
     .sort((a, b) => {
       const aMistake = openMistakeKeys.has(`${a.contentId}\u0000${a.contentVersion}\u0000${a.dimension}`);
@@ -626,10 +662,9 @@ export function buildDailySession(state: LearningState, input: { ownerId: string
       if (focus === "fix_mistakes") return Number(bMistake) - Number(aMistake) || a.dueAt.localeCompare(b.dueAt);
       if (focus === "listening_focus") return Number(b.dimension !== "reading") - Number(a.dimension !== "reading") || a.dueAt.localeCompare(b.dueAt);
       return a.dueAt.localeCompare(b.dueAt);
-    })
-    .slice(0, focus === "balanced" ? 6 : 20)
+    }), todayLevel);
+  const due: DailyItem[] = dueCards
     .map((card) => ({ id: reviewItemId(card), kind: "review", contentId: card.contentId, contentVersion: card.contentVersion, reviewCardId: card.id, dimension: card.dimension, status: "pending" }));
-  const content = input.dailyContent;
   const contentItems = content?.status === "ready" ? content.items.slice(0, newWordCount) : [];
   const planFingerprint = content?.status === "ready"
     ? `ready:${content.releaseId}:${content.startLevel}:${contentItems.map((item) => `${item.contentId}:${item.contentVersion}`).join("|")}:${newWordCount}:${listeningEnabled}:${focus}`
@@ -690,19 +725,21 @@ export function buildDailySession(state: LearningState, input: { ownerId: string
   });
   const summary = { ...(core.find((item) => item.kind === "summary") ?? { id: "summary", kind: "summary" as const, contentId: "summary", status: "pending" as const }), estimatedMinutes: 0 };
   const plannedItems = [...planned, summary];
+  const plannedReviewItems = plannedItems.filter((item) => item.kind === "review");
+  const plannedReviewCardIds = plannedReviewItems.map((item) => item.reviewCardId).filter((cardId): cardId is string => Boolean(cardId));
+  const plannedReviewItemIds = plannedReviewItems.map((item) => item.id);
+  const reviewBatchId = id("review-batch", `${input.ownerId}:${input.localDay}:${input.ruleVersion}:${plannedReviewCardIds.join(",")}`);
   if (prior) {
-    const dueIds = new Set(due.map((item) => item.id));
-    const priorPendingReviewIds = prior.items.filter((item) => item.kind === "review" && item.status === "pending").map((item) => item.id);
-    const duePlanMatches = due.every((item) => prior.items.some((priorItem) => priorItem.id === item.id))
-      && priorPendingReviewIds.every((itemId) => dueIds.has(itemId));
     const samePlan = prior.ruleVersion === input.ruleVersion
       && prior.planFingerprint === planFingerprint
       && (prior.budgetMinutes ?? 30) === budgetMinutes
       && (prior.newWordCount ?? 1) === newWordCount
       && (prior.listeningEnabled ?? true) === listeningEnabled
       && (prior.focus ?? "balanced") === focus
-      && prior.items.every((item) => item.kind !== "review" || (Boolean(item.reviewCardId) && typeof item.estimatedMinutes === "number"))
-      && duePlanMatches;
+      && Boolean(prior.reviewBatchId)
+      && Array.isArray(prior.reviewCardIds)
+      && Array.isArray(prior.reviewItemIds)
+      && prior.items.every((item) => item.kind !== "review" || (Boolean(item.reviewCardId) && typeof item.estimatedMinutes === "number"));
     if (samePlan) return { state, session: prior };
     const activePlanned = plannedItems.filter((item) => item.kind !== "summary");
     const retained = activePlanned.map((item) => {
@@ -724,6 +761,9 @@ export function buildDailySession(state: LearningState, input: { ownerId: string
       listeningEnabled,
       focus,
       totalEstimatedMinutes: retained.reduce((sum, item) => sum + (item.estimatedMinutes ?? estimateDailyItem(item)), 0),
+      reviewBatchId,
+      reviewCardIds: plannedReviewCardIds,
+      reviewItemIds: plannedReviewItemIds,
       startLevel: content?.startLevel,
       contentReleaseId: content?.releaseId,
       planFingerprint,
@@ -749,6 +789,9 @@ export function buildDailySession(state: LearningState, input: { ownerId: string
     listeningEnabled,
     focus,
     totalEstimatedMinutes: plannedItems.reduce((sum, item) => sum + (item.estimatedMinutes ?? estimateDailyItem(item)), 0),
+    reviewBatchId,
+    reviewCardIds: plannedReviewCardIds,
+    reviewItemIds: plannedReviewItemIds,
     notice: content?.status === "empty" ? { code: content.code, message: content.message, actionHref: content.actionHref, actionLabel: content.actionLabel } : undefined,
     items: plannedItems,
   };
