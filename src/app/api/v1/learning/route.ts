@@ -33,7 +33,7 @@ import { resolveCapabilities } from "../../../../lib/commercial/storage";
 import { type ProductCapabilities } from "../../../../lib/commercial/capabilities";
 import { reconcileReferralLearningMilestone } from "../../../../lib/commercial/referral-storage";
 import { learningRewardLocalDay } from "@/lib/engagement/storage";
-import { selectTodayContent, todayContentByAssetId, todayContentFromCatalogRow } from "../../../../lib/learning/today-content";
+import { selectTodayContent, todayContentByAssetId, todayContentByContentId, todayContentFromCatalogRow } from "../../../../lib/learning/today-content";
 import { findPublicCatalogWordById } from "../../../../lib/content/public-catalog-index";
 import { accessDecision, createAuditEvent, errorContract } from "../../../../lib/account/access-policy";
 import { recordPolicyAudit } from "../../../../lib/account/audit-storage";
@@ -163,9 +163,18 @@ function view(state: LearningState, ownerId: string, offsetMinutes: number, capa
   const streak = accountTimezone
     ? computeSessionStreak(built.state.dailySessions, accountTimezone, now)
     : computeOffsetSessionStreak(built.state.dailySessions, offsetMinutes, now);
+  const session = {
+    ...built.session,
+    items: built.session.items.map((item) => {
+      if (item.kind !== "learn") return item;
+      const dictionaryAssetId = item.id.startsWith("dictionary:") ? item.id.slice("dictionary:".length) : undefined;
+      const learnContent = dictionaryAssetId ? todayContentByAssetId(dictionaryAssetId) : todayContentByContentId(item.contentId);
+      return learnContent ? { ...item, learnContent } : item;
+    }),
+  };
   return {
     state: built.state,
-    session: built.session,
+    session,
     cards,
     mistakes,
     mastery,

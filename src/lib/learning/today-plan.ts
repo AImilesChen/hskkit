@@ -13,6 +13,36 @@ export type TodayCelebration = {
   message: string;
 };
 
+export type TodayJourneyProgressItem = {
+  id: string;
+  kind: "review" | "learn" | "listen" | "practice" | "summary";
+  status: "pending" | "completed" | "skipped";
+};
+
+export function todayJourneyProgress(items: readonly TodayJourneyProgressItem[]) {
+  const phases: TodayJourneyProgressItem[][] = [];
+  let reviewPhase: TodayJourneyProgressItem[] | undefined;
+  for (const item of items) {
+    if (item.kind === "summary") continue;
+    if (item.kind === "review") {
+      if (!reviewPhase) {
+        reviewPhase = [];
+        phases.push(reviewPhase);
+      }
+      reviewPhase.push(item);
+    } else {
+      phases.push([item]);
+    }
+  }
+  const completedPhases = phases.filter((phase) => phase.every((item) => item.status !== "pending")).length;
+  const pendingIndex = phases.findIndex((phase) => phase.some((item) => item.status === "pending"));
+  return {
+    currentPhase: pendingIndex >= 0 ? pendingIndex + 1 : phases.length,
+    totalPhases: phases.length,
+    completedPhases,
+  };
+}
+
 export function resolveTodayCelebration(input: {
   returnedKind: TodayCompletedKind | null;
   completedCount: number;

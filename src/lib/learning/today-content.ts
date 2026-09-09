@@ -1,7 +1,7 @@
 import runtimeIndex from "../content/runtime-content-index.json" with { type: "json" };
 import type { CatalogSearchRow } from "../content/catalog-search.ts";
 import { getHsk3LevelStatus } from "../content/level-status.ts";
-import { getWordBySlug, listPublishedWords, type StudyWord } from "../dictionary/catalog.ts";
+import { listPublishedWords, type StudyWord } from "../dictionary/catalog.ts";
 
 const planCache = new Map<string, TodayContentPlan>();
 const runtimeWordAssets = Object.values(runtimeIndex.runtimeWords).flat();
@@ -19,6 +19,7 @@ export interface TodayContentItem {
   partOfSpeech: string;
   studySlug: string;
   example?: StudyWord["example"];
+  audioSrc?: string;
 }
 
 export type TodayContentPlan =
@@ -57,6 +58,7 @@ function mapItem(asset: RuntimeTodayAsset, word: StudyWord | undefined, releaseI
     partOfSpeech: asset.partOfSpeech,
     studySlug: word?.slug ?? asset.id,
     example: word?.example,
+    audioSrc: word?.audio.status === "formal" ? word.audio.src : (asset as unknown as { audioSrc?: string }).audioSrc,
   };
 }
 
@@ -119,10 +121,12 @@ export function todayContentByContentId(contentId: string): TodayContentItem | u
 }
 
 export function todayContentByAssetId(assetId: string): TodayContentItem | undefined {
-  const asset = runtimeWordAssets.find((candidate) => candidate.id === assetId);
+  const asset = runtimeWordAssets.find((candidate) => candidate.id === assetId)
+    ?? runtimeIndex.dictionaryAssets.find((candidate) => candidate.id === assetId);
   if (!asset) return undefined;
-  const result = getWordBySlug(asset.id);
-  return mapItem(asset, result.status === "published" ? result.item : undefined, runtimeIndex.releaseId);
+  const words = listPublishedWords();
+  const word = words.find((candidate) => candidate.id === asset.id || candidate.hanzi === asset.hanzi);
+  return mapItem(asset, word, runtimeIndex.releaseId);
 }
 
 export function todayContentFromCatalogRow(row: CatalogSearchRow): TodayContentItem {
@@ -139,5 +143,6 @@ export function todayContentFromCatalogRow(row: CatalogSearchRow): TodayContentI
     partOfSpeech: row.part_of_speech,
     studySlug: row.id,
     example: undefined,
+    audioSrc: undefined,
   };
 }

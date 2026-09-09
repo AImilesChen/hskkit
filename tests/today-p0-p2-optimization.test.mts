@@ -3,12 +3,54 @@ import { readFile } from "node:fs/promises";
 import test from "node:test";
 
 import { assertCurrentDailySession, assertTodayLearnItemMatches, buildDailySession, emptyLearningState, gradeReview } from "../src/lib/learning/domain.ts";
-import { selectTodayContent } from "../src/lib/learning/today-content.ts";
-import { isTodayBudgetMinutes, isTodayFocus, isTodayNewWordCount, recommendTodayMinutes, resolveTodayCelebration, TODAY_BUDGET_OPTIONS, TODAY_FOCUS_OPTIONS, TODAY_NEW_WORD_OPTIONS } from "../src/lib/learning/today-plan.ts";
+import { selectTodayContent, todayContentByAssetId } from "../src/lib/learning/today-content.ts";
+import { isTodayBudgetMinutes, isTodayFocus, isTodayNewWordCount, recommendTodayMinutes, resolveTodayCelebration, todayJourneyProgress, TODAY_BUDGET_OPTIONS, TODAY_FOCUS_OPTIONS, TODAY_NEW_WORD_OPTIONS } from "../src/lib/learning/today-plan.ts";
 
 const root = new URL("../", import.meta.url);
 const source = (path: string) => readFile(new URL(path, root), "utf8");
 const now = "2026-09-09T09:00:00.000Z";
+
+test("Today keeps the completed review as one stable journey phase and advances to phase two of five", () => {
+  const route = [
+    { id: "review-1", kind: "review", status: "completed" },
+    { id: "review-2", kind: "review", status: "completed" },
+    { id: "review-3", kind: "review", status: "completed" },
+    { id: "learn", kind: "learn", status: "pending" },
+    { id: "audio", kind: "listen", status: "pending" },
+    { id: "context", kind: "listen", status: "pending" },
+    { id: "practice", kind: "practice", status: "pending" },
+  ] as const;
+  assert.deepEqual(todayJourneyProgress(route), { currentPhase: 2, totalPhases: 5, completedPhases: 1 });
+});
+
+test("Today renders the saved Learn word inline and completes it before unlocking listening", async () => {
+  const [dashboard, route, content] = await Promise.all([
+    source("src/app/components/learning-dashboard.tsx"),
+    source("src/app/api/v1/learning/route.ts"),
+    source("src/lib/learning/today-content.ts"),
+  ]);
+  for (const token of [
+    "Today review",
+    "Overall progress",
+    "learnContent",
+    "Formal pronunciation",
+    "Example translation",
+    "completeLearn",
+    "I’ve learned",
+    "Continue to listening",
+    "scrollIntoView",
+  ]) assert.match(dashboard, new RegExp(token));
+  assert.match(route, /learnContent/);
+  assert.match(content, /audioSrc/);
+  const travel = todayContentByAssetId("hsk3.word.l2.0368.v1");
+  assert.deepEqual(travel && { hanzi: travel.hanzi, pinyin: travel.pinyin, meaning: travel.meaning, audio: Boolean(travel.audioSrc), example: travel.example?.hanzi }, {
+    hanzi: "旅行",
+    pinyin: "lǚxíng",
+    meaning: "to travel; journey; trip",
+    audio: true,
+    example: "我们暑假去中国旅行。",
+  });
+});
 
 test("Today Learn opens the exact planned word and removes the technical content-update notice", () => {
   const plan = selectTodayContent(1);
@@ -40,8 +82,9 @@ test("Today has one dominant start action, explicit plan save feedback, progress
   const dashboard = await source("src/app/components/learning-dashboard.tsx");
   for (const token of [
     "Continue Today Session",
-    "Current step",
-    "of {plannedTodayTasks.length}",
+    "Current phase",
+    "of {journeyProgress.totalPhases}",
+    "Overall progress",
     "min remaining",
     "Why this plan",
     "Save changes",

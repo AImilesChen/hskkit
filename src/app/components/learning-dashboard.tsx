@@ -8,10 +8,11 @@ import HomeIcon, { type HomeIconName } from "./home-icon";
 import LearningLoopNav, { type LearningLoopLabel } from "./learning-loop-nav";
 import { LearningLoadError, loadLearningData, type LearningLoadErrorCode } from "../../lib/learning/client-load";
 import { buildIntentReviewQueue, buildReviewQueue, filterReviewCards, recommendReviewCount, reviewComposition, reviewEntryIntent, reviewGradeOptions, reviewTip, type ReviewEntryIntent, type ReviewGrade } from "../../lib/learning/review-session";
-import { recommendTodayMinutes, resolveTodayCelebration, todayCompletionProofKey, TODAY_BUDGET_OPTIONS, TODAY_FOCUS_OPTIONS, TODAY_NEW_WORD_OPTIONS, type TodayCelebration, type TodayCompletedKind, type TodayFocus, type TodayNewWordCount } from "../../lib/learning/today-plan";
+import { recommendTodayMinutes, resolveTodayCelebration, todayCompletionProofKey, todayJourneyProgress, TODAY_BUDGET_OPTIONS, TODAY_FOCUS_OPTIONS, TODAY_NEW_WORD_OPTIONS, type TodayCelebration, type TodayCompletedKind, type TodayFocus, type TodayNewWordCount } from "../../lib/learning/today-plan";
 
 type Dimension = "reading" | "audio" | "context_audio";
-type Item = { id: string; kind: "review" | "learn" | "listen" | "practice" | "summary"; contentId: string; contentVersion?: string; status: "pending" | "completed" | "skipped"; dimension?: Dimension; title?: string; href?: string; estimatedMinutes?: number; deferred?: boolean; reviewCardId?: string };
+type LearnContent = { assetId: string; hanzi: string; pinyin: string; meaning: string; partOfSpeech: string; example?: { hanzi: string; pinyin: string; meaning: string }; audioSrc?: string };
+type Item = { id: string; kind: "review" | "learn" | "listen" | "practice" | "summary"; contentId: string; contentVersion?: string; status: "pending" | "completed" | "skipped"; dimension?: Dimension; title?: string; href?: string; estimatedMinutes?: number; deferred?: boolean; reviewCardId?: string; learnContent?: LearnContent };
 type Notice = { code: string; message: string; actionHref: string; actionLabel: string };
 type Card = { id: string; contentId: string; dimension: Dimension; dueAt: string; revision: number; prompt: string; context?: string; instruction?: string; answerMode: "choice" | "text" | "self_recall"; correctAnswer: string; correctAnswerKey: string; userAnswer: string; priorAnswerLabel: string; choices: Array<{ key: string; text: string }>; isMistake: boolean; legacyReview: boolean; reviewReason: string; explanation: string; level?: number; levelBand: string; skill: string; topic?: string; intervalDays: number; ease: number; reviewCount: number; audioText?: string; audioSrc?: string; assetId?: string; pinyin?: string; meaning?: string; example?: { hanzi: string; pinyin: string; meaning: string }; formalAudioSrc?: string; playbackRequired: boolean; playbackReady: boolean };
 type Mistake = { id: string; contentId: string; cardId?: string; status: string; createdAt: string; resolvedAt?: string; dimension: Dimension; prompt: string; level?: number; skill: string };
@@ -81,6 +82,7 @@ export default function LearningDashboard({ mode }: { mode: "today" | "review" |
   const [lastRatedCardId, setLastRatedCardId] = useState<string | null>(null);
   const [ratedLegacyMistakeIds, setRatedLegacyMistakeIds] = useState<string[]>([]);
   const [reviewSaving, setReviewSaving] = useState(false);
+  const [learnSavingId, setLearnSavingId] = useState("");
   const [syncState, setSyncState] = useState<"synced" | "local_pending" | "syncing" | "conflict" | "failed">("synced");
   const [planDraftMinutes, setPlanDraftMinutes] = useState(30);
   const [planDraftLevel, setPlanDraftLevel] = useState(1);
@@ -403,6 +405,19 @@ export default function LearningDashboard({ mode }: { mode: "today" | "review" |
   }
   async function skip(item: Item) { await post("skip_item", { sessionId: data!.session.id, itemId: item.id }, `skip:${data!.session.id}:${item.id}`); }
   async function restore(item: Item) { await post("restore_item", { sessionId: data!.session.id, itemId: item.id }, `restore:${data!.session.id}:${item.id}`); }
+  async function completeLearn(item: Item) {
+    if (!data || !item.learnContent || learnSavingId) return;
+    setLearnSavingId(item.id);
+    try {
+      const result = await post("complete_item", { sessionId: data.session.id, itemId: item.id, assetId: item.learnContent.assetId }, `complete-learn:${data.session.id}:${item.id}`) as Data | true | false;
+      if (!result) return;
+      const nextSession = typeof result === "object" ? result.session : { ...data.session, items: data.session.items.map((entry) => entry.id === item.id ? { ...entry, status: "completed" as const } : entry) };
+      const nextItem = nextSession.items.find((entry) => !entry.deferred && entry.status === "pending" && entry.kind !== "summary");
+      if (nextItem) window.requestAnimationFrame(() => document.querySelector<HTMLElement>(`[data-today-item-id="${CSS.escape(nextItem.id)}"]`)?.scrollIntoView({ behavior: "smooth", block: "center" }));
+    } finally {
+      setLearnSavingId("");
+    }
+  }
   async function configureToday() {
     setPlanFeedback("");
     const payload = { budgetMinutes: planDraftMinutes, startLevel: planDraftLevel, newWordCount: planDraftNewWords, listeningEnabled: planDraftListening, focus: planDraftFocus };
@@ -471,6 +486,9 @@ export default function LearningDashboard({ mode }: { mode: "today" | "review" |
       .filter(({ item }) => item.kind === "summary" || (!item.deferred && (item.estimatedMinutes ?? 0) > 0));
     const deferredTodayItems = data.session.items.filter((item) => item.deferred);
     const plannedTodayTasks = currentTodayItems.map(({ item }) => item).filter((item) => item.kind !== "summary");
+    const reviewGroupItems = plannedTodayTasks.filter((item) => item.kind === "review");
+    const completedReviewCount = reviewGroupItems.filter((item) => item.status === "completed").length;
+    const incorrectReviewCount = reviewGroupItems.filter((item) => item.status === "completed" && open.some((mistake) => mistake.contentId === item.contentId)).length;
     const selectedReviewItems = currentTodayItems.map(({ item }) => item).filter((item) => item.kind === "review" && item.status === "pending");
     const selectedReviewCards = selectedReviewItems
       .map((item) => dueForToday.find((card) => card.id === item.reviewCardId || (!item.reviewCardId && card.contentId === item.contentId && card.dimension === item.dimension)))
@@ -480,12 +498,13 @@ export default function LearningDashboard({ mode }: { mode: "today" | "review" |
     const completedTasks = plannedTodayTasks.filter((item) => item.status === "completed").length;
     const skippedTasks = plannedTodayTasks.filter((item) => item.status === "skipped").length;
     const remainingMinutes = plannedTodayTasks.filter((item) => item.status === "pending").reduce((sum, item) => sum + (item.estimatedMinutes ?? 0), 0);
-    const currentStep = activeToday ? plannedTodayTasks.findIndex((item) => item.id === activeToday.id) + 1 : plannedTodayTasks.length;
+    const journeyProgress = todayJourneyProgress(plannedTodayTasks);
+    const currentStep = journeyProgress.currentPhase;
     const gapMinutes = Math.max(0, (data.session.budgetMinutes ?? 30) - (data.session.totalEstimatedMinutes ?? 0));
     const weakest = Object.entries(data.mastery).sort((a, b) => a[1] - b[1])[0]?.[0]?.replace("context_audio", "context listening").replace("audio", "listening") ?? "vocabulary";
     const recommendedMinutes = recommendTodayMinutes({ monthPoints: reward?.monthPoints ?? 0, openMistakes: open.length, currentStreak: data.streak.current, mastery: data.mastery, cardCount: data.cards.length });
     const summaryComplete = data.session.items.some((item) => item.kind === "summary" && item.status === "completed");
-    const progressPercent = plannedTodayTasks.length ? Math.round(((completedTasks + skippedTasks) / plannedTodayTasks.length) * 100) : 0;
+    const progressPercent = journeyProgress.totalPhases ? Math.round((journeyProgress.completedPhases / journeyProgress.totalPhases) * 100) : 0;
     return <Shell title="Today" active="Today" sub="One guided session: review what matters, learn one exact word, practise it, then see your result.">
       <div className="today-page">
       <section className="mb-5 overflow-hidden rounded-[28px] border border-blue-200 bg-gradient-to-br from-slate-950 via-blue-950 to-blue-900 text-white shadow-[0_24px_70px_rgba(30,64,175,0.18)]">
@@ -494,14 +513,14 @@ export default function LearningDashboard({ mode }: { mode: "today" | "review" |
             <p className="text-sm font-semibold text-blue-200">Today Session · HSK {data.session.startLevel ?? 1}</p>
             <h2 className="mt-2 text-3xl font-bold text-white">{summaryComplete ? "Today is complete" : activeToday ? label(activeToday) : "Your next session is ready"}</h2>
             <p className="mt-3 max-w-xl text-sm leading-6 text-blue-100">Today chooses the order for you: urgent memory first, then the exact next learning step.</p>
-            <div className="mt-5 grid grid-cols-3 gap-2 text-sm"><p><strong className="block text-white">Current step</strong>{currentStep} of {plannedTodayTasks.length}</p><p><strong className="block text-white">Progress</strong>{completedTasks + skippedTasks}/{plannedTodayTasks.length}</p><p><strong className="block text-white">Time</strong>{remainingMinutes} min remaining</p></div>
+            <div className="mt-5 grid grid-cols-3 gap-2 text-sm"><p><strong className="block text-white">Current phase</strong>{currentStep} of {journeyProgress.totalPhases}</p><p><strong className="block text-white">Overall progress</strong>{journeyProgress.completedPhases}/{journeyProgress.totalPhases}</p><p><strong className="block text-white">Time</strong>{remainingMinutes} min remaining</p></div>
             <div className="mt-4 h-2 overflow-hidden rounded-full bg-blue-950/80" role="progressbar" aria-label="Today progress" aria-valuemin={0} aria-valuemax={100} aria-valuenow={progressPercent}><div className="h-full rounded-full bg-blue-300 transition-[width] duration-500 motion-reduce:transition-none" style={{ width: `${progressPercent}%` }} /></div>
             {activeToday && <button className="mt-4 min-h-[44px] text-sm font-semibold text-blue-100 underline underline-offset-4" onClick={() => void skip(activeToday)}>Skip and move to tomorrow</button>}
           </div>
           <TodayHeroArtwork progress={progressPercent} complete={summaryComplete} />
         </div>
       </section>
-      {activeToday && <div className="today-mobile-action sticky z-30 mb-5 rounded-2xl border border-blue-200 bg-white/95 p-2 shadow-[0_16px_42px_rgba(15,23,42,0.2)] backdrop-blur md:hidden" style={{ bottom: "calc(76px + env(safe-area-inset-bottom))" }}>{primaryTodayAction(activeToday, data.session.id, currentStep, plannedTodayTasks.length, selectedReviewItems, selectedReviewCards)}</div>}
+      {activeToday && activeToday.kind !== "learn" && <div className="today-mobile-action sticky z-30 mb-5 rounded-2xl border border-blue-200 bg-white/95 p-2 shadow-[0_16px_42px_rgba(15,23,42,0.2)] backdrop-blur md:hidden" style={{ bottom: "calc(76px + env(safe-area-inset-bottom))" }}>{primaryTodayAction(activeToday, data.session.id, currentStep, journeyProgress.totalPhases, selectedReviewItems, selectedReviewCards)}</div>}
       <section className="mb-5 flex min-h-[72px] items-center justify-between gap-4 rounded-2xl border border-slate-200 bg-white px-5 py-3 shadow-sm">
         <span className="min-w-0"><strong className="block text-slate-950">Today’s plan</strong><span className="block truncate text-sm text-slate-600">HSK {data.session.startLevel ?? 1} · {data.session.budgetMinutes ?? 30} min · {data.session.newWordCount ?? 1} new · {(data.session.listeningEnabled ?? true) ? "Listening on" : "Listening off"} · {({ balanced: "Balanced", review_first: "Review first", fix_mistakes: "Fix mistakes", listening_focus: "Listening focus" } as const)[data.session.focus ?? "balanced"]}</span></span>
         <button className="min-h-[48px] flex-none rounded-xl px-4 font-bold text-blue-700 hover:bg-blue-50 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-blue-100" onClick={() => setPlanOpen(true)}>Adjust today’s plan</button>
@@ -522,13 +541,15 @@ export default function LearningDashboard({ mode }: { mode: "today" | "review" |
           const locked = item.status === "pending" && activeToday?.id !== item.id;
           const journeyState = item.status === "completed" ? "completed" : item.status === "skipped" ? "skipped" : locked ? "locked" : "current";
           if (item.kind === "review" && index !== firstReviewIndex) return null;
-          if (item.kind === "review") return <article className={`relative z-[1] grid grid-cols-[48px_minmax(0,1fr)] gap-4 rounded-2xl border p-4 sm:p-5 ${todayJourneyTone("review", journeyState)}`} key={item.id}>
+          if (item.kind === "review") return <article data-today-item-id={item.id} className={`relative z-[1] grid grid-cols-[48px_minmax(0,1fr)] gap-4 rounded-2xl border p-4 sm:p-5 ${todayJourneyTone("review", journeyState)}`} key={item.id}>
             <TodayJourneyIcon item={item} state={journeyState} />
-            <div className="min-w-0"><div className="flex flex-wrap items-center justify-between gap-2"><span className="text-xs font-extrabold uppercase tracking-[.14em] text-violet-700">Scheduled review</span><TodayStatus state={journeyState} /></div>
-              <h2 className="mt-1 text-xl font-bold text-slate-950">{selectedReviewItems.length > 0 ? `${selectedReviewItems.length} item${selectedReviewItems.length === 1 ? "" : "s"} selected` : "Review complete"}</h2>
+            <div className="min-w-0"><div className="flex flex-wrap items-center justify-between gap-2"><span className="text-xs font-extrabold uppercase tracking-[.14em] text-violet-700">Today review</span><TodayStatus state={journeyState} /></div>
+              <h2 className="mt-1 text-xl font-bold text-slate-950">{completedReviewCount === reviewGroupItems.length ? `Today review complete · ${completedReviewCount}/${reviewGroupItems.length}` : `${completedReviewCount}/${reviewGroupItems.length} reviewed`}</h2>
               <p className="mt-1 text-slate-600">{journeyState === "locked" ? "Complete the previous step to unlock." : selectedReviewItems.length > 0 ? `About ${selectedReviewItems.reduce((sum, entry) => sum + (entry.estimatedMinutes ?? 0), 0)} min · ${dueForToday.length} total due.` : "Step complete · memory checks saved."}</p>
+              {completedReviewCount === reviewGroupItems.length && <p className="mt-2 text-sm font-semibold text-violet-800">{incorrectReviewCount ? `${incorrectReviewCount} wrong ${incorrectReviewCount === 1 ? "answer remains" : "answers remain"} in later review.` : "No wrong answer remains from this review phase."}</p>}
               <p className="mt-2 text-sm text-violet-800"><strong>Why now:</strong> due memory and open mistakes come before new material.</p>
-              {journeyState === "current" && <div className="mt-4 hidden md:block">{primaryTodayAction(item, data.session.id, currentStep, plannedTodayTasks.length, selectedReviewItems, selectedReviewCards)}</div>}
+              {completedReviewCount === reviewGroupItems.length && <details className="mt-3 rounded-xl border border-violet-200 bg-white/70 px-4 py-3"><summary className="cursor-pointer font-semibold text-violet-900">View completed review record</summary><ul className="mt-2 space-y-1 text-sm text-slate-600">{reviewGroupItems.map((review, reviewIndex) => <li key={review.id}>✓ Review {reviewIndex + 1} · saved</li>)}</ul></details>}
+              {journeyState === "current" && <div className="mt-4 hidden md:block">{primaryTodayAction(item, data.session.id, currentStep, journeyProgress.totalPhases, selectedReviewItems, selectedReviewCards)}</div>}
             </div>
           </article>;
           if (item.kind === "summary") return <article className={`relative z-[1] grid grid-cols-[48px_minmax(0,1fr)] gap-4 rounded-2xl border p-4 sm:p-5 ${item.status === "completed" ? "border-emerald-200 bg-emerald-50" : "border-slate-200 bg-slate-50"}`} key={item.id} aria-live="polite">
@@ -541,12 +562,19 @@ export default function LearningDashboard({ mode }: { mode: "today" | "review" |
               {item.status === "completed" && <div className="mt-5 flex flex-wrap gap-3"><Link className="btn secondary" href={`/practice/${data.session.startLevel ?? 1}/vocabulary`}>Bonus task</Link>{open.length > 0 && <Link className="btn secondary" href="/mistakes">Correct open mistakes</Link>}</div>}
             </div>
           </article>;
-          return <article className={`relative z-[1] grid grid-cols-[48px_minmax(0,1fr)] gap-4 rounded-2xl border p-4 sm:p-5 ${todayJourneyTone(item.kind, journeyState)}`} key={item.id}>
+          return <article data-today-item-id={item.id} className={`relative z-[1] grid grid-cols-[48px_minmax(0,1fr)] gap-4 rounded-2xl border p-4 sm:p-5 ${todayJourneyTone(item.kind, journeyState)}`} key={item.id}>
             <TodayJourneyIcon item={item} state={journeyState} />
             <div className="min-w-0"><div className="flex flex-wrap items-center justify-between gap-2"><span className="text-xs font-extrabold uppercase tracking-[.14em]">{item.dimension?.replace("_", " ") ?? item.kind}</span><TodayStatus state={journeyState} /></div><h2 className="mt-1 text-xl font-bold text-slate-950">{label(item)}</h2>
               <p className="mt-1 text-slate-600">{journeyState === "completed" ? "Step complete · progress saved." : journeyState === "skipped" ? "Moved to tomorrow · available to restore." : journeyState === "locked" ? "Complete the previous step to unlock." : `Ready now · ${item.estimatedMinutes ?? 0} min`}</p>
               <p className="mt-2 text-sm text-blue-800"><strong>Why now:</strong> {todayReason(item, open.length, weakest)}</p>
-              {journeyState === "current" && <div className="mt-4 hidden md:block">{primaryTodayAction(item, data.session.id, currentStep, plannedTodayTasks.length, selectedReviewItems, selectedReviewCards)}</div>}
+              {journeyState === "current" && item.kind === "learn" && item.learnContent && <section className="mt-4 rounded-2xl border border-blue-200 bg-white p-5" aria-label={`Learn ${item.learnContent.hanzi}`}>
+                <div className="flex flex-wrap items-start justify-between gap-4"><div><p className="text-4xl font-bold text-slate-950" lang="zh-Hans">{item.learnContent.hanzi}</p><p className="mt-1 text-lg font-semibold text-blue-700">{item.learnContent.pinyin}</p></div><span className="rounded-full bg-blue-50 px-3 py-1 text-xs font-bold uppercase tracking-wide text-blue-700">{item.learnContent.partOfSpeech}</span></div>
+                <p className="mt-4 text-lg text-slate-800"><strong>Meaning:</strong> {item.learnContent.meaning}</p>
+                {item.learnContent.audioSrc && <div className="mt-4"><p className="mb-2 text-sm font-semibold text-slate-700">Formal pronunciation</p><audio controls preload="metadata" src={item.learnContent.audioSrc} className="w-full max-w-full" /></div>}
+                {item.learnContent.example && <div className="mt-4 border-t border-slate-200 pt-4"><p className="text-lg font-semibold text-slate-950" lang="zh-Hans">{item.learnContent.example.hanzi}</p><p className="mt-1 text-blue-700">{item.learnContent.example.pinyin}</p><p className="mt-1 text-sm text-slate-600"><strong>Example translation:</strong> {item.learnContent.example.meaning}</p></div>}
+                <button type="button" disabled={learnSavingId === item.id} onClick={() => void completeLearn(item)} className="mt-5 min-h-[50px] w-full rounded-xl bg-blue-600 px-5 py-3 font-bold text-white shadow-sm hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-blue-200">{learnSavingId === item.id ? "Saving…" : <>I’ve learned “{item.learnContent.hanzi}” · {plannedTodayTasks.find((entry) => entry.status === "pending" && entry.id !== item.id)?.kind === "listen" ? "Continue to listening" : "Continue to next step"}</>}</button>
+              </section>}
+              {journeyState === "current" && (item.kind !== "learn" || !item.learnContent) && <div className="mt-4 hidden md:block">{primaryTodayAction(item, data.session.id, currentStep, journeyProgress.totalPhases, selectedReviewItems, selectedReviewCards)}</div>}
               {item.status === "skipped" && <button className="mt-4 min-h-[48px] rounded-xl border border-blue-300 bg-white px-5 py-3 font-bold text-blue-700" onClick={() => void restore(item)}>Restore step</button>}
             </div>
           </article>;
