@@ -2,9 +2,11 @@ import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 import test from "node:test";
 
-import { assertCurrentDailySession, assertTodayLearnItemMatches, buildDailySession, emptyLearningState, gradeReview } from "../src/lib/learning/domain.ts";
+import { assertCurrentDailySession, assertTodayLearnItemMatches, buildDailySession, emptyLearningState, gradeReview, recordAttempt } from "../src/lib/learning/domain.ts";
 import { selectTodayContent, todayContentByAssetId, todayContentByContentId } from "../src/lib/learning/today-content.ts";
 import { completionProofNeedsSync, isTodayBudgetMinutes, isTodayFocus, isTodayNewWordCount, parseTodayCompletionProof, recommendTodayMinutes, recommendTodayNewWordCount, resolveTodayCelebration, todayCompletionProof, todayJourneyProgress, todaySummaryStats, TODAY_BUDGET_OPTIONS, TODAY_FOCUS_OPTIONS, TODAY_NEW_WORD_OPTIONS } from "../src/lib/learning/today-plan.ts";
+import { answerPracticeQuestion, createPracticeSession } from "../src/lib/practice/domain.ts";
+import { trustedPracticeQuestionVersion } from "../src/lib/practice/questions.ts";
 
 const root = new URL("../", import.meta.url);
 const source = (path: string) => readFile(new URL(path, root), "utf8");
@@ -86,6 +88,82 @@ test("a constrained level reports the real number of available new words", () =>
   });
   assert.equal(built.session.newWordCount, 3);
   assert.equal(built.session.plannedNewWordCount, 2);
+});
+
+test("mistakes created inside Today are saved for review without re-locking the frozen session", () => {
+  const plan = selectTodayContent(1, 3);
+  const built = buildDailySession(emptyLearningState(), {
+    ownerId: "today-frozen-session",
+    localDay: "2026-09-09",
+    ruleVersion: "today-v9",
+    now,
+    dailyContent: plan,
+    budgetMinutes: 20,
+    newWordCount: 3,
+  });
+  const attempted = recordAttempt(built.state, {
+    idempotencyKey: "today-practice-mistake",
+    contentId: "practice:question-1",
+    contentVersion: "practice-v1",
+    dimension: "reading",
+    answer: "a",
+    correctAnswer: "b",
+    observedAt: now,
+    mode: "practice",
+    dailySessionId: built.session.id,
+    dailyItemId: built.session.items.find((item) => item.kind === "practice")?.id,
+  });
+  const session = attempted.state.dailySessions.find((item) => item.id === built.session.id)!;
+  const addedReview = session.items.find((item) => item.kind === "review");
+  assert.equal(addedReview?.status, "pending");
+  assert.equal(addedReview?.deferred, true);
+});
+
+test("finishing a Today Practice with mistakes unlocks Summary immediately and keeps new reviews deferred", () => {
+  const ownerId = "today-practice-summary";
+  const built = buildDailySession(emptyLearningState(), {
+    ownerId,
+    localDay: "2026-09-09",
+    ruleVersion: "today-v9",
+    now,
+    dailyContent: selectTodayContent(1, 3),
+    budgetMinutes: 20,
+    newWordCount: 3,
+  });
+  const practiceItem = built.session.items.find((item) => item.kind === "practice")!;
+  const readyState = {
+    ...built.state,
+    dailySessions: built.state.dailySessions.map((session) => session.id === built.session.id
+      ? { ...session, items: session.items.map((item) => item.kind !== "practice" && item.kind !== "summary" ? { ...item, status: "completed" as const } : item) }
+      : session),
+  };
+  const skill = practiceItem.contentId.split(":").at(-1)!;
+  const created = createPracticeSession(readyState, {
+    ownerId,
+    level: 1,
+    skill,
+    idempotencyKey: "today-practice-session",
+    now,
+    dailySessionId: built.session.id,
+    dailyItemId: practiceItem.id,
+  });
+  let state = created.state;
+  for (const [index, questionId] of created.session.questionIds.entries()) {
+    const question = trustedPracticeQuestionVersion(questionId, created.session.questionVersion)!;
+    const wrongAnswer = Object.keys(question.options).find((answer) => answer !== question.correctAnswer)!;
+    state = answerPracticeQuestion(state, {
+      ownerId,
+      sessionId: created.session.id,
+      questionId,
+      answer: wrongAnswer,
+      idempotencyKey: `today-practice-answer-${index}`,
+      now: new Date(Date.parse(now) + index * 1000).toISOString(),
+    }).state;
+  }
+  const completed = state.dailySessions.find((session) => session.id === built.session.id)!;
+  assert.equal(completed.items.find((item) => item.kind === "practice")?.status, "completed");
+  assert.equal(completed.items.find((item) => item.kind === "summary")?.status, "completed");
+  assert.equal(completed.items.filter((item) => item.kind === "review" && !(built.session.reviewItemIds ?? []).includes(item.id)).every((item) => item.deferred), true);
 });
 
 test("Today completion proof holds the server revision and blocks stale locked rendering", () => {

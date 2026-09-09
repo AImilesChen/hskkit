@@ -343,7 +343,8 @@ function applyAttemptToSessions(state: LearningState, attempt: Attempt, card: Sr
     if (!attempt.correct && !items.some((item) => item.id === reviewItemId(card))) {
       const estimatedMinutes = 3;
       const plannedMinutes = session.totalEstimatedMinutes ?? session.items.filter((item) => !item.deferred).reduce((sum, item) => sum + (item.estimatedMinutes ?? estimateDailyItem(item)), 0);
-      const deferred = plannedMinutes + estimatedMinutes > (session.budgetMinutes ?? 30);
+      const deferred = attempt.dailySessionId === session.id
+        || plannedMinutes + estimatedMinutes > (session.budgetMinutes ?? 30);
       const reviewItem: DailyItem = {
         id: reviewItemId(card),
         kind: "review",

@@ -201,7 +201,11 @@ function finishTodayPractice(state: LearningState, session: PracticeSession, com
         return item;
       });
       if (!changed) return daily;
-      const summaryReady = items.filter((item) => item.kind !== "summary").every((item) => item.status !== "pending");
+      const frozenReviewIds = new Set(daily.reviewItemIds ?? []);
+      items = items.map((item) => item.kind === "review" && !frozenReviewIds.has(item.id)
+        ? { ...item, deferred: true }
+        : item);
+      const summaryReady = items.filter((item) => item.kind !== "summary" && !item.deferred).every((item) => item.status !== "pending");
       if (summaryReady) items = items.map((item) => item.kind === "summary" ? { ...item, status: "completed" as const } : item);
       return { ...daily, items, completedAt: summaryReady ? (daily.completedAt ?? completedAt) : daily.completedAt };
     }),
