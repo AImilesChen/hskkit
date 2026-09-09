@@ -7,7 +7,7 @@ import AiAssist from "./ai-assist";
 import HomeIcon, { type HomeIconName } from "./home-icon";
 import LearningLoopNav, { type LearningLoopLabel } from "./learning-loop-nav";
 import { LearningLoadError, loadLearningData, type LearningLoadErrorCode } from "../../lib/learning/client-load";
-import { buildIntentReviewQueue, buildReviewQueue, filterReviewCards, recommendReviewCount, reviewComposition, reviewEntryIntent, reviewGradeOptions, reviewTip, type ReviewEntryIntent, type ReviewGrade } from "../../lib/learning/review-session";
+import { buildIntentReviewQueue, filterReviewCards, recommendReviewCount, reviewCardIdsForScope, reviewComposition, reviewEntryIntent, reviewGradeOptions, reviewTip, type ReviewEntryIntent, type ReviewGrade, type ReviewLevelControl, type ReviewLevelScope } from "../../lib/learning/review-session";
 import { completionProofNeedsSync, parseTodayCompletionProof, recommendTodayMinutes, recommendTodayNewWordCount, resolveTodayCelebration, todayCompletionProofKey, todaySummaryStats, todayJourneyProgress, TODAY_BUDGET_OPTIONS, TODAY_FOCUS_OPTIONS, TODAY_NEW_WORD_OPTIONS, type TodayBudgetMinutes, type TodayCelebration, type TodayCompletedKind, type TodayFocus, type TodayNewWordCount } from "../../lib/learning/today-plan";
 
 type Dimension = "reading" | "audio" | "context_audio";
@@ -21,6 +21,7 @@ type Data = {
   session: { id: string; startLevel?: number; contentReleaseId?: string; notice?: Notice; budgetMinutes?: number; newWordCount?: TodayNewWordCount; plannedNewWordCount?: number; listeningEnabled?: boolean; focus?: TodayFocus; totalEstimatedMinutes?: number; reviewBatchId?: string; reviewCardIds?: string[]; reviewItemIds?: string[]; items: Item[] };
   cards: Card[];
   focusedReview: (Card & { focusReason: "open_mistake" | "due" })[];
+  reviewLevelControl: ReviewLevelControl;
   canUndoReview: { cardId: string } | null;
   capabilities: { tier: "free" | "pro"; dailyNewItems: number | null; dailyReviewGrades: number | null; focusedReview: boolean };
   usage: { dailyNewItems: number; dailyReviewGrades: number };
@@ -67,6 +68,7 @@ export default function LearningDashboard({ mode }: { mode: "today" | "review" |
   const completionSyncAttempts = useRef(0);
   const celebrationPanelRef = useRef<HTMLDivElement | null>(null);
   const [reviewMinutes, setReviewMinutes] = useState<5 | 10 | 20>(10);
+  const [selectedReviewScope, setSelectedReviewScope] = useState<ReviewLevelScope>("current");
   const [difficultOnly, setDifficultOnly] = useState(false);
   const [mistakeLevel, setMistakeLevel] = useState(0);
   const [mistakeType, setMistakeType] = useState<"all" | Dimension>("all");
@@ -141,6 +143,8 @@ export default function LearningDashboard({ mode }: { mode: "today" | "review" |
   useEffect(() => {
     const search = new URLSearchParams(window.location.search);
     setEntryIntent(reviewEntryIntent(window.location.search));
+    const reviewLevel = Number(search.get("level"));
+    setSelectedReviewScope(search.get("level") === "all" ? "all" : Number.isInteger(reviewLevel) && reviewLevel >= 1 && reviewLevel <= 9 ? reviewLevel : "current");
     setEntryTodaySessionId(search.get("dailySessionId") ?? "");
     setEntryTodayItemId(search.get("dailyItemId") ?? "");
     const completed = search.get("completed");
@@ -159,6 +163,18 @@ export default function LearningDashboard({ mode }: { mode: "today" | "review" |
     return () => window.removeEventListener("online", online);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  useEffect(() => {
+    if (mode !== "review") return;
+    const syncReviewScopeFromUrl = () => {
+      const value = new URLSearchParams(window.location.search).get("level");
+      const level = Number(value);
+      setSelectedReviewScope(value === "all" ? "all" : Number.isInteger(level) && level >= 1 && level <= 9 ? level : "current");
+      setReviewIds(null);
+    };
+    window.addEventListener("popstate", syncReviewScopeFromUrl);
+    return () => window.removeEventListener("popstate", syncReviewScopeFromUrl);
+  }, [mode]);
 
   useEffect(() => {
     if (mode !== "today" || !data || !returnedKind) return;
@@ -676,9 +692,14 @@ export default function LearningDashboard({ mode }: { mode: "today" | "review" |
   </Shell>;
 
   const due = data.capabilities.focusedReview ? data.focusedReview : data.cards.filter((card) => card.dueAt <= new Date().toISOString());
-  const selectableDue = filterReviewCards(due, { difficultOnly });
+  const serverScopedReviewIds = reviewCardIdsForScope(data.reviewLevelControl, selectedReviewScope);
+  const dueById = new Map<string, Card>();
+  for (const card of due) dueById.set(card.id, card);
+  const scopedDue = serverScopedReviewIds.map((id) => dueById.get(id)).filter((card): card is Card => Boolean(card));
+  const selectableDue = filterReviewCards(scopedDue, { difficultOnly });
+  const selectedReviewCount = selectableDue.length;
   const composition = reviewComposition(selectableDue);
-  const recommendedCount = recommendReviewCount(due);
+  const recommendedCount = recommendReviewCount(scopedDue);
   const reviewedSessionCards = (reviewIds ?? []).map((id) => data.cards.find((card) => card.id === id)).filter((card): card is Card => Boolean(card));
   const nextReviewAt = reviewedSessionCards.map((card) => card.dueAt).filter((dueAt) => new Date(dueAt).getTime() > Date.now()).sort()[0];
   const reviewPool = entryIntent.kind === "mistake" ? data.cards.filter((card) => card.isMistake && !ratedLegacyMistakeIds.includes(card.id)) : entryIntent.kind === "setup" ? data.cards : due;
@@ -698,29 +719,49 @@ export default function LearningDashboard({ mode }: { mode: "today" | "review" |
   const selectedText = activeCard?.choices.find((choice) => choice.key === selectedAnswer)?.text ?? reviewDraft;
   const currentAnswerCorrect = retryFeedback?.correct ?? false;
   const isMistakeRetry = Boolean(activeCard?.isMistake && !activeCard.legacyReview && activeCard.answerMode !== "self_recall");
+  const chooseReviewScope = (scope: ReviewLevelScope) => {
+    setSelectedReviewScope(scope);
+    const url = new URL(window.location.href);
+    if (scope === "current") url.searchParams.delete("level");
+    else url.searchParams.set("level", String(scope));
+    window.history.pushState({}, "", `${url.pathname}${url.search}${url.hash}`);
+  };
+  const reviewScopeOptions: Array<{ scope: ReviewLevelScope; label: string; count: number }> = [
+    { scope: "current", label: `Current level · HSK ${data.reviewLevelControl.currentLevel}`, count: data.reviewLevelControl.currentCardIds.length },
+    { scope: "all", label: "All levels", count: data.reviewLevelControl.allCount },
+    ...data.reviewLevelControl.levels.map(({ level, count }) => ({ scope: level, label: `HSK ${level}`, count })),
+  ];
 
   return <Shell title={entryIntent.kind === "mistake" ? "Mistake correction" : "Review"} active="Review" sub={entryIntent.kind === "mistake" ? "Correct the original wrong answer, understand it, and continue or return to Mistakes." : "Review due memories with a short, explained rating flow."} compact={Boolean(reviewIds?.length)}>
     <div className="mx-auto max-w-[880px]">
       {entryIntent.kind === "today" && <section className="mb-5 rounded-2xl border border-blue-200 bg-blue-50 p-4"><p className="text-xs font-bold uppercase tracking-[0.14em] text-blue-700">Today Session</p><p className="mt-1 text-sm text-slate-700">These due cards are the current saved Today step. Your position is restored after refresh or back navigation.</p></section>}
       {directEntryPreparing && <State title="Preparing your review" text="Loading the review items from where you started." />}
-      {!reviewIds && entryResolved && entryIntent.kind === "setup" && due.length > 0 && <div className="overflow-hidden rounded-[28px] border border-slate-200 bg-white shadow-[0_22px_60px_rgba(15,23,42,0.08)]">
+      {!reviewIds && entryResolved && entryIntent.kind === "setup" && <div className="overflow-hidden rounded-[28px] border border-slate-200 bg-white shadow-[0_22px_60px_rgba(15,23,42,0.08)]">
         <div className="border-b border-slate-200 bg-slate-950 px-[24px] py-[24px] text-white sm:px-[32px] sm:py-[32px]">
           <p className="text-sm font-semibold text-blue-300">{data.capabilities.focusedReview ? "Focused Review · Pro" : "Review setup"}</p>
           <h2 className="mt-2 text-3xl font-bold tracking-tight text-white sm:text-4xl">Choose a focused session</h2>
-          <p className="mt-3 max-w-2xl text-slate-300">{due.length} item{due.length === 1 ? " is" : "s are"} due. Mistakes come first, followed by scheduled memory checks across reading and listening.</p>
-          <p className="mt-4 text-sm font-semibold text-blue-200">Recommended review: {recommendedCount} items from your due load and difficult-item history.</p>
+          <p className="mt-3 max-w-2xl text-slate-300">{data.reviewLevelControl.allCount} item{data.reviewLevelControl.allCount === 1 ? " is" : "s are"} due across all levels. Your current level is HSK {data.reviewLevelControl.currentLevel}.</p>
+          <p className="mt-4 text-sm font-semibold text-blue-200">Recommended review: {recommendedCount} item{recommendedCount === 1 ? "" : "s"} from the selected level and difficult-item history.</p>
         </div>
         <div className="p-[24px] sm:p-[32px]">
           <fieldset>
+            <legend className="font-semibold text-slate-950">Choose review level</legend>
+            <p className="mt-1 text-sm text-slate-600">Pick a level, then start when you are ready. Counts come from the same due-card filter used to build the session.</p>
+            <div className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-3">
+              {reviewScopeOptions.map((option) => <button type="button" key={String(option.scope)} onClick={() => chooseReviewScope(option.scope)} aria-pressed={selectedReviewScope === option.scope} className={`min-h-[60px] rounded-xl border px-3 py-2 text-left transition focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-blue-200 ${selectedReviewScope === option.scope ? "border-blue-600 bg-blue-50 text-blue-950" : "border-slate-200 bg-white text-slate-700 hover:border-slate-400"}`}><strong className="block">{option.label}</strong><span className="text-sm">{option.count} due</span></button>)}
+            </div>
+          </fieldset>
+          <fieldset className="mt-6">
             <legend className="font-semibold text-slate-950">How long do you want to review?</legend>
             <div className="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-3">
-              {([5, 10, 20] as const).map((minutes) => <button type="button" key={minutes} onClick={() => setReviewMinutes(minutes)} aria-pressed={reviewMinutes === minutes} className={`min-h-[72px] rounded-2xl border px-4 text-left transition focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-blue-200 ${reviewMinutes === minutes ? "border-blue-600 bg-blue-50 text-blue-950" : "border-slate-200 bg-white text-slate-700 hover:border-slate-400"}`}><strong className="block text-lg">{minutes} min</strong><span className="text-sm">Up to {Math.min(minutes, due.length)} item{Math.min(minutes, due.length) === 1 ? "" : "s"}</span></button>)}
+              {([5, 10, 20] as const).map((minutes) => <button type="button" key={minutes} onClick={() => setReviewMinutes(minutes)} aria-pressed={reviewMinutes === minutes} className={`min-h-[72px] rounded-2xl border px-4 text-left transition focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-blue-200 ${reviewMinutes === minutes ? "border-blue-600 bg-blue-50 text-blue-950" : "border-slate-200 bg-white text-slate-700 hover:border-slate-400"}`}><strong className="block text-lg">{minutes} min</strong><span className="text-sm">Up to {Math.min(minutes, selectedReviewCount)} item{Math.min(minutes, selectedReviewCount) === 1 ? "" : "s"}</span></button>)}
             </div>
           </fieldset>
           <label className="mt-5 flex min-h-[48px] items-center gap-3 rounded-xl border border-slate-200 p-3"><input type="checkbox" checked={difficultOnly} onChange={(event) => setDifficultOnly(event.target.checked)} /><span><strong>Difficult items only</strong><small className="block text-slate-500">Open mistakes and cards below normal ease</small></span></label>
           <div aria-label="Review composition" className="mt-5 grid gap-3 rounded-2xl bg-slate-50 p-4 sm:grid-cols-3"><p><strong>Mistakes</strong><br />{composition.mistakes}</p><p><strong>Reading</strong><br />{composition.reading}</p><p><strong>Listening</strong><br />{composition.listening}</p></div>
           <details className="mt-4 rounded-xl border border-slate-200 p-4"><summary className="cursor-pointer font-semibold">How to rate your memory</summary><p className="mt-2 text-sm text-slate-600">Choose Forgot if you could not recall it, Difficult if recall was slow or uncertain, Remembered if correct with normal effort, and Easy only when recall was immediate. Your choice schedules the next review.</p></details>
-          {selectableDue.length > 0 ? <button className="mt-6 min-h-[48px] w-full rounded-xl bg-blue-600 px-5 py-3 font-bold text-white shadow-sm transition hover:bg-blue-700 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-blue-200" onClick={() => { setReviewIds(buildReviewQueue(selectableDue, reviewMinutes).map((card) => card.id)); setReviewedCount(0); setRatedLegacyMistakeIds([]); }}>Start review · {Math.min(reviewMinutes, selectableDue.length)} items</button> : <p className="mt-6 rounded-xl bg-amber-50 p-4 text-sm text-amber-900" role="status">No difficult items are due. Turn off “Difficult items only” to review the full due queue.</p>}
+          <button disabled={selectedReviewCount === 0} className="mt-6 min-h-[48px] w-full rounded-xl bg-blue-600 px-5 py-3 font-bold text-white shadow-sm transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-40 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-blue-200" onClick={() => { setReviewIds(selectableDue.slice(0, reviewMinutes).map((card) => card.id)); setReviewedCount(0); setRatedLegacyMistakeIds([]); }}>Start review · {Math.min(reviewMinutes, selectedReviewCount)} item{Math.min(reviewMinutes, selectedReviewCount) === 1 ? "" : "s"}</button>
+          {selectedReviewCount === 0 && <p className="mt-3 rounded-xl bg-amber-50 p-4 text-sm text-amber-900" role="status">{difficultOnly ? "No difficult items are due at this level. Turn off “Difficult items only” to check the full selected queue." : "No due reviews at this level. Choose another level or All levels."}</p>}
           {data.capabilities.tier === "free" && <p className="mt-4 text-sm text-slate-500"><strong>Free remaining today:</strong> {Math.max(0, (data.capabilities.dailyReviewGrades ?? 0) - data.usage.dailyReviewGrades)} successful SRS ratings. <Link className="font-semibold text-blue-700 underline-offset-4 hover:underline" href="/pricing">Pro removes the Free daily learning and review limits and prioritizes unresolved mistakes.</Link></p>}
         </div>
       </div>}
@@ -733,7 +774,7 @@ export default function LearningDashboard({ mode }: { mode: "today" | "review" |
         <div className="mb-5 h-2 overflow-hidden rounded-full bg-slate-200"><div className="h-full rounded-full bg-blue-600 transition-[width]" style={{ width: `${Math.min(100, displayReviewedCount / sessionTotal * 100)}%` }} /></div>
         <article className="overflow-hidden rounded-[28px] border border-slate-200 bg-white shadow-[0_22px_60px_rgba(15,23,42,0.08)]">
           <div className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-200 bg-slate-50 px-[24px] py-[16px] sm:px-[32px]">
-            <p className="text-sm font-bold text-slate-700">{isMistakeRetry ? "Mistake retry" : "Memory review"} · {activeCard.level ? `HSK ${activeCard.levelBand}` : "Older saved item"} · {activeCard.skill}</p>
+            <p className="text-sm font-bold text-slate-700">{isMistakeRetry ? "Mistake retry" : "Memory review"} · {activeCard.level ? `HSK ${activeCard.level}` : "Older saved item"} · {activeCard.skill}</p>
             <div className="flex flex-wrap items-center gap-2">{data.capabilities.focusedReview && activeFocusReason && <span className="rounded-full bg-blue-100 px-3 py-1 text-xs font-bold text-blue-800">Focused Review · Pro · {activeFocusReason === "open_mistake" ? "Open mistake prioritized" : "Due memory prioritized"}</span>}{activeCard.topic && <p className="text-sm text-slate-500">{activeCard.topic}</p>}</div>
           </div>
           <div className="p-[24px] sm:p-[32px]">
@@ -786,8 +827,8 @@ export default function LearningDashboard({ mode }: { mode: "today" | "review" |
 
       {directEntryEmpty && <State title={entryIntent.kind === "mistake" ? "This mistake is no longer open" : "You're caught up"} text={entryIntent.kind === "mistake" ? "It may already have been resolved or is no longer available for review." : "There are no reviews due in today's queue."}><Link className="btn" href={entryIntent.kind === "mistake" ? "/mistakes" : "/today"}>{entryIntent.kind === "mistake" ? "Back to Mistakes" : "Back to Today"}</Link></State>}
       {entryResolved && entryIntent.kind === "setup" && reviewIds === null && due.length === 0 && data.cards.length > 0 && <section className="overflow-hidden rounded-[28px] border border-slate-200 bg-white shadow-[0_22px_60px_rgba(15,23,42,0.08)]">
-        <div className="border-b border-slate-200 bg-slate-950 px-6 py-6 text-white sm:px-8"><p className="text-sm font-semibold text-blue-300">Schedule clear</p><h2 className="mt-2 text-3xl font-bold text-white">Upcoming reviews</h2><p className="mt-2 text-slate-300">Nothing is due now. You can inspect the schedule or complete one real review early here.</p></div>
-        <div className="p-6 sm:p-8"><div className="grid gap-3">{[...data.cards].sort((a, b) => a.dueAt.localeCompare(b.dueAt)).slice(0, 3).map((card) => <article className="rounded-2xl border border-slate-200 p-4" key={card.id}><p className="font-bold text-slate-950">{card.prompt}</p><p className="mt-1 text-sm text-slate-600">{card.skill} · Scheduled {new Date(card.dueAt).toLocaleString()}</p></article>)}</div><button className="mt-5 min-h-[48px] w-full rounded-xl bg-blue-600 px-5 py-3 font-bold text-white focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-blue-200" onClick={() => { setReviewIds([[...data.cards].sort((a, b) => a.dueAt.localeCompare(b.dueAt))[0].id]); setReviewedCount(0); setRatedLegacyMistakeIds([]); }}>Review one early</button></div>
+        <div className="border-b border-slate-200 bg-slate-950 px-6 py-6 text-white sm:px-8"><p className="text-sm font-semibold text-blue-300">Schedule clear</p><h2 className="mt-2 text-3xl font-bold text-white">Upcoming reviews</h2><p className="mt-2 text-slate-300">Nothing is due now. You can inspect the schedule without changing a future review.</p></div>
+        <div className="p-6 sm:p-8"><div className="grid gap-3">{[...data.cards].sort((a, b) => a.dueAt.localeCompare(b.dueAt)).slice(0, 3).map((card) => <article className="rounded-2xl border border-slate-200 p-4" key={card.id}><p className="font-bold text-slate-950">{card.prompt}</p><p className="mt-1 text-sm text-slate-600">{card.skill} · Scheduled {new Date(card.dueAt).toLocaleString()}</p></article>)}</div></div>
       </section>}
       {entryResolved && entryIntent.kind === "setup" && reviewIds === null && due.length === 0 && data.cards.length === 0 && <State title="No review history yet" text="A completed Practice or Listening answer creates your first scheduled memory card. Wrong answers become due immediately."><div className="flex flex-wrap gap-2"><Link className="btn" href="/practice">Start practice</Link><Link className="btn secondary" href="/listen">Start listening</Link></div></State>}
       {audioError && <p className="mt-4 rounded-xl bg-red-50 p-4 text-sm text-red-700" role="alert">{audioError}</p>}

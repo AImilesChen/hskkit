@@ -67,7 +67,6 @@ test("only a successful real review updates mastery, resolves the mistake and sc
 test("Review and Mistakes are workspaces for early review and corrected history, not dead-end links", async () => {
   const dashboard = await source("src/app/components/learning-dashboard.tsx");
   for (const token of [
-    "Review one early",
     "Upcoming reviews",
     "Corrected mistakes",
     "Corrected on",

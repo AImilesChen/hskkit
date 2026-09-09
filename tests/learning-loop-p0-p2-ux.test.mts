@@ -91,7 +91,7 @@ test("review planning supports composition, difficult-only queues, recommendatio
     ...cards,
     { id: "c", contentId: "c", isMistake: true, dimension: "audio" as const, dueAt: "2026-09-03T00:00:00.000Z" },
   ], { kind: "mistake", contentId: "c", cardId: "c" }, 1);
-  assert.deepEqual(continuous.map((card) => card.id), ["c", "a"]);
+  assert.deepEqual(continuous.map((card) => card.id), ["c"]);
 });
 
 test("Today listening opens an available advanced word-audio task without requiring context audio", async () => {

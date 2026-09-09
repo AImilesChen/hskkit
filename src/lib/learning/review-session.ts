@@ -3,12 +3,46 @@ export type ReviewQueueCard = {
   isMistake: boolean;
   dimension: "reading" | "audio" | "context_audio";
   dueAt: string;
+  level?: number;
+};
+
+export type ReviewLevelScope = "current" | "all" | number;
+export type ReviewLevelControl = {
+  currentLevel: number;
+  currentCardIds: string[];
+  allCardIds: string[];
+  allCount: number;
+  levels: Array<{ level: number; count: number }>;
+  cardIdsByLevel: Record<number, string[]>;
 };
 
 export function buildReviewQueue<T extends ReviewQueueCard>(cards: T[], cap: number): T[] {
   return [...cards]
     .sort((a, b) => Number(b.isMistake) - Number(a.isMistake) || a.dueAt.localeCompare(b.dueAt))
     .slice(0, Math.max(1, cap));
+}
+
+export function reviewLevelControl<T extends ReviewQueueCard>(cards: T[], currentLevel: number, preserveOrder = false): ReviewLevelControl {
+  const normalizedCurrentLevel = Number.isInteger(currentLevel) && currentLevel >= 1 && currentLevel <= 9 ? currentLevel : 1;
+  const ordered = preserveOrder ? [...cards] : buildReviewQueue(cards, Math.max(1, cards.length));
+  const cardIdsByLevel = Object.fromEntries(Array.from({ length: 9 }, (_, index) => {
+    const level = index + 1;
+    return [level, ordered.filter((card) => card.level === level).map((card) => card.id)];
+  })) as Record<number, string[]>;
+  return {
+    currentLevel: normalizedCurrentLevel,
+    currentCardIds: cardIdsByLevel[normalizedCurrentLevel],
+    allCardIds: ordered.map((card) => card.id),
+    allCount: ordered.length,
+    levels: Array.from({ length: 9 }, (_, index) => ({ level: index + 1, count: cardIdsByLevel[index + 1].length })),
+    cardIdsByLevel,
+  };
+}
+
+export function reviewCardIdsForScope(control: ReviewLevelControl, scope: ReviewLevelScope): string[] {
+  if (scope === "all") return [...control.allCardIds];
+  if (scope === "current") return [...control.currentCardIds];
+  return [...(control.cardIdsByLevel[scope] ?? [])];
 }
 
 export type ReviewEntryIntent =
@@ -42,7 +76,7 @@ export function buildIntentReviewQueue<T extends ReviewQueueCard & { contentId: 
   if (intent.kind === "mistake") {
     const mistakes = cards.filter((card) => card.isMistake);
     const selected = mistakes.find((card) => card.contentId === intent.contentId && (!intent.cardId || card.id === intent.cardId));
-    return selected ? [selected, ...mistakes.filter((card) => card.id !== selected.id)] : [];
+    return selected ? [selected] : [];
   }
   return [];
 }
@@ -89,7 +123,7 @@ export function recommendReviewCount(cards: ReviewPlanningCard[]): number {
 }
 
 export function reviewTip(card: ReviewPlanningCard) {
-  const level = card.level ? `HSK ${card.level >= 7 ? "7–9" : card.level}` : "This item";
+  const level = card.level ? `HSK ${card.level}` : "This item";
   if (card.dimension !== "reading") return `${level} listening: hear the whole phrase once before choosing; do not translate word by word.`;
   if ((card.skill ?? "").toLowerCase().includes("grammar")) return `${level} grammar: identify the sentence role before comparing choices.`;
   return `${level} vocabulary: recall the meaning first, then verify pinyin and usage.`;

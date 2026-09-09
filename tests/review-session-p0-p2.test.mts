@@ -90,7 +90,7 @@ test("Today starts its due queue directly while Mistakes targets the selected mi
   assert.deepEqual(reviewEntryIntent("?source=mistakes&contentId=question%3Atarget"), { kind: "mistake", contentId: "question:target" });
   assert.equal(reviewEntryIntent("").kind, "setup");
   assert.deepEqual(buildIntentReviewQueue(cards, { kind: "today" }, 10).map((card: { id: string }) => card.id), ["mistake-1", "mistake-2", "due-1"]);
-  assert.deepEqual(buildIntentReviewQueue(cards, { kind: "mistake", contentId: "question:target" }, 10).map((card: { id: string }) => card.id), ["mistake-1", "mistake-2"]);
+  assert.deepEqual(buildIntentReviewQueue(cards, { kind: "mistake", contentId: "question:target" }, 10).map((card: { id: string }) => card.id), ["mistake-1"]);
 });
 
 test("review entry links preserve Today and selected-mistake context", async () => {
@@ -172,7 +172,7 @@ test("mistake links target an exact review card when content IDs repeat", async 
     { id: "card-a", contentId: "shared", isMistake: true, dueAt: "2026-01-01T00:00:00.000Z", dimension: "reading" as const },
     { id: "card-b", contentId: "shared", isMistake: true, dueAt: "2026-01-01T00:00:00.000Z", dimension: "audio" as const },
   ];
-  assert.deepEqual(buildIntentReviewQueue(cards, intent, 10).map((card) => card.id), ["card-b", "card-a"]);
+  assert.deepEqual(buildIntentReviewQueue(cards, intent, 10).map((card) => card.id), ["card-b"]);
   const client = await source("src/app/components/learning-dashboard.tsx");
   assert.match(client, /cardId=\$\{encodeURIComponent\(mistake\.cardId\)\}/);
 });

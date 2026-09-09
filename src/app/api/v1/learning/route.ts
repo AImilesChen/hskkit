@@ -40,6 +40,7 @@ import { recordPolicyAudit } from "../../../../lib/account/audit-storage";
 import { computeSessionStreak } from "../../../../lib/account/domain";
 import { computeOffsetSessionStreak, deriveHomeNextStep, learningLocalDay } from "../../../../lib/learning/progress";
 import { checkReviewAnswer, reviewSnapshotFromStep7Exercise } from "../../../../lib/learning/review-content";
+import { reviewLevelControl } from "../../../../lib/learning/review-session";
 import { resolvedReviewSnapshotForAttempt } from "../../../../lib/learning/review-content-resolver";
 import { getDictionaryLearningContext, getDictionaryWordsByIds } from "../../../../lib/dictionary/p2-server";
 import { dictionaryWordProgress, resolveDictionaryPractice } from "../../../../lib/dictionary/p2-learning";
@@ -169,6 +170,8 @@ function view(state: LearningState, ownerId: string, offsetMinutes: number, capa
       .sort((a, b) => Number(b.isMistake) - Number(a.isMistake) || Number(b.dimension !== "reading") - Number(a.dimension !== "reading") || a.dueAt.localeCompare(b.dueAt))
       .map((card) => ({ ...card, focusReason: card.isMistake ? "open_mistake" as const : "due" as const }))
     : [];
+  const dueReviewCards = capabilities.focusedReview ? focusedReview : cards.filter((card) => card.dueAt <= now);
+  const reviewLevels = reviewLevelControl(dueReviewCards, startLevel, capabilities.focusedReview);
   const streak = accountTimezone
     ? computeSessionStreak(built.state.dailySessions, accountTimezone, now)
     : computeOffsetSessionStreak(built.state.dailySessions, offsetMinutes, now);
@@ -188,6 +191,7 @@ function view(state: LearningState, ownerId: string, offsetMinutes: number, capa
     mistakes,
     mastery,
     focusedReview,
+    reviewLevelControl: reviewLevels,
     canUndoReview: built.state.lastReviewUndo ? { cardId: built.state.lastReviewUndo.cardId } : null,
     nextAction,
     streak,
@@ -219,6 +223,7 @@ function response(data: ReturnType<typeof view>, fresh: boolean, id: string, rev
     savedWords,
     mastery: data.mastery,
     focusedReview: data.focusedReview,
+    reviewLevelControl: data.reviewLevelControl,
     canUndoReview: data.canUndoReview,
     capabilities,
     usage,
