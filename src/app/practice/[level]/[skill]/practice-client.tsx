@@ -34,6 +34,7 @@ function practiceMessage(code: string) {
   if (code === "PRACTICE_SESSION_EXPIRED") return "This Practice Session timed out. Start a new session; no late answer was saved.";
   if (code === "PRACTICE_QUESTION_WITHDRAWN") return "This question was withdrawn after a content review. Start a new session to continue with the current set.";
   if (code === "INVALID_PRACTICE_ANSWER") return "That answer is not valid for this question. No attempt was saved.";
+  if (code === "PRACTICE_DAILY_SESSION_STALE") return "This Today step is from an earlier learning day. Return to Today to open the current saved step.";
   return code;
 }
 
@@ -63,6 +64,7 @@ export default function PracticeClient({ level, skill, dailySessionId, dailyItem
     const query = new URLSearchParams({ level: String(level), skill });
     if (dailySessionId) query.set("dailySessionId", dailySessionId);
     if (dailyItemId) query.set("dailyItemId", dailyItemId);
+    query.set("tzOffset", String(new Date().getTimezoneOffset()));
     void json(`/api/v1/practice?${query.toString()}`)
       .then((data) => {
         setSession(data.session);
@@ -75,7 +77,7 @@ export default function PracticeClient({ level, skill, dailySessionId, dailyItem
   const post = async (action: string, payload: Record<string, unknown>, operation: string) => {
     const key = keys.current[operation] ?? crypto.randomUUID();
     keys.current[operation] = key;
-    const data = await json("/api/v1/practice", { method: "POST", body: JSON.stringify({ action, payload: { ...payload, idempotencyKey: key } }) });
+    const data = await json("/api/v1/practice", { method: "POST", body: JSON.stringify({ action, payload: { ...payload, idempotencyKey: key }, tzOffset: new Date().getTimezoneOffset() }) });
     delete keys.current[operation];
     return data;
   };
@@ -204,8 +206,9 @@ export default function PracticeClient({ level, skill, dailySessionId, dailyItem
 
         {error && <Alert text={error} />}
 
+        {dailyItemId && <div className="mt-5 rounded-2xl border border-blue-200 bg-blue-50 p-4"><p className="text-xs font-bold uppercase tracking-[0.14em] text-blue-700">Today Session</p><p className="mt-1 text-sm text-slate-700">This scored result completed the saved Today step. Continue to the next task; mistakes remain available for correction.</p></div>}
         <div className="mt-6 flex flex-col items-stretch gap-3 sm:flex-row sm:items-center">
-          {hasMistakes ? <>
+          {dailyItemId ? <Link className="inline-flex min-h-[48px] w-full items-center justify-center rounded-xl bg-blue-600 px-6 py-3 text-base font-bold text-white shadow-sm transition hover:bg-blue-700 sm:w-auto" href="/today?resume=1">Continue Today Session</Link> : hasMistakes ? <>
             <Link className="inline-flex min-h-[48px] w-full items-center justify-center rounded-xl bg-blue-600 px-6 py-3 text-base font-bold text-white shadow-sm transition hover:bg-blue-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-700 motion-reduce:transition-none sm:w-auto" href="/review">Review {wrongCount} {wrongCount === 1 ? "mistake" : "mistakes"} now</Link>
             <button className="min-h-[48px] w-full rounded-xl border border-blue-200 bg-white px-6 py-3 text-base font-bold text-blue-700 transition hover:border-blue-400 hover:bg-blue-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-700 disabled:cursor-wait disabled:opacity-60 motion-reduce:transition-none sm:w-auto" disabled={busy} onClick={start} type="button">Practice again</button>
           </> : <>
@@ -231,6 +234,7 @@ export default function PracticeClient({ level, skill, dailySessionId, dailyItem
   const question = session.questions[index];
   const feedback = session.feedback.find((entry) => entry.questionId === question.id);
   return <main className="mx-auto min-h-[calc(100vh-64px)] max-w-3xl px-4 py-10 sm:px-6 sm:py-16">
+    {dailyItemId && <section className="mb-5 rounded-2xl border border-blue-200 bg-blue-50 p-4" aria-label="Today Session context"><p className="text-xs font-bold uppercase tracking-[0.14em] text-blue-700">Today Session</p><p className="mt-1 text-sm text-slate-700">This practice session is bound to your current Today step. Answers save after every response, so refresh and back navigation restore progress.</p></section>}
     <div className="flex items-end justify-between gap-4"><div><span className="text-xs font-extrabold uppercase tracking-[.18em] text-blue-700">Level {session.level} · {session.skill}</span><h1 className="mt-2 font-serif text-3xl font-bold text-slate-950">Question {index + 1} of {session.questions.length}</h1></div><span className="text-sm font-bold text-slate-500">{Math.round(((index + 1) / session.questions.length) * 100)}%</span></div>
     <div className="mt-4 h-2 overflow-hidden rounded-full bg-slate-100"><div className="h-full rounded-full bg-blue-600" style={{ width: `${((index + 1) / session.questions.length) * 100}%` }} /></div>
     <section className="mt-8 rounded-3xl border border-slate-200 bg-white p-5 shadow-sm sm:p-8">

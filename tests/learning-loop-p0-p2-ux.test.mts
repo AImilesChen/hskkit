@@ -108,7 +108,7 @@ test("Today listening opens an available advanced word-audio task without requir
 test("Today, Review and Mistakes expose the approved P0-P2 interaction contract", async () => {
   const [client, route] = await Promise.all([source("src/app/components/learning-dashboard.tsx"), source("src/app/api/v1/learning/route.ts")]);
   for (const token of [
-    "Learning level", "Start selected plan", "Recommended review", "Review composition", "How to rate your memory",
+    "Learning level", "Continue Today Session", "Recommended review", "Review composition", "How to rate your memory",
     "Review tip", "Difficult items only", "Next review", "Review report", "Mistake correction", "Continue correcting",
     "Back to Mistakes", "HSK level", "Question type", "When added", "No difficult items are due",
   ]) assert.match(client, new RegExp(token));

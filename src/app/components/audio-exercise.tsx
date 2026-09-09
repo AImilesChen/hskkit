@@ -33,7 +33,7 @@ export default function AudioExerciseClient({ exercises, initialMode, dailySessi
       started = await fetch("/api/v1/learning", {
         method: "POST",
         headers: { "content-type": "application/json" },
-        body: JSON.stringify({ action: "audio_playback_start", payload: { idempotencyKey: crypto.randomUUID(), assetId: exercise.assetId, mode, dailySessionId, dailyItemId } }),
+        body: JSON.stringify({ action: "audio_playback_start", payload: { idempotencyKey: crypto.randomUUID(), assetId: exercise.assetId, mode, dailySessionId, dailyItemId }, tzOffset: new Date().getTimezoneOffset() }),
       });
     } catch {
       setError("Playback verification could not start. Nothing was written to mastery.");
@@ -65,7 +65,7 @@ export default function AudioExerciseClient({ exercises, initialMode, dailySessi
         const completed = await fetch("/api/v1/learning", {
           method: "POST",
           headers: { "content-type": "application/json" },
-          body: JSON.stringify({ action: "audio_playback_complete", payload: { idempotencyKey: crypto.randomUUID(), assetId: exercise.assetId, mode, playbackTicket, dailySessionId, dailyItemId } }),
+          body: JSON.stringify({ action: "audio_playback_complete", payload: { idempotencyKey: crypto.randomUUID(), assetId: exercise.assetId, mode, playbackTicket, dailySessionId, dailyItemId }, tzOffset: new Date().getTimezoneOffset() }),
         });
         if (!completed.ok) throw new Error("PLAYBACK_NOT_VERIFIED");
         setPlayed((current) => ({ ...current, [mode]: true }));
@@ -117,6 +117,7 @@ export default function AudioExerciseClient({ exercises, initialMode, dailySessi
 
   const result = saved[mode];
   return <main className="learn"><header><span className="eyebrow">Audio SRS · HSK {exercise.word.level}</span><h1>{exercise.word.hanzi}</h1><p>{exercise.word.pinyin} · {exercises.context_audio ? "Complete word audio and context audio separately." : "Complete the available word-audio task."}</p><nav><Link href="/today">Today</Link><Link href="/review">Review</Link><Link href="/mistakes">Mistakes</Link><Link href="/listen">Listen</Link></nav></header>
+    {dailyItemId && <section className="mb-4 rounded-2xl border border-blue-200 bg-blue-50 p-4" aria-label="Today Session context"><p className="text-xs font-bold uppercase tracking-[0.14em] text-blue-700">Today Session</p><p className="mt-1 text-sm text-slate-700">This listening result is tied to your current saved step. Refreshing or going back will restore the same task.</p></section>}
     <article className="card">
       {!dailyItemId && availableModes.length > 1 && <div className="mb-5 flex flex-wrap gap-2" role="tablist" aria-label="Listening mode">
         {exercises.audio && <button className={`btn ${mode === "audio" ? "" : "secondary"}`} onClick={() => selectMode("audio")}>Word audio</button>}
@@ -131,7 +132,7 @@ export default function AudioExerciseClient({ exercises, initialMode, dailySessi
         {Object.entries(exercise.options).map(([letter, text]) => <button key={letter} className="btn secondary text-left" disabled={!played[mode] || saving || Boolean(result)} onClick={() => answer(letter)}>{letter}. {text}</button>)}
       </div>
       {saving && <p className="mt-4 text-sm font-semibold text-blue-700" role="status">Saving mastery…</p>}
-      {result && <div className={`mt-5 rounded-xl p-4 ${result.correct ? "bg-emerald-50 text-emerald-800" : "bg-amber-50 text-amber-900"}`} role="status"><strong>{result.correct ? "Correct — mastery saved." : "Not yet — added to Mistakes and Review."}</strong><p className="mt-2">Correct answer: {result.correctAnswerText}</p><div className="mt-4 flex flex-wrap gap-2">{mode === "audio" && exercises.context_audio && !saved.context_audio && !dailyItemId && <button className="btn" onClick={() => selectMode("context_audio")}>Continue to context audio</button>}<Link className="btn secondary" href={result.correct ? "/today" : "/mistakes"}>{result.correct ? "Return to Today" : "Open Mistakes"}</Link></div></div>}
+      {result && <div className={`mt-5 rounded-xl p-4 ${result.correct ? "bg-emerald-50 text-emerald-800" : "bg-amber-50 text-amber-900"}`} role="status"><strong>{result.correct ? "Correct — mastery saved." : "Not yet — added to Mistakes and Review."}</strong><p className="mt-2">Correct answer: {result.correctAnswerText}</p><div className="mt-4 flex flex-wrap gap-2">{mode === "audio" && exercises.context_audio && !saved.context_audio && !dailyItemId && <button className="btn" onClick={() => selectMode("context_audio")}>Continue to context audio</button>}{dailyItemId ? <Link className="btn" href="/today?resume=1">Continue Today Session</Link> : <Link className="btn secondary" href={result.correct ? "/today" : "/mistakes"}>{result.correct ? "Return to Today" : "Open Mistakes"}</Link>}</div></div>}
     </article>
   </main>;
 }

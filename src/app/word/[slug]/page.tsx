@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { DictionaryWordActions } from "../../components/dictionary-word-actions";
+import TodayWordCompletion from "../../components/today-word-completion";
 import { WordScriptToggle } from "../../components/word-script-toggle";
 import { StudyPage } from "../../components/study-shell";
 import { listPublishedWords, relatedWordsForWord } from "@/lib/dictionary/catalog";
@@ -9,7 +10,7 @@ import { getIndexedCharacter } from "@/lib/dictionary/character-index";
 import { getDictionaryLearningContext } from "@/lib/dictionary/p2-server";
 import { getPublishedWordBySlug, splitDictionaryMeanings } from "@/lib/dictionary/runtime-word";
 
-type Props = { params: Promise<{ slug: string }> };
+type Props = { params: Promise<{ slug: string }>; searchParams?: Promise<Record<string, string | string[] | undefined>> };
 
 const PART_OF_SPEECH_LABELS: Record<string, string> = {
   V: "Verb",
@@ -47,7 +48,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   };
 }
 
-export default async function WordPage({ params }: Props) {
+export default async function WordPage({ params, searchParams }: Props) {
   const result = await getPublishedWordBySlug((await params).slug);
   if (result.status !== "published") notFound();
   const word = result.item;
@@ -59,6 +60,9 @@ export default async function WordPage({ params }: Props) {
   const characters = [...word.hanzi].filter((character, index, values) => values.indexOf(character) === index && getIndexedCharacter(character));
   const definitions = splitDictionaryMeanings(word.meaning);
   const related = relatedWordsForWord(word);
+  const query = await searchParams;
+  const dailySessionId = typeof query?.dailySessionId === "string" ? query.dailySessionId : "";
+  const dailyItemId = typeof query?.dailyItemId === "string" ? query.dailyItemId : "";
   const schema = {
     "@context": "https://schema.org",
     "@type": "DefinedTerm",
@@ -92,6 +96,8 @@ export default async function WordPage({ params }: Props) {
               </div>
             </div>
           </article>
+
+          {dailySessionId && dailyItemId && <TodayWordCompletion assetId={word.id} dailySessionId={dailySessionId} dailyItemId={dailyItemId} step={typeof query?.todayStep === "string" ? query.todayStep : undefined} total={typeof query?.todayTotal === "string" ? query.todayTotal : undefined} />}
 
           <DictionaryWordActions assetId={word.id} level={word.level} audioAsset={word.audioAsset} />
 

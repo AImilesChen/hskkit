@@ -5,6 +5,8 @@ import { loadState, saveState } from "@/lib/learning/storage";
 import { answerPracticeQuestion, createPracticeSession, publicPracticeSession, reportPracticeQuestion, selectPracticeSession } from "@/lib/practice/domain";
 import { practiceQuestionLifecycle, trustedPracticeQuestion } from "@/lib/practice/questions";
 import { learningRewardLocalDay } from "@/lib/engagement/storage";
+import { assertCurrentDailySession, type LearningState } from "@/lib/learning/domain";
+import { learningLocalDay } from "@/lib/learning/progress";
 
 async function owner() {
   const identity = await requestIdentity();
@@ -17,9 +19,21 @@ async function owner() {
 }
 const short = (value: unknown, max = 120) => typeof value === "string" && value.length > 0 && value.length <= max ? value : undefined;
 const level = (value: unknown) => Number.isInteger(Number(value)) && Number(value) >= 1 && Number(value) <= 9 ? Number(value) : undefined;
+const offset = (value: unknown) => Number.isFinite(Number(value)) ? Math.max(-840, Math.min(840, Math.round(Number(value)))) : 0;
+function assertCurrentDailyPracticeBinding(state: LearningState, ownerId: string, dailySessionId: string | undefined, dailyItemId: string | undefined, now: string, offsetMinutes: number, accountTimezone?: string) {
+  if (!dailySessionId && !dailyItemId) return;
+  if (!dailySessionId || !dailyItemId) throw new Error("INVALID_DAILY_PRACTICE_BINDING");
+  const localDay = learningLocalDay(now, offsetMinutes, accountTimezone);
+  const current = state.dailySessions.find((candidate) => candidate.ownerId === ownerId && candidate.localDay === localDay);
+  try {
+    assertCurrentDailySession(current, dailySessionId);
+  } catch {
+    throw new Error("PRACTICE_DAILY_SESSION_STALE");
+  }
+}
 const errorStatus = (code: string) => code === "ACCOUNT_DELETED" ? 403
   : code === "PRACTICE_SESSION_NOT_FOUND" ? 404
-    : code === "PRACTICE_SESSION_EXPIRED" || code === "PRACTICE_QUESTION_WITHDRAWN" ? 410
+    : code === "PRACTICE_SESSION_EXPIRED" || code === "PRACTICE_QUESTION_WITHDRAWN" || code === "PRACTICE_DAILY_SESSION_STALE" ? 410
       : code === "REVISION_CONFLICT" ? 409
         : 422;
 function response(req: NextRequest, data: unknown, identity: Awaited<ReturnType<typeof owner>>, status = 200) {
@@ -38,8 +52,9 @@ export async function GET(req: NextRequest) {
   if (!requestedLevel || !skill) return response(req, { error: "INVALID_PRACTICE_REQUEST" }, identity, 422);
   const loaded = await loadState(identity.id);
   const now = new Date().toISOString();
-  const session = selectPracticeSession(loaded.state, { ownerId: identity.id, level: requestedLevel, skill, dailySessionId, dailyItemId }, now);
   try {
+    assertCurrentDailyPracticeBinding(loaded.state, identity.id, dailySessionId, dailyItemId, now, offset(req.nextUrl.searchParams.get("tzOffset")), identity.account?.timezone);
+    const session = selectPracticeSession(loaded.state, { ownerId: identity.id, level: requestedLevel, skill, dailySessionId, dailyItemId }, now);
     return response(req, { session: session ? publicPracticeSession(session, now) : null, scope: identity.account ? "account" : "guest", revision: loaded.revision }, identity);
   } catch (error) {
     const code = error instanceof Error ? error.message : "PRACTICE_LOAD_FAILED";
@@ -61,6 +76,7 @@ export async function POST(req: NextRequest) {
   const idempotencyKey = short(payload.idempotencyKey, 100);
   if (!action || !idempotencyKey) return response(req, { error: "INVALID_PRACTICE_REQUEST" }, identity, 422);
   const key = idempotencyKey;
+  const tz = offset(body.tzOffset);
 
   for (let turn = 0; turn < 3; turn += 1) {
     const loaded = await loadState(identity.id);
@@ -74,6 +90,7 @@ export async function POST(req: NextRequest) {
         if (!requestedLevel || !skill) throw new Error("INVALID_PRACTICE_REQUEST");
         const dailySessionId = short(payload.dailySessionId, 180);
         const dailyItemId = short(payload.dailyItemId, 180);
+        assertCurrentDailyPracticeBinding(state, identity.id, dailySessionId, dailyItemId, now, tz, identity.account?.timezone);
         const created = createPracticeSession(state, { ownerId: identity.id, level: requestedLevel, skill, idempotencyKey: key, now, dailySessionId, dailyItemId });
         state = created.state;
         data = { session: publicPracticeSession(created.session, now) };
@@ -84,6 +101,8 @@ export async function POST(req: NextRequest) {
         if (questionId && practiceQuestionLifecycle(questionId) === "withdrawn") throw new Error("PRACTICE_QUESTION_WITHDRAWN");
         const question = questionId ? trustedPracticeQuestion(questionId) : undefined;
         if (!sessionId || !question || !answer || !Object.hasOwn(question.options, answer)) throw new Error("INVALID_PRACTICE_ANSWER");
+        const practiceSession = state.practiceSessions?.find((candidate) => candidate.id === sessionId && candidate.ownerId === identity.id);
+        assertCurrentDailyPracticeBinding(state, identity.id, practiceSession?.dailySessionId, practiceSession?.dailyItemId, now, tz, identity.account?.timezone);
         const updated = answerPracticeQuestion(state, { ownerId: identity.id, sessionId, questionId: question.id, answer, idempotencyKey: key, now });
         state = updated.state;
         data = { session: publicPracticeSession(updated.session, now), feedback: updated.feedback };

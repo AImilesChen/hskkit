@@ -6,6 +6,8 @@ import { createHash } from "node:crypto";
 import {
   buildDailySession,
   applyDailyItemAction,
+  assertTodayLearnItemMatches,
+  assertCurrentDailySession,
   addWordToToday,
   addWordToReview,
   recordDictionarySearch,
@@ -19,6 +21,7 @@ import {
   recordAudioAttempt,
   type LearningState,
 } from "../../../../lib/learning/domain";
+import { isTodayBudgetMinutes } from "../../../../lib/learning/today-plan";
 import { audioPlaybackSubject, trustedAudioExercise, trustedTodayAudioExercise, type AudioMode } from "../../../../lib/learning/audio";
 import { advancedListeningBySlug, isStep7AnswerAllowed, normalizeStep7Answer, trustedStep7Exercise } from "../../../../lib/learning/step7-content";
 import { completeStep7PlaybackTicket, consumeStep7PlaybackTicket, createStep7PlaybackTicket } from "../../../../lib/learning/step7-playback";
@@ -78,12 +81,12 @@ function audioExercise(assetId: string, mode: AudioMode, dailyBound = false) {
     ? trustedTodayAudioExercise(assetId, mode)
     : trustedAudioExercise(assetId, mode) ?? trustedTodayAudioExercise(assetId, mode);
 }
-function assertDailyAudioBinding(state: LearningState, dailySessionId: string | undefined, dailyItemId: string | undefined, exercise: NonNullable<ReturnType<typeof audioExercise>>) {
+function assertDailyAudioBinding(state: LearningState, dailySessionId: string | undefined, dailyItemId: string | undefined, exercise: NonNullable<ReturnType<typeof audioExercise>>, currentDailySessionId?: string) {
   if (!dailySessionId && !dailyItemId) return;
   const session = dailySessionId ? state.dailySessions.find((candidate) => candidate.id === dailySessionId) : undefined;
   const item = session && dailyItemId ? session.items.find((candidate) => candidate.id === dailyItemId) : undefined;
   const firstPending = session?.items.find((candidate) => !candidate.deferred && candidate.status === "pending");
-  if (!session || !item || firstPending?.id !== item.id || item.kind !== "listen" || item.contentId !== exercise.contentId || item.contentVersion !== exercise.contentVersion || item.dimension !== exercise.dimension) {
+  if (dailySessionId !== currentDailySessionId || !session || !item || firstPending?.id !== item.id || item.kind !== "listen" || item.contentId !== exercise.contentId || item.contentVersion !== exercise.contentVersion || item.dimension !== exercise.dimension) {
     throw new Error("DAILY_ITEM_MISMATCH");
   }
 }
@@ -281,7 +284,8 @@ async function postLearning(req: NextRequest) {
     if (!exercise) return errorResponse("INVALID_AUDIO_PLAYBACK", 422);
     try {
       const loaded = await loadState(identity.id);
-      assertDailyAudioBinding(loaded.state, dailySessionId, dailyItemId, exercise);
+      const activeToday = view(loaded.state, identity.id, tz, capabilities, identity.account?.timezone);
+      assertDailyAudioBinding(activeToday.state, dailySessionId, dailyItemId, exercise, activeToday.session.id);
       const exerciseKey = audioPlaybackSubject(exercise, dailySessionId, dailyItemId);
       if (action === "audio_playback_start") {
         const ticket = await createStep7PlaybackTicket(identity.id, exerciseKey, exercise.voiceText);
@@ -545,7 +549,9 @@ async function postLearning(req: NextRequest) {
         const dailyItemId = short(payload.dailyItemId, 220);
         const exercise = assetId && mode ? audioExercise(assetId, mode, Boolean(dailySessionId && dailyItemId)) : undefined;
         if (!exercise || !answer || !Object.hasOwn(exercise.options, answer)) throw new Error("INVALID_AUDIO_ATTEMPT");
-        assertDailyAudioBinding(state, dailySessionId, dailyItemId, exercise);
+        const activeToday = view(state, identity.id, tz, capabilities, identity.account?.timezone);
+        state = activeToday.state;
+        assertDailyAudioBinding(state, dailySessionId, dailyItemId, exercise, activeToday.session.id);
         const ticketId = short(payload.playbackTicket, 80);
         if (!ticketId) throw new Error("AUDIO_PLAYBACK_REQUIRED");
         await consumeStep7PlaybackTicket(identity.id, audioPlaybackSubject(exercise, dailySessionId, dailyItemId), ticketId, key);
@@ -696,7 +702,16 @@ async function postLearning(req: NextRequest) {
         const sessionId = short(payload.sessionId, 120);
         const itemId = short(payload.itemId, 160);
         if (!sessionId || !itemId) throw new Error("INVALID_ITEM");
+        const activeToday = view(state, identity.id, tz, capabilities, identity.account?.timezone);
+        assertCurrentDailySession(activeToday.session, sessionId);
+        state = activeToday.state;
         const currentItem = state.dailySessions.find((session) => session.id === sessionId)?.items.find((item) => item.id === itemId);
+        if (action === "complete_item" && currentItem?.kind === "learn") {
+          const assetId = short(payload.assetId, 120);
+          const displayedWord = assetId ? await resolveTodayDictionaryItem(assetId) : undefined;
+          if (!displayedWord) throw new Error("TODAY_LEARN_WORD_MISMATCH");
+          assertTodayLearnItemMatches(state, { sessionId, itemId, contentId: displayedWord.contentId, contentVersion: displayedWord.contentVersion });
+        }
         state = applyDailyItemAction(state, {
           sessionId,
           itemId,
@@ -709,7 +724,7 @@ async function postLearning(req: NextRequest) {
         }
       } else if (action === "configure_today") {
         const budgetMinutes = Number(payload.budgetMinutes);
-        if (!Number.isInteger(budgetMinutes) || budgetMinutes < 5 || budgetMinutes > 180) throw new Error("INVALID_TIME_BUDGET");
+        if (!isTodayBudgetMinutes(budgetMinutes)) throw new Error("INVALID_TIME_BUDGET");
         const requestedLevel = payload.startLevel === undefined ? state.preferredLearningLevel : Number(payload.startLevel);
         if (requestedLevel !== undefined && (!Number.isInteger(requestedLevel) || requestedLevel < 1 || requestedLevel > 9)) throw new Error("INVALID_LEARNING_LEVEL");
         const observedAt = new Date().toISOString();

@@ -3,6 +3,7 @@ import type { TodayContentPlan } from "./today-content.ts";
 import { practiceQuestionSet } from "../practice/questions.ts";
 import type { ReviewSnapshot } from "./review-content.ts";
 import type { DictionaryPracticeWord } from "../dictionary/p2-learning.ts";
+import { isTodayBudgetMinutes } from "./today-plan.ts";
 
 export type Grade = "again" | "hard" | "good" | "easy";
 export type Dimension = "reading" | "audio" | "context_audio";
@@ -587,6 +588,23 @@ export function applyDailyItemAction(state: LearningState, input: {
   return { state: next, item: dailySessions.find((candidate) => candidate.id === input.sessionId)!.items.find((item) => item.id === input.itemId)!, replayed: false as const };
 }
 
+export function assertTodayLearnItemMatches(state: LearningState, input: {
+  sessionId: string;
+  itemId: string;
+  contentId: string;
+  contentVersion: string;
+}) {
+  const item = state.dailySessions.find((session) => session.id === input.sessionId)?.items.find((candidate) => candidate.id === input.itemId);
+  if (!item || item.kind !== "learn") throw new Error("ITEM_NOT_FOUND");
+  if (item.contentId !== input.contentId || item.contentVersion !== input.contentVersion) throw new Error("TODAY_LEARN_WORD_MISMATCH");
+  return item;
+}
+
+export function assertCurrentDailySession(currentSession: DailySession | undefined, requestedSessionId: string) {
+  if (!currentSession || currentSession.id !== requestedSessionId) throw new Error("STALE_TODAY_SESSION");
+  return currentSession;
+}
+
 export function buildDailySession(state: LearningState, input: { ownerId: string; localDay: string; ruleVersion: string; now: string; dailyContent?: TodayContentPlan; budgetMinutes?: number }) {
   const prior = state.dailySessions.find((session) => session.ownerId === input.ownerId && session.localDay === input.localDay);
   const due: DailyItem[] = state.cards
@@ -603,7 +621,7 @@ export function buildDailySession(state: LearningState, input: { ownerId: string
     ? practiceQuestionSet(content.startLevel, "vocabulary")[0]?.setVersion
     : undefined;
   const core: DailyItem[] = content?.status === "ready" ? [
-    { id: `learn:${content.item.contentId}:${content.item.contentVersion}`, kind: "learn", contentId: content.item.contentId, contentVersion: content.item.contentVersion, title: `Learn ${content.item.hanzi}`, href: `/vocabulary/${content.startLevel}`, status: "pending" },
+    { id: `learn:${content.item.contentId}:${content.item.contentVersion}`, kind: "learn", contentId: content.item.contentId, contentVersion: content.item.contentVersion, title: `Learn ${content.item.hanzi}`, href: `/word/${content.item.studySlug}`, status: "pending" },
     { id: `listen:${content.item.contentId}:${content.item.contentVersion}:audio`, kind: "listen", contentId: content.item.contentId, contentVersion: content.item.contentVersion, dimension: "audio", title: `Listen to ${content.item.hanzi}`, href: `/listen/today/${content.item.assetId}?mode=audio`, status: "pending" },
     ...(content.item.example ? [{ id: `listen:${content.item.contentId}:${content.item.contentVersion}:context_audio`, kind: "listen" as const, contentId: content.item.contentId, contentVersion: content.item.contentVersion, dimension: "context_audio" as const, title: "Listen in context", href: `/listen/today/${content.item.assetId}?mode=context_audio`, status: "pending" as const }] : []),
     ...(content.practiceHref && practiceVersion ? [{ id: `practice:${content.startLevel}:vocabulary:${practiceVersion}`, kind: "practice" as const, contentId: `practice:${content.startLevel}:vocabulary`, contentVersion: practiceVersion, dimension: "reading" as const, title: `Level ${content.startLevel} vocabulary practice`, href: content.practiceHref, status: "pending" as const }] : []),
@@ -618,7 +636,7 @@ export function buildDailySession(state: LearningState, input: { ownerId: string
     { id: "summary", kind: "summary", contentId: "summary", status: "pending" },
   ];
 
-  const budgetMinutes = Number.isInteger(input.budgetMinutes) && Number(input.budgetMinutes) >= 5 && Number(input.budgetMinutes) <= 180 ? Number(input.budgetMinutes) : prior?.budgetMinutes ?? 30;
+  const budgetMinutes = isTodayBudgetMinutes(input.budgetMinutes) ? input.budgetMinutes : isTodayBudgetMinutes(prior?.budgetMinutes) ? prior.budgetMinutes : 30;
   const carriedDictionaryItems = (prior?.items ?? []).filter((item) => item.id.startsWith("dictionary:") && item.status !== "completed");
   const candidateIds = new Set<string>();
   const candidates = [...due, ...carriedDictionaryItems, ...core.filter((item) => item.kind !== "summary")]
@@ -666,9 +684,7 @@ export function buildDailySession(state: LearningState, input: { ownerId: string
       planFingerprint,
       notice: content?.status === "empty"
         ? { code: content.code, message: content.message, actionHref: content.actionHref, actionLabel: content.actionLabel }
-        : content?.status === "ready"
-          ? { code: "CONTENT_UPDATED", message: "Daily content was updated to the current approved learning plan. Completed history was kept.", actionHref: "/today", actionLabel: "Continue updated session" }
-          : undefined,
+        : undefined,
       items: replacement,
     };
     const reconciled = reconcileSummary(refreshed, input.now);
