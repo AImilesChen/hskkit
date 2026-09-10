@@ -69,7 +69,7 @@ test("Review and Mistakes are workspaces for early review and corrected history,
   for (const token of [
     "Upcoming reviews",
     "Corrected mistakes",
-    "Corrected on",
+    "Corrected ",
     "Mastered after successful review",
   ]) assert.match(dashboard, new RegExp(token));
   assert.match(dashboard, /data\.mistakes\s*\.filter\(\(mistake\) => mistake\.status === "resolved"\)/);

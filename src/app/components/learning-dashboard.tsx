@@ -11,6 +11,8 @@ import { activeReviewCardId, activeTodayReviewCardId, buildIntentReviewQueue, fi
 import { completionProofNeedsSync, parseTodayCompletionProof, recommendTodayMinutes, recommendTodayNewWordCount, resolveTodayCelebration, todayCompletionProofKey, todaySummaryStats, todayJourneyProgress, TODAY_BUDGET_OPTIONS, TODAY_FOCUS_OPTIONS, TODAY_NEW_WORD_OPTIONS, type TodayBudgetMinutes, type TodayCelebration, type TodayCompletedKind, type TodayFocus, type TodayNewWordCount } from "../../lib/learning/today-plan";
 
 type Dimension = "reading" | "audio" | "context_audio";
+type MistakeFilter = "all" | "reading" | "listening";
+type MistakeTab = "open" | "corrected";
 type LearnContent = { assetId: string; hanzi: string; pinyin: string; meaning: string; partOfSpeech: string; example?: { hanzi: string; pinyin: string; meaning: string }; audioSrc?: string };
 type Item = { id: string; kind: "review" | "learn" | "listen" | "practice" | "summary"; contentId: string; contentVersion?: string; status: "pending" | "completed" | "skipped"; dimension?: Dimension; title?: string; href?: string; estimatedMinutes?: number; deferred?: boolean; reviewCardId?: string; learnContent?: LearnContent };
 type Notice = { code: string; message: string; actionHref: string; actionLabel: string };
@@ -70,9 +72,12 @@ export default function LearningDashboard({ mode }: { mode: "today" | "review" |
   const [reviewMinutes, setReviewMinutes] = useState<5 | 10 | 20>(10);
   const [selectedReviewScope, setSelectedReviewScope] = useState<ReviewLevelScope>("current");
   const [difficultOnly, setDifficultOnly] = useState(false);
-  const [mistakeLevel, setMistakeLevel] = useState(0);
-  const [mistakeType, setMistakeType] = useState<"all" | Dimension>("all");
-  const [mistakeAge, setMistakeAge] = useState(0);
+  const [mistakeTab, setMistakeTab] = useState<"open" | "corrected">("open");
+  const [mistakeFilter, setMistakeFilter] = useState<MistakeFilter>("all");
+  const [correctedVisible, setCorrectedVisible] = useState(10);
+  const [loadingMoreCorrected, setLoadingMoreCorrected] = useState(false);
+  const [mistakeNotice, setMistakeNotice] = useState("");
+  const mistakeScrollPositions = useRef<Record<MistakeTab, number>>({ open: 0, corrected: 0 });
   const [reviewIds, setReviewIds] = useState<string[] | null>(null);
   const [entryIntent, setEntryIntent] = useState<ReviewEntryIntent>({ kind: "setup" });
   const [entryTodaySessionId, setEntryTodaySessionId] = useState("");
@@ -162,6 +167,14 @@ export default function LearningDashboard({ mode }: { mode: "today" | "review" |
     return () => window.removeEventListener("online", online);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  useEffect(() => {
+    if (mode !== "mistakes" || !data) return;
+    const correctedCount = data.mistakes.filter((mistake) => mistake.status === "resolved").length;
+    const savedCount = sessionStorage.getItem("hskkit_mistakes_corrected_count_v1");
+    if (savedCount !== null && correctedCount > Number(savedCount)) setMistakeNotice("Corrected — moved to your history.");
+    sessionStorage.setItem("hskkit_mistakes_corrected_count_v1", String(correctedCount));
+  }, [data, mode]);
 
   useEffect(() => {
     if (mode !== "review") return;
@@ -467,6 +480,21 @@ export default function LearningDashboard({ mode }: { mode: "today" | "review" |
   }
   async function skip(item: Item) { await post("skip_item", { sessionId: data!.session.id, itemId: item.id }, `skip:${data!.session.id}:${item.id}`); }
   async function restore(item: Item) { await post("restore_item", { sessionId: data!.session.id, itemId: item.id }, `restore:${data!.session.id}:${item.id}`); }
+  function switchMistakeTab(nextTab: MistakeTab) {
+    mistakeScrollPositions.current[mistakeTab] = window.scrollY;
+    setMistakeTab(nextTab);
+    window.requestAnimationFrame(() => window.scrollTo({ top: mistakeScrollPositions.current[nextTab], behavior: "instant" }));
+  }
+
+  function loadMoreCorrected() {
+    if (loadingMoreCorrected) return;
+    setLoadingMoreCorrected(true);
+    window.setTimeout(() => {
+      setCorrectedVisible((count) => count + 10);
+      setLoadingMoreCorrected(false);
+    }, 150);
+  }
+
   async function completeLearn(item: Item) {
     if (!data || !item.learnContent || learnSavingId) return;
     setLearnSavingId(item.id);
@@ -512,7 +540,7 @@ export default function LearningDashboard({ mode }: { mode: "today" | "review" |
   if (loadFailure) {
     const offline = loadFailure === "offline";
     const temporarilyUnavailable = loadFailure === "temporarily_unavailable";
-    const title = offline ? "You're offline" : temporarilyUnavailable ? "Learning data is temporarily busy" : "We couldn't load this page";
+    const title = mode === "mistakes" ? "We couldn’t load your mistakes." : offline ? "You're offline" : temporarilyUnavailable ? "Learning data is temporarily busy" : "We couldn't load this page";
     const text = offline
       ? "Reconnect and try again. Your progress is unchanged."
       : temporarilyUnavailable
@@ -526,15 +554,24 @@ export default function LearningDashboard({ mode }: { mode: "today" | "review" |
   if (mode === "today" && completionSyncState !== "idle") return <LearningStatePage mode={mode} title={completionSyncState === "syncing" ? "Syncing your completed session…" : "Your completion is saved, but the latest session is still syncing"} text={completionSyncState === "syncing" ? "Checking the latest server progress before showing your next step." : "We will not show an outdated locked step. Retry to load the latest saved session."} loading={completionSyncState === "syncing"}>
     {completionSyncState === "failed" && <button className="btn" onClick={() => { completionSyncAttempts.current = 0; setCompletionSyncState("syncing"); void load(true); }}>Retry sync</button>}
   </LearningStatePage>;
-  if (!data) return <LearningStatePage mode={mode} title={mode === "review" ? "Preparing your review" : mode === "mistakes" ? "Loading your mistakes" : "Preparing today's plan"} text="Loading due items and restoring progress." loading />;
+  if (!data && mode === "mistakes") return <Shell title="Mistakes" active="Mistakes" sub="Retry your wrong answers. A mistake moves to Corrected after you answer it correctly.">
+    <div className="mistakes-skeleton mx-auto grid max-w-[880px] gap-3" role="status" aria-label="Loading your mistakes" aria-live="polite">
+      <span className="sr-only">Loading your mistakes</span>
+      <div className="grid grid-cols-2 gap-2"><div className="h-12 animate-pulse rounded-xl bg-slate-200"/><div className="h-12 animate-pulse rounded-xl bg-slate-200"/></div>
+      <div className="h-28 animate-pulse rounded-2xl bg-slate-100"/>
+      <div className="h-20 animate-pulse rounded-2xl bg-slate-100"/>
+      <div className="h-20 animate-pulse rounded-2xl bg-slate-100"/>
+    </div>
+  </Shell>;
+  if (!data) return <LearningStatePage mode={mode} title={mode === "review" ? "Preparing your review" : "Preparing today's plan"} text="Loading due items and restoring progress." loading />;
   const open = data.mistakes.filter((mistake) => mistake.status === "open");
   const corrected = data.mistakes
     .filter((mistake) => mistake.status === "resolved")
     .sort((a, b) => (b.resolvedAt ?? b.createdAt).localeCompare(a.resolvedAt ?? a.createdAt));
-  const filteredOpen = open.filter((mistake) =>
-    (!mistakeLevel || mistake.level === mistakeLevel)
-    && (mistakeType === "all" || mistake.dimension === mistakeType)
-    && (!mistakeAge || Date.now() - new Date(mistake.createdAt).getTime() <= mistakeAge * 86_400_000));
+  const filteredOpen = open.filter((mistake) => mistakeFilter === "all"
+    || (mistakeFilter === "reading" ? mistake.dimension === "reading" : mistake.dimension === "audio" || mistake.dimension === "context_audio"));
+  const visibleCorrected = corrected.slice(0, correctedVisible);
+  const correctedGroups = groupCorrectedMistakes(visibleCorrected);
   const dueForToday = data.capabilities.focusedReview
     ? data.focusedReview
     : data.cards.filter((card) => card.dueAt <= new Date().toISOString());
@@ -672,32 +709,46 @@ export default function LearningDashboard({ mode }: { mode: "today" | "review" |
     </Shell>;
   }
 
-  if (mode === "mistakes") return <Shell title="Mistakes" active="Mistakes" sub="Correct wrong answers continuously; they leave this list only after a successful retry.">
-    {open.length ? <>
-      <section className="card mb-4" aria-label="Mistake filters"><h2>Filter corrections</h2><div className="mt-4 grid gap-3 sm:grid-cols-3">
-        <label>HSK level<select aria-label="Filter by HSK level" className="min-h-[44px] rounded-lg border border-slate-300 bg-white px-3" value={mistakeLevel} onChange={(event) => setMistakeLevel(Number(event.target.value))}><option value={0}>All levels</option>{Array.from({ length: 9 }, (_, index) => index + 1).map((level) => <option key={level} value={level}>HSK {level}</option>)}</select></label>
-        <label>Question type<select aria-label="Filter by question type" className="min-h-[44px] rounded-lg border border-slate-300 bg-white px-3" value={mistakeType} onChange={(event) => setMistakeType(event.target.value as "all" | Dimension)}><option value="all">All types</option><option value="reading">Reading</option><option value="audio">Word listening</option><option value="context_audio">Context listening</option></select></label>
-        <label>When added<select aria-label="Filter by error time" className="min-h-[44px] rounded-lg border border-slate-300 bg-white px-3" value={mistakeAge} onChange={(event) => setMistakeAge(Number(event.target.value))}><option value={0}>Any time</option><option value={7}>Last 7 days</option><option value={30}>Last 30 days</option></select></label>
-      </div><p className="mt-3 text-sm text-slate-600">Showing {filteredOpen.length} of {open.length} open mistakes.</p></section>
-      {filteredOpen.length ? <div className="grid gap-4">{filteredOpen.map((mistake) => <article className="card" key={mistake.id}>
-        <span className="eyebrow">Wrong answer · {mistake.dimension.replace("_", " ")}</span>
-        <h2>{mistake.prompt}</h2>
-        <p>{mistake.level ? `HSK ${mistake.level} · ` : ""}{mistake.skill} · Added {new Date(mistake.createdAt).toLocaleDateString()}</p>
-        <p className="text-sm text-slate-600">Retry, check the answer, then continue to the next correction or return here.</p>
-        <Link className="btn" href={`/review?source=mistakes&contentId=${encodeURIComponent(mistake.contentId)}${mistake.cardId ? `&cardId=${encodeURIComponent(mistake.cardId)}` : ""}`}>Correct this mistake</Link>
-      </article>)}</div> : <State title="No mistakes match these filters" text="Change a level, question type, or error-time filter to see other corrections." />}
-    </> : corrected.length ? <State title="All mistakes corrected" text="There are no open corrections. Your corrected history remains below as a record of completed work." /> : <State title="No mistake history yet" text="A wrong answer in Practice or Listening will appear here immediately with the original question and a real retry."><div className="flex flex-wrap gap-2"><Link className="btn" href="/practice">Start practice</Link><Link className="btn secondary" href="/listen">Start listening</Link></div></State>}
-    {corrected.length > 0 && <section className="mt-5" aria-label="Corrected mistakes">
-      <div className="mb-3"><span className="eyebrow">Correction history</span><h2>Corrected mistakes</h2><p className="text-slate-600">These records stay visible after a successful retry.</p></div>
-      <div className="grid gap-3">{corrected.map((mistake) => <article className="card" key={mistake.id}>
-        <span className="eyebrow">Corrected · {mistake.dimension.replace("_", " ")}</span>
-        <h3 className="text-xl font-bold text-slate-950">{mistake.prompt}</h3>
-        <p>{mistake.level ? `HSK ${mistake.level} · ` : ""}{mistake.skill}</p>
-        <p className="text-sm text-emerald-700"><strong>Corrected on</strong> {new Date(mistake.resolvedAt ?? mistake.createdAt).toLocaleString()}</p>
-      </article>)}</div>
-    </section>}
-    <Mastery values={data.mastery} scope={data.scope} />
-  </Shell>;
+  if (mode === "mistakes") {
+    const firstOpenHref = open[0] ? mistakeReviewHref(open[0]) : "/practice";
+    return <Shell title="Mistakes" active="Mistakes" sub="Retry your wrong answers. A mistake moves to Corrected after you answer it correctly.">
+      <div className="mx-auto max-w-full overflow-x-hidden">
+        <div className="mb-5 grid grid-cols-2 gap-2" role="tablist" aria-label="Mistake status">
+          <button type="button" role="tab" aria-selected={mistakeTab === "open"} onClick={() => switchMistakeTab("open")} className={`min-h-[48px] rounded-xl border px-3 font-bold transition focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-blue-200 ${mistakeTab === "open" ? "border-blue-600 bg-blue-600 text-white" : "border-slate-300 bg-white text-slate-700"}`}>To correct <span aria-label={`${open.length} mistakes`}>{open.length}</span></button>
+          <button type="button" role="tab" aria-selected={mistakeTab === "corrected"} onClick={() => switchMistakeTab("corrected")} className={`min-h-[48px] rounded-xl border px-3 font-bold transition focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-blue-200 ${mistakeTab === "corrected" ? "border-blue-600 bg-blue-600 text-white" : "border-slate-300 bg-white text-slate-700"}`}>Corrected <span aria-label={`${corrected.length} corrected mistakes`}>{corrected.length}</span></button>
+        </div>
+
+        {mistakeNotice && <div className="mb-4 flex flex-wrap items-center justify-between gap-3 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-emerald-900" role="status"><strong>{mistakeNotice}</strong>{open[0] && <Link className="min-h-[44px] rounded-lg border border-emerald-700 px-4 py-2 font-bold" href={firstOpenHref}>Next mistake</Link>}</div>}
+
+        {mistakeTab === "open" ? <section role="tabpanel" aria-label="Mistakes to correct">
+          {open.length ? <>
+            <section className="mb-5 rounded-2xl border border-blue-200 bg-blue-50 p-5 sm:flex sm:items-center sm:justify-between sm:gap-6" aria-label="Correction task">
+              <div><h2 className="text-2xl font-bold text-slate-950">{open.length} {open.length === 1 ? "mistake" : "mistakes"} to correct</h2><p className="mt-1 text-slate-600">Retry them correctly to clear your mistake queue.</p></div>
+              <Link href={firstOpenHref} className="mt-4 inline-flex min-h-[48px] w-full items-center justify-center rounded-xl bg-blue-600 px-5 py-3 font-bold text-white shadow-sm hover:bg-blue-700 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-blue-200 sm:mt-0 sm:w-auto">Correct {open.length} mistake{open.length === 1 ? "" : "s"}</Link>
+            </section>
+            <div className="mb-4 overflow-x-auto" aria-label="Filter mistakes"><div className="flex min-w-max gap-2 pb-1">{(["all", "reading", "listening"] as const).map((filter) => <button type="button" key={filter} aria-pressed={mistakeFilter === filter} onClick={() => setMistakeFilter(filter)} className={`min-h-[44px] whitespace-nowrap rounded-full border px-5 py-2 font-semibold capitalize transition focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-blue-200 ${mistakeFilter === filter ? "border-blue-600 bg-blue-50 text-blue-800" : "border-slate-300 bg-white text-slate-700"}`}>{filter === "all" ? "All" : filter === "reading" ? "Reading" : "Listening"}</button>)}</div></div>
+            {filteredOpen.length ? <div className="grid gap-3">{filteredOpen.map((mistake) => <article className="rounded-2xl border border-blue-200 border-l-4 border-l-blue-600 bg-blue-50/40 p-4 sm:p-5" key={mistake.id}>
+              <span className="text-xs font-extrabold uppercase tracking-[.14em] text-blue-700">To correct · {mistakeDimensionLabel(mistake.dimension)}</span>
+              <h2 className="mt-2 text-xl font-bold leading-snug text-slate-950 sm:text-2xl">{mistake.prompt}</h2>
+              <p className="mt-3 text-sm text-slate-600">{mistake.level ? `HSK ${mistake.level} · ` : ""}{mistake.skill} · Added {formatMistakeDate(mistake.createdAt)}</p>
+              <Link className="mt-4 inline-flex min-h-[44px] items-center rounded-xl border border-blue-600 bg-white px-4 py-2 font-bold text-blue-700 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-blue-200" href={mistakeReviewHref(mistake)}>Retry question</Link>
+            </article>)}</div> : <State title="No mistakes match this filter" text="Choose another question type to see other corrections." />}
+          </> : <State title="All caught up" text="You have corrected every mistake in your queue."><div className="mt-5 flex flex-col gap-3 sm:flex-row"><Link className="btn" href="/practice">Keep practicing</Link><button type="button" className="btn secondary" onClick={() => switchMistakeTab("corrected")}>View corrected history</button></div></State>}
+        </section> : <section role="tabpanel" aria-label="Corrected mistakes">
+          {corrected.length ? <>
+            <div className="mb-5"><h2 className="text-2xl font-bold text-slate-950">{corrected.length} corrected mistake{corrected.length === 1 ? "" : "s"}</h2><p className="mt-1 text-slate-600">These records stay available for review.</p></div>
+            <div className="grid gap-6">{correctedGroups.map((group) => <section key={group.label} aria-labelledby={`mistake-group-${group.label.toLowerCase()}`}><h3 id={`mistake-group-${group.label.toLowerCase()}`} className="mb-2 text-sm font-bold uppercase tracking-[.12em] text-slate-500">{group.label}</h3><div className="divide-y divide-slate-200 rounded-2xl border border-slate-200 bg-white">{group.items.map((mistake) => <article className="p-4 sm:px-5" key={mistake.id}>
+              <span className="text-xs font-extrabold uppercase tracking-[.14em] text-emerald-700">✓ Corrected · {mistakeDimensionLabel(mistake.dimension)}</span>
+              <h4 className="mt-1 text-base font-bold leading-snug text-slate-950 sm:text-lg">{mistake.prompt}</h4>
+              <p className="mt-2 text-sm text-slate-600">{mistake.level ? `HSK ${mistake.level} · ` : ""}{mistake.skill}</p>
+              <p className="mt-1 text-sm text-emerald-700">Corrected {formatMistakeDateTime(mistake.resolvedAt ?? mistake.createdAt)}</p>
+            </article>)}</div></section>)}</div>
+            {correctedVisible < corrected.length ? <button type="button" onClick={loadMoreCorrected} disabled={loadingMoreCorrected} className="mt-5 min-h-[44px] w-full rounded-xl border border-slate-300 bg-white px-5 py-3 font-bold text-slate-800 disabled:cursor-not-allowed disabled:opacity-60 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-blue-200">{loadingMoreCorrected ? "Loading…" : "Load more"}</button> : <p className="mt-5 text-center text-sm font-semibold text-slate-500" role="status">All corrected mistakes loaded</p>}
+          </> : <State title="No corrected mistakes yet" text="Correct a mistake successfully and it will appear here."><button type="button" className="btn mt-5" onClick={() => switchMistakeTab("open")}>View mistakes to correct</button></State>}
+        </section>}
+      </div>
+    </Shell>;
+  }
 
   const due = data.capabilities.focusedReview ? data.focusedReview : data.cards.filter((card) => card.dueAt <= new Date().toISOString());
   const serverScopedReviewIds = reviewCardIdsForScope(data.reviewLevelControl, selectedReviewScope);
@@ -843,6 +894,40 @@ export default function LearningDashboard({ mode }: { mode: "today" | "review" |
       {audioError && <p className="mt-4 rounded-xl bg-red-50 p-4 text-sm text-red-700" role="alert">{audioError}</p>}
     </div>
   </Shell>;
+}
+
+function mistakeReviewHref(mistake: Mistake) {
+  return `/review?source=mistakes&contentId=${encodeURIComponent(mistake.contentId)}${mistake.cardId ? `&cardId=${encodeURIComponent(mistake.cardId)}` : ""}`;
+}
+
+function mistakeDimensionLabel(dimension: Dimension) {
+  return dimension === "reading" ? "Reading" : "Listening";
+}
+
+function formatMistakeDate(value: string) {
+  return new Date(value).toLocaleDateString();
+}
+
+function formatMistakeDateTime(value: string) {
+  return new Date(value).toLocaleString();
+}
+
+function groupCorrectedMistakes(mistakes: Mistake[]) {
+  const now = new Date();
+  const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
+  const yesterdayStart = todayStart - 86_400_000;
+  const groups: Array<{ label: "Today" | "Yesterday" | "Earlier"; items: Mistake[] }> = [
+    { label: "Today", items: [] },
+    { label: "Yesterday", items: [] },
+    { label: "Earlier", items: [] },
+  ];
+  for (const mistake of mistakes) {
+    const correctedAt = new Date(mistake.resolvedAt ?? mistake.createdAt).getTime();
+    if (correctedAt >= todayStart) groups[0].items.push(mistake);
+    else if (correctedAt >= yesterdayStart) groups[1].items.push(mistake);
+    else groups[2].items.push(mistake);
+  }
+  return groups.filter((group) => group.items.length > 0);
 }
 
 type TodayJourneyState = "current" | "completed" | "locked" | "skipped";
