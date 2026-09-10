@@ -56,7 +56,7 @@ test("ordinary Review exposes an explicit level selector and blocks zero-count s
   const route = await source("src/app/api/v1/learning/route.ts");
   const reviewService = await source("src/lib/learning/review-session.ts");
 
-  for (const token of ["Choose review level", "Current level", "All levels", "label: `HSK ${level}`", "No due reviews at this level"]) {
+  for (const token of ["Choose review level", "Current level", "All levels", "label: `HSK ${level}`", "has no due reviews", "View all levels"]) {
     assert.ok(client.includes(token), `missing Review level control token: ${token}`);
   }
   assert.match(client, /reviewLevelControl/);
