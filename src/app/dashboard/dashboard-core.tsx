@@ -3,8 +3,8 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { dashboardPrimaryAction } from "@/lib/learning/dashboard";
-import DashboardGrowth, { type DashboardGrowthData } from "./dashboard-growth";
-import DashboardRewards, { type LearningRewardData } from "./dashboard-rewards";
+import DashboardGrowth, { BookIcon, HeadphonesIcon, TargetIcon, TrendIcon, type DashboardGrowthData } from "./dashboard-growth";
+import DashboardRewards, { RewardIcon, type LearningRewardData } from "./dashboard-rewards";
 
 type DashboardItem = {
   kind: "review" | "learn" | "listen" | "practice" | "summary";
@@ -78,8 +78,6 @@ export default function DashboardCore() {
   const learningTasks = taskItems.filter((item) => item.kind === "learn" && item.status === "pending").length;
   const practiceTasks = taskItems.filter((item) => ["listen", "practice"].includes(item.kind) && item.status === "pending").length;
   const primary = dashboardPrimaryAction({ dueReviews, currentLevel, items: data.session.items });
-  const dailyNewLimit = data.capabilities.dailyNewItems;
-  const newWordPercent = dailyNewLimit === null ? 0 : Math.min(100, Math.round(data.usage.dailyNewItems / Math.max(1, dailyNewLimit) * 100));
   const taskPercent = taskItems.length ? Math.round(completedTasks / taskItems.length * 100) : 0;
 
   return <main className="mx-auto min-h-[70vh] max-w-6xl px-5 py-10 sm:py-14">
@@ -103,7 +101,7 @@ export default function DashboardCore() {
           <dl className="mt-5 grid grid-cols-3 gap-3 text-center">
             <div><dt className="text-xs text-slate-400">Review</dt><dd className="mt-1 text-xl font-black">{reviewTasks}</dd></div>
             <div><dt className="text-xs text-slate-400">New words</dt><dd className="mt-1 text-xl font-black">{learningTasks}</dd></div>
-            <div><dt className="text-xs text-slate-400">Practice</dt><dd className="mt-1 text-xl font-black">{practiceTasks}</dd></div>
+            <div><dt className="flex items-center justify-center gap-1 text-xs text-slate-400"><HeadphonesIcon className="h-3.5 w-3.5" />Practice</dt><dd className="mt-1 text-xl font-black">{practiceTasks}</dd></div>
           </dl>
         </div>
       </div>
@@ -111,16 +109,16 @@ export default function DashboardCore() {
 
     <section data-dashboard-layer="2-learning-signals" className="mt-9" aria-labelledby="learning-signals-title">
       <p className="text-sm font-black uppercase tracking-[0.18em] text-blue-700">At a glance</p>
-      <h2 id="learning-signals-title" className="mt-2 text-2xl font-black tracking-tight text-slate-950">Current learning signals</h2>
+      <h2 id="learning-signals-title" className="mt-2 text-2xl font-black tracking-tight text-slate-950">This week’s learning</h2>
       <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <article className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm"><p className="text-sm font-bold text-slate-500">Due reviews</p><strong className="mt-2 block text-3xl font-black text-slate-950">{dueReviews}</strong><p className="mt-1 text-sm text-slate-600">Ready in your review queue</p></article>
-        <article className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm"><p className="text-sm font-bold text-slate-500">Current level</p><strong className="mt-2 block text-3xl font-black text-slate-950">{levelLabel(currentLevel)}</strong><p className="mt-1 text-sm text-slate-600">Saved learning starting point</p></article>
-        <article className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm"><p className="text-sm font-bold text-slate-500">New words today</p><strong className="mt-2 block text-3xl font-black text-slate-950">{dailyNewLimit === null ? data.usage.dailyNewItems : `${data.usage.dailyNewItems}/${dailyNewLimit}`}</strong><p className="mt-1 text-sm text-slate-600">{dailyNewLimit === null ? "No daily Pro limit" : `${Math.max(0, dailyNewLimit - data.usage.dailyNewItems)} Free items remaining`}</p>{dailyNewLimit !== null && <div className="mt-3 h-1.5 overflow-hidden rounded-full bg-slate-100" role="progressbar" aria-label="New words used today" aria-valuemin={0} aria-valuemax={100} aria-valuenow={newWordPercent}><span className="block h-full rounded-full bg-emerald-500" style={{ width: `${newWordPercent}%` }} /></div>}</article>
-        <article className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm"><p className="text-sm font-bold text-slate-500">Learning streak</p><strong className="mt-2 block text-3xl font-black text-slate-950">{data.streak.current} day{data.streak.current === 1 ? "" : "s"}</strong><p className="mt-1 text-sm text-slate-600">Best: {data.streak.longest} day{data.streak.longest === 1 ? "" : "s"}</p></article>
+        <article className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm"><TrendIcon className="h-5 w-5 text-blue-600" /><p className="mt-3 text-sm font-bold text-slate-500">Learning time</p><strong className="mt-2 block text-3xl font-black text-slate-950">{rewards.weekMinutes} min</strong><p className="mt-1 text-sm text-slate-600">Effective online learning this week</p></article>
+        <article className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm"><RewardIcon className="h-5 w-5 text-indigo-600" /><p className="mt-3 text-sm font-bold text-slate-500">Learning points</p><strong className="mt-2 block text-3xl font-black text-slate-950">{rewards.weekPoints}</strong><p className="mt-1 text-sm text-slate-600">Earned this week</p></article>
+        <article className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm"><BookIcon className="h-5 w-5 text-emerald-600" /><p className="mt-3 text-sm font-bold text-slate-500">New vocabulary</p><strong className="mt-2 block text-3xl font-black text-slate-950">{growth.weekSummary.newWords}</strong><p className="mt-1 text-sm text-slate-600">First learned this week</p></article>
+        <article className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm"><TargetIcon className="h-5 w-5 text-amber-600" /><p className="mt-3 text-sm font-bold text-slate-500">Due for review</p><strong className="mt-2 block text-3xl font-black text-slate-950">{dueReviews}</strong><p className="mt-1 text-sm text-slate-600">Ready in your review queue</p></article>
       </div>
     </section>
 
-    <DashboardRewards rewards={rewards} />
-    <DashboardGrowth growth={growth} />
+    <DashboardRewards rewards={rewards} primaryHref={primary.href} onRewardsChange={setRewards} />
+    <DashboardGrowth growth={growth} primaryHref={primary.href} />
   </main>;
 }

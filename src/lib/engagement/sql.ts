@@ -1,3 +1,32 @@
-export const LEARNING_POINT_AWARD_SQL = "INSERT OR IGNORE INTO learning_point_ledger(id,owner_id,local_day,period_key,units,source,idempotency_key,created_at) SELECT ?,?,?,?,CASE WHEN (SELECT COUNT(*) FROM learning_point_ledger WHERE owner_id=? AND period_key=?)<7 THEN 2 WHEN (SELECT COUNT(*) FROM learning_point_ledger WHERE owner_id=? AND period_key=?)<14 THEN 4 WHEN (SELECT COUNT(*) FROM learning_point_ledger WHERE owner_id=? AND period_key=?)<21 THEN 6 ELSE 10 END,'monthly_effective_learning_day',?,? WHERE EXISTS(SELECT 1 FROM learning_engagement_days WHERE owner_id=? AND local_day=? AND active_seconds>=900) AND EXISTS(SELECT 1 FROM learning_qualifying_tasks WHERE owner_id=? AND local_day=?)";
+export const LEARNING_HEARTBEAT_DAY_SQL = `
+INSERT INTO learning_engagement_days(owner_id,local_day,active_seconds,last_heartbeat_at,created_at,updated_at)
+VALUES(?,?,MIN(3600,?),?,?,?)
+ON CONFLICT(owner_id,local_day) DO UPDATE SET
+  active_seconds=MIN(
+    3600,
+    learning_engagement_days.active_seconds + MIN(
+      excluded.active_seconds,
+      MAX(0, CAST((julianday(excluded.last_heartbeat_at)-julianday(learning_engagement_days.last_heartbeat_at))*86400 AS INTEGER))
+    )
+  ),
+  last_heartbeat_at=MAX(learning_engagement_days.last_heartbeat_at,excluded.last_heartbeat_at),
+  updated_at=excluded.updated_at
+`;
 
-export const LEARNING_HEARTBEAT_DAY_SQL = "INSERT INTO learning_engagement_days(owner_id,local_day,active_seconds,last_heartbeat_at,created_at,updated_at) VALUES(?,?,?,?,?,?) ON CONFLICT(owner_id,local_day) DO UPDATE SET active_seconds=MIN(900,learning_engagement_days.active_seconds+MIN(excluded.active_seconds,MAX(0,unixepoch(excluded.last_heartbeat_at)-unixepoch(learning_engagement_days.last_heartbeat_at)))),last_heartbeat_at=MAX(learning_engagement_days.last_heartbeat_at,excluded.last_heartbeat_at),updated_at=MAX(learning_engagement_days.updated_at,excluded.updated_at)";
+export const LEARNING_POINT_AWARD_SQL = `
+INSERT INTO learning_point_ledger(id,owner_id,local_day,period_key,units,source,idempotency_key,created_at)
+SELECT ?,?,?,?,
+  CASE
+    WHEN active_seconds>=3600 THEN 10
+    WHEN active_seconds>=1800 THEN 5
+    WHEN active_seconds>=600 THEN 1
+    ELSE 0
+  END,
+  'daily_online_learning',?,?
+FROM learning_engagement_days
+WHERE owner_id=? AND local_day=? AND active_seconds>=600
+ON CONFLICT(owner_id,local_day) DO UPDATE SET
+  units=MAX(learning_point_ledger.units,excluded.units),
+  source=CASE WHEN excluded.units>learning_point_ledger.units THEN excluded.source ELSE learning_point_ledger.source END,
+  idempotency_key=CASE WHEN excluded.units>learning_point_ledger.units THEN excluded.idempotency_key ELSE learning_point_ledger.idempotency_key END
+`;

@@ -32,11 +32,20 @@ export async function usageSnapshot(ownerId: string, periodKey: string): Promise
   return snapshot;
 }
 
-export async function learningActivitySince(ownerId: string, sinceIso: string): Promise<Array<{ action: string; createdAt: string }>> {
+export async function learningActivitySince(ownerId: string, sinceIso: string): Promise<Array<{ action: string; createdAt: string; reviewCorrect?: boolean }>> {
   const rows = await (await db()).prepare(
-    "SELECT action,created_at FROM policy_audit_events WHERE subject_id=? AND resource_type='learning' AND result='success' AND created_at>=? ORDER BY created_at ASC",
-  ).bind(ownerId, sinceIso).all<{ action: string; created_at: string }>();
-  return (rows.results as Array<{ action: string; created_at: string }>).map((row) => ({ action: row.action, createdAt: row.created_at }));
+    "SELECT action,metadata_json,created_at FROM policy_audit_events WHERE subject_id=? AND resource_type='learning' AND result='success' AND created_at>=? ORDER BY created_at ASC",
+  ).bind(ownerId, sinceIso).all<{ action: string; metadata_json: string | null; created_at: string }>();
+  return (rows.results as Array<{ action: string; metadata_json: string | null; created_at: string }>).map((row) => {
+    let reviewCorrect: boolean | undefined;
+    if (row.action === "grade" || row.action === "retry_review") {
+      try {
+        const metadata = JSON.parse(row.metadata_json || "{}") as { reviewCorrect?: unknown };
+        if (typeof metadata.reviewCorrect === "boolean") reviewCorrect = metadata.reviewCorrect;
+      } catch { /* Legacy malformed metadata has no truthful review outcome. */ }
+    }
+    return { action: row.action, createdAt: row.created_at, ...(typeof reviewCorrect === "boolean" ? { reviewCorrect } : {}) };
+  });
 }
 
 export async function saveState(ownerId: string, state: LearningState, revision: number, audit?: AuditEvent, usage?: UsageCharge, referralActivity?: ReferralLearningActivity, engagementActivity?: LearningEngagementActivity) {

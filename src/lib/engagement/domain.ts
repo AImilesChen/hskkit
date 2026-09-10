@@ -1,52 +1,84 @@
-export const EFFECTIVE_LEARNING_SECONDS = 15 * 60;
 export const badgeMilestones = [3, 7, 14, 30, 60, 90] as const;
 
-export function isEligibleLearningPath(path: string) {
-  return /^\/(today|review|practice|listen|placement|hsk-level-test|reading|vocabulary|mistakes|grammar)(\/|$)/.test(path)
-    || /^\/(topics|word|character)\//.test(path)
-    || /^\/hsk-[1-9]-(practice-test|reading-practice)(\/|$)/.test(path);
+export type LearningRewardDay = {
+  localDay: string;
+  activeSeconds: number;
+  points: number;
+};
+
+export const learningPointTiers = [
+  { seconds: 600, points: 1 },
+  { seconds: 1_800, points: 5 },
+  { seconds: 3_600, points: 10 },
+] as const;
+
+const APPROVED_LEARNING_PREFIXES = [
+  "/today",
+  "/vocabulary",
+  "/review",
+  "/mistakes",
+  "/listen",
+  "/reading",
+  "/grammar",
+  "/practice",
+  "/placement",
+  "/hsk-level-test",
+] as const;
+
+export function isEligibleLearningPath(pathname: string): boolean {
+  const path = pathname.split(/[?#]/, 1)[0].replace(/\/+$/, "") || "/";
+  if (APPROVED_LEARNING_PREFIXES.some((prefix) => path === prefix || path.startsWith(`${prefix}/`))) return true;
+  return /^\/hsk-(?:[1-9]|7-9)-(?:practice-test|reading-practice)(?:\/|$)/.test(path);
 }
 
-export type RewardedLearningDay = { localDay: string; points: number };
-
-const dayNumber = (day: string) => Math.floor(Date.parse(`${day}T00:00:00.000Z`) / 86_400_000);
-const monthKey = (day: string) => day.slice(0, 7);
-
-export function creditedHeartbeatSeconds(claimedSeconds: number, sessionCreatedAt: Date, now: Date) {
-  const elapsedSeconds = Math.max(0, Math.floor((now.getTime() - sessionCreatedAt.getTime()) / 1000));
-  return Math.min(60, Math.max(0, Math.trunc(claimedSeconds)), elapsedSeconds);
+export function learningPointsForActiveSeconds(seconds: number): number {
+  const safe = Math.max(0, Math.min(3_600, Math.trunc(seconds) || 0));
+  if (safe >= 3_600) return 10;
+  if (safe >= 1_800) return 5;
+  if (safe >= 600) return 1;
+  return 0;
 }
 
-export function learningPointsForMonthlyDay(day: number) {
-  if (!Number.isInteger(day) || day < 1) throw new Error("INVALID_MONTHLY_LEARNING_DAY");
-  if (day <= 7) return 2;
-  if (day <= 14) return 4;
-  if (day <= 21) return 6;
-  return 10;
+export function creditedHeartbeatSeconds(requestedSeconds: number, sessionCreatedAt: Date, now: Date): number {
+  if (!Number.isInteger(requestedSeconds) || requestedSeconds < 1 || requestedSeconds > 60) return 0;
+  const elapsed = Math.floor((now.getTime() - sessionCreatedAt.getTime()) / 1_000);
+  if (!Number.isFinite(elapsed) || elapsed < 1) return 0;
+  return Math.min(60, requestedSeconds, elapsed);
 }
 
-export function learningStreak(days: string[], today: string) {
-  const ordered = [...new Set(days)].sort();
+function dateAtNoon(day: string): Date {
+  return new Date(`${day}T12:00:00.000Z`);
+}
+
+function dayBefore(day: string): string {
+  const date = dateAtNoon(day);
+  date.setUTCDate(date.getUTCDate() - 1);
+  return date.toISOString().slice(0, 10);
+}
+
+function mondayFor(day: string): string {
+  const date = dateAtNoon(day);
+  const offset = (date.getUTCDay() + 6) % 7;
+  date.setUTCDate(date.getUTCDate() - offset);
+  return date.toISOString().slice(0, 10);
+}
+
+function streaks(today: string, days: LearningRewardDay[]) {
+  const learned = new Set(days.filter((day) => day.activeSeconds > 0).map((day) => day.localDay));
+  let current = 0;
+  let cursor = learned.has(today) ? today : dayBefore(today);
+  while (learned.has(cursor)) {
+    current += 1;
+    cursor = dayBefore(cursor);
+  }
+  const ordered = [...learned].sort();
   let longest = 0;
   let run = 0;
-  let prior: number | undefined;
+  let previous = "";
   for (const day of ordered) {
-    const current = dayNumber(day);
-    run = prior !== undefined && current === prior + 1 ? run + 1 : 1;
+    run = previous && dayBefore(day) === previous ? run + 1 : 1;
     longest = Math.max(longest, run);
-    prior = current;
-  }
-  let current = 0;
-  if (ordered.length) {
-    const last = dayNumber(ordered.at(-1)!);
-    const gap = dayNumber(today) - last;
-    if (gap === 0 || gap === 1) {
-      current = 1;
-      for (let index = ordered.length - 1; index > 0; index -= 1) {
-        if (dayNumber(ordered[index]) - dayNumber(ordered[index - 1]) !== 1) break;
-        current += 1;
-      }
-    }
+    previous = day;
   }
   return { current, longest };
 }
@@ -54,39 +86,52 @@ export function learningStreak(days: string[], today: string) {
 export function buildRewardSnapshot(input: {
   today: string;
   activeSeconds: number;
-  qualifyingTasks: number;
-  rewardedDays: RewardedLearningDay[];
+  activityDays: LearningRewardDay[];
   lifetimePoints: number;
+  redeemedPoints?: number;
 }) {
-  const todayReward = input.rewardedDays.find((entry) => entry.localDay === input.today);
-  const monthDays = input.rewardedDays.filter((entry) => monthKey(entry.localDay) === monthKey(input.today));
-  const todayQualified = Boolean(todayReward) || (input.activeSeconds >= EFFECTIVE_LEARNING_SECONDS && input.qualifyingTasks >= 1);
-  const nextMonthLearningDay = monthDays.length + (todayReward ? 0 : 1);
-  const streak = learningStreak(input.rewardedDays.map((entry) => entry.localDay), input.today);
+  const activeSeconds = Math.max(0, Math.min(3_600, Math.trunc(input.activeSeconds) || 0));
+  const todayAward = learningPointsForActiveSeconds(activeSeconds);
+  const nextTier = learningPointTiers.find((tier) => tier.seconds > activeSeconds) ?? null;
+  const monthPrefix = input.today.slice(0, 7);
+  const weekStart = mondayFor(input.today);
+  const activityDays = input.activityDays.map((day) => ({
+    localDay: day.localDay,
+    activeSeconds: Math.max(0, Math.min(3_600, Math.trunc(day.activeSeconds) || 0)),
+    points: Math.max(0, Math.trunc(day.points) || 0),
+  }));
+  const monthDays = activityDays.filter((day) => day.localDay.startsWith(monthPrefix) && day.activeSeconds > 0);
+  const weekDays = activityDays.filter((day) => day.localDay >= weekStart && day.localDay <= input.today);
+  const streak = streaks(input.today, activityDays);
+  const redeemedPoints = Math.max(0, Math.trunc(input.redeemedPoints ?? 0));
+  const lifetimePoints = Math.max(0, Math.trunc(input.lifetimePoints) || 0);
+  const availablePoints = Math.max(0, lifetimePoints - redeemedPoints);
   const unlockedBadges = badgeMilestones
     .filter((days) => streak.longest >= days)
     .map((days) => ({ days, key: `streak-${days}`, label: `${days}-day streak` }));
-  const nextBadgeDays = badgeMilestones.find((days) => days > streak.longest);
+  const nextDays = badgeMilestones.find((days) => days > streak.longest);
+
   return {
     today: input.today,
-    todayQualified,
-    todayAwarded: Boolean(todayReward),
-    todayAward: todayReward?.points ?? (todayQualified ? learningPointsForMonthlyDay(nextMonthLearningDay) : 0),
-    activeSeconds: Math.min(EFFECTIVE_LEARNING_SECONDS, Math.max(0, Math.trunc(input.activeSeconds))),
-    remainingSeconds: Math.max(0, EFFECTIVE_LEARNING_SECONDS - Math.max(0, Math.trunc(input.activeSeconds))),
-    qualifyingTasks: Math.max(0, Math.trunc(input.qualifyingTasks)),
-    needsTask: input.qualifyingTasks < 1,
+    activeSeconds,
+    todayAward,
+    todayAwarded: todayAward > 0,
+    nextTierPoints: nextTier?.points ?? null,
+    nextTierSeconds: nextTier?.seconds ?? null,
+    remainingSeconds: nextTier ? nextTier.seconds - activeSeconds : 0,
     monthLearningDays: monthDays.length,
-    nextMonthLearningDay,
-    nextAward: learningPointsForMonthlyDay(nextMonthLearningDay),
-    monthPoints: monthDays.reduce((sum, entry) => sum + entry.points, 0),
-    lifetimePoints: Math.max(0, Math.trunc(input.lifetimePoints)),
+    monthPoints: monthDays.reduce((sum, day) => sum + day.points, 0),
+    weekMinutes: Math.floor(weekDays.reduce((sum, day) => sum + day.activeSeconds, 0) / 60),
+    weekPoints: weekDays.reduce((sum, day) => sum + day.points, 0),
+    lifetimePoints,
+    redeemedPoints,
+    availablePoints,
+    redeemableCredits: Math.floor(availablePoints / 10),
     currentStreak: streak.current,
     longestStreak: streak.longest,
     unlockedBadges,
-    nextBadge: nextBadgeDays
-      ? { days: nextBadgeDays, remainingDays: Math.max(0, nextBadgeDays - streak.current), key: `streak-${nextBadgeDays}`, label: `${nextBadgeDays}-day streak` }
-      : null,
-    exchangeRate: { learningPoints: 10, aiCredits: 1, available: false },
+    nextBadge: nextDays ? { days: nextDays, remainingDays: nextDays - streak.longest, key: `streak-${nextDays}`, label: `${nextDays}-day streak` } : null,
+    exchangeRate: { learningPoints: 10, aiCredits: 1, available: availablePoints >= 10 },
+    activityDays,
   };
 }

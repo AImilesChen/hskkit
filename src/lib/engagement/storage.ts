@@ -1,5 +1,5 @@
 import { getCloudflareContext } from "@opennextjs/cloudflare";
-import { badgeMilestones, buildRewardSnapshot, creditedHeartbeatSeconds, isEligibleLearningPath } from "./domain.ts";
+import { badgeMilestones, buildRewardSnapshot, creditedHeartbeatSeconds, isEligibleLearningPath, type LearningRewardDay } from "./domain.ts";
 import { LEARNING_HEARTBEAT_DAY_SQL, LEARNING_POINT_AWARD_SQL } from "./sql.ts";
 
 const database = () => getCloudflareContext().env.LEARNING_DB;
@@ -61,16 +61,11 @@ export function engagementTaskStatements(
   activity: LearningEngagementActivity,
   createdAt: string,
 ) {
-  const periodKey = activity.localDay.slice(0, 7);
   const guard = accountGuardStatements(db, ownerId);
   return [
     guard.before,
     db.prepare("INSERT OR IGNORE INTO learning_qualifying_tasks(id,owner_id,local_day,action,idempotency_key,created_at) VALUES(?,?,?,?,?,?)")
       .bind(crypto.randomUUID(), ownerId, activity.localDay, activity.action, activity.idempotencyKey, createdAt),
-    db.prepare("INSERT INTO learning_engagement_days(owner_id,local_day,active_seconds,last_heartbeat_at,created_at,updated_at) VALUES(?,?,0,?,?,?) ON CONFLICT(owner_id,local_day) DO UPDATE SET updated_at=excluded.updated_at")
-      .bind(ownerId, activity.localDay, createdAt, createdAt, createdAt),
-    db.prepare(LEARNING_POINT_AWARD_SQL)
-      .bind(crypto.randomUUID(), ownerId, activity.localDay, periodKey, ownerId, periodKey, ownerId, periodKey, ownerId, periodKey, `effective-day:${activity.localDay}`, createdAt, ownerId, activity.localDay, ownerId, activity.localDay),
     guard.after,
   ];
 }
@@ -82,18 +77,27 @@ export async function recordLearningTask(ownerId: string, activity: LearningEnga
 
 async function reconcileReward(ownerId: string, localDay: string, now: Date) {
   const db = database();
-  const [day, task, existing] = await Promise.all([
-    db.prepare("SELECT active_seconds FROM learning_engagement_days WHERE owner_id=? AND local_day=?").bind(ownerId, localDay).first<{ active_seconds: number }>(),
-    db.prepare("SELECT COUNT(*) count FROM learning_qualifying_tasks WHERE owner_id=? AND local_day=?").bind(ownerId, localDay).first<{ count: number }>(),
-    db.prepare("SELECT units FROM learning_point_ledger WHERE owner_id=? AND local_day=?").bind(ownerId, localDay).first<{ units: number }>(),
+  await guardedBatch(db, ownerId, [
+    db.prepare(LEARNING_POINT_AWARD_SQL).bind(
+      crypto.randomUUID(), ownerId, localDay, localDay.slice(0, 7),
+      `daily-online:${localDay}`, iso(now), ownerId, localDay,
+    ),
   ]);
-  if (!existing && Number(day?.active_seconds ?? 0) >= 900 && Number(task?.count ?? 0) >= 1) {
-    const periodKey = localDay.slice(0, 7);
-    await guardedBatch(db, ownerId, [
-      db.prepare(LEARNING_POINT_AWARD_SQL)
-        .bind(crypto.randomUUID(), ownerId, localDay, periodKey, ownerId, periodKey, ownerId, periodKey, ownerId, periodKey, `effective-day:${localDay}`, iso(now), ownerId, localDay, ownerId, localDay),
-    ]);
-  }
+}
+
+async function rewardActivityDays(ownerId: string): Promise<LearningRewardDay[]> {
+  const rows = await database().prepare(`
+    SELECT d.local_day,d.active_seconds,COALESCE(p.units,0) points
+    FROM learning_engagement_days d
+    LEFT JOIN learning_point_ledger p ON p.owner_id=d.owner_id AND p.local_day=d.local_day
+    WHERE d.owner_id=?
+    ORDER BY d.local_day ASC
+  `).bind(ownerId).all<{ local_day: string; active_seconds: number; points: number }>();
+  return (rows.results as Array<{ local_day: string; active_seconds: number; points: number }>).map((row) => ({
+    localDay: row.local_day,
+    activeSeconds: Number(row.active_seconds),
+    points: Number(row.points),
+  }));
 }
 
 async function persistUnlockedBadges(ownerId: string, snapshot: ReturnType<typeof buildRewardSnapshot>, now: Date) {
@@ -109,21 +113,77 @@ export async function learningRewardSnapshot(ownerId: string, suggestedTimezone:
   const localDay = localDayInTimezone(now, timezone);
   await reconcileReward(ownerId, localDay, now);
   const db = database();
-  const [day, task, rewarded, total] = await Promise.all([
-    db.prepare("SELECT active_seconds FROM learning_engagement_days WHERE owner_id=? AND local_day=?").bind(ownerId, localDay).first<{ active_seconds: number }>(),
-    db.prepare("SELECT COUNT(*) count FROM learning_qualifying_tasks WHERE owner_id=? AND local_day=?").bind(ownerId, localDay).first<{ count: number }>(),
-    db.prepare("SELECT local_day,units FROM learning_point_ledger WHERE owner_id=? ORDER BY local_day ASC").bind(ownerId).all<{ local_day: string; units: number }>(),
+  const [activityDays, total, redeemed, history] = await Promise.all([
+    rewardActivityDays(ownerId),
     db.prepare("SELECT COALESCE(SUM(units),0) total FROM learning_point_ledger WHERE owner_id=?").bind(ownerId).first<{ total: number }>(),
+    db.prepare("SELECT COALESCE(SUM(points_spent),0) total FROM learning_point_redemptions WHERE owner_id=?").bind(ownerId).first<{ total: number }>(),
+    db.prepare("SELECT id,points_spent,credits_granted,created_at FROM learning_point_redemptions WHERE owner_id=? ORDER BY created_at DESC LIMIT 10")
+      .bind(ownerId).all<{ id: string; points_spent: number; credits_granted: number; created_at: string }>(),
   ]);
+  const activeSeconds = activityDays.find((day: LearningRewardDay) => day.localDay === localDay)?.activeSeconds ?? 0;
   const snapshot = buildRewardSnapshot({
     today: localDay,
-    activeSeconds: Number(day?.active_seconds ?? 0),
-    qualifyingTasks: Number(task?.count ?? 0),
-    rewardedDays: (rewarded.results as Array<{ local_day: string; units: number }>).map((entry) => ({ localDay: entry.local_day, points: Number(entry.units) })),
+    activeSeconds,
+    activityDays,
     lifetimePoints: Number(total?.total ?? 0),
+    redeemedPoints: Number(redeemed?.total ?? 0),
   });
   await persistUnlockedBadges(ownerId, snapshot, now);
-  return { ...snapshot, timezone };
+  return {
+    ...snapshot,
+    timezone,
+    redemptionHistory: (history.results as Array<{ id: string; points_spent: number; credits_granted: number; created_at: string }>).map((row) => ({
+      id: row.id,
+      pointsSpent: Number(row.points_spent),
+      creditsGranted: Number(row.credits_granted),
+      createdAt: row.created_at,
+    })),
+  };
+}
+
+export async function redeemLearningPoints(
+  ownerId: string,
+  suggestedTimezone: string,
+  input: { idempotencyKey: string; credits: number },
+  now = new Date(),
+) {
+  if (!/^[a-zA-Z0-9_-]{16,80}$/.test(input.idempotencyKey)) throw new Error("INVALID_IDEMPOTENCY_KEY");
+  if (!Number.isInteger(input.credits) || input.credits < 1 || input.credits > 100) throw new Error("POINTS_MUST_BE_MULTIPLE_OF_10");
+  const db = database();
+  const existing = await db.prepare("SELECT id FROM learning_point_redemptions WHERE owner_id=? AND idempotency_key=?")
+    .bind(ownerId, input.idempotencyKey).first<{ id: string }>();
+  if (!existing) {
+    const points = input.credits * 10;
+    const redemptionId = crypto.randomUUID();
+    const assertionId = crypto.randomUUID();
+    const timestamp = iso(now);
+    try {
+      await guardedBatch(db, ownerId, [
+        db.prepare(`INSERT INTO learning_reward_assertions(id,ok)
+          SELECT ?,CASE WHEN
+            COALESCE((SELECT SUM(units) FROM learning_point_ledger WHERE owner_id=?),0)
+            - COALESCE((SELECT SUM(points_spent) FROM learning_point_redemptions WHERE owner_id=?),0) >= ?
+          THEN 1 ELSE 0 END`).bind(assertionId, ownerId, ownerId, points),
+        db.prepare("INSERT INTO learning_point_redemptions(id,owner_id,idempotency_key,points_spent,credits_granted,created_at) VALUES(?,?,?,?,?,?)")
+          .bind(redemptionId, ownerId, input.idempotencyKey, points, input.credits, timestamp),
+        db.prepare("INSERT INTO credit_ledger(id,owner_id,units,source,reward_id,operation_id,expires_at,created_at) VALUES(?,?,?,?,?,?,?,?)")
+          .bind(crypto.randomUUID(), ownerId, input.credits, "learning_points_exchange", redemptionId, null, "9999-12-31T23:59:59.999Z", timestamp),
+        db.prepare("DELETE FROM learning_reward_assertions WHERE id=?").bind(assertionId),
+      ]);
+    } catch (error) {
+      const replay = await db.prepare("SELECT id FROM learning_point_redemptions WHERE owner_id=? AND idempotency_key=?")
+        .bind(ownerId, input.idempotencyKey).first<{ id: string }>();
+      if (!replay) {
+        const total = await db.prepare(`SELECT
+          COALESCE((SELECT SUM(units) FROM learning_point_ledger WHERE owner_id=?),0)
+          - COALESCE((SELECT SUM(points_spent) FROM learning_point_redemptions WHERE owner_id=?),0) available`)
+          .bind(ownerId, ownerId).first<{ available: number }>();
+        if (Number(total?.available ?? 0) < points) throw new Error("INSUFFICIENT_LEARNING_POINTS");
+        throw error;
+      }
+    }
+  }
+  return learningRewardSnapshot(ownerId, suggestedTimezone, now);
 }
 
 export async function startLearningEngagement(ownerId: string, suggestedTimezone: string, route: string, now = new Date()) {
@@ -160,13 +220,22 @@ export async function recordForegroundHeartbeat(
     .bind(input.sessionToken, ownerId, localDay, input.route, timestamp).first<{ created_at: string }>();
   if (!session) throw new Error("ENGAGEMENT_SESSION_EXPIRED");
   const creditedSeconds = creditedHeartbeatSeconds(input.seconds, new Date(session.created_at), now);
+  const periodKey = localDay.slice(0, 7);
   try {
     await guardedBatch(db, ownerId, [
-      db.prepare("INSERT INTO learning_engagement_heartbeats(id,owner_id,local_day,credited_seconds,created_at) VALUES(?,?,?,?,?)").bind(input.heartbeatId, ownerId, localDay, creditedSeconds, timestamp),
+      db.prepare("INSERT INTO learning_engagement_heartbeats(id,owner_id,local_day,credited_seconds,created_at) VALUES(?,?,?,?,?)")
+        .bind(input.heartbeatId, ownerId, localDay, creditedSeconds, timestamp),
       db.prepare(LEARNING_HEARTBEAT_DAY_SQL).bind(ownerId, localDay, creditedSeconds, timestamp, timestamp, timestamp),
+      db.prepare(LEARNING_POINT_AWARD_SQL).bind(
+        crypto.randomUUID(), ownerId, localDay, periodKey,
+        `daily-online:${localDay}`, timestamp, ownerId, localDay,
+      ),
+      db.prepare("UPDATE learning_engagement_sessions SET expires_at=? WHERE id=? AND owner_id=?")
+        .bind(iso(new Date(now.getTime() + 5 * 60_000)), input.sessionToken, ownerId),
     ]);
   } catch (error) {
-    const replay = await db.prepare("SELECT 1 ok FROM learning_engagement_heartbeats WHERE id=? AND owner_id=?").bind(input.heartbeatId, ownerId).first<{ ok: number }>();
+    const replay = await db.prepare("SELECT 1 ok FROM learning_engagement_heartbeats WHERE id=? AND owner_id=?")
+      .bind(input.heartbeatId, ownerId).first<{ ok: number }>();
     if (!replay) throw error;
   }
   return learningRewardSnapshot(ownerId, timezone, now);

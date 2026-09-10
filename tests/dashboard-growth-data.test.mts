@@ -18,7 +18,7 @@ test("growth snapshot uses account timezone and only successful learning actions
     timezone: "America/Los_Angeles",
     activity: [
       { action: "attempt", createdAt: "2026-09-01T00:30:00.000Z" },
-      { action: "grade", createdAt: "2026-09-05T08:00:00.000Z" },
+      { action: "grade", createdAt: "2026-09-05T08:00:00.000Z", reviewCorrect: true },
       { action: "configure_today", createdAt: "2026-09-05T09:00:00.000Z" },
     ],
     attempts: [],
@@ -26,9 +26,10 @@ test("growth snapshot uses account timezone and only successful learning actions
   });
   assert.equal(snapshot.timezone, "America/Los_Angeles");
   assert.equal(snapshot.curve30.at(-1)?.date, "2026-09-05");
-  assert.equal(snapshot.curve30.find((day) => day.date === "2026-08-31")?.count, 1);
-  assert.equal(snapshot.curve30.find((day) => day.date === "2026-09-05")?.count, 1);
-  assert.equal(snapshot.calendar.days.find((day) => day.date === "2026-09-05")?.count, 1);
+  assert.equal(snapshot.curve30.find((day) => day.date === "2026-08-31")?.completedTasks, 1);
+  assert.equal(snapshot.curve30.find((day) => day.date === "2026-09-05")?.completedTasks, 1);
+  assert.equal(snapshot.curve30.find((day) => day.date === "2026-09-05")?.reviewAccuracy, 100);
+  assert.equal(snapshot.calendar.days.find((day) => day.date === "2026-09-05")?.completedTasks, 1);
   assert.equal(snapshot.totalActions30, 2);
 });
 
@@ -64,7 +65,7 @@ test("empty state remains genuinely empty instead of inventing activity", () => 
   assert.equal(snapshot.hasActivity, false);
   assert.equal(snapshot.hasCalendarActivity, false);
   assert.equal(snapshot.hasLevelProgress, false);
-  assert.ok(snapshot.curve30.every((day) => day.count === 0));
+  assert.ok(snapshot.curve30.every((day) => day.completedTasks === 0 && day.activeSeconds === 0 && day.points === 0));
   assert.ok(snapshot.calendar.days.every((day) => !day.active));
   assert.ok(snapshot.levelProgress.every((row) => row.learned === 0));
 });

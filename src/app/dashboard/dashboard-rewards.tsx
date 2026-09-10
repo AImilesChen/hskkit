@@ -1,66 +1,139 @@
 "use client";
 
+import Link from "next/link";
+import { useEffect, useState } from "react";
+
 export type LearningRewardData = {
   today: string;
   timezone: string;
-  todayQualified: boolean;
-  todayAwarded: boolean;
   todayAward: number;
+  todayAwarded: boolean;
   activeSeconds: number;
   remainingSeconds: number;
-  qualifyingTasks: number;
-  needsTask: boolean;
+  nextTierPoints: number | null;
+  nextTierSeconds: number | null;
   monthLearningDays: number;
-  nextMonthLearningDay: number;
-  nextAward: number;
   monthPoints: number;
+  weekMinutes: number;
+  weekPoints: number;
   lifetimePoints: number;
+  redeemedPoints: number;
+  availablePoints: number;
+  redeemableCredits: number;
   currentStreak: number;
   longestStreak: number;
   unlockedBadges: Array<{ days: number; key: string; label: string }>;
   nextBadge: { days: number; remainingDays: number; key: string; label: string } | null;
-  exchangeRate: { learningPoints: number; aiCredits: number; available: false };
+  exchangeRate: { learningPoints: 10; aiCredits: 1; available: boolean };
+  activityDays: Array<{ localDay: string; activeSeconds: number; points: number }>;
+  redemptionHistory: Array<{ id: string; pointsSpent: number; creditsGranted: number; createdAt: string }>;
 };
 
-const minutes = (seconds: number) => Math.min(15, Math.floor(seconds / 60));
+type IconProps = { className?: string };
+export function RewardIcon({ className = "h-5 w-5" }: IconProps) {
+  return <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true"><path d="M12 3l2.6 5.3 5.8.8-4.2 4.1 1 5.8-5.2-2.8L6.8 19l1-5.8-4.2-4.1 5.8-.8L12 3z" /></svg>;
+}
+export function LockIcon({ className = "h-5 w-5" }: IconProps) {
+  return <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true"><rect x="5" y="10" width="14" height="11" rx="2" /><path d="M8 10V7a4 4 0 018 0v3" /></svg>;
+}
 
-export default function DashboardRewards({ rewards }: { rewards: LearningRewardData }) {
-  const todayMessage = rewards.todayAwarded
-    ? `Earned ${rewards.todayAward} learning points today.`
-    : rewards.activeSeconds < 900
-      ? `${Math.ceil(rewards.remainingSeconds / 60)} active minute${Math.ceil(rewards.remainingSeconds / 60) === 1 ? "" : "s"} left, plus one completed task.`
-      : rewards.needsTask
-        ? "Complete one real learning task to earn today’s points."
-        : `Today qualifies for ${rewards.todayAward} learning points.`;
+const minutes = (seconds: number) => Math.min(60, Math.floor(seconds / 60));
+
+export default function DashboardRewards({ rewards, primaryHref, onRewardsChange }: {
+  rewards: LearningRewardData;
+  primaryHref: string;
+  onRewardsChange: (next: LearningRewardData) => void;
+}) {
+  const [credits, setCredits] = useState(1);
+  const [confirming, setConfirming] = useState(false);
+  const [busy, setBusy] = useState(false);
+  const [message, setMessage] = useState("");
+  useEffect(() => setCredits((value) => Math.max(1, Math.min(value, Math.max(1, rewards.redeemableCredits)))), [rewards.redeemableCredits]);
+
+  const remainingMinutes = Math.ceil(rewards.remainingSeconds / 60);
+  const todayMessage = rewards.nextTierPoints === null
+    ? "Daily maximum reached: 10 learning points."
+    : `${remainingMinutes} more active minute${remainingMinutes === 1 ? "" : "s"} to reach ${rewards.nextTierPoints} points today.`;
+
+  async function redeem() {
+    setBusy(true);
+    setMessage("");
+    try {
+      const response = await fetch("/api/v1/account/learning-rewards", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "redeem", credits, idempotencyKey: crypto.randomUUID() }),
+      });
+      const payload = await response.json() as LearningRewardData & { error?: string };
+      if (!response.ok) throw new Error(payload.error || "REDEMPTION_FAILED");
+      onRewardsChange(payload);
+      window.dispatchEvent(new CustomEvent("hskkit:learning-reward", { detail: payload }));
+      setMessage(`Exchange complete. ${credits} AI credit${credits === 1 ? "" : "s"} added.`);
+      setConfirming(false);
+    } catch (error) {
+      setMessage(error instanceof Error && error.message === "INSUFFICIENT_LEARNING_POINTS" ? "Your available learning points changed. Refresh and try again." : "Exchange could not be completed. Try again.");
+    } finally {
+      setBusy(false);
+    }
+  }
 
   return <section data-dashboard-layer="2b-rewards" className="mt-10" aria-labelledby="learning-rewards-heading">
     <div className="rounded-3xl border border-indigo-200 bg-gradient-to-br from-indigo-50 via-white to-emerald-50 p-5 shadow-sm sm:p-7">
       <header className="flex flex-wrap items-start justify-between gap-4">
         <div>
-          <p className="text-sm font-black uppercase tracking-[0.18em] text-indigo-700">Learning rewards</p>
-          <h2 id="learning-rewards-heading" className="mt-2 text-2xl font-black tracking-tight text-slate-950">Keep the month moving</h2>
-          <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-600">A day counts after 15 active foreground minutes and one completed learning task. Missing a day does not reset this month’s reward tier.</p>
+          <p className="flex items-center gap-2 text-sm font-black uppercase tracking-[0.18em] text-indigo-700"><RewardIcon />Learning rewards</p>
+          <h2 id="learning-rewards-heading" className="mt-2 text-2xl font-black tracking-tight text-slate-950">Today’s online learning</h2>
+          <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-600">Active time on learning pages earns cumulative daily points automatically. Background and idle time do not count.</p>
         </div>
-        <div className="rounded-2xl bg-indigo-700 px-4 py-3 text-white"><span className="block text-xs font-bold uppercase tracking-wide text-indigo-200">Learning points</span><strong className="mt-1 block text-3xl font-black tabular-nums">{rewards.lifetimePoints}</strong></div>
+        <div className="rounded-2xl bg-indigo-700 px-4 py-3 text-white"><span className="block text-xs font-bold uppercase tracking-wide text-indigo-200">Available learning points</span><strong className="mt-1 block text-3xl font-black tabular-nums">{rewards.availablePoints}</strong></div>
       </header>
 
-      <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <article className="rounded-2xl border border-white bg-white/90 p-4"><p className="text-sm font-bold text-slate-500">Today: {minutes(rewards.activeSeconds)} / 15 min</p><div className="mt-3 h-2 overflow-hidden rounded-full bg-slate-100" role="progressbar" aria-label="Today active learning minutes" aria-valuemin={0} aria-valuemax={15} aria-valuenow={minutes(rewards.activeSeconds)}><span className="block h-full rounded-full bg-indigo-600" style={{ width: `${Math.min(100, rewards.activeSeconds / 9)}%` }} /></div><p className="mt-3 text-sm leading-5 text-slate-700">{todayMessage}</p></article>
-        <article className="rounded-2xl border border-white bg-white/90 p-4"><p className="text-sm font-bold text-slate-500">Current streak</p><strong className="mt-2 block text-3xl font-black text-slate-950">{rewards.currentStreak} day{rewards.currentStreak === 1 ? "" : "s"}</strong><p className="mt-1 text-sm text-slate-600">Best: {rewards.longestStreak} day{rewards.longestStreak === 1 ? "" : "s"}</p></article>
-        <article className="rounded-2xl border border-white bg-white/90 p-4"><p className="text-sm font-bold text-slate-500">This month</p><strong className="mt-2 block text-3xl font-black text-slate-950">{rewards.monthLearningDays} day{rewards.monthLearningDays === 1 ? "" : "s"}</strong><p className="mt-1 text-sm text-slate-600">{rewards.monthPoints} points earned · next day +{rewards.nextAward}</p></article>
-        <article className="rounded-2xl border border-white bg-white/90 p-4"><p className="text-sm font-bold text-slate-500">Next badge</p><strong className="mt-2 block text-2xl font-black text-slate-950">{rewards.nextBadge ? rewards.nextBadge.label : "90-day set complete"}</strong><p className="mt-1 text-sm text-slate-600">{rewards.nextBadge ? `${rewards.nextBadge.remainingDays} effective day${rewards.nextBadge.remainingDays === 1 ? "" : "s"} to go` : "All launch milestones unlocked"}</p></article>
+      <div className="mt-6 grid gap-5 lg:grid-cols-[1.25fr_.75fr]">
+        <article className="rounded-2xl border border-white bg-white/90 p-5">
+          <div className="flex flex-wrap items-baseline justify-between gap-2"><p className="font-black text-slate-950">Today: {minutes(rewards.activeSeconds)} / 60 minutes</p><strong className="text-indigo-700">{rewards.todayAward} / 10 points</strong></div>
+          <div className="relative mt-5 h-3 rounded-full bg-slate-100" role="progressbar" aria-label="Today active learning minutes" aria-valuemin={0} aria-valuemax={60} aria-valuenow={minutes(rewards.activeSeconds)}>
+            <span className="block h-full rounded-full bg-gradient-to-r from-blue-600 to-emerald-500" style={{ width: `${Math.min(100, rewards.activeSeconds / 36)}%` }} />
+            {[10, 30, 60].map((minute) => <span key={minute} className="absolute top-1/2 h-4 w-1 -translate-y-1/2 bg-white" style={{ left: `${minute / 60 * 100}%` }} aria-hidden="true" />)}
+          </div>
+          <div className="mt-3 grid grid-cols-3 gap-2 text-xs font-bold text-slate-600"><span>10 min · 1 point</span><span className="text-center">30 min · 5 points</span><span className="text-right">60 min · 10 points</span></div>
+          <p className="mt-4 text-sm leading-6 text-slate-700">{todayMessage}</p>
+          <Link href={primaryHref} className="mt-4 inline-flex min-h-11 items-center justify-center rounded-xl bg-blue-600 px-5 font-black text-white hover:bg-blue-700">Continue learning</Link>
+        </article>
+
+        <article className="rounded-2xl border border-white bg-white/90 p-5">
+          <h3 className="font-black text-slate-950">Redeem AI credits</h3>
+          <p className="mt-2 text-sm text-slate-600">10 learning points = 1 AI credit.</p>
+          <strong className="mt-4 block text-3xl font-black text-slate-950">{rewards.redeemableCredits}</strong>
+          <span className="text-sm text-slate-500">AI credit{rewards.redeemableCredits === 1 ? "" : "s"} available to exchange</span>
+          {rewards.redeemableCredits > 1 && <label className="mt-4 block text-sm font-bold text-slate-700">Credits to exchange<select value={credits} onChange={(event) => setCredits(Number(event.target.value))} className="mt-2 min-h-11 w-full rounded-xl border border-slate-300 bg-white px-3">{Array.from({ length: rewards.redeemableCredits }, (_, index) => <option key={index + 1} value={index + 1}>{index + 1} credit{index ? "s" : ""} · {(index + 1) * 10} points</option>)}</select></label>}
+          <button type="button" disabled={!rewards.exchangeRate.available || busy} onClick={() => setConfirming(true)} className="mt-4 min-h-11 w-full rounded-xl bg-indigo-700 px-4 font-black text-white disabled:cursor-not-allowed disabled:bg-slate-300">{rewards.exchangeRate.available ? "Exchange points" : `Need ${10 - rewards.availablePoints} more points`}</button>
+        </article>
       </div>
 
-      <div className="mt-6 border-t border-indigo-100 pt-5">
-        <h3 className="text-lg font-black text-slate-950">Badge wall</h3>
-        <div className="mt-3 grid grid-cols-3 gap-2 sm:grid-cols-6">
-          {[3, 7, 14, 30, 60, 90].map((days) => {
-            const unlocked = rewards.unlockedBadges.some((badge) => badge.days === days);
-            return <div key={days} className={`rounded-xl border px-2 py-3 text-center ${unlocked ? "border-amber-300 bg-amber-50 text-amber-950" : "border-slate-200 bg-white/70 text-slate-400"}`} aria-label={`${days}-day badge ${unlocked ? "unlocked" : "locked"}`}><span className="block text-lg font-black">{days}</span><span className="text-xs font-bold">days</span></div>;
-          })}
-        </div>
-        <p className="mt-4 text-xs leading-5 text-slate-500">10 learning points = 1 AI credit. Conversion is not open yet; learning points stay separate from subscription AI credits.</p>
+      {message && <p className="mt-4 rounded-xl bg-white px-4 py-3 text-sm font-bold text-slate-800" role="status">{message}</p>}
+
+      <div className="mt-6 grid gap-5 border-t border-indigo-100 pt-5 lg:grid-cols-2">
+        <article>
+          <h3 className="text-lg font-black text-slate-950">This month</h3>
+          <p className="mt-2 text-sm text-slate-600">{rewards.monthLearningDays} learning day{rewards.monthLearningDays === 1 ? "" : "s"} · {rewards.monthPoints} points</p>
+          <p className="mt-1 text-sm text-slate-600">Current streak: {rewards.currentStreak} days · Best: {rewards.longestStreak} days</p>
+          <div className="mt-4 grid grid-cols-3 gap-2 sm:grid-cols-6">
+            {[3, 7, 14, 30, 60, 90].map((days) => {
+              const unlocked = rewards.unlockedBadges.some((badge) => badge.days === days);
+              return <div key={days} className={`rounded-xl border px-2 py-3 text-center ${unlocked ? "border-amber-300 bg-amber-50 text-amber-950" : "border-slate-200 bg-white/70 text-slate-400"}`} title={unlocked ? `${days}-day streak unlocked` : `Locked: reach a ${days}-day learning streak`}><span className="flex justify-center">{unlocked ? <RewardIcon /> : <LockIcon />}</span><strong className="mt-1 block text-sm">{days} days</strong></div>;
+            })}
+          </div>
+          <p className="mt-3 text-xs leading-5 text-slate-500">Badges unlock from your real consecutive learning-day record.</p>
+        </article>
+        <article>
+          <h3 className="text-lg font-black text-slate-950">Redemption history</h3>
+          {rewards.redemptionHistory.length ? <ul className="mt-3 space-y-2">{rewards.redemptionHistory.slice(0, 4).map((entry) => <li key={entry.id} className="flex items-center justify-between rounded-xl bg-white px-3 py-2 text-sm"><span>{new Date(entry.createdAt).toLocaleDateString()}</span><strong>{entry.pointsSpent} points → {entry.creditsGranted} AI credit{entry.creditsGranted === 1 ? "" : "s"}</strong></li>)}</ul> : <p className="mt-3 text-sm text-slate-500">No exchanges yet.</p>}
+        </article>
       </div>
     </div>
+
+    {confirming && <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/55 p-4" role="dialog" aria-modal="true" aria-labelledby="exchange-title">
+      <div className="w-full max-w-md rounded-2xl bg-white p-6 shadow-2xl"><h3 id="exchange-title" className="text-xl font-black text-slate-950">Confirm exchange</h3><p className="mt-3 text-slate-600">Exchange {credits * 10} learning points for {credits} AI credit{credits === 1 ? "" : "s"}? This cannot be reversed.</p><div className="mt-6 flex gap-3"><button type="button" disabled={busy} onClick={() => setConfirming(false)} className="min-h-11 flex-1 rounded-xl border border-slate-300 font-bold text-slate-700">Cancel</button><button type="button" disabled={busy} onClick={() => void redeem()} className="min-h-11 flex-1 rounded-xl bg-indigo-700 font-black text-white disabled:bg-slate-400">{busy ? "Exchanging…" : "Confirm exchange"}</button></div></div>
+    </div>}
   </section>;
 }

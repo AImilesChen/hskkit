@@ -443,6 +443,7 @@ async function postLearning(req: NextRequest) {
     let state = view(loaded.state, identity.id, tz, capabilities, identity.account?.timezone).state;
     let feedback: { correct: boolean; correctAnswerText: string; explanation?: string } | undefined;
     let usageCharge: UsageCharge | undefined;
+    let reviewCorrect: boolean | undefined;
     try {
       if (action === "attempt") {
         const questionId = short(payload.questionId, 50);
@@ -646,6 +647,7 @@ async function postLearning(req: NextRequest) {
         state = gradeReview(state, { cardId: card.id, grade: correct ? "good" : "again", idempotencyKey: key, observedAt: new Date().toISOString(), clientRevision: cardRevision, requireAudioPlayback: reviewCard?.playbackRequired, resolveMistakes: true }).state;
         if (capabilities.dailyReviewGrades !== null) usageCharge = { metric: "daily_review_grades", periodKey, idempotencyKey: key, units: 1, limit: capabilities.dailyReviewGrades };
         feedback = { correct, correctAnswerText: snapshot.correctAnswerText };
+        reviewCorrect = correct;
       } else if (action === "grade") {
         const cardId = short(payload.cardId, 120);
         const grade = short(payload.grade, 10);
@@ -658,6 +660,7 @@ async function postLearning(req: NextRequest) {
           return mistake.contentId === persistedCard.contentId && mistake.contentVersion === persistedCard.contentVersion && sourceAttempt?.dimension === persistedCard.dimension && mistake.status === "open";
         }) : false;
         state = gradeReview(state, { cardId, grade: grade as "again" | "hard" | "good" | "easy", idempotencyKey: key, observedAt: new Date().toISOString(), clientRevision, requireAudioPlayback: reviewCard?.playbackRequired, resolveMistakes: !hasOpenMistake }).state;
+        reviewCorrect = grade !== "again";
         if (capabilities.dailyReviewGrades !== null) usageCharge = { metric: "daily_review_grades", periodKey, idempotencyKey: key, units: 1, limit: capabilities.dailyReviewGrades };
       } else if (action === "undo_review") {
         const cardId = short(payload.cardId, 120);
@@ -785,7 +788,7 @@ async function postLearning(req: NextRequest) {
         ? { localDay: await learningRewardLocalDay(identity.id, identity.account.timezone || "UTC"), action: String(action), idempotencyKey: key }
         : undefined;
       const data = view(state, identity.id, tz, capabilities, identity.account?.timezone);
-      await saveState(identity.id, data.state, loaded.revision, createAuditEvent({ subjectId: identity.id, action: String(action), resourceType: "learning", resourceId: data.session.id, result: "success", idempotencyKey: key, metadata: { revision: loaded.revision + 1 } }), usageCharge, referralActivity, engagementActivity);
+      await saveState(identity.id, data.state, loaded.revision, createAuditEvent({ subjectId: identity.id, action: String(action), resourceType: "learning", resourceId: data.session.id, result: "success", idempotencyKey: key, metadata: { revision: loaded.revision + 1, ...(typeof reviewCorrect === "boolean" ? { reviewCorrect } : {}) } }), usageCharge, referralActivity, engagementActivity);
       if (referralActivity) {
         try { await reconcileReferralLearningMilestone(referralActivity.userId); } catch { /* activity is committed atomically and the reward reconciles on Account load */ }
       }
