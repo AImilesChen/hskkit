@@ -5,7 +5,7 @@ import hsk2QuestionBank from "../data/hsk2.json" with { type: "json" };
 import hsk3QuestionBank from "../data/hsk3.json" with { type: "json" };
 import hsk4QuestionBank from "../data/hsk4.json" with { type: "json" };
 import hsk5QuestionBank from "../data/hsk5.json" with { type: "json" };
-import { LISTENING_LIBRARY_QUESTIONS } from "../learning/listening-library.ts";
+import { LISTENING_LIBRARY_HISTORY_QUESTIONS } from "../learning/listening-library.ts";
 import { READING_LIBRARY_QUESTIONS } from "../learning/reading-library.ts";
 import practiceAudioManifest from "./audio-assets.json" with { type: "json" };
 import practiceV3History from "./practice-v3-history.json" with { type: "json" };
@@ -404,7 +404,7 @@ function v3ReadingQuestions(level: number): PracticeQuestion[] {
 }
 
 function v3ListeningQuestions(level: number): PracticeQuestion[] {
-  const sources = LISTENING_LIBRARY_QUESTIONS.filter((question) => level === 7 ? question.level >= 7 : question.level === level);
+  const sources = LISTENING_LIBRARY_HISTORY_QUESTIONS.filter((question) => level === 7 ? question.level >= 7 : question.level === level);
   return sources.map((question) => ({
     ...v3Base(level, "listening", question.contentVersion, question.level),
     id: `practice-v4-${bandLabel(level)}-listening-${question.id}`,
@@ -418,6 +418,7 @@ function v3ListeningQuestions(level: number): PracticeQuestion[] {
     weaknessTag: question.weaknessTag,
     sourceRef: question.sourceRef,
     sourceUrl: "https://hskkit.com/content-license",
+    lifecycleStatus: question.lifecycleStatus,
   }));
 }
 
@@ -434,12 +435,48 @@ function attachSetVersion(questions: PracticeQuestion[]) {
   });
 }
 
-const ALL_V3_QUESTIONS = attachSetVersion([1, 2, 3, 4, 5, 6, 7].flatMap((level) => [
+const PRE_TEMPLATE_DIVERSITY_QUESTIONS = attachSetVersion([1, 2, 3, 4, 5, 6, 7].flatMap((level) => [
   ...v3VocabularyQuestions(level),
   ...v3GrammarQuestions(level),
   ...v3ReadingQuestions(level),
   ...v3ListeningQuestions(level),
 ]));
+
+const PROMPT_VARIANTS: Record<string, string[]> = {
+  "他们什么时候回家？": ["他们什么时候回家？", "文中说他们几点回家？", "他们回家的时间是什么时候？", "根据材料，他们何时回家？"],
+  "What information is mentioned first in the recording?": ["What information is mentioned first in the recording?", "Which detail does the recording give first?", "What is the first point you hear?", "Which item is introduced at the start of the recording?"],
+  "这样安排有什么作用？": ["这样安排有什么作用？", "这个安排带来了什么效果？", "为什么要作出这样的安排？", "材料说明这一安排有何作用？"],
+  "Which title best matches the recording?": ["Which title best matches the recording?", "Choose the most suitable title for the recording.", "Which heading best summarizes what you hear?", "What would be the best title for this recording?"],
+  "使用延长时段需要什么？": ["使用延长时段需要什么？", "进入延长时段要满足什么条件？", "材料要求使用者提供什么？", "怎样才能使用延长开放时段？"],
+  "这次调整的主要目的是什么？": ["这次调整的主要目的是什么？", "为什么要作出这次调整？", "这项调整主要想解决什么问题？", "材料说明调整的核心目的是什么？"],
+  "新制度提供了什么变化？": ["新制度提供了什么变化？", "新制度带来了哪项改变？", "与原来相比，新制度有什么不同？", "材料提到制度发生了什么变化？"],
+  "为什么仍然保留限制条件？": ["为什么仍然保留限制条件？", "保留限制条件的原因是什么？", "材料为何没有取消这项限制？", "继续设置限制主要是出于什么考虑？"],
+  "调查结果说明了什么？": ["调查结果说明了什么？", "从调查结果可以看出什么？", "这项调查支持哪一判断？", "材料中的调查数据表明什么？"],
+  "支持者的主要理由是什么？": ["支持者的主要理由是什么？", "支持者最看重哪一点？", "哪项内容概括了支持方的理由？", "支持这一方案的人提出了什么依据？"],
+  "反对者担心什么？": ["反对者担心什么？", "反对方主要提出了哪项顾虑？", "哪一问题令反对者担忧？", "材料中的反对意见集中在哪方面？"],
+  "委员会为什么暂不作最终决定？": ["委员会为什么暂不作最终决定？", "委员会推迟决定的原因是什么？", "为什么还不能作出最终决定？", "材料说明委员会还要等待什么？"],
+};
+
+function diversifyPromptTemplates(questions: PracticeQuestion[]) {
+  const occurrences = new Map<string, number>();
+  return questions.map((question) => {
+    const variants = PROMPT_VARIANTS[question.prompt];
+    if (!variants) return question;
+    const key = `${question.level}:${question.skill}:${question.prompt}`;
+    const occurrence = occurrences.get(key) ?? 0;
+    occurrences.set(key, occurrence + 1);
+    const variantIndex = occurrence % variants.length;
+    if (variantIndex === 0) return question;
+    return {
+      ...question,
+      id: `${question.id}-prompt-v2-${variantIndex + 1}`,
+      contentVersion: `${question.contentVersion}:prompt-v2-${variantIndex + 1}`,
+      prompt: variants[variantIndex],
+    };
+  });
+}
+
+const ALL_V3_QUESTIONS = attachSetVersion(diversifyPromptTemplates(PRE_TEMPLATE_DIVERSITY_QUESTIONS));
 
 export const PRACTICE_QUESTIONS: PracticeQuestion[] = ALL_V3_QUESTIONS.filter((question) => question.authorizationStatus === "authorized" && question.qaStatus === "approved" && question.lifecycleStatus === "published");
 
@@ -452,7 +489,7 @@ export function practiceReviewIdentity(question: PracticeQuestion) {
     question.level,
     question.skill,
     normalizedIdentityText(question.context ?? question.audioText),
-    normalizedIdentityText(question.prompt),
+    normalizedIdentityText(question.weaknessTag),
     normalizedIdentityText(question.options[question.correctAnswer]),
   ]);
   return {
@@ -488,7 +525,7 @@ const LEGACY_PRACTICE_QUESTIONS = [...LEGACY_LEVEL_ONE, ...[2, 3, 4, 5, 6].flatM
 
 export const WITHDRAWN_PRACTICE_QUESTION_ID = "practice-v1-l1-vocab-retired-sample";
 const WITHDRAWN_SNAPSHOT: PracticeQuestion = { ...base(1, "vocabulary"), id: WITHDRAWN_PRACTICE_QUESTION_ID, contentVersion: "hskkit-practice-l1-vocabulary-v1", setVersion: "hskkit-practice-l1-vocabulary-v1", prompt: "Retired sample", options: { a: "甲", b: "乙", c: "丙", d: "丁" }, correctAnswer: "a", explanation: "Retained only for historical audit.", weaknessTag: "retired", sourceRef: "hskkit-retired-sample", sourceUrl: "https://hskkit.com/content-license", lifecycleStatus: "withdrawn" };
-const HISTORY = [...ALL_V3_QUESTIONS, ...(practiceV3History as PracticeQuestion[]), ...ALL_V2_QUESTIONS, ...LEGACY_PRACTICE_QUESTIONS, WITHDRAWN_SNAPSHOT];
+const HISTORY = [...ALL_V3_QUESTIONS, ...PRE_TEMPLATE_DIVERSITY_QUESTIONS, ...(practiceV3History as PracticeQuestion[]), ...ALL_V2_QUESTIONS, ...LEGACY_PRACTICE_QUESTIONS, WITHDRAWN_SNAPSHOT];
 
 export function practiceQuestionLifecycle(id: string) { return HISTORY.find((question) => question.id === id)?.lifecycleStatus; }
 export function practiceQuestionSet(level: number, skill: string) { return PRACTICE_QUESTIONS.filter((question) => question.level === level && question.skill === skill && question.lifecycleStatus === "published"); }

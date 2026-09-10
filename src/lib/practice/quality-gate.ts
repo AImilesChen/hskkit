@@ -1,14 +1,15 @@
 import type { PracticeQuestion } from "./questions.ts";
 import { practiceReviewIdentity } from "./questions.ts";
+import { buildReviewQueue } from "../learning/review-session.ts";
 
-export type PracticeQualityRule = "exact-duplicate" | "near-duplicate" | "template-density" | "level-source";
+export type PracticeQualityRule = "exact-duplicate" | "near-duplicate" | "template-density" | "level-source" | "session-composition";
 export type PracticeQualityMetrics = {
   exactDuplicateGroups: number;
   nearDuplicatePairs: number;
   templateDensityViolations: number;
   levelSourceFailures: number;
+  sessionCompositionViolations: number;
 };
-export type PracticeQualityBaseline = PracticeQualityMetrics;
 export type PracticeQualityFinding = {
   rule: PracticeQualityRule;
   summary: string;
@@ -18,8 +19,6 @@ export type PracticeQualityFinding = {
 export type PracticeQualityAudit = {
   questionCount: number;
   metrics: PracticeQualityMetrics;
-  baseline?: PracticeQualityBaseline;
-  regressions: Array<keyof PracticeQualityMetrics>;
   findings: PracticeQualityFinding[];
   editorialReviewQuestionIds: string[];
   blocked: boolean;
@@ -64,7 +63,7 @@ function finding(rule: PracticeQualityRule, questionIds: string[], summary: stri
   return { rule, questionIds, summary, evidence };
 }
 
-export function auditPracticeQuestionBank(questions: PracticeQuestion[], baseline?: PracticeQualityBaseline): PracticeQualityAudit {
+export function auditPracticeQuestionBank(questions: PracticeQuestion[]): PracticeQualityAudit {
   const released = questions.filter((question) => question.authorizationStatus === "authorized" && question.qaStatus === "approved" && question.lifecycleStatus === "published");
   const findings: PracticeQualityFinding[] = [];
 
@@ -123,7 +122,7 @@ export function auditPracticeQuestionBank(questions: PracticeQuestion[], baselin
     }
     const dominant = [...templates.entries()].sort((left, right) => right[1].length - left[1].length)[0];
     const ratio = dominant[1].length / pool.length;
-    if (ratio <= 0.75) continue;
+    if (ratio <= 0.25) continue;
     findings.push(finding(
       "template-density",
       dominant[1].map((question) => question.id),
@@ -149,21 +148,46 @@ export function auditPracticeQuestionBank(questions: PracticeQuestion[], baselin
     ));
   }
 
+  for (let level = 1; level <= 7; level += 1) {
+    const pool = released.filter((question) => question.level === level);
+    if (pool.length < 10) continue;
+    const queue = buildReviewQueue(pool.map((question) => ({
+      id: question.id,
+      contentId: question.id,
+      level: question.level,
+      skill: question.skill,
+      dimension: question.skill === "listening" ? "audio" as const : "reading" as const,
+      dueAt: "2026-01-01T00:00:00.000Z",
+      isMistake: false,
+      ...practiceReviewIdentity(question),
+    })), 10);
+    const invalid = queue.length < 10 || queue.some((card, index) => {
+      const previous = queue[index - 1];
+      const twoBack = queue[index - 2];
+      return Boolean(
+        previous && (card.sourceGroupId === previous.sourceGroupId || card.templateId === previous.templateId)
+        || twoBack && card.skill === previous?.skill && card.skill === twoBack.skill,
+      );
+    });
+    if (invalid) findings.push(finding(
+      "session-composition",
+      queue.map((card) => card.id),
+      `Level ${level} cannot produce a ten-question mixed Review queue within the diversity constraints.`,
+      `queueSize=${queue.length}`,
+    ));
+  }
+
   const metrics: PracticeQualityMetrics = {
     exactDuplicateGroups: [...exactGroups.values()].reduce((count, group) => count + Math.max(0, group.length - 1), 0),
     nearDuplicatePairs: findings.filter((item) => item.rule === "near-duplicate").length,
     templateDensityViolations: findings.filter((item) => item.rule === "template-density").length,
     levelSourceFailures: findings.filter((item) => item.rule === "level-source").length,
+    sessionCompositionViolations: findings.filter((item) => item.rule === "session-composition").length,
   };
-  const regressions = baseline
-    ? (Object.keys(metrics) as Array<keyof PracticeQualityMetrics>).filter((key) => metrics[key] > baseline[key])
-    : [];
-  const blocked = baseline ? regressions.length > 0 : Object.values(metrics).some((count) => count > 0);
+  const blocked = Object.values(metrics).some((count) => count > 0);
   return {
     questionCount: released.length,
     metrics,
-    baseline,
-    regressions,
     findings,
     editorialReviewQuestionIds: [...new Set(findings.flatMap((item) => item.questionIds))],
     blocked,
@@ -184,10 +208,13 @@ export function renderPracticeEditorialReport(audit: PracticeQualityAudit) {
     `- Near-duplicate source pairs: ${audit.metrics.nearDuplicatePairs}`,
     "",
     "## Template density review",
-    `- Pools above the 75% dominant-template threshold: ${audit.metrics.templateDensityViolations}`,
+    `- Pools above the 25% dominant-template threshold: ${audit.metrics.templateDensityViolations}`,
     "",
     "## Level source review",
     `- Missing or inconsistent source-level records: ${audit.metrics.levelSourceFailures}`,
+    "",
+    "## Review session composition",
+    `- Queues violating source/template/skill-run constraints: ${audit.metrics.sessionCompositionViolations}`,
     "",
     "## Editorial review queue",
     `- Questions requiring human Chinese/editorial review: ${audit.editorialReviewQuestionIds.length}`,
@@ -196,9 +223,8 @@ export function renderPracticeEditorialReport(audit: PracticeQualityAudit) {
     "",
     "## Build and release decision",
     `- ${decision}`,
-    `- Regression keys: ${audit.regressions.length ? audit.regressions.join(", ") : "none"}`,
-    "- Existing reviewed debt is frozen by the checked-in baseline; any metric increase blocks build and content release.",
-    "- Automated checks triage evidence only. Human Chinese/editorial review remains required before reducing the baseline.",
+    "- No baseline allowances apply. Any non-zero metric blocks build and content release.",
+    "- Automated checks triage evidence only. Human Chinese/editorial review remains required before release.",
     "",
   ];
   return lines.join("\n");

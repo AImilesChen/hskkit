@@ -11,6 +11,21 @@ export type ReviewQueueCard = {
 };
 
 export type ReviewLevelScope = "current" | "all" | number;
+
+export type AnswerableReviewCard = {
+  answerMode: "choice" | "text" | "self_recall";
+  correctAnswerKey: string;
+  correctAnswer: string;
+};
+
+const normalizedReviewAnswer = (value: string) => value.normalize("NFKC").toLowerCase().replace(/[\s\p{P}\p{S}]+/gu, "");
+
+export function reviewAnswerIsCorrect(card: AnswerableReviewCard, answer: string): boolean {
+  if (!answer.trim() || card.answerMode === "self_recall") return false;
+  return card.answerMode === "choice"
+    ? normalizedReviewAnswer(answer) === normalizedReviewAnswer(card.correctAnswerKey)
+    : [card.correctAnswerKey, card.correctAnswer].some((expected) => normalizedReviewAnswer(answer) === normalizedReviewAnswer(expected));
+}
 export type ReviewLevelControl = {
   currentLevel: number;
   currentCardIds: string[];

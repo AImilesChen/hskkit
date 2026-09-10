@@ -132,6 +132,14 @@ export function publishedListeningAudioAsset(assetId: string): PublishedAudioAss
   return listeningAssets.get(assetId);
 }
 
+/** Returns only a duration from a published, QA-approved asset whose public URL is trusted. */
+export function publishedAudioDurationBySrc(src: string | undefined): number | undefined {
+  if (!src) return undefined;
+  const asset = [...listeningAssets.values(), ...practiceAssets.values(), ...contentAssets.values()]
+    .find((candidate) => candidate.src === src);
+  return asset?.durationSeconds;
+}
+
 export function publicAudioAsset(asset: PublishedAudioAsset | undefined): PublicAudioAsset | undefined {
   return asset ? publicAsset(asset) : undefined;
 }

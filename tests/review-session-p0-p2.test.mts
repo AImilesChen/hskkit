@@ -62,7 +62,7 @@ test("review layout stays task-first, responsive, and avoids dashboard-card spra
 
 test("Today presents one truthful review entry with due count, time, level, and skill mix", async () => {
   const client = await source("src/app/components/learning-dashboard.tsx");
-  for (const token of ["dueForToday", "estimated review", "HSK mix", "Skill mix", "firstReviewIndex", "orderedTodayItems"]) {
+  for (const token of ["dueForToday", "total due", "selectedReviewCards", "firstReviewIndex", "orderedTodayItems"]) {
     assert.match(client, new RegExp(token));
   }
   assert.match(client, /if \(item\.kind === "review" && index !== firstReviewIndex\) return null/);
@@ -95,9 +95,8 @@ test("Today starts its due queue directly while Mistakes targets the selected mi
 
 test("review entry links preserve Today and selected-mistake context", async () => {
   const client = await source("src/app/components/learning-dashboard.tsx");
-  assert.match(client, /href="\/review\?source=today"/);
+  assert.match(client, /`\/review\?source=today&dailySessionId=/);
   assert.match(client, /`\/review\?source=mistakes&contentId=\$\{encodeURIComponent\(mistake\.contentId\)\}\$\{mistake\.cardId/);
-  assert.match(client, /href: "\/review"/);
 });
 
 test("mistake retry and self-recall use distinct truthful interactions", async () => {
@@ -180,12 +179,12 @@ test("mistake links target an exact review card when content IDs repeat", async 
 test("review retry identity, replay feedback and audio gating are enforced server-side", async () => {
   const route = await source("src/app/api/v1/learning/route.ts");
   const domain = await source("src/lib/learning/domain.ts");
-  assert.match(route, /mistakeKey\(card\.contentId, card\.contentVersion, card\.dimension\)/);
+  assert.match(route, /mistake\.contentId === card\.contentId && mistake\.contentVersion === card\.contentVersion/);
   assert.match(route, /sourceAttempt\?\.dimension === card\.dimension/);
   assert.match(route, /action === "retry_review"[\s\S]*gradeKeys\.includes\(key\)[\s\S]*correctAnswerText/);
   assert.match(route, /playbackRequired = card\.dimension !== "reading" && Boolean\(formalAudioSrc && formalAudioText\)/);
   assert.match(domain, /requireAudioPlayback\?: boolean/);
-  assert.match(domain, /sourceAttempt\?\.dimension === old\.dimension/);
+  assert.match(domain, /const sameDimension = \(sourceAttempt\?\.dimension \?\? "reading"\) === old\.dimension/);
 });
 
 test("grammar contexts use a real newline and choice retries expose a named fieldset", async () => {

@@ -9,7 +9,7 @@ export interface ListeningLibraryQuestion extends AdvancedListeningLesson {
   sourceLicense: string;
   authorizationStatus: "authorized";
   qaStatus: "approved";
-  lifecycleStatus: "published";
+  lifecycleStatus: "published" | "withdrawn";
   weaknessTag: string;
   explanation: string;
 }
@@ -42,7 +42,7 @@ type RawGroup = {
   sourceLicense: string;
   authorizationStatus: "authorized";
   qaStatus: "approved";
-  lifecycleStatus: "published";
+  lifecycleStatus: "published" | "withdrawn";
   questions: RawQuestion[];
 };
 const bank = bankJson as { version: string; label: string; coverageNotice: string; groups: RawGroup[] };
@@ -92,25 +92,27 @@ const QUESTIONS: ListeningLibraryQuestion[] = bank.groups.flatMap((group) => gro
 
 export const LISTENING_LIBRARY_LABEL = bank.label;
 export const LISTENING_LIBRARY_COVERAGE_NOTICE = bank.coverageNotice;
-export const LISTENING_LIBRARY_QUESTIONS = QUESTIONS;
+export const LISTENING_LIBRARY_HISTORY_QUESTIONS = QUESTIONS;
+export const LISTENING_LIBRARY_QUESTIONS = QUESTIONS.filter((question) => question.lifecycleStatus === "published");
 export const LISTENING_LIBRARY_COUNTS = {
-  audioGroups: bank.groups.length,
-  questions: QUESTIONS.length,
+  audioGroups: new Set(LISTENING_LIBRARY_QUESTIONS.map((question) => question.audioSrc)).size,
+  questions: LISTENING_LIBRARY_QUESTIONS.length,
   byLevel: Array.from({ length: 9 }, (_, index) => {
     const level = index + 1;
+    const questions = LISTENING_LIBRARY_QUESTIONS.filter((question) => question.level === level);
     return {
       level,
-      audioGroups: bank.groups.filter((group) => group.level === level).length,
-      questions: QUESTIONS.filter((question) => question.level === level).length,
+      audioGroups: new Set(questions.map((question) => question.audioSrc)).size,
+      questions: questions.length,
     };
   }),
 };
 
 export function listeningQuestionsForLevel(level: number) {
-  return QUESTIONS.filter((question) => question.level === level);
+  return LISTENING_LIBRARY_QUESTIONS.filter((question) => question.level === level);
 }
 export function listeningQuestionBySlug(slug: string) {
-  return QUESTIONS.find((question) => question.slug === slug);
+  return LISTENING_LIBRARY_QUESTIONS.find((question) => question.slug === slug);
 }
 function seedNumber(seed: string) {
   let value = 2166136261;

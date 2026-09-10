@@ -49,6 +49,7 @@ import { learningTopics } from "../../../../lib/topics/catalog";
 import { getTrustedTopicPracticeQuestions, getVerifiedTopicForMutation } from "../../../../lib/topics/server";
 import { answerTopicPracticeQuestion } from "../../../../lib/topics/practice";
 import { recordTopicVisit, topicWordProgressFromState } from "../../../../lib/topics/progress";
+import { publishedAudioDurationBySrc } from "../../../../lib/audio/assets";
 
 const COOKIE = GUEST_COOKIE;
 const queueBindingFor = (ownerId: string) => createHash("sha256").update(`hskkit-learning-queue:${ownerId}`).digest("base64url").slice(0, 24);
@@ -295,7 +296,8 @@ async function postLearning(req: NextRequest) {
       if (!card?.audioText || card.dimension === "reading") throw new Error("INVALID_AUDIO_REVIEW");
       const exerciseKey = `review:${card.id}:${card.revision}`;
       if (action === "audio_review_playback_start") {
-        const ticket = await createStep7PlaybackTicket(identity.id, exerciseKey, card.audioText);
+        const trustedDuration = publishedAudioDurationBySrc(card.audioSrc);
+        const ticket = await createStep7PlaybackTicket(identity.id, exerciseKey, card.audioText, new Date(), trustedDuration);
         return NextResponse.json({ playbackTicket: ticket.id, notBefore: ticket.notBefore, expiresAt: ticket.expiresAt }, { status: 201 });
       }
       const ticketId = short(payload.playbackTicket, 80);
