@@ -7,7 +7,7 @@ import AiAssist from "./ai-assist";
 import HomeIcon, { type HomeIconName } from "./home-icon";
 import LearningLoopNav, { type LearningLoopLabel } from "./learning-loop-nav";
 import { LearningLoadError, loadLearningData, type LearningLoadErrorCode } from "../../lib/learning/client-load";
-import { activeReviewCardId, buildIntentReviewQueue, filterReviewCards, recommendReviewCount, reviewAnswerIsCorrect, reviewCardIdsForScope, reviewComposition, reviewEntryIntent, reviewGradeOptions, reviewTip, type ReviewEntryIntent, type ReviewGrade, type ReviewLevelControl, type ReviewLevelScope } from "../../lib/learning/review-session";
+import { activeReviewCardId, activeTodayReviewCardId, buildIntentReviewQueue, filterReviewCards, recommendReviewCount, reviewAnswerIsCorrect, reviewCardIdsForScope, reviewComposition, reviewEntryIntent, reviewGradeOptions, reviewTip, type ReviewEntryIntent, type ReviewGrade, type ReviewLevelControl, type ReviewLevelScope } from "../../lib/learning/review-session";
 import { completionProofNeedsSync, parseTodayCompletionProof, recommendTodayMinutes, recommendTodayNewWordCount, resolveTodayCelebration, todayCompletionProofKey, todaySummaryStats, todayJourneyProgress, TODAY_BUDGET_OPTIONS, TODAY_FOCUS_OPTIONS, TODAY_NEW_WORD_OPTIONS, type TodayBudgetMinutes, type TodayCelebration, type TodayCompletedKind, type TodayFocus, type TodayNewWordCount } from "../../lib/learning/today-plan";
 
 type Dimension = "reading" | "audio" | "context_audio";
@@ -392,6 +392,10 @@ export default function LearningDashboard({ mode }: { mode: "today" | "review" |
     if (reviewSaving) return;
     setReviewSaving(true);
     try {
+      if (entryIntent.kind === "today" && activeTodayReviewCardId(reviewIds, todayCompletedReviewIds) !== card.id) {
+        await load(true);
+        return;
+      }
       const targetBefore = data?.session.id === entryTodaySessionId ? data.session.items.find((item) => item.id === entryTodayItemId) : undefined;
       const result = await post("grade", { cardId: card.id, grade: gradeName, clientRevision: card.revision }, `grade:${card.id}:${gradeName}`) as Data | false;
       if (result) {
@@ -413,6 +417,10 @@ export default function LearningDashboard({ mode }: { mode: "today" | "review" |
   async function submitRetry(card: Card) {
     const answer = card.answerMode === "choice" ? selectedAnswer : reviewDraft.trim();
     if (!answer || reviewSaving) return;
+    if (entryIntent.kind === "today" && activeTodayReviewCardId(reviewIds, todayCompletedReviewIds) !== card.id) {
+      await load(true);
+      return;
+    }
     if (!card.isMistake) {
       setRetryFeedback({ correct: reviewAnswerIsCorrect(card, answer), correctAnswerText: card.correctAnswer });
       setAnswerChecked(true);
@@ -703,11 +711,13 @@ export default function LearningDashboard({ mode }: { mode: "today" | "review" |
   const reviewedSessionCards = (reviewIds ?? []).map((id) => data.cards.find((card) => card.id === id)).filter((card): card is Card => Boolean(card));
   const nextReviewAt = reviewedSessionCards.map((card) => card.dueAt).filter((dueAt) => new Date(dueAt).getTime() > Date.now()).sort()[0];
   const todayReviewItemIds = new Set(data.session.reviewItemIds ?? []);
-  const todayCompletedReviewIds = new Set(data.session.items.filter((item) => todayReviewItemIds.has(item.id) && item.kind === "review" && item.status === "completed").map((item) => item.reviewCardId));
+  const todayCompletedReviewIds = new Set(data.session.items.filter((item) => todayReviewItemIds.has(item.id) && item.kind === "review" && item.status === "completed").map((item) => item.reviewCardId).filter((id): id is string => Boolean(id)));
   const sessionTotal = reviewIds?.length ?? 0;
   const todayReviewedCount = entryIntent.kind === "today" ? (reviewIds ?? []).filter((id) => todayCompletedReviewIds.has(id)).length : reviewedCount;
   const displayReviewedCount = entryIntent.kind === "today" ? todayReviewedCount : reviewedCount;
-  const activeReviewId = activeReviewCardId(reviewIds, displayReviewedCount);
+  const activeReviewId = entryIntent.kind === "today"
+    ? activeTodayReviewCardId(reviewIds, todayCompletedReviewIds)
+    : activeReviewCardId(reviewIds, reviewedCount);
   const activeCard = activeReviewId ? data.cards.find((card) => card.id === activeReviewId) : undefined;
   const activeFocusReason = data.focusedReview.find((card) => card.id === activeCard?.id)?.focusReason;
   const directEntryPreparing = !entryResolved || (entryIntent.kind !== "setup" && reviewIds === null);

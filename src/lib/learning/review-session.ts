@@ -80,6 +80,11 @@ export function activeReviewCardId(reviewIds: readonly string[] | null, reviewed
   return reviewIds[reviewedCount];
 }
 
+export function activeTodayReviewCardId(reviewIds: readonly string[] | null, completedReviewIds: ReadonlySet<string>): string | undefined {
+  if (!reviewIds) return undefined;
+  return reviewIds.find((id) => !completedReviewIds.has(id));
+}
+
 export function reviewLevelControl<T extends ReviewQueueCard>(cards: T[], currentLevel: number, preserveOrder = false): ReviewLevelControl {
   const normalizedCurrentLevel = Number.isInteger(currentLevel) && currentLevel >= 1 && currentLevel <= 9 ? currentLevel : 1;
   const ordered = preserveOrder

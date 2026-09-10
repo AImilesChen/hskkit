@@ -33,8 +33,24 @@ test("review session advances through its frozen card IDs and stops at the real 
   assert.equal(activeReviewCardId(reviewIds, 1 - 1), "card-1");
 
   const client = await source("src/app/components/learning-dashboard.tsx");
-  assert.match(client, /activeReviewCardId\(reviewIds, displayReviewedCount\)/);
+  assert.match(client, /entryIntent\.kind === "today"[\s\S]*activeTodayReviewCardId\(reviewIds, todayCompletedReviewIds\)[\s\S]*activeReviewCardId\(reviewIds, reviewedCount\)/);
   assert.doesNotMatch(client, /plannedCards\[0\]/);
+});
+
+test("Today review restores the first unfinished card regardless of queue order", async () => {
+  const { activeTodayReviewCardId } = await import("../src/lib/learning/review-session.ts");
+  const reviewIds = ["card-a", "card-b"];
+
+  assert.equal(activeTodayReviewCardId(reviewIds, new Set(["card-b"])), "card-a");
+  assert.equal(activeTodayReviewCardId(reviewIds, new Set(["card-a"])), "card-b");
+  assert.equal(activeTodayReviewCardId(reviewIds, new Set(["card-a", "card-b"])), undefined);
+  assert.equal(activeTodayReviewCardId(null, new Set()), undefined);
+});
+
+test("Today review refreshes stale state instead of submitting an already completed card", async () => {
+  const client = await source("src/app/components/learning-dashboard.tsx");
+  const staleGuard = /if \(entryIntent\.kind === "today" && activeTodayReviewCardId\(reviewIds, todayCompletedReviewIds\) !== card\.id\) \{[\s\S]*?await load\(true\);[\s\S]*?return;[\s\S]*?\}/g;
+  assert.equal(client.match(staleGuard)?.length, 2);
 });
 
 test("rating copy explains memory outcome and interval without unexplained SRS jargon", async () => {
