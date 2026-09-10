@@ -2,7 +2,7 @@ import type { Attempt } from "./domain.ts";
 import { trustedQuestion } from "./questions.ts";
 import { trustedAudioExercise, trustedTodayAudioExercise } from "./audio.ts";
 import { todayContentByContentId } from "./today-content.ts";
-import { trustedPracticeQuestionVersion } from "../practice/questions.ts";
+import { practiceReviewIdentity, trustedPracticeQuestionVersion } from "../practice/questions.ts";
 import { reviewSnapshotForAttempt, type ReviewSnapshot } from "./review-content.ts";
 
 const band = (level: number, levelBand?: string) => levelBand === "7-9" || level >= 7 ? "7–9" : String(level);
@@ -15,6 +15,7 @@ export function resolvedReviewSnapshotForAttempt(attempt: Attempt): ReviewSnapsh
   if (attempt.contentId.startsWith("practice:")) {
     const question = trustedPracticeQuestionVersion(attempt.contentId.slice("practice:".length), attempt.questionVersion ?? attempt.contentVersion);
     if (question) return {
+      ...practiceReviewIdentity(question),
       level: question.level,
       levelBand: band(question.level, question.levelBand),
       skillLabel: question.skill[0].toUpperCase() + question.skill.slice(1),

@@ -17,6 +17,9 @@ export interface ReviewSnapshot {
   explanation: string;
   audioSrc?: string;
   audioText?: string;
+  sourceGroupId?: string;
+  templateId?: string;
+  canonicalContentKey?: string;
 }
 
 const band = (level: number, levelBand?: string) => levelBand === "7-9" || level >= 7 ? "7–9" : String(level);

@@ -14,6 +14,7 @@ import {
   toggleSavedWord,
 
   gradeReview,
+  isOpenMistakeForCard,
   undoLastReview,
   markAudioReviewReady,
   masterySnapshot,
@@ -108,11 +109,6 @@ function view(state: LearningState, ownerId: string, offsetMinutes: number, capa
   };
   const built = buildDailySession(state, { ownerId, localDay, ruleVersion: "today-v9", now, dailyContent: selectTodayContent(startLevel, preferences.newWordCount), budgetMinutes, ...preferences });
   const projected = projectLearningHistory(built.state, capabilities, new Date(now));
-  const mistakeKey = (contentId: string, contentVersion: string, dimension: string) => `${contentId}\u0000${contentVersion}\u0000${dimension}`;
-  const openMistakeKeys = new Set(projected.mistakes.filter((mistake) => mistake.status === "open").map((mistake) => {
-    const attempt = built.state.attempts.find((candidate) => candidate.id === mistake.sourceAttemptId);
-    return mistakeKey(mistake.contentId, mistake.contentVersion, attempt?.dimension ?? "reading");
-  }));
   const visibleCards = projected.cards;
   const cards = visibleCards.map((card) => {
     const attempt = built.state.attempts.find((candidate) => candidate.id === card.sourceAttemptId);
@@ -125,7 +121,7 @@ function view(state: LearningState, ownerId: string, offsetMinutes: number, capa
     const formalAudioSrc = snapshot?.audioSrc ?? (audio?.word.audio.status === "formal" ? audio.word.audio.src : undefined);
     const formalAudioText = snapshot?.audioText ?? audio?.voiceText;
     const playbackRequired = card.dimension !== "reading" && Boolean(formalAudioSrc && formalAudioText);
-    const isMistake = openMistakeKeys.has(mistakeKey(card.contentId, card.contentVersion, card.dimension));
+    const isMistake = isOpenMistakeForCard(built.state, card);
     return {
       ...card,
       prompt: snapshot?.prompt ?? attempt?.prompt ?? card.contentId,
@@ -143,6 +139,9 @@ function view(state: LearningState, ownerId: string, offsetMinutes: number, capa
       level: snapshot?.level,
       levelBand: snapshot?.levelBand ?? "Legacy",
       skill: snapshot?.skillLabel ?? (card.dimension === "reading" ? "Reading" : "Listening"),
+      sourceGroupId: snapshot?.sourceGroupId,
+      templateId: snapshot?.templateId,
+      canonicalContentKey: snapshot?.canonicalContentKey ?? card.canonicalContentKey,
       topic: snapshot?.topic,
       explanation: snapshot?.explanation ?? "This older item does not contain a complete original question snapshot. Use it only as a memory prompt.",
       audioText: formalAudioText,
@@ -159,7 +158,12 @@ function view(state: LearningState, ownerId: string, offsetMinutes: number, capa
   const mistakes = projected.mistakes.map((mistake) => {
     const attempt = built.state.attempts.find((candidate) => candidate.id === mistake.sourceAttemptId);
     const dimension = attempt?.dimension ?? "reading";
-    const cardId = built.state.cards.find((card) => card.contentId === mistake.contentId && card.contentVersion === mistake.contentVersion && card.dimension === dimension)?.id;
+    const mistakeCanonical = mistake.canonicalContentKey ?? attempt?.canonicalContentKey ?? attempt?.reviewSnapshot?.canonicalContentKey;
+    const cardId = built.state.cards.find((card) => {
+      if (card.dimension !== dimension) return false;
+      if (mistakeCanonical && card.canonicalContentKey) return card.canonicalContentKey === mistakeCanonical;
+      return card.contentId === mistake.contentId && card.contentVersion === mistake.contentVersion;
+    })?.id;
     const snapshot = attempt ? resolvedReviewSnapshotForAttempt(attempt) : undefined;
     return { ...mistake, cardId, dimension, prompt: attempt?.prompt ?? mistake.contentId, level: snapshot?.level, skill: snapshot?.skillLabel ?? (dimension === "reading" ? "Reading" : "Listening") };
   });

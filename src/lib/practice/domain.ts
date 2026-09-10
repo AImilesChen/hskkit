@@ -1,6 +1,6 @@
 import { createHash } from "node:crypto";
 import { recordAttempt, type LearningState, type PracticeSession, type QuestionReport } from "../learning/domain.ts";
-import { PRACTICE_SESSION_SIZE, practiceQuestionLifecycle, practiceQuestionSet, publicPracticeQuestion, trustedPracticeQuestionVersion, type PracticeQuestion } from "./questions.ts";
+import { PRACTICE_SESSION_SIZE, practiceQuestionLifecycle, practiceQuestionSet, practiceReviewIdentity, publicPracticeQuestion, trustedPracticeQuestionVersion, type PracticeQuestion } from "./questions.ts";
 
 const stableId = (prefix: string, key: string) => `${prefix}_${createHash("sha256").update(key).digest("base64url")}`;
 const PRACTICE_SESSION_TTL_MS = 24 * 60 * 60 * 1000;
@@ -253,6 +253,7 @@ export function answerPracticeQuestion(state: LearningState, input: {
     dailySessionId: session.dailySessionId,
     dailyItemId: session.dailyItemId,
     reviewSnapshot: {
+      ...practiceReviewIdentity(question),
       level: question.level,
       levelBand: question.levelBand === "7-9" ? "7–9" : question.levelBand,
       skillLabel: question.skill[0].toUpperCase() + question.skill.slice(1),

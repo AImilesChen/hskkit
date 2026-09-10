@@ -27,6 +27,7 @@ export interface PracticeQuestion {
   levelBand: string;
   sourceLevel?: number;
   sourceGroupId?: string;
+  templateId?: string;
   skill: PracticeSkill;
   prompt: string;
   context?: string;
@@ -441,6 +442,25 @@ const ALL_V3_QUESTIONS = attachSetVersion([1, 2, 3, 4, 5, 6, 7].flatMap((level) 
 ]));
 
 export const PRACTICE_QUESTIONS: PracticeQuestion[] = ALL_V3_QUESTIONS.filter((question) => question.authorizationStatus === "authorized" && question.qaStatus === "approved" && question.lifecycleStatus === "published");
+
+const normalizedIdentityText = (value: string | undefined) => (value ?? "").normalize("NFKC").trim().replace(/\s+/g, " ").toLocaleLowerCase("en");
+export function practiceReviewIdentity(question: PracticeQuestion) {
+  const sourceGroupId = question.sourceGroupId ?? question.sourceRef.replace(/(?:[:._-])v\d+(?=[:._-]|$)/gi, "");
+  const promptTemplate = normalizedIdentityText(question.prompt).replace(/[“\"].*?[”\"]/g, "{value}");
+  const templateId = question.templateId ?? `${question.skill}:${promptTemplate}`;
+  const semantic = JSON.stringify([
+    question.level,
+    question.skill,
+    normalizedIdentityText(question.context ?? question.audioText),
+    normalizedIdentityText(question.prompt),
+    normalizedIdentityText(question.options[question.correctAnswer]),
+  ]);
+  return {
+    sourceGroupId,
+    templateId,
+    canonicalContentKey: `practice:${createHash("sha256").update(semantic).digest("base64url").slice(0, 24)}`,
+  };
+}
 
 const LEGACY_PRACTICE_VERSION = "hskkit-practice-l1-vocabulary-v1";
 export function practiceSetContentVersion(releaseId: string, sources: Array<{ logicalId: string; version: string | number }>) {

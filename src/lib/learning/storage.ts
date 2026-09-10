@@ -1,11 +1,11 @@
 import { getCloudflareContext } from "@opennextjs/cloudflare";
 import { POLICY_AUDIT_SQL, policyAuditBindings } from "../account/audit-storage";
 import type { AuditEvent } from "../account/access-policy";
-import type { LearningState } from "./domain";
+import { normalizeReviewState, type LearningState } from "./domain";
 import { engagementTaskStatements, type LearningEngagementActivity } from "../engagement/storage";
 const emptyLearningState = (): LearningState => ({ attempts: [], cards: [], mistakes: [], dailySessions: [] });
 export async function db(){return (await getCloudflareContext({async:true})).env.LEARNING_DB;}
-export async function loadState(ownerId:string){const row=await (await db()).prepare("SELECT state_json,revision FROM learning_states WHERE owner_id=?").bind(ownerId).first<{state_json:string;revision:number}>();return row?{state:JSON.parse(row.state_json) as LearningState,revision:row.revision}:{state:emptyLearningState(),revision:0};}
+export async function loadState(ownerId:string){const row=await (await db()).prepare("SELECT state_json,revision FROM learning_states WHERE owner_id=?").bind(ownerId).first<{state_json:string;revision:number}>();return row?{state:normalizeReviewState(JSON.parse(row.state_json) as LearningState),revision:row.revision}:{state:emptyLearningState(),revision:0};}
 export type UsageCharge = {
   metric: "daily_new_items" | "daily_review_grades";
   periodKey: string;

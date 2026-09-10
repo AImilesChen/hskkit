@@ -1,6 +1,6 @@
 import { createHash } from "node:crypto";
 import type { TodayContentPlan } from "./today-content.ts";
-import { practiceQuestionSet } from "../practice/questions.ts";
+import { practiceQuestionSet, practiceReviewIdentity, trustedPracticeQuestionVersion } from "../practice/questions.ts";
 import type { ReviewSnapshot } from "./review-content.ts";
 import type { DictionaryPracticeWord } from "../dictionary/p2-learning.ts";
 import { isTodayBudgetMinutes, isTodayFocus, isTodayNewWordCount, type TodayFocus, type TodayNewWordCount } from "./today-plan.ts";
@@ -30,6 +30,7 @@ export interface Attempt {
   dailySessionId?: string;
   dailyItemId?: string;
   reviewSnapshot?: ReviewSnapshot;
+  canonicalContentKey?: string;
 }
 export interface SrsCard {
   id: string;
@@ -45,6 +46,7 @@ export interface SrsCard {
   sourceAttemptId: string;
   gradeKeys: string[];
   gradeResults?: Record<string, Grade>;
+  canonicalContentKey?: string;
 }
 export interface Mistake {
   id: string;
@@ -54,6 +56,7 @@ export interface Mistake {
   status: "open" | "resolved" | "retired";
   createdAt: string;
   resolvedAt?: string;
+  canonicalContentKey?: string;
 }
 export interface DailyItem {
   id: string;
@@ -207,6 +210,101 @@ export function masterySnapshot(state: LearningState): Record<Dimension, number>
 
 const id = (prefix: string, key: string) => `${prefix}_${createHash("sha256").update(key).digest("base64url")}`;
 const add = (iso: string, days: number, minutes = 0) => new Date(new Date(iso).getTime() + days * 86_400_000 + minutes * 60_000).toISOString();
+
+const normalizedReviewIdentityText = (value: string | undefined) => (value ?? "").normalize("NFKC").trim().replace(/\s+/g, " ").toLocaleLowerCase("en");
+function canonicalForAttempt(attempt: Attempt | undefined) {
+  if (!attempt) return undefined;
+  const stored = attempt.canonicalContentKey ?? attempt.reviewSnapshot?.canonicalContentKey;
+  if (stored) return stored;
+  if (attempt.contentId.startsWith("practice:")) {
+    const question = trustedPracticeQuestionVersion(attempt.contentId.slice("practice:".length), attempt.questionVersion ?? attempt.contentVersion);
+    if (question) return practiceReviewIdentity(question).canonicalContentKey;
+  }
+  if (attempt.reviewSnapshot?.prompt && attempt.reviewSnapshot.correctAnswerText) {
+    return `legacy:${createHash("sha256").update(JSON.stringify([
+      attempt.reviewSnapshot.level,
+      attempt.dimension,
+      normalizedReviewIdentityText(attempt.reviewSnapshot.prompt),
+      normalizedReviewIdentityText(attempt.reviewSnapshot.correctAnswerText),
+    ])).digest("base64url").slice(0, 24)}`;
+  }
+  return undefined;
+}
+
+/** Lazy compatibility migration: enrich old snapshots and collapse only cards with a proven shared semantic identity. */
+export function normalizeReviewState(state: LearningState): LearningState {
+  const attempts = state.attempts.map((attempt) => {
+    const canonicalContentKey = canonicalForAttempt(attempt);
+    return canonicalContentKey === attempt.canonicalContentKey ? attempt : { ...attempt, canonicalContentKey };
+  });
+  const attemptsById = new Map(attempts.map((attempt) => [attempt.id, attempt]));
+  const groups = new Map<string, SrsCard[]>();
+  for (const card of state.cards) {
+    const canonicalContentKey = card.canonicalContentKey ?? canonicalForAttempt(attemptsById.get(card.sourceAttemptId)!);
+    const enriched = canonicalContentKey ? { ...card, canonicalContentKey } : card;
+    const key = canonicalContentKey ? `${canonicalContentKey}\u0000${card.dimension}` : `opaque:${card.id}`;
+    groups.set(key, [...(groups.get(key) ?? []), enriched]);
+  }
+  const aliases = new Map<string, SrsCard>();
+  const cards = [...groups.values()].map((group) => {
+    if (group.length === 1) {
+      aliases.set(group[0].id, group[0]);
+      return group[0];
+    }
+    const primary = [...group].sort((left, right) => {
+      const leftAt = attemptsById.get(left.sourceAttemptId)?.observedAt ?? "";
+      const rightAt = attemptsById.get(right.sourceAttemptId)?.observedAt ?? "";
+      return rightAt.localeCompare(leftAt);
+    })[0];
+    const gradeKeys = [...new Set(group.flatMap((card) => card.gradeKeys))];
+    const merged: SrsCard = {
+      ...primary,
+      dueAt: group.map((card) => card.dueAt).sort()[0],
+      intervalDays: Math.min(...group.map((card) => card.intervalDays)),
+      ease: Math.min(...group.map((card) => card.ease)),
+      revision: Math.max(...group.map((card) => card.revision)),
+      reviewCount: group.reduce((sum, card) => sum + card.reviewCount, 0),
+      gradeKeys,
+      gradeResults: Object.assign({}, ...group.map((card) => card.gradeResults ?? {})),
+    };
+    for (const card of group) aliases.set(card.id, merged);
+    return merged;
+  });
+  const dailySessions = state.dailySessions.map((session) => ({
+    ...session,
+    reviewCardIds: session.reviewCardIds
+      ? [...new Set(session.reviewCardIds.map((cardId) => aliases.get(cardId)?.id ?? cardId))]
+      : undefined,
+    items: session.items.map((item) => {
+      if (!item.reviewCardId) return item;
+      const replacement = aliases.get(item.reviewCardId);
+      return replacement ? { ...item, reviewCardId: replacement.id, contentId: replacement.contentId, contentVersion: replacement.contentVersion } : item;
+    }),
+  }));
+  const validCards = new Map(cards.map((card) => [card.id, card]));
+  return {
+    ...state,
+    attempts,
+    cards,
+    mistakes: state.mistakes.map((mistake) => ({ ...mistake, canonicalContentKey: mistake.canonicalContentKey ?? canonicalForAttempt(attemptsById.get(mistake.sourceAttemptId)!) })),
+    dailySessions,
+    audioReviewReady: state.audioReviewReady?.filter((entry) => validCards.get(entry.cardId)?.revision === entry.cardRevision),
+    lastReviewUndo: state.lastReviewUndo && validCards.has(state.lastReviewUndo.cardId) ? state.lastReviewUndo : undefined,
+  };
+}
+
+export function isOpenMistakeForCard(state: LearningState, card: SrsCard) {
+  const cardCanonical = card.canonicalContentKey ?? canonicalForAttempt(state.attempts.find((attempt) => attempt.id === card.sourceAttemptId));
+  return state.mistakes.some((mistake) => {
+    if (mistake.status !== "open") return false;
+    const sourceAttempt = state.attempts.find((attempt) => attempt.id === mistake.sourceAttemptId);
+    if ((sourceAttempt?.dimension ?? "reading") !== card.dimension) return false;
+    const mistakeCanonical = mistake.canonicalContentKey ?? canonicalForAttempt(sourceAttempt);
+    return Boolean(cardCanonical && mistakeCanonical)
+      ? cardCanonical === mistakeCanonical
+      : mistake.contentId === card.contentId && mistake.contentVersion === card.contentVersion;
+  });
+}
 
 function reconcileSummary(session: DailySession, completedAt?: string): DailySession {
   const unfinished = session.items.some((item) => item.kind !== "summary" && !item.deferred && item.status === "pending");
@@ -382,7 +480,9 @@ export function recordAttempt(state: LearningState, input: {
   dailySessionId?: string;
   dailyItemId?: string;
   reviewSnapshot?: ReviewSnapshot;
+  canonicalContentKey?: string;
 }) {
+  state = normalizeReviewState(state);
   const prior = state.attempts.find((attempt) => attempt.idempotencyKey === input.idempotencyKey);
   if (prior) {
     const samePayload = prior.contentId === input.contentId
@@ -399,9 +499,11 @@ export function recordAttempt(state: LearningState, input: {
     return { state, attempt: prior };
   }
 
-  const attempt: Attempt = { ...input, id: id("att", input.idempotencyKey), correct: input.answer === input.correctAnswer };
+  const rawAttempt: Attempt = { ...input, id: id("att", input.idempotencyKey), correct: input.answer === input.correctAnswer };
+  const canonicalContentKey = canonicalForAttempt(rawAttempt);
+  const attempt: Attempt = canonicalContentKey ? { ...rawAttempt, canonicalContentKey } : rawAttempt;
   const card: SrsCard = {
-    id: id("card", `${input.contentId}:${input.contentVersion}:${input.dimension}`),
+    id: id("card", `${canonicalContentKey ?? `${input.contentId}:${input.contentVersion}`}:${input.dimension}`),
     contentId: input.contentId,
     contentVersion: input.contentVersion,
     dimension: input.dimension,
@@ -413,17 +515,26 @@ export function recordAttempt(state: LearningState, input: {
     algorithmVersion: "hskkit-srs-v1",
     sourceAttemptId: attempt.id,
     gradeKeys: [],
+    canonicalContentKey,
   };
-  const existingCard = state.cards.find((candidate) => candidate.id === card.id);
-  const activeCard = existingCard && !attempt.correct ? {
+  const existingCard = state.cards.find((candidate) => candidate.dimension === input.dimension && (
+    candidate.id === card.id || Boolean(canonicalContentKey && candidate.canonicalContentKey === canonicalContentKey)
+  ));
+  const updatedExisting = existingCard ? {
     ...existingCard,
+    contentId: input.contentId,
+    contentVersion: input.contentVersion,
+    sourceAttemptId: attempt.id,
+    canonicalContentKey,
+  } : undefined;
+  const activeCard = updatedExisting && !attempt.correct ? {
+    ...updatedExisting,
     dueAt: input.observedAt,
     intervalDays: 0,
-    revision: existingCard.revision + 1,
-    sourceAttemptId: attempt.id,
-  } : existingCard ?? card;
+    revision: updatedExisting.revision + 1,
+  } : updatedExisting ?? card;
   const cards = existingCard
-    ? state.cards.map((candidate) => candidate.id === activeCard.id ? activeCard : candidate)
+    ? state.cards.map((candidate) => candidate.id === existingCard.id ? activeCard : candidate)
     : [...state.cards, card];
   const mistakes = attempt.correct ? state.mistakes : [...state.mistakes, {
     id: id("mistake", attempt.id),
@@ -432,6 +543,7 @@ export function recordAttempt(state: LearningState, input: {
     sourceAttemptId: attempt.id,
     status: "open" as const,
     createdAt: input.observedAt,
+    canonicalContentKey,
   }];
   const withAttempt: LearningState = {
     ...state,
@@ -486,7 +598,13 @@ export function gradeReview(state: LearningState, input: {
   };
   const mistakes = state.mistakes.map((mistake) => {
     const sourceAttempt = state.attempts.find((attempt) => attempt.id === mistake.sourceAttemptId);
-    return (input.resolveMistakes ?? true) && mistake.contentId === old.contentId && mistake.contentVersion === old.contentVersion && sourceAttempt?.dimension === old.dimension && mistake.status === "open" && input.grade !== "again"
+    const sameDimension = (sourceAttempt?.dimension ?? "reading") === old.dimension;
+    const mistakeCanonical = mistake.canonicalContentKey ?? canonicalForAttempt(sourceAttempt);
+    const oldCanonical = old.canonicalContentKey ?? canonicalForAttempt(state.attempts.find((attempt) => attempt.id === old.sourceAttemptId));
+    const sameContent = Boolean(mistakeCanonical && oldCanonical)
+      ? mistakeCanonical === oldCanonical
+      : mistake.contentId === old.contentId && mistake.contentVersion === old.contentVersion;
+    return (input.resolveMistakes ?? true) && sameContent && sameDimension && mistake.status === "open" && input.grade !== "again"
       ? { ...mistake, status: "resolved" as const, resolvedAt: input.observedAt }
       : mistake;
   });
@@ -650,17 +768,14 @@ export function buildDailySession(state: LearningState, input: { ownerId: string
   const newWordCount = isTodayNewWordCount(input.newWordCount) ? input.newWordCount : isTodayNewWordCount(prior?.newWordCount) ? prior.newWordCount : 1;
   const listeningEnabled = typeof input.listeningEnabled === "boolean" ? input.listeningEnabled : prior?.listeningEnabled ?? true;
   const focus = isTodayFocus(input.focus) ? input.focus : isTodayFocus(prior?.focus) ? prior.focus : "balanced";
-  const openMistakeKeys = new Set(state.mistakes.filter((mistake) => mistake.status === "open").map((mistake) => {
-    const attempt = state.attempts.find((candidate) => candidate.id === mistake.sourceAttemptId);
-    return `${mistake.contentId}\u0000${mistake.contentVersion}\u0000${attempt?.dimension ?? "reading"}`;
-  }));
+  const openMistakeCardIds = new Set(state.cards.filter((card) => isOpenMistakeForCard(state, card)).map((card) => card.id));
   const content = input.dailyContent;
   const todayLevel = content?.status === "ready" || content?.status === "empty" ? content.startLevel : prior?.startLevel ?? 1;
   const dueCards = selectTodayReviewCards(state, state.cards
     .filter((card) => card.dueAt <= input.now)
     .sort((a, b) => {
-      const aMistake = openMistakeKeys.has(`${a.contentId}\u0000${a.contentVersion}\u0000${a.dimension}`);
-      const bMistake = openMistakeKeys.has(`${b.contentId}\u0000${b.contentVersion}\u0000${b.dimension}`);
+      const aMistake = openMistakeCardIds.has(a.id);
+      const bMistake = openMistakeCardIds.has(b.id);
       if (focus === "fix_mistakes") return Number(bMistake) - Number(aMistake) || a.dueAt.localeCompare(b.dueAt);
       if (focus === "listening_focus") return Number(b.dimension !== "reading") - Number(a.dimension !== "reading") || a.dueAt.localeCompare(b.dueAt);
       return a.dueAt.localeCompare(b.dueAt);
@@ -710,7 +825,7 @@ export function buildDailySession(state: LearningState, input: { ownerId: string
   const budgetMinutes = isTodayBudgetMinutes(input.budgetMinutes) ? input.budgetMinutes : isTodayBudgetMinutes(prior?.budgetMinutes) ? prior.budgetMinutes : 30;
   const carriedDictionaryItems = (prior?.items ?? []).filter((item) => item.id.startsWith("dictionary:") && item.status !== "completed");
   const coreTasks = core.filter((item) => item.kind !== "summary");
-  const dueMistakes = due.filter((item) => openMistakeKeys.has(`${item.contentId}\u0000${item.contentVersion}\u0000${item.dimension}`));
+  const dueMistakes = due.filter((item) => Boolean(item.reviewCardId && openMistakeCardIds.has(item.reviewCardId)));
   const dueOther = due.filter((item) => !dueMistakes.some((mistake) => mistake.id === item.id));
   const orderedCandidates = focus === "listening_focus"
     ? [...coreTasks.filter((item) => item.kind === "listen"), ...due, ...carriedDictionaryItems, ...coreTasks.filter((item) => item.kind !== "listen")]

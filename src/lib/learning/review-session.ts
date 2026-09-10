@@ -4,6 +4,10 @@ export type ReviewQueueCard = {
   dimension: "reading" | "audio" | "context_audio";
   dueAt: string;
   level?: number;
+  skill?: string;
+  sourceGroupId?: string;
+  templateId?: string;
+  canonicalContentKey?: string;
 };
 
 export type ReviewLevelScope = "current" | "all" | number;
@@ -16,15 +20,51 @@ export type ReviewLevelControl = {
   cardIdsByLevel: Record<number, string[]>;
 };
 
+function diversifyReviewQueue<T extends ReviewQueueCard>(orderedCards: T[], cap: number): T[] {
+  const seenCanonical = new Set<string>();
+  const remaining = [...orderedCards].filter((card) => {
+    if (!card.canonicalContentKey) return true;
+    if (seenCanonical.has(card.canonicalContentKey)) return false;
+    seenCanonical.add(card.canonicalContentKey);
+    return true;
+  });
+  const selected: T[] = [];
+  const usedSources = new Set<string>();
+  const maximum = Math.min(remaining.length, Math.max(1, cap));
+  const allowed = (card: T, relaxSource: boolean, relaxTemplate: boolean, relaxSkill: boolean) => {
+    const previous = selected.at(-1);
+    const beforePrevious = selected.at(-2);
+    if (!relaxSource && card.sourceGroupId && usedSources.has(card.sourceGroupId)) return false;
+    if (!relaxTemplate && card.templateId && card.templateId === previous?.templateId) return false;
+    if (!relaxSkill && card.skill && card.skill === previous?.skill && card.skill === beforePrevious?.skill) return false;
+    return true;
+  };
+  while (selected.length < maximum) {
+    let index = -1;
+    for (const relaxation of [[false, false, false], [true, false, false], [true, true, false], [true, true, true]] as const) {
+      index = remaining.findIndex((card) => allowed(card, relaxation[0], relaxation[1], relaxation[2]));
+      if (index >= 0) break;
+    }
+    if (index < 0) break;
+    const [next] = remaining.splice(index, 1);
+    selected.push(next);
+    if (next.sourceGroupId) usedSources.add(next.sourceGroupId);
+  }
+  return selected;
+}
+
 export function buildReviewQueue<T extends ReviewQueueCard>(cards: T[], cap: number): T[] {
-  return [...cards]
-    .sort((a, b) => Number(b.isMistake) - Number(a.isMistake) || a.dueAt.localeCompare(b.dueAt))
-    .slice(0, Math.max(1, cap));
+  return diversifyReviewQueue(
+    [...cards].sort((a, b) => Number(b.isMistake) - Number(a.isMistake) || a.dueAt.localeCompare(b.dueAt)),
+    cap,
+  );
 }
 
 export function reviewLevelControl<T extends ReviewQueueCard>(cards: T[], currentLevel: number, preserveOrder = false): ReviewLevelControl {
   const normalizedCurrentLevel = Number.isInteger(currentLevel) && currentLevel >= 1 && currentLevel <= 9 ? currentLevel : 1;
-  const ordered = preserveOrder ? [...cards] : buildReviewQueue(cards, Math.max(1, cards.length));
+  const ordered = preserveOrder
+    ? diversifyReviewQueue(cards, Math.max(1, cards.length))
+    : buildReviewQueue(cards, Math.max(1, cards.length));
   const cardIdsByLevel = Object.fromEntries(Array.from({ length: 9 }, (_, index) => {
     const level = index + 1;
     return [level, ordered.filter((card) => card.level === level).map((card) => card.id)];
