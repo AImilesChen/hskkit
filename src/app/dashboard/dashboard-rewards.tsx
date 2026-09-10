@@ -61,7 +61,7 @@ export default function DashboardRewards({ rewards, primaryHref, onRewardsChange
   const remainingMinutes = Math.ceil(rewards.remainingSeconds / 60);
   const todayMessage = rewards.nextTierPoints === null
     ? "Daily maximum reached: 10 learning points."
-    : `${remainingMinutes} more active minute${remainingMinutes === 1 ? "" : "s"} to reach ${rewards.nextTierPoints} points today.`;
+    : `${remainingMinutes} more active minute${remainingMinutes === 1 ? "" : "s"} to reach ${rewards.nextTierPoints} point${rewards.nextTierPoints === 1 ? "" : "s"} today.`;
 
   async function redeem() {
     setBusy(true);
@@ -134,7 +134,7 @@ export default function DashboardRewards({ rewards, primaryHref, onRewardsChange
           <h3 className="text-lg font-black text-slate-950">This month</h3>
           <p className="mt-2 text-sm text-slate-600">{rewards.monthLearningDays} learning day{rewards.monthLearningDays === 1 ? "" : "s"} · {rewards.monthPoints} points</p>
           <p className="mt-1 text-sm text-slate-600">Current streak: {rewards.currentStreak} days · Best: {rewards.longestStreak} days</p>
-          <div className="mt-4 grid grid-cols-3 gap-2 sm:grid-cols-6">
+          <div className="mt-4 grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-6">
             {badgeLadder.map(({ days, name }) => {
               const unlocked = rewards.unlockedBadges.some((badge) => badge.days === days);
               return <div key={days} className={`rounded-xl border px-2 py-3 text-center ${unlocked ? "border-amber-300 bg-amber-50 text-amber-950" : "border-slate-200 bg-white/70 text-slate-400"}`} title={unlocked ? `${name} unlocked` : `Locked: reach ${days} consecutive learning days`}><span className="flex justify-center">{unlocked ? <RewardIcon /> : <LockIcon />}</span><strong className="mt-1 block text-sm">{name}</strong><span className="mt-1 block text-[11px] font-bold">{days} consecutive learning days</span></div>;

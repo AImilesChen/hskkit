@@ -17,6 +17,12 @@ test("stage 3 dashboard presents calendar, 7/30-day curve, truthful HSK bands an
   assert.match(growth, /No learned vocabulary saved yet/);
   assert.match(growth, /grid-cols-7/);
   assert.match(growth, /className={`flex h-10 items-center/);
+  assert.match(growth, /Today · \$\{selectedDay\.date\}/);
+  assert.match(growth, /Showing \{metricLabels\[metric\]\.toLowerCase\(\)\} from saved learning activity/);
+  assert.match(growth, /metric === "tasks" \? "Effective time" : "Completed tasks"/);
+  assert.match(growth, /Select a point for daily details/);
+  assert.doesNotMatch(growth, /Effective learning minutes by default/);
+  assert.doesNotMatch(growth, /Click or focus a point/);
   assert.doesNotMatch(growth, /aspect-square/);
   assert.doesNotMatch(growth, /sample|placeholder|demo data/i);
 });
