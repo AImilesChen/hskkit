@@ -2,10 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
-import { AudioButton } from "../../components/audio-button";
-
-const sessionSizes = [10, 20, 50] as const;
-type SessionSize = typeof sessionSizes[number];
+import { AudioButton } from "../components/audio-button";
 
 type FlashcardWord = {
   id: string;
@@ -31,8 +28,7 @@ function randomSeed() {
   return Date.now() & 0x7fffffff;
 }
 
-export function QuickFlashcards({ level, levelLabel, publishedCount }: { level: number; levelLabel: string; publishedCount: number }) {
-  const [sessionSize, setSessionSize] = useState<SessionSize>(20);
+export function QuickFlashcards({ level, levelLabel, publishedCount, sessionSize }: { level: number; levelLabel: string; publishedCount: number; sessionSize: 10 | 20 | 50 }) {
   const [seed, setSeed] = useState(0);
   const [words, setWords] = useState<FlashcardWord[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -85,8 +81,7 @@ export function QuickFlashcards({ level, levelLabel, publishedCount }: { level: 
     .filter((form, index, forms) => form && form !== currentWord.payload.hanzi && forms.indexOf(form) === index)
     .join(" · ") ?? "", [currentWord]);
 
-  function newRandomSet(size: SessionSize = sessionSize) {
-    setSessionSize(size);
+  function newRandomSet() {
     setSeed(randomSeed());
   }
 
@@ -113,12 +108,7 @@ export function QuickFlashcards({ level, levelLabel, publishedCount }: { level: 
           <h2 id="quick-flashcards-heading" className="mt-2 text-2xl font-bold tracking-tight text-white sm:text-3xl">Quick Flashcards · {levelLabel}</h2>
           <p className="mt-2 max-w-xl text-sm leading-6 text-slate-300">Review a fresh, non-repeating set drawn from {publishedCount.toLocaleString()} published HSK 3.0 words. No sign-in required.</p>
         </div>
-        <div>
-          <p className="mb-2 text-xs font-bold uppercase tracking-[.12em] text-slate-400">Cards per set</p>
-          <div className="flex gap-2" aria-label="Cards per flashcard set">
-            {sessionSizes.map((size) => <button key={size} type="button" aria-pressed={sessionSize === size} disabled={loading && sessionSize === size} onClick={() => newRandomSet(size)} className={`inline-flex min-h-11 min-w-11 items-center justify-center rounded-xl border px-3 text-sm font-bold transition focus:outline-none focus:ring-4 focus:ring-blue-400/30 ${sessionSize === size ? "border-blue-400 bg-blue-500 text-white" : "border-slate-600 bg-slate-900 text-slate-200 hover:border-blue-400"}`}>{size}</button>)}
-          </div>
-        </div>
+        <p className="rounded-full border border-slate-700 bg-slate-900 px-4 py-2 text-sm font-bold text-blue-100">{sessionSize} cards</p>
       </div>
     </header>
 

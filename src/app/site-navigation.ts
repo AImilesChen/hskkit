@@ -34,6 +34,7 @@ export const siteNavigation: NavigationEntry[] = [
   {
     label: "Tests",
     items: [
+      { href: "/flashcards", label: "Quick Flashcards", description: "Choose an HSK level and flip through 10, 20, or 50 random words." },
       { href: "/placement", label: "Placement", description: "Find a suggested starting point, not an official score." },
       { href: "/mock/basic", label: "Basic Mock", description: "Take the published HSK 1–6 timed mock." },
       { href: "/mock/advanced", label: "Advanced Mock", description: "Assess the unified HSK 7–9 advanced ability band." },

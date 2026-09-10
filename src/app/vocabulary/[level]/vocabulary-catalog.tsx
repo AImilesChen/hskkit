@@ -3,7 +3,6 @@
 import Link from "next/link";
 import { FormEvent, useEffect, useMemo, useRef, useState } from "react";
 import { AudioButton } from "../../components/audio-button";
-import { QuickFlashcards } from "./quick-flashcards";
 
 type AudioFilter = "all" | "formal";
 type SortOrder = "catalog" | "pinyin";
@@ -70,8 +69,7 @@ function visiblePages(current: number, total: number): PageItem[] {
   return result;
 }
 
-export function VocabularyCatalog({ level, levelLabel, publishedCount, initialMode = "browse" }: { level: number; levelLabel: string; publishedCount: number; initialMode?: "browse" | "flashcards" }) {
-  const [mode, setMode] = useState<"browse" | "flashcards">(initialMode);
+export function VocabularyCatalog({ level, levelLabel, publishedCount }: { level: number; levelLabel: string; publishedCount: number }) {
   const [query, setQuery] = useState("");
   const [partOfSpeech, setPartOfSpeech] = useState("");
   const [audio, setAudio] = useState<AudioFilter>("all");
@@ -139,18 +137,13 @@ export function VocabularyCatalog({ level, levelLabel, publishedCount, initialMo
   const resultTotal = data?.pagination.total ?? publishedCount;
 
   return <section ref={resultsRef} className="scroll-mt-24" aria-label={`${levelLabel} vocabulary activities`}>
-    <div className="mb-[20px] flex flex-col gap-3 border-b border-slate-200 pb-[16px] sm:flex-row sm:items-end sm:justify-between">
+    <div className="mb-[20px] border-b border-slate-200 pb-[16px]">
       <div>
         <p className="text-xs font-bold uppercase tracking-[.14em] text-slate-500">Vocabulary workspace</p>
-        <p className="mt-1 text-sm leading-6 text-slate-600">Switch between the full catalog and your current card set.</p>
-      </div>
-      <div className="grid grid-cols-2 gap-1 rounded-xl border border-slate-200 bg-slate-100 p-1" role="group" aria-label="Vocabulary activity mode">
-        <button type="button" aria-pressed={mode === "browse"} onClick={() => setMode("browse")} className={`inline-flex min-h-11 items-center justify-center rounded-lg px-4 text-sm font-bold transition focus:outline-none focus:ring-4 focus:ring-slate-200 ${mode === "browse" ? "bg-white text-slate-950 shadow-sm ring-1 ring-slate-200" : "text-slate-600 hover:text-slate-950"}`}>Browse vocabulary</button>
-        <button type="button" aria-pressed={mode === "flashcards"} onClick={() => setMode("flashcards")} className={`inline-flex min-h-11 items-center justify-center rounded-lg px-4 text-sm font-bold transition focus:outline-none focus:ring-4 focus:ring-slate-200 ${mode === "flashcards" ? "bg-white text-slate-950 shadow-sm ring-1 ring-slate-200" : "text-slate-600 hover:text-slate-950"}`}>Quick Flashcards</button>
+        <p className="mt-1 text-sm leading-6 text-slate-600">Search and filter the complete published catalog for this level.</p>
       </div>
     </div>
 
-    {mode === "browse" ? <>
     <form className="rounded-xl border border-slate-200 bg-white p-[16px]" onSubmit={submit}>
       <div className="grid min-w-0 gap-3 lg:grid-cols-[minmax(0,2fr)_minmax(9rem,.75fr)_minmax(9rem,.75fr)_minmax(11rem,.9fr)] lg:items-end">
         <div className="min-w-0">
@@ -235,6 +228,5 @@ export function VocabularyCatalog({ level, levelLabel, publishedCount, initialMo
           <button type="button" disabled={!data.pagination.hasNext || loading} onClick={() => changePage(data.pagination.page + 1)} className="min-h-11 rounded-lg border border-slate-300 bg-white px-4 font-semibold text-slate-700 transition hover:border-blue-600 hover:text-blue-700 disabled:cursor-not-allowed disabled:opacity-40">Next</button>
         </nav>}
       </div> : null}
-    </> : <QuickFlashcards level={level} levelLabel={levelLabel} publishedCount={publishedCount} />}
   </section>;
 }

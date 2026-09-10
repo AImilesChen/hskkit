@@ -6,8 +6,12 @@ import test from "node:test";
 import { buildCatalogQuery, parseCatalogSearchParams } from "../src/lib/content/catalog-search.ts";
 import { handleCatalogWordsRequest } from "../src/lib/content/catalog-route.ts";
 
+const vocabularyPageSource = fs.readFileSync(new URL("../src/app/vocabulary/[level]/page.tsx", import.meta.url), "utf8");
 const catalogSource = fs.readFileSync(new URL("../src/app/vocabulary/[level]/vocabulary-catalog.tsx", import.meta.url), "utf8");
-const quickSource = fs.readFileSync(new URL("../src/app/vocabulary/[level]/quick-flashcards.tsx", import.meta.url), "utf8");
+const flashcardsPageSource = fs.readFileSync(new URL("../src/app/flashcards/page.tsx", import.meta.url), "utf8");
+const workspaceSource = fs.readFileSync(new URL("../src/app/flashcards/flashcards-workspace.tsx", import.meta.url), "utf8");
+const quickSource = fs.readFileSync(new URL("../src/app/flashcards/quick-flashcards.tsx", import.meta.url), "utf8");
+const navigationSource = fs.readFileSync(new URL("../src/app/site-navigation.ts", import.meta.url), "utf8");
 const routeSource = fs.readFileSync(new URL("../src/lib/content/catalog-route.ts", import.meta.url), "utf8");
 
 test("flashcard catalog mode validates a bounded request and executes a stable unique sample", () => {
@@ -110,14 +114,14 @@ test("flashcard responses are no-store while invalid random requests fail before
   assert.equal(prepareCalls, beforeInvalid);
 });
 
-test("level vocabulary keeps Browse vocabulary and Quick Flashcards as separate modes", () => {
-  assert.match(catalogSource, /role="group"/);
-  assert.match(catalogSource, /aria-pressed=\{mode === "browse"\}/);
-  assert.match(catalogSource, /aria-pressed=\{mode === "flashcards"\}/);
-  assert.match(catalogSource, />Browse vocabulary</);
-  assert.match(catalogSource, />Quick Flashcards</);
-  assert.match(catalogSource, /<QuickFlashcards/);
-  assert.match(catalogSource, /mode === "browse"/);
+test("quick flashcards live on a dedicated route under Tests, not inside level vocabulary pages", () => {
+  assert.match(navigationSource, /label: "Tests"[\s\S]*?href: "\/flashcards", label: "Quick Flashcards"/);
+  assert.match(flashcardsPageSource, /<FlashcardsWorkspace/);
+  assert.match(workspaceSource, /Choose your HSK level/);
+  assert.match(flashcardsPageSource, /HSK 7–9/);
+  assert.match(workspaceSource, /<QuickFlashcards/);
+  assert.doesNotMatch(vocabularyPageSource, /Quick Flashcards|quick-review-heading|mode=flashcards/);
+  assert.doesNotMatch(catalogSource, /Quick Flashcards|<QuickFlashcards|mode === "flashcards"|Vocabulary activity mode/);
   assert.doesNotMatch(catalogSource, /hsk1_vocab\.json/);
 });
 
@@ -126,7 +130,8 @@ test("quick flashcards load only the selected published HSK 3.0 level and suppor
   assert.match(quickSource, /level: String\(level\)/);
   assert.match(quickSource, /mode: "flashcards"/);
   assert.match(quickSource, /seed: String\(seed\)/);
-  assert.match(quickSource, /const sessionSizes = \[10, 20, 50\] as const/);
+  assert.match(workspaceSource, /const sessionSizes = \[10, 20, 50\] as const/);
+  assert.match(workspaceSource, /Start \{selected\.label\} flashcards/);
   assert.match(quickSource, /pageSize: String\(sessionSize\)/);
   assert.match(quickSource, /New random set/);
 });
