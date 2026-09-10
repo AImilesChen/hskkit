@@ -7,7 +7,7 @@ import AiAssist from "./ai-assist";
 import HomeIcon, { type HomeIconName } from "./home-icon";
 import LearningLoopNav, { type LearningLoopLabel } from "./learning-loop-nav";
 import { LearningLoadError, loadLearningData, type LearningLoadErrorCode } from "../../lib/learning/client-load";
-import { buildIntentReviewQueue, filterReviewCards, recommendReviewCount, reviewAnswerIsCorrect, reviewCardIdsForScope, reviewComposition, reviewEntryIntent, reviewGradeOptions, reviewTip, type ReviewEntryIntent, type ReviewGrade, type ReviewLevelControl, type ReviewLevelScope } from "../../lib/learning/review-session";
+import { activeReviewCardId, buildIntentReviewQueue, filterReviewCards, recommendReviewCount, reviewAnswerIsCorrect, reviewCardIdsForScope, reviewComposition, reviewEntryIntent, reviewGradeOptions, reviewTip, type ReviewEntryIntent, type ReviewGrade, type ReviewLevelControl, type ReviewLevelScope } from "../../lib/learning/review-session";
 import { completionProofNeedsSync, parseTodayCompletionProof, recommendTodayMinutes, recommendTodayNewWordCount, resolveTodayCelebration, todayCompletionProofKey, todaySummaryStats, todayJourneyProgress, TODAY_BUDGET_OPTIONS, TODAY_FOCUS_OPTIONS, TODAY_NEW_WORD_OPTIONS, type TodayBudgetMinutes, type TodayCelebration, type TodayCompletedKind, type TodayFocus, type TodayNewWordCount } from "../../lib/learning/today-plan";
 
 type Dimension = "reading" | "audio" | "context_audio";
@@ -85,7 +85,6 @@ export default function LearningDashboard({ mode }: { mode: "today" | "review" |
   const [retryFeedback, setRetryFeedback] = useState<{ correct: boolean; correctAnswerText: string } | null>(null);
   const [retryResult, setRetryResult] = useState<Data | null>(null);
   const [lastRatedCardId, setLastRatedCardId] = useState<string | null>(null);
-  const [ratedLegacyMistakeIds, setRatedLegacyMistakeIds] = useState<string[]>([]);
   const [reviewSaving, setReviewSaving] = useState(false);
   const [learnSavingId, setLearnSavingId] = useState("");
   const [syncState, setSyncState] = useState<"synced" | "local_pending" | "syncing" | "conflict" | "failed">("synced");
@@ -300,7 +299,6 @@ export default function LearningDashboard({ mode }: { mode: "today" | "review" |
         : data.cards.filter((card) => card.dueAt <= new Date().toISOString());
     setReviewIds(entryIntent.kind === "today" ? (data.session.reviewCardIds ?? []) : buildIntentReviewQueue(reviewCards, entryIntent, reviewMinutes).map((card) => card.id));
     setReviewedCount(0);
-    setRatedLegacyMistakeIds([]);
   }, [data, entryIntent, entryResolved, mode, reviewIds, reviewMinutes]);
 
   useEffect(() => {
@@ -406,7 +404,6 @@ export default function LearningDashboard({ mode }: { mode: "today" | "review" |
         setRetryFeedback(null);
         setRetryResult(null);
         setReviewedCount((count) => count + 1);
-        if (entryIntent.kind === "mistake" && card.legacyReview) setRatedLegacyMistakeIds((ids) => [...ids, card.id]);
         setLastRatedCardId(card.id);
       }
     } finally {
@@ -454,7 +451,6 @@ export default function LearningDashboard({ mode }: { mode: "today" | "review" |
       if (await post("undo_review", { cardId: lastRatedCardId }, `undo-review:${lastRatedCardId}`)) {
         if (entryIntent.kind === "today" && entryTodaySessionId && entryTodayItemId) sessionStorage.removeItem(todayCompletionProofKey(entryTodaySessionId, entryTodayItemId));
         setReviewedCount((count) => Math.max(0, count - 1));
-        setRatedLegacyMistakeIds((ids) => ids.filter((id) => id !== lastRatedCardId));
         setLastRatedCardId(null);
       }
     } finally {
@@ -706,17 +702,14 @@ export default function LearningDashboard({ mode }: { mode: "today" | "review" |
   const recommendedCount = recommendReviewCount(scopedDue);
   const reviewedSessionCards = (reviewIds ?? []).map((id) => data.cards.find((card) => card.id === id)).filter((card): card is Card => Boolean(card));
   const nextReviewAt = reviewedSessionCards.map((card) => card.dueAt).filter((dueAt) => new Date(dueAt).getTime() > Date.now()).sort()[0];
-  const reviewPool = entryIntent.kind === "mistake" ? data.cards.filter((card) => card.isMistake && !ratedLegacyMistakeIds.includes(card.id)) : entryIntent.kind === "setup" ? data.cards : due;
   const todayReviewItemIds = new Set(data.session.reviewItemIds ?? []);
   const todayCompletedReviewIds = new Set(data.session.items.filter((item) => todayReviewItemIds.has(item.id) && item.kind === "review" && item.status === "completed").map((item) => item.reviewCardId));
-  const plannedCards = reviewIds
-    ? reviewIds.map((id) => (entryIntent.kind === "today" ? data.cards : reviewPool).find((card) => card.id === id)).filter((card): card is Card => Boolean(card)).filter((card) => entryIntent.kind !== "today" || !todayCompletedReviewIds.has(card.id))
-    : [];
-  const activeCard = plannedCards[0];
-  const activeFocusReason = data.focusedReview.find((card) => card.id === activeCard?.id)?.focusReason;
   const sessionTotal = reviewIds?.length ?? 0;
   const todayReviewedCount = entryIntent.kind === "today" ? (reviewIds ?? []).filter((id) => todayCompletedReviewIds.has(id)).length : reviewedCount;
   const displayReviewedCount = entryIntent.kind === "today" ? todayReviewedCount : reviewedCount;
+  const activeReviewId = activeReviewCardId(reviewIds, displayReviewedCount);
+  const activeCard = activeReviewId ? data.cards.find((card) => card.id === activeReviewId) : undefined;
+  const activeFocusReason = data.focusedReview.find((card) => card.id === activeCard?.id)?.focusReason;
   const directEntryPreparing = !entryResolved || (entryIntent.kind !== "setup" && reviewIds === null);
   const directEntryEmpty = entryIntent.kind !== "setup" && reviewIds !== null && reviewIds.length === 0;
   const sessionComplete = Boolean(reviewIds?.length && (displayReviewedCount >= sessionTotal || !activeCard));
@@ -766,7 +759,7 @@ export default function LearningDashboard({ mode }: { mode: "today" | "review" |
           <label className="mt-5 flex min-h-[48px] items-center gap-3 rounded-xl border border-slate-200 p-3"><input type="checkbox" checked={difficultOnly} onChange={(event) => setDifficultOnly(event.target.checked)} /><span><strong>Difficult items only</strong><small className="block text-slate-500">Open mistakes and cards below normal ease</small></span></label>
           <div aria-label="Review composition" className="mt-5 grid gap-3 rounded-2xl bg-slate-50 p-4 sm:grid-cols-3"><p><strong>Mistakes</strong><br />{composition.mistakes}</p><p><strong>Reading</strong><br />{composition.reading}</p><p><strong>Listening</strong><br />{composition.listening}</p></div>
           <details className="mt-4 rounded-xl border border-slate-200 p-4"><summary className="cursor-pointer font-semibold">How to rate your memory</summary><p className="mt-2 text-sm text-slate-600">Choose Forgot if you could not recall it, Difficult if recall was slow or uncertain, Remembered if correct with normal effort, and Easy only when recall was immediate. Your choice schedules the next review.</p></details>
-          <button disabled={selectedReviewCount === 0} className="mt-6 min-h-[48px] w-full rounded-xl bg-blue-600 px-5 py-3 font-bold text-white shadow-sm transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-40 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-blue-200" onClick={() => { setReviewIds(selectableDue.slice(0, reviewMinutes).map((card) => card.id)); setReviewedCount(0); setRatedLegacyMistakeIds([]); }}>Start review · {Math.min(reviewMinutes, selectedReviewCount)} item{Math.min(reviewMinutes, selectedReviewCount) === 1 ? "" : "s"}</button>
+          <button disabled={selectedReviewCount === 0} className="mt-6 min-h-[48px] w-full rounded-xl bg-blue-600 px-5 py-3 font-bold text-white shadow-sm transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-40 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-blue-200" onClick={() => { setReviewIds(selectableDue.slice(0, reviewMinutes).map((card) => card.id)); setReviewedCount(0); }}>Start review · {Math.min(reviewMinutes, selectedReviewCount)} item{Math.min(reviewMinutes, selectedReviewCount) === 1 ? "" : "s"}</button>
           {selectedReviewCount === 0 && <div className="mt-3 rounded-xl bg-amber-50 p-4 text-sm text-amber-900" role="status"><p>{difficultOnly ? "No difficult items are due at this level. Turn off “Difficult items only” to check the full selected queue." : selectedReviewLevel ? `HSK ${selectedReviewLevel} has no due reviews.` : "No reviews are due across all levels."}</p>{!difficultOnly && selectedReviewScope !== "all" && <button type="button" className="mt-3 min-h-[44px] rounded-lg border border-amber-700 px-4 py-2 font-bold focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-amber-200" onClick={() => chooseReviewScope("all")}>View all levels</button>}</div>}
           {data.capabilities.tier === "free" && <p className="mt-4 text-sm text-slate-500"><strong>Free remaining today:</strong> {Math.max(0, (data.capabilities.dailyReviewGrades ?? 0) - data.usage.dailyReviewGrades)} successful SRS ratings. <Link className="font-semibold text-blue-700 underline-offset-4 hover:underline" href="/pricing">Pro removes the Free daily learning and review limits and prioritizes unresolved mistakes.</Link></p>}
         </div>

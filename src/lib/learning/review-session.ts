@@ -75,6 +75,11 @@ export function buildReviewQueue<T extends ReviewQueueCard>(cards: T[], cap: num
   );
 }
 
+export function activeReviewCardId(reviewIds: readonly string[] | null, reviewedCount: number): string | undefined {
+  if (!reviewIds || !Number.isInteger(reviewedCount) || reviewedCount < 0) return undefined;
+  return reviewIds[reviewedCount];
+}
+
 export function reviewLevelControl<T extends ReviewQueueCard>(cards: T[], currentLevel: number, preserveOrder = false): ReviewLevelControl {
   const normalizedCurrentLevel = Number.isInteger(currentLevel) && currentLevel >= 1 && currentLevel <= 9 ? currentLevel : 1;
   const ordered = preserveOrder

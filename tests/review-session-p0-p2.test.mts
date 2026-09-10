@@ -21,6 +21,22 @@ test("review queue prioritizes mistakes, preserves mixed skills, and respects a 
   assert.deepEqual(buildIntentReviewQueue(cardsWithContent, intent, 2).map((card: { id: string }) => card.id), ["context-due", "reading-due"]);
 });
 
+test("review session advances through its frozen card IDs and stops at the real queue length", async () => {
+  const { activeReviewCardId } = await import("../src/lib/learning/review-session.ts");
+  const reviewIds = ["card-1", "card-2", "card-3"];
+  assert.equal(activeReviewCardId(reviewIds, 0), "card-1");
+  assert.equal(activeReviewCardId(reviewIds, 1), "card-2");
+  assert.equal(activeReviewCardId(reviewIds, 2), "card-3");
+  assert.equal(activeReviewCardId(reviewIds, 3), undefined);
+  assert.equal(activeReviewCardId(["only-card"], 0), "only-card");
+  assert.equal(activeReviewCardId(["only-card"], 1), undefined);
+  assert.equal(activeReviewCardId(reviewIds, 1 - 1), "card-1");
+
+  const client = await source("src/app/components/learning-dashboard.tsx");
+  assert.match(client, /activeReviewCardId\(reviewIds, displayReviewedCount\)/);
+  assert.doesNotMatch(client, /plannedCards\[0\]/);
+});
+
 test("rating copy explains memory outcome and interval without unexplained SRS jargon", async () => {
   const { reviewGradeOptions } = await import("../src/lib/learning/review-session.ts");
   assert.deepEqual(reviewGradeOptions(2.5, 1).map((option: { label: string; hint: string }) => [option.label, option.hint]), [
