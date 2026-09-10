@@ -53,3 +53,9 @@ test("weekly signals and HSK vocabulary wording stay explicit and use a consiste
   }
   assert.doesNotMatch(core + rewards + growth, /🔥|🏆|⭐|🎁|📅|📈/);
 });
+
+test("remaining dashboard requirements expose rules, activity bands, interactive detail, comparisons, skills and full badges", () => {
+  for (const token of ["How points work", "cumulative, not added together", "Up to 10 points per day", "locked or idle time pauses automatically"]) assert.match(rewards, new RegExp(token));
+  for (const token of ["Under 10 min", "10–29 min", "30–59 min", "60 min", "calendarTone", "selectedCurveDay", "Compared with previous", "changePercent", "Click or focus a point for daily details", "Listening", "Speaking", "Reading", "Writing", "Skill evidence", "No saved attempts yet"]) assert.match(growth, new RegExp(token));
+  for (const token of ["First rhythm", "One-week streak", "Two-week streak", "Monthly habit", "60-day momentum", "90-day consistency", "consecutive learning days"]) assert.match(rewards, new RegExp(token));
+});

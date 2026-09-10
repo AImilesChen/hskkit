@@ -29,6 +29,7 @@ export async function GET() {
       timezone,
       activity,
       attempts: state.attempts,
+      dailySessions: state.dailySessions,
       engagementDays: rewards.activityDays,
       levelTotals,
     }), { headers: noStore });

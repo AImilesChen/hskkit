@@ -69,3 +69,49 @@ test("empty state remains genuinely empty instead of inventing activity", () => 
   assert.ok(snapshot.calendar.days.every((day) => !day.active));
   assert.ok(snapshot.levelProgress.every((row) => row.learned === 0));
 });
+
+test("completed Today learn items count as new vocabulary on their real local day", () => {
+  const snapshot = buildGrowthSnapshot({
+    now: new Date("2026-09-05T12:00:00.000Z"),
+    timezone: "UTC",
+    activity: [],
+    attempts: [],
+    dailySessions: [
+      { localDay: "2026-09-04", items: [
+        { kind: "learn", status: "completed", contentId: "word:one" },
+        { kind: "learn", status: "completed", contentId: "word:one" },
+        { kind: "learn", status: "pending", contentId: "word:two" },
+      ] },
+      { localDay: "2026-09-05", items: [{ kind: "learn", status: "completed", contentId: "word:three" }] },
+    ],
+    levelTotals,
+  });
+  assert.equal(snapshot.curve30.find((day) => day.date === "2026-09-04")?.newWords, 1);
+  assert.equal(snapshot.curve30.find((day) => day.date === "2026-09-05")?.newWords, 1);
+  assert.equal(snapshot.weekSummary.newWords, 2);
+});
+
+test("growth snapshot compares periods and exposes truthful skill evidence", () => {
+  const engagementDays = Array.from({ length: 60 }, (_, index) => ({
+    localDay: new Date(Date.UTC(2026, 6, 8 + index, 12)).toISOString().slice(0, 10),
+    activeSeconds: index >= 53 ? 1_200 : 600,
+    points: index >= 53 ? 5 : 1,
+  }));
+  const snapshot = buildGrowthSnapshot({
+    now: new Date("2026-09-05T12:00:00.000Z"),
+    timezone: "UTC",
+    activity: [],
+    attempts: [
+      { contentId: "reading:1", observedAt: "2026-09-05T10:00:00.000Z", correct: true, dimension: "reading", reviewSnapshot: { skillLabel: "Reading" } },
+      { contentId: "listening:1", observedAt: "2026-09-05T10:10:00.000Z", correct: false, dimension: "audio", reviewSnapshot: { skillLabel: "Listening" } },
+    ],
+    engagementDays,
+    levelTotals,
+  });
+  assert.deepEqual(snapshot.comparisons[7].minutes, { current: 140, previous: 70, changePercent: 100 });
+  assert.equal(snapshot.comparisons[30].minutes.current, 370);
+  assert.equal(snapshot.comparisons[30].minutes.previous, 300);
+  assert.deepEqual(snapshot.skillOverview.find((skill) => skill.key === "reading"), { key: "reading", label: "Reading", attempts: 1, correct: 1, accuracy: 100 });
+  assert.deepEqual(snapshot.skillOverview.find((skill) => skill.key === "listening"), { key: "listening", label: "Listening", attempts: 1, correct: 0, accuracy: 0 });
+  assert.deepEqual(snapshot.skillOverview.find((skill) => skill.key === "speaking"), { key: "speaking", label: "Speaking", attempts: 0, correct: 0, accuracy: null });
+});
