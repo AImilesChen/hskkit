@@ -77,8 +77,7 @@ test("secondary learning tools remain below the reading task", () => {
   assert.match(page, /Coverage boundary/);
 });
 
-test("mobile Reading pages keep the floating feedback trigger compact around study controls", () => {
+test("mobile Reading pages hide the floating feedback trigger from study controls", () => {
   assert.match(feedbackWidget, /pathname\.startsWith\("\/reading"\).*feedback-trigger--reading/);
-  assert.match(globalStyles, /\.feedback-trigger--reading\s*\{[^}]*width:\s*46px;[^}]*min-width:\s*46px;/s);
-  assert.match(globalStyles, /\.feedback-trigger--reading\s*>\s*span:last-child/);
+  assert.match(globalStyles, /\.feedback-trigger--reading\s*\{[^}]*display:\s*none;/s);
 });
