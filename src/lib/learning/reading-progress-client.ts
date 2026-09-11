@@ -112,7 +112,7 @@ export async function syncReadingProgress(action: "reading_article_progress" | "
   const response = await fetch("/api/v1/learning", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ action, idempotencyKey: crypto.randomUUID(), clientRevision, payload }),
+    body: JSON.stringify({ action, clientRevision, payload: { idempotencyKey: crypto.randomUUID(), ...payload } }),
   });
   if (!response.ok) throw new Error("READING_PROGRESS_SYNC_FAILED");
   return response.json() as Promise<{ readingArticleProgress?: ReadingArticleProgress[]; revision: number; scope: "account" | "guest" }>;

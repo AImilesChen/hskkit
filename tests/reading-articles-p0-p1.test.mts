@@ -83,6 +83,8 @@ test("guest progress persists locally, syncs to the account and merges on login"
   assert.match(progress, /mergeReadingProgress/);
   assert.match(progress, /data\.scope === "account"/);
   assert.match(progress, /reading_article_progress/);
+  assert.match(progress, /payload:\s*\{\s*idempotencyKey:\s*crypto\.randomUUID\(\),\s*\.\.\.payload\s*\}/);
+  assert.doesNotMatch(progress, /\{\s*action,\s*idempotencyKey:/);
   assert.match(library, /Continue/);
   assert.match(library, /Recommended next/);
   assert.match(level, /Continue article/);
