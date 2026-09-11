@@ -24,13 +24,16 @@ test("review UI answers every complete card and reserves reveal-only for incompl
   assert.match(client, /activeCard\.legacyReview.*Reveal answer/s);
 });
 
-test("review audio uses trusted asset duration and completes immediately from the ended event", async () => {
+test("review audio uses trusted duration, verifies after the playback window, and locks answers", async () => {
   assert.equal(publishedAudioDurationBySrc("/audio/listening-library/v2/hsk1-001.mp3"), 1.104);
   const route = await source("src/app/api/v1/learning/route.ts");
   const client = await source("src/app/components/learning-dashboard.tsx");
+  const verifier = await source("src/lib/learning/verified-playback.ts");
   assert.match(route, /publishedAudioDurationBySrc\(card\.audioSrc\)/);
   assert.match(route, /createStep7PlaybackTicket\(identity\.id, exerciseKey, card\.audioText, new Date\(\), trustedDuration\)/);
-  assert.doesNotMatch(client, /if \(remaining\) await new Promise/);
-  assert.match(client, /onEnded=\{\(\) => void completeFormalPlayback\(activeCard\)\}/);
-  assert.match(client, /Replay the full recording/);
+  assert.match(verifier, /waitForPlaybackWindow\(ticket\.notBefore/);
+  assert.match(client, /<AudioPlaybackControl asset=/);
+  assert.match(client, /beforePlay=\{\(\) => startFormalPlayback\(activeCard\)\}/);
+  assert.match(client, /<fieldset disabled=\{activeCard\.playbackRequired && !activeCard\.playbackReady\}>/);
+  assert.doesNotMatch(client, /<audio controls preload="metadata" src=\{activeCard\.audioSrc\}/);
 });

@@ -3,13 +3,15 @@
 import Link from "next/link";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { AudioPlaybackControl } from "../../../components/audio-playback-control";
+import { useVerifiedAudioPlayback } from "../../../components/use-verified-audio-playback";
+import { PlaybackRequestError } from "@/lib/learning/verified-playback";
 import type { PublicTopicPracticeQuestion, TopicPracticeMode } from "@/lib/topics/practice";
 import { TopicIcon } from "../../topic-visuals";
 import { topicIconFor, topicVisualFor } from "@/lib/topics/visuals";
 
 type Props = { topicSlug: string; topicTitle: string; visualKey: string; categorySlug: string; questions: PublicTopicPracticeQuestion[] };
 type Feedback = { correct: boolean; correctAnswerText: string; explanation?: string };
-type LearningView = { queueBinding: string; revision: number; feedback?: Feedback; message?: string; playbackTicket?: string };
+type LearningView = { queueBinding: string; revision: number; feedback?: Feedback; message?: string; code?: string; playbackTicket?: string; notBefore?: string };
 const labels: Record<TopicPracticeMode, string> = { meaning: "Meaning", pinyin: "Pinyin", listening: "Listening", scene: "Scene" };
 
 export function TopicPracticeClient({ topicSlug, topicTitle, visualKey, categorySlug, questions }: Props) {
@@ -22,10 +24,19 @@ export function TopicPracticeClient({ topicSlug, topicTitle, visualKey, category
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   const [finished, setFinished] = useState(false);
-  const [playbackTicket, setPlaybackTicket] = useState("");
-  const [playbackReady, setPlaybackReady] = useState(false);
   const attemptKeys = useRef<Record<string, string>>({});
   const question = questions[index];
+  const playback = useVerifiedAudioPlayback({
+    context: "topic-practice",
+    start: async () => {
+      if (question.mode !== "listening" || !question.audioAsset) throw new PlaybackRequestError("AUDIO_ASSET_UNAVAILABLE");
+      const started = await post("topic_practice_playback_start", { topicSlug, questionId: question.id, idempotencyKey: `topic-play-start-${crypto.randomUUID()}` });
+      if (!started.playbackTicket) throw new PlaybackRequestError("AUDIO_PLAYBACK_REQUIRED");
+      return { playbackTicket: started.playbackTicket, notBefore: started.notBefore };
+    },
+    complete: async (playbackTicket) => { await post("topic_practice_playback_complete", { topicSlug, questionId: question.id, playbackTicket, idempotencyKey: `topic-play-complete-${crypto.randomUUID()}` }); },
+    onMessage: setError,
+  });
   const visual = topicVisualFor(categorySlug);
   const progress = useMemo(() => Math.round(((finished ? questions.length : index) / questions.length) * 100), [finished, index, questions.length]);
 
@@ -49,56 +60,14 @@ export function TopicPracticeClient({ topicSlug, topicTitle, visualKey, category
       body: JSON.stringify({ action, queueBinding: view.queueBinding, clientRevision: view.revision, payload }),
     });
     const body = await response.json() as LearningView;
-    if (!response.ok) throw new Error(body.message || "That action could not be saved.");
+    if (!response.ok) throw new PlaybackRequestError(body.code ?? "UNKNOWN_ERROR", body.message || "That action could not be saved.");
     return body;
-  }
-
-  async function authorizePlayback() {
-    if (question.mode !== "listening" || !question.audioAsset || busy) return false;
-    setBusy(true);
-    setError("");
-    setPlaybackReady(false);
-    try {
-      const started = await post("topic_practice_playback_start", {
-        topicSlug, questionId: question.id, idempotencyKey: `topic-play-start-${crypto.randomUUID()}`,
-      });
-      if (!started.playbackTicket) throw new Error("Playback could not start.");
-      setPlaybackTicket(started.playbackTicket);
-      return true;
-    } catch (reason) {
-      setError(reason instanceof Error ? reason.message : "Playback could not start.");
-      setBusy(false);
-      return false;
-    }
-  }
-
-  async function finishPlayback() {
-    if (!playbackTicket) { setBusy(false); return; }
-    try {
-      await post("topic_practice_playback_complete", {
-        topicSlug, questionId: question.id, playbackTicket,
-        idempotencyKey: `topic-play-complete-${crypto.randomUUID()}`,
-      });
-      setPlaybackReady(true);
-    } catch (reason) {
-      setPlaybackReady(false);
-      setError(reason instanceof Error ? reason.message : "Listen to the complete audio before answering.");
-    } finally {
-      setBusy(false);
-    }
-  }
-
-  function failPlayback() {
-    setPlaybackTicket("");
-    setPlaybackReady(false);
-    setBusy(false);
-    setError("Audio playback failed. Retry the audio before answering.");
   }
 
   async function submit() {
     if (!question || !selected || busy || feedback) return;
     if (!view) { setError("Learning state is still loading."); return; }
-    if (question.mode === "listening" && !playbackReady) { setError("Play the complete synthesized listening audio before answering."); return; }
+    if (question.mode === "listening" && !playback.verified) { setError("Play the complete synthesized listening audio before answering."); return; }
     setBusy(true);
     setError("");
     try {
@@ -108,7 +77,7 @@ export function TopicPracticeClient({ topicSlug, topicTitle, visualKey, category
         topicSlug,
         questionId: question.id,
         answer: selected,
-        playbackTicket: question.mode === "listening" ? playbackTicket : undefined,
+        playbackTicket: question.mode === "listening" ? playback.ticket : undefined,
         idempotencyKey,
       });
       if (!data.feedback) throw new Error("ANSWER_SAVE_FAILED");
@@ -127,12 +96,12 @@ export function TopicPracticeClient({ topicSlug, topicTitle, visualKey, category
     if (!feedback) return;
     if (index + 1 >= questions.length) { setFinished(true); return; }
     setIndex((value) => value + 1);
-    setSelected(""); setFeedback(null); setError(""); setPlaybackTicket(""); setPlaybackReady(false);
+    setSelected(""); setFeedback(null); setError(""); playback.reset();
   }
 
   function restart() {
     attemptKeys.current = {};
-    setIndex(0); setSelected(""); setFeedback(null); setCorrectCount(0); setMistakeCount(0); setFinished(false); setPlaybackTicket(""); setPlaybackReady(false); setError("");
+    setIndex(0); setSelected(""); setFeedback(null); setCorrectCount(0); setMistakeCount(0); setFinished(false); playback.reset(); setError("");
   }
 
   if (finished) return <section className={`mt-6 rounded-3xl border bg-white p-6 shadow-[0_22px_55px_-44px_rgba(15,23,42,0.45)] sm:p-[32px] ${visual.border}`} aria-live="polite">
@@ -148,12 +117,12 @@ export function TopicPracticeClient({ topicSlug, topicTitle, visualKey, category
     <article className="mt-3 rounded-2xl border border-slate-200 bg-white p-4 shadow-[0_22px_55px_-44px_rgba(15,23,42,0.45)] sm:mt-5 sm:rounded-3xl sm:p-[32px]">
       <div className="flex flex-wrap items-center justify-between gap-3"><span className={`inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-xs font-black ${visual.surface} ${visual.mutedText}`}><TopicIcon name={topicIconFor(visualKey)} className="size-4" />{labels[question.mode]}</span><p className="text-sm font-bold text-slate-500">{question.instruction}</p></div>
       {question.context ? <pre className="mt-5 whitespace-pre-wrap rounded-2xl bg-slate-950 p-4 font-sans text-base leading-7 text-slate-100" lang="zh-Hans">{question.context}</pre> : null}
-      {question.mode === "listening" ? <div className="mt-5"><AudioPlaybackControl asset={question.audioAsset} beforePlay={authorizePlayback} onComplete={() => void finishPlayback()} onFailure={failPlayback} />{playbackReady ? <p className="mt-2 text-sm font-bold text-emerald-800">Listening verified. Choose your answer.</p> : null}</div> : null}
+      {question.mode === "listening" ? <div className="mt-5"><AudioPlaybackControl asset={question.audioAsset} beforePlay={playback.beforePlay} onComplete={() => void playback.onComplete()} onFailure={playback.onFailure} verificationState={playback.verifying ? "verifying" : playback.verified ? "verified" : "idle"} showProgress />{playback.verified ? <p className="mt-2 text-sm font-bold text-emerald-800">Listening verified. Choose your answer.</p> : null}</div> : null}
       <h2 id="topic-practice-question" className="mt-4 text-xl font-black leading-tight text-slate-950 sm:mt-[24px] sm:text-3xl">{question.prompt}</h2>
-      <div className="mt-4 grid gap-3 sm:mt-[24px] sm:grid-cols-2" role="radiogroup" aria-label="Answer choices">{question.options.map((option) => { const active = selected === option.key; const correctChoice = feedback && option.text === feedback.correctAnswerText; return <button key={option.key} type="button" role="radio" aria-checked={active} disabled={Boolean(feedback) || busy} onClick={() => setSelected(option.key)} className={`min-h-14 rounded-2xl border px-4 py-3 text-left text-sm font-bold transition ${correctChoice ? "border-emerald-500 bg-emerald-50 text-emerald-950" : active ? "border-blue-600 bg-blue-50 text-blue-950" : "border-slate-200 bg-white text-slate-800 hover:border-blue-300"}`}><span className="mr-3 inline-flex h-7 w-7 items-center justify-center rounded-full bg-slate-100 text-xs font-black">{option.key}</span>{option.text}</button>; })}</div>
+      <div className="mt-4 grid gap-3 sm:mt-[24px] sm:grid-cols-2" role="radiogroup" aria-label="Answer choices">{question.options.map((option) => { const active = selected === option.key; const correctChoice = feedback && option.text === feedback.correctAnswerText; const listeningLocked = question.mode === "listening" && !playback.verified; return <button key={option.key} type="button" role="radio" aria-checked={active} disabled={Boolean(feedback) || busy || listeningLocked} onClick={() => setSelected(option.key)} className={`min-h-14 rounded-2xl border px-4 py-3 text-left text-sm font-bold transition ${listeningLocked ? "cursor-not-allowed border-slate-200 bg-slate-50 text-slate-400" : correctChoice ? "border-emerald-500 bg-emerald-50 text-emerald-950" : active ? "border-blue-600 bg-blue-50 text-blue-950" : "border-slate-200 bg-white text-slate-800 hover:border-blue-300"}`}><span className="mr-3 inline-flex h-7 w-7 items-center justify-center rounded-full bg-slate-100 text-xs font-black">{option.key}</span>{option.text}</button>; })}</div>
       {error ? <p className="mt-4 rounded-xl bg-rose-50 p-4 text-sm font-bold text-rose-800" role="alert">{error}</p> : null}
       {feedback ? <div className={`mt-5 rounded-2xl p-5 ${feedback.correct ? "bg-emerald-50 text-emerald-950" : "bg-amber-50 text-amber-950"}`} aria-live="polite"><p className="font-black">{feedback.correct ? "Correct" : `Correct answer: ${feedback.correctAnswerText}`}</p>{feedback.explanation ? <p className="mt-2 text-sm leading-6">{feedback.explanation}</p> : null}</div> : null}
-      <div className="mt-6 flex flex-wrap justify-between gap-3"><Link href={`/topics/${topicSlug}`} className="inline-flex min-h-11 items-center px-2 text-sm font-bold text-slate-600 hover:text-blue-700">Exit session</Link>{feedback ? <button type="button" onClick={next} className="inline-flex min-h-11 items-center justify-center rounded-xl bg-slate-950 px-6 text-sm font-black text-white hover:bg-slate-800">{index + 1 === questions.length ? "Finish session" : "Next question"}</button> : <button type="button" onClick={() => void submit()} disabled={!selected || busy || !view} className="inline-flex min-h-11 items-center justify-center rounded-xl bg-blue-600 px-6 text-sm font-black text-white hover:bg-blue-700 disabled:cursor-not-allowed disabled:bg-slate-300">{busy ? "Checking…" : "Check answer"}</button>}</div>
+      <div className="mt-6 flex flex-wrap justify-between gap-3"><Link href={`/topics/${topicSlug}`} className="inline-flex min-h-11 items-center px-2 text-sm font-bold text-slate-600 hover:text-blue-700">Exit session</Link>{feedback ? <button type="button" onClick={next} className="inline-flex min-h-11 items-center justify-center rounded-xl bg-slate-950 px-6 text-sm font-black text-white hover:bg-slate-800">{index + 1 === questions.length ? "Finish session" : "Next question"}</button> : <button type="button" onClick={() => void submit()} disabled={!selected || busy || !view || (question.mode === "listening" && !playback.verified)} className="inline-flex min-h-11 items-center justify-center rounded-xl bg-blue-600 px-6 text-sm font-black text-white hover:bg-blue-700 disabled:cursor-not-allowed disabled:bg-slate-300">{busy ? "Checking…" : "Check answer"}</button>}</div>
     </article>
   </section>;
 }

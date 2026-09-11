@@ -225,7 +225,7 @@ test("grammar contexts use a real newline and choice retries expose a named fiel
   const client = await source("src/app/components/learning-dashboard.tsx");
   assert.doesNotMatch(review, /pattern}\\\\n/);
   assert.doesNotMatch(mock, /pattern}\\\\n/);
-  assert.match(client, /<fieldset><legend[^>]*>Choose an answer<\/legend>/);
+  assert.match(client, /<fieldset[^>]*><legend[^>]*>Choose an answer<\/legend>/);
 });
 
 test("ordinary memory grades cannot resolve an open mistake and grade replay stores its original result", async () => {

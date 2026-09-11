@@ -3,13 +3,18 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { AudioPlaybackControl } from "../../../components/audio-playback-control";
+import { useVerifiedAudioPlayback } from "../../../components/use-verified-audio-playback";
 import type { DictionaryPracticeExercise, DictionaryPracticeWord } from "../../../../lib/dictionary/p2-learning";
+import { PlaybackRequestError } from "../../../../lib/learning/verified-playback";
 
 type LearningView = {
   queueBinding: string;
   revision: number;
   feedback?: { correct: boolean; correctAnswerText: string };
   message?: string;
+  code?: string;
+  playbackTicket?: string;
+  notBefore?: string;
 };
 
 export function WordPracticeClient({ word, exercises }: { word: DictionaryPracticeWord; exercises: DictionaryPracticeExercise[] }) {
@@ -19,9 +24,19 @@ export function WordPracticeClient({ word, exercises }: { word: DictionaryPracti
   const [feedback, setFeedback] = useState<LearningView["feedback"]>();
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState("");
-  const [playbackTicket, setPlaybackTicket] = useState("");
-  const [playbackReady, setPlaybackReady] = useState(false);
   const active = exercises.find((exercise) => exercise.id === activeId) ?? exercises[0];
+  const playback = useVerifiedAudioPlayback({
+    context: "dictionary-practice",
+    start: async () => {
+      if (!active?.audioAsset) throw new PlaybackRequestError("AUDIO_ASSET_UNAVAILABLE");
+      const started = await post("dictionary_playback_start", { assetId: word.assetId, idempotencyKey: `dictionary-play-start-${crypto.randomUUID()}` });
+      if (!started.playbackTicket) throw new PlaybackRequestError("AUDIO_PLAYBACK_REQUIRED");
+      return { playbackTicket: started.playbackTicket, notBefore: started.notBefore };
+    },
+    complete: async (playbackTicket) => { await post("dictionary_playback_complete", { assetId: word.assetId, playbackTicket, idempotencyKey: `dictionary-play-complete-${crypto.randomUUID()}` }); },
+    onVerified: () => setMessage("Listening verified. Choose your answer."),
+    onMessage: setMessage,
+  });
 
   useEffect(() => {
     const controller = new AbortController();
@@ -40,8 +55,7 @@ export function WordPracticeClient({ word, exercises }: { word: DictionaryPracti
     setAnswer("");
     setFeedback(undefined);
     setMessage("");
-    setPlaybackTicket("");
-    setPlaybackReady(false);
+    playback.reset();
   }
 
   async function post(action: string, payload: Record<string, unknown>) {
@@ -51,52 +65,14 @@ export function WordPracticeClient({ word, exercises }: { word: DictionaryPracti
       headers: { "content-type": "application/json" },
       body: JSON.stringify({ action, queueBinding: view.queueBinding, clientRevision: view.revision, payload }),
     });
-    const body = await response.json() as LearningView & { playbackTicket?: string };
-    if (!response.ok) throw new Error(body.message || "That action could not be saved.");
+    const body = await response.json() as LearningView;
+    if (!response.ok) throw new PlaybackRequestError(body.code ?? "UNKNOWN_ERROR", body.message || "That action could not be saved.");
     return body;
-  }
-
-  async function authorizePlayback() {
-    if (!active?.audioAsset || busy) return false;
-    setBusy(true);
-    setMessage("");
-    setPlaybackReady(false);
-    try {
-      const started = await post("dictionary_playback_start", { assetId: word.assetId, idempotencyKey: `dictionary-play-start-${crypto.randomUUID()}` });
-      if (!started.playbackTicket) throw new Error("Playback could not start.");
-      setPlaybackTicket(started.playbackTicket);
-      return true;
-    } catch (error) {
-      setMessage(error instanceof Error ? error.message : "Playback could not start.");
-      setBusy(false);
-      return false;
-    }
-  }
-
-  async function finishPlayback() {
-    if (!playbackTicket) { setBusy(false); return; }
-    try {
-      await post("dictionary_playback_complete", { assetId: word.assetId, playbackTicket, idempotencyKey: `dictionary-play-complete-${crypto.randomUUID()}` });
-      setPlaybackReady(true);
-      setMessage("Listening verified. Choose your answer.");
-    } catch (error) {
-      setMessage(error instanceof Error ? error.message : "Listen to the complete audio before answering.");
-      setPlaybackReady(false);
-    } finally {
-      setBusy(false);
-    }
-  }
-
-  function failPlayback() {
-    setPlaybackTicket("");
-    setPlaybackReady(false);
-    setBusy(false);
-    setMessage("Audio playback failed. Retry the audio before answering.");
   }
 
   async function submit() {
     if (!active || !answer || busy) return;
-    if (active.mode === "listening" && !playbackReady) { setMessage("Play the complete synthesized pronunciation before answering."); return; }
+    if (active.mode === "listening" && !playback.verified) { setMessage("Play the complete synthesized pronunciation before answering."); return; }
     setBusy(true);
     setMessage("");
     try {
@@ -104,7 +80,7 @@ export function WordPracticeClient({ word, exercises }: { word: DictionaryPracti
         assetId: word.assetId,
         mode: active.mode,
         answer,
-        playbackTicket: active.mode === "listening" ? playbackTicket : undefined,
+        playbackTicket: active.mode === "listening" ? playback.ticket : undefined,
         idempotencyKey: `dictionary-practice-${active.mode}-${crypto.randomUUID()}`,
       });
       setView(body);
@@ -130,15 +106,15 @@ export function WordPracticeClient({ word, exercises }: { word: DictionaryPracti
     <div className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm sm:p-7">
       <p className="text-xs font-bold uppercase tracking-[0.12em] text-blue-700">{active.instruction}</p>
       <h2 className="mt-3 text-2xl font-black text-slate-950">{active.prompt}</h2>
-      {active.mode === "listening" ? <AudioPlaybackControl asset={active.audioAsset} beforePlay={authorizePlayback} onComplete={() => void finishPlayback()} onFailure={failPlayback} className="mt-5" /> : null}
-      <fieldset className="mt-6 grid gap-3">
+      {active.mode === "listening" ? <AudioPlaybackControl asset={active.audioAsset} beforePlay={playback.beforePlay} onComplete={() => void playback.onComplete()} onFailure={playback.onFailure} verificationState={playback.verifying ? "verifying" : playback.verified ? "verified" : "idle"} showProgress className="mt-5" /> : null}
+      <fieldset disabled={active.mode === "listening" && !playback.verified} className="mt-6 grid gap-3">
         <legend className="sr-only">Answer choices</legend>
-        {active.options.map((option) => <label key={option.key} className={`flex min-h-12 cursor-pointer items-center gap-3 rounded-xl border px-4 py-3 text-sm font-semibold ${answer === option.key ? "border-blue-600 bg-blue-50 text-blue-950" : "border-slate-200 text-slate-800 hover:border-blue-300"}`}>
+        {active.options.map((option) => <label key={option.key} className={`flex min-h-12 items-center gap-3 rounded-xl border px-4 py-3 text-sm font-semibold ${active.mode === "listening" && !playback.verified ? "cursor-not-allowed border-slate-200 bg-slate-50 text-slate-400" : answer === option.key ? "cursor-pointer border-blue-600 bg-blue-50 text-blue-950" : "cursor-pointer border-slate-200 text-slate-800 hover:border-blue-300"}`}>
           <input type="radio" name={active.id} value={option.key} checked={answer === option.key} onChange={() => { setAnswer(option.key); setFeedback(undefined); }} className="size-4 accent-blue-600" />
           <span className="font-black text-slate-500">{option.key}</span><span>{option.text}</span>
         </label>)}
       </fieldset>
-      <button type="button" onClick={() => void submit()} disabled={!view || !answer || busy || (active.mode === "listening" && !playbackReady)} className="mt-5 min-h-11 w-full rounded-xl bg-blue-600 px-5 text-sm font-bold text-white hover:bg-blue-700 disabled:cursor-not-allowed disabled:bg-slate-200 disabled:text-slate-500 sm:w-auto">{busy ? "Saving…" : "Check answer"}</button>
+      <button type="button" onClick={() => void submit()} disabled={!view || !answer || busy || (active.mode === "listening" && !playback.verified)} className="mt-5 min-h-11 w-full rounded-xl bg-blue-600 px-5 text-sm font-bold text-white hover:bg-blue-700 disabled:cursor-not-allowed disabled:bg-slate-200 disabled:text-slate-500 sm:w-auto">{busy ? "Saving…" : "Check answer"}</button>
       <div className="mt-4 min-h-12" aria-live="polite">
         {feedback ? <div className={`rounded-xl px-4 py-3 text-sm ${feedback.correct ? "bg-emerald-50 text-emerald-900" : "bg-amber-50 text-amber-950"}`}>
           <p className="font-bold">{feedback.correct ? "Correct." : `Not quite. Correct answer: ${feedback.correctAnswerText}.`}</p>

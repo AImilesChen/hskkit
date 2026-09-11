@@ -42,7 +42,7 @@ test("listening playback exposes progress, verification and replay states withou
   assert.match(player, /Play again/);
   assert.match(player, /role="progressbar"/);
   assert.match(player, /aria-busy=/);
-  assert.match(player, /const disabled = unavailable \|\| \(!showProgress/);
+  assert.match(player, /const disabled = unavailable \|\| state === "loading" \|\| verificationState === "verifying"/);
   assert.match(player, /bg-blue-700/);
   assert.match(step7, /Play the audio to unlock the answers\./);
   assert.match(step7, /Keep listening — answers unlock when playback finishes\./);

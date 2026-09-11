@@ -73,6 +73,7 @@ async function resolveTodayDictionaryItem(assetId: string) {
 const offset = (value: unknown) => Number.isInteger(value) && Number(value) >= -840 && Number(value) <= 840 ? Number(value) : 0;
 const PRIVATE_RESPONSE_HEADERS = { "Cache-Control": "private, no-store" } as const;
 const errorResponse = (code: string, status: number, extra: Record<string, unknown> = {}) => NextResponse.json({ ...errorContract(code), ...extra }, { status, headers: PRIVATE_RESPONSE_HEADERS });
+const reportPlaybackVerificationFailure = (action: string, code: string) => console.warn("[playback-verification]", { action, code });
 async function requireLearningAccess(identity: Awaited<ReturnType<typeof owner>>, permission: "learning:read" | "learning:write") {
   const decision = accessDecision({ accountStatus: identity.account?.status ?? "guest", permission });
   if (!decision.allowed) {
@@ -307,7 +308,9 @@ async function postLearning(req: NextRequest) {
       await completeStep7PlaybackTicket(identity.id, exerciseKey, ticketId, key);
       return NextResponse.json({ state: "playback_verified" });
     } catch (error) {
-      return errorResponse(error instanceof Error ? error.message : "AUDIO_PLAYBACK_INCOMPLETE", 422);
+      const code = error instanceof Error ? error.message : "AUDIO_PLAYBACK_INCOMPLETE";
+      reportPlaybackVerificationFailure(action, code);
+      return errorResponse(code, 422);
     }
   }
 
@@ -337,6 +340,7 @@ async function postLearning(req: NextRequest) {
       return res;
     } catch (error) {
       const code = error instanceof Error ? error.message : "AUDIO_PLAYBACK_INCOMPLETE";
+      reportPlaybackVerificationFailure(action, code);
       return errorResponse(code, code === "ACCOUNT_DELETED" ? 403 : 422);
     }
   }
@@ -348,7 +352,7 @@ async function postLearning(req: NextRequest) {
     const exerciseKey = `dictionary:${context.current.assetId}:listening`;
     try {
       if (action === "dictionary_playback_start") {
-        const ticket = await createStep7PlaybackTicket(identity.id, exerciseKey, context.current.hanzi);
+        const ticket = await createStep7PlaybackTicket(identity.id, exerciseKey, context.current.hanzi, new Date(), context.current.audioAsset.durationSeconds ?? publishedAudioDurationBySrc(context.current.audioAsset.src));
         const res = NextResponse.json({ playbackTicket: ticket.id, notBefore: ticket.notBefore, expiresAt: ticket.expiresAt }, { status: 201 });
         if (identity.fresh) res.cookies.set(COOKIE, identity.id, { httpOnly: true, sameSite: "lax", secure: true, maxAge: 31_536_000, path: "/" });
         return res;
@@ -358,7 +362,9 @@ async function postLearning(req: NextRequest) {
       await completeStep7PlaybackTicket(identity.id, exerciseKey, ticketId, key);
       return NextResponse.json({ state: "playback_verified" });
     } catch (error) {
-      return errorResponse(error instanceof Error ? error.message : "AUDIO_PLAYBACK_INCOMPLETE", 422);
+      const code = error instanceof Error ? error.message : "AUDIO_PLAYBACK_INCOMPLETE";
+      reportPlaybackVerificationFailure(action, code);
+      return errorResponse(code, 422);
     }
   }
 
@@ -388,6 +394,7 @@ async function postLearning(req: NextRequest) {
       return res;
     } catch (error) {
       const code = error instanceof Error ? error.message : "AUDIO_PLAYBACK_INCOMPLETE";
+      reportPlaybackVerificationFailure(action, code);
       return errorResponse(code, code === "ACCOUNT_DELETED" ? 403 : 422);
     }
   }
@@ -400,7 +407,7 @@ async function postLearning(req: NextRequest) {
     if (!question?.audioAsset?.text || !question.audioAsset.src) return errorResponse("INVALID_TOPIC_PRACTICE_PLAYBACK", 422);
     try {
       if (action === "topic_practice_playback_start") {
-        const ticket = await createStep7PlaybackTicket(identity.id, question.id, question.audioAsset.text);
+        const ticket = await createStep7PlaybackTicket(identity.id, question.id, question.audioAsset.text, new Date(), question.audioAsset.durationSeconds ?? publishedAudioDurationBySrc(question.audioAsset.src));
         const res = NextResponse.json({ playbackTicket: ticket.id, notBefore: ticket.notBefore, expiresAt: ticket.expiresAt }, { status: 201 });
         if (identity.fresh) res.cookies.set(COOKIE, identity.id, { httpOnly: true, sameSite: "lax", secure: true, maxAge: 31_536_000, path: "/" });
         return res;
@@ -410,7 +417,9 @@ async function postLearning(req: NextRequest) {
       await completeStep7PlaybackTicket(identity.id, question.id, ticketId, key);
       return NextResponse.json({ state: "playback_verified" });
     } catch (error) {
-      return errorResponse(error instanceof Error ? error.message : "AUDIO_PLAYBACK_INCOMPLETE", 422);
+      const code = error instanceof Error ? error.message : "AUDIO_PLAYBACK_INCOMPLETE";
+      reportPlaybackVerificationFailure(action, code);
+      return errorResponse(code, 422);
     }
   }
 

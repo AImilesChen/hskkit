@@ -69,8 +69,8 @@ test("Topics, Dictionary, practice, and Listening consume canonical assets and a
   assert.match(wordPage, /audioAsset/);
   assert.match(listening, /publishedListeningAudioAsset/);
   assert.match(player, /audioAsset/);
-  assert.match(topicPractice, /onFailure=\{failPlayback\}/);
-  assert.match(wordPractice, /onFailure=\{failPlayback\}/);
+  assert.match(topicPractice, /onFailure=\{playback\.onFailure\}/);
+  assert.match(wordPractice, /onFailure=\{playback\.onFailure\}/);
   for (const source of [topicPage, topicPractice, wordPage, wordPractice, player]) {
     assert.doesNotMatch(source, /Formal audio|formal audio/);
   }
