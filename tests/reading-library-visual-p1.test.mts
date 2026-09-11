@@ -64,6 +64,8 @@ test("article bank and responsive UI satisfy the P0/P1 structural scale", () => 
   assert.match(styles, /min-height:\s*44px/);
   assert.match(styles, /@media\(max-width:760px\)/);
   assert.match(styles, /@media\(max-width:420px\)/);
+  assert.match(styles, /\.progressItem\{[^}]*grid-template-columns:1fr auto/);
+  assert.match(styles, /\.progressItem progress[^}]*grid-column:1\/-1/);
   assert.doesNotMatch(styles, /word-break:\s*break-all/);
 });
 
