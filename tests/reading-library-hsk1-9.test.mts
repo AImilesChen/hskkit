@@ -94,8 +94,8 @@ test("reading UI exposes dual modes, HSK 1–9 routes, 10/20 quick starts, artic
   const resultState = readFileSync(new URL("src/app/components/reading-session-state.tsx", root), "utf8");
   assert.match(experience, />Articles</);
   assert.match(experience, /Quick Practice/);
-  assert.match(experience, /count=10/);
-  assert.match(experience, /count=20/);
+  assert.match(experience, /size=10/);
+  assert.match(experience, /size=20/);
   assert.match(experience, /Continue/);
   assert.match(experience, /Recommended next/);
   assert.match(articleReader, /Mark article complete/);

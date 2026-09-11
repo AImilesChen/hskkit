@@ -108,7 +108,7 @@ export async function loadMergedReadingProgress() {
   }
 }
 
-export async function syncReadingProgress(action: "reading_article_progress" | "reading_article_word", payload: Record<string, unknown>, clientRevision?: number) {
+export async function syncReadingProgress(action: "reading_article_progress" | "reading_article_complete" | "reading_article_word", payload: Record<string, unknown>, clientRevision?: number) {
   const response = await fetch("/api/v1/learning", {
     method: "POST",
     headers: { "Content-Type": "application/json" },

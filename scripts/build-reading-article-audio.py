@@ -10,7 +10,7 @@ import edge_tts
 ROOT = Path(__file__).resolve().parents[1]
 BANK_PATH = ROOT / "src/lib/learning/reading-articles.json"
 MANIFEST_PATH = ROOT / "src/lib/learning/reading-article-audio-manifest.json"
-OUT = ROOT / "public/audio/reading-articles/v1"
+OUT = ROOT / "public/audio/reading-articles"
 OUT.mkdir(parents=True, exist_ok=True)
 BANK = json.loads(BANK_PATH.read_text(encoding="utf-8"))
 OLD_MANIFEST = json.loads(MANIFEST_PATH.read_text(encoding="utf-8")) if MANIFEST_PATH.exists() else {}
@@ -28,7 +28,7 @@ def sha(data: bytes) -> str:
 async def one(article: dict) -> tuple[str, dict]:
     slug = article["slug"]
     text = text_for(article)
-    text_sha = sha("\n\n".join(article["paragraphs"]).encode("utf-8"))
+    text_sha = sha(text.encode("utf-8"))
     path = OUT / article["audioSrc"].rsplit("/", 1)[-1]
     old = OLD_MANIFEST.get(slug, {})
     if path.exists() and path.stat().st_size > 1000 and old.get("textSha256") == text_sha:

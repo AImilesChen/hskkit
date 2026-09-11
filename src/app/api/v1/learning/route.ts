@@ -416,7 +416,7 @@ async function postLearning(req: NextRequest) {
 
   for (let turn = 0; turn < 3; turn += 1) {
     const loaded = await loadState(identity.id);
-    const readingProgressAction = action === "reading_article_progress" || action === "reading_article_word";
+    const readingProgressAction = action === "reading_article_progress" || action === "reading_article_complete" || action === "reading_article_word";
     const dailyAction = action === "complete_item" || action === "skip_item" || action === "restore_item" || action === "configure_today" || action === "save_word" || action === "add_to_today" || action === "add_to_review" || action === "dictionary_search" || action === "clear_dictionary_searches" || topicAction || readingProgressAction;
     if (dailyAction && (loaded.state.dailyOperationKeys ?? []).includes(key)) {
       return response(view(loaded.state, identity.id, tz, capabilities, identity.account?.timezone), identity.fresh, identity.id, loaded.revision, Boolean(identity.account), capabilities, usage);
@@ -448,7 +448,7 @@ async function postLearning(req: NextRequest) {
     let usageCharge: UsageCharge | undefined;
     let reviewCorrect: boolean | undefined;
     try {
-      if (action === "reading_article_progress") {
+      if (action === "reading_article_progress" || action === "reading_article_complete") {
         const articleSlug = short(payload.articleSlug, 120);
         const article = articleSlug ? articleBySlug(articleSlug) : undefined;
         if (!article) throw new Error("INVALID_READING_ARTICLE_PROGRESS");

@@ -9,6 +9,8 @@ const experience = readFileSync(new URL("../src/app/components/reading-library-e
 const levelLibrary = readFileSync(new URL("../src/app/components/reading-level-library.tsx", import.meta.url), "utf8");
 const styles = readOrBlank(new URL("../src/app/components/reading-library-experience.module.css", import.meta.url));
 const reader = readFileSync(new URL("../src/app/components/reading-article-reader.tsx", import.meta.url), "utf8");
+const progressClient = readFileSync(new URL("../src/lib/learning/reading-progress-client.ts", import.meta.url), "utf8");
+const growth = readFileSync(new URL("../src/lib/learning/growth.ts", import.meta.url), "utf8");
 const feedbackWidget = readFileSync(new URL("../src/app/components/feedback-widget.tsx", import.meta.url), "utf8");
 const globalStyles = readFileSync(new URL("../src/app/globals.css", import.meta.url), "utf8");
 const library = JSON.parse(readFileSync(new URL("../src/lib/learning/reading-library.json", import.meta.url), "utf8"));
@@ -25,6 +27,7 @@ test("reading index presents two explicit modes before level choices", () => {
 
 test("level directory has the required list metadata, progress and filters", () => {
   assert.match(levelLibrary, /Topic/);
+  assert.match(levelLibrary, /Difficulty/);
   assert.match(levelLibrary, /Reading time/);
   assert.match(levelLibrary, /Progress/);
   assert.match(levelLibrary, /Audio/);
@@ -33,25 +36,50 @@ test("level directory has the required list metadata, progress and filters", () 
   assert.match(levelLibrary, /3 questions/);
   assert.match(levelLibrary, /Continue article/);
   assert.match(levelLibrary, /Clear filters/);
+  assert.match(levelLibrary, /Difficulty is relative within HSK/);
+});
+
+test("difficulty is a real within-level filter rather than a duplicate HSK label", () => {
+  for (let level = 1; level <= 9; level += 1) {
+    const bands = new Set(articles.articles.filter((article: {level:number}) => article.level === level).map((article: {difficulty:string}) => article.difficulty));
+    assert.deepEqual([...bands].sort(), ["easier", "standard", "stretch"]);
+  }
 });
 
 test("article reader exposes the approved reading hierarchy and learning-loop destinations", () => {
   assert.match(reader, /<audio[^>]*preload="metadata"/);
   assert.match(reader, /Pinyin/);
-  assert.match(reader, /paragraph translations/);
+  assert.match(reader, /Show paragraph \$\{index \+ 1\} translation/);
+  assert.match(reader, /translationParagraphs/);
+  assert.match(reader, /inlineWord/);
   assert.match(reader, /Tap a word for meaning and Review/);
   assert.match(reader, /Core grammar/);
   assert.match(reader, /Check answer/);
   assert.match(reader, /Article summary/);
+  assert.match(reader, /Question types to review/);
+  assert.match(reader, /Recommended review/);
   assert.match(reader, /reading_article_attempt/);
   assert.match(reader, /href="\/review"/);
   assert.match(reader, /href="\/mistakes"/);
 });
 
+test("reading index exposes a real recent-reading history, not only one last item", () => {
+  assert.match(experience, /recentArticles/);
+  assert.match(experience, /Reading history/);
+  assert.match(experience, /slice\(0, 6\)/);
+});
+
+test("article completion is a supported sync action and contributes a Dashboard growth event", () => {
+  assert.match(progressClient, /"reading_article_progress" \| "reading_article_complete" \| "reading_article_word"/);
+  assert.match(reader, /"reading_article_complete"/);
+  assert.match(growth, /GROWTH_LEARNING_ACTIONS[\s\S]*"reading_article_complete"/);
+});
+
 test("quick practice retains the original short-passage bank and explicit 10/20 starts", () => {
   assert.match(experience, /two-to-three-sentence materials/);
-  assert.match(experience, /count=10/);
-  assert.match(experience, /count=20/);
+  assert.match(experience, /Quick Practice level/);
+  assert.match(experience, /\/reading\/start\?level=\$\{quickLevel\}&size=10/);
+  assert.match(experience, /\/reading\/start\?level=\$\{quickLevel\}&size=20/);
   for (let level = 1; level <= 9; level += 1) {
     const passages = library.passages.filter((passage: {level:number}) => passage.level === level);
     assert.equal(passages.length, level <= 6 ? 24 : 12);

@@ -2,6 +2,7 @@ import bankJson from "./reading-articles.json" with { type: "json" };
 
 export type ReadingArticleQuestion = {
   id: string;
+  type?: "detail" | "sequence" | "inference" | "attitude" | "structure" | "evaluation";
   prompt: string;
   options: string[];
   correctAnswer: number;

@@ -50,7 +50,7 @@ export type GrowthSnapshot = {
 
 export const GROWTH_LEARNING_ACTIONS = new Set([
   "attempt", "topic_practice_attempt", "dictionary_practice_attempt", "step7_attempt",
-  "audio_attempt", "retry_review", "grade", "complete_item",
+  "audio_attempt", "retry_review", "grade", "complete_item", "reading_article_complete",
 ]);
 
 function localDate(instant: Date | string, timezone: string): string | null {

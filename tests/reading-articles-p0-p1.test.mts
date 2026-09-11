@@ -12,9 +12,9 @@ test("reading center separates complete articles from 10/20-question quick pract
   assert.match(experience, />Articles</);
   assert.match(experience, />Quick Practice</);
   assert.match(experience, /complete graded articles/);
-  assert.match(experience, /\/practice\?mode=reading&count=10/);
-  assert.match(experience, /\/practice\?mode=reading&count=20/);
-  assert.match(experience, /not full articles/);
+  assert.match(experience, /\/reading\/start\?level=\$\{quickLevel\}&size=10/);
+  assert.match(experience, /\/reading\/start\?level=\$\{quickLevel\}&size=20/);
+  assert.match(experience, /exercises, not full articles/);
 });
 
 test("article library has twenty independently addressed first-pass-reviewed articles for every HSK level", () => {
@@ -51,7 +51,7 @@ test("article detail supports narration, pinyin, translation, vocabulary, gramma
   const reader = read("src/app/components/reading-article-reader.tsx");
   assert.match(reader, /Article narration/);
   assert.match(reader, /Pinyin/);
-  assert.match(reader, /paragraph translations/);
+  assert.match(reader, /Show paragraph \$\{index \+ 1\} translation/);
   assert.match(reader, /Key vocabulary/);
   assert.match(reader, /Core grammar/);
   assert.match(reader, /Check answer/);
