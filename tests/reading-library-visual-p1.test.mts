@@ -105,6 +105,12 @@ test("secondary learning tools remain below the reading task", () => {
   assert.match(page, /Coverage boundary/);
 });
 
+test("Reading center hero keeps all three text levels legible on the dark gradient", () => {
+  assert.match(styles, /\.hero h1\{[^}]*color:#f2fafa/);
+  assert.match(styles, /\.hero>\.sectionEyebrow\{[^}]*color:#cfe7e6/);
+  assert.match(styles, /\.hero>p:last-child\{[^}]*color:#dceeee/);
+});
+
 test("Reading pages hide the floating feedback trigger from study controls", () => {
   assert.match(feedbackWidget, /pathname\.startsWith\("\/reading"\).*feedback-trigger--reading/);
   assert.match(globalStyles, /\.feedback-trigger--reading\s*\{[^}]*display:\s*none;/s);
