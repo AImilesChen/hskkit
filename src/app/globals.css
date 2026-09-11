@@ -1132,9 +1132,10 @@
 .feedback-success h2 { margin: 0; }
 .feedback-success > p:not(.feedback-success-icon) { margin: 0 0 8px; color: #64748B; }
 
+.feedback-trigger--reading { display: none; }
+
 @media (max-width: 700px) {
   .feedback-trigger { right: 16px; bottom: calc(16px + env(safe-area-inset-bottom)); min-height: 46px; padding: 0 16px; }
-  .feedback-trigger--reading { display: none; }
   .feedback-overlay { display: flex; align-items: flex-end; backdrop-filter: none; }
   .feedback-dialog {
     position: relative; right: auto; bottom: auto; width: 100%; max-height: calc(100dvh - 16px);
