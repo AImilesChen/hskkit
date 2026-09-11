@@ -65,6 +65,8 @@ test("article answers use trusted server content and become reading review/mista
   const reader = read("src/app/components/reading-article-reader.tsx");
   const api = read("src/app/api/v1/learning/route.ts");
   assert.match(reader, /action:\s*"reading_article_attempt"/);
+  assert.match(reader, /payload:\s*\{\s*idempotencyKey:\s*crypto\.randomUUID\(\),\s*articleSlug:/);
+  assert.doesNotMatch(reader, /action:\s*"reading_article_attempt",\s*idempotencyKey:/);
   assert.match(api, /action === "reading_article_attempt"/);
   assert.match(api, /articleQuestion\(articleSlug, questionId\)/);
   assert.match(api, /contentId:\s*`reading-article:/);

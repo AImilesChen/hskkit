@@ -91,8 +91,7 @@ export default function ReadingArticleReader({ article, next, higherLevel }: { a
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           action: "reading_article_attempt",
-          idempotencyKey: crypto.randomUUID(),
-          payload: { articleSlug: article.slug, questionId, answer: String.fromCharCode(65 + answerIndex) },
+          payload: { idempotencyKey: crypto.randomUUID(), articleSlug: article.slug, questionId, answer: String.fromCharCode(65 + answerIndex) },
         }),
       });
       if (!response.ok) throw new Error("submit failed");
