@@ -9,6 +9,8 @@ const experience = readFileSync(new URL("../src/app/components/reading-library-e
 const levelLibrary = readFileSync(new URL("../src/app/components/reading-level-library.tsx", import.meta.url), "utf8");
 const styles = readOrBlank(new URL("../src/app/components/reading-library-experience.module.css", import.meta.url));
 const reader = readFileSync(new URL("../src/app/components/reading-article-reader.tsx", import.meta.url), "utf8");
+const feedbackWidget = readFileSync(new URL("../src/app/components/feedback-widget.tsx", import.meta.url), "utf8");
+const globalStyles = readFileSync(new URL("../src/app/globals.css", import.meta.url), "utf8");
 const library = JSON.parse(readFileSync(new URL("../src/lib/learning/reading-library.json", import.meta.url), "utf8"));
 const articles = JSON.parse(readFileSync(new URL("../src/lib/learning/reading-articles.json", import.meta.url), "utf8"));
 
@@ -73,4 +75,10 @@ test("secondary learning tools remain below the reading task", () => {
   assert.match(page, /Your learning/);
   assert.ok(page.indexOf("<ReadingLibraryExperience") < page.indexOf("Your learning"));
   assert.match(page, /Coverage boundary/);
+});
+
+test("mobile Reading pages keep the floating feedback trigger compact around study controls", () => {
+  assert.match(feedbackWidget, /pathname\.startsWith\("\/reading"\).*feedback-trigger--reading/);
+  assert.match(globalStyles, /\.feedback-trigger--reading\s*\{[^}]*width:\s*46px;[^}]*min-width:\s*46px;/s);
+  assert.match(globalStyles, /\.feedback-trigger--reading\s*>\s*span:last-child/);
 });

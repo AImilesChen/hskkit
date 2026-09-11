@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState, type FormEvent, type KeyboardEvent } from "react";
+import { usePathname } from "next/navigation";
 
 type FeedbackType = "bug" | "suggestion" | "other";
 
@@ -20,6 +21,7 @@ function deviceCategory(): "desktop" | "mobile" | "tablet" {
 }
 
 export function FeedbackWidget() {
+  const pathname = usePathname();
   const [open, setOpen] = useState(false);
   const [type, setType] = useState<FeedbackType>("bug");
   const [message, setMessage] = useState("");
@@ -120,8 +122,8 @@ export function FeedbackWidget() {
 
   return (
     <>
-      <button ref={triggerRef} className="feedback-trigger" type="button" aria-label="Send feedback" onClick={openDialog}>
-        <span aria-hidden="true">✦</span> Feedback
+      <button ref={triggerRef} className={`feedback-trigger${pathname.startsWith("/reading") ? " feedback-trigger--reading" : ""}`} type="button" aria-label="Send feedback" onClick={openDialog}>
+        <span aria-hidden="true">✦</span><span>Feedback</span>
       </button>
       {open && (
         <div className="feedback-overlay" onMouseDown={(event) => { if (event.target === event.currentTarget) closeDialog(); }}>

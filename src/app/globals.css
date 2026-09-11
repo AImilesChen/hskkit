@@ -1134,6 +1134,8 @@
 
 @media (max-width: 700px) {
   .feedback-trigger { right: 16px; bottom: calc(16px + env(safe-area-inset-bottom)); min-height: 46px; padding: 0 16px; }
+  .feedback-trigger--reading { width: 46px; min-width: 46px; padding: 0; }
+  .feedback-trigger--reading > span:last-child { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
   .feedback-overlay { display: flex; align-items: flex-end; backdrop-filter: none; }
   .feedback-dialog {
     position: relative; right: auto; bottom: auto; width: 100%; max-height: calc(100dvh - 16px);
