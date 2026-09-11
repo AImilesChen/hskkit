@@ -83,16 +83,24 @@ test("10/20 reading sessions are deterministic, unique and stay inside the selec
   }
 });
 
-test("reading UI exposes HSK 1–9 selector, 10/20 starts, progress, same-level next and results", () => {
+test("reading UI exposes dual modes, HSK 1–9 routes, 10/20 quick starts, article progress and results", () => {
   const index = readFileSync(new URL("src/app/reading/page.tsx", root), "utf8");
   const experience = readFileSync(new URL("src/app/components/reading-library-experience.tsx", root), "utf8");
+  const articleReader = readFileSync(new URL("src/app/components/reading-article-reader.tsx", root), "utf8");
+  const levelLibrary = readFileSync(new URL("src/app/components/reading-level-library.tsx", root), "utf8");
   const sessionPage = readFileSync(new URL("src/app/reading/session/[slug]/page.tsx", root), "utf8");
   const start = readFileSync(new URL("src/app/reading/start/route.ts", root), "utf8");
   const results = readFileSync(new URL("src/app/reading/results/page.tsx", root), "utf8");
   const resultState = readFileSync(new URL("src/app/components/reading-session-state.tsx", root), "utf8");
-  assert.match(experience, /Read at your level/);
-  assert.match(experience, /Start 10 questions/);
-  assert.match(experience, /Start 20 questions/);
+  assert.match(experience, />Articles</);
+  assert.match(experience, /Quick Practice/);
+  assert.match(experience, /count=10/);
+  assert.match(experience, /count=20/);
+  assert.match(experience, /Continue/);
+  assert.match(experience, /Recommended next/);
+  assert.match(articleReader, /Mark article complete/);
+  assert.match(articleReader, /Evidence:/);
+  assert.match(levelLibrary, /\/reading\/article\//);
   assert.match(index, /ReadingLibraryExperience/);
   assert.match(start, /readingSession/);
   assert.match(sessionPage, /Reading · HSK.*of/);

@@ -23,6 +23,7 @@ import {
   type LearningState,
 } from "../../../../lib/learning/domain";
 import { isTodayBudgetMinutes, isTodayFocus, isTodayNewWordCount, recommendTodayNewWordCount } from "../../../../lib/learning/today-plan";
+import { articleBySlug, articleQuestion } from "../../../../lib/learning/reading-articles";
 import { audioPlaybackSubject, trustedAudioExercise, trustedTodayAudioExercise, type AudioMode } from "../../../../lib/learning/audio";
 import { advancedListeningBySlug, isStep7AnswerAllowed, normalizeStep7Answer, trustedStep7Exercise } from "../../../../lib/learning/step7-content";
 import { completeStep7PlaybackTicket, consumeStep7PlaybackTicket, createStep7PlaybackTicket } from "../../../../lib/learning/step7-playback";
@@ -35,7 +36,7 @@ import { type ProductCapabilities } from "../../../../lib/commercial/capabilitie
 import { reconcileReferralLearningMilestone } from "../../../../lib/commercial/referral-storage";
 import { learningRewardLocalDay } from "@/lib/engagement/storage";
 import { selectTodayContent, todayContentByAssetId, todayContentByContentId, todayContentFromCatalogRow } from "../../../../lib/learning/today-content";
-import { findPublicCatalogWordById } from "../../../../lib/content/public-catalog-index";
+import { findPublicCatalogWordById, suggestPublicCatalogWords } from "../../../../lib/content/public-catalog-index";
 import { accessDecision, createAuditEvent, errorContract } from "../../../../lib/account/access-policy";
 import { recordPolicyAudit } from "../../../../lib/account/audit-storage";
 import { computeSessionStreak } from "../../../../lib/account/domain";
@@ -223,6 +224,7 @@ function response(data: ReturnType<typeof view>, fresh: boolean, id: string, rev
     savedWordIds: data.state.savedWordIds ?? [],
     recentDictionarySearches: data.state.recentDictionarySearches ?? [],
     topicVisits: data.state.topicVisits ?? [],
+    readingArticleProgress: data.state.readingArticleProgress ?? [],
     topicProgress,
     dictionaryProgress,
     savedWords,
@@ -414,7 +416,8 @@ async function postLearning(req: NextRequest) {
 
   for (let turn = 0; turn < 3; turn += 1) {
     const loaded = await loadState(identity.id);
-    const dailyAction = action === "complete_item" || action === "skip_item" || action === "restore_item" || action === "configure_today" || action === "save_word" || action === "add_to_today" || action === "add_to_review" || action === "dictionary_search" || action === "clear_dictionary_searches" || topicAction;
+    const readingProgressAction = action === "reading_article_progress" || action === "reading_article_word";
+    const dailyAction = action === "complete_item" || action === "skip_item" || action === "restore_item" || action === "configure_today" || action === "save_word" || action === "add_to_today" || action === "add_to_review" || action === "dictionary_search" || action === "clear_dictionary_searches" || topicAction || readingProgressAction;
     if (dailyAction && (loaded.state.dailyOperationKeys ?? []).includes(key)) {
       return response(view(loaded.state, identity.id, tz, capabilities, identity.account?.timezone), identity.fresh, identity.id, loaded.revision, Boolean(identity.account), capabilities, usage);
     }
@@ -445,7 +448,77 @@ async function postLearning(req: NextRequest) {
     let usageCharge: UsageCharge | undefined;
     let reviewCorrect: boolean | undefined;
     try {
-      if (action === "attempt") {
+      if (action === "reading_article_progress") {
+        const articleSlug = short(payload.articleSlug, 120);
+        const article = articleSlug ? articleBySlug(articleSlug) : undefined;
+        if (!article) throw new Error("INVALID_READING_ARTICLE_PROGRESS");
+        const now = new Date().toISOString();
+        const prior = state.readingArticleProgress?.find((item) => item.slug === article.slug);
+        const scrollPercent = Math.max(prior?.scrollPercent ?? 0, Math.min(100, Math.max(0, Number(payload.scrollPercent) || 0)));
+        const answeredCount = Math.max(prior?.answeredCount ?? 0, Math.min(article.questions.length, Math.max(0, Number(payload.answeredCount) || 0)));
+        const correctCount = Math.max(prior?.correctCount ?? 0, Math.min(answeredCount, Math.max(0, Number(payload.correctCount) || 0)));
+        const completed = Boolean(payload.completed) || Boolean(prior?.completed);
+        const favorite = typeof payload.favorite === "boolean" ? payload.favorite : prior?.favorite ?? false;
+        const readingSeconds = Math.max(prior?.readingSeconds ?? 0, Math.min(86_400, Math.max(0, Number(payload.readingSeconds) || 0)));
+        const nextProgress = {
+          slug: article.slug,
+          level: article.level,
+          openedAt: prior?.openedAt ?? now,
+          lastViewedAt: now,
+          scrollPercent,
+          completed,
+          ...(completed ? { completedAt: prior?.completedAt ?? now } : {}),
+          answeredCount,
+          correctCount,
+          ...(answeredCount ? { accuracy: Math.round((correctCount / answeredCount) * 100) } : {}),
+          wordClickCount: prior?.wordClickCount ?? 0,
+          reviewWordIds: prior?.reviewWordIds ?? [],
+          favorite,
+          readingSeconds,
+          needsReview: answeredCount > 0 && correctCount < answeredCount,
+        };
+        state = {
+          ...state,
+          readingArticleProgress: [nextProgress, ...(state.readingArticleProgress ?? []).filter((item) => item.slug !== article.slug)].slice(0, 500),
+          dailyOperationKeys: [...(state.dailyOperationKeys ?? []), key].slice(-400),
+        };
+      } else if (action === "reading_article_word") {
+        const articleSlug = short(payload.articleSlug, 120);
+        const hanzi = short(payload.hanzi, 20);
+        const article = articleSlug ? articleBySlug(articleSlug) : undefined;
+        const vocabulary = article && hanzi ? article.vocabulary.find((item) => item.hanzi === hanzi) : undefined;
+        if (!article || !vocabulary) throw new Error("INVALID_READING_ARTICLE_WORD");
+        const catalogWord = suggestPublicCatalogWords({ q: vocabulary.hanzi, level: article.level, limit: 4 }).find((item) => item.hanzi === vocabulary.hanzi);
+        if (catalogWord) {
+          const context = await getDictionaryLearningContext(catalogWord.id);
+          if (context) state = addWordToReview(state, { word: context.current, observedAt: new Date().toISOString() });
+        }
+        const now = new Date().toISOString();
+        const prior = state.readingArticleProgress?.find((item) => item.slug === article.slug);
+        const reviewWordIds = catalogWord ? [...new Set([...(prior?.reviewWordIds ?? []), catalogWord.id])] : prior?.reviewWordIds ?? [];
+        const nextProgress = {
+          slug: article.slug,
+          level: article.level,
+          openedAt: prior?.openedAt ?? now,
+          lastViewedAt: now,
+          scrollPercent: prior?.scrollPercent ?? 0,
+          completed: prior?.completed ?? false,
+          ...(prior?.completedAt ? { completedAt: prior.completedAt } : {}),
+          answeredCount: prior?.answeredCount ?? 0,
+          correctCount: prior?.correctCount ?? 0,
+          ...(prior?.accuracy !== undefined ? { accuracy: prior.accuracy } : {}),
+          wordClickCount: (prior?.wordClickCount ?? 0) + 1,
+          reviewWordIds,
+          favorite: prior?.favorite ?? false,
+          readingSeconds: prior?.readingSeconds ?? 0,
+          needsReview: prior?.needsReview ?? false,
+        };
+        state = {
+          ...state,
+          readingArticleProgress: [nextProgress, ...(state.readingArticleProgress ?? []).filter((item) => item.slug !== article.slug)].slice(0, 500),
+          dailyOperationKeys: [...(state.dailyOperationKeys ?? []), key].slice(-400),
+        };
+      } else if (action === "attempt") {
         const questionId = short(payload.questionId, 50);
         const answer = short(payload.answer, 8);
         const question = questionId ? trustedQuestion(questionId) : undefined;
@@ -474,6 +547,79 @@ async function postLearning(req: NextRequest) {
             explanation: question.explanation ?? "Compare the supported detail with the other choices.",
           },
         }).state;
+      } else if (action === "reading_article_attempt") {
+        const articleSlug = short(payload.articleSlug, 120);
+        const questionId = short(payload.questionId, 20);
+        const answer = short(payload.answer, 8);
+        const trusted = articleSlug && questionId ? articleQuestion(articleSlug, questionId) : undefined;
+        const optionIndex = answer ? "ABCD".indexOf(answer) : -1;
+        if (!trusted || optionIndex < 0 || optionIndex >= trusted.question.options.length) throw new Error("INVALID_READING_ARTICLE_ATTEMPT");
+        const { article, question } = trusted;
+        const selectedAnswer = answer as string;
+        const answerKeys = ["A", "B", "C", "D"] as const;
+        const correctAnswer = answerKeys[question.correctAnswer];
+        if (!correctAnswer) throw new Error("INVALID_READING_ARTICLE_ANSWER_KEY");
+        const options: Record<string, string> = Object.fromEntries(question.options.map((option, index) => [answerKeys[index], option]));
+        const selectedOption = options[selectedAnswer];
+        const correctOption = options[correctAnswer];
+        if (!selectedOption || !correctOption) throw new Error("INVALID_READING_ARTICLE_OPTION");
+        const recorded = recordAttempt(state, {
+          idempotencyKey: key,
+          contentId: `reading-article:${article.slug}:${question.id}`,
+          contentVersion: article.contentVersion,
+          dimension: "reading",
+          answer: selectedAnswer,
+          correctAnswer,
+          prompt: question.prompt,
+          userAnswerText: selectedOption,
+          correctAnswerText: correctOption,
+          observedAt: new Date().toISOString(),
+          mode: "practice",
+          skill: "reading",
+          standardVersion: "HSK 3.0",
+          reviewSnapshot: {
+            level: article.level,
+            levelBand: String(article.level),
+            skillLabel: "Reading · article",
+            topic: article.title,
+            context: article.paragraphs.join("\n\n"),
+            prompt: question.prompt,
+            answerMode: "choice" as const,
+            options,
+            correctAnswer,
+            correctAnswerText: correctOption,
+            explanation: question.explanation,
+          },
+        });
+        state = recorded.state;
+        const articleAttempts = new Map<string, boolean>();
+        for (const attempt of state.attempts.filter((item) => item.contentId.startsWith(`reading-article:${article.slug}:`))) {
+          const attemptQuestionId = attempt.contentId.slice(`reading-article:${article.slug}:`.length);
+          if (!articleAttempts.has(attemptQuestionId)) articleAttempts.set(attemptQuestionId, attempt.correct);
+        }
+        const answeredCount = articleAttempts.size;
+        const correctCount = [...articleAttempts.values()].filter(Boolean).length;
+        const now = new Date().toISOString();
+        const prior = state.readingArticleProgress?.find((item) => item.slug === article.slug);
+        const nextProgress = {
+          slug: article.slug,
+          level: article.level,
+          openedAt: prior?.openedAt ?? now,
+          lastViewedAt: now,
+          scrollPercent: prior?.scrollPercent ?? 0,
+          completed: prior?.completed ?? false,
+          ...(prior?.completedAt ? { completedAt: prior.completedAt } : {}),
+          answeredCount,
+          correctCount,
+          accuracy: answeredCount ? Math.round((correctCount / answeredCount) * 100) : undefined,
+          wordClickCount: prior?.wordClickCount ?? 0,
+          reviewWordIds: prior?.reviewWordIds ?? [],
+          favorite: prior?.favorite ?? false,
+          readingSeconds: prior?.readingSeconds ?? 0,
+          needsReview: correctCount < answeredCount,
+        };
+        state = { ...state, readingArticleProgress: [nextProgress, ...(state.readingArticleProgress ?? []).filter((item) => item.slug !== article.slug)].slice(0, 500) };
+        feedback = { correct: recorded.attempt.correct, correctAnswerText: correctOption, explanation: question.explanation };
       } else if (action === "topic_practice_attempt") {
         const topicSlug = short(payload.topicSlug, 100);
         const questionId = short(payload.questionId, 160);

@@ -1,0 +1,1622 @@
+{
+  "hsk1-daily-life-01": {
+    "textSha256": "653f564c360f35766164eff3680439d5ad549577fe5833a6e9e79ba3e36389d7",
+    "audioSha256": "8f14ef3031828099f0330504f3b7eb1de78802514be2f5e7fcea21bb3a5afea8",
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "rate": "-8%",
+    "engine": "Microsoft Edge TTS",
+    "sourceLicense": "HSKKit original editorial content; synthesized narration",
+    "qaStatus": "generated-for-final-text"
+  },
+  "hsk1-transport-02": {
+    "textSha256": "86e0fe9f4dfb8b03934a6a4248c683cb656015c0a2a5975fcaf868958b2e982f",
+    "audioSha256": "1480b1f7a73f5f60609804a7e6992b6895c92837951b22227e0720e33fc8c51a",
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "rate": "-8%",
+    "engine": "Microsoft Edge TTS",
+    "sourceLicense": "HSKKit original editorial content; synthesized narration",
+    "qaStatus": "generated-for-final-text"
+  },
+  "hsk1-study-03": {
+    "textSha256": "9bafbb1daebbb747cd78c42e4b0d3746368f70e8f48f7927296140121d2c7a50",
+    "audioSha256": "fe7f572e35fd2181777150b150a43f5001c222d061bf79d756dc3fca4e35887b",
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "rate": "-8%",
+    "engine": "Microsoft Edge TTS",
+    "sourceLicense": "HSKKit original editorial content; synthesized narration",
+    "qaStatus": "generated-for-final-text"
+  },
+  "hsk1-community-04": {
+    "textSha256": "5454c2a5e68278bda441adb2d64ea494b9b01263df364cd46608d9b616570a43",
+    "audioSha256": "3ca206a82b3845713283c8ba11de1722828a9307326abd6f6eb806e604695131",
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "rate": "-8%",
+    "engine": "Microsoft Edge TTS",
+    "sourceLicense": "HSKKit original editorial content; synthesized narration",
+    "qaStatus": "generated-for-final-text"
+  },
+  "hsk1-food-05": {
+    "textSha256": "fad3ad8f06fe58d2614408e37b41afc8cdf61ac83f080d4596ad4e8dc843b81e",
+    "audioSha256": "b45aafa517753a1ae40633e521a1c82bae6cd5cd14e4edc5bb87a3affdd4a539",
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "rate": "-8%",
+    "engine": "Microsoft Edge TTS",
+    "sourceLicense": "HSKKit original editorial content; synthesized narration",
+    "qaStatus": "generated-for-final-text"
+  },
+  "hsk1-health-06": {
+    "textSha256": "91eba8caf43a25f1532548c2bac36f4c13694ade7cfbf8f638b5a9d353e344c2",
+    "audioSha256": "997d9e386b0168c23ce39607f2f2e73c6f907b758eacf802ae84c1c38623f94b",
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "rate": "-8%",
+    "engine": "Microsoft Edge TTS",
+    "sourceLicense": "HSKKit original editorial content; synthesized narration",
+    "qaStatus": "generated-for-final-text"
+  },
+  "hsk1-environment-07": {
+    "textSha256": "707a3737a4e486217e781fdb5d3ad6051dd5c6624dd0a12c43296e4e537c8d61",
+    "audioSha256": "33849dda4774423af1eed96dc1507fb403a295c150a5af346ff1e55a65f2cac0",
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "rate": "-8%",
+    "engine": "Microsoft Edge TTS",
+    "sourceLicense": "HSKKit original editorial content; synthesized narration",
+    "qaStatus": "generated-for-final-text"
+  },
+  "hsk1-nature-08": {
+    "textSha256": "eabfba882c1c0d230b4c93a67aa099665b2699e39d5d42c50bece9689e8db3c1",
+    "audioSha256": "dfc90519e4dd35e778cdbcd06ec100e76dd7632030c39ec46ebb6836d930d7d4",
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "rate": "-8%",
+    "engine": "Microsoft Edge TTS",
+    "sourceLicense": "HSKKit original editorial content; synthesized narration",
+    "qaStatus": "generated-for-final-text"
+  },
+  "hsk1-wellbeing-09": {
+    "textSha256": "4425a21e11739b9b3e11997fe0d2ae5ca21738e82e0436626ee7c10e49ad73f8",
+    "audioSha256": "2875dc348aeee59488d5adf9f56d8c3a4dc4ccb71031b72f9c2e2dce6a9ec4c4",
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "rate": "-8%",
+    "engine": "Microsoft Edge TTS",
+    "sourceLicense": "HSKKit original editorial content; synthesized narration",
+    "qaStatus": "generated-for-final-text"
+  },
+  "hsk1-technology-10": {
+    "textSha256": "0727ea0c45c136bc6487fba1ef0ea72d11a152ebd6af48251d6cf38b7a9a45bb",
+    "audioSha256": "25061649da9d5fb05268620cbd9ef356f57ada4471a1797607c27e87e1be29bc",
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "rate": "-8%",
+    "engine": "Microsoft Edge TTS",
+    "sourceLicense": "HSKKit original editorial content; synthesized narration",
+    "qaStatus": "generated-for-final-text"
+  },
+  "hsk1-sport-11": {
+    "textSha256": "e649dbe702d76793f625e7ede2f7cdc498daa84e4bdb664383630e335522384f",
+    "audioSha256": "17ca31b3c0dd00c16128bdf8674f01ac2c651ad2edfc5f48f9ea66828013c7ab",
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "rate": "-8%",
+    "engine": "Microsoft Edge TTS",
+    "sourceLicense": "HSKKit original editorial content; synthesized narration",
+    "qaStatus": "generated-for-final-text"
+  },
+  "hsk1-relationships-12": {
+    "textSha256": "49736dba848e86fd833b6e7964bf07f3295d66148f411c0dfde0440fc906ec24",
+    "audioSha256": "8679d6d64ce8f7302d54b9846841f660ef764be9a2baae66e04ac27a57fde97d",
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "rate": "-8%",
+    "engine": "Microsoft Edge TTS",
+    "sourceLicense": "HSKKit original editorial content; synthesized narration",
+    "qaStatus": "generated-for-final-text"
+  },
+  "hsk1-honesty-13": {
+    "textSha256": "e980e3c54058c715b521b6fc0e435b70b8d05dd0eebdc77bb31377e6ac38e565",
+    "audioSha256": "3c448f63810008f678134c3aa3f1c1858f8ed7b5257f4513dffdd5e746ec8852",
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "rate": "-8%",
+    "engine": "Microsoft Edge TTS",
+    "sourceLicense": "HSKKit original editorial content; synthesized narration",
+    "qaStatus": "generated-for-final-text"
+  },
+  "hsk1-weather-14": {
+    "textSha256": "4b5401989cce2fda96b3edc85b4ddeb06f996f7f6a9f897bf23c6ecda7d93c61",
+    "audioSha256": "5006f41b6cc54722e40c5447ad89711199bc35d04f35b1575b858ac97ef86bd0",
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "rate": "-8%",
+    "engine": "Microsoft Edge TTS",
+    "sourceLicense": "HSKKit original editorial content; synthesized narration",
+    "qaStatus": "generated-for-final-text"
+  },
+  "hsk1-work-15": {
+    "textSha256": "d7a04e84aff4dcc2633fe264f7f26e62891797b47df1499e9db6181496642afb",
+    "audioSha256": "854239f39fa80f1bfed4ced575117af80610a25cb10a74724d72068bee2cd7ea",
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "rate": "-8%",
+    "engine": "Microsoft Edge TTS",
+    "sourceLicense": "HSKKit original editorial content; synthesized narration",
+    "qaStatus": "generated-for-final-text"
+  },
+  "hsk1-environment-16": {
+    "textSha256": "7bb9b6c947e730b97b887f068a7b7ffb94d6c6d65688fb8e0a40a38be3b507aa",
+    "audioSha256": "0e9767e4f55bf5dc7c4e8ee037f8e524a21afbfec733cfa9e2efd8e811ec5c42",
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "rate": "-8%",
+    "engine": "Microsoft Edge TTS",
+    "sourceLicense": "HSKKit original editorial content; synthesized narration",
+    "qaStatus": "generated-for-final-text"
+  },
+  "hsk1-leisure-17": {
+    "textSha256": "aa3ead810af9668ab597fdb7fe89fd28f0c6f335d703b857171a86bfac845970",
+    "audioSha256": "191c2ff1778fbf8bf6f29b4da3d6711852fda4c4f6c409227cbad1ad2675c8f5",
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "rate": "-8%",
+    "engine": "Microsoft Edge TTS",
+    "sourceLicense": "HSKKit original editorial content; synthesized narration",
+    "qaStatus": "generated-for-final-text"
+  },
+  "hsk1-family-18": {
+    "textSha256": "8aa0be7d5f4f4a2bd5efdc04462299b9507aa1e94db6b9f2a9fd9f976b3dcddb",
+    "audioSha256": "2756f92ccec17a00cba152b34442b3aa8af9dfce87d5a5da25c46ea67c9b5d73",
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "rate": "-8%",
+    "engine": "Microsoft Edge TTS",
+    "sourceLicense": "HSKKit original editorial content; synthesized narration",
+    "qaStatus": "generated-for-final-text"
+  },
+  "hsk1-planning-19": {
+    "textSha256": "508f4daf93e2003c554e60a8a401a749f5e2e7081ce11ecb60c87ea01d3bc513",
+    "audioSha256": "acbf186e7d724bc38baa2a5ebe9c69783913c5abd0500d7a128c8dd4e93003cf",
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "rate": "-8%",
+    "engine": "Microsoft Edge TTS",
+    "sourceLicense": "HSKKit original editorial content; synthesized narration",
+    "qaStatus": "generated-for-final-text"
+  },
+  "hsk1-respect-20": {
+    "textSha256": "9b159f907a93e26116bae7fda4b11bd0bf9a4c6ee0e4db551ef17cbaa3548e5c",
+    "audioSha256": "adc4910e4e502b88fd3bd62cbba63066f55557793eb3ece037f4aac734f3f33b",
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "rate": "-8%",
+    "engine": "Microsoft Edge TTS",
+    "sourceLicense": "HSKKit original editorial content; synthesized narration",
+    "qaStatus": "generated-for-final-text"
+  },
+  "hsk2-daily-life-01": {
+    "textSha256": "3749b3a0f309479f491dd67f7435981681af7ca8a432d849631c19d3a2817dff",
+    "audioSha256": "66a3125fe074050b55786570bb4770817185c9033526313433ed51491258c7a9",
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "rate": "-8%",
+    "engine": "Microsoft Edge TTS",
+    "sourceLicense": "HSKKit original editorial content; synthesized narration",
+    "qaStatus": "generated-for-final-text"
+  },
+  "hsk2-transport-02": {
+    "textSha256": "0ff7783e30c57cbdb3aa7283950e4b62ac6868ff518f08b6b5e2a2e44ec96e8c",
+    "audioSha256": "f126a74043c1397474b869343f9e3fd5f3f7a5454e2be0ee1cfba367e29620a2",
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "rate": "-8%",
+    "engine": "Microsoft Edge TTS",
+    "sourceLicense": "HSKKit original editorial content; synthesized narration",
+    "qaStatus": "generated-for-final-text"
+  },
+  "hsk2-study-03": {
+    "textSha256": "76c1a32a785f2c278041ff53b9a8cb76592f97e98040596a9fab60885e9ea892",
+    "audioSha256": "006470c713fe3d1783a74eb3bbdc03a12bc77dc4e2e8fdd54e3fe8eb35553561",
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "rate": "-8%",
+    "engine": "Microsoft Edge TTS",
+    "sourceLicense": "HSKKit original editorial content; synthesized narration",
+    "qaStatus": "generated-for-final-text"
+  },
+  "hsk2-community-04": {
+    "textSha256": "5669f284832b72241b124a81a004d8b5c9cc79441a5bc985a660b6ec84bf63d9",
+    "audioSha256": "d976c1c105445fdbe2037fbdf618f6fdde9686b26e2ac3ceaf1dd40a9382c58f",
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "rate": "-8%",
+    "engine": "Microsoft Edge TTS",
+    "sourceLicense": "HSKKit original editorial content; synthesized narration",
+    "qaStatus": "generated-for-final-text"
+  },
+  "hsk2-food-05": {
+    "textSha256": "8c4ece1cdb257ae154aa2dccc7e02ed2f3f93f0fa3aa833eccb0627a7f16ad59",
+    "audioSha256": "4b239af53fbe972dc3794f62898d9c8b2ad6ce65c4c998bfb19d7eb8daebbeb8",
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "rate": "-8%",
+    "engine": "Microsoft Edge TTS",
+    "sourceLicense": "HSKKit original editorial content; synthesized narration",
+    "qaStatus": "generated-for-final-text"
+  },
+  "hsk2-health-06": {
+    "textSha256": "6631ca71f47ca4df3957e9c56711a3e6d8ac3d6d15ef29eeca99aae3ccb6126d",
+    "audioSha256": "7e1d57ace6acdc963b432baa3b66a1220a9f3b1afb0a625f7ab5234a005c1eb1",
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "rate": "-8%",
+    "engine": "Microsoft Edge TTS",
+    "sourceLicense": "HSKKit original editorial content; synthesized narration",
+    "qaStatus": "generated-for-final-text"
+  },
+  "hsk2-environment-07": {
+    "textSha256": "27e15f2c1e8b8740f70cf169a216594160508b41410b3e25f4594d6c7ec5bb5d",
+    "audioSha256": "829d62aafc47e63620c24c65c2f4dfc9ae44e32741f6975b615d39a38db31f8a",
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "rate": "-8%",
+    "engine": "Microsoft Edge TTS",
+    "sourceLicense": "HSKKit original editorial content; synthesized narration",
+    "qaStatus": "generated-for-final-text"
+  },
+  "hsk2-nature-08": {
+    "textSha256": "885eba97360c8ce632df423817539a950747915d02de68fe938e8a066540b59e",
+    "audioSha256": "1d583964062639cebf2f8146e79197e1087e70e2658ef87f7be84c7a5874e7c4",
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "rate": "-8%",
+    "engine": "Microsoft Edge TTS",
+    "sourceLicense": "HSKKit original editorial content; synthesized narration",
+    "qaStatus": "generated-for-final-text"
+  },
+  "hsk2-wellbeing-09": {
+    "textSha256": "1f417c9fd1e86ccd0ea1461c10fba837f4c881d9c320f9b8009895b8ec20d191",
+    "audioSha256": "7c41c921313bec75edbdec008528690cca2c5f57cf139af4b1392cca28773162",
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "rate": "-8%",
+    "engine": "Microsoft Edge TTS",
+    "sourceLicense": "HSKKit original editorial content; synthesized narration",
+    "qaStatus": "generated-for-final-text"
+  },
+  "hsk2-technology-10": {
+    "textSha256": "057c6e25f0277062109d13747f70220a17404edcc746898aa55dfd6d10afcdab",
+    "audioSha256": "ee2dcc82f04ed69c8effaaf494eee735ec2718c1c8fed802bac215c352ab9c1b",
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "rate": "-8%",
+    "engine": "Microsoft Edge TTS",
+    "sourceLicense": "HSKKit original editorial content; synthesized narration",
+    "qaStatus": "generated-for-final-text"
+  },
+  "hsk2-sport-11": {
+    "textSha256": "74d6765df0d3ea28c3b77dde2d24515139bf1f3a601992a612d6d293e9e7dd27",
+    "audioSha256": "da57c1ed617de10e24d32d0bad37596a6bee00d3b8763837248019f37d463396",
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "rate": "-8%",
+    "engine": "Microsoft Edge TTS",
+    "sourceLicense": "HSKKit original editorial content; synthesized narration",
+    "qaStatus": "generated-for-final-text"
+  },
+  "hsk2-relationships-12": {
+    "textSha256": "2c034c63b139031e062f402e3584decfc2d0e7e880d0b24e4e6b100da42ba2bf",
+    "audioSha256": "c9e28b92adaad1c33e2a72e765de09c4caf0dcdfc210eadd57a0dd54f2ea4e9c",
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "rate": "-8%",
+    "engine": "Microsoft Edge TTS",
+    "sourceLicense": "HSKKit original editorial content; synthesized narration",
+    "qaStatus": "generated-for-final-text"
+  },
+  "hsk2-honesty-13": {
+    "textSha256": "e30c48255e11a4a616e60cb1bca655259dbb39da952098df9721c3962a6c13f3",
+    "audioSha256": "08975dc745fa180f35f234ddcb4e61c093c45874fce43e19b0bc4bc345dbe70b",
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "rate": "-8%",
+    "engine": "Microsoft Edge TTS",
+    "sourceLicense": "HSKKit original editorial content; synthesized narration",
+    "qaStatus": "generated-for-final-text"
+  },
+  "hsk2-weather-14": {
+    "textSha256": "6e7af8091486c67c26e3ca17a7debbab1b3e74e74f232ebae477116e884ebaa9",
+    "audioSha256": "7007368bf8dba8ab1fe49131df1c6d0f95f14f1e16b0636dcdf8b9c62205b795",
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "rate": "-8%",
+    "engine": "Microsoft Edge TTS",
+    "sourceLicense": "HSKKit original editorial content; synthesized narration",
+    "qaStatus": "generated-for-final-text"
+  },
+  "hsk2-work-15": {
+    "textSha256": "980a4150fe5bb384b73a9d9c134538604c3f6cb86641185170a75be62619be83",
+    "audioSha256": "9bc0c1597a2d4cf2fcec7ee0ea2674040cfc84ecf5c22b147cd56c1f4c7642ae",
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "rate": "-8%",
+    "engine": "Microsoft Edge TTS",
+    "sourceLicense": "HSKKit original editorial content; synthesized narration",
+    "qaStatus": "generated-for-final-text"
+  },
+  "hsk2-environment-16": {
+    "textSha256": "78a97e07e0cb7ba1644059e1b6cbab8804db7c362453c2f4bbaeed9d3b36cf4d",
+    "audioSha256": "13912d05d416b763ae599c4073e21217c0c556be817ac5239848750bd61b20ab",
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "rate": "-8%",
+    "engine": "Microsoft Edge TTS",
+    "sourceLicense": "HSKKit original editorial content; synthesized narration",
+    "qaStatus": "generated-for-final-text"
+  },
+  "hsk2-leisure-17": {
+    "textSha256": "b72c5f709cccbc6d5a877f8a473ec4be7781df097a52280c375f5ce1781ca7b5",
+    "audioSha256": "7b3f908f91fffba4ac97d72c39007f80587fc9fcfa51da53921d1a021027121b",
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "rate": "-8%",
+    "engine": "Microsoft Edge TTS",
+    "sourceLicense": "HSKKit original editorial content; synthesized narration",
+    "qaStatus": "generated-for-final-text"
+  },
+  "hsk2-family-18": {
+    "textSha256": "2599b0b0c05192586016d2739cedf81eb1cdc8da0f2ca7a5f9b0e1b419efc49e",
+    "audioSha256": "e163ab06c3cc4077e62c535810b9afa9ccdb7522bcbc6b6fdced1a72bbc9316d",
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "rate": "-8%",
+    "engine": "Microsoft Edge TTS",
+    "sourceLicense": "HSKKit original editorial content; synthesized narration",
+    "qaStatus": "generated-for-final-text"
+  },
+  "hsk2-planning-19": {
+    "textSha256": "f99bebc5d95369396873af24deb95498784d869cf6e993568a2398fd580073e2",
+    "audioSha256": "45f1a94066b6db55589dc3c02357b5f8e57029152cb952883cebad01b133ee33",
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "rate": "-8%",
+    "engine": "Microsoft Edge TTS",
+    "sourceLicense": "HSKKit original editorial content; synthesized narration",
+    "qaStatus": "generated-for-final-text"
+  },
+  "hsk2-respect-20": {
+    "textSha256": "ccdde5e6ae2c6786d9c098bba2768bf1c1e71a6d46e461f90592a8e4fc4e435b",
+    "audioSha256": "df495dce62c51e7c548c95962ea6f914468573542d28d12af00c2b7617758aff",
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "rate": "-8%",
+    "engine": "Microsoft Edge TTS",
+    "sourceLicense": "HSKKit original editorial content; synthesized narration",
+    "qaStatus": "generated-for-final-text"
+  },
+  "hsk3-daily-life-01": {
+    "textSha256": "f8beb213e4fcbc178830a1b4308df7eb824dcf9059cd53ee3f49197cfebcf343",
+    "audioSha256": "3a6e7358b67c8e83189ced14b83cd19c7b4f62aef8a71effb0ffd6c46bd05227",
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "rate": "-8%",
+    "engine": "Microsoft Edge TTS",
+    "sourceLicense": "HSKKit original editorial content; synthesized narration",
+    "qaStatus": "generated-for-final-text"
+  },
+  "hsk3-transport-02": {
+    "textSha256": "9262d4b2f86b72b89300cb2be87b81028826e6a228a33e8f3eb4f412718f6afa",
+    "audioSha256": "725f9cb90e512c3da8b52e60de261397a007badcefd1dbba3d9e5d552801851b",
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "rate": "-8%",
+    "engine": "Microsoft Edge TTS",
+    "sourceLicense": "HSKKit original editorial content; synthesized narration",
+    "qaStatus": "generated-for-final-text"
+  },
+  "hsk3-study-03": {
+    "textSha256": "2f0da20d7efab0fe58853166dfa69bab9c4b6414d0096ef2a1461ea7033b896a",
+    "audioSha256": "9f58d0f75c532b3ccc4f49799acddb38f5774b83cb5786bbd0aa08151e9da781",
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "rate": "-8%",
+    "engine": "Microsoft Edge TTS",
+    "sourceLicense": "HSKKit original editorial content; synthesized narration",
+    "qaStatus": "generated-for-final-text"
+  },
+  "hsk3-community-04": {
+    "textSha256": "24107b4cc7deb735dcbea8b9afbf981286317a69d9054e7359506844c35ccba6",
+    "audioSha256": "71ea86534246831443d1b2d7f7742bd7a8a7cfa2345f4f6341ad7c739b177e84",
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "rate": "-8%",
+    "engine": "Microsoft Edge TTS",
+    "sourceLicense": "HSKKit original editorial content; synthesized narration",
+    "qaStatus": "generated-for-final-text"
+  },
+  "hsk3-food-05": {
+    "textSha256": "411f28c5b8d705a7b878ad852ff86a0605a746e2d024ca8bec117e3c884e616e",
+    "audioSha256": "f6de17c3532195feebaf1426465585634af38fb005f556e984b0d5cfc4109e1c",
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "rate": "-8%",
+    "engine": "Microsoft Edge TTS",
+    "sourceLicense": "HSKKit original editorial content; synthesized narration",
+    "qaStatus": "generated-for-final-text"
+  },
+  "hsk3-health-06": {
+    "textSha256": "6f9847defef02a05a50721f9b4703955386f26cded5ad1824501401856254e22",
+    "audioSha256": "c8953bd90ea92cde8040cd50b2500b3a34e5841cdfbf16a51d40875c7bbf6f07",
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "rate": "-8%",
+    "engine": "Microsoft Edge TTS",
+    "sourceLicense": "HSKKit original editorial content; synthesized narration",
+    "qaStatus": "generated-for-final-text"
+  },
+  "hsk3-environment-07": {
+    "textSha256": "6241b76a8503effcb565ab35fd266df26a209bcfe98a6bd237cd512c8d88af7d",
+    "audioSha256": "3829316d393b1e58cfb87179cf4624ba2423bd41603f40d5679571cc475e9269",
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "rate": "-8%",
+    "engine": "Microsoft Edge TTS",
+    "sourceLicense": "HSKKit original editorial content; synthesized narration",
+    "qaStatus": "generated-for-final-text"
+  },
+  "hsk3-nature-08": {
+    "textSha256": "1451adfa78305bb0590f4465396772c99bb3800c1f202d50225e43155bdf0c1f",
+    "audioSha256": "416bde35f9849dfee7c45615c41d0b2a22b176d36d603691f07dbe291e818c31",
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "rate": "-8%",
+    "engine": "Microsoft Edge TTS",
+    "sourceLicense": "HSKKit original editorial content; synthesized narration",
+    "qaStatus": "generated-for-final-text"
+  },
+  "hsk3-wellbeing-09": {
+    "textSha256": "d0dcbe7a1c6c1663a8bc86017adb88a2db1a5bd87ea3cb81162474f287e0728c",
+    "audioSha256": "10ae28e701f6d2240d23f7fafd717f44d8005fe18a5ebd9f586918240a11fa45",
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "rate": "-8%",
+    "engine": "Microsoft Edge TTS",
+    "sourceLicense": "HSKKit original editorial content; synthesized narration",
+    "qaStatus": "generated-for-final-text"
+  },
+  "hsk3-technology-10": {
+    "textSha256": "69c427c199eca76a4b9a670eddf9414ddaac18714ecac15685b8b85481388438",
+    "audioSha256": "912335353dc9d5c634f4225360f746f1aed41066d1bd32699feae9ccd7369c5b",
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "rate": "-8%",
+    "engine": "Microsoft Edge TTS",
+    "sourceLicense": "HSKKit original editorial content; synthesized narration",
+    "qaStatus": "generated-for-final-text"
+  },
+  "hsk3-sport-11": {
+    "textSha256": "11577227f750a561a611b16b79c901d8c2f655ea6c44e5265ee75651614c62e2",
+    "audioSha256": "65df475f61338430ae566825d4a671d94e0b068e80a5a72753ae756801afbbb0",
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "rate": "-8%",
+    "engine": "Microsoft Edge TTS",
+    "sourceLicense": "HSKKit original editorial content; synthesized narration",
+    "qaStatus": "generated-for-final-text"
+  },
+  "hsk3-relationships-12": {
+    "textSha256": "f964ccfddb023490767477353a50b6b03ebd17b51bc50368cc3eafc1a1bb9ab5",
+    "audioSha256": "ff9019d40bc024483462cf0a7390269eb0ca3ae1f2b738d6af42e3aa2610a600",
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "rate": "-8%",
+    "engine": "Microsoft Edge TTS",
+    "sourceLicense": "HSKKit original editorial content; synthesized narration",
+    "qaStatus": "generated-for-final-text"
+  },
+  "hsk3-honesty-13": {
+    "textSha256": "573ceaea6e7c5b098498e30158c2647ae6aabcbec893fd451768096cbec389bf",
+    "audioSha256": "b2263e2a1ac26ce2fc7842e02e62350411505b9b0fc73c44f8d1f68769a1647b",
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "rate": "-8%",
+    "engine": "Microsoft Edge TTS",
+    "sourceLicense": "HSKKit original editorial content; synthesized narration",
+    "qaStatus": "generated-for-final-text"
+  },
+  "hsk3-weather-14": {
+    "textSha256": "80c7f93f845dff4100590d1ff5d26261fb679a291f8d6cd537ec0431ae149449",
+    "audioSha256": "b76a51e1e91941cd4f7fef9438fdb90d36176e6e5e05f38874e4bcdd80a866be",
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "rate": "-8%",
+    "engine": "Microsoft Edge TTS",
+    "sourceLicense": "HSKKit original editorial content; synthesized narration",
+    "qaStatus": "generated-for-final-text"
+  },
+  "hsk3-work-15": {
+    "textSha256": "aceb1805aa19308883ded912ffe66bd654dfcfc6fbaac1b0b72b0207ff987643",
+    "audioSha256": "badda65eb86a7ac26a8fc20a576d21a1ea141fd9fd0ea8cd269a57100ecd5de3",
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "rate": "-8%",
+    "engine": "Microsoft Edge TTS",
+    "sourceLicense": "HSKKit original editorial content; synthesized narration",
+    "qaStatus": "generated-for-final-text"
+  },
+  "hsk3-environment-16": {
+    "textSha256": "59655c8b5911ab1ebb08c030e3aa2b05a05c05c3223d97d0bceb4195e92b9a6c",
+    "audioSha256": "cbf7e9b7133c0ebe784c73d3603eb8a87b6382c749a1f2ed2f1d35095412ae0f",
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "rate": "-8%",
+    "engine": "Microsoft Edge TTS",
+    "sourceLicense": "HSKKit original editorial content; synthesized narration",
+    "qaStatus": "generated-for-final-text"
+  },
+  "hsk3-leisure-17": {
+    "textSha256": "8c2f133de5ec9463685a57f0f8cd5020ffdcef9f8b3b5975c46dff3f23ccd878",
+    "audioSha256": "3009c11e2cf81dcb9841f406c498ea13baa7dd17d3746db7e5999ada7c18a5c0",
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "rate": "-8%",
+    "engine": "Microsoft Edge TTS",
+    "sourceLicense": "HSKKit original editorial content; synthesized narration",
+    "qaStatus": "generated-for-final-text"
+  },
+  "hsk3-family-18": {
+    "textSha256": "98b17beeedec9119dbdbd0186044ebeaa4be2f83a13d641dc5c3877a0f0ed2f7",
+    "audioSha256": "c55acf653c158da17996aa7864f5a0a97070bbbc41b060bf45b8136068e64ef3",
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "rate": "-8%",
+    "engine": "Microsoft Edge TTS",
+    "sourceLicense": "HSKKit original editorial content; synthesized narration",
+    "qaStatus": "generated-for-final-text"
+  },
+  "hsk3-planning-19": {
+    "textSha256": "14db9717b279b0dd6449687b9e30899d6e76d48b74899bb5fe17c9f3fb416670",
+    "audioSha256": "5d209b1e191be2d01850cce667674b573310efcea76141f84c18a6511ce5e4d3",
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "rate": "-8%",
+    "engine": "Microsoft Edge TTS",
+    "sourceLicense": "HSKKit original editorial content; synthesized narration",
+    "qaStatus": "generated-for-final-text"
+  },
+  "hsk3-respect-20": {
+    "textSha256": "991de7eadbf18ac0b63b0d8976e51aaf9db4c2944950a555d13894e6ba86c57b",
+    "audioSha256": "53613c934bf4bbf2d538ddcffc400e0225fc0e13b3aa310917cb903af9ed6e21",
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "rate": "-8%",
+    "engine": "Microsoft Edge TTS",
+    "sourceLicense": "HSKKit original editorial content; synthesized narration",
+    "qaStatus": "generated-for-final-text"
+  },
+  "hsk4-daily-life-01": {
+    "textSha256": "f08cdcf1c2fb986a13a9bdcb97ddd4fb3671669d6a837c8b6bf473e3cec0cfd4",
+    "audioSha256": "53cf1f0845e91df7296fd77662bd789585f632bd9729a040ef43ae4cdd5b9fcb",
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "rate": "-8%",
+    "engine": "Microsoft Edge TTS",
+    "sourceLicense": "HSKKit original editorial content; synthesized narration",
+    "qaStatus": "generated-for-final-text"
+  },
+  "hsk4-transport-02": {
+    "textSha256": "d0209be58d489cfeef77a2195977809e39e69e2cc2bfc324fdd5e3639b4e2659",
+    "audioSha256": "0fb6931a15471ec6cbad30bbbda59880cffe9721feb457c8a366dd78ec6baa80",
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "rate": "-8%",
+    "engine": "Microsoft Edge TTS",
+    "sourceLicense": "HSKKit original editorial content; synthesized narration",
+    "qaStatus": "generated-for-final-text"
+  },
+  "hsk4-study-03": {
+    "textSha256": "dcf176b8be94bfc76d64791be136135837ff8701939608caccd5c2ce1bdcb415",
+    "audioSha256": "e0d60264e93503dafcb67c0cd4cd0fbd9b41416bd5859344bae3912d2e9fabc3",
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "rate": "-8%",
+    "engine": "Microsoft Edge TTS",
+    "sourceLicense": "HSKKit original editorial content; synthesized narration",
+    "qaStatus": "generated-for-final-text"
+  },
+  "hsk4-community-04": {
+    "textSha256": "dc2cc0b6f7a1ecb1dcb1509a442d007c07163def0acbde40fa3a0da1f4dfa2cd",
+    "audioSha256": "7f49d5bfca4b2bf0a77ae50984533450c6d866b3c3b8389bf5c42f30cab24e9e",
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "rate": "-8%",
+    "engine": "Microsoft Edge TTS",
+    "sourceLicense": "HSKKit original editorial content; synthesized narration",
+    "qaStatus": "generated-for-final-text"
+  },
+  "hsk4-food-05": {
+    "textSha256": "4ecd150a782a1b94d55b15843c0fa33e29d0c72341de6e641d273289d7d1a24f",
+    "audioSha256": "69318c725a9c877a9b55afb10c9171a423c31a4ab7c6beab4f3de44c2b1b1b0c",
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "rate": "-8%",
+    "engine": "Microsoft Edge TTS",
+    "sourceLicense": "HSKKit original editorial content; synthesized narration",
+    "qaStatus": "generated-for-final-text"
+  },
+  "hsk4-health-06": {
+    "textSha256": "951eab185220147812d555a3f8f3c76a6646ae946d492138f14e02937459a42d",
+    "audioSha256": "5ac416b656c0ef96b93503a1a8ad9e4a773fe665769aae1f8d41e662a7878ac4",
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "rate": "-8%",
+    "engine": "Microsoft Edge TTS",
+    "sourceLicense": "HSKKit original editorial content; synthesized narration",
+    "qaStatus": "generated-for-final-text"
+  },
+  "hsk4-environment-07": {
+    "textSha256": "e8a6f9da8f121c2bfaf9200ae2570c0a44fed055ea5248d4125f9e58d2a0bc64",
+    "audioSha256": "0088dcc512538f2f6dd0d87a5f06d129be5b048533d1b0175b472389c77117cd",
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "rate": "-8%",
+    "engine": "Microsoft Edge TTS",
+    "sourceLicense": "HSKKit original editorial content; synthesized narration",
+    "qaStatus": "generated-for-final-text"
+  },
+  "hsk4-nature-08": {
+    "textSha256": "4377f94210ff3c1c949c2e0eb6e3ffaf8f15e739e5c5732b98d31362f3af44a3",
+    "audioSha256": "8ed8f0cb95091d4487253222a415487a9b1b1a6a98d44cea67658e9dfddf0fd3",
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "rate": "-8%",
+    "engine": "Microsoft Edge TTS",
+    "sourceLicense": "HSKKit original editorial content; synthesized narration",
+    "qaStatus": "generated-for-final-text"
+  },
+  "hsk4-wellbeing-09": {
+    "textSha256": "ce557563be3bac806fd8f98df2d2d21033a42f54799e64331f70d3cdeb9947ba",
+    "audioSha256": "cd72837a486520a009c1b913de4092f4bc70c9d8241cf47d0208429296c34554",
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "rate": "-8%",
+    "engine": "Microsoft Edge TTS",
+    "sourceLicense": "HSKKit original editorial content; synthesized narration",
+    "qaStatus": "generated-for-final-text"
+  },
+  "hsk4-technology-10": {
+    "textSha256": "fa3c976d39150e95cdc3eb7718af5e74e380fa580b5bb831ed1238dce9a50e64",
+    "audioSha256": "573f3a24dd32a6d6693423fc58e126f314a8586cd8b2933e194087c97798459a",
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "rate": "-8%",
+    "engine": "Microsoft Edge TTS",
+    "sourceLicense": "HSKKit original editorial content; synthesized narration",
+    "qaStatus": "generated-for-final-text"
+  },
+  "hsk4-sport-11": {
+    "textSha256": "1e928c73d6c265cd7a449f9c9227197a1db46cea4fc26874cb03f9aa5fed72b6",
+    "audioSha256": "f7b46622e74d344136ba61c40f269b1259ea68142de0e5c3aaf6f5ab4cf30faf",
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "rate": "-8%",
+    "engine": "Microsoft Edge TTS",
+    "sourceLicense": "HSKKit original editorial content; synthesized narration",
+    "qaStatus": "generated-for-final-text"
+  },
+  "hsk4-relationships-12": {
+    "textSha256": "75a1f65e2f206606ea4699a1daaddd70a5ab005824e2dca38132773092a5a5b7",
+    "audioSha256": "72fba326cef0ef8d63ba61aa14d74bd7f86e5228318cbaf7a4bdda29b2e4f5ce",
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "rate": "-8%",
+    "engine": "Microsoft Edge TTS",
+    "sourceLicense": "HSKKit original editorial content; synthesized narration",
+    "qaStatus": "generated-for-final-text"
+  },
+  "hsk4-honesty-13": {
+    "textSha256": "71f61223e45d0199a0ffdbe6ff228c4e670359cbedf60016723ba0396b88f7df",
+    "audioSha256": "4325dea51df101fe5d0187bb9c1d21af8543c8a3b786e1d6191cfb6b70f4cfce",
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "rate": "-8%",
+    "engine": "Microsoft Edge TTS",
+    "sourceLicense": "HSKKit original editorial content; synthesized narration",
+    "qaStatus": "generated-for-final-text"
+  },
+  "hsk4-weather-14": {
+    "textSha256": "a77563be99fbf614b44029f8a7257116e36c6e07b69ada7aaf285c8ff6e65c35",
+    "audioSha256": "42081c7d5223b7bcd4caebc36c35563774c6b71b7e3915eba65b5796c599b345",
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "rate": "-8%",
+    "engine": "Microsoft Edge TTS",
+    "sourceLicense": "HSKKit original editorial content; synthesized narration",
+    "qaStatus": "generated-for-final-text"
+  },
+  "hsk4-work-15": {
+    "textSha256": "62f42e16af70c9700d1e8663b26b2a610d2ac2c6d78cc5391f32c1c9ec457679",
+    "audioSha256": "143b823049d2bbbe8eb13f3dbc455afe07ef016a609ca3c148d16445a6077cc2",
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "rate": "-8%",
+    "engine": "Microsoft Edge TTS",
+    "sourceLicense": "HSKKit original editorial content; synthesized narration",
+    "qaStatus": "generated-for-final-text"
+  },
+  "hsk4-environment-16": {
+    "textSha256": "eb510a8f6ef48bc0af81cabac6dafad3835bc2020b25f8f50174d59c2e69b213",
+    "audioSha256": "b2c552026ae31f84b595a5ad81b6e4c9fa7285aadbbdd2b87838a37f2e0e43c3",
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "rate": "-8%",
+    "engine": "Microsoft Edge TTS",
+    "sourceLicense": "HSKKit original editorial content; synthesized narration",
+    "qaStatus": "generated-for-final-text"
+  },
+  "hsk4-leisure-17": {
+    "textSha256": "69902cc3ab8b41c8213ed56ea17c764410fe485dcd96cc08a1ba4177fd6b5c14",
+    "audioSha256": "4b2ec5d4d4f3887694d3a52f21d420fc1c62dfdeccc82698da4f09f015e4fd07",
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "rate": "-8%",
+    "engine": "Microsoft Edge TTS",
+    "sourceLicense": "HSKKit original editorial content; synthesized narration",
+    "qaStatus": "generated-for-final-text"
+  },
+  "hsk4-family-18": {
+    "textSha256": "2527bf0d2e8f6a6778dabaf2999c3c30e32efbb36fdc552b9f7ebe91f4abcaa9",
+    "audioSha256": "c9b8c46db4119ec2199a5f35f197e3f5a1ed6982b045d70358538bbb74ae271c",
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "rate": "-8%",
+    "engine": "Microsoft Edge TTS",
+    "sourceLicense": "HSKKit original editorial content; synthesized narration",
+    "qaStatus": "generated-for-final-text"
+  },
+  "hsk4-planning-19": {
+    "textSha256": "067808bdda72a98c81ae7c20be1170f50d0d4abd0a8cc85a6557f9074e5aaaa1",
+    "audioSha256": "0debdfd0103603c0a4878aa9a8be8eea20be2dc1a8681a56f9ad39970150d3cc",
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "rate": "-8%",
+    "engine": "Microsoft Edge TTS",
+    "sourceLicense": "HSKKit original editorial content; synthesized narration",
+    "qaStatus": "generated-for-final-text"
+  },
+  "hsk4-respect-20": {
+    "textSha256": "e530d8e445ea5aae43ecd92321de1e4c187e70a13b2b1a50c42101b09e7a8d6a",
+    "audioSha256": "8ea0cd0290f8e871aad8848ab95e63bb54d71e74b50f26473c786ed7479e0e16",
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "rate": "-8%",
+    "engine": "Microsoft Edge TTS",
+    "sourceLicense": "HSKKit original editorial content; synthesized narration",
+    "qaStatus": "generated-for-final-text"
+  },
+  "hsk5-daily-life-01": {
+    "textSha256": "d5f451d5621d3574908a557114e053ac9d7166cc94a5ce3e414aa2d85f1d28eb",
+    "audioSha256": "bcae6d24d4e5433c080626deea8cbb57138d6b013284b7d1d851fb983d223050",
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "rate": "-8%",
+    "engine": "Microsoft Edge TTS",
+    "sourceLicense": "HSKKit original editorial content; synthesized narration",
+    "qaStatus": "generated-for-final-text"
+  },
+  "hsk5-transport-02": {
+    "textSha256": "a208d10f52947e758ddc94ec221e47a99b6f08c8dca2333c6e0cbc4ff88812b6",
+    "audioSha256": "47b1735cf4163a4555e882130aad66c8fdf63a581c6ad4d315764756ca66af9d",
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "rate": "-8%",
+    "engine": "Microsoft Edge TTS",
+    "sourceLicense": "HSKKit original editorial content; synthesized narration",
+    "qaStatus": "generated-for-final-text"
+  },
+  "hsk5-study-03": {
+    "textSha256": "3f45c6f11f262fb5018d0e361a9bc3703c29090f16a12678d65c2be5ab52bec9",
+    "audioSha256": "553aec7509604785abc77c9c67c92649d151d2fb4e90d90b464c3916540fb46d",
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "rate": "-8%",
+    "engine": "Microsoft Edge TTS",
+    "sourceLicense": "HSKKit original editorial content; synthesized narration",
+    "qaStatus": "generated-for-final-text"
+  },
+  "hsk5-community-04": {
+    "textSha256": "345b006f4ba073aa0698af07c9a24fb4c5c8da51d16725169d7461f6e7e4fa37",
+    "audioSha256": "22fffed8c094e39865fbde4772e3bf0b8d4d2eac540451381185a32c1da9d9e2",
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "rate": "-8%",
+    "engine": "Microsoft Edge TTS",
+    "sourceLicense": "HSKKit original editorial content; synthesized narration",
+    "qaStatus": "generated-for-final-text"
+  },
+  "hsk5-food-05": {
+    "textSha256": "af1bf7224979c14f513aafe14db1033cd9e49eb2415e0d24891c1c2e06deb8fc",
+    "audioSha256": "e4f75ef83f78cf63aa4187ac88bd598df954877b9840109f0ed5f47882b42cae",
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "rate": "-8%",
+    "engine": "Microsoft Edge TTS",
+    "sourceLicense": "HSKKit original editorial content; synthesized narration",
+    "qaStatus": "generated-for-final-text"
+  },
+  "hsk5-health-06": {
+    "textSha256": "3d2e21c1e20a3a5bdd7407091230d814b2cb47ceca9e5917400789add21a80f2",
+    "audioSha256": "4b5acbbe485832c47151a5fc8892f305d88d5728cc05271c1c1f9e55c0dc474f",
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "rate": "-8%",
+    "engine": "Microsoft Edge TTS",
+    "sourceLicense": "HSKKit original editorial content; synthesized narration",
+    "qaStatus": "generated-for-final-text"
+  },
+  "hsk5-environment-07": {
+    "textSha256": "dc763036e071b07faa5cae66897b63643273225e350a5e63a9727629bf569daf",
+    "audioSha256": "8f4f30f5859dd2c3d21cbcd68cc65a6ceed08ebbbce0ec13941178a2ed83483b",
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "rate": "-8%",
+    "engine": "Microsoft Edge TTS",
+    "sourceLicense": "HSKKit original editorial content; synthesized narration",
+    "qaStatus": "generated-for-final-text"
+  },
+  "hsk5-nature-08": {
+    "textSha256": "bb8fb77de6b7b6322b9946b2c8a17eabdce1dd8c046a25d42c38f94634fb8f32",
+    "audioSha256": "39e432e7b8b2c6f201e0ef8cd6affe337fc0774f543b7b315bf01ba498e0329e",
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "rate": "-8%",
+    "engine": "Microsoft Edge TTS",
+    "sourceLicense": "HSKKit original editorial content; synthesized narration",
+    "qaStatus": "generated-for-final-text"
+  },
+  "hsk5-wellbeing-09": {
+    "textSha256": "414ad4f9b1b99fddd9793505da9a1014acdaa093b89580635f5dbf1c519d4b85",
+    "audioSha256": "75df81757e97904c66fbe83b458345fe715cbe42c04dd5acde3f1f8bc66de01e",
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "rate": "-8%",
+    "engine": "Microsoft Edge TTS",
+    "sourceLicense": "HSKKit original editorial content; synthesized narration",
+    "qaStatus": "generated-for-final-text"
+  },
+  "hsk5-technology-10": {
+    "textSha256": "118ac7b5403955630a4e4bd3c3ac3f0fe2294846d3ee60ad94765aae5f3c7ed2",
+    "audioSha256": "641ab314fc16bd6081bc54594e4c7e457cbb62e7922ea6e71d301622398e40ff",
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "rate": "-8%",
+    "engine": "Microsoft Edge TTS",
+    "sourceLicense": "HSKKit original editorial content; synthesized narration",
+    "qaStatus": "generated-for-final-text"
+  },
+  "hsk5-sport-11": {
+    "textSha256": "bf798ceade0a94889eab7583cfdb664f554c609dc525a479f263ca82e8a8e548",
+    "audioSha256": "0c461b049c90430ae0c24646228726716a1c19088b9fcc939eddd3d630640313",
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "rate": "-8%",
+    "engine": "Microsoft Edge TTS",
+    "sourceLicense": "HSKKit original editorial content; synthesized narration",
+    "qaStatus": "generated-for-final-text"
+  },
+  "hsk5-relationships-12": {
+    "textSha256": "ade5c53074875e0ce24ecb8449adff06f3e428eb4f48671aaf217976a35c8926",
+    "audioSha256": "6ee99e711c2e17273c0fecadf8f7ca6af51cea987e185dc6b9d76d017012661b",
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "rate": "-8%",
+    "engine": "Microsoft Edge TTS",
+    "sourceLicense": "HSKKit original editorial content; synthesized narration",
+    "qaStatus": "generated-for-final-text"
+  },
+  "hsk5-honesty-13": {
+    "textSha256": "8e3f276bd2adf7759ef31b4aaac7c830e15cdfeb625ab56798ed1de83c4a9009",
+    "audioSha256": "54f170574ac894d8dc883eabaab7077102f845f0ffd1809e757d2b9e943f7284",
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "rate": "-8%",
+    "engine": "Microsoft Edge TTS",
+    "sourceLicense": "HSKKit original editorial content; synthesized narration",
+    "qaStatus": "generated-for-final-text"
+  },
+  "hsk5-weather-14": {
+    "textSha256": "f73a69a2c5f97ca5f9f86e5b5ad4d87acc4fbc759bab28a565f7fc909daff0b7",
+    "audioSha256": "8cc6a7915915cd25aacf4af7cc42cbeda5fb013d4ff655fe17cc8ecb73103ae5",
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "rate": "-8%",
+    "engine": "Microsoft Edge TTS",
+    "sourceLicense": "HSKKit original editorial content; synthesized narration",
+    "qaStatus": "generated-for-final-text"
+  },
+  "hsk5-work-15": {
+    "textSha256": "46f76c573f4a730715f7bcd54c280abe65e2b7a92a12375a2b2e6ffe53d7a5e7",
+    "audioSha256": "883739a0a677657c467cf2c174dede8cef5cf3f061c9e9b7d96fc889eb459bca",
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "rate": "-8%",
+    "engine": "Microsoft Edge TTS",
+    "sourceLicense": "HSKKit original editorial content; synthesized narration",
+    "qaStatus": "generated-for-final-text"
+  },
+  "hsk5-environment-16": {
+    "textSha256": "65b1d4d3527932b7305e4e08710d8eb01974fffa5f6970aebae2a720861603db",
+    "audioSha256": "c2cce501818ac302a00a664984dcfdbc4308b6c21f2bfe886ad47d8d14cbf769",
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "rate": "-8%",
+    "engine": "Microsoft Edge TTS",
+    "sourceLicense": "HSKKit original editorial content; synthesized narration",
+    "qaStatus": "generated-for-final-text"
+  },
+  "hsk5-leisure-17": {
+    "textSha256": "45c12067fdabc65583b83f508b798b66001f7e9e6a2b0c04b05d03f7850e6aab",
+    "audioSha256": "54b533c85678019de209b95f587bf1269a589015efce064b60951c6ca1123fb4",
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "rate": "-8%",
+    "engine": "Microsoft Edge TTS",
+    "sourceLicense": "HSKKit original editorial content; synthesized narration",
+    "qaStatus": "generated-for-final-text"
+  },
+  "hsk5-family-18": {
+    "textSha256": "a8d5ce5137359daaa70b45ab2ce73b6315f7ed18c1dc461212a20a8e9dfe6671",
+    "audioSha256": "4c36ec5c9da876bd49131c8dcff10b8b83bb045962497305ae38efd0a2f8af98",
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "rate": "-8%",
+    "engine": "Microsoft Edge TTS",
+    "sourceLicense": "HSKKit original editorial content; synthesized narration",
+    "qaStatus": "generated-for-final-text"
+  },
+  "hsk5-planning-19": {
+    "textSha256": "b652c30edc79e16b5449f57191f8051f88529c5c051a57f24ddbb0f739aa1574",
+    "audioSha256": "33a740670e245bbccd17a274aebd5a8081e559eb1d99cf18520f6bdce890571e",
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "rate": "-8%",
+    "engine": "Microsoft Edge TTS",
+    "sourceLicense": "HSKKit original editorial content; synthesized narration",
+    "qaStatus": "generated-for-final-text"
+  },
+  "hsk5-respect-20": {
+    "textSha256": "fca5a08710b96cb078ec31f53ff4db039543af7466136a49898b01e4e5cfc5a7",
+    "audioSha256": "5d0feff68258f391955ea84792473719f9fba198c83a66cf9bbd29e7e3c0fac1",
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "rate": "-8%",
+    "engine": "Microsoft Edge TTS",
+    "sourceLicense": "HSKKit original editorial content; synthesized narration",
+    "qaStatus": "generated-for-final-text"
+  },
+  "hsk6-daily-life-01": {
+    "textSha256": "8477ac0ef9d86948cab90c5166090170784c0c306189472c0004747e261f3b0a",
+    "audioSha256": "505b026d346e981c2fe9e46d9d079a20943be4aab2daa4549ab777990831a8c7",
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "rate": "-8%",
+    "engine": "Microsoft Edge TTS",
+    "sourceLicense": "HSKKit original editorial content; synthesized narration",
+    "qaStatus": "generated-for-final-text"
+  },
+  "hsk6-transport-02": {
+    "textSha256": "afb020f43db3da52210a43eeca35e6fb5e3bcdcee9712e25d6ecbe3a96f3f77f",
+    "audioSha256": "02f0d449bf51fd15d4455c3e670661318d06f3a62f4f88f055a346e55eb12420",
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "rate": "-8%",
+    "engine": "Microsoft Edge TTS",
+    "sourceLicense": "HSKKit original editorial content; synthesized narration",
+    "qaStatus": "generated-for-final-text"
+  },
+  "hsk6-study-03": {
+    "textSha256": "b845168178d8139f62dc8b5b7525420fb87d22b267069ba9edc3ba284aac013f",
+    "audioSha256": "121377e0234a10a9e4ef8faa6d91d5d53e3c71ab91398437402e2a4974262690",
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "rate": "-8%",
+    "engine": "Microsoft Edge TTS",
+    "sourceLicense": "HSKKit original editorial content; synthesized narration",
+    "qaStatus": "generated-for-final-text"
+  },
+  "hsk6-community-04": {
+    "textSha256": "6775ab298c0878fb4f89685957c482f2d453773a90ca2953ca5f778a7b48c18a",
+    "audioSha256": "8b4445f64407c442de125b35328c61e5ec43f21b8650c8b70d1294a4c79cd805",
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "rate": "-8%",
+    "engine": "Microsoft Edge TTS",
+    "sourceLicense": "HSKKit original editorial content; synthesized narration",
+    "qaStatus": "generated-for-final-text"
+  },
+  "hsk6-food-05": {
+    "textSha256": "2a81bfb2617a529278de1b63a2378987ff200169698081211d2cf9c2054ff035",
+    "audioSha256": "04b5a3cddc6219f3bcdb4d9ed92fc10e240a4a4c941200ea82d6e7878686a88a",
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "rate": "-8%",
+    "engine": "Microsoft Edge TTS",
+    "sourceLicense": "HSKKit original editorial content; synthesized narration",
+    "qaStatus": "generated-for-final-text"
+  },
+  "hsk6-health-06": {
+    "textSha256": "d0814d98066cc2750d7869eed0973f406985ec09bfdc5791f62c022d4f708d00",
+    "audioSha256": "ec1699c8fcf2c0286f0ef264d4d5486829d312dee3655fca75c9201439ca0599",
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "rate": "-8%",
+    "engine": "Microsoft Edge TTS",
+    "sourceLicense": "HSKKit original editorial content; synthesized narration",
+    "qaStatus": "generated-for-final-text"
+  },
+  "hsk6-environment-07": {
+    "textSha256": "91f41609dc674101a8ac16431c1a95a68fccbd7ae1ace9776481df36a5c5b231",
+    "audioSha256": "bb1510e62cd8bec47501dfeca9e1504e5fd21fa1318d8e2958c036cceed7e5b9",
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "rate": "-8%",
+    "engine": "Microsoft Edge TTS",
+    "sourceLicense": "HSKKit original editorial content; synthesized narration",
+    "qaStatus": "generated-for-final-text"
+  },
+  "hsk6-nature-08": {
+    "textSha256": "fb6dc34ca6de94953a3b833880a409ac18a1ba88f15b87c64cc37aab2909ec6f",
+    "audioSha256": "b4cbb1b931be0908db9c42513704a9509dbf0566e2c68222880b99bc6d4dd73f",
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "rate": "-8%",
+    "engine": "Microsoft Edge TTS",
+    "sourceLicense": "HSKKit original editorial content; synthesized narration",
+    "qaStatus": "generated-for-final-text"
+  },
+  "hsk6-wellbeing-09": {
+    "textSha256": "3506b4b3968b0ef9d44307b779186cc7ed094ecf9acc01a98883988665ac98db",
+    "audioSha256": "55d8fa00c0fb3ff90dfad7825dd72872c240e0820f43c2a98e747b59c349155b",
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "rate": "-8%",
+    "engine": "Microsoft Edge TTS",
+    "sourceLicense": "HSKKit original editorial content; synthesized narration",
+    "qaStatus": "generated-for-final-text"
+  },
+  "hsk6-technology-10": {
+    "textSha256": "c4167751826bf2482dfa453b3da480dad547e6925f1ca6408f792d38a0d06715",
+    "audioSha256": "8554861b592c502148fea5bfe8b0c134f4a35859a6edf85949c43f250877b03e",
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "rate": "-8%",
+    "engine": "Microsoft Edge TTS",
+    "sourceLicense": "HSKKit original editorial content; synthesized narration",
+    "qaStatus": "generated-for-final-text"
+  },
+  "hsk6-sport-11": {
+    "textSha256": "8b87670b109e6daf3bc5881359e8f0286f145c43d7cb129dd3d900f44dce4728",
+    "audioSha256": "239fa331e4cf14d6bfae0ef415b88b5c1bb6c4cbdd59923e177058b0a5830794",
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "rate": "-8%",
+    "engine": "Microsoft Edge TTS",
+    "sourceLicense": "HSKKit original editorial content; synthesized narration",
+    "qaStatus": "generated-for-final-text"
+  },
+  "hsk6-relationships-12": {
+    "textSha256": "59a9117af485366747b9dd164cc490a6df16bad45235a55f9b43542b0749cd1a",
+    "audioSha256": "164301c6ce9a1e7974fc52ef37a22d749c675bba3891737c556c3493cbdb85b5",
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "rate": "-8%",
+    "engine": "Microsoft Edge TTS",
+    "sourceLicense": "HSKKit original editorial content; synthesized narration",
+    "qaStatus": "generated-for-final-text"
+  },
+  "hsk6-honesty-13": {
+    "textSha256": "c47b996523f2ec68bd29651f0a3acec328e56246c1739ae90e7926aaa398854f",
+    "audioSha256": "98e18bd36e4b95a0c169db0622d07339749e10624d89caaaf5f5a64f9a99132b",
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "rate": "-8%",
+    "engine": "Microsoft Edge TTS",
+    "sourceLicense": "HSKKit original editorial content; synthesized narration",
+    "qaStatus": "generated-for-final-text"
+  },
+  "hsk6-weather-14": {
+    "textSha256": "fa952e943d0f5fe5ec081857019032e834bddfeb6b8df6d48095431cf3d34795",
+    "audioSha256": "60d707baed8e85bf1154ccb8e4dae1c246a86bb37a4c3f8dfdb0c068f6013e6a",
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "rate": "-8%",
+    "engine": "Microsoft Edge TTS",
+    "sourceLicense": "HSKKit original editorial content; synthesized narration",
+    "qaStatus": "generated-for-final-text"
+  },
+  "hsk6-work-15": {
+    "textSha256": "481aa95ffd9d2f22e7b88660c0a7ad834e3fd57589ed095b121ab9f3ffdfea11",
+    "audioSha256": "22b403243fee4fbc251a4d64ef6decd713910f32bd6bb0a33ad0c863ec4db4b3",
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "rate": "-8%",
+    "engine": "Microsoft Edge TTS",
+    "sourceLicense": "HSKKit original editorial content; synthesized narration",
+    "qaStatus": "generated-for-final-text"
+  },
+  "hsk6-environment-16": {
+    "textSha256": "74eea06888b21f5a40f7fe98306a2377185813bcc6653c022d78afd89023c1ac",
+    "audioSha256": "389c094318ec7eefe16810302e663274da4de57c15d9e10bf312faf69e7d785b",
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "rate": "-8%",
+    "engine": "Microsoft Edge TTS",
+    "sourceLicense": "HSKKit original editorial content; synthesized narration",
+    "qaStatus": "generated-for-final-text"
+  },
+  "hsk6-leisure-17": {
+    "textSha256": "36eb9276630e01e0be21e3b8cb565e00f9db0a392537e7e302b0fb54062f0625",
+    "audioSha256": "7ea79327dc97a2dbdc21823ed589455eb4e0cb6374b8b4ec40b16e0ee7446a9f",
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "rate": "-8%",
+    "engine": "Microsoft Edge TTS",
+    "sourceLicense": "HSKKit original editorial content; synthesized narration",
+    "qaStatus": "generated-for-final-text"
+  },
+  "hsk6-family-18": {
+    "textSha256": "28134a032aa98690ed35ccbb00e79da8d47815370125a65b55532600415725c9",
+    "audioSha256": "54049d5b22c1d7d02614b355f1953a6911e21fa15e79cfaa728785b397214be0",
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "rate": "-8%",
+    "engine": "Microsoft Edge TTS",
+    "sourceLicense": "HSKKit original editorial content; synthesized narration",
+    "qaStatus": "generated-for-final-text"
+  },
+  "hsk6-planning-19": {
+    "textSha256": "9b04b82c4b1d4b95ae345ba9e3602ac3c784bbb475095b095b04546f3c6de656",
+    "audioSha256": "d49e963e84e1461f0325cc14d18c9644fa92670e7caa9acc9288d9deb9f81fc9",
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "rate": "-8%",
+    "engine": "Microsoft Edge TTS",
+    "sourceLicense": "HSKKit original editorial content; synthesized narration",
+    "qaStatus": "generated-for-final-text"
+  },
+  "hsk6-respect-20": {
+    "textSha256": "afa35ddd635aea5b723fc15f2edfe599c77f99dc9440e2043ed20a2ad6ee6dfe",
+    "audioSha256": "6fc88d668a73694e15f6cbd579355a16e2409f712afaecfd5ef8de1cc2a4df3f",
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "rate": "-8%",
+    "engine": "Microsoft Edge TTS",
+    "sourceLicense": "HSKKit original editorial content; synthesized narration",
+    "qaStatus": "generated-for-final-text"
+  },
+  "hsk7-daily-life-01": {
+    "textSha256": "90aa7769828ce8d93b9179c3c44f146a7da3cbb2dc84acb86dc8e6318d23ae06",
+    "audioSha256": "d6e5f073aa755596344db44cf6c21d2d99481e62b527c1f7c864be49c1cf7424",
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "rate": "-8%",
+    "engine": "Microsoft Edge TTS",
+    "sourceLicense": "HSKKit original editorial content; synthesized narration",
+    "qaStatus": "generated-for-final-text"
+  },
+  "hsk7-transport-02": {
+    "textSha256": "50e3acc6fdcf2ab496043b92decb914e66e794eae95ef7a1da717398e035f72d",
+    "audioSha256": "62cb52f768bbdd16ac5f836400415faa685f76732f68d85463c46f8f5a58ac8a",
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "rate": "-8%",
+    "engine": "Microsoft Edge TTS",
+    "sourceLicense": "HSKKit original editorial content; synthesized narration",
+    "qaStatus": "generated-for-final-text"
+  },
+  "hsk7-study-03": {
+    "textSha256": "ab987e86ca602dc400619546ecf0e1b8afdf49a0a9ecac00ceabf5cd70edd607",
+    "audioSha256": "3d1831b13c23f9ce614915ba7bbd5c137d3b2bf17309e203f49991021f03b608",
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "rate": "-8%",
+    "engine": "Microsoft Edge TTS",
+    "sourceLicense": "HSKKit original editorial content; synthesized narration",
+    "qaStatus": "generated-for-final-text"
+  },
+  "hsk7-community-04": {
+    "textSha256": "8041d3d8e56b6337631d4eb25c8dd3a960107a3b3623501d0dd841af80bed80e",
+    "audioSha256": "ed31b46a6828fbc076dd4ac8a83a9954b1b8c78df6b9cdf8c58de5d7fdf6765a",
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "rate": "-8%",
+    "engine": "Microsoft Edge TTS",
+    "sourceLicense": "HSKKit original editorial content; synthesized narration",
+    "qaStatus": "generated-for-final-text"
+  },
+  "hsk7-food-05": {
+    "textSha256": "9d0bf3ab41bc63592f20efa3ac1cbbdffb3566744cf556053403be176c063da4",
+    "audioSha256": "fef1307991c1001384c6d0a2b0fea26400ddd800ffba44f4f78d98298d8bcbb9",
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "rate": "-8%",
+    "engine": "Microsoft Edge TTS",
+    "sourceLicense": "HSKKit original editorial content; synthesized narration",
+    "qaStatus": "generated-for-final-text"
+  },
+  "hsk7-health-06": {
+    "textSha256": "57eb04ce8ebd1d840797d23d930c0d2ec5ed5fc80ee47aaf0968278e1f31832a",
+    "audioSha256": "f1649240d2f7d0a9dfa040655bd14b39f542a88956192c5085c661512b65a20b",
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "rate": "-8%",
+    "engine": "Microsoft Edge TTS",
+    "sourceLicense": "HSKKit original editorial content; synthesized narration",
+    "qaStatus": "generated-for-final-text"
+  },
+  "hsk7-environment-07": {
+    "textSha256": "2930280f512c4eecc1ea5b8b533db2de597eafe894d0465521bf55297e6cf170",
+    "audioSha256": "2b0a4e2baea4eb0dd3977d139950dba32ad047224fcf9166a111cc0c687e7474",
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "rate": "-8%",
+    "engine": "Microsoft Edge TTS",
+    "sourceLicense": "HSKKit original editorial content; synthesized narration",
+    "qaStatus": "generated-for-final-text"
+  },
+  "hsk7-nature-08": {
+    "textSha256": "292ad534f20877bfc09ece3e160474cb03e093431415aec9dd4c4afb0859a5a7",
+    "audioSha256": "11c5cc6a0f5728b147c9a18872ba08dd40f67ee84dcc14a4784551e20867dcf4",
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "rate": "-8%",
+    "engine": "Microsoft Edge TTS",
+    "sourceLicense": "HSKKit original editorial content; synthesized narration",
+    "qaStatus": "generated-for-final-text"
+  },
+  "hsk7-wellbeing-09": {
+    "textSha256": "5c834ff01185ef70b05f3e0069348f2ff8e7bc735163939f9cca71af8a369f8a",
+    "audioSha256": "6a2bc0f81a4d384c685a92972b5211fb67853b5511f3afc2e82c9d4796bde4fd",
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "rate": "-8%",
+    "engine": "Microsoft Edge TTS",
+    "sourceLicense": "HSKKit original editorial content; synthesized narration",
+    "qaStatus": "generated-for-final-text"
+  },
+  "hsk7-technology-10": {
+    "textSha256": "38b7655a3d32337b1c943f61f6d3f49d96c5c32eae4e7fc58bbcab4446447300",
+    "audioSha256": "e6fac5bc75b58751833669370ddd52e582e2e4c0ac5ec01d895c9c62fe494d1c",
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "rate": "-8%",
+    "engine": "Microsoft Edge TTS",
+    "sourceLicense": "HSKKit original editorial content; synthesized narration",
+    "qaStatus": "generated-for-final-text"
+  },
+  "hsk7-sport-11": {
+    "textSha256": "a57956e09ab04e1a11ae34e3dea974b3be72461f756684c5b37c35eac72dd9d4",
+    "audioSha256": "cf755366998ea05ca4dcddfc7b43a41cc78cb9b5ec6bb86127230effd156c11c",
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "rate": "-8%",
+    "engine": "Microsoft Edge TTS",
+    "sourceLicense": "HSKKit original editorial content; synthesized narration",
+    "qaStatus": "generated-for-final-text"
+  },
+  "hsk7-relationships-12": {
+    "textSha256": "a8618e2b050935be6be4be3879d2c643feef42af4782b940bed977b9f0eb718f",
+    "audioSha256": "600985aacb2b857c10398517dbb1401915040d72974cad28242cc3a3fc2d6dfa",
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "rate": "-8%",
+    "engine": "Microsoft Edge TTS",
+    "sourceLicense": "HSKKit original editorial content; synthesized narration",
+    "qaStatus": "generated-for-final-text"
+  },
+  "hsk7-honesty-13": {
+    "textSha256": "452968c9b61bfa0abbe2b5be707488265646fea6c5ee7377884dade529356de7",
+    "audioSha256": "9c8ae24b0b7c7e61b34379354484cb1cdc8b634cc657b733f2b1e2572ff5ab59",
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "rate": "-8%",
+    "engine": "Microsoft Edge TTS",
+    "sourceLicense": "HSKKit original editorial content; synthesized narration",
+    "qaStatus": "generated-for-final-text"
+  },
+  "hsk7-weather-14": {
+    "textSha256": "ab857a41e6ecd339831f9d948534e96164a0c8278d677676df8c1b40bcfcf7c5",
+    "audioSha256": "8dfa88cb488a95064e3f97829d75d428b0f12c619a329b4deb2a55e6544ba1a4",
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "rate": "-8%",
+    "engine": "Microsoft Edge TTS",
+    "sourceLicense": "HSKKit original editorial content; synthesized narration",
+    "qaStatus": "generated-for-final-text"
+  },
+  "hsk7-work-15": {
+    "textSha256": "712d6e95cbe46dea02de6976187a93a3baea613d94a024b1612765f1f4246cd1",
+    "audioSha256": "c097dba7c532c1b48f72c06cad747f187a5977a7077b7afdd4af68a23ca571f0",
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "rate": "-8%",
+    "engine": "Microsoft Edge TTS",
+    "sourceLicense": "HSKKit original editorial content; synthesized narration",
+    "qaStatus": "generated-for-final-text"
+  },
+  "hsk7-environment-16": {
+    "textSha256": "a417f7f8869f17541cc54f7d562342b0d6792ce1c4f8324caa9600ceb6bf93b6",
+    "audioSha256": "24e3ece57ef80ebc30146ecacf9917f0668c75008c293cc238d180031e3c29b6",
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "rate": "-8%",
+    "engine": "Microsoft Edge TTS",
+    "sourceLicense": "HSKKit original editorial content; synthesized narration",
+    "qaStatus": "generated-for-final-text"
+  },
+  "hsk7-leisure-17": {
+    "textSha256": "d570d8b6993650556f8f5979199db98240c3edc9117391579014dd4a7080f520",
+    "audioSha256": "849f014ba15ca7046d97359a3419065e9e7c6a264a62f38d05095c777f0c4fc0",
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "rate": "-8%",
+    "engine": "Microsoft Edge TTS",
+    "sourceLicense": "HSKKit original editorial content; synthesized narration",
+    "qaStatus": "generated-for-final-text"
+  },
+  "hsk7-family-18": {
+    "textSha256": "de81bbccc21a3e250705f83e007174068a211465fb27bf903e93c8122eab0e83",
+    "audioSha256": "cd882e1447919152301dc8d37b3b6626a7bedbd803ea08eadd61d1bb27bac256",
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "rate": "-8%",
+    "engine": "Microsoft Edge TTS",
+    "sourceLicense": "HSKKit original editorial content; synthesized narration",
+    "qaStatus": "generated-for-final-text"
+  },
+  "hsk7-planning-19": {
+    "textSha256": "e2eb632008402da622a422a720c272cec58cd8df655812111e429eb6f5a27390",
+    "audioSha256": "5573386f9765cc55387a0624725192bea0e2f37dcacbd799e958c3f8c59d056c",
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "rate": "-8%",
+    "engine": "Microsoft Edge TTS",
+    "sourceLicense": "HSKKit original editorial content; synthesized narration",
+    "qaStatus": "generated-for-final-text"
+  },
+  "hsk7-respect-20": {
+    "textSha256": "8fa9daa82495bb815e3dc954488cb0d854f26bd35ecc82ed95b2b0e0bc012146",
+    "audioSha256": "18fbe42c9de6c99fbdf27b2ab97065d29227387255168601f1b00ef8ed7e1bb3",
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "rate": "-8%",
+    "engine": "Microsoft Edge TTS",
+    "sourceLicense": "HSKKit original editorial content; synthesized narration",
+    "qaStatus": "generated-for-final-text"
+  },
+  "hsk8-daily-life-01": {
+    "textSha256": "903676d67a15476cff22269b34927c30033dc3015d324dd0c81e5d15acb2390c",
+    "audioSha256": "9e9502423a1b852ca4e0629d56f332e48886e7d82a6e3f48a273c791d2174a78",
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "rate": "-8%",
+    "engine": "Microsoft Edge TTS",
+    "sourceLicense": "HSKKit original editorial content; synthesized narration",
+    "qaStatus": "generated-for-final-text"
+  },
+  "hsk8-transport-02": {
+    "textSha256": "5eb575880544aff2a6ea913c0935a137a8c7063a60af6267e2f7a481249c09cb",
+    "audioSha256": "9258e3628b06f1f29c8d824d473047f548387bb51730481eb39e27734b28ed2b",
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "rate": "-8%",
+    "engine": "Microsoft Edge TTS",
+    "sourceLicense": "HSKKit original editorial content; synthesized narration",
+    "qaStatus": "generated-for-final-text"
+  },
+  "hsk8-study-03": {
+    "textSha256": "da5507dee2a437b2395cb060cac022f786d172ae075288af468654eee74c4082",
+    "audioSha256": "4e6a2376c1787a325d5f05cbae8bb8e31f903a9d91228b11af1228754ee2710a",
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "rate": "-8%",
+    "engine": "Microsoft Edge TTS",
+    "sourceLicense": "HSKKit original editorial content; synthesized narration",
+    "qaStatus": "generated-for-final-text"
+  },
+  "hsk8-community-04": {
+    "textSha256": "979174756e039215cbf6e8bd901288b0182fe11823cb443b41b8c84277b7eee0",
+    "audioSha256": "f6bb14e1d72d0baec6ec4688cd0eff1f19abce6e63de0f1332d945b6343070f0",
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "rate": "-8%",
+    "engine": "Microsoft Edge TTS",
+    "sourceLicense": "HSKKit original editorial content; synthesized narration",
+    "qaStatus": "generated-for-final-text"
+  },
+  "hsk8-food-05": {
+    "textSha256": "df42cae9b04077c18d8e469d5ca340f59f77defcd794d2ff4b545109b39cda16",
+    "audioSha256": "fc36bffa2f162622d0585bd325c88bf4a1b5b4c10423efa60d5186f0dc55a0be",
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "rate": "-8%",
+    "engine": "Microsoft Edge TTS",
+    "sourceLicense": "HSKKit original editorial content; synthesized narration",
+    "qaStatus": "generated-for-final-text"
+  },
+  "hsk8-health-06": {
+    "textSha256": "aefa74818eb7bd354dc5316372b132fb0157e4fbe37ece8ac2951aa81687d06a",
+    "audioSha256": "776cc645399336be23f58a4627236fd700eac89c3bc6e5d69928d7364058742d",
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "rate": "-8%",
+    "engine": "Microsoft Edge TTS",
+    "sourceLicense": "HSKKit original editorial content; synthesized narration",
+    "qaStatus": "generated-for-final-text"
+  },
+  "hsk8-environment-07": {
+    "textSha256": "d81e2dfe9bf8ff38996acfdd93dcdd54a47c8b1546e84ff1a79985e163d509b9",
+    "audioSha256": "8cd2551e7afd8e7a47f9a808245ac4f6845b23409c20048619121f35ff091e10",
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "rate": "-8%",
+    "engine": "Microsoft Edge TTS",
+    "sourceLicense": "HSKKit original editorial content; synthesized narration",
+    "qaStatus": "generated-for-final-text"
+  },
+  "hsk8-nature-08": {
+    "textSha256": "8e38ce7e6a726b73b0c0d08f16aeae3cd20b680d82b35c65e2c405dc8807e7c2",
+    "audioSha256": "174972e4d53cb61de58317090c69d841438b48a0fc8ff863693ab470eef4cc34",
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "rate": "-8%",
+    "engine": "Microsoft Edge TTS",
+    "sourceLicense": "HSKKit original editorial content; synthesized narration",
+    "qaStatus": "generated-for-final-text"
+  },
+  "hsk8-wellbeing-09": {
+    "textSha256": "07ff45b5237d83d1e1ba08a58a23234e0746b59ab31fa8db7813b53ad255f878",
+    "audioSha256": "c2dac269dda8e4939e68597aedb4fca270a1bbeb4ce2e211e6d3306b1c712987",
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "rate": "-8%",
+    "engine": "Microsoft Edge TTS",
+    "sourceLicense": "HSKKit original editorial content; synthesized narration",
+    "qaStatus": "generated-for-final-text"
+  },
+  "hsk8-technology-10": {
+    "textSha256": "7bfa7b9bffae3bd7626e7472fcc2827197e08bac916152ea620ad5bb020871fc",
+    "audioSha256": "d7eacdc526b8ef51e0017958b141664ce66c5ea1e3fcd9a36e4d75e8817e932d",
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "rate": "-8%",
+    "engine": "Microsoft Edge TTS",
+    "sourceLicense": "HSKKit original editorial content; synthesized narration",
+    "qaStatus": "generated-for-final-text"
+  },
+  "hsk8-sport-11": {
+    "textSha256": "bc81d8a41cf6c904b107e75889ec3c994d570fb6b24ef018e735ac443a009ea4",
+    "audioSha256": "aa16aa430e3f0e0c2cd4b907414b7b0df5f5f44d9d0fe9aa5d8df92c71f58235",
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "rate": "-8%",
+    "engine": "Microsoft Edge TTS",
+    "sourceLicense": "HSKKit original editorial content; synthesized narration",
+    "qaStatus": "generated-for-final-text"
+  },
+  "hsk8-relationships-12": {
+    "textSha256": "7129353e8dcd0781b13746b615d3ff159f310c1222f570e4b487febe82927a2e",
+    "audioSha256": "e0445ee4953344d492f3ec740f39960fd097cd4ed2c6b7ac5785cd110f79fb79",
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "rate": "-8%",
+    "engine": "Microsoft Edge TTS",
+    "sourceLicense": "HSKKit original editorial content; synthesized narration",
+    "qaStatus": "generated-for-final-text"
+  },
+  "hsk8-honesty-13": {
+    "textSha256": "07d030beba8570cea484a4c25d5f3736e5c8836a946db31fac859c0336cf8c86",
+    "audioSha256": "e84488cb0c85efbf191bc7d678547fadfaf094bdc4c5cdb5ac83e96412f87309",
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "rate": "-8%",
+    "engine": "Microsoft Edge TTS",
+    "sourceLicense": "HSKKit original editorial content; synthesized narration",
+    "qaStatus": "generated-for-final-text"
+  },
+  "hsk8-weather-14": {
+    "textSha256": "81649af6f3a0980bee9a4db120bc454bed4983793f13d7aba29e2bf81d94f95f",
+    "audioSha256": "74b1cedeeafeaf69bb598d219a24e342b1d180564692509c9a542e6519c14af8",
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "rate": "-8%",
+    "engine": "Microsoft Edge TTS",
+    "sourceLicense": "HSKKit original editorial content; synthesized narration",
+    "qaStatus": "generated-for-final-text"
+  },
+  "hsk8-work-15": {
+    "textSha256": "8ad91c7160bedc4bbbd1e3c73863730c8e997f238838eeb1a188b616048e6ee1",
+    "audioSha256": "ee63b5cfcfce3ef600d03f83336f3670f0fffc5a2dbcf95f5ac388358d30d4b9",
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "rate": "-8%",
+    "engine": "Microsoft Edge TTS",
+    "sourceLicense": "HSKKit original editorial content; synthesized narration",
+    "qaStatus": "generated-for-final-text"
+  },
+  "hsk8-environment-16": {
+    "textSha256": "bacd8b0c6dfaaa2ff9f715077854f14419f8f77dd98093fda943329f13ffcfc5",
+    "audioSha256": "cd86a07abcbd935e97078a2203256df0853f01a8153370cefb04cdcd22022eb9",
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "rate": "-8%",
+    "engine": "Microsoft Edge TTS",
+    "sourceLicense": "HSKKit original editorial content; synthesized narration",
+    "qaStatus": "generated-for-final-text"
+  },
+  "hsk8-leisure-17": {
+    "textSha256": "5677b4344349fe819ebf562c6adee155b8488fb859e5bedd4ae70db72c1bfe55",
+    "audioSha256": "46e430f9f0f35221c0eadd15e7bcda379965c29c4fe89397b410961f39d5401f",
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "rate": "-8%",
+    "engine": "Microsoft Edge TTS",
+    "sourceLicense": "HSKKit original editorial content; synthesized narration",
+    "qaStatus": "generated-for-final-text"
+  },
+  "hsk8-family-18": {
+    "textSha256": "c0b89875fa3e10d6dd2c601567dee876438b2ffa405e8afd9698fe661c0f25d6",
+    "audioSha256": "747d77d33b2e3c1f8c33384a6c90bd979e53a58c32d77b578bde492000c3a526",
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "rate": "-8%",
+    "engine": "Microsoft Edge TTS",
+    "sourceLicense": "HSKKit original editorial content; synthesized narration",
+    "qaStatus": "generated-for-final-text"
+  },
+  "hsk8-planning-19": {
+    "textSha256": "7bdf3c5aa4e58b1888dba4a16b745f7197ead79cf19593f8eb4066d6a132c1ba",
+    "audioSha256": "17411ee6c3f92cb2b2fb602231fcacdef2db4d1541e68a2785003b1549aa890d",
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "rate": "-8%",
+    "engine": "Microsoft Edge TTS",
+    "sourceLicense": "HSKKit original editorial content; synthesized narration",
+    "qaStatus": "generated-for-final-text"
+  },
+  "hsk8-respect-20": {
+    "textSha256": "5ec4589e8b0a1a89c220350a5850b8ac1e31acbf24c99c92321443d0000594e9",
+    "audioSha256": "fcff6a9ecbe03096f16dc3eee7b72c6d71d3c78ef06bc17c34aed7ffe9bbe52b",
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "rate": "-8%",
+    "engine": "Microsoft Edge TTS",
+    "sourceLicense": "HSKKit original editorial content; synthesized narration",
+    "qaStatus": "generated-for-final-text"
+  },
+  "hsk9-daily-life-01": {
+    "textSha256": "ba378d515d15c8a2a25fc57d79603d7ad2f8d5bd2a81e9974ec20d54671e06f1",
+    "audioSha256": "cb2fd4fbdfa2d9fd86ee7f5e1372ce35b091d077792dd9b3ec6c8e8bfbb61ce2",
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "rate": "-8%",
+    "engine": "Microsoft Edge TTS",
+    "sourceLicense": "HSKKit original editorial content; synthesized narration",
+    "qaStatus": "generated-for-final-text"
+  },
+  "hsk9-transport-02": {
+    "textSha256": "7e5659db42b0f23c231cff0d22211248178a306f04f327655d1ebcf66aed088a",
+    "audioSha256": "14fb01d0eca65df4cd3c1e211724edf2cd41f47ec602e1faa2f4f2f4fb2b61ce",
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "rate": "-8%",
+    "engine": "Microsoft Edge TTS",
+    "sourceLicense": "HSKKit original editorial content; synthesized narration",
+    "qaStatus": "generated-for-final-text"
+  },
+  "hsk9-study-03": {
+    "textSha256": "1892f5e08bba3b9357eb50e2c857ab63a2e230fb1932e003f01f71712401c260",
+    "audioSha256": "066db4b2c315e2b7e2bad3a5694d6769c04be8d64017292438cb0aa95899e414",
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "rate": "-8%",
+    "engine": "Microsoft Edge TTS",
+    "sourceLicense": "HSKKit original editorial content; synthesized narration",
+    "qaStatus": "generated-for-final-text"
+  },
+  "hsk9-community-04": {
+    "textSha256": "015f1a76e1be2dd4c9417025fbce163ee181cc320c66b2fb77f0743dd3c14f3a",
+    "audioSha256": "98f37c26c55f89153c16f06d06deccd28403f6b5d361a6723a31358ee46b9371",
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "rate": "-8%",
+    "engine": "Microsoft Edge TTS",
+    "sourceLicense": "HSKKit original editorial content; synthesized narration",
+    "qaStatus": "generated-for-final-text"
+  },
+  "hsk9-food-05": {
+    "textSha256": "53c855f52c72b7ceafc0402d385468964b85594c3b50281919b44508eb3f3a42",
+    "audioSha256": "6c3166646c636543ad1d982356dabc6a2e4d9a353e7cf2dbdffb54bc181d48af",
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "rate": "-8%",
+    "engine": "Microsoft Edge TTS",
+    "sourceLicense": "HSKKit original editorial content; synthesized narration",
+    "qaStatus": "generated-for-final-text"
+  },
+  "hsk9-health-06": {
+    "textSha256": "a23e50c78d8fc81ae0bc8ba137fec3d60940cc77286d1013d329438bef0acc2c",
+    "audioSha256": "9ed7d15a497300c18d4cd3e7ef80cdb1565b130a6010f189a09fbc95fc5dfd74",
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "rate": "-8%",
+    "engine": "Microsoft Edge TTS",
+    "sourceLicense": "HSKKit original editorial content; synthesized narration",
+    "qaStatus": "generated-for-final-text"
+  },
+  "hsk9-environment-07": {
+    "textSha256": "03f0a17d0cb2d9a55e97b5d6f33ba99e20e9abe0ea21b05a83a16e9cb2d5c41d",
+    "audioSha256": "9273f50e279d5564b43faae51616c3da424750523f2da170bb1779bddc9244c1",
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "rate": "-8%",
+    "engine": "Microsoft Edge TTS",
+    "sourceLicense": "HSKKit original editorial content; synthesized narration",
+    "qaStatus": "generated-for-final-text"
+  },
+  "hsk9-nature-08": {
+    "textSha256": "1381e2ab010376325dee953a69232854db76c77a956581df0d82123a42fbc787",
+    "audioSha256": "413e350add4ae90b56c3f6ddd0257b8ea9b1767bed054cf98133e4973871983e",
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "rate": "-8%",
+    "engine": "Microsoft Edge TTS",
+    "sourceLicense": "HSKKit original editorial content; synthesized narration",
+    "qaStatus": "generated-for-final-text"
+  },
+  "hsk9-wellbeing-09": {
+    "textSha256": "f494ebf2bc5853a7c6864e81c3e14522567044f9c8382391a26ea2e5ec5eae2f",
+    "audioSha256": "0b9850f4f440564e05a4d06158e6720c751c9521376fcff5ff1c6d7db143b19c",
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "rate": "-8%",
+    "engine": "Microsoft Edge TTS",
+    "sourceLicense": "HSKKit original editorial content; synthesized narration",
+    "qaStatus": "generated-for-final-text"
+  },
+  "hsk9-technology-10": {
+    "textSha256": "0c6911c9747d2e3749acfcb78f67d8f9b10c8b05642b41ccc4c2fc51f81ed921",
+    "audioSha256": "72294b5c900847046df192ede1f658c6b2e9725d9de06394bd175a1d3e2ccffd",
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "rate": "-8%",
+    "engine": "Microsoft Edge TTS",
+    "sourceLicense": "HSKKit original editorial content; synthesized narration",
+    "qaStatus": "generated-for-final-text"
+  },
+  "hsk9-sport-11": {
+    "textSha256": "493f2af6fdfa99e32c4e5ffd7aa6dad845ce219f0ffd30969417c6235ddafce8",
+    "audioSha256": "8ad72993ca3682daf08c47018b59f993567aef3f637bd16e694d2c0fa5648c7e",
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "rate": "-8%",
+    "engine": "Microsoft Edge TTS",
+    "sourceLicense": "HSKKit original editorial content; synthesized narration",
+    "qaStatus": "generated-for-final-text"
+  },
+  "hsk9-relationships-12": {
+    "textSha256": "1d157d04c6049bf6073f6b6c6cc26a65061e04c33632a4174c9face746cc14a0",
+    "audioSha256": "608fc5a475ee4d7781c81e95301a71b603e906a4d6fa201ec96eab352ecab6bc",
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "rate": "-8%",
+    "engine": "Microsoft Edge TTS",
+    "sourceLicense": "HSKKit original editorial content; synthesized narration",
+    "qaStatus": "generated-for-final-text"
+  },
+  "hsk9-honesty-13": {
+    "textSha256": "85b3bfb7eb636af8e8bc1b44bb0bba7c286a785c752557a8be4f4a120ec0ee8e",
+    "audioSha256": "83830c2c6e5dc5912a9191a0bbe357e8f870038c7386eea8eb761bdcc67f0aa5",
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "rate": "-8%",
+    "engine": "Microsoft Edge TTS",
+    "sourceLicense": "HSKKit original editorial content; synthesized narration",
+    "qaStatus": "generated-for-final-text"
+  },
+  "hsk9-weather-14": {
+    "textSha256": "032b3c4214ab5a5ea9e4cfaff9fd14f8ccf1b7088610b342b24e4e7f0a24bf73",
+    "audioSha256": "0fc4113ba13fe34b7b943eea7e3d5859cee838c09b450030425eca462fec233d",
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "rate": "-8%",
+    "engine": "Microsoft Edge TTS",
+    "sourceLicense": "HSKKit original editorial content; synthesized narration",
+    "qaStatus": "generated-for-final-text"
+  },
+  "hsk9-work-15": {
+    "textSha256": "2ff9ff1ea01ba39fc023bb0dc632562a88032564db76ecc614352769de8de431",
+    "audioSha256": "088729178f2ccb4bb54712439688df363b34ded4ac222c503053c0908714ad22",
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "rate": "-8%",
+    "engine": "Microsoft Edge TTS",
+    "sourceLicense": "HSKKit original editorial content; synthesized narration",
+    "qaStatus": "generated-for-final-text"
+  },
+  "hsk9-environment-16": {
+    "textSha256": "79b3e6ad94289b80f8815767bce4aba7ff8f0a53cbe430f08091ceeb1aa777e6",
+    "audioSha256": "d9e0a3a41ff8d3fc2d4861ebbebb89bfa6d515ee887f9506797ad694b48341b1",
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "rate": "-8%",
+    "engine": "Microsoft Edge TTS",
+    "sourceLicense": "HSKKit original editorial content; synthesized narration",
+    "qaStatus": "generated-for-final-text"
+  },
+  "hsk9-leisure-17": {
+    "textSha256": "da8e5bae14498afd6a815172430f3f35f98e04e5a17540b158b3a19668d6adcc",
+    "audioSha256": "4f5ea3fdef79ae63555c326cc42ae154606d5635a1bd07e1722c08cf6f87743b",
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "rate": "-8%",
+    "engine": "Microsoft Edge TTS",
+    "sourceLicense": "HSKKit original editorial content; synthesized narration",
+    "qaStatus": "generated-for-final-text"
+  },
+  "hsk9-family-18": {
+    "textSha256": "bb1f16c212d04bd96870aba3d4a8db1aa23a7515d9a5a917955d600654171116",
+    "audioSha256": "71b20aa62b3a159270d9fae3f9666d6157027ead585475e031e240dbc16aa555",
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "rate": "-8%",
+    "engine": "Microsoft Edge TTS",
+    "sourceLicense": "HSKKit original editorial content; synthesized narration",
+    "qaStatus": "generated-for-final-text"
+  },
+  "hsk9-planning-19": {
+    "textSha256": "37911824e3d53302afc9134acd95f036c1c865337e409ef3ec86b4884568a68c",
+    "audioSha256": "a8ac71d6d076ba7622ec50c58203da8dd1d1e2c706811eaab67934fb9e6f735c",
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "rate": "-8%",
+    "engine": "Microsoft Edge TTS",
+    "sourceLicense": "HSKKit original editorial content; synthesized narration",
+    "qaStatus": "generated-for-final-text"
+  },
+  "hsk9-respect-20": {
+    "textSha256": "856a79cf144a844eb2cb1762f34b73992a3ea2790b0c7dbc88f954b1d2700864",
+    "audioSha256": "a62858a2017b0965bd628150224b5068c2d6022bc029378f2b099b5a7c0fab46",
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "rate": "-8%",
+    "engine": "Microsoft Edge TTS",
+    "sourceLicense": "HSKKit original editorial content; synthesized narration",
+    "qaStatus": "generated-for-final-text"
+  }
+}

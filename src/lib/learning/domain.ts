@@ -170,6 +170,23 @@ export interface QuestionReport {
   status: "open" | "reviewing" | "resolved" | "rejected";
   createdAt: string;
 }
+export interface ReadingArticleProgress {
+  slug: string;
+  level: number;
+  openedAt: string;
+  lastViewedAt: string;
+  scrollPercent: number;
+  completed: boolean;
+  completedAt?: string;
+  answeredCount: number;
+  correctCount: number;
+  accuracy?: number;
+  wordClickCount: number;
+  reviewWordIds: string[];
+  favorite: boolean;
+  readingSeconds: number;
+  needsReview: boolean;
+}
 export interface LearningState {
   attempts: Attempt[];
   cards: SrsCard[];
@@ -185,6 +202,7 @@ export interface LearningState {
   savedWordIds?: string[];
   recentDictionarySearches?: Array<{ query: string; level?: number; searchedAt: string }>;
   topicVisits?: Array<{ topicSlug: string; lastAssetId: string; visitedAt: string }>;
+  readingArticleProgress?: ReadingArticleProgress[];
   lastReviewUndo?: {
     cardId: string;
     gradeKey: string;
