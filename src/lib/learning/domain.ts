@@ -58,6 +58,11 @@ export interface Mistake {
   resolvedAt?: string;
   canonicalContentKey?: string;
 }
+export interface DailyLearnContent extends DictionaryPracticeWord {
+  partOfSpeech: string;
+  example?: { hanzi: string; pinyin: string; meaning: string };
+  audioSrc?: string;
+}
 export interface DailyItem {
   id: string;
   kind: DailyItemKind;
@@ -70,6 +75,10 @@ export interface DailyItem {
   estimatedMinutes?: number;
   deferred?: boolean;
   reviewCardId?: string;
+  todayStatus?: "new" | "continue";
+  selectionReason?: string;
+  startedAt?: string;
+  learnContent?: DailyLearnContent;
 }
 export interface DailySession {
   id: string;
@@ -91,6 +100,8 @@ export interface DailySession {
   reviewBatchId?: string;
   reviewCardIds?: string[];
   reviewItemIds?: string[];
+  wordRefreshesUsed?: number;
+  frozenAt?: string;
   items: DailyItem[];
 }
 export interface PlacementAnswer {
@@ -354,9 +365,18 @@ export function recordDictionarySearch(state: LearningState, input: { query: str
   return { ...state, recentDictionarySearches: [{ query, ...(level ? { level } : {}), searchedAt: input.searchedAt }, ...recent].slice(0, 10) };
 }
 
-export function addWordToReview(state: LearningState, input: { word: DictionaryPracticeWord; observedAt: string }): LearningState {
+export function addWordToReview(state: LearningState, input: { word: DictionaryPracticeWord; observedAt: string; dueAt?: string }): LearningState {
   const existing = state.cards.find((card) => card.contentId === input.word.contentId && card.contentVersion === input.word.contentVersion && card.dimension === "reading");
-  if (existing) return state;
+  if (existing) {
+    const sourceAttempt = state.attempts.find((attempt) => attempt.id === existing.sourceAttemptId);
+    if (input.word.level < 7 || !sourceAttempt?.reviewSnapshot || sourceAttempt.reviewSnapshot.level === input.word.level) return state;
+    return {
+      ...state,
+      attempts: state.attempts.map((attempt) => attempt.id === existing.sourceAttemptId
+        ? { ...attempt, reviewSnapshot: { ...attempt.reviewSnapshot!, level: input.word.level, levelBand: input.word.levelBand } }
+        : attempt),
+    };
+  }
   const attemptId = id("att", `dictionary-review:${input.word.assetId}:${input.word.contentVersion}`);
   const cardId = id("card", `${input.word.contentId}:${input.word.contentVersion}:reading`);
   const answerText = `${input.word.hanzi} · ${input.word.pinyin} · ${input.word.meaning}`;
@@ -395,8 +415,8 @@ export function addWordToReview(state: LearningState, input: { word: DictionaryP
     contentId: input.word.contentId,
     contentVersion: input.word.contentVersion,
     dimension: "reading",
-    dueAt: input.observedAt,
-    intervalDays: 0,
+    dueAt: input.dueAt ?? input.observedAt,
+    intervalDays: input.dueAt ? Math.max(1, Math.round((Date.parse(input.dueAt) - Date.parse(input.observedAt)) / 86_400_000)) : 0,
     ease: 2.5,
     revision: 0,
     reviewCount: 0,
@@ -708,7 +728,7 @@ export function completeDailyItem(state: LearningState, sessionId: string, itemI
 export function applyDailyItemAction(state: LearningState, input: {
   sessionId: string;
   itemId: string;
-  action: "complete" | "skip" | "restore";
+  action: "start" | "complete" | "skip" | "restore";
   idempotencyKey: string;
   observedAt: string;
 }) {
@@ -724,10 +744,11 @@ export function applyDailyItemAction(state: LearningState, input: {
   if (!current || current.kind === "summary") throw new Error("ITEM_NOT_FOUND");
   if (input.action !== "restore" && session.items.find((item) => !item.deferred && item.status === "pending")?.id !== current.id) throw new Error("ITEM_OUT_OF_ORDER");
   if (input.action === "complete" && current.kind !== "learn") throw new Error("ITEM_REQUIRES_ACTIVITY");
+  if (input.action === "start" && current.kind !== "learn") throw new Error("ITEM_REQUIRES_ACTIVITY");
   if (input.action === "restore" && current.status !== "skipped") throw new Error("ITEM_NOT_SKIPPED");
-  const status = input.action === "restore" ? "pending" as const : input.action === "skip" ? "skipped" as const : "completed" as const;
+  const status = input.action === "start" ? current.status : input.action === "restore" ? "pending" as const : input.action === "skip" ? "skipped" as const : "completed" as const;
   const dailySessions = state.dailySessions.map((candidate) => candidate.id === input.sessionId
-    ? reconcileSummary({ ...candidate, completedAt: input.action === "restore" ? undefined : candidate.completedAt, items: candidate.items.map((item) => item.id === input.itemId ? { ...item, status } : item) }, input.observedAt)
+    ? reconcileSummary({ ...candidate, completedAt: input.action === "restore" ? undefined : candidate.completedAt, items: candidate.items.map((item) => item.id === input.itemId ? { ...item, status, ...(input.action === "start" && !item.startedAt ? { startedAt: input.observedAt } : {}) } : item) }, input.observedAt)
     : candidate);
   const next = { ...state, dailySessions, dailyOperationKeys: [...(state.dailyOperationKeys ?? []).slice(-499), input.idempotencyKey] };
   return { state: next, item: dailySessions.find((candidate) => candidate.id === input.sessionId)!.items.find((item) => item.id === input.itemId)!, replayed: false as const };
@@ -748,6 +769,18 @@ export function assertTodayLearnItemMatches(state: LearningState, input: {
 export function assertCurrentDailySession(currentSession: DailySession | undefined, requestedSessionId: string) {
   if (!currentSession || currentSession.id !== requestedSessionId) throw new Error("STALE_TODAY_SESSION");
   return currentSession;
+}
+
+export function freezeDailySession(state: LearningState, sessionId: string, observedAt: string) {
+  const session = state.dailySessions.find((candidate) => candidate.id === sessionId);
+  if (!session) throw new Error("DAILY_SESSION_NOT_FOUND");
+  if (session.frozenAt) return { state, session, replayed: true as const };
+  const frozen = { ...session, frozenAt: observedAt };
+  return {
+    state: { ...state, dailySessions: state.dailySessions.map((candidate) => candidate.id === sessionId ? frozen : candidate) },
+    session: frozen,
+    replayed: false as const,
+  };
 }
 
 function todayReviewLevel(state: LearningState, card: SrsCard) {
@@ -781,8 +814,9 @@ function selectTodayReviewCards(state: LearningState, cards: SrsCard[], startLev
   }).slice(0, 3);
 }
 
-export function buildDailySession(state: LearningState, input: { ownerId: string; localDay: string; ruleVersion: string; now: string; dailyContent?: TodayContentPlan; budgetMinutes?: number; newWordCount?: number; listeningEnabled?: boolean; focus?: TodayFocus }) {
+export function buildDailySession(state: LearningState, input: { ownerId: string; localDay: string; ruleVersion: string; now: string; dailyContent?: TodayContentPlan; budgetMinutes?: number; newWordCount?: number; listeningEnabled?: boolean; focus?: TodayFocus; allowFrozenUpdate?: boolean; preservedTodayContentIds?: string[] }) {
   const prior = state.dailySessions.find((session) => session.ownerId === input.ownerId && session.localDay === input.localDay);
+  if (prior?.frozenAt && !input.allowFrozenUpdate) return { state, session: prior };
   const newWordCount = isTodayNewWordCount(input.newWordCount) ? input.newWordCount : isTodayNewWordCount(prior?.newWordCount) ? prior.newWordCount : 1;
   const listeningEnabled = typeof input.listeningEnabled === "boolean" ? input.listeningEnabled : prior?.listeningEnabled ?? true;
   const focus = isTodayFocus(input.focus) ? input.focus : isTodayFocus(prior?.focus) ? prior.focus : "balanced";
@@ -816,7 +850,31 @@ export function buildDailySession(state: LearningState, input: { ownerId: string
     const audioItems: DailyItem[] = [];
     const contextItems: DailyItem[] = [];
     for (const item of contentItems) {
-      learnItems.push({ id: `learn:${item.contentId}:${item.contentVersion}`, kind: "learn", contentId: item.contentId, contentVersion: item.contentVersion, title: `Learn ${item.hanzi}`, href: `/word/${item.studySlug}`, status: "pending" });
+      learnItems.push({
+        id: `learn:${item.contentId}:${item.contentVersion}`,
+        kind: "learn",
+        contentId: item.contentId,
+        contentVersion: item.contentVersion,
+        title: `Learn ${item.hanzi}`,
+        href: `/word/${item.studySlug}`,
+        status: "pending",
+        todayStatus: item.todayStatus ?? "new",
+        selectionReason: item.selectionReason ?? `New · selected near your current HSK ${content.startLevel} progress.`,
+        learnContent: {
+          assetId: item.assetId,
+          contentId: item.contentId,
+          contentVersion: item.contentVersion,
+          level: item.level,
+          levelBand: item.level >= 7 ? "7–9" : String(item.level),
+          hanzi: item.hanzi,
+          traditional: item.hanzi,
+          pinyin: item.pinyin,
+          meaning: item.meaning,
+          partOfSpeech: item.partOfSpeech,
+          example: item.example,
+          audioSrc: item.audioSrc,
+        },
+      });
       if (listeningEnabled) {
         audioItems.push({ id: `listen:${item.contentId}:${item.contentVersion}:audio`, kind: "listen", contentId: item.contentId, contentVersion: item.contentVersion, dimension: "audio", title: `Listen to ${item.hanzi}`, href: `/listen/today/${item.assetId}?mode=audio`, status: "pending" });
         if (item.example) contextItems.push({ id: `listen:${item.contentId}:${item.contentVersion}:context_audio`, kind: "listen", contentId: item.contentId, contentVersion: item.contentVersion, dimension: "context_audio", title: "Listen in context", href: `/listen/today/${item.assetId}?mode=context_audio`, status: "pending" });
@@ -857,8 +915,13 @@ export function buildDailySession(state: LearningState, input: { ownerId: string
     .filter((item) => !candidateIds.has(item.id) && Boolean(candidateIds.add(item.id)))
     .map((item) => ({ ...item, deferred: false, estimatedMinutes: item.estimatedMinutes ?? estimateDailyItem(item) }));
   let used = 0;
+  const preservedTodayContentIds = new Set(input.preservedTodayContentIds ?? []);
   const planned = candidates.filter((item) => {
     const minutes = item.estimatedMinutes ?? 0;
+    if (preservedTodayContentIds.has(item.contentId)) {
+      used += minutes;
+      return true;
+    }
     if (used + minutes > budgetMinutes) return false;
     used += minutes;
     return true;
@@ -885,7 +948,9 @@ export function buildDailySession(state: LearningState, input: { ownerId: string
     const activePlanned = plannedItems.filter((item) => item.kind !== "summary");
     const retained = activePlanned.map((item) => {
       const previous = prior.items.find((candidate) => candidate.id === item.id && candidate.contentVersion === item.contentVersion);
-      return previous?.status === "completed" || previous?.status === "skipped" ? { ...item, status: previous.status } : item;
+      return previous
+        ? { ...item, status: previous.status, startedAt: previous.startedAt, todayStatus: previous.todayStatus ?? item.todayStatus, selectionReason: previous.selectionReason ?? item.selectionReason }
+        : item;
     });
     const archivedCompleted = prior.items
       .filter((item) => item.kind !== "summary" && item.status === "completed" && !activePlanned.some((plannedItem) => plannedItem.id === item.id))

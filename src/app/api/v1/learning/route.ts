@@ -8,6 +8,7 @@ import {
   applyDailyItemAction,
   assertTodayLearnItemMatches,
   assertCurrentDailySession,
+  freezeDailySession,
   addWordToToday,
   addWordToReview,
   recordDictionarySearch,
@@ -20,9 +21,10 @@ import {
   masterySnapshot,
   recordAttempt,
   recordAudioAttempt,
+  type DailyLearnContent,
   type LearningState,
 } from "../../../../lib/learning/domain";
-import { isTodayBudgetMinutes, isTodayFocus, isTodayNewWordCount, recommendTodayNewWordCount } from "../../../../lib/learning/today-plan";
+import { canRefreshTodayWords, isTodayBudgetMinutes, isTodayFocus, isTodayNewWordCount, recommendTodayNewWordCount } from "../../../../lib/learning/today-plan";
 import { articleBySlug, articleQuestion } from "../../../../lib/learning/reading-articles";
 import { audioPlaybackSubject, trustedAudioExercise, trustedTodayAudioExercise, type AudioMode } from "../../../../lib/learning/audio";
 import { advancedListeningBySlug, isStep7AnswerAllowed, normalizeStep7Answer, trustedStep7Exercise } from "../../../../lib/learning/step7-content";
@@ -35,7 +37,7 @@ import { resolveCapabilities } from "../../../../lib/commercial/storage";
 import { type ProductCapabilities } from "../../../../lib/commercial/capabilities";
 import { reconcileReferralLearningMilestone } from "../../../../lib/commercial/referral-storage";
 import { learningRewardLocalDay } from "@/lib/engagement/storage";
-import { selectTodayContent, todayContentByAssetId, todayContentByContentId, todayContentFromCatalogRow } from "../../../../lib/learning/today-content";
+import { selectTodayContent, todayContentByAssetId, todayContentByContentId, todayContentFromCatalogRow, todayPlanLevel, todaySelectionContext, type TodayContentItem } from "../../../../lib/learning/today-content";
 import { findPublicCatalogWordById, suggestPublicCatalogWords } from "../../../../lib/content/public-catalog-index";
 import { accessDecision, createAuditEvent, errorContract } from "../../../../lib/account/access-policy";
 import { recordPolicyAudit } from "../../../../lib/account/audit-storage";
@@ -70,6 +72,22 @@ async function resolveTodayDictionaryItem(assetId: string) {
   const row = findPublicCatalogWordById(assetId);
   return row ? todayContentFromCatalogRow(row) : undefined;
 }
+function dailyLearnContent(word: TodayContentItem): DailyLearnContent {
+  return {
+    assetId: word.assetId,
+    contentId: word.contentId,
+    contentVersion: word.contentVersion,
+    level: word.level,
+    levelBand: word.level >= 7 ? "7–9" : String(word.level),
+    hanzi: word.hanzi,
+    traditional: word.hanzi,
+    pinyin: word.pinyin,
+    meaning: word.meaning,
+    partOfSpeech: word.partOfSpeech,
+    example: word.example,
+    audioSrc: word.audioSrc,
+  };
+}
 const offset = (value: unknown) => Number.isInteger(value) && Number(value) >= -840 && Number(value) <= 840 ? Number(value) : 0;
 const PRIVATE_RESPONSE_HEADERS = { "Cache-Control": "private, no-store" } as const;
 const errorResponse = (code: string, status: number, extra: Record<string, unknown> = {}) => NextResponse.json({ ...errorContract(code), ...extra }, { status, headers: PRIVATE_RESPONSE_HEADERS });
@@ -99,9 +117,10 @@ function view(state: LearningState, ownerId: string, offsetMinutes: number, capa
   const now = new Date().toISOString();
   const nextAction = deriveHomeNextStep(state, now);
   const latestPlacement = [...(state.placementResults ?? [])].sort((a, b) => b.createdAt.localeCompare(a.createdAt))[0];
-  const startLevel = state.preferredLearningLevel ?? latestPlacement?.recommendedLevel ?? 1;
+  const preferredStartLevel = state.preferredLearningLevel ?? latestPlacement?.recommendedLevel ?? 1;
   const localDay = learningLocalDay(now, offsetMinutes, accountTimezone);
   const prior = state.dailySessions.find((session) => session.ownerId === ownerId && session.localDay === localDay);
+  const startLevel = todayPlanLevel(state, ownerId, localDay, preferredStartLevel);
   const budgetMinutes = isTodayBudgetMinutes(prior?.budgetMinutes) ? prior.budgetMinutes : 20;
   const legacySingleWordPlan = prior?.ruleVersion === "today-v8" && prior.newWordCount === 1 && budgetMinutes >= 10;
   const savedPreferences = state.todayPreferences;
@@ -110,7 +129,8 @@ function view(state: LearningState, ownerId: string, offsetMinutes: number, capa
     listeningEnabled: savedPreferences?.listeningEnabled ?? true,
     focus: savedPreferences?.focus ?? "balanced" as const,
   };
-  const built = buildDailySession(state, { ownerId, localDay, ruleVersion: "today-v9", now, dailyContent: selectTodayContent(startLevel, preferences.newWordCount), budgetMinutes, ...preferences });
+  const selectionContext = todaySelectionContext(state, ownerId, localDay);
+  const built = buildDailySession(state, { ownerId, localDay, ruleVersion: "today-v10", now, dailyContent: selectTodayContent(startLevel, preferences.newWordCount, selectionContext), budgetMinutes, ...preferences });
   const projected = projectLearningHistory(built.state, capabilities, new Date(now));
   const visibleCards = projected.cards;
   const cards = visibleCards.map((card) => {
@@ -187,7 +207,8 @@ function view(state: LearningState, ownerId: string, offsetMinutes: number, capa
     items: built.session.items.map((item) => {
       if (item.kind !== "learn") return item;
       const dictionaryAssetId = item.id.startsWith("dictionary:") ? item.id.slice("dictionary:".length) : undefined;
-      const learnContent = dictionaryAssetId ? todayContentByAssetId(dictionaryAssetId) : todayContentByContentId(item.contentId);
+      const resolvedLearnContent = dictionaryAssetId ? todayContentByAssetId(dictionaryAssetId) : todayContentByContentId(item.contentId);
+      const learnContent = item.learnContent ?? (resolvedLearnContent ? dailyLearnContent(resolvedLearnContent) : undefined);
       return learnContent ? { ...item, learnContent } : item;
     }),
   };
@@ -426,8 +447,8 @@ async function postLearning(req: NextRequest) {
   for (let turn = 0; turn < 3; turn += 1) {
     const loaded = await loadState(identity.id);
     const readingProgressAction = action === "reading_article_progress" || action === "reading_article_complete" || action === "reading_article_word";
-    const dailyAction = action === "complete_item" || action === "skip_item" || action === "restore_item" || action === "configure_today" || action === "save_word" || action === "add_to_today" || action === "add_to_review" || action === "dictionary_search" || action === "clear_dictionary_searches" || topicAction || readingProgressAction;
-    if (dailyAction && (loaded.state.dailyOperationKeys ?? []).includes(key)) {
+    const dailyAction = action === "freeze_today" || action === "start_item" || action === "complete_item" || action === "skip_item" || action === "restore_item" || action === "refresh_today_words" || action === "configure_today" || action === "save_word" || action === "add_to_today" || action === "add_to_review" || action === "dictionary_search" || action === "clear_dictionary_searches" || topicAction || readingProgressAction;
+    if (dailyAction && action !== "freeze_today" && (loaded.state.dailyOperationKeys ?? []).includes(key)) {
       return response(view(loaded.state, identity.id, tz, capabilities, identity.account?.timezone), identity.fresh, identity.id, loaded.revision, Boolean(identity.account), capabilities, usage);
     }
     if (action === "grade") {
@@ -890,7 +911,7 @@ async function postLearning(req: NextRequest) {
           href: `/word/${item.studySlug}`,
         });
         state = { ...state, dailyOperationKeys: [...(state.dailyOperationKeys ?? []), key].slice(-400) };
-      } else if (action === "complete_item" || action === "skip_item" || action === "restore_item") {
+      } else if (action === "start_item" || action === "complete_item" || action === "skip_item" || action === "restore_item") {
         const sessionId = short(payload.sessionId, 120);
         const itemId = short(payload.itemId, 160);
         if (!sessionId || !itemId) throw new Error("INVALID_ITEM");
@@ -898,22 +919,96 @@ async function postLearning(req: NextRequest) {
         assertCurrentDailySession(activeToday.session, sessionId);
         state = activeToday.state;
         const currentItem = state.dailySessions.find((session) => session.id === sessionId)?.items.find((item) => item.id === itemId);
+        let displayedWord: Awaited<ReturnType<typeof resolveTodayDictionaryItem>> | DailyLearnContent | undefined;
         if (action === "complete_item" && currentItem?.kind === "learn") {
           const assetId = short(payload.assetId, 120);
-          const displayedWord = assetId ? await resolveTodayDictionaryItem(assetId) : undefined;
+          displayedWord = assetId && currentItem.learnContent?.assetId === assetId
+            ? currentItem.learnContent
+            : assetId
+              ? await resolveTodayDictionaryItem(assetId)
+              : undefined;
           if (!displayedWord) throw new Error("TODAY_LEARN_WORD_MISMATCH");
           assertTodayLearnItemMatches(state, { sessionId, itemId, contentId: displayedWord.contentId, contentVersion: displayedWord.contentVersion });
         }
+        const observedAt = new Date().toISOString();
         state = applyDailyItemAction(state, {
           sessionId,
           itemId,
-          action: action === "complete_item" ? "complete" : action === "skip_item" ? "skip" : "restore",
+          action: action === "start_item" ? "start" : action === "complete_item" ? "complete" : action === "skip_item" ? "skip" : "restore",
           idempotencyKey: key,
-          observedAt: new Date().toISOString(),
+          observedAt,
         }).state;
+        if (action === "complete_item" && currentItem?.kind === "learn" && displayedWord) {
+          const selectedTodayLevel = activeToday.session.startLevel;
+          const reviewLevel = selectedTodayLevel && selectedTodayLevel >= 7
+            ? selectedTodayLevel
+            : displayedWord.level;
+          state = addWordToReview(state, {
+            word: {
+              assetId: displayedWord.assetId,
+              contentId: displayedWord.contentId,
+              contentVersion: displayedWord.contentVersion,
+              level: reviewLevel,
+              levelBand: reviewLevel >= 7 ? "7–9" : String(reviewLevel),
+              hanzi: displayedWord.hanzi,
+              traditional: displayedWord.hanzi,
+              pinyin: displayedWord.pinyin,
+              meaning: displayedWord.meaning,
+            },
+            observedAt,
+            dueAt: new Date(Date.parse(observedAt) + 86_400_000).toISOString(),
+          });
+        }
         if (action === "complete_item" && currentItem?.kind === "learn" && currentItem.status === "pending" && capabilities.dailyNewItems !== null) {
           usageCharge = { metric: "daily_new_items", periodKey, idempotencyKey: key, units: 1, limit: capabilities.dailyNewItems };
         }
+      } else if (action === "freeze_today") {
+        const sessionId = short(payload.sessionId, 120);
+        if (!sessionId) throw new Error("INVALID_ITEM");
+        const activeToday = view(state, identity.id, tz, capabilities, identity.account?.timezone);
+        assertCurrentDailySession(activeToday.session, sessionId);
+        const frozen = freezeDailySession(activeToday.state, sessionId, new Date().toISOString());
+        if (frozen.replayed) {
+          return response(view(frozen.state, identity.id, tz, capabilities, identity.account?.timezone), identity.fresh, identity.id, loaded.revision, Boolean(identity.account), capabilities, usage);
+        }
+        state = { ...frozen.state, dailyOperationKeys: [...(frozen.state.dailyOperationKeys ?? []), key].slice(-400) };
+      } else if (action === "refresh_today_words") {
+        const sessionId = short(payload.sessionId, 120);
+        if (!sessionId) throw new Error("INVALID_ITEM");
+        const observedAt = new Date().toISOString();
+        const activeToday = view(state, identity.id, tz, capabilities, identity.account?.timezone);
+        assertCurrentDailySession(activeToday.session, sessionId);
+        if (!canRefreshTodayWords(activeToday.session)) throw new Error("TODAY_WORD_REFRESH_UNAVAILABLE");
+        const preservedLearn = activeToday.session.items.filter((item) => item.kind === "learn" && (item.status !== "pending" || Boolean(item.startedAt)));
+        const replaced = activeToday.session.items.filter((item) => item.kind === "learn" && item.status === "pending" && !item.startedAt).map((item) => item.contentId);
+        state = {
+          ...activeToday.state,
+          dailySessions: activeToday.state.dailySessions.map((session) => session.id === sessionId ? { ...session, wordRefreshesUsed: 1 } : session),
+        };
+        const localDay = learningLocalDay(observedAt, tz, identity.account?.timezone);
+        const context = todaySelectionContext(state, identity.id, localDay);
+        const startLevel = activeToday.session.startLevel ?? state.preferredLearningLevel ?? 1;
+        const newWordCount = activeToday.session.newWordCount ?? state.todayPreferences?.newWordCount ?? 3;
+        state = buildDailySession(state, {
+          ownerId: identity.id,
+          localDay,
+          ruleVersion: "today-v10",
+          now: observedAt,
+          dailyContent: selectTodayContent(startLevel, newWordCount, {
+            ...context,
+            fixedTodayContentIds: preservedLearn.map((item) => item.contentId),
+            excludedCurrentPlanContentIds: replaced,
+            continueContentIds: [],
+            refreshCount: 1,
+          }),
+          budgetMinutes: activeToday.session.budgetMinutes ?? 20,
+          newWordCount,
+          listeningEnabled: activeToday.session.listeningEnabled ?? true,
+          focus: activeToday.session.focus ?? "balanced",
+          allowFrozenUpdate: true,
+          preservedTodayContentIds: preservedLearn.map((item) => item.contentId),
+        }).state;
+        state = { ...state, dailyOperationKeys: [...(state.dailyOperationKeys ?? []), key].slice(-400) };
       } else if (action === "configure_today") {
         const budgetMinutes = Number(payload.budgetMinutes);
         if (!isTodayBudgetMinutes(budgetMinutes)) throw new Error("INVALID_TIME_BUDGET");
@@ -927,10 +1022,35 @@ async function postLearning(req: NextRequest) {
         if (requestedLevel !== undefined && (!Number.isInteger(requestedLevel) || requestedLevel < 1 || requestedLevel > 9)) throw new Error("INVALID_LEARNING_LEVEL");
         const observedAt = new Date().toISOString();
         const latestPlacement = [...(state.placementResults ?? [])].sort((a, b) => b.createdAt.localeCompare(a.createdAt))[0];
-        const startLevel = requestedLevel ?? latestPlacement?.recommendedLevel ?? 1;
+        const preferredStartLevel = requestedLevel ?? latestPlacement?.recommendedLevel ?? 1;
+        const localDay = learningLocalDay(observedAt, tz, identity.account?.timezone);
+        const startLevel = todayPlanLevel(state, identity.id, localDay, preferredStartLevel);
         const todayPreferences = { newWordCount, listeningEnabled, focus };
+        const currentSession = state.dailySessions.find((session) => session.ownerId === identity.id && session.localDay === localDay);
+        const currentLearn = currentSession?.items.filter((item) => item.kind === "learn") ?? [];
+        const preservedContentIds = currentLearn
+          .filter((item) => item.status !== "pending" || Boolean(item.startedAt))
+          .map((item) => item.contentId);
+        const fixedTodayContentIds = [
+          ...preservedContentIds,
+          ...currentLearn.filter((item) => item.status === "pending" && !item.startedAt).map((item) => item.contentId),
+        ];
+        const selectionCount = Math.max(newWordCount, preservedContentIds.length);
         state = { ...state, ...(requestedLevel ? { preferredLearningLevel: requestedLevel } : {}), todayPreferences };
-        state = buildDailySession(state, { ownerId: identity.id, localDay: learningLocalDay(observedAt, tz, identity.account?.timezone), ruleVersion: "today-v9", now: observedAt, dailyContent: selectTodayContent(startLevel, newWordCount), budgetMinutes, ...todayPreferences }).state;
+        state = buildDailySession(state, {
+          ownerId: identity.id,
+          localDay,
+          ruleVersion: "today-v10",
+          now: observedAt,
+          dailyContent: selectTodayContent(startLevel, selectionCount, {
+            ...todaySelectionContext(state, identity.id, localDay),
+            fixedTodayContentIds,
+          }),
+          budgetMinutes,
+          ...todayPreferences,
+          allowFrozenUpdate: true,
+          preservedTodayContentIds: preservedContentIds,
+        }).state;
         state = { ...state, dailyOperationKeys: [...(state.dailyOperationKeys ?? []), key].slice(-400) };
       } else {
         return errorResponse("INVALID_ACTION", 422);

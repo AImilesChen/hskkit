@@ -47,7 +47,8 @@ const words: IndexedWord[] = packedWords.map((packed) => ({
   search_english: packed[11],
   sort_level: packed[3] === "7-9" ? 7 : Number(packed[3]),
 }));
-const wordById = new Map(words.map((word) => [word.id, word]));
+const wordById = new Map(words.map((row) => [row.id, row]));
+const wordByLogicalId = new Map(words.map((row) => [row.id.replace(/\.v\d+$/, ""), row]));
 const wordsByLevel = new Map<string, IndexedWord[]>();
 const wordsByCharacter = new Map<string, IndexedWord[]>();
 const suggestionCandidates = new Map<string, IndexedWord[]>();
@@ -76,6 +77,10 @@ export function findPublicCatalogWordById(assetId: string): CatalogSearchRow | n
   return wordById.get(assetId) ?? null;
 }
 
+export function findPublicCatalogWordByLogicalId(logicalId: string): CatalogSearchRow | null {
+  return wordByLogicalId.get(logicalId) ?? null;
+}
+
 export function findPublicCatalogWordsContainingCharacter(hanzi: string, limit = 36): CatalogSearchRow[] {
   return (wordsByCharacter.get(hanzi) ?? []).slice(0, Math.max(0, limit));
 }
@@ -85,6 +90,11 @@ export function findPublicCatalogWordsByIds(assetIds: string[]): CatalogSearchRo
     const word = wordById.get(assetId);
     return word ? [word] : [];
   });
+}
+
+export function listPublicCatalogWordsForLevel(level: number): CatalogSearchRow[] {
+  const levelBand = level >= 7 ? "7-9" : String(level);
+  return [...(wordsByLevel.get(levelBand) ?? [])];
 }
 
 export function searchPublicCatalogWords(params: CatalogSearchParams, formalAudioIds: readonly string[] = []) {

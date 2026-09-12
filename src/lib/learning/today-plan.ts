@@ -5,6 +5,11 @@ export type TodayBudgetMinutes = typeof TODAY_BUDGET_OPTIONS[number];
 export type TodayNewWordCount = typeof TODAY_NEW_WORD_OPTIONS[number];
 export type TodayFocus = typeof TODAY_FOCUS_OPTIONS[number];
 export type TodayCompletedKind = "review" | "learn" | "listen" | "practice";
+
+export function canRefreshTodayWords(session: { wordRefreshesUsed?: number; items: Array<{ kind: string; status: string; startedAt?: string }> }) {
+  if ((session.wordRefreshesUsed ?? 0) >= 1) return false;
+  return session.items.some((item) => item.kind === "learn" && item.status === "pending" && !item.startedAt);
+}
 export type TodayCelebration = {
   kind: "step" | "session";
   icon: "review" | "book" | "headphones" | "pencil" | "target";
