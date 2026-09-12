@@ -1,9 +1,16 @@
 "use client";
 
 import Link from "next/link";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import { loadPlacementSession, placementPublicError, placementRetakeLocked } from "./client-recovery";
+import {
+  PlacementClientError,
+  cachePlacementOverview,
+  loadPlacementSession,
+  placementPublicError,
+  placementRetakeLocked,
+  readCachedPlacementOverview,
+} from "./client-recovery";
 
 type Question = {
   id: string;
@@ -37,8 +44,13 @@ type PlacementResponse = {
   session?: Session;
   result?: { id: string };
   error?: string;
+  errorCode?: string;
+  referenceId?: string;
+  retryable?: boolean;
+  recoverableSessionId?: string;
   status?: PlacementStatus;
   latestResultId?: string | null;
+  latestRecommendedLevel?: number | null;
   retakeAvailableAt?: string | null;
   canRetake?: boolean;
   serverNow?: string;
@@ -82,19 +94,24 @@ export default function PlacementClient() {
   const [expired, setExpired] = useState(false);
   const [placementStatus, setPlacementStatus] = useState<PlacementStatus>("ready");
   const [latestResultId, setLatestResultId] = useState<string>();
+  const [latestRecommendedLevel, setLatestRecommendedLevel] = useState<number>();
   const [retakeAvailableAt, setRetakeAvailableAt] = useState<string>();
   const [canRetake, setCanRetake] = useState(true);
   const [serverClockOffsetMs, setServerClockOffsetMs] = useState(0);
   const [loadError, setLoadError] = useState<string>();
+  const [loadReference, setLoadReference] = useState<string>();
+  const [loadRecoverySessionId, setLoadRecoverySessionId] = useState<string>();
   const [startError, setStartError] = useState<string>();
   const [answerError, setAnswerError] = useState<string>();
   const [nowMs, setNowMs] = useState(() => Date.now());
+  const inFlightLoadRef = useRef<Promise<void> | null>(null);
 
   const applyOverview = useCallback((data: {
     session: Session | null;
     expired?: boolean;
     status?: PlacementStatus;
     latestResultId?: string | null;
+    latestRecommendedLevel?: number | null;
     retakeAvailableAt?: string | null;
     canRetake?: boolean;
     serverNow?: string;
@@ -103,6 +120,7 @@ export default function PlacementClient() {
     setExpired(Boolean(data.expired));
     setPlacementStatus(data.status ?? (data.expired ? "expired" : data.session ? "active" : "ready"));
     setLatestResultId(data.latestResultId ?? undefined);
+    setLatestRecommendedLevel(data.latestRecommendedLevel ?? undefined);
     setRetakeAvailableAt(data.retakeAvailableAt ?? undefined);
     setCanRetake(data.canRetake ?? data.status !== "cooldown");
     const serverNowMs = data.serverNow ? Date.parse(data.serverNow) : Number.NaN;
@@ -112,38 +130,47 @@ export default function PlacementClient() {
     }
   }, []);
 
-  const load = useCallback(async () => {
-    setLoading(true);
-    setReconnecting(false);
-    setLoadError(undefined);
-    setStartError(undefined);
-    try {
-      const data = await loadPlacementSession<Session>({ onRetry: () => setReconnecting(true) });
-      applyOverview(data);
-    } catch (reason) {
-      setSession(null);
-      setLoadError(reason instanceof Error ? reason.message : "PLACEMENT_LOAD_FAILED");
-    } finally {
-      setReconnecting(false);
-      setLoading(false);
-    }
+  const applyLoadFailure = useCallback((reason: unknown) => {
+    const responseFallback = reason instanceof PlacementClientError ? reason.details : null;
+    const cachedFallback = readCachedPlacementOverview(window.sessionStorage);
+    const fallback = responseFallback?.latestResultId ? responseFallback : cachedFallback;
+    if (fallback) applyOverview(fallback as Parameters<typeof applyOverview>[0]);
+    else setSession(null);
+    setLoadReference(reason instanceof PlacementClientError ? reason.details.referenceId : undefined);
+    setLoadRecoverySessionId(reason instanceof PlacementClientError ? reason.details.recoverableSessionId : undefined);
+    setLoadError(reason instanceof PlacementClientError ? reason.code : reason instanceof Error ? reason.message : "PLACEMENT_LOAD_FAILED");
   }, [applyOverview]);
 
-  useEffect(() => {
-    let active = true;
-    loadPlacementSession<Session>({ onRetry: () => active && setReconnecting(true) })
-      .then((data) => {
-        if (!active) return;
+  const load = useCallback(() => {
+    if (inFlightLoadRef.current) return inFlightLoadRef.current;
+    const operation = (async () => {
+      setLoading(true);
+      setReconnecting(false);
+      setLoadError(undefined);
+      setLoadReference(undefined);
+      setLoadRecoverySessionId(undefined);
+      setStartError(undefined);
+      try {
+        const data = await loadPlacementSession<Session>({ onRetry: () => setReconnecting(true) });
+        cachePlacementOverview(window.sessionStorage, data);
         applyOverview(data);
-      })
-      .catch((reason: Error) => active && setLoadError(reason.message))
-      .finally(() => {
-        if (!active) return;
+      } catch (reason) {
+        applyLoadFailure(reason);
+      } finally {
         setReconnecting(false);
         setLoading(false);
-      });
-    return () => { active = false; };
-  }, [applyOverview]);
+      }
+    })();
+    inFlightLoadRef.current = operation;
+    void operation.finally(() => {
+      if (inFlightLoadRef.current === operation) inFlightLoadRef.current = null;
+    });
+    return operation;
+  }, [applyLoadFailure, applyOverview]);
+
+  useEffect(() => {
+    void load();
+  }, [load]);
 
   useEffect(() => {
     if (placementStatus !== "cooldown" || !retakeAvailableAt) return;
@@ -183,6 +210,29 @@ export default function PlacementClient() {
       } else {
         setStartError(reason instanceof Error ? reason.message : "PLACEMENT_START_FAILED");
       }
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  async function restartIncompatiblePlacement() {
+    if (!loadRecoverySessionId) return;
+    setSaving(true);
+    setStartError(undefined);
+    try {
+      const data = await placementRequest("/api/v1/placement/sessions", {
+        previousSessionId: loadRecoverySessionId,
+        idempotencyKey: key("placement-compatible-restart"),
+      });
+      setSession(data.session ?? null);
+      setExpired(false);
+      setPlacementStatus("active");
+      setLoadError(undefined);
+      setLoadReference(undefined);
+      setLoadRecoverySessionId(undefined);
+      setManualIndex(0);
+    } catch (reason) {
+      setStartError(reason instanceof Error ? reason.message : "PLACEMENT_START_FAILED");
     } finally {
       setSaving(false);
     }
@@ -259,10 +309,10 @@ export default function PlacementClient() {
       <main className="mx-auto min-h-[70vh] max-w-3xl px-5 py-14 sm:py-20">
         <p className="text-sm font-bold uppercase tracking-[0.18em] text-blue-700">HSKKit placement</p>
         <h1 className="mt-4 text-4xl font-black tracking-tight text-slate-950 sm:text-5xl">
-          {cooldownActive || latestReady ? "Your latest placement is ready" : expired ? "Your saved placement session expired" : noQuestions ? "Placement is temporarily unavailable" : temporarilyUnavailable ? "Placement is temporarily busy" : loadFailed ? "We couldn't load your placement" : "Find a practical starting level"}
+          {expired ? "Your saved placement session expired" : cooldownActive || latestReady ? "Your latest placement is ready" : noQuestions ? "Placement is temporarily unavailable" : temporarilyUnavailable ? "Placement is temporarily busy" : loadFailed ? "We couldn't load your placement" : "Find a practical starting level"}
         </h1>
         <p className="mt-5 max-w-2xl text-lg leading-8 text-slate-600">
-          {cooldownActive ? `View your latest result now. You can retake the placement ${retakeAvailableAt ? retakeCountdown(retakeAvailableAt, nowMs) : "after the 24-hour cooldown"}.` : latestReady ? "Review your latest result or start a new placement when you are ready." : expired ? "Placement sessions stay available for seven days. Start a new placement to continue." : noQuestions ? "No diagnostic questions are available right now. No empty or demo result will be generated." : temporarilyUnavailable ? "Your saved answers are safe. Please try again." : loadFailed ? "Your saved answers have not been changed. Retry loading before starting a new session." : "Start with 12 questions across vocabulary, grammar, reading and listening. The test then adapts to your answers and finishes in 18–24 questions, with progress saved as you go."}
+          {expired ? "Placement sessions stay available for seven days. Your saved answers remain in history; view your latest result or start a new placement." : cooldownActive ? `View your latest result now. You can retake the placement ${retakeAvailableAt ? retakeCountdown(retakeAvailableAt, nowMs) : "after the 24-hour cooldown"}.` : latestReady ? "Review your latest result or start a new placement when you are ready." : noQuestions ? "No diagnostic questions are available right now. No empty or demo result will be generated." : temporarilyUnavailable ? "Your saved answers are safe. Please try again." : loadFailed ? "Your saved answers have not been changed. Retry loading before starting a new session." : "Start with 12 questions across vocabulary, grammar, reading and listening. The test then adapts to your answers and finishes in 18–24 questions, with progress saved as you go."}
         </p>
         {cooldownActive && retakeAtLabel ? <p className="mt-4 rounded-xl border border-blue-200 bg-blue-50 p-4 text-sm font-semibold text-blue-950" id="placement-retake-availability" role="status">Retake available {retakeAtLabel} ({retakeCountdown(retakeAvailableAt!, nowMs)}).</p> : null}
         {!loadFailed && !noQuestions && !latestResultId ? <div className="mt-7 grid gap-3 rounded-2xl border border-blue-200 bg-blue-50 p-5 text-sm text-blue-950 sm:grid-cols-3">
@@ -275,16 +325,27 @@ export default function PlacementClient() {
           <p className="mt-3">The diagnostic uses an approved, versioned question set including three listening items. If listening evidence is unavailable, the result lowers confidence and states what was not measured instead of guessing.</p>
         </details> : null}
         {loadError && !expired && !noQuestions ? <p className="mt-5 rounded-xl bg-red-50 p-4 text-sm text-red-800" role="alert">{placementPublicError(loadError)}</p> : null}
+        {loadError && loadReference ? <p className="mt-2 text-sm text-slate-500">Reference: <code className="font-semibold text-slate-700">{loadReference}</code></p> : null}
+        {latestResultId && latestRecommendedLevel ? <p className="mt-4 rounded-xl border border-slate-200 bg-white p-4 text-sm font-semibold text-slate-800">Latest saved result: HSK {latestRecommendedLevel}</p> : null}
         {startError ? <p className="mt-5 rounded-xl bg-red-50 p-4 text-sm text-red-800" role="alert">{placementPublicError(startError)}</p> : null}
         <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-          {loadFailed || noQuestions
-            ? <button className="inline-flex min-h-12 items-center justify-center rounded-xl bg-blue-600 px-6 font-bold text-white hover:bg-blue-700 disabled:opacity-60" disabled={loading} onClick={load} type="button">Try loading again</button>
-            : latestResultId
-              ? <>
-                  <Link className="inline-flex min-h-12 items-center justify-center rounded-xl bg-blue-600 px-6 font-bold text-white hover:bg-blue-700" href={`/placement/result/${encodeURIComponent(latestResultId)}`}>View my result</Link>
-                  <button aria-describedby={cooldownActive && retakeAtLabel ? "placement-retake-availability" : undefined} className="inline-flex min-h-12 items-center justify-center rounded-xl border border-slate-300 bg-white px-6 font-bold text-slate-800 hover:border-blue-400 disabled:cursor-not-allowed disabled:bg-slate-100 disabled:text-slate-500" disabled={saving || retakeLocked} onClick={start} type="button">{saving ? "Starting…" : cooldownActive ? `Retake available ${retakeAvailableAt ? retakeCountdown(retakeAvailableAt, nowMs) : "later"}` : "Retake placement"}</button>
-                </>
-              : <button className="inline-flex min-h-12 items-center justify-center rounded-xl bg-blue-600 px-6 font-bold text-white hover:bg-blue-700 disabled:opacity-60" disabled={saving || retakeLocked} onClick={start} type="button">{saving ? "Starting…" : expired ? "Start a new placement" : "Start placement"}</button>}
+          {loadError === "auth_required"
+            ? <Link className="inline-flex min-h-12 items-center justify-center rounded-xl bg-blue-600 px-6 font-bold text-white hover:bg-blue-700" href="/login?returnTo=%2Fplacement">Sign in again</Link>
+            : loadError === "account_unavailable"
+              ? <Link className="inline-flex min-h-12 items-center justify-center rounded-xl bg-blue-600 px-6 font-bold text-white hover:bg-blue-700" href="/account">Open account</Link>
+              : loadError === "content_incompatible" && loadRecoverySessionId
+                ? <button className="inline-flex min-h-12 items-center justify-center rounded-xl bg-blue-600 px-6 font-bold text-white hover:bg-blue-700 disabled:opacity-60" disabled={saving} onClick={restartIncompatiblePlacement} type="button">{saving ? "Starting…" : "Start a new placement"}</button>
+                : loadFailed || noQuestions
+                  ? <>
+                      <button className="inline-flex min-h-12 items-center justify-center rounded-xl bg-blue-600 px-6 font-bold text-white hover:bg-blue-700 disabled:opacity-60" disabled={loading} onClick={load} type="button">Try loading again</button>
+                      {latestResultId ? <Link className="inline-flex min-h-12 items-center justify-center rounded-xl border border-blue-300 bg-white px-6 font-bold text-blue-700" href={`/placement/result/${encodeURIComponent(latestResultId)}`}>View latest result</Link> : null}
+                    </>
+                  : latestResultId
+                    ? <>
+                        <Link className="inline-flex min-h-12 items-center justify-center rounded-xl bg-blue-600 px-6 font-bold text-white hover:bg-blue-700" href={`/placement/result/${encodeURIComponent(latestResultId)}`}>View my result</Link>
+                        <button aria-describedby={cooldownActive && retakeAtLabel ? "placement-retake-availability" : undefined} className="inline-flex min-h-12 items-center justify-center rounded-xl border border-slate-300 bg-white px-6 font-bold text-slate-800 hover:border-blue-400 disabled:cursor-not-allowed disabled:bg-slate-100 disabled:text-slate-500" disabled={saving || retakeLocked} onClick={start} type="button">{saving ? "Starting…" : cooldownActive ? `Retake available ${retakeAvailableAt ? retakeCountdown(retakeAvailableAt, nowMs) : "later"}` : expired ? "Start a new placement" : "Retake placement"}</button>
+                      </>
+                    : <button className="inline-flex min-h-12 items-center justify-center rounded-xl bg-blue-600 px-6 font-bold text-white hover:bg-blue-700 disabled:opacity-60" disabled={saving || retakeLocked} onClick={start} type="button">{saving ? "Starting…" : expired ? "Start a new placement" : "Start placement"}</button>}
           <Link className="inline-flex min-h-12 items-center justify-center rounded-xl border border-slate-300 px-6 font-bold text-slate-800" href="/levels">Choose a level instead</Link>
         </div>
       </main>

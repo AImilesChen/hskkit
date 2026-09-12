@@ -5,7 +5,11 @@ import { emptyLearningState } from "../src/lib/learning/domain.ts";
 import {
   answerPlacementQuestion,
   createPlacementSession,
+  expiredPlacement,
+  placementOverview,
+  placementSessionExpiresAt,
   restartPlacement,
+  resumePlacement,
   submitPlacement,
 } from "../src/lib/placement/domain.ts";
 import {
@@ -88,4 +92,58 @@ test("restart closes the prior session and creates a separate clean attempt", ()
   assert.notEqual(restarted.session.id, created.session.id);
   assert.equal(restarted.session.answers.length, 0);
   assert.equal(restarted.state.placementSessions?.find((entry) => entry.id === created.session.id)?.status, "abandoned");
+});
+
+test("signed-in learner restores an unfinished placement with saved answers intact", () => {
+  const ownerId = "user:account-restore";
+  const created = createPlacementSession(emptyLearningState(), { ownerId, idempotencyKey: "signed-start", now: "2026-08-21T00:00:00.000Z" });
+  const question = trustedPlacementQuestion(created.session.questionIds[0], created.session.questionVersion)!;
+  const answered = answerPlacementQuestion(created.state, {
+    sessionId: created.session.id,
+    questionId: question.id,
+    answer: "a",
+    idempotencyKey: "signed-answer",
+    now: "2026-08-21T00:01:00.000Z",
+  });
+  const resumed = resumePlacement(answered.state, ownerId, "2026-08-22T00:00:00.000Z");
+  assert.equal(resumed?.id, created.session.id);
+  assert.deepEqual(resumed?.answers, answered.session.answers);
+});
+
+test("unfinished placement becomes recoverable exactly at expiry without deleting answers", () => {
+  const ownerId = "user:account-expiry";
+  const created = createPlacementSession(emptyLearningState(), { ownerId, idempotencyKey: "expiry-start", now: "2026-08-21T00:00:00.000Z" });
+  const question = trustedPlacementQuestion(created.session.questionIds[0], created.session.questionVersion)!;
+  const answered = answerPlacementQuestion(created.state, {
+    sessionId: created.session.id,
+    questionId: question.id,
+    answer: "b",
+    idempotencyKey: "expiry-answer",
+    now: "2026-08-21T00:01:00.000Z",
+  });
+  const expiresAt = placementSessionExpiresAt(answered.session);
+  assert.equal(resumePlacement(answered.state, ownerId, expiresAt), undefined);
+  assert.equal(expiredPlacement(answered.state, ownerId, expiresAt)?.answers[0].answer, "b");
+  assert.equal(answered.state.placementSessions?.[0].status, "in_progress");
+});
+
+test("latest result remains available when a newer unfinished placement later expires", () => {
+  const ownerId = "user:account-history";
+  let state = createPlacementSession(emptyLearningState(), { ownerId, idempotencyKey: "history-first", now: "2026-08-21T00:00:00.000Z" }).state;
+  const firstSessionId = state.placementSessions![0].id;
+  state = finishAdaptive(state, firstSessionId, "correct");
+  const submitted = submitPlacement(state, { sessionId: firstSessionId, idempotencyKey: "history-submit", now: "2026-08-21T00:05:00.000Z" });
+  const newer = createPlacementSession(submitted.state, { ownerId, idempotencyKey: "history-newer", now: "2026-08-23T00:00:00.000Z" });
+  const question = trustedPlacementQuestion(newer.session.questionIds[0], newer.session.questionVersion)!;
+  const answered = answerPlacementQuestion(newer.state, {
+    sessionId: newer.session.id,
+    questionId: question.id,
+    answer: "a",
+    idempotencyKey: "history-newer-answer",
+    now: "2026-08-23T00:01:00.000Z",
+  });
+  const overview = placementOverview(answered.state, ownerId, "2026-09-01T00:00:00.000Z");
+  assert.equal(overview.latestResultId, submitted.result.id);
+  assert.equal(overview.canRetake, true);
+  assert.equal(expiredPlacement(answered.state, ownerId, "2026-09-01T00:00:00.000Z")?.answers.length, 1);
 });

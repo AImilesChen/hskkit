@@ -20,5 +20,8 @@ export async function POST(req: NextRequest) {
   }
   const idempotencyKey = shortPlacementValue(body.idempotencyKey, 100);
   if (!idempotencyKey) return NextResponse.json({ error: "INVALID_PLACEMENT_REQUEST" }, { status: 422 });
-  return runPlacementAction(req, "start", { idempotencyKey });
+  const previousSessionId = shortPlacementValue(body.previousSessionId, 160);
+  return previousSessionId
+    ? runPlacementAction(req, "restart", { idempotencyKey, previousSessionId })
+    : runPlacementAction(req, "start", { idempotencyKey });
 }

@@ -7,6 +7,7 @@ import { loadPlacementState, savePlacementState } from "@/lib/placement/storage"
 import {
   answerPlacementQuestion,
   createPlacementSession,
+  expiredPlacement,
   placementOverview,
   placementResult,
   placementSessionExpiresAt,
@@ -16,6 +17,7 @@ import {
 } from "@/lib/placement/domain";
 import { publicPlacementQuestion, trustedPlacementQuestion } from "@/lib/placement/questions";
 import { d1UnavailableResponse, userD1RetryAfterSeconds, withUserD1ReadProtection } from "@/lib/d1/user-protection";
+import { isUserD1TemporaryError } from "@/lib/d1/user-retry";
 
 export type PlacementAction = "start" | "answer" | "submit" | "restart";
 
@@ -81,10 +83,81 @@ function unavailableOrThrow(error: unknown) {
   throw error;
 }
 
-function placementLoadUnavailableOrThrow(error: unknown) {
-  const unavailable = d1UnavailableResponse(error, userD1RetryAfterSeconds());
-  if (unavailable) return unavailable;
-  throw error;
+type PlacementLoadDiagnostic = {
+  identity?: PlacementOwner;
+  sessionId?: string;
+  sessionStatus?: string;
+};
+
+type PlacementLoadTrace = {
+  requestId: string;
+  referenceId: string;
+  cfRayId: string | null;
+};
+
+function placementLoadTrace(req: NextRequest): PlacementLoadTrace {
+  const requestId = crypto.randomUUID();
+  return {
+    requestId,
+    referenceId: `PLC-${requestId.replaceAll("-", "").slice(0, 8).toUpperCase()}`,
+    cfRayId: req.headers.get("cf-ray"),
+  };
+}
+
+async function placementSessionIdHash(sessionId?: string) {
+  if (!sessionId) return null;
+  const digest = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(sessionId));
+  return Array.from(new Uint8Array(digest).slice(0, 6), (value) => value.toString(16).padStart(2, "0")).join("");
+}
+
+function placementLoadFailureSpec(error: unknown) {
+  const code = error instanceof Error ? error.message : "PLACEMENT_LOAD_FAILED";
+  if (isUserD1TemporaryError(error)) return { errorCode: "D1_TEMPORARILY_UNAVAILABLE", status: 503, retryable: true };
+  if (code === "ACCOUNT_REQUIRED") return { errorCode: code, status: 401, retryable: false };
+  if (code === "ACCOUNT_DELETED") return { errorCode: code, status: 403, retryable: false };
+  if (code === "PLACEMENT_QUESTION_NOT_FOUND" || code === "PLACEMENT_CONTENT_VERSION_MISMATCH") {
+    return { errorCode: "PLACEMENT_CONTENT_VERSION_MISMATCH", status: 409, retryable: false };
+  }
+  if (code === "PLACEMENT_NO_QUESTIONS") return { errorCode: code, status: 503, retryable: false };
+  return { errorCode: "PLACEMENT_LOAD_FAILED", status: 500, retryable: false };
+}
+
+async function placementLoadFailureResponse(
+  req: NextRequest,
+  error: unknown,
+  trace: PlacementLoadTrace,
+  diagnostic: PlacementLoadDiagnostic,
+  retryCount: number,
+) {
+  const spec = placementLoadFailureSpec(error);
+  const sessionIdHash = await placementSessionIdHash(diagnostic.sessionId);
+  console.error({
+    event: "placement_load_failed",
+    errorCode: spec.errorCode,
+    requestId: trace.requestId,
+    sessionIdHash,
+    sessionStatus: diagnostic.sessionStatus ?? null,
+    retryCount,
+    cfRayId: trace.cfRayId,
+  });
+  const payload = {
+    session: null,
+    error: spec.errorCode,
+    errorCode: spec.errorCode,
+    retryable: spec.retryable,
+    requestId: trace.requestId,
+    referenceId: trace.referenceId,
+    ...(spec.errorCode === "PLACEMENT_CONTENT_VERSION_MISMATCH" && diagnostic.sessionId
+      ? { recoverableSessionId: diagnostic.sessionId }
+      : {}),
+  };
+  const result = diagnostic.identity
+    ? response(req, payload, diagnostic.identity, spec.status)
+    : NextResponse.json(payload, { status: spec.status });
+  result.headers.set("x-request-id", trace.requestId);
+  result.headers.set("x-placement-reference", trace.referenceId);
+  if (spec.retryable) result.headers.set("retry-after", String(userD1RetryAfterSeconds()));
+  return result;
 }
 
 export function placementStatus(code: string) {
@@ -107,18 +180,24 @@ export async function placementFailure(req: NextRequest, code: string) {
   }
 }
 
-async function getPlacementSessionInner(req: NextRequest) {
+async function getPlacementSessionInner(req: NextRequest, diagnostic: PlacementLoadDiagnostic) {
   const identity = await owner();
-  if (identity.account?.status === "deleted") return response(req, { error: "ACCOUNT_DELETED" }, identity, 403);
+  diagnostic.identity = identity;
+  if (identity.account?.status === "deleted") throw new Error("ACCOUNT_DELETED");
   const loaded = await loadPlacementState(identity.id);
   const now = new Date().toISOString();
   const active = resumePlacement(loaded.state, identity.id, now);
+  const expiredSession = expiredPlacement(loaded.state, identity.id, now);
   const overview = placementOverview(loaded.state, identity.id, now);
+  diagnostic.sessionId = active?.id ?? expiredSession?.id;
+  diagnostic.sessionStatus = active?.status ?? expiredSession?.status ?? overview.status;
+  const latestResult = overview.latestResultId ? placementResult(loaded.state, identity.id, overview.latestResultId) : undefined;
   return response(req, {
     session: active ? sessionView(active) : null,
-    expired: overview.status === "expired",
+    expired: Boolean(expiredSession),
     status: overview.status,
     latestResultId: overview.latestResultId ?? null,
+    latestRecommendedLevel: latestResult?.recommendedLevel ?? null,
     retakeAvailableAt: overview.retakeAvailableAt ?? null,
     canRetake: overview.canRetake,
     serverNow: now,
@@ -128,10 +207,16 @@ async function getPlacementSessionInner(req: NextRequest) {
 }
 
 export async function getPlacementSession(req: NextRequest) {
+  const trace = placementLoadTrace(req);
+  const diagnostic: PlacementLoadDiagnostic = {};
+  let attempts = 0;
   try {
-    return await withUserD1ReadProtection(() => getPlacementSessionInner(req));
+    return await withUserD1ReadProtection(() => {
+      attempts += 1;
+      return getPlacementSessionInner(req, diagnostic);
+    });
   } catch (error) {
-    return placementLoadUnavailableOrThrow(error);
+    return placementLoadFailureResponse(req, error, trace, diagnostic, Math.max(0, attempts - 1));
   }
 }
 
