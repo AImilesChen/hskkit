@@ -193,18 +193,24 @@ test("P1 interleaves each new word with its word audio before later context audi
   }
 });
 
-test("P1 summary identifies learned words, review entries, and a genuinely started word for tomorrow", () => {
-  const changes = todaySummaryChanges([
-    { id: "learn:a", kind: "learn", contentId: "catalog:a", status: "completed", todayStatus: "new", learnContent: { hanzi: "爱" } },
-    { id: "learn:d", kind: "learn", contentId: "catalog:d", status: "skipped", todayStatus: "continue", startedAt: now, learnContent: { hanzi: "但是" } },
-    { id: "learn:b", kind: "learn", contentId: "catalog:b", status: "skipped", todayStatus: "new", startedAt: "2026-09-12T08:00:00.000Z", learnContent: { hanzi: "帮忙" } },
-    { id: "learn:e", kind: "learn", contentId: "catalog:e", status: "skipped", todayStatus: "new", startedAt: "2026-09-12T09:00:00.000Z", learnContent: { hanzi: "爱好" } },
-    { id: "learn:c", kind: "learn", contentId: "catalog:c", status: "pending", todayStatus: "new", learnContent: { hanzi: "北京" } },
-    { id: "review:a", kind: "review", contentId: "catalog:a", status: "completed" },
+test("P1 summary only reports a learned word as entered review when its review card is persisted", () => {
+  const items = [
+    { id: "learn:a", kind: "learn" as const, contentId: "catalog:a", contentVersion: "v1", status: "completed" as const, todayStatus: "new" as const, learnContent: { hanzi: "爱" } },
+    { id: "learn:d", kind: "learn" as const, contentId: "catalog:d", status: "skipped" as const, todayStatus: "continue" as const, startedAt: now, learnContent: { hanzi: "但是" } },
+    { id: "learn:b", kind: "learn" as const, contentId: "catalog:b", status: "skipped" as const, todayStatus: "new" as const, startedAt: "2026-09-12T08:00:00.000Z", learnContent: { hanzi: "帮忙" } },
+    { id: "learn:e", kind: "learn" as const, contentId: "catalog:e", status: "skipped" as const, todayStatus: "new" as const, startedAt: "2026-09-12T09:00:00.000Z", learnContent: { hanzi: "爱好" } },
+    { id: "learn:c", kind: "learn" as const, contentId: "catalog:c", status: "pending" as const, todayStatus: "new" as const, learnContent: { hanzi: "北京" } },
+    { id: "review:a", kind: "review" as const, contentId: "catalog:a", status: "completed" as const },
+  ];
+  const withoutPersistedCard = todaySummaryChanges(items, []);
+  assert.deepEqual(withoutPersistedCard.learnedWords, ["爱"]);
+  assert.deepEqual(withoutPersistedCard.enteredReviewWords, []);
+  assert.deepEqual(withoutPersistedCard.continueTomorrowWords, ["爱好"]);
+
+  const withPersistedCard = todaySummaryChanges(items, [
+    { contentId: "catalog:a", contentVersion: "v1", dimension: "reading" },
   ]);
-  assert.deepEqual(changes.learnedWords, ["爱"]);
-  assert.deepEqual(changes.enteredReviewWords, ["爱"]);
-  assert.deepEqual(changes.continueTomorrowWords, ["爱好"]);
+  assert.deepEqual(withPersistedCard.enteredReviewWords, ["爱"]);
 });
 
 test("P1 never plans context audio for a word whose Learn/audio unit was excluded by the budget", () => {

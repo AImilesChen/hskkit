@@ -115,14 +115,26 @@ export function completionProofNeedsSync(proof: TodayCompletionProof | null, cur
 
 export type TodaySummaryChangeItem = TodayJourneyProgressItem & {
   contentId?: string;
+  contentVersion?: string;
   startedAt?: string;
   todayStatus?: "new" | "continue";
   learnContent?: { hanzi: string };
 };
 
-export function todaySummaryChanges(items: readonly TodaySummaryChangeItem[]) {
+export type TodaySummaryReviewCard = {
+  contentId: string;
+  contentVersion: string;
+  dimension: "reading" | "audio" | "context_audio";
+};
+
+export function todaySummaryChanges(items: readonly TodaySummaryChangeItem[], cards: readonly TodaySummaryReviewCard[]) {
   const learnedWords = items
     .filter((item) => item.kind === "learn" && item.status === "completed" && Boolean(item.learnContent?.hanzi))
+    .map((item) => item.learnContent!.hanzi);
+  const enteredReviewWords = items
+    .filter((item) => item.kind === "learn" && item.status === "completed" && Boolean(item.learnContent?.hanzi)
+      && Boolean(item.contentId) && Boolean(item.contentVersion)
+      && cards.some((card) => card.dimension === "reading" && card.contentId === item.contentId && card.contentVersion === item.contentVersion))
     .map((item) => item.learnContent!.hanzi);
   const continueTomorrowWords = items
     .filter((item) => item.kind === "learn" && item.status !== "completed" && item.todayStatus !== "continue" && Boolean(item.startedAt) && Boolean(item.learnContent?.hanzi))
@@ -131,7 +143,7 @@ export function todaySummaryChanges(items: readonly TodaySummaryChangeItem[]) {
     .slice(0, 1);
   return {
     learnedWords,
-    enteredReviewWords: [...learnedWords],
+    enteredReviewWords,
     continueTomorrowWords,
   };
 }
