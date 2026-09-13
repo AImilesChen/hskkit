@@ -309,6 +309,14 @@ test("public listening payload never exposes the trusted answer before submissio
   assert.equal(JSON.stringify(publicAudioExercise(trusted!)).includes("correctAnswer"), false);
 });
 
+test("Today listening resolves a rotated public-catalog word by its exact asset id", () => {
+  const trusted = trustedTodayAudioExercise("hsk3.word.l2.0369.v1", "audio");
+  assert.ok(trusted);
+  assert.equal(trusted?.word.hanzi, "旅游");
+  assert.equal(trusted?.word.audio.status, "formal");
+  assert.equal(JSON.stringify(publicAudioExercise(trusted!)).includes("correctAnswer"), false);
+});
+
 test("same-day Placement change refreshes pending work without creating another Daily Session", () => {
   const level1 = selectTodayContent(1);
   const level2 = selectTodayContent(2);

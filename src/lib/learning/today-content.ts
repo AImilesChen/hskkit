@@ -1,7 +1,7 @@
 import { getHsk3LevelStatus, formalWordAudioUrlByContentId } from "../content/level-status.ts";
 import runtimeIndex from "../content/runtime-content-index.json" with { type: "json" };
 import type { CatalogSearchRow } from "../content/catalog-search.ts";
-import { findPublicCatalogWordByLogicalId, listPublicCatalogWordsForLevel } from "../content/public-catalog-index.ts";
+import { findPublicCatalogWordById, findPublicCatalogWordByLogicalId, listPublicCatalogWordsForLevel } from "../content/public-catalog-index.ts";
 import { listPublishedWords, type StudyWord } from "../dictionary/catalog.ts";
 import { learningTopics } from "../topics/catalog.ts";
 import type { LearningState } from "./domain.ts";
@@ -322,9 +322,12 @@ export function selectTodayContent(level: number, requestedCount = 1, options?: 
 export function todayContentByAssetId(assetId: string): TodayContentItem | undefined {
   const asset = [...Object.values(runtimeWords).flat(), ...(runtimeIndex.dictionaryAssets as RuntimeWord[])]
     .find((candidate) => candidate.id === assetId);
-  if (!asset) return undefined;
-  const word = listPublishedWords().find((candidate) => candidate.id === asset.id || candidate.hanzi === asset.hanzi);
-  return mapItem(asset, word);
+  if (asset) {
+    const word = listPublishedWords().find((candidate) => candidate.id === asset.id || candidate.hanzi === asset.hanzi);
+    return mapItem(asset, word);
+  }
+  const publicWord = findPublicCatalogWordById(assetId);
+  return publicWord ? todayContentFromCatalogRow(publicWord) : undefined;
 }
 
 export function todayContentByContentId(contentId: string): TodayContentItem | undefined {
