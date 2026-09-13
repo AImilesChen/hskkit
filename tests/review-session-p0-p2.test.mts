@@ -106,7 +106,7 @@ test("revealed catalog review content uses published vocabulary details and only
   const client = await source("src/app/components/learning-dashboard.tsx");
   for (const token of ["pinyin", "meaning", "example", "formalAudioSrc"]) assert.match(route, new RegExp(token));
   for (const token of ["Pinyin", "Meaning", "Example", "Example translation", "Formal recording"]) assert.match(client, new RegExp(token));
-  assert.match(route, /audio\?\.word\.audio\.status === "formal"/);
+  assert.match(route, /originalAudio\?\.word\.audio\.status === "formal"/);
   assert.match(audio, /formalWordAudioUrlByContentId\.get\(item\.assetId\)/);
   assert.match(client, /<audio[^>]+controls[^>]+src=\{activeCard\.formalAudioSrc\}/);
 });
@@ -188,9 +188,9 @@ test("mistake retries are system-checked and only a correct retry can resolve th
   assert.match(route, /grade: correct \? "good" : "again"/);
 });
 
-test("review UI separates mistake submission from no-input self-recall memory review", async () => {
+test("review UI separates question submission from vocabulary self-recall", async () => {
   const client = await source("src/app/components/learning-dashboard.tsx");
-  for (const token of ["Check answer", "Type your answer", "Think of the answer before revealing", "There is no answer field", "older saved item"]) assert.match(client, new RegExp(token));
+  for (const token of ["Check answer", "Type your answer", "Recall the word and its meaning in your mind", "Reveal word and meaning"]) assert.match(client, new RegExp(token));
   assert.match(client, /reviewDraft\.trim\(\)/);
   assert.match(client, /setAudioError\(""\)/);
 });

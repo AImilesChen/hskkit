@@ -42,6 +42,27 @@ function session(input: Partial<DailySession> & Pick<DailySession, "localDay" | 
   };
 }
 
+test("Today excludes review cards that cannot present a real question or recoverable vocabulary task", () => {
+  const state: LearningState = {
+    ...emptyLearningState(),
+    cards: [
+      { id: "blocked", contentId: "legacy:missing", contentVersion: "v1", dimension: "audio", dueAt: now, intervalDays: 0, ease: 2.5, revision: 0, reviewCount: 0, algorithmVersion: "hskkit-srs-v1", sourceAttemptId: "attempt-blocked", gradeKeys: [] },
+      { id: "eligible", contentId: "word:available", contentVersion: "v1", dimension: "audio", dueAt: now, intervalDays: 0, ease: 2.5, revision: 0, reviewCount: 0, algorithmVersion: "hskkit-srs-v1", sourceAttemptId: "attempt-eligible", gradeKeys: [] },
+    ],
+  };
+  const built = buildDailySession(state, {
+    ownerId,
+    localDay: day,
+    ruleVersion: "today-v10",
+    now,
+    dailyContent: ready(1, 1),
+    budgetMinutes: 20,
+    reviewCardEligible: (card) => card.id === "eligible",
+  });
+  assert.deepEqual(built.session.reviewCardIds, ["eligible"]);
+  assert.ok(!built.session.items.some((item) => item.reviewCardId === "blocked"));
+});
+
 test("P0 selects only complete published words from the learner's exact HSK level", () => {
   const candidates = listTodayContent(2);
   assert.ok(candidates.length >= 100, "the real Level 2 release must be used instead of the former two-word demo pool");

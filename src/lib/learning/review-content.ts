@@ -2,6 +2,47 @@ import type { Attempt } from "./domain.ts";
 import { ADVANCED_LISTENING_LESSONS, GRAMMAR_LESSONS, READING_LESSONS, type Step7Exercise } from "./step7-content.ts";
 
 export type ReviewAnswerMode = "choice" | "text" | "self_recall";
+export type ReviewPresentationMode = "question_review" | "vocabulary_recall" | "unsupported_legacy";
+
+export interface LegacyListeningVocabulary {
+  level: number;
+  hanzi: string;
+  pinyin: string;
+  meaning: string;
+  example?: { hanzi: string; pinyin: string; meaning: string };
+}
+
+export type LegacyListeningReviewPresentation =
+  | {
+    reviewMode: "vocabulary_recall";
+    reviewable: true;
+    prompt: string;
+    instruction: string;
+    correctAnswer: string;
+    level: number;
+    skill: string;
+  }
+  | { reviewMode: "unsupported_legacy"; reviewable: false };
+
+export function legacyListeningReviewPresentation(input: {
+  dimension: "reading" | "audio" | "context_audio";
+  audioSrc?: string;
+  vocabulary?: LegacyListeningVocabulary;
+}): LegacyListeningReviewPresentation {
+  if (input.dimension === "reading" || !input.audioSrc || !input.vocabulary) {
+    return { reviewMode: "unsupported_legacy", reviewable: false };
+  }
+  return {
+    reviewMode: "vocabulary_recall",
+    reviewable: true,
+    prompt: "Listen and recall the word and its meaning.",
+    instruction: "Play the recording, recall the word and meaning, then reveal them to check your memory.",
+    correctAnswer: `${input.vocabulary.hanzi} — ${input.vocabulary.meaning}`,
+    level: input.vocabulary.level,
+    skill: "Listening · vocabulary recall",
+  };
+}
+
 export interface ReviewSnapshot {
   level: number;
   levelBand: string;

@@ -814,7 +814,7 @@ function selectTodayReviewCards(state: LearningState, cards: SrsCard[], startLev
   }).slice(0, 3);
 }
 
-export function buildDailySession(state: LearningState, input: { ownerId: string; localDay: string; ruleVersion: string; now: string; dailyContent?: TodayContentPlan; budgetMinutes?: number; newWordCount?: number; listeningEnabled?: boolean; focus?: TodayFocus; allowFrozenUpdate?: boolean; preservedTodayContentIds?: string[] }) {
+export function buildDailySession(state: LearningState, input: { ownerId: string; localDay: string; ruleVersion: string; now: string; dailyContent?: TodayContentPlan; budgetMinutes?: number; newWordCount?: number; listeningEnabled?: boolean; focus?: TodayFocus; allowFrozenUpdate?: boolean; preservedTodayContentIds?: string[]; reviewCardEligible?: (card: SrsCard) => boolean }) {
   const prior = state.dailySessions.find((session) => session.ownerId === input.ownerId && session.localDay === input.localDay);
   if (prior?.frozenAt && !input.allowFrozenUpdate) return { state, session: prior };
   const newWordCount = isTodayNewWordCount(input.newWordCount) ? input.newWordCount : isTodayNewWordCount(prior?.newWordCount) ? prior.newWordCount : 1;
@@ -824,7 +824,7 @@ export function buildDailySession(state: LearningState, input: { ownerId: string
   const content = input.dailyContent;
   const todayLevel = content?.status === "ready" || content?.status === "empty" ? content.startLevel : prior?.startLevel ?? 1;
   const dueCards = selectTodayReviewCards(state, state.cards
-    .filter((card) => card.dueAt <= input.now)
+    .filter((card) => card.dueAt <= input.now && (input.reviewCardEligible?.(card) ?? true))
     .sort((a, b) => {
       const aMistake = openMistakeCardIds.has(a.id);
       const bMistake = openMistakeCardIds.has(b.id);

@@ -23,6 +23,7 @@ import {
   recordAudioAttempt,
   type DailyLearnContent,
   type LearningState,
+  type SrsCard,
 } from "../../../../lib/learning/domain";
 import { canRefreshTodayWords, isTodayBudgetMinutes, isTodayFocus, isTodayNewWordCount, recommendTodayNewWordCount } from "../../../../lib/learning/today-plan";
 import { articleBySlug, articleQuestion } from "../../../../lib/learning/reading-articles";
@@ -43,7 +44,7 @@ import { accessDecision, createAuditEvent, errorContract } from "../../../../lib
 import { recordPolicyAudit } from "../../../../lib/account/audit-storage";
 import { computeSessionStreak } from "../../../../lib/account/domain";
 import { computeOffsetSessionStreak, deriveHomeNextStep, learningLocalDay } from "../../../../lib/learning/progress";
-import { checkReviewAnswer, reviewSnapshotFromStep7Exercise } from "../../../../lib/learning/review-content";
+import { checkReviewAnswer, legacyListeningReviewPresentation, reviewSnapshotFromStep7Exercise } from "../../../../lib/learning/review-content";
 import { reviewLevelControl } from "../../../../lib/learning/review-session";
 import { resolvedReviewSnapshotForAttempt } from "../../../../lib/learning/review-content-resolver";
 import { getDictionaryLearningContext, getDictionaryWordsByIds } from "../../../../lib/dictionary/p2-server";
@@ -113,6 +114,30 @@ function assertDailyAudioBinding(state: LearningState, dailySessionId: string | 
     throw new Error("DAILY_ITEM_MISMATCH");
   }
 }
+function reviewPresentation(state: LearningState, card: SrsCard) {
+  const attempt = state.attempts.find((candidate) => candidate.id === card.sourceAttemptId);
+  const snapshot = attempt ? resolvedReviewSnapshotForAttempt(attempt) : undefined;
+  const catalogItem = attempt ? todayContentByContentId(attempt.contentId) : undefined;
+  const assetId = attempt?.contentId.startsWith("word:") ? attempt.contentId.slice(5) : catalogItem?.assetId;
+  const originalAudio = card.dimension !== "reading" && assetId
+    ? (trustedAudioExercise(assetId, card.dimension as AudioMode) ?? trustedTodayAudioExercise(assetId, card.dimension as AudioMode))
+    : undefined;
+  const snapshotAudioSrc = snapshot?.audioSrc ?? (originalAudio?.word.audio.status === "formal" ? originalAudio.word.audio.src : undefined);
+  const snapshotAudioText = snapshot?.audioText ?? originalAudio?.voiceText;
+  const questionSnapshot = snapshot && (card.dimension === "reading" || Boolean(snapshotAudioSrc && snapshotAudioText)) ? snapshot : undefined;
+  const fallbackWordAudio = !questionSnapshot && assetId
+    ? (trustedAudioExercise(assetId, "audio") ?? trustedTodayAudioExercise(assetId, "audio"))
+    : undefined;
+  const vocabulary = (questionSnapshot ? originalAudio : fallbackWordAudio)?.word;
+  const formalAudioSrc = questionSnapshot ? snapshotAudioSrc : fallbackWordAudio?.word.audio.status === "formal" ? fallbackWordAudio.word.audio.src : undefined;
+  const formalAudioText = questionSnapshot ? snapshotAudioText : fallbackWordAudio?.voiceText;
+  const legacyPresentation = legacyListeningReviewPresentation({
+    dimension: card.dimension,
+    audioSrc: formalAudioSrc,
+    vocabulary,
+  });
+  return { attempt, assetId, vocabulary, formalAudioSrc, formalAudioText, questionSnapshot, legacyPresentation };
+}
 function view(state: LearningState, ownerId: string, offsetMinutes: number, capabilities: ProductCapabilities, accountTimezone?: string) {
   const now = new Date().toISOString();
   const nextAction = deriveHomeNextStep(state, now);
@@ -130,43 +155,49 @@ function view(state: LearningState, ownerId: string, offsetMinutes: number, capa
     focus: savedPreferences?.focus ?? "balanced" as const,
   };
   const selectionContext = todaySelectionContext(state, ownerId, localDay);
-  const built = buildDailySession(state, { ownerId, localDay, ruleVersion: "today-v10", now, dailyContent: selectTodayContent(startLevel, preferences.newWordCount, selectionContext), budgetMinutes, ...preferences });
+  const built = buildDailySession(state, {
+    ownerId,
+    localDay,
+    ruleVersion: "today-v10",
+    now,
+    dailyContent: selectTodayContent(startLevel, preferences.newWordCount, selectionContext),
+    budgetMinutes,
+    ...preferences,
+    reviewCardEligible: (card) => {
+      const presentation = reviewPresentation(state, card);
+      return Boolean(presentation.questionSnapshot) || presentation.legacyPresentation.reviewable;
+    },
+  });
   const projected = projectLearningHistory(built.state, capabilities, new Date(now));
   const visibleCards = projected.cards;
   const cards = visibleCards.map((card) => {
-    const attempt = built.state.attempts.find((candidate) => candidate.id === card.sourceAttemptId);
-    const snapshot = attempt ? resolvedReviewSnapshotForAttempt(attempt) : undefined;
-    const assetId = attempt?.contentId.startsWith("word:") ? attempt.contentId.slice(5) : undefined;
-    const audio = card.dimension !== "reading" && assetId
-      ? (trustedAudioExercise(assetId, card.dimension as AudioMode) ?? trustedTodayAudioExercise(assetId, card.dimension as AudioMode))
-      : undefined;
-    const vocabulary = audio?.word;
-    const formalAudioSrc = snapshot?.audioSrc ?? (audio?.word.audio.status === "formal" ? audio.word.audio.src : undefined);
-    const formalAudioText = snapshot?.audioText ?? audio?.voiceText;
+    const { attempt, assetId, vocabulary, formalAudioSrc, formalAudioText, questionSnapshot, legacyPresentation } = reviewPresentation(built.state, card);
     const playbackRequired = card.dimension !== "reading" && Boolean(formalAudioSrc && formalAudioText);
     const isMistake = isOpenMistakeForCard(built.state, card);
     return {
       ...card,
-      prompt: snapshot?.prompt ?? attempt?.prompt ?? card.contentId,
-      context: snapshot?.context,
-      instruction: snapshot?.instruction,
-      answerMode: snapshot?.answerMode ?? "self_recall",
-      correctAnswer: snapshot?.correctAnswerText ?? attempt?.correctAnswerText ?? attempt?.correctAnswer ?? "",
-      correctAnswerKey: snapshot?.correctAnswer ?? attempt?.correctAnswer ?? "",
+      reviewMode: questionSnapshot ? "question_review" : legacyPresentation.reviewMode,
+      reviewable: Boolean(questionSnapshot) || legacyPresentation.reviewable,
+      prompt: questionSnapshot?.prompt ?? (legacyPresentation.reviewable ? legacyPresentation.prompt : ""),
+      context: questionSnapshot?.context,
+      instruction: questionSnapshot?.instruction ?? (legacyPresentation.reviewable ? legacyPresentation.instruction : undefined),
+      answerMode: questionSnapshot?.answerMode ?? "self_recall",
+      correctAnswer: questionSnapshot?.correctAnswerText ?? (legacyPresentation.reviewable ? legacyPresentation.correctAnswer : ""),
+      correctAnswerKey: questionSnapshot?.correctAnswer ?? attempt?.correctAnswer ?? "",
       userAnswer: attempt?.userAnswerText ?? attempt?.answer ?? "",
       priorAnswerLabel: "Answer from your earlier practice",
-      choices: snapshot?.options ? Object.entries(snapshot.options).map(([key, text]) => ({ key, text })) : [],
+      choices: questionSnapshot?.options ? Object.entries(questionSnapshot.options).map(([key, text]) => ({ key, text })) : [],
       isMistake,
-      legacyReview: !snapshot,
+      legacyReview: !questionSnapshot,
       reviewReason: isMistake ? "You missed this in an earlier practice session." : card.reviewCount === 0 ? "This is your first scheduled memory check." : "This item is due now based on your previous review.",
-      level: snapshot?.level,
-      levelBand: snapshot?.levelBand ?? "Legacy",
-      skill: snapshot?.skillLabel ?? (card.dimension === "reading" ? "Reading" : "Listening"),
-      sourceGroupId: snapshot?.sourceGroupId,
-      templateId: snapshot?.templateId,
-      canonicalContentKey: snapshot?.canonicalContentKey ?? card.canonicalContentKey,
-      topic: snapshot?.topic,
-      explanation: snapshot?.explanation ?? "This older item does not contain a complete original question snapshot. Use it only as a memory prompt.",
+      level: questionSnapshot?.level ?? (legacyPresentation.reviewable ? legacyPresentation.level : undefined),
+      levelBand: questionSnapshot?.levelBand ?? "Legacy",
+      skill: questionSnapshot?.skillLabel ?? (legacyPresentation.reviewable ? legacyPresentation.skill : "Unavailable legacy item"),
+      sourceGroupId: questionSnapshot?.sourceGroupId,
+      templateId: questionSnapshot?.templateId,
+      canonicalContentKey: questionSnapshot?.canonicalContentKey ?? card.canonicalContentKey,
+      topic: questionSnapshot?.topic,
+      explanation: questionSnapshot?.explanation ?? (vocabulary ? `${vocabulary.hanzi} (${vocabulary.pinyin}) means “${vocabulary.meaning}.”` : ""),
       audioText: formalAudioText,
       audioSrc: formalAudioSrc,
       assetId,
@@ -177,7 +208,7 @@ function view(state: LearningState, ownerId: string, offsetMinutes: number, capa
       playbackRequired,
       playbackReady: !playbackRequired || Boolean(built.state.audioReviewReady?.some((ready) => ready.cardId === card.id && ready.cardRevision === card.revision)),
     };
-  });
+  }).filter((card) => card.reviewable);
   const mistakes = projected.mistakes.map((mistake) => {
     const attempt = built.state.attempts.find((candidate) => candidate.id === mistake.sourceAttemptId);
     const dimension = attempt?.dimension ?? "reading";
@@ -202,9 +233,24 @@ function view(state: LearningState, ownerId: string, offsetMinutes: number, capa
   const streak = accountTimezone
     ? computeSessionStreak(built.state.dailySessions, accountTimezone, now)
     : computeOffsetSessionStreak(built.state.dailySessions, offsetMinutes, now);
-  const session = {
+  const reviewableCardIds = new Set(cards.map((card) => card.id));
+  const reviewableSessionItems = built.session.items.filter((item) => item.kind !== "review" || !item.reviewCardId || reviewableCardIds.has(item.reviewCardId));
+  const reviewableSessionItemIds = new Set(reviewableSessionItems.map((item) => item.id));
+  const removedReviewMinutes = built.session.items
+    .filter((item) => !reviewableSessionItemIds.has(item.id))
+    .reduce((minutes, item) => minutes + (item.estimatedMinutes ?? 0), 0);
+  const storedSession = {
     ...built.session,
-    items: built.session.items.map((item) => {
+    reviewCardIds: built.session.reviewCardIds?.filter((cardId) => reviewableCardIds.has(cardId)),
+    reviewItemIds: built.session.reviewItemIds?.filter((itemId) => reviewableSessionItemIds.has(itemId)),
+    totalEstimatedMinutes: typeof built.session.totalEstimatedMinutes === "number"
+      ? Math.max(0, built.session.totalEstimatedMinutes - removedReviewMinutes)
+      : undefined,
+    items: reviewableSessionItems,
+  };
+  const session = {
+    ...storedSession,
+    items: storedSession.items.map((item) => {
       if (item.kind !== "learn") return item;
       const dictionaryAssetId = item.id.startsWith("dictionary:") ? item.id.slice("dictionary:".length) : undefined;
       const resolvedLearnContent = dictionaryAssetId ? todayContentByAssetId(dictionaryAssetId) : todayContentByContentId(item.contentId);
@@ -212,8 +258,12 @@ function view(state: LearningState, ownerId: string, offsetMinutes: number, capa
       return learnContent ? { ...item, learnContent } : item;
     }),
   };
+  const viewState = {
+    ...built.state,
+    dailySessions: built.state.dailySessions.map((candidate) => candidate.id === storedSession.id ? storedSession : candidate),
+  };
   return {
-    state: built.state,
+    state: viewState,
     session,
     cards,
     mistakes,
@@ -225,7 +275,7 @@ function view(state: LearningState, ownerId: string, offsetMinutes: number, capa
     streak,
     streakBasis: accountTimezone ? `Account timezone: ${accountTimezone}` : "This device's local day",
     currentLevel: startLevel,
-    dueCount: built.state.cards.filter((card) => card.dueAt <= now).length,
+    dueCount: cards.filter((card) => card.dueAt <= now).length,
     practiceQuestionsCompleted: (built.state.practiceSessions ?? [])
       .filter((practice) => practice.dailySessionId === session.id)
       .reduce((count, practice) => Math.max(count, practice.answers.length), 0),
