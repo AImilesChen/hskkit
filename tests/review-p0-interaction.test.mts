@@ -88,6 +88,8 @@ test("Today vocabulary recall reveals answer details only after playback", async
   const client = await source("src/app/components/learning-dashboard.tsx");
   assert.match(client, /useTodayVocabularyRecall/);
   assert.match(client, /Reveal word and meaning/);
+  assert.match(client, /const useTodayQuestionReview = Boolean\(todayListeningReview && todayListeningReview\.todayReviewMode === "question_review"\)/);
+  assert.match(client, /!useTodayQuestionReview && !revealed\[activeCard\.id\] && !answerChecked/);
   assert.match(client, /disabled=\{!activeCard\.playbackReady\}/);
   assert.match(client, /activeCard\.hanzi/);
   assert.match(client, /How well did you remember it after revealing the word\?/);
