@@ -43,7 +43,7 @@ import { accessDecision, createAuditEvent, errorContract } from "../../../../lib
 import { recordPolicyAudit } from "../../../../lib/account/audit-storage";
 import { computeSessionStreak } from "../../../../lib/account/domain";
 import { computeOffsetSessionStreak, deriveHomeNextStep, learningLocalDay } from "../../../../lib/learning/progress";
-import { checkReviewAnswer, reviewSnapshotFromStep7Exercise } from "../../../../lib/learning/review-content";
+import { checkReviewAnswer, legacyListeningReviewPresentation, reviewSnapshotFromStep7Exercise } from "../../../../lib/learning/review-content";
 import { reviewLevelControl } from "../../../../lib/learning/review-session";
 import { resolvedReviewSnapshotForAttempt } from "../../../../lib/learning/review-content-resolver";
 import { getDictionaryLearningContext, getDictionaryWordsByIds } from "../../../../lib/dictionary/p2-server";
@@ -137,13 +137,30 @@ function view(state: LearningState, ownerId: string, offsetMinutes: number, capa
     const attempt = built.state.attempts.find((candidate) => candidate.id === card.sourceAttemptId);
     const snapshot = attempt ? resolvedReviewSnapshotForAttempt(attempt) : undefined;
     const assetId = attempt?.contentId.startsWith("word:") ? attempt.contentId.slice(5) : undefined;
+    const todayAssetId = assetId ?? todayContentByContentId(attempt?.contentId ?? "")?.assetId;
     const audio = card.dimension !== "reading" && assetId
       ? (trustedAudioExercise(assetId, card.dimension as AudioMode) ?? trustedTodayAudioExercise(assetId, card.dimension as AudioMode))
       : undefined;
     const vocabulary = audio?.word;
     const formalAudioSrc = snapshot?.audioSrc ?? (audio?.word.audio.status === "formal" ? audio.word.audio.src : undefined);
     const formalAudioText = snapshot?.audioText ?? audio?.voiceText;
-    const playbackRequired = card.dimension !== "reading" && Boolean(formalAudioSrc && formalAudioText);
+    const completeListeningQuestion = card.dimension !== "reading" && Boolean(snapshot && snapshot.audioSrc && snapshot.audioText);
+    const fallbackAudio = card.dimension !== "reading" && !completeListeningQuestion && todayAssetId
+      ? (trustedTodayAudioExercise(todayAssetId, "audio") ?? trustedAudioExercise(todayAssetId, "audio"))
+      : undefined;
+    const fallbackAudioSrc = fallbackAudio?.word.audio.status === "formal" ? fallbackAudio.word.audio.src : undefined;
+    const fallbackAudioText = fallbackAudio?.voiceText;
+    const legacyListening = card.dimension === "reading" || completeListeningQuestion
+      ? undefined
+      : legacyListeningReviewPresentation(fallbackAudio?.word, fallbackAudioSrc, fallbackAudioText);
+    const vocabularyPresentation = legacyListening?.reviewable ? legacyListening : undefined;
+    const todayReviewMode = card.dimension === "reading"
+      ? "reading_unchanged" as const
+      : completeListeningQuestion
+        ? "question_review" as const
+        : legacyListening?.reviewMode ?? "unsupported_legacy" as const;
+    const todayReviewable = card.dimension === "reading" || todayReviewMode !== "unsupported_legacy";
+    const todayVocabulary = fallbackAudio?.word;
     const isMistake = isOpenMistakeForCard(built.state, card);
     return {
       ...card,
@@ -158,6 +175,18 @@ function view(state: LearningState, ownerId: string, offsetMinutes: number, capa
       choices: snapshot?.options ? Object.entries(snapshot.options).map(([key, text]) => ({ key, text })) : [],
       isMistake,
       legacyReview: !snapshot,
+      todayReviewMode,
+      todayReviewable,
+      todayPrompt: completeListeningQuestion ? snapshot?.prompt : vocabularyPresentation?.prompt,
+      todayInstruction: completeListeningQuestion ? snapshot?.instruction : vocabularyPresentation?.instruction,
+      todayAudioSrc: completeListeningQuestion ? snapshot?.audioSrc : fallbackAudioSrc,
+      todayAudioText: completeListeningQuestion ? snapshot?.audioText : fallbackAudioText,
+      todayPlaybackRequired: card.dimension !== "reading" && Boolean((completeListeningQuestion ? snapshot?.audioSrc : fallbackAudioSrc) && (completeListeningQuestion ? snapshot?.audioText : fallbackAudioText)),
+      todayPlaybackReady: card.dimension === "reading" || !(completeListeningQuestion ? snapshot?.audioSrc : fallbackAudioSrc) || !(completeListeningQuestion ? snapshot?.audioText : fallbackAudioText) || Boolean(built.state.audioReviewReady?.some((ready) => ready.cardId === card.id && ready.cardRevision === card.revision)),
+      todayHanzi: todayVocabulary?.hanzi,
+      todayPinyin: todayVocabulary?.pinyin,
+      todayMeaning: todayVocabulary?.meaning,
+      todayExample: todayVocabulary?.example,
       reviewReason: isMistake ? "You missed this in an earlier practice session." : card.reviewCount === 0 ? "This is your first scheduled memory check." : "This item is due now based on your previous review.",
       level: snapshot?.level,
       levelBand: snapshot?.levelBand ?? "Legacy",
@@ -174,8 +203,8 @@ function view(state: LearningState, ownerId: string, offsetMinutes: number, capa
       meaning: vocabulary?.meaning,
       example: vocabulary?.example,
       formalAudioSrc,
-      playbackRequired,
-      playbackReady: !playbackRequired || Boolean(built.state.audioReviewReady?.some((ready) => ready.cardId === card.id && ready.cardRevision === card.revision)),
+      playbackRequired: card.dimension !== "reading" && Boolean(formalAudioSrc && formalAudioText),
+      playbackReady: card.dimension === "reading" || !formalAudioSrc || !formalAudioText || Boolean(built.state.audioReviewReady?.some((ready) => ready.cardId === card.id && ready.cardRevision === card.revision)),
     };
   });
   const mistakes = projected.mistakes.map((mistake) => {
@@ -316,12 +345,23 @@ async function postLearning(req: NextRequest) {
     const cardRevision = Number.isInteger(payload.cardRevision) ? Number(payload.cardRevision) : -1;
     try {
       const loaded = await loadState(identity.id);
-      const card = view(loaded.state, identity.id, tz, capabilities, identity.account?.timezone).cards.find((candidate) => candidate.id === cardId && candidate.revision === cardRevision);
-      if (!card?.audioText || card.dimension === "reading") throw new Error("INVALID_AUDIO_REVIEW");
+      const activeReview = view(loaded.state, identity.id, tz, capabilities, identity.account?.timezone);
+      const card = activeReview.cards.find((candidate) => candidate.id === cardId && candidate.revision === cardRevision);
+      const todayReview = payload.todayReview === true;
+      if (todayReview) {
+        const dailySessionId = short(payload.dailySessionId, 120);
+        const dailyItemId = short(payload.dailyItemId, 220);
+        const dailyItem = activeReview.session.id === dailySessionId ? activeReview.session.items.find((item) => item.id === dailyItemId) : undefined;
+        const firstPending = activeReview.session.items.find((item) => !item.deferred && item.status === "pending");
+        if (!dailyItem || dailyItem.kind !== "review" || dailyItem.reviewCardId !== cardId || dailyItem.status !== "pending" || firstPending?.id !== dailyItem.id) throw new Error("DAILY_ITEM_MISMATCH");
+      }
+      const audioText = todayReview ? card?.todayAudioText : card?.audioText;
+      const audioSrc = todayReview ? card?.todayAudioSrc : card?.audioSrc;
+      if (!card || !audioText || !audioSrc || card.dimension === "reading") throw new Error("INVALID_AUDIO_REVIEW");
       const exerciseKey = `review:${card.id}:${card.revision}`;
       if (action === "audio_review_playback_start") {
-        const trustedDuration = publishedAudioDurationBySrc(card.audioSrc);
-        const ticket = await createStep7PlaybackTicket(identity.id, exerciseKey, card.audioText, new Date(), trustedDuration);
+        const trustedDuration = publishedAudioDurationBySrc(audioSrc);
+        const ticket = await createStep7PlaybackTicket(identity.id, exerciseKey, audioText, new Date(), trustedDuration);
         return NextResponse.json({ playbackTicket: ticket.id, notBefore: ticket.notBefore, expiresAt: ticket.expiresAt }, { status: 201 });
       }
       const ticketId = short(payload.playbackTicket, 80);

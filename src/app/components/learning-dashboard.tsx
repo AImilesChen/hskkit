@@ -18,7 +18,7 @@ type MistakeTab = "open" | "corrected";
 type LearnContent = { assetId: string; hanzi: string; pinyin: string; meaning: string; partOfSpeech: string; example?: { hanzi: string; pinyin: string; meaning: string }; audioSrc?: string };
 type Item = { id: string; kind: "review" | "learn" | "listen" | "practice" | "summary"; contentId: string; contentVersion?: string; status: "pending" | "completed" | "skipped"; dimension?: Dimension; title?: string; href?: string; estimatedMinutes?: number; deferred?: boolean; reviewCardId?: string; learnContent?: LearnContent; todayStatus?: "new" | "continue"; selectionReason?: string; startedAt?: string };
 type Notice = { code: string; message: string; actionHref: string; actionLabel: string };
-type Card = { id: string; contentId: string; contentVersion: string; dimension: Dimension; dueAt: string; revision: number; prompt: string; context?: string; instruction?: string; answerMode: "choice" | "text" | "self_recall"; correctAnswer: string; correctAnswerKey: string; userAnswer: string; priorAnswerLabel: string; choices: Array<{ key: string; text: string }>; isMistake: boolean; legacyReview: boolean; reviewReason: string; explanation: string; level?: number; levelBand: string; skill: string; topic?: string; intervalDays: number; ease: number; reviewCount: number; audioText?: string; audioSrc?: string; assetId?: string; pinyin?: string; meaning?: string; example?: { hanzi: string; pinyin: string; meaning: string }; formalAudioSrc?: string; playbackRequired: boolean; playbackReady: boolean };
+type Card = { id: string; contentId: string; contentVersion: string; dimension: Dimension; dueAt: string; revision: number; prompt: string; context?: string; instruction?: string; answerMode: "choice" | "text" | "self_recall"; correctAnswer: string; correctAnswerKey: string; userAnswer: string; priorAnswerLabel: string; choices: Array<{ key: string; text: string }>; isMistake: boolean; legacyReview: boolean; todayReviewMode: "question_review" | "vocabulary_recall" | "unsupported_legacy" | "reading_unchanged"; todayReviewable: boolean; todayPrompt?: string; todayInstruction?: string; todayAudioSrc?: string; todayAudioText?: string; todayPlaybackRequired: boolean; todayPlaybackReady: boolean; todayHanzi?: string; todayPinyin?: string; todayMeaning?: string; todayExample?: { hanzi: string; pinyin: string; meaning: string }; reviewReason: string; explanation: string; level?: number; levelBand: string; skill: string; topic?: string; intervalDays: number; ease: number; reviewCount: number; audioText?: string; audioSrc?: string; assetId?: string; hanzi?: string; pinyin?: string; meaning?: string; example?: { hanzi: string; pinyin: string; meaning: string }; formalAudioSrc?: string; playbackRequired: boolean; playbackReady: boolean };
 type Mistake = { id: string; contentId: string; cardId?: string; status: string; createdAt: string; resolvedAt?: string; dimension: Dimension; prompt: string; level?: number; skill: string };
 type RewardSnapshot = { monthLearningDays: number; monthPoints: number; currentStreak: number; remainingSeconds: number; nextAward: number; nextMonthLearningDay: number; todayQualified: boolean; todayAwarded: boolean; todayAward: number };
 type Data = {
@@ -498,6 +498,11 @@ export default function LearningDashboard({ mode }: { mode: "today" | "review" |
     }
   }
   async function skip(item: Item) { await post("skip_item", { sessionId: data!.session.id, itemId: item.id }, `skip:${data!.session.id}:${item.id}`); }
+  async function skipUnsupportedTodayReview() {
+    const item = data?.session.id === entryTodaySessionId ? data.session.items.find((candidate) => candidate.id === entryTodayItemId) : undefined;
+    if (!item || item.kind !== "review" || item.status !== "pending") return;
+    if (await post("skip_item", { sessionId: data!.session.id, itemId: item.id }, `skip:${data!.session.id}:${item.id}`)) window.location.assign("/today");
+  }
   async function restore(item: Item) { await post("restore_item", { sessionId: data!.session.id, itemId: item.id }, `restore:${data!.session.id}:${item.id}`); }
   async function startLearn(item: Item) {
     if (!data || item.kind !== "learn" || item.status !== "pending" || item.startedAt) return;
@@ -553,9 +558,9 @@ export default function LearningDashboard({ mode }: { mode: "today" | "review" |
     const cardKey = `${card.id}:${card.revision}`;
     const coordinator = new PlaybackVerificationCoordinator({
       onStateChange: setReviewPlaybackState,
-      start: async () => playbackResponse<{ playbackTicket: string; notBefore?: string }>(await fetch("/api/v1/learning", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ action: "audio_review_playback_start", payload: { idempotencyKey: crypto.randomUUID(), cardId: card.id, cardRevision: card.revision }, tzOffset: tz(), queueBinding: data?.queueBinding }) })),
+      start: async () => playbackResponse<{ playbackTicket: string; notBefore?: string }>(await fetch("/api/v1/learning", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ action: "audio_review_playback_start", payload: { idempotencyKey: crypto.randomUUID(), cardId: card.id, cardRevision: card.revision, todayReview: entryIntent.kind === "today", dailySessionId: entryTodaySessionId, dailyItemId: entryTodayItemId }, tzOffset: tz(), queueBinding: data?.queueBinding }) })),
       complete: async (playbackTicket) => {
-        await playbackResponse(await fetch("/api/v1/learning", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ action: "audio_review_playback_complete", payload: { idempotencyKey: crypto.randomUUID(), cardId: card.id, cardRevision: card.revision, playbackTicket }, tzOffset: tz(), queueBinding: data?.queueBinding }) }));
+        await playbackResponse(await fetch("/api/v1/learning", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ action: "audio_review_playback_complete", payload: { idempotencyKey: crypto.randomUUID(), cardId: card.id, cardRevision: card.revision, playbackTicket, todayReview: entryIntent.kind === "today", dailySessionId: entryTodaySessionId, dailyItemId: entryTodayItemId }, tzOffset: tz(), queueBinding: data?.queueBinding }) }));
         await post("audio_review_ready", { cardId: card.id, cardRevision: card.revision, playbackTicket }, `audio-ready:${card.id}:${card.revision}`);
       },
     });
@@ -832,7 +837,28 @@ export default function LearningDashboard({ mode }: { mode: "today" | "review" |
   const activeReviewId = entryIntent.kind === "today"
     ? activeTodayReviewCardId(reviewIds, todayCompletedReviewIds)
     : activeReviewCardId(reviewIds, reviewedCount);
-  const activeCard = activeReviewId ? data.cards.find((card) => card.id === activeReviewId) : undefined;
+  const storedActiveCard = activeReviewId ? data.cards.find((card) => card.id === activeReviewId) : undefined;
+  const activeCard = storedActiveCard && entryIntent.kind === "today" && storedActiveCard.dimension !== "reading" ? {
+    ...storedActiveCard,
+    prompt: storedActiveCard.todayPrompt ?? storedActiveCard.prompt,
+    instruction: storedActiveCard.todayInstruction,
+    audioSrc: storedActiveCard.todayAudioSrc,
+    audioText: storedActiveCard.todayAudioText,
+    formalAudioSrc: storedActiveCard.todayAudioSrc,
+    playbackRequired: storedActiveCard.todayPlaybackRequired,
+    playbackReady: storedActiveCard.todayPlaybackReady,
+    legacyReview: storedActiveCard.todayReviewMode !== "question_review",
+    answerMode: storedActiveCard.todayReviewMode === "vocabulary_recall" ? "self_recall" as const : storedActiveCard.answerMode,
+    correctAnswer: storedActiveCard.todayReviewMode === "vocabulary_recall" ? storedActiveCard.todayHanzi ?? "" : storedActiveCard.correctAnswer,
+    topic: undefined,
+    explanation: storedActiveCard.todayReviewMode === "vocabulary_recall" && storedActiveCard.todayHanzi && storedActiveCard.todayPinyin && storedActiveCard.todayMeaning
+      ? `${storedActiveCard.todayHanzi} (${storedActiveCard.todayPinyin}) means “${storedActiveCard.todayMeaning}.”`
+      : storedActiveCard.explanation,
+    hanzi: storedActiveCard.todayHanzi,
+    pinyin: storedActiveCard.todayPinyin,
+    meaning: storedActiveCard.todayMeaning,
+    example: storedActiveCard.todayExample,
+  } : storedActiveCard;
   const activeFocusReason = data.focusedReview.find((card) => card.id === activeCard?.id)?.focusReason;
   const directEntryPreparing = !entryResolved || (entryIntent.kind !== "setup" && reviewIds === null);
   const directEntryEmpty = entryIntent.kind !== "setup" && reviewIds !== null && reviewIds.length === 0;
@@ -841,6 +867,9 @@ export default function LearningDashboard({ mode }: { mode: "today" | "review" |
   const currentAnswerCorrect = retryFeedback?.correct ?? false;
   const isMistakeRetry = Boolean(activeCard?.isMistake && !activeCard.legacyReview && activeCard.answerMode !== "self_recall");
   const canAnswerReview = Boolean(activeCard && !activeCard.legacyReview && activeCard.answerMode !== "self_recall");
+  const todayListeningReview = entryIntent.kind === "today" && activeCard?.dimension !== "reading" ? activeCard : undefined;
+  const useTodayListeningFlow = Boolean(todayListeningReview && (todayListeningReview.todayReviewMode === "question_review" || todayListeningReview.todayReviewMode === "vocabulary_recall"));
+  const useTodayVocabularyRecall = todayListeningReview?.todayReviewMode === "vocabulary_recall";
   const chooseReviewScope = (scope: ReviewLevelScope) => {
     setSelectedReviewScope(scope);
     const url = new URL(window.location.href);
@@ -889,7 +918,14 @@ export default function LearningDashboard({ mode }: { mode: "today" | "review" |
         </div>
       </div>}
 
-      {reviewIds && !sessionComplete && activeCard && <div aria-live="polite">
+      {reviewIds && !sessionComplete && activeCard && todayListeningReview?.todayReviewMode === "unsupported_legacy" && <article className="rounded-[28px] border border-amber-200 bg-white p-[24px] shadow-[0_22px_60px_rgba(15,23,42,0.08)] sm:p-[32px]" aria-live="polite">
+        <p className="text-sm font-bold uppercase tracking-[0.14em] text-amber-700">Older listening item</p>
+        <h2 className="mt-3 text-2xl font-bold text-slate-950">This item cannot be restored safely.</h2>
+        <p className="mt-3 text-slate-600">The saved item has neither a complete original question nor a verified word recording, so Today will skip only this item without changing your other Review cards.</p>
+        <button type="button" disabled={reviewSaving} onClick={() => void skipUnsupportedTodayReview()} className="mt-6 min-h-[48px] w-full rounded-xl bg-blue-600 px-5 py-3 font-bold text-white disabled:cursor-not-allowed disabled:opacity-50">{reviewSaving ? "Skipping…" : "Skip unavailable item"}</button>
+      </article>}
+
+      {reviewIds && !sessionComplete && activeCard && todayListeningReview?.todayReviewMode !== "unsupported_legacy" && <div aria-live="polite">
         <div className="mb-4 flex flex-wrap items-end justify-between gap-3">
           <div><p className="text-sm font-semibold text-slate-500">Review progress</p><p className="mt-1 text-lg font-bold text-slate-950">{displayReviewedCount + 1} of {sessionTotal}</p></div>
           <p className="text-sm text-slate-500">{Math.max(0, sessionTotal - displayReviewedCount - 1)} after this</p>
@@ -908,11 +944,12 @@ export default function LearningDashboard({ mode }: { mode: "today" | "review" |
             {activeCard.audioSrc && <div className="mt-5"><p className="mb-2 text-sm font-semibold text-slate-700">Original recording</p><AudioPlaybackControl asset={{ id: `${activeCard.id}:${activeCard.revision}`, src: activeCard.audioSrc, sourceLabel: "Synthesized listening audio" }} beforePlay={() => startFormalPlayback(activeCard)} onComplete={() => void completeFormalPlayback(activeCard)} onFailure={() => { reviewPlayback.current?.coordinator.fail(); setAudioError("Audio playback failed. Retry the recording before answering."); }} verificationState={reviewPlaybackState === "preparing" || reviewPlaybackState === "verifying" ? "verifying" : activeCard.playbackReady ? "verified" : "idle"} showProgress /></div>}
             {!activeCard.audioSrc && activeCard.dimension !== "reading" && <p className="mt-4 rounded-xl bg-amber-50 p-3 text-sm text-amber-900">The original recording is not available for this older item. It cannot be treated as a full listening retry.</p>}
             {!activeCard.playbackReady && activeCard.playbackRequired && <p className="mt-3 text-sm font-semibold text-amber-700">Finish audio playback before answering.</p>}
+            {todayListeningReview && !activeCard.playbackReady && <p className="mt-3 rounded-xl bg-blue-50 p-3 text-sm font-semibold text-blue-900">Listen to the full recording to open the answer step.</p>}
 
-            {canAnswerReview && !answerChecked ? <div className="mt-7">
+            {canAnswerReview && !answerChecked && (!useTodayListeningFlow || activeCard.playbackReady) ? <div className="mt-7">
               {activeCard.answerMode === "choice" ? <fieldset disabled={activeCard.playbackRequired && !activeCard.playbackReady}><legend className="font-bold text-slate-950">Choose an answer</legend><div className="mt-3 grid gap-3">{activeCard.choices.map((choice) => <label key={choice.key} className={`flex min-h-[52px] items-center gap-3 rounded-xl border px-4 py-3 transition ${activeCard.playbackRequired && !activeCard.playbackReady ? "cursor-not-allowed border-slate-200 bg-slate-50 text-slate-400" : selectedAnswer === choice.key ? "cursor-pointer border-blue-600 bg-blue-50" : "cursor-pointer border-slate-200 hover:border-slate-400"}`}><input type="radio" name={`review-${activeCard.id}`} value={choice.key} checked={selectedAnswer === choice.key} onChange={() => setSelectedAnswer(choice.key)} /><span><strong className="mr-2">{choice.key}.</strong>{choice.text}</span></label>)}</div></fieldset> : <><label className="font-bold text-slate-950" htmlFor={`review-answer-${activeCard.id}`}>Type your answer</label><textarea id={`review-answer-${activeCard.id}`} maxLength={180} value={reviewDraft} disabled={activeCard.playbackRequired && !activeCard.playbackReady} onChange={(event) => setReviewDraft(event.target.value)} className="mt-3 min-h-[112px] w-full rounded-xl border border-slate-300 p-4 text-base focus:border-blue-600 focus:outline-none focus:ring-4 focus:ring-blue-100 disabled:cursor-not-allowed disabled:bg-slate-50 disabled:text-slate-400" /></>}
               <button disabled={!(activeCard.answerMode === "choice" ? selectedAnswer : reviewDraft.trim()) || !activeCard.playbackReady || reviewSaving} onClick={() => void submitRetry(activeCard)} className="mt-5 min-h-[48px] w-full rounded-xl bg-blue-600 px-5 py-3 font-bold text-white disabled:cursor-not-allowed disabled:opacity-40 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-blue-200">{reviewSaving ? "Checking…" : "Check answer"}</button>
-            </div> : !revealed[activeCard.id] && !answerChecked ? <div className="mt-7">{activeCard.legacyReview && <p className="mb-3 rounded-xl bg-amber-50 p-3 text-sm text-amber-900">This older saved item has no complete original question. It is available only as a memory prompt and will not be presented as a real mistake retry.</p>}<p className="mb-3 text-sm text-slate-600">Think of the answer before revealing it. There is no answer field in this incomplete legacy review.</p><button className="min-h-[48px] w-full rounded-xl bg-blue-600 px-5 py-3 font-bold text-white disabled:cursor-not-allowed disabled:opacity-40 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-blue-200" disabled={!activeCard.playbackReady} onClick={() => setRevealed((current) => ({ ...current, [activeCard.id]: true }))}>Reveal answer</button></div> : null}
+            </div> : !revealed[activeCard.id] && !answerChecked ? <div className="mt-7">{activeCard.legacyReview && !useTodayVocabularyRecall && <p className="mb-3 rounded-xl bg-amber-50 p-3 text-sm text-amber-900">This older saved item has no complete original question. It is available only as a memory prompt and will not be presented as a real mistake retry.</p>}<p className="mb-3 text-sm text-slate-600">{useTodayVocabularyRecall ? "Play the recording, recall the word and meaning, then reveal the answer." : "Think of the answer before revealing it. There is no answer field in this incomplete legacy review."}</p><button className="min-h-[48px] w-full rounded-xl bg-blue-600 px-5 py-3 font-bold text-white disabled:cursor-not-allowed disabled:opacity-40 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-blue-200" disabled={!activeCard.playbackReady} onClick={() => setRevealed((current) => ({ ...current, [activeCard.id]: true }))}>{useTodayVocabularyRecall ? "Reveal word and meaning" : "Reveal answer"}</button></div> : null}
 
             {(revealed[activeCard.id] || answerChecked) && <div className="mt-7" aria-live="polite">
               {answerChecked && <div className={`rounded-2xl border p-4 ${currentAnswerCorrect ? "border-emerald-200 bg-emerald-50 text-emerald-950" : "border-rose-200 bg-rose-50 text-rose-950"}`}><p className="font-bold">{currentAnswerCorrect ? (isMistakeRetry ? "Correct this time — this mistake is resolved" : "Correct") : entryIntent.kind === "today" && isMistakeRetry ? "Saved for later review — today’s step still counts" : "Not yet — review the difference"}</p><p className="mt-1"><strong>Your answer this time:</strong> {selectedText}</p>{entryIntent.kind === "today" && isMistakeRetry && !currentAnswerCorrect && <p className="mt-2 text-sm">This mistake stays open and will return later without blocking the next Today step.</p>}</div>}
@@ -921,8 +958,9 @@ export default function LearningDashboard({ mode }: { mode: "today" | "review" |
                 {isMistakeRetry && <details className="mt-3 border-t border-slate-200 pt-3 text-sm"><summary className="cursor-pointer font-semibold text-slate-700">Earlier attempt</summary><p className="mt-2"><strong>{activeCard.priorAnswerLabel}:</strong> {activeCard.userAnswer || "No answer"}</p></details>}
                 <p className="mt-3 text-sm text-slate-600"><strong className="mb-1 block text-slate-800">Why the answer fits</strong>{activeCard.explanation}</p>
               </div>
-              {(activeCard.pinyin || activeCard.meaning || activeCard.example) && <section className="mt-4 rounded-2xl border border-slate-200 bg-white p-[20px]" aria-label="Vocabulary answer details">
-                {activeCard.pinyin && <p><strong>Pinyin:</strong> {activeCard.pinyin}</p>}
+              {(activeCard.hanzi || activeCard.pinyin || activeCard.meaning || activeCard.example) && <section className="mt-4 rounded-2xl border border-slate-200 bg-white p-[20px]" aria-label="Vocabulary answer details">
+                {activeCard.hanzi && <p><strong>Word:</strong> <span lang="zh-Hans">{activeCard.hanzi}</span></p>}
+                {activeCard.pinyin && <p className={activeCard.hanzi ? "mt-2" : undefined}><strong>Pinyin:</strong> {activeCard.pinyin}</p>}
                 {activeCard.meaning && <p className="mt-2"><strong>Meaning:</strong> {activeCard.meaning}</p>}
                 {activeCard.example && <div className="mt-4 border-t border-slate-200 pt-4">
                   <p><strong>Example:</strong> <span lang="zh-Hans">{activeCard.example.hanzi}</span></p>
@@ -932,7 +970,7 @@ export default function LearningDashboard({ mode }: { mode: "today" | "review" |
                 {activeCard.formalAudioSrc && activeCard.formalAudioSrc !== activeCard.audioSrc && <div className="mt-4"><p className="mb-2 text-sm font-semibold text-slate-700">Formal recording</p><audio controls preload="none" src={activeCard.formalAudioSrc} className="max-w-full" /></div>}
               </section>}
               {isMistakeRetry && answerChecked && <><p className="mt-4 text-sm text-slate-600">AI explanation available after you retry. It uses this saved question and feedback and costs one AI credit.</p><AiAssist feature="explanation" reviewCardId={activeCard.id} /></>}
-              {isMistakeRetry && answerChecked ? <button disabled={reviewSaving} onClick={() => continueAfterRetry(activeCard)} className="mt-5 min-h-[48px] w-full rounded-xl bg-blue-600 px-5 py-3 font-bold text-white disabled:cursor-not-allowed disabled:opacity-50 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-blue-200">Continue</button> : <div className="mt-5"><p className="font-bold text-slate-950">{answerChecked ? "How well did you remember it after answering?" : "How well did you remember it before revealing?"}</p><div className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-4">{reviewGradeOptions(activeCard.ease, activeCard.intervalDays).map((option) => <button disabled={reviewSaving} key={option.grade} onClick={() => void grade(activeCard, option.grade)} className="min-h-[76px] rounded-xl border border-slate-200 bg-white px-3 py-3 text-left transition hover:border-blue-500 hover:bg-blue-50 disabled:cursor-not-allowed disabled:opacity-50 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-blue-200"><strong className="block text-slate-950">{option.label}</strong><span className="mt-1 block text-xs text-slate-500">{option.hint}</span></button>)}</div></div>}
+              {isMistakeRetry && answerChecked ? <button disabled={reviewSaving} onClick={() => continueAfterRetry(activeCard)} className="mt-5 min-h-[48px] w-full rounded-xl bg-blue-600 px-5 py-3 font-bold text-white disabled:cursor-not-allowed disabled:opacity-50 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-blue-200">Continue</button> : <div className="mt-5"><p className="font-bold text-slate-950">{answerChecked ? "How well did you remember it after answering?" : useTodayVocabularyRecall ? "How well did you remember it after revealing the word?" : "How well did you remember it before revealing?"}</p><div className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-4">{reviewGradeOptions(activeCard.ease, activeCard.intervalDays).map((option) => <button disabled={reviewSaving} key={option.grade} onClick={() => void grade(activeCard, option.grade)} className="min-h-[76px] rounded-xl border border-slate-200 bg-white px-3 py-3 text-left transition hover:border-blue-500 hover:bg-blue-50 disabled:cursor-not-allowed disabled:opacity-50 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-blue-200"><strong className="block text-slate-950">{option.label}</strong><span className="mt-1 block text-xs text-slate-500">{option.hint}</span></button>)}</div></div>}
             </div>}
           </div>
         </article>

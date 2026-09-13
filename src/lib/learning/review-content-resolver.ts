@@ -28,6 +28,7 @@ export function resolvedReviewSnapshotForAttempt(attempt: Attempt): ReviewSnapsh
       correctAnswerText: question.options[question.correctAnswer],
       explanation: question.explanation,
       audioSrc: question.audioSrc,
+      audioText: question.audioText,
     };
   }
 

@@ -2,6 +2,27 @@ import type { Attempt } from "./domain.ts";
 import { ADVANCED_LISTENING_LESSONS, GRAMMAR_LESSONS, READING_LESSONS, type Step7Exercise } from "./step7-content.ts";
 
 export type ReviewAnswerMode = "choice" | "text" | "self_recall";
+export type LegacyListeningWord = {
+  assetId?: string;
+  hanzi: string;
+  pinyin: string;
+  meaning: string;
+  example?: { hanzi: string; pinyin: string; meaning: string };
+};
+export type ListeningReviewPresentation =
+  | { reviewMode: "vocabulary_recall"; reviewable: true; prompt: string; instruction: string }
+  | { reviewMode: "unsupported_legacy"; reviewable: false; prompt?: undefined; instruction?: undefined };
+
+export function legacyListeningReviewPresentation(word: LegacyListeningWord | undefined, audioSrc?: string, audioText?: string): ListeningReviewPresentation {
+  if (!word || !audioSrc || !audioText) return { reviewMode: "unsupported_legacy", reviewable: false };
+  return {
+    reviewMode: "vocabulary_recall",
+    reviewable: true,
+    prompt: "Listen and recall the word and its meaning.",
+    instruction: "播放音频，在脑中回忆这个词及其意思。",
+  };
+}
+
 export interface ReviewSnapshot {
   level: number;
   levelBand: string;
