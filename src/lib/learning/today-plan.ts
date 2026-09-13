@@ -113,6 +113,29 @@ export function completionProofNeedsSync(proof: TodayCompletionProof | null, cur
   return current.revision < proof.revision || !current.completedItem || (proof.summaryComplete && !current.summaryComplete);
 }
 
+export type TodaySummaryChangeItem = TodayJourneyProgressItem & {
+  contentId?: string;
+  startedAt?: string;
+  todayStatus?: "new" | "continue";
+  learnContent?: { hanzi: string };
+};
+
+export function todaySummaryChanges(items: readonly TodaySummaryChangeItem[]) {
+  const learnedWords = items
+    .filter((item) => item.kind === "learn" && item.status === "completed" && Boolean(item.learnContent?.hanzi))
+    .map((item) => item.learnContent!.hanzi);
+  const continueTomorrowWords = items
+    .filter((item) => item.kind === "learn" && item.status !== "completed" && item.todayStatus !== "continue" && Boolean(item.startedAt) && Boolean(item.learnContent?.hanzi))
+    .sort((left, right) => (right.startedAt ?? "").localeCompare(left.startedAt ?? ""))
+    .map((item) => item.learnContent!.hanzi)
+    .slice(0, 1);
+  return {
+    learnedWords,
+    enteredReviewWords: [...learnedWords],
+    continueTomorrowWords,
+  };
+}
+
 export function todaySummaryStats(items: readonly TodayJourneyProgressItem[]) {
   const completed = items.filter((item) => item.kind !== "summary" && item.status === "completed");
   return {

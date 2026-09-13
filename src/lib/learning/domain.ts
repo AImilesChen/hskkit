@@ -834,7 +834,14 @@ export function buildDailySession(state: LearningState, input: { ownerId: string
     }), todayLevel);
   const due: DailyItem[] = dueCards
     .map((card) => ({ id: reviewItemId(card), kind: "review", contentId: card.contentId, contentVersion: card.contentVersion, reviewCardId: card.id, dimension: card.dimension, status: "pending" }));
-  const contentItems = content?.status === "ready" ? content.items.slice(0, newWordCount) : [];
+  const preservedTodayContentIds = new Set(input.preservedTodayContentIds ?? []);
+  const preservedContentItems = content?.status === "ready" ? content.items.filter((item) => preservedTodayContentIds.has(item.contentId)) : [];
+  const contentItems = content?.status === "ready" ? [
+    ...preservedContentItems,
+    ...content.items
+      .filter((item) => !preservedTodayContentIds.has(item.contentId))
+      .slice(0, Math.max(0, newWordCount - preservedContentItems.length)),
+  ] : [];
   const actualNewWordCount = content ? contentItems.length : newWordCount;
   const planFingerprint = content?.status === "ready"
     ? `ready:${content.releaseId}:${content.startLevel}:${contentItems.map((item) => `${item.contentId}:${item.contentVersion}`).join("|")}:${newWordCount}:${listeningEnabled}:${focus}`
@@ -846,11 +853,9 @@ export function buildDailySession(state: LearningState, input: { ownerId: string
     : undefined;
   const contentCore: DailyItem[] = [];
   if (content?.status === "ready") {
-    const learnItems: DailyItem[] = [];
-    const audioItems: DailyItem[] = [];
     const contextItems: DailyItem[] = [];
     for (const item of contentItems) {
-      learnItems.push({
+      contentCore.push({
         id: `learn:${item.contentId}:${item.contentVersion}`,
         kind: "learn",
         contentId: item.contentId,
@@ -859,7 +864,7 @@ export function buildDailySession(state: LearningState, input: { ownerId: string
         href: `/word/${item.studySlug}`,
         status: "pending",
         todayStatus: item.todayStatus ?? "new",
-        selectionReason: item.selectionReason ?? `New · selected near your current HSK ${content.startLevel} progress.`,
+        selectionReason: item.selectionReason ?? `This is a new HSK ${content.startLevel} word you haven’t studied.`,
         learnContent: {
           assetId: item.assetId,
           contentId: item.contentId,
@@ -876,11 +881,11 @@ export function buildDailySession(state: LearningState, input: { ownerId: string
         },
       });
       if (listeningEnabled) {
-        audioItems.push({ id: `listen:${item.contentId}:${item.contentVersion}:audio`, kind: "listen", contentId: item.contentId, contentVersion: item.contentVersion, dimension: "audio", title: `Listen to ${item.hanzi}`, href: `/listen/today/${item.assetId}?mode=audio`, status: "pending" });
+        contentCore.push({ id: `listen:${item.contentId}:${item.contentVersion}:audio`, kind: "listen", contentId: item.contentId, contentVersion: item.contentVersion, dimension: "audio", title: `Listen to ${item.hanzi}`, href: `/listen/today/${item.assetId}?mode=audio`, status: "pending" });
         if (item.example) contextItems.push({ id: `listen:${item.contentId}:${item.contentVersion}:context_audio`, kind: "listen", contentId: item.contentId, contentVersion: item.contentVersion, dimension: "context_audio", title: "Listen in context", href: `/listen/today/${item.assetId}?mode=context_audio`, status: "pending" });
       }
     }
-    contentCore.push(...learnItems, ...audioItems, ...contextItems);
+    contentCore.push(...contextItems);
   }
   const core: DailyItem[] = content?.status === "ready" ? [
     ...contentCore,
@@ -904,7 +909,7 @@ export function buildDailySession(state: LearningState, input: { ownerId: string
   const dueMistakes = due.filter((item) => Boolean(item.reviewCardId && openMistakeCardIds.has(item.reviewCardId)));
   const dueOther = due.filter((item) => !dueMistakes.some((mistake) => mistake.id === item.id));
   const orderedCandidates = focus === "listening_focus"
-    ? [...coreTasks.filter((item) => item.kind === "listen"), ...due, ...carriedDictionaryItems, ...coreTasks.filter((item) => item.kind !== "listen")]
+    ? [...due, ...carriedDictionaryItems, ...coreTasks]
     : focus === "fix_mistakes"
       ? [...dueMistakes, ...coreTasks, ...dueOther, ...carriedDictionaryItems]
       : focus === "review_first"
@@ -914,18 +919,43 @@ export function buildDailySession(state: LearningState, input: { ownerId: string
   const candidates = orderedCandidates
     .filter((item) => !candidateIds.has(item.id) && Boolean(candidateIds.add(item.id)))
     .map((item) => ({ ...item, deferred: false, estimatedMinutes: item.estimatedMinutes ?? estimateDailyItem(item) }));
-  let used = 0;
-  const preservedTodayContentIds = new Set(input.preservedTodayContentIds ?? []);
-  const planned = candidates.filter((item) => {
-    const minutes = item.estimatedMinutes ?? 0;
-    if (preservedTodayContentIds.has(item.contentId)) {
-      used += minutes;
-      return true;
+  const candidateUnits: DailyItem[][] = [];
+  for (let index = 0; index < candidates.length; index += 1) {
+    const item = candidates[index];
+    const next = candidates[index + 1];
+    if (item.kind === "learn" && next?.kind === "listen" && next.dimension === "audio" && next.contentId === item.contentId) {
+      candidateUnits.push([item, next]);
+      index += 1;
+    } else {
+      candidateUnits.push([item]);
     }
-    if (used + minutes > budgetMinutes) return false;
+  }
+  let used = 0;
+  const firstLearnUnitIndex = candidateUnits.findIndex((unit) => unit.some((item) => item.kind === "learn"));
+  const firstLearnMinutes = firstLearnUnitIndex >= 0
+    ? candidateUnits[firstLearnUnitIndex].reduce((sum, item) => sum + (item.estimatedMinutes ?? 0), 0)
+    : 0;
+  const plannedUnits: DailyItem[][] = [];
+  const plannedLearnContentIds = new Set<string>();
+  for (let index = 0; index < candidateUnits.length; index += 1) {
+    const unit = candidateUnits[index];
+    const minutes = unit.reduce((sum, item) => sum + (item.estimatedMinutes ?? 0), 0);
+    const preserved = unit.some((item) => preservedTodayContentIds.has(item.contentId));
+    const contextAudio = unit.length === 1 && unit[0].kind === "listen" && unit[0].dimension === "context_audio";
+    if (contextAudio && !plannedLearnContentIds.has(unit[0].contentId)) continue;
+    if (preserved) {
+      used += minutes;
+      plannedUnits.push(unit);
+      unit.filter((item) => item.kind === "learn").forEach((item) => plannedLearnContentIds.add(item.contentId));
+      continue;
+    }
+    const reserveFirstLearn = firstLearnUnitIndex >= 0 && index < firstLearnUnitIndex ? firstLearnMinutes : 0;
+    if (used + minutes + reserveFirstLearn > budgetMinutes) continue;
     used += minutes;
-    return true;
-  });
+    plannedUnits.push(unit);
+    unit.filter((item) => item.kind === "learn").forEach((item) => plannedLearnContentIds.add(item.contentId));
+  }
+  const planned = plannedUnits.flat();
   const summary = { ...(core.find((item) => item.kind === "summary") ?? { id: "summary", kind: "summary" as const, contentId: "summary", status: "pending" as const }), estimatedMinutes: 0 };
   const plannedItems = [...planned, summary];
   const plannedReviewItems = plannedItems.filter((item) => item.kind === "review");

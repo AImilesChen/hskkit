@@ -3,6 +3,7 @@ import runtimeIndex from "../content/runtime-content-index.json" with { type: "j
 import type { CatalogSearchRow } from "../content/catalog-search.ts";
 import { findPublicCatalogWordByLogicalId, listPublicCatalogWordsForLevel } from "../content/public-catalog-index.ts";
 import { listPublishedWords, type StudyWord } from "../dictionary/catalog.ts";
+import { learningTopics } from "../topics/catalog.ts";
 import type { LearningState } from "./domain.ts";
 
 export interface TodayContentItem {
@@ -38,6 +39,7 @@ export interface TodaySelectionOptions {
   continueContentIds?: readonly string[];
   refreshCount?: number;
   progressWindowSize?: number;
+  lastNewLocalDayByContentId?: Readonly<Record<string, string>>;
 }
 
 type RuntimeWord = {
@@ -128,25 +130,57 @@ function stableHash(value: string) {
   return hash >>> 0;
 }
 
-function rank(items: TodayContentItem[], seed: string) {
-  return [...items].sort((left, right) => stableHash(`${seed}:${left.contentId}`) - stableHash(`${seed}:${right.contentId}`) || left.contentId.localeCompare(right.contentId));
+const topicCategoryByAssetId = new Map<string, string>();
+for (const topic of learningTopics) {
+  if (topic.status !== "published" || topic.sourceReleaseId !== releaseId) continue;
+  for (const assetId of topic.wordAssetIds) {
+    if (!topicCategoryByAssetId.has(assetId)) topicCategoryByAssetId.set(assetId, topic.categoryId);
+  }
 }
 
-function mixedSelection(items: TodayContentItem[], count: number, seed: string) {
-  const ranked = rank(items, seed);
-  const selected: TodayContentItem[] = [];
+function primaryPartOfSpeech(item: TodayContentItem) {
+  return item.partOfSpeech.split(/[\/,+]/)[0].trim().toLowerCase();
+}
+
+function dayDistance(fromDay: string, toDay: string) {
+  const from = Date.parse(`${fromDay}T00:00:00.000Z`);
+  const to = Date.parse(`${toDay}T00:00:00.000Z`);
+  return Number.isFinite(from) && Number.isFinite(to) ? Math.max(0, Math.round((to - from) / 86_400_000)) : 0;
+}
+
+function weightedSelection(items: TodayContentItem[], count: number, seed: string, localDay: string, lastShown: Readonly<Record<string, string>>) {
+  const remaining = [...items];
+  const selected: Array<{ item: TodayContentItem; balancedTopic: boolean; balancedPart: boolean }> = [];
   const usedParts = new Set<string>();
-  for (const item of ranked) {
-    const part = item.partOfSpeech.split(/[\/,+]/)[0].trim().toLowerCase();
-    if (usedParts.has(part)) continue;
-    selected.push(item);
-    usedParts.add(part);
-    if (selected.length === count) return selected;
-  }
-  for (const item of ranked) {
-    if (selected.some((candidate) => candidate.contentId === item.contentId)) continue;
-    selected.push(item);
-    if (selected.length === count) break;
+  const usedTopics = new Set<string>();
+  const windowDenominator = Math.max(1, items.length - 1);
+
+  while (remaining.length && selected.length < count) {
+    const ranked = remaining.map((item) => {
+      const sequenceIndex = items.findIndex((candidate) => candidate.contentId === item.contentId);
+      const proximity = 1 - sequenceIndex / windowDenominator;
+      const seededVariation = stableHash(`${seed}:${item.contentId}`) / 0xffffffff;
+      const sequenceSignal = proximity * 0.8 + seededVariation * 0.2;
+      const priorDay = lastShown[item.contentId];
+      const recencySignal = priorDay ? Math.min(1, dayDistance(priorDay, localDay) / 90) : 1;
+      const topic = topicCategoryByAssetId.get(item.assetId);
+      const topicSignal = topic ? (usedTopics.size === 0 ? 0.5 : usedTopics.has(topic) ? 0 : 1) : 0;
+      const part = primaryPartOfSpeech(item);
+      const partSignal = usedParts.size === 0 ? 0.5 : usedParts.has(part) ? 0 : 1;
+      return {
+        item,
+        topic,
+        part,
+        balancedTopic: Boolean(topic && usedTopics.size > 0 && !usedTopics.has(topic)),
+        balancedPart: Boolean(usedParts.size > 0 && !usedParts.has(part)),
+        score: sequenceSignal * 0.5 + recencySignal * 0.2 + topicSignal * 0.15 + partSignal * 0.15,
+      };
+    }).sort((left, right) => right.score - left.score || stableHash(`${seed}:tie:${left.item.contentId}`) - stableHash(`${seed}:tie:${right.item.contentId}`));
+    const choice = ranked[0];
+    selected.push({ item: choice.item, balancedTopic: choice.balancedTopic, balancedPart: choice.balancedPart });
+    usedParts.add(choice.part);
+    if (choice.topic) usedTopics.add(choice.topic);
+    remaining.splice(remaining.findIndex((item) => item.contentId === choice.item.contentId), 1);
   }
   return selected;
 }
@@ -178,11 +212,16 @@ export function todaySelectionContext(state: LearningState, ownerId: string, loc
     .flatMap((session) => session.items
       .filter((item) => item.kind === "learn" && item.todayStatus !== "continue")
       .map((item) => item.contentId)))];
-  const latestStarted = sessions
+  const lastNewLocalDayByContentId = Object.fromEntries(sessions
     .filter((session) => session.localDay < localDay)
-    .sort((left, right) => right.localDay.localeCompare(left.localDay))
+    .sort((left, right) => left.localDay.localeCompare(right.localDay))
     .flatMap((session) => session.items
-      .filter((item) => item.kind === "learn" && item.status === "pending" && Boolean(item.startedAt))
+      .filter((item) => item.kind === "learn" && item.todayStatus !== "continue")
+      .map((item) => [item.contentId, session.localDay] as const)));
+  const latestStarted = sessions
+    .filter((session) => session.localDay === daysBefore(localDay, 1))
+    .flatMap((session) => session.items
+      .filter((item) => item.kind === "learn" && item.status !== "completed" && Boolean(item.startedAt) && item.todayStatus !== "continue")
       .sort((left, right) => (right.startedAt ?? "").localeCompare(left.startedAt ?? "")))
     .find((item) => !completedContentIds.includes(item.contentId));
   return {
@@ -190,6 +229,7 @@ export function todaySelectionContext(state: LearningState, ownerId: string, loc
     localDay,
     completedContentIds,
     recentNewContentIds,
+    lastNewLocalDayByContentId,
     fixedTodayContentIds: today?.items.filter((item) => item.kind === "learn").map((item) => item.contentId),
     continueContentIds: latestStarted ? [latestStarted.contentId] : [],
     refreshCount: today?.wordRefreshesUsed ?? 0,
@@ -234,10 +274,16 @@ export function selectTodayContent(level: number, requestedCount = 1, options?: 
   const progressWindow = [...afterCursor, ...beforeCursor].slice(0, progressWindowSize);
   const remainingCount = Math.max(0, count - fixed.length - continuing.length);
   const seed = `${selection.ownerId ?? "guest"}:${selection.localDay ?? "today"}:${releaseId}:hsk-${level}:refresh-${selection.refreshCount ?? 0}:progressWindowSize-${progressWindowSize}`;
-  const selectedNew = mixedSelection(progressWindow, remainingCount, seed).map((item) => ({
+  const selectedNew = weightedSelection(progressWindow, remainingCount, seed, selection.localDay ?? "today", selection.lastNewLocalDayByContentId ?? {}).map(({ item, balancedTopic, balancedPart }) => ({
     ...item,
     todayStatus: "new" as const,
-    selectionReason: `New · selected near your current HSK ${level} progress.`,
+    selectionReason: balancedTopic && balancedPart
+      ? `This is a new HSK ${level} word you haven’t studied, selected near your current progress to balance today’s vocabulary topics and part-of-speech variety.`
+      : balancedTopic
+        ? `This is a new HSK ${level} word you haven’t studied, selected near your current progress to balance today’s vocabulary topics.`
+        : balancedPart
+          ? `This is a new HSK ${level} word you haven’t studied, selected near your current progress for part-of-speech variety.`
+          : `This is a new HSK ${level} word you haven’t studied, selected near your current progress.`,
   }));
   const items = [...fixed, ...continuing, ...selectedNew].slice(0, count);
   if (!items.length) {

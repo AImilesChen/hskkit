@@ -18,7 +18,7 @@ import {
   todayPlanLevel,
   todaySelectionContext,
 } from "../src/lib/learning/today-content.ts";
-import { canRefreshTodayWords } from "../src/lib/learning/today-plan.ts";
+import { canRefreshTodayWords, todaySummaryChanges } from "../src/lib/learning/today-plan.ts";
 
 const ownerId = "today-rotation-user";
 const day = "2026-09-12";
@@ -102,6 +102,53 @@ test("P0 carries at most one started unfinished word and does not carry a merely
   assert.equal(plan.items.filter((item) => item.todayStatus === "continue").length, 1);
 });
 
+test("P0 carries a started word only once, then returns it to normal eligibility instead of pinning it forever", () => {
+  const travel = listTodayContent(2).find((item) => item.hanzi === "旅行");
+  assert.ok(travel, "the formal HSK 2 release must contain 旅行");
+  const yesterday = session({
+    localDay: "2026-09-11",
+    items: [{
+      id: `learn:${travel.contentId}:${travel.contentVersion}`,
+      kind: "learn",
+      contentId: travel.contentId,
+      contentVersion: travel.contentVersion,
+      status: "skipped",
+      startedAt: "2026-09-11T09:00:00.000Z",
+      todayStatus: "new",
+    }],
+  });
+  const firstCarry = todaySelectionContext({ ...emptyLearningState(), dailySessions: [yesterday] }, ownerId, day);
+  assert.deepEqual(firstCarry.continueContentIds, [travel.contentId]);
+
+  const carriedToday = session({
+    localDay: day,
+    items: [{
+      ...yesterday.items[0],
+      id: `learn:${travel.contentId}:${travel.contentVersion}`,
+      todayStatus: "continue",
+    }],
+  });
+  const tomorrow = todaySelectionContext({ ...emptyLearningState(), dailySessions: [yesterday, carriedToday] }, ownerId, "2026-09-13");
+  assert.deepEqual(tomorrow.continueContentIds, [], "a Continue word must not occupy a new-word slot for a second extra day");
+});
+
+test("P0 uses the published topic map and weighted signals while keeping selection inside the progress segment", () => {
+  const candidates = listTodayContent(1);
+  const plan = selectTodayContent(1, 5, {
+    ownerId,
+    localDay: day,
+    progressWindowSize: 40,
+    lastNewLocalDayByContentId: Object.fromEntries(candidates.slice(0, 20).map((item) => [item.contentId, "2026-08-01"])),
+  });
+  assert.equal(plan.status, "ready");
+  if (plan.status !== "ready") return;
+  const allowed = new Set(candidates.slice(0, 40).map((item) => item.contentId));
+  assert.ok(plan.items.every((item) => allowed.has(item.contentId)));
+  assert.ok(new Set(plan.items.map((item) => item.partOfSpeech.split(/[\\/,+]/)[0].trim().toLowerCase())).size > 1, "Today should apply part-of-speech diversity");
+  assert.ok(plan.items.some((item) => item.selectionReason?.includes("balance today’s vocabulary topics")), "a real published topic-diversity choice must explain that signal honestly");
+  assert.ok(plan.items.some((item) => item.selectionReason?.includes("part-of-speech variety")), "a real part-of-speech diversity choice must explain that signal honestly");
+});
+
 test("P0 preserves an already frozen same-day plan even if candidate inputs later change", () => {
   const original = ready(3, 3);
   const built = buildDailySession(emptyLearningState(), {
@@ -116,6 +163,71 @@ test("P0 preserves an already frozen same-day plan even if candidate inputs late
   const fixed = todaySelectionContext(built.state, ownerId, day);
   const rebuiltPlan = ready(3, 3, { ...fixed, recentNewContentIds: original.items.map((item) => item.contentId) });
   assert.deepEqual(rebuiltPlan.items.map((item) => item.contentId), original.items.map((item) => item.contentId));
+});
+
+test("P1 interleaves each new word with its word audio before later context audio and practice", () => {
+  const plan = ready(1, 3);
+  for (const focus of ["balanced", "review_first", "fix_mistakes", "listening_focus"] as const) {
+    const built = buildDailySession(emptyLearningState(), {
+      ownerId: `${ownerId}-${focus}`,
+      localDay: day,
+      ruleVersion: "today-v10",
+      now,
+      dailyContent: plan,
+      budgetMinutes: 30,
+      newWordCount: 3,
+      listeningEnabled: true,
+      focus,
+    });
+    const core = built.session.items.filter((item) => item.kind !== "summary" && item.kind !== "review");
+    const learningIds = plan.items.map((item) => item.contentId);
+    for (const contentId of learningIds) {
+      const learnIndex = core.findIndex((item) => item.kind === "learn" && item.contentId === contentId);
+      const wordAudioIndex = core.findIndex((item) => item.kind === "listen" && item.dimension === "audio" && item.contentId === contentId);
+      assert.ok(learnIndex >= 0 && wordAudioIndex === learnIndex + 1, `${focus}: each word audio must immediately follow its Learn step`);
+    }
+    const firstContextIndex = core.findIndex((item) => item.kind === "listen" && item.dimension === "context_audio");
+    const lastLearnIndex = core.findLastIndex((item) => item.kind === "learn");
+    assert.ok(firstContextIndex < 0 || firstContextIndex > lastLearnIndex, `${focus}: context audio belongs after the new-word learning sequence`);
+    assert.equal(core.at(-1)?.kind, "practice", `${focus}: practice must close the content sequence`);
+  }
+});
+
+test("P1 summary identifies learned words, review entries, and a genuinely started word for tomorrow", () => {
+  const changes = todaySummaryChanges([
+    { id: "learn:a", kind: "learn", contentId: "catalog:a", status: "completed", todayStatus: "new", learnContent: { hanzi: "爱" } },
+    { id: "learn:d", kind: "learn", contentId: "catalog:d", status: "skipped", todayStatus: "continue", startedAt: now, learnContent: { hanzi: "但是" } },
+    { id: "learn:b", kind: "learn", contentId: "catalog:b", status: "skipped", todayStatus: "new", startedAt: "2026-09-12T08:00:00.000Z", learnContent: { hanzi: "帮忙" } },
+    { id: "learn:e", kind: "learn", contentId: "catalog:e", status: "skipped", todayStatus: "new", startedAt: "2026-09-12T09:00:00.000Z", learnContent: { hanzi: "爱好" } },
+    { id: "learn:c", kind: "learn", contentId: "catalog:c", status: "pending", todayStatus: "new", learnContent: { hanzi: "北京" } },
+    { id: "review:a", kind: "review", contentId: "catalog:a", status: "completed" },
+  ]);
+  assert.deepEqual(changes.learnedWords, ["爱"]);
+  assert.deepEqual(changes.enteredReviewWords, ["爱"]);
+  assert.deepEqual(changes.continueTomorrowWords, ["爱好"]);
+});
+
+test("P1 never plans context audio for a word whose Learn/audio unit was excluded by the budget", () => {
+  const basePlan = ready(1, 3);
+  const contextualItems = basePlan.items.map((item, index) => ({
+    ...item,
+    example: { hanzi: `例句${index + 1}`, pinyin: `lì jù ${index + 1}`, meaning: `Example ${index + 1}` },
+  }));
+  const built = buildDailySession(emptyLearningState(), {
+    ownerId,
+    localDay: day,
+    ruleVersion: "today-v10",
+    now,
+    dailyContent: { ...basePlan, item: contextualItems[0], items: contextualItems },
+    budgetMinutes: 5,
+    newWordCount: 3,
+    listeningEnabled: true,
+    focus: "balanced",
+  });
+  const plannedLearnIds = new Set(built.session.items.filter((item) => item.kind === "learn").map((item) => item.contentId));
+  for (const item of built.session.items.filter((candidate) => candidate.kind === "listen" && candidate.dimension === "context_audio")) {
+    assert.ok(plannedLearnIds.has(item.contentId), `context audio for ${item.contentId} requires its Learn step in the same plan`);
+  }
 });
 
 test("P1 records a real start without completing the word and limits replacement to once per day", () => {
@@ -149,9 +261,12 @@ test("P1 exposes honest New/Continue/Review/Mistake reasons, one replacement, le
     source("src/app/api/v1/learning/route.ts"),
     source("src/lib/learning/today-content.ts"),
   ]);
-  for (const token of ["New", "Continue", "Review", "Mistake", "Why today", "Change today's words", "Level complete", "Words learned"]) {
+  for (const token of ["New", "Continue", "Review", "Mistake", "Why today", "Change today’s words", "Level complete", "Words learned"]) {
     assert.match(dashboard, new RegExp(token.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")));
   }
+  assert.match(dashboard, /if available/);
+  assert.match(dashboard, /mistake\.cardId === review\.reviewCardId/);
+  assert.match(dashboard, /mistake\.dimension === review\.dimension/);
   assert.match(route, /start_item/);
   assert.match(route, /refresh_today_words/);
   assert.match(route, /addWordToReview/);
@@ -340,7 +455,7 @@ test("P1 refresh preserves every started or skipped Learn item even when due rev
     now: "2026-09-12T09:00:00.000Z",
     dailyContent: refreshedContent,
     budgetMinutes: 10,
-    newWordCount: 3,
+    newWordCount: 1,
     focus: "review_first",
     allowFrozenUpdate: true,
     preservedTodayContentIds: preservedContentIds,
@@ -349,4 +464,45 @@ test("P1 refresh preserves every started or skipped Learn item even when due rev
   const second = refreshed.session.items.find((item) => item.id === learns[1].id);
   assert.equal(first?.status, "skipped");
   assert.equal(second?.startedAt, "2026-09-12T08:30:00.000Z");
+});
+
+test("P1 never lets a large due-review queue block every planned new word", () => {
+  let state = emptyLearningState();
+  for (const word of listTodayContent(1).slice(10, 16)) {
+    state = addWordToReview(state, {
+      word: {
+        assetId: word.assetId,
+        contentId: word.contentId,
+        contentVersion: word.contentVersion,
+        level: word.level,
+        levelBand: String(word.level),
+        hanzi: word.hanzi,
+        traditional: word.hanzi,
+        pinyin: word.pinyin,
+        meaning: word.meaning,
+      },
+      observedAt: now,
+      dueAt: now,
+    });
+  }
+
+  for (const focus of ["balanced", "review_first", "fix_mistakes", "listening_focus"] as const) {
+    const built = buildDailySession(state, {
+      ownerId: `${ownerId}-${focus}`,
+      localDay: day,
+      ruleVersion: "today-v10",
+      now,
+      dailyContent: ready(1, 1),
+      budgetMinutes: 5,
+      newWordCount: 1,
+      listeningEnabled: true,
+      focus,
+    });
+    const planned = built.session.items.filter((item) => item.kind !== "summary");
+    const learnIndex = planned.findIndex((item) => item.kind === "learn");
+    assert.ok(learnIndex >= 0, `${focus} must keep at least one planned new word instead of spending the whole budget on reviews`);
+    assert.equal(planned[learnIndex + 1]?.kind, "listen", `${focus} must keep word audio attached to the planned Learn step`);
+    assert.equal(planned[learnIndex + 1]?.dimension, "audio", `${focus} must put word audio immediately after Learn`);
+    assert.equal(planned[learnIndex + 1]?.contentId, planned[learnIndex]?.contentId, `${focus} must attach the correct word audio`);
+  }
 });
