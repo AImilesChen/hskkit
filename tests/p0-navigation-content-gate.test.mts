@@ -35,7 +35,8 @@ test("formal status rejects levels outside HSK 3.0", () => {
   assert.throws(() => getHsk3LevelStatus(10), /level/i);
 });
 
-test("sitemap excludes legacy sample vocabulary routes before adding formal published levels", () => {
+test("sitemap includes only canonical vocabulary routes", () => {
   const source = fs.readFileSync(new URL("../src/app/sitemap.ts", import.meta.url), "utf8");
   assert.match(source, /sitemapContentRoutes\(\)\.filter\(\(route\) => !route\.startsWith\("\/vocabulary\/"\)\)/);
+  assert.match(source, /entry\.availability === "ready" && entry\.level <= 7/);
 });
