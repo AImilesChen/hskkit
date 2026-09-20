@@ -50,15 +50,15 @@ export const metadata: Metadata = {
     siteName: "HSKKit",
     type: "website",
     images: [{
-      url: "/og-image.png",
+      url: "/og-image-hsk3-2026.png",
       width: 1200,
       height: 630,
-      alt: "HSKKit - Free HSK Study Guides",
+      alt: "HSKKit — Learn published HSK 3.0 vocabulary across Levels 1–9",
     }],
   },
-  twitter: { 
+  twitter: {
     card: "summary_large_image",
-    images: ["/og-image.png"],
+    images: ["/og-image-hsk3-2026.png"],
   },
   icons: {
     icon: [
