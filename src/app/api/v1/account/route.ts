@@ -6,6 +6,8 @@ import { loadPlacementState } from "../../../../lib/placement/storage";
 import { countPlans } from "../../../../lib/planner/storage";
 import { d1UnavailableResponse, withUserD1ReadProtection } from "@/lib/d1/user-protection";
 
+export const dynamic = "force-dynamic";
+
 const cookie = (response: NextResponse, value: string, maxAge = 31_536_000) => {
   response.cookies.set(ACCOUNT_COOKIE, value, { httpOnly: true, sameSite: "strict", secure: true, maxAge, path: "/" });
   response.headers.set("cache-control", "private, no-store");
@@ -38,7 +40,7 @@ async function getAccount() {
       plannerVersions: guestPlanCount,
       revision: guest.revision,
     } : { hasData: false, attempts: 0, learningSessions: 0, plannerVersions: 0, revision: 0 },
-  });
+  }, { headers: { "cache-control": "private, no-store" } });
 }
 
 export async function GET() {

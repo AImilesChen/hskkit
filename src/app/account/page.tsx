@@ -9,6 +9,8 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false },
 };
 
+export const dynamic = "force-dynamic";
+
 export default function AccountPage() {
   return <><SiteHeader/><main className="learn account-page">
     <header className="account-page-header">

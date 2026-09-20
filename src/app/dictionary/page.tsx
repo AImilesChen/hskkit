@@ -12,6 +12,8 @@ export const metadata: Metadata = {
   alternates: { canonical: "/dictionary" },
 };
 
+export const dynamic = "force-static";
+
 export default function DictionaryPage() {
   const firstPage = getHsk3LevelPreview(1, 12);
   const level = getHsk3LevelStatus(1);

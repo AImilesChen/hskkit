@@ -6,6 +6,7 @@ import SubscriptionCheckout,{FreePlanAction,WelcomeTrialAction} from "./subscrip
 import { PUBLIC_ACCOUNT_SCOPE, PUBLIC_FORMAL_CONTENT_SCOPE } from "@/lib/public-copy";
 
 export const metadata: Metadata = { title: "Pricing | HSKKit", description: "Compare HSKKit Free with Pro Monthly and Pro Yearly.", alternates: { canonical: "/pricing" } };
+export const dynamic = "force-static";
 
 const proBenefits = [
   "Unlimited learning and reviews (anti-abuse safeguards still apply)",

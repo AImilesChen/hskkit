@@ -55,6 +55,9 @@
 	}, {
 		"binding": "BLOG_MEDIA_R2",
 		"bucket_name": "hskkit-blog-media"
+	}, {
+		"binding": "NEXT_INC_CACHE_R2_BUCKET",
+		"bucket_name": "hskkit-next-inc-cache"
 	}],
 	"queues": {
 		"producers": [{

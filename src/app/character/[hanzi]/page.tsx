@@ -8,7 +8,7 @@ import { getPublishedCharacterByHanzi } from "@/lib/dictionary/runtime-character
 
 type Props = { params: Promise<{ hanzi: string }> };
 function clean(value: string) { try { return decodeURIComponent(value); } catch { return value; } }
-export const dynamic = "force-dynamic";
+export const dynamic = "force-static";
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const hanzi = clean((await params).hanzi);

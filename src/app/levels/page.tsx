@@ -9,6 +9,8 @@ export const metadata: Metadata = {
   alternates: { canonical: "/levels" },
 };
 
+export const dynamic = "force-static";
+
 const descriptions = [
   "Build essential greetings and everyday study language.",
   "Handle familiar routines, travel, and common habits.",

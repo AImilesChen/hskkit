@@ -22,6 +22,8 @@ export const metadata: Metadata = {
   alternates: { canonical: "/" },
 };
 
+export const dynamic = "force-static";
+
 type Tool = {
   title: string;
   text: string;
