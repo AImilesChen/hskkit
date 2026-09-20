@@ -4,9 +4,10 @@ import test from "node:test";
 
 const sitemapSource = fs.readFileSync(new URL("../src/app/sitemap.ts", import.meta.url), "utf8");
 
-test("sitemap generation stays off D1 so crawlers cannot exhaust the database queue", () => {
+test("sitemap uses the shared short-lived Blog cache instead of uncached repository reads", () => {
   assert.doesNotMatch(sitemapSource, /getVerifiedTopicsSnapshot|listPublishedBlogSlugs/);
-  assert.doesNotMatch(sitemapSource, /dynamic\s*=\s*["']force-dynamic["']/);
-  assert.match(sitemapSource, /content\/blog\/manifest\.json/);
+  assert.match(sitemapSource, /dynamic\s*=\s*["']force-dynamic["']/);
+  assert.match(sitemapSource, /listCachedPublishedBlogSlugs/);
+  assert.doesNotMatch(sitemapSource, /content\/blog\/manifest\.json/);
   assert.match(sitemapSource, /publishedTopicRoutesForVerifiedAssets/);
 });

@@ -3,9 +3,10 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { StudyPage } from "@/app/components/study-shell";
+import { getCachedPublishedBlogPostBySlug, listCachedRelatedBlogPosts } from "@/lib/blog/cache";
 import { estimateReadingMinutes, extractBlogFaqs, extractBlogHeadings, markdownToSafeHtml } from "@/lib/blog/domain";
 import { blogLearningActions, recommendedBlogLearningAction } from "@/lib/blog/learning-actions";
-import { blogMediaUrl, getPublishedBlogPostBySlug, listRelatedBlogPosts } from "@/lib/blog/repository";
+import { blogMediaUrl } from "@/lib/blog/repository";
 import BlogActionLink from "../blog-action-link";
 
 export const dynamic = "force-dynamic";
@@ -15,7 +16,7 @@ const dateLabel = (value?: string) => value ? new Date(value).toLocaleDateString
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;
-  const post = await getPublishedBlogPostBySlug(slug);
+  const post = await getCachedPublishedBlogPostBySlug(slug);
   if (!post) return { title: "Article not found | HSKKit", robots: { index: false, follow: false } };
   const image = post.featuredImageKey ? absolute(blogMediaUrl(post.featuredImageKey)) : absolute("/og-image.png");
   return {
@@ -29,13 +30,13 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 
 export default async function BlogArticlePage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const post = await getPublishedBlogPostBySlug(slug);
+  const post = await getCachedPublishedBlogPostBySlug(slug);
   if (!post) notFound();
   const faqs = extractBlogFaqs(post.contentMarkdown);
   const bodyMarkdown = post.contentMarkdown.replace(/^#\s+.+\n+/, "").split(/\n##\s+(?:FAQ|Frequently asked questions)\s*\n/i)[0].trim();
   const headings = extractBlogHeadings(bodyMarkdown);
   const bodyHtml = markdownToSafeHtml(bodyMarkdown);
-  const related = await listRelatedBlogPosts(post);
+  const related = await listCachedRelatedBlogPosts(post);
   const actions = blogLearningActions(post.hskLevel);
   const recommended = recommendedBlogLearningAction(post.hskLevel);
   const levelName = post.hskLevel ? `HSK ${post.hskLevel >= 7 ? "7–9" : post.hskLevel}` : "All HSK levels";

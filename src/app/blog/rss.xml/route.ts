@@ -1,10 +1,10 @@
-import { listPublishedBlogFeed } from "@/lib/blog/repository";
+import { listCachedPublishedBlogFeed } from "@/lib/blog/cache";
 
 export const dynamic = "force-dynamic";
 const escapeXml = (value: string) => value.replace(/[<>&"']/g, (character) => ({ "<": "&lt;", ">": "&gt;", "&": "&amp;", '"': "&quot;", "'": "&apos;" }[character]!));
 
 export async function GET() {
-  const posts = await listPublishedBlogFeed(100);
+  const posts = await listCachedPublishedBlogFeed(100);
   const items = posts.map((post) => `<item>
 <title>${escapeXml(post.title)}</title>
 <link>https://hskkit.com/blog/${encodeURIComponent(post.slug)}</link>

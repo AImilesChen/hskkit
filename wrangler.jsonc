@@ -45,6 +45,20 @@
 		"database_name": "hskkit-placement",
 		"database_id": "f9cd1bb9-a95c-4e8e-843e-25cb013a41a2",
 		"migrations_dir": "migrations-placement"
+	}, {
+		"binding": "NEXT_TAG_CACHE_D1",
+		"database_name": "hskkit-next-tag-cache",
+		"database_id": "7c59cd48-fa79-459b-ae6c-492c965349b5"
+	}],
+	"durable_objects": {
+		"bindings": [{
+			"name": "NEXT_CACHE_DO_QUEUE",
+			"class_name": "DOQueueHandler"
+		}]
+	},
+	"migrations": [{
+		"tag": "v1",
+		"new_sqlite_classes": ["DOQueueHandler"]
 	}],
 	"send_email": [{
 		"name": "FEEDBACK_EMAIL"

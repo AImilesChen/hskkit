@@ -106,7 +106,7 @@ test("Stage E exposes article metadata, structured data, sitemap and RSS without
   assert.match(repository, /published_at<=\?/);
   assert.match(repository, /published_version_number/);
   assert.doesNotMatch(repository, /status IN \('draft','withdrawn'\)/);
-  assert.match(sitemap, /listPublishedBlogSlugs/);
+  assert.match(sitemap, /listCachedPublishedBlogSlugs/);
   assert.match(rss, /application\/rss\+xml/);
   assert.match(rss, /escapeXml/);
 });

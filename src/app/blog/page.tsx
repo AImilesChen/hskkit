@@ -2,7 +2,8 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { StudyPage } from "@/app/components/study-shell";
 import { BLOG_CATEGORIES, normalizePublicBlogQuery } from "@/lib/blog/domain";
-import { blogMediaUrl, listPublishedBlogPosts } from "@/lib/blog/repository";
+import { listCachedPublishedBlogPosts } from "@/lib/blog/cache";
+import { blogMediaUrl } from "@/lib/blog/repository";
 
 export const dynamic = "force-dynamic";
 export const metadata: Metadata = {
@@ -16,7 +17,7 @@ const dateLabel = (value?: string) => value ? new Date(value).toLocaleDateString
 
 export default async function BlogPage({ searchParams }: { searchParams: Promise<Record<string, string | string[] | undefined>> }) {
   const query = normalizePublicBlogQuery(await searchParams);
-  const { posts, hasMore } = await listPublishedBlogPosts(query);
+  const { posts, hasMore } = await listCachedPublishedBlogPosts(query);
   const nextQuery = new URLSearchParams();
   if (query.q) nextQuery.set("q", query.q);
   if (query.category) nextQuery.set("category", query.category);

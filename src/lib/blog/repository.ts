@@ -173,7 +173,7 @@ export async function listRelatedBlogPosts(post: PublicBlogPost, limit = 3): Pro
 }
 
 export async function listPublishedBlogSlugs(): Promise<Array<{ slug: string; published_at: string; updated_at: string }>> {
-  const rows = await db().prepare("SELECT slug,published_at,updated_at FROM blog_posts WHERE status='published' AND published_at<=? AND published_version_number IS NOT NULL ORDER BY published_at DESC LIMIT 1000").bind(new Date().toISOString()).all<{ slug: string; published_at: string; updated_at: string }>();
+  const rows = await db().prepare("SELECT p.slug,p.published_at,v.created_at AS updated_at FROM blog_posts p JOIN blog_post_versions v ON v.post_id=p.id AND v.version_number=p.published_version_number WHERE p.status='published' AND p.published_at<=? AND p.published_version_number IS NOT NULL ORDER BY p.published_at DESC LIMIT 1000").bind(new Date().toISOString()).all<{ slug: string; published_at: string; updated_at: string }>();
   return rows.results;
 }
 
