@@ -4,6 +4,8 @@ import test from "node:test";
 
 import catalogJson from "../src/lib/content/catalog.json" with { type: "json" };
 import manifestJson from "../content/releases/hsk3-content-truth-v5.json" with { type: "json" };
+import publicCatalogIndexJson from "../src/lib/content/public-catalog-index.json" with { type: "json" };
+import runtimeContentIndexJson from "../src/lib/content/runtime-content-index.json" with { type: "json" };
 import { queryCatalog, validateRepository, type ContentRepository } from "../src/lib/content/repository.ts";
 import { toPublicCatalogResponse } from "../src/lib/content/public-catalog.ts";
 
@@ -62,4 +64,33 @@ test("runtime level pages use the pre-indexed published catalog instead of full 
   assert.doesNotMatch(source, /queryCatalog|catalog\.json/);
   assert.match(source, /runtime-content-index\.json/);
   assert.match(source, /runtimeIndex\.runtimeWords/);
+});
+
+test("lexical sense markers never leak into the four affected word displays", () => {
+  const expectedWords = new Map([
+    ["hsk3.word.l2.0062.v1", ["称", "稱"]],
+    ["hsk3.word.l2.0377.v1", ["面", "面"]],
+    ["hsk3.word.l2.0378.v1", ["面", "麵"]],
+    ["hsk3.word.l5.0101.v1", ["称", "稱"]],
+  ]);
+  for (const [id, [hanzi, traditional]] of expectedWords) {
+    const asset = repository.contentAssets.find((candidate) => candidate.id === id);
+    assert.equal(asset?.payload.hanzi, hanzi, `${id} simplified display`);
+    assert.equal(asset?.payload.traditional, traditional, `${id} traditional display`);
+    const entry = manifest.entries.find((candidate) => candidate.id === id) as ManifestEntry & { traditional?: string };
+    assert.equal(entry?.hanzi, hanzi, `${id} manifest simplified display`);
+    assert.equal(entry?.traditional, traditional, `${id} manifest traditional display`);
+  }
+
+  const publicWords = (publicCatalogIndexJson as { words: Array<[string, string, string, string, string, string]> }).words;
+  const runtimeWords = Object.values((runtimeContentIndexJson as { runtimeWords: Record<string, Array<{ id: string; hanzi: string }>> }).runtimeWords).flat();
+  assert.equal(publicWords.some(([id, , , , hanzi, traditional]) => expectedWords.has(id) && (/[0-9¹²³⁴⁵⁶⁷⁸⁹]$/.test(hanzi) || /[0-9¹²³⁴⁵⁶⁷⁸⁹]$/.test(traditional))), false);
+  assert.equal(runtimeWords.some((word) => expectedWords.has(word.id) && /[0-9¹²³⁴⁵⁶⁷⁸⁹]$/.test(word.hanzi)), false);
+
+  const importer = fs.readFileSync(new URL("../scripts/content/import-hsk3-batch1.py", import.meta.url), "utf8");
+  assert.match(importer, /display_spellings/);
+  assert.match(importer, /Variants/);
+
+  const learningRoute = fs.readFileSync(new URL("../src/app/api/v1/learning/route.ts", import.meta.url), "utf8");
+  assert.match(learningRoute, /refreshTodayDisplayItem/);
 });

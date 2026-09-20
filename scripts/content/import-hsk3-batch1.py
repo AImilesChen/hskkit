@@ -101,6 +101,29 @@ def clean_meaning(definitions: list[str]) -> str:
     return "; ".join(selected)
 
 
+SENSE_MARKER_SUFFIX = re.compile(r"[0-9¹²³⁴⁵⁶⁷⁸⁹]+$")
+
+
+def display_spellings(row: dict[str, str]) -> tuple[str, str]:
+    simplified = row["Simplified"].strip()
+    traditional = row["Traditional"].strip()
+    if not (SENSE_MARKER_SUFFIX.search(simplified) or SENSE_MARKER_SUFFIX.search(traditional)):
+        return simplified, traditional
+
+    variants = json.loads(row.get("Variants") or "[]")
+    spellings = {
+        (str(variant.get("Simplified", "")).strip(), str(variant.get("Traditional", "")).strip())
+        for variant in variants
+        if variant.get("Simplified")
+    }
+    if len(spellings) != 1:
+        raise ValueError(f"Ambiguous display spelling for {row['ID']}: {sorted(spellings)!r}")
+    display_simplified, display_traditional = spellings.pop()
+    if SENSE_MARKER_SUFFIX.search(display_simplified) or SENSE_MARKER_SUFFIX.search(display_traditional):
+        raise ValueError(f"Sense marker leaked into display spelling for {row['ID']}")
+    return display_simplified, display_traditional or display_simplified
+
+
 def meaning_for(row: dict[str, str], exact: dict[str, list[str]], by_simplified: dict[str, list[list[str]]]) -> tuple[str, str]:
     definitions: list[str] = []
     for key in filter(None, row["CEDICT"].split("/")):
@@ -147,9 +170,8 @@ def main() -> None:
         runtime_level = 7 if source_level == "7-9" else int(source_level)
         meaning, meaning_source = meaning_for(row, exact, by_simplified)
         meaning_sources[meaning_source] += 1
-        hanzi = row["Simplified"].strip()
+        hanzi, traditional = display_spellings(row)
         pinyin = row["Pinyin"].strip()
-        traditional = row["Traditional"].strip()
         pos = row["POS"].strip() or "unspecified"
         if not hanzi or not re.search(r"[\u3400-\u9fff]", hanzi):
             raise ValueError(f"Invalid hanzi: {row['ID']} {hanzi!r}")

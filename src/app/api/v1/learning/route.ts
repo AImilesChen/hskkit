@@ -21,6 +21,7 @@ import {
   masterySnapshot,
   recordAttempt,
   recordAudioAttempt,
+  type DailyItem,
   type DailyLearnContent,
   type LearningState,
 } from "../../../../lib/learning/domain";
@@ -87,6 +88,15 @@ function dailyLearnContent(word: TodayContentItem): DailyLearnContent {
     example: word.example,
     audioSrc: word.audioSrc,
   };
+}
+function refreshTodayDisplayItem(item: DailyItem): DailyItem {
+  if (item.kind !== "learn" && item.kind !== "listen") return item;
+  const dictionaryAssetId = item.id.startsWith("dictionary:") ? item.id.slice("dictionary:".length) : undefined;
+  const current = dictionaryAssetId ? todayContentByAssetId(dictionaryAssetId) : todayContentByContentId(item.contentId);
+  if (!current) return item;
+  if (item.kind === "learn") return { ...item, title: `Learn ${current.hanzi}`, learnContent: dailyLearnContent(current) };
+  if (item.dimension === "audio") return { ...item, title: `Listen to ${current.hanzi}` };
+  return item;
 }
 const offset = (value: unknown) => Number.isInteger(value) && Number(value) >= -840 && Number(value) <= 840 ? Number(value) : 0;
 const PRIVATE_RESPONSE_HEADERS = { "Cache-Control": "private, no-store" } as const;
@@ -233,13 +243,7 @@ function view(state: LearningState, ownerId: string, offsetMinutes: number, capa
     : computeOffsetSessionStreak(built.state.dailySessions, offsetMinutes, now);
   const session = {
     ...built.session,
-    items: built.session.items.map((item) => {
-      if (item.kind !== "learn") return item;
-      const dictionaryAssetId = item.id.startsWith("dictionary:") ? item.id.slice("dictionary:".length) : undefined;
-      const resolvedLearnContent = dictionaryAssetId ? todayContentByAssetId(dictionaryAssetId) : todayContentByContentId(item.contentId);
-      const learnContent = item.learnContent ?? (resolvedLearnContent ? dailyLearnContent(resolvedLearnContent) : undefined);
-      return learnContent ? { ...item, learnContent } : item;
-    }),
+    items: built.session.items.map(refreshTodayDisplayItem),
   };
   return {
     state: built.state,
