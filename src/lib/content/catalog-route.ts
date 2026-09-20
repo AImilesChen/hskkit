@@ -3,6 +3,7 @@ import {
   parseCatalogSearchParams,
 } from "./catalog-search.ts";
 import { searchPublicCatalogWords } from "./public-catalog-index.ts";
+import { PUBLIC_DICTIONARY_CACHE_CONTROL } from "./catalog-edge-cache.ts";
 import { formalWordAudioAssetIds, formalWordAudioUrlByContentId } from "./level-status.ts";
 
 function errorResponse(status: number, error: string, message: string) {
@@ -33,7 +34,7 @@ export async function handleCatalogWordsRequest(request: Request, _legacyDatabas
       headers: {
         "Cache-Control": params.mode === "flashcards"
           ? "no-store"
-          : "public, max-age=30, s-maxage=120, stale-while-revalidate=300",
+          : PUBLIC_DICTIONARY_CACHE_CONTROL,
       },
     });
   } catch (error) {

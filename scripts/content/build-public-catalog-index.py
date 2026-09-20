@@ -63,12 +63,44 @@ def main() -> None:
         ])
 
     rows.sort(key=lambda row: ((7 if row[3] == "7-9" else int(row[3])), row[0]))
+
+    def append_index(index: dict[str, list[int]], key: str, position: int) -> None:
+        if key:
+            index.setdefault(key, []).append(position)
+
+    level_positions: dict[str, list[int]] = {}
+    search_indexes: dict[str, dict[str, list[int]]] = {
+        "hanzi": {},
+        "pinyin": {},
+        "english": {},
+    }
+    character_associations: dict[str, list[int]] = {}
+
+    for position, row in enumerate(rows):
+        level_band = row[3]
+        append_index(level_positions, level_band, position)
+
+        for field, value in (("hanzi", row[9]), ("pinyin", row[10]), ("english", row[11])):
+            for character in sorted(set(value)):
+                append_index(search_indexes[field], character, position)
+
+        for character in sorted(set(row[4])):
+            append_index(character_associations, character, position)
+
+    level_shards = {
+        level: [positions[0], len(positions)]
+        for level, positions in level_positions.items()
+    }
     artifact = {
+        "indexVersion": 1,
         "releaseId": release_id,
         "releaseVersion": int(release["version"]),
         "publishedAt": release["publishedAt"],
         "wordCount": len(rows),
         "words": rows,
+        "levelShards": level_shards,
+        "searchIndexes": search_indexes,
+        "characterAssociations": character_associations,
     }
     output = Path(args.output)
     output.parent.mkdir(parents=True, exist_ok=True)

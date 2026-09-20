@@ -1,19 +1,22 @@
 import { getCloudflareContext } from "@opennextjs/cloudflare";
 import { handleCatalogWordsRequest } from "@/lib/content/catalog-route";
+import { buildCatalogWordsCacheKey } from "@/lib/content/catalog-edge-cache";
 
 export async function GET(request: Request) {
-  const { ctx } = getCloudflareContext();
-  const cacheable = new URL(request.url).searchParams.get("mode") !== "flashcards";
+  const cacheKey = buildCatalogWordsCacheKey(new URL(request.url));
   const cloudflareCaches = typeof caches !== "undefined"
     ? caches as CacheStorage & { default: Cache }
     : null;
-  const edgeCache = cacheable ? cloudflareCaches?.default ?? null : null;
-  if (edgeCache) {
-    const cached = await edgeCache.match(request.url);
+  const edgeCache = cacheKey ? cloudflareCaches?.default ?? null : null;
+  if (edgeCache && cacheKey) {
+    const cached = await edgeCache.match(cacheKey);
     if (cached) return cached;
   }
 
   const response = await handleCatalogWordsRequest(request);
-  if (edgeCache && response.ok) ctx.waitUntil(edgeCache.put(request.url, response.clone()));
+  if (edgeCache && cacheKey && response.ok) {
+    const { ctx } = getCloudflareContext();
+    ctx.waitUntil(edgeCache.put(cacheKey, response.clone()));
+  }
   return response;
 }

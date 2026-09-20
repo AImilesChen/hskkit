@@ -1,12 +1,18 @@
+import { getCloudflareContext } from "@opennextjs/cloudflare";
 import { NextResponse } from "next/server";
 import { CatalogQueryError, parseCatalogSearchParams } from "@/lib/content/catalog-search";
+import {
+  buildDictionarySuggestionsCacheKey,
+  PUBLIC_DICTIONARY_CACHE_CONTROL,
+} from "@/lib/content/catalog-edge-cache";
 import { suggestPublicCatalogWords } from "@/lib/content/public-catalog-index";
 import { formalWordAudioAssetIds } from "@/lib/content/level-status";
 
-export async function GET(request: Request) {
+async function buildSuggestionsResponse(request: Request) {
   try {
     const params = parseCatalogSearchParams(new URL(request.url));
-    if (!params.q) return NextResponse.json({ suggestions: [] }, { headers: { "Cache-Control": "public, max-age=300, s-maxage=3600" } });
+    const cacheControl = params.mode === "flashcards" ? "no-store" : PUBLIC_DICTIONARY_CACHE_CONTROL;
+    if (!params.q) return NextResponse.json({ suggestions: [] }, { headers: { "Cache-Control": cacheControl } });
     const rows = suggestPublicCatalogWords({
       q: params.q,
       level: params.level,
@@ -22,7 +28,7 @@ export async function GET(request: Request) {
         pinyin: row.pinyin,
         meaning: row.meaning,
       })),
-    }, { headers: { "Cache-Control": "public, max-age=300, s-maxage=3600" } });
+    }, { headers: { "Cache-Control": cacheControl } });
   } catch (error) {
     if (error instanceof CatalogQueryError) {
       return NextResponse.json({ suggestions: [] }, { status: 400, headers: { "Cache-Control": "no-store" } });
@@ -30,4 +36,23 @@ export async function GET(request: Request) {
     console.error("dictionary_suggestions_failed", error);
     return NextResponse.json({ suggestions: [] }, { status: 503, headers: { "Cache-Control": "no-store" } });
   }
+}
+
+export async function GET(request: Request) {
+  const cacheKey = buildDictionarySuggestionsCacheKey(new URL(request.url));
+  const cloudflareCaches = typeof caches !== "undefined"
+    ? caches as CacheStorage & { default: Cache }
+    : null;
+  const edgeCache = cacheKey ? cloudflareCaches?.default ?? null : null;
+  if (edgeCache && cacheKey) {
+    const cached = await edgeCache.match(cacheKey);
+    if (cached) return cached;
+  }
+
+  const response = await buildSuggestionsResponse(request);
+  if (edgeCache && cacheKey && response.ok) {
+    const { ctx } = getCloudflareContext();
+    ctx.waitUntil(edgeCache.put(cacheKey, response.clone()));
+  }
+  return response;
 }

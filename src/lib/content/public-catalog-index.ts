@@ -3,6 +3,7 @@ import {
   CatalogQueryError,
   normalizeCatalogQuery,
   toCatalogWordResponse,
+  type CatalogSearchField,
   type CatalogSearchParams,
   type CatalogSearchRow,
 } from "./catalog-search.ts";
@@ -22,102 +23,133 @@ type PackedWord = [
   searchEnglish: string,
 ];
 
-type IndexedWord = CatalogSearchRow & {
-  search_hanzi: string;
-  search_pinyin: string;
-  search_english: string;
-  sort_level: number;
+type CatalogArtifact = {
+  indexVersion: number;
+  releaseId: string;
+  releaseVersion: number;
+  words: PackedWord[];
+  levelShards: Record<string, [start: number, count: number]>;
+  searchIndexes: Record<"hanzi" | "pinyin" | "english", Record<string, number[]>>;
+  characterAssociations: Record<string, number[]>;
 };
 
-const packedWords = publicCatalog.words as PackedWord[];
-export const publicCatalogReleaseId = publicCatalog.releaseId;
-const words: IndexedWord[] = packedWords.map((packed) => ({
-  id: packed[0],
-  release_id: publicCatalog.releaseId,
-  standard_version: packed[1],
-  content_version: packed[2],
-  level_band: packed[3],
-  hanzi: packed[4],
-  traditional: packed[5],
-  pinyin: packed[6],
-  meaning: packed[7],
-  part_of_speech: packed[8],
-  search_hanzi: packed[9],
-  search_pinyin: packed[10],
-  search_english: packed[11],
-  sort_level: packed[3] === "7-9" ? 7 : Number(packed[3]),
-}));
-const wordById = new Map(words.map((row) => [row.id, row]));
-const wordByLogicalId = new Map(words.map((row) => [row.id.replace(/\.v\d+$/, ""), row]));
-const wordsByLevel = new Map<string, IndexedWord[]>();
-const wordsByCharacter = new Map<string, IndexedWord[]>();
-const suggestionCandidates = new Map<string, IndexedWord[]>();
+const artifact = publicCatalog as unknown as CatalogArtifact;
+const packedWords = artifact.words;
+export const publicCatalogReleaseId = artifact.releaseId;
+export const publicCatalogReleaseVersion = artifact.releaseVersion;
 
-for (const word of words) {
-  wordsByLevel.set(word.level_band, [...(wordsByLevel.get(word.level_band) ?? []), word]);
-  for (const character of new Set([...word.hanzi])) {
-    wordsByCharacter.set(character, [...(wordsByCharacter.get(character) ?? []), word]);
-  }
-  for (const first of new Set([word.search_pinyin[0], word.search_english[0]].filter(Boolean))) {
-    suggestionCandidates.set(first, [...(suggestionCandidates.get(first) ?? []), word]);
-  }
+function rowAt(index: number): CatalogSearchRow {
+  const packed = packedWords[index];
+  return {
+    id: packed[0],
+    release_id: artifact.releaseId,
+    standard_version: packed[1],
+    content_version: packed[2],
+    level_band: packed[3],
+    hanzi: packed[4],
+    traditional: packed[5],
+    pinyin: packed[6],
+    meaning: packed[7],
+    part_of_speech: packed[8],
+  };
 }
 
-function hasPartOfSpeech(word: IndexedWord, requested?: string) {
-  if (!requested) return true;
-  return word.part_of_speech.toLowerCase().split("/").includes(requested.toLowerCase());
+function findPackedIndex(value: string, keyAt: (packed: PackedWord) => string): number | null {
+  let low = 0;
+  let high = packedWords.length - 1;
+  while (low <= high) {
+    const middle = (low + high) >> 1;
+    const comparison = keyAt(packedWords[middle]).localeCompare(value);
+    if (comparison === 0) return middle;
+    if (comparison < 0) low = middle + 1;
+    else high = middle - 1;
+  }
+  return null;
 }
 
-function flashcardScore(word: IndexedWord, seed: number) {
-  const sequence = Number(word.id.match(/\.(\d{4})\.v\d+$/)?.[1] ?? 0);
-  return (Math.imul(sequence + seed, 1_103_515_245) + 12_345) & 0x7fffffff;
+function levelShard(level?: number): [start: number, count: number] {
+  if (level === undefined) return [0, packedWords.length];
+  return artifact.levelShards[level >= 7 ? "7-9" : String(level)] ?? [0, 0];
+}
+
+function indicesForShard(level?: number): number[] {
+  const [start, count] = levelShard(level);
+  return Array.from({ length: count }, (_, offset) => start + offset);
+}
+
+function hasPartOfSpeech(packed: PackedWord, requested?: string) {
+  return !requested || packed[8].toLowerCase().split("/").includes(requested.toLowerCase());
+}
+
+function searchFieldValue(packed: PackedWord, field?: CatalogSearchField) {
+  if (field === "hanzi") return packed[9];
+  if (field === "pinyin") return packed[10];
+  if (field === "english") return packed[11];
+  return `${packed[9]} ${packed[10]} ${packed[11]}`;
+}
+
+function candidateIndices(needle: string, field?: CatalogSearchField): number[] {
+  if (!needle) return [];
+  const first = Array.from(needle)[0];
+  const fields = field && field !== "all" ? [field] : ["hanzi", "pinyin", "english"] as const;
+  const candidates = new Set<number>();
+  for (const selectedField of fields) {
+    for (const index of artifact.searchIndexes[selectedField][first] ?? []) candidates.add(index);
+  }
+  return [...candidates].sort((left, right) => left - right);
+}
+
+function flashcardScore(index: number, seed: number) {
+  const sequence = Number(packedWords[index][0].match(/\.(\d{4})\.v\d+$/)?.[1] ?? 0);
+  return ((sequence + seed) * 1_103_515_245 + 12_345) & 0x7fffffff;
 }
 
 export function findPublicCatalogWordById(assetId: string): CatalogSearchRow | null {
-  return wordById.get(assetId) ?? null;
+  const index = findPackedIndex(assetId, (packed) => packed[0]);
+  return index === null ? null : rowAt(index);
 }
 
 export function findPublicCatalogWordByLogicalId(logicalId: string): CatalogSearchRow | null {
-  return wordByLogicalId.get(logicalId) ?? null;
+  const index = findPackedIndex(logicalId, (packed) => packed[0].replace(/\.v\d+$/, ""));
+  return index === null ? null : rowAt(index);
 }
 
 export function findPublicCatalogWordsContainingCharacter(hanzi: string, limit = 36): CatalogSearchRow[] {
-  return (wordsByCharacter.get(hanzi) ?? []).slice(0, Math.max(0, limit));
+  return (artifact.characterAssociations[hanzi] ?? []).slice(0, Math.max(0, limit)).map(rowAt);
 }
 
 export function findPublicCatalogWordsByIds(assetIds: string[]): CatalogSearchRow[] {
   return [...new Set(assetIds)].flatMap((assetId) => {
-    const word = wordById.get(assetId);
-    return word ? [word] : [];
+    const index = findPackedIndex(assetId, (packed) => packed[0]);
+    return index === null ? [] : [rowAt(index)];
   });
 }
 
 export function listPublicCatalogWordsForLevel(level: number): CatalogSearchRow[] {
-  const levelBand = level >= 7 ? "7-9" : String(level);
-  return [...(wordsByLevel.get(levelBand) ?? [])];
+  return indicesForShard(level).map(rowAt);
 }
 
 export function searchPublicCatalogWords(params: CatalogSearchParams, formalAudioIds: readonly string[] = []) {
-  const levelBand = params.level === undefined ? undefined : params.level >= 7 ? "7-9" : String(params.level);
-  const source = levelBand ? wordsByLevel.get(levelBand) ?? [] : words;
   const needle = normalizeCatalogQuery(params.q);
+  const searchCandidates = needle ? new Set(candidateIndices(needle, params.field)) : null;
   const formalAudioSet = params.audio === "formal" ? new Set(formalAudioIds) : null;
-  let filtered = source.filter((word) => {
-    if (!hasPartOfSpeech(word, params.partOfSpeech)) return false;
-    if (formalAudioSet && !formalAudioSet.has(word.id)) return false;
-    if (!needle) return true;
-    const haystack = params.field === "hanzi" ? word.search_hanzi
-      : params.field === "pinyin" ? word.search_pinyin
-      : params.field === "english" ? word.search_english
-      : `${word.search_hanzi} ${word.search_pinyin} ${word.search_english}`;
-    return haystack.includes(needle);
-  });
+  const [start, count] = levelShard(params.level);
+  const filtered: number[] = [];
+
+  for (let index = start; index < start + count; index += 1) {
+    const packed = packedWords[index];
+    if (searchCandidates && !searchCandidates.has(index)) continue;
+    if (!hasPartOfSpeech(packed, params.partOfSpeech)) continue;
+    if (formalAudioSet && !formalAudioSet.has(packed[0])) continue;
+    if (needle && !searchFieldValue(packed, params.field).includes(needle)) continue;
+    filtered.push(index);
+  }
 
   if (params.mode === "flashcards") {
     const seed = params.seed ?? 0;
-    filtered = [...filtered].sort((left, right) => flashcardScore(left, seed) - flashcardScore(right, seed) || left.id.localeCompare(right.id));
+    filtered.sort((left, right) => flashcardScore(left, seed) - flashcardScore(right, seed) || packedWords[left][0].localeCompare(packedWords[right][0]));
   } else if (params.sort === "pinyin") {
-    filtered = [...filtered].sort((left, right) => left.pinyin.localeCompare(right.pinyin, "en", { sensitivity: "base" }) || left.id.localeCompare(right.id));
+    filtered.sort((left, right) => packedWords[left][6].localeCompare(packedWords[right][6], "en", { sensitivity: "base" }) || packedWords[left][0].localeCompare(packedWords[right][0]));
   }
 
   const total = filtered.length;
@@ -126,10 +158,10 @@ export function searchPublicCatalogWords(params: CatalogSearchParams, formalAudi
     throw new CatalogQueryError("page exceeds the available result pages");
   }
   return toCatalogWordResponse({
-    rows: filtered.slice(offset, offset + params.pageSize + 1),
+    rows: filtered.slice(offset, offset + params.pageSize + 1).map(rowAt),
     total,
-    releaseId: publicCatalog.releaseId,
-    releaseVersion: publicCatalog.releaseVersion,
+    releaseId: artifact.releaseId,
+    releaseVersion: artifact.releaseVersion,
     params,
     formalAudioIds,
   });
@@ -162,26 +194,32 @@ export function suggestPublicCatalogWords(input: {
 }): CatalogSearchRow[] {
   const needle = normalizeCatalogQuery(input.q.trim()).slice(0, 100);
   if (!needle) return [];
-  const first = needle[0];
+  const first = Array.from(needle)[0];
   const isHanQuery = /\p{Script=Han}/u.test(first);
   if (!isHanQuery && !/[a-z0-9]/.test(first)) return [];
-  const prefixCandidates = isHanQuery ? wordsByCharacter.get(first) ?? [] : suggestionCandidates.get(first) ?? [];
-  const directCandidates = words.filter((word) =>
-    word.search_hanzi.includes(needle)
-    || word.search_pinyin.includes(needle)
-    || word.search_english.includes(needle),
-  );
-  const source = [...new Set([...directCandidates, ...prefixCandidates])];
+
+  const directIndices = candidateIndices(needle).filter((index) => searchFieldValue(packedWords[index]).includes(needle));
+  const prefixPool = isHanQuery
+    ? artifact.characterAssociations[first] ?? []
+    : candidateIndices(first, "pinyin").concat(candidateIndices(first, "english"));
+  const prefixIndices = [...new Set(prefixPool)].sort((left, right) => left - right).filter((index) => {
+    if (isHanQuery) return true;
+    const packed = packedWords[index];
+    return packed[10][0] === first || packed[11][0] === first;
+  });
+  const source = [...new Set([...directIndices, ...prefixIndices])];
   const levelBand = input.level === undefined ? undefined : input.level >= 7 ? "7-9" : String(input.level);
   const formalAudioSet = input.formalAudioIds ? new Set(input.formalAudioIds) : null;
   if (formalAudioSet?.size === 0) return [];
   const limit = Math.max(1, Math.min(input.limit ?? 4, 10));
 
-  return source.filter((word) =>
-    (!levelBand || word.level_band === levelBand)
-    && hasPartOfSpeech(word, input.partOfSpeech)
-    && (!formalAudioSet || formalAudioSet.has(word.id)),
-  ).map((word) => {
+  return source.filter((index) => {
+    const packed = packedWords[index];
+    return (!levelBand || packed[3] === levelBand)
+      && hasPartOfSpeech(packed, input.partOfSpeech)
+      && (!formalAudioSet || formalAudioSet.has(packed[0]));
+  }).map((index) => {
+    const word = rowAt(index);
     const forms = [word.hanzi, word.pinyin, word.meaning].map(normalizeCatalogQuery).filter(Boolean);
     const score = Math.min(...forms.map((form) => {
       if (form === needle) return 0;
@@ -197,13 +235,18 @@ export function suggestPublicCatalogWords(input: {
 }
 
 export function findPublicCatalogWordLearningContext(assetId: string) {
-  const current = wordById.get(assetId);
-  if (!current) return null;
-  const levelWords = wordsByLevel.get(current.level_band) ?? [];
-  const currentIndex = levelWords.findIndex((word) => word.id === current.id);
-  const candidates = Array.from({ length: Math.min(8, Math.max(0, levelWords.length - 1)) }, (_, offset) =>
-    levelWords[(currentIndex + offset + 1) % levelWords.length],
+  const currentIndex = findPackedIndex(assetId, (packed) => packed[0]);
+  if (currentIndex === null) return null;
+  const current = rowAt(currentIndex);
+  const levelIndices = indicesForShard(current.level_band === "7-9" ? 7 : Number(current.level_band));
+  const position = levelIndices.indexOf(currentIndex);
+  const candidates = Array.from({ length: Math.min(8, Math.max(0, levelIndices.length - 1)) }, (_, offset) =>
+    rowAt(levelIndices[(position + offset + 1) % levelIndices.length]),
   );
-  const toneComparisons = words.filter((word) => word.id !== current.id && word.search_pinyin === current.search_pinyin).slice(0, 8);
+  const first = Array.from(packedWords[currentIndex][10])[0];
+  const toneComparisons = (artifact.searchIndexes.pinyin[first] ?? [])
+    .filter((index) => index !== currentIndex && packedWords[index][10] === packedWords[currentIndex][10])
+    .slice(0, 8)
+    .map(rowAt);
   return { current, candidates, nextWord: candidates[0] ?? null, toneComparisons };
 }

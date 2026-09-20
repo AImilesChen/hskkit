@@ -95,12 +95,13 @@ test("dictionary filter failures cannot render data from the previous filter", (
   assert.match(source, /error \? <StatePanel[\s\S]*: null/);
 });
 
-test("catalog GET responses use the Cloudflare edge cache while flashcards stay private", () => {
+test("catalog GET responses use a canonical versioned Cloudflare edge key while flashcards stay private", () => {
   const route = read("src/app/api/v1/catalog/words/route.ts");
-  assert.match(route, /edgeCache\.match\(request\.url\)/);
-  assert.match(route, /edgeCache\.put\(request\.url, response\.clone\(\)\)/);
-  assert.match(route, /get\("mode"\) !== "flashcards"/);
-  assert.match(route, /ctx\.waitUntil/);
+  assert.match(route, /buildCatalogWordsCacheKey/);
+  assert.match(route, /edgeCache\.match\(cacheKey\)/);
+  assert.match(route, /edgeCache\.put\(cacheKey, response\.clone\(\)\)/);
+  assert.match(route, /cacheKey \?/);
+  assert.doesNotMatch(route, /edgeCache\.match\(request\.url\)/);
 });
 
 test("session activity writes are throttled without changing authentication", () => {
