@@ -1,4 +1,6 @@
-const TRANSIENT_RETRY_DELAYS_MS = [800, 2000] as const;
+const DEFAULT_RETRY_DELAY_MS = 2_000;
+const MAX_RETRY_DELAY_MS = 10_000;
+const MAX_ATTEMPTS = 2;
 
 export type LearningLoadErrorCode = "offline" | "temporarily_unavailable" | "unavailable";
 
@@ -29,6 +31,15 @@ async function responseErrorCode(response: Response): Promise<string> {
   }
 }
 
+function retryAfterMs(response: Response, now = Date.now()) {
+  const value = response.headers.get("retry-after")?.trim();
+  if (!value) return DEFAULT_RETRY_DELAY_MS;
+  const seconds = Number(value);
+  const delayMs = Number.isFinite(seconds) ? seconds * 1_000 : Date.parse(value) - now;
+  if (!Number.isFinite(delayMs) || delayMs <= 0) return DEFAULT_RETRY_DELAY_MS;
+  return Math.min(MAX_RETRY_DELAY_MS, Math.ceil(delayMs));
+}
+
 export async function loadLearningData<T>(
   request: () => Promise<Response>,
   options: LoadOptions = {},
@@ -52,12 +63,12 @@ export async function loadLearningData<T>(
       }
     }
 
-    const errorCode = await responseErrorCode(response);
+    const errorCode = await responseErrorCode(response.clone());
     const isTransientD1 = response.status === 503 && errorCode === "D1_TEMPORARILY_UNAVAILABLE";
     if (!isTransientD1) throw new LearningLoadError(isOnline() ? "unavailable" : "offline");
+    if (attempt + 1 >= MAX_ATTEMPTS) throw new LearningLoadError("temporarily_unavailable");
 
-    const delayMs = TRANSIENT_RETRY_DELAYS_MS[attempt];
-    if (delayMs === undefined) throw new LearningLoadError("temporarily_unavailable");
+    const delayMs = retryAfterMs(response);
     options.onTransientRetry?.(attempt + 1, delayMs);
     await wait(delayMs);
   }

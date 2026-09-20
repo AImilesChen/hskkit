@@ -67,7 +67,9 @@ test("primary user-state APIs return explicit bounded D1 overload responses", ()
   assert.match(protection, /D1_TEMPORARILY_UNAVAILABLE/);
   assert.match(retry, /circuitOpenUntil/);
   for (const path of ["src/app/api/v1/account/route.ts", "src/app/api/v1/learning/route.ts", "src/app/api/v1/planner/route.ts"]) {
-    const route = read(path);
+    const route = path.endsWith("/learning/route.ts")
+      ? `${read(path)}\n${read("src/app/api/v1/learning/read.ts")}`
+      : read(path);
     assert.match(route, /withUserD1ReadProtection/);
     assert.match(route, /d1UnavailableResponse/);
   }

@@ -9,6 +9,7 @@ import HomeIcon, { type HomeIconName } from "./home-icon";
 import LearningLoopNav, { type LearningLoopLabel } from "./learning-loop-nav";
 import { PlaybackRequestError, PlaybackVerificationCoordinator, playbackErrorCode, playbackVerificationMessage, type PlaybackVerificationState } from "../../lib/learning/verified-playback";
 import { LearningLoadError, loadLearningData, type LearningLoadErrorCode } from "../../lib/learning/client-load";
+import { readTodaySnapshot, writeTodaySnapshot } from "../../lib/learning/today-snapshot";
 import { activeReviewCardId, activeTodayReviewCardId, buildIntentReviewQueue, filterReviewCards, recommendReviewCount, reviewAnswerIsCorrect, reviewCardIdsForScope, reviewComposition, reviewEntryIntent, reviewGradeOptions, reviewTip, type ReviewEntryIntent, type ReviewGrade, type ReviewLevelControl, type ReviewLevelScope } from "../../lib/learning/review-session";
 import { canRefreshTodayWords, completionProofNeedsSync, parseTodayCompletionProof, recommendTodayMinutes, recommendTodayNewWordCount, resolveTodayCelebration, todayCompletionProofKey, todaySummaryChanges, todaySummaryStats, todayJourneyProgress, TODAY_BUDGET_OPTIONS, TODAY_FOCUS_OPTIONS, TODAY_NEW_WORD_OPTIONS, type TodayBudgetMinutes, type TodayCelebration, type TodayCompletedKind, type TodayFocus, type TodayNewWordCount } from "../../lib/learning/today-plan";
 
@@ -62,6 +63,7 @@ export default function LearningDashboard({ mode }: { mode: "today" | "review" |
   const [error, setError] = useState("");
   const [loadFailure, setLoadFailure] = useState<LearningLoadErrorCode | "">("");
   const [retryingLoad, setRetryingLoad] = useState(false);
+  const [refreshNotice, setRefreshNotice] = useState("");
   const [revealed, setRevealed] = useState<Record<string, boolean>>({});
   const [audioError, setAudioError] = useState("");
   const [celebration, setCelebration] = useState<(TodayCelebration & { animate: boolean }) | null>(null);
@@ -106,6 +108,7 @@ export default function LearningDashboard({ mode }: { mode: "today" | "review" |
   const [reward, setReward] = useState<RewardSnapshot | null>(null);
   const operationKeys = useRef<Record<string, string>>({});
   const dataRef = useRef<Data | null>(null);
+  const restoredSnapshotRef = useRef<Data | null>(null);
   const reviewPlayback = useRef<{ cardKey: string; coordinator: PlaybackVerificationCoordinator } | null>(null);
   const [reviewPlaybackState, setReviewPlaybackState] = useState<PlaybackVerificationState>("idle");
 
@@ -124,16 +127,19 @@ export default function LearningDashboard({ mode }: { mode: "today" | "review" |
   }
 
   async function load(manualRetry = false) {
+    const showingSavedToday = mode === "today" && Boolean(dataRef.current);
     setError("");
     setLoadFailure("");
     setRetryingLoad(manualRetry);
+    if (showingSavedToday) setRefreshNotice("Showing your saved plan while we refresh…");
     try {
       const loaded = await loadLearningData<Data>(
         () => fetch(`/api/v1/learning?tzOffset=${tz()}`, { cache: "no-store" }),
         {
           isOnline: () => navigator.onLine,
           onTransientRetry: () => {
-            setLoadFailure("temporarily_unavailable");
+            if (dataRef.current && mode === "today") setRefreshNotice("Showing your saved plan while we refresh…");
+            else setLoadFailure("temporarily_unavailable");
             setRetryingLoad(true);
           },
         },
@@ -152,16 +158,35 @@ export default function LearningDashboard({ mode }: { mode: "today" | "review" |
           .catch(() => setReward(null));
       }
       setLoadFailure("");
+      setRefreshNotice("");
       if (pendingQueue(loaded.queueBinding).length) void retryPending(loaded);
       else { setSyncState("synced"); void freezeTodayPlan(loaded); }
     } catch (caught) {
-      setLoadFailure(caught instanceof LearningLoadError ? caught.code : navigator.onLine ? "unavailable" : "offline");
+      const code = caught instanceof LearningLoadError ? caught.code : navigator.onLine ? "unavailable" : "offline";
+      if (dataRef.current && mode === "today") {
+        setLoadFailure("");
+        setRefreshNotice(code === "offline"
+          ? "Showing your saved plan while you’re offline."
+          : "Showing your saved plan. We’ll refresh when the service is ready.");
+      } else setLoadFailure(code);
     } finally {
       setRetryingLoad(false);
     }
   }
   // The initial restore intentionally runs once; retries use the latest data through dataRef.
   useEffect(() => {
+    const savedToday = mode === "today" ? readTodaySnapshot<Data>(sessionStorage) : null;
+    if (savedToday) {
+      restoredSnapshotRef.current = savedToday;
+      dataRef.current = savedToday;
+      setData(savedToday);
+      setPlanDraftMinutes((savedToday.session.budgetMinutes ?? 20) as TodayBudgetMinutes);
+      setPlanDraftLevel(savedToday.session.startLevel ?? 1);
+      setPlanDraftNewWords(savedToday.session.newWordCount ?? recommendTodayNewWordCount((savedToday.session.budgetMinutes ?? 20) as TodayBudgetMinutes));
+      setPlanDraftListening(savedToday.session.listeningEnabled ?? true);
+      setPlanDraftFocus(savedToday.session.focus ?? "balanced");
+      setRefreshNotice("Showing your saved plan while we refresh…");
+    }
     const search = new URLSearchParams(window.location.search);
     setEntryIntent(reviewEntryIntent(window.location.search));
     const reviewLevel = Number(search.get("level"));
@@ -184,6 +209,15 @@ export default function LearningDashboard({ mode }: { mode: "today" | "review" |
     return () => window.removeEventListener("online", online);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  useEffect(() => {
+    if (mode !== "today" || !data) return;
+    if (restoredSnapshotRef.current === data) {
+      restoredSnapshotRef.current = null;
+      return;
+    }
+    writeTodaySnapshot(sessionStorage, data);
+  }, [data, mode]);
 
   useEffect(() => {
     if (mode !== "mistakes" || !data) return;
@@ -666,6 +700,7 @@ export default function LearningDashboard({ mode }: { mode: "today" | "review" |
     const progressPercent = journeyProgress.totalPhases ? Math.round((journeyProgress.completedPhases / journeyProgress.totalPhases) * 100) : 0;
     return <Shell title="Today" active="Today" sub="One guided session: review what matters, learn distinct new words, practise them, then see your result.">
       <div className="today-page">
+      {refreshNotice && <p className="mb-4 rounded-xl border border-blue-200 bg-blue-50 px-4 py-3 text-sm font-semibold text-blue-900" role="status">{refreshNotice}</p>}
       <section className="mb-5 overflow-hidden rounded-[28px] border border-blue-200 bg-gradient-to-br from-slate-950 via-blue-950 to-blue-900 text-white shadow-[0_24px_70px_rgba(30,64,175,0.18)]">
         <div className="grid items-center gap-6 p-5 sm:grid-cols-[minmax(0,1fr)_240px] sm:p-7">
           <div>

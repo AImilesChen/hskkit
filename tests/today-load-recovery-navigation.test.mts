@@ -10,13 +10,13 @@ const jsonResponse = (status: number, body: unknown) => new Response(JSON.string
   headers: { "content-type": "application/json" },
 });
 
-test("Today client retries bounded transient D1 responses and recovers", async () => {
+test("Today client retries one bounded transient D1 response and recovers", async () => {
   let attempts = 0;
   const waits: number[] = [];
   const retryAttempts: number[] = [];
   const result = await loadLearningData<{ ready: boolean }>(async () => {
     attempts += 1;
-    return attempts < 3
+    return attempts === 1
       ? jsonResponse(503, { error: "D1_TEMPORARILY_UNAVAILABLE", retryable: true })
       : jsonResponse(200, { ready: true });
   }, {
@@ -26,9 +26,9 @@ test("Today client retries bounded transient D1 responses and recovers", async (
   });
 
   assert.deepEqual(result, { ready: true });
-  assert.equal(attempts, 3);
-  assert.deepEqual(waits, [800, 2000]);
-  assert.deepEqual(retryAttempts, [1, 2]);
+  assert.equal(attempts, 2);
+  assert.deepEqual(waits, [2000]);
+  assert.deepEqual(retryAttempts, [1]);
 });
 
 test("Today client exposes a typed service-busy failure after bounded retries", async () => {
@@ -40,7 +40,7 @@ test("Today client exposes a typed service-busy failure after bounded retries", 
     }, { wait: async () => undefined, isOnline: () => true }),
     (error: unknown) => error instanceof LearningLoadError && error.code === "temporarily_unavailable",
   );
-  assert.equal(attempts, 3);
+  assert.equal(attempts, 2);
 });
 
 test("Today client labels an actual offline fetch failure without retrying", async () => {
