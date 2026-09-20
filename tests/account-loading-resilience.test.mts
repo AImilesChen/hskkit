@@ -12,7 +12,7 @@ const accountPayload = {
   guest: { hasData: false, attempts: 0, learningSessions: 0, plannerVersions: 0, revision: 0 },
 };
 
-test("header and Account share one in-flight account request", async () => {
+test("Account detailed loader deduplicates one in-flight request", async () => {
   assert.equal(fs.existsSync(browserModuleUrl), true, "a shared browser account loader must exist");
   const { clearAccountSnapshot, loadAccountSnapshot } = await import(browserModuleUrl.href);
   clearAccountSnapshot();
@@ -87,20 +87,23 @@ test("Account auxiliary resources load in bounded batches", async () => {
   assert.deepEqual(results.map((result: PromiseSettledResult<number>) => result.status === "fulfilled" ? result.value : -1), [0, 1, 2, 3, 4, 5]);
 });
 
-test("only the primary account status request touches session recency", () => {
+test("Header status preserves session recency without loading detailed account aggregates", () => {
   const identity = read("../src/lib/account/identity.ts");
   const storage = read("../src/lib/account/storage.ts");
-  const route = read("../src/app/api/v1/account/route.ts");
+  const statusRoute = read("../src/app/api/v1/account/status/route.ts");
+  const accountRoute = read("../src/app/api/v1/account/route.ts");
   const accountClient = read("../src/app/account/account-client.tsx");
   const header = read("../src/app/site-header.tsx");
 
   assert.match(identity, /requestIdentity\(options:[\s\S]*touchSession/);
-  assert.match(identity, /authenticateSession\(sessionToken, options\.touchSession/);
+  assert.match(identity, /authenticateSession\(sessionToken, touchSession\)/);
   assert.match(storage, /authenticateSession\(sessionToken: string \| undefined, touchSession = false\)/);
   assert.match(storage, /if \(touchSession\)[\s\S]*UPDATE account_sessions SET last_used_at/);
-  assert.match(route, /requestIdentity\(\{ touchSession: true \}\)/);
+  assert.match(statusRoute, /requestIdentity\(\{ touchSession: true \}\)/);
+  assert.doesNotMatch(statusRoute, /loadState|loadPlacementState|countPlans/);
+  assert.match(accountRoute, /requestIdentity\(\{ touchSession: true \}\)/);
   assert.match(accountClient, /loadAccountSnapshot/);
-  assert.match(accountClient, /settleInBatches/);
-  assert.match(header, /loadAccountSnapshot/);
-  assert.doesNotMatch(header, /fetch\("\/api\/v1\/account"/);
+  assert.match(accountClient, /\/api\/v1\/account\/overview\?deviceId=/);
+  assert.match(header, /loadHeaderAccountStatus/);
+  assert.doesNotMatch(header, /loadAccountSnapshot|fetch\("\/api\/v1\/account"/);
 });

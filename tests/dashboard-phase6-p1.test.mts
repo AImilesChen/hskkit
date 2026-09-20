@@ -4,14 +4,16 @@ import test from "node:test";
 
 const read = (path: string) => fs.readFileSync(new URL(path, import.meta.url), "utf8");
 const header = read("../src/app/site-header.tsx");
+const headerStatus = read("../src/lib/account/header-status.ts");
 const dashboard = read("../src/app/dashboard/dashboard-core.tsx");
 const growth = read("../src/app/dashboard/dashboard-growth.tsx");
 
 test("signed-in navigation exposes Dashboard directly without removing the guest Sign in entry", () => {
-  assert.match(header, /fetch\("\/api\/v1\/account"/);
+  assert.match(header, /loadHeaderAccountStatus/);
+  assert.match(headerStatus, /fetch\("\/api\/v1\/account\/status"/);
   assert.match(header, /const \[authState, setAuthState\]/);
   assert.match(header, /const signedIn = authState === "account"/);
-  assert.match(header, /account:\s*\{[^}]*userId/);
+  assert.match(header, /\.then\(\(\{ signedIn \}\)/);
   assert.match(header, /href:\s*"\/dashboard"/);
   assert.match(header, /label:\s*"Dashboard"/);
   assert.match(header, /hskkit:auth-changed/);

@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
-import { loadAccountSnapshot } from "@/lib/account/browser";
+import { loadHeaderAccountStatus } from "@/lib/account/header-status";
 import {
   isNavigationEntryActive,
   isNavigationGroup,
@@ -41,19 +41,27 @@ export default function SiteHeader() {
   }, [pathname]);
 
   useEffect(() => {
-    const refreshAuth = () => {
-      void loadAccountSnapshot<{ account: { userId: string } | null }>()
-        .then((payload: { account: { userId: string } | null }) => setAuthState(payload.account?.userId ? "account" : "guest"))
+    let refreshGeneration = 0;
+    const refreshAuth = (force = false) => {
+      const generation = ++refreshGeneration;
+      void loadHeaderAccountStatus({ force })
+        .then(({ signedIn }) => {
+          if (generation === refreshGeneration) setAuthState(signedIn ? "account" : "guest");
+        })
         .catch(() => undefined);
     };
+    const refreshAfterAuthChange = () => refreshAuth(true);
+    const refreshFromBrowser = () => refreshAuth();
+
     refreshAuth();
-    window.addEventListener("hskkit:auth-changed", refreshAuth);
-    window.addEventListener("pageshow", refreshAuth);
-    window.addEventListener("focus", refreshAuth);
+    window.addEventListener("hskkit:auth-changed", refreshAfterAuthChange);
+    window.addEventListener("pageshow", refreshFromBrowser);
+    window.addEventListener("focus", refreshFromBrowser);
     return () => {
-      window.removeEventListener("hskkit:auth-changed", refreshAuth);
-      window.removeEventListener("pageshow", refreshAuth);
-      window.removeEventListener("focus", refreshAuth);
+      refreshGeneration += 1;
+      window.removeEventListener("hskkit:auth-changed", refreshAfterAuthChange);
+      window.removeEventListener("pageshow", refreshFromBrowser);
+      window.removeEventListener("focus", refreshFromBrowser);
     };
   }, []);
 
