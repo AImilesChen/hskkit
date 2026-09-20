@@ -8,7 +8,7 @@ const sections = [
   { href: "/admin", label: "Overview" },
   { href: "/admin/users", label: "Users" },
   { href: "/admin/subscriptions", label: "Subscriptions" },
-  { href: "/admin/feedback", label: "Feedback" },
+  { href: "/admin/feedback", label: "Feedback inbox" },
 ] as const;
 
 function matchesSection(pathname: string, href: string) {

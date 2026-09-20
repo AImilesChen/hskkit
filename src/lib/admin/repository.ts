@@ -31,8 +31,8 @@ export async function getAdminOverview(db: AdminDb, now = new Date().toISOString
     (SELECT COUNT(*) FROM subscriptions WHERE plan_id='pro_yearly' AND stripe_livemode=1 AND status IN ('active','trialing')) yearly_live,
     (SELECT COUNT(*) FROM subscriptions WHERE plan_id='pro_monthly' AND stripe_livemode=0 AND status IN ('active','trialing')) monthly_test,
     (SELECT COUNT(*) FROM subscriptions WHERE plan_id='pro_yearly' AND stripe_livemode=0 AND status IN ('active','trialing')) yearly_test,
-    (SELECT COUNT(*) FROM feedback_submissions WHERE review_status='unread') unread_feedback,
-    (SELECT COUNT(*) FROM feedback_submissions WHERE review_status='resolved') resolved_feedback`).bind(day, week, now).first<Record<string, number>>());
+    (SELECT COUNT(*) FROM feedback_submissions WHERE review_status='unread' AND retention_status='kept') unread_feedback,
+    (SELECT COUNT(*) FROM feedback_submissions WHERE review_status='resolved' AND retention_status='kept') resolved_feedback`).bind(day, week, now).first<Record<string, number>>());
   const metric = (key: string) => Number(row?.[key] || 0);
   return {
     registrations: metric("registrations"),
@@ -121,6 +121,21 @@ export async function listAdminSubscriptions(db: AdminDb, options: ListOptions) 
   return { items: result.results.map((row) => ({ ...minimizeSubscription(row), email: maskEmail(row.email as string | null) }) as Record<string, unknown>), meta: pageMeta(total, options.page, options.pageSize) };
 }
 
+export async function getAdminFeedbackCounts(db: AdminDb) {
+  const row = await withAdminD1Retry(() => db.prepare(`SELECT
+    SUM(CASE WHEN review_status='unread' AND retention_status='kept' THEN 1 ELSE 0 END) unread,
+    SUM(CASE WHEN review_status='read' AND retention_status='kept' THEN 1 ELSE 0 END) read,
+    SUM(CASE WHEN review_status='resolved' AND retention_status='kept' THEN 1 ELSE 0 END) resolved,
+    SUM(CASE WHEN retention_status='archived' THEN 1 ELSE 0 END) archived
+    FROM feedback_submissions`).first<Record<string, number>>());
+  return {
+    unread: Number(row?.unread || 0),
+    read: Number(row?.read || 0),
+    resolved: Number(row?.resolved || 0),
+    archived: Number(row?.archived || 0),
+  };
+}
+
 export async function listAdminFeedback(db: AdminDb, options: ListOptions) {
   const values: unknown[] = [];
   const where: string[] = [];
@@ -135,7 +150,7 @@ export async function listAdminFeedback(db: AdminDb, options: ListOptions) {
   const clause = where.length ? `WHERE ${where.join(" AND ")}` : "";
   const total = await count(db, `SELECT COUNT(*) count FROM feedback_submissions f ${clause}`, values);
   const result = await withAdminD1Retry(() => db.prepare(`
-    SELECT f.id,f.type,f.message,f.email,
+    SELECT f.id,f.type,f.message,f.email,f.page_path,
       f.review_status,f.reviewed_at,f.admin_note,f.retention_status,f.archived_at,f.created_at,
       MAX(oi.user_id) account_user_id
     FROM feedback_submissions f

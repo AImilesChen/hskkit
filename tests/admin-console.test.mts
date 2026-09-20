@@ -212,9 +212,7 @@ test("admin feedback supports search, review, retention filtering and audited de
     readFile(new URL("../migrations/0036_admin_performance_feedback_retention.sql", import.meta.url), "utf8").catch(() => ""),
   ]);
   assert.match(page, /Search feedback/);
-  assert.match(page, /Review status/);
   assert.match(page, /Feedback type/);
-  assert.match(page, /Retention/);
   assert.match(page, /FeedbackReviewForm/);
   assert.match(form, /Archive/);
   assert.match(form, /Restore/);
@@ -226,4 +224,36 @@ test("admin feedback supports search, review, retention filtering and audited de
   assert.match(route, /export async function DELETE/);
   assert.match(migration, /retention_status/);
   assert.match(migration, /feedback_deleted/);
+});
+
+test("admin feedback opens as a user-feedback inbox instead of an empty input form", async () => {
+  const [overview, navigation, page, form, repository, css] = await Promise.all([
+    readFile(new URL("../src/app/admin/(console)/page.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../src/app/admin/(console)/admin-navigation.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../src/app/admin/(console)/feedback/page.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../src/app/admin/(console)/feedback/feedback-review-form.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../src/lib/admin/repository.ts", import.meta.url), "utf8"),
+    readFile(new URL("../src/app/admin/(console)/admin.css", import.meta.url), "utf8"),
+  ]);
+
+  assert.match(navigation, /Feedback inbox/);
+  assert.match(overview, /Unread user feedback/);
+  assert.match(overview, /admin-metric-link/);
+  assert.match(overview, /\/admin\/feedback\?view=unread/);
+  assert.match(page, /<h2>User feedback<\/h2>/);
+  assert.match(page, /Review feedback submitted by users\. Admin actions are recorded\./);
+  assert.match(page, /const view =[^;]+\? raw\.view : "unread"/);
+  assert.match(page, /getAdminFeedbackCounts/);
+  for (const label of ["Unread", "Read", "Resolved", "Archived"]) assert.match(page, new RegExp(`\\b${label}\\b`));
+  assert.match(page, /<details className="admin-feedback-filters"/);
+  assert.match(page, /No user feedback yet/);
+  assert.match(page, /No feedback matches these filters/);
+  assert.match(form, /Mark as read/);
+  assert.match(form, /Resolve/);
+  assert.match(form, /<details className="admin-feedback-tools"/);
+  assert.match(form, /Add internal note/);
+  assert.match(repository, /export async function getAdminFeedbackCounts/);
+  assert.match(repository, /retention_status='archived'/);
+  assert.match(css, /\.admin-feedback-views/);
+  assert.match(css, /\.admin-feedback-tools/);
 });
