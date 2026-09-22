@@ -81,11 +81,11 @@ test("account redesign preserves the approved account, sync, billing, referral a
 test("signed-in account renders primary account data before auxiliary resources finish", () => {
   assert.match(
     client,
-    /const data = await loadAccountSnapshot<AccountView>\(\{ force \}\);[\s\S]*?if \(generation !== refreshGeneration\.current\) return;\s*setView\(data\);\s*if \(data\.account\?\.timezone\) setTimezone\(data\.account\.timezone\);\s*if \(data\.account\?\.status === "active"\) \{\s*void loadAuxiliary\(generation\)\.catch/,
+    /const data = await loadAccountSnapshot<AccountView>\(\{ force \}\);[\s\S]*?if \(generation !== refreshGeneration\.current\) return;\s*setView\(data\);\s*if \(data\.account\?\.timezone\) setTimezone\(data\.account\.timezone\);\s*if \(data\.account\?\.status === "active"\) \{\s*void loadAuxiliary\(generation\);/,
     "the primary account shell must render and finish refresh without awaiting auxiliary resources",
   );
-  assert.match(client, /const loadAuxiliary = async \(generation: number\) => \{\s*const deviceId = syncDeviceId\(\);\s*const results = await settleInBatches/);
-  assert.match(client, /void loadAuxiliary\(generation\)\.catch\(cause => \{[\s\S]*?generation !== refreshGeneration\.current/);
+  assert.match(client, /const loadAuxiliary = async \(generation: number, requested: AuxiliaryResource\[\] = auxiliaryResources\) => \{/);
+  assert.match(client, /const data = await json\(`\/api\/v1\/account\/overview\?deviceId=[\s\S]*?if \(generation !== refreshGeneration\.current\) return;/);
   assert.doesNotMatch(client, /await loadAuxiliary\(generation\)/);
 });
 

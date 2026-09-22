@@ -12,6 +12,8 @@ type MergePreview = { id: string; mergeKey: string; expiresAt: string; preview: 
 type IconName = "learn" | "spark" | "profile" | "devices" | "billing" | "gift" | "privacy" | "clock" | "arrow";
 type AuxiliaryResource = "streak" | "sync" | "subscription" | "ai" | "referrals" | "planner";
 type AuxiliaryState = Record<AuxiliaryResource, "loading" | "ready" | "error">;
+type AuxiliaryResult = { status: "ready"; data: any } | { status: "error"; error: string };
+const auxiliaryResources: AuxiliaryResource[] = ["streak", "sync", "subscription", "ai", "referrals", "planner"];
 const loadingAuxiliaryState = (): AuxiliaryState => ({ streak: "loading", sync: "loading", subscription: "loading", ai: "loading", referrals: "loading", planner: "loading" });
 
 async function json(url: string, init?: RequestInit) {
@@ -97,17 +99,28 @@ export default function AccountClient() {
   const [checkoutSuccess, setCheckoutSuccess] = useState(false);
   const refreshGeneration = useRef(0);
 
-  const loadAuxiliary = async (generation: number) => {
+  const loadAuxiliary = async (generation: number, requested: AuxiliaryResource[] = auxiliaryResources) => {
     const deviceId = syncDeviceId();
-    const data = await json(`/api/v1/account/overview?deviceId=${encodeURIComponent(deviceId)}`);
-    if (generation !== refreshGeneration.current) return;
-    setStreak(data.streak);
-    setSync(data.sync);
-    setSubscription(data.subscription);
-    setAiQuota(data.ai);
-    setReferrals(data.referrals);
-    setPlanner(data.planner);
-    setAuxiliary({ streak: "ready", sync: "ready", subscription: "ready", ai: "ready", referrals: "ready", planner: "ready" });
+    setAuxiliary(current => requested.reduce((next, resource) => ({ ...next, [resource]: "loading" }), current));
+    const resourceQuery = requested.length === auxiliaryResources.length ? "" : `&resources=${encodeURIComponent(requested.join(","))}`;
+    try {
+      const data = await json(`/api/v1/account/overview?deviceId=${encodeURIComponent(deviceId)}${resourceQuery}`) as { resources: Partial<Record<AuxiliaryResource, AuxiliaryResult>> };
+      if (generation !== refreshGeneration.current) return;
+      const setters: Record<AuxiliaryResource, (value: any) => void> = { streak: setStreak, sync: setSync, subscription: setSubscription, ai: setAiQuota, referrals: setReferrals, planner: setPlanner };
+      requested.forEach(resource => {
+        const result = data.resources[resource] ?? { status: "error", error: "MISSING_RESOURCE" };
+        setAuxiliary(current => ({ ...current, [resource]: result.status }));
+        if (result.status === "ready") setters[resource](result.data);
+      });
+    } catch {
+      if (generation !== refreshGeneration.current) return;
+      requested.forEach(resource => setAuxiliary(current => ({ ...current, [resource]: "error" })));
+    }
+  };
+
+  const retryFailedAuxiliary = () => {
+    const failed = auxiliaryResources.filter(resource => auxiliary[resource] === "error");
+    if (failed.length) void loadAuxiliary(refreshGeneration.current, failed);
   };
 
   const refresh = async (force = false) => {
@@ -122,11 +135,7 @@ export default function AccountClient() {
       setView(data);
       if (data.account?.timezone) setTimezone(data.account.timezone);
       if (data.account?.status === "active") {
-        void loadAuxiliary(generation).catch(cause => {
-          if (generation !== refreshGeneration.current) return;
-          setAuxiliary({ streak: "error", sync: "error", subscription: "error", ai: "error", referrals: "error", planner: "error" });
-          setError(cause instanceof Error ? cause.message : "LOAD_FAILED");
-        });
+        void loadAuxiliary(generation);
         void fetch("/api/v1/admin/blog/access", { cache: "no-store" })
           .then(response => { if (generation === refreshGeneration.current) setBlogAdmin(response.ok); })
           .catch(() => { if (generation === refreshGeneration.current) setBlogAdmin(false); });
@@ -262,7 +271,7 @@ export default function AccountClient() {
           {auxiliary.planner !== "ready" ? <>
             <h2>{auxiliary.planner === "error" ? "Study plan unavailable" : "Loading your study plan…"}</h2>
             <p>{auxiliary.planner === "error" ? "We could not verify your current plan or due reviews. Retry before relying on these signals." : "Checking your saved plan and due reviews."}</p>
-            {auxiliary.planner === "error" && <button className="btn account-primary-action" onClick={() => void refresh()}>Retry account details</button>}
+            {auxiliary.planner === "error" && <button className="btn account-primary-action" onClick={retryFailedAuxiliary}>Retry unavailable details</button>}
           </> : <>
             <h2>{nextTitle}</h2>
             <p>{plan ? `HSK ${plan.inputs.goalLevel} plan · ${completedCount} of ${planTasks.length} weekly tasks complete` : dueReviews! > 0 ? "Clear due reviews first to keep your memory schedule current." : "No saved weekly plan yet. Start today or build one in Planner."}</p>
@@ -295,7 +304,7 @@ export default function AccountClient() {
           <div className="account-card-heading"><span className="account-icon-tile gold"><AccountIcon name="spark"/></span><div><p className="account-kicker">Membership & AI</p><h2>{tier ? `${tier} learning access` : "Learning access"}</h2></div><span className={`account-plan-badge ${tier?.toLowerCase() ?? "pending"}`}>{tier ?? (auxiliary.subscription === "error" ? "Unavailable" : "Loading")}</span></div>
           {auxiliary.subscription !== "ready" || auxiliary.ai !== "ready" || auxiliary.referrals !== "ready" ? <div className="account-data-unavailable" role="status">
             <p>{[auxiliary.subscription, auxiliary.ai, auxiliary.referrals].includes("error") ? "Membership or AI details are unavailable. No plan or credit values are shown until they can be verified." : "Loading verified membership and AI details…"}</p>
-            {[auxiliary.subscription, auxiliary.ai, auxiliary.referrals].includes("error") && <button className="btn secondary" onClick={() => void refresh()}>Retry account details</button>}
+            {[auxiliary.subscription, auxiliary.ai, auxiliary.referrals].includes("error") && <button className="btn secondary" onClick={retryFailedAuxiliary}>Retry unavailable details</button>}
           </div> : <>
             <p>{tier === "Pro" ? referrals?.access?.source === "paid" ? "Unlimited regular study and review, Focused Review, expanded history and 500 AI credits each month are active." : referrals?.access?.source === "trial" ? `Unlimited regular study and review and Focused Review are active during your trial, with ${referrals.access.baseAiCredits} trial AI credits granted.` : "Unlimited regular study and review and Focused Review are active through your promotional Pro access. Your available AI credits are shown below." : "Keep learning free with daily study and review allowances, or compare Pro when you need more."}</p>
             <div className="account-credit-balance">
@@ -312,7 +321,7 @@ export default function AccountClient() {
           <div className="account-card-heading"><span className="account-icon-tile reward"><AccountIcon name="gift"/></span><div><p className="account-kicker">Invite & earn</p><h2>Referral rewards</h2></div></div>
           {auxiliary.referrals !== "ready" ? <div className="account-data-unavailable" role="status">
             <p>{auxiliary.referrals === "error" ? "Referral progress is unavailable. No reward totals are shown until they can be verified." : "Loading verified referral progress…"}</p>
-            {auxiliary.referrals === "error" && <button className="btn secondary" onClick={() => void refresh()}>Retry account details</button>}
+            {auxiliary.referrals === "error" && <button className="btn secondary" onClick={retryFailedAuxiliary}>Retry unavailable details</button>}
           </div> : <>
             <div className="account-reward-stats"><div><strong>{referralCount}</strong><span>Invited</span></div><div><strong>{qualifiedReferrals}</strong><span>Qualified</span></div><div><strong>{referrals?.bonusCredits ?? 0}</strong><span>Credits available</span></div></div>
             <div className="account-next-reward"><span>Next reward</span><strong>{nextReward}</strong><small>Rewards require real learning activity and pass eligibility checks.</small></div>

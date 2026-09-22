@@ -52,7 +52,7 @@ function recordTemporaryFailure() {
   if (consecutiveFailures >= CIRCUIT_FAILURE_THRESHOLD) circuitOpenUntil = Date.now() + CIRCUIT_OPEN_MS;
 }
 
-export async function withUserD1ReadProtection<T>(operation: () => Promise<T>, timeoutMs = USER_D1_READ_TIMEOUT_MS): Promise<T> {
+export async function withUserD1ReadProtection<T>(operation: () => Promise<T>, timeoutMs: number | null = USER_D1_READ_TIMEOUT_MS): Promise<T> {
   if (Date.now() < circuitOpenUntil) throw new UserD1UnavailableError();
   for (let attempt = 1; attempt <= MAX_D1_READ_ATTEMPTS; attempt += 1) {
     let retrySlot = false;
@@ -66,7 +66,7 @@ export async function withUserD1ReadProtection<T>(operation: () => Promise<T>, t
       await new Promise((resolve) => setTimeout(resolve, RETRY_DELAYS_MS[attempt - 2]));
     }
     try {
-      const result = await runAttempt(operation, timeoutMs);
+      const result = timeoutMs === null ? await operation() : await runAttempt(operation, timeoutMs);
       consecutiveFailures = 0;
       return result;
     } catch (error) {
@@ -84,6 +84,12 @@ export async function withUserD1ReadProtection<T>(operation: () => Promise<T>, t
     }
   }
   throw new UserD1UnavailableError();
+}
+
+// Aggregate callers use this when one logical read may contain several D1 operations.
+// It retries only errors reported by D1 and does not turn aggregate wall time into a D1 failure.
+export function withUserD1TransientRetry<T>(operation: () => Promise<T>): Promise<T> {
+  return withUserD1ReadProtection(operation, null);
 }
 
 export function resetUserD1ProtectionForTest() {

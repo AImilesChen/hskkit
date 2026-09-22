@@ -54,7 +54,8 @@ test("Account dashboard uses one read-only aggregate instead of six component re
   assert.match(overview, /quotaSnapshot/);
   assert.match(overview, /trialAndReferralSnapshot/);
   assert.doesNotMatch(overview, /registerSyncDevice/);
-  assert.match(overview, /withUserD1ReadProtection/);
+  assert.match(overview, /withUserD1TransientRetry/);
+  assert.doesNotMatch(overview, /withUserD1ReadProtection/);
 });
 
 test("primary user-state APIs return explicit bounded D1 overload responses", () => {
