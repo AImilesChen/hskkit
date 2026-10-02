@@ -6,6 +6,7 @@ import {selectPackAssets} from "../src/lib/commercial/catalog.ts";
 import {generateDifferentiatedProductArtifact,worksheetPromptSegments} from "../src/lib/commercial/product-generator.ts";
 import {buildWorksheetLevel,WORKSHEET_MODULES} from "../src/lib/commercial/worksheet-pack.ts";
 import {resourceProductDetail} from "../src/lib/commercial/resource-products.ts";
+import {DIGITAL_PRODUCTS} from "../src/lib/commercial/products.ts";
 
 function zipEntries(zip:Uint8Array){
   const result=new Map<string,Uint8Array>();
@@ -159,4 +160,8 @@ test("worksheet product page promises and exposes real student and answer sample
   assert.match(detail.formats.join(" "),/low-ink/i);
   assert.ok(detail.samplePages.some(sample=>/student/i.test(sample.label)&&/student/i.test(sample.alt)));
   assert.ok(detail.samplePages.some(sample=>/answer/i.test(sample.label)&&/answer/i.test(sample.alt)));
+  const catalog= DIGITAL_PRODUCTS.find(product=>product.id==="worksheet-pack");
+  assert.ok(catalog);
+  assert.match(catalog.description,/README/);
+  assert.doesNotMatch(catalog.description,/Quick Start/);
 });
