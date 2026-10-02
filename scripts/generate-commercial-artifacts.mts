@@ -6,12 +6,12 @@ import { generatePackPdf, generateZipFiles } from "../src/lib/commercial/generat
 import { generateDifferentiatedProductArtifact } from "../src/lib/commercial/product-generator.ts";
 import { buildProductDeliveries, DEFAULT_PRODUCT_GENERATION_VERSION, DIGITAL_PRODUCTS, generationVersionForProduct } from "../src/lib/commercial/products.ts";
 
-const selectedProductId=process.env.PRODUCT_ID?.trim();
+const selectedProductIds=(process.env.PRODUCT_IDS||process.env.PRODUCT_ID||"").split(",").map(id=>id.trim()).filter(Boolean);
 const vocabularyOnly=process.env.VOCABULARY_ONLY==="1";
 const requestedGenerationVersion=process.env.GENERATION_VERSION?.trim();
 if(requestedGenerationVersion&&(!/^[a-z0-9][a-z0-9._-]{0,63}$/i.test(requestedGenerationVersion)||requestedGenerationVersion==="."||requestedGenerationVersion===".."))throw new Error("INVALID_GENERATION_VERSION");
 const outputRoot=resolve(process.argv[2]||"/tmp/hskkit-commercial-artifacts");
-if(selectedProductId&&!DIGITAL_PRODUCTS.some(product=>product.id===selectedProductId))throw new Error("INVALID_PRODUCT_ID");
+if(selectedProductIds.some(id=>!DIGITAL_PRODUCTS.some(product=>product.id===id)))throw new Error("INVALID_PRODUCT_ID");
 const [fontBytes,emojiBytes,assessmentAudioA,assessmentAudioB,assessmentAudioC]=await Promise.all([
   readFile(new URL("../assets/fonts/HskKitSansSubset.ttf",import.meta.url)),
   readFile(new URL("../assets/fonts/HskKitEmoji.ttf",import.meta.url)),
@@ -58,7 +58,7 @@ async function vocabularyBundleFiles(productId:string,levels:number[]){
   return [...files,{name:"README.txt",data:readme},{name:"LICENSE.txt",data:licence}];
 }
 for(const product of DIGITAL_PRODUCTS){
-  if(selectedProductId&&product.id!==selectedProductId)continue;
+  if(selectedProductIds.length&&!selectedProductIds.includes(product.id))continue;
   if(vocabularyOnly&&product.category!=="level"&&product.category!=="bundle")continue;
   const generationVersion=requestedGenerationVersion||generationVersionForProduct(product.id);
   const deliveries=buildProductDeliveries(product.id);

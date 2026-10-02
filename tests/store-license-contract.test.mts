@@ -23,7 +23,9 @@ test("teacher product has a bounded classroom licence while learner products rem
     if(product.id!=="teacher-lesson-plan-pack")assert.equal(productLicenseNotice(product.id),"Personal, non-transferable study and print use only.",product.id);
   }
   assert.equal(generationVersionForProduct("teacher-lesson-plan-pack"),"teacher-pack-v3");
-  assert.equal(generationVersionForProduct("worksheet-pack"),"complete-vocabulary-v1");
+  assert.equal(generationVersionForProduct("worksheet-pack"),"worksheet-editorial-v16");
+  assert.equal(generationVersionForProduct("learner-practice-toolkit"),"worksheet-editorial-v16");
+  assert.equal(generationVersionForProduct("exam-preparation-bundle"),"worksheet-editorial-v16");
 });
 
 test("Store, resource checkout, Terms and generated delivery use the selected product licence",async()=>{

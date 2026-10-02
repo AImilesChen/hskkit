@@ -91,7 +91,7 @@ test("planner delivery contains real printable and AcroForm-fillable editions",a
   assert.equal(digitalProduct("30-day-planner")?.format,"zip");
   const artifact=await generateDifferentiatedProductArtifact("30-day-planner",new Uint8Array(font),new Uint8Array(emoji),"planner-v2-test");
   assert.equal(artifact.format,"zip");
-  assert.deepEqual([...artifact.manifest.files].sort(),[...expectedFiles].sort());
+  assert.deepEqual([...artifact.manifest.files].sort(),[...expectedFiles,"HSKKit-30-Day-Planner-Progress-Tracker.xlsx"].sort());
   const files=zipEntries(artifact.bytes);
   assert.deepEqual([...files.keys()].filter(name=>name.endsWith(".pdf")).sort(),[...expectedFiles].sort());
   const printable=await PDFDocument.load(files.get(expectedFiles[1])!);
@@ -130,7 +130,7 @@ test("Store copy and real previews describe the personalized planner system",asy
 
 test("planner uses an immutable v4 artifact while existing purchase rights migrate from PDF to ZIP",async()=>{
   assert.equal(generationVersionForProduct("30-day-planner"),"planner-progress-xlsx-v4");
-  assert.equal(generationVersionForProduct("worksheet-pack"),"complete-vocabulary-v1");
+  assert.equal(generationVersionForProduct("worksheet-pack"),"worksheet-editorial-v16");
   assert.equal(currentProductDelivery("30-day-planner","product",null)?.format,"zip","legacy entitlement rows resolve through the current catalog during forward deployment");
   const routeSource=await readFile(new URL("../src/app/api/v1/commercial/exports/route.ts",import.meta.url),"utf8");
   assert.match(routeSource,/generationVersion:generationVersionForProduct\(productId\)/);

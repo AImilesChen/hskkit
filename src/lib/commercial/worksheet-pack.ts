@@ -1,4 +1,35 @@
 import type {PackSelection,PackWord} from "./catalog.ts";
+import {authoredLevelOne} from "./worksheet-level-1.ts";
+import {authoredLevelTwo} from "./worksheet-level-2.ts";
+import {authoredLevelThree} from "./worksheet-level-3.ts";
+import {worksheetLevelFourA} from "./worksheet-level-4a.ts";
+import {worksheetLevelFourB} from "./worksheet-level-4b.ts";
+import {worksheetLevelFiveA} from "./worksheet-level-5a.ts";
+import {worksheetLevelFiveB1} from "./worksheet-level-5b1.ts";
+import {worksheetLevelFiveB2} from "./worksheet-level-5b2.ts";
+import {worksheetLevelFiveB3} from "./worksheet-level-5b3.ts";
+import {worksheetLevelSixA} from "./worksheet-level-6a.ts";
+import {worksheetLevelSixB1} from "./worksheet-level-6b1.ts";
+import {worksheetLevelSixB2} from "./worksheet-level-6b2.ts";
+import {worksheetLevelSixB3} from "./worksheet-level-6b3.ts";
+import {worksheetLevelSevenA} from "./worksheet-level-7a.ts";
+import {worksheetLevelSevenB} from "./worksheet-level-7b.ts";
+import {worksheetLevelSevenC} from "./worksheet-level-7c.ts";
+import {worksheetLevelSevenD} from "./worksheet-level-7d.ts";
+import {worksheetLevelEightA1} from "./worksheet-level-8a1.ts";
+import {worksheetLevelEightA2} from "./worksheet-level-8a2.ts";
+import {worksheetLevelEightB1} from "./worksheet-level-8b1.ts";
+import {worksheetLevelEightB2} from "./worksheet-level-8b2.ts";
+import {worksheetLevelEightC} from "./worksheet-level-8c.ts";
+import {worksheetLevelEightD1} from "./worksheet-level-8d1.ts";
+import {worksheetLevelEightD2} from "./worksheet-level-8d2.ts";
+import {worksheetLevelNineA1} from "./worksheet-level-9a1.ts";
+import {worksheetLevelNineA2} from "./worksheet-level-9a2.ts";
+import {worksheetLevelNineB1} from "./worksheet-level-9b1.ts";
+import {worksheetLevelNineB2} from "./worksheet-level-9b2.ts";
+import {worksheetLevelNineC} from "./worksheet-level-9c.ts";
+import {worksheetLevelNineD1} from "./worksheet-level-9d1.ts";
+import {worksheetLevelNineD2} from "./worksheet-level-9d2.ts";
 
 export const WORKSHEET_MODULES=[
   "meaning-match","hanzi-tone","context-cloze","sentence-order","dialogue-completion",
@@ -181,7 +212,13 @@ export function buildWorksheetLevel(selection:PackSelection):WorksheetLevel{
   if(selection.words.length<36)throw new Error("WORKSHEET_SOURCE_WORDS_REQUIRED");
   const modules=WORKSHEET_MODULES.map((kind,moduleIndex)=>{
     const start=moduleIndex*3;
-    const questions=Array.from({length:3},(_,index)=>questionFor(level,kind,index,selection.words[(start+index)%selection.words.length],selection.words[(start+index+11)%selection.words.length],selection.words[(start+index+23)%selection.words.length],profile));
+    const levelFourQuestions=(worksheetLevelFourA as Partial<Record<WorksheetModuleKind,WorksheetQuestion[]>>)[kind]??(worksheetLevelFourB as Partial<Record<WorksheetModuleKind,WorksheetQuestion[]>>)[kind];
+    const levelFiveQuestions=([worksheetLevelFiveA,worksheetLevelFiveB1,worksheetLevelFiveB2,worksheetLevelFiveB3] as Partial<Record<WorksheetModuleKind,WorksheetQuestion[]>>[]).map(part=>part[kind]).find(Boolean);
+    const levelSixQuestions=([worksheetLevelSixA,worksheetLevelSixB1,worksheetLevelSixB2,worksheetLevelSixB3] as Partial<Record<WorksheetModuleKind,WorksheetQuestion[]>>[]).map(part=>part[kind]).find(Boolean);
+    const levelSevenQuestions=([worksheetLevelSevenA,worksheetLevelSevenB,worksheetLevelSevenC,worksheetLevelSevenD] as Partial<Record<WorksheetModuleKind,WorksheetQuestion[]>>[]).map(part=>part[kind]).find(Boolean);
+    const levelEightQuestions=([worksheetLevelEightA1,worksheetLevelEightA2,worksheetLevelEightB1,worksheetLevelEightB2,worksheetLevelEightC,worksheetLevelEightD1,worksheetLevelEightD2] as Partial<Record<WorksheetModuleKind,WorksheetQuestion[]>>[]).map(part=>part[kind]).find(Boolean);
+    const levelNineQuestions=([worksheetLevelNineA1,worksheetLevelNineA2,worksheetLevelNineB1,worksheetLevelNineB2,worksheetLevelNineC,worksheetLevelNineD1,worksheetLevelNineD2] as Partial<Record<WorksheetModuleKind,WorksheetQuestion[]>>[]).map(part=>part[kind]).find(Boolean);
+    const questions=level===1?authoredLevelOne(kind):level===2?authoredLevelTwo(kind):level===3?authoredLevelThree(kind):level===4?(levelFourQuestions??[]):level===5?(levelFiveQuestions??[]):level===6?(levelSixQuestions??[]):level===7?(levelSevenQuestions??[]):level===8?(levelEightQuestions??[]):level===9?(levelNineQuestions??[]):Array.from({length:3},(_,index)=>questionFor(level,kind,index,selection.words[(start+index)%selection.words.length],selection.words[(start+index+11)%selection.words.length],selection.words[(start+index+23)%selection.words.length],profile));
     return {kind,title:MODULE_META[kind].title,instruction:`${MODULE_META[kind].instruction} Level ${level} focus: ${profile.operation}.`,questions};
   });
   return {level,difficultyNote:profile.difficultyNote,signature:profile.signature,modules};

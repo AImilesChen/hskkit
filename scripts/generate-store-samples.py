@@ -14,12 +14,12 @@ from PIL import Image, ImageDraw, ImageFont
 
 PDF_SAMPLES = {
     "worksheet-pack": [
-        ("HSKKit-Worksheet-Quick-Start.pdf", 1, "quick-start"),
+        ("HSKKit-Worksheet-Progress-Checklist.pdf", 1, "progress-checklist"),
         ("HSKKit-Worksheets-Student-A4.pdf", 1, "level-1-student-meaning-match"),
-        ("HSKKit-Worksheets-Student-A4.pdf", 37, "level-4-student-reading"),
-        ("HSKKit-Worksheets-Student-A4.pdf", 78, "level-8-student-information-match"),
-        ("HSKKit-Worksheets-Answer-Key.pdf", 37, "level-4-answer-reading"),
-        ("HSKKit-Worksheets-Answer-Key.pdf", 90, "level-9-answer-review-test"),
+        ("HSKKit-Worksheets-Student-A4.pdf", 36, "level-4-student-reading"),
+        ("HSKKit-Worksheets-Student-A4.pdf", 113, "level-8-student-information-match"),
+        ("HSKKit-Worksheets-Answer-Key.pdf", 26, "level-4-answer-reading"),
+        ("HSKKit-Worksheets-Answer-Key.pdf", 97, "level-9-answer-review-test"),
     ],
     "assessment-tracker": [
         ("HSKKit-Assessment-Dashboard-Guide.pdf", 1, "scoring-guide"),

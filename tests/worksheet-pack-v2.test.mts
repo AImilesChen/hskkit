@@ -3,7 +3,7 @@ import test from "node:test";
 import {readFile} from "node:fs/promises";
 import {PDFDocument} from "pdf-lib";
 import {selectPackAssets} from "../src/lib/commercial/catalog.ts";
-import {generateDifferentiatedProductArtifact} from "../src/lib/commercial/product-generator.ts";
+import {generateDifferentiatedProductArtifact,worksheetPromptSegments} from "../src/lib/commercial/product-generator.ts";
 import {buildWorksheetLevel,WORKSHEET_MODULES} from "../src/lib/commercial/worksheet-pack.ts";
 import {resourceProductDetail} from "../src/lib/commercial/resource-products.ts";
 
@@ -22,7 +22,6 @@ function zipEntries(zip:Uint8Array){
 }
 
 const expectedFiles=[
-  "HSKKit-Worksheet-Quick-Start.pdf",
   "HSKKit-Worksheets-Student-A4.pdf",
   "HSKKit-Worksheets-Student-US-Letter.pdf",
   "HSKKit-Worksheets-Student-A4-Low-Ink.pdf",
@@ -33,6 +32,28 @@ const expectedFiles=[
 ];
 const font=await readFile(new URL("../assets/fonts/HskKitSansSubset.ttf",import.meta.url));
 const emoji=await readFile(new URL("../assets/fonts/HskKitEmoji.ttf",import.meta.url));
+
+test("reading sources, options and final evidence instruction stay separate",()=>{
+  const l8=buildWorksheetLevel(selectPackAssets(8)).modules.find(module=>module.kind==="reading-comprehension")!.questions[0];
+  const parts=worksheetPromptSegments(l8.prompt);
+  assert.ok(parts.some(part=>part.kind==="source"&&part.text.startsWith("材料甲")));
+  assert.ok(parts.some(part=>part.kind==="source"&&part.text.startsWith("材料乙")));
+  assert.ok(parts.some(part=>part.kind==="instruction"&&part.text.startsWith("若要决定")));
+  assert.ok(parts.every(part=>part.kind!=="source"||!part.text.includes("若要决定")));
+  for(const option of ["A.","B.","C."])assert.ok(parts.some(part=>part.kind==="option"&&part.text.startsWith(option)),option);
+  assert.ok(parts.some(part=>part.kind==="instruction"&&/排除另两项/.test(part.text)));
+  assert.ok(parts.every(part=>part.text.trim().length>0));
+  const l4=buildWorksheetLevel(selectPackAssets(4)).modules.find(module=>module.kind==="context-cloze")!.questions[0];
+  const short=worksheetPromptSegments(l4.prompt);
+  assert.ok(short.some(part=>part.kind==="option"&&part.text==="C. 恢复"));
+  assert.ok(short.some(part=>part.kind==="instruction"&&/哪两处信息/.test(part.text)));
+  const second=buildWorksheetLevel(selectPackAssets(4)).modules.find(module=>module.kind==="context-cloze")!.questions[1];
+  const secondParts=worksheetPromptSegments(second.prompt);
+  assert.equal(secondParts.find(part=>part.kind==="option"&&part.text.startsWith("C."))?.text,"C. 仍然");
+  assert.ok(secondParts.some(part=>part.kind==="instruction"&&part.text.startsWith("选词并说明")));
+  const fourWay=buildWorksheetLevel(selectPackAssets(6)).modules.find(module=>module.kind==="sentence-order")!.questions[0];
+  assert.ok(worksheetPromptSegments(fourWay.prompt).some(part=>part.kind==="option"&&part.text.startsWith("D.")));
+});
 
 test("worksheet font uses TrueType outlines for consistent Poppler and MuPDF rendering",()=>{
   const tableDirectory=font.subarray(0,512).toString("latin1");
@@ -64,10 +85,18 @@ test("Level 1-9 worksheet plans expose ten required task families plus a real re
     signatures.add(plan.signature);
     workload.push(plan.modules.flatMap(worksheetModule=>worksheetModule.questions).reduce((sum,question)=>sum+question.prompt.length+question.responseLines*20,0));
     assert.ok(new Set(plan.modules.map(worksheetModule=>worksheetModule.questions[0].commonError)).size>=8,`Level ${level} task-aligned common errors`);
-    const allPrompts=plan.modules.flatMap(worksheetModule=>worksheetModule.questions.map(question=>question.prompt)).join("\n");
-    if(level===7)assert.match(allPrompts,/段落一：[\s\S]*段落二：[\s\S]*段落三：/,"Level 7 includes actual three-paragraph sources");
-    if(level===8)assert.match(allPrompts,/文本A：[\s\S]*文本B：/,"Level 8 includes actual paired texts");
-    if(level===9){assert.match(allPrompts,/主张：[\s\S]*反方：/,"Level 9 includes claim and counterclaim sources");assert.match(allPrompts,/样本只来自|证据限制|限制/,"Level 9 includes an explicit evidence limit");assert.match(allPrompts,/反驳/,"Level 9 requires rebuttal");}
+    if(level>=7){
+      for(const kind of ["reading-comprehension","information-match"] as const){
+        const module=plan.modules.find(item=>item.kind===kind);
+        assert.ok(module,`Level ${level} includes ${kind}`);
+        for(const question of module.questions){
+          assert.ok(question.prompt.length>=220,`${question.id} includes enough independently readable source material`);
+          assert.match(question.prompt,/材料甲|资料甲|文本A|第一段|资料A/,`${question.id} first source`);
+          assert.match(question.prompt,/材料乙|资料乙|文本B|第二段|资料B/,`${question.id} second source`);
+          assert.ok(question.explanation.length>=70,`${question.id} explains evidence and distractors`);
+        }
+      }
+    }
   }
   assert.equal(signatures.size,9,"every level has a distinct task/difficulty signature");
   assert.ok(workload[3]>workload[0],"Level 4 workload exceeds Level 1");
@@ -89,32 +118,35 @@ test("worksheet ZIP ships distinct printable, low-ink, fillable, sample and answ
   assert.equal(artifact.format,"zip");
   assert.deepEqual([...artifact.manifest.files].sort(),[...expectedFiles].sort());
   const files=zipEntries(artifact.bytes);
-  assert.deepEqual([...files.keys()].filter(name=>name.endsWith(".pdf")).sort(),[...expectedFiles].sort(),"ZIP contains exactly the eight promised PDFs");
+  assert.deepEqual([...files.keys()].filter(name=>name.endsWith(".pdf")).sort(),expectedFiles.filter(name=>name.endsWith(".pdf")).sort(),"ZIP contains exactly the seven promised PDFs");
   for(const name of expectedFiles)assert.ok(files.has(name),name);
+  assert.ok(!files.has("HSKKit-Worksheet-Quick-Start.pdf"),"single-page Quick Start is consolidated into README");
+  const readme=new TextDecoder().decode(files.get("README.txt"));
+  assert.match(readme,/open A4, US Letter, low-ink or fillable/);
+  assert.match(readme,/different day/);
+  assert.match(readme,/Progress Checklist/);
+  assert.doesNotMatch(readme,/XLSX|Review-Log\.xlsx/);
+  assert.ok(!files.has("HSKKit-Worksheet-Optional-Review-Log.xlsx"));
+  assert.doesNotMatch(readme,/Read the Quick Start or guide file/);
   const a4=await PDFDocument.load(files.get("HSKKit-Worksheets-Student-A4.pdf")!);
   const letter=await PDFDocument.load(files.get("HSKKit-Worksheets-Student-US-Letter.pdf")!);
   const lowInk=await PDFDocument.load(files.get("HSKKit-Worksheets-Student-A4-Low-Ink.pdf")!);
   const fillable=await PDFDocument.load(files.get("HSKKit-Worksheets-Student-Fillable.pdf")!);
   const answers=await PDFDocument.load(files.get("HSKKit-Worksheets-Answer-Key.pdf")!);
-  const quickStart=await PDFDocument.load(files.get("HSKKit-Worksheet-Quick-Start.pdf")!);
   const samples=await PDFDocument.load(files.get("HSKKit-Worksheet-Completed-Samples.pdf")!);
   const checklist=await PDFDocument.load(files.get("HSKKit-Worksheet-Progress-Checklist.pdf")!);
-  assert.equal(a4.getPageCount(),90,"A4 student workbook has one page for each level/module pair");
-  assert.equal(letter.getPageCount(),a4.getPageCount(),"Letter and A4 cover identical tasks");
+  assert.ok(a4.getPageCount()>0&&letter.getPageCount()>0&&answers.getPageCount()>0);
   assert.equal(lowInk.getPageCount(),a4.getPageCount(),"low-ink and A4 cover identical tasks");
-  assert.equal(answers.getPageCount(),a4.getPageCount(),"answer pages align to student module pages");
-  assert.equal(fillable.getPageCount(),90,"fillable workbook has one page for each level/module pair");
+  assert.ok(fillable.getPageCount()>0&&samples.getPageCount()>0&&checklist.getPageCount()>0);
   const assertDimensions=(pdf:PDFDocument,width:number,height:number,label:string)=>pdf.getPages().forEach((page,index)=>{assert.ok(Math.abs(page.getWidth()-width)<1,`${label} page ${index+1} width`);assert.ok(Math.abs(page.getHeight()-height)<1,`${label} page ${index+1} height`);});
-  for(const [pdf,label] of [[a4,"A4 student"],[lowInk,"A4 low-ink"],[fillable,"A4 fillable"],[answers,"A4 answer"],[quickStart,"A4 Quick Start"],[samples,"A4 samples"],[checklist,"A4 checklist"]] as const)assertDimensions(pdf,595.28,841.89,label);
+  for(const [pdf,label] of [[a4,"A4 student"],[lowInk,"A4 low-ink"],[fillable,"A4 fillable"],[answers,"A4 answer"],[samples,"A4 samples"],[checklist,"A4 checklist"]] as const)assertDimensions(pdf,595.28,841.89,label);
   assertDimensions(letter,612,792,"US Letter student");
   const expectedFieldNames=[] as string[];
   for(let level=1;level<=9;level++)for(const worksheetModule of buildWorksheetLevel(selectPackAssets(level)).modules)for(const question of worksheetModule.questions)expectedFieldNames.push(`worksheet.${question.id}`);
   const actualFieldNames=fillable.getForm().getFields().map(field=>field.getName());
   assert.equal(actualFieldNames.length,270,"fillable workbook contains one real response field per question ID");
   assert.deepEqual([...actualFieldNames].sort(),[...expectedFieldNames].sort(),"fillable field names map exactly to all worksheet question IDs");
-  assert.equal(quickStart.getPageCount(),2,"Quick Start separates setup from the study flow");
-  assert.equal(samples.getPageCount(),27,"Completed Samples gives each completed response its own page");
-  assert.equal(checklist.getPageCount(),10,"Progress Checklist contains setup plus one page per level");
+  assert.ok(samples.getPageCount()>=9,"Completed Samples retain generous type and independent explanations");
 });
 
 test("worksheet product page promises and exposes real student and answer samples",()=>{

@@ -101,7 +101,7 @@ function wordLines(text:string,font:PDFFont,size:number,width:number){
   for(const word of words){const next=current?`${current} ${word}`:word;if(font.widthOfTextAtSize(next,size)<=width){current=next;continue;}if(current)output.push(current);if(font.widthOfTextAtSize(word,size)<=width)current=word;else{const fragments=lines(word,font,size,width);output.push(...fragments.slice(0,-1));current=fragments.at(-1)??"";}}
   if(current)output.push(current);return output;
 }
-async function makePdf(title:string,subtitle:string,sections:PdfSection[],fontBytes:Uint8Array,pageSize:[number,number]=[595.28,841.89]){
+async function makePdf(title:string,subtitle:string,sections:PdfSection[],fontBytes:Uint8Array,pageSize:[number,number]=[595.28,841.89],compact=false){
   const pdf=await PDFDocument.create();pdf.registerFontkit(fontkit);const font=await pdf.embedFont(new Uint8Array(fontBytes),{subset:false});
   pdf.setTitle(title);pdf.setAuthor("HSKKit");pdf.setSubject("HSK 3.0 unofficial learning resource");pdf.setKeywords(["HSK 3.0","unofficial","HSKKit"]);
   const size:[number,number]=pageSize;let page:PDFPage;let y=0;let pageNumber=0;const [pageWidth,pageHeight]=size;
@@ -111,12 +111,30 @@ async function makePdf(title:string,subtitle:string,sections:PdfSection[],fontBy
   fresh();for(const line of wordLines(title,font,20,contentWidth)){page!.drawText(line,{x:36,y,size:20,font,color:rgb(.04,.31,.29)});y-=27;}y-=5;
   for(const line of wordLines(subtitle,font,9.5,contentWidth)){page!.drawText(line,{x:36,y,size:9.5,font,color:rgb(.25,.3,.38)});y-=14;}
   for(const line of wordLines("Advanced-band disclosure: HSK 3.0 defines one unified Levels 7–9 band; Level 7/8/9 labels use the same canonical approved source set.",font,8.5,contentWidth)){page!.drawText(line,{x:36,y,size:8.5,font,color:rgb(.45,.28,.08)});y-=12;}y-=12;
-  for(const section of sections){if(section.pageBreakBefore||y<112)fresh();for(const headingLine of wordLines(section.heading,font,14,contentWidth)){if(y<72)fresh();page!.drawText(headingLine,{x:36,y,size:14,font,color:rgb(.04,.31,.29)});y-=18;}y-=4;for(const item of section.body){for(const line of wordLines(item,font,9.5,contentWidth-10)){if(y<58)fresh();page!.drawText(line,{x:44,y,size:9.5,font,color:rgb(.12,.16,.24)});y-=14;}y-=5;}y-=10;}
+  if(compact){
+    for(const section of sections){
+      const headingRows=wordLines(section.heading,font,13,contentWidth);
+      const rows=section.body.map(item=>wordLines(item,font,10.5,contentWidth-10));
+      const sectionHeight=headingRows.length*18+9+rows.reduce((total,lines)=>total+lines.length*15+7,0)+12;
+      const firstBodyHeight=(rows[0]?.length??0)*15;
+      if(y-sectionHeight<58&&sectionHeight<pageHeight-95||y-headingRows.length*18-firstBodyHeight<58)fresh();
+      for(const line of headingRows){page!.drawText(line,{x:36,y,size:13,font,color:rgb(.04,.31,.29)});y-=18;}
+      y-=9;
+      for(const item of rows){for(const line of item){if(y<62)fresh();page!.drawText(line,{x:44,y,size:10.5,font,color:rgb(.12,.16,.24)});y-=15;}y-=7;}
+      y-=12;
+    }
+  }else for(const section of sections){if(section.pageBreakBefore||y<112)fresh();for(const headingLine of wordLines(section.heading,font,14,contentWidth)){if(y<72)fresh();page!.drawText(headingLine,{x:36,y,size:14,font,color:rgb(.04,.31,.29)});y-=18;}y-=4;for(const item of section.body){for(const line of wordLines(item,font,9.5,contentWidth-10)){if(y<58)fresh();page!.drawText(line,{x:44,y,size:9.5,font,color:rgb(.12,.16,.24)});y-=14;}y-=5;}y-=10;}
   return new Uint8Array(await pdf.save({useObjectStreams:false}));
 }
 function readme(product:DigitalProduct,files:string[],manifest:ProductArtifactManifest){
   const audio=manifest.audioProvenance;
-  const quickStart=audio?[
+  const quickStart=product.id==="worksheet-pack"?[
+    "1. Choose one HSK level, then open A4, US Letter, low-ink or fillable Student Workbook. These versions contain the same question IDs; print only the module you need.",
+    "2. Read the worked example or situation, then answer all three IDs in one module without opening the Answer Key. Keep the printed response area for your own writing.",
+    "3. Check matching IDs in the Answer Key. Read Why and Common mistake; correct each missed item using the supplied evidence. Completed Samples demonstrate how to check, not text to copy.",
+    "4. On a different day, retry missed items without the key. Mark the printable Progress Checklist and jot down the error clue and next review action; no spreadsheet entry is required.",
+    "Levels 1–2: recognition and short routines; 3–4: context and reconstruction; 5–6: extended evidence; 7–9: cross-text reasoning and formal response."
+  ]:audio?[
     "1. Print one Level section from one Form A/B/C Student PDF and the matching Answer Sheet section.",
     "2. Play the matching MP3 once without pausing; each numbered prompt already includes a 5-second response gap.",
     "3. Complete Listening, Reading and Writing before opening Answers and Explanations.",
@@ -186,6 +204,32 @@ type WorksheetPdfMode="student"|"answer"|"fillable";
 type WorksheetPdfOptions={pageSize:"A4"|"LETTER";mode:WorksheetPdfMode;lowInk?:boolean};
 const WORKSHEET_PAGE_SIZES={A4:[595.28,841.89],LETTER:[612,792]} as const;
 
+type WorksheetPromptSegment={kind:"intro"|"source"|"option"|"instruction";text:string};
+export function worksheetPromptSegments(prompt:string):WorksheetPromptSegment[]{
+  const markers=/(?:材料[甲乙丙丁]|资料[ABC甲乙丙丁]|文本[AB])[｜:：]|(?<![A-Za-z])[ABCD]\.\s/g;
+  const points=[...prompt.matchAll(markers)].map(match=>({index:match.index!,label:match[0]}));
+  const segments:WorksheetPromptSegment[]=[];
+  const append=(text:string,kind:WorksheetPromptSegment["kind"])=>{if(text.trim())segments.push({kind,text:text.trim()});};
+  let from=0,kind:WorksheetPromptSegment["kind"]="intro";
+  for(const point of points){
+    if(point.index<from)continue;
+    append(prompt.slice(from,point.index),kind);
+    from=point.index;kind=/^[ABCD]\./.test(point.label)?"option":"source";
+  }
+  append(prompt.slice(from),kind);
+  return segments.flatMap((segment,index)=>{
+    const followedByOptions=segment.kind==="source"&&segments[index+1]?.kind==="option";
+    if(segment.kind!=="option"&&!followedByOptions)return [segment];
+    const match=followedByOptions?/。\s*(?=(?:若要|哪项|请判断|请比较))/.exec(segment.text)
+      :segment.kind==="option"&&/^[CD]\./.test(segment.text)
+        ?/(?:。|\.)\s*(?=(?:Write|Which|Copy|Choose|Give|Explain|State|Cite|说出|引用|选词|说明|用时间线|请引用|选一项|根据哪|请分别|请说明|写出|指出))/i.exec(segment.text)
+        :null;
+    if(!match)return [segment];
+    const pos=match.index;
+    return [{kind:segment.kind,text:segment.text.slice(0,pos).trim()},{kind:"instruction" as const,text:segment.text.slice(pos+match[0].length).trim()}];
+  });
+}
+
 async function makeWorksheetPdf(plans:WorksheetLevel[],fontBytes:Uint8Array,options:WorksheetPdfOptions){
   const pdf=await PDFDocument.create();pdf.registerFontkit(fontkit);const font=await pdf.embedFont(new Uint8Array(fontBytes),{subset:false});
   const form=options.mode==="fillable"?pdf.getForm():null;
@@ -194,51 +238,235 @@ async function makeWorksheetPdf(plans:WorksheetLevel[],fontBytes:Uint8Array,opti
   pdf.setTitle(`HSK Worksheet Pack · ${options.mode==="answer"?"Answer Key":options.mode==="fillable"?"Fillable Student Workbook":"Student Workbook"} · ${options.pageSize}`);
   pdf.setAuthor("HSKKit");pdf.setSubject("Differentiated HSK 3.0 Level 1–9 multi-skill worksheets");
   let pageNumber=0;
+  // The answer key flows across level boundaries. Student pages retain level boundaries
+  // so a printed level can still be separated and assigned on its own.
+  let answerPage:PDFPage|undefined,answerY=0;
+  const answerSize=13,answerLeading=19;
   const drawText=(page:PDFPage,text:string,x:number,y:number,size:number,maxWidth:number,color=ink,lineHeight=size+3)=>{const wrapped=wordLines(text,font,size,maxWidth);for(const row of wrapped){page.drawText(row,{x,y,size,font,color});y-=lineHeight;}return y;};
-  for(const plan of plans)for(const worksheetModule of plan.modules){
-    const page=pdf.addPage([width,height]);pageNumber+=1;
-    if(options.lowInk){page.drawLine({start:{x:30,y:height-32},end:{x:width-30,y:height-32},thickness:1,color:dark});}
-    else page.drawRectangle({x:0,y:height-39,width,height:39,color:dark});
-    page.drawText(`HSKKit · Level ${plan.level} · ${options.mode==="answer"?"Teacher Answer Key":"Student Worksheet"}`,{x:30,y:height-25,size:9,font,color:options.lowInk?dark:rgb(1,1,1)});
-    page.drawText(String(pageNumber),{x:width-48,y:22,size:8,font,color:muted});
-    let y=height-65;
-    y=drawText(page,worksheetModule.title,30,y,15,width-60,dark,19)-2;
-    y=drawText(page,plan.difficultyNote,30,y,8.2,width-60,muted,11)-3;
-    y=drawText(page,worksheetModule.instruction,30,y,8.7,width-60,ink,12)-5;
-    for(const question of worksheetModule.questions){
-      if(options.mode==="answer"){
-        y=drawText(page,`${question.id} · Answer: ${question.answer}`,34,y,8,width-68,dark,10)-2;
-        y=drawText(page,`Why: ${question.explanation}`,40,y,7.5,width-80,ink,9.5)-2;
-        y=drawText(page,question.commonError,40,y,7.5,width-80,muted,9.5)-7;
+  const promptParts=(prompt:string)=>worksheetPromptSegments(prompt);
+  const promptHeight=(question:(typeof plans)[number]["modules"][number]["questions"][number])=>{
+    const segments=promptParts(question.prompt);
+    return 17+segments.reduce((sum,segment)=>{
+      if(segment.kind==="source"){
+        const label=/^(?:材料[甲乙丙丁]|资料[ABC甲乙丙丁]|文本[AB])[｜:：]/.exec(segment.text)?.[0]??"";
+        return sum+16+wordLines(segment.text.slice(label.length),font,12,width-112).length*18+5;
+      }
+      const text=segment.kind==="instruction"?`作答要求 · ${segment.text}`:segment.text;
+      return sum+wordLines(text,font,segment.kind==="instruction"?11.5:12,width-112).length*18+(segment.kind==="option"?3:6);
+    },0)+5;
+  };
+  const drawPrompt=(page:PDFPage,question:(typeof plans)[number]["modules"][number]["questions"][number],y:number)=>{
+    page.drawText(question.id,{x:48,y,size:11,font,color:dark});y-=17;
+    for(const segment of promptParts(question.prompt)){
+      if(segment.kind==="source"){
+        const label=/^(?:材料[甲乙丙丁]|资料[ABC甲乙丙丁]|文本[AB])[｜:：]/.exec(segment.text)?.[0]??"";
+        page.drawText(label.replace(/[｜:：]$/,""),{x:48,y,size:11.5,font,color:dark});y-=16;
+        y=drawText(page,segment.text.slice(label.length),54,y,12,width-112,ink,18)-5;
+      }else if(segment.kind==="instruction"){
+        y=drawText(page,`作答要求 · ${segment.text}`,48,y,11.5,width-112,dark,18)-6;
       }else{
-        y=drawText(page,`${question.id} · ${question.prompt}`,34,y,8.2,width-68,ink,10.5)-4;
-        const responseHeight=Math.max(18,question.responseLines*10.5);
+        y=drawText(page,segment.text,segment.kind==="option"?54:48,y,12,width-112,ink,18)-(segment.kind==="option"?3:6);
+      }
+    }
+    return y-5;
+  };
+  for(const plan of plans){
+    let currentPage:PDFPage|undefined=options.mode==="answer"?answerPage:undefined;
+    let currentY=options.mode==="answer"?answerY:0;
+    for(const worksheetModule of plan.modules){
+    const startPage=(continued=false)=>{
+      const next=pdf.addPage([width,height]);pageNumber+=1;
+      if(options.lowInk){next.drawLine({start:{x:30,y:height-32},end:{x:width-30,y:height-32},thickness:1,color:dark});}
+      else next.drawRectangle({x:0,y:height-39,width,height:39,color:dark});
+      next.drawText(options.mode==="answer"?"HSKKit · Teacher Answer Key · Levels 1–9":`HSKKit · Level ${plan.level} · Student Worksheet`,{x:30,y:height-25,size:10,font,color:options.lowInk?dark:rgb(1,1,1)});
+      next.drawText(String(pageNumber),{x:width-48,y:22,size:8,font,color:muted});
+      let cursor=height-65;
+      const moduleHeading=options.mode==="answer"?`Level ${plan.level} · ${worksheetModule.title}`:worksheetModule.title;
+      cursor=drawText(next,moduleHeading+(continued?" · Continued":""),36,cursor,16,width-72,dark,22)-6;
+      if(!continued){cursor=drawText(next,plan.difficultyNote,36,cursor,11,width-72,muted,16)-5;
+        cursor=drawText(next,worksheetModule.instruction,36,cursor,12,width-72,ink,18)-17;}
+      if(options.mode==="answer")next.drawText("Score each ID against its student item; accept original answers meeting the printed criteria.",{x:30,y:35,size:9,font,color:muted});
+      else{
+        next.drawText("Name:",{x:30,y:35,size:9,font,color:muted});next.drawLine({start:{x:58,y:34},end:{x:170,y:34},thickness:.6,color:muted});
+        next.drawText("Date:",{x:190,y:35,size:9,font,color:muted});next.drawLine({start:{x:216,y:34},end:{x:310,y:34},thickness:.6,color:muted});
+        next.drawText("Check only after completing all three IDs.",{x:330,y:35,size:9,font,color:muted});
+      }
+      return {next,cursor};
+    };
+    const required=(question:(typeof worksheetModule.questions)[number])=>options.mode==="answer"
+      ?wordLines(`${question.id} · ${question.answer}`,font,answerSize,width-96).length*answerLeading+8+wordLines(`Why · ${question.explanation}`,font,answerSize,width-96).length*answerLeading+8+wordLines(`Common mistake · ${question.commonError}`,font,answerSize,width-96).length*answerLeading+21
+      :promptHeight(question)+(form?Math.max(38,question.responseLines*19)+14:usesHanziGrid(question)?89:question.responseLines*19+14);
+    function usesHanziGrid(question:(typeof worksheetModule.questions)[number]){
+      return plan.level<=2&&worksheetModule.kind==="hanzi-tone"&&
+        /(?:copy|write|fill).*?(?:茶|character|hanzi|two-hanzi|汉字|“__洗手)/i.test(question.prompt);
+    }
+    const moduleHeading=options.mode==="answer"?`Level ${plan.level} · ${worksheetModule.title}`:worksheetModule.title;
+    const headingNeed=wordLines(moduleHeading,font,16,width-72).length*22+6+wordLines(plan.difficultyNote,font,11,width-72).length*16+5+wordLines(worksheetModule.instruction,font,12,width-72).length*18+17;
+    // A long response may continue on another page; the module heading must stay with
+    // its first prompt and at least one writing line, not with the entire response.
+    const firstQuestion=worksheetModule.questions[0];
+    const firstNeed=options.mode==="answer"?required(firstQuestion):promptHeight(firstQuestion)+38;
+    let page:PDFPage;let y:number;
+    if(!currentPage||currentY-14-headingNeed-firstNeed<58){({next:page,cursor:y}=startPage());}
+    else{
+      page=currentPage;y=currentY-14;
+      y=drawText(page,moduleHeading,36,y,16,width-72,dark,22)-6;
+      y=drawText(page,plan.difficultyNote,36,y,11,width-72,muted,16)-5;
+      y=drawText(page,worksheetModule.instruction,36,y,12,width-72,ink,18)-17;
+    }
+    for(const [questionIndex,question] of worksheetModule.questions.entries()){
+      const needed=required(question);
+      const promptNeed=promptHeight(question);
+      const minimumNeed=options.mode==="answer"?needed:promptNeed+38;
+      // Keep a short fillable task and its field together. Only genuinely long
+      // tasks may place the response field alone on a continuation page.
+      if(form&&y-needed<58&&needed<=height-155){({next:page,cursor:y}=startPage(true));}
+      else if(y-needed<58&&y-minimumNeed<58){({next:page,cursor:y}=startPage(true));}
+      if(options.mode!=="answer"&&y-promptNeed<58)throw new Error(`WORKSHEET_PROMPT_TOO_LONG:${question.id}`);
+      if(options.mode==="answer"&&y-needed<58)throw new Error(`WORKSHEET_ANSWER_TOO_LONG:${question.id}`);
+      if(options.mode==="answer"){
+        y=drawText(page,`${question.id} · ${question.answer}`,48,y,answerSize,width-96,dark,answerLeading)-8;
+        y=drawText(page,`Why · ${question.explanation}`,48,y,answerSize,width-96,ink,answerLeading)-8;
+        y=drawText(page,`Common mistake · ${question.commonError}`,48,y,answerSize,width-96,muted,answerLeading)-21;
+      }else{
+        y=drawPrompt(page,question,y);
+        let responseHeight=Math.max(38,question.responseLines*19);
         if(form){
+          if(y-responseHeight<58){
+            ({next:page,cursor:y}=startPage(true));
+            page.drawText(`${question.id} · response continued`,{x:48,y,size:11,font,color:dark});y-=24;
+            if(question.responseLines>=5)responseHeight=Math.max(responseHeight,y-82);
+          }
           const field=form.createTextField(`worksheet.${question.id}`);field.enableMultiline();
-          field.addToPage(page,{x:40,y:y-responseHeight+4,width:width-80,height:responseHeight,borderColor:lineColor,borderWidth:.75,textColor:ink,font});field.setFontSize(8);
-          y-=responseHeight+8;
+          field.addToPage(page,{x:48,y:y-responseHeight+4,width:width-96,height:responseHeight,borderColor:lineColor,borderWidth:.75,textColor:ink,font});field.setFontSize(12);
+          y-=responseHeight+14;
+        }else if(usesHanziGrid(question)){
+          page.drawText("在田字格内写汉字；拼音或补全句子写在下方横线上。",{x:48,y,size:9.5,font,color:muted});y-=17;
+          const cellSize=40,cellCount=4,gap=5;
+          for(let cell=0;cell<cellCount;cell++){
+            const x=40+cell*(cellSize+gap),bottom=y-cellSize;
+            page.drawRectangle({x,y:bottom,width:cellSize,height:cellSize,borderColor:lineColor,borderWidth:.65});
+            page.drawLine({start:{x:x+cellSize/2,y:bottom},end:{x:x+cellSize/2,y},thickness:.3,color:lineColor,dashArray:[2,2]});
+            page.drawLine({start:{x,y:bottom+cellSize/2},end:{x:x+cellSize,y:bottom+cellSize/2},thickness:.3,color:lineColor,dashArray:[2,2]});
+          }
+          y-=cellSize+10;
+          page.drawLine({start:{x:48,y},end:{x:width-48,y},thickness:.55,color:lineColor});
+          y-=22;
         }else{
-          for(let row=0;row<question.responseLines;row++){page.drawLine({start:{x:40,y},end:{x:width-40,y},thickness:.55,color:lineColor});y-=10.5;}
-          y-=7;
+          const evidenceLabels=plan.level>=7&&worksheetModule.kind==="reading-comprehension"
+            ?["选择","甲证据","乙证据","排除理由","综合判断"]:[];
+          const next=worksheetModule.questions[questionIndex+1];
+          const baseRemaining=y-question.responseLines*19-14;
+          const nextFits=next&&baseRemaining-required(next)>=58;
+          const expandable=worksheetModule.kind==="writing-speaking"||(plan.level>=7&&worksheetModule.kind==="reading-comprehension");
+          const target=worksheetModule.kind==="writing-speaking"
+            ?plan.level>=7?12:plan.level>=5?5:2:7;
+          const extra=expandable&&!nextFits?Math.min(target,Math.max(0,Math.floor((baseRemaining-84)/19))):0;
+          // A genuine continuation page should remain useful for handwriting
+          // all the way down to the safe print margin; don't create another
+          // page just to satisfy a fixed number of extra ruled lines.
+          let continued=false;
+          for(let row=0;row<question.responseLines+extra;row++){
+            if(y<77){({next:page,cursor:y}=startPage(true));page.drawText(`${question.id} · response continued`,{x:48,y,size:11,font,color:dark});y-=24;continued=true;}
+            const label=evidenceLabels[row];
+            if(label)page.drawText(label,{x:48,y:y+3,size:9,font,color:muted});
+            page.drawLine({start:{x:label?122:48,y},end:{x:width-48,y},thickness:.55,color:lineColor});y-=19;
+          }
+          if(continued&&plan.level>=7&&question.responseLines>=5){
+            while(y>=96){page.drawLine({start:{x:48,y},end:{x:width-48,y},thickness:.55,color:lineColor});y-=19;}
+          }
+          y-=14;
         }
       }
     }
-    if(options.mode==="answer")page.drawText("Key rule: score every ID against the matching student item; original output may vary only within the printed criteria.",{x:30,y:35,size:7.5,font,color:muted});
-    else{
-      page.drawText("Name:",{x:30,y:35,size:7.5,font,color:muted});page.drawLine({start:{x:58,y:34},end:{x:170,y:34},thickness:.6,color:muted});
-      page.drawText("Date:",{x:190,y:35,size:7.5,font,color:muted});page.drawLine({start:{x:216,y:34},end:{x:310,y:34},thickness:.6,color:muted});
-      page.drawText("Check only after completing all three IDs.",{x:330,y:35,size:7.5,font,color:muted});
+    currentPage=page;currentY=y;
     }
+    if(options.mode==="answer"){answerPage=currentPage;answerY=currentY;}
   }
   if(form)form.updateFieldAppearances(font);
   return new Uint8Array(await pdf.save({useObjectStreams:false}));
 }
 
-function worksheetSampleSections(plans:WorksheetLevel[]):PdfSection[]{
-  return plans.flatMap(plan=>{
-    const samples=[plan.modules[2].questions[0],plan.modules[6].questions[0],plan.modules[8].questions[0]];
-    return samples.map((question,index)=>({heading:`Level ${plan.level} · Completed student sample ${index+1} of 3`,pageBreakBefore:plan.level!==1||index!==0,body:[`${question.id} · Prompt: ${question.prompt}`,`Completed response: ${question.sampleResponse}`,`Self-check: ${question.explanation}`,question.commonError]}));
-  });
+async function makeWorksheetSamplesPdf(plans:WorksheetLevel[],fontBytes:Uint8Array){
+  const pdf=await PDFDocument.create();pdf.registerFontkit(fontkit);const font=await pdf.embedFont(new Uint8Array(fontBytes),{subset:false});
+  const [width,height]=WORKSHEET_PAGE_SIZES.A4,ink=rgb(.11,.15,.22),dark=rgb(.04,.31,.29),muted=rgb(.38,.43,.5),rule=rgb(.76,.83,.81);
+  pdf.setTitle("HSK Worksheet Pack · Completed Samples");pdf.setAuthor("HSKKit");
+  let page:PDFPage|undefined,y=0,pageNumber=0;
+  const fresh=()=>{page=pdf.addPage([width,height]);pageNumber++;
+    page.drawLine({start:{x:36,y:height-38},end:{x:width-36,y:height-38},thickness:1.2,color:dark});
+    page.drawText("HSKKit  /  COMPLETED SAMPLES",{x:36,y:height-27,size:9,font,color:dark});
+    page.drawText(String(pageNumber),{x:width-48,y:25,size:9,font,color:muted});y=height-66;};
+  const sampleRows=(text:string,prompt=false)=>{
+    const paragraphs=prompt?worksheetPromptSegments(text).map(part=>part.kind==="instruction"?`作答要求 · ${part.text}`:part.text)
+      :text.split(/\n|(?=[ABC]\. )/).filter(Boolean);
+    return paragraphs.flatMap(part=>wordLines(part.trim(),font,13,width-112).map((row,index)=>({row,paragraphStart:index===0})));
+  };
+  const block=(label:string,text:string,accent=false,prompt=false)=>{
+    const rows=sampleRows(text,prompt),need=21+rows.length*19+rows.filter(row=>row.paragraphStart).length*6+12;
+    if(!page||y-need<52)fresh();
+    page!.drawText(label,{x:48,y,size:12,font,color:accent?dark:muted});y-=21;
+    for(const {row,paragraphStart} of rows){if(paragraphStart)y-=6;
+      if(y<58){fresh();page!.drawText(`${label} · continued`,{x:48,y,size:12,font,color:muted});y-=22;}
+      page!.drawText(row,{x:48,y,size:13,font,color:accent?dark:ink});y-=19;}
+    y-=12;
+  };
+  for(const plan of plans)for(const [index,question] of [plan.modules[2].questions[0],plan.modules[6].questions[0],plan.modules[8].questions[0]].entries()){
+    const blocks=[question.prompt,question.sampleResponse,question.explanation,question.commonError];
+    const estimate=58+blocks.reduce((sum,text,blockIndex)=>{const rows=sampleRows(text,blockIndex===0);return sum+33+rows.length*19+rows.filter(row=>row.paragraphStart).length*6;},0);
+    // Keep a complete short example together; a long example can start in the
+    // remaining space after the previous one's self-check instead of leaving a sparse page.
+    if(!page||(estimate<height-130?y-estimate<52:y<220))fresh();
+    page!.drawText(`LEVEL ${plan.level}   /   EXAMPLE ${index+1}`,{x:48,y,size:15,font,color:dark});y-=24;
+    page!.drawLine({start:{x:48,y},end:{x:width-48,y},thickness:.8,color:rule});y-=12;
+    block("TASK · Read and attempt before checking",question.prompt,false,true);
+    block("COMPLETED RESPONSE",question.sampleResponse,true);
+    const pairedNeed=[question.explanation,question.commonError].reduce((sum,text)=>{
+      const rows=sampleRows(text);return sum+33+rows.length*19+rows.filter(row=>row.paragraphStart).length*6;
+    },0);
+    if(y-pairedNeed<52&&pairedNeed<height-120)fresh();
+    block("SELF-CHECK · Evidence and reasoning",question.explanation);
+    block("COMMON MISTAKE · What to revise",question.commonError);
+    y-=8;
+  }
+  return new Uint8Array(await pdf.save({useObjectStreams:false}));
+}
+
+async function makeWorksheetChecklistPdf(plans:WorksheetLevel[],fontBytes:Uint8Array){
+  const pdf=await PDFDocument.create();pdf.registerFontkit(fontkit);
+  const font=await pdf.embedFont(new Uint8Array(fontBytes),{subset:false});
+  const [width,height]=WORKSHEET_PAGE_SIZES.A4;
+  const dark=rgb(.04,.31,.29),ink=rgb(.11,.15,.22),muted=rgb(.38,.43,.5),rule=rgb(.65,.72,.71);
+  pdf.setTitle("HSK Worksheet Pack · Progress Checklist");pdf.setAuthor("HSKKit");
+  let pageNo=0;
+  for(const plan of plans){
+    for(let start=0;start<plan.modules.length;start+=5){
+      const page=pdf.addPage([width,height]);pageNo++;
+      page.drawLine({start:{x:36,y:height-38},end:{x:width-36,y:height-38},thickness:1.2,color:dark});
+      page.drawText(`HSKKit / LEVEL ${plan.level} / PROGRESS ${start/5+1}`,{x:36,y:height-27,size:9,font,color:dark});
+      page.drawText(String(pageNo),{x:width-48,y:25,size:9,font,color:muted});
+      let y=height-70;
+      page.drawText(`Level ${plan.level} · 逐题学习记录`,{x:36,y,size:17,font,color:dark});y-=27;
+      for(const row of wordLines("初 = 首次独立答对   改 = 对照答案纠错   复 = 隔天独立复测答对；未完成留空。",font,11,width-72)){
+        page.drawText(row,{x:36,y,size:11,font,color:ink});y-=17;
+      }
+      y-=12;
+      for(const module of plan.modules.slice(start,start+5)){
+        const heading=`${module.title} · 日期 __________  首答 ____ / 3  纠错后 ____ / 3`;
+        for(const row of wordLines(heading,font,11,width-84)){
+          page.drawText(row,{x:42,y,size:11,font,color:dark});y-=16;
+        }
+        const ids=module.questions.map((q,index)=>`${index+1} 初□ 改□ 复□`).join("     ");
+        page.drawText(ids,{x:48,y,size:11,font,color:ink});y-=24;
+        page.drawText("错因 / 证据：",{x:48,y,size:10.5,font,color:muted});
+        page.drawLine({start:{x:133,y:y-2},end:{x:width-48,y:y-2},thickness:.65,color:rule});y-=23;
+        page.drawLine({start:{x:48,y:y-2},end:{x:width-48,y:y-2},thickness:.65,color:rule});y-=20;
+        page.drawLine({start:{x:42,y:y-4},end:{x:width-42,y:y-4},thickness:.4,color:rule});y-=17;
+      }
+      if(y<82)throw new Error(`WORKSHEET_CHECKLIST_OVERFLOW:${plan.level}:${start}`);
+      page.drawText("复测日期：____________    下个单元 / 级别决定：________________________________",{x:42,y,size:10.5,font,color:muted});
+    }
+  }
+  return new Uint8Array(await pdf.save({useObjectStreams:false}));
 }
 
 const formLabel=(variant:number)=>(["A","B","C"] as const)[variant];
@@ -352,28 +580,15 @@ export async function generateDifferentiatedProductArtifact(productId:DigitalPro
   }
   if(product.id==="worksheet-pack"){
     const plans=selections.map(buildWorksheetLevel);
-    const quickStart=await makePdf("HSK Worksheet Pack · Quick Start","Use one differentiated module at a time. Student pages, answer pages and field IDs stay aligned from Level 1 through Level 9.",[
-      {heading:"Choose the correct level and mode",body:["Levels 1–2: direct recognition, tone accuracy, short routines and controlled output.","Levels 3–4: paragraph context, reason/result, reconstruction and viewpoint support.","Levels 5–6: extended evidence, cause/effect, comparison and recommendation.","Levels 7–9: multi-paragraph discourse, cross-text synthesis, counterargument and formal reasoning.","Choose A4, US Letter, low-ink or fillable. All four student versions contain the same 270 question IDs."]},
-      {heading:"20–35 minute study flow",pageBreakBefore:true,body:["1. Complete one three-item module without the answer key.","2. Use the printed response area; advanced writing tasks may continue on the back of the page.","3. Check the same IDs in the Teacher Answer Key. Read the explanation and common-error note.","4. Revise every missed item once, then record evidence and the next review date in the Progress Checklist."]},
-      {heading:"Scoring and open responses",body:["Objective items must match the keyed target, form and evidence link.","Dialogue, writing and speaking responses may vary only when they preserve the keyed meaning and satisfy every printed Level constraint.","Completed Samples demonstrate the checking method; they are not scripts to copy."]},
-    ],fontBytes);
     // Fontkit mutates parsing state; generate sequentially so shared font bytes cannot corrupt glyph maps.
     const studentA4=await makeWorksheetPdf(plans,fontBytes,{pageSize:"A4",mode:"student"});
     const studentLetter=await makeWorksheetPdf(plans,fontBytes,{pageSize:"LETTER",mode:"student"});
     const studentLowInk=await makeWorksheetPdf(plans,fontBytes,{pageSize:"A4",mode:"student",lowInk:true});
     const fillable=await makeWorksheetPdf(plans,fontBytes,{pageSize:"A4",mode:"fillable"});
     const answers=await makeWorksheetPdf(plans,fontBytes,{pageSize:"A4",mode:"answer"});
-    const completedSamples=await makePdf("HSK Worksheet Pack · Completed Samples","Three worked models per level show how to answer, check the matching ID and revise from evidence.",worksheetSampleSections(plans),fontBytes);
-    const checklistSections=plans.map(plan=>({heading:`Level ${plan.level} · Progress Checklist`,pageBreakBefore:true,body:[
-      `Difficulty focus: ${plan.difficultyNote}`,
-      ...plan.modules.map(module=>`□ ${module.title} · date ______ · correct before review ____ / 3 · correct after revision ____ / 3`),
-      "Evidence note: __________________________________________________________________",
-      "One recurring form / meaning / context error: ______________________________________",
-      "Next review date: __________   Next module or level decision: ________________________",
-    ]}));
-    const checklist=await makePdf("HSK Worksheet Pack · Progress Checklist","Record performance by module and question ID. Confidence alone does not count as evidence.",checklistSections,fontBytes);
+    const completedSamples=await makeWorksheetSamplesPdf(plans,fontBytes);
+    const checklist=await makeWorksheetChecklistPdf(plans,fontBytes);
     const files=[
-      {name:"HSKKit-Worksheet-Quick-Start.pdf",data:quickStart},
       {name:"HSKKit-Worksheets-Student-A4.pdf",data:studentA4},
       {name:"HSKKit-Worksheets-Student-US-Letter.pdf",data:studentLetter},
       {name:"HSKKit-Worksheets-Student-A4-Low-Ink.pdf",data:studentLowInk},
