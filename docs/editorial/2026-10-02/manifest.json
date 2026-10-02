@@ -1,0 +1,26 @@
+[
+  {
+    "slug": "hsk-1-2-first-graded-reader",
+    "title": "Your First Chinese Storybook After HSK 1 or 2: A Beginner's Buying and Reading Guide",
+    "excerpt": "Ready for a first Chinese storybook after HSK 1 or 2? Compare three real beginner readers, test a sample page, and build a routine that helps you finish a story.",
+    "category": "Reading",
+    "hskLevel": null,
+    "featuredImageAlt": "An open beginner Chinese storybook with page markers and a pencil on a sunlit wooden table"
+  },
+  {
+    "slug": "hsk-handwriting-paper-computer-guide",
+    "title": "Do You Have to Handwrite Chinese Characters for the HSK? Check Your Actual Exam Before You Practise",
+    "excerpt": "HSK writing is not the same question as handwriting. Check your exam version, level, date and paper or computer mode, then practise the output your actual task requires.",
+    "category": "Exam Preparation",
+    "hskLevel": null,
+    "featuredImageAlt": "Hands writing with a pen on paper beside hands typing on a computer keyboard"
+  },
+  {
+    "slug": "hsk6-fluency-real-life-self-test",
+    "title": "Is HSK 6 Fluent Chinese? Test What You Can Actually Do Beyond the Exam",
+    "excerpt": "An HSK 6 result cannot answer every real-world language question. Use three linked tasks and a practical ledger to find your specific reading, listening and speaking gaps.",
+    "category": "Study Guides",
+    "hskLevel": 6,
+    "featuredImageAlt": "Learners navigate a rainy Chinese city street and speak at a cafe in an evening scene"
+  }
+]
