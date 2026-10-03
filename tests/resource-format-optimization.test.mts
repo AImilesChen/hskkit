@@ -47,7 +47,7 @@ test("Assessment Tracker merchandising lists its two Excel workbooks and complet
 });
 
 test("30-Day Planner ships an editable Excel progress companion",async()=>{
-  assert.equal(generationVersionForProduct("30-day-planner"),"planner-progress-xlsx-v4");
+  assert.equal(generationVersionForProduct("30-day-planner"),"planner-progress-xlsx-v5");
   const artifact=await generateDifferentiatedProductArtifact("30-day-planner",new Uint8Array(font),new Uint8Array(emoji),"format-optimization-test");
   const files=zipEntries(artifact.bytes);
   const name="HSKKit-30-Day-Planner-Progress-Tracker.xlsx";
@@ -59,6 +59,16 @@ test("30-Day Planner ships an editable Excel progress companion",async()=>{
   assert.match(text(workbook.get("xl/worksheets/sheet2.xml")),/Day 30/);
   assert.match(text(workbook.get("xl/worksheets/sheet2.xml")),/<dataValidations/);
   assert.match(text(workbook.get("xl/worksheets/sheet3.xml")),/COUNTIF/);
+  const summary=text(workbook.get("xl/worksheets/sheet3.xml"));
+  assert.match(summary,/Not yet completed/);
+  assert.match(summary,/Week 1/);
+  assert.match(summary,/Week 4/);
+  assert.match(summary,/Finish/);
+  assert.match(summary,/H2:H8/);
+  assert.match(summary,/H30:H31/);
+  assert.match(summary,/conditionalFormatting/);
+  assert.match(text(workbook.get("xl/styles.xml")),/sz val="18"/);
+  assert.match(text(workbook.get("xl/worksheets/sheet2.xml")),/H2:H31/);
 });
 
 test("Practice Assessment Pack ships an Excel score workbook with automatic totals and weakest-skill result",async()=>{

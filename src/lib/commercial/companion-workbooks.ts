@@ -6,7 +6,7 @@ const escapeXml=(value:unknown)=>String(value??"").replaceAll("&","&amp;").repla
 const inline=(ref:string,value:unknown,style=0)=>`<c r="${ref}" t="inlineStr" s="${style}"><is><t xml:space="preserve">${escapeXml(value)}</t></is></c>`;
 const numeric=(ref:string,value:number,style=0)=>`<c r="${ref}" s="${style}"><v>${value}</v></c>`;
 const formula=(ref:string,value:string,style=0)=>`<c r="${ref}" s="${style}"><f>${escapeXml(value)}</f><v>0</v></c>`;
-const row=(index:number,cells:string[])=>`<row r="${index}">${cells.join("")}</row>`;
+const row=(index:number,cells:string[],height?:number)=>`<row r="${index}"${height?` ht="${height}" customHeight="1"`:""}>${cells.join("")}</row>`;
 const sheet=(rows:string[],columns:string,extra="")=>`<?xml version="1.0" encoding="UTF-8" standalone="yes"?><worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><sheetViews><sheetView workbookViewId="0"><pane ySplit="1" topLeftCell="A2" activePane="bottomLeft" state="frozen"/></sheetView></sheetViews>${columns}<sheetData>${rows.join("")}</sheetData>${extra}</worksheet>`;
 
 type WorkbookSheet={name:string;xml:string};
@@ -17,6 +17,16 @@ function workbookPackage(title:string,sheets:WorkbookSheet[]){
   const workbook=`<?xml version="1.0" encoding="UTF-8" standalone="yes"?><workbook xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"><sheets>${sheets.map((item,index)=>`<sheet name="${escapeXml(item.name)}" sheetId="${index+1}" r:id="rId${index+1}"/>`).join("")}</sheets><calcPr calcMode="auto" fullCalcOnLoad="1" forceFullCalc="1"/></workbook>`;
   const workbookRels=`<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">${sheets.map((_,index)=>`<Relationship Id="rId${index+1}" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet" Target="worksheets/sheet${index+1}.xml"/>`).join("")}<Relationship Id="rId${sheets.length+1}" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles" Target="styles.xml"/></Relationships>`;
   let styles=`<?xml version="1.0" encoding="UTF-8" standalone="yes"?><styleSheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><fonts count="4"><font><sz val="10"/><name val="Arial"/></font><font><b/><color rgb="FFFFFFFF"/><sz val="10"/><name val="Arial"/></font><font><b/><color rgb="FF123A39"/><sz val="12"/><name val="Arial"/></font><font><color rgb="FF334E54"/><sz val="10"/><name val="Arial"/></font></fonts><fills count="6"><fill><patternFill patternType="none"/></fill><fill><patternFill patternType="gray125"/></fill><fill><patternFill patternType="solid"><fgColor rgb="FF0F766E"/></patternFill></fill><fill><patternFill patternType="solid"><fgColor rgb="FFE9F5F2"/></patternFill></fill><fill><patternFill patternType="solid"><fgColor rgb="FFF2F7F7"/></patternFill></fill><fill><patternFill patternType="solid"><fgColor rgb="FFFFF8E7"/></patternFill></fill></fills><borders count="2"><border><left/><right/><top/><bottom/><diagonal/></border><border><left style="thin"><color rgb="FFD4E4E2"/></left><right style="thin"><color rgb="FFD4E4E2"/></right><top style="thin"><color rgb="FFD4E4E2"/></top><bottom style="thin"><color rgb="FFD4E4E2"/></bottom><diagonal/></border></borders><cellStyleXfs count="1"><xf numFmtId="0" fontId="0" fillId="0" borderId="0"/></cellStyleXfs><cellXfs count="10"><xf numFmtId="0" fontId="0" fillId="0" borderId="0" xfId="0"/><xf numFmtId="0" fontId="1" fillId="2" borderId="0" xfId="0" applyFill="1" applyFont="1" applyAlignment="1"><alignment wrapText="1"/></xf><xf numFmtId="10" fontId="0" fillId="0" borderId="0" xfId="0" applyNumberFormat="1"/><xf numFmtId="14" fontId="0" fillId="0" borderId="0" xfId="0" applyNumberFormat="1"/><xf numFmtId="0" fontId="3" fillId="3" borderId="1" xfId="0" applyAlignment="1"><alignment vertical="center" wrapText="1" indent="1"/></xf><xf numFmtId="0" fontId="2" fillId="3" borderId="1" xfId="0" applyAlignment="1"><alignment vertical="center" wrapText="1" indent="1"/></xf><xf numFmtId="0" fontId="3" fillId="4" borderId="1" xfId="0" applyAlignment="1"><alignment vertical="center" wrapText="1"/></xf><xf numFmtId="0" fontId="3" fillId="5" borderId="1" xfId="0" applyAlignment="1"><alignment vertical="center" wrapText="1"/></xf><xf numFmtId="14" fontId="3" fillId="5" borderId="1" xfId="0" applyNumberFormat="1" applyAlignment="1"><alignment vertical="center"/></xf><xf numFmtId="0" fontId="3" fillId="4" borderId="1" xfId="0" applyAlignment="1"><alignment vertical="center" wrapText="1" indent="1"/></xf></cellXfs><cellStyles count="1"><cellStyle name="Normal" xfId="0" builtinId="0"/></cellStyles></styleSheet>`;
+  if(title==="HSKKit 30-Day Planner Progress Tracker"){
+    // Planner-specific hierarchy; leave other workbook products untouched.
+    styles=styles.replace('<fonts count="4">','<fonts count="8">').replace('</fonts>','<font><b/><color rgb="FFFFFFFF"/><sz val="12"/><name val="Arial"/></font><font><b/><color rgb="FF123A39"/><sz val="16"/><name val="Arial"/></font><font><b/><color rgb="FF123A39"/><sz val="18"/><name val="Arial"/></font><font><color rgb="FF263F45"/><sz val="11"/><name val="Arial"/></font></fonts>')
+      .replace('<cellXfs count="10">','<cellXfs count="14">').replace('</cellXfs>',[
+        '<xf numFmtId="0" fontId="4" fillId="2" borderId="0" xfId="0" applyFill="1" applyFont="1" applyAlignment="1"><alignment vertical="center" wrapText="1" indent="1"/></xf>',
+        '<xf numFmtId="0" fontId="5" fillId="3" borderId="0" xfId="0" applyFill="1" applyFont="1" applyAlignment="1"><alignment vertical="center" indent="1"/></xf>',
+        '<xf numFmtId="0" fontId="6" fillId="3" borderId="1" xfId="0" applyFill="1" applyFont="1" applyAlignment="1"><alignment vertical="center" indent="1"/></xf>',
+        '<xf numFmtId="0" fontId="7" fillId="3" borderId="1" xfId="0" applyFill="1" applyFont="1" applyAlignment="1"><alignment vertical="center" wrapText="1" indent="1"/></xf>',
+      ].join('')+'</cellXfs>');
+  }
   if(title==="HSKKit Worksheet Review Log"){
     const xf=(fill:number,border:number,align:string,numFmt=0,font=4)=>`<xf numFmtId="${numFmt}" fontId="${font}" fillId="${fill}" borderId="${border}" xfId="0" applyFont="1" applyFill="1" applyBorder="1" applyAlignment="1"${numFmt?' applyNumberFormat="1"':''}><alignment vertical="center" horizontal="${align}"${align==='left'?' indent="1" wrapText="1"':''}/></xf>`;
     styles=styles.replace('<fonts count="4">','<fonts count="6">').replace('</fonts>','<font><color rgb="FF263F45"/><sz val="11"/><name val="Arial"/></font><font><b/><color rgb="FFFFFFFF"/><sz val="11"/><name val="Arial"/></font></fonts>')
@@ -40,27 +50,44 @@ function workbookPackage(title:string,sheets:WorkbookSheet[]){
 
 export function generatePlannerProgressWorkbook(plan:PlannerPack){
   const setupRows=[
-    row(1,[inline("A1","Setup field",1),inline("B1","Your value",1)]),
-    ...["Current Level","Target Level","Start date","Daily route (20 / 30 / 45 minutes)","Weakest skill","Study goal"].map((label,index)=>row(index+2,[inline(`A${index+2}`,label)])),
+    row(1,[inline("A1","30-DAY PLANNER · START HERE",11),inline("B1","Your inputs / instructions",10)],38),
+    ...["Current Level","Target Level","Start date","Daily route (20 / 30 / 45 minutes)","Weakest measured skill","Study goal"].map((label,index)=>row(index+2,[inline(`A${index+2}`,label,5),inline(`B${index+2}`,"",index===2?3:13)],38)),
+    row(9,[inline("A9","01 · PREPARE",5),inline("B9","Bring your own level-matched word list, keyed reading questions, transcript-backed audio and writing model/teacher feedback. These exercises are not included.",13)],62),
+    row(10,[inline("A10","02 · BASELINE",5),inline("B10","Before choosing your weakest skill, measure vocabulary /20, reading /10, writing /5 and listening /10. Listening may need a separate session outside Day 1's timer. Score correct / total x 100; unmeasured is NOT zero.",13)],82),
+    row(11,[inline("A11","03 · DAILY WORK",5),inline("B11","Use the PDF for tasks and corrections. On the 30-Day Plan tab choose only one time route. Enter Done or Recovered, one short evidence result and the next action in the light cells H–J.",13)],70),
+    row(12,[inline("A12","04 · REVIEW",5),inline("B12","Use the PDF checkpoints on Days 7, 14, 21 and 28. Use fresh material for retests. This XLSX counts completed/recovered days; it neither contains questions nor scores practice automatically.",13)],70),
+    row(14,[inline("A14","ILLUSTRATION ONLY",5),inline("B14","Day 1, route 30: 16/20 words, 8/10 reading, 4/5 writing; a separate listening check 3/10. In the plan enter Done, evidence V16/20 R8/10 W4/5, next action Day 2. No example data is stored in your plan.",13)],82),
   ];
   const setupValidation='<dataValidations count="1"><dataValidation type="list" allowBlank="1" showErrorMessage="1" sqref="B5"><formula1>&quot;20,30,45&quot;</formula1></dataValidation></dataValidations>';
-  const dailyRows=[row(1,["Day","Date","Phase","Focus","20-minute route","30-minute route","45-minute route","Status","Evidence","Next action"].map((value,index)=>inline(`${String.fromCharCode(65+index)}1`,value,1)))];
+  const dailyRows=[row(1,["Day","Date","Phase","Focus","20-minute route","30-minute route","45-minute route","Status","Evidence","Next action"].map((value,index)=>inline(`${String.fromCharCode(65+index)}1`,value,10)),38)];
   for(const day of plan.days){
     const r=day.day+1;
-    dailyRows.push(row(r,[inline(`A${r}`,`Day ${day.day}`),formula(`B${r}`,`IF(Setup!B4=\"\",\"\",Setup!B4+${day.day-1})`,3),inline(`C${r}`,day.phase),inline(`D${r}`,day.focus),inline(`E${r}`,day.routes[20]),inline(`F${r}`,day.routes[30]),inline(`G${r}`,day.routes[45])]));
+    dailyRows.push(row(r,[inline(`A${r}`,`Day ${day.day}`,5),formula(`B${r}`,`IF(Setup!B4=\"\",\"\",Setup!B4+${day.day-1})`,3),inline(`C${r}`,day.phase,13),inline(`D${r}`,day.focus,13),inline(`E${r}`,day.routes[20],13),inline(`F${r}`,day.routes[30],13),inline(`G${r}`,day.routes[45],13),inline(`H${r}`,"",13),inline(`I${r}`,"",13),inline(`J${r}`,"",13)],76));
   }
   const dailyExtra='<autoFilter ref="A1:J31"/><dataValidations count="1"><dataValidation type="list" allowBlank="1" showErrorMessage="1" sqref="H2:H31"><formula1>&quot;Not started,Done,Recovered&quot;</formula1></dataValidation></dataValidations>';
+  const status="'30-Day Plan'!H2:H31";
+  const count=(state:string,first=2,last=31)=>`COUNTIF('30-Day Plan'!H${first}:H${last},\"${state}\")`;
   const summaryRows=[
-    row(1,[inline("A1","Progress metric",1),inline("B1","Result",1)]),
-    row(2,[inline("A2","Planned days"),numeric("B2",30)]),
-    row(3,[inline("A3","Completed or recovered days"),formula("B3",`COUNTIF('30-Day Plan'!H2:H31,\"Done\")+COUNTIF('30-Day Plan'!H2:H31,\"Recovered\")`)]),
-    row(4,[inline("A4","Completion"),formula("B4","IFERROR(B3/B2,0)",2)]),
-    row(6,[inline("A6","Weekly checkpoints",1),inline("B6","Day 7 · Day 14 · Day 21 · Day 28",1)]),
+    row(1,[inline("A1","PROGRESS · 30 DAYS",11),inline("B1","Result",10),inline("C1","Progress",10),inline("D1","What this means",10)],38),
+    row(2,[inline("A2","Planned days",5),numeric("B2",30,12),inline("D2","A completed or recovered day counts once.",13)],44),
+    row(3,[inline("A3","Done",5),formula("B3",count("Done"),12)],44),
+    row(4,[inline("A4","Recovered",5),formula("B4",count("Recovered"),12)],44),
+    row(5,[inline("A5","Completed or recovered",5),formula("B5","B3+B4",12),formula("C5",'IFERROR(B5/B2,0)',2)],48),
+    row(6,[inline("A6","Not yet completed",5),formula("B6","B2-B5",12),inline("D6","Blank and Not started statuses remain unfinished.",13)],44),
+    row(8,[inline("A8","WEEKLY VIEW",10),inline("B8","Days",10),inline("C8","Complete",10),inline("D8","Rate",10)],38),
+    ...[["Week 1",1,7],["Week 2",8,14],["Week 3",15,21],["Week 4",22,28],["Finish",29,30]].map(([label,first,last],index)=>{
+      const r=9+index,from=Number(first)+1,to=Number(last)+1;
+      return row(r,[inline(`A${r}`,label,5),inline(`B${r}`,`Day ${first}–${last}`,13),formula(`C${r}`,`${count("Done",from,to)}+${count("Recovered",from,to)}`,12),formula(`D${r}`,`IFERROR(C${r}/${Number(last)-Number(first)+1},0)`,2)],42);
+    }),
+    row(15,[inline("A15","NEXT CHECKPOINT",10),inline("B15","Use the PDF",10)],36),
+    row(16,[inline("A16","Review on Days 7, 14, 21, 28",5),inline("B16","Recheck with fresh material; record errors and your next action in the PDF. These counts do not grade practice or measure proficiency.",13)],76),
   ];
+  const summaryExtra='<conditionalFormatting sqref="C5"><cfRule type="dataBar" priority="1"><dataBar><cfvo type="num" val="0"/><cfvo type="num" val="1"/><color rgb="FF0F766E"/></dataBar></cfRule></conditionalFormatting>';
+  const summaryPrint=(xml:string)=>xml.replace("<sheetViews>",'<sheetPr><pageSetUpPr fitToPage="1"/></sheetPr><sheetViews>').replace("</worksheet>",'<pageSetup paperSize="9" orientation="landscape" fitToWidth="1" fitToHeight="1"/></worksheet>');
   return workbookPackage("HSKKit 30-Day Planner Progress Tracker",[
-    {name:"Setup",xml:sheet(setupRows,'<cols><col min="1" max="1" width="38" customWidth="1"/><col min="2" max="2" width="44" customWidth="1"/></cols>',setupValidation)},
-    {name:"30-Day Plan",xml:sheet(dailyRows,'<cols><col min="1" max="2" width="13" customWidth="1"/><col min="3" max="4" width="24" customWidth="1"/><col min="5" max="7" width="70" customWidth="1"/><col min="8" max="8" width="15" customWidth="1"/><col min="9" max="10" width="30" customWidth="1"/></cols>',dailyExtra)},
-    {name:"Progress Summary",xml:sheet(summaryRows,'<cols><col min="1" max="1" width="34" customWidth="1"/><col min="2" max="2" width="38" customWidth="1"/></cols>')},
+    {name:"Setup",xml:sheet(setupRows,'<cols><col min="1" max="1" width="38" customWidth="1"/><col min="2" max="2" width="70" customWidth="1"/></cols>',setupValidation)},
+    {name:"30-Day Plan",xml:sheet(dailyRows,'<cols><col min="1" max="2" width="13" customWidth="1"/><col min="3" max="4" width="24" customWidth="1"/><col min="5" max="7" width="58" customWidth="1"/><col min="8" max="8" width="15" customWidth="1"/><col min="9" max="10" width="30" customWidth="1"/></cols>',dailyExtra)},
+    {name:"Progress Summary",xml:summaryPrint(sheet(summaryRows,'<cols><col min="1" max="1" width="34" customWidth="1"/><col min="2" max="2" width="25" customWidth="1"/><col min="3" max="3" width="18" customWidth="1"/><col min="4" max="4" width="48" customWidth="1"/></cols>',summaryExtra))},
   ]);
 }
 

@@ -100,7 +100,7 @@ test("each practical resource ships the promised usable files",async()=>{
     }
     const files=zipEntries(artifact.bytes);
     for(const name of names)assert.ok(files.has(name),`${productId}: ${name}`);
-    for(const [name,bytes] of files){if(name.endsWith(".pdf")){const pdf=await PDFDocument.load(bytes);if(productId==="teacher-lesson-plan-pack"&&name==="HSKKit-Teacher-Pack-Quick-Start.pdf")assert.equal(pdf.getPageCount(),1,`${productId}: ${name}`);else if(productId==="30-day-planner")assert.equal(pdf.getPageCount(),name.endsWith("Quick-Start.pdf")?1:38,`${productId}: ${name}`);else assert.ok(pdf.getPageCount()>=2,`${productId}: ${name}`);}}
+    for(const [name,bytes] of files){if(name.endsWith(".pdf")){const pdf=await PDFDocument.load(bytes);if(productId==="teacher-lesson-plan-pack"&&name==="HSKKit-Teacher-Pack-Quick-Start.pdf")assert.equal(pdf.getPageCount(),1,`${productId}: ${name}`);else if(productId==="30-day-planner")assert.equal(pdf.getPageCount(),name.endsWith("Quick-Start.pdf")?1:41,`${productId}: ${name}`);else assert.ok(pdf.getPageCount()>=2,`${productId}: ${name}`);}}
     const readme=new TextDecoder().decode(files.get("README.txt"));
     assert.match(readme,/How to use/i,productId);
     if(productId==="teacher-lesson-plan-pack"){

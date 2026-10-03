@@ -106,11 +106,12 @@ async function makePdf(title:string,subtitle:string,sections:PdfSection[],fontBy
   pdf.setTitle(title);pdf.setAuthor("HSKKit");pdf.setSubject("HSK 3.0 unofficial learning resource");pdf.setKeywords(["HSK 3.0","unofficial","HSKKit"]);
   const size:[number,number]=pageSize;let page:PDFPage;let y=0;let pageNumber=0;const [pageWidth,pageHeight]=size;
   const header=title.includes("Practice Assessment")?"HSKKit · Practice Assessment v2 · HSK 3.0 · Unofficial":"HSKKit · HSK 3.0 · Unofficial learning resource";
+  const plannerQuickStart=title==="HSK 30-Day Planner · Quick Start";
   const contentWidth=pageWidth-75;
   const fresh=()=>{page=pdf.addPage(size);pageNumber+=1;page.drawRectangle({x:0,y:pageHeight-30,width:pageWidth,height:30,color:rgb(.04,.31,.29)});page.drawText(header,{x:32,y:pageHeight-20,size:9,font,color:rgb(1,1,1)});page.drawText(String(pageNumber),{x:pageWidth-55,y:26,size:8,font,color:rgb(.45,.5,.56)});y=pageHeight-57;};
   fresh();for(const line of wordLines(title,font,20,contentWidth)){page!.drawText(line,{x:36,y,size:20,font,color:rgb(.04,.31,.29)});y-=27;}y-=5;
-  for(const line of wordLines(subtitle,font,9.5,contentWidth)){page!.drawText(line,{x:36,y,size:9.5,font,color:rgb(.25,.3,.38)});y-=14;}
-  for(const line of wordLines("Advanced-band disclosure: HSK 3.0 defines one unified Levels 7–9 band; Level 7/8/9 labels use the same canonical approved source set.",font,8.5,contentWidth)){page!.drawText(line,{x:36,y,size:8.5,font,color:rgb(.45,.28,.08)});y-=12;}y-=12;
+  for(const line of wordLines(subtitle,font,plannerQuickStart?11:9.5,contentWidth)){page!.drawText(line,{x:36,y,size:plannerQuickStart?11:9.5,font,color:rgb(.25,.3,.38)});y-=plannerQuickStart?16:14;}
+  for(const line of wordLines("Advanced-band disclosure: HSK 3.0 defines one unified Levels 7–9 band; Level 7/8/9 labels use the same canonical approved source set.",font,plannerQuickStart?9.5:8.5,contentWidth)){page!.drawText(line,{x:36,y,size:plannerQuickStart?9.5:8.5,font,color:rgb(.45,.28,.08)});y-=plannerQuickStart?14:12;}y-=plannerQuickStart?20:12;
   if(compact){
     for(const section of sections){
       const headingRows=wordLines(section.heading,font,13,contentWidth);
@@ -123,12 +124,24 @@ async function makePdf(title:string,subtitle:string,sections:PdfSection[],fontBy
       for(const item of rows){for(const line of item){if(y<62)fresh();page!.drawText(line,{x:44,y,size:10.5,font,color:rgb(.12,.16,.24)});y-=15;}y-=7;}
       y-=12;
     }
-  }else for(const section of sections){if(section.pageBreakBefore||y<112)fresh();for(const headingLine of wordLines(section.heading,font,14,contentWidth)){if(y<72)fresh();page!.drawText(headingLine,{x:36,y,size:14,font,color:rgb(.04,.31,.29)});y-=18;}y-=4;for(const item of section.body){for(const line of wordLines(item,font,9.5,contentWidth-10)){if(y<58)fresh();page!.drawText(line,{x:44,y,size:9.5,font,color:rgb(.12,.16,.24)});y-=14;}y-=5;}y-=10;}
+  }else for(const section of sections){
+    const headingSize=plannerQuickStart?16:14,bodySize=plannerQuickStart?11.5:9.5;
+    if(section.pageBreakBefore||y<112)fresh();
+    for(const headingLine of wordLines(section.heading,font,headingSize,contentWidth)){if(y<72)fresh();page!.drawText(headingLine,{x:36,y,size:headingSize,font,color:rgb(.04,.31,.29)});y-=plannerQuickStart?23:18;}
+    y-=plannerQuickStart?7:4;
+    for(const item of section.body){for(const line of wordLines(item,font,bodySize,contentWidth-10)){if(y<58)fresh();page!.drawText(line,{x:44,y,size:bodySize,font,color:rgb(.12,.16,.24)});y-=plannerQuickStart?18:14;}y-=plannerQuickStart?11:5;}
+    y-=plannerQuickStart?22:10;
+  }
   return new Uint8Array(await pdf.save({useObjectStreams:false}));
 }
 function readme(product:DigitalProduct,files:string[],manifest:ProductArtifactManifest){
   const audio=manifest.audioProvenance;
-  const quickStart=product.id==="worksheet-pack"?[
+  const quickStart=product.id==="30-day-planner"?[
+    "1. Read Prepare materials before Day 1. This is a study planner, not a self-contained course: bring your own level-appropriate word list, keyed reading questions, keyed audio with transcript, and writing model or feedback source.",
+    "2. On the setup page, measure first-attempt vocabulary /20, reading /10, writing /5 and listening /10. Listening can take a separate setup session outside the Day 1 timer. Convert each measured fraction to a score out of 100; mark absent skills NOT MEASURED, not zero.",
+    "3. Use the lowest measured skill on the two-page Assessment mapping to select its first assignment. Choose the 20, 30 or 45-minute route and do only that route; record results and corrections in the PDF.",
+    "4. Recheck with fresh material on Days 14 and 28; use the Day 21 scoring anchors and four weekly reviews. On Day 28 compare only measured, comparable skills; do listening separately and mark missing checks NOT MEASURED. The optional XLSX tracks status and a short evidence note, not extra practice or automatic grading."
+  ]:product.id==="worksheet-pack"?[
     "1. Choose one HSK level, then open A4, US Letter, low-ink or fillable Student Workbook. These versions contain the same question IDs; print only the module you need.",
     "2. Read the worked example or situation, then answer all three IDs in one module without opening the Answer Key. Keep the printed response area for your own writing.",
     "3. Check matching IDs in the Answer Key. Read Why and Common mistake; correct each missed item using the supplied evidence. Completed Samples demonstrate how to check, not text to copy.",
@@ -165,28 +178,63 @@ async function makePlannerPdf(plan:PlannerPack,fontBytes:Uint8Array,fillable:boo
   pdf.setTitle(`HSK 30-Day Planner · ${fillable?"Fillable":"Printable"} A4`);pdf.setAuthor("HSKKit");pdf.setSubject("HSK 30-Day Personalized Study System");
   const fresh=(title:string)=>{const page=pdf.addPage([width,height]);pageNumber+=1;page.drawRectangle({x:0,y:height-39,width,height:39,color:dark});page.drawText("HSKKit · HSK 30-Day Personalized Study System",{x:30,y:height-25,size:9,font,color:rgb(1,1,1)});page.drawText(String(pageNumber),{x:width-48,y:22,size:8,font,color:muted});page.drawText(title,{x:30,y:height-68,size:16,font,color:dark});return page;};
   const drawWrapped=(page:PDFPage,text:string,x:number,y:number,size:number,maxWidth:number,color=ink,lineHeight=size+3)=>{for(const row of wordLines(text,font,size,maxWidth)){page.drawText(row,{x,y,size,font,color});y-=lineHeight;}return y;};
-  const response=(page:PDFPage,name:string,label:string,x:number,top:number,fieldWidth:number,fieldHeight:number)=>{page.drawText(label,{x,y:top,size:8.2,font,color:muted});const boxY=top-fieldHeight-6;if(form){const field=form.createTextField(name);field.enableMultiline();field.addToPage(page,{x,y:boxY,width:fieldWidth,height:fieldHeight,borderColor:lineColor,borderWidth:.7,textColor:ink,font});field.setFontSize(8);}else{page.drawRectangle({x,y:boxY,width:fieldWidth,height:fieldHeight,borderColor:lineColor,borderWidth:.7});for(let line=boxY+10;line<boxY+fieldHeight;line+=11)page.drawLine({start:{x:x+5,y:line},end:{x:x+fieldWidth-5,y:line},thickness:.35,color:lineColor});}return boxY-16;};
+  const response=(page:PDFPage,name:string,label:string,x:number,top:number,fieldWidth:number,fieldHeight:number)=>{page.drawText(label,{x,y:top,size:9.5,font,color:ink});const boxY=top-fieldHeight-8;if(form){const field=form.createTextField(name);field.enableMultiline();field.addToPage(page,{x,y:boxY,width:fieldWidth,height:fieldHeight,borderColor:lineColor,borderWidth:.7,textColor:ink,font});field.setFontSize(10);}else{page.drawRectangle({x,y:boxY,width:fieldWidth,height:fieldHeight,borderColor:lineColor,borderWidth:.7});for(let line=boxY+13;line<boxY+fieldHeight;line+=15)page.drawLine({start:{x:x+5,y:line},end:{x:x+fieldWidth-5,y:line},thickness:.35,color:lineColor});}return boxY-17;};
 
   {
     const page=fresh("Start here · diagnosis, goal and route");
     let y=742;y=drawWrapped(page,plan.positioning,30,y,11,width-60,dark,15)-8;y=drawWrapped(page,plan.workflow.join(" → "),30,y,8.5,width-60,muted,12)-16;
     const fields=[["planner.setup.currentLevel","Current Level"],["planner.setup.targetLevel","Target Level"],["planner.setup.examDateOrGoal","Exam date or study goal"],["planner.setup.dailyMinutes","Daily available time"],["planner.setup.weakAreas","Initial weak areas"],["planner.setup.route","Selected route: 20 / 30 / 45"],["planner.setup.assessment.vocabulary","Assessment · vocabulary score out of 100"],["planner.setup.assessment.listening","Assessment · listening score out of 100"],["planner.setup.assessment.reading","Assessment · reading score out of 100"],["planner.setup.assessment.writing","Assessment · writing score out of 100"]] as const;
     for(let index=0;index<fields.length;index+=2){const left=fields[index],right=fields[index+1];response(page,left[0],left[1],30,y,250,42);response(page,right[0],right[1],315,y,250,42);y-=88;}
+    drawWrapped(page,"Score rule: first-attempt correct / total x 100. Use NOT MEASURED if no keyed source is available; never enter 0 for a missing check. The listening check may require a separate setup session outside Day 1's timer.",30,y+14,10,width-60,ink,15);
   }
-  {
-    const page=fresh("Assessment result → practice direction");let y=742;y=drawWrapped(page,"Find the lowest skill score, choose its band, and start with the printed assignment. Recheck with fresh material on Days 14 and 28.",30,y,9,width-60,ink,13)-10;
-    for(const mapping of plan.assessmentMappings){y=drawWrapped(page,`${mapping.skill.toUpperCase()} · ${mapping.band} · ${mapping.practiceDirection.join(" + ")}`,32,y,9,width-64,dark,11.5);y=drawWrapped(page,`First assignment: ${mapping.firstAssignment}`,42,y,8.5,width-84,muted,11)-6;}
+  for(const [title,sections] of [["Prepare materials · before you begin",plan.sourcingGuide],["Worked example · Day 1 to first action",plan.workedExample]] as const){
+    const page=fresh(title);let y=738;
+    for(const section of sections){
+      y=drawWrapped(page,section.heading,30,y,12,width-60,dark,18)-5;
+      y=drawWrapped(page,section.body,30,y,10.5,width-60,ink,15)-18;
+      if(y<48)throw new Error(`PLANNER_GUIDE_OVERFLOW_${title}`);
+    }
+  }
+  for(let group=0;group<2;group++){
+    const page=fresh(`Assessment → practice · ${group===0?"vocabulary & listening":"reading & writing"}`);let y=738;
+    y=drawWrapped(page,"Use scores out of 100, not raw counts. Find the lowest MEASURED skill and its band. Start with its assignment; recheck using fresh, keyed material on Days 14 and 28.",30,y,11.5,width-60,ink,18)-21;
+    const mappings=plan.assessmentMappings.slice(group*6,group*6+6);
+    for(const [index,mapping] of mappings.entries()){
+      if(index%3===0){
+        page.drawRectangle({x:30,y:y-26,width:width-60,height:32,color:rgb(.9,.96,.95)});
+        page.drawText(mapping.skill.toUpperCase(),{x:39,y:y-17,size:13.5,font,color:dark});y-=43;
+      }
+      y=drawWrapped(page,`${mapping.band} · ${mapping.practiceDirection.join(" + ")}`,39,y,12,width-78,dark,18)-5;
+      y=drawWrapped(page,`First assignment: ${mapping.firstAssignment}`,48,y,11.5,width-96,ink,18)-22;
+    }
+    if(y<46)throw new Error(`PLANNER_MAPPING_OVERFLOW_${group}`);
   }
   for(const day of plan.days){
     const page=fresh(`Day ${day.day} · ${day.phase} · ${day.focus}`);let y=742;
-    y=drawWrapped(page,`Materials: ${day.materials.join(" · ")}`,30,y,8.2,width-60,muted,11)-8;
-    for(const minutes of [20,30,45] as const){page.drawRectangle({x:30,y:y-74,width:width-60,height:70,borderColor:lineColor,borderWidth:.8});y=drawWrapped(page,day.routes[minutes],40,y-17,8,width-80,ink,10)-18;}
-    y=drawWrapped(page,`Evidence target: ${day.evidence.join(" · ")}`,30,y,8.2,width-60,dark,11)-12;
-    y=response(page,`planner.day${day.day}.completed`,"Completed work / route used",30,y,width-60,22);
-    y=response(page,`planner.day${day.day}.evidence`,"Measured evidence (counts, accuracy or completed output)",30,y,width-60,38);
-    y=response(page,`planner.day${day.day}.difficult`,"What was difficult and why?",30,y,width-60,38);
-    response(page,`planner.day${day.day}.nextReview`,"Next review date / next action",30,y,width-60,28);
-    const review=plan.weeklyReviews.find(item=>item.day===day.day);if(review){const reviewPage=fresh(`Day ${day.day} · Weekly evidence review`);let reviewY=742;for(const [index,prompt] of review.prompts.entries()){reviewY=response(reviewPage,`planner.week${day.day}.${["progress","missed","adjustment","nextFocus"][index]}`,prompt,30,reviewY,width-60,105);}}
+    y=drawWrapped(page,`Materials (bring your own): ${day.materials.join(" · ")}`,30,y,10,width-60,ink,14)-10;
+    for(const minutes of [20,30,45] as const){
+      const route=`${minutes} MIN · ${day.routes[minutes].replace(/^\d+ min · /,"")}`;
+      const rows=wordLines(route,font,10,width-84);
+      const boxHeight=Math.max(53,rows.length*14+23);
+      page.drawRectangle({x:30,y:y-boxHeight,width:width-60,height:boxHeight-4,borderColor:lineColor,borderWidth:.8});
+      y=drawWrapped(page,route,42,y-20,10,width-84,ink,14)-13;
+    }
+    y=drawWrapped(page,`Evidence target: ${day.evidence.join(" · ")}`,30,y,10,width-60,dark,14)-15;
+    y=response(page,`planner.day${day.day}.completed`,"Completed work / route used",30,y,width-60,44);
+    y=response(page,`planner.day${day.day}.evidence`,"Measured evidence (counts, accuracy or completed output)",30,y,width-60,80);
+    y=response(page,`planner.day${day.day}.difficult`,"What was difficult and why?",30,y,width-60,80);
+    y=response(page,`planner.day${day.day}.nextReview`,"Next review date / next action",30,y,width-60,54);
+    if(y<38)throw new Error(`PLANNER_DAY_OVERFLOW_${day.day}`);
+    const review=plan.weeklyReviews.find(item=>item.day===day.day);if(review){
+      const reviewPage=fresh(`Day ${day.day} · Weekly evidence review`);let reviewY=742;
+      if(day.day===21){
+        reviewY=drawWrapped(reviewPage,"Day 21 scoring anchors · score each response 0–2 in each area; total /6 only if all three are measured. Use a model or teacher to verify accuracy; otherwise mark it NOT MEASURED, not zero.",30,reviewY,10.5,width-60,dark,15)-8;
+        for(const item of plan.productionRubric)reviewY=drawWrapped(reviewPage,`${item.dimension}: ${item.anchors}`,36,reviewY,10,width-72,ink,14)-4;
+        reviewY-=6;
+      }
+      for(const [index,prompt] of review.prompts.entries())reviewY=response(reviewPage,`planner.week${day.day}.${["progress","missed","adjustment","nextFocus"][index]}`,prompt,30,reviewY,width-60,day.day===21?96:105);
+      if(reviewY<38)throw new Error(`PLANNER_REVIEW_OVERFLOW_${day.day}`);
+    }
   }
   {
     const page=fresh(plan.recoveryWorksheet.title);let y=742;y=drawWrapped(page,plan.recoveryWorksheet.rule,30,y,9,width-60,dark,13)-18;const fields=["missedDay","reason","unfinished","moveForward","reducedRoute","returnDate"];
@@ -528,7 +576,7 @@ export async function generateDifferentiatedProductArtifact(productId:DigitalPro
     :[1,2,3,4,5,6,7,8,9]).map(selectPackAssets);
   if(product.id==="30-day-planner"){
     const plan=buildPlannerPack();
-    const quickStart=await makePdf("HSK 30-Day Planner · Quick Start",plan.positioning,[{heading:"Core workflow",body:[plan.workflow.join(" → "),"Before Day 1, record current Level, target Level, exam date or study goal, daily time, weak areas and initial Assessment scores.","Choose one route for seven days. The 20, 30 and 45-minute routes change task quantity, input length and required output—not only the timer."]},{heading:"Use evidence to personalize",body:["Find the lowest Assessment skill and band on the mapping page. Start with its named assignment.","Complete one daily page, record measurable evidence, then use Days 7, 14, 21 and 28 to adjust the next week.","If a day is missed, complete the formal Missed-Day Recovery Worksheet. Keep the next calendar date and move only unfinished retrieval/correction work.","On Day 30, repeat the baseline with fresh material and choose the next-stage plan."]}],fontBytes);
+    const quickStart=await makePdf("HSK 30-Day Planner · Quick Start",plan.positioning,[{heading:"Before you start: bring your own practice materials",body:["This is a guided plan, not a course or question bank. It does not include word lists, graded questions or answers, audio/transcripts, or writing feedback.","Prepare level-matched vocabulary, keyed reading items, transcript-backed listening questions, and writing prompts with a model or teacher check. Read the two preparation/example pages of the main PDF before Day 1."]},{heading:"Score fairly, then choose a route",body:["Day 1 covers vocabulary and reading; the 30/45-minute routes add writing. Measure listening separately before comparing four skills—it is outside Day 1's timer.","Convert first-attempt correct / total to a score out of 100. Mark absent checks NOT MEASURED, never zero. Pick the lowest measured skill on the two-page mapping and reserve its first assignment.","Complete only your chosen 20/30/45-minute route. Record evidence in the PDF. The optional XLSX summarizes statuses; it does not supply practice or grade work."]},{heading:"Review and recover",body:["Review on Days 7, 14, 21, and 28 with fresh input. Move only unfinished work when you miss a day; keep completed work. On Day 30 compare against a fresh sample using the same scoring method."]}],fontBytes);
     const printable=await makePlannerPdf(plan,fontBytes,false),fillable=await makePlannerPdf(plan,fontBytes,true);
     const files=[{name:"HSKKit-30-Day-Planner-Quick-Start.pdf",data:quickStart},{name:"HSKKit-30-Day-Planner-Printable-A4.pdf",data:printable},{name:"HSKKit-30-Day-Planner-Fillable-A4.pdf",data:fillable},{name:"HSKKit-30-Day-Planner-Progress-Tracker.xlsx",data:generatePlannerProgressWorkbook(plan)}];
     const manifest=manifestFor(product,files.map(file=>file.name),selections,generationVersion);return {bytes:packageZip(product,files,manifest),format:"zip" as const,manifest};

@@ -3,7 +3,9 @@ export const DIGITAL_ACCESS_DAYS=14;
 export const DIGITAL_REFUND_DAYS=7;
 export const DIGITAL_DOWNLOAD_LIMIT=3;
 export const DEFAULT_PRODUCT_GENERATION_VERSION="complete-vocabulary-v1";
-export const PLANNER_GENERATION_VERSION="planner-progress-xlsx-v4";
+export const PLANNER_GENERATION_VERSION="planner-progress-xlsx-v5";
+export const PLANNER_BUNDLE_GENERATION_VERSION="learner-toolkit-planner-v5";
+export const EXAM_BUNDLE_GENERATION_VERSION="exam-preparation-planner-v5";
 export const PRACTICE_ASSESSMENT_GENERATION_VERSION="practice-score-xlsx-v2";
 export const TEACHER_PACK_GENERATION_VERSION="teacher-pack-v3";
 export const WORKSHEET_GENERATION_VERSION="worksheet-editorial-v16";
@@ -47,7 +49,7 @@ export const DIGITAL_PRODUCTS:readonly DigitalProduct[]=[
 
 export function digitalProduct(value:unknown){return DIGITAL_PRODUCTS.find(product=>product.id===value)??null;}
 export function productLicenseNotice(productId:unknown){return productId==="teacher-lesson-plan-pack"?TEACHER_CLASSROOM_LICENSE:PERSONAL_PRODUCT_LICENSE;}
-export function generationVersionForProduct(productId:unknown){return productId==="assessment-tracker"?"assessment-tracker-v4":productId==="learner-practice-toolkit"?"learner-toolkit-assessment-v4":productId==="worksheet-pack"||productId==="exam-preparation-bundle"?WORKSHEET_GENERATION_VERSION:productId==="30-day-planner"?PLANNER_GENERATION_VERSION:productId==="practice-assessment-pack"?PRACTICE_ASSESSMENT_GENERATION_VERSION:productId==="teacher-lesson-plan-pack"?TEACHER_PACK_GENERATION_VERSION:DEFAULT_PRODUCT_GENERATION_VERSION;}
+export function generationVersionForProduct(productId:unknown){return productId==="assessment-tracker"?"assessment-tracker-v4":productId==="learner-practice-toolkit"?PLANNER_BUNDLE_GENERATION_VERSION:productId==="exam-preparation-bundle"?EXAM_BUNDLE_GENERATION_VERSION:productId==="worksheet-pack"?WORKSHEET_GENERATION_VERSION:productId==="30-day-planner"?PLANNER_GENERATION_VERSION:productId==="practice-assessment-pack"?PRACTICE_ASSESSMENT_GENERATION_VERSION:productId==="teacher-lesson-plan-pack"?TEACHER_PACK_GENERATION_VERSION:DEFAULT_PRODUCT_GENERATION_VERSION;}
 export function productDeliverableLabels(productId:unknown):string[]{
   const product=digitalProduct(productId);if(!product)throw new Error("INVALID_PRODUCT");
   if(product.category==="level")return [`${product.vocabularyCount?.toLocaleString("en-US")} canonical entries in one searchable PDF`,`Manifest and README/licence information`];

@@ -24,9 +24,9 @@ test("teacher product has a bounded classroom licence while learner products rem
   }
   assert.equal(generationVersionForProduct("teacher-lesson-plan-pack"),"teacher-pack-v3");
   assert.equal(generationVersionForProduct("worksheet-pack"),"worksheet-editorial-v16");
-  assert.equal(generationVersionForProduct("learner-practice-toolkit"),"learner-toolkit-assessment-v4");
+  assert.equal(generationVersionForProduct("learner-practice-toolkit"),"learner-toolkit-planner-v5");
   assert.equal(generationVersionForProduct("assessment-tracker"),"assessment-tracker-v4");
-  assert.equal(generationVersionForProduct("exam-preparation-bundle"),"worksheet-editorial-v16");
+  assert.equal(generationVersionForProduct("exam-preparation-bundle"),"exam-preparation-planner-v5");
 });
 
 test("Store, resource checkout, Terms and generated delivery use the selected product licence",async()=>{

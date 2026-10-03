@@ -68,8 +68,44 @@ test("assessment-day routes match the materials and only compare with checkpoint
   assert.match(days.get(14)!.routes[30],/fresh vocabulary, input and output/i);
   assert.match(days.get(21)!.routes[30],/three speaking or writing prompts.*three-point rubric/i);
   assert.doesNotMatch(Object.values(days.get(21)!.routes).join(" "),/vocabulary|reading/i);
-  assert.match(days.get(28)!.routes[30],/four-skill mini-check/i);
-  assert.match(days.get(30)!.routes[45],/compare them with Day 1.*Consolidate, Repeat 30 days or Readiness check/i);
+  assert.match(days.get(28)!.routes[30],/four-area mini-check/i);
+  assert.match(days.get(30)!.routes[45],/compare with Day 1.*choose the next stage.*Recheck listening separately/i);
+});
+
+test("Day 3 tests listening without a visible answer and stays within tone discrimination",()=>{
+  const day=buildPlannerPack().days[2];
+  assert.match(day.materials.join(" "),/audio|recording/i);
+  for(const route of Object.values(day.routes)){
+    assert.match(route,/listen.*mark tones.*reveal|hear.*mark tones.*reveal/i);
+    assert.doesNotMatch(route,/hear or read|six-sentence|spoken summary|missed details/i);
+  }
+});
+
+test("Day 25 compares two source texts on every route",()=>{
+  const day=buildPlannerPack().days[24];
+  for(const route of Object.values(day.routes)){
+    assert.match(route,/two (?:short related|fresh related) texts/i);
+    assert.match(route,/evidence.*each text/i);
+    assert.doesNotMatch(route,/one 120|one extended or paired|or 6 items/i);
+  }
+});
+
+test("Day 21 includes usable anchored scoring criteria, not just a rubric name",()=>{
+  const plan=buildPlannerPack();
+  assert.match(plan.days[20].materials.join(" "),/rubric.*review page/i);
+  assert.deepEqual(plan.productionRubric?.map(item=>item.dimension),["Completion","Accuracy","Clarity"]);
+  for(const item of plan.productionRubric??[]){
+    assert.match(item.anchors,/0 = .*1 = .*2 = /i);
+  }
+});
+
+test("Day 28 scores only a comparable sample; missing skills never become zero",()=>{
+  const day=buildPlannerPack().days[27];
+  assert.match(day.routes[20],/20.word.*10.*reading/i);
+  assert.match(day.routes[20],/NOT MEASURED/i);
+  assert.doesNotMatch(day.routes[20],/one compact item.*four scores/i);
+  assert.match(day.routes[30],/five sentence/i);
+  assert.match(day.routes[45],/separately.*listening/i);
 });
 
 test("assessment bands map to concrete practice directions and recovery is a formal worksheet",()=>{
@@ -97,9 +133,14 @@ test("planner delivery contains real printable and AcroForm-fillable editions",a
   const printable=await PDFDocument.load(files.get(expectedFiles[1])!);
   const fillable=await PDFDocument.load(files.get(expectedFiles[2])!);
   const quickStart=await PDFDocument.load(files.get(expectedFiles[0])!);
-  assert.equal(printable.getPageCount(),38);
-  assert.equal(fillable.getPageCount(),38);
+  assert.equal(printable.getPageCount(),41);
+  assert.equal(fillable.getPageCount(),41);
   assert.equal(quickStart.getPageCount(),1);
+  const expectedGuide=buildPlannerPack();
+  assert.equal(expectedGuide.sourcingGuide.length,5);
+  assert.match(expectedGuide.sourcingGuide[2].body,/listening check in a separate setup session/i);
+  assert.match(expectedGuide.workedExample[1].body,/Listening 3\/10 = 30/);
+  assert.match(expectedGuide.sourcingGuide[0].body,/NOT supplied/);
   for(const [pdf,label] of [[printable,"printable"],[fillable,"fillable"],[quickStart,"quick-start"]] as const)for(const [index,page] of pdf.getPages().entries()){
     assert.ok(Math.abs(page.getWidth()-595.28)<1,`${label} page ${index+1} A4 width`);
     assert.ok(Math.abs(page.getHeight()-841.89)<1,`${label} page ${index+1} A4 height`);
@@ -129,7 +170,7 @@ test("Store copy and real previews describe the personalized planner system",asy
 });
 
 test("planner uses an immutable v4 artifact while existing purchase rights migrate from PDF to ZIP",async()=>{
-  assert.equal(generationVersionForProduct("30-day-planner"),"planner-progress-xlsx-v4");
+  assert.equal(generationVersionForProduct("30-day-planner"),"planner-progress-xlsx-v5");
   assert.equal(generationVersionForProduct("worksheet-pack"),"worksheet-editorial-v16");
   assert.equal(currentProductDelivery("30-day-planner","product",null)?.format,"zip","legacy entitlement rows resolve through the current catalog during forward deployment");
   const routeSource=await readFile(new URL("../src/app/api/v1/commercial/exports/route.ts",import.meta.url),"utf8");

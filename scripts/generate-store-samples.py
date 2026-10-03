@@ -29,10 +29,10 @@ PDF_SAMPLES = {
     "30-day-planner": [
         ("HSKKit-30-Day-Planner-Quick-Start.pdf", 1, "quick-start"),
         ("HSKKit-30-Day-Planner-Printable-A4.pdf", 1, "setup-diagnosis"),
-        ("HSKKit-30-Day-Planner-Printable-A4.pdf", 2, "assessment-mapping"),
-        ("HSKKit-30-Day-Planner-Printable-A4.pdf", 11, "day-8-routes"),
-        ("HSKKit-30-Day-Planner-Fillable-A4.pdf", 18, "weekly-review"),
-        ("HSKKit-30-Day-Planner-Fillable-A4.pdf", 37, "recovery-worksheet"),
+        ("HSKKit-30-Day-Planner-Printable-A4.pdf", 4, "assessment-mapping"),
+        ("HSKKit-30-Day-Planner-Printable-A4.pdf", 14, "day-8-routes"),
+        ("HSKKit-30-Day-Planner-Fillable-A4.pdf", 29, "weekly-review"),
+        ("HSKKit-30-Day-Planner-Fillable-A4.pdf", 40, "recovery-worksheet"),
     ],
     "practice-assessment-pack": [
         ("HSKKit-Practice-Assessment-A-Student.pdf", 2, "timed-instructions"),
