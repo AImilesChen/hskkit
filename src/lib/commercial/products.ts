@@ -47,7 +47,7 @@ export const DIGITAL_PRODUCTS:readonly DigitalProduct[]=[
 
 export function digitalProduct(value:unknown){return DIGITAL_PRODUCTS.find(product=>product.id===value)??null;}
 export function productLicenseNotice(productId:unknown){return productId==="teacher-lesson-plan-pack"?TEACHER_CLASSROOM_LICENSE:PERSONAL_PRODUCT_LICENSE;}
-export function generationVersionForProduct(productId:unknown){return productId==="worksheet-pack"||productId==="learner-practice-toolkit"||productId==="exam-preparation-bundle"?WORKSHEET_GENERATION_VERSION:productId==="30-day-planner"?PLANNER_GENERATION_VERSION:productId==="practice-assessment-pack"?PRACTICE_ASSESSMENT_GENERATION_VERSION:productId==="teacher-lesson-plan-pack"?TEACHER_PACK_GENERATION_VERSION:DEFAULT_PRODUCT_GENERATION_VERSION;}
+export function generationVersionForProduct(productId:unknown){return productId==="assessment-tracker"?"assessment-tracker-v4":productId==="learner-practice-toolkit"?"learner-toolkit-assessment-v4":productId==="worksheet-pack"||productId==="exam-preparation-bundle"?WORKSHEET_GENERATION_VERSION:productId==="30-day-planner"?PLANNER_GENERATION_VERSION:productId==="practice-assessment-pack"?PRACTICE_ASSESSMENT_GENERATION_VERSION:productId==="teacher-lesson-plan-pack"?TEACHER_PACK_GENERATION_VERSION:DEFAULT_PRODUCT_GENERATION_VERSION;}
 export function productDeliverableLabels(productId:unknown):string[]{
   const product=digitalProduct(productId);if(!product)throw new Error("INVALID_PRODUCT");
   if(product.category==="level")return [`${product.vocabularyCount?.toLocaleString("en-US")} canonical entries in one searchable PDF`,`Manifest and README/licence information`];

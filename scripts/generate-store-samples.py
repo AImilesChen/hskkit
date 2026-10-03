@@ -22,9 +22,9 @@ PDF_SAMPLES = {
         ("HSKKit-Worksheets-Answer-Key.pdf", 97, "level-9-answer-review-test"),
     ],
     "assessment-tracker": [
-        ("HSKKit-Assessment-Dashboard-Guide.pdf", 1, "scoring-guide"),
-        ("HSKKit-Assessment-Dashboard-Guide.pdf", 2, "dashboard-method"),
-        ("HSKKit-Printable-Assessment-Record.pdf", 2, "level-3-review-record"),
+        ("03-Assessment-Guide.pdf", 3, "scoring-guide"),
+        ("03-Assessment-Guide.pdf", 2, "dashboard-method"),
+        ("04-Level-Printable-Checkpoints.pdf", 3, "level-3-review-record"),
     ],
     "30-day-planner": [
         ("HSKKit-30-Day-Planner-Quick-Start.pdf", 1, "quick-start"),
@@ -52,7 +52,7 @@ PDF_SAMPLES = {
 }
 CSV_SAMPLES = {
     "assessment-tracker": [
-        ("HSKKit-Assessment-Tracker.csv", "vocabulary-tracker"),
+        ("HSKKit-Assessment-Tracker-Raw-Data.csv", "vocabulary-tracker"),
         ("HSKKit-Weekly-Review.csv", "weekly-review-log"),
     ]
 }
@@ -123,7 +123,7 @@ def render_csv(csv_bytes: bytes, title: str, destination: Path) -> None:
             value = row[column] if column < len(row) else ""
             draw.rectangle((x, y, x + column_width, y + row_height), fill=fill, outline="#cbd5e1")
             draw.text((x + 10, y + 17), value[:22], font=body_font, fill="#334155")
-    watermark(image).save(destination, "WEBP", quality=88, method=6)
+    watermark(image).save(destination, "WEBP", quality=95, method=6)
 
 
 def main() -> None:
