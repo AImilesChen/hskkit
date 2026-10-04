@@ -42,7 +42,7 @@ import { computeSessionStreak } from "../../../../lib/account/domain";
 import { computeOffsetSessionStreak, deriveHomeNextStep, learningLocalDay } from "../../../../lib/learning/progress";
 import { checkReviewAnswer, reviewSnapshotFromStep7Exercise } from "../../../../lib/learning/review-content";
 import { reviewLevelControl } from "../../../../lib/learning/review-session";
-import { resolvedReviewSnapshotForAttempt } from "../../../../lib/learning/review-content-resolver";
+import { resolvedReviewSnapshotForAttempt, trustedReviewAudioExerciseForAttempt } from "../../../../lib/learning/review-content-resolver";
 import { getDictionaryLearningContext, getDictionaryWordsByIds } from "../../../../lib/dictionary/p2-server";
 import { dictionaryWordProgress, resolveDictionaryPractice } from "../../../../lib/dictionary/p2-learning";
 import { learningTopics } from "../../../../lib/topics/catalog";
@@ -115,12 +115,10 @@ function view(state: LearningState, ownerId: string, offsetMinutes: number, capa
     const attempt = built.state.attempts.find((candidate) => candidate.id === card.sourceAttemptId);
     const snapshot = attempt ? resolvedReviewSnapshotForAttempt(attempt) : undefined;
     const assetId = attempt?.contentId.startsWith("word:") ? attempt.contentId.slice(5) : undefined;
-    const audio = card.dimension !== "reading" && assetId
-      ? (trustedAudioExercise(assetId, card.dimension as AudioMode) ?? trustedTodayAudioExercise(assetId, card.dimension as AudioMode))
-      : undefined;
+    const audio = attempt && card.dimension !== "reading" ? trustedReviewAudioExerciseForAttempt(attempt) : undefined;
     const vocabulary = audio?.word;
-    const formalAudioSrc = snapshot?.audioSrc ?? (audio?.word.audio.status === "formal" ? audio.word.audio.src : undefined);
-    const formalAudioText = snapshot?.audioText ?? audio?.voiceText;
+    const formalAudioSrc = snapshot?.audioSrc;
+    const formalAudioText = snapshot?.audioText;
     const playbackRequired = card.dimension !== "reading" && Boolean(formalAudioSrc && formalAudioText);
     const isMistake = isOpenMistakeForCard(built.state, card);
     return {

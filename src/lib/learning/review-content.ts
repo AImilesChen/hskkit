@@ -48,11 +48,20 @@ export function reviewSnapshotFromStep7Exercise(exercise: Step7Exercise): Review
     instruction: listening.instruction, prompt: exercise.prompt, answerMode: optionsMode(exercise.options), options: exercise.options ? { ...exercise.options } : undefined,
     correctAnswer: exercise.correctAnswer, correctAnswerText: exercise.options?.[exercise.correctAnswer] ?? exercise.correctAnswer, explanation: exercise.explanation,
     audioSrc: listening.audioSrc, audioText: listening.voiceText,
+    sourceGroupId: exercise.contentId.replace(/-q\d+$/, ""),
   };
   return undefined;
 }
 
 export function reviewSnapshotForAttempt(attempt: Attempt): ReviewSnapshot | undefined {
+  // A listening recording is part of the question's identity. Rebuild it from the
+  // exact published version rather than trusting an older persisted snapshot.
+  if (attempt.contentId.startsWith("listening:")) {
+    const exercise = [...ADVANCED_LISTENING_LESSONS, ...LISTENING_LIBRARY_QUESTIONS]
+      .map((lesson) => lesson.exercise)
+      .find((candidate) => candidate.contentId === attempt.contentId && candidate.contentVersion === attempt.contentVersion);
+    return exercise ? reviewSnapshotFromStep7Exercise(exercise) : undefined;
+  }
   if (attempt.reviewSnapshot) return { ...attempt.reviewSnapshot, options: attempt.reviewSnapshot.options ? { ...attempt.reviewSnapshot.options } : undefined };
   const step7 = [...GRAMMAR_LESSONS, ...READING_LESSONS, ...ADVANCED_LISTENING_LESSONS, ...LISTENING_LIBRARY_QUESTIONS]
     .map((lesson) => lesson.exercise).find((exercise) => exercise.contentId === attempt.contentId && exercise.contentVersion === attempt.contentVersion);

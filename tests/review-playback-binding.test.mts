@@ -18,6 +18,8 @@ test("review obtains a ticket before starting media and waits for server confirm
 test("review state resets on card change and failures do not unlock a stale card", async () => {
   const dashboard = await readFile(new URL("src/app/components/learning-dashboard.tsx", root), "utf8");
   assert.match(dashboard, /reviewPlayback\.current\?\.coordinator\.reset\(\)/);
+  assert.match(dashboard, /\[currentReviewCardId, currentReviewCardRevision, reviewIds\]/);
+  assert.match(dashboard, /key=\{`\$\{activeCard\.id\}:\$\{activeCard\.revision\}:\$\{activeCard\.audioSrc\}`\}/);
   assert.match(dashboard, /active\.cardKey !== `\$\{card\.id\}:\$\{card\.revision\}`/);
   assert.match(dashboard, /playbackVerificationMessage\(code, "complete"\)/);
 });

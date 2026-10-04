@@ -106,7 +106,8 @@ test("revealed catalog review content uses published vocabulary details and only
   const client = await source("src/app/components/learning-dashboard.tsx");
   for (const token of ["pinyin", "meaning", "example", "formalAudioSrc"]) assert.match(route, new RegExp(token));
   for (const token of ["Pinyin", "Meaning", "Example", "Example translation", "Formal recording"]) assert.match(client, new RegExp(token));
-  assert.match(route, /audio\?\.word\.audio\.status === "formal"/);
+  assert.match(route, /trustedReviewAudioExerciseForAttempt\(attempt\)/);
+  assert.match(route, /const formalAudioSrc = snapshot\?\.audioSrc/);
   assert.match(audio, /formalWordAudioUrlByContentId\.get\(item\.assetId\)/);
   assert.match(client, /<audio[^>]+controls[^>]+src=\{activeCard\.formalAudioSrc\}/);
 });
@@ -225,7 +226,7 @@ test("grammar contexts use a real newline and choice retries expose a named fiel
   const client = await source("src/app/components/learning-dashboard.tsx");
   assert.doesNotMatch(review, /pattern}\\\\n/);
   assert.doesNotMatch(mock, /pattern}\\\\n/);
-  assert.match(client, /<fieldset><legend[^>]*>Choose an answer<\/legend>/);
+  assert.match(client, /<fieldset[^>]*><legend[^>]*>Choose an answer<\/legend>/);
 });
 
 test("ordinary memory grades cannot resolve an open mistake and grade replay stores its original result", async () => {
