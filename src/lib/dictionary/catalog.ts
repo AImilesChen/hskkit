@@ -170,7 +170,8 @@ export function searchPublishedCharacters(query: string, options: { level?: numb
 export function getWordBySlug(slug: string): LookupResult<StudyWord> {
   const curatedWord = STUDY_WORDS.find((item) => item.slug === slug);
   if (curatedWord) return { status: "published", item: curatedWord };
-  const asset = runtimeWordAssets.find((candidate) => candidate.id === slug);
+  const asset = dictionaryAssets.find((candidate) => candidate.id === slug)
+    ?? runtimeWordAssets.find((candidate) => candidate.id === slug);
   return asset
     ? { status: "published", item: studyWordFromAsset(asset, asset.id) }
     : { status: "missing" };
