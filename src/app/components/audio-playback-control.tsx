@@ -115,7 +115,7 @@ export function AudioPlaybackControl({
       ? `Paused ${formatSeconds(currentTime)} / ${formatSeconds(duration)}`
       : undefined;
   const statusText = verificationState === "verifying"
-    ? "Playback finished — unlocking answers…"
+    ? "Playback finished — confirming playback…"
     : verificationState === "verified" && state !== "playing" && state !== "loading"
       ? "Playback complete"
       : progressText ?? (state === "loading"
