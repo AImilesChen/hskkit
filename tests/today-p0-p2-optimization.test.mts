@@ -45,8 +45,8 @@ test("Today derives a useful default word count from the selected time budget", 
   assert.equal(recommendTodayNewWordCount(30), 5);
 });
 
-test("a 20 minute plan contains the complete three-word learning loop", () => {
-  const plan = selectTodayContent(3, 3);
+test("a 20 minute plan contains three distinct words and only their available listening", () => {
+  const plan = selectTodayContent(2, 3);
   assert.equal(plan.status, "ready");
   const built = buildDailySession(emptyLearningState(), {
     ownerId: "today-three-words",
@@ -61,20 +61,21 @@ test("a 20 minute plan contains the complete three-word learning loop", () => {
   });
   const active = built.session.items.filter((item) => !item.deferred && item.kind !== "summary");
   assert.equal(active.filter((item) => item.kind === "learn").length, 3);
-  assert.equal(active.filter((item) => item.kind === "listen").length, 6);
+  assert.equal(active.filter((item) => item.kind === "listen").length, 4);
   assert.equal(active.filter((item) => item.kind === "practice").length, 1);
-  assert.deepEqual(active.slice(0, 9).map((item) => item.kind === "listen" ? `${item.kind}:${item.dimension}` : item.kind), [
+  assert.deepEqual(active.slice(0, 8).map((item) => item.kind === "listen" ? `${item.kind}:${item.dimension}` : item.kind), [
     "learn", "learn", "learn",
     "listen:audio", "listen:audio", "listen:audio",
-    "listen:context_audio", "listen:context_audio", "listen:context_audio",
+    "listen:context_audio", "practice",
   ]);
 });
 
-test("a constrained level reports the real number of available new words", () => {
+test("Today uses the wider approved word pool and reports the real planned count", () => {
   const plan = selectTodayContent(1, 3);
   assert.equal(plan.status, "ready");
   if (plan.status !== "ready") return;
-  assert.equal(plan.items.length, 2);
+  assert.equal(plan.items.length, 3);
+  assert.equal(new Set(plan.items.map((item) => item.contentId)).size, 3);
   const built = buildDailySession(emptyLearningState(), {
     ownerId: "learner-l1",
     localDay: "2026-09-09",
@@ -87,7 +88,7 @@ test("a constrained level reports the real number of available new words", () =>
     focus: "balanced",
   });
   assert.equal(built.session.newWordCount, 3);
-  assert.equal(built.session.plannedNewWordCount, 2);
+  assert.equal(built.session.plannedNewWordCount, 3);
 });
 
 test("mistakes created inside Today are saved for review without re-locking the frozen session", () => {
@@ -410,7 +411,7 @@ test("completed Today renders truthful statistics, recovery, personalization and
     "practice questions completed",
     "Recommended focus",
     "Monthly learning score",
-    "Learn {data.session.plannedNewWordCount ?? data.session.newWordCount",
+    "Explore HSK {data.session.startLevel ?? 1} words",
     "Review {open.length} open mistake",
     "Done for today",
     "Current streak",
