@@ -28,9 +28,13 @@ test("review audio uses trusted asset duration and completes immediately from th
   assert.equal(publishedAudioDurationBySrc("/audio/listening-library/v2/hsk1-001.mp3"), 1.104);
   const route = await source("src/app/api/v1/learning/route.ts");
   const client = await source("src/app/components/learning-dashboard.tsx");
+  const playback = await source("src/lib/learning/verified-playback.ts");
   assert.match(route, /publishedAudioDurationBySrc\(card\.audioSrc\)/);
   assert.match(route, /createStep7PlaybackTicket\(identity\.id, exerciseKey, card\.audioText, new Date\(\), trustedDuration\)/);
   assert.doesNotMatch(client, /if \(remaining\) await new Promise/);
-  assert.match(client, /onEnded=\{\(\) => void completeFormalPlayback\(activeCard\)\}/);
-  assert.match(client, /Replay the full recording/);
+  assert.match(client, /onComplete=\{\(\) => void completeFormalPlayback\(activeCard\)\}/);
+  assert.match(client, /setReviewPlaybackEndedKey\(active\.cardKey\)/);
+  assert.match(client, /disabled=\{!canSelectReviewAnswer\}/);
+  assert.match(client, /!activeCard\.playbackReady \|\| reviewSaving/);
+  assert.match(playback, /Replay the full recording/);
 });
