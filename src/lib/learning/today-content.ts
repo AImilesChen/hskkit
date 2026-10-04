@@ -2,8 +2,9 @@ import runtimeIndex from "../content/runtime-content-index.json" with { type: "j
 import type { CatalogSearchRow } from "../content/catalog-search.ts";
 import { getHsk3LevelStatus } from "../content/level-status.ts";
 import { listPublishedWords, type StudyWord } from "../dictionary/catalog.ts";
+import type { DailySession } from "./domain.ts";
 
-const planCache = new Map<string, TodayContentPlan>();
+const poolCache = new Map<number, TodayContentItem[]>();
 const runtimeWordAssets = Object.values(runtimeIndex.runtimeWords).flat();
 type RuntimeTodayAsset = (typeof runtimeWordAssets)[number];
 
@@ -20,25 +21,52 @@ export interface TodayContentItem {
   studySlug: string;
   example?: StudyWord["example"];
   audioSrc?: string;
+  isContinuing?: boolean;
 }
 
 export type TodayContentPlan =
   | { status: "ready"; startLevel: number; levelBand: string; releaseId: string; item: TodayContentItem; items: TodayContentItem[]; practiceHref?: string; unavailableCapabilities?: Array<"context_audio" | "practice"> }
-  | { status: "empty"; startLevel: number; releaseId?: string; code: "EMPTY_CONTENT_QUEUE" | "CONTEXT_AUDIO_UNAVAILABLE"; message: string; actionHref: string; actionLabel: string };
+  | { status: "empty"; startLevel: number; releaseId?: string; code: "EMPTY_CONTENT_QUEUE" | "NO_NEW_WORDS"; message: string; actionHref: string; actionLabel: string };
+
+export interface TodayWordSelection {
+  pinnedContentIds?: readonly string[];
+  continuingContentIds?: readonly string[];
+  completedContentIds?: readonly string[];
+  listeningEnabled?: boolean;
+  freezePinned?: boolean;
+}
+
+export function todayWordHistory(sessions: readonly DailySession[], ownerId: string, localDay: string, level: number): TodayWordSelection {
+  const own = sessions.filter((session) => session.ownerId === ownerId);
+  const current = own.find((session) => session.localDay === localDay && session.startLevel === level);
+  const previous = own.filter((session) => session.localDay < localDay && session.startLevel === level)
+    .sort((a, b) => b.localDay.localeCompare(a.localDay));
+  const completedContentIds = [...new Set(own.flatMap((session) => session.items
+    .filter((item) => item.kind === "learn" && item.status === "completed")
+    .map((item) => item.contentId)))];
+  const seenEarlierWords = new Set<string>();
+  const continuingContentIds = previous.flatMap((session) => session.items.flatMap((item) => {
+    if (item.kind !== "learn" || seenEarlierWords.has(item.contentId)) return [];
+    seenEarlierWords.add(item.contentId);
+    return item.status !== "completed" || session.items.some((step) => step.kind === "listen" && step.contentId === item.contentId && step.status !== "completed")
+      ? [item.contentId] : [];
+  }));
+  return {
+    pinnedContentIds: current?.items.filter((item) => item.kind === "learn").map((item) => item.contentId),
+    continuingContentIds: [...new Set([...continuingContentIds, ...(current?.items.filter((item) => item.kind === "learn" && item.isContinuing).map((item) => item.contentId) ?? [])])],
+    completedContentIds,
+    freezePinned: Boolean(current),
+  };
+}
 
 function activeLevel(level: number) {
   const status = getHsk3LevelStatus(level);
   const catalogLevel = level >= 7 ? 7 : level;
   return {
     releaseId: runtimeIndex.releaseId,
-    contentAssets: runtimeIndex.dictionaryAssets.filter((asset) => asset.level === catalogLevel),
+    catalogLevel,
     availability: status.availability,
   };
-}
-
-function compatibleAsset(asset: RuntimeTodayAsset, words: StudyWord[]): { asset: RuntimeTodayAsset; word: StudyWord } | undefined {
-  const word = words.find((candidate) => candidate.hanzi === asset.hanzi);
-  return word ? { asset, word } : undefined;
 }
 
 function versionFor(asset: RuntimeTodayAsset, releaseId: string) {
@@ -58,16 +86,28 @@ function mapItem(asset: RuntimeTodayAsset, word: StudyWord | undefined, releaseI
     partOfSpeech: asset.partOfSpeech,
     studySlug: word?.slug ?? asset.id,
     example: word?.example,
-    audioSrc: word?.audio.status === "formal" ? word.audio.src : (asset as unknown as { audioSrc?: string }).audioSrc,
+    audioSrc: word?.audio.status === "formal" ? word.audio.src : (asset as unknown as { audioSrc?: string | null }).audioSrc || undefined,
   };
 }
 
-export function selectTodayContent(startLevel: number, requestedCount = 1): TodayContentPlan {
+function availableItems(catalogLevel: number): TodayContentItem[] {
+  const cached = poolCache.get(catalogLevel);
+  if (cached) return cached;
+  const words = listPublishedWords();
+  const dictionary = runtimeIndex.dictionaryAssets.filter((asset) => asset.level === catalogLevel);
+  const runtime = runtimeIndex.runtimeWords[String(catalogLevel) as keyof typeof runtimeIndex.runtimeWords] ?? [];
+  const curated = dictionary.filter((asset) => words.some((word) => word.id === asset.id));
+  const seen = new Set<string>();
+  const items = [...curated, ...dictionary, ...runtime]
+    .filter((asset) => !seen.has(asset.id) && Boolean(seen.add(asset.id)))
+    .map((asset) => mapItem(asset, words.find((word) => word.id === asset.id), runtimeIndex.releaseId));
+  poolCache.set(catalogLevel, items);
+  return items;
+}
+
+export function selectTodayContent(startLevel: number, requestedCount = 1, selection: TodayWordSelection = {}): TodayContentPlan {
   const level = Number.isInteger(startLevel) && startLevel >= 1 && startLevel <= 9 ? startLevel : 1;
   const count = Number.isInteger(requestedCount) ? Math.min(5, Math.max(1, requestedCount)) : 1;
-  const cacheKey = `${level}:${count}`;
-  const cached = planCache.get(cacheKey);
-  if (cached) return cached;
   const result = activeLevel(level);
   let plan: TodayContentPlan;
   if (result.availability !== "ready") {
@@ -81,13 +121,27 @@ export function selectTodayContent(startLevel: number, requestedCount = 1): Toda
       actionLabel: level >= 8 ? "Open the unified HSK 7–9 advanced ability band catalog" : "Choose another available level",
     };
   } else {
-    const words = listPublishedWords();
-    const joined = result.contentAssets
-      .map((asset) => compatibleAsset(asset, words))
-      .filter((value): value is { asset: RuntimeTodayAsset; word: StudyWord } => Boolean(value))
-      .slice(0, count);
-    if (!joined.length && result.contentAssets[0]) joined.push({ asset: result.contentAssets[0], word: undefined as unknown as StudyWord });
-    const items = joined.map(({ asset, word }) => mapItem(asset, word, result.releaseId));
+    const pool = availableItems(result.catalogLevel);
+    const byId = new Map(pool.map((item) => [item.contentId, item]));
+    const completed = new Set(selection.completedContentIds ?? []);
+    const continuing = new Set(selection.continuingContentIds ?? []);
+    const pinned = (selection.pinnedContentIds ?? []).flatMap((id) => byId.has(id) ? [byId.get(id)!] : []);
+    const freezePinned = Boolean(selection.freezePinned && pinned.length);
+    const carried = freezePinned ? [] : (selection.continuingContentIds ?? []).flatMap((id) => byId.has(id) ? [byId.get(id)!] : []);
+    const chosen = new Set<string>();
+    const items: TodayContentItem[] = [];
+    for (const item of [...pinned, ...carried].slice(0, 5)) {
+      if (chosen.has(item.contentId)) continue;
+      chosen.add(item.contentId);
+      items.push({ ...item, isContinuing: continuing.has(item.contentId) });
+    }
+    const remaining = pool.filter((item) => !chosen.has(item.contentId) && !completed.has(item.contentId));
+    const ordered = selection.listeningEnabled === false ? remaining : [
+      ...remaining.filter((item) => Boolean(item.audioSrc)),
+      ...remaining.filter((item) => !item.audioSrc),
+    ];
+    const alreadyNew = items.filter((item) => !item.isContinuing).length;
+    for (const item of ordered.slice(0, freezePinned ? 0 : Math.max(0, count - alreadyNew))) items.push(item);
     plan = items.length ? {
       status: "ready",
       startLevel: level,
@@ -104,31 +158,30 @@ export function selectTodayContent(startLevel: number, requestedCount = 1): Toda
       status: "empty",
       startLevel: level,
       releaseId: result.releaseId,
-      code: "CONTEXT_AUDIO_UNAVAILABLE",
-      message: `Level ${level} content is published, but no approved context-audio task is available yet. Your saved progress is unchanged.`,
+      code: "NO_NEW_WORDS",
+      message: `You have completed the available Today words at HSK ${level}. Due reviews remain available; choose another level for more new words.`,
       actionHref: `/vocabulary/${level}`,
-      actionLabel: `Open Level ${level} vocabulary`,
+      actionLabel: `Explore HSK ${level} vocabulary`,
     };
   }
-  planCache.set(cacheKey, plan);
   return plan;
 }
 
 export function todayContentByContentId(contentId: string): TodayContentItem | undefined {
   const logicalId = contentId.startsWith("catalog:") ? contentId.slice("catalog:".length) : undefined;
   const asset = logicalId
-    ? runtimeWordAssets.find((candidate) => candidate.logicalId === logicalId)
-      ?? runtimeIndex.dictionaryAssets.find((candidate) => candidate.logicalId === logicalId)
+    ? runtimeIndex.dictionaryAssets.find((candidate) => candidate.logicalId === logicalId)
+      ?? runtimeWordAssets.find((candidate) => candidate.logicalId === logicalId)
     : undefined;
   return asset ? todayContentByAssetId(asset.id) : undefined;
 }
 
 export function todayContentByAssetId(assetId: string): TodayContentItem | undefined {
-  const asset = runtimeWordAssets.find((candidate) => candidate.id === assetId)
-    ?? runtimeIndex.dictionaryAssets.find((candidate) => candidate.id === assetId);
+  const asset = runtimeIndex.dictionaryAssets.find((candidate) => candidate.id === assetId)
+    ?? runtimeWordAssets.find((candidate) => candidate.id === assetId);
   if (!asset) return undefined;
   const words = listPublishedWords();
-  const word = words.find((candidate) => candidate.id === asset.id || candidate.hanzi === asset.hanzi);
+  const word = words.find((candidate) => candidate.id === asset.id);
   return mapItem(asset, word, runtimeIndex.releaseId);
 }
 
