@@ -203,7 +203,7 @@ export default function Step7ExerciseClient({ exercise, audioAsset, previousHref
         showProgress={Boolean(listeningSession)}
         verificationState={listeningSession ? verificationState : "idle"}
       />
-    </> : <AudioPlaybackControl asset={undefined} />}
+    </> : null}
     {listeningSession && <p className="step7-answer-guidance" aria-live="polite">{listeningGuidance}</p>}
     {exercise.options ? <div className={`step7-options ${listeningSession && !played ? "locked" : ""}`.trim()} aria-disabled={listeningSession ? !played : undefined}>
       {Object.entries(exercise.options).map(([letter, text]) => listeningSession

@@ -6,6 +6,11 @@
   padding: 48px 20px 96px;
 }
 
+.practice {
+  margin-top: 36px;
+  scroll-margin-top: 90px;
+}
+
 .learningTools {
   display: flex;
   align-items: center;
