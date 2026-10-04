@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import type { PublicAudioAsset } from "@/lib/audio/assets";
 
 export type AudioPlaybackState = "loading" | "ready" | "playing" | "paused" | "error" | "unavailable";
+export type PlayableAudioAsset = Pick<PublicAudioAsset, "id" | "src" | "sourceLabel" | "durationSeconds">;
 
 type VerificationState = "idle" | "verifying" | "verified";
 
@@ -40,7 +41,7 @@ export function AudioPlaybackControl({
   showProgress = false,
   verificationState = "idle",
 }: {
-  asset?: PublicAudioAsset;
+  asset?: PlayableAudioAsset;
   beforePlay?: () => Promise<boolean | void>;
   onComplete?: () => void;
   onFailure?: () => void;
@@ -77,19 +78,13 @@ export function AudioPlaybackControl({
   async function playOrRetry() {
     const audio = audioRef.current;
     if (!audio || !asset || verificationState === "verifying" || preparingPlaybackRef.current || state === "loading") return;
-    if (variant === "default" && state === "error") {
-      setState("loading");
-      audio.load();
-      return;
-    }
-    if (variant === "default" && state === "playing") return;
-    if (variant === "icon" && state === "playing") {
+    if (state === "playing") {
       audio.pause();
       setState("paused");
       return;
     }
 
-    const resuming = variant === "icon" && state === "paused";
+    const resuming = state === "paused";
     try {
       preparingPlaybackRef.current = true;
       setState("loading");
@@ -139,7 +134,7 @@ export function AudioPlaybackControl({
     : state === "error"
       ? "Retry audio"
       : state === "playing"
-        ? "Playing…"
+        ? "Pause audio"
         : state === "paused"
           ? "Resume audio"
           : state === "loading"
@@ -149,7 +144,7 @@ export function AudioPlaybackControl({
               : verificationState === "verified" ? "Play again" : "Play audio";
   const target = label ? ` for ${label}` : "";
   const accessibleActionLabel = `${state === "playing"
-    ? variant === "icon" ? "Pause pronunciation" : "Audio is playing"
+    ? variant === "icon" ? "Pause pronunciation" : "Pause audio"
     : state === "paused"
       ? "Resume pronunciation"
       : state === "error"
@@ -162,8 +157,8 @@ export function AudioPlaybackControl({
               ? variant === "icon" ? "Play pronunciation again" : "Play audio again"
               : variant === "icon" ? "Play pronunciation" : "Play audio"}${target}${asset ? `. ${asset.sourceLabel}.` : ""}`;
   const unavailable = state === "unavailable";
-  const busy = state === "loading" || verificationState === "verifying" || (variant === "default" && state === "playing");
-  const disabled = unavailable || (!showProgress && (state === "loading" || (variant === "default" && state === "playing")));
+  const busy = state === "loading" || verificationState === "verifying";
+  const disabled = unavailable || state === "loading" || verificationState === "verifying";
   const progress = duration > 0 ? Math.min(100, Math.max(0, (currentTime / duration) * 100)) : 0;
 
   const audioElement = asset ? <audio

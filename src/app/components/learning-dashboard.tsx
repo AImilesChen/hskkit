@@ -4,9 +4,11 @@ import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import type { ReactNode } from "react";
 import AiAssist from "./ai-assist";
+import { AudioPlaybackControl } from "./audio-playback-control";
 import HomeIcon, { type HomeIconName } from "./home-icon";
 import LearningLoopNav, { type LearningLoopLabel } from "./learning-loop-nav";
 import { LearningLoadError, loadLearningData, type LearningLoadErrorCode } from "../../lib/learning/client-load";
+import { PlaybackRequestError, PlaybackVerificationCoordinator, playbackErrorCode, playbackVerificationMessage, type PlaybackVerificationState } from "../../lib/learning/verified-playback";
 import { activeReviewCardId, activeTodayReviewCardId, buildIntentReviewQueue, filterReviewCards, recommendReviewCount, reviewAnswerIsCorrect, reviewCardIdsForScope, reviewComposition, reviewEntryIntent, reviewGradeOptions, reviewTip, type ReviewEntryIntent, type ReviewGrade, type ReviewLevelControl, type ReviewLevelScope } from "../../lib/learning/review-session";
 import { completionProofNeedsSync, parseTodayCompletionProof, recommendTodayMinutes, recommendTodayNewWordCount, resolveTodayCelebration, todayCompletionProofKey, todaySummaryStats, todayJourneyProgress, TODAY_BUDGET_OPTIONS, TODAY_FOCUS_OPTIONS, TODAY_NEW_WORD_OPTIONS, type TodayBudgetMinutes, type TodayCelebration, type TodayCompletedKind, type TodayFocus, type TodayNewWordCount } from "../../lib/learning/today-plan";
 
@@ -99,7 +101,8 @@ export default function LearningDashboard({ mode }: { mode: "today" | "review" |
   const [reward, setReward] = useState<RewardSnapshot | null>(null);
   const operationKeys = useRef<Record<string, string>>({});
   const dataRef = useRef<Data | null>(null);
-  const playbackTickets = useRef<Record<string, { playbackTicket: string; notBefore?: string }>>({});
+  const reviewPlayback = useRef<{ cardKey: string; coordinator: PlaybackVerificationCoordinator } | null>(null);
+  const [reviewPlaybackState, setReviewPlaybackState] = useState<PlaybackVerificationState>("idle");
 
   async function load(manualRetry = false) {
     setError("");
@@ -308,7 +311,8 @@ export default function LearningDashboard({ mode }: { mode: "today" | "review" |
     setRetryFeedback(null);
     setRetryResult(null);
     setAudioError("");
-    playbackTickets.current = {};
+    reviewPlayback.current?.coordinator.reset();
+    reviewPlayback.current = null;
   }, [reviewedCount, reviewIds]);
 
   async function retryPending(current: Data | null = data) {
@@ -487,26 +491,43 @@ export default function LearningDashboard({ mode }: { mode: "today" | "review" |
     setPlanFeedback(result === "queued_conflict" ? "Plan change is pending. Use Retry sync to apply it to the latest server copy." : result === true ? "Plan change saved on this device. It will apply after sync." : result ? `Plan updated: HSK ${planDraftLevel}, ${planDraftMinutes} minutes, ${planDraftNewWords} new word${planDraftNewWords === 1 ? "" : "s"}.` : "Plan was not updated. Reload the server copy and try again.");
     if (result) setPlanOpen(false);
   }
+  async function playbackResponse<T>(response: Response) {
+    const body = await response.json() as T & { error?: string; message?: string };
+    if (!response.ok) throw new PlaybackRequestError(body.error ?? "UNKNOWN_ERROR", body.message);
+    return body;
+  }
   async function startFormalPlayback(card: Card) {
     setAudioError("");
-    try {
-      const started = await fetch("/api/v1/learning", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ action: "audio_review_playback_start", payload: { idempotencyKey: crypto.randomUUID(), cardId: card.id, cardRevision: card.revision }, tzOffset: tz(), queueBinding: data?.queueBinding }) });
-      if (!started.ok) throw new Error("START_FAILED");
-      const ticket = await started.json() as { playbackTicket?: string; notBefore?: string };
-      if (!ticket.playbackTicket) throw new Error("NO_TICKET");
-      playbackTickets.current[card.id] = { playbackTicket: ticket.playbackTicket, notBefore: ticket.notBefore };
-    } catch { setAudioError("Playback verification could not start. No mastery was changed."); }
+    const cardKey = `${card.id}:${card.revision}`;
+    const coordinator = new PlaybackVerificationCoordinator({
+      onStateChange: setReviewPlaybackState,
+      start: async () => playbackResponse<{ playbackTicket: string; notBefore?: string }>(await fetch("/api/v1/learning", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ action: "audio_review_playback_start", payload: { idempotencyKey: crypto.randomUUID(), cardId: card.id, cardRevision: card.revision }, tzOffset: tz(), queueBinding: data?.queueBinding }) })),
+      complete: async (playbackTicket) => {
+        await playbackResponse(await fetch("/api/v1/learning", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ action: "audio_review_playback_complete", payload: { idempotencyKey: crypto.randomUUID(), cardId: card.id, cardRevision: card.revision, playbackTicket }, tzOffset: tz(), queueBinding: data?.queueBinding }) }));
+        const ready = await post("audio_review_ready", { cardId: card.id, cardRevision: card.revision, playbackTicket }, `audio-ready:${card.id}:${card.revision}`);
+        if (!ready) throw new PlaybackRequestError("AUDIO_PLAYBACK_REQUIRED");
+      },
+    });
+    reviewPlayback.current?.coordinator.reset();
+    reviewPlayback.current = { cardKey, coordinator };
+    try { return await coordinator.prepare(); }
+    catch (error) {
+      const code = playbackErrorCode(error);
+      console.warn("[playback-verification]", { context: "review", phase: "start", code });
+      setAudioError(playbackVerificationMessage(code, "start"));
+      return false;
+    }
   }
   async function completeFormalPlayback(card: Card) {
-    const ticket = playbackTickets.current[card.id];
-    if (!ticket) { setAudioError("Playback could not be verified. Replay it before answering."); return; }
+    const active = reviewPlayback.current;
+    if (!active || active.cardKey !== `${card.id}:${card.revision}`) { setAudioError(playbackVerificationMessage("AUDIO_PLAYBACK_REQUIRED", "complete")); return; }
     try {
-      // The media element's ended event is the source of truth; the server ticket enforces trusted duration.
-      const completed = await fetch("/api/v1/learning", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ action: "audio_review_playback_complete", payload: { idempotencyKey: crypto.randomUUID(), cardId: card.id, cardRevision: card.revision, playbackTicket: ticket.playbackTicket }, tzOffset: tz(), queueBinding: data?.queueBinding }) });
-      if (!completed.ok) throw new Error("COMPLETE_FAILED");
-      await post("audio_review_ready", { cardId: card.id, cardRevision: card.revision, playbackTicket: ticket.playbackTicket }, `audio-ready:${card.id}:${card.revision}`);
-      delete playbackTickets.current[card.id];
-    } catch { setAudioError("Playback could not be verified. Replay the full recording before answering; no mastery was changed."); }
+      if (await active.coordinator.finish()) setAudioError("");
+    } catch (error) {
+      const code = playbackErrorCode(error);
+      console.warn("[playback-verification]", { context: "review", phase: "complete", code });
+      setAudioError(playbackVerificationMessage(code, "complete"));
+    }
   }
 
   if (loadFailure) {
@@ -791,12 +812,12 @@ export default function LearningDashboard({ mode }: { mode: "today" | "review" |
             {activeCard.instruction && <p className="mb-4 rounded-xl bg-blue-50 p-4 text-sm leading-6 text-blue-950">{activeCard.instruction}</p>}
             {activeCard.context && <p className="mb-5 rounded-2xl bg-slate-50 p-5 text-lg leading-8 text-slate-900" lang="zh-Hans">{activeCard.context}</p>}
             <h2 className="text-2xl font-bold leading-snug tracking-tight text-slate-950 sm:text-3xl">{activeCard.prompt}</h2>
-            {activeCard.audioSrc && <div className="mt-5"><p className="mb-2 text-sm font-semibold text-slate-700">Original recording</p><audio controls preload="metadata" src={activeCard.audioSrc} className="w-full max-w-full" onPlay={() => void startFormalPlayback(activeCard)} onEnded={() => void completeFormalPlayback(activeCard)} /></div>}
+            {activeCard.audioSrc && <div className="mt-5"><p className="mb-2 text-sm font-semibold text-slate-700">Original recording</p><AudioPlaybackControl asset={{ id: `${activeCard.id}:${activeCard.revision}`, src: activeCard.audioSrc, sourceLabel: "Synthesized listening audio" }} beforePlay={() => startFormalPlayback(activeCard)} onComplete={() => void completeFormalPlayback(activeCard)} onStateChange={(state) => { if (state === "paused") reviewPlayback.current?.coordinator.pause(); else if (state === "playing") reviewPlayback.current?.coordinator.resume(); }} onFailure={() => { reviewPlayback.current?.coordinator.fail(); setAudioError("Audio playback failed. Retry the recording before answering."); }} verificationState={reviewPlaybackState === "preparing" || reviewPlaybackState === "verifying" ? "verifying" : activeCard.playbackReady ? "verified" : "idle"} showProgress /></div>}
             {!activeCard.audioSrc && activeCard.dimension !== "reading" && <p className="mt-4 rounded-xl bg-amber-50 p-3 text-sm text-amber-900">The original recording is not available for this older item. It cannot be treated as a full listening retry.</p>}
             {!activeCard.playbackReady && activeCard.playbackRequired && <p className="mt-3 text-sm font-semibold text-amber-700">Finish audio playback before answering.</p>}
 
             {canAnswerReview && !answerChecked ? <div className="mt-7">
-              {activeCard.answerMode === "choice" ? <fieldset><legend className="font-bold text-slate-950">Choose an answer</legend><div className="mt-3 grid gap-3">{activeCard.choices.map((choice) => <label key={choice.key} className={`flex min-h-[52px] cursor-pointer items-center gap-3 rounded-xl border px-4 py-3 transition ${selectedAnswer === choice.key ? "border-blue-600 bg-blue-50" : "border-slate-200 hover:border-slate-400"}`}><input type="radio" name={`review-${activeCard.id}`} value={choice.key} checked={selectedAnswer === choice.key} onChange={() => setSelectedAnswer(choice.key)} /><span><strong className="mr-2">{choice.key}.</strong>{choice.text}</span></label>)}</div></fieldset> : <><label className="font-bold text-slate-950" htmlFor={`review-answer-${activeCard.id}`}>Type your answer</label><textarea id={`review-answer-${activeCard.id}`} maxLength={180} value={reviewDraft} onChange={(event) => setReviewDraft(event.target.value)} className="mt-3 min-h-[112px] w-full rounded-xl border border-slate-300 p-4 text-base focus:border-blue-600 focus:outline-none focus:ring-4 focus:ring-blue-100" /></>}
+              {activeCard.answerMode === "choice" ? <fieldset disabled={activeCard.playbackRequired && !activeCard.playbackReady}><legend className="font-bold text-slate-950">Choose an answer</legend><div className="mt-3 grid gap-3">{activeCard.choices.map((choice) => <label key={choice.key} className={`flex min-h-[52px] cursor-pointer items-center gap-3 rounded-xl border px-4 py-3 transition ${selectedAnswer === choice.key ? "border-blue-600 bg-blue-50" : "border-slate-200 hover:border-slate-400"}`}><input type="radio" name={`review-${activeCard.id}`} value={choice.key} checked={selectedAnswer === choice.key} onChange={() => setSelectedAnswer(choice.key)} /><span><strong className="mr-2">{choice.key}.</strong>{choice.text}</span></label>)}</div></fieldset> : <><label className="font-bold text-slate-950" htmlFor={`review-answer-${activeCard.id}`}>Type your answer</label><textarea id={`review-answer-${activeCard.id}`} maxLength={180} value={reviewDraft} disabled={activeCard.playbackRequired && !activeCard.playbackReady} onChange={(event) => setReviewDraft(event.target.value)} className="mt-3 min-h-[112px] w-full rounded-xl border border-slate-300 p-4 text-base focus:border-blue-600 focus:outline-none focus:ring-4 focus:ring-blue-100" /></>}
               <button disabled={!(activeCard.answerMode === "choice" ? selectedAnswer : reviewDraft.trim()) || !activeCard.playbackReady || reviewSaving} onClick={() => void submitRetry(activeCard)} className="mt-5 min-h-[48px] w-full rounded-xl bg-blue-600 px-5 py-3 font-bold text-white disabled:cursor-not-allowed disabled:opacity-40 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-blue-200">{reviewSaving ? "Checking…" : "Check answer"}</button>
             </div> : !revealed[activeCard.id] && !answerChecked ? <div className="mt-7">{activeCard.legacyReview && <p className="mb-3 rounded-xl bg-amber-50 p-3 text-sm text-amber-900">This older saved item has no complete original question. It is available only as a memory prompt and will not be presented as a real mistake retry.</p>}<p className="mb-3 text-sm text-slate-600">Think of the answer before revealing it. There is no answer field in this incomplete legacy review.</p><button className="min-h-[48px] w-full rounded-xl bg-blue-600 px-5 py-3 font-bold text-white disabled:cursor-not-allowed disabled:opacity-40 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-blue-200" disabled={!activeCard.playbackReady} onClick={() => setRevealed((current) => ({ ...current, [activeCard.id]: true }))}>Reveal answer</button></div> : null}
 
