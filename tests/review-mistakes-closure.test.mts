@@ -64,15 +64,18 @@ test("only a successful real review updates mastery, resolves the mistake and sc
   assert.deepEqual(masterySnapshot(undone), { reading: 0, audio: 0, context_audio: 0 });
 });
 
-test("Review and Mistakes are workspaces for early review and corrected history, not dead-end links", async () => {
+test("Review and Mistakes are workspaces for early review and compact corrected history", async () => {
   const dashboard = await source("src/app/components/learning-dashboard.tsx");
   for (const token of [
     "Upcoming reviews",
-    "Corrected mistakes",
-    "Corrected on",
+    "Corrected history",
+    "Past successful retries",
     "Mastered after successful review",
   ]) assert.match(dashboard, new RegExp(token));
-  assert.match(dashboard, /data\.mistakes\s*\.filter\(\(mistake\) => mistake\.status === "resolved"\)/);
+  assert.match(dashboard, /mistakes\.filter\(\(mistake\) => mistake\.status !== "open"\)/);
+  assert.match(dashboard, /<details className=/);
+  assert.match(dashboard, /const MISTAKES_PAGE_SIZE = 5/);
+  assert.match(dashboard, /ordered\.slice\(firstIndex, firstIndex \+ MISTAKES_PAGE_SIZE\)/);
 });
 
 test("account learning state remains server-backed for refresh, re-login and another device", async () => {
