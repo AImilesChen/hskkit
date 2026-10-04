@@ -21,6 +21,7 @@ export default function AudioExerciseClient({ exercises, initialMode, dailySessi
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState<Record<AudioMode, { answer: string; correct: boolean; correctAnswerText: string } | undefined>>({ audio: undefined, context_audio: undefined });
   const [error, setError] = useState("");
+  const [staleDailyItem, setStaleDailyItem] = useState(false);
   const keys = useRef<Partial<Record<AudioMode, string>>>({});
   const attemptedAnswers = useRef<Partial<Record<AudioMode, string>>>({});
   const savingRef = useRef(false);
@@ -52,6 +53,7 @@ export default function AudioExerciseClient({ exercises, initialMode, dailySessi
 
   async function startPlayback(targetMode: AudioMode): Promise<boolean> {
     setError("");
+    setStaleDailyItem(false);
     setHeard((current) => ({ ...current, [targetMode]: false }));
     setVerified((current) => ({ ...current, [targetMode]: false }));
     setSelected((current) => ({ ...current, [targetMode]: undefined }));
@@ -70,7 +72,13 @@ export default function AudioExerciseClient({ exercises, initialMode, dailySessi
       return false;
     }
     if (!started.ok) {
-      setError("This Daily item changed or playback verification could not start. Return to Today and resume the current step.");
+      const failure = await started.json().catch(() => null) as { error?: string } | null;
+      if (failure?.error === "DAILY_ITEM_MISMATCH") {
+        setStaleDailyItem(true);
+        setError("This link belongs to an earlier Today step. Open Today to resume your current task.");
+      } else {
+        setError("Playback verification could not start. Retry the recording; nothing was saved.");
+      }
       setPreparing(false);
       return false;
     }
@@ -248,7 +256,7 @@ export default function AudioExerciseClient({ exercises, initialMode, dailySessi
       {formalAudioSrc ? <AudioPlaybackControl key={`${exercise.assetId}:${mode}`} asset={{ id: exercise.assetId, src: formalAudioSrc, sourceLabel: "Synthesized listening audio" }} beforePlay={() => startPlayback(mode)} onComplete={() => void verifyPlayback(mode)} onFailure={() => failPlayback(mode)} onStateChange={setFormalState} verificationState={verifying[mode] ? "verifying" : verified[mode] ? "verified" : "idle"} showProgress className="mt-4" />
         : <button className="btn mb-5" onClick={() => void play()} disabled={preparing || playing || verifying[mode]}>{preparing ? "Preparing…" : playing ? "Playing…" : verifying[mode] ? "Verifying…" : heard[mode] ? "Play again" : "Play audio"}</button>}
       <p className="mt-3 text-sm text-slate-600" role="status" aria-live="polite">{playbackStatus}</p>
-      {error && <p className="mt-3 rounded-xl bg-red-50 p-4 text-sm text-red-700" role="alert">{error}</p>}
+      {error && <div className="mt-3 rounded-xl bg-red-50 p-4 text-sm text-red-700" role="alert"><p>{error}</p>{staleDailyItem && <Link className="mt-3 inline-flex min-h-11 items-center rounded-lg bg-blue-700 px-4 text-sm font-bold text-white hover:bg-blue-800" href="/today?resume=1">Resume current Today step</Link>}</div>}
       <div className="mt-5 grid gap-3">
         {Object.entries(exercise.options).map(([letter, text]) => <button key={letter} type="button" className={`btn secondary text-left ${selected[mode] === letter ? "border-blue-700 bg-blue-50 ring-2 ring-blue-200" : ""}`} aria-pressed={selected[mode] === letter} disabled={!heard[mode] || saving || Boolean(result)} onClick={() => answer(letter)}>{letter}. {text}</button>)}
       </div>

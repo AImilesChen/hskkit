@@ -95,7 +95,8 @@ export function AudioPlaybackControl({
         const allowed = await beforePlay?.();
         if (allowed === false) {
           preparingPlaybackRef.current = false;
-          setState("error");
+          // A rejected verification request does not mean the audio failed to load.
+          setState(state === "error" ? "error" : "ready");
           return;
         }
       }
