@@ -15,7 +15,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { assetId } = await params;
   const exercise = trustedTodayAudioExercise(assetId, "audio");
   return exercise
-    ? { title: `${exercise.word.hanzi} Today Listening | HSKKit`, robots: { index: false, follow: false } }
+    ? { title: `HSK ${exercise.word.level} Today Listening | HSKKit`, robots: { index: false, follow: false } }
     : { title: "Daily audio unavailable | HSKKit", robots: { index: false, follow: false } };
 }
 
