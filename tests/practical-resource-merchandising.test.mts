@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import {access,readFile,stat} from "node:fs/promises";
+import {loadAssessmentLevelAudio} from "./assessment-level-audio-fixture.mts";
 import {PDFDocument} from "pdf-lib";
 import {generateDifferentiatedProductArtifact} from "../src/lib/commercial/product-generator.ts";
 import {resourceProductDetails} from "../src/lib/commercial/resource-products.ts";
@@ -25,7 +26,7 @@ const expected={
   "worksheet-pack":["HSKKit-Worksheets-Student-A4.pdf","HSKKit-Worksheets-Student-US-Letter.pdf","HSKKit-Worksheets-Student-A4-Low-Ink.pdf","HSKKit-Worksheets-Student-Fillable.pdf","HSKKit-Worksheets-Answer-Key.pdf","HSKKit-Worksheet-Completed-Samples.pdf","HSKKit-Worksheet-Progress-Checklist.pdf"],
   "assessment-tracker":["HSKKit-Assessment-Tracker-Blank.xlsx","HSKKit-Assessment-Tracker-Example.xlsx","HSKKit-Assessment-Tracker-Raw-Data.csv","HSKKit-Assessment-Tracker.csv","HSKKit-Weekly-Review.csv","HSKKit-Assessment-Dashboard-Guide.pdf","HSKKit-Printable-Assessment-Record.pdf"],
   "30-day-planner":["HSKKit-30-Day-Planner-Quick-Start.pdf","HSKKit-30-Day-Planner-Printable-A4.pdf","HSKKit-30-Day-Planner-Fillable-A4.pdf","HSKKit-30-Day-Planner-Progress-Tracker.xlsx"],
-  "practice-assessment-pack":["HSKKit-Practice-Assessment-A-Student.pdf","HSKKit-Practice-Assessment-B-Student.pdf","HSKKit-Practice-Assessment-C-Student.pdf","HSKKit-Practice-Assessment-A-Listening.mp3","HSKKit-Practice-Assessment-B-Listening.mp3","HSKKit-Practice-Assessment-C-Listening.mp3","HSKKit-Practice-Assessment-Audio-Source-License.txt","HSKKit-Practice-Assessment-Answer-Sheets.pdf","HSKKit-Practice-Assessment-Answers-Explanations.pdf","HSKKit-Practice-Assessment-Facilitator-Transcripts.pdf","HSKKit-Practice-Assessment-Score-Report.pdf","HSKKit-Practice-Assessment-Score-Tracker.csv","HSKKit-Practice-Assessment-Score-Tracker.xlsx"],
+  "practice-assessment-pack":["HSKKit-Practice-Assessment-A-Student.pdf","HSKKit-Practice-Assessment-B-Student.pdf","HSKKit-Practice-Assessment-C-Student.pdf","HSKKit-Practice-Assessment-A-Listening.mp3","HSKKit-Practice-Assessment-B-Listening.mp3","HSKKit-Practice-Assessment-C-Listening.mp3","HSKKit-Practice-Assessment-Audio-Source-License.txt","HSKKit-Practice-Assessment-Answer-Sheets.pdf","HSKKit-Practice-Assessment-Answers-Explanations.pdf","HSKKit-Practice-Assessment-Facilitator-Transcripts.pdf","HSKKit-Practice-Assessment-Score-Report.pdf","HSKKit-Practice-Assessment-Score-Tracker.xlsx",...(["A","B","C"] as const).flatMap(form=>Array.from({length:9},(_,index)=>`Level-Audio/form-${form}-level-${index+1}.mp3`)),"Level-Audio/timing-index.json"],
   "teacher-lesson-plan-pack":["HSKKit-Teacher-Pack-Quick-Start.pdf","HSKKit-Teacher-Lesson-Plans-A4.pdf","HSKKit-Teacher-Lesson-Plans-US-Letter.pdf","HSKKit-Student-Handouts-A4.pdf","HSKKit-Student-Handouts-US-Letter.pdf","HSKKit-Exit-Tickets-A4.pdf","HSKKit-Exit-Tickets-US-Letter.pdf","HSKKit-Homework-Answers-Rubrics.pdf","HSKKit-Activity-Cards-A4.pdf","HSKKit-Activity-Cards-US-Letter.pdf","HSKKit-Editable-Lesson-Plans.docx","HSKKit-Editable-Classroom-Slides.pptx"]
 } as const;
 
@@ -89,7 +90,7 @@ test("each practical resource provides four to six readable real sample pages an
 
 test("each practical resource ships the promised usable files",async()=>{
   for(const [productId,names] of Object.entries(expected)){
-    const artifact=await generateDifferentiatedProductArtifact(productId,new Uint8Array(font),new Uint8Array(emoji),"p0-p1-v2",assessmentAudio);
+    const artifact=await generateDifferentiatedProductArtifact(productId,new Uint8Array(font),new Uint8Array(emoji),"p0-p1-v2",assessmentAudio,await loadAssessmentLevelAudio());
     assert.equal(artifact.manifest.files.length,names.length,productId);
     assert.deepEqual([...artifact.manifest.files].sort(),[...names].sort(),productId);
     if(artifact.format==="pdf"){

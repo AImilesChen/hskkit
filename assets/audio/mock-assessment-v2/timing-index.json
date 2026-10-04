@@ -1,0 +1,1844 @@
+{
+  "source": "src/lib/commercial/mock-assessment-content.ts",
+  "sourceSha256": "72a8161c4beafc6f9c9fd97a17e1e0870c947721bb2cc9d828b4e7010fe5b422",
+  "model": "zh_CN-chaowen-medium.onnx",
+  "modelSha256": "820d64ac16048fbcf38dd0823d37fab5f5e0c2bd71b01ca5a50f553fac19e746",
+  "modelConfigSha256": "a6bb2caafa0645642f13cbf7e2f6fbbb16fded66e51109fc26d622f6472fa16f",
+  "pauseSecondsPerQuestion": 5,
+  "timestampBasis": "PCM sample offsets before MP3 encoding; allow encoder delay/rounding (~0.03 s)",
+  "forms": {
+    "A": {
+      "file": "form-A.mp3",
+      "sha256": "cf154c20136be54156d068cc03e9180ebfa0883875a0bf5a6ef40fe19c26b185",
+      "transcriptSha256": "c2343f19a4b644e7d334a899de10868e2bcf734911ac6bc681edfa930a336bc9",
+      "durationSecondsPcm": 878.804,
+      "sampleRate": 22050,
+      "levels": [
+        {
+          "level": 1,
+          "startSeconds": 0.0,
+          "endSeconds": 76.386,
+          "segments": [
+            {
+              "kind": "intro",
+              "startSeconds": 0.0,
+              "speechEndSeconds": 9.834,
+              "text": "HSKKit 非官方 HSK 三点零分级练习测评，A卷听力。每个文本播放一次。每题后有五秒作答停顿。"
+            },
+            {
+              "kind": "heading",
+              "startSeconds": 9.834,
+              "speechEndSeconds": 12.33,
+              "text": "现在开始第1级听力。"
+            },
+            {
+              "kind": "passage",
+              "startSeconds": 12.33,
+              "speechEndSeconds": 29.28,
+              "text": "第一句：小林和小雨。第二句：七点五十分。第三句：在车站见面后坐八点的公共汽车去学校。第四句：两个人想一起到学校。第五句：他们按时上车。"
+            },
+            {
+              "kind": "question",
+              "startSeconds": 29.28,
+              "speechEndSeconds": 33.541,
+              "text": "第1题。谁参与了这件事。请作答。",
+              "pauseEndSeconds": 38.541
+            },
+            {
+              "kind": "question",
+              "startSeconds": 38.541,
+              "speechEndSeconds": 42.744,
+              "text": "第2题。第二句说的是几点。请作答。",
+              "pauseEndSeconds": 47.744
+            },
+            {
+              "kind": "question",
+              "startSeconds": 47.744,
+              "speechEndSeconds": 51.378,
+              "text": "第3题。要做什么。请作答。",
+              "pauseEndSeconds": 56.378
+            },
+            {
+              "kind": "question",
+              "startSeconds": 56.378,
+              "speechEndSeconds": 60.569,
+              "text": "第4题。为什么有这个安排。请作答。",
+              "pauseEndSeconds": 65.569
+            },
+            {
+              "kind": "question",
+              "startSeconds": 65.569,
+              "speechEndSeconds": 69.598,
+              "text": "第5题。最后一句说了什么。请作答。",
+              "pauseEndSeconds": 74.598
+            },
+            {
+              "kind": "end",
+              "startSeconds": 74.598,
+              "speechEndSeconds": 76.386,
+              "text": "本级听力结束。"
+            }
+          ]
+        },
+        {
+          "level": 2,
+          "startSeconds": 76.386,
+          "endSeconds": 145.155,
+          "segments": [
+            {
+              "kind": "heading",
+              "startSeconds": 76.386,
+              "speechEndSeconds": 78.847,
+              "text": "现在开始第2级听力。"
+            },
+            {
+              "kind": "passage",
+              "startSeconds": 78.847,
+              "speechEndSeconds": 97.574,
+              "text": "甲：王老师和学生有什么安排？乙：上午九点，先上课，再在十一点开会。甲：为什么？乙：当天有两项学校安排。甲：后来呢？乙：下午三点给学生打电话。"
+            },
+            {
+              "kind": "question",
+              "startSeconds": 97.574,
+              "speechEndSeconds": 101.661,
+              "text": "第1题。谁参与了这件事。请作答。",
+              "pauseEndSeconds": 106.661
+            },
+            {
+              "kind": "question",
+              "startSeconds": 106.661,
+              "speechEndSeconds": 111.107,
+              "text": "第2题。第一项安排在几点。请作答。",
+              "pauseEndSeconds": 116.107
+            },
+            {
+              "kind": "question",
+              "startSeconds": 116.107,
+              "speechEndSeconds": 119.66,
+              "text": "第3题。要做什么。请作答。",
+              "pauseEndSeconds": 124.66
+            },
+            {
+              "kind": "question",
+              "startSeconds": 124.66,
+              "speechEndSeconds": 128.828,
+              "text": "第4题。为什么有这个安排。请作答。",
+              "pauseEndSeconds": 133.828
+            },
+            {
+              "kind": "question",
+              "startSeconds": 133.828,
+              "speechEndSeconds": 138.402,
+              "text": "第5题。后来或接下来怎样。请作答。",
+              "pauseEndSeconds": 143.402
+            },
+            {
+              "kind": "end",
+              "startSeconds": 143.402,
+              "speechEndSeconds": 145.155,
+              "text": "本级听力结束。"
+            }
+          ]
+        },
+        {
+          "level": 3,
+          "startSeconds": 145.155,
+          "endSeconds": 218.406,
+          "segments": [
+            {
+              "kind": "heading",
+              "startSeconds": 145.155,
+              "speechEndSeconds": 147.675,
+              "text": "现在开始第3级听力。"
+            },
+            {
+              "kind": "passage",
+              "startSeconds": 147.675,
+              "speechEndSeconds": 166.053,
+              "text": "请听通知。通知说会议九点开始，地点改为三零五教室，原因是二零三的设备坏了。参会者要在八点五十分到场。 教学楼电梯上午检修，三零五教室只能走东侧楼梯到达。"
+            },
+            {
+              "kind": "question",
+              "startSeconds": 166.053,
+              "speechEndSeconds": 170.372,
+              "text": "第1题。资料一主要说什么。请作答。",
+              "pauseEndSeconds": 175.372
+            },
+            {
+              "kind": "question",
+              "startSeconds": 175.372,
+              "speechEndSeconds": 180.121,
+              "text": "第2题。资料二增加了什么信息。请作答。",
+              "pauseEndSeconds": 185.121
+            },
+            {
+              "kind": "question",
+              "startSeconds": 185.121,
+              "speechEndSeconds": 191.425,
+              "text": "第3题。两份信息合起来，怎样理解更合适。请作答。",
+              "pauseEndSeconds": 196.425
+            },
+            {
+              "kind": "question",
+              "startSeconds": 196.425,
+              "speechEndSeconds": 201.417,
+              "text": "第4题。资料一还明确了哪项安排。请作答。",
+              "pauseEndSeconds": 206.417
+            },
+            {
+              "kind": "question",
+              "startSeconds": 206.417,
+              "speechEndSeconds": 211.642,
+              "text": "第5题。资料一要求参会者何时到场。请作答。",
+              "pauseEndSeconds": 216.642
+            },
+            {
+              "kind": "end",
+              "startSeconds": 216.642,
+              "speechEndSeconds": 218.406,
+              "text": "本级听力结束。"
+            }
+          ]
+        },
+        {
+          "level": 4,
+          "startSeconds": 218.406,
+          "endSeconds": 302.223,
+          "segments": [
+            {
+              "kind": "heading",
+              "startSeconds": 218.406,
+              "speechEndSeconds": 221.007,
+              "text": "现在开始第4级听力。"
+            },
+            {
+              "kind": "passage",
+              "startSeconds": 221.007,
+              "speechEndSeconds": 248.917,
+              "text": "请听两段消息。第一段：因为午间排队时间太长，食堂试行线上预约。学生在前一天晚上八点前选餐，到店出示二维码；若要取消，必须在当天早上九点前操作。 第二段：试行首周数据显示，十二点十分前到店的人平均少等八分钟，晚到者仍可能排队。"
+            },
+            {
+              "kind": "question",
+              "startSeconds": 248.917,
+              "speechEndSeconds": 254.409,
+              "text": "第1题。资料一的主要安排或处理是什么。请作答。",
+              "pauseEndSeconds": 259.409
+            },
+            {
+              "kind": "question",
+              "startSeconds": 259.409,
+              "speechEndSeconds": 264.332,
+              "text": "第2题。资料二的主要贡献是什么。请作答。",
+              "pauseEndSeconds": 269.332
+            },
+            {
+              "kind": "question",
+              "startSeconds": 269.332,
+              "speechEndSeconds": 274.15,
+              "text": "第3题。资料二如何回应资料一。请作答。",
+              "pauseEndSeconds": 279.15
+            },
+            {
+              "kind": "question",
+              "startSeconds": 279.15,
+              "speechEndSeconds": 285.303,
+              "text": "第4题。哪项做法能同时保留两份资料的关切。请作答。",
+              "pauseEndSeconds": 290.303
+            },
+            {
+              "kind": "question",
+              "startSeconds": 290.303,
+              "speechEndSeconds": 295.458,
+              "text": "第5题。哪项是资料一的依据或条件。请作答。",
+              "pauseEndSeconds": 300.458
+            },
+            {
+              "kind": "end",
+              "startSeconds": 300.458,
+              "speechEndSeconds": 302.223,
+              "text": "本级听力结束。"
+            }
+          ]
+        },
+        {
+          "level": 5,
+          "startSeconds": 302.223,
+          "endSeconds": 386.631,
+          "segments": [
+            {
+              "kind": "heading",
+              "startSeconds": 302.223,
+              "speechEndSeconds": 304.649,
+              "text": "现在开始第5级听力。"
+            },
+            {
+              "kind": "passage",
+              "startSeconds": 304.649,
+              "speechEndSeconds": 333.163,
+              "text": "请听一段情况说明。公交调查发现，早高峰去科技园的乘客增加三成，旧线绕行商业区平均多花十五分钟。公司决定增加科技园站，同时保留医院站。 另一方面，社区听证会上，商业区商户担心客流下降，建议早晚高峰走新线，平峰仍经过商业区。"
+            },
+            {
+              "kind": "question",
+              "startSeconds": 333.163,
+              "speechEndSeconds": 338.701,
+              "text": "第1题。资料一的主要安排或处理是什么。请作答。",
+              "pauseEndSeconds": 343.701
+            },
+            {
+              "kind": "question",
+              "startSeconds": 343.701,
+              "speechEndSeconds": 348.624,
+              "text": "第2题。资料二的主要贡献是什么。请作答。",
+              "pauseEndSeconds": 353.624
+            },
+            {
+              "kind": "question",
+              "startSeconds": 353.624,
+              "speechEndSeconds": 358.477,
+              "text": "第3题。资料二如何回应资料一。请作答。",
+              "pauseEndSeconds": 363.477
+            },
+            {
+              "kind": "question",
+              "startSeconds": 363.477,
+              "speechEndSeconds": 369.735,
+              "text": "第4题。哪项做法能同时保留两份资料的关切。请作答。",
+              "pauseEndSeconds": 374.735
+            },
+            {
+              "kind": "question",
+              "startSeconds": 374.735,
+              "speechEndSeconds": 379.924,
+              "text": "第5题。哪项是资料一的依据或条件。请作答。",
+              "pauseEndSeconds": 384.924
+            },
+            {
+              "kind": "end",
+              "startSeconds": 384.924,
+              "speechEndSeconds": 386.631,
+              "text": "本级听力结束。"
+            }
+          ]
+        },
+        {
+          "level": 6,
+          "startSeconds": 386.631,
+          "endSeconds": 471.608,
+          "segments": [
+            {
+              "kind": "heading",
+              "startSeconds": 386.631,
+              "speechEndSeconds": 389.185,
+              "text": "现在开始第6级听力。"
+            },
+            {
+              "kind": "passage",
+              "startSeconds": 389.185,
+              "speechEndSeconds": 418.013,
+              "text": "甲：我们先看现有情况。数字导览上线后，年轻访客停留更久，老年访客完成率却下降。团队发现主要问题是字体过小、步骤过多，因此保留内容并简化操作。 乙：还需要考虑另一方的意见。无障碍顾问提醒，大字模式仍不足以帮助所有人，还应提供语音说明和实体路线卡。"
+            },
+            {
+              "kind": "question",
+              "startSeconds": 418.013,
+              "speechEndSeconds": 423.574,
+              "text": "第1题。资料一的主要安排或处理是什么。请作答。",
+              "pauseEndSeconds": 428.574
+            },
+            {
+              "kind": "question",
+              "startSeconds": 428.574,
+              "speechEndSeconds": 433.52,
+              "text": "第2题。资料二的主要贡献是什么。请作答。",
+              "pauseEndSeconds": 438.52
+            },
+            {
+              "kind": "question",
+              "startSeconds": 438.52,
+              "speechEndSeconds": 443.407,
+              "text": "第3题。资料二如何回应资料一。请作答。",
+              "pauseEndSeconds": 448.407
+            },
+            {
+              "kind": "question",
+              "startSeconds": 448.407,
+              "speechEndSeconds": 454.63,
+              "text": "第4题。哪项做法能同时保留两份资料的关切。请作答。",
+              "pauseEndSeconds": 459.63
+            },
+            {
+              "kind": "question",
+              "startSeconds": 459.63,
+              "speechEndSeconds": 464.866,
+              "text": "第5题。哪项是资料一的依据或条件。请作答。",
+              "pauseEndSeconds": 469.866
+            },
+            {
+              "kind": "end",
+              "startSeconds": 469.866,
+              "speechEndSeconds": 471.608,
+              "text": "本级听力结束。"
+            }
+          ]
+        },
+        {
+          "level": 7,
+          "startSeconds": 471.608,
+          "endSeconds": 602.503,
+          "segments": [
+            {
+              "kind": "heading",
+              "startSeconds": 471.608,
+              "speechEndSeconds": 474.139,
+              "text": "现在开始第7级听力。"
+            },
+            {
+              "kind": "passage",
+              "startSeconds": 474.139,
+              "speechEndSeconds": 548.698,
+              "text": "以下是情况说明及补充意见。第一份资料指出：公共健康信息准确只是最低条件。例如某地公布筛查建议时，只写有效率上升，未说明样本主要来自年轻成年人，老年人误以为结论同样适用。机构应交代样本范围、尚未确定的效果与可能改变建议的新证据，并把行动建议同证据强度分开标示。这样做并非要求公众自行计算风险，而是让人知道目前建议适用于谁、何时须重新评估。 第二份资料指出：一线医生赞成透明说明，却担心一次列出多组概率会使赶时间的患者抓不住重点。有诊室试把信息分为简短行动卡和可展开的证据页：先说明当前该做什么，再说明样本限制及可能变更的条件。但分层不能把关键副作用藏在第二层；医生建议由不同年龄的患者试读，记录误解，再决定哪些警示必须放在首页。"
+            },
+            {
+              "kind": "question",
+              "startSeconds": 548.698,
+              "speechEndSeconds": 553.598,
+              "text": "第1题。资料一的核心主张是什么。请作答。",
+              "pauseEndSeconds": 558.598
+            },
+            {
+              "kind": "question",
+              "startSeconds": 558.598,
+              "speechEndSeconds": 563.66,
+              "text": "第2题。资料二的主要贡献是什么。请作答。",
+              "pauseEndSeconds": 568.66
+            },
+            {
+              "kind": "question",
+              "startSeconds": 568.66,
+              "speechEndSeconds": 573.536,
+              "text": "第3题。资料二如何回应资料一。请作答。",
+              "pauseEndSeconds": 578.536
+            },
+            {
+              "kind": "question",
+              "startSeconds": 578.536,
+              "speechEndSeconds": 584.828,
+              "text": "第4题。哪项做法能同时保留两份资料的关切。请作答。",
+              "pauseEndSeconds": 589.828
+            },
+            {
+              "kind": "question",
+              "startSeconds": 589.828,
+              "speechEndSeconds": 595.738,
+              "text": "第5题。哪一具体情形说明单一指标可能误导。请作答。",
+              "pauseEndSeconds": 600.738
+            },
+            {
+              "kind": "end",
+              "startSeconds": 600.738,
+              "speechEndSeconds": 602.503,
+              "text": "本级听力结束。"
+            }
+          ]
+        },
+        {
+          "level": 8,
+          "startSeconds": 602.503,
+          "endSeconds": 740.723,
+          "segments": [
+            {
+              "kind": "heading",
+              "startSeconds": 602.503,
+              "speechEndSeconds": 605.034,
+              "text": "现在开始第8级听力。"
+            },
+            {
+              "kind": "passage",
+              "startSeconds": 605.034,
+              "speechEndSeconds": 686.118,
+              "text": "主持人：请说明各自的依据。发言人一：城市更新若推高租金并迫使长期居民迁出，即使环境更美观，也可能削弱社区网络。某街区翻新后新增绿地，但原租户中不少人搬到交通更差的地区；只计算投资额与绿化面积会漏掉这笔代价。评估组主张在批准前记录居民留存、公共服务可达性及参与质量，完工后再追踪，而不是把一次听证会当作充分参与。迁出也可能有其他原因，因此还须访谈居民并比较相近街区。 发言人二：开发方认为提高建设密度能增加住房总量；若一味压低规模，可能让更多家庭无房可租。他们提出对施工期间搬迁者发放租赁补贴，并保留一定比例的可负担住房。不过补贴若只覆盖一年，而新租金长期上涨，就不能证明老住户可以返回。开发方愿意公布补贴领取率和回迁率，评估组则要求按收入组分别报告，以免总体回迁数字掩盖低收入住户的流失。"
+            },
+            {
+              "kind": "question",
+              "startSeconds": 686.118,
+              "speechEndSeconds": 691.389,
+              "text": "第1题。第一位发言人的核心论点是什么。请作答。",
+              "pauseEndSeconds": 696.389
+            },
+            {
+              "kind": "question",
+              "startSeconds": 696.389,
+              "speechEndSeconds": 701.996,
+              "text": "第2题。第二位发言人的主要关切是什么。请作答。",
+              "pauseEndSeconds": 706.996
+            },
+            {
+              "kind": "question",
+              "startSeconds": 706.996,
+              "speechEndSeconds": 711.849,
+              "text": "第3题。资料二如何回应资料一。请作答。",
+              "pauseEndSeconds": 716.849
+            },
+            {
+              "kind": "question",
+              "startSeconds": 716.849,
+              "speechEndSeconds": 723.049,
+              "text": "第4题。哪项做法能同时保留两份资料的关切。请作答。",
+              "pauseEndSeconds": 728.049
+            },
+            {
+              "kind": "question",
+              "startSeconds": 728.049,
+              "speechEndSeconds": 733.924,
+              "text": "第5题。哪一具体情形说明单一指标可能误导。请作答。",
+              "pauseEndSeconds": 738.924
+            },
+            {
+              "kind": "end",
+              "startSeconds": 738.924,
+              "speechEndSeconds": 740.723,
+              "text": "本级听力结束。"
+            }
+          ]
+        },
+        {
+          "level": 9,
+          "startSeconds": 740.723,
+          "endSeconds": 878.804,
+          "segments": [
+            {
+              "kind": "heading",
+              "startSeconds": 740.723,
+              "speechEndSeconds": 743.324,
+              "text": "现在开始第9级听力。"
+            },
+            {
+              "kind": "passage",
+              "startSeconds": 743.324,
+              "speechEndSeconds": 824.919,
+              "text": "主张方：复杂政策争议中，不同群体会按不同价值排序解释同一证据。例如修路可缩短多数人的通勤，却可能占用少数居民的公共活动场地。协商除了核对预计节省的时间，还须说明怎样衡量失去场地的损失、谁获得补偿、由谁决定权重。更多数据无法自动决定何种损失值得承受；委员会主张表决前公开权衡标准，也公开未获采纳的方案及理由，以便事后复核。 质疑方：技术顾问认为过早争论价值会干扰事实核验，建议先建立各方认可的统一数据集，再讨论分配。社区代表反问：若数据集只计通勤时间、不计活动场地使用者，所谓统一已经做出价值选择。他们并不反对核对数据，而是要求把选择指标的会议记录一并公开。顾问随后同意先列出待核验的指标清单，但提醒不同指标的测量误差不能被当成既定事实。程序仍须同时处理测量可靠性与指标选择的正当性。"
+            },
+            {
+              "kind": "question",
+              "startSeconds": 824.919,
+              "speechEndSeconds": 829.029,
+              "text": "第1题。主张方强调什么。请作答。",
+              "pauseEndSeconds": 834.029
+            },
+            {
+              "kind": "question",
+              "startSeconds": 834.029,
+              "speechEndSeconds": 839.207,
+              "text": "第2题。质疑方补充了哪项必要关切。请作答。",
+              "pauseEndSeconds": 844.207
+            },
+            {
+              "kind": "question",
+              "startSeconds": 844.207,
+              "speechEndSeconds": 850.046,
+              "text": "第3题。异议与主张之间的真正分歧是什么。请作答。",
+              "pauseEndSeconds": 855.046
+            },
+            {
+              "kind": "question",
+              "startSeconds": 855.046,
+              "speechEndSeconds": 860.968,
+              "text": "第4题。哪项判断回应异议而不抹去原主张。请作答。",
+              "pauseEndSeconds": 865.968
+            },
+            {
+              "kind": "question",
+              "startSeconds": 865.968,
+              "speechEndSeconds": 872.063,
+              "text": "第5题。哪一具体情形说明单一指标可能误导。请作答。",
+              "pauseEndSeconds": 877.063
+            },
+            {
+              "kind": "end",
+              "startSeconds": 877.063,
+              "speechEndSeconds": 878.804,
+              "text": "本级听力结束。"
+            }
+          ]
+        }
+      ],
+      "levelTracks": [
+        {
+          "level": 1,
+          "file": "form-A-level-1.mp3",
+          "sha256": "4d2063b27822a71305189911c2e3c97232aa7198245b2d98721248228ff97943",
+          "startsAtSecondsInFullForm": 0.0
+        },
+        {
+          "level": 2,
+          "file": "form-A-level-2.mp3",
+          "sha256": "b1aed02ff75e37a899e505d53675d73f1540c5e2bf190f3cf02f8a7cb830a5b6",
+          "startsAtSecondsInFullForm": 76.386
+        },
+        {
+          "level": 3,
+          "file": "form-A-level-3.mp3",
+          "sha256": "d5aa83d220505607b7da457ffc157e8b44f51c1fadc0ed37fac76fa7214386b1",
+          "startsAtSecondsInFullForm": 145.155
+        },
+        {
+          "level": 4,
+          "file": "form-A-level-4.mp3",
+          "sha256": "89f3d9042a8e7fd0d644e77de1350ce654d90d912101feb5b458f2ed3bf4346a",
+          "startsAtSecondsInFullForm": 218.406
+        },
+        {
+          "level": 5,
+          "file": "form-A-level-5.mp3",
+          "sha256": "b254560c29b0839d570664f18e2aca83d007edc724a0179111506cc46fd4f8fb",
+          "startsAtSecondsInFullForm": 302.223
+        },
+        {
+          "level": 6,
+          "file": "form-A-level-6.mp3",
+          "sha256": "b665fac7eceb05b634bd1bf6b680211ac0c1eab3c56b065f4ba11f385145d912",
+          "startsAtSecondsInFullForm": 386.631
+        },
+        {
+          "level": 7,
+          "file": "form-A-level-7.mp3",
+          "sha256": "abb8b979ee0d289985467470cd66dfbb4b2420cd3743d6db26a53baedb8fa919",
+          "startsAtSecondsInFullForm": 471.608
+        },
+        {
+          "level": 8,
+          "file": "form-A-level-8.mp3",
+          "sha256": "6136ce157f15268aa53bea40ab67361121abd0d9027567e97c47f7c0237d485e",
+          "startsAtSecondsInFullForm": 602.503
+        },
+        {
+          "level": 9,
+          "file": "form-A-level-9.mp3",
+          "sha256": "bda27ae12f43766ed41b474f42774c6475e2393c336c45278f16082c8f56e93c",
+          "startsAtSecondsInFullForm": 740.723
+        }
+      ]
+    },
+    "B": {
+      "file": "form-B.mp3",
+      "sha256": "4a086bf48f798148f820e8e4f541a4b752a359dd25b52f71cc5c838cc6bee618",
+      "transcriptSha256": "57e849e7df349c4843e82fec3aacd830073c8df7ee69cdec9fb6e699ddc15c33",
+      "durationSecondsPcm": 877.562,
+      "sampleRate": 22050,
+      "levels": [
+        {
+          "level": 1,
+          "startSeconds": 0.0,
+          "endSeconds": 73.936,
+          "segments": [
+            {
+              "kind": "intro",
+              "startSeconds": 0.0,
+              "speechEndSeconds": 9.787,
+              "text": "HSKKit 非官方 HSK 三点零分级练习测评，B卷听力。每个文本播放一次。每题后有五秒作答停顿。"
+            },
+            {
+              "kind": "heading",
+              "startSeconds": 9.787,
+              "speechEndSeconds": 12.272,
+              "text": "现在开始第1级听力。"
+            },
+            {
+              "kind": "passage",
+              "startSeconds": 12.272,
+              "speechEndSeconds": 26.912,
+              "text": "第一句：孩子和妈妈。第二句：下午五点以前。第三句：去超市买三个苹果。第四句：家里没有苹果了。第五句：孩子买完苹果回家。"
+            },
+            {
+              "kind": "question",
+              "startSeconds": 26.912,
+              "speechEndSeconds": 31.057,
+              "text": "第1题。谁参与了这件事。请作答。",
+              "pauseEndSeconds": 36.057
+            },
+            {
+              "kind": "question",
+              "startSeconds": 36.057,
+              "speechEndSeconds": 40.283,
+              "text": "第2题。第二句说的是几点。请作答。",
+              "pauseEndSeconds": 45.283
+            },
+            {
+              "kind": "question",
+              "startSeconds": 45.283,
+              "speechEndSeconds": 48.835,
+              "text": "第3题。要做什么。请作答。",
+              "pauseEndSeconds": 53.835
+            },
+            {
+              "kind": "question",
+              "startSeconds": 53.835,
+              "speechEndSeconds": 58.038,
+              "text": "第4题。为什么有这个安排。请作答。",
+              "pauseEndSeconds": 63.038
+            },
+            {
+              "kind": "question",
+              "startSeconds": 63.038,
+              "speechEndSeconds": 67.16,
+              "text": "第5题。最后一句说了什么。请作答。",
+              "pauseEndSeconds": 72.16
+            },
+            {
+              "kind": "end",
+              "startSeconds": 72.16,
+              "speechEndSeconds": 73.936,
+              "text": "本级听力结束。"
+            }
+          ]
+        },
+        {
+          "level": 2,
+          "startSeconds": 73.936,
+          "endSeconds": 141.475,
+          "segments": [
+            {
+              "kind": "heading",
+              "startSeconds": 73.936,
+              "speechEndSeconds": 76.513,
+              "text": "现在开始第2级听力。"
+            },
+            {
+              "kind": "passage",
+              "startSeconds": 76.513,
+              "speechEndSeconds": 94.381,
+              "text": "甲：服务员和顾客有什么安排？乙：中午十二点，把两碗面和一杯茶送到六号桌。甲：为什么？乙：顾客已经点好午饭。甲：后来呢？乙：顾客确认茶不要加糖。"
+            },
+            {
+              "kind": "question",
+              "startSeconds": 94.381,
+              "speechEndSeconds": 98.572,
+              "text": "第1题。谁参与了这件事。请作答。",
+              "pauseEndSeconds": 103.572
+            },
+            {
+              "kind": "question",
+              "startSeconds": 103.572,
+              "speechEndSeconds": 107.613,
+              "text": "第2题。什么时候进行。请作答。",
+              "pauseEndSeconds": 112.613
+            },
+            {
+              "kind": "question",
+              "startSeconds": 112.613,
+              "speechEndSeconds": 116.154,
+              "text": "第3题。要做什么。请作答。",
+              "pauseEndSeconds": 121.154
+            },
+            {
+              "kind": "question",
+              "startSeconds": 121.154,
+              "speechEndSeconds": 125.322,
+              "text": "第4题。为什么有这个安排。请作答。",
+              "pauseEndSeconds": 130.322
+            },
+            {
+              "kind": "question",
+              "startSeconds": 130.322,
+              "speechEndSeconds": 134.722,
+              "text": "第5题。后来或接下来怎样。请作答。",
+              "pauseEndSeconds": 139.722
+            },
+            {
+              "kind": "end",
+              "startSeconds": 139.722,
+              "speechEndSeconds": 141.475,
+              "text": "本级听力结束。"
+            }
+          ]
+        },
+        {
+          "level": 3,
+          "startSeconds": 141.475,
+          "endSeconds": 216.479,
+          "segments": [
+            {
+              "kind": "heading",
+              "startSeconds": 141.475,
+              "speechEndSeconds": 144.006,
+              "text": "现在开始第3级听力。"
+            },
+            {
+              "kind": "passage",
+              "startSeconds": 144.006,
+              "speechEndSeconds": 163.557,
+              "text": "请听通知。小周没报上下午摄影课，于是选择晚上七点的班。夜间班要求自己带相机，她已经向朋友借到一台。 课程邮件补充：第一节课在校门口集合，若下雨则改在图书馆一楼。"
+            },
+            {
+              "kind": "question",
+              "startSeconds": 163.557,
+              "speechEndSeconds": 167.772,
+              "text": "第1题。资料一主要说什么。请作答。",
+              "pauseEndSeconds": 172.772
+            },
+            {
+              "kind": "question",
+              "startSeconds": 172.772,
+              "speechEndSeconds": 177.683,
+              "text": "第2题。资料二增加了什么信息。请作答。",
+              "pauseEndSeconds": 182.683
+            },
+            {
+              "kind": "question",
+              "startSeconds": 182.683,
+              "speechEndSeconds": 189.138,
+              "text": "第3题。两份信息合起来，怎样理解更合适。请作答。",
+              "pauseEndSeconds": 194.138
+            },
+            {
+              "kind": "question",
+              "startSeconds": 194.138,
+              "speechEndSeconds": 199.049,
+              "text": "第4题。资料一还明确了哪项安排。请作答。",
+              "pauseEndSeconds": 204.049
+            },
+            {
+              "kind": "question",
+              "startSeconds": 204.049,
+              "speechEndSeconds": 209.784,
+              "text": "第5题。资料一说小周选择了几点的夜间班。请作答。",
+              "pauseEndSeconds": 214.784
+            },
+            {
+              "kind": "end",
+              "startSeconds": 214.784,
+              "speechEndSeconds": 216.479,
+              "text": "本级听力结束。"
+            }
+          ]
+        },
+        {
+          "level": 4,
+          "startSeconds": 216.479,
+          "endSeconds": 300.713,
+          "segments": [
+            {
+              "kind": "heading",
+              "startSeconds": 216.479,
+              "speechEndSeconds": 218.999,
+              "text": "现在开始第4级听力。"
+            },
+            {
+              "kind": "passage",
+              "startSeconds": 218.999,
+              "speechEndSeconds": 247.257,
+              "text": "请听两段消息。第一段：考试季期间，为满足学生复习座位需求，图书馆工作日普通阅览区的闭馆时间从八点延长到十点。儿童区仍在六点关闭，周末安排不变。 第二段：座位系统显示，晚八点后的使用率只有周二和周四超过七成，其他工作日晚间仍有空位。"
+            },
+            {
+              "kind": "question",
+              "startSeconds": 247.257,
+              "speechEndSeconds": 252.76,
+              "text": "第1题。资料一的主要安排或处理是什么。请作答。",
+              "pauseEndSeconds": 257.76
+            },
+            {
+              "kind": "question",
+              "startSeconds": 257.76,
+              "speechEndSeconds": 262.718,
+              "text": "第2题。资料二的主要贡献是什么。请作答。",
+              "pauseEndSeconds": 267.718
+            },
+            {
+              "kind": "question",
+              "startSeconds": 267.718,
+              "speechEndSeconds": 272.652,
+              "text": "第3题。资料二如何回应资料一。请作答。",
+              "pauseEndSeconds": 277.652
+            },
+            {
+              "kind": "question",
+              "startSeconds": 277.652,
+              "speechEndSeconds": 283.863,
+              "text": "第4题。哪项做法能同时保留两份资料的关切。请作答。",
+              "pauseEndSeconds": 288.863
+            },
+            {
+              "kind": "question",
+              "startSeconds": 288.863,
+              "speechEndSeconds": 293.972,
+              "text": "第5题。哪项是资料一的依据或条件。请作答。",
+              "pauseEndSeconds": 298.972
+            },
+            {
+              "kind": "end",
+              "startSeconds": 298.972,
+              "speechEndSeconds": 300.713,
+              "text": "本级听力结束。"
+            }
+          ]
+        },
+        {
+          "level": 5,
+          "startSeconds": 300.713,
+          "endSeconds": 383.31,
+          "segments": [
+            {
+              "kind": "heading",
+              "startSeconds": 300.713,
+              "speechEndSeconds": 303.175,
+              "text": "现在开始第5级听力。"
+            },
+            {
+              "kind": "passage",
+              "startSeconds": 303.175,
+              "speechEndSeconds": 329.564,
+              "text": "请听一段情况说明。公司试行弹性办公，不减少工时。员工须在上午十点到下午四点协作，其他时间自行安排，三个月后再评估。 另一方面，客户团队表示，紧急问题多发生在早上九点，若无人值班会延迟响应，因此要求每组安排轮值。"
+            },
+            {
+              "kind": "question",
+              "startSeconds": 329.564,
+              "speechEndSeconds": 335.195,
+              "text": "第1题。资料一的主要安排或处理是什么。请作答。",
+              "pauseEndSeconds": 340.195
+            },
+            {
+              "kind": "question",
+              "startSeconds": 340.195,
+              "speechEndSeconds": 345.141,
+              "text": "第2题。资料二的主要贡献是什么。请作答。",
+              "pauseEndSeconds": 350.141
+            },
+            {
+              "kind": "question",
+              "startSeconds": 350.141,
+              "speechEndSeconds": 355.017,
+              "text": "第3题。资料二如何回应资料一。请作答。",
+              "pauseEndSeconds": 360.017
+            },
+            {
+              "kind": "question",
+              "startSeconds": 360.017,
+              "speechEndSeconds": 366.31,
+              "text": "第4题。哪项做法能同时保留两份资料的关切。请作答。",
+              "pauseEndSeconds": 371.31
+            },
+            {
+              "kind": "question",
+              "startSeconds": 371.31,
+              "speechEndSeconds": 376.499,
+              "text": "第5题。哪项是资料一的依据或条件。请作答。",
+              "pauseEndSeconds": 381.499
+            },
+            {
+              "kind": "end",
+              "startSeconds": 381.499,
+              "speechEndSeconds": 383.31,
+              "text": "本级听力结束。"
+            }
+          ]
+        },
+        {
+          "level": 6,
+          "startSeconds": 383.31,
+          "endSeconds": 468.102,
+          "segments": [
+            {
+              "kind": "heading",
+              "startSeconds": 383.31,
+              "speechEndSeconds": 385.853,
+              "text": "现在开始第6级听力。"
+            },
+            {
+              "kind": "passage",
+              "startSeconds": 385.853,
+              "speechEndSeconds": 414.518,
+              "text": "甲：我们先看现有情况。学校取消纸质通知后发布更快，但有家庭错过日期。调查发现部分家长不常看应用，于是学校为关键事项增加短信。 乙：还需要考虑另一方的意见。家长委员会认为短信可能产生费用，建议入学登记时让家庭在短信、邮件和纸质信之间自行选择。"
+            },
+            {
+              "kind": "question",
+              "startSeconds": 414.518,
+              "speechEndSeconds": 420.01,
+              "text": "第1题。资料一的主要安排或处理是什么。请作答。",
+              "pauseEndSeconds": 425.01
+            },
+            {
+              "kind": "question",
+              "startSeconds": 425.01,
+              "speechEndSeconds": 429.944,
+              "text": "第2题。资料二的主要贡献是什么。请作答。",
+              "pauseEndSeconds": 434.944
+            },
+            {
+              "kind": "question",
+              "startSeconds": 434.944,
+              "speechEndSeconds": 439.89,
+              "text": "第3题。资料二如何回应资料一。请作答。",
+              "pauseEndSeconds": 444.89
+            },
+            {
+              "kind": "question",
+              "startSeconds": 444.89,
+              "speechEndSeconds": 451.229,
+              "text": "第4题。哪项做法能同时保留两份资料的关切。请作答。",
+              "pauseEndSeconds": 456.229
+            },
+            {
+              "kind": "question",
+              "startSeconds": 456.229,
+              "speechEndSeconds": 461.36,
+              "text": "第5题。哪项是资料一的依据或条件。请作答。",
+              "pauseEndSeconds": 466.36
+            },
+            {
+              "kind": "end",
+              "startSeconds": 466.36,
+              "speechEndSeconds": 468.102,
+              "text": "本级听力结束。"
+            }
+          ]
+        },
+        {
+          "level": 7,
+          "startSeconds": 468.102,
+          "endSeconds": 605.045,
+          "segments": [
+            {
+              "kind": "heading",
+              "startSeconds": 468.102,
+              "speechEndSeconds": 470.726,
+              "text": "现在开始第7级听力。"
+            },
+            {
+              "kind": "passage",
+              "startSeconds": 470.726,
+              "speechEndSeconds": 551.438,
+              "text": "以下是情况说明及补充意见。第一份资料指出：课堂讨论不应停留在使用或禁止人工智能。一次写作练习中，有学生用工具搜集反例，却未核查来源便把虚构引文写进论证；另有学生用它比较提纲后自行重写，反而更能说明选择理由。项目拟允许工具辅助检索和修改，但核心判断、引文核验与最终解释须由学生完成。评分要看推理过程，而非只看答案速度；同时不能把每一次尝试都当作违规。 第二份资料指出：部分学生认为强制提交全部草稿会增加无效负担，也可能暴露尚未成形的私人想法。他们建议只在关键结论旁标记工具参与范围、原始资料出处和人工核验步骤。教师担心简短标记不足以发现代写，因此提出随机口头追问：学生若能解释为何舍弃工具建议，可免交完整对话记录。两方争议集中在证明责任所需的记录粒度，而非是否核查引文。"
+            },
+            {
+              "kind": "question",
+              "startSeconds": 551.438,
+              "speechEndSeconds": 556.256,
+              "text": "第1题。资料一的核心主张是什么。请作答。",
+              "pauseEndSeconds": 561.256
+            },
+            {
+              "kind": "question",
+              "startSeconds": 561.256,
+              "speechEndSeconds": 566.167,
+              "text": "第2题。资料二的主要贡献是什么。请作答。",
+              "pauseEndSeconds": 571.167
+            },
+            {
+              "kind": "question",
+              "startSeconds": 571.167,
+              "speechEndSeconds": 576.055,
+              "text": "第3题。资料二如何回应资料一。请作答。",
+              "pauseEndSeconds": 581.055
+            },
+            {
+              "kind": "question",
+              "startSeconds": 581.055,
+              "speechEndSeconds": 587.336,
+              "text": "第4题。哪项做法能同时保留两份资料的关切。请作答。",
+              "pauseEndSeconds": 592.336
+            },
+            {
+              "kind": "question",
+              "startSeconds": 592.336,
+              "speechEndSeconds": 598.257,
+              "text": "第5题。哪一具体情形说明单一指标可能误导。请作答。",
+              "pauseEndSeconds": 603.257
+            },
+            {
+              "kind": "end",
+              "startSeconds": 603.257,
+              "speechEndSeconds": 605.045,
+              "text": "本级听力结束。"
+            }
+          ]
+        },
+        {
+          "level": 8,
+          "startSeconds": 605.045,
+          "endSeconds": 744.055,
+          "segments": [
+            {
+              "kind": "heading",
+              "startSeconds": 605.045,
+              "speechEndSeconds": 607.46,
+              "text": "现在开始第8级听力。"
+            },
+            {
+              "kind": "passage",
+              "startSeconds": 607.46,
+              "speechEndSeconds": 689.508,
+              "text": "主持人：请说明各自的依据。发言人一：开放数据若缺少字段说明、更新频率和责任主体，使用者很难判断结论是否可靠。曾有地图把未上报的区域标成零事故，引发错误的安全排名；补齐缺失值说明后，排名发生改变。办公室主张发布时同时提供字段定义、缺漏范围和纠错联系人，并记录更新后的版本差异。维护不等于无限审核，但如果纠错只能覆盖热门地区，也须检查对资源较少地区的影响。 发言人二：创业团队担心资料说明要经过层层审核，等数据完整时已经错过使用窗口。他们建议先发布机器可读的临时版本，醒目标注尚未核实的字段，并承诺在固定期限内补齐说明和错误记录。办公室指出，临时版本一旦被下游复制，后来的更正未必能传达到所有人；团队因此建议提供版本号和变更通知。争议不在是否说明，而在何时发布以及由谁承担传播更正的责任。"
+            },
+            {
+              "kind": "question",
+              "startSeconds": 689.508,
+              "speechEndSeconds": 694.779,
+              "text": "第1题。第一位发言人的核心论点是什么。请作答。",
+              "pauseEndSeconds": 699.779
+            },
+            {
+              "kind": "question",
+              "startSeconds": 699.779,
+              "speechEndSeconds": 705.34,
+              "text": "第2题。第二位发言人的主要关切是什么。请作答。",
+              "pauseEndSeconds": 710.34
+            },
+            {
+              "kind": "question",
+              "startSeconds": 710.34,
+              "speechEndSeconds": 715.193,
+              "text": "第3题。资料二如何回应资料一。请作答。",
+              "pauseEndSeconds": 720.193
+            },
+            {
+              "kind": "question",
+              "startSeconds": 720.193,
+              "speechEndSeconds": 726.439,
+              "text": "第4题。哪项做法能同时保留两份资料的关切。请作答。",
+              "pauseEndSeconds": 731.439
+            },
+            {
+              "kind": "question",
+              "startSeconds": 731.439,
+              "speechEndSeconds": 737.337,
+              "text": "第5题。哪一具体情形说明单一指标可能误导。请作答。",
+              "pauseEndSeconds": 742.337
+            },
+            {
+              "kind": "end",
+              "startSeconds": 742.337,
+              "speechEndSeconds": 744.055,
+              "text": "本级听力结束。"
+            }
+          ]
+        },
+        {
+          "level": 9,
+          "startSeconds": 744.055,
+          "endSeconds": 877.562,
+          "segments": [
+            {
+              "kind": "heading",
+              "startSeconds": 744.055,
+              "speechEndSeconds": 746.621,
+              "text": "现在开始第9级听力。"
+            },
+            {
+              "kind": "passage",
+              "startSeconds": 746.621,
+              "speechEndSeconds": 823.781,
+              "text": "主张方：平台若只统计删除数量，可能把高处置量误当高质量：一次规则更新提高了删除量，也使某类方言表达更常被误判。审计组拟按季度比较规则清晰度、申诉成功率和错误在不同群体中的分布。申诉率低未必代表错误少，也可能是用户不知道如何申诉；因此还须查申诉入口是否可达，并记录纠正后受影响内容能否恢复。发现集中错误后应修改规则并补救。 质疑方：平台方担心公开细分群体数据被人用来试探审核边界，主张只向独立审计员提供原始记录。研究者认为如果外界只看到一句合格结论，便无法复核审计方法，建议公开去标识的汇总口径、抽样方式和误差范围。双方承认个体隐私不能为透明牺牲，但仍需决定哪些方法信息可公开，以及独立审计员如何说明未公开数据对结论的影响。仅公开总删除量不能回应这些问题。"
+            },
+            {
+              "kind": "question",
+              "startSeconds": 823.781,
+              "speechEndSeconds": 827.914,
+              "text": "第1题。主张方强调什么。请作答。",
+              "pauseEndSeconds": 832.914
+            },
+            {
+              "kind": "question",
+              "startSeconds": 832.914,
+              "speechEndSeconds": 838.092,
+              "text": "第2题。质疑方补充了哪项必要关切。请作答。",
+              "pauseEndSeconds": 843.092
+            },
+            {
+              "kind": "question",
+              "startSeconds": 843.092,
+              "speechEndSeconds": 849.06,
+              "text": "第3题。异议与主张之间的真正分歧是什么。请作答。",
+              "pauseEndSeconds": 854.06
+            },
+            {
+              "kind": "question",
+              "startSeconds": 854.06,
+              "speechEndSeconds": 859.853,
+              "text": "第4题。哪项判断回应异议而不抹去原主张。请作答。",
+              "pauseEndSeconds": 864.853
+            },
+            {
+              "kind": "question",
+              "startSeconds": 864.853,
+              "speechEndSeconds": 870.844,
+              "text": "第5题。哪一具体情形说明单一指标可能误导。请作答。",
+              "pauseEndSeconds": 875.844
+            },
+            {
+              "kind": "end",
+              "startSeconds": 875.844,
+              "speechEndSeconds": 877.562,
+              "text": "本级听力结束。"
+            }
+          ]
+        }
+      ],
+      "levelTracks": [
+        {
+          "level": 1,
+          "file": "form-B-level-1.mp3",
+          "sha256": "f13cefb402b4890a86d98ddb5d1e9e5777f0adbb09a2a8140d5da9a4edb51062",
+          "startsAtSecondsInFullForm": 0.0
+        },
+        {
+          "level": 2,
+          "file": "form-B-level-2.mp3",
+          "sha256": "6aafdb26facafebd0b961f97fe1574596b024173865c824bed38d56fb99e1316",
+          "startsAtSecondsInFullForm": 73.936
+        },
+        {
+          "level": 3,
+          "file": "form-B-level-3.mp3",
+          "sha256": "ac99a3b6feecaf97890693b6518bf372e680e53e6c2fbb2aa36384f44d262aad",
+          "startsAtSecondsInFullForm": 141.475
+        },
+        {
+          "level": 4,
+          "file": "form-B-level-4.mp3",
+          "sha256": "3708db2b027218a7bda9fb708feb7e70e69869c572c3eb01546bf83292296bec",
+          "startsAtSecondsInFullForm": 216.479
+        },
+        {
+          "level": 5,
+          "file": "form-B-level-5.mp3",
+          "sha256": "b6134ac707a3914ae358bd8e4e80759048d66edfcf95f77d39f0bbe09785d1a0",
+          "startsAtSecondsInFullForm": 300.713
+        },
+        {
+          "level": 6,
+          "file": "form-B-level-6.mp3",
+          "sha256": "07b1e0cb3acaee9fb23330e06104e8458274dc9f6cc7041f1c5025d68ada4f2f",
+          "startsAtSecondsInFullForm": 383.31
+        },
+        {
+          "level": 7,
+          "file": "form-B-level-7.mp3",
+          "sha256": "bc49bca1f8df3942271d42ca8e2a4e33043f160f8107b9a44dec3e8cd2e3d128",
+          "startsAtSecondsInFullForm": 468.102
+        },
+        {
+          "level": 8,
+          "file": "form-B-level-8.mp3",
+          "sha256": "40d78e8791b7719ff0db5c1120c91a84166cbd99ff64473a5c150b7737c9b193",
+          "startsAtSecondsInFullForm": 605.045
+        },
+        {
+          "level": 9,
+          "file": "form-B-level-9.mp3",
+          "sha256": "12c7e865da41dfd843d6653aa56ee3b418c4033684ee7fabe15a2649aacfb724",
+          "startsAtSecondsInFullForm": 744.055
+        }
+      ]
+    },
+    "C": {
+      "file": "form-C.mp3",
+      "sha256": "33add7444d6adebec22eacc0a2b0a2570cbbc9e411f45456ba57ca94ff50d55a",
+      "transcriptSha256": "484395dc5607cd4e3bac35c9b005431d833898d021d31e1592a64af5c5684540",
+      "durationSecondsPcm": 875.194,
+      "sampleRate": 22050,
+      "levels": [
+        {
+          "level": 1,
+          "startSeconds": 0.0,
+          "endSeconds": 77.64,
+          "segments": [
+            {
+              "kind": "intro",
+              "startSeconds": 0.0,
+              "speechEndSeconds": 9.927,
+              "text": "HSKKit 非官方 HSK 三点零分级练习测评，C卷听力。每个文本播放一次。每题后有五秒作答停顿。"
+            },
+            {
+              "kind": "heading",
+              "startSeconds": 9.927,
+              "speechEndSeconds": 12.434,
+              "text": "现在开始第1级听力。"
+            },
+            {
+              "kind": "passage",
+              "startSeconds": 12.434,
+              "speechEndSeconds": 30.348,
+              "text": "第一句：小安和朋友。第二句：下午两点。第三句：天气晴就去公园，下雨就留在家里。第四句：他们想一起过周末。第五句：小安准备水，朋友准备水果。"
+            },
+            {
+              "kind": "question",
+              "startSeconds": 30.348,
+              "speechEndSeconds": 34.516,
+              "text": "第1题。谁参与了这件事。请作答。",
+              "pauseEndSeconds": 39.516
+            },
+            {
+              "kind": "question",
+              "startSeconds": 39.516,
+              "speechEndSeconds": 43.94,
+              "text": "第2题。第二句说的是几点。请作答。",
+              "pauseEndSeconds": 48.94
+            },
+            {
+              "kind": "question",
+              "startSeconds": 48.94,
+              "speechEndSeconds": 52.539,
+              "text": "第3题。要做什么。请作答。",
+              "pauseEndSeconds": 57.539
+            },
+            {
+              "kind": "question",
+              "startSeconds": 57.539,
+              "speechEndSeconds": 61.823,
+              "text": "第4题。为什么有这个安排。请作答。",
+              "pauseEndSeconds": 66.823
+            },
+            {
+              "kind": "question",
+              "startSeconds": 66.823,
+              "speechEndSeconds": 70.898,
+              "text": "第5题。最后一句说了什么。请作答。",
+              "pauseEndSeconds": 75.898
+            },
+            {
+              "kind": "end",
+              "startSeconds": 75.898,
+              "speechEndSeconds": 77.64,
+              "text": "本级听力结束。"
+            }
+          ]
+        },
+        {
+          "level": 2,
+          "startSeconds": 77.64,
+          "endSeconds": 146.456,
+          "segments": [
+            {
+              "kind": "heading",
+              "startSeconds": 77.64,
+              "speechEndSeconds": 80.147,
+              "text": "现在开始第2级听力。"
+            },
+            {
+              "kind": "passage",
+              "startSeconds": 80.147,
+              "speechEndSeconds": 99.455,
+              "text": "甲：护士和赵明有什么安排？乙：星期四上午十点，在二楼诊室复查并带上检查单。甲：为什么？乙：医生需要查看上次结果。甲：后来呢？乙：赵明提前十分钟到医院。"
+            },
+            {
+              "kind": "question",
+              "startSeconds": 99.455,
+              "speechEndSeconds": 103.53,
+              "text": "第1题。谁参与了这件事。请作答。",
+              "pauseEndSeconds": 108.53
+            },
+            {
+              "kind": "question",
+              "startSeconds": 108.53,
+              "speechEndSeconds": 112.512,
+              "text": "第2题。什么时候进行。请作答。",
+              "pauseEndSeconds": 117.512
+            },
+            {
+              "kind": "question",
+              "startSeconds": 117.512,
+              "speechEndSeconds": 121.03,
+              "text": "第3题。要做什么。请作答。",
+              "pauseEndSeconds": 126.03
+            },
+            {
+              "kind": "question",
+              "startSeconds": 126.03,
+              "speechEndSeconds": 130.302,
+              "text": "第4题。为什么有这个安排。请作答。",
+              "pauseEndSeconds": 135.302
+            },
+            {
+              "kind": "question",
+              "startSeconds": 135.302,
+              "speechEndSeconds": 139.691,
+              "text": "第5题。后来或接下来怎样。请作答。",
+              "pauseEndSeconds": 144.691
+            },
+            {
+              "kind": "end",
+              "startSeconds": 144.691,
+              "speechEndSeconds": 146.456,
+              "text": "本级听力结束。"
+            }
+          ]
+        },
+        {
+          "level": 3,
+          "startSeconds": 146.456,
+          "endSeconds": 221.193,
+          "segments": [
+            {
+              "kind": "heading",
+              "startSeconds": 146.456,
+              "speechEndSeconds": 148.975,
+              "text": "现在开始第3级听力。"
+            },
+            {
+              "kind": "passage",
+              "startSeconds": 148.975,
+              "speechEndSeconds": 169.142,
+              "text": "请听通知。周六的志愿活动还缺接待人员。新志愿者九点参加半小时培训，之后到入口接待读者。 活动表显示：入口组负责登记，咨询台负责路线说明，书架组只整理归还的图书。"
+            },
+            {
+              "kind": "question",
+              "startSeconds": 169.142,
+              "speechEndSeconds": 173.402,
+              "text": "第1题。资料一主要说什么。请作答。",
+              "pauseEndSeconds": 178.402
+            },
+            {
+              "kind": "question",
+              "startSeconds": 178.402,
+              "speechEndSeconds": 183.197,
+              "text": "第2题。资料二增加了什么信息。请作答。",
+              "pauseEndSeconds": 188.197
+            },
+            {
+              "kind": "question",
+              "startSeconds": 188.197,
+              "speechEndSeconds": 194.676,
+              "text": "第3题。两份信息合起来，怎样理解更合适。请作答。",
+              "pauseEndSeconds": 199.676
+            },
+            {
+              "kind": "question",
+              "startSeconds": 199.676,
+              "speechEndSeconds": 204.587,
+              "text": "第4题。资料一还明确了哪项安排。请作答。",
+              "pauseEndSeconds": 209.587
+            },
+            {
+              "kind": "question",
+              "startSeconds": 209.587,
+              "speechEndSeconds": 214.475,
+              "text": "第5题。资料一说培训何时开始。请作答。",
+              "pauseEndSeconds": 219.475
+            },
+            {
+              "kind": "end",
+              "startSeconds": 219.475,
+              "speechEndSeconds": 221.193,
+              "text": "本级听力结束。"
+            }
+          ]
+        },
+        {
+          "level": 4,
+          "startSeconds": 221.193,
+          "endSeconds": 301.828,
+          "segments": [
+            {
+              "kind": "heading",
+              "startSeconds": 221.193,
+              "speechEndSeconds": 223.84,
+              "text": "现在开始第4级听力。"
+            },
+            {
+              "kind": "passage",
+              "startSeconds": 223.84,
+              "speechEndSeconds": 248.151,
+              "text": "请听两段消息。第一段：短信提醒居民在下午六点前凭取件码到社区站取大型包裹。超过时间，包裹会在第二天送往中心站。 第二段：社区站门前修路，步行入口在北侧；中心站距离社区三公里，晚上九点关闭。"
+            },
+            {
+              "kind": "question",
+              "startSeconds": 248.151,
+              "speechEndSeconds": 253.724,
+              "text": "第1题。资料一的主要安排或处理是什么。请作答。",
+              "pauseEndSeconds": 258.724
+            },
+            {
+              "kind": "question",
+              "startSeconds": 258.724,
+              "speechEndSeconds": 263.635,
+              "text": "第2题。资料二的主要贡献是什么。请作答。",
+              "pauseEndSeconds": 268.635
+            },
+            {
+              "kind": "question",
+              "startSeconds": 268.635,
+              "speechEndSeconds": 273.546,
+              "text": "第3题。资料二如何回应资料一。请作答。",
+              "pauseEndSeconds": 278.546
+            },
+            {
+              "kind": "question",
+              "startSeconds": 278.546,
+              "speechEndSeconds": 284.862,
+              "text": "第4题。哪项做法能同时保留两份资料的关切。请作答。",
+              "pauseEndSeconds": 289.862
+            },
+            {
+              "kind": "question",
+              "startSeconds": 289.862,
+              "speechEndSeconds": 295.052,
+              "text": "第5题。哪项是资料一的依据或条件。请作答。",
+              "pauseEndSeconds": 300.052
+            },
+            {
+              "kind": "end",
+              "startSeconds": 300.052,
+              "speechEndSeconds": 301.828,
+              "text": "本级听力结束。"
+            }
+          ]
+        },
+        {
+          "level": 5,
+          "startSeconds": 301.828,
+          "endSeconds": 383.322,
+          "segments": [
+            {
+              "kind": "heading",
+              "startSeconds": 301.828,
+              "speechEndSeconds": 304.22,
+              "text": "现在开始第5级听力。"
+            },
+            {
+              "kind": "passage",
+              "startSeconds": 304.22,
+              "speechEndSeconds": 329.599,
+              "text": "请听一段情况说明。项目组发现水质改善后居民仍少去河岸。访谈显示，夜间照明不足和步道破损同样影响使用，因此改造范围被扩大。 另一方面，财政评估指出，今年预算只够先修主步道；照明若全面更新，要推迟到下一年度。"
+            },
+            {
+              "kind": "question",
+              "startSeconds": 329.599,
+              "speechEndSeconds": 335.253,
+              "text": "第1题。资料一的主要安排或处理是什么。请作答。",
+              "pauseEndSeconds": 340.253
+            },
+            {
+              "kind": "question",
+              "startSeconds": 340.253,
+              "speechEndSeconds": 345.245,
+              "text": "第2题。资料二的主要贡献是什么。请作答。",
+              "pauseEndSeconds": 350.245
+            },
+            {
+              "kind": "question",
+              "startSeconds": 350.245,
+              "speechEndSeconds": 355.11,
+              "text": "第3题。资料二如何回应资料一。请作答。",
+              "pauseEndSeconds": 360.11
+            },
+            {
+              "kind": "question",
+              "startSeconds": 360.11,
+              "speechEndSeconds": 366.437,
+              "text": "第4题。哪项做法能同时保留两份资料的关切。请作答。",
+              "pauseEndSeconds": 371.437
+            },
+            {
+              "kind": "question",
+              "startSeconds": 371.437,
+              "speechEndSeconds": 376.569,
+              "text": "第5题。哪项是资料一的依据或条件。请作答。",
+              "pauseEndSeconds": 381.569
+            },
+            {
+              "kind": "end",
+              "startSeconds": 381.569,
+              "speechEndSeconds": 383.322,
+              "text": "本级听力结束。"
+            }
+          ]
+        },
+        {
+          "level": 6,
+          "startSeconds": 383.322,
+          "endSeconds": 467.614,
+          "segments": [
+            {
+              "kind": "heading",
+              "startSeconds": 383.322,
+              "speechEndSeconds": 385.83,
+              "text": "现在开始第6级听力。"
+            },
+            {
+              "kind": "passage",
+              "startSeconds": 385.83,
+              "speechEndSeconds": 414.146,
+              "text": "甲：我们先看现有情况。社区选择二十户家庭试用实时用电反馈设备，希望减少晚间高峰。六个月后将比较用电量和账单，再决定是否扩大。 乙：还需要考虑另一方的意见。参与家庭担心设备收集生活规律，要求只保存每小时总量，并在试点结束后删除明细。"
+            },
+            {
+              "kind": "question",
+              "startSeconds": 414.146,
+              "speechEndSeconds": 419.684,
+              "text": "第1题。资料一的主要安排或处理是什么。请作答。",
+              "pauseEndSeconds": 424.684
+            },
+            {
+              "kind": "question",
+              "startSeconds": 424.684,
+              "speechEndSeconds": 429.677,
+              "text": "第2题。资料二的主要贡献是什么。请作答。",
+              "pauseEndSeconds": 434.677
+            },
+            {
+              "kind": "question",
+              "startSeconds": 434.677,
+              "speechEndSeconds": 439.506,
+              "text": "第3题。资料二如何回应资料一。请作答。",
+              "pauseEndSeconds": 444.506
+            },
+            {
+              "kind": "question",
+              "startSeconds": 444.506,
+              "speechEndSeconds": 450.799,
+              "text": "第4题。哪项做法能同时保留两份资料的关切。请作答。",
+              "pauseEndSeconds": 455.799
+            },
+            {
+              "kind": "question",
+              "startSeconds": 455.799,
+              "speechEndSeconds": 460.907,
+              "text": "第5题。哪项是资料一的依据或条件。请作答。",
+              "pauseEndSeconds": 465.907
+            },
+            {
+              "kind": "end",
+              "startSeconds": 465.907,
+              "speechEndSeconds": 467.614,
+              "text": "本级听力结束。"
+            }
+          ]
+        },
+        {
+          "level": 7,
+          "startSeconds": 467.614,
+          "endSeconds": 600.297,
+          "segments": [
+            {
+              "kind": "heading",
+              "startSeconds": 467.614,
+              "speechEndSeconds": 470.168,
+              "text": "现在开始第7级听力。"
+            },
+            {
+              "kind": "passage",
+              "startSeconds": 470.168,
+              "speechEndSeconds": 546.701,
+              "text": "以下是情况说明及补充意见。第一份资料指出：委员会过去用游客总量评价旅游项目。上次大型节庆吸引许多访客，却只带来短期岗位；活动结束后就业很快回落，附近居民还反映广场无法正常使用。新评估拟加入本地就业的持续时间、居民实际收入和公共空间压力，并与全年开放的社区项目比较。不过常态项目初期人数较少，若只观察首月，也会低估其积累效果。 第二份资料指出：酒店协会认为大型活动能迅速提高城市曝光，直接收益以外还可能带来数月后的预订。但曝光次数本身不能证明预订是由节庆带来的，协会建议比较活动前后的订单来源，并与未举办活动的相近城市对照。委员会提醒，若后续订单增长却伴随房租和场地使用成本上升，也不能只把增长记作净收益；双方同意先试行两套指标，再讨论预算分配。"
+            },
+            {
+              "kind": "question",
+              "startSeconds": 546.701,
+              "speechEndSeconds": 551.612,
+              "text": "第1题。资料一的核心主张是什么。请作答。",
+              "pauseEndSeconds": 556.612
+            },
+            {
+              "kind": "question",
+              "startSeconds": 556.612,
+              "speechEndSeconds": 561.616,
+              "text": "第2题。资料二的主要贡献是什么。请作答。",
+              "pauseEndSeconds": 566.616
+            },
+            {
+              "kind": "question",
+              "startSeconds": 566.616,
+              "speechEndSeconds": 571.481,
+              "text": "第3题。资料二如何回应资料一。请作答。",
+              "pauseEndSeconds": 576.481
+            },
+            {
+              "kind": "question",
+              "startSeconds": 576.481,
+              "speechEndSeconds": 582.704,
+              "text": "第4题。哪项做法能同时保留两份资料的关切。请作答。",
+              "pauseEndSeconds": 587.704
+            },
+            {
+              "kind": "question",
+              "startSeconds": 587.704,
+              "speechEndSeconds": 593.59,
+              "text": "第5题。哪一具体情形说明单一指标可能误导。请作答。",
+              "pauseEndSeconds": 598.59
+            },
+            {
+              "kind": "end",
+              "startSeconds": 598.59,
+              "speechEndSeconds": 600.297,
+              "text": "本级听力结束。"
+            }
+          ]
+        },
+        {
+          "level": 8,
+          "startSeconds": 600.297,
+          "endSeconds": 740.003,
+          "segments": [
+            {
+              "kind": "heading",
+              "startSeconds": 600.297,
+              "speechEndSeconds": 602.77,
+              "text": "现在开始第8级听力。"
+            },
+            {
+              "kind": "passage",
+              "startSeconds": 602.77,
+              "speechEndSeconds": 685.212,
+              "text": "主持人：请说明各自的依据。发言人一：医院拟用症状风险与等候时间共同分诊，高风险者优先。过去按到院顺序排队时，某些急症可能等得过久；但单靠问卷也不能完整判断病情。试点前三个月将比较高风险患者的等待时间与复诊结果，同时公布指标和护士复核流程。若整体平均时间下降而某类患者反复被错误降级，医院不能仅凭平均值宣布成功，还须记录更改分诊级别的理由。 发言人二：患者代表支持高风险优先，却担心慢性疼痛在一次简短问卷里不够显著，容易被系统低估。他们要求复核时同时看患者自述、历史病历和症状变化，并允许现场护士立即调级，而不必等申诉结束。有人担心人工复核拖慢流程；代表建议先记录复核次数、用时和纠错率，再判断是否需要增加人手。速度与公平都需要实测，不能假设只要保留人工按钮就解决偏差。"
+            },
+            {
+              "kind": "question",
+              "startSeconds": 685.212,
+              "speechEndSeconds": 690.483,
+              "text": "第1题。第一位发言人的核心论点是什么。请作答。",
+              "pauseEndSeconds": 695.483
+            },
+            {
+              "kind": "question",
+              "startSeconds": 695.483,
+              "speechEndSeconds": 701.079,
+              "text": "第2题。第二位发言人的主要关切是什么。请作答。",
+              "pauseEndSeconds": 706.079
+            },
+            {
+              "kind": "question",
+              "startSeconds": 706.079,
+              "speechEndSeconds": 710.978,
+              "text": "第3题。资料二如何回应资料一。请作答。",
+              "pauseEndSeconds": 715.978
+            },
+            {
+              "kind": "question",
+              "startSeconds": 715.978,
+              "speechEndSeconds": 722.422,
+              "text": "第4题。哪项做法能同时保留两份资料的关切。请作答。",
+              "pauseEndSeconds": 727.422
+            },
+            {
+              "kind": "question",
+              "startSeconds": 727.422,
+              "speechEndSeconds": 733.273,
+              "text": "第5题。哪一具体情形说明单一指标可能误导。请作答。",
+              "pauseEndSeconds": 738.273
+            },
+            {
+              "kind": "end",
+              "startSeconds": 738.273,
+              "speechEndSeconds": 740.003,
+              "text": "本级听力结束。"
+            }
+          ]
+        },
+        {
+          "level": 9,
+          "startSeconds": 740.003,
+          "endSeconds": 875.194,
+          "segments": [
+            {
+              "kind": "heading",
+              "startSeconds": 740.003,
+              "speechEndSeconds": 742.523,
+              "text": "现在开始第9级听力。"
+            },
+            {
+              "kind": "passage",
+              "startSeconds": 742.523,
+              "speechEndSeconds": 821.865,
+              "text": "主张方：气候适应不能只采用一个平均预测：平均降雨变化温和，不等于低洼社区不会遭遇极端积水。规划组拟比较多种情景，优先处理一旦发生就难以恢复的风险，并追踪防护成本是否集中落在资源较少的社区。可拆卸挡水设施可以随新数据调整，而永久工程更须事前检验；两者并非只能选其一。未来五年应定期复核预测、受益范围和未被保护的人群。 质疑方：财政部门担心同时准备多套方案会稀释今年有限的资金，主张先投向最可能出现的情景，待新数据出炉再调整。保险专家指出，低概率的极端灾害若造成无法恢复的损失，单按发生概率排序会低估风险。他们建议为不可逆损失设最低防护线，同时把较容易调整的支出留到下一轮决策。两方都承认预算有限，分歧在于现在为罕见但严重的风险预留多少资源，而非是否需要计算概率。"
+            },
+            {
+              "kind": "question",
+              "startSeconds": 821.865,
+              "speechEndSeconds": 825.859,
+              "text": "第1题。主张方强调什么。请作答。",
+              "pauseEndSeconds": 830.859
+            },
+            {
+              "kind": "question",
+              "startSeconds": 830.859,
+              "speechEndSeconds": 836.095,
+              "text": "第2题。质疑方补充了哪项必要关切。请作答。",
+              "pauseEndSeconds": 841.095
+            },
+            {
+              "kind": "question",
+              "startSeconds": 841.095,
+              "speechEndSeconds": 846.889,
+              "text": "第3题。异议与主张之间的真正分歧是什么。请作答。",
+              "pauseEndSeconds": 851.889
+            },
+            {
+              "kind": "question",
+              "startSeconds": 851.889,
+              "speechEndSeconds": 857.589,
+              "text": "第4题。哪项判断回应异议而不抹去原主张。请作答。",
+              "pauseEndSeconds": 862.589
+            },
+            {
+              "kind": "question",
+              "startSeconds": 862.589,
+              "speechEndSeconds": 868.429,
+              "text": "第5题。哪一具体情形说明单一指标可能误导。请作答。",
+              "pauseEndSeconds": 873.429
+            },
+            {
+              "kind": "end",
+              "startSeconds": 873.429,
+              "speechEndSeconds": 875.194,
+              "text": "本级听力结束。"
+            }
+          ]
+        }
+      ],
+      "levelTracks": [
+        {
+          "level": 1,
+          "file": "form-C-level-1.mp3",
+          "sha256": "9a17632171398ebc472c8c97a5f3a9955d32b81bcd1e9c2a6c799066ad0a2590",
+          "startsAtSecondsInFullForm": 0.0
+        },
+        {
+          "level": 2,
+          "file": "form-C-level-2.mp3",
+          "sha256": "310d16fdd641195e772597d10c35233171e87acb1edd717c2bb836753565de84",
+          "startsAtSecondsInFullForm": 77.64
+        },
+        {
+          "level": 3,
+          "file": "form-C-level-3.mp3",
+          "sha256": "774b2c858e3dc9ed902ae359c4ad2f306a0e222ecac1f4734449eb224e7e32b2",
+          "startsAtSecondsInFullForm": 146.456
+        },
+        {
+          "level": 4,
+          "file": "form-C-level-4.mp3",
+          "sha256": "d1cc55c820788cfd50956c1078c580737e3de880f1918607fc55a9020dcf5773",
+          "startsAtSecondsInFullForm": 221.193
+        },
+        {
+          "level": 5,
+          "file": "form-C-level-5.mp3",
+          "sha256": "30af11739809b853a6fbf42fddbd027a61bfd5e78555c3675c10d2655aab589d",
+          "startsAtSecondsInFullForm": 301.828
+        },
+        {
+          "level": 6,
+          "file": "form-C-level-6.mp3",
+          "sha256": "f022d0d3fd9a1bdf760db364e4a212255a7ee5fda2ac5ea4912b51447d17b8a9",
+          "startsAtSecondsInFullForm": 383.322
+        },
+        {
+          "level": 7,
+          "file": "form-C-level-7.mp3",
+          "sha256": "477ea222bfd7e8d284945264573dee58a535d87883a33fa760ec989f72382821",
+          "startsAtSecondsInFullForm": 467.614
+        },
+        {
+          "level": 8,
+          "file": "form-C-level-8.mp3",
+          "sha256": "86f093380584a7590b434c8dc80ead3c260c1e35e98bacd29174da8e22a22cbd",
+          "startsAtSecondsInFullForm": 600.297
+        },
+        {
+          "level": 9,
+          "file": "form-C-level-9.mp3",
+          "sha256": "79b19a21af7d528436ebbc28c5189a488356d64d7803333aa381b700d2c72f83",
+          "startsAtSecondsInFullForm": 740.003
+        }
+      ]
+    }
+  }
+}

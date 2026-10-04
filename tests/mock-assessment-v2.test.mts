@@ -1,6 +1,8 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import {readFile} from "node:fs/promises";
+import {createHash} from "node:crypto";
+import {loadAssessmentLevelAudio} from "./assessment-level-audio-fixture.mts";
 import * as generator from "../src/lib/commercial/product-generator.ts";
 import {assessmentScenario} from "../src/lib/commercial/mock-assessment-content.ts";
 
@@ -64,13 +66,18 @@ test("all 27 Level/Form scenarios use distinct, level-authentic task designs and
   assert.equal(new Set(scenarios.map(item=>item.sourceB)).size,27);
   assert.equal(new Set(Array.from({length:9},(_,index)=>assessmentScenario(index+1,0).listeningGenre)).size,9);
   assert.equal(new Set(Array.from({length:9},(_,index)=>assessmentScenario(index+1,0).readingTaskFamilies.join("|"))).size,9);
-  assert.match(assessmentScenario(1,0).transcript,/短句一/u);
-  assert.match(assessmentScenario(2,0).transcript,/女：[\s\S]*男：/u);
-  assert.match(assessmentScenario(4,0).transcript,/第一段对话[\s\S]*第二段对话/u);
+  assert.match(assessmentScenario(1,0).transcript,/第一句：[\s\S]*第五句：/u);
+  assert.match(assessmentScenario(2,0).transcript,/甲：[\s\S]*乙：/u);
+  assert.match(assessmentScenario(4,0).transcript,/第一段：[\s\S]*第二段：/u);
   assert.match(assessmentScenario(8,0).transcript,/发言人一[\s\S]*发言人二/u);
-  assert.match(assessmentScenario(9,0).transcript,/主张方[\s\S]*质疑方[\s\S]*回应方/u);
-  assert.doesNotMatch(assessmentScenario(1,0).readingTaskFamilies.join(" "),/synthesis|counterargument|rhetorical/u);
-  assert.match(assessmentScenario(9,0).readingTaskFamilies.join(" "),/counterargument[\s\S]*critical synthesis/u);
+  assert.match(assessmentScenario(9,0).transcript,/主张方[\s\S]*质疑方/u);
+  assert.doesNotMatch(assessmentScenario(1,0).readingTaskFamilies.join(" "),/综合论证|批判综合|反证分析/u);
+  assert.match(assessmentScenario(9,0).readingTaskFamilies.join(" "),/价值前提[\s\S]*批判综合/u);
+  const operations=[/开头|接着/u,/先|后面/u,/安排|要求/u,/规则|限制/u,/事实|考量/u,/症状|覆盖/u,/论证|表达/u,/总体收益|利益/u,/判断前提|程序/u];
+  for(let level=1;level<=9;level++){
+    const firstTwo=assessmentScenario(level,0).reading.slice(0,2).map(q=>q.prompt).join(' ');
+    assert.match(firstTwo,operations[level-1],`Level ${level} actual reading operation`);
+  }
   for(const item of scenarios){
     assert.equal(item.listening.length,5);
     assert.equal(item.reading.length,10);
@@ -78,8 +85,14 @@ test("all 27 Level/Form scenarios use distinct, level-authentic task designs and
     const allItems=[...item.listening,...item.reading];
     assert.ok(new Set(allItems.map(question=>question.answer)).size>=2,"one scenario must not use a single repeated answer letter");
     for(const question of allItems){
+      assert.equal(new Set(question.options).size,3,`duplicate options: ${question.prompt}`);
       for(const [index,option] of question.options.entries())assert.match(question.distractorAnalysis,new RegExp(`${["A","B","C"][index]}“${option.replace(/[.*+?^${}()|[\]\\]/g,"\\$&")}”`));
     }
+    for(const question of item.reading){
+      const quoted=[...question.explanation.matchAll(/“([^”]+)”/gu)].map(match=>match[1]);
+      assert.ok(quoted.some(span=>`${item.readingText}${item.sourceB}`.includes(span)),`answer explanation must cite visible source: ${question.prompt}`);
+    }
+    assert.equal(item.reading.slice(0,5).filter(q=>item.listening.some(l=>l.prompt.replace(/^听力/,"阅读")===q.prompt)).length,0,"first five reading operations must not duplicate listening stems");
   }
   for(const form of [0,1,2]){
     const answers=Array.from({length:9},(_,level)=>assessmentScenario(level+1,form)).flatMap(item=>[...item.listening,...item.reading].map(question=>question.answer));
@@ -96,8 +109,7 @@ test("mock assessment v2 packages form audio, answer sheets, explanations, score
     readFile(new URL("../assets/audio/mock-assessment-v2/form-B.mp3",import.meta.url)),
     readFile(new URL("../assets/audio/mock-assessment-v2/form-C.mp3",import.meta.url)),
   ]);
-  const create=generator.generateDifferentiatedProductArtifact as unknown as (productId:string,font:Uint8Array,emoji:Uint8Array,version:string,audio:Record<"A"|"B"|"C",Uint8Array>)=>Promise<{bytes:Uint8Array;manifest:{files:string[]}}>;
-  const artifact=await create("practice-assessment-pack",new Uint8Array(font),new Uint8Array(emoji),"mock-v2-test",{A:audioA,B:audioB,C:audioC});
+  const artifact=await generator.generateDifferentiatedProductArtifact("practice-assessment-pack",new Uint8Array(font),new Uint8Array(emoji),"mock-v2-test",{A:audioA,B:audioB,C:audioC},await loadAssessmentLevelAudio());
   const files=zipEntries(artifact.bytes);
   for(const name of [
     "HSKKit-Practice-Assessment-A-Listening.mp3",
@@ -112,6 +124,26 @@ test("mock assessment v2 packages form audio, answer sheets, explanations, score
   assert.match(new TextDecoder().decode(files.get("HSKKit-Practice-Assessment-Audio-Source-License.txt")!),/Piper[\s\S]*MIT[\s\S]*CC0-1\.0/);
   for(const form of ["A","B","C"] as const){const mp3=files.get(`HSKKit-Practice-Assessment-${form}-Listening.mp3`)!;assert.ok(mp3.byteLength>500_000);assert.ok(mp3[0]===0x49&&mp3[1]===0x44&&mp3[2]===0x33||mp3[0]===0xff&&(mp3[1]&0xe0)===0xe0);}
   assert.deepEqual([...artifact.manifest.files].sort(),[...files.keys()].filter(name=>name!=="manifest.json"&&name!=="README.txt").sort());
+  const levelIndex=JSON.parse(new TextDecoder().decode(files.get("Level-Audio/timing-index.json")!));
+  const {createHash}=await import("node:crypto");
+  for(const form of ["A","B","C"] as const){
+    assert.equal(levelIndex.forms[form].levelTracks.length,9);
+    for(const track of levelIndex.forms[form].levelTracks){
+      const audio=files.get(`Level-Audio/${track.file}`);
+      assert.ok(audio?.byteLength>10_000,track.file);
+      assert.equal(createHash("sha256").update(audio!).digest("hex"),track.sha256);
+    }
+  }
+  assert.equal(artifact.manifest.audioProvenance?.levelTrackCount,27);
+  assert.equal(artifact.manifest.audioProvenance?.sourceSha256,levelIndex.sourceSha256);
+  const manifest=JSON.parse(new TextDecoder().decode(files.get("manifest.json")!));
+  assert.deepEqual(manifest.levels,[1,2,3,4,5,6,7,8,9]);
+  for(const form of ["A","B","C"] as const){
+    const {createHash}=await import("node:crypto");
+    const actual=createHash("sha256").update(files.get(`HSKKit-Practice-Assessment-${form}-Listening.mp3`)!).digest("hex");
+    assert.equal(manifest.audioProvenance.sha256[form],actual);
+  }
+  assert.doesNotMatch(new TextDecoder().decode(files.get("README.txt")!),/Score-Tracker\.csv/);
 });
 
 test("mock assessment v2 source MP3 files are real non-placeholder audio assets",async()=>{
@@ -129,6 +161,16 @@ test("mock assessment v2 source transcripts remain synchronized with packaged MP
     const source=await readFile(new URL(`../assets/audio/mock-assessment-v2/form-${form}.txt`,import.meta.url),"utf8");
     assert.equal(source,listeningScript!(form));
   }
+});
+
+test("assessment audio index is pinned to current question source and missing companion tracks fail closed",async()=>{
+  const index=JSON.parse(await readFile(new URL("../assets/audio/mock-assessment-v2/timing-index.json",import.meta.url),"utf8"));
+  assert.equal(index.sourceSha256,createHash("sha256").update(await readFile(new URL("../src/lib/commercial/mock-assessment-content.ts",import.meta.url))).digest("hex"));
+  const [font,emoji,a,b,c]=await Promise.all(["../assets/fonts/HskKitSansSubset.ttf","../assets/fonts/HskKitEmoji.ttf",...(["A","B","C"].map(form=>`../assets/audio/mock-assessment-v2/form-${form}.mp3`))].map(path=>readFile(new URL(path,import.meta.url))));
+  const full={A:new Uint8Array(a),B:new Uint8Array(b),C:new Uint8Array(c)};
+  await assert.rejects(()=>generator.generateDifferentiatedProductArtifact("practice-assessment-pack",new Uint8Array(font),new Uint8Array(emoji),"mock-v2-test",full),/ASSESSMENT_LEVEL_AUDIO_REQUIRED/);
+  const level=await loadAssessmentLevelAudio();delete level.tracks["form-A-level-1.mp3"];
+  await assert.rejects(()=>generator.generateDifferentiatedProductArtifact("practice-assessment-pack",new Uint8Array(font),new Uint8Array(emoji),"mock-v2-test",full,level),/ASSESSMENT_LEVEL_AUDIO_TRACK_MISMATCH/);
 });
 
 test("mock assessment v2 fails closed when real listening audio is absent",async()=>{

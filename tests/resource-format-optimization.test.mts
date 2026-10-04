@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import {readFile} from "node:fs/promises";
+import {loadAssessmentLevelAudio} from "./assessment-level-audio-fixture.mts";
 import {generateDifferentiatedProductArtifact} from "../src/lib/commercial/product-generator.ts";
 import {resourceProductDetail} from "../src/lib/commercial/resource-products.ts";
 import {generationVersionForProduct} from "../src/lib/commercial/products.ts";
@@ -31,7 +32,7 @@ test("resource cards disclose the actual delivery file types",async()=>{
   assert.deepEqual(resourceProductDetail("worksheet-pack")?.fileTypes,["PDF"]);
   assert.deepEqual(resourceProductDetail("assessment-tracker")?.fileTypes,["XLSX","CSV","PDF"]);
   assert.deepEqual(resourceProductDetail("30-day-planner")?.fileTypes,["PDF","XLSX"]);
-  assert.deepEqual(resourceProductDetail("practice-assessment-pack")?.fileTypes,["PDF","MP3","CSV","XLSX"]);
+  assert.deepEqual(resourceProductDetail("practice-assessment-pack")?.fileTypes,["PDF","MP3","XLSX"]);
   const source=await readFile(new URL("../src/app/store/store-purchase.tsx",import.meta.url),"utf8");
   assert.match(source,/detail\.fileTypes\.map/);
   assert.doesNotMatch(source,/>Digital<\/span>/);
@@ -72,16 +73,18 @@ test("30-Day Planner ships an editable Excel progress companion",async()=>{
 });
 
 test("Practice Assessment Pack ships an Excel score workbook with automatic totals and weakest-skill result",async()=>{
-  assert.equal(generationVersionForProduct("practice-assessment-pack"),"practice-score-xlsx-v2");
-  const artifact=await generateDifferentiatedProductArtifact("practice-assessment-pack",new Uint8Array(font),new Uint8Array(emoji),"format-optimization-test",{A:new Uint8Array(audioA),B:new Uint8Array(audioB),C:new Uint8Array(audioC)});
+  assert.equal(generationVersionForProduct("practice-assessment-pack"),"practice-score-xlsx-v3");
+  const artifact=await generateDifferentiatedProductArtifact("practice-assessment-pack",new Uint8Array(font),new Uint8Array(emoji),"format-optimization-test",{A:new Uint8Array(audioA),B:new Uint8Array(audioB),C:new Uint8Array(audioC)},await loadAssessmentLevelAudio());
   const files=zipEntries(artifact.bytes);
   const name="HSKKit-Practice-Assessment-Score-Tracker.xlsx";
   assert.ok(files.has(name));
   const workbook=zipEntries(files.get(name)!);
-  assert.match(text(workbook.get("xl/workbook.xml")),/Score Entry/);
-  assert.match(text(workbook.get("xl/workbook.xml")),/Progress Summary/);
-  const scores=text(workbook.get("xl/worksheets/sheet2.xml"));
+  assert.match(text(workbook.get("xl/workbook.xml")),/Attempts/);
+  assert.match(text(workbook.get("xl/workbook.xml")),/Progress/);
+  assert.match(text(workbook.get("xl/workbook.xml")),/Worked Example/);
+  const scores=text(workbook.get("xl/worksheets/sheet1.xml"));
   assert.match(scores,/SUM\(D2:F2\)/);
   assert.match(scores,/MIN\(D2:F2\)/);
+  assert.match(scores,/COUNT\(D2:F2\).*3/);
   assert.match(scores,/<dataValidations/);
 });

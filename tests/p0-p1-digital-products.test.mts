@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { readFile } from "node:fs/promises";
+import {readFile} from "node:fs/promises";
+import {loadAssessmentLevelAudio} from "./assessment-level-audio-fixture.mts";
 
 const read=(path:string)=>readFile(new URL(`../${path}`,import.meta.url),"utf8");
 
@@ -74,7 +75,7 @@ test("five differentiated MVP generators produce real PDF or ZIP artifacts",asyn
   ]);
   const assessmentAudio={A:new Uint8Array(audioA),B:new Uint8Array(audioB),C:new Uint8Array(audioC)};
   for(const productId of generatorProducts){
-    const artifact=await generator.generateDifferentiatedProductArtifact(productId,new Uint8Array(font),new Uint8Array(emoji),"p0-p1-v2",assessmentAudio);
+    const artifact=await generator.generateDifferentiatedProductArtifact(productId,new Uint8Array(font),new Uint8Array(emoji),"p0-p1-v2",assessmentAudio,await loadAssessmentLevelAudio());
     assert.ok(artifact.bytes.byteLength>1000,`${productId} artifact too small`);
     assert.ok(["pdf","zip"].includes(artifact.format));
     const magic=new TextDecoder().decode(artifact.bytes.slice(0,4));

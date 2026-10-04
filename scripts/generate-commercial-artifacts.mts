@@ -3,7 +3,7 @@ import { resolve } from "node:path";
 import { createHash } from "node:crypto";
 import { buildPackManifest, selectPackAssets, type PackSelection } from "../src/lib/commercial/catalog.ts";
 import { generatePackPdf, generateZipFiles } from "../src/lib/commercial/generator.ts";
-import { generateDifferentiatedProductArtifact } from "../src/lib/commercial/product-generator.ts";
+import { generateDifferentiatedProductArtifact, type AssessmentLevelAudio } from "../src/lib/commercial/product-generator.ts";
 import { buildProductDeliveries, DEFAULT_PRODUCT_GENERATION_VERSION, DIGITAL_PRODUCTS, generationVersionForProduct } from "../src/lib/commercial/products.ts";
 
 const selectedProductIds=(process.env.PRODUCT_IDS||process.env.PRODUCT_ID||"").split(",").map(id=>id.trim()).filter(Boolean);
@@ -20,9 +20,21 @@ const [fontBytes,emojiBytes,assessmentAudioA,assessmentAudioB,assessmentAudioC]=
   readFile(new URL("../assets/audio/mock-assessment-v2/form-C.mp3",import.meta.url)),
 ]);
 const assessmentAudio={A:new Uint8Array(assessmentAudioA),B:new Uint8Array(assessmentAudioB),C:new Uint8Array(assessmentAudioC)};
+async function loadAssessmentLevelAudio():Promise<AssessmentLevelAudio>{
+  const dir=new URL("../assets/audio/mock-assessment-v2/",import.meta.url);
+  const index=new Uint8Array(await readFile(new URL("timing-index.json",dir)));
+  const parsed=JSON.parse(new TextDecoder().decode(index)) as {forms:Record<string,{levelTracks:Array<{file:string}>}>};
+  const entries=Object.values(parsed.forms).flatMap(form=>form.levelTracks);
+  const tracks:Record<string,Uint8Array>={};
+  for(const track of entries)tracks[track.file]=new Uint8Array(await readFile(new URL(track.file,dir)));
+  return {index,tracks};
+}
+const assessmentLevelAudio=await loadAssessmentLevelAudio();
 const levelGenerationVersion=requestedGenerationVersion||DEFAULT_PRODUCT_GENERATION_VERSION;
 const levelArtifacts=new Map<number,{bytes:Uint8Array;manifest:Record<string,unknown>;selection:PackSelection}>();
-for(let level=1;level<=7;level++){
+const requestedVocabularyProducts=DIGITAL_PRODUCTS.filter(product=>(!selectedProductIds.length||selectedProductIds.includes(product.id))&&(product.category==="level"||product.category==="bundle"));
+const requiredLevels=new Set(requestedVocabularyProducts.flatMap(product=>product.levels));
+for(const level of [...requiredLevels].sort((a,b)=>a-b)){
   const selection=selectPackAssets(level);const packManifest=buildPackManifest(selection,levelGenerationVersion);const manifest=packManifest as unknown as Record<string,unknown>;
   levelArtifacts.set(level,{bytes:await generatePackPdf(selection,packManifest,fontBytes,emojiBytes),manifest,selection});
 }
@@ -78,7 +90,7 @@ for(const product of DIGITAL_PRODUCTS){
   if(product.category==="resource_bundle"){
     const componentFiles=[] as Array<{name:string;data:Uint8Array}>;
     for(const componentId of product.componentProductIds??[]){
-      const component=await generateDifferentiatedProductArtifact(componentId,fontBytes,emojiBytes,generationVersion,assessmentAudio);
+      const component=await generateDifferentiatedProductArtifact(componentId,fontBytes,emojiBytes,generationVersion,assessmentAudio,assessmentLevelAudio);
       componentFiles.push({name:`${componentId}.${component.format}`,data:component.bytes});
     }
     const manifest={schemaVersion:"hskkit-product-manifest-v1",productId:product.id,generationVersion,standard:"HSK 3.0",standardVersion:"GF0025-2021",officialExam:false,levels:product.levels,componentProductIds:product.componentProductIds,files:componentFiles.map(file=>file.name),licenseNotice:"Personal, non-transferable study and print use only."};
@@ -89,6 +101,6 @@ for(const product of DIGITAL_PRODUCTS){
     const bytes=generateZipFiles([...payload,{name:"checksums.sha256",data:checksumFile(payload)}]);
     await save(product.id,"product","zip",bytes,manifest,generationVersion);continue;
   }
-  const artifact=await generateDifferentiatedProductArtifact(product.id,fontBytes,emojiBytes,generationVersion,assessmentAudio);
+  const artifact=await generateDifferentiatedProductArtifact(product.id,fontBytes,emojiBytes,generationVersion,assessmentAudio,assessmentLevelAudio);
   await save(product.id,deliveries[0].deliveryKey,artifact.format,artifact.bytes,artifact.manifest as unknown as Record<string,unknown>,generationVersion);
 }

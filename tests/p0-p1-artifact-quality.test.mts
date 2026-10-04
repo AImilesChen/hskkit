@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import {readFile} from "node:fs/promises";
+import {loadAssessmentLevelAudio} from "./assessment-level-audio-fixture.mts";
 import {PDFDocument} from "pdf-lib";
 import {generateDifferentiatedProductArtifact} from "../src/lib/commercial/product-generator.ts";
 import {buildPackManifest,manifestStillAuthorized,selectPackAssets} from "../src/lib/commercial/catalog.ts";
@@ -18,7 +19,7 @@ const [assessmentAudioA,assessmentAudioB,assessmentAudioC]=await Promise.all([
 const assessmentAudio={A:new Uint8Array(assessmentAudioA),B:new Uint8Array(assessmentAudioB),C:new Uint8Array(assessmentAudioC)};
 test("P1 artifacts contain parseable non-placeholder PDFs, CSV data, manifests and stable filenames",async()=>{
  const [font,emoji]=await Promise.all([readFile(new URL("../assets/fonts/HskKitSansSubset.ttf",import.meta.url)),readFile(new URL("../assets/fonts/HskKitEmoji.ttf",import.meta.url))]);
- for(const productId of products){const artifact=await generateDifferentiatedProductArtifact(productId,new Uint8Array(font),new Uint8Array(emoji),"p0-p1-v2",assessmentAudio);assert.ok(artifact.bytes.byteLength>5_000,productId);assert.equal(artifact.manifest.productId,productId);assert.equal(artifact.manifest.generationVersion,"p0-p1-v2");assert.equal(artifact.manifest.officialExam,false);assert.equal(artifact.manifest.standardVersion,"GF0025-2021");assert.match(artifact.manifest.advancedBandDisclosure,/unified Levels 7–9/);assert.equal(artifact.manifest.assets.length,expectedAssetCounts[productId]);
+ for(const productId of products){const artifact=await generateDifferentiatedProductArtifact(productId,new Uint8Array(font),new Uint8Array(emoji),"p0-p1-v2",assessmentAudio,await loadAssessmentLevelAudio());assert.ok(artifact.bytes.byteLength>5_000,productId);assert.equal(artifact.manifest.productId,productId);assert.equal(artifact.manifest.generationVersion,"p0-p1-v2");assert.equal(artifact.manifest.officialExam,false);assert.equal(artifact.manifest.standardVersion,"GF0025-2021");assert.match(artifact.manifest.advancedBandDisclosure,/unified Levels 7–9/);assert.equal(artifact.manifest.assets.length,expectedAssetCounts[productId]);
   if(artifact.format==="pdf"){const pdf=await PDFDocument.load(artifact.bytes);assert.ok(pdf.getPageCount()>=2);assert.match(pdf.getTitle()??"",/HSK/);continue;}
   const files=zipEntries(artifact.bytes);assert.ok(files.has("manifest.json"),productId);const manifest=JSON.parse(new TextDecoder().decode(files.get("manifest.json")));assert.equal(manifest.productId,productId);assert.equal(manifest.officialExam,false);assert.equal(manifest.standard,"HSK 3.0");assert.equal(manifest.standardVersion,"GF0025-2021");assert.match(manifest.advancedBandDisclosure,/unified Levels 7–9/);assert.equal(manifest.assets.length,expectedAssetCounts[productId]);
   const pdfs=[...files.entries()].filter(([name])=>name.endsWith(".pdf"));assert.ok(pdfs.length>=1,productId);for(const [name,bytes] of pdfs){assert.ok(bytes.byteLength>2_000,name);const pdf=await PDFDocument.load(bytes);assert.ok(pdf.getPageCount()>=1,name);assert.match(pdf.getTitle()??"",/HSK/,name);}
@@ -30,7 +31,7 @@ test("P1 artifacts contain parseable non-placeholder PDFs, CSV data, manifests a
 
 test("every paid P1 artifact manifest remains authorized for download",async()=>{
  const [font,emoji]=await Promise.all([readFile(new URL("../assets/fonts/HskKitSansSubset.ttf",import.meta.url)),readFile(new URL("../assets/fonts/HskKitEmoji.ttf",import.meta.url))]);
- for(const productId of products){const artifact=await generateDifferentiatedProductArtifact(productId,new Uint8Array(font),new Uint8Array(emoji),"p0-p1-v2",assessmentAudio);assert.equal(manifestStillAuthorized(JSON.stringify(artifact.manifest)),true,productId);}
+ for(const productId of products){const artifact=await generateDifferentiatedProductArtifact(productId,new Uint8Array(font),new Uint8Array(emoji),"p0-p1-v2",assessmentAudio,await loadAssessmentLevelAudio());assert.equal(manifestStillAuthorized(JSON.stringify(artifact.manifest)),true,productId);}
  assert.equal(manifestStillAuthorized(JSON.stringify({schemaVersion:"hskkit-product-manifest-v1",productId:"unknown-product",sourceIndependent:true,assets:[]})),false);
  assert.equal(manifestStillAuthorized(JSON.stringify({schemaVersion:"hskkit-product-manifest-v1",productId:"practice-assessment-pack",sourceIndependent:false,assets:[]})),false);
 });

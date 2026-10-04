@@ -27,6 +27,15 @@ function workbookPackage(title:string,sheets:WorkbookSheet[]){
         '<xf numFmtId="0" fontId="7" fillId="3" borderId="1" xfId="0" applyFill="1" applyFont="1" applyAlignment="1"><alignment vertical="center" wrapText="1" indent="1"/></xf>',
       ].join('')+'</cellXfs>');
   }
+  if(title==="HSKKit Practice Assessment Score Tracker"){
+    styles=styles.replace('<fonts count="4">','<fonts count="6">').replace('</fonts>','<font><b/><color rgb="FFFFFFFF"/><sz val="12"/><name val="Arial"/></font><font><color rgb="FF263F45"/><sz val="11"/><name val="Arial"/></font></fonts>')
+      .replace('<cellXfs count="10">','<cellXfs count="14">').replace('</cellXfs>',[
+        '<xf numFmtId="0" fontId="4" fillId="2" borderId="1" xfId="0" applyFill="1" applyFont="1" applyAlignment="1"><alignment vertical="center" wrapText="1"/></xf>',
+        '<xf numFmtId="0" fontId="5" fillId="5" borderId="1" xfId="0" applyFill="1" applyAlignment="1"><alignment vertical="center" wrapText="1"/></xf>',
+        '<xf numFmtId="14" fontId="5" fillId="5" borderId="1" xfId="0" applyNumberFormat="1" applyAlignment="1"><alignment vertical="center"/></xf>',
+        '<xf numFmtId="0" fontId="5" fillId="3" borderId="1" xfId="0" applyFill="1" applyAlignment="1"><alignment vertical="center" wrapText="1"/></xf>',
+      ].join('')+'</cellXfs>');
+  }
   if(title==="HSKKit Worksheet Review Log"){
     const xf=(fill:number,border:number,align:string,numFmt=0,font=4)=>`<xf numFmtId="${numFmt}" fontId="${font}" fillId="${fill}" borderId="${border}" xfId="0" applyFont="1" applyFill="1" applyBorder="1" applyAlignment="1"${numFmt?' applyNumberFormat="1"':''}><alignment vertical="center" horizontal="${align}"${align==='left'?' indent="1" wrapText="1"':''}/></xf>`;
     styles=styles.replace('<fonts count="4">','<fonts count="6">').replace('</fonts>','<font><color rgb="FF263F45"/><sz val="11"/><name val="Arial"/></font><font><b/><color rgb="FFFFFFFF"/><sz val="11"/><name val="Arial"/></font></fonts>')
@@ -91,25 +100,75 @@ export function generatePlannerProgressWorkbook(plan:PlannerPack){
   ]);
 }
 
+const assessmentDrills:[string,string,string][]=[
+  ["Replay short utterances; mark person, time and place.","Redo direct-detail and matching items; underline supporting words.","Rewrite one 20–40-character response with a full sentence and required word."],
+  ["Rebuild the two-step dialogue sequence before choosing.","Redo event-order and information matching; explain each link.","Revise the short report so both events connect in order."],
+  ["Summarize the notice; check the changed arrangement against audio.","Redo time/condition and two-source links; underline exact support.","Expand a 50–80-character response with a clear reason and result."],
+  ["Map both parts of the changed plan and verify the shared conclusion.","Compare sources; identify the condition that changes the proposal.","Add an explicit transition between evidence and conclusion."],
+  ["Note speaker stance and the evidence that supports it.","Redo claim/evidence items and justify each answer from sources.","Rewrite 100–150 characters with viewpoint and one source detail."],
+  ["Draw the cause-to-effect chain before checking options.","Redo cross-source causality; reject reversed-cause options.","Make claim, evidence and consequence explicit in the report."],
+  ["Identify register, stance and discourse structure.","Annotate passage structure and each paragraph's role.","Rewrite the weakest task with precise register and two sources."],
+  ["Separate each speaker's claim; note agreement and conflict.","Use a two-column source/evidence matrix for synthesis.","Revise 180–300 characters using both sources and their disagreement."],
+  ["Separate claim, counterclaim, evidence and qualification.","Rank evidence strength in counterargument items.","Write claim, two-source evidence, counterpoint and justified conclusion."],
+];
+
 export function generatePracticeAssessmentScoreWorkbook(){
-  const instructions=[
-    row(1,[inline("A1","HSKKit Practice Assessment Score Tracker",1)]),
-    row(2,[inline("A2","Enter one row after each Form A, B or C checkpoint. Listening, Reading and Writing each use 0–10; Total and Weakest Skill calculate automatically.")]),
+  // Buyer records are on the first sheet; worked example never enters Progress.
+  const example=[
+    row(1,[inline("A1","EXAMPLE ONLY · NOT YOUR RECORDS",10),inline("B1","Enter your own results on Attempts. These illustration scores never enter Progress.",11)],44),
+    ...[
+      ["1 · SCORE", "After scoring Level 3 Form A with the Answers and Score Report: Listening 2/10, Reading 6/10, Writing 7/10. Enter date, level, form and three scores on ONE new Attempts row. Total = 15/30; weakest = Listening."],
+      ["2 · EVIDENCE", "Record the real missed question ID/task and the specific missed cue from the transcript in columns I–J. The lowest score is only a starting point; check the actual answer evidence."],
+      ["3 · PRACTISE", "For a missed changed arrangement: replay the segment, write the original and revised plan, verify against the transcript, then retry with answers hidden. Enter a next review date and follow-up status."],
+      ["4 · RETEST", "Independently complete Level 3 Form B and append a NEW row: Listening 4, Reading 6, Writing 7 = 17/30. Previous same level = 15; Change = +2. Compare each skill with the earlier row; do not overwrite Form A."],
+      ["NOT AN EXAM", "These numbers are invented illustrations, not learner data or official exam results. Different forms are not equated; a score change describes practice records, not proven proficiency gain."],
+      ["ZERO / MISSING", "Listening 0, Reading 0, Writing 0 with date, level and form is a completed 0/30 attempt. Missing identity or any score leaves Total blank and excludes the row from Progress."],
+      ["HOW TO USE", "Attempts is the only input sheet. Enter chronological rows (200 prepared rows); do not sort them, since Previous uses earlier physical rows. Progress counts completed rows. Drill Guide supplies optional practice prompts; Score Report has scoring rules."],
+      ["SCOPE", "This unofficial workbook does not grade responses or set reminders. Levels 7–9 are practice distinctions within the unified advanced band."],
+    ].map(([label,text],i)=>row(i+2,[inline(`A${i+2}`,label,5),inline(`B${i+2}`,text,11)],80)),
   ];
-  const scoreRows=[row(1,["Form","Level","Date","Listening /10","Reading /10","Writing /10","Total /30","Weakest Skill","Recommended Practice","Next Review Date"].map((value,index)=>inline(`${String.fromCharCode(65+index)}1`,value,1)))];
-  for(let index=0;index<27;index++){
-    const r=index+2;
-    scoreRows.push(row(r,[inline(`A${r}`,(["A","B","C"] as const)[Math.floor(index/9)]),numeric(`B${r}`,(index%9)+1),formula(`G${r}`,`IF(COUNT(D${r}:F${r})<3,\"\",SUM(D${r}:F${r}))`),formula(`H${r}`,`IF(COUNT(D${r}:F${r})<3,\"\",IF(D${r}=MIN(D${r}:F${r}),\"Listening\",IF(E${r}=MIN(D${r}:F${r}),\"Reading\",\"Writing\")))`)]));
+  const cols=["1 Date","2 Level","3 Form","4 Listen /10","5 Read /10","6 Write /10","Total /30","Weakest skill","7 Missed item / task","8 Error evidence / why","Suggested drill","9 Next review","Previous same level /30","Change /30","10 Follow-up","Scored flag"];
+  const attempts=[row(1,cols.map((label,i)=>inline(`${String.fromCharCode(65+i)}1`,label,10)),42)];
+  for(let r=2;r<=201;r++){
+    const weakest=`IF(D${r}=MIN(D${r}:F${r}),"Listening",IF(E${r}=MIN(D${r}:F${r}),"Reading","Writing"))`;
+    const cells:string[]=[];
+    for(const col of 'ABCDEFGHIJKLMNOP'){
+      const ref=`${col}${r}`;
+      if(col==='G')cells.push(formula(ref,`IF(OR(A${r}="",B${r}="",C${r}="",COUNT(D${r}:F${r})<>3),"",SUM(D${r}:F${r}))`,6));
+      else if(col==='H')cells.push(formula(ref,`IF(G${r}="","",${weakest})`,4));
+      else if(col==='K')cells.push(formula(ref,`IF(H${r}="","",INDEX('Drill Guide'!$B$5:$D$13,B${r},IF(H${r}="Listening",1,IF(H${r}="Reading",2,3))))`,4));
+      else if(col==='M')cells.push(formula(ref,r===2?'IF(G2="","","")':`IF(G${r}="","",IFERROR(LOOKUP(2,1/(($B$2:B${r-1}=B${r})*(ISNUMBER($G$2:G${r-1}))),$G$2:G${r-1}),""))`,6));
+      else if(col==='N')cells.push(formula(ref,`IF(OR(G${r}="",M${r}=""),"",G${r}-M${r})`,6));
+      else if(col==='P')cells.push(formula(ref,`IF(ISNUMBER(G${r}),1,0)`,6));
+      else cells.push(inline(ref,"",col==='A'||col==='L'?12:11));
+    }
+    attempts.push(row(r,cells,39));
   }
-  const scoreExtra='<autoFilter ref="A1:J28"/><dataValidations count="3"><dataValidation type="whole" operator="between" allowBlank="1" showErrorMessage="1" sqref="D2:D28"><formula1>0</formula1><formula2>10</formula2></dataValidation><dataValidation type="whole" operator="between" allowBlank="1" showErrorMessage="1" sqref="E2:E28"><formula1>0</formula1><formula2>10</formula2></dataValidation><dataValidation type="whole" operator="between" allowBlank="1" showErrorMessage="1" sqref="F2:F28"><formula1>0</formula1><formula2>10</formula2></dataValidation></dataValidations>';
-  const summaryRows=[
-    row(1,[inline("A1","Form",1),inline("B1","Average Total /30",1),inline("C1","Completed Records",1)]),
-    ...["A","B","C"].map((formName,index)=>{const r=index+2;return row(r,[inline(`A${r}`,formName),formula(`B${r}`,`IFERROR(AVERAGEIF('Score Entry'!A2:A28,A${r},'Score Entry'!G2:G28),0)`),formula(`C${r}`,`COUNTIFS('Score Entry'!A2:A28,A${r},'Score Entry'!G2:G28,\">0\")`)]);}),
-  ];
+  const validation=(type:string,range:string,first:string,second?:string)=>`<dataValidation type="${type}"${second?' operator="between"':''} allowBlank="1" showErrorMessage="1" errorTitle="Check this entry" error="Use the indicated range or list." sqref="${range}"><formula1>${escapeXml(first)}</formula1>${second?`<formula2>${second}</formula2>`:''}</dataValidation>`;
+  const attemptExtra='<autoFilter ref="A1:O201"/><dataValidations count="6">'+[
+    validation('whole','B2:B201','1','9'),validation('list','C2:C201','"A,B,C"'),
+    ...['D','E','F'].map(c=>validation('whole',`${c}2:${c}201`,'0','10')),
+    validation('list','O2:O201','"Needs practice,Practised,Retested"'),
+  ].join('')+'</dataValidations>';
+  const source="'Attempts'!";
+  const progress=[row(1,["Level","Completed attempts","Form A","Form B","Form C","Avg Listen /10","Avg Read /10","Avg Write /10","Avg Total /30","Next step"].map((v,i)=>inline(`${String.fromCharCode(65+i)}1`,v,10)),44)];
+  for(let level=1;level<=9;level++){
+    const r=level+1,base=`${source}$B$2:$B$201,A${r},${source}$P$2:$P$201,1`,count=`COUNTIFS(${base})`;
+    const cells=[numeric(`A${r}`,level,5),formula(`B${r}`,count,6)];
+    for(const [i,formName] of ['A','B','C'].entries())cells.push(formula(`${'CDE'[i]}${r}`,`COUNTIFS(${base},${source}$C$2:$C$201,"${formName}")`,6));
+    for(const [i,col] of ['D','E','F','G'].entries())cells.push(formula(`${'FGHI'[i]}${r}`,`IF(B${r}=0,"",ROUND(SUMIFS(${source}$${col}$2:$${col}$201,${source}$B$2:$B$201,A${r},${source}$P$2:$P$201,1)/B${r},1))`,6));
+    cells.push(inline(`J${r}`,"Filter Attempts to this level; review weakest task and retest.",11));
+    progress.push(row(r,cells,46));
+  }
+  progress.push(row(12,[inline('A12','Do not compare averages between levels; same-level attempts are the only repeat measure.',5)],60));
+  const guide=[row(1,[inline('A1','DRILL GUIDE · SCORE REPORT COMPANION',10)],42),row(2,[inline('A2','Suggested practice is a starting point, not an automatic diagnosis. See Score Report for full level-specific directions.',11)],52),row(4,['Level','Listening','Reading','Writing'].map((v,i)=>inline(`${'ABCD'[i]}4`,v,10)),38),...assessmentDrills.map((items,i)=>row(i+5,[numeric(`A${i+5}`,i+1,5),...items.map((text,j)=>inline(`${'BCD'[j]}${i+5}`,text,11))],82))];
+  const widths=(values:number[])=>`<cols>${values.map((width,i)=>`<col min="${i+1}" max="${i+1}" width="${width}" customWidth="1"/>`).join('')}</cols>`;
+  const print=(xml:string,wide=false)=>xml.replace('<sheetViews>','<sheetPr><pageSetUpPr fitToPage="1"/></sheetPr><sheetViews>').replace('</worksheet>',`<pageSetup paperSize="9" orientation="${wide?'landscape':'portrait'}" fitToWidth="1" fitToHeight="${wide?0:1}"/></worksheet>`);
   return workbookPackage("HSKKit Practice Assessment Score Tracker",[
-    {name:"Instructions",xml:sheet(instructions,'<cols><col min="1" max="1" width="110" customWidth="1"/></cols>')},
-    {name:"Score Entry",xml:sheet(scoreRows,'<cols><col min="1" max="3" width="13" customWidth="1"/><col min="4" max="8" width="18" customWidth="1"/><col min="9" max="10" width="30" customWidth="1"/></cols>',scoreExtra)},
-    {name:"Progress Summary",xml:sheet(summaryRows,'<cols><col min="1" max="1" width="14" customWidth="1"/><col min="2" max="3" width="22" customWidth="1"/></cols>')},
+    {name:"Attempts",xml:print(sheet(attempts,widths([16,10,10,18,18,18,16,18,31,42,53,20,25,17,22]).replace('</cols>','<col min="16" max="16" width="12" hidden="1"/></cols>'),attemptExtra).replace('<pane ySplit="1" topLeftCell="A2" activePane="bottomLeft" state="frozen"/>','<pane xSplit="3" ySplit="1" topLeftCell="D2" activePane="bottomRight" state="frozen"/>'),true)},
+    {name:"Progress",xml:print(sheet(progress,widths([13,21,14,14,14,21,20,21,22,62])),true)},
+    {name:"Worked Example",xml:print(sheet(example,widths([27,110])))},
+    {name:"Drill Guide",xml:print(sheet(guide,widths([13,55,55,65]),'<mergeCells count="2"><mergeCell ref="A1:D1"/><mergeCell ref="A2:D2"/></mergeCells>'),true)},
   ]);
 }
 

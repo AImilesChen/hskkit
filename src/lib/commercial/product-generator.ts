@@ -13,11 +13,27 @@ import {generatePlannerProgressWorkbook,generatePracticeAssessmentScoreWorkbook}
 import {makeHomeworkPdf,makeStudentHandoutPdf,makeTeacherCutPdf,makeTeacherPlanPdf,makeTeacherQuickStartPdf,TEACHER_PAGE_SIZES} from "./teacher-pdf.ts";
 
 const encoder=new TextEncoder();
-export type ProductArtifactManifest={schemaVersion:string;productId:string;generationVersion:string;standard:"HSK 3.0";standardVersion:"GF0025-2021";officialExam:false;levels:number[];advancedBandDisclosure:string;licenseNotice:string;files:string[];sourceIndependent:boolean;assets:Array<{id:string;version:string;sourceRef:string;licenseRef:string}>;audioProvenance?:{provider:string;voices:Record<AssessmentForm,string>;generatedOn:string;responsePauseSeconds:number;redistributionStatus:string;sha256:Record<AssessmentForm,string>}};
-const ASSESSMENT_AUDIO_SHA256:Record<AssessmentForm,string>={A:"07f5273876f407f538dd713989b93336a2a863b3bdb5b75252254b432b2bac17",B:"677b74b33bb9bf94cb535336e4fa8789fbabea900dff130a4de384c8cab1be59",C:"3f6982318c9640cef1deece19a5d13b129eafd5b63c55b40636cfd6d51bc006b"};
-const ASSESSMENT_AUDIO_PROVENANCE={provider:"Piper open-source neural text-to-speech",voices:{A:"zh_CN-chaowen-medium",B:"zh_CN-chaowen-medium",C:"zh_CN-chaowen-medium"} as Record<AssessmentForm,string>,generatedOn:"2026-08-26",responsePauseSeconds:5,redistributionStatus:"Piper voice model repository: MIT; Chaowen training dataset: CC0-1.0; synthetic output generated for HSKKit with attribution and source notice included.",sha256:ASSESSMENT_AUDIO_SHA256};
+export type ProductArtifactManifest={schemaVersion:string;productId:string;generationVersion:string;standard:"HSK 3.0";standardVersion:"GF0025-2021";officialExam:false;levels:number[];advancedBandDisclosure:string;licenseNotice:string;files:string[];sourceIndependent:boolean;assets:Array<{id:string;version:string;sourceRef:string;licenseRef:string}>;audioProvenance?:{provider:string;voices:Record<AssessmentForm,string>;generatedOn:string;responsePauseSeconds:number;redistributionStatus:string;sha256:Record<AssessmentForm,string>;levelTrackCount?:number;sourceSha256?:string}};
+export type AssessmentLevelAudio={index:Uint8Array;tracks:Record<string,Uint8Array>};
+const ASSESSMENT_AUDIO_SHA256:Record<AssessmentForm,string>={A:"cf154c20136be54156d068cc03e9180ebfa0883875a0bf5a6ef40fe19c26b185",B:"4a086bf48f798148f820e8e4f541a4b752a359dd25b52f71cc5c838cc6bee618",C:"33add7444d6adebec22eacc0a2b0a2570cbbc9e411f45456ba57ca94ff50d55a"};
+const ASSESSMENT_SOURCE_SHA256="72a8161c4beafc6f9c9fd97a17e1e0870c947721bb2cc9d828b4e7010fe5b422";
+const ASSESSMENT_AUDIO_PROVENANCE={provider:"Piper open-source neural text-to-speech",voices:{A:"zh_CN-chaowen-medium",B:"zh_CN-chaowen-medium",C:"zh_CN-chaowen-medium"} as Record<AssessmentForm,string>,generatedOn:"2026-10-04",responsePauseSeconds:5,redistributionStatus:"Piper voice model repository: MIT; Chaowen training dataset: CC0-1.0; synthetic output generated for HSKKit with attribution and source notice included.",sha256:ASSESSMENT_AUDIO_SHA256};
 async function sha256Hex(bytes:Uint8Array){const copy=new Uint8Array(bytes.byteLength);copy.set(bytes);const digest=await crypto.subtle.digest("SHA-256",copy.buffer);return [...new Uint8Array(digest)].map(byte=>byte.toString(16).padStart(2,"0")).join("");}
 async function validateAssessmentAudio(audio:Partial<Record<AssessmentForm,Uint8Array>>|undefined){for(const form of ["A","B","C"] as const){const data=audio?.[form];if(!data||data.byteLength<5_000_000)throw new Error(`ASSESSMENT_AUDIO_REQUIRED_${form}`);if(await sha256Hex(data)!==ASSESSMENT_AUDIO_SHA256[form])throw new Error(`ASSESSMENT_AUDIO_UNVERIFIED_${form}`);}}
+async function validateAssessmentLevelAudio(audio:Partial<Record<AssessmentForm,Uint8Array>>|undefined,levelAudio:AssessmentLevelAudio|undefined){
+  if(!levelAudio?.index)throw new Error("ASSESSMENT_LEVEL_AUDIO_REQUIRED");
+  const index=JSON.parse(new TextDecoder().decode(levelAudio.index)) as {sourceSha256:string;pauseSecondsPerQuestion:number;forms:Record<AssessmentForm,{sha256:string;transcriptSha256:string;levelTracks:Array<{level:number;file:string;sha256:string}>}>};
+  if(index.sourceSha256!==ASSESSMENT_SOURCE_SHA256||index.pauseSecondsPerQuestion!==5||Object.keys(index.forms).sort().join("")!=="ABC")throw new Error("ASSESSMENT_LEVEL_AUDIO_INDEX_INVALID");
+  const files:Array<{name:string;data:Uint8Array}>=[];
+  for(const form of ["A","B","C"] as const){
+    const entry=index.forms[form];
+    if(entry.sha256!==await sha256Hex(audio![form]!)||entry.transcriptSha256!==await sha256Hex(encoder.encode(assessmentListeningScript(form))))throw new Error(`ASSESSMENT_LEVEL_AUDIO_SCRIPT_MISMATCH_${form}`);
+    if(entry.levelTracks.length!==9||entry.levelTracks.some((track,i)=>track.level!==i+1||track.file!==`form-${form}-level-${i+1}.mp3`))throw new Error(`ASSESSMENT_LEVEL_AUDIO_TRACKS_INVALID_${form}`);
+    for(const track of entry.levelTracks){const data=levelAudio.tracks[track.file];if(!data||await sha256Hex(data)!==track.sha256)throw new Error(`ASSESSMENT_LEVEL_AUDIO_TRACK_MISMATCH_${track.file}`);files.push({name:`Level-Audio/${track.file}`,data});}
+  }
+  if(Object.keys(levelAudio.tracks).length!==27)throw new Error("ASSESSMENT_LEVEL_AUDIO_EXTRA_TRACKS");
+  return {index,files:[{name:"Level-Audio/timing-index.json",data:levelAudio.index},...files]};
+}
 type PdfSection={heading:string;body:string[];pageBreakBefore?:boolean};
 type Selection=ReturnType<typeof selectPackAssets>;
 const TEACHER_LESSON_WORDS:Record<number,string[]>={
@@ -50,9 +66,9 @@ export function mockAssessmentBlueprint(level:number):MockAssessmentBlueprint{
   const levelRecommendations:Record<number,MockAssessmentBlueprint["recommendations"]>={
     1:{listening:["Replay short utterances and mark the stated person, time and place."],reading:["Redo direct-detail and simple matching items with the supporting words underlined."],writing:["Rewrite one 20–40-character response with one complete sentence and the required word."]},
     2:{listening:["Rebuild the two-step dialogue sequence before choosing an answer."],reading:["Redo event-order and information-matching items; explain each link aloud."],writing:["Revise the short report so both events are connected in the correct order."]},
-    3:{listening:["Summarize the short passage in one sentence before answering inference items."],reading:["Redo context-cloze items and cite the sentence that fixes each blank."],writing:["Expand one response to 50–80 characters with a clear reason and result."]},
-    4:{listening:["Map the changed plan across both dialogue parts, then answer reconstruction items."],reading:["Redo paragraph sequence and matching with transition words circled."],writing:["Revise cohesion by adding an explicit transition between evidence and conclusion."]},
-    5:{listening:["Note the speaker stance and the evidence that supports it in the extended passage."],reading:["Redo sentence-insertion items and justify the chosen position from surrounding cohesion."],writing:["Rewrite 100–150 characters with a stated viewpoint and one cited source detail."]},
+    3:{listening:["Summarize the short notice and verify the changed arrangement against the spoken evidence."],reading:["Redo the time-and-condition and two-source connection items; underline the exact support."],writing:["Expand one response to 50–80 characters with a clear reason and result."]},
+    4:{listening:["Map the changed plan across both parts, then verify the shared conclusion."],reading:["Compare both sources and check which condition or limitation changes the first proposal."],writing:["Revise cohesion by adding an explicit transition between evidence and conclusion."]},
+    5:{listening:["Note the speaker stance and the evidence that supports it in the report."],reading:["Redo claim-and-evidence items and justify each choice from the provided sources."],writing:["Rewrite 100–150 characters with a stated viewpoint and one cited source detail."]},
     6:{listening:["Draw the cause-to-effect chain from the multi-turn dialogue before checking options."],reading:["Redo cause-effect and cross-source items; reject options with reversed causality."],writing:["Revise the report so claim, evidence and consequence are explicit."]},
     7:{listening:["Identify register, stance and discourse structure in the extended passage."],reading:["Annotate passage structure and explain how each paragraph advances the claim."],writing:["Rewrite the weakest advanced task with precise register and two source references."]},
     8:{listening:["Track each speaker claim separately, then write the shared and conflicting points."],reading:["Redo multi-source synthesis using a two-column source-evidence matrix."],writing:["Revise 180–300 characters to integrate both sources without erasing disagreement."]},
@@ -88,7 +104,7 @@ function productAssets(product:DigitalProduct,selections:Selection[]){
   return [...unique.values()];
 }
 function manifestFor(product:DigitalProduct,files:string[],selections:Selection[],generationVersion:string):ProductArtifactManifest{
-  return {schemaVersion:"hskkit-product-manifest-v1",productId:product.id,generationVersion,standard:"HSK 3.0",standardVersion:"GF0025-2021",officialExam:false,levels:product.levels,advancedBandDisclosure:"HSK 3.0 defines one unified Levels 7–9 advanced ability band; Level 7, 8 and 9 labels in this resource use the same canonical approved advanced source set.",licenseNotice:productLicenseNotice(product.id),files,sourceIndependent:product.id==="30-day-planner"||product.id==="practice-assessment-pack",assets:productAssets(product,selections),...(product.id==="practice-assessment-pack"?{audioProvenance:ASSESSMENT_AUDIO_PROVENANCE}:{})};
+  return {schemaVersion:"hskkit-product-manifest-v1",productId:product.id,generationVersion,standard:"HSK 3.0",standardVersion:"GF0025-2021",officialExam:false,levels:product.id==="practice-assessment-pack"?[1,2,3,4,5,6,7,8,9]:product.levels,advancedBandDisclosure:"HSK 3.0 defines one unified Levels 7–9 advanced ability band; Level 7, 8 and 9 labels in this resource use the same canonical approved advanced source set.",licenseNotice:productLicenseNotice(product.id),files,sourceIndependent:product.id==="30-day-planner"||product.id==="practice-assessment-pack",assets:productAssets(product,selections),...(product.id==="practice-assessment-pack"?{audioProvenance:ASSESSMENT_AUDIO_PROVENANCE}:{})};
 }
 
 function lines(text:string,font:PDFFont,size:number,width:number){
@@ -105,13 +121,17 @@ async function makePdf(title:string,subtitle:string,sections:PdfSection[],fontBy
   const pdf=await PDFDocument.create();pdf.registerFontkit(fontkit);const font=await pdf.embedFont(new Uint8Array(fontBytes),{subset:false});
   pdf.setTitle(title);pdf.setAuthor("HSKKit");pdf.setSubject("HSK 3.0 unofficial learning resource");pdf.setKeywords(["HSK 3.0","unofficial","HSKKit"]);
   const size:[number,number]=pageSize;let page:PDFPage;let y=0;let pageNumber=0;const [pageWidth,pageHeight]=size;
-  const header=title.includes("Practice Assessment")?"HSKKit · Practice Assessment v2 · HSK 3.0 · Unofficial":"HSKKit · HSK 3.0 · Unofficial learning resource";
+  const assessmentPdf=title.includes("Practice Assessment");
+  const header=assessmentPdf?"HSKKit · Practice Assessment v2 · HSK 3.0 · Unofficial":"HSKKit · HSK 3.0 · Unofficial learning resource";
   const plannerQuickStart=title==="HSK 30-Day Planner · Quick Start";
   const contentWidth=pageWidth-75;
   const fresh=()=>{page=pdf.addPage(size);pageNumber+=1;page.drawRectangle({x:0,y:pageHeight-30,width:pageWidth,height:30,color:rgb(.04,.31,.29)});page.drawText(header,{x:32,y:pageHeight-20,size:9,font,color:rgb(1,1,1)});page.drawText(String(pageNumber),{x:pageWidth-55,y:26,size:8,font,color:rgb(.45,.5,.56)});y=pageHeight-57;};
   fresh();for(const line of wordLines(title,font,20,contentWidth)){page!.drawText(line,{x:36,y,size:20,font,color:rgb(.04,.31,.29)});y-=27;}y-=5;
-  for(const line of wordLines(subtitle,font,plannerQuickStart?11:9.5,contentWidth)){page!.drawText(line,{x:36,y,size:plannerQuickStart?11:9.5,font,color:rgb(.25,.3,.38)});y-=plannerQuickStart?16:14;}
-  for(const line of wordLines("Advanced-band disclosure: HSK 3.0 defines one unified Levels 7–9 band; Level 7/8/9 labels use the same canonical approved source set.",font,plannerQuickStart?9.5:8.5,contentWidth)){page!.drawText(line,{x:36,y,size:plannerQuickStart?9.5:8.5,font,color:rgb(.45,.28,.08)});y-=plannerQuickStart?14:12;}y-=plannerQuickStart?20:12;
+  const subtitleSize=plannerQuickStart?11:assessmentPdf?11:9.5;
+  for(const line of wordLines(subtitle,font,subtitleSize,contentWidth)){page!.drawText(line,{x:36,y,size:subtitleSize,font,color:rgb(.25,.3,.38)});y-=plannerQuickStart?16:assessmentPdf?16:14;}
+  const bandDisclosure=assessmentPdf?"Levels 7–9 are unofficial advanced practice distinctions within the unified HSK 3.0 advanced band; not separate official score bands.":"Advanced-band disclosure: HSK 3.0 defines one unified Levels 7–9 band; Level 7/8/9 labels use the same canonical approved source set.";
+  const disclosureSize=plannerQuickStart?9.5:assessmentPdf?10:8.5;
+  for(const line of wordLines(bandDisclosure,font,disclosureSize,contentWidth)){page!.drawText(line,{x:36,y,size:disclosureSize,font,color:rgb(.45,.28,.08)});y-=plannerQuickStart?14:assessmentPdf?15:12;}y-=plannerQuickStart?20:12;
   if(compact){
     for(const section of sections){
       const headingRows=wordLines(section.heading,font,13,contentWidth);
@@ -124,13 +144,51 @@ async function makePdf(title:string,subtitle:string,sections:PdfSection[],fontBy
       for(const item of rows){for(const line of item){if(y<62)fresh();page!.drawText(line,{x:44,y,size:10.5,font,color:rgb(.12,.16,.24)});y-=15;}y-=7;}
       y-=12;
     }
-  }else for(const section of sections){
-    const headingSize=plannerQuickStart?16:14,bodySize=plannerQuickStart?11.5:9.5;
-    if(section.pageBreakBefore||y<112)fresh();
-    for(const headingLine of wordLines(section.heading,font,headingSize,contentWidth)){if(y<72)fresh();page!.drawText(headingLine,{x:36,y,size:headingSize,font,color:rgb(.04,.31,.29)});y-=plannerQuickStart?23:18;}
+  }else for(const [sectionIndex,section] of sections.entries()){
+    if(!assessmentPdf){
+      const headingSize=plannerQuickStart?16:14,bodySize=plannerQuickStart?11.5:9.5;
+      const bodyLeading=plannerQuickStart?18:14,itemGap=plannerQuickStart?11:5;
+      if(section.pageBreakBefore||y<112)fresh();
+      for(const headingLine of wordLines(section.heading,font,headingSize,contentWidth)){if(y<72)fresh();page!.drawText(headingLine,{x:36,y,size:headingSize,font,color:rgb(.04,.31,.29)});y-=plannerQuickStart?23:18;}
+      y-=plannerQuickStart?7:4;
+      for(const item of section.body){for(const line of wordLines(item,font,bodySize,contentWidth-10)){if(y<58)fresh();page!.drawText(line,{x:44,y,size:bodySize,font,color:rgb(.12,.16,.24)});y-=bodyLeading;}y-=itemGap;}
+      y-=plannerQuickStart?22:10;continue;
+    }
+    const answerKey=title.includes("Answers and Explanations");
+    const scoreReport=title.includes("Score Report");
+    const compactAssessmentRole=answerKey||title.includes("Facilitator Transcripts")||scoreReport;
+    const studentAssessment=title.includes(" · Form ");
+    const headingSize=15;
+    const bodySize=answerKey||scoreReport?11.25:compactAssessmentRole||studentAssessment?11.5:12;
+    const bodyLeading=answerKey||scoreReport?16.5:studentAssessment?16.5:compactAssessmentRole?17:18;
+    const itemGap=answerKey||scoreReport?6:studentAssessment?6:compactAssessmentRole?7:9;
+    const headingRows=wordLines(section.heading,font,headingSize,contentWidth);
+    const firstItem=section.body[0]??"";
+    const firstNeed=wordLines(firstItem,font,bodySize,contentWidth-10).length*bodyLeading+itemGap;
+    const headingNeed=headingRows.length*21+4+firstNeed;
+    const writingSheet=title.includes("Answer Sheets")&&section.heading.includes("Writing Task");
+    const studentWriting=title.includes(" · Form ")&&section.heading.endsWith(" · Writing");
+    const writingNeed=writingSheet||studentWriting?headingRows.length*21+4+section.body.reduce((sum,item)=>sum+wordLines(item,font,bodySize,contentWidth-10).length*(writingSheet&&/^_{20,}$/.test(item)?20:bodyLeading)+(writingSheet&&/^_{20,}$/.test(item)?0:itemGap),0)+14:0;
+    // Keep a complete writing instruction or response area together when it fits on one page.
+    const keepWriting=(writingSheet||studentWriting)&&writingNeed<pageHeight-125&&y-writingNeed<62;
+    // An assessment's title belongs on the first usable page, not a disposable cover.
+    if((section.pageBreakBefore&&sectionIndex!==0)||y-headingNeed<62||keepWriting)fresh();
+    for(const headingLine of headingRows){page!.drawText(headingLine,{x:36,y,size:headingSize,font,color:rgb(.04,.31,.29)});y-=plannerQuickStart?23:assessmentPdf?21:18;}
     y-=plannerQuickStart?7:4;
-    for(const item of section.body){for(const line of wordLines(item,font,bodySize,contentWidth-10)){if(y<58)fresh();page!.drawText(line,{x:44,y,size:bodySize,font,color:rgb(.12,.16,.24)});y-=plannerQuickStart?18:14;}y-=plannerQuickStart?11:5;}
-    y-=plannerQuickStart?22:10;
+    for(const [itemIndex,item] of section.body.entries()){
+      const ruled=assessmentPdf&&/^_{20,}$/.test(item);
+      const objective=assessmentPdf&&/^\d+\.  A  \/  B  \/  C$/.test(item);
+      const rowLeading=ruled?20:objective?23:bodyLeading;
+      const gap=ruled?0:objective?10:itemGap;
+      const rows=wordLines(item,font,bodySize,contentWidth-10);
+      // Keep a short item intact; long paragraphs may flow with an explicit section label.
+      if(assessmentPdf&&itemIndex>0&&y-rows.length*rowLeading-gap<62&&rows.length*rowLeading+gap<pageHeight-135){
+        fresh();page!.drawText(`${section.heading} · Continued`,{x:36,y,size:12,font,color:rgb(.04,.31,.29)});y-=23;
+      }
+      for(const line of rows){if(y<62){fresh();if(assessmentPdf){page!.drawText(`${section.heading} · Continued`,{x:36,y,size:12,font,color:rgb(.04,.31,.29)});y-=23;}}page!.drawText(line,{x:44,y,size:bodySize,font,color:rgb(.12,.16,.24)});y-=rowLeading;}
+      y-=gap;
+    }
+    y-=plannerQuickStart?22:assessmentPdf?14:10;
   }
   return new Uint8Array(await pdf.save({useObjectStreams:false}));
 }
@@ -149,9 +207,9 @@ function readme(product:DigitalProduct,files:string[],manifest:ProductArtifactMa
     "Levels 1–2: recognition and short routines; 3–4: context and reconstruction; 5–6: extended evidence; 7–9: cross-text reasoning and formal response."
   ]:audio?[
     "1. Print one Level section from one Form A/B/C Student PDF and the matching Answer Sheet section.",
-    "2. Play the matching MP3 once without pausing; each numbered prompt already includes a 5-second response gap.",
+    "2. Play the matching full Form MP3 once without pausing. For one level only, use the matching Level-Audio/form-X-level-N.mp3 inside this same ZIP; each numbered prompt already includes a 5-second response gap.",
     "3. Complete Listening, Reading and Writing before opening Answers and Explanations.",
-    "4. Record /30 in the Score Report or CSV, identify the weakest skill and complete the linked practice before the next form."
+    "4. Use the Score Report rubric, then open Score-Tracker.xlsx → Attempts (the first sheet). Enter scores, missed evidence, practice and a same-level retest on separate rows; see Worked Example for a sample."
   ]:[
     "1. Read the Quick Start or guide file before opening the working files.",
     "2. Choose one HSK level and one evidence-based goal.",
@@ -162,9 +220,9 @@ function readme(product:DigitalProduct,files:string[],manifest:ProductArtifactMa
     `${product.name} · HSKKit`,"","How to use",...quickStart,
     "","Included files",...files.map(name=>`- ${name}`),"","Important",
     "This is an unofficial HSK 3.0 learning resource, not an official examination product.",
-    audio?`Three Mandarin MP3 listening tracks are included for Forms A, B and C. Playback is once at natural pace with ${audio.responsePauseSeconds}-second response pauses; exact transcripts are included.`:"Audio is not included.",
+    audio?`Three full Mandarin MP3 listening tracks and 27 matching level-only tracks are included for Forms A, B and C. Playback is once at natural pace with ${audio.responsePauseSeconds}-second response pauses; exact transcripts are included.`:"Audio is not included.",
     audio?`Audio provenance: ${audio.provider}; voices ${Object.entries(audio.voices).map(([form,voice])=>`${form}=${voice}`).join(", ")}; generated ${audio.generatedOn}.`:"",
-    audio?`Audio integrity: each MP3 is pinned by SHA-256 in manifest.json. ${audio.redistributionStatus}`:"",
+    audio?`Audio integrity: full-form MP3 SHA-256 hashes are in manifest.json; per-level MP3 hashes and source fingerprint are in Level-Audio/timing-index.json. ${audio.redistributionStatus}`:"",
     "Levels 7–9 use one unified canonical advanced source set.",
     product.id==="teacher-lesson-plan-pack"?`Licensed under this product contract: ${productLicenseNotice(product.id)}`:"Licensed for personal, non-transferable study and print use only."
   ];
@@ -556,17 +614,17 @@ function assessmentAnswerSections(selection:Selection,variant:number):PdfSection
   ];
 }
 function assessmentAnswerSheetSections(selection:Selection,variant:number):PdfSection[]{
-  const label=formLabel(variant),writingCount=selection.level>=7?3:2,linesPerTask=selection.level>=7?8:selection.level>=5?6:4;
-  const writingBody=Array.from({length:writingCount},(_,task)=>[`Task ${task+1} response (${task===0?"evidence and completion":task===1?"connection and language":"claim, evidence and counterpoint"})`,...Array.from({length:linesPerTask},()=>"________________________________________________________________________")]).flat();
+  const label=formLabel(variant),writingCount=selection.level>=7?3:2,linesPerTask=selection.level>=7?24:selection.level>=5?14:8;
+  const writingSections:PdfSection[]=Array.from({length:writingCount},(_,task)=>({heading:`Form ${label} · Level ${selection.level} · Writing Task ${task+1} / ${writingCount}`,body:["Name: ____________________   Date: ____________________",`Task ${task+1} · ${task===0?"main claim and evidence":task===1?"cross-source comparison":"claim, two-source evidence and counterpoint"}`,"Use the ruled area below for this task. Continue on clearly labeled paper if needed.",...Array.from({length:linesPerTask},()=>"________________________________________________________________________")]}));
   return [
-    {heading:`Form ${label} · Level ${selection.level} · Listening answers · 2 points each`,body:["Name: ____________________   Date: ____________________",...Array.from({length:5},(_,index)=>`${index+1}.  A  /  B  /  C`)]},
-    {heading:`Form ${label} · Level ${selection.level} · Reading answers · 1 point each`,body:Array.from({length:10},(_,index)=>`${index+1}.  A  /  B  /  C${index===6?"   (sentence/order item)":index===7?"   (information-match item)":""}`)},
-    {heading:`Form ${label} · Level ${selection.level} · Writing responses · /10`,body:writingBody}
+    {heading:`Form ${label} · Level ${selection.level} · Listening answers · 2 points each`,pageBreakBefore:true,body:["Name: ____________________   Date: ____________________",...Array.from({length:5},(_,index)=>`${index+1}.  A  /  B  /  C`)]},
+    {heading:`Form ${label} · Level ${selection.level} · Reading answers · 1 point each`,body:Array.from({length:10},(_,index)=>`${index+1}.  A  /  B  /  C`)},
+    ...writingSections
   ];
 }
-function assessmentReportSections(selection:Selection):PdfSection[]{const spec=mockAssessmentBlueprint(selection.level);return [{heading:`Level ${selection.level} · Score report`,body:["Learner: ____________________   Form: ____   Date: ____________________","Listening ____ / 10   Reading ____ / 10   Writing ____ / 10   Total ____ / 30",`Conversion: listening correct × 2; reading correct × 1; writing follows the printed Level ${selection.level} task allocation.`,`Rubric band: ${spec.band}. Suggested time: ${spec.suggestedMinutes} minutes. This is an unofficial diagnostic result, not an official HSK score.`,`Strongest evidence: ____________________   Weakest skill: listening / reading / writing`,`Weakest task family: detail / sequence / cloze / matching / insertion / inference / synthesis / counterargument`]},{heading:`Level ${selection.level} · Weakness → recommended practice`,body:[`Listening pathway: ${spec.recommendations.listening.join(" ")}`,`Reading pathway: ${spec.recommendations.reading.join(" ")}`,`Writing pathway: ${spec.recommendations.writing.join(" ")}`,"Select only the pathway matching the weakest skill and task family, complete it twice, then use the next form as a fresh check."]}];}
+function assessmentReportSections(selection:Selection):PdfSection[]{const spec=mockAssessmentBlueprint(selection.level);return [{heading:`Level ${selection.level} · Score report`,body:["Learner: ____________________   Form: ____   Date: ____________________","Listening ____ / 10   Reading ____ / 10   Writing ____ / 10   Total ____ / 30",`Conversion: listening correct × 2; reading correct × 1; writing follows the printed Level ${selection.level} task allocation.`,`Rubric band: ${spec.band}. Suggested time: ${spec.suggestedMinutes} minutes. This is an unofficial diagnostic result, not an official HSK score.`,`Strongest evidence: ____________________   Weakest skill: listening / reading / writing`,`Weakest task family (copy the exact label from the student paper): ________________________________`]},{heading:`Level ${selection.level} · Weakness → recommended practice`,body:[`Listening pathway: ${spec.recommendations.listening.join(" ")}`,`Reading pathway: ${spec.recommendations.reading.join(" ")}`,`Writing pathway: ${spec.recommendations.writing.join(" ")}`,"Choose the weakest skill's pathway; practise twice, then retest with the next form."]}];}
 
-export async function generateDifferentiatedProductArtifact(productId:DigitalProductId|string,fontBytes:Uint8Array,_emojiFontBytes:Uint8Array,generationVersion=generationVersionForProduct(productId),assessmentAudio?:Partial<Record<AssessmentForm,Uint8Array>>){
+export async function generateDifferentiatedProductArtifact(productId:DigitalProductId|string,fontBytes:Uint8Array,_emojiFontBytes:Uint8Array,generationVersion=generationVersionForProduct(productId),assessmentAudio?:Partial<Record<AssessmentForm,Uint8Array>>,assessmentLevelAudio?:AssessmentLevelAudio){
   const product=digitalProduct(productId);if(!product||!(product.category==="resource"||product.category==="teacher"))throw new Error("INVALID_DIFFERENTIATED_PRODUCT");
   // Vocabulary truth has six discrete levels plus one canonical Advanced 7–9 band.
   // Level-driven teaching resources still expose honest Level 8/9 views backed by
@@ -650,16 +708,23 @@ export async function generateDifferentiatedProductArtifact(productId:DigitalPro
   if(product.id==="practice-assessment-pack"){
     const forms=(["A","B","C"] as const);
     await validateAssessmentAudio(assessmentAudio);
+    // The production delivery route exposes one ZIP. Keep the level-by-level companion tracks
+    // inside that same ZIP so every buyer receives them without a second inaccessible object.
+    const levelAudio=await validateAssessmentLevelAudio(assessmentAudio,assessmentLevelAudio);
     const studentFiles:Array<{name:string;data:Uint8Array}>=[];
     for(let variant=0;variant<3;variant++)studentFiles.push({name:`HSKKit-Practice-Assessment-${formLabel(variant)}-Student.pdf`,data:await makePdf(`HSK Level-Aligned Practice Assessment v2 · Form ${formLabel(variant)}`,"Original Level 1–9 diagnostic practice with differentiated listening, reading and writing tasks. This is not an official HSK examination and does not claim an official blueprint or score.",selections.flatMap(selection=>assessmentStudentSections(selection,variant)),fontBytes)});
     const answerSheets=await makePdf("HSK Level-Aligned Practice Assessment v2 · Answer Sheets","Print one Level section for each learner. Objective responses and writing space stay separate from the student paper.",selections.flatMap(selection=>[0,1,2].flatMap(variant=>assessmentAnswerSheetSections(selection,variant))),fontBytes);
     const answers=await makePdf("HSK Level-Aligned Practice Assessment v2 · Answers and Explanations","Every objective answer includes evidence and distractor analysis. Apply only the rubric band named for that level. Scores are unofficial diagnostics.",selections.flatMap(selection=>[0,1,2].flatMap(variant=>assessmentAnswerSections(selection,variant))),fontBytes);
     const transcripts=await makePdf("HSK Level-Aligned Practice Assessment v2 · Facilitator Transcripts","Exact spoken transcript for each matching MP3. Playback: once at natural pace, with five seconds of silence after every numbered question. Synthetic voice provenance is recorded in README and manifest.",forms.map(form=>({heading:`Form ${form} · exact MP3 transcript`,body:mockAssessmentListeningScript(form).split("\n")})),fontBytes);
     const scoreReport=await makePdf("HSK Level-Aligned Practice Assessment v2 · Score Report","Record evidence by skill, identify the weakest result and complete the linked practice before attempting the next form.",selections.flatMap(assessmentReportSections),fontBytes);
-    const scoreRows=["form,level,date,listening_0_10,reading_0_10,writing_0_10,total_0_30,weakest_skill,recommended_practice,next_review_date",...forms.flatMap(form=>selections.map(selection=>`${form},${selection.level},,,,,,,,`))];
     const audioFiles=forms.map(form=>({name:`HSKKit-Practice-Assessment-${form}-Listening.mp3`,data:assessmentAudio![form]!}));
-    const audioNotice=encoder.encode(["HSKKit Practice Assessment Pack v2 · Audio Source and License Notice","","Synthetic voice engine: Piper","Voice model: zh_CN-chaowen-medium (Chaowen)","Voice repository: https://huggingface.co/rhasspy/piper-voices/tree/main/zh/zh_CN/chaowen/medium","Repository license: MIT (see repository license metadata)","Model card: https://huggingface.co/rhasspy/piper-voices/blob/main/zh/zh_CN/chaowen/medium/MODEL_CARD","Training dataset: Chinese Standard Mandarin Speech Corpus","Dataset source: https://www.data-baker.com/open_source.html","Dataset license in model card: CC0-1.0","Generated by HSKKit on 2026-08-26. Synthetic voice; no natural person is represented or imitated.","Each numbered question is followed by five seconds of encoded response silence.","File identity is pinned by SHA-256 in manifest.json."].join("\r\n"));
-    const files=[...studentFiles,...audioFiles,{name:"HSKKit-Practice-Assessment-Audio-Source-License.txt",data:audioNotice},{name:"HSKKit-Practice-Assessment-Answer-Sheets.pdf",data:answerSheets},{name:"HSKKit-Practice-Assessment-Answers-Explanations.pdf",data:answers},{name:"HSKKit-Practice-Assessment-Facilitator-Transcripts.pdf",data:transcripts},{name:"HSKKit-Practice-Assessment-Score-Report.pdf",data:scoreReport},{name:"HSKKit-Practice-Assessment-Score-Tracker.csv",data:encoder.encode(scoreRows.join("\r\n"))},{name:"HSKKit-Practice-Assessment-Score-Tracker.xlsx",data:generatePracticeAssessmentScoreWorkbook()}];const manifest=manifestFor(product,files.map(file=>file.name),selections,generationVersion);return {bytes:packageZip(product,files,manifest),format:"zip" as const,manifest};
+    const audioNotice=encoder.encode(["HSKKit Practice Assessment Pack v2 · Audio Source and License Notice","","Synthetic voice engine: Piper","Voice model: zh_CN-chaowen-medium (Chaowen)","Voice repository: https://huggingface.co/rhasspy/piper-voices/tree/main/zh/zh_CN/chaowen/medium","Repository license: MIT (see repository license metadata)","Model card: https://huggingface.co/rhasspy/piper-voices/blob/main/zh/zh_CN/chaowen/medium/MODEL_CARD","Training dataset: Chinese Standard Mandarin Speech Corpus","Dataset source: https://www.data-baker.com/open_source.html","Dataset license in model card: CC0-1.0","Generated by HSKKit on 2026-10-04. Synthetic voice; no natural person is represented or imitated.","Each numbered question is followed by five seconds of encoded response silence.","File identity is pinned by SHA-256 in manifest.json."].join("\r\n"));
+    const files=[...studentFiles,...audioFiles,...levelAudio.files,{name:"HSKKit-Practice-Assessment-Audio-Source-License.txt",data:audioNotice},{name:"HSKKit-Practice-Assessment-Answer-Sheets.pdf",data:answerSheets},{name:"HSKKit-Practice-Assessment-Answers-Explanations.pdf",data:answers},{name:"HSKKit-Practice-Assessment-Facilitator-Transcripts.pdf",data:transcripts},{name:"HSKKit-Practice-Assessment-Score-Report.pdf",data:scoreReport},{name:"HSKKit-Practice-Assessment-Score-Tracker.xlsx",data:generatePracticeAssessmentScoreWorkbook()}];
+    const manifest=manifestFor(product,files.map(file=>file.name),selections,generationVersion);
+    if(manifest.audioProvenance){
+      manifest.audioProvenance={...manifest.audioProvenance,sourceSha256:levelAudio.index.sourceSha256,levelTrackCount:27,sha256:Object.fromEntries(await Promise.all(forms.map(async form=>[form,await sha256Hex(assessmentAudio![form]!)]))) as Record<AssessmentForm,string>};
+    }
+    return {bytes:packageZip(product,files,manifest),format:"zip" as const,manifest};
   }
   // Every printed lesson word is the exact authorized catalog object represented by this artifact manifest.
   const pack=buildTeacherLessonPack(teacherLessonSources(selections));
