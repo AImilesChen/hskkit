@@ -103,6 +103,7 @@ export default function LearningDashboard({ mode }: { mode: "today" | "review" |
   const dataRef = useRef<Data | null>(null);
   const reviewPlayback = useRef<{ cardKey: string; coordinator: PlaybackVerificationCoordinator } | null>(null);
   const [reviewPlaybackState, setReviewPlaybackState] = useState<PlaybackVerificationState>("idle");
+  const [reviewPlaybackEndedKey, setReviewPlaybackEndedKey] = useState<string | null>(null);
 
   async function load(manualRetry = false) {
     setError("");
@@ -323,6 +324,7 @@ export default function LearningDashboard({ mode }: { mode: "today" | "review" |
     reviewPlayback.current?.coordinator.reset();
     reviewPlayback.current = null;
     setReviewPlaybackState("idle");
+    setReviewPlaybackEndedKey(null);
   }, [currentReviewCardId, currentReviewCardRevision, reviewIds]);
 
   async function retryPending(current: Data | null = data) {
@@ -508,6 +510,7 @@ export default function LearningDashboard({ mode }: { mode: "today" | "review" |
   }
   async function startFormalPlayback(card: Card) {
     setAudioError("");
+    setReviewPlaybackEndedKey(null);
     const cardKey = `${card.id}:${card.revision}`;
     const coordinator = new PlaybackVerificationCoordinator({
       onStateChange: setReviewPlaybackState,
@@ -531,6 +534,7 @@ export default function LearningDashboard({ mode }: { mode: "today" | "review" |
   async function completeFormalPlayback(card: Card) {
     const active = reviewPlayback.current;
     if (!active || active.cardKey !== `${card.id}:${card.revision}`) { setAudioError(playbackVerificationMessage("AUDIO_PLAYBACK_REQUIRED", "complete")); return; }
+    setReviewPlaybackEndedKey(active.cardKey);
     try {
       if (await active.coordinator.finish()) setAudioError("");
     } catch (error) {
@@ -758,6 +762,9 @@ export default function LearningDashboard({ mode }: { mode: "today" | "review" |
   const currentAnswerCorrect = retryFeedback?.correct ?? false;
   const isMistakeRetry = Boolean(activeCard?.isMistake && !activeCard.legacyReview && activeCard.answerMode !== "self_recall");
   const canAnswerReview = Boolean(activeCard && !activeCard.legacyReview && activeCard.answerMode !== "self_recall");
+  const reviewAudioEnded = Boolean(activeCard && reviewPlaybackEndedKey === `${activeCard.id}:${activeCard.revision}` && reviewPlaybackState !== "error");
+  const canSelectReviewAnswer = Boolean(activeCard && (!activeCard.playbackRequired || activeCard.playbackReady || reviewAudioEnded));
+  const ratingAdvanceLabel = displayReviewedCount + 1 >= sessionTotal ? "Save & finish" : "Save & next question";
   const chooseReviewScope = (scope: ReviewLevelScope) => {
     setSelectedReviewScope(scope);
     const url = new URL(window.location.href);
@@ -824,10 +831,10 @@ export default function LearningDashboard({ mode }: { mode: "today" | "review" |
             <h2 className="text-2xl font-bold leading-snug tracking-tight text-slate-950 sm:text-3xl">{activeCard.prompt}</h2>
             {activeCard.audioSrc && <div className="mt-5"><p className="mb-2 text-sm font-semibold text-slate-700">Original recording</p><AudioPlaybackControl key={`${activeCard.id}:${activeCard.revision}:${activeCard.audioSrc}`} asset={{ id: `${activeCard.id}:${activeCard.revision}`, src: activeCard.audioSrc, sourceLabel: "Synthesized listening audio" }} beforePlay={() => startFormalPlayback(activeCard)} onComplete={() => void completeFormalPlayback(activeCard)} onStateChange={(state) => { if (state === "paused") reviewPlayback.current?.coordinator.pause(); else if (state === "playing") reviewPlayback.current?.coordinator.resume(); }} onFailure={() => { reviewPlayback.current?.coordinator.fail(); setAudioError("Audio playback failed. Retry the recording before answering."); }} verificationState={reviewPlaybackState === "preparing" || reviewPlaybackState === "verifying" ? "verifying" : activeCard.playbackReady ? "verified" : "idle"} showProgress /></div>}
             {!activeCard.audioSrc && activeCard.dimension !== "reading" && <p className="mt-4 rounded-xl bg-amber-50 p-3 text-sm text-amber-900">The original recording is not available for this older item. It cannot be treated as a full listening retry.</p>}
-            {!activeCard.playbackReady && activeCard.playbackRequired && <p className="mt-3 text-sm font-semibold text-amber-700">Finish audio playback before answering.</p>}
+            {!activeCard.playbackReady && activeCard.playbackRequired && <p className="mt-3 text-sm font-semibold text-amber-700">{reviewAudioEnded ? "Audio finished. Choose an answer now; checking will unlock after playback verification." : "Finish audio playback before answering."}</p>}
 
             {canAnswerReview && !answerChecked ? <div className="mt-7">
-              {activeCard.answerMode === "choice" ? <fieldset disabled={activeCard.playbackRequired && !activeCard.playbackReady}><legend className="font-bold text-slate-950">Choose an answer</legend><div className="mt-3 grid gap-3">{activeCard.choices.map((choice) => <label key={choice.key} className={`flex min-h-[52px] cursor-pointer items-center gap-3 rounded-xl border px-4 py-3 transition ${selectedAnswer === choice.key ? "border-blue-600 bg-blue-50" : "border-slate-200 hover:border-slate-400"}`}><input type="radio" name={`review-${activeCard.id}`} value={choice.key} checked={selectedAnswer === choice.key} onChange={() => setSelectedAnswer(choice.key)} /><span><strong className="mr-2">{choice.key}.</strong>{choice.text}</span></label>)}</div></fieldset> : <><label className="font-bold text-slate-950" htmlFor={`review-answer-${activeCard.id}`}>Type your answer</label><textarea id={`review-answer-${activeCard.id}`} maxLength={180} value={reviewDraft} disabled={activeCard.playbackRequired && !activeCard.playbackReady} onChange={(event) => setReviewDraft(event.target.value)} className="mt-3 min-h-[112px] w-full rounded-xl border border-slate-300 p-4 text-base focus:border-blue-600 focus:outline-none focus:ring-4 focus:ring-blue-100" /></>}
+              {activeCard.answerMode === "choice" ? <fieldset disabled={!canSelectReviewAnswer}><legend className="font-bold text-slate-950">Choose an answer</legend><div className="mt-3 grid gap-3">{activeCard.choices.map((choice) => <label key={choice.key} className={`flex min-h-[52px] cursor-pointer items-center gap-3 rounded-xl border px-4 py-3 transition ${selectedAnswer === choice.key ? "border-blue-600 bg-blue-50" : "border-slate-200 hover:border-slate-400"}`}><input type="radio" name={`review-${activeCard.id}`} value={choice.key} checked={selectedAnswer === choice.key} onChange={() => setSelectedAnswer(choice.key)} /><span><strong className="mr-2">{choice.key}.</strong>{choice.text}</span></label>)}</div></fieldset> : <><label className="font-bold text-slate-950" htmlFor={`review-answer-${activeCard.id}`}>Type your answer</label><textarea id={`review-answer-${activeCard.id}`} maxLength={180} value={reviewDraft} disabled={!canSelectReviewAnswer} onChange={(event) => setReviewDraft(event.target.value)} className="mt-3 min-h-[112px] w-full rounded-xl border border-slate-300 p-4 text-base focus:border-blue-600 focus:outline-none focus:ring-4 focus:ring-blue-100" /></>}
               <button disabled={!(activeCard.answerMode === "choice" ? selectedAnswer : reviewDraft.trim()) || !activeCard.playbackReady || reviewSaving} onClick={() => void submitRetry(activeCard)} className="mt-5 min-h-[48px] w-full rounded-xl bg-blue-600 px-5 py-3 font-bold text-white disabled:cursor-not-allowed disabled:opacity-40 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-blue-200">{reviewSaving ? "Checking…" : "Check answer"}</button>
             </div> : !revealed[activeCard.id] && !answerChecked ? <div className="mt-7">{activeCard.legacyReview && <p className="mb-3 rounded-xl bg-amber-50 p-3 text-sm text-amber-900">This older saved item has no complete original question. It is available only as a memory prompt and will not be presented as a real mistake retry.</p>}<p className="mb-3 text-sm text-slate-600">Think of the answer before revealing it. There is no answer field in this incomplete legacy review.</p><button className="min-h-[48px] w-full rounded-xl bg-blue-600 px-5 py-3 font-bold text-white disabled:cursor-not-allowed disabled:opacity-40 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-blue-200" disabled={!activeCard.playbackReady} onClick={() => setRevealed((current) => ({ ...current, [activeCard.id]: true }))}>Reveal answer</button></div> : null}
 
@@ -849,7 +856,7 @@ export default function LearningDashboard({ mode }: { mode: "today" | "review" |
                 {activeCard.formalAudioSrc && activeCard.formalAudioSrc !== activeCard.audioSrc && <div className="mt-4"><p className="mb-2 text-sm font-semibold text-slate-700">Formal recording</p><audio controls preload="none" src={activeCard.formalAudioSrc} className="max-w-full" /></div>}
               </section>}
               {isMistakeRetry && answerChecked && <><p className="mt-4 text-sm text-slate-600">AI explanation available after you retry. It uses this saved question and feedback and costs one AI credit.</p><AiAssist feature="explanation" reviewCardId={activeCard.id} /></>}
-              {isMistakeRetry && answerChecked ? <button disabled={reviewSaving} onClick={() => continueAfterRetry(activeCard)} className="mt-5 min-h-[48px] w-full rounded-xl bg-blue-600 px-5 py-3 font-bold text-white disabled:cursor-not-allowed disabled:opacity-50 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-blue-200">Continue</button> : <div className="mt-5"><p className="font-bold text-slate-950">{answerChecked ? "How well did you remember it after answering?" : "How well did you remember it before revealing?"}</p><div className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-4">{reviewGradeOptions(activeCard.ease, activeCard.intervalDays).map((option) => <button disabled={reviewSaving} key={option.grade} onClick={() => void grade(activeCard, option.grade)} className="min-h-[76px] rounded-xl border border-slate-200 bg-white px-3 py-3 text-left transition hover:border-blue-500 hover:bg-blue-50 disabled:cursor-not-allowed disabled:opacity-50 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-blue-200"><strong className="block text-slate-950">{option.label}</strong><span className="mt-1 block text-xs text-slate-500">{option.hint}</span></button>)}</div></div>}
+              {isMistakeRetry && answerChecked ? <button disabled={reviewSaving} onClick={() => continueAfterRetry(activeCard)} className="mt-5 min-h-[48px] w-full rounded-xl bg-blue-600 px-5 py-3 font-bold text-white disabled:cursor-not-allowed disabled:opacity-50 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-blue-200">Continue</button> : <div className="mt-5"><p className="font-bold text-slate-950">{answerChecked ? "How well did you remember it after answering?" : "How well did you remember it before revealing?"}</p><p className="mt-1 text-sm text-slate-600">Choose a rating to save this answer and {displayReviewedCount + 1 >= sessionTotal ? "finish the review" : "open the next question"}.</p><div className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-4">{reviewGradeOptions(activeCard.ease, activeCard.intervalDays).map((option) => <button disabled={reviewSaving} key={option.grade} onClick={() => void grade(activeCard, option.grade)} className="min-h-[92px] rounded-xl border border-slate-200 bg-white px-3 py-3 text-left transition hover:border-blue-500 hover:bg-blue-50 disabled:cursor-not-allowed disabled:opacity-50 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-blue-200"><strong className="block text-slate-950">{option.label}</strong><span className="mt-1 block text-xs text-slate-500">{option.hint}</span><span className="mt-2 block text-xs font-bold text-blue-700">{ratingAdvanceLabel} →</span></button>)}</div></div>}
             </div>}
           </div>
         </article>
