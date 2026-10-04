@@ -1,5 +1,6 @@
 import type { Attempt } from "./domain.ts";
 import { ADVANCED_LISTENING_LESSONS, GRAMMAR_LESSONS, READING_LESSONS, type Step7Exercise } from "./step7-content.ts";
+import { LISTENING_LIBRARY_QUESTIONS } from "./listening-library.ts";
 
 export type ReviewAnswerMode = "choice" | "text" | "self_recall";
 export interface ReviewSnapshot {
@@ -40,7 +41,8 @@ export function reviewSnapshotFromStep7Exercise(exercise: Step7Exercise): Review
     context: reading.passage, prompt: exercise.prompt, answerMode: optionsMode(exercise.options), options: exercise.options ? { ...exercise.options } : undefined,
     correctAnswer: exercise.correctAnswer, correctAnswerText: exercise.options?.[exercise.correctAnswer] ?? exercise.correctAnswer, explanation: exercise.explanation,
   };
-  const listening = ADVANCED_LISTENING_LESSONS.find((lesson) => lesson.exercise.contentId === exercise.contentId);
+  const listening = [...ADVANCED_LISTENING_LESSONS, ...LISTENING_LIBRARY_QUESTIONS]
+    .find((lesson) => lesson.exercise.contentId === exercise.contentId && lesson.exercise.contentVersion === exercise.contentVersion);
   if (listening) return {
     level: listening.level, levelBand: band(listening.level, listening.levelBand), skillLabel: "Listening", topic: listening.title,
     instruction: listening.instruction, prompt: exercise.prompt, answerMode: optionsMode(exercise.options), options: exercise.options ? { ...exercise.options } : undefined,
@@ -52,8 +54,8 @@ export function reviewSnapshotFromStep7Exercise(exercise: Step7Exercise): Review
 
 export function reviewSnapshotForAttempt(attempt: Attempt): ReviewSnapshot | undefined {
   if (attempt.reviewSnapshot) return { ...attempt.reviewSnapshot, options: attempt.reviewSnapshot.options ? { ...attempt.reviewSnapshot.options } : undefined };
-  const step7 = [...GRAMMAR_LESSONS, ...READING_LESSONS, ...ADVANCED_LISTENING_LESSONS]
-    .map((lesson) => lesson.exercise).find((exercise) => exercise.contentId === attempt.contentId);
+  const step7 = [...GRAMMAR_LESSONS, ...READING_LESSONS, ...ADVANCED_LISTENING_LESSONS, ...LISTENING_LIBRARY_QUESTIONS]
+    .map((lesson) => lesson.exercise).find((exercise) => exercise.contentId === attempt.contentId && exercise.contentVersion === attempt.contentVersion);
   if (step7 && step7.contentVersion === attempt.contentVersion) return reviewSnapshotFromStep7Exercise(step7);
   return undefined;
 }
