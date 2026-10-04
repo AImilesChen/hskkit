@@ -1,0 +1,138 @@
+import assert from "node:assert/strict";
+import { readFile } from "node:fs/promises";
+import test from "node:test";
+
+import { addWordToReview, buildDailySession, emptyLearningState } from "../src/lib/learning/domain.ts";
+import { trustedTodayAudioExercise } from "../src/lib/learning/audio.ts";
+import { selectTodayContent, todayWordHistory } from "../src/lib/learning/today-content.ts";
+import { getWordBySlug } from "../src/lib/dictionary/catalog.ts";
+
+const now = "2026-10-04T09:00:00.000Z";
+
+function firstDay() {
+  const content = selectTodayContent(2, 1);
+  assert.equal(content.status, "ready");
+  const built = buildDailySession(emptyLearningState(), {
+    ownerId: "learner", localDay: "2026-10-04", ruleVersion: "today-v10", now,
+    dailyContent: content, budgetMinutes: 20, newWordCount: 1, listeningEnabled: true,
+  });
+  return { content, session: built.session };
+}
+
+test("Today has a larger usable pool and each planned word opens a published study page", () => {
+  const content = selectTodayContent(2, 5);
+  assert.equal(content.status, "ready");
+  if (content.status !== "ready") return;
+  assert.equal(content.items.length, 5);
+  assert.equal(new Set(content.items.map((item) => item.contentId)).size, 5);
+  for (const item of content.items) {
+    assert.equal(getWordBySlug(item.studySlug).status, "published");
+    if (item.audioSrc) {
+      const listening = trustedTodayAudioExercise(item.assetId, "audio");
+      assert.equal(listening?.contentId, item.contentId);
+      assert.equal(listening?.voiceText, item.hanzi);
+    }
+  }
+});
+
+test("unfinished word continues tomorrow, with a new word after it and matching listening identity", () => {
+  const { content, session } = firstDay();
+  assert.equal(content.status, "ready");
+  if (content.status !== "ready") return;
+  const unfinished = { ...session, items: session.items.map((item) => item.kind === "learn" ? { ...item, status: "completed" as const } : item) };
+  const state = { ...emptyLearningState(), dailySessions: [unfinished] };
+  const history = todayWordHistory(state.dailySessions, "learner", "2026-10-05", 2);
+  const next = selectTodayContent(2, 1, { ...history, listeningEnabled: true });
+  assert.equal(next.status, "ready");
+  if (next.status !== "ready") return;
+  assert.equal(next.items[0].contentId, content.item.contentId);
+  assert.equal(next.items[0].isContinuing, true);
+  assert.equal(next.items.filter((item) => !item.isContinuing).length, 1);
+  const built = buildDailySession(state, {
+    ownerId: "learner", localDay: "2026-10-05", ruleVersion: "today-v10", now: "2026-10-05T09:00:00.000Z",
+    dailyContent: next, budgetMinutes: 20, newWordCount: 1, listeningEnabled: true,
+  });
+  const continued = built.session.items.find((item) => item.kind === "learn" && item.contentId === content.item.contentId);
+  assert.equal(continued?.isContinuing, true);
+  assert.match(continued?.title ?? "", /^Continue learning /);
+  assert.ok(built.session.items.some((item) => item.kind === "listen" && item.contentId === continued?.contentId));
+});
+
+test("completed word is not assigned as new tomorrow, but today's saved selection stays fixed", () => {
+  const { content, session } = firstDay();
+  assert.equal(content.status, "ready");
+  if (content.status !== "ready") return;
+  const finished = { ...session, items: session.items.map((item) => item.kind === "learn" || item.kind === "listen" ? { ...item, status: "completed" as const } : item) };
+  const sameDay = todayWordHistory([finished], "learner", "2026-10-04", 2);
+  const frozen = selectTodayContent(2, 3, sameDay);
+  assert.equal(frozen.status, "ready");
+  if (frozen.status !== "ready") return;
+  assert.deepEqual(frozen.items.map((item) => item.contentId), [content.item.contentId]);
+  const reconfigured = selectTodayContent(2, 3, { ...sameDay, freezePinned: false });
+  assert.equal(reconfigured.status, "ready");
+  if (reconfigured.status !== "ready") return;
+  assert.equal(reconfigured.items.length, 3);
+  const tomorrow = todayWordHistory([finished], "learner", "2026-10-05", 2);
+  const next = selectTodayContent(2, 1, tomorrow);
+  assert.equal(next.status, "ready");
+  if (next.status !== "ready") return;
+  assert.notEqual(next.item.contentId, content.item.contentId);
+  assert.equal(next.item.isContinuing, undefined);
+});
+
+test("an unfinished word survives a later day with no room for a Learn step", () => {
+  const { content, session } = firstDay();
+  assert.equal(content.status, "ready");
+  if (content.status !== "ready") return;
+  const noRoom = {
+    ...session, id: "review-only-day", localDay: "2026-10-05", startLevel: 2,
+    items: session.items.filter((item) => item.kind === "summary"),
+  };
+  const history = todayWordHistory([session, noRoom], "learner", "2026-10-06", 2);
+  const next = selectTodayContent(2, 1, history);
+  assert.equal(next.status, "ready");
+  if (next.status !== "ready") return;
+  assert.equal(next.items[0].contentId, content.item.contentId);
+  assert.equal(next.items[0].isContinuing, true);
+});
+
+test("words without a verified recording stay in Learn without a broken listening step", () => {
+  const content = selectTodayContent(6, 1, { listeningEnabled: true });
+  assert.equal(content.status, "ready");
+  if (content.status !== "ready") return;
+  assert.equal(content.item.audioSrc, undefined);
+  const built = buildDailySession(emptyLearningState(), {
+    ownerId: "reading-only", localDay: "2026-10-04", ruleVersion: "today-v10", now,
+    dailyContent: content, budgetMinutes: 20, newWordCount: 1, listeningEnabled: true,
+  });
+  assert.equal(built.session.items.filter((item) => item.kind === "learn").length, 1);
+  assert.equal(built.session.items.filter((item) => item.kind === "listen").length, 0);
+});
+
+test("exhausted Today pool gives an honest empty state instead of restarting at the first word", () => {
+  const completed: string[] = [];
+  for (let batch = 0; batch < 30; batch++) {
+    const content = selectTodayContent(2, 5, { completedContentIds: completed });
+    if (content.status === "empty") {
+      assert.equal(content.code, "NO_NEW_WORDS");
+      return;
+    }
+    completed.push(...content.items.map((item) => item.contentId));
+  }
+  assert.fail("Today kept reusing completed words");
+});
+
+test("completing a Today word schedules one later reading review and replays safely", async () => {
+  const word = {
+    assetId: "hsk3.word.l2.0368.v1", contentId: "word:hsk3.word.l2.0368.v1",
+    contentVersion: "hsk3-content-truth-v5:2026.08.21-batch1", level: 2, levelBand: "2",
+    hanzi: "旅行", traditional: "旅行", pinyin: "lǚxíng", meaning: "travel",
+  };
+  const dueAt = "2026-10-05T09:00:00.000Z";
+  const first = addWordToReview(emptyLearningState(), { word, observedAt: now, dueAt });
+  assert.equal(first.cards.length, 1);
+  assert.equal(first.cards[0].dueAt, dueAt);
+  assert.equal(addWordToReview(first, { word, observedAt: now, dueAt }).cards.length, 1);
+  const route = await readFile(new URL("../src/app/api/v1/learning/route.ts", import.meta.url), "utf8");
+  assert.match(route, /state = addWordToReview\(state, \{ word: completedLearnContext\.current, observedAt: completedAt, dueAt:/);
+});
