@@ -15,8 +15,11 @@ async function hmac(secret: string, value: string) {
 }
 export async function sha256Hex(value: string | Uint8Array) {
   const source = typeof value === "string" ? encoder.encode(value) : value;
-  const buffer = new ArrayBuffer(source.byteLength);
-  new Uint8Array(buffer).set(source);
+  // R2 arrayBuffer() returns an exact, owned ArrayBuffer. Avoid duplicating a
+  // 60–70 MB product ZIP while the export worker or download handler hashes it.
+  const buffer = source.buffer instanceof ArrayBuffer && source.byteOffset === 0 && source.byteLength === source.buffer.byteLength
+    ? source.buffer
+    : source.slice().buffer;
   return [...new Uint8Array(await crypto.subtle.digest("SHA-256", buffer))].map((byte) => byte.toString(16).padStart(2, "0")).join("");
 }
 export type DownloadTokenPayload = { jobId: string; userId: string; jti: string; exp: number };
