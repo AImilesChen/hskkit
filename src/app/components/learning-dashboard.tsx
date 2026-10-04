@@ -304,6 +304,15 @@ export default function LearningDashboard({ mode }: { mode: "today" | "review" |
     setReviewedCount(0);
   }, [data, entryIntent, entryResolved, mode, reviewIds, reviewMinutes]);
 
+  const currentReviewCardId = mode === "review" && data && reviewIds
+    ? entryIntent.kind === "today"
+      ? activeTodayReviewCardId(reviewIds, new Set(data.session.items
+        .filter((item) => (data.session.reviewItemIds ?? []).includes(item.id) && item.kind === "review" && item.status === "completed")
+        .map((item) => item.reviewCardId).filter((id): id is string => Boolean(id))))
+      : activeReviewCardId(reviewIds, reviewedCount)
+    : null;
+  const currentReviewCardRevision = data?.cards.find((card) => card.id === currentReviewCardId)?.revision;
+
   useEffect(() => {
     setSelectedAnswer("");
     setReviewDraft("");
@@ -313,7 +322,8 @@ export default function LearningDashboard({ mode }: { mode: "today" | "review" |
     setAudioError("");
     reviewPlayback.current?.coordinator.reset();
     reviewPlayback.current = null;
-  }, [reviewedCount, reviewIds]);
+    setReviewPlaybackState("idle");
+  }, [currentReviewCardId, currentReviewCardRevision, reviewIds]);
 
   async function retryPending(current: Data | null = data) {
     if (!current?.queueBinding) return;
@@ -812,7 +822,7 @@ export default function LearningDashboard({ mode }: { mode: "today" | "review" |
             {activeCard.instruction && <p className="mb-4 rounded-xl bg-blue-50 p-4 text-sm leading-6 text-blue-950">{activeCard.instruction}</p>}
             {activeCard.context && <p className="mb-5 rounded-2xl bg-slate-50 p-5 text-lg leading-8 text-slate-900" lang="zh-Hans">{activeCard.context}</p>}
             <h2 className="text-2xl font-bold leading-snug tracking-tight text-slate-950 sm:text-3xl">{activeCard.prompt}</h2>
-            {activeCard.audioSrc && <div className="mt-5"><p className="mb-2 text-sm font-semibold text-slate-700">Original recording</p><AudioPlaybackControl asset={{ id: `${activeCard.id}:${activeCard.revision}`, src: activeCard.audioSrc, sourceLabel: "Synthesized listening audio" }} beforePlay={() => startFormalPlayback(activeCard)} onComplete={() => void completeFormalPlayback(activeCard)} onStateChange={(state) => { if (state === "paused") reviewPlayback.current?.coordinator.pause(); else if (state === "playing") reviewPlayback.current?.coordinator.resume(); }} onFailure={() => { reviewPlayback.current?.coordinator.fail(); setAudioError("Audio playback failed. Retry the recording before answering."); }} verificationState={reviewPlaybackState === "preparing" || reviewPlaybackState === "verifying" ? "verifying" : activeCard.playbackReady ? "verified" : "idle"} showProgress /></div>}
+            {activeCard.audioSrc && <div className="mt-5"><p className="mb-2 text-sm font-semibold text-slate-700">Original recording</p><AudioPlaybackControl key={`${activeCard.id}:${activeCard.revision}:${activeCard.audioSrc}`} asset={{ id: `${activeCard.id}:${activeCard.revision}`, src: activeCard.audioSrc, sourceLabel: "Synthesized listening audio" }} beforePlay={() => startFormalPlayback(activeCard)} onComplete={() => void completeFormalPlayback(activeCard)} onStateChange={(state) => { if (state === "paused") reviewPlayback.current?.coordinator.pause(); else if (state === "playing") reviewPlayback.current?.coordinator.resume(); }} onFailure={() => { reviewPlayback.current?.coordinator.fail(); setAudioError("Audio playback failed. Retry the recording before answering."); }} verificationState={reviewPlaybackState === "preparing" || reviewPlaybackState === "verifying" ? "verifying" : activeCard.playbackReady ? "verified" : "idle"} showProgress /></div>}
             {!activeCard.audioSrc && activeCard.dimension !== "reading" && <p className="mt-4 rounded-xl bg-amber-50 p-3 text-sm text-amber-900">The original recording is not available for this older item. It cannot be treated as a full listening retry.</p>}
             {!activeCard.playbackReady && activeCard.playbackRequired && <p className="mt-3 text-sm font-semibold text-amber-700">Finish audio playback before answering.</p>}
 

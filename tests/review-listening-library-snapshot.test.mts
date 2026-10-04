@@ -39,3 +39,14 @@ test("an already-saved same-version listening-library mistake without a snapshot
 test("a different-version listening-library mistake never receives a possibly wrong recording", () => {
   assert.equal(resolvedReviewSnapshotForAttempt({ ...wrongAttempt(), contentVersion: "unknown-version" }), undefined);
 });
+
+test("a saved listening snapshot cannot replace the recording or answer of its versioned question", () => {
+  const original = reviewSnapshotFromStep7Exercise(question!.exercise)!;
+  const corrupted = { ...original, audioSrc: "/audio/formal/word-mai-v1.mp3", audioText: "买", correctAnswer: "Z" };
+  const recovered = resolvedReviewSnapshotForAttempt({ ...wrongAttempt(), reviewSnapshot: corrupted });
+  assert.equal(recovered?.audioSrc, question!.audioSrc);
+  assert.equal(recovered?.audioText, question!.voiceText);
+  assert.equal(recovered?.correctAnswer, question!.exercise.correctAnswer);
+  assert.equal(recovered?.sourceGroupId, question!.exercise.contentId.replace(/-q\d+$/, ""));
+  assert.equal(resolvedReviewSnapshotForAttempt({ ...wrongAttempt(), contentVersion: "unknown-version", reviewSnapshot: corrupted }), undefined);
+});

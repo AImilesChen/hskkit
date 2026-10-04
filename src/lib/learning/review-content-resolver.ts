@@ -1,14 +1,46 @@
 import type { Attempt } from "./domain.ts";
 import { trustedQuestion } from "./questions.ts";
-import { trustedAudioExercise, trustedTodayAudioExercise } from "./audio.ts";
+import { trustedAudioExercise, trustedTodayAudioExercise, type AudioExercise } from "./audio.ts";
 import { todayContentByContentId } from "./today-content.ts";
 import { practiceReviewIdentity, trustedPracticeQuestionVersion } from "../practice/questions.ts";
 import { reviewSnapshotForAttempt, type ReviewSnapshot } from "./review-content.ts";
 
 const band = (level: number, levelBand?: string) => levelBand === "7-9" || level >= 7 ? "7–9" : String(level);
 
+export function trustedReviewAudioExerciseForAttempt(attempt: Attempt): AudioExercise | undefined {
+  const catalogItem = todayContentByContentId(attempt.contentId);
+  const assetId = attempt.contentId.startsWith("word:") ? attempt.contentId.slice("word:".length) : catalogItem?.assetId;
+  if (!assetId || attempt.dimension === "reading") return undefined;
+  const mode = attempt.dimension === "context_audio" ? "context_audio" : "audio";
+  return [trustedTodayAudioExercise(assetId, mode), trustedAudioExercise(assetId, mode)]
+    .find((exercise) => exercise?.contentId === attempt.contentId && exercise.contentVersion === attempt.contentVersion);
+}
+
 /** Restores only questions that still exist in a trusted, versioned source. Unknown legacy attempts remain honest self-recall items. */
 export function resolvedReviewSnapshotForAttempt(attempt: Attempt): ReviewSnapshot | undefined {
+  if (attempt.contentId.startsWith("word:") || attempt.contentId.startsWith("catalog:")) {
+    const exercise = trustedReviewAudioExerciseForAttempt(attempt);
+    if (!exercise) return undefined;
+    const trustedAnswerText = exercise.options[exercise.correctAnswer];
+    const stored = attempt.reviewSnapshot;
+    const originalChoice = stored?.answerMode === "choice" && stored.options?.[stored.correctAnswer] === trustedAnswerText
+      ? stored : undefined;
+    return {
+      level: exercise.word.level,
+      levelBand: band(exercise.word.level),
+      skillLabel: exercise.dimension === "audio" ? "Listening · word" : "Listening · sentence",
+      topic: exercise.word.partOfSpeech,
+      prompt: originalChoice?.prompt ?? exercise.prompt,
+      answerMode: "choice",
+      options: originalChoice?.options ? { ...originalChoice.options } : { ...exercise.options },
+      correctAnswer: originalChoice?.correctAnswer ?? exercise.correctAnswer,
+      correctAnswerText: trustedAnswerText,
+      explanation: originalChoice?.explanation ?? `${exercise.word.hanzi} (${exercise.word.pinyin}) means “${exercise.word.meaning}.”`,
+      audioSrc: exercise.word.audio.status === "formal" ? exercise.word.audio.src : undefined,
+      audioText: exercise.voiceText,
+    };
+  }
+
   const storedOrStep7 = reviewSnapshotForAttempt(attempt);
   if (storedOrStep7) return storedOrStep7;
 
@@ -47,25 +79,5 @@ export function resolvedReviewSnapshotForAttempt(attempt: Attempt): ReviewSnapsh
     };
   }
 
-  const catalogItem = todayContentByContentId(attempt.contentId);
-  const assetId = attempt.contentId.startsWith("word:") ? attempt.contentId.slice("word:".length) : catalogItem?.assetId;
-  if (assetId) {
-    const mode = attempt.dimension === "context_audio" ? "context_audio" : "audio";
-    const exercise = trustedTodayAudioExercise(assetId, mode) ?? trustedAudioExercise(assetId, mode);
-    if (exercise?.contentVersion === attempt.contentVersion) return {
-      level: exercise.word.level,
-      levelBand: band(exercise.word.level),
-      skillLabel: exercise.dimension === "audio" ? "Listening · word" : "Listening · sentence",
-      topic: exercise.word.partOfSpeech,
-      prompt: exercise.prompt,
-      answerMode: "choice",
-      options: { ...exercise.options },
-      correctAnswer: exercise.correctAnswer,
-      correctAnswerText: exercise.options[exercise.correctAnswer],
-      explanation: `${exercise.word.hanzi} (${exercise.word.pinyin}) means “${exercise.word.meaning}.”`,
-      audioSrc: exercise.word.audio.status === "formal" ? exercise.word.audio.src : undefined,
-      audioText: exercise.voiceText,
-    };
-  }
   return undefined;
 }
