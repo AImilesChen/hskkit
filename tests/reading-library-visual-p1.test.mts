@@ -50,7 +50,7 @@ test("reading workspace separates session setup from authentic product proof", (
 });
 
 test("reading level choice, proof, and actions stay truthful", () => {
-  assert.match(experience, /value: "180", label: "verified passages"/);
+  assert.match(experience, /value: "180", label: "short practice passages"/);
   assert.match(experience, /value: "540", label: "scored questions"/);
   assert.match(experience, /value: "9", label: "independent HSK levels"/);
   assert.match(experience, /value: "Immediate", label: "feedback & explanations"/);
@@ -96,9 +96,11 @@ test("desktop and exact mobile contracts prevent spacing-token collisions and ov
   assert.match(styles, /prefers-reduced-motion:\s*reduce/);
 });
 
-test("secondary learning tools remain below the reading task", () => {
+test("article browsing comes first while existing scored practice and learning links remain available", () => {
+  assert.match(page, /<ReadingArticleBrowser articles=\{articleItems\} shortPassages=\{shortItems\}/);
+  assert.ok(page.indexOf("<ReadingArticleBrowser") < page.indexOf("<ReadingLibraryExperience"));
   assert.match(page, /Your learning/);
   assert.ok(page.indexOf("<ReadingLibraryExperience") < page.indexOf("Your learning"));
   assert.match(page, /Coverage boundary/);
-  assert.match(page, /Published single-passage collection/);
+  assert.doesNotMatch(page, /Published single-passage collection/);
 });

@@ -2,6 +2,7 @@ import type { MetadataRoute } from "next";
 import { sitemapContentRoutes } from "@/lib/dictionary/catalog";
 import { getHsk3LevelStatuses } from "@/lib/content/level-status";
 import { publishedGrammarLessons, publishedReadingLessons } from "@/lib/learning/step7-content";
+import { READING_ARTICLES } from "@/lib/learning/reading-articles";
 import { resourceProductDetails } from "@/lib/commercial/resource-products";
 import {
   learningTopics,
@@ -33,6 +34,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "/hsk-3-0",
     "/hsk-2-0-vs-3-0",
     "/levels",
+    "/reading",
     "/pricing",
     "/store",
     "/blog",
@@ -49,6 +51,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     ...getHsk3LevelStatuses().filter((entry) => entry.availability === "ready").map((entry) => `/vocabulary/${entry.level}`),
     ...publishedGrammarLessons.map((lesson) => `/grammar/${lesson.slug}`),
     ...publishedReadingLessons.map((lesson) => `/reading/${lesson.slug}`),
+    ...READING_ARTICLES.map((article) => `/reading/article/${article.slug}`),
     ...resourceProductDetails.map((product) => `/store/${product.slug}`),
     ...verifiedTopicRoutes,
   ])];

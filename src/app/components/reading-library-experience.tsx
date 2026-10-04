@@ -37,7 +37,7 @@ function ReadingIcon({ name, className }: { name: IconName; className?: string }
 }
 
 const PROOF = [
-  { icon: "book" as const, value: "180", label: "verified passages" },
+  { icon: "book" as const, value: "180", label: "short practice passages" },
   { icon: "question" as const, value: "540", label: "scored questions" },
   { icon: "levels" as const, value: "9", label: "independent HSK levels" },
   { icon: "feedback" as const, value: "Immediate", label: "feedback & explanations" },
@@ -61,7 +61,7 @@ export default function ReadingLibraryExperience({ levels }: { levels: ReadingLe
   return <div className={styles.root}>
     <section className={styles.hero} aria-labelledby="reading-hero-title">
       <span className={styles.eyebrow}>HSK 1–9 · Reading practice</span>
-      <h1 id="reading-hero-title" className={styles.heroTitle}>Read at your level. Understand every answer.</h1>
+      <h2 id="reading-hero-title" className={styles.heroTitle}>Read at your level. Understand every answer.</h2>
       <p className={styles.heroCopy}>Choose one HSK level, practise with real Chinese passages, and stay inside that level for every next question.</p>
       <div className={styles.heroActions}>
         <a className={styles.heroPrimary} href="#build-session">Start reading practice <ReadingIcon name="arrow"/></a>
