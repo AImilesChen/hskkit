@@ -85,6 +85,6 @@ export function buildPackManifest(selection: PackSelection, generationVersion: s
     level: selection.level,
     assets: selection.words.map((word) => ({ id: word.id, version: word.version, contentVersion: word.contentVersion, sourceRef: word.sourceRef, licenseRef: word.licenseRef })),
     excludedAudioReason: "offline_redistribution_not_authorized",
-    licenseNotice: "Text includes CC BY-SA 4.0 material. Attribution and source references are preserved in this manifest. Personal, non-transferable study/print use only.",
+    licenseNotice: "Text includes CC BY-SA 4.0 material. Attribution and source references are preserved in this manifest. The purchaser may print any number of copies for personal study or learners they teach, without charge; printed copies and digital files may not be sold or resold.",
   };
 }
