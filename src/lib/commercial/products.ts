@@ -4,7 +4,7 @@ export const DIGITAL_REFUND_DAYS=7;
 export const DIGITAL_DOWNLOAD_LIMIT=3;
 export const DEFAULT_PRODUCT_GENERATION_VERSION="complete-vocabulary-v1";
 export const PLANNER_GENERATION_VERSION="planner-guided-v6";
-export const PLANNER_BUNDLE_GENERATION_VERSION="learner-toolkit-planner-v5";
+export const PLANNER_BUNDLE_GENERATION_VERSION="learner-toolkit-current-v6";
 export const EXAM_BUNDLE_GENERATION_VERSION="exam-preparation-assessment-v3";
 export const PRACTICE_ASSESSMENT_GENERATION_VERSION="practice-guided-edition-v4";
 export const TEACHER_PACK_GENERATION_VERSION="teacher-pack-v3";
@@ -13,6 +13,7 @@ export const PERSONAL_PRODUCT_LICENSE="Personal, non-transferable study and prin
 export const WORKSHEET_PRODUCT_LICENSE="The purchaser may use the downloaded files without a time limit and print student worksheet pages for learners they personally teach. No resale, public upload, shared-drive distribution, transfer, sublicensing or use by another teacher.";
 export const TRACKER_PRODUCT_LICENSE="Personal, non-transferable use: the purchaser may use the downloaded files without a time limit and print blank assessment record pages for learners they personally teach. No resale, public upload, shared-drive distribution, transfer, sublicensing or use by another teacher.";
 export const PLANNER_PRODUCT_LICENSE="The purchaser may use the downloaded files without a time limit and print blank planner record pages for learners they personally teach. No resale, public upload, shared-drive distribution, transfer, sublicensing or use by another teacher.";
+export const LEARNER_TOOLKIT_LICENSE="The purchaser may use the downloaded components without a time limit and print student worksheet pages, blank assessment record pages and blank planner record pages for learners they personally teach. No resale, public upload, shared-drive distribution, transfer, sublicensing or use by another teacher. Each component's licence also applies.";
 export const PRACTICE_ASSESSMENT_LICENSE="After download, the purchaser may use and print the files without a time limit, including printing answer sheets for students they personally teach.";
 export const TEACHER_CLASSROOM_LICENSE="Single-purchaser classroom licence: the purchaser may adapt editable files and print or share student handouts only with learners they personally teach at one teaching site. No resale, public upload, shared-drive distribution, sublicensing, transfer or use by another teacher.";
 
@@ -52,7 +53,7 @@ export const DIGITAL_PRODUCTS:readonly DigitalProduct[]=[
 ] as const;
 
 export function digitalProduct(value:unknown){return DIGITAL_PRODUCTS.find(product=>product.id===value)??null;}
-export function productLicenseNotice(productId:unknown){return productId==="teacher-lesson-plan-pack"?TEACHER_CLASSROOM_LICENSE:productId==="practice-assessment-pack"?PRACTICE_ASSESSMENT_LICENSE:productId==="worksheet-pack"?WORKSHEET_PRODUCT_LICENSE:productId==="assessment-tracker"?TRACKER_PRODUCT_LICENSE:productId==="30-day-planner"?PLANNER_PRODUCT_LICENSE:PERSONAL_PRODUCT_LICENSE;}
+export function productLicenseNotice(productId:unknown){return productId==="teacher-lesson-plan-pack"?TEACHER_CLASSROOM_LICENSE:productId==="practice-assessment-pack"?PRACTICE_ASSESSMENT_LICENSE:productId==="learner-practice-toolkit"?LEARNER_TOOLKIT_LICENSE:productId==="worksheet-pack"?WORKSHEET_PRODUCT_LICENSE:productId==="assessment-tracker"?TRACKER_PRODUCT_LICENSE:productId==="30-day-planner"?PLANNER_PRODUCT_LICENSE:PERSONAL_PRODUCT_LICENSE;}
 export function generationVersionForProduct(productId:unknown){return productId==="assessment-tracker"?"assessment-tracker-v5":productId==="learner-practice-toolkit"?PLANNER_BUNDLE_GENERATION_VERSION:productId==="exam-preparation-bundle"?EXAM_BUNDLE_GENERATION_VERSION:productId==="worksheet-pack"?WORKSHEET_GENERATION_VERSION:productId==="30-day-planner"?PLANNER_GENERATION_VERSION:productId==="practice-assessment-pack"?PRACTICE_ASSESSMENT_GENERATION_VERSION:productId==="teacher-lesson-plan-pack"?TEACHER_PACK_GENERATION_VERSION:DEFAULT_PRODUCT_GENERATION_VERSION;}
 export function productDeliverableLabels(productId:unknown):string[]{
   const product=digitalProduct(productId);if(!product)throw new Error("INVALID_PRODUCT");
@@ -77,3 +78,4 @@ export function currentProductDelivery(productId:unknown,deliveryKey:unknown,lev
   if(typeof deliveryKey!=="string")return null;
   return buildProductDeliveries(productId).find(item=>item.deliveryKey===deliveryKey&&(item.level??null)===(level??null))??null;
 }
+
