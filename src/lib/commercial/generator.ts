@@ -111,6 +111,6 @@ export function generateOfflineZip(pdf:Uint8Array,manifest:PackManifest){
   return generateZipFiles([
     {name:"HSKKit-Advanced-Study-Pack.pdf",data:pdf},
     {name:"manifest.json",data:encoder.encode(JSON.stringify(manifest,null,2))},
-    {name:"README.txt",data:encoder.encode("HSKKit offline study pack. Personal, non-transferable study and print use only. Audio is excluded because offline redistribution is not authorized.\n")},
+    {name:"README.txt",data:encoder.encode("HSKKit offline study pack. The purchaser may print any number of copies for personal study or learners they teach, without charge; printed copies and digital files may not be sold or resold. Audio is excluded because offline redistribution is not authorized.\n")},
   ]);
 }
