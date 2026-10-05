@@ -66,7 +66,7 @@ async function vocabularyBundleFiles(productId:string,levels:number[]){
     if(level===7)files.push(...await advancedVolumeArtifacts());
   }
   const readme=new TextEncoder().encode(`HSKKit ${productId} offline vocabulary library. Every entry is from the canonical GF0025-2021 release. Advanced 7–9 is one official unified band; the three reading volumes are HSKKit usability divisions, not separate official level lists.\n`);
-  const licence=new TextEncoder().encode("Personal, non-transferable study and print use only. Text includes CC BY-SA 4.0 material; attribution and source references are preserved in manifest.json.\n");
+  const licence=new TextEncoder().encode(`${productLicenseNotice(productId)} Text includes CC BY-SA 4.0 material; attribution and source references are preserved in manifest.json.\n`);
   return [...files,{name:"README.txt",data:readme},{name:"LICENSE.txt",data:licence}];
 }
 for(const product of DIGITAL_PRODUCTS){
@@ -82,7 +82,7 @@ for(const product of DIGITAL_PRODUCTS){
       const artifact=levelArtifacts.get(delivery.level!)!;await save(product.id,delivery.deliveryKey,"pdf",artifact.bytes,artifact.manifest,generationVersion);
     }
     const assets=product.levels.flatMap(level=>levelArtifacts.get(level)!.manifest.assets as unknown[]);
-    const manifest={schemaVersion:"hskkit-bundle-manifest-v2",productId:product.id,standard:"HSK 3.0",standardVersion:"GF0025-2021",generationVersion,officialExam:false,levels:product.levels,vocabularyCount:product.vocabularyCount,advancedBandDisclosure:"HSK 3.0 defines one unified Advanced 7–9 vocabulary band. Reading volumes are HSKKit usability divisions, not official separate level lists.",assets,licenseNotice:"Personal, non-transferable study and print use only."};
+    const manifest={schemaVersion:"hskkit-bundle-manifest-v2",productId:product.id,standard:"HSK 3.0",standardVersion:"GF0025-2021",generationVersion,officialExam:false,levels:product.levels,vocabularyCount:product.vocabularyCount,advancedBandDisclosure:"HSK 3.0 defines one unified Advanced 7–9 vocabulary band. Reading volumes are HSKKit usability divisions, not official separate level lists.",assets,licenseNotice:productLicenseNotice(product.id)};
     const files=await vocabularyBundleFiles(product.id,product.levels);const manifestFile={name:"manifest.json",data:new TextEncoder().encode(JSON.stringify(manifest,null,2))};const payload=[...files,manifestFile];
     const bytes=generateZipFiles([...payload,{name:"checksums.sha256",data:checksumFile(payload)}]);
     await save(product.id,"bundle-zip","zip",bytes,manifest,generationVersion);continue;
@@ -91,13 +91,13 @@ for(const product of DIGITAL_PRODUCTS){
     const componentFiles=[] as Array<{name:string;data:Uint8Array}>;
     const componentVersions=[] as Array<{productId:string;generationVersion:string;sha256:string}>;
     for(const componentId of product.componentProductIds??[]){
-      const componentVersion=product.id==="learner-practice-toolkit"?generationVersionForProduct(componentId):generationVersion;
+      const componentVersion=generationVersionForProduct(componentId);
       const component=await generateDifferentiatedProductArtifact(componentId,fontBytes,emojiBytes,componentVersion,assessmentAudio,assessmentLevelAudio);
       componentFiles.push({name:`${componentId}.${component.format}`,data:component.bytes});
       componentVersions.push({productId:componentId,generationVersion:componentVersion,sha256:createHash("sha256").update(component.bytes).digest("hex")});
     }
     const isLearnerToolkit=product.id==="learner-practice-toolkit";
-    const manifest={schemaVersion:"hskkit-product-manifest-v1",productId:product.id,generationVersion,standard:"HSK 3.0",standardVersion:"GF0025-2021",officialExam:false,levels:product.levels,componentProductIds:product.componentProductIds,files:componentFiles.map(file=>file.name),...(isLearnerToolkit?{components:componentVersions}:{}),licenseNotice:productLicenseNotice(product.id)};
+    const manifest={schemaVersion:"hskkit-product-manifest-v1",productId:product.id,generationVersion,standard:"HSK 3.0",standardVersion:"GF0025-2021",officialExam:false,levels:product.levels,componentProductIds:product.componentProductIds,files:componentFiles.map(file=>file.name),components:componentVersions,licenseNotice:productLicenseNotice(product.id)};
     const manifestFile={name:"manifest.json",data:new TextEncoder().encode(JSON.stringify(manifest,null,2))};
     const learnerReadme=[
       "HSKKit Learner Practice Toolkit | START HERE",
@@ -111,9 +111,21 @@ for(const product of DIGITAL_PRODUCTS){
       "The three component ZIPs are standalone products, not shortened editions. This bundle has no listening audio or official HSK exam. Levels 7-9 use one unified advanced source band. The manifest names each component version and its SHA-256; checksums.sha256 verifies the outer files.",
       "The purchaser may keep downloaded files without a time limit. The 14-day access window and three-download allowance apply only to retrieving this outer ZIP. Read LICENSE.txt and each component README for printing permissions.",
     ].join("\n")+"\n";
-    const readme={name:"README.txt",data:new TextEncoder().encode(isLearnerToolkit?learnerReadme:`HSKKit ${product.name}. Each included ZIP is the complete standalone component product. Read each component README before use.\n`)};
-    const learnerLicence=[productLicenseNotice(product.id),...componentVersions.map(({productId})=>`${productId}: ${productLicenseNotice(productId)}`)].join("\n")+"\n";
-    const licence={name:"LICENSE.txt",data:new TextEncoder().encode(isLearnerToolkit?learnerLicence:"Personal, non-transferable study and print use only. This notice applies to every component and generated file in this Bundle.\n")};
+    const examReadme=[
+      "HSKKit Exam Preparation Bundle | START HERE",
+      "This download contains the complete current Worksheet Pack, Practice Assessment Pack and 30-Day Planner as separate ZIPs. Unzip the outer bundle, then unzip each component. Use the version and SHA-256 entries in manifest.json to identify the exact component releases.",
+      "",
+      "1. Choose one current HSK level and Form A in the Practice Assessment Pack. This is a short, unofficial diagnostic, not a full-length official HSK mock exam. Print the matching student and answer-sheet pages; play the level-only MP3, not the nine-level full-form MP3, for a one-level sitting.",
+      "2. Score the attempt with the matching explanations and score report. Record vocabulary, listening, reading and writing results. Mark an unmeasured skill as NOT MEASURED rather than zero. Level 1 writing is an extra learning diagnostic, not an official Level 1 exam section.",
+      "3. Enter the lowest measured skill in the Planner's Assessment mapping. Choose a 20, 30 or 45-minute route and use the Worksheet Pack for level-matched practice. The Planner and Worksheet do not sync with the Assessment score tracker; record progress yourself.",
+      "4. Use fresh questions on Form B around the midpoint and Form C at the end. Compare results with the same scoring method; review missed question IDs and keep a dated record of your next action.",
+      "",
+      "The Practice Assessment Pack includes three full-form MP3s spanning all levels and 27 level-only MP3s. Levels 7-9 use one unified advanced source band. The three component ZIPs are complete products, not shortened bundle editions. Read each component README for page maps and honest limits.",
+      "The 14-day access window and three-download allowance limit retrieval of this outer ZIP only. Downloaded files do not expire. See LICENSE.txt for the purchaser's printing rights.",
+    ].join("\n")+"\n";
+    const readme={name:"README.txt",data:new TextEncoder().encode(isLearnerToolkit?learnerReadme:examReadme)};
+    const licenceText=[productLicenseNotice(product.id),...componentVersions.map(({productId})=>`${productId}: ${productLicenseNotice(productId)}`)].join("\n")+"\n";
+    const licence={name:"LICENSE.txt",data:new TextEncoder().encode(licenceText)};
     const payload=[...componentFiles,manifestFile,readme,licence];
     const bytes=generateZipFiles([...payload,{name:"checksums.sha256",data:checksumFile(payload)}]);
     await save(product.id,"product","zip",bytes,manifest,generationVersion);continue;
@@ -121,4 +133,3 @@ for(const product of DIGITAL_PRODUCTS){
   const artifact=await generateDifferentiatedProductArtifact(product.id,fontBytes,emojiBytes,generationVersion,assessmentAudio,assessmentLevelAudio);
   await save(product.id,deliveries[0].deliveryKey,artifact.format,artifact.bytes,artifact.manifest as unknown as Record<string,unknown>,generationVersion);
 }
-
