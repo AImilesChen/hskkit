@@ -8,8 +8,9 @@ export const PLANNER_BUNDLE_GENERATION_VERSION="learner-toolkit-planner-v5";
 export const EXAM_BUNDLE_GENERATION_VERSION="exam-preparation-assessment-v3";
 export const PRACTICE_ASSESSMENT_GENERATION_VERSION="practice-guided-edition-v4";
 export const TEACHER_PACK_GENERATION_VERSION="teacher-pack-v3";
-export const WORKSHEET_GENERATION_VERSION="worksheet-editorial-v16";
+export const WORKSHEET_GENERATION_VERSION="worksheet-guided-v17";
 export const PERSONAL_PRODUCT_LICENSE="Personal, non-transferable study and print use only.";
+export const WORKSHEET_PRODUCT_LICENSE="The purchaser may use the downloaded files without a time limit and print student worksheet pages for learners they personally teach. No resale, public upload, shared-drive distribution, transfer, sublicensing or use by another teacher.";
 export const PRACTICE_ASSESSMENT_LICENSE="After download, the purchaser may use and print the files without a time limit, including printing answer sheets for students they personally teach.";
 export const TEACHER_CLASSROOM_LICENSE="Single-purchaser classroom licence: the purchaser may adapt editable files and print or share student handouts only with learners they personally teach at one teaching site. No resale, public upload, shared-drive distribution, sublicensing, transfer or use by another teacher.";
 
@@ -49,14 +50,14 @@ export const DIGITAL_PRODUCTS:readonly DigitalProduct[]=[
 ] as const;
 
 export function digitalProduct(value:unknown){return DIGITAL_PRODUCTS.find(product=>product.id===value)??null;}
-export function productLicenseNotice(productId:unknown){return productId==="teacher-lesson-plan-pack"?TEACHER_CLASSROOM_LICENSE:productId==="practice-assessment-pack"?PRACTICE_ASSESSMENT_LICENSE:PERSONAL_PRODUCT_LICENSE;}
+export function productLicenseNotice(productId:unknown){return productId==="teacher-lesson-plan-pack"?TEACHER_CLASSROOM_LICENSE:productId==="practice-assessment-pack"?PRACTICE_ASSESSMENT_LICENSE:productId==="worksheet-pack"?WORKSHEET_PRODUCT_LICENSE:PERSONAL_PRODUCT_LICENSE;}
 export function generationVersionForProduct(productId:unknown){return productId==="assessment-tracker"?"assessment-tracker-v4":productId==="learner-practice-toolkit"?PLANNER_BUNDLE_GENERATION_VERSION:productId==="exam-preparation-bundle"?EXAM_BUNDLE_GENERATION_VERSION:productId==="worksheet-pack"?WORKSHEET_GENERATION_VERSION:productId==="30-day-planner"?PLANNER_GENERATION_VERSION:productId==="practice-assessment-pack"?PRACTICE_ASSESSMENT_GENERATION_VERSION:productId==="teacher-lesson-plan-pack"?TEACHER_PACK_GENERATION_VERSION:DEFAULT_PRODUCT_GENERATION_VERSION;}
 export function productDeliverableLabels(productId:unknown):string[]{
   const product=digitalProduct(productId);if(!product)throw new Error("INVALID_PRODUCT");
   if(product.category==="level")return [`${product.vocabularyCount?.toLocaleString("en-US")} canonical entries in one searchable PDF`,`Manifest and README/licence information`];
   if(product.category==="bundle")return product.id==="advanced-7-9"?["Complete Advanced 7–9 index and three HSKKit reading volumes","Manifest, README/licence and checksums in one ZIP"]:[`${product.levels.length} searchable vocabulary PDFs covering ${product.vocabularyCount?.toLocaleString("en-US")} entries`,`Manifest, README/licence and checksums in one ZIP`];
   if(product.category==="resource_bundle")return [`${product.componentProductIds?.length} complete resource products in one purchase`,`One combined ZIP with manifest, licence and checksums`];
-  return buildProductDeliveries(product.id).map(delivery=>delivery.artifactType==="worksheet"?"Seven searchable PDFs: four student editions, answer key, completed samples and progress checklist in one ZIP":delivery.artifactType==="assessment"?"Complete 11,092-entry tracker, scoring guide and printable records in one ZIP":delivery.artifactType==="planner"?"Printable, fillable and Quick Start PDFs in one ZIP":delivery.artifactType==="practice_assessment"?"Forms A/B/C, MP3s, scripts, answers, rubrics and score tracker in one ZIP":"Teacher plans, handouts, tickets/cards, homework key/rubric and editable DOCX/PPTX in one ZIP");
+  return buildProductDeliveries(product.id).map(delivery=>delivery.artifactType==="worksheet"?"Eight searchable PDFs: Start Here page map, four student editions, answer key, completed samples and progress checklist in one ZIP":delivery.artifactType==="assessment"?"Complete 11,092-entry tracker, scoring guide and printable records in one ZIP":delivery.artifactType==="planner"?"Printable, fillable and Quick Start PDFs in one ZIP":delivery.artifactType==="practice_assessment"?"Forms A/B/C, MP3s, scripts, answers, rubrics and score tracker in one ZIP":"Teacher plans, handouts, tickets/cards, homework key/rubric and editable DOCX/PPTX in one ZIP");
 }
 export type ProductDelivery={deliveryKey:string;level:number|null;artifactType:"level"|"bundle"|"worksheet"|"assessment"|"planner"|"practice_assessment"|"lesson_plan"|"resource_bundle";format:"pdf"|"zip";downloadLimit:number};
 export function buildProductDeliveries(productId:unknown):ProductDelivery[]{

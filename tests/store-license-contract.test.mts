@@ -21,11 +21,13 @@ test("assessment purchasers may print for their own students while other learner
   assert.equal(productLicenseNotice("teacher-lesson-plan-pack"),teacherNotice);
   assert.match(productLicenseNotice("practice-assessment-pack"),/print.*students they personally teach/);
   assert.match(productLicenseNotice("practice-assessment-pack"),/without a time limit/);
+  assert.match(productLicenseNotice("worksheet-pack"),/print student worksheet pages for learners they personally teach/);
+  assert.match(productLicenseNotice("worksheet-pack"),/without a time limit/);
   for(const product of DIGITAL_PRODUCTS){
-    if(product.id!=="teacher-lesson-plan-pack"&&product.id!=="practice-assessment-pack")assert.equal(productLicenseNotice(product.id),"Personal, non-transferable study and print use only.",product.id);
+    if(product.id!=="teacher-lesson-plan-pack"&&product.id!=="practice-assessment-pack"&&product.id!=="worksheet-pack")assert.equal(productLicenseNotice(product.id),"Personal, non-transferable study and print use only.",product.id);
   }
   assert.equal(generationVersionForProduct("teacher-lesson-plan-pack"),"teacher-pack-v3");
-  assert.equal(generationVersionForProduct("worksheet-pack"),"worksheet-editorial-v16");
+  assert.equal(generationVersionForProduct("worksheet-pack"),"worksheet-guided-v17");
   assert.equal(generationVersionForProduct("learner-practice-toolkit"),"learner-toolkit-planner-v5");
   assert.equal(generationVersionForProduct("assessment-tracker"),"assessment-tracker-v4");
   assert.equal(generationVersionForProduct("exam-preparation-bundle"),"exam-preparation-assessment-v3");
@@ -46,8 +48,8 @@ test("Store, resource checkout, Terms and generated delivery use the selected pr
   assert.match(terms, /single-purchaser classroom licence/i);
   assert.match(terms, /another teacher/);
   assert.doesNotMatch(terms, /All content on HSKKit is provided for personal study use/);
-  assert.match(terms, /Practice Assessment Pack printing permission and Teacher Lesson Plan Pack classroom licence/);
-  assert.match(terms, /Last updated: 2026-08-28/);
+  assert.match(terms, /Worksheet Pack and Practice Assessment Pack printing permissions and Teacher Lesson Plan Pack classroom licence/);
+  assert.match(terms, /Last updated: 2026-10-05/);
   assert.match(terms,/sublicensing, transfer or use by another teacher/i);
   assert.match(generator,/licenseNotice:productLicenseNotice\(product\.id\)/);
   assert.match(generator,/productLicenseNotice\(product\.id\)/);

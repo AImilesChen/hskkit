@@ -23,7 +23,7 @@ function zipEntries(zip:Uint8Array){
 }
 
 const expected={
-  "worksheet-pack":["HSKKit-Worksheets-Student-A4.pdf","HSKKit-Worksheets-Student-US-Letter.pdf","HSKKit-Worksheets-Student-A4-Low-Ink.pdf","HSKKit-Worksheets-Student-Fillable.pdf","HSKKit-Worksheets-Answer-Key.pdf","HSKKit-Worksheet-Completed-Samples.pdf","HSKKit-Worksheet-Progress-Checklist.pdf"],
+  "worksheet-pack":["00-START-HERE.pdf","HSKKit-Worksheets-Student-A4.pdf","HSKKit-Worksheets-Student-US-Letter.pdf","HSKKit-Worksheets-Student-A4-Low-Ink.pdf","HSKKit-Worksheets-Student-Fillable.pdf","HSKKit-Worksheets-Answer-Key.pdf","HSKKit-Worksheet-Completed-Samples.pdf","HSKKit-Worksheet-Progress-Checklist.pdf"],
   "assessment-tracker":["HSKKit-Assessment-Tracker-Blank.xlsx","HSKKit-Assessment-Tracker-Example.xlsx","HSKKit-Assessment-Tracker-Raw-Data.csv","HSKKit-Assessment-Tracker.csv","HSKKit-Weekly-Review.csv","HSKKit-Assessment-Dashboard-Guide.pdf","HSKKit-Printable-Assessment-Record.pdf"],
   "30-day-planner":["HSKKit-30-Day-Planner-Quick-Start.pdf","HSKKit-30-Day-Planner-Printable-A4.pdf","HSKKit-30-Day-Planner-Fillable-A4.pdf","HSKKit-30-Day-Planner-Progress-Tracker.xlsx"],
   "practice-assessment-pack":["00-START-HERE.pdf","HSKKit-Practice-Assessment-A-Student.pdf","HSKKit-Practice-Assessment-B-Student.pdf","HSKKit-Practice-Assessment-C-Student.pdf","HSKKit-Practice-Assessment-A-Listening.mp3","HSKKit-Practice-Assessment-B-Listening.mp3","HSKKit-Practice-Assessment-C-Listening.mp3","HSKKit-Practice-Assessment-Audio-Source-License.txt","HSKKit-Practice-Assessment-Answer-Sheets.pdf","HSKKit-Practice-Assessment-Answers-Explanations.pdf","HSKKit-Practice-Assessment-Facilitator-Transcripts.pdf","HSKKit-Practice-Assessment-Score-Report.pdf","HSKKit-Practice-Assessment-Score-Tracker.xlsx",...(["A","B","C"] as const).flatMap(form=>Array.from({length:9},(_,index)=>`Level-Audio/form-${form}-level-${index+1}.mp3`)),"Level-Audio/timing-index.json"],
@@ -53,9 +53,9 @@ test("five practical resources expose complete, reusable merchandising details",
   }
 });
 
-test("each practical resource provides four to six readable real sample pages and an explicit fit check",async()=>{
+test("each practical resource provides readable real sample pages and an explicit fit check",async()=>{
   for(const detail of resourceProductDetails){
-    assert.ok(detail.samplePages.length>=4&&detail.samplePages.length<=6,`${detail.id}: sample count`);
+    assert.ok(detail.samplePages.length>=4&&detail.samplePages.length<=7,`${detail.id}: sample count`);
     assert.equal(new Set(detail.samplePages.map(sample=>sample.src)).size,detail.samplePages.length,`${detail.id}: unique samples`);
     for(const sample of detail.samplePages){
       assert.match(sample.src,new RegExp(`^/store/samples/${detail.id}/[a-z0-9-]+\\.webp$`));
@@ -75,6 +75,9 @@ test("each practical resource provides four to six readable real sample pages an
     }else if(detail.id==="practice-assessment-pack"){
       assert.match(facts,/print answer sheets for students they personally teach/i,`${detail.id}: student printing`);
       assert.match(facts,/without a time limit/i,`${detail.id}: downloaded use`);
+    }else if(detail.id==="worksheet-pack"){
+      assert.match(facts,/print student worksheet pages for learners they personally teach/i,`${detail.id}: student printing`);
+      assert.match(facts,/Downloaded copies do not expire/i,`${detail.id}: downloaded use`);
     }else{
       assert.match(facts,/personal/i,`${detail.id}: personal licence`);
       assert.match(facts,/non-transferable/i,`${detail.id}: non-transferable licence`);
@@ -112,6 +115,9 @@ test("each practical resource ships the promised usable files",async()=>{
       assert.match(artifact.manifest.licenseNotice,/one teaching site/i,productId);
     }else if(productId==="practice-assessment-pack"){
       assert.match(readme,/print(?:ing)? answer sheets for students they personally teach/i,productId);
+      assert.match(artifact.manifest.licenseNotice,/without a time limit/i,productId);
+    }else if(productId==="worksheet-pack"){
+      assert.match(readme,/print student worksheet pages for learners they personally teach/i,productId);
       assert.match(artifact.manifest.licenseNotice,/without a time limit/i,productId);
     }else{
       assert.match(readme,/personal, non-transferable/i,productId);

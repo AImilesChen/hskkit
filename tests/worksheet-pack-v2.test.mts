@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import {readFile} from "node:fs/promises";
-import {PDFDocument} from "pdf-lib";
+import {PDFDocument,PDFName} from "pdf-lib";
 import {selectPackAssets} from "../src/lib/commercial/catalog.ts";
 import {generateDifferentiatedProductArtifact,worksheetPromptSegments} from "../src/lib/commercial/product-generator.ts";
 import {buildWorksheetLevel,WORKSHEET_MODULES} from "../src/lib/commercial/worksheet-pack.ts";
@@ -23,6 +23,7 @@ function zipEntries(zip:Uint8Array){
 }
 
 const expectedFiles=[
+  "00-START-HERE.pdf",
   "HSKKit-Worksheets-Student-A4.pdf",
   "HSKKit-Worksheets-Student-US-Letter.pdf",
   "HSKKit-Worksheets-Student-A4-Low-Ink.pdf",
@@ -119,16 +120,21 @@ test("worksheet ZIP ships distinct printable, low-ink, fillable, sample and answ
   assert.equal(artifact.format,"zip");
   assert.deepEqual([...artifact.manifest.files].sort(),[...expectedFiles].sort());
   const files=zipEntries(artifact.bytes);
-  assert.deepEqual([...files.keys()].filter(name=>name.endsWith(".pdf")).sort(),expectedFiles.filter(name=>name.endsWith(".pdf")).sort(),"ZIP contains exactly the seven promised PDFs");
+  assert.deepEqual([...files.keys()].filter(name=>name.endsWith(".pdf")).sort(),expectedFiles.filter(name=>name.endsWith(".pdf")).sort(),"ZIP contains exactly the eight promised PDFs");
   for(const name of expectedFiles)assert.ok(files.has(name),name);
-  assert.ok(!files.has("HSKKit-Worksheet-Quick-Start.pdf"),"single-page Quick Start is consolidated into README");
+  assert.ok(files.has("00-START-HERE.pdf"),"exact print ranges are included");
   const readme=new TextDecoder().decode(files.get("README.txt"));
   assert.match(readme,/open A4, US Letter, low-ink or fillable/);
   assert.match(readme,/different day/);
   assert.match(readme,/Progress Checklist/);
   assert.doesNotMatch(readme,/XLSX|Review-Log\.xlsx/);
   assert.ok(!files.has("HSKKit-Worksheet-Optional-Review-Log.xlsx"));
-  assert.doesNotMatch(readme,/Read the Quick Start or guide file/);
+  assert.match(readme,/Open 00-START-HERE\.pdf/);
+  assert.match(artifact.manifest.licenseNotice,/print student worksheet pages for learners they personally teach/);
+  for(const name of expectedFiles.filter(name=>name!=="00-START-HERE.pdf")){
+    const pdf=await PDFDocument.load(files.get(name)!);
+    assert.ok(pdf.catalog.get(PDFName.of("Outlines")),`${name} has Level 1–9 bookmarks`);
+  }
   const a4=await PDFDocument.load(files.get("HSKKit-Worksheets-Student-A4.pdf")!);
   const letter=await PDFDocument.load(files.get("HSKKit-Worksheets-Student-US-Letter.pdf")!);
   const lowInk=await PDFDocument.load(files.get("HSKKit-Worksheets-Student-A4-Low-Ink.pdf")!);

@@ -171,7 +171,7 @@ test("Store copy and real previews describe the personalized planner system",asy
 
 test("planner uses an immutable v4 artifact while existing purchase rights migrate from PDF to ZIP",async()=>{
   assert.equal(generationVersionForProduct("30-day-planner"),"planner-progress-xlsx-v5");
-  assert.equal(generationVersionForProduct("worksheet-pack"),"worksheet-editorial-v16");
+  assert.equal(generationVersionForProduct("worksheet-pack"),"worksheet-guided-v17");
   assert.equal(currentProductDelivery("30-day-planner","product",null)?.format,"zip","legacy entitlement rows resolve through the current catalog during forward deployment");
   const routeSource=await readFile(new URL("../src/app/api/v1/commercial/exports/route.ts",import.meta.url),"utf8");
   assert.match(routeSource,/generationVersion:generationVersionForProduct\(productId\)/);

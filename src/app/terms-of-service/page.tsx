@@ -29,7 +29,7 @@ export default function TermsPage() {
       <main className="section pt-20">
         <div className="max-w-[800px] mx-auto">
           <h1 className="text-h1 max-sm:text-[32px] mb-4">Terms of Service</h1>
-          <p className="text-small text-ink-muted mb-8">Last updated: 2026-08-28</p>
+          <p className="text-small text-ink-muted mb-8">Last updated: 2026-10-05</p>
 
           <section className="mb-8">
             <h2 className="text-h3 mb-4">Acceptance of Terms</h2>
@@ -56,13 +56,13 @@ export default function TermsPage() {
             <p className="text-body text-ink-secondary mb-4">HSKKit offers Pro Monthly at US$5.99 per month and Pro Yearly at US$49 per year. Both renew automatically until cancelled and grant the same account-based Pro entitlement. Cancellation takes effect at the current paid period end.</p>
             <p className="text-body text-ink-secondary mb-4">Eligible refund requests are reviewed under the <a href="/refund-policy" className="text-primary hover:underline">Refund Policy</a>, including its 2/5/3 UTC-calendar-day service timeline. A full refund revokes Pro access after signed Stripe webhook confirmation. Checkout is processed securely by Stripe. Mandatory consumer rights remain unaffected.</p>
             <p className="text-body text-ink-secondary mb-4"><strong>Store products are one-time digital purchases processed by Stripe and are not included in Pro.</strong> Complete Level 1–6 vocabulary PDFs range from US$3.99 to US$17.99; vocabulary Bundles range from US$9.99 to US$49.99; practical learner, Bundle and teacher resources range from US$4.99 to US$24.99. The selected product detail page and Stripe checkout are the price and scope controls. Private access lasts 14 days and permits up to 3 successful downloads per delivery; failed delivery does not consume a download. A signed Stripe refund revokes the purchase licence and private delivery access.</p>
-            <p className="text-body text-ink-secondary mb-4">Most learner products are licensed for personal, non-transferable study and print use. Practice Assessment Pack purchasers may use their downloaded files without a time limit and print answer sheets for students they personally teach; the download window and download count apply to retrieval only. The Teacher Lesson Plan Pack uses a single-purchaser classroom licence: the purchaser may adapt editable files and print or share student handouts only with learners they personally teach at one teaching site. No resale, public upload, shared-drive distribution, sublicensing, transfer or use by another teacher is permitted.</p>
+            <p className="text-body text-ink-secondary mb-4">Most learner products are licensed for personal, non-transferable study and print use. Worksheet Pack purchasers may print student worksheet pages for learners they personally teach, and Practice Assessment Pack purchasers may print answer sheets for students they personally teach. Downloaded copies of these two products do not expire; the 14-day access window and three-download limit apply to retrieval only. The Teacher Lesson Plan Pack uses a single-purchaser classroom licence: the purchaser may adapt editable files and print or share student handouts only with learners they personally teach at one teaching site. No resale, public upload, shared-drive distribution, sublicensing, transfer or use by another teacher is permitted.</p>
           </section>
 
           <section className="mb-8">
             <h2 className="text-h3 mb-4">Intellectual Property</h2>
             <p className="text-body text-ink-secondary mb-4">
-              Unless a purchased product expressly grants a more specific licence above, HSKKit content is provided for personal study use and may not be reproduced, distributed, or adapted without permission. The Practice Assessment Pack printing permission and Teacher Lesson Plan Pack classroom licence are the specific exceptions described above; all other intellectual-property rights remain reserved.
+              Unless a purchased product expressly grants a more specific licence above, HSKKit content is provided for personal study use and may not be reproduced, distributed, or adapted without permission. The Worksheet Pack and Practice Assessment Pack printing permissions and Teacher Lesson Plan Pack classroom licence are the specific exceptions described above; all other intellectual-property rights remain reserved.
             </p>
           </section>
 
