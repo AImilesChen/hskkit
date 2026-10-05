@@ -100,8 +100,11 @@ test("Teacher Pack ships classroom-ready print files plus real editable DOCX and
   }
   for(const name of ["HSKKit-Teacher-Lesson-Plans-A4.pdf","HSKKit-Teacher-Lesson-Plans-US-Letter.pdf"]){
     const pages=pdfPages(files.get(name)!);
-    assert.equal(pages.length,27,`${name}: one page per Level/duration`);
-    for(const [index,page] of pages.entries())for(const label of ["Preparation","Teacher Modeling","Common errors","Exit evidence","Homework + rubric","Differentiation"])assert.ok(page.includes(label),`${name} page ${index+1}: ${label}`);
+    assert.equal(pages.length,54,`${name}: two pages per Level/duration`);
+    for(const [index,page] of pages.entries()){
+      if(index%2===0)assert.match(page,/minute flow|minute lesson/i);
+      else for(const label of ["Preparation","Teacher modeling","Common errors","Exit evidence","Homework + rubric","Differentiation"])assert.ok(page.includes(label),name+" page "+(index+1)+": "+label);
+    }
   }
   for(const name of ["HSKKit-Student-Handouts-A4.pdf","HSKKit-Student-Handouts-US-Letter.pdf"]){const studentText=pdfPages(files.get(name)!).join(" ").replace(/\s+/g,"");assert.match(studentText,/takeonlyCardAorCardB/i);assert.doesNotMatch(studentText,/AnswerKey|FeedbackRubric/);for(const level of buildTeacherLessonPack().levels){for(const fact of [...level.activityCards.A.facts,...level.activityCards.B.facts])assert.ok(!studentText.includes(fact.replace(/\s+/g,"")),`${name}: Level ${level.level} private role fact leaked`);for(const marker of PRIVATE_ROLE_MARKERS[level.level])assert.ok(!studentText.includes(marker.replace(/\s+/g,"")),`${name}: Level ${level.level} private marker leaked: ${marker}`);}}
 
@@ -121,7 +124,7 @@ test("Teacher Pack ships classroom-ready print files plus real editable DOCX and
   const pptx=zipEntries(files.get("HSKKit-Editable-Classroom-Slides.pptx")!);
   assert.ok(pptx.has("ppt/presentation.xml"));
   const slideNames=[...pptx.keys()].filter(name=>/^ppt\/slides\/slide\d+\.xml$/.test(name));
-  assert.ok(slideNames.length>=28,"cover plus three duration slides per level");
+  assert.ok(slideNames.length>=73,"cover plus eight projected prompts per level");
   const slideText=slideNames.map(name=>xml(pptx,name)).join(" ");
   assert.match(slideText,/Level 1/);assert.match(slideText,/Level 9/);
   assert.match(slideText,/Pair Work/);assert.match(slideText,/Communicative Task/);assert.match(slideText,/Exit Ticket/);

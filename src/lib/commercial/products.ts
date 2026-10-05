@@ -7,7 +7,7 @@ export const PLANNER_GENERATION_VERSION="planner-guided-v6";
 export const PLANNER_BUNDLE_GENERATION_VERSION="learner-toolkit-current-v6";
 export const EXAM_BUNDLE_GENERATION_VERSION="exam-preparation-current-v4";
 export const PRACTICE_ASSESSMENT_GENERATION_VERSION="practice-guided-edition-v4";
-export const TEACHER_PACK_GENERATION_VERSION="teacher-pack-v3";
+export const TEACHER_PACK_GENERATION_VERSION="teacher-pack-v4";
 export const WORKSHEET_GENERATION_VERSION="worksheet-guided-v17";
 export const PURCHASED_PRODUCT_LICENSE="The purchaser may keep and use downloaded files without a time limit and print as many copies as needed for personal study or learners they teach. Printed copies may be given to those learners without charge. Printed copies and digital files may not be sold or resold.";
 export const TEACHER_PRODUCT_LICENSE=`${PURCHASED_PRODUCT_LICENSE} The purchaser may adapt the editable lesson-plan files for their own teaching.`;
@@ -44,7 +44,7 @@ export const DIGITAL_PRODUCTS:readonly DigitalProduct[]=[
   {id:"practice-assessment-pack",sku:"hskkit_hsk3_practice_assessment_pack_v2",name:"HSK Practice Assessment Pack",shortName:"Practice Assessment",amountCents:1699,currency:DIGITAL_CURRENCY,category:"resource",levels:[1,2,3,4,5,6,7],format:"zip",description:"Three unofficial HSK 3.0 practice assessments with Mandarin MP3 listening, answer sheets, explanations, rubrics, score report and review pathways."},
   {id:"learner-practice-toolkit",sku:"hskkit_hsk3_learner_practice_toolkit_v1",name:"Learner Practice Toolkit",shortName:"Learner Toolkit",amountCents:1699,currency:DIGITAL_CURRENCY,category:"resource_bundle",levels:[1,2,3,4,5,6,7],format:"zip",componentProductIds:["worksheet-pack","assessment-tracker","30-day-planner"],description:"Worksheet, Tracker and 30-Day Planner together for daily practice, planning and evidence-based progress review."},
   {id:"exam-preparation-bundle",sku:"hskkit_hsk3_exam_preparation_bundle_v1",name:"Exam Preparation Bundle",shortName:"Exam Preparation",amountCents:2499,currency:DIGITAL_CURRENCY,category:"resource_bundle",levels:[1,2,3,4,5,6,7],format:"zip",componentProductIds:["worksheet-pack","practice-assessment-pack","30-day-planner"],description:"Worksheet, Practice Assessment and 30-Day Planner together for practice, diagnosis and a structured review cycle."},
-  {id:"teacher-lesson-plan-pack",sku:"hskkit_hsk3_teacher_lesson_plan_pack_v2",name:"HSK Teacher Lesson Plan Pack",shortName:"Teacher Pack",amountCents:1999,currency:DIGITAL_CURRENCY,category:"teacher",levels:[1,2,3,4,5,6,7],format:"zip",description:"Classroom-ready plans, handouts, tickets, homework, editable DOCX/PPTX and a bounded single-teacher classroom licence."},
+  {id:"teacher-lesson-plan-pack",sku:"hskkit_hsk3_teacher_lesson_plan_pack_v2",name:"HSK Teacher Lesson Plan Pack",shortName:"Teacher Pack",amountCents:1999,currency:DIGITAL_CURRENCY,category:"teacher",levels:[1,2,3,4,5,6,7],format:"zip",description:"Classroom-ready plans, handouts, tickets, homework, editable DOCX/PPTX and the same flexible print permission shown at checkout."},
 ] as const;
 
 export function digitalProduct(value:unknown){return DIGITAL_PRODUCTS.find(product=>product.id===value)??null;}

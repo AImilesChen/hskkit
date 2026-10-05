@@ -22,8 +22,14 @@ def render(pdf:bytes,page:int)->Image.Image:
         source=Path(temporary)/"source.pdf"
         output=Path(temporary)/"page"
         source.write_bytes(pdf)
-        subprocess.run(["pdftoppm","-f",str(page),"-l",str(page),"-r","150","-png","-singlefile",str(source),str(output)],check=True,stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL)
-        return Image.open(output.with_suffix(".png")).convert("RGB")
+        try:
+            subprocess.run(["pdftoppm","-f",str(page),"-l",str(page),"-r","150","-png","-singlefile",str(source),str(output)],check=True,stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL)
+            return Image.open(output.with_suffix(".png")).convert("RGB")
+        except FileNotFoundError:
+            import pypdfium2
+
+            pdf=pypdfium2.PdfDocument(pdf)
+            return pdf[page-1].render(scale=150/72).to_pil().convert("RGB")
 
 
 def main():
@@ -34,7 +40,7 @@ def main():
     with zipfile.ZipFile(args.artifact) as archive:
         plans=archive.read("HSKKit-Teacher-Lesson-Plans-A4.pdf")
         tickets=archive.read("HSKKit-Exit-Tickets-A4.pdf")
-    pages=[("L1 · 45 MIN",render(plans,1)),("L5 · 60 MIN",render(plans,14)),("L9 · 90 MIN",render(plans,27)),("CUTTABLE",render(tickets,1))]
+    pages=[("L1 · 45 MIN",render(plans,1)),("L5 · 60 MIN",render(plans,27)),("L9 · 90 MIN",render(plans,53)),("CUTTABLE",render(tickets,1))]
     canvas=Image.new("RGB",(1600,1000),"#063c34")
     draw=ImageDraw.Draw(canvas)
     for y in range(1000):
