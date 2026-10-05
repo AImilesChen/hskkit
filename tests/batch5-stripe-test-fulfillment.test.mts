@@ -206,11 +206,13 @@ test("Test and Live digital orders keep independent purchase and entitlement sta
   assert.ok(await activeDigitalEntitlement(userId,liveRights[0].id,env,true));assert.equal(await activeDigitalEntitlement(userId,liveRights[0].id,env,false),null);
 });
 
-test("digital checkout retries failed orders, blocks parallel pending checkout, freezes refunds and ignores partial refund revocation",async()=>{
+test("digital checkout retries failed orders, resumes a pending checkout, freezes refunds and ignores partial refund revocation",async()=>{
   const db=await packDb();const env=envFor(db);
   const failed=await createDigitalProductOrder("pack-user","level-6","retry-idem",env);await markDigitalOrderFailed(failed.id,env);
+  const earlierFailed=await createDigitalProductOrder("pack-user","level-6","earlier-failed",env);await markDigitalOrderFailed(earlierFailed.id,env);
   const retried=await createDigitalProductOrder("pack-user","level-6","retry-idem",env);assert.equal(retried.id,failed.id);assert.equal(retried.status,"pending");
-  await assert.rejects(createDigitalProductOrder("pack-user","level-6","other-idem",env),/PRODUCT_CHECKOUT_PENDING/);
+  const resumed=await createDigitalProductOrder("pack-user","level-6","other-idem",env);assert.equal(resumed.id,retried.id);
+  const resumedFromFailed=await createDigitalProductOrder("pack-user","level-6","earlier-failed",env);assert.equal(resumedFromFailed.id,retried.id);
   db.prepare("UPDATE digital_product_orders SET stripe_checkout_session_id='cs_retry' WHERE id=?").run(retried.id);
   const rights=await grantDigitalProductOrder({sessionId:"cs_retry",expectedUserId:"pack-user",expectedProductId:"level-6",paymentIntentId:"pi_retry",chargeId:"ch_retry"},env);assert.equal(rights.length,1);
   assert.ok(await requestDigitalRefund("pack-user",retried.id,env));assert.equal(await activeDigitalEntitlement("pack-user",rights[0].id,env),null);
@@ -224,6 +226,17 @@ test("failed checkout cannot be revived after the same user gains active product
   const db=await packDb();const env=envFor(db);const stale=await createDigitalProductOrder("pack-user","worksheet-pack","stale-idem",env);await markDigitalOrderFailed(stale.id,env);
   const winner=await createDigitalProductOrder("pack-user","worksheet-pack","winner-idem",env);db.prepare("UPDATE digital_product_orders SET stripe_checkout_session_id='cs_winner' WHERE id=?").run(winner.id);await grantDigitalProductOrder({sessionId:"cs_winner",expectedUserId:"pack-user",expectedProductId:"worksheet-pack",paymentIntentId:"pi_winner",chargeId:"ch_winner"},env);
   await assert.rejects(createDigitalProductOrder("pack-user","worksheet-pack","stale-idem",env),/PRODUCT_ALREADY_ACTIVE/);assert.equal((db.prepare("SELECT status FROM digital_product_orders WHERE id=?").get(stale.id) as {status:string}).status,"failed");
+});
+
+test("an expired Stripe session is retained for audit while a new checkout gets a fresh order",async()=>{
+  const db=await packDb();const env=envFor(db);
+  const expired=await createDigitalProductOrder("pack-user","worksheet-pack","first-click",env);
+  db.prepare("UPDATE digital_product_orders SET stripe_checkout_session_id='cs_test_expired' WHERE id=?").run(expired.id);
+  await markDigitalOrderFailed(expired.id,env);
+  const replacement=await createDigitalProductOrder("pack-user","worksheet-pack","replacement-click",env);
+  assert.notEqual(replacement.id,expired.id);
+  assert.equal(replacement.stripe_checkout_session_id,null);
+  assert.equal((db.prepare("SELECT stripe_checkout_session_id FROM digital_product_orders WHERE id=?").get(expired.id) as {stripe_checkout_session_id:string}).stripe_checkout_session_id,"cs_test_expired");
 });
 
 test("final PDF bytes parse independently and render without blank pages",async()=>{
