@@ -78,6 +78,18 @@ export async function createStripeDigitalProductCheckout(input:{orderId:string;u
   return {id:value.id,url:value.url};
 }
 
+export async function retrieveStripeDigitalProductCheckout(input:{sessionId:string;orderId:string;userId:string;product:DigitalProduct;secret:string}){
+  const {value,mode}=await stripeRequest(`checkout/sessions/${encodeURIComponent(input.sessionId)}`,input.secret,{method:"GET"});
+  const metadata=value.metadata as Record<string,unknown>|undefined;
+  if(value.id!==input.sessionId||value.mode!=="payment"||value.client_reference_id!==input.userId||metadata?.order_id!==input.orderId||metadata?.user_id!==input.userId||metadata?.product_id!==input.product.id||Number(value.amount_total)!==input.product.amountCents||value.currency!==input.product.currency)throw new Error("STRIPE_CHECKOUT_MISMATCH");
+  const prefix=mode==="live"?"cs_live_":"cs_test_";
+  if(!input.sessionId.startsWith(prefix))throw new Error("STRIPE_RESPONSE_MODE_MISMATCH");
+  if(value.status==="open"&&typeof value.url==="string"&&value.url.startsWith("https://checkout.stripe.com/"))return {status:"open" as const,url:value.url};
+  if(value.status==="expired")return {status:"expired" as const};
+  if(value.status==="complete")return {status:"complete" as const};
+  throw new Error("STRIPE_CHECKOUT_INVALID");
+}
+
 export async function createStripeSubscriptionCheckout(input:{orderId:string;ownerId:string;userId:string;planId:SubscriptionPlanId;origin:string;secret:string;priceId?:string}){
   const mode=requireStripeMode(input.secret);const plan=subscriptionPlan(input.planId);if(!plan)throw new Error("INVALID_PLAN");
   if(mode==="live"&&!input.priceId)throw new Error("STRIPE_LIVE_PRICE_REQUIRED");

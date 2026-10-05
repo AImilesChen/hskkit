@@ -3,7 +3,7 @@ import test from "node:test";
 import {createHmac} from "node:crypto";
 import {readFile} from "node:fs/promises";
 import {commercialPolicy,stripeSecretForMode,stripeWebhookSecretForMode,subscriptionCommercePolicy} from "../src/lib/commercial/domain.ts";
-import {createStripeDigitalProductCheckout,createStripeSubscriptionCheckout,verifyStripeWebhook} from "../src/lib/commercial/stripe.ts";
+import {createStripeDigitalProductCheckout,createStripeSubscriptionCheckout,retrieveStripeDigitalProductCheckout,verifyStripeWebhook} from "../src/lib/commercial/stripe.ts";
 import {DIGITAL_PRODUCTS} from "../src/lib/commercial/products.ts";
 
 const exportSecret="x".repeat(32);
@@ -45,6 +45,21 @@ test("Live digital checkout fails closed on missing or mismatched Price",async()
   const original=globalThis.fetch;
   globalThis.fetch=async()=>new Response(JSON.stringify({id:"price_bad",active:true,livemode:true,currency:"usd",unit_amount:1,type:"one_time"}),{status:200});
   try{await assert.rejects(()=>createStripeDigitalProductCheckout({orderId:"ord",userId:"user",product,successUrl:"https://hskkit.com/s",cancelUrl:"https://hskkit.com/c",secret:"rk_live_123",priceId:"price_bad"}),/STRIPE_PRICE_MISMATCH/);}finally{globalThis.fetch=original;}
+});
+
+test("an abandoned digital checkout resumes only its verified open Stripe session",async()=>{
+  const product=DIGITAL_PRODUCTS[0];const original=globalThis.fetch;let status="open";
+  globalThis.fetch=async(input,init)=>{
+    assert.equal(String(input),"https://api.stripe.com/v1/checkout/sessions/cs_live_resume");assert.equal(init?.method,"GET");
+    return new Response(JSON.stringify({id:"cs_live_resume",livemode:true,mode:"payment",status,url:status==="open"?"https://checkout.stripe.com/c/pay/cs_live_resume":null,client_reference_id:"user_resume",metadata:{order_id:"order_resume",user_id:"user_resume",product_id:product.id},amount_total:product.amountCents,currency:product.currency}),{status:200});
+  };
+  try{
+    const input={sessionId:"cs_live_resume",orderId:"order_resume",userId:"user_resume",product,secret:"rk_live_test"};
+    assert.deepEqual(await retrieveStripeDigitalProductCheckout(input),{status:"open",url:"https://checkout.stripe.com/c/pay/cs_live_resume"});
+    status="expired";assert.deepEqual(await retrieveStripeDigitalProductCheckout(input),{status:"expired"});
+    status="complete";assert.deepEqual(await retrieveStripeDigitalProductCheckout(input),{status:"complete"});
+    await assert.rejects(()=>retrieveStripeDigitalProductCheckout({...input,userId:"another_user"}),/STRIPE_CHECKOUT_MISMATCH/);
+  }finally{globalThis.fetch=original;}
 });
 
 test("Live subscription Checkout uses only the mapped recurring Price",async()=>{
