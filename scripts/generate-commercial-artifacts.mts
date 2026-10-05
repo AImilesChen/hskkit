@@ -4,7 +4,7 @@ import { createHash } from "node:crypto";
 import { buildPackManifest, selectPackAssets, type PackSelection } from "../src/lib/commercial/catalog.ts";
 import { generatePackPdf, generateZipFiles } from "../src/lib/commercial/generator.ts";
 import { generateDifferentiatedProductArtifact, type AssessmentLevelAudio } from "../src/lib/commercial/product-generator.ts";
-import { buildProductDeliveries, DEFAULT_PRODUCT_GENERATION_VERSION, DIGITAL_PRODUCTS, generationVersionForProduct } from "../src/lib/commercial/products.ts";
+import { buildProductDeliveries, DEFAULT_PRODUCT_GENERATION_VERSION, DIGITAL_PRODUCTS, generationVersionForProduct, productLicenseNotice } from "../src/lib/commercial/products.ts";
 
 const selectedProductIds=(process.env.PRODUCT_IDS||process.env.PRODUCT_ID||"").split(",").map(id=>id.trim()).filter(Boolean);
 const vocabularyOnly=process.env.VOCABULARY_ONLY==="1";
@@ -89,14 +89,31 @@ for(const product of DIGITAL_PRODUCTS){
   }
   if(product.category==="resource_bundle"){
     const componentFiles=[] as Array<{name:string;data:Uint8Array}>;
+    const componentVersions=[] as Array<{productId:string;generationVersion:string;sha256:string}>;
     for(const componentId of product.componentProductIds??[]){
-      const component=await generateDifferentiatedProductArtifact(componentId,fontBytes,emojiBytes,generationVersion,assessmentAudio,assessmentLevelAudio);
+      const componentVersion=product.id==="learner-practice-toolkit"?generationVersionForProduct(componentId):generationVersion;
+      const component=await generateDifferentiatedProductArtifact(componentId,fontBytes,emojiBytes,componentVersion,assessmentAudio,assessmentLevelAudio);
       componentFiles.push({name:`${componentId}.${component.format}`,data:component.bytes});
+      componentVersions.push({productId:componentId,generationVersion:componentVersion,sha256:createHash("sha256").update(component.bytes).digest("hex")});
     }
-    const manifest={schemaVersion:"hskkit-product-manifest-v1",productId:product.id,generationVersion,standard:"HSK 3.0",standardVersion:"GF0025-2021",officialExam:false,levels:product.levels,componentProductIds:product.componentProductIds,files:componentFiles.map(file=>file.name),licenseNotice:"Personal, non-transferable study and print use only."};
+    const isLearnerToolkit=product.id==="learner-practice-toolkit";
+    const manifest={schemaVersion:"hskkit-product-manifest-v1",productId:product.id,generationVersion,standard:"HSK 3.0",standardVersion:"GF0025-2021",officialExam:false,levels:product.levels,componentProductIds:product.componentProductIds,files:componentFiles.map(file=>file.name),...(isLearnerToolkit?{components:componentVersions}:{}),licenseNotice:productLicenseNotice(product.id)};
     const manifestFile={name:"manifest.json",data:new TextEncoder().encode(JSON.stringify(manifest,null,2))};
-    const readme={name:"README.txt",data:new TextEncoder().encode(`HSKKit ${product.name}. Each included ZIP is the complete standalone component product. Read each component README before use.\n`)};
-    const licence={name:"LICENSE.txt",data:new TextEncoder().encode("Personal, non-transferable study and print use only. This notice applies to every component and generated file in this Bundle.\n")};
+    const learnerReadme=[
+      "HSKKit Learner Practice Toolkit | START HERE",
+      "This bundle includes the complete current Worksheet Pack, Assessment Tracker and 30-Day Planner as three separate ZIPs. Unzip the outer bundle, then unzip the component you need. Each component has its own README.",
+      "",
+      "1. Choose a current HSK level and start with the Assessment Tracker Blank workbook. Follow its guide to record a small first attempt; the worked example is fictional and must not be entered as your own result.",
+      "2. Set a goal and choose one 20, 30 or 45-minute route in the 30-Day Planner. The planner is a schedule, not a self-contained course: use level-appropriate material for tasks it does not supply, especially keyed listening audio and writing feedback.",
+      "3. Complete a Worksheet module without its answer key, then check the matching IDs and correct missed items. Use the printable Progress Checklist to schedule a later retry.",
+      "4. Record new dated attempts in the Assessment Tracker and review progress weekly. Its Assessment Log and Full Library Scoring are separate views; update both yourself if you want both summaries. The Planner and Worksheet also do not sync automatically with the Tracker.",
+      "",
+      "The three component ZIPs are standalone products, not shortened editions. This bundle has no listening audio or official HSK exam. Levels 7-9 use one unified advanced source band. The manifest names each component version and its SHA-256; checksums.sha256 verifies the outer files.",
+      "The purchaser may keep downloaded files without a time limit. The 14-day access window and three-download allowance apply only to retrieving this outer ZIP. Read LICENSE.txt and each component README for printing permissions.",
+    ].join("\n")+"\n";
+    const readme={name:"README.txt",data:new TextEncoder().encode(isLearnerToolkit?learnerReadme:`HSKKit ${product.name}. Each included ZIP is the complete standalone component product. Read each component README before use.\n`)};
+    const learnerLicence=[productLicenseNotice(product.id),...componentVersions.map(({productId})=>`${productId}: ${productLicenseNotice(productId)}`)].join("\n")+"\n";
+    const licence={name:"LICENSE.txt",data:new TextEncoder().encode(isLearnerToolkit?learnerLicence:"Personal, non-transferable study and print use only. This notice applies to every component and generated file in this Bundle.\n")};
     const payload=[...componentFiles,manifestFile,readme,licence];
     const bytes=generateZipFiles([...payload,{name:"checksums.sha256",data:checksumFile(payload)}]);
     await save(product.id,"product","zip",bytes,manifest,generationVersion);continue;
@@ -104,3 +121,4 @@ for(const product of DIGITAL_PRODUCTS){
   const artifact=await generateDifferentiatedProductArtifact(product.id,fontBytes,emojiBytes,generationVersion,assessmentAudio,assessmentLevelAudio);
   await save(product.id,deliveries[0].deliveryKey,artifact.format,artifact.bytes,artifact.manifest as unknown as Record<string,unknown>,generationVersion);
 }
+
