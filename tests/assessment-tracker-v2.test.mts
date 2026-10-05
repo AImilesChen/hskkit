@@ -18,17 +18,18 @@ function zipEntries(zip:Uint8Array){
 }
 const text=(bytes:Uint8Array|undefined)=>new TextDecoder().decode(bytes);
 
-test("Assessment Tracker v2 ships separate blank and example Excel dashboards",async()=>{
+test("Assessment Tracker preserves dated retests and excludes partial scores",async()=>{
   const [font,emoji]=await Promise.all([
     readFile(new URL("../assets/fonts/HskKitSansSubset.ttf",import.meta.url)),
     readFile(new URL("../assets/fonts/HskKitEmoji.ttf",import.meta.url)),
   ]);
-  const artifact=await generateDifferentiatedProductArtifact("assessment-tracker",new Uint8Array(font),new Uint8Array(emoji),"assessment-tracker-v2");
+  const artifact=await generateDifferentiatedProductArtifact("assessment-tracker",new Uint8Array(font),new Uint8Array(emoji),"assessment-tracker-v5");
   const files=zipEntries(artifact.bytes);
   const required=[
     "HSKKit-Assessment-Tracker-Blank.xlsx",
     "HSKKit-Assessment-Tracker-Example.xlsx",
     "HSKKit-Assessment-Tracker-Raw-Data.csv",
+    "HSKKit-Assessment-Log-Template.csv",
     "HSKKit-Weekly-Review.csv",
     "HSKKit-Assessment-Dashboard-Guide.pdf",
     "HSKKit-Printable-Assessment-Record.pdf",
@@ -42,6 +43,7 @@ test("Assessment Tracker v2 ships separate blank and example Excel dashboards",a
     assert.ok(workbook.has("xl/charts/chart2.xml"),`${workbookName} chart2`);
     assert.match(text(workbook.get("xl/workbook.xml")),/Dashboard/);
     assert.match(text(workbook.get("xl/workbook.xml")),/Vocabulary Tracker/);
+    assert.match(text(workbook.get("xl/workbook.xml")),/Assessment Log/);
     assert.match(text(workbook.get("xl/workbook.xml")),/Weekly Review/);
     assert.match(text(workbook.get("xl/workbook.xml")),/Print Summary/);
     assert.match(text(workbook.get("xl/workbook.xml")),/calcMode="auto"/);
@@ -50,20 +52,25 @@ test("Assessment Tracker v2 ships separate blank and example Excel dashboards",a
     assert.match(dashboard,/AVERAGEIF/);
     assert.match(dashboard,/COUNTIFS/);
     assert.match(dashboard,/SUMPRODUCT/);
-    assert.match(dashboard,/I\$2:\$I\$11093&amp;lt;&amp;gt;|I\$2:\$I\$11093&lt;&gt;/);
+    assert.match(dashboard,/ISNUMBER/);
     assert.doesNotMatch(dashboard,/LET\(|LAMBDA\(|_xlfn\./);
     const tracker=text(workbook.get("xl/worksheets/sheet3.xml"));
     assert.match(tracker,/<autoFilter ref=/);
     assert.match(tracker,/<conditionalFormatting/);
     assert.match(tracker,/SUM\(I2:K2\)/);
-    assert.match(tracker,/COUNT\(I2:K2\)=0/);
-    assert.match(tracker,/IFERROR\(L2\/6/);
+    assert.match(tracker,/COUNT\(I2:K2\)=3/);
+    assert.match(tracker,/IF\(L2=&quot;&quot;,&quot;&quot;,L2\/6\)/);
     assert.match(tracker,/dataValidations count="3"/);
-    const weekly=text(workbook.get("xl/worksheets/sheet4.xml"));
+    const log=text(workbook.get("xl/worksheets/sheet4.xml"));
+    assert.match(log,/L501/);
+    assert.match(log,/Word ID not found/);
+    assert.match(log,/Score all 3 skills/);
+    const weekly=text(workbook.get("xl/worksheets/sheet5.xml"));
     assert.match(weekly,/AVERAGEIFS/);
-    assert.match(weekly,/\$N\$2:\$N\$11093/);
+    assert.match(weekly,/Assessment Log/);
+    assert.match(weekly,/\$L\$2:\$L\$501/);
     assert.match(weekly,/A2\+7/);
-    const summary=text(workbook.get("xl/worksheets/sheet5.xml"));
+    const summary=text(workbook.get("xl/worksheets/sheet6.xml"));
     assert.match(summary,/pageSetup[^>]*orientation="landscape"/);
     assert.match(summary,/pageMargins/);
   }
@@ -74,12 +81,12 @@ test("Assessment Tracker v2 ships separate blank and example Excel dashboards",a
   assert.match(text(example.get("xl/worksheets/sheet3.xml")),/SAMPLE_EVIDENCE/);
 });
 
-test("Assessment Tracker v2 maps Level 1-9 and calculates percentages without manual work",async()=>{
+test("Assessment Tracker maps the complete source corpus and offers seven printable bands",async()=>{
   const [font,emoji]=await Promise.all([
     readFile(new URL("../assets/fonts/HskKitSansSubset.ttf",import.meta.url)),
     readFile(new URL("../assets/fonts/HskKitEmoji.ttf",import.meta.url)),
   ]);
-  const artifact=await generateDifferentiatedProductArtifact("assessment-tracker",new Uint8Array(font),new Uint8Array(emoji),"assessment-tracker-v2");
+  const artifact=await generateDifferentiatedProductArtifact("assessment-tracker",new Uint8Array(font),new Uint8Array(emoji),"assessment-tracker-v5");
   const files=zipEntries(artifact.bytes);
   const csv=text(files.get("HSKKit-Assessment-Tracker-Raw-Data.csv"));
   const rows=csv.trim().split(/\r?\n/);
@@ -91,5 +98,5 @@ test("Assessment Tracker v2 maps Level 1-9 and calculates percentages without ma
   assert.doesNotMatch(csv,/"[89]","unified-levels-7-9","7"/);
 
   const printable=await PDFDocument.load(files.get("HSKKit-Printable-Assessment-Record.pdf")!);
-  assert.ok(printable.getPageCount()>=8,"printable record must provide one spacious page per canonical level/band plus summary space");
+  assert.equal(printable.getPageCount(),7,"one spacious record page per canonical level/band");
 });

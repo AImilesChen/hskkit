@@ -125,14 +125,15 @@ async function makePdf(title:string,subtitle:string,sections:PdfSection[],fontBy
   const assessmentPdf=title.includes("Practice Assessment");
   const header=assessmentPdf?"HSKKit · Practice Assessment v3 · HSK 3.0 · Unofficial":"HSKKit · HSK 3.0 · Unofficial learning resource";
   const plannerQuickStart=title==="HSK 30-Day Planner · Quick Start";
+  const trackerPdf=title.startsWith("HSK Assessment Tracker");
   const contentWidth=pageWidth-75;
   const fresh=()=>{page=pdf.addPage(size);pageNumber+=1;page.drawRectangle({x:0,y:pageHeight-30,width:pageWidth,height:30,color:rgb(.04,.31,.29)});page.drawText(header,{x:32,y:pageHeight-20,size:9,font,color:rgb(1,1,1)});page.drawText(String(pageNumber),{x:pageWidth-55,y:26,size:8,font,color:rgb(.45,.5,.56)});y=pageHeight-57;};
   fresh();for(const line of wordLines(title,font,20,contentWidth)){page!.drawText(line,{x:36,y,size:20,font,color:rgb(.04,.31,.29)});y-=27;}y-=5;
-  const subtitleSize=plannerQuickStart?11:assessmentPdf?11:9.5;
-  for(const line of wordLines(subtitle,font,subtitleSize,contentWidth)){page!.drawText(line,{x:36,y,size:subtitleSize,font,color:rgb(.25,.3,.38)});y-=plannerQuickStart?16:assessmentPdf?16:14;}
+  const subtitleSize=plannerQuickStart||trackerPdf?11:assessmentPdf?11:9.5;
+  for(const line of wordLines(subtitle,font,subtitleSize,contentWidth)){page!.drawText(line,{x:36,y,size:subtitleSize,font,color:rgb(.25,.3,.38)});y-=plannerQuickStart||trackerPdf?16:assessmentPdf?16:14;}
   const bandDisclosure=assessmentPdf?"Levels 7–9 are unofficial advanced practice distinctions within the unified HSK 3.0 advanced band; not separate official score bands.":"Advanced-band disclosure: HSK 3.0 defines one unified Levels 7–9 band; Level 7/8/9 labels use the same canonical approved source set.";
-  const disclosureSize=plannerQuickStart?9.5:assessmentPdf?10:8.5;
-  for(const line of wordLines(bandDisclosure,font,disclosureSize,contentWidth)){page!.drawText(line,{x:36,y,size:disclosureSize,font,color:rgb(.45,.28,.08)});y-=plannerQuickStart?14:assessmentPdf?15:12;}y-=plannerQuickStart?20:12;
+  const disclosureSize=plannerQuickStart||trackerPdf?9.5:assessmentPdf?10:8.5;
+  for(const line of wordLines(bandDisclosure,font,disclosureSize,contentWidth)){page!.drawText(line,{x:36,y,size:disclosureSize,font,color:rgb(.45,.28,.08)});y-=plannerQuickStart||trackerPdf?14:assessmentPdf?15:12;}y-=plannerQuickStart?20:12;
   if(compact){
     for(const section of sections){
       const headingRows=wordLines(section.heading,font,13,contentWidth);
@@ -147,9 +148,9 @@ async function makePdf(title:string,subtitle:string,sections:PdfSection[],fontBy
     }
   }else for(const [sectionIndex,section] of sections.entries()){
     if(!assessmentPdf){
-      const headingSize=plannerQuickStart?16:14,bodySize=plannerQuickStart?11.5:9.5;
-      const bodyLeading=plannerQuickStart?18:14,itemGap=plannerQuickStart?11:5;
-      if(section.pageBreakBefore||y<112)fresh();
+      const headingSize=plannerQuickStart?16:trackerPdf?15:14,bodySize=plannerQuickStart?11.5:trackerPdf?11:9.5;
+      const bodyLeading=plannerQuickStart?18:trackerPdf?17:14,itemGap=plannerQuickStart?11:trackerPdf?8:5;
+      if((section.pageBreakBefore&&sectionIndex!==0)||y<112)fresh();
       for(const headingLine of wordLines(section.heading,font,headingSize,contentWidth)){if(y<72)fresh();page!.drawText(headingLine,{x:36,y,size:headingSize,font,color:rgb(.04,.31,.29)});y-=plannerQuickStart?23:18;}
       y-=plannerQuickStart?7:4;
       for(const item of section.body){for(const line of wordLines(item,font,bodySize,contentWidth-10)){if(y<58)fresh();page!.drawText(line,{x:44,y,size:bodySize,font,color:rgb(.12,.16,.24)});y-=bodyLeading;}y-=itemGap;}
@@ -222,6 +223,13 @@ function readme(product:DigitalProduct,files:string[],manifest:ProductArtifactMa
     "3. Check matching IDs in the Answer Key. Read Why and Common mistake; correct each missed item using the supplied evidence. Completed Samples demonstrate how to check, not text to copy.",
     "4. On a different day, retry missed items without the key. Mark the printable Progress Checklist and jot down the error clue and next review action; no spreadsheet entry is required.",
     "Levels 1–2: recognition and short routines; 3–4: context and reconstruction; 5–6: extended evidence; 7–9: cross-text reasoning and formal response."
+  ]:product.id==="assessment-tracker"?[
+    "1. Open HSKKit-Assessment-Tracker-Blank.xlsx. Instructions explains the 0–2 rubric; Example.xlsx contains fictional entries and must not be used for real learners.",
+    "2. For a current word snapshot, enter recognition, recall and usage in Vocabulary Tracker. Mastery stays blank until all three skills are scored. Blank means not measured; zero means tested and unsuccessful.",
+    "3. For a repeatable assessment, add a new dated row for each word and attempt in Assessment Log (500 prepared rows). Use an exact Word ID from Vocabulary Tracker, score all three skills 0–2, and write observed evidence and a next action. Do not overwrite an older attempt.",
+    "4. Dashboard summarizes complete current snapshots. Weekly Review summarizes only ready dated log rows. Enter a Monday week start and source level 1–7 (7 = unified advanced 7–9); these two views do not synchronize automatically.",
+    "5. The three distinct CSV files are optional portable templates/data without XLSX formulas. The guide explains scoring and a worked retest; print one record page for your chosen source band.",
+    "The first 500 dated attempts fit in the prepared Assessment Log. To keep a longer history, archive a copy before the log fills; do not assume the Weekly Review scans rows past 501."
   ]:audio?[
     "1. Open 00-START-HERE.pdf. Choose one Level and one Form, then use its exact page ranges to print the Student paper and matching Answer Sheets.",
     "2. For one level, play Level-Audio/form-X-level-N.mp3 (X=A/B/C, N=1–9). The three full-form MP3 files play all nine levels in sequence and are not needed for a one-level sitting. Each numbered prompt includes a 5-second response gap.",
@@ -242,7 +250,7 @@ function readme(product:DigitalProduct,files:string[],manifest:ProductArtifactMa
     audio?`Audio integrity: full-form MP3 SHA-256 hashes are in manifest.json; per-level MP3 hashes and source fingerprint are in Level-Audio/timing-index.json. ${audio.redistributionStatus}`:"",
     "Levels 7–9 use one unified canonical advanced source set.",
     `Licence: ${productLicenseNotice(product.id)}`,
-    product.id==="practice-assessment-pack"||product.id==="worksheet-pack"?"The 14-day access and three-download allowance apply only to retrieving the ZIP. Downloaded copies do not expire.":""
+    product.id==="practice-assessment-pack"||product.id==="worksheet-pack"||product.id==="assessment-tracker"?"The 14-day access and three-download allowance apply only to retrieving the ZIP. Downloaded copies do not expire.":""
   ];
   return encoder.encode(lines.filter(Boolean).join("\n"));
 }
@@ -792,34 +800,40 @@ export async function generateDifferentiatedProductArtifact(productId:DigitalPro
   if(product.id==="assessment-tracker"){
     const rows=["level,source_band,source_level,word_id,hanzi,pinyin,meaning,recognition_0_2,recall_0_2,usage_0_2,last_checked,next_review,evidence,notes"];
     for(const selection of selections)for(const word of selection.words)rows.push([selection.level,selection.level>=7?"unified-levels-7-9":"level-specific",selection.level>=7?7:selection.level,word.id,word.hanzi,word.pinyin,word.meaning,"","","","","","",""].map(value=>`"${String(value).replaceAll('"','""')}"`).join(","));
-    const weekly=["week_start,target_level,words_sampled,recognition_percent,recall_percent,usage_percent,strongest_evidence,weakest_evidence,next_action,next_review_date",...Array.from({length:12},()=>",,,,,,,,,")];
-    const guide=await makePdf("HSK Assessment Tracker · Dashboard Guide","A spreadsheet-neutral scoring and review guide. Use the included UTF-8 CSV files in Excel, Numbers, LibreOffice or Google Sheets.",selections.map(selection=>({heading:`Level ${selection.level} · Evidence rules`,body:["Recognition 0: not recognized · 1: recognized with cue · 2: recognized independently.","Recall 0: no meaning retrieved · 1: partial/slow meaning · 2: accurate meaning without cue.","Usage 0: no accurate use · 1: meaning clear with a minor error · 2: complete accurate use.","Dashboard method: filter this level, average each score column, identify the lowest average, and set next_review from observed evidence."]})),fontBytes);
-    const printableSections=selections.flatMap(selection=>[
-      {
-        heading:`Level ${selection.level} · Checkpoint`,
-        pageBreakBefore:true,
-        body:[
-          "Date: ____   Learner/group: ____   Words sampled: ____",
-          "Recognition total: ____ / ____   Recall total: ____ / ____   Usage total: ____ / ____",
-          "Three secure items: ____________________  Three review items: ____________________",
-          "Observed evidence: __________________________________________________________",
-          "___________________________________________________________________________",
-          "___________________________________________________________________________",
-          "Next action and date: ________________________________________________________",
-          "___________________________________________________________________________",
-        ],
-      },
-      {
-        heading:`Level ${selection.level} · Weekly follow-through`,
-        body:[
-          "Week start: ____   Planned review: ____   Completed: ____",
-          "What changed in recognition / recall / usage: _________________________________",
-          "___________________________________________________________________________",
-          "Keep / change / remove this review action: ____________________________________",
-          "___________________________________________________________________________",
-        ],
-      },
-    ]);
+    const weekly=["week_start,target_source_level,complete_attempts,recognition_percent,recall_percent,usage_percent,overall_percent,strongest_evidence,weakest_evidence,next_action",...Array.from({length:52},()=>",,,,,,,,,")];
+    const log=["attempt_date,word_id,source_level,recognition_0_2,recall_0_2,usage_0_2,observed_evidence,next_action,next_review",...Array.from({length:500},()=>",,,,,,,,")];
+    const guide=await makePdf("HSK Assessment Tracker · Dashboard Guide","Start with the blank XLSX workbook. The CSV files are portable data and templates; they do not calculate scores.",[
+      {heading:"Start in three steps",body:["1. Open Instructions, then choose a source band: Levels 1–6 have separate word lists; Levels 7–9 share one Advanced source band (source level 7).","2. For a current snapshot, find a word in Vocabulary Tracker and enter recognition, recall and usage. Dashboard counts only words with all three scores.","3. For progress over time, add a new date and the exact Word ID to Assessment Log for every attempt. Weekly Review reads completed log attempts; never replace an older attempt."]},
+      {heading:"Score observed performance, 0–2 per skill",body:["Recognition: 0 = cannot identify the word; 1 = identifies with a prompt; 2 = identifies independently.","Recall: 0 = cannot retrieve meaning; 1 = partial or slow meaning; 2 = accurate meaning without a prompt.","Usage: 0 = cannot use it accurately; 1 = comprehensible use with a minor error; 2 = accurate sentence or response.","Mastery = (recognition + recall + usage) / 6 only when all three scores are entered. Blank means not measured; a scored zero means the learner attempted the skill.","Example: recognition 2, recall blank, usage blank → mastery blank. Scores 2, 1, 1 → 4/6 = 66.7%."]},
+      {heading:"Worked retest: one word, two dated attempts",body:["On 7 September, Word ID from Vocabulary Tracker: recognition 2, recall 1, usage 0. Complete attempt = 3/6 = 50%. Evidence: recognized with no cue, could not form a sentence.","Action: write one original sentence, check it, then retrieve the meaning and sentence the following week. Record the action and next review date.","On 14 September, enter a NEW Assessment Log row for the same Word ID: 2, 2, 1 = 5/6 = 83.3%. Keep both rows; the weekly view now shows one complete attempt in each week.","A dated row missing the date, known Word ID or any of the three scores is not Ready and is excluded from Weekly Review."]},
+      {heading:"Read the two views correctly",pageBreakBefore:true,body:["Dashboard is a current, editable snapshot from Vocabulary Tracker. It shows number of fully scored words, average mastery and the share scoring at least 80%. It does not show trends.","Weekly Review reads only Ready Assessment Log rows for the entered Monday week and source level. Percentages average scored attempts in that week, not unique words or the entire vocabulary list.","A target source level of 7 covers the single unified Advanced 7–9 set. Enter one of 1–7, not 8 or 9. The two views do not synchronize; use the dated log to retain retest history."]},
+      {heading:"Capacity, files and honest limits",body:["Vocabulary Tracker contains 11,092 canonical entries. Assessment Log has 500 prepared attempt rows; Weekly Review has 52 prepared week rows. Archive a copy before either capacity is exhausted.","The blank XLSX is for your data; the example XLSX has fictional worked entries. Raw-Data.csv is the source list; Assessment-Log-Template.csv and Weekly-Review.csv are optional portable entry templates without formulas.","This is a self-assessment organizer, not an automatically graded test, audio pack or scheduler. Use the printable record for handwriting, then transfer attempts to the XLSX if you want weekly calculations."]},
+      {heading:"A practical weekly cycle",body:["Choose a Monday week start, one source level and a manageable sample of words. Use fresh prompts, so the learner is not only repeating a memorized answer.","For each tested word, record the exact Word ID, three scores and one short observation. If one skill was not tested, leave it blank and finish the check later.","Choose one action from the weakest observed skill, then set a retest date. On that date, add new log rows for the same Word IDs and compare the actual evidence.","Use the percentage as a learning signal, not an official HSK result. A high average from one attempt does not prove the whole level is secure."]},
+      {heading:"If a result looks empty",body:["Dashboard stays empty for a band until at least one word has all three snapshot scores. Weekly Review stays empty until the selected week and level contain a Ready dated attempt.","Check that dates are real spreadsheet dates, Word IDs exactly match Vocabulary Tracker, and every score is a whole number from 0 to 2. The Entry Status column names incomplete log rows."]}
+    ],fontBytes);
+    const printableSections=selections.map((selection,index)=>({
+      heading:`${selection.level===7?"Advanced 7–9":"Level "+selection.level} · Assessment checkpoint`,
+      pageBreakBefore:index>0,
+      body:[
+        "Date: __________   Learner or group: __________________   Week starting: __________",
+        "Sampled Word IDs: __________________________________________________________",
+        "Recognition: ____ / ____   Recall: ____ / ____   Usage: ____ / ____",
+        "Use 0 = not yet, 1 = with help/partial, 2 = independently/accurately for each skill.",
+        "Which words or errors need another attempt?",
+        "___________________________________________________________________________",
+        "___________________________________________________________________________",
+        "What did the learner actually say, recognize or write?",
+        "___________________________________________________________________________",
+        "___________________________________________________________________________",
+        "Next practice action: ________________________________________________________",
+        "___________________________________________________________________________",
+        "Retest date: __________   New Word IDs or same words? __________________________",
+        "Retest evidence and change in scores:",
+        "___________________________________________________________________________",
+        "___________________________________________________________________________",
+        "Transfer each dated attempt to a NEW Assessment Log row; do not overwrite history."
+      ]
+    }));
     const printable=await makePdf("HSK Assessment Tracker · Printable Record","Use one checkpoint page per level. Sample words across the level and record evidence before choosing the next action.",printableSections,fontBytes);
     const workbookWords=selections.flatMap(selection=>selection.words.map(word=>({level:selection.level,sourceBand:selection.level>=7?"unified-levels-7-9":"level-specific",sourceLevel:selection.level>=7?7:selection.level,id:word.id,hanzi:word.hanzi,pinyin:word.pinyin,meaning:word.meaning})));
     const rawData=encoder.encode(rows.join("\r\n"));
@@ -827,7 +841,7 @@ export async function generateDifferentiatedProductArtifact(productId:DigitalPro
       {name:"HSKKit-Assessment-Tracker-Blank.xlsx",data:generateAssessmentWorkbook(workbookWords,false)},
       {name:"HSKKit-Assessment-Tracker-Example.xlsx",data:generateAssessmentWorkbook(workbookWords,true)},
       {name:"HSKKit-Assessment-Tracker-Raw-Data.csv",data:rawData},
-      {name:"HSKKit-Assessment-Tracker.csv",data:rawData},
+      {name:"HSKKit-Assessment-Log-Template.csv",data:encoder.encode(log.join("\r\n"))},
       {name:"HSKKit-Weekly-Review.csv",data:encoder.encode(weekly.join("\r\n"))},
       {name:"HSKKit-Assessment-Dashboard-Guide.pdf",data:guide},
       {name:"HSKKit-Printable-Assessment-Record.pdf",data:printable},

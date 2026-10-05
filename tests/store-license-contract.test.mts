@@ -23,13 +23,14 @@ test("assessment purchasers may print for their own students while other learner
   assert.match(productLicenseNotice("practice-assessment-pack"),/without a time limit/);
   assert.match(productLicenseNotice("worksheet-pack"),/print student worksheet pages for learners they personally teach/);
   assert.match(productLicenseNotice("worksheet-pack"),/without a time limit/);
+  assert.match(productLicenseNotice("assessment-tracker"),/print blank assessment record pages for learners they personally teach/);
   for(const product of DIGITAL_PRODUCTS){
-    if(product.id!=="teacher-lesson-plan-pack"&&product.id!=="practice-assessment-pack"&&product.id!=="worksheet-pack")assert.equal(productLicenseNotice(product.id),"Personal, non-transferable study and print use only.",product.id);
+    if(product.id!=="teacher-lesson-plan-pack"&&product.id!=="practice-assessment-pack"&&product.id!=="worksheet-pack"&&product.id!=="assessment-tracker")assert.equal(productLicenseNotice(product.id),"Personal, non-transferable study and print use only.",product.id);
   }
   assert.equal(generationVersionForProduct("teacher-lesson-plan-pack"),"teacher-pack-v3");
   assert.equal(generationVersionForProduct("worksheet-pack"),"worksheet-guided-v17");
   assert.equal(generationVersionForProduct("learner-practice-toolkit"),"learner-toolkit-planner-v5");
-  assert.equal(generationVersionForProduct("assessment-tracker"),"assessment-tracker-v4");
+  assert.equal(generationVersionForProduct("assessment-tracker"),"assessment-tracker-v5");
   assert.equal(generationVersionForProduct("exam-preparation-bundle"),"exam-preparation-assessment-v3");
 });
 

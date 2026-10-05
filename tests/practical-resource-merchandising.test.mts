@@ -24,7 +24,7 @@ function zipEntries(zip:Uint8Array){
 
 const expected={
   "worksheet-pack":["00-START-HERE.pdf","HSKKit-Worksheets-Student-A4.pdf","HSKKit-Worksheets-Student-US-Letter.pdf","HSKKit-Worksheets-Student-A4-Low-Ink.pdf","HSKKit-Worksheets-Student-Fillable.pdf","HSKKit-Worksheets-Answer-Key.pdf","HSKKit-Worksheet-Completed-Samples.pdf","HSKKit-Worksheet-Progress-Checklist.pdf"],
-  "assessment-tracker":["HSKKit-Assessment-Tracker-Blank.xlsx","HSKKit-Assessment-Tracker-Example.xlsx","HSKKit-Assessment-Tracker-Raw-Data.csv","HSKKit-Assessment-Tracker.csv","HSKKit-Weekly-Review.csv","HSKKit-Assessment-Dashboard-Guide.pdf","HSKKit-Printable-Assessment-Record.pdf"],
+  "assessment-tracker":["HSKKit-Assessment-Tracker-Blank.xlsx","HSKKit-Assessment-Tracker-Example.xlsx","HSKKit-Assessment-Tracker-Raw-Data.csv","HSKKit-Assessment-Log-Template.csv","HSKKit-Weekly-Review.csv","HSKKit-Assessment-Dashboard-Guide.pdf","HSKKit-Printable-Assessment-Record.pdf"],
   "30-day-planner":["HSKKit-30-Day-Planner-Quick-Start.pdf","HSKKit-30-Day-Planner-Printable-A4.pdf","HSKKit-30-Day-Planner-Fillable-A4.pdf","HSKKit-30-Day-Planner-Progress-Tracker.xlsx"],
   "practice-assessment-pack":["00-START-HERE.pdf","HSKKit-Practice-Assessment-A-Student.pdf","HSKKit-Practice-Assessment-B-Student.pdf","HSKKit-Practice-Assessment-C-Student.pdf","HSKKit-Practice-Assessment-A-Listening.mp3","HSKKit-Practice-Assessment-B-Listening.mp3","HSKKit-Practice-Assessment-C-Listening.mp3","HSKKit-Practice-Assessment-Audio-Source-License.txt","HSKKit-Practice-Assessment-Answer-Sheets.pdf","HSKKit-Practice-Assessment-Answers-Explanations.pdf","HSKKit-Practice-Assessment-Facilitator-Transcripts.pdf","HSKKit-Practice-Assessment-Score-Report.pdf","HSKKit-Practice-Assessment-Score-Tracker.xlsx",...(["A","B","C"] as const).flatMap(form=>Array.from({length:9},(_,index)=>`Level-Audio/form-${form}-level-${index+1}.mp3`)),"Level-Audio/timing-index.json"],
   "teacher-lesson-plan-pack":["HSKKit-Teacher-Pack-Quick-Start.pdf","HSKKit-Teacher-Lesson-Plans-A4.pdf","HSKKit-Teacher-Lesson-Plans-US-Letter.pdf","HSKKit-Student-Handouts-A4.pdf","HSKKit-Student-Handouts-US-Letter.pdf","HSKKit-Exit-Tickets-A4.pdf","HSKKit-Exit-Tickets-US-Letter.pdf","HSKKit-Homework-Answers-Rubrics.pdf","HSKKit-Activity-Cards-A4.pdf","HSKKit-Activity-Cards-US-Letter.pdf","HSKKit-Editable-Lesson-Plans.docx","HSKKit-Editable-Classroom-Slides.pptx"]
@@ -88,7 +88,7 @@ test("each practical resource provides readable real sample pages and an explici
   }
   const factMatrix=Object.fromEntries(resourceProductDetails.map(detail=>[detail.id,detail.fit.facts.join(" ")]));
   assert.match(factMatrix["worksheet-pack"],/Levels 1–9.*answer/i);
-  assert.match(factMatrix["assessment-tracker"],/Levels 1–9.*scoring/i);
+  assert.match(factMatrix["assessment-tracker"],/Levels 1–6.*unified Advanced 7–9.*scoring/i);
   assert.match(factMatrix["30-day-planner"],/current Level.*target Level/i);
   assert.match(factMatrix["practice-assessment-pack"],/Levels 1–9.*27 level-only.*explanations.*rubric.*transcripts/i);
   assert.match(factMatrix["teacher-lesson-plan-pack"],/Levels 1–9.*teacher guidance/i);
