@@ -13,6 +13,7 @@ export default function ResourceProductDetail({product}: {product:StoreProductDe
         <p className="mt-5 max-w-xl text-xl font-semibold leading-8 text-slate-800">{product.promise}</p>
         <p className="mt-4 max-w-xl text-base leading-7 text-slate-600">{product.summary}</p>
         <ul className="mt-6 space-y-3 text-sm leading-6 text-slate-700">{product.outcomes.map(item=><li key={item} className="flex gap-3"><span aria-hidden="true" className="font-extrabold text-emerald-700">✓</span><span>{item}</span></li>)}</ul>
+        {product.id==="30-day-planner"&&<aside aria-label="What to prepare" className="mt-6 max-w-xl rounded-2xl border border-amber-200 bg-amber-50 p-5 text-sm leading-6 text-amber-950"><p className="font-extrabold">Before you buy · bring your own practice materials</p><p className="mt-2">This is a guided 30-day plan, not a course or question bank. You need a word list, reading questions with answers, audio with transcripts, and writing prompts with a model answer or teacher feedback matched to your current HSK level. The same task sequence is used across levels; the plan helps you choose a route and track evidence.</p></aside>}
         <div className="mt-8 max-w-xl"><ResourceProductCheckout productId={product.id} name={product.name} amountCents={product.amountCents}/></div>
       </div>
       <div aria-label="Real product preview">

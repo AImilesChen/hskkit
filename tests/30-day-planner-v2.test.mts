@@ -2,10 +2,10 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import {access,readFile} from "node:fs/promises";
 import {DatabaseSync} from "node:sqlite";
-import {PDFDocument} from "pdf-lib";
+import {PDFDocument,PDFName} from "pdf-lib";
 import {buildPlannerPack,plannerFieldNames} from "../src/lib/commercial/planner-pack.ts";
 import {generateDifferentiatedProductArtifact} from "../src/lib/commercial/product-generator.ts";
-import {currentProductDelivery,digitalProduct,generationVersionForProduct} from "../src/lib/commercial/products.ts";
+import {currentProductDelivery,digitalProduct,generationVersionForProduct,productLicenseNotice} from "../src/lib/commercial/products.ts";
 import {resourceProductDetail} from "../src/lib/commercial/resource-products.ts";
 
 function zipEntries(zip:Uint8Array){
@@ -136,6 +136,10 @@ test("planner delivery contains real printable and AcroForm-fillable editions",a
   assert.equal(printable.getPageCount(),41);
   assert.equal(fillable.getPageCount(),41);
   assert.equal(quickStart.getPageCount(),1);
+  assert.ok(printable.catalog.get(PDFName.of("Outlines")),"printable daily pages have navigation bookmarks");
+  assert.ok(fillable.catalog.get(PDFName.of("Outlines")),"fillable daily pages have navigation bookmarks");
+  assert.match(productLicenseNotice("30-day-planner"),/print blank planner record pages for learners they personally teach/);
+  assert.match(artifact.manifest.advancedBandDisclosure,/same 30-day task sequence/);
   const expectedGuide=buildPlannerPack();
   assert.equal(expectedGuide.sourcingGuide.length,5);
   assert.match(expectedGuide.sourcingGuide[2].body,/listening check in a separate setup session/i);
@@ -170,7 +174,7 @@ test("Store copy and real previews describe the personalized planner system",asy
 });
 
 test("planner uses an immutable v4 artifact while existing purchase rights migrate from PDF to ZIP",async()=>{
-  assert.equal(generationVersionForProduct("30-day-planner"),"planner-progress-xlsx-v5");
+  assert.equal(generationVersionForProduct("30-day-planner"),"planner-guided-v6");
   assert.equal(generationVersionForProduct("worksheet-pack"),"worksheet-guided-v17");
   assert.equal(currentProductDelivery("30-day-planner","product",null)?.format,"zip","legacy entitlement rows resolve through the current catalog during forward deployment");
   const routeSource=await readFile(new URL("../src/app/api/v1/commercial/exports/route.ts",import.meta.url),"utf8");
