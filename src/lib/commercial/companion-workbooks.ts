@@ -74,7 +74,6 @@ export function generatePlannerProgressWorkbook(plan:PlannerPack){
     dailyRows.push(row(r,[inline(`A${r}`,`Day ${day.day}`,5),formula(`B${r}`,`IF(Setup!B4=\"\",\"\",Setup!B4+${day.day-1})`,3),inline(`C${r}`,day.phase,13),inline(`D${r}`,day.focus,13),inline(`E${r}`,day.routes[20],13),inline(`F${r}`,day.routes[30],13),inline(`G${r}`,day.routes[45],13),inline(`H${r}`,"",13),inline(`I${r}`,"",13),inline(`J${r}`,"",13)],76));
   }
   const dailyExtra='<autoFilter ref="A1:J31"/><dataValidations count="1"><dataValidation type="list" allowBlank="1" showErrorMessage="1" sqref="H2:H31"><formula1>&quot;Not started,Done,Recovered&quot;</formula1></dataValidation></dataValidations>';
-  const status="'30-Day Plan'!H2:H31";
   const count=(state:string,first=2,last=31)=>`COUNTIF('30-Day Plan'!H${first}:H${last},\"${state}\")`;
   const summaryRows=[
     row(1,[inline("A1","PROGRESS · 30 DAYS",11),inline("B1","Result",10),inline("C1","Progress",10),inline("D1","What this means",10)],38),
@@ -101,9 +100,9 @@ export function generatePlannerProgressWorkbook(plan:PlannerPack){
 }
 
 const assessmentDrills:[string,string,string][]=[
-  ["Replay short utterances; mark person, time and place.","Redo direct-detail and matching items; underline supporting words.","Rewrite one 20–40-character response with a full sentence and required word."],
+  ["Replay short utterances; mark person, time and place.","Redo direct-detail and matching items; underline supporting words.","Write one short sentence about Source A, then one about Source B. Level 1 writing is an extra learning diagnostic, not an official exam section."],
   ["Rebuild the two-step dialogue sequence before choosing.","Redo event-order and information matching; explain each link.","Revise the short report so both events connect in order."],
-  ["Summarize the notice; check the changed arrangement against audio.","Redo time/condition and two-source links; underline exact support.","Expand a 50–80-character response with a clear reason and result."],
+  ["Summarize the notice; check the changed arrangement against audio.","Redo time/condition and two-source links; underline exact support.","Expand a 40–70-character response with a clear reason and result."],
   ["Map both parts of the changed plan and verify the shared conclusion.","Compare sources; identify the condition that changes the proposal.","Add an explicit transition between evidence and conclusion."],
   ["Note speaker stance and the evidence that supports it.","Redo claim/evidence items and justify each answer from sources.","Rewrite 100–150 characters with viewpoint and one source detail."],
   ["Draw the cause-to-effect chain before checking options.","Redo cross-source causality; reject reversed-cause options.","Make claim, evidence and consequence explicit in the report."],

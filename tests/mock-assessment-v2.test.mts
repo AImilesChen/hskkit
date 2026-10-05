@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import {readFile} from "node:fs/promises";
 import {createHash} from "node:crypto";
+import {PDFDocument,PDFName} from "pdf-lib";
 import {loadAssessmentLevelAudio} from "./assessment-level-audio-fixture.mts";
 import * as generator from "../src/lib/commercial/product-generator.ts";
 import {assessmentScenario} from "../src/lib/commercial/mock-assessment-content.ts";
@@ -112,6 +113,7 @@ test("mock assessment v2 packages form audio, answer sheets, explanations, score
   const artifact=await generator.generateDifferentiatedProductArtifact("practice-assessment-pack",new Uint8Array(font),new Uint8Array(emoji),"mock-v2-test",{A:audioA,B:audioB,C:audioC},await loadAssessmentLevelAudio());
   const files=zipEntries(artifact.bytes);
   for(const name of [
+    "00-START-HERE.pdf",
     "HSKKit-Practice-Assessment-A-Listening.mp3",
     "HSKKit-Practice-Assessment-B-Listening.mp3",
     "HSKKit-Practice-Assessment-C-Listening.mp3",
@@ -121,6 +123,11 @@ test("mock assessment v2 packages form audio, answer sheets, explanations, score
     "HSKKit-Practice-Assessment-Score-Report.pdf",
     "HSKKit-Practice-Assessment-Facilitator-Transcripts.pdf",
   ])assert.ok(files.has(name),name);
+  assert.equal([...files.keys()].filter(name=>name.endsWith(".pdf")).length,8);
+  assert.equal([...files.keys()].filter(name=>name.endsWith(".mp3")).length,30);
+  const guide=await PDFDocument.load(files.get("00-START-HERE.pdf")!);
+  assert.equal(guide.getPageCount(),10,"guide has an introduction and one page per level");
+  assert.ok(guide.catalog.get(PDFName.of("Outlines")),"guide exposes level bookmarks");
   assert.match(new TextDecoder().decode(files.get("HSKKit-Practice-Assessment-Audio-Source-License.txt")!),/Piper[\s\S]*MIT[\s\S]*CC0-1\.0/);
   for(const form of ["A","B","C"] as const){const mp3=files.get(`HSKKit-Practice-Assessment-${form}-Listening.mp3`)!;assert.ok(mp3.byteLength>500_000);assert.ok(mp3[0]===0x49&&mp3[1]===0x44&&mp3[2]===0x33||mp3[0]===0xff&&(mp3[1]&0xe0)===0xe0);}
   assert.deepEqual([...artifact.manifest.files].sort(),[...files.keys()].filter(name=>name!=="manifest.json"&&name!=="README.txt").sort());

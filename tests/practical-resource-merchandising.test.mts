@@ -26,7 +26,7 @@ const expected={
   "worksheet-pack":["HSKKit-Worksheets-Student-A4.pdf","HSKKit-Worksheets-Student-US-Letter.pdf","HSKKit-Worksheets-Student-A4-Low-Ink.pdf","HSKKit-Worksheets-Student-Fillable.pdf","HSKKit-Worksheets-Answer-Key.pdf","HSKKit-Worksheet-Completed-Samples.pdf","HSKKit-Worksheet-Progress-Checklist.pdf"],
   "assessment-tracker":["HSKKit-Assessment-Tracker-Blank.xlsx","HSKKit-Assessment-Tracker-Example.xlsx","HSKKit-Assessment-Tracker-Raw-Data.csv","HSKKit-Assessment-Tracker.csv","HSKKit-Weekly-Review.csv","HSKKit-Assessment-Dashboard-Guide.pdf","HSKKit-Printable-Assessment-Record.pdf"],
   "30-day-planner":["HSKKit-30-Day-Planner-Quick-Start.pdf","HSKKit-30-Day-Planner-Printable-A4.pdf","HSKKit-30-Day-Planner-Fillable-A4.pdf","HSKKit-30-Day-Planner-Progress-Tracker.xlsx"],
-  "practice-assessment-pack":["HSKKit-Practice-Assessment-A-Student.pdf","HSKKit-Practice-Assessment-B-Student.pdf","HSKKit-Practice-Assessment-C-Student.pdf","HSKKit-Practice-Assessment-A-Listening.mp3","HSKKit-Practice-Assessment-B-Listening.mp3","HSKKit-Practice-Assessment-C-Listening.mp3","HSKKit-Practice-Assessment-Audio-Source-License.txt","HSKKit-Practice-Assessment-Answer-Sheets.pdf","HSKKit-Practice-Assessment-Answers-Explanations.pdf","HSKKit-Practice-Assessment-Facilitator-Transcripts.pdf","HSKKit-Practice-Assessment-Score-Report.pdf","HSKKit-Practice-Assessment-Score-Tracker.xlsx",...(["A","B","C"] as const).flatMap(form=>Array.from({length:9},(_,index)=>`Level-Audio/form-${form}-level-${index+1}.mp3`)),"Level-Audio/timing-index.json"],
+  "practice-assessment-pack":["00-START-HERE.pdf","HSKKit-Practice-Assessment-A-Student.pdf","HSKKit-Practice-Assessment-B-Student.pdf","HSKKit-Practice-Assessment-C-Student.pdf","HSKKit-Practice-Assessment-A-Listening.mp3","HSKKit-Practice-Assessment-B-Listening.mp3","HSKKit-Practice-Assessment-C-Listening.mp3","HSKKit-Practice-Assessment-Audio-Source-License.txt","HSKKit-Practice-Assessment-Answer-Sheets.pdf","HSKKit-Practice-Assessment-Answers-Explanations.pdf","HSKKit-Practice-Assessment-Facilitator-Transcripts.pdf","HSKKit-Practice-Assessment-Score-Report.pdf","HSKKit-Practice-Assessment-Score-Tracker.xlsx",...(["A","B","C"] as const).flatMap(form=>Array.from({length:9},(_,index)=>`Level-Audio/form-${form}-level-${index+1}.mp3`)),"Level-Audio/timing-index.json"],
   "teacher-lesson-plan-pack":["HSKKit-Teacher-Pack-Quick-Start.pdf","HSKKit-Teacher-Lesson-Plans-A4.pdf","HSKKit-Teacher-Lesson-Plans-US-Letter.pdf","HSKKit-Student-Handouts-A4.pdf","HSKKit-Student-Handouts-US-Letter.pdf","HSKKit-Exit-Tickets-A4.pdf","HSKKit-Exit-Tickets-US-Letter.pdf","HSKKit-Homework-Answers-Rubrics.pdf","HSKKit-Activity-Cards-A4.pdf","HSKKit-Activity-Cards-US-Letter.pdf","HSKKit-Editable-Lesson-Plans.docx","HSKKit-Editable-Classroom-Slides.pptx"]
 } as const;
 
@@ -72,11 +72,14 @@ test("each practical resource provides four to six readable real sample pages an
     if(detail.id==="teacher-lesson-plan-pack"){
       assert.match(facts,/single-purchaser classroom licence/i,`${detail.id}: classroom licence`);
       assert.match(facts,/one teaching site/i,`${detail.id}: classroom boundary`);
+    }else if(detail.id==="practice-assessment-pack"){
+      assert.match(facts,/print answer sheets for students they personally teach/i,`${detail.id}: student printing`);
+      assert.match(facts,/without a time limit/i,`${detail.id}: downloaded use`);
     }else{
       assert.match(facts,/personal/i,`${detail.id}: personal licence`);
       assert.match(facts,/non-transferable/i,`${detail.id}: non-transferable licence`);
     }
-    assert.match(facts,/no audio|audio (?:is )?not included|3 .*MP3|MP3 listening/i,`${detail.id}: audio boundary`);
+    assert.match(facts,/no audio|audio (?:is )?not included|3 .*MP3|27 level-only|MP3 listening/i,`${detail.id}: audio boundary`);
     assert.match(facts,/14-day/i,`${detail.id}: access period`);
     assert.match(facts,/3 successful downloads/i,`${detail.id}: download limit`);
   }
@@ -84,7 +87,7 @@ test("each practical resource provides four to six readable real sample pages an
   assert.match(factMatrix["worksheet-pack"],/Levels 1–9.*answer/i);
   assert.match(factMatrix["assessment-tracker"],/Levels 1–9.*scoring/i);
   assert.match(factMatrix["30-day-planner"],/current Level.*target Level/i);
-  assert.match(factMatrix["practice-assessment-pack"],/Levels 1–9.*3 Mandarin MP3.*explanations.*rubric.*transcripts/i);
+  assert.match(factMatrix["practice-assessment-pack"],/Levels 1–9.*27 level-only.*explanations.*rubric.*transcripts/i);
   assert.match(factMatrix["teacher-lesson-plan-pack"],/Levels 1–9.*teacher guidance/i);
 });
 
@@ -107,6 +110,9 @@ test("each practical resource ships the promised usable files",async()=>{
     if(productId==="teacher-lesson-plan-pack"){
       assert.match(readme,/single-purchaser classroom licence/i,productId);
       assert.match(artifact.manifest.licenseNotice,/one teaching site/i,productId);
+    }else if(productId==="practice-assessment-pack"){
+      assert.match(readme,/print(?:ing)? answer sheets for students they personally teach/i,productId);
+      assert.match(artifact.manifest.licenseNotice,/without a time limit/i,productId);
     }else{
       assert.match(readme,/personal, non-transferable/i,productId);
       assert.match(artifact.manifest.licenseNotice,/personal, non-transferable/i,productId);
