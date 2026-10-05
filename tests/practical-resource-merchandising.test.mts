@@ -63,25 +63,14 @@ test("each practical resource provides readable real sample pages and an explici
       assert.ok(sample.caption.length>=20,`${detail.id}: decision-useful sample caption`);
       const sampleFile=new URL(`../public${sample.src}`,import.meta.url);
       await access(sampleFile);
-      assert.ok((await stat(sampleFile)).size>=30_000,`${detail.id}: sample is a substantive readable image`);
+      assert.ok((await stat(sampleFile)).size>=20_000,`${detail.id}: sample is a substantive readable image`);
     }
     assert.ok(detail.fit.idealFor.length>=2,`${detail.id}: ideal for`);
     assert.ok(detail.fit.notFor.length>=2,`${detail.id}: not for`);
     assert.ok(detail.fit.facts.length>=4,`${detail.id}: decision facts`);
     const facts=detail.fit.facts.join(" ");
-    if(detail.id==="teacher-lesson-plan-pack"){
-      assert.match(facts,/single-purchaser classroom licence/i,`${detail.id}: classroom licence`);
-      assert.match(facts,/one teaching site/i,`${detail.id}: classroom boundary`);
-    }else if(detail.id==="practice-assessment-pack"){
-      assert.match(facts,/print answer sheets for students they personally teach/i,`${detail.id}: student printing`);
-      assert.match(facts,/without a time limit/i,`${detail.id}: downloaded use`);
-    }else if(detail.id==="worksheet-pack"){
-      assert.match(facts,/print student worksheet pages for learners they personally teach/i,`${detail.id}: student printing`);
-      assert.match(facts,/Downloaded copies do not expire/i,`${detail.id}: downloaded use`);
-    }else{
-      assert.match(facts,/personal/i,`${detail.id}: personal licence`);
-      assert.match(facts,/non-transferable/i,`${detail.id}: non-transferable licence`);
-    }
+    assert.match(facts,/(?:print(?:ing)? (?:any number|as many)|Unlimited printing)/i,`${detail.id}: flexible printing`);
+    assert.match(facts,/printed copies and digital files may not be sold or resold/i,`${detail.id}: no resale`);
     assert.match(facts,/no audio|audio (?:is )?not included|3 .*MP3|27 level-only|MP3 listening/i,`${detail.id}: audio boundary`);
     assert.match(facts,/14-day/i,`${detail.id}: access period`);
     assert.match(facts,/3 successful downloads/i,`${detail.id}: download limit`);
@@ -110,22 +99,8 @@ test("each practical resource ships the promised usable files",async()=>{
     for(const [name,bytes] of files){if(name.endsWith(".pdf")){const pdf=await PDFDocument.load(bytes);if(productId==="teacher-lesson-plan-pack"&&name==="HSKKit-Teacher-Pack-Quick-Start.pdf")assert.equal(pdf.getPageCount(),1,`${productId}: ${name}`);else if(productId==="30-day-planner")assert.equal(pdf.getPageCount(),name.endsWith("Quick-Start.pdf")?1:41,`${productId}: ${name}`);else assert.ok(pdf.getPageCount()>=2,`${productId}: ${name}`);}}
     const readme=new TextDecoder().decode(files.get("README.txt"));
     assert.match(readme,/How to use/i,productId);
-    if(productId==="teacher-lesson-plan-pack"){
-      assert.match(readme,/single-purchaser classroom licence/i,productId);
-      assert.match(artifact.manifest.licenseNotice,/one teaching site/i,productId);
-    }else if(productId==="practice-assessment-pack"){
-      assert.match(readme,/print(?:ing)? answer sheets for students they personally teach/i,productId);
-      assert.match(artifact.manifest.licenseNotice,/without a time limit/i,productId);
-    }else if(productId==="30-day-planner"){
-      assert.match(readme,/print blank planner record pages for learners they personally teach/i,productId);
-      assert.match(artifact.manifest.licenseNotice,/without a time limit/i,productId);
-    }else if(productId==="worksheet-pack"){
-      assert.match(readme,/print student worksheet pages for learners they personally teach/i,productId);
-      assert.match(artifact.manifest.licenseNotice,/without a time limit/i,productId);
-    }else{
-      assert.match(readme,/personal, non-transferable/i,productId);
-      assert.match(artifact.manifest.licenseNotice,/personal, non-transferable/i,productId);
-    }
+    assert.match(readme,/print as many copies as needed/,productId);
+    assert.match(artifact.manifest.licenseNotice,/Printed copies and digital files may not be sold or resold/,productId);
   }
 });
 

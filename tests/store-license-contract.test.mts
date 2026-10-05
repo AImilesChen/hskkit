@@ -3,8 +3,6 @@ import test from "node:test";
 import {readFile} from "node:fs/promises";
 import {DIGITAL_PRODUCTS,generationVersionForProduct,productLicenseNotice} from "../src/lib/commercial/products.ts";
 
-const teacherNotice="Single-purchaser classroom licence: the purchaser may adapt editable files and print or share student handouts only with learners they personally teach at one teaching site. No resale, public upload, shared-drive distribution, sublicensing, transfer or use by another teacher.";
-
 test("frozen Store catalog keeps the approved 17-product matrix and exact Test prices",()=>{
   const expected={
     "level-1":399,"level-2":599,"level-3":799,"level-4":1099,"level-5":1399,"level-6":1799,
@@ -17,23 +15,20 @@ test("frozen Store catalog keeps the approved 17-product matrix and exact Test p
   assert.equal(DIGITAL_PRODUCTS.some(product=>product.id==="level-7"||product.id==="level-8"||product.id==="level-9"),false);
 });
 
-test("assessment purchasers may print for their own students while other learner products remain personal",()=>{
-  assert.equal(productLicenseNotice("teacher-lesson-plan-pack"),teacherNotice);
-  assert.match(productLicenseNotice("practice-assessment-pack"),/print.*students they personally teach/);
-  assert.match(productLicenseNotice("practice-assessment-pack"),/without a time limit/);
-  assert.match(productLicenseNotice("worksheet-pack"),/print student worksheet pages for learners they personally teach/);
-  assert.match(productLicenseNotice("worksheet-pack"),/without a time limit/);
-  assert.match(productLicenseNotice("assessment-tracker"),/print blank assessment record pages for learners they personally teach/);
-  assert.match(productLicenseNotice("30-day-planner"),/print blank planner record pages for learners they personally teach/);
-  assert.match(productLicenseNotice("learner-practice-toolkit"),/print student worksheet pages, blank assessment record pages and blank planner record pages/);
+test("every Store product permits flexible printing but prohibits sale",()=>{
   for(const product of DIGITAL_PRODUCTS){
-    if(!["teacher-lesson-plan-pack","practice-assessment-pack","worksheet-pack","assessment-tracker","30-day-planner","learner-practice-toolkit"].includes(product.id))assert.equal(productLicenseNotice(product.id),"Personal, non-transferable study and print use only.",product.id);
+    const notice=productLicenseNotice(product.id);
+    assert.match(notice,/print as many copies as needed/,product.id);
+    assert.match(notice,/learners they teach/,product.id);
+    assert.match(notice,/Printed copies and digital files may not be sold or resold/,product.id);
+    assert.match(notice,/without a time limit/,product.id);
   }
+  assert.match(productLicenseNotice("teacher-lesson-plan-pack"),/adapt the editable lesson-plan files/);
   assert.equal(generationVersionForProduct("teacher-lesson-plan-pack"),"teacher-pack-v3");
   assert.equal(generationVersionForProduct("worksheet-pack"),"worksheet-guided-v17");
   assert.equal(generationVersionForProduct("learner-practice-toolkit"),"learner-toolkit-current-v6");
   assert.equal(generationVersionForProduct("assessment-tracker"),"assessment-tracker-v5");
-  assert.equal(generationVersionForProduct("exam-preparation-bundle"),"exam-preparation-assessment-v3");
+  assert.equal(generationVersionForProduct("exam-preparation-bundle"),"exam-preparation-current-v4");
 });
 
 test("Store, resource checkout, Terms and generated delivery use the selected product licence",async()=>{
@@ -44,18 +39,16 @@ test("Store, resource checkout, Terms and generated delivery use the selected pr
     readFile("src/app/terms-of-service/page.tsx","utf8"),
     readFile("src/lib/commercial/product-generator.ts","utf8"),
   ]);
-  assert.match(store,/Teacher Lesson Plan Pack uses a single-purchaser classroom licence/);
-  assert.match(store,/sublicensing, transfer or use by another teacher/);
+  assert.match(store,/Every Store purchaser may keep downloaded files without a time limit/);
+  assert.match(store,/Printed copies and digital files may not be sold or resold/);
   assert.match(purchase,/View details and samples/);
   assert.match(detailCheckout,/productLicenseNotice\(productId\)/);
-  assert.match(terms, /single-purchaser classroom licence/i);
-  assert.match(terms, /another teacher/);
+  assert.match(terms, /For every Store product/);
+  assert.match(terms, /Printed copies and digital files may not be sold or resold/);
   assert.doesNotMatch(terms, /All content on HSKKit is provided for personal study use/);
-  assert.match(terms, /Worksheet Pack, Assessment Tracker, 30-Day Planner, Practice Assessment Pack and Learner Practice Toolkit printing permissions/);
-  assert.match(terms, /Learner Practice Toolkit includes the Worksheet, Tracker and Planner permissions/);
+  assert.match(terms, /The 14-day access window and three-download limit apply only to retrieving files/);
   assert.match(terms, /Last updated: 2026-10-05/);
-  assert.match(terms,/sublicensing, transfer or use by another teacher/i);
+  assert.match(terms,/a purchase does not transfer copyright ownership/i);
   assert.match(generator,/licenseNotice:productLicenseNotice\(product\.id\)/);
   assert.match(generator,/productLicenseNotice\(product\.id\)/);
 });
-

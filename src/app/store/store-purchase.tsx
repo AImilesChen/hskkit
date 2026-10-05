@@ -12,7 +12,7 @@ const sectionCopy={
   bundle:{eyebrow:"Complete vocabulary Bundles",title:"Study across levels",copy:"Starter, Progression, unified Advanced 7–9 and the full 11,092-entry library—each with explicit contents and real samples."},
   resource:{eyebrow:"Practice, planning and assessment",title:"Build a repeatable study system",copy:"Open the actual sample pages, inspect every included file, then choose the complete resource that fits your work."},
   resource_bundle:{eyebrow:"Connected resource Bundles",title:"Combine practice and review",copy:"Complete component products packaged together at a lower one-time price; no shortened Bundle editions."},
-  teacher:{eyebrow:"For independent teachers",title:"Teach from ready-to-edit files",copy:"Classroom plans, handouts, checks and editable office files under a bounded single-purchaser classroom licence."},
+  teacher:{eyebrow:"For independent teachers",title:"Teach from ready-to-edit files",copy:"Classroom plans, handouts, checks and editable office files with flexible printing for learners you teach."},
 } as const;
 const skeletonCategoryCounts:Record<(typeof categories)[number],number>={level:6,bundle:4,resource:4,resource_bundle:2,teacher:1};
 

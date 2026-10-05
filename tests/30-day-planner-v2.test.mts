@@ -138,7 +138,7 @@ test("planner delivery contains real printable and AcroForm-fillable editions",a
   assert.equal(quickStart.getPageCount(),1);
   assert.ok(printable.catalog.get(PDFName.of("Outlines")),"printable daily pages have navigation bookmarks");
   assert.ok(fillable.catalog.get(PDFName.of("Outlines")),"fillable daily pages have navigation bookmarks");
-  assert.match(productLicenseNotice("30-day-planner"),/print blank planner record pages for learners they personally teach/);
+  assert.match(productLicenseNotice("30-day-planner"),/print as many copies as needed/);
   assert.match(artifact.manifest.advancedBandDisclosure,/same 30-day task sequence/);
   const expectedGuide=buildPlannerPack();
   assert.equal(expectedGuide.sourcingGuide.length,5);
