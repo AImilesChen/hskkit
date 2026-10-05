@@ -173,7 +173,7 @@ test("Store copy and real previews describe the personalized planner system",asy
   for(const sample of detail.samplePages)await access(new URL(`../public${sample.src}`,import.meta.url));
 });
 
-test("planner uses an immutable v4 artifact while existing purchase rights migrate from PDF to ZIP",async()=>{
+test("planner uses a versioned artifact while existing purchase rights migrate from PDF to ZIP",async()=>{
   assert.equal(generationVersionForProduct("30-day-planner"),"planner-guided-v6");
   assert.equal(generationVersionForProduct("worksheet-pack"),"worksheet-guided-v17");
   assert.equal(currentProductDelivery("30-day-planner","product",null)?.format,"zip","legacy entitlement rows resolve through the current catalog during forward deployment");
