@@ -48,8 +48,8 @@ PDF_SAMPLES = {
     "teacher-lesson-plan-pack": [
         ("HSKKit-Teacher-Pack-Quick-Start.pdf", 1, "teacher-quick-start"),
         ("HSKKit-Teacher-Lesson-Plans-A4.pdf", 1, "teacher-modelling"),
-        ("HSKKit-Teacher-Lesson-Plans-A4.pdf", 2, "guided-practice"),
-        ("HSKKit-Teacher-Lesson-Plans-A4.pdf", 3, "independent-check"),
+        ("HSKKit-Teacher-Lesson-Plans-A4.pdf", 3, "guided-practice"),
+        ("HSKKit-Teacher-Lesson-Plans-A4.pdf", 5, "independent-check"),
         ("HSKKit-Exit-Tickets-A4.pdf", 1, "exit-ticket-homework"),
     ],
 }
@@ -89,13 +89,19 @@ def render_pdf(pdf_bytes: bytes, page_number: int, destination: Path) -> None:
         pdf_path = Path(temp_directory) / "source.pdf"
         output_prefix = Path(temp_directory) / "page"
         pdf_path.write_bytes(pdf_bytes)
-        subprocess.run(
-            ["pdftoppm", "-f", str(page_number), "-l", str(page_number), "-r", "180", "-png", "-singlefile", str(pdf_path), str(output_prefix)],
-            check=True,
-            stdout=subprocess.DEVNULL,
-            stderr=subprocess.DEVNULL,
-        )
-        image = Image.open(output_prefix.with_suffix(".png")).convert("RGB")
+        try:
+            subprocess.run(
+                ["pdftoppm", "-f", str(page_number), "-l", str(page_number), "-r", "180", "-png", "-singlefile", str(pdf_path), str(output_prefix)],
+                check=True,
+                stdout=subprocess.DEVNULL,
+                stderr=subprocess.DEVNULL,
+            )
+            image = Image.open(output_prefix.with_suffix(".png")).convert("RGB")
+        except FileNotFoundError:
+            import pypdfium2
+
+            pdf = pypdfium2.PdfDocument(pdf_bytes)
+            image = pdf[page_number - 1].render(scale=2.5).to_pil().convert("RGB")
         watermark(image).save(destination, "WEBP", quality=88, method=6)
 
 

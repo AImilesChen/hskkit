@@ -13,7 +13,7 @@ import {generatePlannerProgressWorkbook,generatePracticeAssessmentScoreWorkbook}
 import {makeHomeworkPdf,makeStudentHandoutPdf,makeTeacherCutPdf,makeTeacherPlanPdf,makeTeacherQuickStartPdf,TEACHER_PAGE_SIZES} from "./teacher-pdf.ts";
 
 const encoder=new TextEncoder();
-export type ProductArtifactManifest={schemaVersion:string;productId:string;generationVersion:string;standard:"HSK 3.0";standardVersion:"GF0025-2021";officialExam:false;levels:number[];advancedBandDisclosure:string;licenseNotice:string;files:string[];sourceIndependent:boolean;assets:Array<{id:string;version:string;sourceRef:string;licenseRef:string}>;audioProvenance?:{provider:string;voices:Record<AssessmentForm,string>;generatedOn:string;responsePauseSeconds:number;redistributionStatus:string;sha256:Record<AssessmentForm,string>;levelTrackCount?:number;sourceSha256?:string}};
+export type ProductArtifactManifest={schemaVersion:string;productId:string;generationVersion:string;standard:"HSK 3.0";standardVersion:"GF0025-2021";officialExam:false;levels:number[];lessonLevels?:number[];advancedBandDisclosure:string;licenseNotice:string;files:string[];sourceIndependent:boolean;assets:Array<{id:string;version:string;sourceRef:string;licenseRef:string}>;audioProvenance?:{provider:string;voices:Record<AssessmentForm,string>;generatedOn:string;responsePauseSeconds:number;redistributionStatus:string;sha256:Record<AssessmentForm,string>;levelTrackCount?:number;sourceSha256?:string}};
 export type AssessmentLevelAudio={index:Uint8Array;tracks:Record<string,Uint8Array>};
 const ASSESSMENT_AUDIO_SHA256:Record<AssessmentForm,string>={A:"cf154c20136be54156d068cc03e9180ebfa0883875a0bf5a6ef40fe19c26b185",B:"4a086bf48f798148f820e8e4f541a4b752a359dd25b52f71cc5c838cc6bee618",C:"33add7444d6adebec22eacc0a2b0a2570cbbc9e411f45456ba57ca94ff50d55a"};
 const ASSESSMENT_SOURCE_SHA256="72a8161c4beafc6f9c9fd97a17e1e0870c947721bb2cc9d828b4e7010fe5b422";
@@ -104,7 +104,7 @@ function productAssets(product:DigitalProduct,selections:Selection[]){
   return [...unique.values()];
 }
 function manifestFor(product:DigitalProduct,files:string[],selections:Selection[],generationVersion:string):ProductArtifactManifest{
-  return {schemaVersion:"hskkit-product-manifest-v1",productId:product.id,generationVersion,standard:"HSK 3.0",standardVersion:"GF0025-2021",officialExam:false,levels:product.id==="practice-assessment-pack"?[1,2,3,4,5,6,7,8,9]:product.levels,advancedBandDisclosure:product.id==="30-day-planner"?"The same 30-day task sequence is used at all levels; the purchaser supplies practice material matched to their current level. This planner includes no source word list or question bank.":"HSK 3.0 defines one unified Levels 7–9 advanced ability band; Level 7, 8 and 9 labels in this resource use the same canonical approved advanced source set.",licenseNotice:productLicenseNotice(product.id),files,sourceIndependent:product.id==="30-day-planner"||product.id==="practice-assessment-pack",assets:productAssets(product,selections),...(product.id==="practice-assessment-pack"?{audioProvenance:ASSESSMENT_AUDIO_PROVENANCE}:{})};
+  return {schemaVersion:"hskkit-product-manifest-v1",productId:product.id,generationVersion,standard:"HSK 3.0",standardVersion:"GF0025-2021",officialExam:false,levels:product.id==="practice-assessment-pack"?[1,2,3,4,5,6,7,8,9]:product.levels,...(product.id==="teacher-lesson-plan-pack"?{lessonLevels:[1,2,3,4,5,6,7,8,9]}:{}),advancedBandDisclosure:product.id==="30-day-planner"?"The same 30-day task sequence is used at all levels; the purchaser supplies practice material matched to their current level. This planner includes no source word list or question bank.":"HSK 3.0 defines one unified Levels 7–9 advanced ability band; Level 7, 8 and 9 labels in this resource use the same canonical approved advanced source set.",licenseNotice:productLicenseNotice(product.id),files,sourceIndependent:product.id==="30-day-planner"||product.id==="practice-assessment-pack",assets:productAssets(product,selections),...(product.id==="practice-assessment-pack"?{audioProvenance:ASSESSMENT_AUDIO_PROVENANCE}:{})};
 }
 
 function lines(text:string,font:PDFFont,size:number,width:number){
@@ -230,6 +230,13 @@ function readme(product:DigitalProduct,files:string[],manifest:ProductArtifactMa
     "4. Dashboard summarizes complete current snapshots. Weekly Review summarizes only ready dated log rows. Enter a Monday week start and source level 1–7 (7 = unified advanced 7–9); these two views do not synchronize automatically.",
     "5. The three distinct CSV files are optional portable templates/data without XLSX formulas. The guide explains scoring and a worked retest; print one record page for your chosen source band.",
     "The first 500 dated attempts fit in the prepared Assessment Log. To keep a longer history, archive a copy before the log fills; do not assume the Weekly Review scans rows past 501."
+  ]:product.id==="teacher-lesson-plan-pack"?[
+    "1. Choose one of nine level modules and one 45-, 60- or 90-minute variant. These are three timings for the same level module, not 27 unrelated topics.",
+    "2. Open Teacher Lesson Plans (A4 or US Letter). Every variant has a classroom-flow page followed by a separate preparation, error and follow-up page.",
+    "3. Print one Student Handout and the assigned Homework sheet per learner. Cut one Exit Ticket per learner and keep Activity Cards A/B separate until partners exchange information.",
+    "4. Project the editable PPTX level sequence: slides 1-5 and 8 for 45 minutes; add slide 6 for 60 minutes; use slides 1-8 for 90 minutes. The PDF/DOCX contains teacher timings and answer guidance.",
+    "5. Score the Exit Ticket 0-3 and use the matching Answer Key and Feedback Rubric to select the next practice task. No audio is included.",
+    "Downloaded files may be kept without a time limit. The 14-day window and three successful downloads limit retrieval only."
   ]:audio?[
     "1. Open 00-START-HERE.pdf. Choose one Level and one Form, then use its exact page ranges to print the Student paper and matching Answer Sheets.",
     "2. For one level, play Level-Audio/form-X-level-N.mp3 (X=A/B/C, N=1–9). The three full-form MP3 files play all nine levels in sequence and are not needed for a one-level sitting. Each numbered prompt includes a 5-second response gap.",
