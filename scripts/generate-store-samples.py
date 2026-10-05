@@ -9,6 +9,8 @@ from pathlib import Path
 import subprocess
 import tempfile
 import zipfile
+import xml.etree.ElementTree as ET
+from datetime import datetime, timedelta
 
 from PIL import Image, ImageDraw, ImageFont
 
@@ -23,9 +25,9 @@ PDF_SAMPLES = {
         ("HSKKit-Worksheets-Answer-Key.pdf", 110, "level-9-answer-review-test"),
     ],
     "assessment-tracker": [
-        ("03-Assessment-Guide.pdf", 3, "scoring-guide"),
-        ("03-Assessment-Guide.pdf", 2, "dashboard-method"),
-        ("04-Level-Printable-Checkpoints.pdf", 3, "level-3-review-record"),
+        ("HSKKit-Assessment-Dashboard-Guide.pdf", 1, "scoring-guide"),
+        ("HSKKit-Assessment-Dashboard-Guide.pdf", 2, "dashboard-method"),
+        ("HSKKit-Printable-Assessment-Record.pdf", 3, "level-3-review-record"),
     ],
     "30-day-planner": [
         ("HSKKit-30-Day-Planner-Quick-Start.pdf", 1, "quick-start"),
@@ -54,7 +56,6 @@ PDF_SAMPLES = {
 CSV_SAMPLES = {
     "assessment-tracker": [
         ("HSKKit-Assessment-Tracker-Raw-Data.csv", "vocabulary-tracker"),
-        ("HSKKit-Weekly-Review.csv", "weekly-review-log"),
     ]
 }
 
@@ -127,6 +128,47 @@ def render_csv(csv_bytes: bytes, title: str, destination: Path) -> None:
     watermark(image).save(destination, "WEBP", quality=95, method=6)
 
 
+def render_example_log(xlsx_bytes: bytes, destination: Path) -> None:
+    """Show actual filled example cells from the delivered XLSX log."""
+    with zipfile.ZipFile(io.BytesIO(xlsx_bytes)) as workbook:
+        root = ET.fromstring(workbook.read("xl/worksheets/sheet4.xml"))
+    ns = {"x": "http://schemas.openxmlformats.org/spreadsheetml/2006/main"}
+    data = []
+    for sheet_row in root.findall(".//x:sheetData/x:row", ns)[1:4]:
+        cells = {}
+        for cell in sheet_row.findall("x:c", ns):
+            ref = cell.attrib["r"].rstrip("0123456789")
+            inline_value = cell.find("x:is/x:t", ns)
+            numeric_value = cell.find("x:v", ns)
+            cells[ref] = (inline_value.text if inline_value is not None else numeric_value.text if numeric_value is not None else "") or ""
+        excel_day = int(cells["A"])
+        cells["A"] = (datetime(1899, 12, 30) + timedelta(days=excel_day)).strftime("%Y-%m-%d")
+        data.append(cells)
+    image = Image.new("RGB", (1600, 720), "white")
+    draw = ImageDraw.Draw(image)
+    draw.rectangle((0, 0, 1600, 120), fill="#064e3b")
+    draw.text((50, 28), "Dated retests in the Example workbook", font=font(37), fill="white")
+    draw.text((50, 83), "Actual Assessment Log rows from the delivered XLSX", font=font(20), fill="#d1fae5")
+    columns = [("Date", "A", 190), ("Word ID", "B", 340), ("Recognize", "D", 160), ("Recall", "E", 130), ("Use", "F", 120), ("Observed evidence", "I", 580)]
+    x = 40
+    for label, _, width in columns:
+        draw.rectangle((x, 155, x + width, 225), fill="#d1fae5", outline="#94a3b8")
+        draw.text((x + 10, 175), label, font=font(21), fill="#064e3b")
+        x += width
+    for row_number, values in enumerate(data):
+        y = 225 + row_number * 112
+        x = 40
+        for _, key, width in columns:
+            draw.rectangle((x, y, x + width, y + 112), fill="#f8fafc" if row_number % 2 == 0 else "white", outline="#cbd5e1")
+            value = values.get(key, "")
+            if key == "I":
+                value = value.replace("SAMPLE RETEST: ", "Retest: ").replace("SAMPLE: ", "")
+                value = value[:47]
+            draw.text((x + 10, y + 30), value[:47 if key == "I" else 34], font=font(20), fill="#334155")
+            x += width
+    watermark(image).save(destination, "WEBP", quality=92, method=6)
+
+
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("source_root", type=Path, help="p0-p1-v2 artifact directory")
@@ -146,6 +188,22 @@ def main() -> None:
             with zipfile.ZipFile(args.source_root / product / "product.zip") as archive:
                 for name, slug in CSV_SAMPLES[product]:
                     render_csv(archive.read(name), name.removesuffix(".csv").replace("HSKKit-", "").replace("-", " "), product_output / f"{slug}.webp")
+                if product == "assessment-tracker":
+                    render_example_log(archive.read("HSKKit-Assessment-Tracker-Example.xlsx"), product_output / "dated-retests.webp")
+        if product == "assessment-tracker":
+            for sample_path in product_output.glob("*.webp"):
+                sample_image = Image.open(sample_path).convert("RGB")
+                sample_image.thumbnail((1200, 1700), Image.Resampling.LANCZOS)
+                sample_image.save(sample_path, "WEBP", quality=78, method=6)
+            preview = Image.new("RGB", (1450, 650), "#eef5f2")
+            left = Image.open(product_output / "vocabulary-tracker.webp").convert("RGB")
+            right = Image.open(product_output / "level-3-review-record.webp").convert("RGB")
+            right = right.crop((0, 0, right.width, int(right.height * .75)))
+            left.thumbnail((710, 610), Image.Resampling.LANCZOS)
+            right.thumbnail((690, 610), Image.Resampling.LANCZOS)
+            preview.paste(left, (18, 55))
+            preview.paste(right, (740, 18))
+            preview.save(args.output_root.parent / "previews" / "assessment-tracker.webp", "WEBP", quality=90, method=6)
     print(sum(1 for _ in args.output_root.rglob("*.webp")))
 
 

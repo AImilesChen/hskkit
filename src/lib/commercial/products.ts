@@ -11,6 +11,7 @@ export const TEACHER_PACK_GENERATION_VERSION="teacher-pack-v3";
 export const WORKSHEET_GENERATION_VERSION="worksheet-guided-v17";
 export const PERSONAL_PRODUCT_LICENSE="Personal, non-transferable study and print use only.";
 export const WORKSHEET_PRODUCT_LICENSE="The purchaser may use the downloaded files without a time limit and print student worksheet pages for learners they personally teach. No resale, public upload, shared-drive distribution, transfer, sublicensing or use by another teacher.";
+export const TRACKER_PRODUCT_LICENSE="Personal, non-transferable use: the purchaser may use the downloaded files without a time limit and print blank assessment record pages for learners they personally teach. No resale, public upload, shared-drive distribution, transfer, sublicensing or use by another teacher.";
 export const PRACTICE_ASSESSMENT_LICENSE="After download, the purchaser may use and print the files without a time limit, including printing answer sheets for students they personally teach.";
 export const TEACHER_CLASSROOM_LICENSE="Single-purchaser classroom licence: the purchaser may adapt editable files and print or share student handouts only with learners they personally teach at one teaching site. No resale, public upload, shared-drive distribution, sublicensing, transfer or use by another teacher.";
 
@@ -50,8 +51,8 @@ export const DIGITAL_PRODUCTS:readonly DigitalProduct[]=[
 ] as const;
 
 export function digitalProduct(value:unknown){return DIGITAL_PRODUCTS.find(product=>product.id===value)??null;}
-export function productLicenseNotice(productId:unknown){return productId==="teacher-lesson-plan-pack"?TEACHER_CLASSROOM_LICENSE:productId==="practice-assessment-pack"?PRACTICE_ASSESSMENT_LICENSE:productId==="worksheet-pack"?WORKSHEET_PRODUCT_LICENSE:PERSONAL_PRODUCT_LICENSE;}
-export function generationVersionForProduct(productId:unknown){return productId==="assessment-tracker"?"assessment-tracker-v4":productId==="learner-practice-toolkit"?PLANNER_BUNDLE_GENERATION_VERSION:productId==="exam-preparation-bundle"?EXAM_BUNDLE_GENERATION_VERSION:productId==="worksheet-pack"?WORKSHEET_GENERATION_VERSION:productId==="30-day-planner"?PLANNER_GENERATION_VERSION:productId==="practice-assessment-pack"?PRACTICE_ASSESSMENT_GENERATION_VERSION:productId==="teacher-lesson-plan-pack"?TEACHER_PACK_GENERATION_VERSION:DEFAULT_PRODUCT_GENERATION_VERSION;}
+export function productLicenseNotice(productId:unknown){return productId==="teacher-lesson-plan-pack"?TEACHER_CLASSROOM_LICENSE:productId==="practice-assessment-pack"?PRACTICE_ASSESSMENT_LICENSE:productId==="worksheet-pack"?WORKSHEET_PRODUCT_LICENSE:productId==="assessment-tracker"?TRACKER_PRODUCT_LICENSE:PERSONAL_PRODUCT_LICENSE;}
+export function generationVersionForProduct(productId:unknown){return productId==="assessment-tracker"?"assessment-tracker-v5":productId==="learner-practice-toolkit"?PLANNER_BUNDLE_GENERATION_VERSION:productId==="exam-preparation-bundle"?EXAM_BUNDLE_GENERATION_VERSION:productId==="worksheet-pack"?WORKSHEET_GENERATION_VERSION:productId==="30-day-planner"?PLANNER_GENERATION_VERSION:productId==="practice-assessment-pack"?PRACTICE_ASSESSMENT_GENERATION_VERSION:productId==="teacher-lesson-plan-pack"?TEACHER_PACK_GENERATION_VERSION:DEFAULT_PRODUCT_GENERATION_VERSION;}
 export function productDeliverableLabels(productId:unknown):string[]{
   const product=digitalProduct(productId);if(!product)throw new Error("INVALID_PRODUCT");
   if(product.category==="level")return [`${product.vocabularyCount?.toLocaleString("en-US")} canonical entries in one searchable PDF`,`Manifest and README/licence information`];
