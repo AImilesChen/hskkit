@@ -130,7 +130,7 @@ test("worksheet ZIP ships distinct printable, low-ink, fillable, sample and answ
   assert.doesNotMatch(readme,/XLSX|Review-Log\.xlsx/);
   assert.ok(!files.has("HSKKit-Worksheet-Optional-Review-Log.xlsx"));
   assert.match(readme,/Open 00-START-HERE\.pdf/);
-  assert.match(artifact.manifest.licenseNotice,/print student worksheet pages for learners they personally teach/);
+  assert.match(artifact.manifest.licenseNotice,/print as many copies as needed/);
   for(const name of expectedFiles.filter(name=>name!=="00-START-HERE.pdf")){
     const pdf=await PDFDocument.load(files.get(name)!);
     assert.ok(pdf.catalog.get(PDFName.of("Outlines")),`${name} has Level 1–9 bookmarks`);
