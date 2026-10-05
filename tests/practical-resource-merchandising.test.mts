@@ -116,6 +116,9 @@ test("each practical resource ships the promised usable files",async()=>{
     }else if(productId==="practice-assessment-pack"){
       assert.match(readme,/print(?:ing)? answer sheets for students they personally teach/i,productId);
       assert.match(artifact.manifest.licenseNotice,/without a time limit/i,productId);
+    }else if(productId==="30-day-planner"){
+      assert.match(readme,/print blank planner record pages for learners they personally teach/i,productId);
+      assert.match(artifact.manifest.licenseNotice,/without a time limit/i,productId);
     }else if(productId==="worksheet-pack"){
       assert.match(readme,/print student worksheet pages for learners they personally teach/i,productId);
       assert.match(artifact.manifest.licenseNotice,/without a time limit/i,productId);

@@ -104,7 +104,7 @@ function productAssets(product:DigitalProduct,selections:Selection[]){
   return [...unique.values()];
 }
 function manifestFor(product:DigitalProduct,files:string[],selections:Selection[],generationVersion:string):ProductArtifactManifest{
-  return {schemaVersion:"hskkit-product-manifest-v1",productId:product.id,generationVersion,standard:"HSK 3.0",standardVersion:"GF0025-2021",officialExam:false,levels:product.id==="practice-assessment-pack"?[1,2,3,4,5,6,7,8,9]:product.levels,advancedBandDisclosure:"HSK 3.0 defines one unified Levels 7–9 advanced ability band; Level 7, 8 and 9 labels in this resource use the same canonical approved advanced source set.",licenseNotice:productLicenseNotice(product.id),files,sourceIndependent:product.id==="30-day-planner"||product.id==="practice-assessment-pack",assets:productAssets(product,selections),...(product.id==="practice-assessment-pack"?{audioProvenance:ASSESSMENT_AUDIO_PROVENANCE}:{})};
+  return {schemaVersion:"hskkit-product-manifest-v1",productId:product.id,generationVersion,standard:"HSK 3.0",standardVersion:"GF0025-2021",officialExam:false,levels:product.id==="practice-assessment-pack"?[1,2,3,4,5,6,7,8,9]:product.levels,advancedBandDisclosure:product.id==="30-day-planner"?"The same 30-day task sequence is used at all levels; the purchaser supplies practice material matched to their current level. This planner includes no source word list or question bank.":"HSK 3.0 defines one unified Levels 7–9 advanced ability band; Level 7, 8 and 9 labels in this resource use the same canonical approved advanced source set.",licenseNotice:productLicenseNotice(product.id),files,sourceIndependent:product.id==="30-day-planner"||product.id==="practice-assessment-pack",assets:productAssets(product,selections),...(product.id==="practice-assessment-pack"?{audioProvenance:ASSESSMENT_AUDIO_PROVENANCE}:{})};
 }
 
 function lines(text:string,font:PDFFont,size:number,width:number){
@@ -131,7 +131,7 @@ async function makePdf(title:string,subtitle:string,sections:PdfSection[],fontBy
   fresh();for(const line of wordLines(title,font,20,contentWidth)){page!.drawText(line,{x:36,y,size:20,font,color:rgb(.04,.31,.29)});y-=27;}y-=5;
   const subtitleSize=plannerQuickStart||trackerPdf?11:assessmentPdf?11:9.5;
   for(const line of wordLines(subtitle,font,subtitleSize,contentWidth)){page!.drawText(line,{x:36,y,size:subtitleSize,font,color:rgb(.25,.3,.38)});y-=plannerQuickStart||trackerPdf?16:assessmentPdf?16:14;}
-  const bandDisclosure=assessmentPdf?"Levels 7–9 are unofficial advanced practice distinctions within the unified HSK 3.0 advanced band; not separate official score bands.":"Advanced-band disclosure: HSK 3.0 defines one unified Levels 7–9 band; Level 7/8/9 labels use the same canonical approved source set.";
+  const bandDisclosure=plannerQuickStart?"Choose practice material for your current HSK level. The same task sequence works across levels; level-specific lessons and audio are not included.":assessmentPdf?"Levels 7–9 are unofficial advanced practice distinctions within the unified HSK 3.0 advanced band; not separate official score bands.":"Advanced-band disclosure: HSK 3.0 defines one unified Levels 7–9 band; Level 7/8/9 labels use the same canonical approved source set.";
   const disclosureSize=plannerQuickStart||trackerPdf?9.5:assessmentPdf?10:8.5;
   for(const line of wordLines(bandDisclosure,font,disclosureSize,contentWidth)){page!.drawText(line,{x:36,y,size:disclosureSize,font,color:rgb(.45,.28,.08)});y-=plannerQuickStart||trackerPdf?14:assessmentPdf?15:12;}y-=plannerQuickStart?20:12;
   if(compact){
@@ -248,9 +248,9 @@ function readme(product:DigitalProduct,files:string[],manifest:ProductArtifactMa
     audio?`Three full Mandarin MP3 listening tracks and 27 matching level-only tracks are included for Forms A, B and C. Playback is once at natural pace with ${audio.responsePauseSeconds}-second response pauses; exact transcripts are included.`:"Audio is not included.",
     audio?`Audio provenance: ${audio.provider}; voices ${Object.entries(audio.voices).map(([form,voice])=>`${form}=${voice}`).join(", ")}; generated ${audio.generatedOn}.`:"",
     audio?`Audio integrity: full-form MP3 SHA-256 hashes are in manifest.json; per-level MP3 hashes and source fingerprint are in Level-Audio/timing-index.json. ${audio.redistributionStatus}`:"",
-    "Levels 7–9 use one unified canonical advanced source set.",
+    product.id==="30-day-planner"?"The same 30-day task sequence is used at every HSK level. Choose your current level and supply level-matched practice material; no word list, questions, audio or answer keys are included.":"Levels 7–9 use one unified canonical advanced source set.",
     `Licence: ${productLicenseNotice(product.id)}`,
-    product.id==="practice-assessment-pack"||product.id==="worksheet-pack"||product.id==="assessment-tracker"?"The 14-day access and three-download allowance apply only to retrieving the ZIP. Downloaded copies do not expire.":""
+    product.id==="practice-assessment-pack"||product.id==="worksheet-pack"||product.id==="assessment-tracker"||product.id==="30-day-planner"?"The 14-day access and three-download allowance apply only to retrieving the ZIP. Downloaded copies do not expire.":""
   ];
   return encoder.encode(lines.filter(Boolean).join("\n"));
 }
@@ -258,6 +258,7 @@ function packageZip(product:DigitalProduct,files:Array<{name:string;data:Uint8Ar
 
 async function makePlannerPdf(plan:PlannerPack,fontBytes:Uint8Array,fillable:boolean){
   const pdf=await PDFDocument.create();pdf.registerFontkit(fontkit);const font=await pdf.embedFont(new Uint8Array(fontBytes),{subset:false});const form=fillable?pdf.getForm():null;
+  const bookmarks:Array<{title:string;page:PDFPage}>=[];
   const width=595.28,height=841.89,dark=rgb(.04,.31,.29),ink=rgb(.11,.15,.22),muted=rgb(.38,.43,.5),lineColor=rgb(.55,.68,.65);let pageNumber=0;
   pdf.setTitle(`HSK 30-Day Planner · ${fillable?"Fillable":"Printable"} A4`);pdf.setAuthor("HSKKit");pdf.setSubject("HSK 30-Day Personalized Study System");
   const fresh=(title:string)=>{const page=pdf.addPage([width,height]);pageNumber+=1;page.drawRectangle({x:0,y:height-39,width,height:39,color:dark});page.drawText("HSKKit · HSK 30-Day Personalized Study System",{x:30,y:height-25,size:9,font,color:rgb(1,1,1)});page.drawText(String(pageNumber),{x:width-48,y:22,size:8,font,color:muted});page.drawText(title,{x:30,y:height-68,size:16,font,color:dark});return page;};
@@ -265,14 +266,14 @@ async function makePlannerPdf(plan:PlannerPack,fontBytes:Uint8Array,fillable:boo
   const response=(page:PDFPage,name:string,label:string,x:number,top:number,fieldWidth:number,fieldHeight:number)=>{page.drawText(label,{x,y:top,size:9.5,font,color:ink});const boxY=top-fieldHeight-8;if(form){const field=form.createTextField(name);field.enableMultiline();field.addToPage(page,{x,y:boxY,width:fieldWidth,height:fieldHeight,borderColor:lineColor,borderWidth:.7,textColor:ink,font});field.setFontSize(10);}else{page.drawRectangle({x,y:boxY,width:fieldWidth,height:fieldHeight,borderColor:lineColor,borderWidth:.7});for(let line=boxY+13;line<boxY+fieldHeight;line+=15)page.drawLine({start:{x:x+5,y:line},end:{x:x+fieldWidth-5,y:line},thickness:.35,color:lineColor});}return boxY-17;};
 
   {
-    const page=fresh("Start here · diagnosis, goal and route");
+    const page=fresh("Start here · diagnosis, goal and route");bookmarks.push({title:"Start here",page});
     let y=742;y=drawWrapped(page,plan.positioning,30,y,11,width-60,dark,15)-8;y=drawWrapped(page,plan.workflow.join(" → "),30,y,8.5,width-60,muted,12)-16;
     const fields=[["planner.setup.currentLevel","Current Level"],["planner.setup.targetLevel","Target Level"],["planner.setup.examDateOrGoal","Exam date or study goal"],["planner.setup.dailyMinutes","Daily available time"],["planner.setup.weakAreas","Initial weak areas"],["planner.setup.route","Selected route: 20 / 30 / 45"],["planner.setup.assessment.vocabulary","Assessment · vocabulary score out of 100"],["planner.setup.assessment.listening","Assessment · listening score out of 100"],["planner.setup.assessment.reading","Assessment · reading score out of 100"],["planner.setup.assessment.writing","Assessment · writing score out of 100"]] as const;
     for(let index=0;index<fields.length;index+=2){const left=fields[index],right=fields[index+1];response(page,left[0],left[1],30,y,250,42);response(page,right[0],right[1],315,y,250,42);y-=88;}
     drawWrapped(page,"Score rule: first-attempt correct / total x 100. Use NOT MEASURED if no keyed source is available; never enter 0 for a missing check. The listening check may require a separate setup session outside Day 1's timer.",30,y+14,10,width-60,ink,15);
   }
   for(const [title,sections] of [["Prepare materials · before you begin",plan.sourcingGuide],["Worked example · Day 1 to first action",plan.workedExample]] as const){
-    const page=fresh(title);let y=738;
+    const page=fresh(title);bookmarks.push({title,page});let y=738;
     for(const section of sections){
       y=drawWrapped(page,section.heading,30,y,12,width-60,dark,18)-5;
       y=drawWrapped(page,section.body,30,y,10.5,width-60,ink,15)-18;
@@ -280,7 +281,7 @@ async function makePlannerPdf(plan:PlannerPack,fontBytes:Uint8Array,fillable:boo
     }
   }
   for(let group=0;group<2;group++){
-    const page=fresh(`Assessment → practice · ${group===0?"vocabulary & listening":"reading & writing"}`);let y=738;
+    const page=fresh(`Assessment → practice · ${group===0?"vocabulary & listening":"reading & writing"}`);bookmarks.push({title:`Assessment mapping ${group+1}`,page});let y=738;
     y=drawWrapped(page,"Use scores out of 100, not raw counts. Find the lowest MEASURED skill and its band. Start with its assignment; recheck using fresh, keyed material on Days 14 and 28.",30,y,11.5,width-60,ink,18)-21;
     const mappings=plan.assessmentMappings.slice(group*6,group*6+6);
     for(const [index,mapping] of mappings.entries()){
@@ -294,7 +295,7 @@ async function makePlannerPdf(plan:PlannerPack,fontBytes:Uint8Array,fillable:boo
     if(y<46)throw new Error(`PLANNER_MAPPING_OVERFLOW_${group}`);
   }
   for(const day of plan.days){
-    const page=fresh(`Day ${day.day} · ${day.phase} · ${day.focus}`);let y=742;
+    const page=fresh(`Day ${day.day} · ${day.phase} · ${day.focus}`);bookmarks.push({title:`Day ${day.day} · ${day.focus}`,page});let y=742;
     y=drawWrapped(page,`Materials (bring your own): ${day.materials.join(" · ")}`,30,y,10,width-60,ink,14)-10;
     for(const minutes of [20,30,45] as const){
       const route=`${minutes} MIN · ${day.routes[minutes].replace(/^\d+ min · /,"")}`;
@@ -303,14 +304,14 @@ async function makePlannerPdf(plan:PlannerPack,fontBytes:Uint8Array,fillable:boo
       page.drawRectangle({x:30,y:y-boxHeight,width:width-60,height:boxHeight-4,borderColor:lineColor,borderWidth:.8});
       y=drawWrapped(page,route,42,y-20,10,width-84,ink,14)-13;
     }
-    y=drawWrapped(page,`Evidence target: ${day.evidence.join(" · ")}`,30,y,10,width-60,dark,14)-15;
+    y=drawWrapped(page,`Evidence target: ${day.evidence.join(" · ")}`,30,y-12,10,width-60,dark,14)-15;
     y=response(page,`planner.day${day.day}.completed`,"Completed work / route used",30,y,width-60,44);
     y=response(page,`planner.day${day.day}.evidence`,"Measured evidence (counts, accuracy or completed output)",30,y,width-60,80);
     y=response(page,`planner.day${day.day}.difficult`,"What was difficult and why?",30,y,width-60,80);
     y=response(page,`planner.day${day.day}.nextReview`,"Next review date / next action",30,y,width-60,54);
     if(y<38)throw new Error(`PLANNER_DAY_OVERFLOW_${day.day}`);
     const review=plan.weeklyReviews.find(item=>item.day===day.day);if(review){
-      const reviewPage=fresh(`Day ${day.day} · Weekly evidence review`);let reviewY=742;
+      const reviewPage=fresh(`Day ${day.day} · Weekly evidence review`);bookmarks.push({title:`Day ${day.day} · Weekly review`,page:reviewPage});let reviewY=742;
       if(day.day===21){
         reviewY=drawWrapped(reviewPage,"Day 21 scoring anchors · score each response 0–2 in each area; total /6 only if all three are measured. Use a model or teacher to verify accuracy; otherwise mark it NOT MEASURED, not zero.",30,reviewY,10.5,width-60,dark,15)-8;
         for(const item of plan.productionRubric)reviewY=drawWrapped(reviewPage,`${item.dimension}: ${item.anchors}`,36,reviewY,10,width-72,ink,14)-4;
@@ -321,13 +322,14 @@ async function makePlannerPdf(plan:PlannerPack,fontBytes:Uint8Array,fillable:boo
     }
   }
   {
-    const page=fresh(plan.recoveryWorksheet.title);let y=742;y=drawWrapped(page,plan.recoveryWorksheet.rule,30,y,9,width-60,dark,13)-18;const fields=["missedDay","reason","unfinished","moveForward","reducedRoute","returnDate"];
+    const page=fresh(plan.recoveryWorksheet.title);bookmarks.push({title:"Missed-day recovery",page});let y=742;y=drawWrapped(page,plan.recoveryWorksheet.rule,30,y,9,width-60,dark,13)-18;const fields=["missedDay","reason","unfinished","moveForward","reducedRoute","returnDate"];
     for(const [index,prompt] of plan.recoveryWorksheet.prompts.entries())y=response(page,`planner.recovery.${fields[index]}`,prompt,30,y,width-60,index===2||index===3?66:42);
   }
   {
-    const page=fresh(plan.finalReview.title);let y=742;y=drawWrapped(page,"Repeat Day 1 with fresh material. Compare measured evidence—not confidence alone—then select one next-stage action.",30,y,9,width-60,dark,13)-16;const fields=["comparison","strongestGain","remainingGap","nextDecision","nextStartDate","firstAssignments"];
+    const page=fresh(plan.finalReview.title);bookmarks.push({title:"Final review and next stage",page});let y=742;y=drawWrapped(page,"Repeat Day 1 with fresh material. Compare measured evidence—not confidence alone—then select one next-stage action.",30,y,9,width-60,dark,13)-16;const fields=["comparison","strongestGain","remainingGap","nextDecision","nextStartDate","firstAssignments"];
     for(const [index,prompt] of plan.finalReview.prompts.entries())y=response(page,`planner.final.${fields[index]}`,prompt,30,y,width-60,index<3?70:46);
   }
+  addWorksheetBookmarks(pdf,bookmarks);
   if(form)form.updateFieldAppearances(font);
   return new Uint8Array(await pdf.save({useObjectStreams:false}));
 }
