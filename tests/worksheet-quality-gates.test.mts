@@ -11,6 +11,7 @@ for (const level of [1, 2, 3, 4, 5, 6, 7, 8, 9]) {
     assert.equal(new Set(questions.map(q => q.id)).size, questions.length);
     for (const q of questions) {
       assert.ok(q.answer.length > 0 && q.explanation.length > 0, q.id);
+      assert.doesNotMatch(q.answer,/\bsampleResponse\b|\bTODO\b/i,`${q.id}: answer key placeholder`);
       assert.ok(q.prompt.length > 20 && q.responseLines >= 1, q.id);
       assert.doesNotMatch(q.prompt, /means [“"].*?[”"]|表示[“"].*?[”"].*最准确的词|词典.*界定为[“"]/u, `${q.id}: supplied answer`);
       assert.doesNotMatch(q.prompt, /\[source setting\]|\[claim using|\[evidence\]|\[result\]/, `${q.id}: placeholder instead of exercise`);
