@@ -73,7 +73,7 @@ test("30-Day Planner ships an editable Excel progress companion",async()=>{
 });
 
 test("Practice Assessment Pack ships an Excel score workbook with automatic totals and weakest-skill result",async()=>{
-  assert.equal(generationVersionForProduct("practice-assessment-pack"),"practice-score-xlsx-v3");
+  assert.equal(generationVersionForProduct("practice-assessment-pack"),"practice-guided-edition-v4");
   const artifact=await generateDifferentiatedProductArtifact("practice-assessment-pack",new Uint8Array(font),new Uint8Array(emoji),"format-optimization-test",{A:new Uint8Array(audioA),B:new Uint8Array(audioB),C:new Uint8Array(audioC)},await loadAssessmentLevelAudio());
   const files=zipEntries(artifact.bytes);
   const name="HSKKit-Practice-Assessment-Score-Tracker.xlsx";
