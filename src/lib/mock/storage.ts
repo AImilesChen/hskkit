@@ -54,6 +54,18 @@ export async function loadMockSession(ownerId: string, sessionId: string) {
   const row = await (await database()).prepare(`SELECT ${columns} FROM mock_sessions WHERE id=? AND owner_id=?`).bind(sessionId, ownerId).first<MockRow>();
   return row ? fromRow(row) : undefined;
 }
+export async function recentMockExposure(ownerId: string, band: MockSession["band"], targetLevel?: number) {
+  const rows = await (await database()).prepare("SELECT snapshot_json FROM mock_attempts WHERE owner_id=? AND band=? ORDER BY submitted_at DESC LIMIT 6")
+    .bind(ownerId, band).all<{ snapshot_json: string }>();
+  const questions: MockSession["questions"] = (rows.results as Array<{ snapshot_json: string }>).flatMap((row) => {
+    try { return JSON.parse(row.snapshot_json) as MockSession["questions"]; }
+    catch { return []; }
+  }).filter((question: MockSession["questions"][number]) => band === "advanced" || question.level === targetLevel);
+  return {
+    questionIds: [...new Set(questions.map((question) => question.id))],
+    groupIds: [...new Set(questions.map((question) => question.sourceGroupId ?? question.id))],
+  };
+}
 export async function createMockSession(session: MockSession) {
   const now = session.startedAt;
   try {

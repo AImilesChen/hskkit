@@ -16,13 +16,13 @@ test("Basic result writes traceable Mock attempts, SRS cards and Mistakes idempo
   session = saveMockAnswer(session, { questionId: first.id, answer: first.correctAnswer, idempotencyKey: "runtime-answer", now });
   const { result } = submitMock(session, { idempotencyKey: "runtime-submit", now });
   const once = applyMockResultToLearning(empty(), result);
-  assert.equal(once.attempts.length, 18);
-  assert.equal(once.cards.length, 18);
-  assert.equal(once.mistakes.length, 17);
+  assert.equal(once.attempts.length, 15);
+  assert.equal(once.cards.length, 15);
+  assert.equal(once.mistakes.length, 14);
   assert.ok(once.attempts.every((attempt) => attempt.sessionId === session.id && attempt.questionVersion === session.questionSetVersion));
   const replay = applyMockResultToLearning(once, result);
-  assert.equal(replay.attempts.length, 18);
-  assert.equal(replay.mistakes.length, 17);
+  assert.equal(replay.attempts.length, 15);
+  assert.equal(replay.mistakes.length, 14);
 });
 
 test("Batch 14 runtime has durable trace schema and no answer key in in-progress public route", async () => {

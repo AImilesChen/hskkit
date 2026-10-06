@@ -34,7 +34,7 @@ test("Placement result keeps the recommendation and next action in one first-fol
 
 test("Mock start uses learner-facing summaries while keeping release detail available", async () => {
   const client = await source("src/app/components/mock-exam.tsx");
-  for (const token of ["18 questions", "30 minutes", "5 tasks", "20 minutes", "Autosaved", "How this Mock works", "<details"]) {
+  for (const token of ["15 questions", "30 minutes", "35 minutes", "Autosaved", "How this skills check works", "<details"]) {
     assert.match(client, new RegExp(token.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")));
   }
   assert.match(client, /className="btn btn-primary mt-7 min-h-11/);
@@ -46,12 +46,12 @@ test("Mock result distinguishes correct, incorrect and unanswered work with filt
   for (const token of ["correctCount", "incorrectCount", "unansweredCount", "Review mistakes", "Review unanswered", "All", "Incorrect", "Unanswered", "Correct", "reviewFilter", "id=\"mock-question-review\""]) {
     assert.match(client, new RegExp(token));
   }
-  assert.match(client, /broad HSK 7–9 readiness estimate/);
+  assert.match(client, /This score describes only the questions in this attempt/);
   assert.match(client, /<details/);
   assert.doesNotMatch(client, />Open Mistakes</);
 });
 
-test("Traditional HSK 1–6 shared result gives review and retake actions before collapsed detail", async () => {
+test("Traditional HSK 1�C6 shared result gives review and retake actions before collapsed detail", async () => {
   const client = await source("src/app/components/practice-test.tsx");
   assert.match(client, /max-w-\[720px\] px-4 py-4 sm:px-8 sm:py-12/);
   assert.match(client, /bg-\[#EFF6FF\] p-4 sm:p-8/);
