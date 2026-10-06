@@ -87,7 +87,7 @@ test("Today removes unavailable old review cards without deleting saved history"
     idempotencyKey: "new-review", contentId: "question:new", contentVersion: "v1",
     dimension: "reading", answer: "A", correctAnswer: "B", observedAt: "2026-10-05T09:00:00.000Z",
   }).state;
-  const input = { ownerId: "dashboard-learner", localDay: "2026-10-06", ruleVersion: "today-v9", now };
+  const input = { ownerId: "dashboard-learner", localDay: "2026-10-06", ruleVersion: "today-v10", now };
   const stale = buildDailySession(state, input);
   assert.equal(stale.session.reviewCardIds?.length, 2);
   const availableReviewCardIds = new Set(projectLearningHistory(stale.state, FREE_CAPABILITIES, new Date(now)).cards.map((card) => card.id));
