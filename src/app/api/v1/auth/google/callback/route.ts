@@ -37,7 +37,10 @@ export async function GET(request: Request) {
     const proposedTimezone = jar.get(OAUTH_TIMEZONE_COOKIE)?.value;
     const timezone = proposedTimezone && proposedTimezone.length <= 64 && validTimezone(proposedTimezone) ? proposedTimezone : undefined;
     const account = await upsertGoogleAccount(profile, timezone || "UTC");
-    if (timezone && account.timezone !== timezone) await updateTimezone(account.userId, timezone);
+    if (timezone && account.timezone !== timezone) {
+      // Timezone is a convenience setting; a failed update must not block sign-in.
+      await updateTimezone(account.userId, timezone).catch(() => undefined);
+    }
     const referralDevice = jar.get(REFERRAL_DEVICE_COOKIE)?.value;
     await activateWelcomeTrialAndReferral({
       userId: account.userId,
