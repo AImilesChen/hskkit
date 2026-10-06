@@ -15,7 +15,7 @@ export const siteNavigation: NavigationEntry[] = [
     items: [
       { href: "/today", label: "Today", description: "Open due reviews and the next learning task." },
       { href: "/planner", label: "Planner", description: "Build a feasible plan from your goal and progress." },
-      { href: "/levels", label: "Levels", description: "Browse the HSK 3.0 Levels 1�C9 learning path." },
+      { href: "/levels", label: "Levels", description: "Browse the HSK 3.0 Levels 1–9 learning path." },
       { href: "/vocabulary/1", label: "Vocabulary", description: "Browse the published catalog by level.", match: "/vocabulary" },
       { href: "/vocabulary/1?mode=flashcards#vocabulary-activities", label: "Flashcards", description: "Review a short HSK word set and repeat the words you missed." },
       { href: "/topics", label: "Topics", description: "Learn published HSK 3.0 vocabulary through practical themes." },
@@ -36,8 +36,8 @@ export const siteNavigation: NavigationEntry[] = [
     label: "Tests",
     items: [
       { href: "/placement", label: "Placement", description: "Find a suggested starting point, not an official score." },
-      { href: "/mock/basic", label: "Basic Skills Check", description: "Choose HSK 1�C6 for a short, level-specific diagnostic." },
-      { href: "/mock/advanced", label: "Advanced Skills Check", description: "Sample reading, listening and grammar in the unified HSK 7�C9 band." },
+      { href: "/mock/basic", label: "Basic Skills Check", description: "Choose HSK 1-6 for a short, level-specific diagnostic." },
+      { href: "/mock/advanced", label: "Advanced Skills Check", description: "Sample reading, listening and grammar in the unified HSK 7-9 band." },
     ],
   },
   { href: "/dictionary", label: "Dictionary", description: "Search the published HSK 3.0 catalog." },

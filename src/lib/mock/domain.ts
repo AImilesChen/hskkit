@@ -259,7 +259,7 @@ export function submitMock(session: MockSession, input: { idempotencyKey: string
     items,
     questionSnapshots: session.questions,
     nextRoutes: session.band === "basic" ? ["/mistakes", "/review", "/planner"] : ["/planner"],
-    disclaimer: session.band === "advanced" ? "This is feedback on 15 selected HSK 7�C9 practice questions. It is not an official score or a reliable estimate of overall HSK 7�C9 ability; writing, translation and speaking were not assessed." : "This is feedback on 15 selected practice questions at one HSK level. It is not an official exam or scaled score; writing and speaking were not assessed.",
+    disclaimer: session.band === "advanced" ? "This is feedback on 15 selected HSK 7-9 practice questions. It is not an official score or a reliable estimate of overall HSK 7-9 ability; writing, translation and speaking were not assessed." : "This is feedback on 15 selected practice questions at one HSK level. It is not an official exam or scaled score; writing and speaking were not assessed.",
     createdAt: input.now,
   };
   const submitted: MockSession = { ...session, status: "submitted", submittedAt: input.now, revision: session.revision + 1, result };
