@@ -44,6 +44,8 @@ export default function HomeQuickFlashcards({ cards }: { cards: DemoCard[] }) {
       <h2 id="home-demo-title">Preview the review experience</h2>
       <p>Try five published HSK 1 cards before creating an account. This short preview demonstrates the interaction; your free trial and daily Free allowance continue beyond it.</p>
       <ul aria-label="Demo details"><li>5 cards</li><li>HSK 1</li><li>Guest start</li></ul>
+      <Link className="home-demo-full-link" href="/vocabulary/1?mode=flashcards#vocabulary-activities">Open full flashcards <span aria-hidden="true">→</span></Link>
+      <p className="home-demo-full-note">Choose 10, 20, or 50 cards. No sign-in required.</p>
     </div>
 
     <div className="home-demo-player">
