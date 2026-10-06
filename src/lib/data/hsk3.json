@@ -162,7 +162,7 @@
       "D": "因为……所以……"
     },
     "correct_answer": "C",
-    "explanation": "'一……就……'表示两个动作紧接发生，'一做完就去睡觉'=as soon as he finishes, he goes to sleep。A表让步转折，B表递进，D表因果，均不匹配。"
+    "explanation": "'一……就……'表示两个动作紧接发生，'一做完就去睡觉'=as soon as he finishes, he goes to sleep。B表递进，C表转折，D表因果，均不匹配。"
   },
   {
     "id": "hsk3_012",
@@ -177,7 +177,7 @@
       "D": "不但"
     },
     "correct_answer": "B",
-    "explanation": "'即使……也……'表让步，'即使努力也不一定能成功'=even if you work hard, you may not succeed。A表因果，C表条件（与'不一定'矛盾），D表递进，均不匹配。"
+    "explanation": "'即使……也……'表让步，'即使努力也不一定能成功'=even if you work hard, you may not succeed。B表因果，C表条件（与'不一定'矛盾），D表递进，均不匹配。"
   },
   {
     "id": "hsk3_013",
@@ -622,7 +622,7 @@
       "D": "不但"
     },
     "correct_answer": "C",
-    "explanation": "'即使……也……'表让步，'即使努力也不一定能成功'=even if you work hard, you may not succeed。A表条件，B表因果，D表递进，均不匹配。 / 'Even if' indicates concession. A indicates a condition, B indicates cause-effect, and D indicates addition."
+    "explanation": "'即使……也……'表让步，'即使努力也不一定能成功'=even if you work hard, you may not succeed。B表因果，C表条件，D表递进，均不匹配。 / 'Even if...also' indicates concession. B indicates cause-effect, C indicates condition, D indicates progression."
   },
   {
     "id": "hsk3_042",
