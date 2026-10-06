@@ -132,6 +132,49 @@ export function MockExam({ band }: { band: MockBand }) {
     finally { setBusy(false); }
   }
 
+  function chooseAnotherLevel() {
+    if (advanced || !session || busy) return;
+    if (session.status === "submitted") {
+      localStorage.removeItem(key(band));
+      setSession(undefined);
+      setIndex(0);
+      setStatus("Choose an HSK level to begin a new skills check.");
+      return;
+    }
+    if (autoSubmitting.current) return;
+    const level = session.questions[0]?.level ?? targetLevel;
+    if (!window.confirm(`Discard this HSK ${level} skills check and choose another level? Your saved answers for this unfinished attempt will be lost. No score or mistakes will be recorded.`)) return;
+    autoSubmitting.current = true;
+    setBusy(true);
+    setStatus("Discarding unfinished attempt...");
+    void (async () => {
+      try {
+        const response = await fetch("/api/v1/mock", {
+          method: "POST",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify({ action: "discard", payload: { sessionId: session.id, idempotencyKey: requestKey(`discard-${session.id}`) } }),
+        });
+        const data = await response.json() as { discarded?: boolean; error?: string };
+        if (!response.ok || !data.discarded) throw new Error(data.error ?? "Could not discard this attempt. Please retry.");
+        localStorage.removeItem(key(band));
+        setSession(undefined);
+        setIndex(0);
+        setStatus("Choose an HSK level to begin a new skills check.");
+      } catch (error) {
+        autoSubmitting.current = false;
+        const message = error instanceof Error ? error.message : "Could not switch levels. Your current attempt is still saved.";
+        if (message === "REVISION_CONFLICT" || message === "MOCK_ALREADY_SUBMITTED") {
+          try {
+            const latest = await fetch(`/api/v1/mock?sessionId=${encodeURIComponent(session.id)}`);
+            const data = await latest.json() as { session?: PublicSession };
+            if (latest.ok && data.session) setSession(data.session);
+          } catch { /* Keep the current view so the learner can retry safely. */ }
+        }
+        setStatus(message === "MOCK_ALREADY_SUBMITTED" ? "This attempt was already submitted. Its result has been restored." : message);
+      } finally { setBusy(false); }
+    })();
+  }
+
   if (!session) return <section className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
     <p className="text-sm font-bold uppercase tracking-[.16em] text-blue-700">{advanced ? "Unified HSK 7-9 | Short diagnostic" : "HSK 1-6 | Level-specific diagnostic"}</p>
     <h1 className="mt-3 font-serif text-4xl font-bold text-slate-950 sm:text-6xl">{advanced ? "Advanced Skills Check" : "Basic Skills Check"}</h1>
@@ -185,6 +228,7 @@ export function MockExam({ band }: { band: MockBand }) {
         <div className="mt-6 flex flex-col gap-3 sm:flex-row">
           <a className="btn btn-primary min-h-11 text-center" href="#mock-question-review" onClick={() => setReviewFilter(primaryReview.filter)}>{primaryReview.label}</a>
           <button className="btn btn-secondary min-h-11" onClick={start} disabled={busy || ready !== true}>Try another question set</button>
+          {!advanced ? <button className="btn btn-secondary min-h-11" onClick={chooseAnotherLevel}>Choose another HSK level</button> : null}
         </div>
         <details className="mt-5 rounded-2xl border border-slate-200 p-4 text-sm leading-6 text-slate-600">
           <summary className="cursor-pointer font-bold text-slate-800">More learning tools</summary>
@@ -231,6 +275,7 @@ export function MockExam({ band }: { band: MockBand }) {
         </div>
       </div>
     </header>
+    {!advanced ? <div className="flex justify-end"><button className="min-h-11 rounded-xl border border-slate-300 bg-white px-4 text-sm font-bold text-blue-700 hover:border-blue-500 disabled:opacity-50" disabled={busy} onClick={chooseAnotherLevel}>Choose another HSK level</button></div> : null}
     <nav aria-label="Skills check questions" className="flex gap-2 overflow-x-auto pb-2">{session.questions.map((question, questionIndex) => <button key={question.id} className={`min-h-11 min-w-11 rounded-xl border font-bold ${questionIndex === index ? "border-blue-600 bg-blue-600 text-white" : session.answers.some((answer) => answer.questionId === question.id) ? "border-emerald-300 bg-emerald-50" : "border-slate-200 bg-white"}`} onClick={() => setIndex(questionIndex)}>{questionIndex + 1}</button>)}</nav>
     <article className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm sm:p-8">
       <p className="text-sm font-bold uppercase tracking-[.12em] text-slate-500">{current.dimension} | HSK {current.levelBand}</p>

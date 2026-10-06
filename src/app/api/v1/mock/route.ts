@@ -4,7 +4,7 @@ import { GUEST_COOKIE, requestIdentity } from "@/lib/account/identity";
 import { loadState, saveState } from "@/lib/learning/storage";
 import { evaluateMockGate, mockBank, publicMockSession, saveMockAnswer, startMock, submitMock, type MockBand } from "@/lib/mock/domain";
 import { applyMockResultToLearning } from "@/lib/mock/learning";
-import { createMockSession, findMockByStartKey, loadMockSession, recentMockExposure, saveMockProgress, saveMockSubmission } from "@/lib/mock/storage";
+import { createMockSession, discardMockSession, findMockByStartKey, loadMockSession, recentMockExposure, saveMockProgress, saveMockSubmission } from "@/lib/mock/storage";
 import { d1UnavailableResponse, withUserD1ReadProtection } from "@/lib/d1/user-protection";
 
 async function owner() {
@@ -97,7 +97,13 @@ async function postMock(req: NextRequest) {
     const sessionId = short(payload.sessionId);
     if (!sessionId) throw new Error("INVALID_MOCK_REQUEST");
     const session = await loadMockSession(identity.id, sessionId);
+    if (action === "discard" && !session) return response(req, { discarded: true }, identity);
     if (!session) throw new Error("MOCK_SESSION_NOT_FOUND");
+    if (action === "discard") {
+      if (session.status !== "in_progress") throw new Error("MOCK_ALREADY_SUBMITTED");
+      await discardMockSession(session, session.revision);
+      return response(req, { discarded: true }, identity);
+    }
     if (action === "answer") {
       const questionId = short(payload.questionId, 160);
       const answer = short(payload.answer, 180);

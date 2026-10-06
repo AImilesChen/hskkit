@@ -83,6 +83,11 @@ export async function saveMockProgress(session: MockSession, expectedRevision: n
     .bind(JSON.stringify(session.answers), JSON.stringify(session.answerKeys), session.revision, session.answers.at(-1)?.savedAt ?? new Date().toISOString(), session.id, session.ownerId, expectedRevision).run();
   if (!(result.meta.changes ?? 0)) throw new Error("REVISION_CONFLICT");
 }
+export async function discardMockSession(session: MockSession, expectedRevision: number) {
+  const result = await (await database()).prepare("DELETE FROM mock_sessions WHERE id=? AND owner_id=? AND status='in_progress' AND revision=?")
+    .bind(session.id, session.ownerId, expectedRevision).run();
+  if (!(result.meta.changes ?? 0)) throw new Error("REVISION_CONFLICT");
+}
 export async function saveMockSubmission(session: MockSession, expectedRevision: number) {
   if (!session.result || !session.submittedAt) throw new Error("MOCK_RESULT_REQUIRED");
   const db = await database();
