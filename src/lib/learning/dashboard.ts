@@ -13,6 +13,7 @@ type LearningEntryState = {
 type DashboardItemSignal = {
   kind: string;
   status: string;
+  deferred?: boolean;
 };
 
 const dashboardRetryDelaysMs = [50, 150] as const;
@@ -74,11 +75,11 @@ export function dashboardPrimaryAction(input: {
   currentLevel: number;
   items: DashboardItemSignal[];
 }) {
-  const taskItems = input.items.filter((item) => item.kind !== "summary");
+  const taskItems = input.items.filter((item) => item.kind !== "summary" && !item.deferred);
   const hasCompletedTask = taskItems.some((item) => item.status === "completed");
   const hasPendingTask = taskItems.some((item) => item.status === "pending");
-  if (hasCompletedTask && hasPendingTask) return { label: "Continue today’s learning", href: "/today" as const };
-  if (input.dueReviews > 0) return { label: "Start today’s review", href: "/review?source=today" as const };
+  if (hasPendingTask) return { label: hasCompletedTask ? "Continue today’s learning" : "Start today’s plan", href: "/today" as const };
+  if (input.dueReviews > 0) return { label: "Review due memories", href: "/review" as const };
   const level = Math.min(9, Math.max(1, Math.trunc(input.currentLevel) || 1));
   return {
     label: "Learn new words",

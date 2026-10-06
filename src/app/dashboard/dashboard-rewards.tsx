@@ -46,13 +46,13 @@ export default function DashboardRewards({ rewards }: { rewards: LearningRewardD
 
       <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <article className="rounded-2xl border border-white bg-white/90 p-4"><p className="text-sm font-bold text-slate-500">Today: {minutes(rewards.activeSeconds)} / 15 min</p><div className="mt-3 h-2 overflow-hidden rounded-full bg-slate-100" role="progressbar" aria-label="Today active learning minutes" aria-valuemin={0} aria-valuemax={15} aria-valuenow={minutes(rewards.activeSeconds)}><span className="block h-full rounded-full bg-indigo-600" style={{ width: `${Math.min(100, rewards.activeSeconds / 9)}%` }} /></div><p className="mt-3 text-sm leading-5 text-slate-700">{todayMessage}</p></article>
-        <article className="rounded-2xl border border-white bg-white/90 p-4"><p className="text-sm font-bold text-slate-500">Current streak</p><strong className="mt-2 block text-3xl font-black text-slate-950">{rewards.currentStreak} day{rewards.currentStreak === 1 ? "" : "s"}</strong><p className="mt-1 text-sm text-slate-600">Best: {rewards.longestStreak} day{rewards.longestStreak === 1 ? "" : "s"}</p></article>
+        <article className="rounded-2xl border border-white bg-white/90 p-4"><p className="text-sm font-bold text-slate-500">Qualified-day streak</p><strong className="mt-2 block text-3xl font-black text-slate-950">{rewards.currentStreak} day{rewards.currentStreak === 1 ? "" : "s"}</strong><p className="mt-1 text-sm text-slate-600">Best: {rewards.longestStreak} day{rewards.longestStreak === 1 ? "" : "s"} · 15 active minutes and a task</p></article>
         <article className="rounded-2xl border border-white bg-white/90 p-4"><p className="text-sm font-bold text-slate-500">This month</p><strong className="mt-2 block text-3xl font-black text-slate-950">{rewards.monthLearningDays} day{rewards.monthLearningDays === 1 ? "" : "s"}</strong><p className="mt-1 text-sm text-slate-600">{rewards.monthPoints} points earned · next day +{rewards.nextAward}</p></article>
         <article className="rounded-2xl border border-white bg-white/90 p-4"><p className="text-sm font-bold text-slate-500">Next badge</p><strong className="mt-2 block text-2xl font-black text-slate-950">{rewards.nextBadge ? rewards.nextBadge.label : "90-day set complete"}</strong><p className="mt-1 text-sm text-slate-600">{rewards.nextBadge ? `${rewards.nextBadge.remainingDays} effective day${rewards.nextBadge.remainingDays === 1 ? "" : "s"} to go` : "All launch milestones unlocked"}</p></article>
       </div>
 
-      <div className="mt-6 border-t border-indigo-100 pt-5">
-        <h3 className="text-lg font-black text-slate-950">Badge wall</h3>
+      <details className="mt-6 border-t border-indigo-100 pt-5">
+        <summary className="cursor-pointer text-lg font-black text-slate-950">Badge wall · view milestones</summary>
         <div className="mt-3 grid grid-cols-3 gap-2 sm:grid-cols-6">
           {[3, 7, 14, 30, 60, 90].map((days) => {
             const unlocked = rewards.unlockedBadges.some((badge) => badge.days === days);
@@ -60,7 +60,7 @@ export default function DashboardRewards({ rewards }: { rewards: LearningRewardD
           })}
         </div>
         <p className="mt-4 text-xs leading-5 text-slate-500">10 learning points = 1 AI credit. Conversion is not open yet; learning points stay separate from subscription AI credits.</p>
-      </div>
+      </details>
     </div>
   </section>;
 }
