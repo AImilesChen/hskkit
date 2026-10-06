@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 import { AudioPlaybackControl, type AudioPlaybackState } from "@/app/components/audio-playback-control";
 import type { PublicAudioAsset } from "@/lib/audio/assets";
 import AiAssist from "@/app/components/ai-assist";
@@ -22,6 +22,7 @@ type Props = {
 };
 
 export default function Step7ExerciseClient({ exercise, audioAsset, previousHref, previousLabel, nextHref, nextLabel, listeningSession, readingSession }: Props) {
+  const headingId = useId();
   const [answer, setAnswer] = useState("");
   const [played, setPlayed] = useState(!audioAsset);
   const [saving, setSaving] = useState(false);
@@ -190,9 +191,9 @@ export default function Step7ExerciseClient({ exercise, audioAsset, previousHref
             ? "Audio could not be loaded. Retry audio to unlock the answers."
             : "Play the audio to unlock the answers.";
 
-  return <section className="step7-exercise" aria-labelledby="exercise-heading">
+  return <section className="step7-exercise" aria-labelledby={headingId}>
     <span className="eyebrow">Linked practice</span>
-    <h2 id="exercise-heading">{exercise.prompt}</h2>
+    <h2 id={headingId}>{exercise.prompt}</h2>
     {audioAsset ? <>
       <p>{listeningSession ? "Listen to the complete audio, choose an answer, then check it." : "Finish playback before answering. Playback failure never changes mastery or usage."}</p>
       <AudioPlaybackControl

@@ -1,5 +1,5 @@
 import type { Attempt } from "./domain.ts";
-import { ADVANCED_LISTENING_LESSONS, GRAMMAR_LESSONS, READING_LESSONS, type Step7Exercise } from "./step7-content.ts";
+import { ADVANCED_LISTENING_LESSONS, GRAMMAR_CURRICULUM, READING_LESSONS, type Step7Exercise } from "./step7-content.ts";
 import { LISTENING_LIBRARY_QUESTIONS } from "./listening-library.ts";
 
 export type ReviewAnswerMode = "choice" | "text" | "self_recall";
@@ -28,7 +28,7 @@ const optionsMode = (options?: Record<string, string>): ReviewAnswerMode => opti
 
 
 export function reviewSnapshotFromStep7Exercise(exercise: Step7Exercise): ReviewSnapshot | undefined {
-  const grammar = GRAMMAR_LESSONS.find((lesson) => lesson.exercise.contentId === exercise.contentId);
+  const grammar = GRAMMAR_CURRICULUM.find((lesson) => lesson.exercises.some((item) => item.id === exercise.id));
   if (grammar) return {
     level: grammar.level, levelBand: band(grammar.level, grammar.levelBand), skillLabel: "Grammar", topic: grammar.title,
     context: `${grammar.pattern}\n${grammar.examples.map((example) => example.zh).join(" / ")}`,
@@ -63,8 +63,12 @@ export function reviewSnapshotForAttempt(attempt: Attempt): ReviewSnapshot | und
     return exercise ? reviewSnapshotFromStep7Exercise(exercise) : undefined;
   }
   if (attempt.reviewSnapshot) return { ...attempt.reviewSnapshot, options: attempt.reviewSnapshot.options ? { ...attempt.reviewSnapshot.options } : undefined };
-  const step7 = [...GRAMMAR_LESSONS, ...READING_LESSONS, ...ADVANCED_LISTENING_LESSONS, ...LISTENING_LIBRARY_QUESTIONS]
-    .map((lesson) => lesson.exercise).find((exercise) => exercise.contentId === attempt.contentId && exercise.contentVersion === attempt.contentVersion);
+  const step7 = [
+    ...GRAMMAR_CURRICULUM.flatMap((lesson) => lesson.exercises),
+    ...READING_LESSONS.map((lesson) => lesson.exercise),
+    ...ADVANCED_LISTENING_LESSONS.map((lesson) => lesson.exercise),
+    ...LISTENING_LIBRARY_QUESTIONS.map((lesson) => lesson.exercise),
+  ].find((exercise) => exercise.contentId === attempt.contentId && exercise.contentVersion === attempt.contentVersion);
   if (step7 && step7.contentVersion === attempt.contentVersion) return reviewSnapshotFromStep7Exercise(step7);
   return undefined;
 }
