@@ -9,19 +9,19 @@ const pricing = read("../src/app/pricing/page.tsx");
 
 test("P0-2 exposes one frozen information architecture on desktop and mobile", async () => {
   const { siteNavigation, flattenNavigation } = await import("../src/app/site-navigation.ts");
-  assert.deepEqual(siteNavigation.map((entry) => entry.label), ["Learn", "Practice", "Tests", "Dictionary", "Pricing", "Store", "Sign in"]);
-  assert.deepEqual(siteNavigation[0].items?.map((item) => item.label), ["Today", "Planner", "Levels", "Vocabulary", "Topics", "Grammar", "Reading", "Listening library"]);
+  assert.deepEqual(siteNavigation.map((entry) => entry.label), ["Learn", "Practice", "Tests", "Dictionary", "Blog", "Pricing", "Store", "Sign in"]);
+  assert.deepEqual(siteNavigation[0].items?.map((item) => item.label), ["Today", "Planner", "Levels", "Vocabulary", "Flashcards", "Topics", "Grammar", "Reading", "Listening library"]);
   assert.deepEqual(siteNavigation[1].items?.map((item) => item.label), ["Practice", "Review", "Mistakes"]);
   assert.deepEqual(siteNavigation[2].items?.map((item) => item.label), ["Placement", "Basic Mock", "Advanced Mock"]);
   assert.deepEqual(flattenNavigation().map((item) => item.href), [
-    "/today", "/planner", "/levels", "/vocabulary/1", "/topics", "/grammar", "/reading", "/listen",
+    "/today", "/planner", "/levels", "/vocabulary/1", "/vocabulary/1?mode=flashcards#vocabulary-activities", "/topics", "/grammar", "/reading", "/listen",
     "/practice", "/review", "/mistakes", "/placement", "/mock/basic", "/mock/advanced",
-    "/dictionary", "/pricing", "/store", "/account",
+    "/dictionary", "/blog", "/pricing", "/store", "/account",
   ]);
   const hrefs = flattenNavigation().map((item) => item.href);
   assert.equal(new Set(hrefs).size, hrefs.length, "the shared navigation must not contain duplicate destinations");
-  assert.match(header, /siteNavigation\.map/g);
-  assert.equal((header.match(/siteNavigation\.map/g) ?? []).length, 2, "desktop and mobile must render the same shared navigation data");
+  assert.match(header, /navigation\.map/g);
+  assert.equal((header.match(/navigation\.map/g) ?? []).length, 2, "desktop and mobile must render the same shared navigation data");
   assert.doesNotMatch(header, /href="\/hsk-(?:3-0|2-0-vs-3-0)"/, "mobile must not add a second navigation-only route set");
 });
 
@@ -50,6 +50,7 @@ test("P0-2 every frozen destination has a real route", async () => {
   const { flattenNavigation } = await import("../src/app/site-navigation.ts");
   const routeOverrides: Record<string, string> = {
     "/vocabulary/1": "../src/app/vocabulary/[level]/page.tsx",
+    "/vocabulary/1?mode=flashcards#vocabulary-activities": "../src/app/vocabulary/[level]/page.tsx",
     "/mock/basic": "../src/app/mock/[band]/page.tsx",
     "/mock/advanced": "../src/app/mock/[band]/page.tsx",
   };

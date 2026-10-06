@@ -5,6 +5,7 @@ import test from "node:test";
 
 import { buildCatalogQuery, parseCatalogSearchParams } from "../src/lib/content/catalog-search.ts";
 import { handleCatalogWordsRequest } from "../src/lib/content/catalog-route.ts";
+import { flashcardSummary, splitFlashcardForms } from "../src/lib/learning/flashcards.ts";
 
 const catalogSource = fs.readFileSync(new URL("../src/app/vocabulary/[level]/vocabulary-catalog.tsx", import.meta.url), "utf8");
 const quickSource = fs.readFileSync(new URL("../src/app/vocabulary/[level]/quick-flashcards.tsx", import.meta.url), "utf8");
@@ -133,27 +134,40 @@ test("quick flashcards load only the selected published HSK 3.0 level and suppor
 
 test("quick cards reveal published pinyin, meaning and part of speech without inventing examples or SRS", () => {
   assert.match(quickSource, /Show answer/);
-  assert.match(quickSource, /Hide answer/);
-  assert.match(quickSource, /currentWord\.payload\.pinyin/);
+  assert.match(quickSource, /Hide answer for/);
+  assert.match(quickSource, /currentWord\?\.payload\.pinyin/);
   assert.match(quickSource, /currentWord\.payload\.meaning/);
   assert.match(quickSource, /currentWord\?\.payload\.partOfSpeech/);
   assert.match(quickSource, /formalAudioUrl/);
   assert.match(quickSource, /variant="icon"/);
   assert.match(quickSource, /View word details/);
-  assert.match(quickSource, /\.split\("\|"\)/);
+  assert.match(quickSource, /splitFlashcardForms/);
   assert.match(quickSource, /text-white sm:text-3xl/);
-  assert.doesNotMatch(quickSource, /example_cn|example_en|spaced repetition|SRS|>(Again|Hard|Good|Easy)</i);
+  assert.doesNotMatch(quickSource, /example_cn|example_en|>(Again|Hard|Good|Easy)</i);
 });
 
-test("quick cards expose progress, previous/next controls, completion, retry and mobile-safe touch targets", () => {
+test("quick cards expose progress, self-check controls, missed-word replay and mobile-safe touch targets", () => {
   assert.match(quickSource, /Card \{currentIndex \+ 1\} of \{words\.length\}/);
   assert.match(quickSource, />Previous</);
-  assert.match(quickSource, /"Finish" : "Next"/);
-  assert.match(quickSource, /Set complete/);
+  assert.match(quickSource, /rate\("retry"\)/);
+  assert.match(quickSource, /rate\("known"\)/);
+  assert.match(quickSource, /reviewUncertain/);
+  assert.match(quickSource, /Review \{retryWords\.length\} \{retryWords\.length === 1/);
   assert.match(quickSource, /Start another set/);
   assert.match(quickSource, /Try again/);
   assert.match(quickSource, /min-h-11/);
   assert.match(quickSource, /min-w-11/);
   assert.match(quickSource, /aria-live="polite"/);
   assert.match(quickSource, /max-w-\[720px\]/);
+});
+
+test("flashcard self-check repeats only missed or skipped words and keeps alternate forms readable", () => {
+  assert.deepEqual(splitFlashcardForms("有时候|有时|有时"), ["有时候", "有时"]);
+  assert.deepEqual(splitFlashcardForms(" yǒushíhou | yǒushí "), ["yǒushíhou", "yǒushí"]);
+  const words = [{ id: "a" }, { id: "b" }, { id: "c" }];
+  const summary = flashcardSummary(words, { a: "known", b: "retry" });
+  assert.equal(summary.known, 1);
+  assert.equal(summary.markedForPractice, 1);
+  assert.equal(summary.skipped, 1);
+  assert.deepEqual(summary.retryWords.map((word) => word.id), ["b", "c"]);
 });

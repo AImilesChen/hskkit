@@ -96,7 +96,7 @@ export default async function VocabularyPage({ params, searchParams }: Props) {
                 const current = option.level === level;
                 return <Link
                   key={option.level}
-                  href={`/vocabulary/${option.level}`}
+                  href={`/vocabulary/${option.level}${initialMode === "flashcards" ? "?mode=flashcards#vocabulary-activities" : ""}`}
                   aria-current={current ? "page" : undefined}
                   className={`inline-flex min-h-11 shrink-0 items-center justify-center rounded-xl border px-4 text-sm font-semibold transition focus:outline-none focus:ring-4 focus:ring-blue-100 ${current ? "border-blue-600 bg-blue-600 text-white" : "border-slate-300 bg-white text-slate-700 hover:border-blue-500 hover:bg-blue-50 hover:text-blue-700"}`}
                 >{option.label}</Link>;

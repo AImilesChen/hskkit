@@ -153,7 +153,7 @@ test("P0 topic pages expose SEO, breadcrumbs, readable production cards, real wo
 test("P0 Learn navigation places Topics between Vocabulary and Grammar", async () => {
   const { siteNavigation } = await import("../src/app/site-navigation.ts");
   assert.deepEqual(siteNavigation[0].items?.map((item) => item.label), [
-    "Today", "Planner", "Levels", "Vocabulary", "Topics", "Grammar", "Reading", "Listening library",
+    "Today", "Planner", "Levels", "Vocabulary", "Flashcards", "Topics", "Grammar", "Reading", "Listening library",
   ]);
   assert.equal(siteNavigation[0].items?.find((item) => item.label === "Topics")?.href, "/topics");
 });
