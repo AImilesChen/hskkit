@@ -14,7 +14,7 @@ import { completionProofNeedsSync, parseTodayCompletionProof, recommendTodayMinu
 
 type Dimension = "reading" | "audio" | "context_audio";
 type LearnContent = { assetId: string; hanzi: string; pinyin: string; meaning: string; partOfSpeech: string; example?: { hanzi: string; pinyin: string; meaning: string }; audioSrc?: string };
-type Item = { id: string; kind: "review" | "learn" | "listen" | "practice" | "summary"; contentId: string; contentVersion?: string; status: "pending" | "completed" | "skipped"; dimension?: Dimension; title?: string; href?: string; estimatedMinutes?: number; deferred?: boolean; reviewCardId?: string; learnContent?: LearnContent };
+type Item = { id: string; kind: "review" | "learn" | "listen" | "practice" | "summary"; contentId: string; contentVersion?: string; status: "pending" | "completed" | "skipped"; dimension?: Dimension; title?: string; href?: string; estimatedMinutes?: number; deferred?: boolean; isContinuing?: boolean; reviewCardId?: string; learnContent?: LearnContent };
 type Notice = { code: string; message: string; actionHref: string; actionLabel: string };
 type Card = { id: string; contentId: string; dimension: Dimension; dueAt: string; revision: number; prompt: string; context?: string; instruction?: string; answerMode: "choice" | "text" | "self_recall"; correctAnswer: string; correctAnswerKey: string; userAnswer: string; priorAnswerLabel: string; choices: Array<{ key: string; text: string }>; isMistake: boolean; legacyReview: boolean; reviewReason: string; explanation: string; level?: number; levelBand: string; skill: string; topic?: string; intervalDays: number; ease: number; reviewCount: number; audioText?: string; audioSrc?: string; assetId?: string; pinyin?: string; meaning?: string; example?: { hanzi: string; pinyin: string; meaning: string }; formalAudioSrc?: string; playbackRequired: boolean; playbackReady: boolean };
 type Mistake = { id: string; contentId: string; cardId?: string; status: string; createdAt: string; resolvedAt?: string; dimension: Dimension; prompt: string; level?: number; skill: string };
@@ -72,9 +72,6 @@ export default function LearningDashboard({ mode }: { mode: "today" | "review" |
   const [reviewMinutes, setReviewMinutes] = useState<5 | 10 | 20>(10);
   const [selectedReviewScope, setSelectedReviewScope] = useState<ReviewLevelScope>("current");
   const [difficultOnly, setDifficultOnly] = useState(false);
-  const [mistakeLevel, setMistakeLevel] = useState(0);
-  const [mistakeType, setMistakeType] = useState<"all" | Dimension>("all");
-  const [mistakeAge, setMistakeAge] = useState(0);
   const [reviewIds, setReviewIds] = useState<string[] | null>(null);
   const [entryIntent, setEntryIntent] = useState<ReviewEntryIntent>({ kind: "setup" });
   const [entryTodaySessionId, setEntryTodaySessionId] = useState("");
@@ -103,6 +100,7 @@ export default function LearningDashboard({ mode }: { mode: "today" | "review" |
   const dataRef = useRef<Data | null>(null);
   const reviewPlayback = useRef<{ cardKey: string; coordinator: PlaybackVerificationCoordinator } | null>(null);
   const [reviewPlaybackState, setReviewPlaybackState] = useState<PlaybackVerificationState>("idle");
+  const [reviewPlaybackEndedKey, setReviewPlaybackEndedKey] = useState<string | null>(null);
 
   async function load(manualRetry = false) {
     setError("");
@@ -323,6 +321,7 @@ export default function LearningDashboard({ mode }: { mode: "today" | "review" |
     reviewPlayback.current?.coordinator.reset();
     reviewPlayback.current = null;
     setReviewPlaybackState("idle");
+    setReviewPlaybackEndedKey(null);
   }, [currentReviewCardId, currentReviewCardRevision, reviewIds]);
 
   async function retryPending(current: Data | null = data) {
@@ -508,6 +507,7 @@ export default function LearningDashboard({ mode }: { mode: "today" | "review" |
   }
   async function startFormalPlayback(card: Card) {
     setAudioError("");
+    setReviewPlaybackEndedKey(null);
     const cardKey = `${card.id}:${card.revision}`;
     const coordinator = new PlaybackVerificationCoordinator({
       onStateChange: setReviewPlaybackState,
@@ -531,6 +531,7 @@ export default function LearningDashboard({ mode }: { mode: "today" | "review" |
   async function completeFormalPlayback(card: Card) {
     const active = reviewPlayback.current;
     if (!active || active.cardKey !== `${card.id}:${card.revision}`) { setAudioError(playbackVerificationMessage("AUDIO_PLAYBACK_REQUIRED", "complete")); return; }
+    setReviewPlaybackEndedKey(active.cardKey);
     try {
       if (await active.coordinator.finish()) setAudioError("");
     } catch (error) {
@@ -559,13 +560,6 @@ export default function LearningDashboard({ mode }: { mode: "today" | "review" |
   </LearningStatePage>;
   if (!data) return <LearningStatePage mode={mode} title={mode === "review" ? "Preparing your review" : mode === "mistakes" ? "Loading your mistakes" : "Preparing today's plan"} text="Loading due items and restoring progress." loading />;
   const open = data.mistakes.filter((mistake) => mistake.status === "open");
-  const corrected = data.mistakes
-    .filter((mistake) => mistake.status === "resolved")
-    .sort((a, b) => (b.resolvedAt ?? b.createdAt).localeCompare(a.resolvedAt ?? a.createdAt));
-  const filteredOpen = open.filter((mistake) =>
-    (!mistakeLevel || mistake.level === mistakeLevel)
-    && (mistakeType === "all" || mistake.dimension === mistakeType)
-    && (!mistakeAge || Date.now() - new Date(mistake.createdAt).getTime() <= mistakeAge * 86_400_000));
   const dueForToday = data.capabilities.focusedReview
     ? data.focusedReview
     : data.cards.filter((card) => card.dueAt <= new Date().toISOString());
@@ -581,6 +575,11 @@ export default function LearningDashboard({ mode }: { mode: "today" | "review" |
       .filter(({ item }) => item.kind === "summary" || (!item.deferred && (item.estimatedMinutes ?? 0) > 0));
     const deferredTodayItems = data.session.items.filter((item) => item.deferred);
     const plannedTodayTasks = currentTodayItems.map(({ item }) => item).filter((item) => item.kind !== "summary");
+    const newWordItems = plannedTodayTasks.filter((item) => item.kind === "learn" && !item.isContinuing);
+    const continuingWordItems = plannedTodayTasks.filter((item) => item.kind === "learn" && item.isContinuing);
+    const completedNewWords = newWordItems.filter((item) => item.status === "completed").length;
+    const completedNewWordsToday = data.session.items.filter((item) => item.kind === "learn" && item.status === "completed" && !item.isContinuing).length;
+    const completedContinuingWordsToday = data.session.items.filter((item) => item.kind === "learn" && item.status === "completed" && item.isContinuing).length;
     const reviewGroupItems = plannedTodayTasks.filter((item) => item.kind === "review");
     const completedReviewCount = reviewGroupItems.filter((item) => item.status === "completed").length;
     const incorrectReviewCount = reviewGroupItems.filter((item) => item.status === "completed" && open.some((mistake) => mistake.contentId === item.contentId)).length;
@@ -618,13 +617,13 @@ export default function LearningDashboard({ mode }: { mode: "today" | "review" |
       </section>
       {activeToday && activeToday.kind !== "learn" && <div className="today-mobile-action sticky z-30 mb-5 rounded-2xl border border-blue-200 bg-white/95 p-2 shadow-[0_16px_42px_rgba(15,23,42,0.2)] backdrop-blur md:hidden" style={{ bottom: "calc(76px + env(safe-area-inset-bottom))" }}>{primaryTodayAction(activeToday, data.session.id, currentStep, journeyProgress.totalPhases, selectedReviewItems, selectedReviewCards)}</div>}
       <section className="mb-5 flex min-h-[72px] flex-col items-stretch gap-3 rounded-2xl border border-slate-200 bg-white px-5 py-3 shadow-sm sm:flex-row sm:items-center sm:justify-between sm:gap-4">
-        <span className="min-w-0"><strong className="block text-slate-950">Today’s plan</strong><span className="block text-sm leading-6 text-slate-600 sm:truncate">HSK {data.session.startLevel ?? 1} · {data.session.budgetMinutes ?? 20} min · {data.session.plannedNewWordCount ?? data.session.newWordCount ?? 3} new · {(data.session.listeningEnabled ?? true) ? "Listening on" : "Listening off"} · {({ balanced: "Balanced", review_first: "Review first", fix_mistakes: "Fix mistakes", listening_focus: "Listening focus" } as const)[data.session.focus ?? "balanced"]}</span></span>
+        <span className="min-w-0"><strong className="block text-slate-950">Today’s plan</strong><span className="block text-sm leading-6 text-slate-600">HSK {data.session.startLevel ?? 1} · {data.session.budgetMinutes ?? 20} min · New words {completedNewWords}/{newWordItems.length}{continuingWordItems.length ? ` · ${continuingWordItems.length} continuing` : ""} · {(data.session.listeningEnabled ?? true) ? "Listening when available" : "Listening off"} · {({ balanced: "Balanced", review_first: "Review first", fix_mistakes: "Fix mistakes", listening_focus: "Listening focus" } as const)[data.session.focus ?? "balanced"]}</span></span>
         <button className="min-h-[48px] w-full flex-none rounded-xl px-4 font-bold text-blue-700 hover:bg-blue-50 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-blue-100 sm:w-auto" onClick={() => setPlanOpen(true)}>Adjust today’s plan</button>
       </section>
       {planFeedback && <p className="mb-5 rounded-xl bg-emerald-50 px-4 py-3 text-sm font-bold text-emerald-700" role="status">{planFeedback}</p>}
       <section className="mb-5 rounded-2xl border border-blue-100 bg-blue-50/70 p-5">
         <p><strong>{plannedTodayTasks.length} tasks · {data.session.totalEstimatedMinutes ?? 0} min planned</strong></p>
-        <p className="mt-1 text-sm text-slate-600"><strong>Why this plan:</strong> mistakes and due memory come first, then the exact new word, its available listening, and a saved practice result.</p>
+        <p className="mt-1 text-sm text-slate-600"><strong>Why this plan:</strong> mistakes and due memory come first, then unfinished words and new words, their available listening, and a saved practice result.</p>
         {gapMinutes > 0 && <p className="mt-2 text-sm text-slate-600">{gapMinutes} min remains unfilled because no approved ready task fits the remaining budget. Today does not add filler.</p>}
         <div className="mt-4 grid gap-2 text-sm text-slate-600 sm:grid-cols-2"><p><strong>Learning Points:</strong> {reward ? `${reward.monthPoints} this month across ${reward.monthLearningDays} qualified days` : "Build from qualified learning days"}</p><p><strong>Why today arranged this:</strong> {open.length ? `${open.length} open mistake${open.length === 1 ? "" : "s"} are prioritised before new work.` : `No open mistake is blocking you; ${weakest} is your lowest mastery area.`}</p></div>
         {deferredTodayItems.length > 0 && <p className="mt-4 rounded-xl bg-amber-50 p-4 text-sm text-amber-900" role="status"><strong>{deferredTodayItems.length} saved word{deferredTodayItems.length === 1 ? " is" : "s are"} waiting for room.</strong> Increase the budget to bring {deferredTodayItems.length === 1 ? "it" : "them"} into this session.</p>}
@@ -637,13 +636,13 @@ export default function LearningDashboard({ mode }: { mode: "today" | "review" |
           const locked = item.status === "pending" && activeToday?.id !== item.id;
           const journeyState = item.status === "completed" ? "completed" : item.status === "skipped" ? "skipped" : locked ? "locked" : "current";
           if (item.kind === "review" && index !== firstReviewIndex) return null;
-          if (item.kind === "review") return <article data-today-item-id={item.id} className={`relative z-[1] grid grid-cols-[48px_minmax(0,1fr)] gap-4 rounded-2xl border p-4 sm:p-5 ${todayJourneyTone("review", journeyState)}`} key={item.id}>
+          if (item.kind === "review") return <article data-today-item-id={item.id} className={`relative z-[1] grid grid-cols-[48px_minmax(0,1fr)] gap-4 rounded-2xl border ${journeyState === "completed" ? "p-3 sm:p-4" : "p-4 sm:p-5"} ${todayJourneyTone("review", journeyState)}`} key={item.id}>
             <TodayJourneyIcon item={item} state={journeyState} />
             <div className="min-w-0"><div className="flex flex-wrap items-center justify-between gap-2"><span className="text-xs font-extrabold uppercase tracking-[.14em] text-violet-700">Today review</span><TodayStatus state={journeyState} /></div>
               <h2 className="mt-1 text-xl font-bold text-slate-950">{completedReviewCount === reviewGroupItems.length ? `Today review complete · ${completedReviewCount}/${reviewGroupItems.length}` : `${completedReviewCount}/${reviewGroupItems.length} reviewed`}</h2>
               <p className="mt-1 text-slate-600">{journeyState === "locked" ? "Complete the previous step to unlock." : selectedReviewItems.length > 0 ? `About ${selectedReviewItems.reduce((sum, entry) => sum + (entry.estimatedMinutes ?? 0), 0)} min · ${dueForToday.length} total due.` : "Step complete · memory checks saved."}</p>
               {completedReviewCount === reviewGroupItems.length && <p className="mt-2 text-sm font-semibold text-violet-800">{incorrectReviewCount ? `${incorrectReviewCount} wrong ${incorrectReviewCount === 1 ? "answer remains" : "answers remain"} in later review.` : "No wrong answer remains from this review phase."}</p>}
-              <p className="mt-2 text-sm text-violet-800"><strong>Why now:</strong> due memory and open mistakes come before new material.</p>
+              {journeyState !== "completed" && <p className="mt-2 text-sm text-violet-800"><strong>Why now:</strong> due memory and open mistakes come before new material.</p>}
               {completedReviewCount === reviewGroupItems.length && <details className="mt-3 rounded-xl border border-violet-200 bg-white/70 px-4 py-3"><summary className="cursor-pointer font-semibold text-violet-900">View completed review record</summary><ul className="mt-2 space-y-1 text-sm text-slate-600">{reviewGroupItems.map((review, reviewIndex) => <li key={review.id}>✓ Review {reviewIndex + 1} · saved</li>)}</ul></details>}
               {journeyState === "current" && <div className="mt-4 hidden md:block">{primaryTodayAction(item, data.session.id, currentStep, journeyProgress.totalPhases, selectedReviewItems, selectedReviewCards)}</div>}
             </div>
@@ -652,18 +651,18 @@ export default function LearningDashboard({ mode }: { mode: "today" | "review" |
             <TodayJourneyIcon item={item} state={item.status === "completed" ? "completed" : "locked"} />
             <div className="min-w-0"><div className="flex flex-wrap items-center justify-between gap-2"><span className="text-xs font-extrabold uppercase tracking-[.14em] text-emerald-700">Daily Summary</span><TodayStatus state={item.status === "completed" ? "completed" : "locked"} /></div><h2 className="mt-1 text-xl font-bold text-slate-950">{item.status === "completed" ? "Daily session complete" : "Finish the steps above"}</h2>
               <div className="mt-4 grid gap-3 sm:grid-cols-3"><p><strong>Stage progress</strong><br />{journeyProgress.completedPhases}/{journeyProgress.totalPhases} stages complete</p><p><strong>Completed tasks</strong><br />{completedTasks}</p><p><strong>Skipped tasks</strong><br />{skippedTasks}</p></div>
-              <div className="mt-3 grid gap-2 rounded-2xl bg-white/80 p-4 text-sm sm:grid-cols-2"><p><strong>{completionSummary.reviewsCompleted}</strong> review questions completed</p><p><strong>{completionSummary.wordsLearned}</strong> new words learned</p><p><strong>{completionSummary.listeningCompleted}</strong> listening checks completed</p><p><strong>{Math.max(completionSummary.practiceCompleted, data.practiceQuestionsCompleted)}</strong> practice questions completed</p><p><strong>{open.length}</strong> open mistakes</p></div>
+              <div className="mt-3 grid gap-2 rounded-2xl bg-white/80 p-4 text-sm sm:grid-cols-2"><p><strong>{completionSummary.reviewsCompleted}</strong> review questions completed</p><p><strong>{completedNewWordsToday}</strong> new words learned{completedContinuingWordsToday ? ` · ${completedContinuingWordsToday} continued` : ""}</p><p><strong>{completionSummary.listeningCompleted}</strong> listening checks completed</p><p><strong>{Math.max(completionSummary.practiceCompleted, data.practiceQuestionsCompleted)}</strong> practice questions completed</p><p><strong>{open.length}</strong> open mistakes</p></div>
               <div className="mt-4 rounded-2xl bg-white/80 p-4 text-sm"><p><strong>Monthly learning score:</strong> {reward ? `${reward.monthPoints} Learning Points across ${reward.monthLearningDays} qualified days` : data.scope === "guest" ? "Sign in to track Learning Points." : "Score is temporarily unavailable."}</p><p className="mt-2"><strong>Today&apos;s learning reward:</strong> {reward ? reward.todayAwarded ? `+${reward.todayAward} Learning Points earned today.` : reward.todayQualified ? `${reward.todayAward} Learning Points are ready to be recorded.` : `${Math.ceil(reward.remainingSeconds / 60)} active minutes remain; day ${reward.nextMonthLearningDay} is worth ${reward.nextAward} points.` : "Reward status is unavailable; no points are being claimed here."}</p>{reward && item.status === "completed" && <p className="mt-2 font-bold text-blue-800">Learning Points track qualified learning days. Conversion is not open yet; subscription AI credits stay separate.</p>}</div>
               <p className="mt-4"><strong>Recommended focus:</strong> {open.length ? "Correct open mistakes before adding more new material." : `Continue HSK ${data.session.startLevel ?? 1}, with extra ${weakest} practice.`}</p>
               <p><strong>Current streak:</strong> {data.streak.current} day{data.streak.current === 1 ? "" : "s"} · longest {data.streak.longest}. {reward && reward.remainingSeconds > 0 ? `${Math.ceil(reward.remainingSeconds / 60)} active minutes remain for today’s qualification.` : data.streakBasis}</p>
-              {item.status === "completed" && <div className="mt-5 flex flex-wrap gap-3"><Link className="btn" href={`/vocabulary/${data.session.startLevel ?? 1}`}>Learn {data.session.plannedNewWordCount ?? data.session.newWordCount ?? 3} more words</Link><Link className="btn secondary" href="/mistakes">Review {open.length} open mistakes</Link><Link className="btn secondary" href="/dashboard">Done for today</Link></div>}
+              {item.status === "completed" && <div className="mt-5 flex flex-wrap gap-3"><Link className="btn" href={`/vocabulary/${data.session.startLevel ?? 1}`}>Explore HSK {data.session.startLevel ?? 1} words</Link><Link className="btn secondary" href="/mistakes">Review {open.length} open mistakes</Link><Link className="btn secondary" href="/dashboard">Done for today</Link></div>}
             </div>
           </article>;
-          return <article data-today-item-id={item.id} className={`relative z-[1] grid grid-cols-[48px_minmax(0,1fr)] gap-4 rounded-2xl border p-4 sm:p-5 ${todayJourneyTone(item.kind, journeyState)}`} key={item.id}>
+          return <article data-today-item-id={item.id} className={`relative z-[1] grid grid-cols-[48px_minmax(0,1fr)] gap-4 rounded-2xl border ${journeyState === "completed" ? "p-3 sm:p-4" : "p-4 sm:p-5"} ${todayJourneyTone(item.kind, journeyState)}`} key={item.id}>
             <TodayJourneyIcon item={item} state={journeyState} />
             <div className="min-w-0"><div className="flex flex-wrap items-center justify-between gap-2"><span className="text-xs font-extrabold uppercase tracking-[.14em]">{item.dimension?.replace("_", " ") ?? item.kind}</span><TodayStatus state={journeyState} /></div><h2 className="mt-1 text-xl font-bold text-slate-950">{label(item)}</h2>
               <p className="mt-1 text-slate-600">{journeyState === "completed" ? "Step complete · progress saved." : journeyState === "skipped" ? "Moved to tomorrow · available to restore." : journeyState === "locked" ? "Complete the previous step to unlock." : `Ready now · ${item.estimatedMinutes ?? 0} min`}</p>
-              <p className="mt-2 text-sm text-blue-800"><strong>Why now:</strong> {todayReason(item, open.length, weakest)}</p>
+              {journeyState !== "completed" && <p className="mt-2 text-sm text-blue-800"><strong>Why now:</strong> {todayReason(item, open.length, weakest)}</p>}
               {journeyState === "current" && item.kind === "learn" && item.learnContent && <section className="mt-4 rounded-2xl border border-blue-200 bg-white p-5" aria-label={`Learn ${item.learnContent.hanzi}`}>
                 <div className="flex flex-wrap items-start justify-between gap-4"><div><p className="text-4xl font-bold text-slate-950" lang="zh-Hans">{item.learnContent.hanzi}</p><p className="mt-1 text-lg font-semibold text-blue-700">{item.learnContent.pinyin}</p></div><span className="rounded-full bg-blue-50 px-3 py-1 text-xs font-bold uppercase tracking-wide text-blue-700">{item.learnContent.partOfSpeech}</span></div>
                 <p className="mt-4 text-lg text-slate-800"><strong>Meaning:</strong> {item.learnContent.meaning}</p>
@@ -685,7 +684,7 @@ export default function LearningDashboard({ mode }: { mode: "today" | "review" |
             <p className="today-plan-recommendation"><strong>Recommended time:</strong> {recommendedMinutes} minutes, based on your score, streak, open mistakes and recent mastery.</p>
             <div className="today-plan-grid"><label>HSK level<select aria-label="Learning level" value={planDraftLevel} onChange={(event) => setPlanDraftLevel(Number(event.target.value))}>{Array.from({ length: 9 }, (_, index) => index + 1).map((level) => <option key={level} value={level}>{level >= 7 ? `HSK ${level} · Advanced 7–9 band` : `HSK ${level}`}</option>)}</select></label>
               <label>Learning time<select aria-label="Today&apos;s time budget" value={planDraftMinutes} onChange={(event) => { const minutes = Number(event.target.value) as TodayBudgetMinutes; setPlanDraftMinutes(minutes); setPlanDraftNewWords(recommendTodayNewWordCount(minutes)); }}>{TODAY_BUDGET_OPTIONS.map((minutes) => <option key={minutes} value={minutes}>{minutes} minutes{minutes === recommendedMinutes ? " · Recommended" : ""}</option>)}</select></label></div>
-            <fieldset><legend>New words</legend><div className="today-plan-segments">{TODAY_NEW_WORD_OPTIONS.map((count) => <label key={count} className={planDraftNewWords === count ? "selected" : ""}><input type="radio" name="new-words" value={count} checked={planDraftNewWords === count} onChange={() => setPlanDraftNewWords(count)} /><strong>{count}</strong><span>{count === 1 ? "word" : "words"}</span></label>)}</div></fieldset>
+            <fieldset><legend>New words</legend><p className="mt-1 text-sm text-slate-600">Unfinished words continue first; they do not count toward this new-word target.</p><div className="today-plan-segments">{TODAY_NEW_WORD_OPTIONS.map((count) => <label key={count} className={planDraftNewWords === count ? "selected" : ""}><input type="radio" name="new-words" value={count} checked={planDraftNewWords === count} onChange={() => setPlanDraftNewWords(count)} /><strong>{count}</strong><span>{count === 1 ? "word" : "words"}</span></label>)}</div></fieldset>
             <label className="today-plan-switch"><span><strong>Include listening</strong><small>Add available word and context audio to today’s route.</small></span><input type="checkbox" checked={planDraftListening} onChange={(event) => setPlanDraftListening(event.target.checked)} /></label>
             <fieldset><legend>Priority</legend><div className="today-plan-focus">{TODAY_FOCUS_OPTIONS.map((focus) => { const copy = { balanced: ["Balanced", "Mix due memory and new work."], review_first: ["Review first", "Clear all due reviews before new work."], fix_mistakes: ["Fix mistakes", "Put unresolved mistakes first."], listening_focus: ["Listening focus", "Lead with available listening tasks."] }[focus]; return <label key={focus} className={planDraftFocus === focus ? "selected" : ""}><input type="radio" name="today-focus" value={focus} checked={planDraftFocus === focus} onChange={() => setPlanDraftFocus(focus)} /><strong>{copy[0]}</strong><span>{copy[1]}</span></label>; })}</div></fieldset>
             <footer className="today-plan-actions"><button type="button" className="btn secondary" onClick={() => setPlanOpen(false)}>Cancel</button><button type="submit" className="btn">Save changes</button></footer>
@@ -704,30 +703,7 @@ export default function LearningDashboard({ mode }: { mode: "today" | "review" |
   }
 
   if (mode === "mistakes") return <Shell title="Mistakes" active="Mistakes" sub="Correct wrong answers continuously; they leave this list only after a successful retry.">
-    {open.length ? <>
-      <section className="card mb-4" aria-label="Mistake filters"><h2>Filter corrections</h2><div className="mt-4 grid gap-3 sm:grid-cols-3">
-        <label>HSK level<select aria-label="Filter by HSK level" className="min-h-[44px] rounded-lg border border-slate-300 bg-white px-3" value={mistakeLevel} onChange={(event) => setMistakeLevel(Number(event.target.value))}><option value={0}>All levels</option>{Array.from({ length: 9 }, (_, index) => index + 1).map((level) => <option key={level} value={level}>HSK {level}</option>)}</select></label>
-        <label>Question type<select aria-label="Filter by question type" className="min-h-[44px] rounded-lg border border-slate-300 bg-white px-3" value={mistakeType} onChange={(event) => setMistakeType(event.target.value as "all" | Dimension)}><option value="all">All types</option><option value="reading">Reading</option><option value="audio">Word listening</option><option value="context_audio">Context listening</option></select></label>
-        <label>When added<select aria-label="Filter by error time" className="min-h-[44px] rounded-lg border border-slate-300 bg-white px-3" value={mistakeAge} onChange={(event) => setMistakeAge(Number(event.target.value))}><option value={0}>Any time</option><option value={7}>Last 7 days</option><option value={30}>Last 30 days</option></select></label>
-      </div><p className="mt-3 text-sm text-slate-600">Showing {filteredOpen.length} of {open.length} open mistakes.</p></section>
-      {filteredOpen.length ? <div className="grid gap-4">{filteredOpen.map((mistake) => <article className="card" key={mistake.id}>
-        <span className="eyebrow">Wrong answer · {mistake.dimension.replace("_", " ")}</span>
-        <h2>{mistake.prompt}</h2>
-        <p>{mistake.level ? `HSK ${mistake.level} · ` : ""}{mistake.skill} · Added {new Date(mistake.createdAt).toLocaleDateString()}</p>
-        <p className="text-sm text-slate-600">Retry, check the answer, then continue to the next correction or return here.</p>
-        <Link className="btn" href={`/review?source=mistakes&contentId=${encodeURIComponent(mistake.contentId)}${mistake.cardId ? `&cardId=${encodeURIComponent(mistake.cardId)}` : ""}`}>Correct this mistake</Link>
-      </article>)}</div> : <State title="No mistakes match these filters" text="Change a level, question type, or error-time filter to see other corrections." />}
-    </> : corrected.length ? <State title="All mistakes corrected" text="There are no open corrections. Your corrected history remains below as a record of completed work." /> : <State title="No mistake history yet" text="A wrong answer in Practice or Listening will appear here immediately with the original question and a real retry."><div className="flex flex-wrap gap-2"><Link className="btn" href="/practice">Start practice</Link><Link className="btn secondary" href="/listen">Start listening</Link></div></State>}
-    {corrected.length > 0 && <section className="mt-5" aria-label="Corrected mistakes">
-      <div className="mb-3"><span className="eyebrow">Correction history</span><h2>Corrected mistakes</h2><p className="text-slate-600">These records stay visible after a successful retry.</p></div>
-      <div className="grid gap-3">{corrected.map((mistake) => <article className="card" key={mistake.id}>
-        <span className="eyebrow">Corrected · {mistake.dimension.replace("_", " ")}</span>
-        <h3 className="text-xl font-bold text-slate-950">{mistake.prompt}</h3>
-        <p>{mistake.level ? `HSK ${mistake.level} · ` : ""}{mistake.skill}</p>
-        <p className="text-sm text-emerald-700"><strong>Corrected on</strong> {new Date(mistake.resolvedAt ?? mistake.createdAt).toLocaleString()}</p>
-      </article>)}</div>
-    </section>}
-    <Mastery values={data.mastery} scope={data.scope} />
+    <MistakesWorkspace mistakes={data.mistakes} mastery={data.mastery} scope={data.scope} />
   </Shell>;
 
   const due = data.capabilities.focusedReview ? data.focusedReview : data.cards.filter((card) => card.dueAt <= new Date().toISOString());
@@ -759,6 +735,9 @@ export default function LearningDashboard({ mode }: { mode: "today" | "review" |
   const currentAnswerCorrect = retryFeedback?.correct ?? false;
   const isMistakeRetry = Boolean(activeCard?.isMistake && !activeCard.legacyReview && activeCard.answerMode !== "self_recall");
   const canAnswerReview = Boolean(activeCard && !activeCard.legacyReview && activeCard.answerMode !== "self_recall");
+  const reviewAudioEnded = Boolean(activeCard && reviewPlaybackEndedKey === `${activeCard.id}:${activeCard.revision}` && reviewPlaybackState !== "error");
+  const canSelectReviewAnswer = Boolean(activeCard && (!activeCard.playbackRequired || activeCard.playbackReady || reviewAudioEnded));
+  const ratingAdvanceLabel = displayReviewedCount + 1 >= sessionTotal ? "Save & finish" : "Save & next question";
   const chooseReviewScope = (scope: ReviewLevelScope) => {
     setSelectedReviewScope(scope);
     const url = new URL(window.location.href);
@@ -825,10 +804,10 @@ export default function LearningDashboard({ mode }: { mode: "today" | "review" |
             <h2 className="text-2xl font-bold leading-snug tracking-tight text-slate-950 sm:text-3xl">{activeCard.prompt}</h2>
             {activeCard.audioSrc && <div className="mt-5"><p className="mb-2 text-sm font-semibold text-slate-700">Original recording</p><AudioPlaybackControl key={`${activeCard.id}:${activeCard.revision}:${activeCard.audioSrc}`} asset={{ id: `${activeCard.id}:${activeCard.revision}`, src: activeCard.audioSrc, sourceLabel: "Synthesized listening audio" }} beforePlay={() => startFormalPlayback(activeCard)} onComplete={() => void completeFormalPlayback(activeCard)} onStateChange={(state) => { if (state === "paused") reviewPlayback.current?.coordinator.pause(); else if (state === "playing") reviewPlayback.current?.coordinator.resume(); }} onFailure={() => { reviewPlayback.current?.coordinator.fail(); setAudioError("Audio playback failed. Retry the recording before answering."); }} verificationState={reviewPlaybackState === "preparing" || reviewPlaybackState === "verifying" ? "verifying" : activeCard.playbackReady ? "verified" : "idle"} showProgress /></div>}
             {!activeCard.audioSrc && activeCard.dimension !== "reading" && <p className="mt-4 rounded-xl bg-amber-50 p-3 text-sm text-amber-900">The original recording is not available for this older item. It cannot be treated as a full listening retry.</p>}
-            {!activeCard.playbackReady && activeCard.playbackRequired && <p className="mt-3 text-sm font-semibold text-amber-700">Finish audio playback before answering.</p>}
+            {!activeCard.playbackReady && activeCard.playbackRequired && <p className="mt-3 text-sm font-semibold text-amber-700">{reviewAudioEnded ? "Audio finished. Choose an answer now; checking will unlock after playback verification." : "Finish audio playback before answering."}</p>}
 
             {canAnswerReview && !answerChecked ? <div className="mt-7">
-              {activeCard.answerMode === "choice" ? <fieldset disabled={activeCard.playbackRequired && !activeCard.playbackReady}><legend className="font-bold text-slate-950">Choose an answer</legend><div className="mt-3 grid gap-3">{activeCard.choices.map((choice) => <label key={choice.key} className={`flex min-h-[52px] cursor-pointer items-center gap-3 rounded-xl border px-4 py-3 transition ${selectedAnswer === choice.key ? "border-blue-600 bg-blue-50" : "border-slate-200 hover:border-slate-400"}`}><input type="radio" name={`review-${activeCard.id}`} value={choice.key} checked={selectedAnswer === choice.key} onChange={() => setSelectedAnswer(choice.key)} /><span><strong className="mr-2">{choice.key}.</strong>{choice.text}</span></label>)}</div></fieldset> : <><label className="font-bold text-slate-950" htmlFor={`review-answer-${activeCard.id}`}>Type your answer</label><textarea id={`review-answer-${activeCard.id}`} maxLength={180} value={reviewDraft} disabled={activeCard.playbackRequired && !activeCard.playbackReady} onChange={(event) => setReviewDraft(event.target.value)} className="mt-3 min-h-[112px] w-full rounded-xl border border-slate-300 p-4 text-base focus:border-blue-600 focus:outline-none focus:ring-4 focus:ring-blue-100" /></>}
+              {activeCard.answerMode === "choice" ? <fieldset disabled={!canSelectReviewAnswer}><legend className="font-bold text-slate-950">Choose an answer</legend><div className="mt-3 grid gap-3">{activeCard.choices.map((choice) => <label key={choice.key} className={`flex min-h-[52px] cursor-pointer items-center gap-3 rounded-xl border px-4 py-3 transition ${selectedAnswer === choice.key ? "border-blue-600 bg-blue-50" : "border-slate-200 hover:border-slate-400"}`}><input type="radio" name={`review-${activeCard.id}`} value={choice.key} checked={selectedAnswer === choice.key} onChange={() => setSelectedAnswer(choice.key)} /><span><strong className="mr-2">{choice.key}.</strong>{choice.text}</span></label>)}</div></fieldset> : <><label className="font-bold text-slate-950" htmlFor={`review-answer-${activeCard.id}`}>Type your answer</label><textarea id={`review-answer-${activeCard.id}`} maxLength={180} value={reviewDraft} disabled={!canSelectReviewAnswer} onChange={(event) => setReviewDraft(event.target.value)} className="mt-3 min-h-[112px] w-full rounded-xl border border-slate-300 p-4 text-base focus:border-blue-600 focus:outline-none focus:ring-4 focus:ring-blue-100" /></>}
               <button disabled={!(activeCard.answerMode === "choice" ? selectedAnswer : reviewDraft.trim()) || !activeCard.playbackReady || reviewSaving} onClick={() => void submitRetry(activeCard)} className="mt-5 min-h-[48px] w-full rounded-xl bg-blue-600 px-5 py-3 font-bold text-white disabled:cursor-not-allowed disabled:opacity-40 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-blue-200">{reviewSaving ? "Checking…" : "Check answer"}</button>
             </div> : !revealed[activeCard.id] && !answerChecked ? <div className="mt-7">{activeCard.legacyReview && <p className="mb-3 rounded-xl bg-amber-50 p-3 text-sm text-amber-900">This older saved item has no complete original question. It is available only as a memory prompt and will not be presented as a real mistake retry.</p>}<p className="mb-3 text-sm text-slate-600">Think of the answer before revealing it. There is no answer field in this incomplete legacy review.</p><button className="min-h-[48px] w-full rounded-xl bg-blue-600 px-5 py-3 font-bold text-white disabled:cursor-not-allowed disabled:opacity-40 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-blue-200" disabled={!activeCard.playbackReady} onClick={() => setRevealed((current) => ({ ...current, [activeCard.id]: true }))}>Reveal answer</button></div> : null}
 
@@ -850,7 +829,7 @@ export default function LearningDashboard({ mode }: { mode: "today" | "review" |
                 {activeCard.formalAudioSrc && activeCard.formalAudioSrc !== activeCard.audioSrc && <div className="mt-4"><p className="mb-2 text-sm font-semibold text-slate-700">Formal recording</p><audio controls preload="none" src={activeCard.formalAudioSrc} className="max-w-full" /></div>}
               </section>}
               {isMistakeRetry && answerChecked && <><p className="mt-4 text-sm text-slate-600">AI explanation available after you retry. It uses this saved question and feedback and costs one AI credit.</p><AiAssist feature="explanation" reviewCardId={activeCard.id} /></>}
-              {isMistakeRetry && answerChecked ? <button disabled={reviewSaving} onClick={() => continueAfterRetry(activeCard)} className="mt-5 min-h-[48px] w-full rounded-xl bg-blue-600 px-5 py-3 font-bold text-white disabled:cursor-not-allowed disabled:opacity-50 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-blue-200">Continue</button> : <div className="mt-5"><p className="font-bold text-slate-950">{answerChecked ? "How well did you remember it after answering?" : "How well did you remember it before revealing?"}</p><div className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-4">{reviewGradeOptions(activeCard.ease, activeCard.intervalDays).map((option) => <button disabled={reviewSaving} key={option.grade} onClick={() => void grade(activeCard, option.grade)} className="min-h-[76px] rounded-xl border border-slate-200 bg-white px-3 py-3 text-left transition hover:border-blue-500 hover:bg-blue-50 disabled:cursor-not-allowed disabled:opacity-50 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-blue-200"><strong className="block text-slate-950">{option.label}</strong><span className="mt-1 block text-xs text-slate-500">{option.hint}</span></button>)}</div></div>}
+              {isMistakeRetry && answerChecked ? <button disabled={reviewSaving} onClick={() => continueAfterRetry(activeCard)} className="mt-5 min-h-[48px] w-full rounded-xl bg-blue-600 px-5 py-3 font-bold text-white disabled:cursor-not-allowed disabled:opacity-50 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-blue-200">Continue</button> : <div className="mt-5"><p className="font-bold text-slate-950">{answerChecked ? "How well did you remember it after answering?" : "How well did you remember it before revealing?"}</p><p className="mt-1 text-sm text-slate-600">Choose a rating to save this answer and {displayReviewedCount + 1 >= sessionTotal ? "finish the review" : "open the next question"}.</p><div className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-4">{reviewGradeOptions(activeCard.ease, activeCard.intervalDays).map((option) => <button disabled={reviewSaving} key={option.grade} onClick={() => void grade(activeCard, option.grade)} className="min-h-[92px] rounded-xl border border-slate-200 bg-white px-3 py-3 text-left transition hover:border-blue-500 hover:bg-blue-50 disabled:cursor-not-allowed disabled:opacity-50 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-blue-200"><strong className="block text-slate-950">{option.label}</strong><span className="mt-1 block text-xs text-slate-500">{option.hint}</span><span className="mt-2 block text-xs font-bold text-blue-700">{ratingAdvanceLabel} →</span></button>)}</div></div>}
             </div>}
           </div>
         </article>
@@ -931,7 +910,8 @@ function primaryTodayAction(item: Item, dailySessionId: string, step: number, to
   return <Link className="inline-flex min-h-[50px] items-center rounded-xl bg-blue-500 px-6 py-3 font-bold text-white shadow-sm hover:bg-blue-400" href={href}>Continue Today Session</Link>;
 }
 function todayReason(item: Item, openMistakes: number, weakest: string) {
-  if (item.kind === "learn") return "This exact word starts the new-material portion of the selected HSK level.";
+  if (item.kind === "learn") return item.isContinuing ? "You started this word earlier. Finish it before adding more new material." : "This word has not been completed in your earlier Today sessions.";
+  if (item.kind === "listen" && item.isContinuing) return "Finish this word's listening step from your earlier Today session.";
   if (item.kind === "listen") return item.dimension === "context_audio" ? "Context listening follows word audio so meaning is tested in a real sentence." : "Word audio follows Learn so sound is attached to the same item.";
   if (item.kind === "practice") return "Practice closes the loop with a scored, server-saved result.";
   if (item.kind === "review") return openMistakes ? `${openMistakes} open mistake${openMistakes === 1 ? "" : "s"} and due cards take priority.` : `${weakest} is currently your lowest mastery area.`;
@@ -957,6 +937,62 @@ function LearningStatePage(props: { mode: "today" | "review" | "mistakes"; title
   </main>;
 }
 function State(props: { title: string; text: string; children?: ReactNode }) { return <div className="state"><h2>{props.title}</h2><p>{props.text}</p>{props.children}</div>; }
+const MISTAKES_PAGE_SIZE = 5;
+const mistakeTypeLabels: Record<Dimension, string> = { reading: "Reading", audio: "Word listening", context_audio: "Context listening" };
+function mistakeDate(value: string) {
+  const date = new Date(value);
+  return Number.isNaN(date.getTime()) ? "—" : date.toLocaleDateString();
+}
+function MistakesWorkspace({ mistakes, mastery, scope }: { mistakes: Mistake[]; mastery: Data["mastery"]; scope: Data["scope"] }) {
+  const [level, setLevel] = useState(0);
+  const [type, setType] = useState<Dimension | "all">("all");
+  const [age, setAge] = useState(0);
+  const [sort, setSort] = useState<"newest" | "oldest" | "level">("newest");
+  const [page, setPage] = useState(1);
+  const [historyShown, setHistoryShown] = useState(5);
+  const open = mistakes.filter((mistake) => mistake.status === "open");
+  const corrected = mistakes.filter((mistake) => mistake.status !== "open").sort((a, b) => new Date(b.resolvedAt ?? b.createdAt).getTime() - new Date(a.resolvedAt ?? a.createdAt).getTime());
+  const levels = [...new Set(open.map((mistake) => mistake.level).filter((value): value is number => typeof value === "number"))].sort((a, b) => a - b);
+  const cutoff = age ? Date.now() - age * 86400000 : 0;
+  const filtered = open.filter((mistake) => (!level || mistake.level === level) && (type === "all" || mistake.dimension === type) && (!cutoff || new Date(mistake.createdAt).getTime() >= cutoff));
+  const ordered = [...filtered].sort((a, b) => sort === "level"
+    ? (a.level ?? 99) - (b.level ?? 99) || new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+    : (new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()) * (sort === "oldest" ? -1 : 1));
+  const pageCount = Math.max(1, Math.ceil(ordered.length / MISTAKES_PAGE_SIZE));
+  const currentPage = Math.min(page, pageCount);
+  const firstIndex = (currentPage - 1) * MISTAKES_PAGE_SIZE;
+  const visible = ordered.slice(firstIndex, firstIndex + MISTAKES_PAGE_SIZE);
+  const firstPageButton = Math.max(1, Math.min(currentPage - 2, pageCount - 4));
+  const pageButtons = Array.from({ length: Math.min(5, pageCount) }, (_, index) => firstPageButton + index);
+  const filtersActive = level !== 0 || type !== "all" || age !== 0 || sort !== "newest";
+  const resetFilters = () => { setLevel(0); setType("all"); setAge(0); setSort("newest"); setPage(1); };
+  const retryHref = (mistake: Mistake) => `/review?source=mistakes&contentId=${encodeURIComponent(mistake.contentId)}${mistake.cardId ? `&cardId=${encodeURIComponent(mistake.cardId)}` : ""}`;
+
+  return <>
+    {open.length > 0 ? <>
+      <section aria-label="Filter open mistakes" className="grid gap-4 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:grid-cols-2 lg:grid-cols-[125px_minmax(0,1fr)_118px_132px_auto] lg:items-end lg:gap-3 lg:px-5 lg:py-4">
+        <label className="block text-sm font-semibold text-slate-700">HSK level<select value={level} onChange={(event) => { setLevel(Number(event.target.value)); setPage(1); }} className="mt-1 block min-h-11 w-full rounded-lg border border-slate-300 bg-white px-2 text-slate-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-600"><option value={0}>All levels</option>{levels.map((value) => <option key={value} value={value}>HSK {value}</option>)}</select></label>
+        <fieldset className="min-w-0 sm:col-span-2 lg:col-span-1"><legend className="text-sm font-semibold text-slate-700">Question type</legend><div className="mt-1 flex flex-wrap gap-1.5">{([ ["all", "All types"], ["reading", "Reading"], ["audio", "Listening"], ["context_audio", "Context audio"] ] as const).map(([value, label]) => <button key={value} type="button" aria-pressed={type === value} onClick={() => { setType(value); setPage(1); }} className={`min-h-11 rounded-full border px-3 text-sm font-semibold focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-600 ${type === value ? "border-blue-600 bg-blue-600 text-white" : "border-slate-200 bg-blue-50 text-blue-700 hover:border-blue-400"}`}>{label}</button>)}</div></fieldset>
+        <label className="block text-sm font-semibold text-slate-700">When added<select value={age} onChange={(event) => { setAge(Number(event.target.value)); setPage(1); }} className="mt-1 block min-h-11 w-full rounded-lg border border-slate-300 bg-white px-2 text-slate-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-600"><option value={0}>Any time</option><option value={7}>Last 7 days</option><option value={30}>Last 30 days</option></select></label>
+        <label className="block text-sm font-semibold text-slate-700">Sort by<select value={sort} onChange={(event) => { setSort(event.target.value as typeof sort); setPage(1); }} className="mt-1 block min-h-11 w-full rounded-lg border border-slate-300 bg-white px-2 text-slate-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-600"><option value="newest">Newest first</option><option value="oldest">Oldest first</option><option value="level">HSK level</option></select></label>
+        <button type="button" onClick={resetFilters} disabled={!filtersActive} className="min-h-11 rounded-lg bg-blue-50 px-3 text-sm font-semibold text-blue-700 hover:bg-blue-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-600 disabled:cursor-default disabled:text-slate-400 disabled:hover:bg-blue-50">Reset filters</button>
+      </section>
+      <p role="status" className="my-4 text-sm font-medium text-slate-600">{ordered.length ? `Showing ${firstIndex + 1}–${firstIndex + visible.length} of ${ordered.length} matching mistakes` : "No mistakes match these filters"}{ordered.length !== open.length ? ` · ${open.length} open in total` : ""}</p>
+      {visible.length ? <section aria-label="Open mistakes" className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+        <div className="hidden grid-cols-[2rem_minmax(0,1fr)_9rem_5rem_7rem_6rem] gap-4 border-b border-slate-200 bg-slate-50 px-5 py-3 text-xs font-bold uppercase tracking-wide text-slate-500 lg:grid"><span>#</span><span>Question</span><span>Type</span><span>HSK</span><span>Added</span><span className="text-right">Action</span></div>
+        <ol className="divide-y divide-slate-200">{visible.map((mistake, index) => <li key={mistake.id} className="grid gap-3 px-4 py-4 sm:px-5 lg:grid-cols-[2rem_minmax(0,1fr)_9rem_5rem_7rem_6rem] lg:items-center lg:gap-4">
+          <span className="hidden text-sm text-slate-500 lg:block">{firstIndex + index + 1}</span>
+          <div className="min-w-0"><p className="line-clamp-2 font-semibold leading-snug text-slate-950">{mistake.prompt}</p><p className="mt-1 text-xs text-slate-500 lg:hidden">{mistakeTypeLabels[mistake.dimension]} · {mistake.level ? `HSK ${mistake.level}` : "Level unknown"} · Added {mistakeDate(mistake.createdAt)}</p></div>
+          <span className={`hidden w-fit rounded-full px-2 py-1 text-xs font-semibold lg:block ${mistake.dimension === "reading" ? "bg-blue-50 text-blue-700" : mistake.dimension === "audio" ? "bg-emerald-50 text-emerald-700" : "bg-violet-50 text-violet-700"}`}>{mistakeTypeLabels[mistake.dimension]}</span><span className="hidden text-sm text-slate-600 lg:block">{mistake.level ? `HSK ${mistake.level}` : "—"}</span><span className="hidden text-sm text-slate-600 lg:block">{mistakeDate(mistake.createdAt)}</span>
+          <Link href={retryHref(mistake)} className="inline-flex min-h-11 w-fit items-center justify-center gap-1.5 rounded-lg bg-blue-600 px-4 text-sm font-bold text-white hover:bg-blue-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 lg:justify-self-end">Retry <HomeIcon name="arrow" className="size-4" /></Link>
+        </li>)}</ol>
+        {pageCount > 1 && <nav aria-label="Mistakes pages" className="flex flex-wrap items-center justify-center gap-1 border-t border-slate-200 px-3 py-3 sm:justify-end"><button type="button" onClick={() => setPage(currentPage - 1)} disabled={currentPage === 1} className="min-h-11 rounded-lg px-3 text-sm font-semibold text-slate-700 hover:bg-slate-100 disabled:opacity-40">Previous</button>{pageButtons.map((number) => <button key={number} type="button" onClick={() => setPage(number)} aria-label={`Page ${number}`} aria-current={number === currentPage ? "page" : undefined} className={`min-h-11 min-w-11 rounded-lg text-sm font-semibold ${number === currentPage ? "bg-blue-600 text-white" : "text-slate-700 hover:bg-slate-100"}`}>{number}</button>)}<button type="button" onClick={() => setPage(currentPage + 1)} disabled={currentPage === pageCount} className="min-h-11 rounded-lg px-3 text-sm font-semibold text-slate-700 hover:bg-slate-100 disabled:opacity-40">Next</button></nav>}
+      </section> : <State title="No matching mistakes" text="Try another HSK level, question type, or date range."><button type="button" className="btn" onClick={resetFilters}>Show all mistakes</button></State>}
+    </> : <State title={corrected.length ? "All mistakes corrected" : "No mistakes yet"} text={corrected.length ? "Every recorded mistake has been corrected. Keep practicing to build confidence." : "Mistakes from practice and listening will appear here so you can retry them."}><Link className="btn inline-flex items-center" href="/practice">Start practicing</Link></State>}
+    {corrected.length > 0 && <details className="mt-6 rounded-2xl border border-slate-200 bg-white shadow-sm"><summary className="min-h-16 cursor-pointer rounded-2xl px-4 py-4 text-base font-bold text-slate-900 marker:text-blue-600 hover:bg-slate-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-600 sm:px-5">Corrected history <span className="ml-1 rounded-full bg-emerald-50 px-2.5 py-1 text-sm text-emerald-700">{corrected.length}</span><span className="ml-2 block text-sm font-normal text-slate-500 sm:inline">Past successful retries</span></summary><div className="border-t border-slate-200"><ol className="divide-y divide-slate-200">{corrected.slice(0, historyShown).map((mistake) => <li key={mistake.id} className="flex flex-wrap items-start justify-between gap-2 px-4 py-3 sm:px-5"><div className="min-w-0"><p className="line-clamp-2 font-semibold text-slate-900">{mistake.prompt}</p><p className="mt-1 text-xs text-slate-500">{mistakeTypeLabels[mistake.dimension]} · {mistake.level ? `HSK ${mistake.level}` : "Level unknown"}</p></div><span className="whitespace-nowrap text-xs text-slate-500">Corrected {mistakeDate(mistake.resolvedAt ?? mistake.createdAt)}</span></li>)}</ol>{historyShown < corrected.length && <button type="button" onClick={() => setHistoryShown((count) => count + 5)} className="min-h-11 w-full border-t border-slate-200 px-4 text-sm font-semibold text-blue-700 hover:bg-blue-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-600">Show 5 more</button>}</div></details>}
+    <Mastery values={mastery} scope={scope} />
+  </>;
+}
 function Mastery({ values, scope }: { values: Record<Dimension, number>; scope: Data["scope"] }) {
   return <section className="summary"><h2>Mastery</h2><p className="text-sm font-semibold">Mastered after successful review</p><p>Reading {values.reading} · Audio {values.audio} · Context audio {values.context_audio}</p><p>{scope === "account" ? "Saved to your private account learning record and available across synced devices." : "Saved for this guest browser; sign in to merge it explicitly into your account."}</p></section>;
 }
