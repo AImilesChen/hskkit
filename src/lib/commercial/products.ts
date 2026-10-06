@@ -2,7 +2,7 @@ export const DIGITAL_CURRENCY="usd" as const;
 export const DIGITAL_ACCESS_DAYS=14;
 export const DIGITAL_REFUND_DAYS=7;
 export const DIGITAL_DOWNLOAD_LIMIT=3;
-export const DEFAULT_PRODUCT_GENERATION_VERSION="complete-vocabulary-v1";
+export const DEFAULT_PRODUCT_GENERATION_VERSION="complete-vocabulary-v2";
 export const PLANNER_GENERATION_VERSION="planner-guided-v6";
 export const PLANNER_BUNDLE_GENERATION_VERSION="learner-toolkit-current-v6";
 export const EXAM_BUNDLE_GENERATION_VERSION="exam-preparation-current-v4";
@@ -10,6 +10,7 @@ export const PRACTICE_ASSESSMENT_GENERATION_VERSION="practice-guided-edition-v4"
 export const TEACHER_PACK_GENERATION_VERSION="teacher-pack-v4";
 export const WORKSHEET_GENERATION_VERSION="worksheet-guided-v17";
 export const PURCHASED_PRODUCT_LICENSE="The purchaser may keep and use downloaded files without a time limit and print as many copies as needed for personal study or learners they teach. Printed copies may be given to those learners without charge. Printed copies and digital files may not be sold or resold.";
+export const VOCABULARY_PRODUCT_LICENSE="The purchaser may keep the HSKKit files without a time limit, print copies for personal study or learners they teach, and give those learners printed copies without charge. HSKKit does not grant permission to sell its original layout, exercises, branding or packaged files. Third-party vocabulary data and English definitions retain their MIT and CC BY-SA 4.0 licences; these terms do not limit rights granted by those licences.";
 export const TEACHER_PRODUCT_LICENSE=`${PURCHASED_PRODUCT_LICENSE} The purchaser may adapt the editable lesson-plan files for their own teaching.`;
 
 export type DigitalProductId=
@@ -30,7 +31,7 @@ const levelDefinitions=[
 ] as const;
 const levelProducts=levelDefinitions.map(({level,count,amountCents})=>({
   id:`level-${level}` as DigitalProductId,sku:`hskkit_hsk3_level_${level}_complete_v2`,name:`HSK ${level} Complete Vocabulary`,shortName:`HSK ${level} Complete`,amountCents,currency:DIGITAL_CURRENCY,category:"level" as const,levels:[level],format:"pdf" as const,vocabularyCount:count,
-  description:`All ${count.toLocaleString("en-US")} canonical HSK 3.0 Level ${level} entries with Hanzi, tone-marked pinyin, English meaning, part of speech and source ID.`,
+  description:`All ${count.toLocaleString("en-US")} HSK 3.0 Level ${level} entries with Hanzi, tone-marked pinyin, dictionary-style English glosses, available part-of-speech labels and source IDs.`,
 }));
 export const DIGITAL_PRODUCTS:readonly DigitalProduct[]=[
   ...levelProducts,
@@ -48,12 +49,12 @@ export const DIGITAL_PRODUCTS:readonly DigitalProduct[]=[
 ] as const;
 
 export function digitalProduct(value:unknown){return DIGITAL_PRODUCTS.find(product=>product.id===value)??null;}
-export function productLicenseNotice(productId:unknown){return productId==="teacher-lesson-plan-pack"?TEACHER_PRODUCT_LICENSE:PURCHASED_PRODUCT_LICENSE;}
+export function productLicenseNotice(productId:unknown){const product=digitalProduct(productId);return product?.category==="level"||product?.category==="bundle"?VOCABULARY_PRODUCT_LICENSE:productId==="teacher-lesson-plan-pack"?TEACHER_PRODUCT_LICENSE:PURCHASED_PRODUCT_LICENSE;}
 export function generationVersionForProduct(productId:unknown){return productId==="assessment-tracker"?"assessment-tracker-v5":productId==="learner-practice-toolkit"?PLANNER_BUNDLE_GENERATION_VERSION:productId==="exam-preparation-bundle"?EXAM_BUNDLE_GENERATION_VERSION:productId==="worksheet-pack"?WORKSHEET_GENERATION_VERSION:productId==="30-day-planner"?PLANNER_GENERATION_VERSION:productId==="practice-assessment-pack"?PRACTICE_ASSESSMENT_GENERATION_VERSION:productId==="teacher-lesson-plan-pack"?TEACHER_PACK_GENERATION_VERSION:DEFAULT_PRODUCT_GENERATION_VERSION;}
 export function productDeliverableLabels(productId:unknown):string[]{
   const product=digitalProduct(productId);if(!product)throw new Error("INVALID_PRODUCT");
-  if(product.category==="level")return [`${product.vocabularyCount?.toLocaleString("en-US")} canonical entries in one searchable PDF`,`Manifest and README/licence information`];
-  if(product.category==="bundle")return product.id==="advanced-7-9"?["Complete Advanced 7–9 index and three HSKKit reading volumes","Manifest, README/licence and checksums in one ZIP"]:[`${product.levels.length} searchable vocabulary PDFs covering ${product.vocabularyCount?.toLocaleString("en-US")} entries`,`Manifest, README/licence and checksums in one ZIP`];
+  if(product.category==="level")return [`${product.vocabularyCount?.toLocaleString("en-US")} entries in one searchable PDF`,`Source and licence notes inside the PDF`];
+  if(product.category==="bundle")return product.id==="advanced-7-9"?["One complete Advanced 7–9 index plus three HSKKit reading volumes","Manifest, README, licence and checksums in one ZIP"]:product.id==="complete-1-9"?["Seven complete catalogs covering 11,092 entries","Three additional Advanced reading volumes plus manifest and licence in the ZIP"]:[`${product.levels.length} searchable vocabulary PDFs covering ${product.vocabularyCount?.toLocaleString("en-US")} entries`,`Manifest, README, licence and checksums in one ZIP`];
   if(product.category==="resource_bundle")return [`${product.componentProductIds?.length} complete resource products in one purchase`,`One combined ZIP with manifest, licence and checksums`];
   return buildProductDeliveries(product.id).map(delivery=>delivery.artifactType==="worksheet"?"Eight searchable PDFs: Start Here page map, four student editions, answer key, completed samples and progress checklist in one ZIP":delivery.artifactType==="assessment"?"Complete 11,092-entry tracker, scoring guide and printable records in one ZIP":delivery.artifactType==="planner"?"Printable, fillable and Quick Start PDFs in one ZIP":delivery.artifactType==="practice_assessment"?"Forms A/B/C, MP3s, scripts, answers, rubrics and score tracker in one ZIP":"Teacher plans, handouts, tickets/cards, homework key/rubric and editable DOCX/PPTX in one ZIP");
 }

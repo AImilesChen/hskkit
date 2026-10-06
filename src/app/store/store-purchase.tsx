@@ -22,7 +22,7 @@ function StoreCatalogSkeleton({message}:{message:string}){
     {message?<p role="alert" className="rounded-xl border border-red-200 bg-red-50 p-4 text-sm font-semibold text-red-700">{message}</p>:null}
     {categories.map(category=><section key={category} aria-hidden="true">
       <div className="grid gap-3 md:grid-cols-[0.75fr_1.25fr] md:items-end"><div><div className="h-3 w-44 rounded bg-slate-200"/><div className="mt-3 h-8 w-64 max-w-full rounded bg-slate-200"/></div><div className="h-12 max-w-2xl rounded bg-slate-100"/></div>
-      <div className={`mt-6 grid gap-5 ${category==="bundle"||category==="resource_bundle"?"md:grid-cols-2":"sm:grid-cols-2 lg:grid-cols-3"}`}>
+      <div className={`mt-6 grid gap-5 ${category==="bundle"||category==="resource_bundle"?"md:grid-cols-2":"md:grid-cols-2 lg:grid-cols-3"}`}>
         {Array.from({length:skeletonCategoryCounts[category]},(_,index)=><article key={index} className="min-h-[360px] overflow-hidden rounded-xl border border-slate-200 bg-white"><div className="aspect-[4/3] bg-slate-100"/><div className="space-y-4 p-5"><div className="h-4 w-24 rounded bg-slate-200"/><div className="h-7 w-3/4 rounded bg-slate-200"/><div className="h-16 rounded bg-slate-100"/><div className="h-11 rounded-lg bg-slate-200"/></div></article>)}
       </div>
     </section>)}
@@ -36,7 +36,7 @@ export default function StorePurchase(){
   return <section aria-label="Digital product catalog" className="mt-10 space-y-16">
     {categories.map(category=>{const products=config.products.filter(product=>product.category===category);if(!products.length)return null;const copy=sectionCopy[category];return <section key={category} aria-labelledby={`${category}-catalog-heading`}>
       <div className="grid gap-3 md:grid-cols-[0.75fr_1.25fr] md:items-end"><div><p className="text-xs font-bold uppercase tracking-[0.16em] text-blue-700">{copy.eyebrow}</p><h2 id={`${category}-catalog-heading`} className="mt-2 text-2xl font-extrabold tracking-tight text-slate-950 sm:text-3xl">{copy.title}</h2></div><p className="max-w-2xl text-sm leading-6 text-slate-600">{copy.copy}</p></div>
-      <div className={`mt-6 grid gap-5 ${category==="bundle"||category==="resource_bundle"?"md:grid-cols-2":"sm:grid-cols-2 lg:grid-cols-3"}`}>
+      <div className={`mt-6 grid gap-5 ${category==="bundle"||category==="resource_bundle"?"md:grid-cols-2":"md:grid-cols-2 lg:grid-cols-3"}`}>
         {products.map(product=>{const detail=storeProductDetail(product.id);if(!detail)return null;return <article key={product.id} className="flex min-h-[360px] flex-col overflow-hidden rounded-xl border border-slate-200 bg-white">
           <div className="relative aspect-[4/3] overflow-hidden border-b border-slate-200 bg-slate-100"><Image src={detail.previewImage} alt={detail.previewAlt} fill priority={product.id==="level-1"} sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw" className="object-cover"/></div>
           <div className="flex flex-1 flex-col p-5"><div className="flex items-start justify-between gap-4"><div><p className="text-xs font-bold uppercase tracking-[0.14em] text-blue-700">{detail.eyebrow}</p><h3 className="mt-2 text-xl font-extrabold tracking-tight text-slate-950">{product.name}</h3></div><div className="flex shrink-0 flex-wrap justify-end gap-1" aria-label={`Included formats: ${detail.fileTypes.join(", ")}`}>{detail.fileTypes.map(fileType=><span key={fileType} className="rounded-full bg-blue-50 px-2.5 py-1 text-xs font-bold text-blue-700">{fileType}</span>)}</div></div>

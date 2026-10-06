@@ -36,7 +36,7 @@ test("detail page owns the single explicit confirmation and preserves product id
   assert.match(checkout,/body:JSON\.stringify\(\{productId,idempotencyKey/);
   assert.match(checkout,/location\.assign\(`\/login\?returnTo=/);
   assert.match(checkout,/disabled=\{!available\|\|!accepted\|\|busy\}/);
-  assert.match(checkout,/Continue to Stripe Test checkout/);
+  assert.match(checkout,/Continue to secure checkout/);
   assert.match(checkout,/min-h-11/);
 });
 

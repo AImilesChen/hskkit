@@ -1,5 +1,6 @@
 import runtimeIndex from "../content/runtime-content-index.json" with { type: "json" };
 import canonicalRelease from "../../../content/releases/hsk3-gf0025-2021-v2.json" with { type: "json" };
+import {VOCABULARY_PRODUCT_LICENSE} from "./products.ts";
 
 export type PackWord = {
   id: string;
@@ -53,7 +54,8 @@ export function selectPackAssets(level: number): PackSelection {
   const eligible=contentAssets.filter(asset=>asset.level_band===band&&asset.publish_status==="published"&&asset.qa_status==="approved"&&Boolean(asset.source_ref)&&Boolean(asset.license_ref));
   if (!eligible.length) throw new Error("CONTENT_NOT_RELEASED");
   const words:PackWord[]=eligible.map(asset=>toPackWord(asset,level));
-  const exercises = words.slice(0, 20).map((word, index) => ({
+  const exerciseCount=Math.min(20,words.length);
+  const exercises = Array.from({length:exerciseCount},(_,index)=>words[Math.floor(index*(words.length-1)/Math.max(1,exerciseCount-1))]).map((word, index) => ({
     id: `exercise-${level}-${index + 1}`,
     prompt: `${index + 1}. Write the meaning and pinyin for “${word.hanzi}”.`,
     answer: `${word.pinyin} — ${word.meaning}`,
@@ -85,6 +87,6 @@ export function buildPackManifest(selection: PackSelection, generationVersion: s
     level: selection.level,
     assets: selection.words.map((word) => ({ id: word.id, version: word.version, contentVersion: word.contentVersion, sourceRef: word.sourceRef, licenseRef: word.licenseRef })),
     excludedAudioReason: "offline_redistribution_not_authorized",
-    licenseNotice: "Text includes CC BY-SA 4.0 material. Attribution and source references are preserved in this manifest. The purchaser may print any number of copies for personal study or learners they teach, without charge; printed copies and digital files may not be sold or resold.",
+    licenseNotice: `HSK 3.0 level membership follows GF0025-2021. Pinyin and available POS labels are adapted from ivankra/hsk30 (MIT); English definitions are adapted from CC-CEDICT (CC BY-SA 4.0). Source details: https://hskkit.com/content-license. ${VOCABULARY_PRODUCT_LICENSE}`,
   };
 }
