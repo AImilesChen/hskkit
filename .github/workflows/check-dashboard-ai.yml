@@ -1,4 +1,4 @@
-name: Check dashboard badges and AI provider
+name: Check dashboard rewards, growth and AI provider
 
 on:
   pull_request:
@@ -9,6 +9,10 @@ on:
       - ".env.example"
       - "wrangler.jsonc"
       - "src/app/dashboard/dashboard-rewards.tsx"
+      - "src/app/dashboard/dashboard-growth.tsx"
+      - "src/app/dashboard/dashboard-core.tsx"
+      - "src/app/api/v1/dashboard/growth/route.ts"
+      - "src/lib/learning/growth.ts"
       - "src/lib/ai/provider.ts"
       - "src/lib/engagement/domain.ts"
       - "tests/**"
@@ -30,9 +34,9 @@ jobs:
         run: npm ci
       - name: Typecheck
         run: npm run typecheck
-      - name: Run badge and AI provider tests
+      - name: Run dashboard growth, badge and AI provider tests
         run: |
-          node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --test tests/dashboard-stage7-rewards.test.mts tests/step8-ai.test.mts
+          node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --test tests/dashboard-growth-data.test.mts tests/dashboard-growth-ui.test.mts tests/dashboard-stage7-rewards.test.mts tests/step8-ai.test.mts
           node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --test --test-name-pattern="Batch 4 AI provider hard timeout|AI provider retries one transient" tests/batch4-pro-ai-loop.test.mts tests/batch13-content-ai-contract.test.mts
       - name: Build
         run: npm run build
