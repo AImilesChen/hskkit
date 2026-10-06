@@ -2,7 +2,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 import { selectPackAssets, buildPackManifest, manifestStillAuthorized } from "../src/lib/commercial/catalog.ts";
-import { generatePackPdf, generateOfflineZip } from "../src/lib/commercial/generator.ts";
+import { generatePackPdf, generateOfflineZip, learnerGloss } from "../src/lib/commercial/generator.ts";
 
 test("commercial vocabulary selection uses the complete canonical HSK 3.0 release", () => {
   const expected={1:500,2:772,3:973,4:1000,5:1071,6:1140,7:5636} as const;
@@ -16,6 +16,11 @@ test("commercial vocabulary selection uses the complete canonical HSK 3.0 releas
   const selected = selectPackAssets(1);
   assert.equal(selected.level, 1);
   assert.ok(selected.exercises.length <= 20);
+  assert.equal(selected.exercises.length,20);
+  const exercisePositions=selected.exercises.map(exercise=>selected.words.findIndex(word=>word.id===exercise.sourceAssetId));
+  assert.equal(exercisePositions[0],0);
+  assert.equal(exercisePositions.at(-1),selected.words.length-1);
+  assert.ok(exercisePositions[10]>selected.words.length/2,"self-check should cover the complete list");
   assert.equal([1,2,3,4,5,6,7].flatMap(level=>selectPackAssets(level).words).length,11092);
   const advancedIds=selectPackAssets(7).words.map(word=>word.id);
   assert.deepEqual(selectPackAssets(8).words.map(word=>word.id),advancedIds);
@@ -69,4 +74,9 @@ test("PDF line fitting wraps English at word boundaries", async () => {
   assert.equal(typeof generator.fitLines, "function");
   const monospace = { widthOfTextAtSize: (text: string) => text.length };
   assert.deepEqual(generator.fitLines("sentence for emphasis", monospace as never, 1, 10), ["sentence", "for", "emphasis"]);
+});
+
+test("learner glosses expand dictionary shorthand without changing canonical source data",()=>{
+  assert.equal(learnerGloss("to help sb do sth; CL: 个; (Tw)"),"to help someone do something; measure word: 个; (Taiwan)");
+  assert.equal(selectPackAssets(1).words[0].meaning.includes("something"),false);
 });

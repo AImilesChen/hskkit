@@ -36,47 +36,92 @@ function drawWrapped(page: PDFPage, text: string, font: PDFFont, size: number, x
   return y;
 }
 
-export async function generatePackPdf(selection: PackSelection, manifest: PackManifest, fontBytes: Uint8Array, emojiFontBytes: Uint8Array,options?:{label?:string}) {
+export function learnerGloss(value:string){
+  return value.replace(/\bsth\b/gi,"something").replace(/\bsb\b/gi,"someone").replace(/\bCL:\s*/g,"measure word: ").replace(/\(Tw\)/g,"(Taiwan)");
+}
+
+export const HSK30_MIT_NOTICE=`MIT License\nCopyright (c) 2023 Ivan Krasilnikov\nCopyright (c) 2021 Shawky\nCopyright (c) 2021 Pleco Inc.\n\nPermission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:\n\nThe above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.\n\nTHE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.`;
+
+export async function generatePackPdf(selection: PackSelection, manifest: PackManifest, fontBytes: Uint8Array, _emojiFontBytes: Uint8Array,options?:{label?:string;entryNumberOffset?:number;totalAdvancedCount?:number}) {
   const pdf = await PDFDocument.create();
   pdf.registerFontkit(fontkit);
   const font = await pdf.embedFont(fontBytes, { subset: false });
-  const emojiFont = await pdf.embedFont(emojiFontBytes, { subset: false });
-  const levelLabel=options?.label??(selection.level===7?"Advanced 7–9":`Level ${selection.level}`);
-  pdf.setTitle(`HSKKit HSK 3.0 ${levelLabel} Complete Vocabulary`);
+  const levelLabel=options?.label??(selection.level>=7?"Advanced 7–9":`Level ${selection.level}`);
+  const isVolume=options?.totalAdvancedCount!==undefined;
+  pdf.setTitle(`HSKKit HSK 3.0 ${levelLabel}${isVolume?" Vocabulary":" Complete Vocabulary"}`);
   pdf.setAuthor("HSKKit");
-  pdf.setSubject(`Complete canonical HSK 3.0 ${levelLabel} vocabulary; ${manifest.generationVersion}`);
+  pdf.setSubject(`HSK 3.0 ${levelLabel} vocabulary reference; ${manifest.generationVersion}`);
   pdf.setKeywords(["HSK 3.0",levelLabel,"complete vocabulary",manifest.generationVersion,"CC BY-SA 4.0"]);
   const pageSize: [number, number] = [595.28, 841.89];
-  let page = pdf.addPage(pageSize);
+  const cover=pdf.addPage(pageSize);
+  let page = cover;
   let y = 790;
-  const addHeader = () => {
-    page.drawRectangle({ x: 0, y: 815, width: 595.28, height: 27, color: rgb(0.06, 0.35, 0.32) });
-    page.drawText(`HSKKit - HSK 3.0 ${levelLabel} Complete Vocabulary`, { x: 36, y: 823, size: 10, font, color: rgb(1, 1, 1) });
+  const headerLabel=isVolume?`HSKKit - HSK 3.0 Advanced 7–9 · Reading Volume`:`HSKKit - HSK 3.0 ${levelLabel} Vocabulary`;
+  const addHeader = (target:PDFPage) => {
+    target.drawRectangle({ x: 0, y: 815, width: 595.28, height: 27, color: rgb(0.06, 0.35, 0.32) });
+    target.drawText(headerLabel, { x: 36, y: 823, size: 10, font, color: rgb(1, 1, 1) });
   };
-  const ensure = (needed: number) => { if (y < needed) { page = pdf.addPage(pageSize); y = 790; addHeader(); } };
-  addHeader();
-  page.drawText(`${levelLabel} Complete Vocabulary`, { x: 40, y, size: 24, font, color: rgb(0.06, 0.35, 0.32) }); y -= 38;
-  page.drawText("汉字 · Pinyin · English · POS · Source ID", { x: 40, y, size: 13, font });
-  page.drawText("☺", { x: 347, y, size: 14, font: emojiFont }); y -= 26;
-  y = drawWrapped(page, `Generation: ${manifest.generationVersion}  |  Complete entry count: ${selection.words.length}\nCanonical release: ${manifest.standardVersion}. Audio is excluded because offline redistribution is not authorized.${selection.level===7?"\nHSK 3.0 defines one unified Advanced 7–9 vocabulary band. This is the complete official band, not three separate official level lists.":""}`, font, 9, 40, y, 515); y -= 15;
+  const ensure = (needed: number) => { if (y < needed) { page = pdf.addPage(pageSize); y = 790; addHeader(page); } };
+  addHeader(cover);
+  y=drawWrapped(cover,isVolume?levelLabel:`${levelLabel} Complete Vocabulary`,font,24,40,y,515,30)-12;
+  cover.drawText("汉字 · Pinyin · English · Source ID", { x: 40, y, size: 13, font }); y -= 32;
+  const entryStatement=isVolume?`This reading volume repeats ${selection.words.length} of ${options.totalAdvancedCount} entries from the complete Advanced 7–9 index; numbering is continuous across the three volumes.`:`${selection.words.length} entries in this complete ${selection.level>=7?"unified Advanced 7–9 band":`Level ${selection.level}`} reference.`;
+  y=drawWrapped(cover,`${entryStatement}\nGeneration: ${manifest.generationVersion}. Standard scope: ${manifest.standardVersion}. Audio is not included.`,font,10,40,y,515,15)-22;
+  y=drawWrapped(cover,"How to use this reference: find a pinyin initial below, then use page numbers or PDF search for an exact Hanzi, pinyin, English gloss or source ID. Dictionary-style glosses can include several senses; they are not graded lesson translations. A part-of-speech label appears only when the source assigns one. A vertical bar separates alternative headwords and matching pronunciations.",font,10,40,y,515,15)-16;
+  if(selection.level>=7)y=drawWrapped(cover,"Advanced 7–9 is one unified vocabulary band. The reading volumes are HSKKit usability divisions, not official separate Level 7, 8 and 9 lists.",font,10,40,y,515,15)-16;
+  cover.drawText("Find words by pinyin initial",{x:40,y,size:16,font,color:rgb(0.06,0.35,0.32)});
+  const indexTop=y-30;
+  page=pdf.addPage(pageSize);y=790;addHeader(page);
+  const initialPages=new Map<string,number>();
+  const pageRanges=new Map<number,{first:number;last:number}>();
   for (const [index, word] of selection.words.entries()) {
-    ensure(112);
-    page.drawText(`${index + 1}. ${word.hanzi}  ${word.pinyin}`, { x: 40, y, size: 12, font, color: rgb(0.06, 0.35, 0.32) }); y -= 16;
-    y = drawWrapped(page, `${word.partOfSpeech ? `[${word.partOfSpeech}] ` : ""}${word.meaning}`, font, 9, 54, y, 495); y -= 5;
-    y = drawWrapped(page, `Source ID: ${word.id}`, font, 7, 54, y, 495); y -= 8;
+    const number=(options?.entryNumberOffset??0)+index+1;
+    const heading=`${number}. ${word.hanzi}  ${word.pinyin}`;
+    const pos=word.partOfSpeech&&word.partOfSpeech!=="unspecified"?`[${word.partOfSpeech}] `:"";
+    const meaning=`${pos}${learnerGloss(word.meaning)}`;
+    const entryHeight=fitLines(heading,font,13,515).length*18+fitLines(meaning,font,10.5,495).length*15+40;
+    ensure(entryHeight+52);
+    const currentPage=pdf.getPageCount();
+    const initial=(word.pinyin.normalize("NFD").replace(/\p{M}/gu,"").match(/[a-z]/i)?.[0]??"#").toUpperCase();
+    if(!initialPages.has(initial))initialPages.set(initial,currentPage);
+    const range=pageRanges.get(currentPage);if(range)range.last=number;else pageRanges.set(currentPage,{first:number,last:number});
+    y=drawWrapped(page,heading,font,13,40,y,515,18)-2;
+    y=drawWrapped(page,meaning,font,10.5,54,y,495,15)-5;
+    y=drawWrapped(page,`Source ID: ${word.id}`,font,8.5,54,y,495,11.5)-12;
   }
-  ensure(160); y -= 8;
-  page.drawText("练习 / Exercises", { x: 40, y, size: 18, font, color: rgb(0.06, 0.35, 0.32) }); y -= 26;
-  for (const exercise of selection.exercises) { ensure(80); y = drawWrapped(page, exercise.prompt, font, 10, 40, y, 515); y -= 22; }
-  ensure(160); y -= 8;
-  page.drawText("Answer key", { x: 40, y, size: 16, font, color: rgb(0.06, 0.35, 0.32) }); y -= 24;
-  for (const exercise of selection.exercises) { ensure(60); y = drawWrapped(page, `${exercise.id}: ${exercise.answer}`, font, 9, 40, y, 515); y -= 5; }
-  page=pdf.addPage(pageSize);y=790;addHeader();
-  page.drawText("授权与追溯 / License and traceability", { x: 40, y, size: 14, font }); y -= 22;
-  y = drawWrapped(page, manifest.licenseNotice, font, 8, 40, y, 515); y -= 8;
-  y = drawWrapped(page, `Manifest schema: ${manifest.schemaVersion}; standard: ${manifest.standardVersion}; assets: ${manifest.assets.length}. Full per-asset source, version and license references follow in this PDF.`, font, 8, 40, y, 515);y-=18;
-  ensure(100);page.drawText("Per-asset manifest",{x:40,y,size:12,font,color:rgb(0.06,0.35,0.32)});y-=18;
-  for(const asset of manifest.assets){ensure(62);y=drawWrapped(page,`${asset.id} | ${asset.version} | source: ${asset.sourceRef} | license: ${asset.licenseRef}`,font,7,40,y,515);y-=4;}
+  if(selection.exercises.length){
+    page=pdf.addPage(pageSize);y=790;addHeader(page);
+    page.drawText("Self-check / 自测", { x: 40, y, size: 18, font, color: rgb(0.06, 0.35, 0.32) }); y -= 28;
+    y=drawWrapped(page,"Twenty words are sampled across this entire list. Write each meaning and pronunciation before checking the key. This short self-check does not test every entry.",font,10,40,y,515,15)-18;
+    for (const exercise of selection.exercises) { ensure(80); y = drawWrapped(page, exercise.prompt, font, 10, 40, y, 515); y -= 22; }
+    ensure(160); y -= 8;
+    page.drawText("Answer key", { x: 40, y, size: 16, font, color: rgb(0.06, 0.35, 0.32) }); y -= 24;
+    for (const exercise of selection.exercises) { ensure(60); y = drawWrapped(page, `${exercise.id}: ${learnerGloss(exercise.answer)}`, font, 9, 40, y, 515); y -= 5; }
+  }
+  page=pdf.addPage(pageSize);y=790;addHeader(page);
+  page.drawText("Sources, rights and traceability", { x: 40, y, size: 16, font, color: rgb(0.06,0.35,0.32) }); y -= 28;
+  y=drawWrapped(page,manifest.licenseNotice,font,9,40,y,515,13)-16;
+  y=drawWrapped(page,"Level membership: PRC Ministry of Education, GF0025-2021 (https://www.moe.gov.cn/). Pinyin, variants and available POS: ivankra/hsk30 commit 4ff9e391 (MIT; https://github.com/ivankra/hsk30). English definitions: CC-CEDICT snapshot e0d756cb (CC BY-SA 4.0; https://www.mdbg.net/chinese/dictionary?page=cc-cedict and https://creativecommons.org/licenses/by-sa/4.0/). HSKKit adapts the source data for this publication. Every entry retains its source ID; the versioned delivery manifest records the full per-entry references.",font,9,40,y,515,13)-16;
+  const sourceGroups=new Map<string,number>();for(const asset of manifest.assets){const key=`${asset.sourceRef} · ${asset.licenseRef}`;sourceGroups.set(key,(sourceGroups.get(key)??0)+1);}
+  for(const [source,count] of sourceGroups){ensure(80);y=drawWrapped(page,`${count} entries: ${source}`,font,8,40,y,515,11)-8;}
+  const editorial=selection.words.filter(word=>word.sourceRef.includes("hskkit-editorial"));
+  if(editorial.length){ensure(100);y=drawWrapped(page,`HSKKit original compositional glosses: ${editorial.map(word=>word.id).join(", ")}`,font,8,40,y,515,11)-16;}
+  ensure(130);page.drawText("MIT source notice",{x:40,y,size:12,font,color:rgb(0.06,0.35,0.32)});y-=20;
+  for(const paragraph of HSK30_MIT_NOTICE.split("\n")){ensure(65);y=drawWrapped(page,paragraph,font,8,40,y,515,11)-2;}
+  const initials=[...initialPages.entries()].sort(([a],[b])=>a.localeCompare(b));
+  for(const [index,[letter,pageNumber]] of initials.entries()){
+    const column=index>=Math.ceil(initials.length/2)?1:0;
+    const row=column?index-Math.ceil(initials.length/2):index;
+    cover.drawText(`${letter}  ·  page ${pageNumber}`,{x:40+column*265,y:indexTop-row*23,size:11,font,color:rgb(0.12,0.16,0.24)});
+  }
+  const totalPages=pdf.getPageCount();
+  for(const [index,target] of pdf.getPages().entries()){
+    target.drawLine({start:{x:40,y:43},end:{x:555,y:43},thickness:0.5,color:rgb(0.82,0.86,0.87)});
+    const range=pageRanges.get(index+1);
+    if(range)target.drawText(`Entries ${range.first}–${range.last}`,{x:40,y:27,size:8,font,color:rgb(0.35,0.4,0.43)});
+    const footer=`Page ${index+1} of ${totalPages}`;
+    target.drawText(footer,{x:555-font.widthOfTextAtSize(footer,8),y:27,size:8,font,color:rgb(0.35,0.4,0.43)});
+  }
   return new Uint8Array(await pdf.save({ useObjectStreams: false }));
 }
 

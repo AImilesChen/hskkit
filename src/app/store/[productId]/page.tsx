@@ -4,6 +4,7 @@ import SiteHeader from "@/app/site-header";
 import SiteFooter from "@/app/site-footer";
 import {storeProductDetail,storeProductDetails} from "@/lib/commercial/product-details";
 import ResourceProductDetail from "./resource-product-detail";
+import StoreMobileStyle from "../store-mobile-style";
 
 export function generateStaticParams(){
   return storeProductDetails.map(product=>({productId:product.slug}));
@@ -22,5 +23,5 @@ export default async function ResourceProductPage({params}:{params:Promise<{prod
   if(!product)notFound();
   const offer=Object.fromEntries([["@type","Offer"],["price",(product.amountCents/100).toFixed(2)],["priceCurrency","USD"],["url",`https://hskkit.com/store/${product.slug}`]]);
   const productJson={"@context":"https://schema.org","@type":"Product",name:product.name,description:product.summary,image:`https://hskkit.com${product.previewImage}`,offers:offer};
-  return <><SiteHeader/><main className="mx-auto w-full max-w-[1160px] px-5 py-8 sm:py-12"><script type="application/ld+json" dangerouslySetInnerHTML={{__html:JSON.stringify(productJson)}}/><ResourceProductDetail product={product}/></main><SiteFooter/></>;
+  return <><StoreMobileStyle/><SiteHeader/><main data-store-route className="mx-auto w-full max-w-[1160px] px-5 py-8 sm:py-12"><script type="application/ld+json" dangerouslySetInnerHTML={{__html:JSON.stringify(productJson)}}/><ResourceProductDetail product={product}/></main><SiteFooter/></>;
 }
