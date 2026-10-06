@@ -863,7 +863,7 @@ export function buildDailySession(state: LearningState, input: { ownerId: string
       && Boolean(prior.reviewBatchId)
       && Array.isArray(prior.reviewCardIds)
       && Array.isArray(prior.reviewItemIds)
-      && (!input.availableReviewCardIds || prior.items.every((item) => item.kind !== "review" || item.status !== "pending" || (Boolean(item.reviewCardId) && input.availableReviewCardIds.has(item.reviewCardId))))
+      && (!input.availableReviewCardIds || prior.items.every((item) => item.kind !== "review" || item.status !== "pending" || (typeof item.reviewCardId === "string" && input.availableReviewCardIds?.has(item.reviewCardId) === true)))
       && prior.items.every((item) => item.kind !== "review" || (Boolean(item.reviewCardId) && typeof item.estimatedMinutes === "number"));
     if (samePlan) return { state, session: prior };
     const activePlanned = plannedItems.filter((item) => item.kind !== "summary");
