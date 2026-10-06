@@ -19,7 +19,7 @@ test("server dispatcher and dashboard protect the approved new-versus-establishe
 });
 
 test("dashboard core contains only the approved stage-two learning signals", () => {
-  for (const label of ["Today’s learning", "Today’s focus", "Due reviews", "Current level", "New words today", "Learning streak"]) {
+  for (const label of ["Today’s learning", "Today’s focus", "Available reviews", "Current level", "Daily new-word allowance", "Completed-session streak"]) {
     assert.match(dashboard, new RegExp(label.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")));
   }
   assert.match(dashboard, /id="today-focus-title" className="[^"]*text-white/);
