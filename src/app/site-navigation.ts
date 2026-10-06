@@ -17,6 +17,7 @@ export const siteNavigation: NavigationEntry[] = [
       { href: "/planner", label: "Planner", description: "Build a feasible plan from your goal and progress." },
       { href: "/levels", label: "Levels", description: "Browse the HSK 3.0 Levels 1–9 learning path." },
       { href: "/vocabulary/1", label: "Vocabulary", description: "Browse the published catalog by level.", match: "/vocabulary" },
+      { href: "/vocabulary/1?mode=flashcards#vocabulary-activities", label: "Flashcards", description: "Review a short HSK word set and repeat the words you missed." },
       { href: "/topics", label: "Topics", description: "Learn published HSK 3.0 vocabulary through practical themes." },
       { href: "/grammar", label: "Grammar", description: "Study published grammar patterns and exercises." },
       { href: "/reading", label: "Reading", description: "Open levelled reading passages and exercises." },
