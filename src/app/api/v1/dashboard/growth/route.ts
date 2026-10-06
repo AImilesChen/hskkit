@@ -37,6 +37,8 @@ export async function GET() {
     timezone: identity.account.timezone || "UTC",
     activity,
     attempts: state.attempts,
+    sessions: state.dailySessions,
+    cards: state.cards,
     levelTotals,
   });
 

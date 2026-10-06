@@ -57,6 +57,10 @@ test("natural-month ordinal resets while lifetime points do not", () => {
   assert.equal(snapshot.nextMonthLearningDay, 3);
   assert.equal(snapshot.todayAward, 2);
   assert.equal(snapshot.lifetimePoints, 14);
+  assert.deepEqual(snapshot.monthRewardedDays, [
+    { localDay: "2026-09-01", points: 2 },
+    { localDay: "2026-09-03", points: 2 },
+  ]);
 
   const tierBoundary = buildRewardSnapshot({
     today: "2026-09-08", activeSeconds: 0, qualifyingTasks: 0,

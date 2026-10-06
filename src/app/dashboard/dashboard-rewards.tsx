@@ -14,6 +14,7 @@ export type LearningRewardData = {
   nextMonthLearningDay: number;
   nextAward: number;
   monthPoints: number;
+  monthRewardedDays: Array<{ localDay: string; points: number }>;
   lifetimePoints: number;
   currentStreak: number;
   longestStreak: number;
