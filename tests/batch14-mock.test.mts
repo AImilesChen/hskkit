@@ -26,6 +26,7 @@ test("Each level has an approved three-skill diagnostic pool", () => {
   const basic = mockBank("basic", 3);
   const advanced = mockBank("advanced");
   assert.ok(advanced.length >= 15);
+  assert.ok(advanced.every((question) => question.sourceGroupId !== "reading-library-v2-hsk9-09"));
   assert.deepEqual([...new Set(basic.map((q) => q.level))], [3]);
   assert.deepEqual([...new Set(advanced.map((q) => q.dimension))].sort(), ["grammar", "listening", "reading"]);
   assert.ok([...basic, ...advanced].every((q) => q.approval === "approved" && q.authorization === "authorized" && q.lifecycle === "published"));

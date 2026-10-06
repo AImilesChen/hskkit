@@ -86,6 +86,8 @@ export interface MockSession {
 
 const QUESTIONS_PER_SKILL = 5;
 const DIAGNOSTIC_SKILLS = ["grammar", "reading", "listening"] as const;
+// This published passage contains a malformed sentence and must not enter a timed diagnostic.
+const EXCLUDED_MOCK_SOURCE_GROUPS = new Set(["reading-library-v2-hsk9-09"]);
 const fromPractice = (question: PracticeQuestion, band: MockBand): MockQuestion => ({
   id: question.id,
   contentId: question.id,
@@ -111,7 +113,7 @@ const fromPractice = (question: PracticeQuestion, band: MockBand): MockQuestion 
 });
 
 export const mockBank = (band: MockBand, targetLevel = 3): MockQuestion[] => PRACTICE_QUESTIONS
-  .filter((question) => question.level === (band === "basic" ? targetLevel : 7) && DIAGNOSTIC_SKILLS.some((skill) => skill === question.skill))
+  .filter((question) => question.level === (band === "basic" ? targetLevel : 7) && DIAGNOSTIC_SKILLS.some((skill) => skill === question.skill) && !EXCLUDED_MOCK_SOURCE_GROUPS.has(question.sourceGroupId ?? ""))
   .map((question) => fromPractice(question, band));
 
 export function evaluateMockGate(band: MockBand, questions = mockBank(band), targetLevel = 3): { ready: boolean; reason: string | null } {
