@@ -144,7 +144,7 @@ export default function DashboardGrowth({
             <h4 className="font-black text-slate-950">Scheduled review load</h4>
             <span className="text-sm font-semibold text-slate-600">{forecastTotal} cards across 7 days</span>
           </div>
-          <p className="mt-1 text-xs leading-5 text-slate-600">Today includes overdue cards. Counts show the current schedule and may change after you review.</p>
+          <p className="mt-1 text-xs leading-5 text-slate-600">Today includes overdue cards and cards due later today. Available reviews above counts only cards due right now. Completing a review can change future totals.</p>
           <div className="mt-3 grid grid-cols-7 gap-1.5" aria-label="Scheduled reviews for the next seven days">
             {growth.reviewForecast.map((day, index) => <div key={day.date} className="rounded-xl bg-slate-50 p-1.5 text-center">
               <span className="block text-[11px] font-semibold text-slate-500">{index === 0 ? "Today" : day.label}</span>
