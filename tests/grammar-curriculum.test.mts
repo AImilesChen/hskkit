@@ -7,6 +7,7 @@ import { reviewSnapshotFromStep7Exercise } from "../src/lib/learning/review-cont
 test("grammar curriculum covers seven bands with distinct, trusted questions", () => {
   assert.equal(GRAMMAR_CURRICULUM.length, 21);
   assert.deepEqual([...new Set(GRAMMAR_CURRICULUM.map((item) => item.levelBand))], ["1", "2", "3", "4", "5", "6", "7-9"]);
+  assert.deepEqual(GRAMMAR_CURRICULUM.slice(0, 3).map((item) => item.slug), ["basic-shi-negation", "you-meiyou-possession", "ma-yes-no-questions"]);
   assert.deepEqual(GRAMMAR_CURRICULUM.map((item) => item.levelBand).reduce((counts, band) => ({ ...counts, [band]: (counts[band] ?? 0) + 1 }), {} as Record<string, number>), { "1": 3, "2": 3, "3": 3, "4": 3, "5": 3, "6": 3, "7-9": 3 });
   const ids = new Set<string>();
   const contentKeys = new Set<string>();

@@ -113,6 +113,15 @@ export interface GrammarCurriculumLesson {
   readingSlug?: string;
   exercises: Step7Exercise[];
 }
+const GRAMMAR_LESSON_ORDER = [
+  "basic-shi-negation", "you-meiyou-possession", "ma-yes-no-questions",
+  "le-completed-action", "zhengzai-action", "comparison-with-bi",
+  "ba-sentence-basics", "yi-jiu-immediate-sequence", "yuelaiyue-change",
+  "suiran-danshi-contrast", "condition-with-zhiyao", "chule-hai-addition",
+  "budan-erqie-addition", "contrast-with-jinguan", "jishi-ye-concession",
+  "formal-causation-yu-youyu", "wulun-dou-invariance", "yuqi-buru-preference",
+  "advanced-concession-guran", "bingfei-ershi-correction", "yuqishuo-burushuo-reframe",
+];
 export const GRAMMAR_CURRICULUM: GrammarCurriculumLesson[] = [
   ...GRAMMAR_LESSONS.map((lesson) => ({
     slug: lesson.slug, level: lesson.level, levelBand: lesson.levelBand,
@@ -125,7 +134,7 @@ export const GRAMMAR_CURRICULUM: GrammarCurriculumLesson[] = [
     exercises: [lesson.exercise, ORIGINAL_GRAMMAR_EXTRAS[lesson.slug].exercise],
   })),
   ...ADDITIONAL_GRAMMAR_LESSONS,
-].sort((a, b) => a.level - b.level || a.title.localeCompare(b.title, "en"));
+].sort((a, b) => GRAMMAR_LESSON_ORDER.indexOf(a.slug) - GRAMMAR_LESSON_ORDER.indexOf(b.slug));
 export const READING_LESSONS: ReadingLesson[] = ALL_READING_LESSONS
   .filter((lesson) => isPublishedStep7Content(`hsk3.reading.${lesson.slug}`))
   .map((lesson) => ({
