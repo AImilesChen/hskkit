@@ -134,7 +134,7 @@
 .home-demo-full-link { display: inline-flex; min-height: 44px; align-items: center; gap: 6px; margin-top: 20px; color: var(--home-blue-dark); font-size: 15px; font-weight: 800; text-decoration: underline; text-underline-offset: 4px; }
 .home-demo-full-link:hover { color: var(--home-blue); }
 .home-demo-full-link:focus-visible { border-radius: 4px; outline: 3px solid var(--home-blue); outline-offset: 3px; }
-.home-demo-copy > .home-demo-full-note { margin-top: 4px; font-size: 13px; }
+.home-demo-copy > p.home-demo-full-note { margin-top: 4px; font-size: 13px; }
 .home-demo-player { min-width: 0; border: 1px solid #c4d5e5; border-radius: 18px; padding: clamp(17px, 2.8vw, 25px); background: #fff; box-shadow: 0 22px 55px rgba(16,35,63,.11); }
 .home-demo-progress { display: flex; justify-content: space-between; gap: 12px; color: #52677c; font-size: 12px; font-weight: 780; }
 .home-demo-progress-track { height: 6px; overflow: hidden; margin-top: 9px; border-radius: 999px; background: #e1e9f1; }
