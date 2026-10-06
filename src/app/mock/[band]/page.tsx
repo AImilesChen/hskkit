@@ -5,8 +5,8 @@ import SiteHeader from "@/app/site-header";
 import SiteFooter from "@/app/site-footer";
 
 export const metadata: Metadata = {
-  title: "HSK 3.0 Timed Skills Checks �� HSKKit",
-  description: "Choose a level-specific HSK 1�C6 skills check or a short unified HSK 7�C9 diagnostic. These are learning checks, not official full-length exams.",
+  title: "HSK 3.0 Timed Skills Checks | HSKKit",
+  description: "Choose a level-specific HSK 1-6 skills check or a short unified HSK 7-9 diagnostic. These are learning checks, not official full-length exams.",
   robots: { index: false, follow: false },
 };
 
