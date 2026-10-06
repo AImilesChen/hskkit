@@ -2,6 +2,7 @@ import { publicAudioAsset, publishedContentAudioAssetByLogicalId, publishedPract
 import { isPublishedStep7Content } from "./step7-release.ts";
 import { LISTENING_LIBRARY_QUESTIONS, listeningQuestionBySlug } from "./listening-library.ts";
 import { READING_LIBRARY_QUESTIONS } from "./reading-library.ts";
+import { ADDITIONAL_GRAMMAR_LESSONS, ORIGINAL_GRAMMAR_EXTRAS } from "./grammar-curriculum-data.ts";
 
 export type Step7ContentKind = "grammar" | "reading" | "tone" | "discrimination" | "dictation";
 
@@ -73,7 +74,7 @@ type ReadingSource = Omit<ReadingLesson, "contentVersion" | "passage" | "pinyin"
 
 const ALL_GRAMMAR_LESSONS: GrammarSource[] = [
   { slug: "basic-shi-negation", level: 1, levelBand: "1", title: "Affirming and negating identity with 是", explanation: "Use 是 to connect a person or thing with an identity. Put 不 directly before 是 to negate that identity.", pattern: "Subject + 是 / 不是 + noun", examples: [{ zh: "我是学生。", en: "I am a student." }, { zh: "她不是老师。", en: "She is not a teacher." }], readingSlug: "family-weekend-plan", exercise: exercise("grammar-basic-shi-negation-v1", "grammar:basic-shi-negation", "grammar", "Choose the natural sentence for “He is not a doctor.”", { A: "他不医生。", B: "他不是医生。", C: "他是不医生。" }, "B", "Negate identity with 不是 before the noun phrase.") },
-  { slug: "comparison-with-bi", level: 2, levelBand: "2", title: "Comparing with 比", explanation: "Place 比 between the two things being compared; the adjective or result follows the second item.", pattern: "A + 比 + B + adjective / quantity", examples: [{ zh: "火车比汽车快。", en: "The train is faster than the bus." }, { zh: "今天比昨天冷两度。", en: "Today is two degrees colder than yesterday." }], readingSlug: "weekend-travel-plan", exercise: exercise("grammar-comparison-with-bi-v1", "grammar:comparison-with-bi", "grammar", "Which sentence correctly says the train is faster than the bus?", { A: "火车比汽车快。", B: "火车快比汽车。", C: "比汽车火车快。" }, "A", "The 比 phrase comes after the item being described and before the comparison standard.") },
+  { slug: "comparison-with-bi", level: 2, levelBand: "2", title: "Comparing with 比", explanation: "Place 比 between the two things being compared; the adjective or result follows the second item.", pattern: "A + 比 + B + adjective / quantity", examples: [{ zh: "火车比汽车快。", en: "The train is faster than the car." }, { zh: "今天比昨天冷两度。", en: "Today is two degrees colder than yesterday." }], readingSlug: "weekend-travel-plan", exercise: exercise("grammar-comparison-with-bi-v1", "grammar:comparison-with-bi", "grammar", "Which sentence correctly says the train is faster than the car?", { A: "火车比汽车快。", B: "火车快比汽车。", C: "比汽车火车快。" }, "A", "The 比 phrase comes after the item being described and before the comparison standard.") },
   { slug: "ba-sentence-basics", level: 3, levelBand: "3", title: "The 把 sentence: object before the action", explanation: "Use 把 when a known object is affected, moved or changed, and state the result after the verb.", pattern: "Subject + 把 + known object + verb + result", examples: [{ zh: "我把生词写在本子上。", en: "I write the new words in my notebook." }, { zh: "请把门关上。", en: "Please close the door." }], readingSlug: "morning-study-routine", exercise: exercise("grammar-ba-sentence-basics-v1", "grammar:ba-sentence-basics", "grammar", "Choose the complete 把 sentence.", { A: "她把句子写在本子上。", B: "她把写句子。", C: "她句子把本子。" }, "A", "A complete 把 sentence names the affected object and the result of the action.") },
   { slug: "condition-with-zhiyao", level: 4, levelBand: "4", title: "Stating a sufficient condition with 只要…就…", explanation: "Use 只要 to give a sufficient condition and 就 to introduce the result that follows from it.", pattern: "只要 + condition，subject + 就 + result", examples: [{ zh: "只要带学生证，就可以进图书馆。", en: "As long as you bring your student ID, you can enter the library." }, { zh: "只要提前预约，我们就能使用会议室。", en: "As long as we reserve ahead, we can use the meeting room." }], readingSlug: "library-evening-hours", exercise: exercise("grammar-condition-with-zhiyao-v1", "grammar:condition-with-zhiyao", "grammar", "Complete: ___ 提前预约，我们 ___ 能进去。", { A: "虽然 / 但是", B: "只要 / 就", C: "因为 / 所以" }, "B", "只要…就… marks a sufficient condition and its expected result.") },
   { slug: "contrast-with-jinguan", level: 5, levelBand: "5", title: "Conceding with 尽管…但是…", explanation: "Use 尽管 to acknowledge a fact and 但是 to introduce a contrasting outcome.", pattern: "尽管 + acknowledged fact，但是 + contrasting result", examples: [{ zh: "尽管时间有限，但是团队完成了测试。", en: "Although time was limited, the team completed the test." }, { zh: "尽管可以远程办公，但是每周仍要开一次现场会议。", en: "Although remote work is allowed, there is still one in-person meeting each week." }], readingSlug: "flexible-work-schedule", exercise: exercise("grammar-contrast-with-jinguan-v1", "grammar:contrast-with-jinguan", "grammar", "Which pair introduces concession followed by contrast?", { A: "只要…就…", B: "不仅…而且…", C: "尽管…但是…" }, "C", "尽管 introduces what is conceded; 但是 marks the unexpected contrast.") },
@@ -83,7 +84,7 @@ const ALL_GRAMMAR_LESSONS: GrammarSource[] = [
 
 const ALL_READING_LESSONS: ReadingSource[] = [
   { slug: "family-weekend-plan", level: 1, levelBand: "1", title: "A family weekend plan", text: "星期六，妈妈去商店，爸爸在家做饭。我和姐姐下午去公园。", translation: "On Saturday, Mom goes to the store, Dad cooks at home, and my sister and I go to the park in the afternoon.", vocabulary: [{ word: "商店", pinyin: "shāngdiàn", meaning: "store" }, { word: "做饭", pinyin: "zuòfàn", meaning: "cook" }, { word: "公园", pinyin: "gōngyuán", meaning: "park" }], questionType: "detail", difficulty: "easy", grammarSlug: "basic-shi-negation", exercise: exercise("reading-family-weekend-plan-v1", "reading:family-weekend-plan", "reading", "Who cooks at home?", { A: "妈妈", B: "爸爸", C: "姐姐" }, "B", "The passage says 爸爸在家做饭.") },
-  { slug: "weekend-travel-plan", level: 2, levelBand: "2", title: "Choosing a weekend trip", text: "王明周末想去杭州。火车比汽车快，也更准时。他决定星期六早上坐火车去，星期天下午回来。", translation: "Wang Ming plans to visit Hangzhou. Because the train is faster and more punctual than the bus, he will take it Saturday morning and return Sunday afternoon.", vocabulary: [{ word: "周末", pinyin: "zhōumò", meaning: "weekend" }, { word: "准时", pinyin: "zhǔnshí", meaning: "punctual" }, { word: "决定", pinyin: "juédìng", meaning: "decide" }], questionType: "detail", difficulty: "easy", grammarSlug: "comparison-with-bi", exercise: exercise("reading-weekend-travel-plan-v1", "reading:weekend-travel-plan", "reading", "Why does Wang Ming choose the train?", { A: "It is cheaper.", B: "It is faster and more punctual.", C: "It leaves on Sunday." }, "B", "The passage explicitly compares the train with the bus on speed and punctuality.") },
+  { slug: "weekend-travel-plan", level: 2, levelBand: "2", title: "Choosing a weekend trip", text: "王明周末想去杭州。火车比汽车快，也更准时。他决定星期六早上坐火车去，星期天下午回来。", translation: "Wang Ming plans to visit Hangzhou. The train is faster and more punctual than the car, so he will take it Saturday morning and return Sunday afternoon.", vocabulary: [{ word: "周末", pinyin: "zhōumò", meaning: "weekend" }, { word: "准时", pinyin: "zhǔnshí", meaning: "punctual" }, { word: "决定", pinyin: "juédìng", meaning: "decide" }], questionType: "detail", difficulty: "easy", grammarSlug: "comparison-with-bi", exercise: exercise("reading-weekend-travel-plan-v1", "reading:weekend-travel-plan", "reading", "Why does Wang Ming choose the train?", { A: "It is cheaper.", B: "It is faster and more punctual.", C: "It leaves on Sunday." }, "B", "The passage explicitly compares the train with the car on speed and punctuality.") },
   { slug: "morning-study-routine", level: 3, levelBand: "3", title: "A focused morning routine", text: "每天早上，林月先复习十个生词，再听十五分钟中文。她把不懂的句子写在本子上，晚上再看一遍。", translation: "Every morning, Lin Yue first reviews ten new words and then listens to Chinese for fifteen minutes. She writes unfamiliar sentences in her notebook and reviews them at night.", vocabulary: [{ word: "复习", pinyin: "fùxí", meaning: "review" }, { word: "生词", pinyin: "shēngcí", meaning: "new word" }, { word: "一遍", pinyin: "yí biàn", meaning: "once through" }], questionType: "sequence", difficulty: "medium", grammarSlug: "ba-sentence-basics", exercise: exercise("reading-morning-study-routine-v1", "reading:morning-study-routine", "reading", "What does Lin Yue do after reviewing new words?", { A: "She listens to Chinese.", B: "She goes back to sleep.", C: "She takes a test." }, "A", "先…再… shows that listening follows vocabulary review.") },
   { slug: "library-evening-hours", level: 4, levelBand: "4", title: "Why the library extended its hours", text: "考试月期间，图书馆把闭馆时间从晚上九点延长到十一点。只要出示学生证，学生就可以进入夜间学习区。学校希望减少宿舍里的噪音，也让需要小组讨论的学生有合适的空间。", translation: "During exam month, the library extends closing from 9 p.m. to 11 p.m. Students may enter the night study zone with student ID. The school wants to reduce dorm noise and provide appropriate space for group discussions.", vocabulary: [{ word: "闭馆", pinyin: "bìguǎn", meaning: "close (a library)" }, { word: "出示", pinyin: "chūshì", meaning: "present/show" }, { word: "延长", pinyin: "yáncháng", meaning: "extend" }], questionType: "purpose", difficulty: "medium", grammarSlug: "condition-with-zhiyao", exercise: exercise("reading-library-evening-hours-v1", "reading:library-evening-hours", "reading", "Which purpose is stated for extending the hours?", { A: "To sell student IDs", B: "To reduce dorm noise and provide study space", C: "To cancel group discussions" }, "B", "The final sentence gives both purposes directly.") },
   { slug: "flexible-work-schedule", level: 5, levelBand: "5", title: "A trial flexible-work schedule", text: "公司试行弹性工作制后，员工可以在早上七点到十点之间到岗。尽管个人时间更灵活，但是每个团队仍须保证核心时段有人值班。三个月后的调查显示，迟到减少了，跨部门会议却需要更早安排。", translation: "After introducing flexible work, employees may arrive between 7 and 10 a.m. Although personal schedules are more flexible, teams must cover core hours. After three months, lateness fell but cross-department meetings needed earlier planning.", vocabulary: [{ word: "试行", pinyin: "shìxíng", meaning: "pilot/try out" }, { word: "到岗", pinyin: "dàogǎng", meaning: "arrive at one's post" }, { word: "值班", pinyin: "zhíbān", meaning: "be on duty" }], questionType: "inference", difficulty: "medium", grammarSlug: "contrast-with-jinguan", exercise: exercise("reading-flexible-work-schedule-v1", "reading:flexible-work-schedule", "reading", "What can reasonably be inferred about cross-department meetings?", { A: "They disappeared.", B: "They require more advance coordination.", C: "They can only happen at night." }, "B", "Because arrival times vary, shared meetings need earlier coordination; the passage does not say they disappeared.") },
@@ -99,6 +100,32 @@ export const GRAMMAR_LESSONS: GrammarLesson[] = ALL_GRAMMAR_LESSONS
     relatedReadingSlug: lesson.readingSlug,
     examples: lesson.examples.map((example) => ({ ...example, chinese: example.zh, pinyin: "", english: example.en })),
   }));
+export interface GrammarCurriculumLesson {
+  slug: string;
+  level: number;
+  levelBand: string;
+  title: string;
+  explanation: string;
+  pattern: string;
+  usage: string;
+  pitfall: string;
+  examples: Array<{ zh: string; en: string; pinyin?: string }>;
+  readingSlug?: string;
+  exercises: Step7Exercise[];
+}
+export const GRAMMAR_CURRICULUM: GrammarCurriculumLesson[] = [
+  ...GRAMMAR_LESSONS.map((lesson) => ({
+    slug: lesson.slug, level: lesson.level, levelBand: lesson.levelBand,
+    title: lesson.title, explanation: lesson.explanation, pattern: lesson.pattern,
+    usage: ORIGINAL_GRAMMAR_EXTRAS[lesson.slug].usage,
+    pitfall: ORIGINAL_GRAMMAR_EXTRAS[lesson.slug].pitfall,
+    examples: lesson.examples,
+    // These passages do not actually demonstrate both halves of the pattern.
+    readingSlug: ["basic-shi-negation", "formal-causation-yu-youyu"].includes(lesson.slug) ? undefined : lesson.readingSlug,
+    exercises: [lesson.exercise, ORIGINAL_GRAMMAR_EXTRAS[lesson.slug].exercise],
+  })),
+  ...ADDITIONAL_GRAMMAR_LESSONS,
+].sort((a, b) => a.level - b.level || a.title.localeCompare(b.title, "en"));
 export const READING_LESSONS: ReadingLesson[] = ALL_READING_LESSONS
   .filter((lesson) => isPublishedStep7Content(`hsk3.reading.${lesson.slug}`))
   .map((lesson) => ({
@@ -139,17 +166,18 @@ export const ADVANCED_LISTENING_LESSONS: AdvancedListeningLesson[] = [
 
 function releasedGrammar(lesson: GrammarLesson) { return isPublishedStep7Content(`hsk3.grammar.${lesson.slug}`) ? lesson : undefined; }
 function releasedReading(lesson: ReadingLesson) { return isPublishedStep7Content(`hsk3.reading.${lesson.slug}`) ? lesson : undefined; }
-export const grammarLessonBySlug = (slug: string) => { const lesson = GRAMMAR_LESSONS.find((item) => item.slug === slug); return lesson ? releasedGrammar(lesson) : undefined; };
+export const grammarLessonBySlug = (slug: string) => GRAMMAR_CURRICULUM.find((item) => item.slug === slug);
 export const readingLessonBySlug = (slug: string) => { const lesson = READING_LESSONS.find((item) => item.slug === slug); return lesson ? releasedReading(lesson) : undefined; };
 export const advancedListeningBySlug = (slug: string) => listeningQuestionBySlug(slug) ?? ADVANCED_LISTENING_LESSONS.find((item) => item.slug === slug);
 export const publishedGrammarLessons = GRAMMAR_LESSONS.filter(releasedGrammar);
 export const publishedReadingLessons = READING_LESSONS.filter(releasedReading);
-export const grammarBySlug = grammarLessonBySlug;
+// Preserve the original Batch 13 lookup contract for older clients and tests.
+export const grammarBySlug = (slug: string) => GRAMMAR_LESSONS.find((item) => item.slug === slug);
 export const readingBySlug = readingLessonBySlug;
 export const normalizeStep7Answer = (value: string) => value.normalize("NFKC").replace(/[\s，。！？、,.!?]/g, "").toLowerCase();
 export const isStep7AnswerAllowed = (exercise: Step7Exercise, answer: string) => exercise.options ? Object.hasOwn(exercise.options, answer) : normalizeStep7Answer(answer).length > 0 && answer.length <= 120;
 const trustedExercises = new Map<string, Step7Exercise>([
-  ...GRAMMAR_LESSONS.filter(releasedGrammar).map((lesson) => [lesson.exercise.id, lesson.exercise] as const),
+  ...GRAMMAR_CURRICULUM.flatMap((lesson) => lesson.exercises.map((item) => [item.id, item] as const)),
   ...READING_LESSONS.filter(releasedReading).map((lesson) => [lesson.exercise.id, lesson.exercise] as const),
   ...READING_LIBRARY_QUESTIONS.map((lesson) => [lesson.exercise.id, lesson.exercise] as const),
   ...ADVANCED_LISTENING_LESSONS.map((lesson) => [lesson.exercise.id, lesson.exercise] as const),

@@ -25,6 +25,7 @@ import {
 import { isTodayBudgetMinutes, isTodayFocus, isTodayNewWordCount, recommendTodayNewWordCount } from "../../../../lib/learning/today-plan";
 import { audioPlaybackSubject, trustedAudioExercise, trustedTodayAudioExercise, type AudioMode } from "../../../../lib/learning/audio";
 import { advancedListeningBySlug, isStep7AnswerAllowed, normalizeStep7Answer, trustedStep7Exercise } from "../../../../lib/learning/step7-content";
+import { grammarProgressSnapshot } from "../../../../lib/learning/grammar-progress";
 import { completeStep7PlaybackTicket, consumeStep7PlaybackTicket, createStep7PlaybackTicket } from "../../../../lib/learning/step7-playback";
 import { trustedQuestion } from "../../../../lib/learning/questions";
 import { requestIdentity, GUEST_COOKIE } from "../../../../lib/account/identity";
@@ -225,6 +226,7 @@ function response(data: ReturnType<typeof view>, fresh: boolean, id: string, rev
     topicVisits: data.state.topicVisits ?? [],
     topicProgress,
     dictionaryProgress,
+    grammarProgress: grammarProgressSnapshot(data.state),
     savedWords,
     mastery: data.mastery,
     focusedReview: data.focusedReview,
