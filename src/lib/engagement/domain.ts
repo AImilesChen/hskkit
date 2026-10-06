@@ -97,6 +97,7 @@ export function buildRewardSnapshot(input: {
     nextMonthLearningDay,
     nextAward: learningPointsForMonthlyDay(nextMonthLearningDay),
     monthPoints: monthDays.reduce((sum, entry) => sum + entry.points, 0),
+    monthRewardedDays: monthDays.map((entry) => ({ localDay: entry.localDay, points: entry.points })),
     lifetimePoints: Math.max(0, Math.trunc(input.lifetimePoints)),
     currentStreak: streak.current,
     longestStreak: streak.longest,
