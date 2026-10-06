@@ -34,7 +34,7 @@ import { resolveCapabilities } from "../../../../lib/commercial/storage";
 import { type ProductCapabilities } from "../../../../lib/commercial/capabilities";
 import { reconcileReferralLearningMilestone } from "../../../../lib/commercial/referral-storage";
 import { learningRewardLocalDay } from "@/lib/engagement/storage";
-import { selectTodayContent, todayContentByAssetId, todayContentByContentId, todayContentFromCatalogRow, todayWordHistory } from "../../../../lib/learning/today-content";
+import { selectTodayContent, todayContentByAssetId, todayContentByContentId, todayContentFromCatalogRow } from "../../../../lib/learning/today-content";
 import { findPublicCatalogWordById } from "../../../../lib/content/public-catalog-index";
 import { accessDecision, createAuditEvent, errorContract } from "../../../../lib/account/access-policy";
 import { recordPolicyAudit } from "../../../../lib/account/audit-storage";
@@ -108,8 +108,8 @@ function view(state: LearningState, ownerId: string, offsetMinutes: number, capa
     listeningEnabled: savedPreferences?.listeningEnabled ?? true,
     focus: savedPreferences?.focus ?? "balanced" as const,
   };
-  const wordHistory = todayWordHistory(state.dailySessions, ownerId, localDay, startLevel);
-  const built = buildDailySession(state, { ownerId, localDay, ruleVersion: "today-v10", now, dailyContent: selectTodayContent(startLevel, preferences.newWordCount, { ...wordHistory, listeningEnabled: preferences.listeningEnabled }), budgetMinutes, ...preferences });
+  const availableReviewCardIds = new Set(projectLearningHistory(state, capabilities, new Date(now)).cards.map((card) => card.id));
+  const built = buildDailySession(state, { ownerId, localDay, ruleVersion: "today-v9", now, dailyContent: selectTodayContent(startLevel, preferences.newWordCount), budgetMinutes, availableReviewCardIds, ...preferences });
   const projected = projectLearningHistory(built.state, capabilities, new Date(now));
   const visibleCards = projected.cards;
   const cards = visibleCards.map((card) => {
@@ -201,7 +201,7 @@ function view(state: LearningState, ownerId: string, offsetMinutes: number, capa
     streak,
     streakBasis: accountTimezone ? `Account timezone: ${accountTimezone}` : "This device's local day",
     currentLevel: startLevel,
-    dueCount: built.state.cards.filter((card) => card.dueAt <= now).length,
+    dueCount: cards.filter((card) => card.dueAt <= now).length,
     practiceQuestionsCompleted: (built.state.practiceSessions ?? [])
       .filter((practice) => practice.dailySessionId === session.id)
       .reduce((count, practice) => Math.max(count, practice.answers.length), 0),
@@ -739,27 +739,20 @@ async function postLearning(req: NextRequest) {
         assertCurrentDailySession(activeToday.session, sessionId);
         state = activeToday.state;
         const currentItem = state.dailySessions.find((session) => session.id === sessionId)?.items.find((item) => item.id === itemId);
-        let completedLearnContext: Awaited<ReturnType<typeof getDictionaryLearningContext>> = null;
         if (action === "complete_item" && currentItem?.kind === "learn") {
           const assetId = short(payload.assetId, 120);
           const displayedWord = assetId ? await resolveTodayDictionaryItem(assetId) : undefined;
           if (!displayedWord) throw new Error("TODAY_LEARN_WORD_MISMATCH");
           assertTodayLearnItemMatches(state, { sessionId, itemId, contentId: displayedWord.contentId, contentVersion: displayedWord.contentVersion });
-          completedLearnContext = await getDictionaryLearningContext(displayedWord.assetId);
-          if (!completedLearnContext) throw new Error("TODAY_LEARN_WORD_MISMATCH");
         }
-        const completedAt = new Date().toISOString();
         state = applyDailyItemAction(state, {
           sessionId,
           itemId,
           action: action === "complete_item" ? "complete" : action === "skip_item" ? "skip" : "restore",
           idempotencyKey: key,
-          observedAt: completedAt,
+          observedAt: new Date().toISOString(),
         }).state;
-        if (action === "complete_item" && currentItem?.kind === "learn" && currentItem.status === "pending" && completedLearnContext) {
-          state = addWordToReview(state, { word: completedLearnContext.current, observedAt: completedAt, dueAt: new Date(Date.parse(completedAt) + 86_400_000).toISOString() });
-        }
-        if (action === "complete_item" && currentItem?.kind === "learn" && currentItem.status === "pending" && !currentItem.isContinuing && capabilities.dailyNewItems !== null) {
+        if (action === "complete_item" && currentItem?.kind === "learn" && currentItem.status === "pending" && capabilities.dailyNewItems !== null) {
           usageCharge = { metric: "daily_new_items", periodKey, idempotencyKey: key, units: 1, limit: capabilities.dailyNewItems };
         }
       } else if (action === "configure_today") {
@@ -778,9 +771,8 @@ async function postLearning(req: NextRequest) {
         const startLevel = requestedLevel ?? latestPlacement?.recommendedLevel ?? 1;
         const todayPreferences = { newWordCount, listeningEnabled, focus };
         state = { ...state, ...(requestedLevel ? { preferredLearningLevel: requestedLevel } : {}), todayPreferences };
-        const localDay = learningLocalDay(observedAt, tz, identity.account?.timezone);
-        const wordHistory = todayWordHistory(state.dailySessions, identity.id, localDay, startLevel);
-        state = buildDailySession(state, { ownerId: identity.id, localDay, ruleVersion: "today-v10", now: observedAt, dailyContent: selectTodayContent(startLevel, newWordCount, { ...wordHistory, listeningEnabled, freezePinned: false }), budgetMinutes, ...todayPreferences }).state;
+        const availableReviewCardIds = new Set(projectLearningHistory(state, capabilities, new Date(observedAt)).cards.map((card) => card.id));
+        state = buildDailySession(state, { ownerId: identity.id, localDay: learningLocalDay(observedAt, tz, identity.account?.timezone), ruleVersion: "today-v9", now: observedAt, dailyContent: selectTodayContent(startLevel, newWordCount), budgetMinutes, availableReviewCardIds, ...todayPreferences }).state;
         state = { ...state, dailyOperationKeys: [...(state.dailyOperationKeys ?? []), key].slice(-400) };
       } else {
         return errorResponse("INVALID_ACTION", 422);
