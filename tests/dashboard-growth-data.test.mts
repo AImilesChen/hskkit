@@ -68,3 +68,38 @@ test("empty state remains genuinely empty instead of inventing activity", () => 
   assert.ok(snapshot.calendar.days.every((day) => !day.active));
   assert.ok(snapshot.levelProgress.every((row) => row.learned === 0));
 });
+
+test("calendar explains saved work and the accuracy trend excludes synthetic dictionary cards", () => {
+  const snapshot = buildGrowthSnapshot({
+    now: new Date("2026-10-06T12:00:00.000Z"),
+    timezone: "Europe/London",
+    activity: [
+      { action: "attempt", createdAt: "2026-10-05T23:30:00.000Z" },
+      { action: "grade", createdAt: "2026-10-06T08:00:00.000Z" },
+      { action: "complete_item", createdAt: "2026-10-06T08:05:00.000Z" },
+    ],
+    attempts: [
+      { contentId: "word:travel", observedAt: "2026-10-05T23:30:00.000Z", correct: true },
+      { contentId: "practice:1", observedAt: "2026-10-06T08:10:00.000Z", correct: false },
+      { contentId: "word:manual", idempotencyKey: "dictionary-review:manual:v1", observedAt: "2026-10-06T08:11:00.000Z", correct: true },
+    ],
+    sessions: [{ id: "today-1", localDay: "2026-10-06", items: [
+      { id: "learn-1", kind: "learn", status: "completed", title: "Learn 旅行" },
+      { id: "listen-1", kind: "listen", status: "completed" },
+    ] }],
+    cards: [
+      { dueAt: "2026-10-01T00:00:00.000Z" },
+      { dueAt: "2026-10-07T12:00:00.000Z" },
+      { dueAt: "2026-10-20T12:00:00.000Z" },
+    ],
+    levelTotals,
+  });
+  const today = snapshot.calendar.days.find((day) => day.date === "2026-10-06");
+  assert.equal(today?.count, 3);
+  assert.deepEqual(today?.activity, { practice: 1, review: 1, todaySteps: 1 });
+  assert.deepEqual(today?.completedSteps, { review: 0, learn: 1, listen: 1, practice: 0 });
+  assert.deepEqual(today?.learnedTitles, ["Learn 旅行"]);
+  assert.deepEqual(today?.answers, { correct: 1, total: 2 });
+  assert.deepEqual(snapshot.reviewForecast.map((day) => day.count).slice(0, 2), [1, 1]);
+  assert.equal(snapshot.reviewForecast.reduce((sum, day) => sum + day.count, 0), 2);
+});
