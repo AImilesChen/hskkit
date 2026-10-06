@@ -37,6 +37,13 @@ test("review session advances through its frozen card IDs and stops at the real 
   assert.doesNotMatch(client, /plannedCards\[0\]/);
 });
 
+test("a missing saved card cannot produce a successful zero-answer review report", async () => {
+  const client = await source("src/app/components/learning-dashboard.tsx");
+  assert.match(client, /sessionComplete = Boolean\(reviewIds\?\.length && displayReviewedCount >= sessionTotal\)/);
+  assert.match(client, /missingReviewCard[\s\S]*This review item is no longer available/);
+  assert.doesNotMatch(client, /displayReviewedCount >= sessionTotal \|\| !activeCard/);
+});
+
 test("Today review restores the first unfinished card regardless of queue order", async () => {
   const { activeTodayReviewCardId } = await import("../src/lib/learning/review-session.ts");
   const reviewIds = ["card-a", "card-b"];
