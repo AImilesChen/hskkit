@@ -9,6 +9,7 @@ import DashboardRewards, { type LearningRewardData } from "./dashboard-rewards";
 type DashboardItem = {
   kind: "review" | "learn" | "listen" | "practice" | "summary";
   status: "pending" | "completed" | "skipped";
+  deferred?: boolean;
 };
 
 type DashboardData = {
@@ -30,28 +31,34 @@ export default function DashboardCore() {
   const [growth, setGrowth] = useState<DashboardGrowthData | null>(null);
   const [rewards, setRewards] = useState<LearningRewardData | null>(null);
   const [error, setError] = useState("");
+  const [auxiliaryStatus, setAuxiliaryStatus] = useState<"loading" | "ready" | "partial">("loading");
 
   async function load() {
     setError("");
+    setAuxiliaryStatus("loading");
     try {
-      const [response, growthResponse, rewardResponse] = await Promise.all([
-        fetch(`/api/v1/learning?tzOffset=${timezoneOffset()}`, { cache: "no-store" }),
-        fetch("/api/v1/dashboard/growth", { cache: "no-store" }),
-        fetch("/api/v1/account/learning-rewards", { cache: "no-store" }),
-      ]);
-      if (!response.ok || !growthResponse.ok || !rewardResponse.ok) throw new Error("DASHBOARD_UNAVAILABLE");
-      const [payload, growthPayload, rewardPayload] = await Promise.all([
-        response.json() as Promise<DashboardData>,
-        growthResponse.json() as Promise<DashboardGrowthData>,
-        rewardResponse.json() as Promise<LearningRewardData>,
-      ]);
+      const response = await fetch(`/api/v1/learning?tzOffset=${timezoneOffset()}`, { cache: "no-store" });
+      if (!response.ok) throw new Error("DASHBOARD_UNAVAILABLE");
+      const payload = await response.json() as DashboardData;
       if (payload.scope !== "account") throw new Error("ACCOUNT_REQUIRED");
       setData(payload);
-      setGrowth(growthPayload);
-      setRewards(rewardPayload);
     } catch {
       setError("We couldn’t load your current learning data. Try again.");
+      return;
     }
+    const [growthResult, rewardResult] = await Promise.allSettled([
+      fetch("/api/v1/dashboard/growth", { cache: "no-store" }).then(async (response) => {
+        if (!response.ok) throw new Error("GROWTH_UNAVAILABLE");
+        return response.json() as Promise<DashboardGrowthData>;
+      }),
+      fetch("/api/v1/account/learning-rewards", { cache: "no-store" }).then(async (response) => {
+        if (!response.ok) throw new Error("REWARDS_UNAVAILABLE");
+        return response.json() as Promise<LearningRewardData>;
+      }),
+    ]);
+    setGrowth(growthResult.status === "fulfilled" ? growthResult.value : null);
+    setRewards(rewardResult.status === "fulfilled" ? rewardResult.value : null);
+    setAuxiliaryStatus(growthResult.status === "fulfilled" && rewardResult.status === "fulfilled" ? "ready" : "partial");
   }
 
   useEffect(() => {
@@ -61,7 +68,7 @@ export default function DashboardCore() {
     return () => window.removeEventListener("hskkit:learning-reward", updateRewards);
   }, []);
 
-  if (!data || !growth || !rewards) {
+  if (!data) {
     return <main className="mx-auto min-h-[70vh] max-w-6xl px-5 py-12 sm:py-16">
       {error
         ? <div className="rounded-2xl border border-red-200 bg-red-50 p-6" role="alert"><h1 className="text-2xl font-black text-slate-950">Dashboard unavailable</h1><p className="mt-2 text-slate-700">{error}</p><button className="mt-5 min-h-12 rounded-xl bg-blue-600 px-6 font-bold text-white" onClick={() => void load()}>Retry</button></div>
@@ -71,7 +78,7 @@ export default function DashboardCore() {
 
   const dueReviews = data.dueCount;
   const currentLevel = Math.min(9, Math.max(1, Math.trunc(data.currentLevel) || 1));
-  const taskItems = data.session.items.filter((item) => item.kind !== "summary" && item.status !== "skipped");
+  const taskItems = data.session.items.filter((item) => item.kind !== "summary" && item.status !== "skipped" && !item.deferred);
   const completedTasks = taskItems.filter((item) => item.status === "completed").length;
   const pendingTasks = taskItems.filter((item) => item.status === "pending").length;
   const reviewTasks = taskItems.filter((item) => item.kind === "review" && item.status === "pending").length;
@@ -86,7 +93,7 @@ export default function DashboardCore() {
     <header className="max-w-3xl">
       <p className="text-sm font-black uppercase tracking-[0.18em] text-blue-700">Learning dashboard</p>
       <h1 className="mt-2 text-4xl font-black tracking-tight text-slate-950 sm:text-5xl">Today’s learning</h1>
-      <p className="mt-3 text-base leading-7 text-slate-600">One clear next step, based on your saved level and real learning progress.</p>
+      <p className="mt-3 text-base leading-7 text-slate-600">Continue your saved Today plan, then check the learning progress you can act on.</p>
     </header>
 
     <section data-dashboard-layer="1-today-focus" className="mt-8 overflow-hidden rounded-3xl bg-slate-950 text-white shadow-xl shadow-slate-200" aria-labelledby="today-focus-title">
@@ -94,7 +101,7 @@ export default function DashboardCore() {
         <div>
           <p className="text-sm font-bold uppercase tracking-[0.16em] text-blue-300">Today’s focus</p>
           <h2 id="today-focus-title" className="mt-2 text-3xl font-black tracking-tight text-white sm:text-4xl">{primary.label}</h2>
-          <p className="mt-3 max-w-2xl leading-7 text-slate-300">{pendingTasks > 0 ? `${pendingTasks} task item${pendingTasks === 1 ? "" : "s"} remain in today’s queue.` : dueReviews > 0 ? `${dueReviews} memory item${dueReviews === 1 ? " is" : "s are"} ready to review.` : `Your next new-word session is ready at ${levelLabel(currentLevel)}.`}</p>
+          <p className="mt-3 max-w-2xl leading-7 text-slate-300">{pendingTasks > 0 ? `${pendingTasks} step${pendingTasks === 1 ? "" : "s"} remain in your saved Today plan. Start with the current unlocked step.` : dueReviews > 0 ? `${dueReviews} available memory item${dueReviews === 1 ? " is" : "s are"} ready to review.` : `Your next new-word session is ready at ${levelLabel(currentLevel)}.`}</p>
           <Link className="mt-6 inline-flex min-h-12 items-center justify-center rounded-xl bg-blue-500 px-6 font-black text-white transition hover:bg-blue-400 focus:outline-none focus:ring-4 focus:ring-blue-300/40" href={primary.href}>{primary.label}<span className="ml-2" aria-hidden="true">→</span></Link>
         </div>
         <div className="rounded-2xl border border-white/10 bg-white/5 p-5">
@@ -113,14 +120,15 @@ export default function DashboardCore() {
       <p className="text-sm font-black uppercase tracking-[0.18em] text-blue-700">At a glance</p>
       <h2 id="learning-signals-title" className="mt-2 text-2xl font-black tracking-tight text-slate-950">Current learning signals</h2>
       <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <article className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm"><p className="text-sm font-bold text-slate-500">Due reviews</p><strong className="mt-2 block text-3xl font-black text-slate-950">{dueReviews}</strong><p className="mt-1 text-sm text-slate-600">Ready in your review queue</p></article>
+        <article className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm"><p className="text-sm font-bold text-slate-500">Available reviews</p><strong className="mt-2 block text-3xl font-black text-slate-950">{dueReviews}</strong><p className="mt-1 text-sm text-slate-600">{reviewTasks} planned for Today</p><Link href="/review" className="mt-3 inline-flex min-h-11 items-center font-bold text-blue-700 underline-offset-4 hover:underline">Choose a review session →</Link></article>
         <article className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm"><p className="text-sm font-bold text-slate-500">Current level</p><strong className="mt-2 block text-3xl font-black text-slate-950">{levelLabel(currentLevel)}</strong><p className="mt-1 text-sm text-slate-600">Saved learning starting point</p></article>
-        <article className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm"><p className="text-sm font-bold text-slate-500">New words today</p><strong className="mt-2 block text-3xl font-black text-slate-950">{dailyNewLimit === null ? data.usage.dailyNewItems : `${data.usage.dailyNewItems}/${dailyNewLimit}`}</strong><p className="mt-1 text-sm text-slate-600">{dailyNewLimit === null ? "No daily Pro limit" : `${Math.max(0, dailyNewLimit - data.usage.dailyNewItems)} Free items remaining`}</p>{dailyNewLimit !== null && <div className="mt-3 h-1.5 overflow-hidden rounded-full bg-slate-100" role="progressbar" aria-label="New words used today" aria-valuemin={0} aria-valuemax={100} aria-valuenow={newWordPercent}><span className="block h-full rounded-full bg-emerald-500" style={{ width: `${newWordPercent}%` }} /></div>}</article>
-        <article className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm"><p className="text-sm font-bold text-slate-500">Learning streak</p><strong className="mt-2 block text-3xl font-black text-slate-950">{data.streak.current} day{data.streak.current === 1 ? "" : "s"}</strong><p className="mt-1 text-sm text-slate-600">Best: {data.streak.longest} day{data.streak.longest === 1 ? "" : "s"}</p></article>
+        <article className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm"><p className="text-sm font-bold text-slate-500">Daily new-word allowance</p><strong className="mt-2 block text-3xl font-black text-slate-950">{dailyNewLimit === null ? data.usage.dailyNewItems : `${data.usage.dailyNewItems}/${dailyNewLimit}`}</strong><p className="mt-1 text-sm text-slate-600">{dailyNewLimit === null ? "New words learned today · no Pro limit" : `${Math.max(0, dailyNewLimit - data.usage.dailyNewItems)} Free items remaining · ${learningTasks} planned today`}</p>{dailyNewLimit !== null && <div className="mt-3 h-1.5 overflow-hidden rounded-full bg-slate-100" role="progressbar" aria-label="New words used today" aria-valuemin={0} aria-valuemax={100} aria-valuenow={newWordPercent}><span className="block h-full rounded-full bg-emerald-500" style={{ width: `${newWordPercent}%` }} /></div>}</article>
+        <article className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm"><p className="text-sm font-bold text-slate-500">Completed-session streak</p><strong className="mt-2 block text-3xl font-black text-slate-950">{data.streak.current} day{data.streak.current === 1 ? "" : "s"}</strong><p className="mt-1 text-sm text-slate-600">Best: {data.streak.longest} day{data.streak.longest === 1 ? "" : "s"} · based on saved Today sessions</p></article>
       </div>
     </section>
 
-    <DashboardRewards rewards={rewards} />
-    <DashboardGrowth growth={growth} />
+    {rewards ? <DashboardRewards rewards={rewards} /> : <section className="mt-10 rounded-2xl border border-slate-200 bg-white p-5" role="status"><h2 className="font-bold text-slate-950">Learning rewards</h2><p className="mt-1 text-sm text-slate-600">{auxiliaryStatus === "loading" ? "Loading your reward progress…" : "Reward progress is temporarily unavailable."}</p></section>}
+    {growth ? <DashboardGrowth growth={growth} /> : <section className="mt-10 rounded-2xl border border-slate-200 bg-white p-5" role="status"><h2 className="font-bold text-slate-950">Learning growth</h2><p className="mt-1 text-sm text-slate-600">{auxiliaryStatus === "loading" ? "Loading your learning history…" : "Learning history is temporarily unavailable."}</p></section>}
+    {auxiliaryStatus === "partial" && <button type="button" className="mt-5 min-h-11 rounded-xl border border-blue-200 px-4 font-bold text-blue-700" onClick={() => void load()}>Retry missing statistics</button>}
   </main>;
 }
