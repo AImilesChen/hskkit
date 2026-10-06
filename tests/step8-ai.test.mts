@@ -90,17 +90,18 @@ test("provider adapter makes one bounded DeepSeek request and normalizes failure
     calls.push({ url: String(input), body: JSON.parse(String(init?.body)) });
     return new Response(JSON.stringify({ id: "provider-1", choices: [{ message: { content: JSON.stringify({ title: "Tip", summary: "Grounded help.", whyCorrect: "Because the result is complete.", nextStep: "Try one more item." }) } }], usage: { prompt_tokens: 100, completion_tokens: 40 } }), { status: 200, headers: { "content-type": "application/json" } });
   };
-  const config = providerConfig({ DEEPSEEK_API_KEY: "test-secret", DEEPSEEK_BASE_URL: "https://api.deepseek.com", DEEPSEEK_MODEL: "deepseek-chat" } as CloudflareEnv)!;
+  const config = providerConfig({ DEEPSEEK_API_KEY: "test-secret", DEEPSEEK_BASE_URL: "https://api.deepseek.com", DEEPSEEK_MODEL: "deepseek-flash" } as CloudflareEnv)!;
   const result = await callAiProvider(config, "trusted prompt", 320, request as typeof fetch);
   assert.equal(calls.length, 1);
   assert.equal(calls[0].url, "https://api.deepseek.com/chat/completions");
-  assert.equal(calls[0].body.model, "deepseek-chat");
+  assert.equal(calls[0].body.model, "deepseek-flash");
   assert.equal(calls[0].body.max_tokens, 320);
   assert.equal(calls[0].body.stream, false);
+  assert.deepEqual(calls[0].body.thinking, { type: "disabled" });
   assert.equal(result.providerRequestId, "provider-1");
   await assert.rejects(() => callAiProvider(config, "trusted prompt", 320, async () => new Response(JSON.stringify({ choices: [{ message: { content: "{}" } }], usage: { completion_tokens: 321 } }), { status: 200 })), /AI_PROVIDER_INVALID_RESPONSE/);
   await assert.rejects(() => callAiProvider(config, "trusted prompt", 320, async () => new Response("unavailable", { status: 503 })), /AI_PROVIDER_UNAVAILABLE/);
-  assert.throws(() => providerConfig({ DEEPSEEK_API_KEY: "test-secret", DEEPSEEK_BASE_URL: "https://proxy.example.com", DEEPSEEK_MODEL: "deepseek-chat" } as CloudflareEnv), /AI_PROVIDER_CONFIG_INVALID/);
+  assert.throws(() => providerConfig({ DEEPSEEK_API_KEY: "test-secret", DEEPSEEK_BASE_URL: "https://proxy.example.com", DEEPSEEK_MODEL: "deepseek-flash" } as CloudflareEnv), /AI_PROVIDER_CONFIG_INVALID/);
 });
 
 test("guest merge preserves terminal AI history and cannot reset consumed allowance", () => {
