@@ -139,7 +139,7 @@ test("shared navigation exposes Grammar and Reading indexes", async () => {
 });
 
 test("AI provider retries one transient failure only and never retries invalid output", async () => {
-  const config = { apiKey: "test", baseUrl: "https://api.deepseek.com", model: "deepseek-chat" } as const;
+  const config = { apiKey: "test", baseUrl: "https://api.deepseek.com", model: "deepseek-flash" } as const;
   let attempts = 0;
   const recovered = await callAiProvider(config, "trusted", 100, async () => {
     attempts += 1;

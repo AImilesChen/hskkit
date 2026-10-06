@@ -127,7 +127,7 @@ test("Batch 4 AI provider hard timeout covers request and response body", async 
   const config = providerConfig({
     DEEPSEEK_API_KEY: "test-secret",
     DEEPSEEK_BASE_URL: "https://api.deepseek.com",
-    DEEPSEEK_MODEL: "deepseek-chat",
+    DEEPSEEK_MODEL: "deepseek-flash",
   } as CloudflareEnv)!;
 
   let requestAttempts = 0;

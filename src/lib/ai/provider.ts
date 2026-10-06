@@ -1,11 +1,11 @@
 export type AiProviderResult = { content: string; providerRequestId?: string; promptTokens?: number; completionTokens?: number };
-export type AiProviderConfig = { apiKey: string; baseUrl: "https://api.deepseek.com"; model: "deepseek-chat" };
+export type AiProviderConfig = { apiKey: string; baseUrl: "https://api.deepseek.com"; model: "deepseek-flash" };
 
 export function providerConfig(env: CloudflareEnv): AiProviderConfig | undefined {
   if (!env.DEEPSEEK_API_KEY) return undefined;
   const baseUrl = env.DEEPSEEK_BASE_URL || "https://api.deepseek.com";
-  const model = env.DEEPSEEK_MODEL || "deepseek-chat";
-  if (baseUrl !== "https://api.deepseek.com" || model !== "deepseek-chat") throw new Error("AI_PROVIDER_CONFIG_INVALID");
+  const model = env.DEEPSEEK_MODEL || "deepseek-flash";
+  if (baseUrl !== "https://api.deepseek.com" || model !== "deepseek-flash") throw new Error("AI_PROVIDER_CONFIG_INVALID");
   return { apiKey: env.DEEPSEEK_API_KEY, baseUrl, model };
 }
 
@@ -35,7 +35,7 @@ export async function callAiProvider(config: AiProviderConfig, prompt: string, m
                 { role: "system", content: "You provide concise, grounded Chinese-language learning support. Follow the requested JSON schema exactly." },
                 { role: "user", content: prompt },
               ],
-              temperature: 0.2,
+              thinking: { type: "disabled" },
               max_tokens: maxOutputTokens,
               stream: false,
               response_format: { type: "json_object" },

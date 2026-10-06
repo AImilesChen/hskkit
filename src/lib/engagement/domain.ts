@@ -51,6 +51,22 @@ export function learningStreak(days: string[], today: string) {
   return { current, longest };
 }
 
+function firstBadgeUnlockDays(days: string[]) {
+  const ordered = [...new Set(days)].sort();
+  const unlocked = new Map<number, string>();
+  let run = 0;
+  let prior: number | undefined;
+  for (const day of ordered) {
+    const current = dayNumber(day);
+    run = prior !== undefined && current === prior + 1 ? run + 1 : 1;
+    for (const milestone of badgeMilestones) {
+      if (run >= milestone && !unlocked.has(milestone)) unlocked.set(milestone, day);
+    }
+    prior = current;
+  }
+  return unlocked;
+}
+
 export function buildRewardSnapshot(input: {
   today: string;
   activeSeconds: number;
@@ -63,9 +79,10 @@ export function buildRewardSnapshot(input: {
   const todayQualified = Boolean(todayReward) || (input.activeSeconds >= EFFECTIVE_LEARNING_SECONDS && input.qualifyingTasks >= 1);
   const nextMonthLearningDay = monthDays.length + (todayReward ? 0 : 1);
   const streak = learningStreak(input.rewardedDays.map((entry) => entry.localDay), input.today);
+  const badgeUnlockDays = firstBadgeUnlockDays(input.rewardedDays.map((entry) => entry.localDay));
   const unlockedBadges = badgeMilestones
-    .filter((days) => streak.longest >= days)
-    .map((days) => ({ days, key: `streak-${days}`, label: `${days}-day streak` }));
+    .filter((days) => badgeUnlockDays.has(days))
+    .map((days) => ({ days, key: `streak-${days}`, label: `${days}-day streak`, earnedOn: badgeUnlockDays.get(days)! }));
   const nextBadgeDays = badgeMilestones.find((days) => days > streak.longest);
   return {
     today: input.today,
@@ -87,6 +104,5 @@ export function buildRewardSnapshot(input: {
     nextBadge: nextBadgeDays
       ? { days: nextBadgeDays, remainingDays: Math.max(0, nextBadgeDays - streak.current), key: `streak-${nextBadgeDays}`, label: `${nextBadgeDays}-day streak` }
       : null,
-    exchangeRate: { learningPoints: 10, aiCredits: 1, available: false },
   };
 }
