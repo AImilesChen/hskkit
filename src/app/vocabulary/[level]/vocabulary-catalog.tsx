@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { FormEvent, useEffect, useMemo, useRef, useState } from "react";
 import { AudioButton } from "../../components/audio-button";
 import { QuickFlashcards } from "./quick-flashcards";
@@ -71,7 +72,14 @@ function visiblePages(current: number, total: number): PageItem[] {
 }
 
 export function VocabularyCatalog({ level, levelLabel, publishedCount, initialMode = "browse" }: { level: number; levelLabel: string; publishedCount: number; initialMode?: "browse" | "flashcards" }) {
+  const router = useRouter();
   const [mode, setMode] = useState<"browse" | "flashcards">(initialMode);
+  useEffect(() => setMode(initialMode), [initialMode]);
+
+  function changeMode(nextMode: "browse" | "flashcards") {
+    setMode(nextMode);
+    router.replace(`/vocabulary/${level}${nextMode === "flashcards" ? "?mode=flashcards" : ""}#vocabulary-activities`, { scroll: false });
+  }
   const [query, setQuery] = useState("");
   const [partOfSpeech, setPartOfSpeech] = useState("");
   const [audio, setAudio] = useState<AudioFilter>("all");
@@ -145,8 +153,8 @@ export function VocabularyCatalog({ level, levelLabel, publishedCount, initialMo
         <p className="mt-1 text-sm leading-6 text-slate-600">Switch between the full catalog and your current card set.</p>
       </div>
       <div className="grid grid-cols-2 gap-1 rounded-xl border border-slate-200 bg-slate-100 p-1" role="group" aria-label="Vocabulary activity mode">
-        <button type="button" aria-pressed={mode === "browse"} onClick={() => setMode("browse")} className={`inline-flex min-h-11 items-center justify-center rounded-lg px-4 text-sm font-bold transition focus:outline-none focus:ring-4 focus:ring-slate-200 ${mode === "browse" ? "bg-white text-slate-950 shadow-sm ring-1 ring-slate-200" : "text-slate-600 hover:text-slate-950"}`}>Browse vocabulary</button>
-        <button type="button" aria-pressed={mode === "flashcards"} onClick={() => setMode("flashcards")} className={`inline-flex min-h-11 items-center justify-center rounded-lg px-4 text-sm font-bold transition focus:outline-none focus:ring-4 focus:ring-slate-200 ${mode === "flashcards" ? "bg-white text-slate-950 shadow-sm ring-1 ring-slate-200" : "text-slate-600 hover:text-slate-950"}`}>Quick Flashcards</button>
+        <button type="button" aria-pressed={mode === "browse"} onClick={() => changeMode("browse")} className={`inline-flex min-h-11 items-center justify-center rounded-lg px-4 text-sm font-bold transition focus:outline-none focus:ring-4 focus:ring-slate-200 ${mode === "browse" ? "bg-white text-slate-950 shadow-sm ring-1 ring-slate-200" : "text-slate-600 hover:text-slate-950"}`}>Browse vocabulary</button>
+        <button type="button" aria-pressed={mode === "flashcards"} onClick={() => changeMode("flashcards")} className={`inline-flex min-h-11 items-center justify-center rounded-lg px-4 text-sm font-bold transition focus:outline-none focus:ring-4 focus:ring-slate-200 ${mode === "flashcards" ? "bg-white text-slate-950 shadow-sm ring-1 ring-slate-200" : "text-slate-600 hover:text-slate-950"}`}>Quick Flashcards</button>
       </div>
     </div>
 
