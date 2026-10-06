@@ -102,6 +102,7 @@ test("provider adapter makes one bounded DeepSeek request and normalizes failure
   await assert.rejects(() => callAiProvider(config, "trusted prompt", 320, async () => new Response(JSON.stringify({ choices: [{ message: { content: "{}" } }], usage: { completion_tokens: 321 } }), { status: 200 })), /AI_PROVIDER_INVALID_RESPONSE/);
   await assert.rejects(() => callAiProvider(config, "trusted prompt", 320, async () => new Response("unavailable", { status: 503 })), /AI_PROVIDER_UNAVAILABLE/);
   assert.throws(() => providerConfig({ DEEPSEEK_API_KEY: "test-secret", DEEPSEEK_BASE_URL: "https://proxy.example.com", DEEPSEEK_MODEL: "deepseek-flash" } as CloudflareEnv), /AI_PROVIDER_CONFIG_INVALID/);
+  assert.throws(() => providerConfig({ DEEPSEEK_API_KEY: "test-secret", DEEPSEEK_BASE_URL: "https://api.deepseek.com", DEEPSEEK_MODEL: "deepseek-chat" } as CloudflareEnv), /AI_PROVIDER_CONFIG_INVALID/);
 });
 
 test("guest merge preserves terminal AI history and cannot reset consumed allowance", () => {
