@@ -128,7 +128,7 @@ export default function DashboardCore() {
     </section>
 
     {rewards ? <DashboardRewards rewards={rewards} /> : <section className="mt-10 rounded-2xl border border-slate-200 bg-white p-5" role="status"><h2 className="font-bold text-slate-950">Learning rewards</h2><p className="mt-1 text-sm text-slate-600">{auxiliaryStatus === "loading" ? "Loading your reward progress…" : "Reward progress is temporarily unavailable."}</p></section>}
-    {growth ? <DashboardGrowth growth={growth} /> : <section className="mt-10 rounded-2xl border border-slate-200 bg-white p-5" role="status"><h2 className="font-bold text-slate-950">Learning growth</h2><p className="mt-1 text-sm text-slate-600">{auxiliaryStatus === "loading" ? "Loading your learning history…" : "Learning history is temporarily unavailable."}</p></section>}
+    {growth ? <DashboardGrowth growth={growth} rewardedDays={rewards?.monthRewardedDays} /> : <section className="mt-10 rounded-2xl border border-slate-200 bg-white p-5" role="status"><h2 className="font-bold text-slate-950">Learning growth</h2><p className="mt-1 text-sm text-slate-600">{auxiliaryStatus === "loading" ? "Loading your learning history…" : "Learning history is temporarily unavailable."}</p></section>}
     {auxiliaryStatus === "partial" && <button type="button" className="mt-5 min-h-11 rounded-xl border border-blue-200 px-4 font-bold text-blue-700" onClick={() => void load()}>Retry missing statistics</button>}
   </main>;
 }
