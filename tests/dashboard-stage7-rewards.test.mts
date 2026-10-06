@@ -72,6 +72,7 @@ test("streak and approved badges use effective rewarded days, not visits", () =>
   assert.equal(snapshot.currentStreak, 7);
   assert.equal(snapshot.longestStreak, 7);
   assert.deepEqual(snapshot.unlockedBadges.map((badge) => badge.days), [3, 7]);
+  assert.deepEqual(snapshot.unlockedBadges.map((badge) => badge.earnedOn), ["2026-09-03", "2026-09-07"]);
   assert.equal(snapshot.nextBadge?.days, 14);
   assert.deepEqual(badgeMilestones, [3, 7, 14, 30, 60, 90]);
 });
@@ -114,8 +115,10 @@ test("stage 7 ships server reconciliation, foreground heartbeat and dashboard re
   assert.match(dashboard, /Today:/);
   assert.match(dashboard, /15 min/);
   assert.match(dashboard, /Badge wall/);
-  assert.match(dashboard, /10 learning points = 1 AI credit/);
-  assert.match(dashboard, /Conversion is not open yet/);
+  assert.match(dashboard, /Progress to next streak badge/);
+  assert.match(dashboard, /of 6 earned/);
+  assert.doesNotMatch(dashboard, /10 learning points = 1 AI credit/);
+  assert.doesNotMatch(dashboard, /<details/);
   assert.match(layout, /LearningEngagementTracker/);
   assert.match(accountStorage, /rewards:\s*\{/);
   assert.match(accountStorage, /DELETE FROM learning_reward_profiles/);
