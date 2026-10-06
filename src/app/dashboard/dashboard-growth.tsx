@@ -22,8 +22,12 @@ const weekdays = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
 export default function DashboardGrowth({ growth }: { growth: DashboardGrowthData }) {
   const [range, setRange] = useState<7 | 30>(7);
+  const [selectedDate, setSelectedDate] = useState<string | null>(null);
   const curve = growth.curve30.slice(-range);
   const maxCount = Math.max(1, ...curve.map((day) => day.count));
+  const rangeTotal = curve.reduce((sum, day) => sum + day.count, 0);
+  const today = growth.calendar.days.find((day) => day.isToday)?.date;
+  const selectedDay = growth.calendar.days.find((day) => day.date === selectedDate) ?? growth.calendar.days.find((day) => day.isToday);
   const points = curve.map((day, index) => {
     const x = curve.length === 1 ? 300 : index / (curve.length - 1) * 580 + 10;
     const y = 160 - day.count / maxCount * 135;
@@ -46,8 +50,9 @@ export default function DashboardGrowth({ growth }: { growth: DashboardGrowthDat
         <div className="mt-5 grid grid-cols-7 gap-1.5 text-center" style={{ gridTemplateColumns: "repeat(7, minmax(0, 1fr))" }} aria-label={`${growth.calendar.monthLabel} study activity`}>
           {weekdays.map((day) => <span key={day} className="pb-1 text-[11px] font-bold uppercase text-slate-400">{day.slice(0, 1)}</span>)}
           {Array.from({ length: growth.calendar.firstWeekday }, (_, index) => <span key={`blank-${index}`} aria-hidden="true" />)}
-          {growth.calendar.days.map((day) => <div key={day.date} title={`${day.date}: ${day.count} completed learning action${day.count === 1 ? "" : "s"}`} style={{ height: "2.25rem" }} className={`flex h-9 items-center justify-center rounded-xl border text-sm font-bold ${day.active ? "border-emerald-300 bg-emerald-100 text-emerald-900" : day.isToday ? "border-blue-300 bg-blue-50 text-blue-900" : "border-slate-100 bg-slate-50 text-slate-500"}`} aria-label={`${day.date}, ${day.count} completed learning action${day.count === 1 ? "" : "s"}`}>{day.day}</div>)}
+          {growth.calendar.days.map((day) => <button type="button" key={day.date} disabled={Boolean(today && day.date > today)} onClick={() => setSelectedDate(day.date)} title={`${day.date}: ${day.count} completed learning action${day.count === 1 ? "" : "s"}`} className={`flex h-9 items-center justify-center rounded-xl border text-sm font-bold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 disabled:cursor-default ${day.active ? "border-emerald-300 bg-emerald-100 text-emerald-900" : day.isToday ? "border-blue-300 bg-blue-50 text-blue-900" : "border-slate-100 bg-slate-50 text-slate-500"}`} aria-label={`${day.date}, ${day.count} completed learning action${day.count === 1 ? "" : "s"}`} aria-pressed={selectedDay?.date === day.date}>{day.day}</button>)}
         </div>
+        {selectedDay && <p className="mt-4 rounded-xl bg-blue-50 p-3 text-sm text-blue-950" role="status"><strong>{selectedDay.date}</strong> · {selectedDay.count} completed learning action{selectedDay.count === 1 ? "" : "s"}{selectedDay.isToday ? " so far today" : ""}</p>}
         {!growth.hasCalendarActivity && <div className="mt-5 rounded-2xl bg-slate-50 p-4"><p className="font-bold text-slate-900">No completed learning activity yet</p><p className="mt-1 text-sm leading-6 text-slate-600">Finish a lesson, practice item, or review and your first check-in will appear here.</p></div>}
       </article>
 
@@ -59,6 +64,7 @@ export default function DashboardGrowth({ growth }: { growth: DashboardGrowthDat
           </div>
         </div>
         {growth.hasActivity ? <div className="mt-5">
+          <p className="mb-2 text-sm font-semibold text-slate-700">{rangeTotal} completed actions in {range} days · busiest day: {maxCount}</p>
           <svg className="h-48 w-full overflow-visible" viewBox="0 0 600 180" role="img" aria-label={`${range}-day learning curve`} preserveAspectRatio="none">
             <line x1="10" y1="160" x2="590" y2="160" stroke="#cbd5e1" strokeWidth="1" />
             <polyline points={points} fill="none" stroke="#2563eb" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" vectorEffect="non-scaling-stroke" />
