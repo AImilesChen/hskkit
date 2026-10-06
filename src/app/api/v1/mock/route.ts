@@ -4,7 +4,7 @@ import { GUEST_COOKIE, requestIdentity } from "@/lib/account/identity";
 import { loadState, saveState } from "@/lib/learning/storage";
 import { evaluateMockGate, mockBank, publicMockSession, saveMockAnswer, startMock, submitMock, type MockBand } from "@/lib/mock/domain";
 import { applyMockResultToLearning } from "@/lib/mock/learning";
-import { createMockSession, findMockByStartKey, loadMockSession, saveMockProgress, saveMockSubmission } from "@/lib/mock/storage";
+import { createMockSession, findMockByStartKey, loadMockSession, recentMockExposure, saveMockProgress, saveMockSubmission } from "@/lib/mock/storage";
 import { d1UnavailableResponse, withUserD1ReadProtection } from "@/lib/d1/user-protection";
 
 async function owner() {
@@ -43,13 +43,14 @@ async function persistLearning(ownerId: string, result: ReturnType<typeof submit
 async function getMock(req: NextRequest) {
   const sessionId = short(req.nextUrl.searchParams.get("sessionId"));
   if (!sessionId) {
-    const availability = (requestedBand: MockBand) => {
-      const questions = mockBank(requestedBand);
-      return evaluateMockGate(requestedBand, questions);
+    const availability = (requestedBand: MockBand, targetLevel?: number) => {
+      const questions = mockBank(requestedBand, targetLevel);
+      return evaluateMockGate(requestedBand, questions, targetLevel);
     };
-    const [basic, advanced] = [availability("basic"), availability("advanced")];
+    const basicLevels = Object.fromEntries([1, 2, 3, 4, 5, 6].map((level) => [level, availability("basic", level)]));
+    const [basic, advanced] = [basicLevels[3], availability("advanced")];
     return NextResponse.json(
-      { availability: { basic, advanced } },
+      { availability: { basic, basicLevels, advanced } },
       { headers: { "cache-control": "public, max-age=300, s-maxage=3600" } },
     );
   }
@@ -85,9 +86,12 @@ async function postMock(req: NextRequest) {
     if (action === "start") {
       const requestedBand = band(payload.band);
       if (!requestedBand) throw new Error("INVALID_MOCK_BAND");
+      const targetLevel = requestedBand === "basic" ? payload.targetLevel : undefined;
+      if (requestedBand === "basic" && (typeof targetLevel !== "number" || !Number.isInteger(targetLevel) || targetLevel < 1 || targetLevel > 6)) throw new Error("INVALID_MOCK_LEVEL");
       const prior = await findMockByStartKey(identity.id, requestedBand, idempotencyKey);
       if (prior) return response(req, { session: publicMockSession(prior), scope: identity.account ? "account" : "guest" }, identity);
-      const session = await createMockSession(startMock({ band: requestedBand, ownerId: identity.id, idempotencyKey, now: new Date().toISOString() }));
+      const recent = await recentMockExposure(identity.id, requestedBand, targetLevel as number | undefined);
+      const session = await createMockSession(startMock({ band: requestedBand, ownerId: identity.id, idempotencyKey, now: new Date().toISOString(), targetLevel: targetLevel as number | undefined, recentQuestionIds: recent.questionIds, recentGroupIds: recent.groupIds }));
       return response(req, { session: publicMockSession(session), scope: identity.account ? "account" : "guest" }, identity, 201);
     }
     const sessionId = short(payload.sessionId);

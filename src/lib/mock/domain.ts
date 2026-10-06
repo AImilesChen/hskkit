@@ -1,18 +1,12 @@
-import {
-  ADVANCED_LISTENING_LESSONS,
-  publishedGrammarLessons,
-  publishedReadingLessons,
-  normalizeStep7Answer,
-  type Step7Exercise,
-} from "../learning/step7-content.ts";
-import { STEP7_RELEASE_ID } from "../learning/step7-release.ts";
+import { normalizeStep7Answer } from "../learning/step7-content.ts";
+import { PRACTICE_QUESTIONS, PRACTICE_VERSION, type PracticeQuestion } from "../practice/questions.ts";
 
 export type MockBand = "basic" | "advanced";
 export type MockDimension = "grammar" | "reading" | "listening" | "pragmatics";
 export type MockAbilityInterval = "developing" | "functional" | "strong";
-export const MOCK_QUESTION_SET_VERSION = "hsk3-batch14-mock-v1";
+export const MOCK_QUESTION_SET_VERSION = "hsk3-level-diagnostic-v2";
 export const BASIC_MOCK_DURATION_SECONDS = 30 * 60;
-export const ADVANCED_MOCK_DURATION_SECONDS = 20 * 60;
+export const ADVANCED_MOCK_DURATION_SECONDS = 35 * 60;
 export const BASIC_MOCK_SCORING_VERSION = "basic-raw-v1";
 export const ADVANCED_MOCK_SCORING_VERSION = "advanced-band-v1";
 
@@ -33,6 +27,8 @@ export interface MockQuestion {
   audioSrc?: string;
   audioText?: string;
   instruction?: string;
+  sourceGroupId?: string;
+  sourceLevel?: number;
   approval: "approved" | "pending";
   authorization: "authorized" | "missing";
   lifecycle: "published" | "withdrawn";
@@ -88,59 +84,89 @@ export interface MockSession {
   result?: MockResult;
 }
 
-const fromExercise = (exercise: Step7Exercise, input: Pick<MockQuestion, "band" | "level" | "levelBand" | "dimension"> & Pick<MockQuestion, "audioSrc" | "audioText" | "instruction">): MockQuestion => ({
-  id: exercise.id,
-  contentId: exercise.contentId,
-  contentVersion: exercise.contentVersion,
-  sourceReleaseId: STEP7_RELEASE_ID,
-  ...input,
-  prompt: exercise.prompt,
-  context: exercise.kind === "reading"
-    ? publishedReadingLessons.find((lesson) => lesson.exercise.id === exercise.id)?.passage
-    : exercise.kind === "grammar"
-      ? (() => {
-          const lesson = publishedGrammarLessons.find((candidate) => candidate.exercise.id === exercise.id);
-          return lesson ? `${lesson.pattern}\n${lesson.examples.map((example) => example.zh).join(" / ")}` : undefined;
-        })()
-      : undefined,
-  options: exercise.options,
-  correctAnswer: exercise.correctAnswer,
-  explanation: exercise.explanation,
+const QUESTIONS_PER_SKILL = 5;
+const DIAGNOSTIC_SKILLS = ["grammar", "reading", "listening"] as const;
+// This published passage contains a malformed sentence and must not enter a timed diagnostic.
+const EXCLUDED_MOCK_SOURCE_GROUPS = new Set(["reading-library-v2-hsk9-09"]);
+const fromPractice = (question: PracticeQuestion, band: MockBand): MockQuestion => ({
+  id: question.id,
+  contentId: question.id,
+  contentVersion: question.contentVersion,
+  sourceReleaseId: PRACTICE_VERSION,
+  band,
+  level: question.level,
+  levelBand: band === "advanced" ? "7-9" : String(question.level),
+  dimension: question.skill as MockDimension,
+  prompt: question.prompt,
+  context: question.context,
+  options: { ...question.options },
+  correctAnswer: question.correctAnswer,
+  explanation: question.explanation,
+  audioSrc: question.audioSrc,
+  audioText: question.audioText,
+  instruction: question.skill === "listening" ? "Listen to the recording before choosing your answer." : undefined,
+  sourceGroupId: question.sourceGroupId ?? question.id,
+  sourceLevel: question.sourceLevel,
   approval: "approved",
   authorization: "authorized",
   lifecycle: "published",
 });
 
-const BASIC_BANK: MockQuestion[] = Array.from({ length: 6 }, (_, index) => index + 1).flatMap((level) => {
-  const grammar = publishedGrammarLessons.find((item) => item.level === level);
-  const reading = publishedReadingLessons.find((item) => item.level === level);
-  const listening = ADVANCED_LISTENING_LESSONS.find((item) => item.level === level);
-  if (!grammar || !reading || !listening) return [];
-  return [
-    fromExercise(grammar.exercise, { band: "basic", level, levelBand: String(level), dimension: "grammar" }),
-    fromExercise(reading.exercise, { band: "basic", level, levelBand: String(level), dimension: "reading" }),
-    fromExercise(listening.exercise, { band: "basic", level, levelBand: String(level), dimension: "listening", audioSrc: listening.audioSrc, audioText: listening.voiceText, instruction: listening.instruction }),
-  ];
-});
-const advancedGrammar = publishedGrammarLessons.find((item) => item.levelBand === "7-9");
-const advancedReading = publishedReadingLessons.find((item) => item.levelBand === "7-9");
-const advancedListening = ADVANCED_LISTENING_LESSONS.filter((item) => item.level >= 7 && item.level <= 9);
-const ADVANCED_BANK: MockQuestion[] = [
-  ...(advancedGrammar ? [fromExercise(advancedGrammar.exercise, { band: "advanced" as const, level: 7, levelBand: "7-9", dimension: "pragmatics" as const })] : []),
-  ...(advancedReading ? [fromExercise(advancedReading.exercise, { band: "advanced" as const, level: 7, levelBand: "7-9", dimension: "reading" as const })] : []),
-  ...advancedListening.map((item) => fromExercise(item.exercise, { band: "advanced" as const, level: item.level, levelBand: "7-9", dimension: "listening" as const, audioSrc: item.audioSrc, audioText: item.voiceText, instruction: item.instruction })),
-];
+export const mockBank = (band: MockBand, targetLevel = 3): MockQuestion[] => PRACTICE_QUESTIONS
+  .filter((question) => question.level === (band === "basic" ? targetLevel : 7) && DIAGNOSTIC_SKILLS.some((skill) => skill === question.skill) && !EXCLUDED_MOCK_SOURCE_GROUPS.has(question.sourceGroupId ?? ""))
+  .map((question) => fromPractice(question, band));
 
-export const mockBank = (band: MockBand): MockQuestion[] => (band === "basic" ? BASIC_BANK : ADVANCED_BANK).map((question) => ({ ...question, options: question.options ? { ...question.options } : undefined }));
-export function evaluateMockGate(band: MockBand, questions = mockBank(band)): { ready: boolean; reason: string | null } {
-  const expected = band === "basic" ? 18 : 5;
-  if (questions.length !== expected) return { ready: false, reason: "CONTENT_COUNT_GATE" };
+export function evaluateMockGate(band: MockBand, questions = mockBank(band), targetLevel = 3): { ready: boolean; reason: string | null } {
+  if (band === "basic" && (!Number.isInteger(targetLevel) || targetLevel < 1 || targetLevel > 6)) return { ready: false, reason: "INVALID_MOCK_LEVEL" };
+  const level = band === "basic" ? targetLevel : 7;
+  if (questions.length < QUESTIONS_PER_SKILL * DIAGNOSTIC_SKILLS.length) return { ready: false, reason: "CONTENT_COUNT_GATE" };
   if (questions.some((question) => question.band !== band || question.approval !== "approved" || question.authorization !== "authorized" || question.lifecycle !== "published")) return { ready: false, reason: "CONTENT_APPROVAL_GATE" };
-  if (new Set(questions.map((question) => question.id)).size !== expected) return { ready: false, reason: "QUESTION_ID_GATE" };
+  if (questions.some((question) => question.level !== level)) return { ready: false, reason: "LEVEL_COVERAGE_GATE" };
+  if (new Set(questions.map((question) => question.id)).size !== questions.length) return { ready: false, reason: "QUESTION_ID_GATE" };
   if (questions.some((question) => !question.correctAnswer || !question.explanation || !question.contentVersion || !question.sourceReleaseId)) return { ready: false, reason: "SCORING_GATE" };
-  if (band === "basic" && [1, 2, 3, 4, 5, 6].some((level) => questions.filter((question) => question.level === level).length !== 3)) return { ready: false, reason: "BASIC_LEVEL_COVERAGE_GATE" };
-  if (band === "advanced" && ["reading", "listening", "pragmatics"].some((dimension) => !questions.some((question) => question.dimension === dimension))) return { ready: false, reason: "ADVANCED_DIMENSION_GATE" };
+  if (DIAGNOSTIC_SKILLS.some((skill) => questions.filter((question) => question.dimension === skill).length < QUESTIONS_PER_SKILL)) return { ready: false, reason: "SKILL_COVERAGE_GATE" };
+  if (band === "advanced" && DIAGNOSTIC_SKILLS.some((skill) => [7, 8, 9].some((sourceLevel) => !questions.some((question) => question.dimension === skill && question.sourceLevel === sourceLevel)))) return { ready: false, reason: "ADVANCED_LEVEL_COVERAGE_GATE" };
+  if (DIAGNOSTIC_SKILLS.filter((skill) => skill !== "grammar").some((skill) => new Set(questions.filter((question) => question.dimension === skill).map((question) => question.sourceGroupId)).size < QUESTIONS_PER_SKILL)) return { ready: false, reason: "SOURCE_DIVERSITY_GATE" };
+  if (questions.some((question) => question.dimension === "listening" && !question.audioSrc)) return { ready: false, reason: "LISTENING_AUDIO_GATE" };
   return { ready: true, reason: null };
+}
+
+const hash = (value: string) => {
+  let result = 2166136261;
+  for (let index = 0; index < value.length; index += 1) result = Math.imul(result ^ value.charCodeAt(index), 16777619);
+  return result >>> 0;
+};
+
+export function selectMockQuestions(pool: MockQuestion[], seed: string, recentQuestionIds: readonly string[] = [], recentGroupIds: readonly string[] = []): MockQuestion[] {
+  const recentQuestions = new Set(recentQuestionIds);
+  const recentGroups = new Set(recentGroupIds);
+  const selected = DIAGNOSTIC_SKILLS.flatMap((skill) => {
+    const groupUsed = new Set<string>();
+    const ranked = pool.filter((question) => question.dimension === skill).sort((left, right) => {
+      const penalty = (question: MockQuestion) => Number(recentQuestions.has(question.id)) * 2 + Number(recentGroups.has(question.sourceGroupId ?? question.id));
+      return penalty(left) - penalty(right) || hash(`${seed}:${left.id}`) - hash(`${seed}:${right.id}`) || left.id.localeCompare(right.id);
+    });
+    const chosen: MockQuestion[] = [];
+    const add = (question: MockQuestion) => {
+      const group = question.sourceGroupId ?? question.id;
+      if (groupUsed.has(group)) return;
+      groupUsed.add(group);
+      chosen.push(question);
+    };
+    if (pool[0]?.band === "advanced") {
+      for (const sourceLevel of [7, 8, 9]) {
+        const candidate = ranked.find((question) => question.sourceLevel === sourceLevel && !groupUsed.has(question.sourceGroupId ?? question.id));
+        if (candidate) add(candidate);
+      }
+    }
+    for (const question of ranked) {
+      if (chosen.length === QUESTIONS_PER_SKILL) break;
+      add(question);
+    }
+    if (chosen.length !== QUESTIONS_PER_SKILL) throw new Error("SOURCE_DIVERSITY_GATE");
+    return chosen;
+  });
+  return selected.sort((left, right) => hash(`${seed}:order:${left.id}`) - hash(`${seed}:order:${right.id}`) || left.id.localeCompare(right.id));
 }
 
 const publicQuestion = ({ correctAnswer: _correctAnswer, explanation: _explanation, approval: _approval, authorization: _authorization, lifecycle: _lifecycle, audioText: _audioText, ...question }: MockQuestion) => question;
@@ -160,10 +186,11 @@ export function publicMockSession(session: MockSession) {
     result: session.result,
   };
 }
-export function startMock(input: { band: MockBand; ownerId: string; idempotencyKey: string; now: string }): MockSession {
-  const questions = mockBank(input.band);
-  const gate = evaluateMockGate(input.band, questions);
+export function startMock(input: { band: MockBand; ownerId: string; idempotencyKey: string; now: string; targetLevel?: number; recentQuestionIds?: string[]; recentGroupIds?: string[] }): MockSession {
+  const pool = mockBank(input.band, input.targetLevel);
+  const gate = evaluateMockGate(input.band, pool, input.targetLevel);
   if (!gate.ready) throw new Error(gate.reason ?? "MOCK_NOT_READY");
+  const questions = selectMockQuestions(pool, input.idempotencyKey, input.recentQuestionIds, input.recentGroupIds);
   const duration = input.band === "basic" ? BASIC_MOCK_DURATION_SECONDS : ADVANCED_MOCK_DURATION_SECONDS;
   return {
     id: `mock_${crypto.randomUUID()}`,
@@ -218,7 +245,6 @@ export function submitMock(session: MockSession, input: { idempotencyKey: string
   });
   const correctCount = items.filter((item) => item.correct).length;
   const percentage = Math.round((correctCount / items.length) * 100);
-  const abilityInterval: MockAbilityInterval | undefined = session.band === "advanced" ? percentage >= 80 ? "strong" : percentage >= 40 ? "functional" : "developing" : undefined;
   const result: MockResult = {
     id: `mock_result_${crypto.randomUUID()}`,
     sessionId: session.id,
@@ -229,12 +255,11 @@ export function submitMock(session: MockSession, input: { idempotencyKey: string
     correctCount,
     totalCount: items.length,
     percentage,
-    abilityInterval,
     dimensionEvidence: evidence(items),
     items,
     questionSnapshots: session.questions,
     nextRoutes: session.band === "basic" ? ["/mistakes", "/review", "/planner"] : ["/planner"],
-    disclaimer: session.band === "advanced" ? "This unified HSK 7–9 advanced ability band result is HSKKit learning feedback, not a single-level official score." : "This raw practice score is HSKKit learning feedback, not an official HSK scaled score.",
+    disclaimer: session.band === "advanced" ? "This is feedback on 15 selected HSK 7�C9 practice questions. It is not an official score or a reliable estimate of overall HSK 7�C9 ability; writing, translation and speaking were not assessed." : "This is feedback on 15 selected practice questions at one HSK level. It is not an official exam or scaled score; writing and speaking were not assessed.",
     createdAt: input.now,
   };
   const submitted: MockSession = { ...session, status: "submitted", submittedAt: input.now, revision: session.revision + 1, result };

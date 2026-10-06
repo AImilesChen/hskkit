@@ -12,7 +12,7 @@ test("P0-2 exposes one frozen information architecture on desktop and mobile", a
   assert.deepEqual(siteNavigation.map((entry) => entry.label), ["Learn", "Practice", "Tests", "Dictionary", "Blog", "Pricing", "Store", "Sign in"]);
   assert.deepEqual(siteNavigation[0].items?.map((item) => item.label), ["Today", "Planner", "Levels", "Vocabulary", "Flashcards", "Topics", "Grammar", "Reading", "Listening library"]);
   assert.deepEqual(siteNavigation[1].items?.map((item) => item.label), ["Practice", "Review", "Mistakes"]);
-  assert.deepEqual(siteNavigation[2].items?.map((item) => item.label), ["Placement", "Basic Mock", "Advanced Mock"]);
+  assert.deepEqual(siteNavigation[2].items?.map((item) => item.label), ["Placement", "Basic Skills Check", "Advanced Skills Check"]);
   assert.deepEqual(flattenNavigation().map((item) => item.href), [
     "/today", "/planner", "/levels", "/vocabulary/1", "/vocabulary/1?mode=flashcards#vocabulary-activities", "/topics", "/grammar", "/reading", "/listen",
     "/practice", "/review", "/mistakes", "/placement", "/mock/basic", "/mock/advanced",
