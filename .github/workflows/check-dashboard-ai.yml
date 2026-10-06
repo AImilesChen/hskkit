@@ -36,7 +36,7 @@ jobs:
         run: npm run typecheck
       - name: Run dashboard growth, badge and AI provider tests
         run: |
-          node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --test tests/dashboard-growth-data.test.mts tests/dashboard-growth-ui.test.mts tests/dashboard-stage7-rewards.test.mts tests/step8-ai.test.mts
+          node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --test tests/dashboard-growth-data.test.mts tests/dashboard-growth-ui.test.mts tests/dashboard-growth-render.test.mts tests/dashboard-stage7-rewards.test.mts tests/step8-ai.test.mts
           node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --test --test-name-pattern="Batch 4 AI provider hard timeout|AI provider retries one transient" tests/batch4-pro-ai-loop.test.mts tests/batch13-content-ai-contract.test.mts
       - name: Build
         run: npm run build
