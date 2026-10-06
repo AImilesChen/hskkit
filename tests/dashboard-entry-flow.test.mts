@@ -1,5 +1,8 @@
 import assert from "node:assert/strict";
 import test from "node:test";
+import { buildDailySession, emptyLearningState, recordAttempt } from "../src/lib/learning/domain.ts";
+import { projectLearningHistory } from "../src/lib/learning/projection.ts";
+import { FREE_CAPABILITIES } from "../src/lib/commercial/capabilities.ts";
 import {
   dashboardPrimaryAction,
   isTransientDashboardStorageError,
@@ -61,13 +64,37 @@ test("dashboard exposes exactly one primary action in the approved priority orde
     items: [{ kind: "learn", status: "completed" }, { kind: "practice", status: "pending" }],
   }), { label: "Continue today’s learning", href: "/today" });
   assert.deepEqual(dashboardPrimaryAction({ dueReviews: 7, currentLevel: 3, items: [] }), {
-    label: "Start today’s review",
-    href: "/review?source=today",
+    label: "Review due memories",
+    href: "/review",
+  });
+  assert.deepEqual(dashboardPrimaryAction({ dueReviews: 7, currentLevel: 3, items: [{ kind: "review", status: "pending" }] }), {
+    label: "Start today’s plan",
+    href: "/today",
   });
   assert.deepEqual(dashboardPrimaryAction({ dueReviews: 0, currentLevel: 3, items: [] }), {
     label: "Learn new words",
     href: "/vocabulary/3?mode=flashcards#vocabulary-activities",
   });
+});
+
+test("Today removes unavailable old review cards without deleting saved history", () => {
+  const now = "2026-10-06T09:00:00.000Z";
+  let state = recordAttempt(emptyLearningState(), {
+    idempotencyKey: "old-review", contentId: "question:old", contentVersion: "v1",
+    dimension: "reading", answer: "A", correctAnswer: "B", observedAt: "2026-09-01T09:00:00.000Z",
+  }).state;
+  state = recordAttempt(state, {
+    idempotencyKey: "new-review", contentId: "question:new", contentVersion: "v1",
+    dimension: "reading", answer: "A", correctAnswer: "B", observedAt: "2026-10-05T09:00:00.000Z",
+  }).state;
+  const input = { ownerId: "dashboard-learner", localDay: "2026-10-06", ruleVersion: "today-v9", now };
+  const stale = buildDailySession(state, input);
+  assert.equal(stale.session.reviewCardIds?.length, 2);
+  const availableReviewCardIds = new Set(projectLearningHistory(stale.state, FREE_CAPABILITIES, new Date(now)).cards.map((card) => card.id));
+  const repaired = buildDailySession(stale.state, { ...input, availableReviewCardIds });
+  assert.equal(repaired.state.cards.length, 2, "server history remains available if the account changes tier");
+  assert.deepEqual(repaired.session.reviewCardIds, [...availableReviewCardIds]);
+  assert.deepEqual(repaired.session.items.filter((item) => item.kind === "review" && item.status === "pending").map((item) => item.reviewCardId), [...availableReviewCardIds]);
 });
 
 test("dashboard recognizes Cloudflare D1 overload failures as transient", () => {
