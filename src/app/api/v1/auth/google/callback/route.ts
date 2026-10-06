@@ -3,9 +3,11 @@ import { cookies } from "next/headers";
 import { OAUTH_RETURN_COOKIE, OAUTH_STATE_COOKIE, OAUTH_VERIFIER_COOKIE, SESSION_COOKIE } from "@/lib/account/identity";
 import { safeReturnTo } from "@/lib/account/domain";
 import { exchangeGoogleCode, googleOAuthConfig, loadGoogleProfile } from "@/lib/account/oauth";
-import { createAccountSession, upsertGoogleAccount } from "@/lib/account/storage";
+import { createAccountSession, updateTimezone, upsertGoogleAccount, validTimezone } from "@/lib/account/storage";
 import { activateWelcomeTrialAndReferral, sha256ReferralDevice } from "@/lib/commercial/referral-storage";
 import { OAUTH_REFERRAL_COOKIE, REFERRAL_DEVICE_COOKIE } from "@/lib/commercial/referrals";
+
+const OAUTH_TIMEZONE_COOKIE = "hskkit_oauth_timezone";
 
 function failure(request: Request, code: string, returnTo: string) {
   const response = NextResponse.redirect(new URL(`/login?error=${encodeURIComponent(code)}&returnTo=${encodeURIComponent(returnTo)}`, request.url));
@@ -13,6 +15,7 @@ function failure(request: Request, code: string, returnTo: string) {
   response.cookies.delete(OAUTH_VERIFIER_COOKIE);
   response.cookies.delete(OAUTH_RETURN_COOKIE);
   response.cookies.delete(OAUTH_REFERRAL_COOKIE);
+  response.cookies.delete(OAUTH_TIMEZONE_COOKIE);
   return response;
 }
 
@@ -31,7 +34,13 @@ export async function GET(request: Request) {
     const config = googleOAuthConfig();
     const accessToken = await exchangeGoogleCode(code, verifier, config);
     const profile = await loadGoogleProfile(accessToken);
-    const account = await upsertGoogleAccount(profile);
+    const proposedTimezone = jar.get(OAUTH_TIMEZONE_COOKIE)?.value;
+    const timezone = proposedTimezone && proposedTimezone.length <= 64 && validTimezone(proposedTimezone) ? proposedTimezone : undefined;
+    const account = await upsertGoogleAccount(profile, timezone || "UTC");
+    if (timezone && account.timezone !== timezone) {
+      // Timezone is a convenience setting; a failed update must not block sign-in.
+      await updateTimezone(account.userId, timezone).catch(() => undefined);
+    }
     const referralDevice = jar.get(REFERRAL_DEVICE_COOKIE)?.value;
     await activateWelcomeTrialAndReferral({
       userId: account.userId,
@@ -52,6 +61,7 @@ export async function GET(request: Request) {
     response.cookies.delete(OAUTH_VERIFIER_COOKIE);
     response.cookies.delete(OAUTH_RETURN_COOKIE);
     response.cookies.delete(OAUTH_REFERRAL_COOKIE);
+    response.cookies.delete(OAUTH_TIMEZONE_COOKIE);
     return response;
   } catch (reason) {
     const code = reason instanceof Error && reason.message === "ACCOUNT_DELETED" ? "account_deleted" : "google_failed";

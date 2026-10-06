@@ -399,13 +399,16 @@
 .account-identity-copy > p:last-child { display: flex; align-items: center; gap: 8px; margin: 0 !important; color: #475569 !important; font-size: 14px; }
 .account-identity-meta { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1px; margin: 24px 0 0; overflow: hidden; border: 1px solid #E2E8F0; border-radius: 12px; background: #E2E8F0; }
 .account-identity-meta div { display: grid; gap: 3px; min-width: 0; padding: 12px 14px; background: white; }
-.account-identity-meta dt { color: #64748B; font-size: 12px; font-weight: 750; text-transform: uppercase; letter-spacing: .05em; }
+.account-identity-meta dt { color: #475569; font-size: 13px; font-weight: 750; text-transform: uppercase; letter-spacing: .04em; }
 .account-identity-meta dd { overflow: hidden; color: #0F172A; font-size: 15px; font-weight: 800; text-overflow: ellipsis; white-space: nowrap; }
-.account-identity-actions { display: flex; gap: 20px; margin-top: 14px; }
+.account-identity-actions { display: flex; flex-wrap: wrap; gap: 4px 20px; margin-top: 14px; }
+.account-signout-link { border: 0; padding: 0; background: transparent; cursor: pointer; font: inherit; font-weight: 800; }
+.account-signout-link:disabled { cursor: wait; opacity: .6; }
 .account-study-focus { display: grid; align-content: center; min-width: 0; padding: 30px; background: linear-gradient(145deg, #0F2F5F, #123E76); color: white; }
 .account-study-focus h2 { margin: 14px 0 6px; color: white; font-size: clamp(25px, 3vw, 34px); line-height: 1.15; letter-spacing: -.025em; }
 .account-study-focus > p { margin: 0 0 18px !important; color: #D7E8FF !important; font-size: 14px; line-height: 1.5; }
 .account-study-focus .account-primary-action { width: fit-content; background: white; color: #123E76; }
+.account-study-dashboard-link { display: inline-flex; width: fit-content; min-height: 44px; align-items: center; margin-top: 6px; color: #DBEAFE; font-size: 14px; font-weight: 700; text-decoration: underline; text-underline-offset: 3px; }
 .account-weekly-progress { display: grid; gap: 7px; margin-top: 21px; }
 .account-weekly-progress > div:first-child { display: flex; align-items: center; justify-content: space-between; gap: 12px; font-size: 13px; font-weight: 750; }
 .account-weekly-progress > div:first-child strong { font-size: 16px; }
@@ -425,7 +428,7 @@
 .account-momentum-grid strong { color: #0F172A; font-size: 27px; line-height: 1.05; }
 .account-momentum-grid article > span:not(.account-metric-icon) { margin-top: 4px; color: #334155; font-size: 14px; font-weight: 800; }
 .account-momentum-grid small { margin-top: 4px; overflow: hidden; color: #64748B; font-size: 12px; text-overflow: ellipsis; white-space: nowrap; }
-.account-benefits-grid { display: grid; grid-template-columns: minmax(0, 7fr) minmax(300px, 5fr); gap: 16px; align-items: stretch; }
+.account-benefits-grid { display: block; }
 .account-membership-card, .account-reward-card { border: 1px solid #DCE5EF; border-radius: 18px; padding: 24px; background: white; }
 .account-membership-card { box-shadow: 0 12px 32px rgba(15, 23, 42, .055); }
 .account-membership-card > p { margin: 16px 0 !important; color: #475569 !important; }
@@ -439,7 +442,7 @@
 .account-credit-heading strong small { color: #A16207; font-size: 14px; }
 .account-credit-track { background: #FDE68A; }
 .account-credit-track span { background: linear-gradient(90deg, #D97706, #F59E0B); }
-.account-credit-meta { display: flex; justify-content: space-between; gap: 12px; color: #78716C; font-size: 12px; }
+.account-credit-meta { display: flex; justify-content: space-between; gap: 12px; color: #57534E; font-size: 14px; }
 .account-credit-meta a { align-items: center; color: #92400E; display: inline-flex; font-weight: 800; min-height: 44px; }
 .account-benefit-list { display: grid; gap: 7px; margin: 16px 0; color: #475569; font-size: 14px; list-style: none; }
 .account-benefit-list li { position: relative; padding-left: 20px; }
@@ -516,7 +519,7 @@
 .account-setting > summary:focus-visible { outline: 3px solid #93C5FD; outline-offset: -3px; }
 .account-setting > summary > span:nth-child(2) { display: grid; gap: 2px; min-width: 0; }
 .account-setting > summary strong { color: #0F172A; font-size: 16px; }
-.account-setting > summary small { overflow: hidden; color: #64748B; font-size: 14px; text-overflow: ellipsis; white-space: nowrap; }
+.account-setting > summary small { overflow: hidden; color: #475569; font-size: 14px; text-overflow: ellipsis; white-space: nowrap; }
 .account-setting-action { display: inline-flex; min-height: 44px; align-items: center; color: #1D4ED8; font-size: 14px; font-weight: 800; }
 .account-setting-action::after { content: ""; width: 8px; height: 8px; margin-left: 9px; border-right: 2px solid currentColor; border-bottom: 2px solid currentColor; transform: rotate(45deg) translateY(-2px); transition: transform 160ms ease; }
 .account-setting[open] .account-setting-action::after { transform: rotate(225deg) translate(-2px, -2px); }
@@ -534,6 +537,12 @@
 .account-sync-summary > div > div, .account-device-list li > div { display: grid; gap: 2px; }
 .account-sync-summary small, .account-device-list small { color: #64748B; font-size: 13px; }
 .account-status-dot { width: 10px; height: 10px; flex: none; border-radius: 50%; background: #10B981; box-shadow: 0 0 0 4px #D1FAE5; }
+.account-status-dot.pending { background: #D97706; box-shadow: 0 0 0 4px #FEF3C7; }
+.account-device-warning { margin: 16px 0 0 !important; border-left: 3px solid #D97706; padding: 10px 13px; background: #FFFBEB; color: #78350F !important; font-size: 14px; }
+.account-referral-summary { color: #334155 !important; font-weight: 700; }
+.account-reward-rules { margin-top: 14px; border-top: 1px solid #E2E8F0; padding-top: 14px; }
+.account-reward-rules summary { width: fit-content; min-height: 44px; align-content: center; color: #1D4ED8; cursor: pointer; font-weight: 700; }
+.account-reward-rules .account-note { max-width: 760px; line-height: 1.6; }
 .account-device-list, .account-referral-list { display: grid; margin: 16px 0 0; border-top: 1px solid #E2E8F0; }
 .account-device-list li, .account-referral-list li { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 58px; border-bottom: 1px solid #E2E8F0; }
 .account-referral-list li span { color: #64748B; font-size: 14px; }
@@ -629,7 +638,7 @@
   .account-section-heading > p { text-align: left; }
   .account-setting > summary { grid-template-columns: 38px minmax(0, 1fr) auto; gap: 10px; min-height: 72px; padding: 10px 13px; }
   .account-setting > summary .account-icon-tile { width: 38px; height: 38px; }
-  .account-setting > summary small { font-size: 12px; }
+  .account-setting > summary small { font-size: 13px; }
   .account-setting-action { min-height: 44px; font-size: 0; }
   .account-setting-action::after { width: 9px; height: 9px; margin: 0 5px; }
   .account-setting-content { padding: 18px 14px; }
