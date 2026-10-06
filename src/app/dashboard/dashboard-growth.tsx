@@ -134,7 +134,7 @@ export default function DashboardGrowth({
                   ? <line key={point.day.date} x1={previous.x} y1={previous.y} x2={point.x} y2={point.y} stroke="#0f766e" strokeWidth="4" strokeLinecap="round" vectorEffect="non-scaling-stroke" />
                   : null;
               })}
-            {chartPoints.map((point) => point.y === null ? null : <circle key={point.day.date} cx={point.x} cy={point.y} r="5" fill="#fff" stroke={mode === "actions" ? "#2563eb" : "#0f766e"} strokeWidth="3"><title>{point.day.date}: {mode === "actions" ? plural(point.day.count, "action") : point.day.answers.correct + "/" + point.day.answers.total + " correct"}</title></circle>)}
+            {chartPoints.map((point) => point.y === null ? null : <circle key={point.day.date} cx={point.x} cy={point.y} r="5" fill="#fff" stroke={mode === "actions" ? "#2563eb" : "#0f766e"} strokeWidth="3"><title>{point.day.date + ": " + (mode === "actions" ? plural(point.day.count, "action") : point.day.answers.correct + "/" + point.day.answers.total + " correct")}</title></circle>)}
           </svg>
           <div className="mt-1 flex justify-between text-xs font-semibold text-slate-500"><span>{curve[0]?.label}</span><span>{curve.at(-1)?.label}</span></div>
           {mode === "accuracy" && <p className="mt-3 text-xs leading-5 text-slate-600">Days without submitted answers have no data point. Self-rated reviews are excluded; this is answer accuracy, not a measured forgetting curve.</p>}
