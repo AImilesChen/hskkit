@@ -112,6 +112,7 @@ test("when only context listening is unfinished, it resumes without replaying Le
   });
   const continued = built.session.items.filter((item) => item.contentId === content.item.contentId);
   assert.deepEqual(continued.map((item) => [item.kind, item.dimension]), [["listen", "context_audio"]]);
+  assert.equal(continued[0].title, `Continue context listening: ${content.item.hanzi}`);
 });
 
 test("an existing Today plan drops a redundant Learn step when yesterday's Learn was saved", () => {
