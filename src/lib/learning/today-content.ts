@@ -68,8 +68,8 @@ export function todayWordHistory(sessions: readonly DailySession[], ownerId: str
     return [item.contentId];
   }));
   return {
-    pinnedContentIds: current?.items.filter((item) => item.kind === "learn").map((item) => item.contentId),
-    continuingContentIds: [...new Set([...continuingContentIds, ...(current?.items.filter((item) => item.kind === "learn" && item.isContinuing).map((item) => item.contentId) ?? [])])],
+    pinnedContentIds: [...new Set(current?.items.filter((item) => item.kind === "learn" || item.kind === "listen").map((item) => item.contentId) ?? [])],
+    continuingContentIds: [...new Set([...continuingContentIds, ...(current?.items.filter((item) => (item.kind === "learn" || item.kind === "listen") && item.isContinuing).map((item) => item.contentId) ?? [])])],
     continuingSteps,
     completedContentIds,
     freezePinned: Boolean(current),
