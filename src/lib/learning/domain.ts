@@ -785,7 +785,7 @@ export function buildDailySession(state: LearningState, input: { ownerId: string
     .map((card) => ({ id: reviewItemId(card), kind: "review", contentId: card.contentId, contentVersion: card.contentVersion, reviewCardId: card.id, dimension: card.dimension, status: "pending" }));
   const contentItems = content?.status === "ready" ? content.items : [];
   const planFingerprint = content?.status === "ready"
-    ? `ready:${content.releaseId}:${content.startLevel}:${contentItems.map((item) => `${item.contentId}:${item.contentVersion}:${item.isContinuing ? "continue" : "new"}`).join("|")}:${newWordCount}:${listeningEnabled}:${focus}`
+    ? `ready:${content.releaseId}:${content.startLevel}:${contentItems.map((item) => `${item.contentId}:${item.contentVersion}:${item.isContinuing ? "continue" : "new"}:${item.resumeSteps ? [item.resumeSteps.learn, item.resumeSteps.audio, item.resumeSteps.contextAudio].map(Number).join("") : "all"}`).join("|")}:${newWordCount}:${listeningEnabled}:${focus}`
     : content?.status === "empty"
       ? `empty:${content.releaseId}:${content.startLevel}:${content.code}:${newWordCount}:${listeningEnabled}:${focus}`
       : `legacy:${newWordCount}:${listeningEnabled}:${focus}`;
@@ -798,13 +798,15 @@ export function buildDailySession(state: LearningState, input: { ownerId: string
     const audioItems: DailyItem[] = [];
     const contextItems: DailyItem[] = [];
     for (const item of contentItems) {
-      learnItems.push({ id: `learn:${item.contentId}:${item.contentVersion}`, kind: "learn", contentId: item.contentId, contentVersion: item.contentVersion, title: `${item.isContinuing ? "Continue learning" : "Learn"} ${item.hanzi}`, href: `/word/${item.studySlug}`, status: "pending", isContinuing: item.isContinuing });
+      const needs = item.isContinuing ? item.resumeSteps : undefined;
+      if (!needs || needs.learn) learnItems.push({ id: `learn:${item.contentId}:${item.contentVersion}`, kind: "learn", contentId: item.contentId, contentVersion: item.contentVersion, title: `${item.isContinuing ? "Continue learning" : "Learn"} ${item.hanzi}`, href: `/word/${item.studySlug}`, status: "pending", isContinuing: item.isContinuing });
       if (listeningEnabled && item.audioSrc) {
-        audioItems.push({ id: `listen:${item.contentId}:${item.contentVersion}:audio`, kind: "listen", contentId: item.contentId, contentVersion: item.contentVersion, dimension: "audio", title: `${item.isContinuing ? "Continue listening to" : "Listen to"} ${item.hanzi}`, href: `/listen/today/${item.assetId}?mode=audio`, status: "pending", isContinuing: item.isContinuing });
-        if (item.example) contextItems.push({ id: `listen:${item.contentId}:${item.contentVersion}:context_audio`, kind: "listen", contentId: item.contentId, contentVersion: item.contentVersion, dimension: "context_audio", title: "Listen in context", href: `/listen/today/${item.assetId}?mode=context_audio`, status: "pending", isContinuing: item.isContinuing });
+        if (!needs || needs.audio) audioItems.push({ id: `listen:${item.contentId}:${item.contentVersion}:audio`, kind: "listen", contentId: item.contentId, contentVersion: item.contentVersion, dimension: "audio", title: `${item.isContinuing ? "Continue listening to" : "Listen to"} ${item.hanzi}`, href: `/listen/today/${item.assetId}?mode=audio`, status: "pending", isContinuing: item.isContinuing });
+        if (item.example && (!needs || needs.contextAudio)) contextItems.push({ id: `listen:${item.contentId}:${item.contentVersion}:context_audio`, kind: "listen", contentId: item.contentId, contentVersion: item.contentVersion, dimension: "context_audio", title: `${item.isContinuing ? "Continue context listening" : "Listen in context"}: ${item.hanzi}`, href: `/listen/today/${item.assetId}?mode=context_audio`, status: "pending", isContinuing: item.isContinuing });
       }
     }
-    contentCore.push(...learnItems, ...audioItems, ...contextItems);
+    const wordSteps = [...learnItems, ...audioItems, ...contextItems];
+    contentCore.push(...wordSteps.filter((step) => step.isContinuing), ...wordSteps.filter((step) => !step.isContinuing));
   }
   const core: DailyItem[] = content?.status === "ready" ? [
     ...contentCore,

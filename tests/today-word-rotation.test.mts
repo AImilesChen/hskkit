@@ -35,7 +35,7 @@ test("Today has a larger usable pool and each planned word opens a published stu
   }
 });
 
-test("unfinished word continues tomorrow, with a new word after it and matching listening identity", () => {
+test("a learned word with unfinished listening resumes at audio without repeating Learn", () => {
   const { content, session } = firstDay();
   assert.equal(content.status, "ready");
   if (content.status !== "ready") return;
@@ -53,9 +53,100 @@ test("unfinished word continues tomorrow, with a new word after it and matching 
     dailyContent: next, budgetMinutes: 20, newWordCount: 1, listeningEnabled: true,
   });
   const continued = built.session.items.find((item) => item.kind === "learn" && item.contentId === content.item.contentId);
-  assert.equal(continued?.isContinuing, true);
-  assert.match(continued?.title ?? "", /^Continue learning /);
-  assert.ok(built.session.items.some((item) => item.kind === "listen" && item.contentId === continued?.contentId));
+  assert.equal(continued, undefined);
+  const listening = built.session.items.find((item) => item.kind === "listen" && item.contentId === content.item.contentId && item.dimension === "audio");
+  assert.equal(listening?.isContinuing, true);
+  assert.match(listening?.title ?? "", /^Continue listening to /);
+  const newLearn = built.session.items.find((item) => item.kind === "learn" && !item.isContinuing);
+  assert.ok(newLearn);
+  assert.ok(built.session.items.indexOf(listening!) < built.session.items.indexOf(newLearn));
+});
+
+test("a word whose Learn step is unfinished still resumes Learn and its available listening", () => {
+  const { content, session } = firstDay();
+  assert.equal(content.status, "ready");
+  if (content.status !== "ready") return;
+  const history = todayWordHistory([session], "learner", "2026-10-05", 2);
+  const next = selectTodayContent(2, 1, { ...history, listeningEnabled: true });
+  assert.equal(next.status, "ready");
+  if (next.status !== "ready") return;
+  assert.equal(next.items[0].resumeSteps?.learn, true);
+  const built = buildDailySession({ ...emptyLearningState(), dailySessions: [session] }, {
+    ownerId: "learner", localDay: "2026-10-05", ruleVersion: "today-v10", now: "2026-10-05T09:00:00.000Z",
+    dailyContent: next, budgetMinutes: 20, newWordCount: 1, listeningEnabled: true,
+  });
+  assert.ok(built.session.items.some((item) => item.kind === "learn" && item.contentId === content.item.contentId && item.isContinuing));
+  assert.ok(built.session.items.some((item) => item.kind === "listen" && item.contentId === content.item.contentId));
+});
+
+test("an older unfinished audio step does not reopen after a later completion", () => {
+  const { content, session } = firstDay();
+  assert.equal(content.status, "ready");
+  if (content.status !== "ready") return;
+  const first = { ...session, items: session.items.map((item) => item.kind === "learn" ? { ...item, status: "completed" as const } : item) };
+  const second = {
+    ...first, id: "second-day", localDay: "2026-10-05",
+    items: first.items.map((item) => item.kind === "listen" ? { ...item, status: "completed" as const } : item),
+  };
+  const history = todayWordHistory([first, second], "learner", "2026-10-06", 2);
+  assert.ok(!history.continuingContentIds?.includes(content.item.contentId));
+});
+
+test("when only context listening is unfinished, it resumes without replaying Learn or word audio", () => {
+  const { content, session } = firstDay();
+  assert.equal(content.status, "ready");
+  if (content.status !== "ready") return;
+  assert.ok(content.item.example);
+  const yesterday = {
+    ...session,
+    items: session.items.map((item) => item.kind === "learn" || item.dimension === "audio"
+      ? { ...item, status: "completed" as const } : item),
+  };
+  const history = todayWordHistory([yesterday], "learner", "2026-10-05", 2);
+  const next = selectTodayContent(2, 1, { ...history, listeningEnabled: true });
+  assert.equal(next.status, "ready");
+  if (next.status !== "ready") return;
+  const built = buildDailySession({ ...emptyLearningState(), dailySessions: [yesterday] }, {
+    ownerId: "learner", localDay: "2026-10-05", ruleVersion: "today-v10", now: "2026-10-05T09:00:00.000Z",
+    dailyContent: next, budgetMinutes: 20, newWordCount: 1, listeningEnabled: true,
+  });
+  const continued = built.session.items.filter((item) => item.contentId === content.item.contentId);
+  assert.deepEqual(continued.map((item) => [item.kind, item.dimension]), [["listen", "context_audio"]]);
+  assert.equal(continued[0].title, `Continue context listening: ${content.item.hanzi}`);
+});
+
+test("an existing Today plan drops a redundant Learn step when yesterday's Learn was saved", () => {
+  const { content, session } = firstDay();
+  assert.equal(content.status, "ready");
+  if (content.status !== "ready") return;
+  const yesterday = { ...session, items: session.items.map((item) => item.kind === "learn" ? { ...item, status: "completed" as const } : item) };
+  const current = {
+    ...session, id: "old-current-plan", localDay: "2026-10-05", planFingerprint: "old-plan",
+    items: session.items.map((item) => ({ ...item, status: "pending" as const, isContinuing: true })),
+  };
+  const state = { ...emptyLearningState(), dailySessions: [yesterday, current] };
+  const history = todayWordHistory(state.dailySessions, "learner", "2026-10-05", 2);
+  const next = selectTodayContent(2, 1, { ...history, listeningEnabled: true });
+  assert.equal(next.status, "ready");
+  if (next.status !== "ready") return;
+  const built = buildDailySession(state, {
+    ownerId: "learner", localDay: "2026-10-05", ruleVersion: "today-v10", now: "2026-10-05T09:00:00.000Z",
+    dailyContent: next, budgetMinutes: 20, newWordCount: 1, listeningEnabled: true,
+  });
+  assert.equal(built.session.id, current.id);
+  assert.ok(!built.session.items.some((item) => item.kind === "learn" && item.contentId === content.item.contentId && item.status === "pending"));
+  assert.ok(built.session.items.some((item) => item.kind === "listen" && item.contentId === content.item.contentId && item.status === "pending"));
+  const afterRefresh = todayWordHistory(built.state.dailySessions, "learner", "2026-10-05", 2);
+  assert.ok(afterRefresh.pinnedContentIds?.includes(content.item.contentId));
+  const refreshedContent = selectTodayContent(2, 1, { ...afterRefresh, listeningEnabled: true });
+  assert.equal(refreshedContent.status, "ready");
+  if (refreshedContent.status !== "ready") return;
+  const refreshed = buildDailySession(built.state, {
+    ownerId: "learner", localDay: "2026-10-05", ruleVersion: "today-v10", now: "2026-10-05T09:05:00.000Z",
+    dailyContent: refreshedContent, budgetMinutes: 20, newWordCount: 1, listeningEnabled: true,
+  });
+  assert.ok(refreshed.session.items.some((item) => item.kind === "listen" && item.contentId === content.item.contentId && item.status === "pending"));
+  assert.ok(!refreshed.session.items.some((item) => item.kind === "learn" && item.contentId === content.item.contentId && item.status === "pending"));
 });
 
 test("completed word is not assigned as new tomorrow, but today's saved selection stays fixed", () => {

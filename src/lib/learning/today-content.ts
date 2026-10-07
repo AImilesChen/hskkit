@@ -22,6 +22,13 @@ export interface TodayContentItem {
   example?: StudyWord["example"];
   audioSrc?: string;
   isContinuing?: boolean;
+  resumeSteps?: TodayResumeSteps;
+}
+
+export interface TodayResumeSteps {
+  learn: boolean;
+  audio: boolean;
+  contextAudio: boolean;
 }
 
 export type TodayContentPlan =
@@ -31,6 +38,7 @@ export type TodayContentPlan =
 export interface TodayWordSelection {
   pinnedContentIds?: readonly string[];
   continuingContentIds?: readonly string[];
+  continuingSteps?: Readonly<Record<string, TodayResumeSteps>>;
   completedContentIds?: readonly string[];
   listeningEnabled?: boolean;
   freezePinned?: boolean;
@@ -45,15 +53,24 @@ export function todayWordHistory(sessions: readonly DailySession[], ownerId: str
     .filter((item) => item.kind === "learn" && item.status === "completed")
     .map((item) => item.contentId)))];
   const seenEarlierWords = new Set<string>();
+  const continuingSteps: Record<string, TodayResumeSteps> = {};
   const continuingContentIds = previous.flatMap((session) => session.items.flatMap((item) => {
     if (item.kind !== "learn" || seenEarlierWords.has(item.contentId)) return [];
     seenEarlierWords.add(item.contentId);
-    return item.status !== "completed" || session.items.some((step) => step.kind === "listen" && step.contentId === item.contentId && step.status !== "completed")
-      ? [item.contentId] : [];
+    const steps = previous.flatMap((day) => day.items.filter((step) => step.contentId === item.contentId));
+    const learn = !steps.some((step) => step.kind === "learn" && step.status === "completed");
+    const audio = learn || (steps.some((step) => step.kind === "listen" && step.dimension === "audio")
+      && !steps.some((step) => step.kind === "listen" && step.dimension === "audio" && step.status === "completed"));
+    const contextAudio = learn || (steps.some((step) => step.kind === "listen" && step.dimension === "context_audio")
+      && !steps.some((step) => step.kind === "listen" && step.dimension === "context_audio" && step.status === "completed"));
+    if (!learn && !audio && !contextAudio) return [];
+    continuingSteps[item.contentId] = { learn, audio, contextAudio };
+    return [item.contentId];
   }));
   return {
-    pinnedContentIds: current?.items.filter((item) => item.kind === "learn").map((item) => item.contentId),
-    continuingContentIds: [...new Set([...continuingContentIds, ...(current?.items.filter((item) => item.kind === "learn" && item.isContinuing).map((item) => item.contentId) ?? [])])],
+    pinnedContentIds: [...new Set(current?.items.filter((item) => item.kind === "learn" || item.kind === "listen").map((item) => item.contentId) ?? [])],
+    continuingContentIds: [...new Set([...continuingContentIds, ...(current?.items.filter((item) => (item.kind === "learn" || item.kind === "listen") && item.isContinuing).map((item) => item.contentId) ?? [])])],
+    continuingSteps,
     completedContentIds,
     freezePinned: Boolean(current),
   };
@@ -133,7 +150,7 @@ export function selectTodayContent(startLevel: number, requestedCount = 1, selec
     for (const item of [...pinned, ...carried].slice(0, 5)) {
       if (chosen.has(item.contentId)) continue;
       chosen.add(item.contentId);
-      items.push({ ...item, isContinuing: continuing.has(item.contentId) });
+      items.push({ ...item, isContinuing: continuing.has(item.contentId), resumeSteps: selection.continuingSteps?.[item.contentId] });
     }
     const remaining = pool.filter((item) => !chosen.has(item.contentId) && !completed.has(item.contentId));
     const ordered = selection.listeningEnabled === false ? remaining : [

@@ -911,7 +911,7 @@ function primaryTodayAction(item: Item, dailySessionId: string, step: number, to
 }
 function todayReason(item: Item, openMistakes: number, weakest: string) {
   if (item.kind === "learn") return item.isContinuing ? "You started this word earlier. Finish it before adding more new material." : "This word has not been completed in your earlier Today sessions.";
-  if (item.kind === "listen" && item.isContinuing) return "Finish this word's listening step from your earlier Today session.";
+  if (item.kind === "listen" && item.isContinuing) return item.dimension === "context_audio" ? "Only this word's context listening remains; completed steps stay saved." : "Finish this word's unfinished listening check; completed Learn steps stay saved.";
   if (item.kind === "listen") return item.dimension === "context_audio" ? "Context listening follows word audio so meaning is tested in a real sentence." : "Word audio follows Learn so sound is attached to the same item.";
   if (item.kind === "practice") return "Practice closes the loop with a scored, server-saved result.";
   if (item.kind === "review") return openMistakes ? `${openMistakes} open mistake${openMistakes === 1 ? "" : "s"} and due cards take priority.` : `${weakest} is currently your lowest mastery area.`;
