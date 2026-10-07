@@ -136,6 +136,17 @@ test("an existing Today plan drops a redundant Learn step when yesterday's Learn
   assert.equal(built.session.id, current.id);
   assert.ok(!built.session.items.some((item) => item.kind === "learn" && item.contentId === content.item.contentId && item.status === "pending"));
   assert.ok(built.session.items.some((item) => item.kind === "listen" && item.contentId === content.item.contentId && item.status === "pending"));
+  const afterRefresh = todayWordHistory(built.state.dailySessions, "learner", "2026-10-05", 2);
+  assert.ok(afterRefresh.pinnedContentIds?.includes(content.item.contentId));
+  const refreshedContent = selectTodayContent(2, 1, { ...afterRefresh, listeningEnabled: true });
+  assert.equal(refreshedContent.status, "ready");
+  if (refreshedContent.status !== "ready") return;
+  const refreshed = buildDailySession(built.state, {
+    ownerId: "learner", localDay: "2026-10-05", ruleVersion: "today-v10", now: "2026-10-05T09:05:00.000Z",
+    dailyContent: refreshedContent, budgetMinutes: 20, newWordCount: 1, listeningEnabled: true,
+  });
+  assert.ok(refreshed.session.items.some((item) => item.kind === "listen" && item.contentId === content.item.contentId && item.status === "pending"));
+  assert.ok(!refreshed.session.items.some((item) => item.kind === "learn" && item.contentId === content.item.contentId && item.status === "pending"));
 });
 
 test("completed word is not assigned as new tomorrow, but today's saved selection stays fixed", () => {
