@@ -15,7 +15,7 @@ export async function requireBlogAdmin() {
   const row = await env.LEARNING_DB.prepare("SELECT email,email_verified FROM account_oauth_identities WHERE user_id=? AND provider='google' ORDER BY updated_at DESC LIMIT 1")
     .bind(identity.account.userId).first<{ email: string | null; email_verified: number }>();
   const email = row?.email_verified === 1 ? row.email?.trim().toLowerCase() : undefined;
-  if (!isEmailAllowed(email, env.BLOG_ADMIN_EMAILS)) throw new BlogHttpError(403, "BLOG_ADMIN_REQUIRED");
+  if (!isEmailAllowed(email, env.BLOG_ADMIN_EMAILS) && !isEmailAllowed(email, env.BLOG_ADMIN_EXTRA_EMAILS)) throw new BlogHttpError(403, "BLOG_ADMIN_REQUIRED");
   return { account: identity.account, email: email!, env };
 }
 export async function readBlogJson(request: Request) {
