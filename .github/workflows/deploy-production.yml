@@ -39,6 +39,23 @@ jobs:
             echo "Missing repository secret CLOUDFLARE_API_TOKEN" >&2
             exit 1
           fi
+      - name: Diagnose Cloudflare metadata access
+        run: |
+          endpoints=(
+            "bindings|/accounts/$CLOUDFLARE_ACCOUNT_ID/workers/services/hskkit/environments/production/bindings"
+            "routes|/accounts/$CLOUDFLARE_ACCOUNT_ID/workers/services/hskkit/environments/production/routes?show_zonename=true"
+            "domains|/accounts/$CLOUDFLARE_ACCOUNT_ID/workers/domains/records?page=0&per_page=5&service=hskkit&environment=production"
+            "subdomain|/accounts/$CLOUDFLARE_ACCOUNT_ID/workers/services/hskkit/environments/production/subdomain"
+            "service|/accounts/$CLOUDFLARE_ACCOUNT_ID/workers/services/hskkit/environments/production"
+            "schedules|/accounts/$CLOUDFLARE_ACCOUNT_ID/workers/scripts/hskkit/schedules"
+          )
+          for entry in "${endpoints[@]}"; do
+            label="${entry%%|*}"
+            path="${entry#*|}"
+            status=$(curl --silent --show-error --max-time 20 --output "$RUNNER_TEMP/cf-metadata-response.json" --write-out "%{http_code}" -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" "https://api.cloudflare.com/client/v4$path" || true)
+            codes=$(jq -r '[.errors[]?.code] | join(",")' "$RUNNER_TEMP/cf-metadata-response.json" 2>/dev/null || true)
+            echo "Cloudflare metadata $label: HTTP $status; error codes: ${codes:-none}"
+          done
       - name: Check whether assessment delivery changed
         id: assessment
         run: |
