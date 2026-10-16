@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Script from "next/script";
 import { Inter, Noto_Sans_SC, Noto_Serif_SC, Source_Serif_4 } from "next/font/google";
 import { PlausibleAnalytics } from "./components/plausible-analytics";
 import { FeedbackWidget } from "./components/feedback-widget";
@@ -90,6 +91,16 @@ export default function RootLayout({
         <LearningEngagementTracker />
         <FeedbackWidget />
         <PlausibleAnalytics domain={PLAUSIBLE_DOMAIN} endpoint={PLAUSIBLE_ENDPOINT} />
+        <Script
+          src="https://www.googletagmanager.com/gtag/js?id=G-W19896DKRJ"
+          strategy="afterInteractive"
+        />
+        <Script id="google-analytics" strategy="afterInteractive">
+          {`window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag("js", new Date());
+gtag("config", "G-W19896DKRJ");`}
+        </Script>
       </body>
     </html>
   );
