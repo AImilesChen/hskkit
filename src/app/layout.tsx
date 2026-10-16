@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Inter, Noto_Sans_SC, Noto_Serif_SC, Source_Serif_4 } from "next/font/google";
 import { PlausibleAnalytics } from "./components/plausible-analytics";
+import { GoogleAnalyticsConsent } from "./components/google-analytics-consent";
 import { FeedbackWidget } from "./components/feedback-widget";
 import { LearningEngagementTracker } from "./components/learning-engagement-tracker";
 import "./globals.css";
@@ -90,6 +91,7 @@ export default function RootLayout({
         <LearningEngagementTracker />
         <FeedbackWidget />
         <PlausibleAnalytics domain={PLAUSIBLE_DOMAIN} endpoint={PLAUSIBLE_ENDPOINT} />
+        <GoogleAnalyticsConsent />
       </body>
     </html>
   );
