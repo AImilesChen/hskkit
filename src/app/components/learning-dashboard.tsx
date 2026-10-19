@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import type { ReactNode } from "react";
 import AiAssist from "./ai-assist";
+import UploadedMistakeAnalyzer from "./uploaded-mistake-analyzer";
 import { AudioPlaybackControl } from "./audio-playback-control";
 import HomeIcon, { type HomeIconName } from "./home-icon";
 import LearningLoopNav, { type LearningLoopLabel } from "./learning-loop-nav";
@@ -973,6 +974,7 @@ function MistakesWorkspace({ mistakes, mastery, scope }: { mistakes: Mistake[]; 
   const retryHref = (mistake: Mistake) => `/review?source=mistakes&contentId=${encodeURIComponent(mistake.contentId)}${mistake.cardId ? `&cardId=${encodeURIComponent(mistake.cardId)}` : ""}`;
 
   return <>
+    <UploadedMistakeAnalyzer />
     {open.length > 0 ? <>
       <section aria-label="Filter open mistakes" className="grid gap-4 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:grid-cols-2 lg:grid-cols-[125px_minmax(0,1fr)_118px_132px_auto] lg:items-end lg:gap-3 lg:px-5 lg:py-4">
         <label className="block text-sm font-semibold text-slate-700">HSK level<select value={level} onChange={(event) => { setLevel(Number(event.target.value)); setPage(1); }} className="mt-1 block min-h-11 w-full rounded-lg border border-slate-300 bg-white px-2 text-slate-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-600"><option value={0}>All levels</option>{levels.map((value) => <option key={value} value={value}>HSK {value}</option>)}</select></label>

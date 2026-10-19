@@ -56,7 +56,7 @@ export function usagePeriodKey(period: "day" | "month", now = new Date()) {
 }
 
 export function aiCreditCost(feature: AiFeature) {
-  return feature === "study_plan" ? 5 : 1;
+  return feature === "study_plan" || feature === "image_mistake" ? 5 : 1;
 }
 
 export function historyWindow<T extends { observedAt: string }>(rows: T[], capabilities: ProductCapabilities, now = new Date()) {

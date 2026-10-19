@@ -270,7 +270,7 @@ export async function applySubscriptionEvent(event:NormalizedSubscriptionEvent, 
     if(event.kind==="invoice_paid") {
       const chargedAt=event.chargedAt??at;
       const firstPaidWindow=Math.abs(Date.parse(chargedAt)-Date.parse(sub.created_at))<=7*86_400_000;
-      const existingRollover=await db.prepare(`SELECT 1 ok FROM welcome_credit_rollovers WHERE owner_id=?`).bind(sub.owner_id).first<{ok:number}>();
+      const existingRollover=await db.prepare(`SELECT 1 ok FROM welcome_credit_rollovers WHERE owner_id=? UNION SELECT 1 ok FROM post_trial_ai_credits WHERE owner_id=?`).bind(sub.owner_id,sub.owner_id).first<{ok:number}>();
       if(!existingRollover&&firstPaidWindow){
         const trial=await db.prepare(`SELECT starts_at,ends_at,ai_credits FROM promotional_entitlements WHERE owner_id=? AND kind='welcome_trial' ORDER BY created_at DESC LIMIT 1`).bind(sub.owner_id).first<{starts_at:string;ends_at:string;ai_credits:number|null}>();
         if(trial){

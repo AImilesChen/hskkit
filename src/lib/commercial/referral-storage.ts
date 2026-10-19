@@ -76,28 +76,40 @@ export async function bonusCreditBalance(ownerId: string, at = new Date()) {
   return Math.max(0, Number(row?.balance ?? 0));
 }
 
-export async function resolveCommercialAccess(ownerId: string, at = new Date()): Promise<{ capabilities: ProductCapabilities; access: ReturnType<typeof resolveAccessSource>; bonusCredits: number }> {
+export async function resolveCommercialAccess(ownerId: string, at = new Date()): Promise<{ capabilities: ProductCapabilities; access: ReturnType<typeof resolveAccessSource>; bonusCredits: number; postTrialGiftCredits: number }> {
   const db = database();
-  // Expiry is derived from ends_at at read time; request-path reads do not perform maintenance writes.
-  const [paid, trial, promo, bonus, rolloverRow] = await Promise.all([
+  // Expiry is derived from ends_at. The one-time post-trial gift is granted
+  // lazily at the first access after the trial ends.
+  const [paid, trial, promo, bonus, rolloverRow, existingGift] = await Promise.all([
     db.prepare("SELECT status,ends_at FROM subscription_entitlements WHERE owner_id=? AND stripe_livemode=?").bind(ownerId,activeStripeLivemode()).first<{ status: "active" | "ended" | "revoked"; ends_at: string | null }>(),
-    db.prepare("SELECT status,ends_at,ai_credits FROM promotional_entitlements WHERE owner_id=? AND kind='welcome_trial' ORDER BY created_at DESC LIMIT 1").bind(ownerId).first<{ status: "active" | "ended" | "revoked"; ends_at: string | null; ai_credits: number | null }>(),
+    db.prepare("SELECT id,status,ends_at,ai_credits FROM promotional_entitlements WHERE owner_id=? AND kind='welcome_trial' ORDER BY created_at DESC LIMIT 1").bind(ownerId).first<{ id: string; status: "active" | "ended" | "revoked"; ends_at: string | null; ai_credits: number | null }>(),
     db.prepare("SELECT status,MAX(ends_at) ends_at FROM promotional_entitlements WHERE owner_id=? AND kind='referral_pass' AND status='active'").bind(ownerId).first<{ status: "active" | "ended" | "revoked"; ends_at: string | null }>(),
     bonusCreditBalance(ownerId, at),
     db.prepare("SELECT remaining_units,conversion_period,conversion_period_used FROM welcome_credit_rollovers WHERE owner_id=?").bind(ownerId).first<{ remaining_units: number; conversion_period: string; conversion_period_used: number }>(),
+    db.prepare("SELECT remaining_units FROM post_trial_ai_credits WHERE owner_id=?").bind(ownerId).first<{ remaining_units: number }>(),
   ]);
   const access = resolveAccessSource({
     paid: paid ? { status: paid.status, endsAt: paid.ends_at } : null,
     trial: trial ? { status: trial.status, endsAt: trial.ends_at, aiCredits: trial.ai_credits } : null,
     promo: promo?.ends_at ? { status: promo.status, endsAt: promo.ends_at } : null,
   }, at);
-  if (access.tier === "free") return { capabilities: FREE_CAPABILITIES, access, bonusCredits: bonus };
+  const shouldGrantGift = !existingGift && trial && trial.status !== "revoked" && trial.ends_at && trial.ends_at <= iso(at) && access.source !== "paid" && !rolloverRow;
+  if (shouldGrantGift) {
+    await db.prepare("INSERT OR IGNORE INTO post_trial_ai_credits(owner_id,trial_id,granted_units,remaining_units,created_at) VALUES(?,?,10,10,?)").bind(ownerId, trial.id, iso(at)).run();
+  }
+  const gift = existingGift ?? (shouldGrantGift ? await db.prepare("SELECT remaining_units FROM post_trial_ai_credits WHERE owner_id=?").bind(ownerId).first<{ remaining_units: number }>() : null);
+  const giftCredits = Number(gift?.remaining_units ?? 0);
+  // The current monthly bucket may already contain trial/Pro usage. Preserve
+  // that usage in its ceiling so a newly available gift is actually spendable.
+  const priorUsage = access.baseAiCredits === 0 ? await db.prepare("SELECT used FROM ai_quota_buckets WHERE owner_id=? AND period_key=?").bind(ownerId, at.toISOString().slice(0, 7)).first<{ used: number }>() : null;
+  const carriedUsage = Math.max(0, Number(priorUsage?.used ?? 0));
+  if (access.tier === "free") return { capabilities: bonus + giftCredits > 0 ? { ...FREE_CAPABILITIES, aiMonthlyCredits: Math.min(2000, carriedUsage + bonus + giftCredits), aiRequestsPerHour: 3, aiConcurrency: 1 } : FREE_CAPABILITIES, access, bonusCredits: bonus + giftCredits, postTrialGiftCredits: giftCredits };
   if (access.source === "paid") {
     const rollover = rolloverRow ? { remainingCredits: Number(rolloverRow.remaining_units), conversionPeriod: rolloverRow.conversion_period, spentInConversionPeriod: Number(rolloverRow.conversion_period_used) } : null;
     const paidCredits = paidCreditAllowance({ rollover, currentPeriod: at.toISOString().slice(0, 7) });
-    return { capabilities: { ...PRO_CAPABILITIES, aiMonthlyCredits: paidCredits.totalAllowance + bonus }, access, bonusCredits: bonus + paidCredits.bonusCredits };
+    return { capabilities: { ...PRO_CAPABILITIES, aiMonthlyCredits: paidCredits.totalAllowance + bonus + giftCredits }, access, bonusCredits: bonus + paidCredits.bonusCredits + giftCredits, postTrialGiftCredits: giftCredits };
   }
-  return { capabilities: { ...PRO_CAPABILITIES, aiMonthlyCredits: access.baseAiCredits + bonus }, access, bonusCredits: bonus };
+  return { capabilities: { ...PRO_CAPABILITIES, aiMonthlyCredits: Math.min(2000, access.baseAiCredits + carriedUsage + bonus + giftCredits) }, access, bonusCredits: bonus + giftCredits, postTrialGiftCredits: giftCredits };
 }
 
 async function hasPaidPro(userId: string, at: Date) {
@@ -219,7 +231,7 @@ export async function trialAndReferralSummary(userId: string, now = new Date()) 
     bonusCreditBalance(owner(userId), now),
     resolveCommercialAccess(owner(userId), now),
   ]);
-  return { referralCode, sharePath: `/login?ref=${referralCode}`, trial, access: access.access, bonusCredits: bonus, bonusExpiresAt: yearEnd(now), referrals: relationshipRows.results, rewards: rewards.results };
+  return { referralCode, sharePath: `/login?ref=${referralCode}`, trial, access: access.access, bonusCredits: bonus, postTrialGiftCredits: access.postTrialGiftCredits, bonusExpiresAt: yearEnd(now), referrals: relationshipRows.results, rewards: rewards.results };
 }
 
 export async function trialAndReferralSnapshot(userId: string, now = new Date(), resolvedAccess?: Awaited<ReturnType<typeof resolveCommercialAccess>>) {
@@ -233,7 +245,7 @@ export async function trialAndReferralSnapshot(userId: string, now = new Date(),
   ]);
   const access = resolvedAccess ?? await resolveCommercialAccess(owner(userId), now);
   const referralCode = code?.code ?? null;
-  return { referralCode, sharePath: referralCode ? `/login?ref=${referralCode}` : null, trial, access: access.access, bonusCredits: bonus, bonusExpiresAt: yearEnd(now), referrals: relationshipRows.results, rewards: rewards.results };
+  return { referralCode, sharePath: referralCode ? `/login?ref=${referralCode}` : null, trial, access: access.access, bonusCredits: bonus, postTrialGiftCredits: access.postTrialGiftCredits, bonusExpiresAt: yearEnd(now), referrals: relationshipRows.results, rewards: rewards.results };
 }
 
 export async function adminReferralAction(action: "block_referral" | "revoke_reward", id: string, reason: string, now = new Date()) {
