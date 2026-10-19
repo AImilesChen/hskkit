@@ -461,7 +461,7 @@ export async function actOnDataRequest(userId: string, requestId: string, action
   const processing = await persistTransition(userId, current, "process");
   try {
     if (processing.type === "export") {
-      const [learning, placement, accountRow, requests, audits, plans, aiOperations, aiQuota, rewardSessions, rewardHeartbeats, rewardDays, rewardTasks, rewardPoints, rewardBadges, rewardProfile] = await Promise.all([
+      const [learning, placement, accountRow, requests, audits, plans, aiOperations, aiQuota, rewardSessions, rewardHeartbeats, rewardDays, rewardTasks, rewardPoints, rewardBadges, rewardProfile, externalMistakes, postTrialCredits] = await Promise.all([
         loadState(ownerId(userId)),
         loadPlacementState(ownerId(userId)),
         getAccount(userId),
@@ -477,9 +477,11 @@ export async function actOnDataRequest(userId: string, requestId: string, action
         db().prepare("SELECT local_day,period_key,units,source,created_at FROM learning_point_ledger WHERE owner_id=? ORDER BY local_day").bind(ownerId(userId)).all(),
         db().prepare("SELECT badge_key,awarded_at FROM learning_badges WHERE owner_id=? ORDER BY awarded_at").bind(ownerId(userId)).all(),
         db().prepare("SELECT timezone,created_at FROM learning_reward_profiles WHERE owner_id=?").bind(ownerId(userId)).first(),
+        db().prepare("SELECT question,answer,explanation,learner_mistake,next_step,confidence,created_at FROM external_image_mistakes WHERE owner_id=? ORDER BY created_at").bind(ownerId(userId)).all(),
+        db().prepare("SELECT granted_units,remaining_units,created_at FROM post_trial_ai_credits WHERE owner_id=?").bind(ownerId(userId)).first(),
       ]);
       const exportedLearning = { ...learning.state, placementSessions: placement.state.placementSessions, placementResults: placement.state.placementResults };
-      const resultJson = JSON.stringify({ schemaVersion: "account-export-v1", generatedAt: now(), account: accountRow, learning: exportedLearning, rewards: { profile: rewardProfile, sessions: rewardSessions.results, heartbeats: rewardHeartbeats.results, days: rewardDays.results, qualifyingTasks: rewardTasks.results, points: rewardPoints.results, badges: rewardBadges.results }, plans, ai: { operations: aiOperations.results, quota: aiQuota.results }, requests, audit: audits.results });
+      const resultJson = JSON.stringify({ schemaVersion: "account-export-v1", generatedAt: now(), account: accountRow, learning: exportedLearning, rewards: { profile: rewardProfile, sessions: rewardSessions.results, heartbeats: rewardHeartbeats.results, days: rewardDays.results, qualifyingTasks: rewardTasks.results, points: rewardPoints.results, badges: rewardBadges.results }, plans, ai: { operations: aiOperations.results, quota: aiQuota.results, postTrialCredits }, externalMistakes: externalMistakes.results, requests, audit: audits.results });
       const completed = transitionDataRequest(processing, "complete", now());
       const expiresAt = new Date(Date.now() + 24 * 60 * 60_000).toISOString();
       const assertionId = crypto.randomUUID();
@@ -508,6 +510,8 @@ export async function actOnDataRequest(userId: string, requestId: string, action
         db().prepare("DELETE FROM study_plan_versions WHERE owner_id=?").bind(ownerId(userId)),
         db().prepare("DELETE FROM step7_playback_tickets WHERE owner_id=?").bind(ownerId(userId)),
         db().prepare("DELETE FROM ai_operations WHERE owner_id=?").bind(ownerId(userId)),
+        db().prepare("DELETE FROM external_image_mistakes WHERE owner_id=?").bind(ownerId(userId)),
+        db().prepare("DELETE FROM post_trial_ai_credits WHERE owner_id=?").bind(ownerId(userId)),
         db().prepare("DELETE FROM ai_quota_buckets WHERE owner_id=?").bind(ownerId(userId)),
         db().prepare("UPDATE account_data_requests SET result_json=NULL,expires_at=NULL WHERE user_id=?").bind(userId),
         db().prepare("UPDATE account_tokens SET revoked_at=? WHERE user_id=? AND revoked_at IS NULL").bind(completed.updatedAt, userId),

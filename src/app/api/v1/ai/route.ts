@@ -111,7 +111,7 @@ export async function POST(req: NextRequest) {
     anchor = `${plan.id}:v${plan.version}`;
   }
 
-  if (capabilities.tier !== "pro") {
+  if (capabilities.aiMonthlyCredits <= 0) {
     return response({ error: "PRO_AI_REQUIRED", charged: false, fallback, capabilities, upgradeHref: "/pricing", quota: await quotaView(identity.id, policy) }, identity, 403);
   }
 

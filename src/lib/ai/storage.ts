@@ -168,14 +168,16 @@ export async function finalizeSuccess(input: { operation: AiOperation; output: A
   const now = (input.now ?? new Date()).toISOString();
   const assertion = crypto.randomUUID();
   const welcomeAssertion = `${assertion}:welcome`;
-  const [bucket, rollover] = await Promise.all([
+  const [bucket, rollover, postTrial] = await Promise.all([
     database.prepare("SELECT used FROM ai_quota_buckets WHERE owner_id=? AND period_key=?").bind(input.operation.ownerId, input.operation.quotaPeriod).first<{ used: number }>(),
     database.prepare("SELECT w.remaining_units,w.conversion_period,w.conversion_period_used FROM welcome_credit_rollovers w JOIN subscription_entitlements e ON e.owner_id=w.owner_id AND e.stripe_livemode=? AND e.status='active' AND (e.ends_at IS NULL OR e.ends_at>?) WHERE w.owner_id=?").bind(activeStripeLivemode(), now, input.operation.ownerId).first<{ remaining_units: number; conversion_period: string; conversion_period_used: number }>(),
+    database.prepare("SELECT remaining_units FROM post_trial_ai_credits WHERE owner_id=?").bind(input.operation.ownerId).first<{ remaining_units: number }>(),
   ]);
   const spendThreshold = input.operation.baseAllowance + (rollover?.conversion_period === input.operation.quotaPeriod ? Number(rollover.conversion_period_used) : 0);
   const bonusSpend = Math.min(input.operation.costUnits, Math.max(0, Number(bucket?.used ?? 0) + input.operation.costUnits - spendThreshold));
   const welcomeSpend = Math.min(bonusSpend, Number(rollover?.remaining_units ?? 0));
-  const referralSpend = bonusSpend - welcomeSpend;
+  const postTrialSpend = Math.min(bonusSpend - welcomeSpend, Number(postTrial?.remaining_units ?? 0));
+  const referralSpend = bonusSpend - welcomeSpend - postTrialSpend;
   const statements = [
     database.prepare("UPDATE ai_operations SET status='succeeded',response_json=?,provider_request_id=?,prompt_tokens=?,completion_tokens=?,updated_at=? WHERE id=? AND owner_id=? AND status='reserved' AND (substr(?,1,5)!='user:' OR EXISTS(SELECT 1 FROM accounts WHERE user_id=substr(?,6) AND status='active'))")
       .bind(JSON.stringify(input.output), input.providerRequestId ?? null, input.promptTokens ?? null, input.completionTokens ?? null, now, input.operation.id, input.operation.ownerId, input.operation.ownerId, input.operation.ownerId),
@@ -190,7 +192,11 @@ export async function finalizeSuccess(input: { operation: AiOperation; output: A
     database.prepare("UPDATE welcome_credit_rollovers SET remaining_units=remaining_units-? WHERE owner_id=? AND remaining_units>=? AND EXISTS(SELECT 1 FROM subscription_entitlements WHERE owner_id=? AND stripe_livemode=? AND status='active' AND (ends_at IS NULL OR ends_at>?))").bind(welcomeSpend, input.operation.ownerId, welcomeSpend, input.operation.ownerId, activeStripeLivemode(), now),
     database.prepare("INSERT INTO ai_quota_assertions(id,ok) VALUES(?,CASE changes() WHEN 1 THEN 1 ELSE 0 END)").bind(welcomeAssertion),
   );
-  statements.push(database.prepare("DELETE FROM ai_quota_assertions WHERE id IN (?,?,?)").bind(assertion, `${assertion}:bucket`, welcomeAssertion));
+  if (postTrialSpend > 0) statements.push(
+    database.prepare("UPDATE post_trial_ai_credits SET remaining_units=remaining_units-? WHERE owner_id=? AND remaining_units>=?").bind(postTrialSpend, input.operation.ownerId, postTrialSpend),
+    database.prepare("INSERT INTO ai_quota_assertions(id,ok) VALUES(?,CASE changes() WHEN 1 THEN 1 ELSE 0 END)").bind(`${assertion}:posttrial`),
+  );
+  statements.push(database.prepare("DELETE FROM ai_quota_assertions WHERE id IN (?,?,?,?)").bind(assertion, `${assertion}:bucket`, welcomeAssertion, `${assertion}:posttrial`));
   try {
     await database.batch(statements);
   } catch {

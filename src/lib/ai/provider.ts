@@ -10,7 +10,7 @@ export function providerConfig(env: CloudflareEnv): AiProviderConfig | undefined
 }
 
 const transientStatus = (status: number) => status === 429 || status >= 500;
-export async function callAiProvider(config: AiProviderConfig, prompt: string, maxOutputTokens: number, request: typeof fetch = fetch, timeoutMs = 8_000): Promise<AiProviderResult> {
+export async function callAiProvider(config: AiProviderConfig, prompt: string, maxOutputTokens: number, request: typeof fetch = fetch, timeoutMs = 8_000, imageDataUrl?: string): Promise<AiProviderResult> {
   let response: Response | undefined;
   let responseBody: string | undefined;
   let finalStatus: number | undefined;
@@ -33,7 +33,7 @@ export async function callAiProvider(config: AiProviderConfig, prompt: string, m
               model: config.model,
               messages: [
                 { role: "system", content: "You provide concise, grounded Chinese-language learning support. Follow the requested JSON schema exactly." },
-                { role: "user", content: prompt },
+                { role: "user", content: imageDataUrl ? [{ type: "text", text: prompt }, { type: "image_url", image_url: { url: imageDataUrl } }] : prompt },
               ],
               thinking: { type: "disabled" },
               max_tokens: maxOutputTokens,

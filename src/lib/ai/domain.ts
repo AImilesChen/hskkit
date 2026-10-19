@@ -39,10 +39,24 @@ export function productAiRuntimePolicy(env: Pick<CloudflareEnv, "AI_DAILY_ALLOWA
   };
 }
 
-export type AiFeature = "explanation" | "study_plan";
+export type AiFeature = "explanation" | "study_plan" | "image_mistake";
 export type ExplanationOutput = { kind: "explanation"; title: string; summary: string; whyCorrect: string; nextStep: string };
 export type StudyPlanOutput = { kind: "study_plan"; title: string; priorities: string[]; nextActions: string[] };
-export type AiOutput = ExplanationOutput | StudyPlanOutput;
+export type ImageMistakeOutput = { kind: "image_mistake"; question: string; answer: string; explanation: string; learnerMistake: string; nextStep: string; confidence: "high" | "medium" };
+export type AiOutput = ExplanationOutput | StudyPlanOutput | ImageMistakeOutput;
+
+// A free correction may repair OCR, but must still refer to the same question.
+export function sameImageQuestionCorrection(original: string, corrected: string) {
+  const normalize = (value: string) => [...value.toLocaleLowerCase().replace(/[\s\p{P}\p{S}]/gu, "")];
+  const before = normalize(original);
+  const after = normalize(corrected);
+  if (before.length < 4 || after.length < 4 || after.length < before.length / 2 || after.length > before.length * 2) return false;
+  const counts = new Map<string, number>();
+  for (const char of before) counts.set(char, (counts.get(char) ?? 0) + 1);
+  let shared = 0;
+  for (const char of after) { const left = counts.get(char) ?? 0; if (left > 0) { shared += 1; counts.set(char, left - 1); } }
+  return shared >= Math.ceil(Math.min(before.length, after.length) * 0.6);
+}
 
 const policy = `Return JSON only. Do not use Markdown or HTML. Never claim official HSK status, official exam endorsement, guaranteed results, or that a learner will pass an exam. Never score pronunciation, speaking accuracy, accent, fluency, or voice quality. Do not invent learner data.`;
 
@@ -88,6 +102,14 @@ export function parseAiOutput(feature: AiFeature, raw: string): AiOutput {
   if (feature === "explanation") {
     exactKeys(value, ["title", "summary", "whyCorrect", "nextStep"]);
     return { kind: feature, title: text(value.title, 2, 120), summary: text(value.summary), whyCorrect: text(value.whyCorrect), nextStep: text(value.nextStep, 2, 240) };
+  }
+  if (feature === "image_mistake") {
+    exactKeys(value, ["question", "answer", "explanation", "learnerMistake", "nextStep", "confidence"]);
+    if (value.confidence !== "high" && value.confidence !== "medium") throw new Error("AI_IMAGE_UNREADABLE");
+    const question = text(value.question, 4, 1000);
+    const answer = text(value.answer, 1, 500);
+    if (!/[\u3400-\u9fff]/u.test(question + answer)) throw new Error("AI_IMAGE_UNREADABLE");
+    return { kind: feature, question, answer, explanation: text(value.explanation, 8, 1200), learnerMistake: text(value.learnerMistake, 2, 600), nextStep: text(value.nextStep, 4, 400), confidence: value.confidence };
   }
   exactKeys(value, ["title", "priorities", "nextActions"]);
   return { kind: feature, title: text(value.title, 2, 120), priorities: list(value.priorities), nextActions: list(value.nextActions) };

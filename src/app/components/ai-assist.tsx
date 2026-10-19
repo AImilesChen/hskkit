@@ -6,7 +6,7 @@ import type { AiFeature, AiOutput } from "@/lib/ai/domain";
 
 type Quota = { allowance: number; used: number; reserved: number; remaining: number; resetAt: string };
 type Fallback = { charged: false; title: string; summary: string; links: Array<{ label: string; href: string }> };
-type Props = { feature: AiFeature; exerciseId?: string; reviewCardId?: string };
+type Props = { feature: Exclude<AiFeature, "image_mistake">; exerciseId?: string; reviewCardId?: string };
 
 export default function AiAssist({ feature, exerciseId, reviewCardId }: Props) {
   const [quota, setQuota] = useState<Quota>();
@@ -20,7 +20,7 @@ export default function AiAssist({ feature, exerciseId, reviewCardId }: Props) {
 
   useEffect(() => {
     let active = true;
-    fetch("/api/v1/ai", { cache: "no-store" }).then(async (response) => ({ status: response.status, value: await response.json().catch(() => undefined) })).then(({ status, value }) => { if (!active) return; if (status === 401 && value?.error === "AI_ACCOUNT_REQUIRED") setAccountRequired(true); else { if (value?.capabilities?.tier !== "pro") setProRequired(true); if (value?.quota) setQuota(value.quota); } }).catch(() => undefined);
+    fetch("/api/v1/ai", { cache: "no-store" }).then(async (response) => ({ status: response.status, value: await response.json().catch(() => undefined) })).then(({ status, value }) => { if (!active) return; if (status === 401 && value?.error === "AI_ACCOUNT_REQUIRED") setAccountRequired(true); else { if (!value?.capabilities?.aiMonthlyCredits) setProRequired(true); if (value?.quota) setQuota(value.quota); } }).catch(() => undefined);
     return () => { active = false; };
   }, []);
 
@@ -35,7 +35,7 @@ export default function AiAssist({ feature, exerciseId, reviewCardId }: Props) {
         setAccountRequired(true); setMessage("Sign in to use bounded AI help. The standard learning path remains available and no quota was created."); return;
       }
       if (response.status === 403 && payload.error === "PRO_AI_REQUIRED") {
-        setProRequired(true); setFallback(payload.fallback); setMessage("AI credits are included with Pro. The non-AI learning path remains available and nothing was charged."); return;
+        setProRequired(true); setFallback(payload.fallback); setMessage("No AI credits are available right now. The non-AI learning path remains available and nothing was charged."); return;
       }
       if (payload.quota) setQuota(payload.quota);
       if (payload.status === "succeeded" && payload.output) {
@@ -56,9 +56,9 @@ export default function AiAssist({ feature, exerciseId, reviewCardId }: Props) {
 
   const label = feature === "explanation" ? "Ask AI to explain" : "Ask AI for plan tips";
   return <section className="ai-assist" aria-labelledby={`ai-${feature}-title`}>
-    <div className="ai-assist-heading"><div><span className="eyebrow">Optional AI · Pro credits</span><h3 id={`ai-${feature}-title`}>{feature === "explanation" ? "AI Explanation" : "AI Study Plan assistant"}</h3></div>{quota && !proRequired && <span className="ai-quota">{quota.remaining}/{quota.allowance} this month · resets {new Date(quota.resetAt).toLocaleDateString(undefined, { month: "short", day: "numeric" })}</span>}</div>
+    <div className="ai-assist-heading"><div><span className="eyebrow">Optional AI · AI credits</span><h3 id={`ai-${feature}-title`}>{feature === "explanation" ? "AI Explanation" : "AI Study Plan assistant"}</h3></div>{quota && !proRequired && <span className="ai-quota">{quota.remaining}/{quota.allowance} this month · resets {new Date(quota.resetAt).toLocaleDateString(undefined, { month: "short", day: "numeric" })}</span>}</div>
     <p>{feature === "explanation" ? "Get a grounded explanation for this completed exercise." : "Add concise priorities to the deterministic plan already saved above."}</p>
-    <p className="ai-policy">{feature === "explanation" ? "One" : "Five"} Pro AI credit{feature === "explanation" ? "" : "s"} per successful response. Provider failures never charge. AI guidance is not official HSK advice and does not score pronunciation.</p>
+    <p className="ai-policy">{feature === "explanation" ? "One" : "Five"} AI credit{feature === "explanation" ? "" : "s"} per successful response. Gifted credits also work after the trial. Provider failures never charge. AI guidance is not official HSK advice and does not score pronunciation.</p>
     <div className="step7-actions">{accountRequired ? <Link className="btn" href="/account">Sign in for AI help</Link> : proRequired ? <Link className="btn" href="/pricing">Compare Pro</Link> : <button className="btn" disabled={busy || quota?.remaining === 0} onClick={() => void generate()}>{busy ? "Generating…" : label}</button>}<Link className="btn secondary" href={feature === "explanation" ? "/review" : "/planner"}>{feature === "explanation" ? "Use Review without AI" : "Keep deterministic plan"}</Link></div>
     {message && <p className="step7-alert" role="status">{message}</p>}
     {output?.kind === "explanation" && <article className="ai-output"><h4>{output.title}</h4><p>{output.summary}</p><p><strong>Why it works:</strong> {output.whyCorrect}</p><p><strong>Next step:</strong> {output.nextStep}</p></article>}
