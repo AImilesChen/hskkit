@@ -47,7 +47,7 @@ test("migration admits image operations, preserves old rows, and stores only pri
     CREATE INDEX idx_ai_operations_owner_time ON ai_operations(owner_id,created_at DESC);
     CREATE INDEX idx_ai_operations_status ON ai_operations(status,updated_at);`);
   db.prepare("INSERT INTO ai_operations(id,owner_id,feature,idempotency_key,request_hash,status,quota_period,cost_units,created_at,updated_at) VALUES('old','user:u','explanation','old-key','hash','succeeded','2026-10',1,'2026-10-01','2026-10-01')").run();
-  db.exec(readFileSync(new URL("../migrations/0042_external_image_mistakes.sql", import.meta.url), "utf8"));
+  db.exec(readFileSync(new URL("../migrations/0044_external_image_mistakes.sql", import.meta.url), "utf8"));
   assert.equal((db.prepare("SELECT COUNT(*) AS n FROM ai_operations WHERE id='old'").get() as any).n, 1);
   db.prepare("INSERT INTO ai_operations(id,owner_id,feature,idempotency_key,request_hash,status,quota_period,cost_units,credit_units,created_at,updated_at) VALUES('new','user:u','image_mistake','new-key','hash2','succeeded','2026-10',1,5,'2026-10-02','2026-10-02')").run();
   db.prepare("INSERT INTO external_image_mistakes(id,owner_id,operation_id,question,answer,explanation,learner_mistake,next_step,confidence,created_at,updated_at) VALUES('saved','user:u','new','Question','Answer','Explanation','Mistake','Tip','high','2026-10-02','2026-10-02')").run();
