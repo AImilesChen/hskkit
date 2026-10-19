@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type DragEvent } from "react";
 import type { ImageMistakeOutput } from "@/lib/ai/domain";
 
 type Quota = { remaining: number; allowance: number };
@@ -30,6 +30,7 @@ async function croppedFile(source: File, crop: Crop) {
 export default function UploadedMistakeAnalyzer() {
   const [file, setFile] = useState<File>();
   const [preview, setPreview] = useState("");
+  const [dragging, setDragging] = useState(false);
   const [crop, setCrop] = useState<Crop>(fullCrop);
   const [answer, setAnswer] = useState("");
   const [officialAnswer, setOfficialAnswer] = useState("");
@@ -46,6 +47,7 @@ export default function UploadedMistakeAnalyzer() {
   const [saved, setSaved] = useState(false);
   const [history, setHistory] = useState<SavedMistake[]>([]);
   const key = useRef(crypto.randomUUID());
+  const dragDepth = useRef(0);
 
   useEffect(() => {
     fetch("/api/v1/ai", { cache: "no-store" }).then(async response => {
@@ -75,6 +77,25 @@ export default function UploadedMistakeAnalyzer() {
       setFile(undefined); setMessage("Choose a JPG, PNG or WebP image under 12 MB. The cropped image sent for analysis must be under 4 MB."); return;
     }
     setFile(next);
+  }
+
+  function dragEnter(event: DragEvent<HTMLDivElement>) {
+    event.preventDefault();
+    dragDepth.current += 1;
+    setDragging(true);
+  }
+
+  function dragLeave(event: DragEvent<HTMLDivElement>) {
+    event.preventDefault();
+    dragDepth.current = Math.max(0, dragDepth.current - 1);
+    if (dragDepth.current === 0) setDragging(false);
+  }
+
+  function dropFile(event: DragEvent<HTMLDivElement>) {
+    event.preventDefault();
+    dragDepth.current = 0;
+    setDragging(false);
+    selectFile(event.dataTransfer.files?.[0]);
   }
 
   function updateCrop(field: keyof Crop, value: number) {
@@ -141,11 +162,27 @@ export default function UploadedMistakeAnalyzer() {
   }
 
   return <section className="mb-6 rounded-2xl border border-blue-200 bg-blue-50/50 p-5 sm:p-6" aria-labelledby="uploaded-mistake-title">
-    <div className="flex flex-wrap items-start justify-between gap-3"><div><span className="text-xs font-bold uppercase tracking-widest text-blue-700">Your own question</span><h2 id="uploaded-mistake-title" className="mt-1 text-xl font-bold text-slate-950">Analyze a mistake from a photo</h2><p className="mt-2 max-w-2xl text-sm text-slate-600">Upload one clear Chinese-learning question from a textbook or screenshot. Crop it, add your answer if you know it, and review the explanation before saving.</p></div><span className="rounded-full bg-white px-3 py-1.5 text-sm font-semibold text-blue-800">5 AI credits per successful analysis</span></div>
+    <div className="flex flex-wrap items-start justify-between gap-3"><div><span className="text-xs font-bold uppercase tracking-widest text-blue-700">Your own question</span><h2 id="uploaded-mistake-title" className="mt-1 text-xl font-bold text-slate-950">Analyze a mistake from a photo</h2><p className="mt-2 max-w-2xl text-sm text-slate-600">Upload one clear Chinese-learning question from a textbook or screenshot. Crop it, add your answer if you know it, and review the explanation before saving.</p></div><span className="rounded-full bg-white px-3 py-1.5 text-sm font-semibold text-blue-800">Charged only after a successful analysis</span></div>
     {signedIn === undefined ? <p className="mt-5 text-sm text-slate-600">Checking your account and AI credits…</p> : !signedIn ? <p className="mt-5 text-sm"><Link className="font-bold text-blue-700 underline" href="/account">Sign in</Link> to analyze and privately save your own questions.</p> : <>
-      <div className="mt-5 grid gap-4 lg:grid-cols-2"><div><label className="block text-sm font-semibold text-slate-800" htmlFor="mistake-image">Question image</label><input id="mistake-image" type="file" accept="image/jpeg,image/png,image/webp" onChange={event => selectFile(event.target.files?.[0])} className="mt-2 block w-full rounded-lg border border-slate-300 bg-white p-3 text-sm"/><p className="mt-1 text-xs text-slate-600">JPG, PNG or WebP. Image bytes are sent for analysis but are not saved to your records.</p></div><div className="grid gap-3 sm:grid-cols-2"><label className="text-sm font-semibold text-slate-800">Your answer (optional)<input value={answer} maxLength={500} onChange={event => { setAnswer(event.target.value); invalidateAnalysis(); }} className="mt-2 block min-h-11 w-full rounded-lg border border-slate-300 bg-white px-3 font-normal" placeholder="What did you choose?"/></label><label className="text-sm font-semibold text-slate-800">Answer key (optional)<input value={officialAnswer} maxLength={500} onChange={event => { setOfficialAnswer(event.target.value); invalidateAnalysis(); }} className="mt-2 block min-h-11 w-full rounded-lg border border-slate-300 bg-white px-3 font-normal" placeholder="If the book provides one"/></label></div></div>
-      {preview && <div className="mt-5 grid gap-4 lg:grid-cols-[minmax(0,1fr)_220px]"><div className="max-h-80 overflow-auto rounded-xl border border-slate-200 bg-white"><div className="relative"><img src={preview} alt="Selected question for cropping" className="block h-auto w-full"/><div className="pointer-events-none absolute border-2 border-blue-600 bg-blue-500/10" style={{ left: `${crop.x}%`, top: `${crop.y}%`, width: `${crop.width}%`, height: `${crop.height}%` }}/></div></div><div className="space-y-2"><p className="text-sm font-bold text-slate-800">Crop to one question</p>{([ ["x", "Left"], ["y", "Top"], ["width", "Width"], ["height", "Height"] ] as const).map(([field, label]) => <label key={field} className="block text-xs font-medium text-slate-700">{label} · {crop[field]}%<input type="range" min={field === "width" || field === "height" ? 20 : 0} max={field === "width" ? 100 - crop.x : field === "height" ? 100 - crop.y : field === "x" ? 100 - crop.width : 100 - crop.height} value={crop[field]} onChange={event => { updateCrop(field, Number(event.target.value)); }} className="block w-full"/></label>)}<button type="button" onClick={() => { setCrop(fullCrop); invalidateAnalysis(); }} className="text-sm font-semibold text-blue-700 underline">Reset crop</button></div></div>}
-      <div className="mt-5 flex flex-wrap items-center gap-3"><button type="button" onClick={() => void analyze()} disabled={!file || busy || (quota !== undefined && quota.remaining < 5)} className="min-h-11 rounded-lg bg-blue-600 px-5 font-bold text-white hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50">{busy ? "Analyzing…" : "Analyze question"}</button><span className="text-sm text-slate-600">{quota ? `${quota.remaining} AI credits available` : "Checking credits…"}</span>{quota && quota.remaining < 5 && <Link className="text-sm font-semibold text-blue-700 underline" href="/pricing">See plans</Link>}</div>
+      <div className="mt-6 space-y-5">
+        <div>
+          <div className="mb-2 flex items-center justify-between gap-3"><h3 className="text-sm font-bold text-slate-900">1. Add a question image</h3><span className="text-xs font-semibold text-slate-500">Required</span></div>
+          <div onDragEnter={dragEnter} onDragLeave={dragLeave} onDragOver={event => event.preventDefault()} onDrop={dropFile} className={`rounded-2xl border-2 border-dashed bg-white transition-colors focus-within:border-blue-600 focus-within:ring-4 focus-within:ring-blue-100 ${dragging ? "border-blue-600 bg-blue-100" : "border-blue-300"}`}>
+            <input id="mistake-image" type="file" accept="image/jpeg,image/png,image/webp" aria-label="Question image" aria-describedby="mistake-image-help" onChange={event => { selectFile(event.target.files?.[0]); event.target.value = ""; }} className="sr-only"/>
+            {!file ? <label htmlFor="mistake-image" className="flex min-h-44 cursor-pointer flex-col items-center justify-center gap-2 px-5 py-7 text-center sm:min-h-48">
+              <span className="flex h-12 w-12 items-center justify-center rounded-full bg-blue-100 text-blue-700"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="h-6 w-6"><path d="M12 16V4m0 0L7 9m5-5 5 5M4 16v3a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-3"/></svg></span>
+              <span className="text-base font-bold text-blue-800">Choose a question image</span>
+              <span className="hidden text-sm text-slate-600 sm:block">or drag a screenshot here</span>
+            </label> : <div className="p-4 sm:p-5">
+              <div className="flex flex-wrap items-center justify-between gap-3"><div className="min-w-0"><p className="text-sm font-bold text-slate-900">Question image ready</p><p className="truncate text-xs text-slate-600">{file.name}</p></div><label htmlFor="mistake-image" className="inline-flex min-h-11 cursor-pointer items-center rounded-lg border border-blue-300 px-4 text-sm font-bold text-blue-700 hover:bg-blue-50">Change image</label></div>
+              {preview ? <div className="mt-4 grid gap-4 lg:grid-cols-[minmax(0,1fr)_220px]"><div className="max-h-80 overflow-auto rounded-xl border border-slate-200 bg-slate-50"><div className="relative"><img src={preview} alt="Selected question for cropping" className="block h-auto w-full"/><div className="pointer-events-none absolute border-2 border-blue-600 bg-blue-500/10" style={{ left: `${crop.x}%`, top: `${crop.y}%`, width: `${crop.width}%`, height: `${crop.height}%` }}/></div></div><div className="space-y-2"><p className="text-sm font-bold text-slate-800">Crop to one question</p>{([ ["x", "Left"], ["y", "Top"], ["width", "Width"], ["height", "Height"] ] as const).map(([field, label]) => <label key={field} className="block text-xs font-medium text-slate-700">{label} · {crop[field]}%<input type="range" min={field === "width" || field === "height" ? 20 : 0} max={field === "width" ? 100 - crop.x : field === "height" ? 100 - crop.y : field === "x" ? 100 - crop.width : 100 - crop.height} value={crop[field]} onChange={event => updateCrop(field, Number(event.target.value))} className="block w-full"/></label>)}<button type="button" onClick={() => { setCrop(fullCrop); invalidateAnalysis(); }} className="text-sm font-semibold text-blue-700 underline">Reset crop</button></div></div> : <p className="mt-4 text-sm text-slate-600">Preparing preview…</p>}
+            </div>}
+          </div>
+          <p id="mistake-image-help" className="mt-2 text-xs text-slate-600">JPG, PNG or WebP, up to 12 MB. The image is sent for analysis but is not saved to your records.</p>
+        </div>
+        <div className="rounded-xl border border-blue-100 bg-white p-4 sm:p-5"><h3 className="text-sm font-bold text-slate-900">2. Add context <span className="font-normal text-slate-500">(optional)</span></h3><p className="mt-1 text-xs text-slate-600">Your answer and the book’s answer key can make the explanation more useful.</p><div className="mt-4 grid gap-3 sm:grid-cols-2"><label className="text-sm font-semibold text-slate-800">Your answer<input value={answer} maxLength={500} onChange={event => { setAnswer(event.target.value); invalidateAnalysis(); }} className="mt-2 block min-h-11 w-full rounded-lg border border-slate-300 bg-white px-3 font-normal" placeholder="What did you choose?"/></label><label className="text-sm font-semibold text-slate-800">Answer key<input value={officialAnswer} maxLength={500} onChange={event => { setOfficialAnswer(event.target.value); invalidateAnalysis(); }} className="mt-2 block min-h-11 w-full rounded-lg border border-slate-300 bg-white px-3 font-normal" placeholder="If the book provides one"/></label></div></div>
+        <div className="border-t border-blue-200 pt-5"><h3 className="text-sm font-bold text-slate-900">3. Analyze your question</h3><div className="mt-3 flex flex-wrap items-center gap-3"><button type="button" onClick={() => void analyze()} disabled={!file || busy || (quota !== undefined && quota.remaining < 5)} className="min-h-11 rounded-lg bg-blue-600 px-5 font-bold text-white hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50">{busy ? "Analyzing…" : "Analyze question · 5 credits"}</button><span className="text-sm text-slate-600">{quota ? `${quota.remaining} AI credits available` : "Checking credits…"}</span>{quota && quota.remaining < 5 && <Link className="text-sm font-semibold text-blue-700 underline" href="/pricing">See plans</Link>}</div>{!file && <p className="mt-2 text-xs text-slate-600">Choose a question image above to continue.</p>}</div>
+      </div>
       {message && <p role="status" className="mt-4 rounded-lg bg-white p-3 text-sm text-slate-700">{message}</p>}
       {output && <article className="mt-5 rounded-xl border border-emerald-200 bg-white p-5"><div className="flex flex-wrap items-center justify-between gap-2"><h3 className="text-lg font-bold text-slate-950">Question analysis</h3><span className="text-xs font-semibold text-slate-500">AI interpretation · check against your source</span></div><dl className="mt-4 space-y-3 text-sm"><div><dt className="font-bold text-slate-800">Recognized question</dt><dd className="mt-1 whitespace-pre-wrap text-slate-700">{output.question}</dd></div><div><dt className="font-bold text-slate-800">Answer</dt><dd className="mt-1 whitespace-pre-wrap text-slate-700">{output.answer}</dd></div><div><dt className="font-bold text-slate-800">Why</dt><dd className="mt-1 whitespace-pre-wrap text-slate-700">{output.explanation}</dd></div><div><dt className="font-bold text-slate-800">Your mistake</dt><dd className="mt-1 whitespace-pre-wrap text-slate-700">{output.learnerMistake}</dd></div><div><dt className="font-bold text-slate-800">Next step</dt><dd className="mt-1 whitespace-pre-wrap text-slate-700">{output.nextStep}</dd></div></dl><p className="mt-4 text-xs text-slate-600">If text recognition is wrong, correct it below once for free. A different image is a new analysis and costs 5 credits when successful.</p><button type="button" onClick={() => void save()} disabled={saving || saved || (!correctionUsed && (correctedQuestion !== output.question || correctedAnswer !== output.answer))} className="mt-4 min-h-11 rounded-lg bg-emerald-700 px-4 font-bold text-white disabled:opacity-50">{saved ? "Saved to my mistakes" : saving ? "Saving…" : "Save to my mistakes"}</button></article>}
       {output && !correctionUsed && !saved && <div className="mt-4 rounded-xl border border-slate-200 bg-white p-4">
