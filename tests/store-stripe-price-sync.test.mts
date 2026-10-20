@@ -8,7 +8,7 @@ test("every Stripe Test checkout uses the frozen product identity and exact amou
   const captured:Array<URLSearchParams>=[];
   globalThis.fetch=async (_input,init)=>{
     captured.push(init?.body as URLSearchParams);
-    return new Response(JSON.stringify({id:`cs_test_${captured.length}`,url:"https://checkout.stripe.test/session",livemode:false}),{status:200,headers:{"content-type":"application/json"}});
+    return new Response(JSON.stringify({id:`cs_test_${captured.length}`,url:"https://checkout.stripe.test/session",livemode:false,amount_total:Number(captured.at(-1)?.get("line_items[0][price_data][unit_amount]"))}),{status:200,headers:{"content-type":"application/json"}});
   };
   try{
     for(const product of DIGITAL_PRODUCTS){

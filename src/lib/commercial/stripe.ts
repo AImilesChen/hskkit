@@ -1,6 +1,7 @@
 import {PDF_PACK_CURRENCY,PDF_PACK_PRICE_CENTS,PDF_PACK_SKU,stripeModeFromSecret,type StripeMode} from "./domain.ts";
 import type {DigitalProduct} from "./products.ts";
 import {buildSubscriptionCheckoutForm,subscriptionPlan,type SubscriptionPlanId} from "./subscription.ts";
+import {halfOffAmountCents} from "./sale.ts";
 
 const STRIPE_VERSION="2024-06-20";
 
@@ -40,6 +41,12 @@ async function verifyFixedPrice(input:{priceId:string;secret:string;amountCents:
   return {mode,productId:typeof value.product==="string"?value.product:undefined};
 }
 
+async function verifyHalfOffCoupon(couponId:string,secret:string){
+  const {value}=await stripeRequest(`coupons/${encodeURIComponent(couponId)}`,secret,{method:"GET"});
+  const appliesTo=value.applies_to as {products?:unknown}|null|undefined;
+  if(value.id!==couponId||value.valid!==true||value.percent_off!==50||value.duration!=="once"||value.amount_off!==null||(Array.isArray(appliesTo?.products)&&appliesTo.products.length>0))throw new Error("STRIPE_SALE_COUPON_INVALID");
+}
+
 export async function createStripeTestCheckout(input:{orderId:string;userId:string;selectedLevel:number;successUrl:string;cancelUrl:string;secret:string}){
   if(requireStripeMode(input.secret)!=="test")throw new Error("STRIPE_LIVE_PRICE_REQUIRED");
   const form=new URLSearchParams({
@@ -56,10 +63,13 @@ export async function createStripeTestCheckout(input:{orderId:string;userId:stri
   return {id:value.id,url:value.url};
 }
 
-export async function createStripeDigitalProductCheckout(input:{orderId:string;userId:string;product:DigitalProduct;successUrl:string;cancelUrl:string;secret:string;priceId?:string}){
+export async function createStripeDigitalProductCheckout(input:{orderId:string;userId:string;product:DigitalProduct;successUrl:string;cancelUrl:string;secret:string;priceId?:string;amountCents?:number;couponId?:string}){
   const mode=requireStripeMode(input.secret);
   if(mode==="live"&&!input.priceId)throw new Error("STRIPE_LIVE_PRICE_REQUIRED");
   if(input.priceId)await verifyFixedPrice({priceId:input.priceId,secret:input.secret,amountCents:input.product.amountCents,currency:input.product.currency});
+  const expectedAmount=input.amountCents??input.product.amountCents;
+  if(expectedAmount!==input.product.amountCents&&(!input.couponId||expectedAmount!==halfOffAmountCents(input.product.amountCents)))throw new Error("STRIPE_SALE_AMOUNT_INVALID");
+  if(input.couponId){await verifyHalfOffCoupon(input.couponId,input.secret);}
   const form=new URLSearchParams({
     mode:"payment",success_url:input.successUrl,cancel_url:input.cancelUrl,client_reference_id:input.userId,
     "line_items[0][quantity]":"1",
@@ -72,16 +82,17 @@ export async function createStripeDigitalProductCheckout(input:{orderId:string;u
     form.set("line_items[0][price_data][product_data][name]",input.product.name);
     form.set("line_items[0][price_data][product_data][description]","One-time purchase. Three successful downloads per delivery during a 14-day access window.");
   }
+  if(input.couponId)form.set("discounts[0][coupon]",input.couponId);
   const {value}=await stripeRequest("checkout/sessions",input.secret,{form,idempotencyKey:`digital-checkout:${input.orderId}`});
   const prefix=mode==="live"?"cs_live_":"cs_test_";
-  if(typeof value.id!=="string"||typeof value.url!=="string"||!value.id.startsWith(prefix))throw new Error("STRIPE_CHECKOUT_INVALID");
+  if(typeof value.id!=="string"||typeof value.url!=="string"||!value.id.startsWith(prefix)||Number(value.amount_total)!==expectedAmount)throw new Error("STRIPE_CHECKOUT_INVALID");
   return {id:value.id,url:value.url};
 }
 
-export async function retrieveStripeDigitalProductCheckout(input:{sessionId:string;orderId:string;userId:string;product:DigitalProduct;secret:string}){
+export async function retrieveStripeDigitalProductCheckout(input:{sessionId:string;orderId:string;userId:string;product:DigitalProduct;secret:string;amountCents?:number}){
   const {value,mode}=await stripeRequest(`checkout/sessions/${encodeURIComponent(input.sessionId)}`,input.secret,{method:"GET"});
   const metadata=value.metadata as Record<string,unknown>|undefined;
-  if(value.id!==input.sessionId||value.mode!=="payment"||value.client_reference_id!==input.userId||metadata?.order_id!==input.orderId||metadata?.user_id!==input.userId||metadata?.product_id!==input.product.id||Number(value.amount_total)!==input.product.amountCents||value.currency!==input.product.currency)throw new Error("STRIPE_CHECKOUT_MISMATCH");
+  if(value.id!==input.sessionId||value.mode!=="payment"||value.client_reference_id!==input.userId||metadata?.order_id!==input.orderId||metadata?.user_id!==input.userId||metadata?.product_id!==input.product.id||Number(value.amount_total)!==(input.amountCents??input.product.amountCents)||value.currency!==input.product.currency)throw new Error("STRIPE_CHECKOUT_MISMATCH");
   const prefix=mode==="live"?"cs_live_":"cs_test_";
   if(!input.sessionId.startsWith(prefix))throw new Error("STRIPE_RESPONSE_MODE_MISMATCH");
   if(value.status==="open"&&typeof value.url==="string"&&value.url.startsWith("https://checkout.stripe.com/"))return {status:"open" as const,url:value.url};
@@ -90,14 +101,30 @@ export async function retrieveStripeDigitalProductCheckout(input:{sessionId:stri
   throw new Error("STRIPE_CHECKOUT_INVALID");
 }
 
-export async function createStripeSubscriptionCheckout(input:{orderId:string;ownerId:string;userId:string;planId:SubscriptionPlanId;origin:string;secret:string;priceId?:string}){
+export async function expireStripeCheckoutSession(sessionId:string,secret:string){
+  try{
+    const {value}=await stripeRequest(`checkout/sessions/${encodeURIComponent(sessionId)}/expire`,secret,{form:new URLSearchParams()});
+    if(value.id===sessionId&&value.status==="expired")return;
+  }catch{
+    const {value}=await stripeRequest(`checkout/sessions/${encodeURIComponent(sessionId)}`,secret,{method:"GET"});
+    if(value.id===sessionId&&value.status==="expired")return;
+    if(value.id===sessionId&&value.status==="complete")throw new Error("CHECKOUT_PAYMENT_PROCESSING");
+  }
+  throw new Error("STRIPE_CHECKOUT_EXPIRE_FAILED");
+}
+
+export async function createStripeSubscriptionCheckout(input:{orderId:string;ownerId:string;userId:string;planId:SubscriptionPlanId;origin:string;secret:string;priceId?:string;amountCents?:number;couponId?:string}){
   const mode=requireStripeMode(input.secret);const plan=subscriptionPlan(input.planId);if(!plan)throw new Error("INVALID_PLAN");
   if(mode==="live"&&!input.priceId)throw new Error("STRIPE_LIVE_PRICE_REQUIRED");
   if(input.priceId)await verifyFixedPrice({priceId:input.priceId,secret:input.secret,amountCents:plan.amountCents,currency:plan.currency,recurring:{interval:plan.interval,intervalCount:plan.intervalCount}});
+  const expectedAmount=input.amountCents??plan.amountCents;
+  if(expectedAmount!==plan.amountCents&&(!input.couponId||expectedAmount!==halfOffAmountCents(plan.amountCents)))throw new Error("STRIPE_SALE_AMOUNT_INVALID");
+  if(input.couponId)await verifyHalfOffCoupon(input.couponId,input.secret);
   const form=buildSubscriptionCheckoutForm({planId:input.planId,priceId:input.priceId,ownerId:input.ownerId,userId:input.userId,orderId:input.orderId,origin:input.origin});
+  if(input.couponId)form.set("discounts[0][coupon]",input.couponId);
   const {value}=await stripeRequest("checkout/sessions",input.secret,{form,idempotencyKey:`subscription-checkout:${input.orderId}`});
   const prefix=mode==="live"?"cs_live_":"cs_test_";
-  if(typeof value.id!=="string"||typeof value.url!=="string"||!value.id.startsWith(prefix))throw new Error("STRIPE_SUBSCRIPTION_CHECKOUT_INVALID");
+  if(typeof value.id!=="string"||typeof value.url!=="string"||!value.id.startsWith(prefix)||Number(value.amount_total)!==expectedAmount)throw new Error("STRIPE_SUBSCRIPTION_CHECKOUT_INVALID");
   return {id:value.id,url:value.url};
 }
 

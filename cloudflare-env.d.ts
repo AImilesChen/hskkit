@@ -17,6 +17,9 @@ interface CloudflareEnv {
   STRIPE_LIVE_WEBHOOK_SECRET?: string;
   STRIPE_PAID_CHECKOUT_ENABLED?: string;
   STRIPE_PRICE_MAP?: string;
+  STRIPE_HALF_OFF_COUPON_ID?: string;
+  STRIPE_HALF_OFF_START_AT?: string;
+  STRIPE_HALF_OFF_END_AT?: string;
   STRIPE_TEST_PRO_PRICE_ID?: string;
   EXPORT_SIGNING_SECRET?: string;
   ADMIN_REFUND_TOKEN?: string;

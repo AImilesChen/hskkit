@@ -1,13 +1,15 @@
 import {commerceDb} from "./storage.ts";
 import {buildProductDeliveries,digitalProduct,DIGITAL_ACCESS_DAYS,DIGITAL_REFUND_DAYS} from "./products.ts";
+import {validOrderAmount} from "./sale.ts";
 
 const nowIso=()=>new Date().toISOString();
 const id=(prefix:string)=>`${prefix}_${crypto.randomUUID()}`;
 export type DigitalOrderRow={id:string;user_id:string;product_id:string;sku:string;amount_cents:number;currency:string;status:string;stripe_livemode:number;stripe_checkout_session_id:string|null;stripe_payment_intent_id:string|null;stripe_charge_id:string|null;created_at:string;paid_at:string|null;refunded_at:string|null};
 export type DigitalEntitlementRow={id:string;user_id:string;order_id:string;product_id:string;delivery_key:string;level:number|null;artifact_type:string;format:"pdf"|"zip";status:string;stripe_livemode:number;starts_at:string;expires_at:string;download_limit:number;successful_downloads:number;version:number};
 
-export async function createDigitalProductOrder(userId:string,productId:string,idempotencyKey:string,env?:Pick<CloudflareEnv,"LEARNING_DB">,livemode=false){
+export async function createDigitalProductOrder(userId:string,productId:string,idempotencyKey:string,env?:Pick<CloudflareEnv,"LEARNING_DB">,livemode=false,amountCents?:number){
   const product=digitalProduct(productId);if(!product)throw new Error("INVALID_PRODUCT");
+  const orderAmount=amountCents??product.amountCents;if(!validOrderAmount(product.amountCents,orderAmount))throw new Error("INVALID_ORDER_AMOUNT");
   const db=commerceDb(env);const at=nowIso();const storageIdempotencyKey=`${livemode?"live":"test"}:${idempotencyKey}`;
   let existingOrder=await db.prepare(`SELECT * FROM digital_product_orders WHERE user_id=? AND idempotency_key=?`).bind(userId,storageIdempotencyKey).first<DigitalOrderRow>();
   if(!existingOrder&&!livemode)existingOrder=await db.prepare(`SELECT * FROM digital_product_orders WHERE user_id=? AND idempotency_key=? AND stripe_livemode=0`).bind(userId,idempotencyKey).first<DigitalOrderRow>();
@@ -25,7 +27,7 @@ export async function createDigitalProductOrder(userId:string,productId:string,i
   if(active)throw new Error("PRODUCT_ALREADY_ACTIVE");
   const pending=await db.prepare(`SELECT * FROM digital_product_orders WHERE user_id=? AND product_id=? AND stripe_livemode=? AND status='pending' LIMIT 1`).bind(userId,product.id,livemode?1:0).first<DigitalOrderRow>();if(pending)return pending;
   const orderId=id("dord");
-  try{await db.prepare(`INSERT INTO digital_product_orders(id,user_id,product_id,sku,amount_cents,currency,status,stripe_mode,stripe_livemode,idempotency_key,created_at,updated_at) VALUES(?,?,?,?,?,?,'pending','test',?,?,?,?)`).bind(orderId,userId,product.id,product.sku,product.amountCents,product.currency,livemode?1:0,storageIdempotencyKey,at,at).run();}catch(error){const raced=await db.prepare(`SELECT * FROM digital_product_orders WHERE user_id=? AND idempotency_key=?`).bind(userId,storageIdempotencyKey).first<DigitalOrderRow>();if(raced?.product_id===product.id&&Boolean(raced.stripe_livemode)===livemode)return raced;if(raced)throw new Error("IDEMPOTENCY_CONFLICT");const open=await db.prepare(`SELECT * FROM digital_product_orders WHERE user_id=? AND product_id=? AND stripe_livemode=? AND status='pending' LIMIT 1`).bind(userId,product.id,livemode?1:0).first<DigitalOrderRow>();if(open)return open;throw error;}
+  try{await db.prepare(`INSERT INTO digital_product_orders(id,user_id,product_id,sku,amount_cents,currency,status,stripe_mode,stripe_livemode,idempotency_key,created_at,updated_at) VALUES(?,?,?,?,?,?,'pending','test',?,?,?,?)`).bind(orderId,userId,product.id,product.sku,orderAmount,product.currency,livemode?1:0,storageIdempotencyKey,at,at).run();}catch(error){const raced=await db.prepare(`SELECT * FROM digital_product_orders WHERE user_id=? AND idempotency_key=?`).bind(userId,storageIdempotencyKey).first<DigitalOrderRow>();if(raced?.product_id===product.id&&Boolean(raced.stripe_livemode)===livemode)return raced;if(raced)throw new Error("IDEMPOTENCY_CONFLICT");const open=await db.prepare(`SELECT * FROM digital_product_orders WHERE user_id=? AND product_id=? AND stripe_livemode=? AND status='pending' LIMIT 1`).bind(userId,product.id,livemode?1:0).first<DigitalOrderRow>();if(open)return open;throw error;}
   const order=await db.prepare(`SELECT * FROM digital_product_orders WHERE id=?`).bind(orderId).first<DigitalOrderRow>();
   if(!order)throw new Error("ORDER_CREATE_FAILED");
   return order;
@@ -33,10 +35,10 @@ export async function createDigitalProductOrder(userId:string,productId:string,i
 export async function attachDigitalCheckoutSession(orderId:string,sessionId:string){await commerceDb().prepare(`UPDATE digital_product_orders SET stripe_checkout_session_id=?,updated_at=? WHERE id=? AND status='pending'`).bind(sessionId,nowIso(),orderId).run();}
 export async function markDigitalOrderFailed(orderId:string,env?:Pick<CloudflareEnv,"LEARNING_DB">){await commerceDb(env).prepare(`UPDATE digital_product_orders SET status='failed',updated_at=? WHERE id=? AND status='pending'`).bind(nowIso(),orderId).run();}
 
-export async function grantDigitalProductOrder(input:{sessionId:string;orderId?:string;expectedUserId?:string;expectedProductId?:string;paymentIntentId?:string;chargeId?:string;livemode?:boolean},env?:Pick<CloudflareEnv,"LEARNING_DB">){
+export async function grantDigitalProductOrder(input:{sessionId:string;orderId?:string;expectedUserId?:string;expectedProductId?:string;expectedAmountCents?:number;paymentIntentId?:string;chargeId?:string;livemode?:boolean},env?:Pick<CloudflareEnv,"LEARNING_DB">){
   const db=commerceDb(env);const order=await db.prepare(`SELECT * FROM digital_product_orders WHERE stripe_checkout_session_id=? OR (id=? AND stripe_checkout_session_id IS NULL) ORDER BY CASE WHEN stripe_checkout_session_id=? THEN 0 ELSE 1 END LIMIT 1`).bind(input.sessionId,input.orderId??"",input.sessionId).first<DigitalOrderRow>();
   if(!order)throw new Error("ORDER_NOT_FOUND");const product=digitalProduct(order.product_id);if(!product)throw new Error("ORDER_PRODUCT_INVALID");
-  if((input.expectedUserId&&order.user_id!==input.expectedUserId)||(input.expectedProductId&&order.product_id!==input.expectedProductId)||(input.livemode!==undefined&&Boolean(order.stripe_livemode)!==input.livemode)||order.amount_cents!==product.amountCents||order.currency!==product.currency)throw new Error("ORDER_METADATA_MISMATCH");
+  if((input.expectedUserId&&order.user_id!==input.expectedUserId)||(input.expectedProductId&&order.product_id!==input.expectedProductId)||(input.livemode!==undefined&&Boolean(order.stripe_livemode)!==input.livemode)||!validOrderAmount(product.amountCents,order.amount_cents)||(input.expectedAmountCents!==undefined&&order.amount_cents!==input.expectedAmountCents)||order.currency!==product.currency)throw new Error("ORDER_METADATA_MISMATCH");
   if(order.status==="refunded")throw new Error("ORDER_ALREADY_REFUNDED");if(!["pending","failed","paid"].includes(order.status))throw new Error("ORDER_NOT_FULFILLABLE");
   const existing=(await db.prepare(`SELECT * FROM digital_product_entitlements WHERE order_id=? ORDER BY delivery_key`).bind(order.id).all<DigitalEntitlementRow>()).results;if(order.status==="paid"&&existing.length)return existing;
   const conflicting=await db.prepare(`SELECT id FROM digital_product_entitlements WHERE user_id=? AND product_id=? AND stripe_livemode=? AND order_id<>? AND ((status='active' AND expires_at>?) OR status='refund_pending') LIMIT 1`).bind(order.user_id,order.product_id,order.stripe_livemode,order.id,nowIso()).first();if(conflicting)throw new Error("PRODUCT_ALREADY_ACTIVE");

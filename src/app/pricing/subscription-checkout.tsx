@@ -8,6 +8,8 @@ type PricingState={
   authenticated:boolean;
   statusAvailable:boolean;
   checkoutEnabled:boolean;
+  sale:null|{percentOff:number;endAt:string};
+  salePrices:Partial<Record<PlanId,number>>;
   subscription:null|{planId:PlanId;status:string;cancelAtPeriodEnd:boolean};
   access:{tier:"free"|"pro";source:"paid"|"trial"|"promo"|"free";endsAt:string|null};
 };
@@ -19,14 +21,22 @@ function loadPricingState(){
   if(!pricingStatePromise)pricingStatePromise=Promise.all([
     fetch("/api/v1/commercial/config",{cache:"no-store"}).then(response=>response.ok?response.json():Promise.reject(new Error("CONFIG_UNAVAILABLE"))),
     fetch("/api/v1/commercial/subscription",{cache:"no-store"}).then(async response=>response.status===401?{authenticated:false,statusAvailable:true,subscription:null,access:freeAccess}:response.ok?{authenticated:true,statusAvailable:true,...await response.json()}:Promise.reject(new Error("SUBSCRIPTION_UNAVAILABLE"))),
-  ]).then(([config,account])=>({authenticated:account.authenticated,statusAvailable:account.statusAvailable,checkoutEnabled:config.checkoutEnabled===true,subscription:account.subscription??null,access:account.access??freeAccess}));
+  ]).then(([config,account])=>({authenticated:account.authenticated,statusAvailable:account.statusAvailable,checkoutEnabled:config.checkoutEnabled===true,sale:config.sale??null,salePrices:Object.fromEntries((config.subscriptions??[]).filter((plan:{saleAmountCents:number|null})=>plan.saleAmountCents!==null).map((plan:{id:PlanId;saleAmountCents:number})=>[plan.id,plan.saleAmountCents])),subscription:account.subscription??null,access:account.access??freeAccess}));
   return pricingStatePromise;
 }
 
 function usePricingState(){
   const [state,setState]=useState<PricingState|null>(null);
-  useEffect(()=>{let active=true;void loadPricingState().then(value=>{if(active)setState(value);}).catch(()=>{if(active)setState({authenticated:false,statusAvailable:false,checkoutEnabled:false,subscription:null,access:freeAccess});});return()=>{active=false;};},[]);
+  useEffect(()=>{let active=true;void loadPricingState().then(value=>{if(active)setState(value);}).catch(()=>{if(active)setState({authenticated:false,statusAvailable:false,checkoutEnabled:false,sale:null,salePrices:{},subscription:null,access:freeAccess});});return()=>{active=false;};},[]);
   return state;
+}
+
+export function SubscriptionPrice({planId}:{planId:PlanId}){
+  const state=usePricingState();
+  const regular=planId==="pro_monthly"?599:4900;
+  const amount=state?.salePrices[planId];
+  const monthly=planId==="pro_monthly";
+  return <><h2 className={`mt-2 text-4xl font-extrabold ${monthly?"text-white":"text-slate-950"}`}>{amount!==undefined?<><span className="mr-2 text-lg font-medium line-through opacity-70">US${(regular/100).toFixed(2)}</span>US${(amount/100).toFixed(2)}</>:`US$${(regular/100).toFixed(2)}`} <span className={`text-base font-medium ${monthly?"text-slate-300":"text-slate-600"}`}>/ {monthly?"month":"year"}</span></h2>{amount!==undefined&&<p className={`mt-2 text-sm font-semibold ${monthly?"text-blue-200":"text-emerald-800"}`}>First payment 50% off. Renews at US${(regular/100).toFixed(2)} per {monthly?"month":"year"}.</p>}</>;
 }
 
 function accessEnd(endsAt:string|null){

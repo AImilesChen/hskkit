@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import SiteHeader from "../site-header";
 import SiteFooter from "../site-footer";
-import SubscriptionCheckout,{FreePlanAction,WelcomeTrialAction} from "./subscription-checkout";
+import SubscriptionCheckout,{FreePlanAction,SubscriptionPrice,WelcomeTrialAction} from "./subscription-checkout";
 import { PUBLIC_ACCOUNT_SCOPE, PUBLIC_FORMAL_CONTENT_SCOPE } from "@/lib/public-copy";
 
 export const metadata: Metadata = { title: "Pricing | HSKKit", description: "Compare HSKKit Free with Pro Monthly and Pro Yearly.", alternates: { canonical: "/pricing" } };
@@ -44,12 +44,12 @@ export default function PricingPage() {
         <FreePlanAction />
       </article>
       <article className="relative flex h-full flex-col rounded-[24px] border-2 border-blue-600 bg-slate-950 p-6 text-white shadow-[0_18px_50px_rgba(37,99,235,0.18)] sm:p-7">
-        <p className="font-bold text-blue-300">PRO MONTHLY</p><h2 className="mt-2 text-4xl font-extrabold text-white">US$5.99 <span className="text-base font-medium text-slate-300">/ month</span></h2><p className="mt-2 text-sm text-slate-300">Same Pro entitlement. Renews monthly.</p>
+        <p className="font-bold text-blue-300">PRO MONTHLY</p><SubscriptionPrice planId="pro_monthly"/><p className="mt-2 text-sm text-slate-300">Same Pro entitlement. Renews monthly.</p>
         <ul className="mt-6 grid gap-3 text-sm leading-6 text-slate-100">{proBenefits.map(item => <li key={item} className="flex gap-2"><span aria-hidden="true" className="font-bold text-blue-300">✓</span><span>{item}</span></li>)}</ul>
         <SubscriptionCheckout planId="pro_monthly" label="Choose Pro Monthly" />
       </article>
       <article className="relative flex h-full flex-col rounded-[24px] border-2 border-emerald-600 bg-white p-6 shadow-[0_18px_50px_rgba(5,150,105,0.12)] sm:p-7">
-        <p className="font-bold text-emerald-700">PRO YEARLY · SAVE 32%</p><h2 className="mt-2 text-4xl font-extrabold text-slate-950">US$49 <span className="text-base font-medium text-slate-600">/ year</span></h2><p className="mt-2 text-sm text-slate-600">Same Pro entitlement. Renews yearly.</p>
+        <p className="font-bold text-emerald-700">PRO YEARLY</p><SubscriptionPrice planId="pro_yearly"/><p className="mt-2 text-sm text-slate-600">Same Pro entitlement. Renews yearly.</p>
         <ul className="mt-6 grid gap-3 text-sm leading-6 text-slate-700">{proBenefits.map(item => <li key={item} className="flex gap-2"><span aria-hidden="true" className="font-bold text-emerald-600">✓</span><span>{item}</span></li>)}</ul>
         <SubscriptionCheckout planId="pro_yearly" label="Choose Pro Yearly" />
       </article>
@@ -77,7 +77,7 @@ export default function PricingPage() {
       <div className="border-l-4 border-emerald-600 pl-5"><p className="text-sm font-bold text-emerald-700">WHEN YOUR WEEK CHANGES</p><h2 className="mt-2 text-xl font-bold text-slate-950">Save, then refine.</h2><p className="mt-2 leading-7 text-slate-600">Planner suggestions use the weekly plan you saved; they do not create unrelated tasks or modify your plan without confirmation.</p></div>
     </section>
 
-    <section className="mt-10 rounded-[24px] border border-slate-300 bg-slate-50 p-6 sm:p-8"><p className="text-sm font-bold text-slate-700">ONE-TIME STORE PRODUCTS</p><h2 className="mt-2 text-2xl font-bold text-slate-950">Complete vocabulary PDFs and practical packs · From US$3.99</h2><p className="mt-2 max-w-3xl leading-7 text-slate-600">Vocabulary PDFs, Bundles and learner or teacher resources are one-time purchases with 3 successful downloads and a 14-day private access window. Each product page lists exact contents and samples. Does not include one-time Store products in Pro.</p><Link href="/store" className="mt-4 inline-flex min-h-11 items-center font-bold text-blue-700">Open Store →</Link></section>
+    <section className="mt-10 rounded-[24px] border border-slate-300 bg-slate-50 p-6 sm:p-8"><p className="text-sm font-bold text-slate-700">ONE-TIME STORE PRODUCTS</p><h2 className="mt-2 text-2xl font-bold text-slate-950">Complete vocabulary PDFs and practical packs</h2><p className="mt-2 max-w-3xl leading-7 text-slate-600">Vocabulary PDFs, Bundles and learner or teacher resources are one-time purchases with 3 successful downloads and a 14-day private access window. Each product page lists exact contents, current price and samples. Does not include one-time Store products in Pro.</p><Link href="/store" className="mt-4 inline-flex min-h-11 items-center font-bold text-blue-700">Open Store →</Link></section>
     <div className="mx-auto mt-8 max-w-3xl space-y-3 text-sm leading-6 text-slate-600"><p>{PUBLIC_FORMAL_CONTENT_SCOPE}</p><p>{PUBLIC_ACCOUNT_SCOPE}</p><p>Subscriptions renew automatically. Cancel anytime; access continues through the paid period. Seven-day refund review is available when AI usage is 10 credits or less. Store products are not included in Pro.</p></div>
   </main><SiteFooter /></>;
 }

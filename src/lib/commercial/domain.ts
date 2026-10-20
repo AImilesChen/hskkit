@@ -1,4 +1,5 @@
 import { digitalProduct } from "./products.ts";
+import {validOrderAmount} from "./sale.ts";
 
 export const PDF_PACK_SKU = "hskkit_advanced_study_pdf_pack_v1";
 export const PDF_PACK_PRICE_CENTS = 999;
@@ -8,7 +9,7 @@ export const PDF_PACK_ACCESS_DAYS = 14;
 export const PDF_PACK_REFUND_DAYS = 7;
 
 export type StripeMode = "test" | "live";
-export type CommerceEnv = { COMMERCE_MODE?: string; STRIPE_SECRET_KEY?: string; STRIPE_TEST_SECRET_KEY?: string; STRIPE_LIVE_SECRET_KEY?: string; STRIPE_WEBHOOK_SECRET?: string; STRIPE_TEST_WEBHOOK_SECRET?: string; STRIPE_LIVE_WEBHOOK_SECRET?: string; STRIPE_PAID_CHECKOUT_ENABLED?: string; STRIPE_PRICE_MAP?: string; EXPORT_SIGNING_SECRET?: string };
+export type CommerceEnv = { COMMERCE_MODE?: string; STRIPE_SECRET_KEY?: string; STRIPE_TEST_SECRET_KEY?: string; STRIPE_LIVE_SECRET_KEY?: string; STRIPE_WEBHOOK_SECRET?: string; STRIPE_TEST_WEBHOOK_SECRET?: string; STRIPE_LIVE_WEBHOOK_SECRET?: string; STRIPE_PAID_CHECKOUT_ENABLED?: string; STRIPE_PRICE_MAP?: string; EXPORT_SIGNING_SECRET?: string; STRIPE_HALF_OFF_COUPON_ID?:string; STRIPE_HALF_OFF_START_AT?:string; STRIPE_HALF_OFF_END_AT?:string };
 
 export function stripeModeFromSecret(secret:string|undefined):StripeMode|null {
   if(secret?.startsWith("sk_test_")||secret?.startsWith("rk_test_"))return "test";
@@ -124,7 +125,7 @@ export function normalizeDigitalProductCheckoutEvent(object: PackCheckoutObject,
   const valid=
     typeof object.id==="string"&&object.id.startsWith(mode==="live"?"cs_live_":"cs_test_")&&
     object.mode==="payment"&&object.payment_status==="paid"&&
-    Boolean(product)&&object.amount_total===product?.amountCents&&object.currency===product?.currency&&
+    Boolean(product)&&validOrderAmount(product!.amountCents,Number(object.amount_total))&&object.currency===product?.currency&&
     typeof object.payment_intent==="string"&&object.payment_intent.startsWith("pi_")&&
     typeof metadata.order_id==="string"&&metadata.order_id.length>0&&
     typeof metadata.user_id==="string"&&metadata.user_id.length>0;
