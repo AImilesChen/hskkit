@@ -27,7 +27,7 @@ test("Live digital checkout requires and verifies a fixed active matching Price 
   globalThis.fetch=async(input,init)=>{
     const url=String(input);calls.push({url,method:init?.method??"GET",body:init?.body as URLSearchParams|undefined});
     if(url.includes(`/prices/price_live_${product.id}`))return new Response(JSON.stringify({id:`price_live_${product.id}`,active:true,livemode:true,currency:product.currency,unit_amount:product.amountCents,type:"one_time"}),{status:200});
-    return new Response(JSON.stringify({id:"cs_live_ready",url:"https://checkout.stripe.com/c/pay/cs_live_ready",livemode:true}),{status:200});
+    return new Response(JSON.stringify({id:"cs_live_ready",url:"https://checkout.stripe.com/c/pay/cs_live_ready",livemode:true,amount_total:product.amountCents}),{status:200});
   };
   try{
     const result=await createStripeDigitalProductCheckout({orderId:"ord_live",userId:"user_live",product,successUrl:"https://hskkit.com/checkout/success",cancelUrl:"https://hskkit.com/checkout/cancel",secret:"rk_live_123",priceId:`price_live_${product.id}`});
@@ -64,7 +64,7 @@ test("an abandoned digital checkout resumes only its verified open Stripe sessio
 
 test("Live subscription Checkout uses only the mapped recurring Price",async()=>{
   const original=globalThis.fetch;const calls:Array<{url:string;init?:RequestInit}>=[];
-  globalThis.fetch=async(input,init)=>{const url=String(input);calls.push({url,init});if(url.includes("/prices/"))return new Response(JSON.stringify({id:"price_live_month",active:true,livemode:true,type:"recurring",unit_amount:599,currency:"usd",recurring:{interval:"month",interval_count:1}}),{status:200});return new Response(JSON.stringify({id:"cs_live_subscription",url:"https://checkout.stripe.com/live",livemode:true}),{status:200});};
+  globalThis.fetch=async(input,init)=>{const url=String(input);calls.push({url,init});if(url.includes("/prices/"))return new Response(JSON.stringify({id:"price_live_month",active:true,livemode:true,type:"recurring",unit_amount:599,currency:"usd",recurring:{interval:"month",interval_count:1}}),{status:200});return new Response(JSON.stringify({id:"cs_live_subscription",url:"https://checkout.stripe.com/live",livemode:true,amount_total:599}),{status:200});};
   try{const result=await createStripeSubscriptionCheckout({orderId:"ord_live",ownerId:"user:u1",userId:"u1",planId:"pro_monthly",priceId:"price_live_month",origin:"https://hskkit.com",secret:"rk_"+"live_123"});assert.equal(result.id,"cs_live_subscription");const form=calls[1].init?.body as URLSearchParams;assert.equal(form.get("line_items[0][price]"),"price_live_month");assert.equal(form.has("line_items[0][price_data][unit_amount]"),false);}finally{globalThis.fetch=original;}
 });
 

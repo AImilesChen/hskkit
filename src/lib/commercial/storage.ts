@@ -3,6 +3,7 @@ import { PDF_PACK_ACCESS_DAYS, PDF_PACK_CURRENCY, PDF_PACK_DOWNLOAD_LIMIT, PDF_P
 import { SUBSCRIPTION_PLANS, entitlementFromSubscription, refundEligibility as subscriptionRefundEligibility, subscriptionPlan, type NormalizedSubscriptionEvent, type ProviderSubscriptionStatus, type SubscriptionPlanId } from "./subscription.ts";
 import { resolveCommercialAccess } from "./referral-storage.ts";
 import { welcomeCreditRollover } from "./referrals.ts";
+import {validOrderAmount} from "./sale.ts";
 
 export const commerceDb = (env?: Pick<CloudflareEnv, "LEARNING_DB">) => env?.LEARNING_DB ?? getCloudflareContext().env.LEARNING_DB;
 const nowIso = () => new Date().toISOString();
@@ -208,10 +209,11 @@ export type SubscriptionOrderRow = { id:string; owner_id:string; user_id:string;
 export type SubscriptionRow = { id:string; owner_id:string; user_id:string; plan_id:SubscriptionPlanId; status:ProviderSubscriptionStatus; cancel_at_period_end:number; current_period_start:string|null; current_period_end:string|null; provider_customer_id:string; provider_subscription_id:string; source_order_id:string|null; stripe_livemode?:number; created_at:string; updated_at:string };
 export type SubscriptionChargeRow = { id:string; subscription_id:string; owner_id:string; provider_invoice_id:string; provider_payment_intent_id:string|null; provider_charge_id:string|null; amount_cents:number; amount_refunded_cents:number; currency:string; status:string; stripe_livemode:number; charged_at:string|null; created_at:string; updated_at:string };
 
-export async function createSubscriptionOrder(input:{ownerId:string;userId:string;planId:SubscriptionPlanId;idempotencyKey:string;livemode?:boolean}) {
+export async function createSubscriptionOrder(input:{ownerId:string;userId:string;planId:SubscriptionPlanId;idempotencyKey:string;livemode?:boolean;amountCents?:number}) {
   const db=commerceDb(); const at=nowIso(); const plan=SUBSCRIPTION_PLANS[input.planId]; const orderId=id("subord");const storageIdempotencyKey=`${input.livemode?"live":"test"}:${input.idempotencyKey}`;
+  const orderAmount=input.amountCents??plan.amountCents;if(!validOrderAmount(plan.amountCents,orderAmount))throw new Error("INVALID_ORDER_AMOUNT");
   await db.prepare(`INSERT OR IGNORE INTO subscription_orders (id,owner_id,user_id,plan_id,amount_cents,currency,status,stripe_livemode,idempotency_key,created_at,updated_at) VALUES (?,?,?,?,?,?,'pending',?,?,?,?)`)
-    .bind(orderId,input.ownerId,input.userId,input.planId,plan.amountCents,plan.currency,input.livemode?1:0,storageIdempotencyKey,at,at).run();
+    .bind(orderId,input.ownerId,input.userId,input.planId,orderAmount,plan.currency,input.livemode?1:0,storageIdempotencyKey,at,at).run();
   const order=await db.prepare(`SELECT * FROM subscription_orders WHERE owner_id=? AND idempotency_key=?`).bind(input.ownerId,storageIdempotencyKey).first<SubscriptionOrderRow>();
   if(!order) throw new Error("SUBSCRIPTION_ORDER_NOT_CREATED");
   if(order.plan_id!==input.planId||Boolean(order.stripe_livemode)!==Boolean(input.livemode)) throw new Error("IDEMPOTENCY_CONFLICT");
@@ -239,7 +241,7 @@ export async function applySubscriptionEvent(event:NormalizedSubscriptionEvent, 
   if(event.kind==="checkout_completed"){
     const order=await db.prepare(`SELECT * FROM subscription_orders WHERE id=?`).bind(event.orderId).first<SubscriptionOrderRow>();
     const plan=SUBSCRIPTION_PLANS[event.planId];
-    if(!order||Boolean(order.stripe_livemode)!==livemode||order.user_id!==event.userId||order.owner_id!==event.ownerId||order.owner_id!==`user:${event.userId}`||order.plan_id!==event.planId||order.amount_cents!==plan.amountCents||order.amount_cents!==event.amountCents||order.currency!==plan.currency||order.currency!==event.currency||(order.provider_checkout_session_id&&order.provider_checkout_session_id!==event.checkoutSessionId)||(order.provider_customer_id&&order.provider_customer_id!==event.customerId)||(order.provider_subscription_id&&order.provider_subscription_id!==event.subscriptionId)) throw new Error("SUBSCRIPTION_ORDER_METADATA_MISMATCH");
+    if(!order||Boolean(order.stripe_livemode)!==livemode||order.user_id!==event.userId||order.owner_id!==event.ownerId||order.owner_id!==`user:${event.userId}`||order.plan_id!==event.planId||!validOrderAmount(plan.amountCents,order.amount_cents)||order.amount_cents!==event.amountCents||order.currency!==plan.currency||order.currency!==event.currency||(order.provider_checkout_session_id&&order.provider_checkout_session_id!==event.checkoutSessionId)||(order.provider_customer_id&&order.provider_customer_id!==event.customerId)||(order.provider_subscription_id&&order.provider_subscription_id!==event.subscriptionId)) throw new Error("SUBSCRIPTION_ORDER_METADATA_MISMATCH");
     if(order.status==="refunded") return;
     const updated=await db.prepare(`UPDATE subscription_orders SET status='completed',provider_checkout_session_id=?,provider_customer_id=?,provider_subscription_id=?,updated_at=? WHERE id=? AND user_id=? AND plan_id=? AND status<>'refunded'`).bind(event.checkoutSessionId,event.customerId,event.subscriptionId,at,event.orderId,event.userId,event.planId).run();
     if(updated.meta.changes!==1) throw new Error("SUBSCRIPTION_ORDER_UPDATE_FAILED"); return;
@@ -260,11 +262,12 @@ export async function applySubscriptionEvent(event:NormalizedSubscriptionEvent, 
     ]); return;
   }
   if(event.kind==="invoice_paid"||event.kind==="invoice_payment_failed"){
-    const sub=await db.prepare(`SELECT s.*,o.status source_order_status,o.stripe_livemode source_order_livemode FROM subscriptions s LEFT JOIN subscription_orders o ON o.id=s.source_order_id WHERE s.provider_subscription_id=?`).bind(event.subscriptionId).first<SubscriptionRow & {source_order_status:string|null;source_order_livemode:number|null}>(); if(!sub) throw new Error("SUBSCRIPTION_NOT_FOUND");
+    const sub=await db.prepare(`SELECT s.*,o.status source_order_status,o.stripe_livemode source_order_livemode,o.amount_cents source_order_amount_cents FROM subscriptions s LEFT JOIN subscription_orders o ON o.id=s.source_order_id WHERE s.provider_subscription_id=?`).bind(event.subscriptionId).first<SubscriptionRow & {source_order_status:string|null;source_order_livemode:number|null;source_order_amount_cents:number|null}>(); if(!sub) throw new Error("SUBSCRIPTION_NOT_FOUND");
     if(sub.source_order_status==="refunded") return;
     if(Boolean(sub.source_order_livemode)!==livemode)throw new Error("SUBSCRIPTION_EVENT_MODE_MISMATCH");
     const plan=subscriptionPlan(sub.plan_id); const validProration=event.billingReason==="subscription_update"&&event.amountCents>=0;
-    if(!plan||event.customerId!==sub.provider_customer_id||(!validProration&&event.amountCents!==plan.amountCents)||event.currency!==plan.currency) throw new Error("SUBSCRIPTION_INVOICE_MISMATCH");
+    const validFirstCharge=event.billingReason==="subscription_create"&&sub.source_order_amount_cents!==null&&event.amountCents===sub.source_order_amount_cents;
+    if(!plan||event.customerId!==sub.provider_customer_id||(!validProration&&!validFirstCharge&&event.amountCents!==plan.amountCents)||event.currency!==plan.currency) throw new Error("SUBSCRIPTION_INVOICE_MISMATCH");
     const chargeId=`charge_${event.invoiceId}`; const status=event.kind==="invoice_paid"?"paid":"failed";
     const statements=[db.prepare(`INSERT INTO subscription_charges(id,subscription_id,owner_id,provider_invoice_id,provider_payment_intent_id,provider_charge_id,amount_cents,amount_refunded_cents,currency,status,stripe_livemode,charged_at,created_at,updated_at) VALUES(?,?,?,?,?,?,?,0,?,?,?,?,?,?) ON CONFLICT(provider_invoice_id) DO UPDATE SET provider_payment_intent_id=excluded.provider_payment_intent_id,provider_charge_id=excluded.provider_charge_id,amount_cents=excluded.amount_cents,status=excluded.status,stripe_livemode=excluded.stripe_livemode,charged_at=excluded.charged_at,updated_at=excluded.updated_at`).bind(chargeId,sub.id,sub.owner_id,event.invoiceId,event.paymentIntentId??null,event.chargeId??null,event.amountCents,event.currency,status,livemode?1:0,event.chargedAt??null,at,at)];
     if(event.kind==="invoice_paid") {

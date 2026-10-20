@@ -30,7 +30,7 @@ export async function POST(req:NextRequest){
     }
     if(event.type==="checkout.session.completed"&&object.mode==="payment"){
       const metadata=object.metadata&&typeof object.metadata==="object"?object.metadata as Record<string,unknown>:{};
-      if(metadata.product_id){const product=normalizeDigitalProductCheckoutEvent(object,mode);await grantDigitalProductOrder({sessionId:product.sessionId,orderId:product.orderId,expectedUserId:product.userId,expectedProductId:product.productId,paymentIntentId:product.paymentIntentId,livemode});}
+      if(metadata.product_id){const product=normalizeDigitalProductCheckoutEvent(object,mode);await grantDigitalProductOrder({sessionId:product.sessionId,orderId:product.orderId,expectedUserId:product.userId,expectedProductId:product.productId,expectedAmountCents:product.amountCents,paymentIntentId:product.paymentIntentId,livemode});}
       else{if(livemode)throw new Error("LEGACY_PACK_LIVE_FORBIDDEN");const pack=normalizePackCheckoutEvent(object,mode);await grantPaidPackPurchase({sessionId:pack.sessionId,orderId:pack.orderId,expectedUserId:pack.userId,expectedSku:pack.sku,expectedSelectedLevel:pack.selectedLevel,paymentIntentId:pack.paymentIntentId});}
       await finalizePaymentEvent(event.id,claimToken,"processed",undefined,livemode);return NextResponse.json({received:true});
     }
