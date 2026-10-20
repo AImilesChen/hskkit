@@ -85,8 +85,9 @@ export async function createStripeDigitalProductCheckout(input:{orderId:string;u
   if(input.couponId)form.set("discounts[0][coupon]",input.couponId);
   const {value}=await stripeRequest("checkout/sessions",input.secret,{form,idempotencyKey:`digital-checkout:${input.orderId}`});
   const prefix=mode==="live"?"cs_live_":"cs_test_";
-  if(typeof value.id!=="string"||typeof value.url!=="string"||!value.id.startsWith(prefix)||Number(value.amount_total)!==expectedAmount)throw new Error("STRIPE_CHECKOUT_INVALID");
-  return {id:value.id,url:value.url};
+  const chargedAmount=Number(value.amount_total);
+  if(typeof value.id!=="string"||typeof value.url!=="string"||!value.id.startsWith(prefix)||!Number.isInteger(chargedAmount)||(!input.couponId&&chargedAmount!==expectedAmount)||(input.couponId&&chargedAmount!==halfOffAmountCents(input.product.amountCents)&&chargedAmount!==Math.floor(input.product.amountCents/2)))throw new Error("STRIPE_CHECKOUT_INVALID");
+  return {id:value.id,url:value.url,amountCents:chargedAmount};
 }
 
 export async function retrieveStripeDigitalProductCheckout(input:{sessionId:string;orderId:string;userId:string;product:DigitalProduct;secret:string;amountCents?:number}){
@@ -124,8 +125,9 @@ export async function createStripeSubscriptionCheckout(input:{orderId:string;own
   if(input.couponId)form.set("discounts[0][coupon]",input.couponId);
   const {value}=await stripeRequest("checkout/sessions",input.secret,{form,idempotencyKey:`subscription-checkout:${input.orderId}`});
   const prefix=mode==="live"?"cs_live_":"cs_test_";
-  if(typeof value.id!=="string"||typeof value.url!=="string"||!value.id.startsWith(prefix)||Number(value.amount_total)!==expectedAmount)throw new Error("STRIPE_SUBSCRIPTION_CHECKOUT_INVALID");
-  return {id:value.id,url:value.url};
+  const chargedAmount=Number(value.amount_total);
+  if(typeof value.id!=="string"||typeof value.url!=="string"||!value.id.startsWith(prefix)||!Number.isInteger(chargedAmount)||(!input.couponId&&chargedAmount!==expectedAmount)||(input.couponId&&chargedAmount!==halfOffAmountCents(plan.amountCents)&&chargedAmount!==Math.floor(plan.amountCents/2)))throw new Error("STRIPE_SUBSCRIPTION_CHECKOUT_INVALID");
+  return {id:value.id,url:value.url,amountCents:chargedAmount};
 }
 
 export async function createStripeYearlyUpgradePortal(input:{subscriptionId:string;customerId:string;monthlyPriceId:string;yearlyPriceId:string;returnUrl:string;secret:string;idempotencyKey:string}){

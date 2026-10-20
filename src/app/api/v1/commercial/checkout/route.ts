@@ -7,7 +7,7 @@ import {digitalProduct} from "@/lib/commercial/products";
 import {subscriptionPlan} from "@/lib/commercial/subscription";
 import {attachSubscriptionCheckout,createSubscriptionOrder,markSubscriptionOrderFailed,openSubscriptionCheckout,subscriptionSummaryForOwner} from "@/lib/commercial/storage";
 import {createStripeDigitalProductCheckout,createStripeSubscriptionCheckout,expireStripeCheckoutSession,retrieveStripeDigitalProductCheckout} from "@/lib/commercial/stripe";
-import {activeHalfOffSale,halfOffAmountCents} from "@/lib/commercial/sale";
+import {activeHalfOffSale,halfOffAmountCents,validOrderAmount} from "@/lib/commercial/sale";
 
 export async function POST(req:NextRequest){
   const identity=await requestIdentity();
@@ -26,7 +26,7 @@ export async function POST(req:NextRequest){
       if(current.entitlement?.status==="active"&&(!current.entitlement.ends_at||String(current.entitlement.ends_at)>new Date().toISOString()))return NextResponse.json({error:"SUBSCRIPTION_ALREADY_ACTIVE"},{status:409});
       const requestedAmount=sale?halfOffAmountCents(plan.amountCents):plan.amountCents;
       const open=await openSubscriptionCheckout(ownerId,plan.id,livemode);
-      if(open?.provider_checkout_url&&open.amount_cents===requestedAmount)return NextResponse.json({orderId:open.id,checkoutUrl:open.provider_checkout_url,planId:open.plan_id,mode:policy.mode,reused:true});
+      if(open?.provider_checkout_url&&(open.amount_cents===requestedAmount||(sale&&open.amount_cents!==plan.amountCents&&validOrderAmount(plan.amountCents,open.amount_cents))))return NextResponse.json({orderId:open.id,checkoutUrl:open.provider_checkout_url,planId:open.plan_id,mode:policy.mode,reused:true});
       if(open?.provider_checkout_session_id){await expireStripeCheckoutSession(open.provider_checkout_session_id,stripeSecret!);await markSubscriptionOrderFailed(open.id);}
       let order=await createSubscriptionOrder({ownerId,userId:identity.account.userId,planId:plan.id,idempotencyKey,livemode,amountCents:requestedAmount});
       if(order.amount_cents!==requestedAmount){order=await createSubscriptionOrder({ownerId,userId:identity.account.userId,planId:plan.id,idempotencyKey:crypto.randomUUID(),livemode,amountCents:requestedAmount});}
@@ -34,7 +34,7 @@ export async function POST(req:NextRequest){
       try{
         const priceId=livemode?stripePriceId(env.STRIPE_PRICE_MAP,`subscription:${plan.id}`):env.STRIPE_TEST_PRO_PRICE_ID;
         const checkout=await createStripeSubscriptionCheckout({orderId:order.id,ownerId,userId:identity.account.userId,planId:plan.id,origin:req.nextUrl.origin,secret:stripeSecret!,priceId,amountCents:order.amount_cents,couponId:order.amount_cents!==plan.amountCents?sale?.couponId:undefined});
-        await attachSubscriptionCheckout(order.id,checkout.id,checkout.url);
+        await attachSubscriptionCheckout(order.id,checkout.id,checkout.url,checkout.amountCents);
         return NextResponse.json({orderId:order.id,checkoutUrl:checkout.url,planId:plan.id,mode:policy.mode},{status:201});
       }catch(error){await markSubscriptionOrderFailed(order.id);throw error;}
     }
@@ -46,7 +46,7 @@ export async function POST(req:NextRequest){
     const livemode=policy.mode==="live";const sale=livemode?activeHalfOffSale(env):null;const amountCents=sale?halfOffAmountCents(product.amountCents):product.amountCents;
     let order=await createDigitalProductOrder(identity.account.userId,product.id,idempotencyKey,undefined,livemode,amountCents);
     if(order.status!=="pending")return NextResponse.json({orderId:order.id,status:order.status,reused:true});
-    if(order.amount_cents!==amountCents){
+    if(order.amount_cents!==amountCents&&!(sale&&order.amount_cents!==product.amountCents&&validOrderAmount(product.amountCents,order.amount_cents))){
       if(order.stripe_checkout_session_id)await expireStripeCheckoutSession(order.stripe_checkout_session_id,stripeSecret!);
       await markDigitalOrderFailed(order.id);
       order=await createDigitalProductOrder(identity.account.userId,product.id,crypto.randomUUID(),undefined,livemode,amountCents);
@@ -60,7 +60,7 @@ export async function POST(req:NextRequest){
     }
     const priceId=livemode?stripePriceId(env.STRIPE_PRICE_MAP,`product:${product.id}`):undefined;
     const checkout=await createStripeDigitalProductCheckout({orderId:order.id,userId:identity.account.userId,product,successUrl:`${req.nextUrl.origin}/checkout/success?session_id={CHECKOUT_SESSION_ID}`,cancelUrl:`${req.nextUrl.origin}/checkout/cancel`,secret:stripeSecret!,priceId,amountCents:order.amount_cents,couponId:order.amount_cents!==product.amountCents?sale?.couponId:undefined});
-    await attachDigitalCheckoutSession(order.id,checkout.id);
+    await attachDigitalCheckoutSession(order.id,checkout.id,checkout.amountCents);
     return NextResponse.json({orderId:order.id,checkoutUrl:checkout.url,productId:product.id,mode:policy.mode},{status:201});
   }catch(error){const code=error instanceof Error?error.message:"CHECKOUT_FAILED";const status=code==="IDEMPOTENCY_CONFLICT"||code==="PRODUCT_ALREADY_ACTIVE"||code==="PRODUCT_CHECKOUT_PENDING"?409:code.startsWith("INVALID")?422:502;return NextResponse.json({error:code},{status});}
 }

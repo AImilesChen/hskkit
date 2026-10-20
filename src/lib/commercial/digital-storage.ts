@@ -32,7 +32,7 @@ export async function createDigitalProductOrder(userId:string,productId:string,i
   if(!order)throw new Error("ORDER_CREATE_FAILED");
   return order;
 }
-export async function attachDigitalCheckoutSession(orderId:string,sessionId:string){await commerceDb().prepare(`UPDATE digital_product_orders SET stripe_checkout_session_id=?,updated_at=? WHERE id=? AND status='pending'`).bind(sessionId,nowIso(),orderId).run();}
+export async function attachDigitalCheckoutSession(orderId:string,sessionId:string,amountCents?:number){await commerceDb().prepare(`UPDATE digital_product_orders SET stripe_checkout_session_id=?,amount_cents=COALESCE(?,amount_cents),updated_at=? WHERE id=? AND status='pending'`).bind(sessionId,amountCents??null,nowIso(),orderId).run();}
 export async function markDigitalOrderFailed(orderId:string,env?:Pick<CloudflareEnv,"LEARNING_DB">){await commerceDb(env).prepare(`UPDATE digital_product_orders SET status='failed',updated_at=? WHERE id=? AND status='pending'`).bind(nowIso(),orderId).run();}
 
 export async function grantDigitalProductOrder(input:{sessionId:string;orderId?:string;expectedUserId?:string;expectedProductId?:string;expectedAmountCents?:number;paymentIntentId?:string;chargeId?:string;livemode?:boolean},env?:Pick<CloudflareEnv,"LEARNING_DB">){

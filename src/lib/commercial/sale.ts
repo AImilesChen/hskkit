@@ -21,5 +21,5 @@ export function activeHalfOffSale(env: HalfOffSaleEnv, now = new Date()) {
 }
 
 export function validOrderAmount(baseAmountCents: number, chargedAmountCents: number) {
-  return chargedAmountCents === baseAmountCents || chargedAmountCents === halfOffAmountCents(baseAmountCents);
+  return chargedAmountCents === baseAmountCents || chargedAmountCents === halfOffAmountCents(baseAmountCents) || chargedAmountCents === Math.floor(baseAmountCents / 2);
 }
