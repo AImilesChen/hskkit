@@ -38,7 +38,8 @@ const files = {
 const s = Object.fromEntries(Object.entries(files).map(([key, path]) => [key, read(path)])) as Record<keyof typeof files, string>;
 
 test("public copy keeps one explicit product boundary after the Test-mode Store opens", () => {
-  assert.match(s.publicCopy, /11,107[\s\S]*5,469[\s\S]*5,638[\s\S]*unified HSK 7–9 advanced ability band/);
+  assert.match(s.publicCopy, /11,092[\s\S]*5,456[\s\S]*5,636[\s\S]*unified HSK 7–9 advanced ability band/);
+  assert.match(s.publicCopy, /15 separate grammar, reading and sentence items; these are not vocabulary words/);
   assert.match(s.publicCopy, /Guest study is supported/);
   for (const key of ["home", "pricing", "contact", "terms"] as const) {
     assert.match(s[key], /PUBLIC_FORMAL_CONTENT_SCOPE/);

@@ -1,5 +1,5 @@
 export const PUBLIC_FORMAL_CONTENT_SCOPE =
-  "Current formal vocabulary scope contains 11,107 source-locked, QA-approved HSK 3.0 entries: 5,469 across Levels 1–6 and 5,638 in one unified HSK 7–9 advanced ability band. Lesson, audio, practice and mock pages include only the approved items shown in the active release; unpublished material is not included.";
+  "The current published HSK 3.0 vocabulary contains 11,092 QA-approved word entries: 5,456 across Levels 1–6 and 5,636 in the unified HSK 7–9 advanced ability band. The active content release also includes 15 separate grammar, reading and sentence items; these are not vocabulary words. Lesson, audio, practice and mock pages include only approved items shown in the active release; unpublished material is not included.";
 
 export const PUBLIC_ACCOUNT_SCOPE =
   "Guest study is supported. An optional account saves and syncs progress privately across devices and is required only for account-only actions.";

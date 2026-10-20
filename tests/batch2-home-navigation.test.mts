@@ -74,7 +74,7 @@ test("old generic entry routes have explicit 301 consolidation while traditional
 });
 
 test("standards comparison reflects the active formal release", () => {
-  assert.match(comparison, /11,107/);
+  assert.match(comparison, /PUBLIC_FORMAL_CONTENT_SCOPE/);
   assert.match(comparison, /Levels 7[–-]9.*unified HSK 7[–-]9 advanced ability band/i);
   assert.doesNotMatch(comparison, /no QA-approved level assets|currently published/i);
 });

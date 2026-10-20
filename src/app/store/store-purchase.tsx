@@ -3,9 +3,9 @@ import Image from "next/image";
 import Link from "next/link";
 import {useEffect,useState} from "react";
 import {storeProductDetail} from "@/lib/commercial/product-details";
+import type {PublicCommerceConfig} from "@/lib/commercial/public-catalog";
 
-type Product={id:string;name:string;category:"level"|"bundle"|"resource"|"resource_bundle"|"teacher";amountCents:number;saleAmountCents:number|null;currency:string;levels:number[];description:string;deliverables:string[]};
-type CommerceConfig={enabled:boolean;accessDays:number;successfulDownloadLimit:number;refundDays:number;sale:{percentOff:number;endAt:string}|null;products:Product[]};
+type CommerceConfig=PublicCommerceConfig;
 const categories=["level","bundle","resource","resource_bundle","teacher"] as const;
 const sectionCopy={
   level:{eyebrow:"Complete HSK 3.0 level files",title:"Choose one complete level",copy:"Six complete Levels 1–6 vocabulary PDFs with canonical counts, searchable text and source IDs."},
@@ -29,8 +29,8 @@ function StoreCatalogSkeleton({message}:{message:string}){
   </section>;
 }
 
-export default function StorePurchase(){
-  const [config,setConfig]=useState<CommerceConfig|null>(null),[message,setMessage]=useState("");
+export default function StorePurchase({initialConfig}:{initialConfig:CommerceConfig}){
+  const [config,setConfig]=useState<CommerceConfig|null>(initialConfig),[message,setMessage]=useState("");
   useEffect(()=>{void fetch("/api/v1/commercial/config",{cache:"no-store"}).then(async response=>{if(!response.ok)throw new Error();return response.json();}).then((data:CommerceConfig)=>setConfig(data)).catch(()=>setMessage("Product catalog could not be loaded. Please refresh and try again."));},[]);
   if(!config)return <StoreCatalogSkeleton message={message}/>;
   return <section aria-label="Digital product catalog" className="mt-10 space-y-16">

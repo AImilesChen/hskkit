@@ -13,6 +13,10 @@ test("Store exposes the frozen 17-product matrix and sends every card through a 
   ]);
 
   assert.match(page, /Build a practical HSK 3\.0 study library/);
+  assert.match(page, /publicCommerceConfig\(\(await getCloudflareContext/);
+  assert.match(page, /<StorePurchase initialConfig=\{config\}/);
+  assert.match(page, /config\.products\.map\(\(product,index\)/);
+  assert.match(purchase, /useState<CommerceConfig\|null>\(initialConfig\)/);
   assert.match(products, /levelDefinitions/);
   assert.doesNotMatch(products, /level-8|level-9/);
   assert.match(products, /advanced-7-9/);

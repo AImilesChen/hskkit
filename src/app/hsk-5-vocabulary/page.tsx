@@ -5,16 +5,16 @@ import InfoBanner from "../components/info-banner";
 import LearningPath from "../components/learning-path";
 
 export const metadata: Metadata = {
-  title: "HSK 5 Vocabulary Guide | HSKKit",
+  title: "HSK 5 Vocabulary Guide (Traditional HSK 2.0) | HSKKit",
   description:
-    "Study HSK 5 vocabulary, HSK 5 word list themes, advanced Chinese words, transition challenges from HSK 4, readiness checks, and review advice.",
+    "Traditional HSK 2.0 resource: study HSK 5 vocabulary themes, sample words and review advice. Use the HSK 3.0 Level 5 catalog for the current standard.",
   alternates: {
     canonical: "https://hskkit.com/hsk-5-vocabulary",
   },
   openGraph: {
-    title: "HSK 5 Vocabulary Guide | HSKKit",
+    title: "HSK 5 Vocabulary Guide (Traditional HSK 2.0) | HSKKit",
     description:
-      "Study HSK 5 vocabulary, HSK 5 word list themes, advanced Chinese words, transition challenges from HSK 4, readiness checks, and review advice.",
+      "Traditional HSK 2.0 resource: study HSK 5 vocabulary themes, sample words and review advice. Use the HSK 3.0 Level 5 catalog for the current standard.",
     url: "https://hskkit.com/hsk-5-vocabulary",
     siteName: "HSKKit",
     type: "website",
