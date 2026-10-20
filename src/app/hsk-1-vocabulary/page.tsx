@@ -4,16 +4,16 @@ import SiteFooter from "../site-footer";
 import HSK1VocabularyClient from "./hsk-1-vocabulary-client";
 
 export const metadata: Metadata = {
-  title: "HSK 1 Vocabulary List | HSKKit",
+  title: "HSK 1 Vocabulary List (Traditional HSK 2.0) | HSKKit",
   description:
-    "Master all 150 HSK 1 words with pinyin, English meaning, and example sentences. Search, filter, and use flashcards to build a strong foundation in beginner Chinese.",
+    "Explore a 150-word Traditional HSK 2.0 HSK 1 list with pinyin, meanings, examples and flashcards. For current HSK 3.0 vocabulary, use the Level 1 catalog.",
   alternates: {
     canonical: "https://hskkit.com/hsk-1-vocabulary",
   },
   openGraph: {
-    title: "HSK 1 Vocabulary List | HSKKit",
+    title: "HSK 1 Vocabulary List (Traditional HSK 2.0) | HSKKit",
     description:
-      "Master all 150 HSK 1 words with pinyin, English meaning, and example sentences. Search, filter, and use flashcards to build a strong foundation in beginner Chinese.",
+      "Explore a 150-word Traditional HSK 2.0 HSK 1 list with pinyin, meanings, examples and flashcards. For current HSK 3.0 vocabulary, use the Level 1 catalog.",
     url: "https://hskkit.com/hsk-1-vocabulary",
     siteName: "HSKKit",
     type: "website",

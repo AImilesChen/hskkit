@@ -5,16 +5,16 @@ import PracticeTest from "../components/practice-test";
 import questions from "../../lib/data/hsk2.json";
 
 export const metadata: Metadata = {
-  title: "HSK 2 Practice Test | HSKKit",
+  title: "HSK 2 Practice Test (Traditional HSK 2.0) | HSKKit",
   description:
-    "Take an interactive HSK 2 practice test with 10 random questions from a 35-question bank. Instant scoring, explanations, and personalized next steps.",
+    "Traditional HSK 2.0 practice: answer 10 random HSK 2 questions from a 35-question bank, then see scoring, explanations and next steps.",
   alternates: {
     canonical: "https://hskkit.com/hsk-2-practice-test",
   },
   openGraph: {
-    title: "HSK 2 Practice Test | HSKKit",
+    title: "HSK 2 Practice Test (Traditional HSK 2.0) | HSKKit",
     description:
-      "Take an interactive HSK 2 practice test with 10 random questions from a 35-question bank. Instant scoring, explanations, and personalized next steps.",
+      "Traditional HSK 2.0 practice: answer 10 random HSK 2 questions from a 35-question bank, then see scoring, explanations and next steps.",
     url: "https://hskkit.com/hsk-2-practice-test",
     siteName: "HSKKit",
     type: "website",

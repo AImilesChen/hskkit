@@ -9,16 +9,16 @@ import { ReadingAnalytics } from "./reading-analytics";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://hskkit.com"),
-  title: "HSK 1 Reading Practice with Pinyin — Free Short Stories | HSKKit",
+  title: "HSK 1 Reading Practice (Traditional HSK 2.0) | HSKKit",
   description:
-    "Practice HSK 1 reading with pinyin support. 5 original short stories with highlighted vocabulary, comprehension questions, and study tips. Free — no login needed.",
+    "Traditional HSK 2.0 reading practice: five original HSK 1 short stories with pinyin, highlighted words and comprehension questions. Free, no login needed.",
   alternates: {
     canonical: "https://hskkit.com/hsk-1-reading-practice",
   },
   openGraph: {
-    title: "HSK 1 Reading Practice with Pinyin — Free Short Stories",
+    title: "HSK 1 Reading Practice (Traditional HSK 2.0)",
     description:
-      "Practice HSK 1 reading with pinyin support. 5 original short stories with highlighted vocabulary, comprehension questions, and study tips.",
+      "Traditional HSK 2.0 reading practice: five original HSK 1 short stories with pinyin, highlighted words and comprehension questions.",
     url: "https://hskkit.com/hsk-1-reading-practice",
     siteName: "HSKKit",
     type: "website",
