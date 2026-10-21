@@ -41,12 +41,6 @@ async function verifyFixedPrice(input:{priceId:string;secret:string;amountCents:
   return {mode,productId:typeof value.product==="string"?value.product:undefined};
 }
 
-async function verifyHalfOffCoupon(couponId:string,secret:string){
-  const {value}=await stripeRequest(`coupons/${encodeURIComponent(couponId)}`,secret,{method:"GET"});
-  const appliesTo=value.applies_to as {products?:unknown}|null|undefined;
-  if(value.id!==couponId||value.valid!==true||value.percent_off!==50||value.duration!=="once"||value.amount_off!==null||(Array.isArray(appliesTo?.products)&&appliesTo.products.length>0))throw new Error("STRIPE_SALE_COUPON_INVALID");
-}
-
 export async function createStripeTestCheckout(input:{orderId:string;userId:string;selectedLevel:number;successUrl:string;cancelUrl:string;secret:string}){
   if(requireStripeMode(input.secret)!=="test")throw new Error("STRIPE_LIVE_PRICE_REQUIRED");
   const form=new URLSearchParams({
@@ -69,7 +63,6 @@ export async function createStripeDigitalProductCheckout(input:{orderId:string;u
   if(input.priceId)await verifyFixedPrice({priceId:input.priceId,secret:input.secret,amountCents:input.product.amountCents,currency:input.product.currency});
   const expectedAmount=input.amountCents??input.product.amountCents;
   if(expectedAmount!==input.product.amountCents&&(!input.couponId||expectedAmount!==halfOffAmountCents(input.product.amountCents)))throw new Error("STRIPE_SALE_AMOUNT_INVALID");
-  if(input.couponId){await verifyHalfOffCoupon(input.couponId,input.secret);}
   const form=new URLSearchParams({
     mode:"payment",success_url:input.successUrl,cancel_url:input.cancelUrl,client_reference_id:input.userId,
     "line_items[0][quantity]":"1",
@@ -120,7 +113,6 @@ export async function createStripeSubscriptionCheckout(input:{orderId:string;own
   if(input.priceId)await verifyFixedPrice({priceId:input.priceId,secret:input.secret,amountCents:plan.amountCents,currency:plan.currency,recurring:{interval:plan.interval,intervalCount:plan.intervalCount}});
   const expectedAmount=input.amountCents??plan.amountCents;
   if(expectedAmount!==plan.amountCents&&(!input.couponId||expectedAmount!==halfOffAmountCents(plan.amountCents)))throw new Error("STRIPE_SALE_AMOUNT_INVALID");
-  if(input.couponId)await verifyHalfOffCoupon(input.couponId,input.secret);
   const form=buildSubscriptionCheckoutForm({planId:input.planId,priceId:input.priceId,ownerId:input.ownerId,userId:input.userId,orderId:input.orderId,origin:input.origin});
   if(input.couponId)form.set("discounts[0][coupon]",input.couponId);
   const {value}=await stripeRequest("checkout/sessions",input.secret,{form,idempotencyKey:`subscription-checkout:${input.orderId}`});
