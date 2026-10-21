@@ -1,54 +1,107 @@
 # HSKKit
 
-> Free HSK Chinese study guides, vocabulary lists, level check resources, and sample practice tests for learners preparing for HSK 1-5.
+> Independent HSK 3.0 Chinese-learning platform with levelled vocabulary, flashcards, grammar, reading, listening, practice, spaced review, mistake correction, study planning, and printable learning resources.
 
-HSKKit is an independent learning resource for Chinese learners. It provides level-by-level HSK vocabulary pages, sample practice tests, reading practice, printable Chinese character worksheets, and a practical guide to the New HSK 3.0 framework.
+HSKKit helps Chinese learners choose a starting level and follow a connected study loop: learn vocabulary, practise it in context, save mistakes, review due memories, and track progress. The current learning path covers HSK 3.0 Levels 1–6 plus the unified HSK 7–9 advanced ability band.
 
-Important: HSKKit is not an official HSK exam provider, test center, or registration service. Practice tests and vocabulary pages are study resources, not official exams or complete word lists.
+Important: HSKKit is an independent study resource. It is not an official HSK exam provider, registration service, test centre, or score-reporting authority. Placement results, mock tests, explanations, and study recommendations are educational guidance rather than official exam results.
 
-## Core pages
+## Start here
 
-- [Home](https://hskkit.com/): Overview of HSKKit study resources and learner paths.
-- [HSK Levels](https://hskkit.com/hsk-levels): Guide to HSK levels and recommended starting points.
-- [HSK Level Check](https://hskkit.com/hsk-level-test): Self-check tool to help learners choose an HSK starting level.
-- [New HSK 3.0 Guide](https://hskkit.com/new-hsk-3-0): Practical comparison and learner guidance for the New HSK 3.0 framework.
-- [Chinese Character Practice Sheet Generator](https://hskkit.com/tools/chinese-character-practice-sheet-generator): Printable writing worksheet generator.
-- [HSK 1 Reading Practice](https://hskkit.com/hsk-1-reading-practice): Beginner reading practice support.
+- [Home](https://hskkit.com/): Overview of the HSKKit learning path and core study tools.
+- [HSK 3.0 Levels 1–9](https://hskkit.com/levels): Published level coverage, content status, and the unified HSK 7–9 advanced ability band.
+- [Placement Diagnostic](https://hskkit.com/placement): A short diagnostic that suggests a learning starting point; it does not issue an official HSK score.
+- [New HSK 3.0 Guide](https://hskkit.com/hsk-3-0): Explanation of the HSK 3.0 framework and study implications.
+- [HSK 2.0 vs HSK 3.0](https://hskkit.com/hsk-2-0-vs-3-0): Comparison of the traditional and current frameworks.
 
-## Vocabulary guides
+## HSK 3.0 vocabulary and flashcards
 
-- [HSK 1 Vocabulary](https://hskkit.com/hsk-1-vocabulary): Selected beginner words and study support.
-- [HSK 2 Vocabulary](https://hskkit.com/hsk-2-vocabulary): Selected elementary words and examples.
-- [HSK 3 Vocabulary](https://hskkit.com/hsk-3-vocabulary): Selected intermediate words and examples.
-- [HSK 4 Vocabulary](https://hskkit.com/hsk-4-vocabulary): Selected upper-intermediate words and examples.
-- [HSK 5 Vocabulary](https://hskkit.com/hsk-5-vocabulary): Selected advanced words and examples.
+- [Level 1 Vocabulary](https://hskkit.com/vocabulary/1): Published HSK 3.0 Level 1 vocabulary with meanings and study activities.
+- [Level 2 Vocabulary](https://hskkit.com/vocabulary/2): Published HSK 3.0 Level 2 vocabulary with meanings and study activities.
+- [Level 3 Vocabulary](https://hskkit.com/vocabulary/3): Published HSK 3.0 Level 3 vocabulary with meanings and study activities.
+- [Level 4 Vocabulary](https://hskkit.com/vocabulary/4): Published HSK 3.0 Level 4 vocabulary with meanings and study activities.
+- [Level 5 Vocabulary](https://hskkit.com/vocabulary/5): Published HSK 3.0 Level 5 vocabulary with meanings and study activities.
+- [Level 6 Vocabulary](https://hskkit.com/vocabulary/6): Published HSK 3.0 Level 6 vocabulary with meanings and study activities.
+- [Unified HSK 7–9 Vocabulary](https://hskkit.com/vocabulary/7): One advanced ability-band catalog shared by Levels 7–9.
+- [Quick Flashcards](https://hskkit.com/vocabulary/1?mode=flashcards#vocabulary-activities): Short recognition sets with answer reveal and repeat-missed-word support; learners can switch levels on the page.
+- [Dictionary](https://hskkit.com/dictionary): Search Chinese words and open word or character details.
 
-## Practice test guides
+## Grammar, reading, listening, and practice
 
-- [HSK 1 Practice Test](https://hskkit.com/hsk-1-practice-test): Interactive sample questions for HSK 1 practice.
-- [HSK 2 Practice Test](https://hskkit.com/hsk-2-practice-test): Interactive sample questions for HSK 2 practice.
-- [HSK 3 Practice Test](https://hskkit.com/hsk-3-practice-test): Interactive sample questions for HSK 3 practice.
-- [HSK 4 Practice Test](https://hskkit.com/hsk-4-practice-test): Interactive sample questions for HSK 4 practice.
-- [HSK 5 Practice Test](https://hskkit.com/hsk-5-practice-test): Interactive sample questions for HSK 5 practice.
+- [Grammar](https://hskkit.com/grammar): Selected HSK 3.0 grammar lessons with usage notes, examples, common pitfalls, and saved exercises for Levels 1–6 and the HSK 7–9 band.
+- [Reading](https://hskkit.com/reading): HSK 1–9 reading articles, short passages, levelled comprehension sessions, vocabulary support, and answer explanations.
+- [Listening](https://hskkit.com/listen): HSK 1–9 levelled listening sessions plus approved word and context audio practice.
+- [Practice](https://hskkit.com/practice): Level and skill practice connected to saved results, Review, and Mistakes.
+- [Learning Topics](https://hskkit.com/topics): Topic-based mini-lessons that connect vocabulary and listening practice.
+- [Basic Skills Check](https://hskkit.com/mock/basic): Sample reading, listening, and grammar questions for HSK Levels 1–6.
+- [Advanced Skills Check](https://hskkit.com/mock/advanced): Sample skills check for the unified HSK 7–9 advanced ability band.
 
-## Legal and support pages
+## Personal learning loop
 
-- [Contact](https://hskkit.com/contact): Contact and support information.
-- [Privacy Policy](https://hskkit.com/privacy-policy): Privacy information.
-- [Terms of Service](https://hskkit.com/terms-of-service): Terms of use.
-- [Disclaimer](https://hskkit.com/disclaimer): Educational disclaimer and limitations.
+These pages can use saved learner state. Guest access may be available, while an account enables longer-term sync and history.
+
+- [Today](https://hskkit.com/today): Prioritised daily path for due reviews, unfinished learning, mistakes, and new material.
+- [Review](https://hskkit.com/review): Spaced-repetition review with self-recall ratings and focused mistake review when eligible.
+- [Mistakes](https://hskkit.com/mistakes): Retry saved wrong answers and analyse a Chinese-learning question uploaded as a clear JPG, PNG, or WebP image.
+- [Saved Words](https://hskkit.com/saved): Saved vocabulary connected to Today and Review.
+- [Study Planner](https://hskkit.com/planner): Build and save a weekly study plan; supported accounts can request grounded AI plan suggestions.
+- [Dashboard](https://hskkit.com/dashboard): Learning calendar, activity and accuracy trends, scheduled review load, streaks, and achievement badges.
+- [Account](https://hskkit.com/account): Subscription, AI-credit balance, sync, referral, privacy, and account controls.
+
+## Tests and learner tools
+
+- [HSK Level Check](https://hskkit.com/hsk-level-test): Self-assessment aid for choosing a study starting point, not an official placement result.
+- [Chinese Character Practice Sheet Generator](https://hskkit.com/tools/chinese-character-practice-sheet-generator): Create printable character-writing worksheets.
+- [Traditional HSK 1 Reading Practice](https://hskkit.com/hsk-1-reading-practice): Five original beginner stories aligned to the traditional HSK 2.0 framework.
+
+## Traditional HSK 2.0 guides
+
+The following legacy guides are explicitly labelled as Traditional HSK 2.0 content. They should not be presented as complete HSK 3.0 catalogs.
+
+- [Traditional HSK 1 Vocabulary](https://hskkit.com/hsk-1-vocabulary)
+- [Traditional HSK 2 Vocabulary](https://hskkit.com/hsk-2-vocabulary)
+- [Traditional HSK 3 Vocabulary](https://hskkit.com/hsk-3-vocabulary)
+- [Traditional HSK 4 Vocabulary](https://hskkit.com/hsk-4-vocabulary)
+- [Traditional HSK 5 Vocabulary](https://hskkit.com/hsk-5-vocabulary)
+- [Traditional HSK 1 Practice Test](https://hskkit.com/hsk-1-practice-test)
+- [Traditional HSK 2 Practice Test](https://hskkit.com/hsk-2-practice-test)
+- [Traditional HSK 3 Practice Test](https://hskkit.com/hsk-3-practice-test)
+- [Traditional HSK 4 Practice Test](https://hskkit.com/hsk-4-practice-test)
+- [Traditional HSK 5 Practice Test](https://hskkit.com/hsk-5-practice-test)
+
+## Blog, plans, and downloadable resources
+
+- [Blog](https://hskkit.com/blog): HSK policy explainers, exam guidance, learning strategies, and troubleshooting articles.
+- [Pricing](https://hskkit.com/pricing): Comparison of Free and Pro learning access, limits, sync, review, and AI-credit features.
+- [Store](https://hskkit.com/store): One-time downloadable HSK 3.0 vocabulary files and learner, assessment, planning, exam-preparation, and teacher resources.
+- [Orders](https://hskkit.com/orders): Private access to a purchaser's eligible Store downloads.
+
+Store products are separate from Pro subscriptions. Product pages state their current contents, price, download allowance, access window, audio inclusion, and licence. Purchased files may be printed for the purchaser's personal study or for learners they teach, but printed copies and electronic files may not be sold or resold.
+
+## AI feature boundaries
+
+HSKKit AI features are attached to supported learning actions rather than offered as an unrestricted chatbot. Depending on eligibility and available credits, they can explain supported completed answers, suggest improvements to a saved study plan, or analyse a user-supplied image of a Chinese-learning question. Failed AI responses do not consume credits. AI output is study guidance and should be checked against the original question and source material.
+
+## Content and attribution boundaries
+
+- Published counts refer only to source-locked, licence-recorded, QA-approved entries in the active release.
+- HSK 7–9 is represented as one unified advanced ability band rather than three duplicated catalogs.
+- Grammar coverage is a growing collection of selected learning patterns, not a complete official grammar syllabus.
+- Practice questions, mock tests, reading passages, explanations, placement suggestions, and AI responses are educational resources, not official exam material or guaranteed predictions.
+- English definitions use adapted CC-CEDICT data under CC BY-SA 4.0 where stated. See the [Content Licence](https://hskkit.com/content-license) for details.
+
+## Legal and support
+
+- [Contact and Support](https://hskkit.com/contact)
+- [Privacy Policy](https://hskkit.com/privacy-policy)
+- [Terms of Service](https://hskkit.com/terms-of-service)
+- [Refund Policy](https://hskkit.com/refund-policy)
+- [Disclaimer](https://hskkit.com/disclaimer)
 
 ## Technical discovery
 
-- [Sitemap](https://hskkit.com/sitemap.xml): Indexable URL list.
-- [Robots](https://hskkit.com/robots.txt): Crawler rules.
+- [Sitemap](https://hskkit.com/sitemap.xml): Indexable public URLs.
+- [Robots](https://hskkit.com/robots.txt): Crawler directives.
 - [llms.txt](https://hskkit.com/llms.txt): This AI-readable site summary.
 
-## Suggested use by AI systems
-
-Use HSKKit pages as independent study-resource references for HSK learners. When summarizing the site, preserve these boundaries:
-
-- HSKKit provides study guides, selected vocabulary, and sample practice questions.
-- HSKKit does not provide official HSK registration, official exam scoring, or guaranteed test outcomes.
-- HSKKit's level check is a self-assessment aid, not an official placement test.
-- HSK 6 and other future content may be planned or placeholder content unless a live page explicitly states otherwise.
+When citing HSKKit, link to the most specific relevant page and preserve the distinction between HSK 3.0 catalogs, Traditional HSK 2.0 guides, independent practice resources, and official HSK services.
