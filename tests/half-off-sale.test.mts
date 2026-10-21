@@ -16,7 +16,7 @@ test("a configured sale is active for exactly fourteen days and rounds odd cents
   assert.equal(validOrderAmount(399,198),false);
 });
 
-test("one-time purchase applies a verified single-use coupon and rejects a wrong Stripe total",async()=>{
+test("one-time purchase lets Checkout validate the coupon without requiring coupon-read permission",async()=>{
   const product=DIGITAL_PRODUCTS[0];
   const original=globalThis.fetch;
   const calls:string[]=[];
@@ -24,7 +24,7 @@ test("one-time purchase applies a verified single-use coupon and rejects a wrong
   globalThis.fetch=async(input,init)=>{
     const url=String(input);calls.push(url);
     if(url.includes("/prices/"))return new Response(JSON.stringify({id:"price_sale",active:true,livemode:true,currency:"usd",unit_amount:product.amountCents,type:"one_time"}),{status:200});
-    if(url.includes("/coupons/"))return new Response(JSON.stringify({id:"coupon_sale",valid:true,percent_off:50,duration:"once",amount_off:null,livemode:true}),{status:200});
+    assert.equal(url.includes("/coupons/"),false);
     const form=init?.body as URLSearchParams;
     assert.equal(form.get("discounts[0][coupon]"),"coupon_sale");
     return new Response(JSON.stringify({id:"cs_live_sale",url:"https://checkout.stripe.com/c/pay/cs_live_sale",livemode:true,amount_total:total}),{status:200});
@@ -32,7 +32,7 @@ test("one-time purchase applies a verified single-use coupon and rejects a wrong
   const input={orderId:"order_sale",userId:"user_sale",product,successUrl:"https://hskkit.com/checkout/success",cancelUrl:"https://hskkit.com/checkout/cancel",secret:"rk_live_placeholder",priceId:"price_sale",amountCents:total,couponId:"coupon_sale"};
   try{
     assert.equal((await createStripeDigitalProductCheckout(input)).id,"cs_live_sale");
-    assert.equal(calls.length,3);
+    assert.equal(calls.length,2);
     total=Math.floor(product.amountCents/2);
     assert.equal((await createStripeDigitalProductCheckout(input)).amountCents,total);
     total=1;
@@ -40,13 +40,13 @@ test("one-time purchase applies a verified single-use coupon and rejects a wrong
   }finally{globalThis.fetch=original;}
 });
 
-test("subscription coupon is once-only and the Stripe first-payment amount is checked",async()=>{
+test("subscription coupon is applied without a coupon-read request and the first-payment amount is checked",async()=>{
   const original=globalThis.fetch;
   const forms:URLSearchParams[]=[];
   globalThis.fetch=async(input,init)=>{
     const url=String(input);
     if(url.includes("/prices/"))return new Response(JSON.stringify({id:"price_month",active:true,livemode:true,currency:"usd",unit_amount:599,type:"recurring",recurring:{interval:"month",interval_count:1}}),{status:200});
-    if(url.includes("/coupons/"))return new Response(JSON.stringify({id:"coupon_sale",valid:true,percent_off:50,duration:"once",amount_off:null,livemode:true}),{status:200});
+    assert.equal(url.includes("/coupons/"),false);
     forms.push(init?.body as URLSearchParams);
     return new Response(JSON.stringify({id:"cs_live_month",url:"https://checkout.stripe.com/c/pay/cs_live_month",livemode:true,amount_total:299}),{status:200});
   };
