@@ -2,8 +2,8 @@ import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 import test from "node:test";
 
-import { assertCurrentDailySession, assertTodayLearnItemMatches, buildDailySession, emptyLearningState, gradeReview, recordAttempt } from "../src/lib/learning/domain.ts";
-import { selectTodayContent, todayContentByAssetId, todayContentByContentId } from "../src/lib/learning/today-content.ts";
+import { applyDailyItemAction, assertCurrentDailySession, assertTodayLearnItemMatches, buildDailySession, emptyLearningState, gradeReview, recordAttempt } from "../src/lib/learning/domain.ts";
+import { selectTodayContent, todayContentByAssetId, todayContentByContentId, todayMeaningCheck } from "../src/lib/learning/today-content.ts";
 import { completionProofNeedsSync, isTodayBudgetMinutes, isTodayFocus, isTodayNewWordCount, parseTodayCompletionProof, recommendTodayMinutes, recommendTodayNewWordCount, resolveTodayCelebration, todayCompletionProof, todayJourneyProgress, todaySummaryStats, TODAY_BUDGET_OPTIONS, TODAY_FOCUS_OPTIONS, TODAY_NEW_WORD_OPTIONS } from "../src/lib/learning/today-plan.ts";
 import { answerPracticeQuestion, createPracticeSession } from "../src/lib/practice/domain.ts";
 import { trustedPracticeQuestionVersion } from "../src/lib/practice/questions.ts";
@@ -43,6 +43,44 @@ test("Today derives a useful default word count from the selected time budget", 
   assert.equal(recommendTodayNewWordCount(15), 3);
   assert.equal(recommendTodayNewWordCount(20), 3);
   assert.equal(recommendTodayNewWordCount(30), 5);
+});
+
+test("Today gives every planned word a stable four-choice meaning check", () => {
+  const plan = selectTodayContent(2, 3);
+  assert.equal(plan.status, "ready");
+  if (plan.status !== "ready") return;
+  for (const item of plan.items) {
+    const first = todayMeaningCheck(item);
+    const second = todayMeaningCheck(item);
+    assert.deepEqual(first, second);
+    assert.equal(first?.options.length, 4);
+    assert.equal(new Set(first?.options.map((option) => option.text)).size, 4);
+    assert.equal(first?.options.find((option) => option.key === first.correctAnswer)?.text, item.meaning);
+  }
+});
+
+test("Today stores the verified Learn memory check with the completed item", () => {
+  const plan = selectTodayContent(1, 1);
+  const built = buildDailySession(emptyLearningState(), {
+    ownerId: "verified-learn",
+    localDay: "2026-09-09",
+    ruleVersion: "today-v10",
+    now,
+    dailyContent: plan,
+    budgetMinutes: 20,
+    newWordCount: 1,
+  });
+  const learn = built.session.items.find((item) => item.kind === "learn")!;
+  const completed = applyDailyItemAction(built.state, {
+    sessionId: built.session.id,
+    itemId: learn.id,
+    action: "complete",
+    idempotencyKey: "complete-verified-learn",
+    observedAt: now,
+    learnCheck: { mode: "meaning", attempts: 2, firstTryCorrect: false, verifiedAt: now },
+  });
+  assert.equal(completed.item.status, "completed");
+  assert.deepEqual(completed.item.learnCheck, { mode: "meaning", attempts: 2, firstTryCorrect: false, verifiedAt: now });
 });
 
 test("a 20 minute plan contains three distinct words and only their available listening", () => {
@@ -207,13 +245,13 @@ test("Today renders the saved Learn word inline and completes it before unlockin
   ]);
   for (const token of [
     "Today review",
-    "Overall progress",
+    "Tasks completed",
     "learnContent",
     "Formal pronunciation",
     "Example translation",
     "completeLearn",
-    "I’ve learned",
-    "Continue to listening",
+    "Start memory check",
+    "Check answer and continue",
     "scrollIntoView",
   ]) assert.match(dashboard, new RegExp(token));
   assert.match(route, /learnContent/);
@@ -259,10 +297,10 @@ test("Today has one dominant start action, explicit plan save feedback, progress
   const dashboard = await source("src/app/components/learning-dashboard.tsx");
   for (const token of [
     "Continue Today Session",
-    "Current phase",
+    "Current stage",
     "of {journeyProgress.totalPhases}",
-    "Overall progress",
-    "min remaining",
+    "Tasks completed",
+    "min left",
     "Why this plan",
     "Save changes",
     "Plan updated",
@@ -380,13 +418,17 @@ test("Today subpages preserve Today Session context and finish through the saved
   ]);
   assert.match(wordPage, /TodayWordCompletion/);
   assert.match(wordAction, /action: "complete_item"/);
-  assert.match(wordAction, /assetId, idempotencyKey: idempotencyKey\.current/);
+  assert.match(wordAction, /answer, attempts/);
   assert.match(wordAction, /sessionStorage\.getItem\(storageKey\)/);
   assert.match(wordAction, /completed=learn&completedSession=/);
   const learningRoute = await source("src/app/api/v1/learning/route.ts");
+  const dashboard = await source("src/app/components/learning-dashboard.tsx");
   const practiceRoute = await source("src/app/api/v1/practice/route.ts");
   assert.match(learningRoute, /assertCurrentDailySession\(activeToday\.session, sessionId\)/);
   assert.match(learningRoute, /assertDailyAudioBinding\(state, dailySessionId, dailyItemId, exercise, activeToday\.session\.id\)/);
+  assert.match(learningRoute, /TODAY_LEARN_CHECK_REQUIRED/);
+  assert.match(dashboard, /Start memory check/);
+  assert.match(dashboard, /Initial learning complete · memory check passed/);
   assert.match(practiceRoute, /assertCurrentDailyPracticeBinding/);
   assert.match(practiceRoute, /PRACTICE_DAILY_SESSION_STALE/);
   assert.match(audio, /tzOffset: new Date\(\)\.getTimezoneOffset\(\)/);

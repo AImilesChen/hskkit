@@ -25,6 +25,12 @@ export interface TodayContentItem {
   resumeSteps?: TodayResumeSteps;
 }
 
+export type TodayMeaningCheck = {
+  prompt: string;
+  options: Array<{ key: "A" | "B" | "C" | "D"; text: string }>;
+  correctAnswer: "A" | "B" | "C" | "D";
+};
+
 export interface TodayResumeSteps {
   learn: boolean;
   audio: boolean;
@@ -120,6 +126,35 @@ function availableItems(catalogLevel: number): TodayContentItem[] {
     .map((asset) => mapItem(asset, words.find((word) => word.id === asset.id), runtimeIndex.releaseId));
   poolCache.set(catalogLevel, items);
   return items;
+}
+
+const meaningOptionKeys = ["A", "B", "C", "D"] as const;
+const normalizedMeaning = (value: string) => value.trim().toLocaleLowerCase().replace(/\s+/g, " ");
+const stableNumber = (value: string) => [...value].reduce((total, character) => (total * 31 + character.charCodeAt(0)) >>> 0, 17);
+
+export function todayMeaningCheck(item: TodayContentItem): TodayMeaningCheck | undefined {
+  const catalogLevel = item.level >= 7 ? 7 : item.level;
+  const seen = new Set([normalizedMeaning(item.meaning)]);
+  const candidates = availableItems(catalogLevel).filter((candidate) => {
+    const meaning = normalizedMeaning(candidate.meaning);
+    if (candidate.contentId === item.contentId || !meaning || seen.has(meaning)) return false;
+    seen.add(meaning);
+    return true;
+  });
+  if (candidates.length < 3) return undefined;
+  const start = stableNumber(item.assetId) % candidates.length;
+  const distractors: string[] = [];
+  for (let offset = 0; offset < candidates.length && distractors.length < 3; offset += 1) {
+    distractors.push(candidates[(start + offset) % candidates.length].meaning);
+  }
+  const correctIndex = stableNumber(`${item.assetId}:meaning`) % 4;
+  const meanings = [...distractors];
+  meanings.splice(correctIndex, 0, item.meaning);
+  return {
+    prompt: `What does “${item.hanzi}” mean?`,
+    options: meanings.map((text, index) => ({ key: meaningOptionKeys[index], text })),
+    correctAnswer: meaningOptionKeys[correctIndex],
+  };
 }
 
 export function selectTodayContent(startLevel: number, requestedCount = 1, selection: TodayWordSelection = {}): TodayContentPlan {
