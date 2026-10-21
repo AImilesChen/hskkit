@@ -9,6 +9,7 @@ import { listPublishedWords, relatedWordsForWord } from "@/lib/dictionary/catalo
 import { getIndexedCharacter } from "@/lib/dictionary/character-index";
 import { getDictionaryLearningContext } from "@/lib/dictionary/p2-server";
 import { getPublishedWordBySlug, splitDictionaryMeanings } from "@/lib/dictionary/runtime-word";
+import { todayContentByAssetId, todayMeaningCheck } from "@/lib/learning/today-content";
 
 type Props = { params: Promise<{ slug: string }>; searchParams?: Promise<Record<string, string | string[] | undefined>> };
 
@@ -63,6 +64,8 @@ export default async function WordPage({ params, searchParams }: Props) {
   const query = await searchParams;
   const dailySessionId = typeof query?.dailySessionId === "string" ? query.dailySessionId : "";
   const dailyItemId = typeof query?.dailyItemId === "string" ? query.dailyItemId : "";
+  const todayContent = dailySessionId && dailyItemId ? todayContentByAssetId(word.id) : undefined;
+  const meaningCheck = todayContent ? todayMeaningCheck(todayContent) : undefined;
   const schema = {
     "@context": "https://schema.org",
     "@type": "DefinedTerm",
@@ -97,7 +100,7 @@ export default async function WordPage({ params, searchParams }: Props) {
             </div>
           </article>
 
-          {dailySessionId && dailyItemId && <TodayWordCompletion assetId={word.id} dailySessionId={dailySessionId} dailyItemId={dailyItemId} step={typeof query?.todayStep === "string" ? query.todayStep : undefined} total={typeof query?.todayTotal === "string" ? query.todayTotal : undefined} />}
+          {dailySessionId && dailyItemId && meaningCheck && <TodayWordCompletion assetId={word.id} dailySessionId={dailySessionId} dailyItemId={dailyItemId} meaningCheck={meaningCheck} step={typeof query?.todayStep === "string" ? query.todayStep : undefined} total={typeof query?.todayTotal === "string" ? query.todayTotal : undefined} />}
 
           <DictionaryWordActions assetId={word.id} level={word.level} audioAsset={word.audioAsset} />
 

@@ -71,6 +71,12 @@ export interface DailyItem {
   estimatedMinutes?: number;
   deferred?: boolean;
   reviewCardId?: string;
+  learnCheck?: {
+    mode: "meaning";
+    attempts: number;
+    firstTryCorrect: boolean;
+    verifiedAt: string;
+  };
 }
 export interface DailySession {
   id: string;
@@ -339,7 +345,11 @@ export function recordDictionarySearch(state: LearningState, input: { query: str
 
 export function addWordToReview(state: LearningState, input: { word: DictionaryPracticeWord; observedAt: string; dueAt?: string }): LearningState {
   const existing = state.cards.find((card) => card.contentId === input.word.contentId && card.contentVersion === input.word.contentVersion && card.dimension === "reading");
-  if (existing) return state;
+  if (existing) {
+    const dueAt = input.dueAt ?? input.observedAt;
+    if (dueAt >= existing.dueAt) return state;
+    return { ...state, cards: state.cards.map((card) => card.id === existing.id ? { ...card, dueAt, intervalDays: 0 } : card) };
+  }
   const attemptId = id("att", `dictionary-review:${input.word.assetId}:${input.word.contentVersion}`);
   const cardId = id("card", `${input.word.contentId}:${input.word.contentVersion}:reading`);
   const answerText = `${input.word.hanzi} · ${input.word.pinyin} · ${input.word.meaning}`;
@@ -694,6 +704,7 @@ export function applyDailyItemAction(state: LearningState, input: {
   action: "complete" | "skip" | "restore";
   idempotencyKey: string;
   observedAt: string;
+  learnCheck?: DailyItem["learnCheck"];
 }) {
   if (!input.idempotencyKey) throw new Error("INVALID_IDEMPOTENCY_KEY");
   if ((state.dailyOperationKeys ?? []).includes(input.idempotencyKey)) {
@@ -710,7 +721,7 @@ export function applyDailyItemAction(state: LearningState, input: {
   if (input.action === "restore" && current.status !== "skipped") throw new Error("ITEM_NOT_SKIPPED");
   const status = input.action === "restore" ? "pending" as const : input.action === "skip" ? "skipped" as const : "completed" as const;
   const dailySessions = state.dailySessions.map((candidate) => candidate.id === input.sessionId
-    ? reconcileSummary({ ...candidate, completedAt: input.action === "restore" ? undefined : candidate.completedAt, items: candidate.items.map((item) => item.id === input.itemId ? { ...item, status } : item) }, input.observedAt)
+    ? reconcileSummary({ ...candidate, completedAt: input.action === "restore" ? undefined : candidate.completedAt, items: candidate.items.map((item) => item.id === input.itemId ? { ...item, status, ...(input.action === "complete" && input.learnCheck ? { learnCheck: input.learnCheck } : {}) } : item) }, input.observedAt)
     : candidate);
   const next = { ...state, dailySessions, dailyOperationKeys: [...(state.dailyOperationKeys ?? []).slice(-499), input.idempotencyKey] };
   return { state: next, item: dailySessions.find((candidate) => candidate.id === input.sessionId)!.items.find((item) => item.id === input.itemId)!, replayed: false as const };

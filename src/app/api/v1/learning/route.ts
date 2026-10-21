@@ -35,7 +35,7 @@ import { resolveCapabilities } from "../../../../lib/commercial/storage";
 import { type ProductCapabilities } from "../../../../lib/commercial/capabilities";
 import { reconcileReferralLearningMilestone } from "../../../../lib/commercial/referral-storage";
 import { learningRewardLocalDay } from "@/lib/engagement/storage";
-import { selectTodayContent, todayContentByAssetId, todayContentByContentId, todayContentFromCatalogRow, todayWordHistory } from "../../../../lib/learning/today-content";
+import { selectTodayContent, todayContentByAssetId, todayContentByContentId, todayContentFromCatalogRow, todayMeaningCheck, todayWordHistory } from "../../../../lib/learning/today-content";
 import { findPublicCatalogWordById } from "../../../../lib/content/public-catalog-index";
 import { accessDecision, createAuditEvent, errorContract } from "../../../../lib/account/access-policy";
 import { recordPolicyAudit } from "../../../../lib/account/audit-storage";
@@ -187,7 +187,7 @@ function view(state: LearningState, ownerId: string, offsetMinutes: number, capa
       if (item.kind !== "learn") return item;
       const dictionaryAssetId = item.id.startsWith("dictionary:") ? item.id.slice("dictionary:".length) : undefined;
       const learnContent = dictionaryAssetId ? todayContentByAssetId(dictionaryAssetId) : todayContentByContentId(item.contentId);
-      return learnContent ? { ...item, learnContent } : item;
+      return learnContent ? { ...item, learnContent: { ...learnContent, meaningCheck: todayMeaningCheck(learnContent) } } : item;
     }),
   };
   return {
@@ -743,6 +743,7 @@ async function postLearning(req: NextRequest) {
         state = activeToday.state;
         const currentItem = state.dailySessions.find((session) => session.id === sessionId)?.items.find((item) => item.id === itemId);
         let completedLearnContext: Awaited<ReturnType<typeof getDictionaryLearningContext>> = null;
+        let completedLearnCheck: NonNullable<LearningState["dailySessions"][number]["items"][number]["learnCheck"]> | undefined;
         if (action === "complete_item" && currentItem?.kind === "learn") {
           const assetId = short(payload.assetId, 120);
           const displayedWord = assetId ? await resolveTodayDictionaryItem(assetId) : undefined;
@@ -750,6 +751,11 @@ async function postLearning(req: NextRequest) {
           assertTodayLearnItemMatches(state, { sessionId, itemId, contentId: displayedWord.contentId, contentVersion: displayedWord.contentVersion });
           completedLearnContext = await getDictionaryLearningContext(displayedWord.assetId);
           if (!completedLearnContext) throw new Error("TODAY_LEARN_WORD_MISMATCH");
+          const meaningCheck = todayMeaningCheck(displayedWord);
+          const answer = short(payload.answer, 1);
+          if (!meaningCheck || answer !== meaningCheck.correctAnswer) throw new Error("TODAY_LEARN_CHECK_REQUIRED");
+          const attempts = Math.max(1, Math.min(20, Number(payload.attempts) || 1));
+          completedLearnCheck = { mode: "meaning", attempts, firstTryCorrect: attempts === 1, verifiedAt: new Date().toISOString() };
         }
         const completedAt = new Date().toISOString();
         state = applyDailyItemAction(state, {
@@ -758,6 +764,7 @@ async function postLearning(req: NextRequest) {
           action: action === "complete_item" ? "complete" : action === "skip_item" ? "skip" : "restore",
           idempotencyKey: key,
           observedAt: completedAt,
+          learnCheck: completedLearnCheck,
         }).state;
         if (action === "complete_item" && currentItem?.kind === "learn" && currentItem.status === "pending" && completedLearnContext) {
           state = addWordToReview(state, { word: completedLearnContext.current, observedAt: completedAt, dueAt: new Date(Date.parse(completedAt) + 86_400_000).toISOString() });

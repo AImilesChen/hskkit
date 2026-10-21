@@ -224,6 +224,9 @@ test("completing a Today word schedules one later reading review and replays saf
   assert.equal(first.cards.length, 1);
   assert.equal(first.cards[0].dueAt, dueAt);
   assert.equal(addWordToReview(first, { word, observedAt: now, dueAt }).cards.length, 1);
+  const recalledLate = addWordToReview(first, { word, observedAt: "2026-10-04T10:00:00.000Z" });
+  assert.equal(recalledLate.cards[0].dueAt, "2026-10-04T10:00:00.000Z");
+  assert.equal(recalledLate.cards[0].intervalDays, 0);
   const route = await readFile(new URL("../src/app/api/v1/learning/route.ts", import.meta.url), "utf8");
   assert.match(route, /state = addWordToReview\(state, \{ word: completedLearnContext\.current, observedAt: completedAt, dueAt:/);
 });

@@ -14,8 +14,9 @@ import { activeReviewCardId, activeTodayReviewCardId, buildIntentReviewQueue, fi
 import { completionProofNeedsSync, parseTodayCompletionProof, recommendTodayMinutes, recommendTodayNewWordCount, resolveTodayCelebration, todayCompletionProofKey, todaySummaryStats, todayJourneyProgress, TODAY_BUDGET_OPTIONS, TODAY_FOCUS_OPTIONS, TODAY_NEW_WORD_OPTIONS, type TodayBudgetMinutes, type TodayCelebration, type TodayCompletedKind, type TodayFocus, type TodayNewWordCount } from "../../lib/learning/today-plan";
 
 type Dimension = "reading" | "audio" | "context_audio";
-type LearnContent = { assetId: string; hanzi: string; pinyin: string; meaning: string; partOfSpeech: string; example?: { hanzi: string; pinyin: string; meaning: string }; audioSrc?: string };
-type Item = { id: string; kind: "review" | "learn" | "listen" | "practice" | "summary"; contentId: string; contentVersion?: string; status: "pending" | "completed" | "skipped"; dimension?: Dimension; title?: string; href?: string; estimatedMinutes?: number; deferred?: boolean; isContinuing?: boolean; reviewCardId?: string; learnContent?: LearnContent };
+type LearnMeaningCheck = { prompt: string; options: Array<{ key: "A" | "B" | "C" | "D"; text: string }>; correctAnswer: "A" | "B" | "C" | "D" };
+type LearnContent = { assetId: string; hanzi: string; pinyin: string; meaning: string; partOfSpeech: string; example?: { hanzi: string; pinyin: string; meaning: string }; audioSrc?: string; meaningCheck?: LearnMeaningCheck };
+type Item = { id: string; kind: "review" | "learn" | "listen" | "practice" | "summary"; contentId: string; contentVersion?: string; status: "pending" | "completed" | "skipped"; dimension?: Dimension; title?: string; href?: string; estimatedMinutes?: number; deferred?: boolean; isContinuing?: boolean; reviewCardId?: string; learnContent?: LearnContent; learnCheck?: { mode: "meaning"; attempts: number; firstTryCorrect: boolean; verifiedAt: string } };
 type Notice = { code: string; message: string; actionHref: string; actionLabel: string };
 type Card = { id: string; contentId: string; dimension: Dimension; dueAt: string; revision: number; prompt: string; context?: string; instruction?: string; answerMode: "choice" | "text" | "self_recall"; correctAnswer: string; correctAnswerKey: string; userAnswer: string; priorAnswerLabel: string; choices: Array<{ key: string; text: string }>; isMistake: boolean; legacyReview: boolean; reviewReason: string; explanation: string; level?: number; levelBand: string; skill: string; topic?: string; intervalDays: number; ease: number; reviewCount: number; audioText?: string; audioSrc?: string; assetId?: string; pinyin?: string; meaning?: string; example?: { hanzi: string; pinyin: string; meaning: string }; formalAudioSrc?: string; playbackRequired: boolean; playbackReady: boolean };
 type Mistake = { id: string; contentId: string; cardId?: string; status: string; createdAt: string; resolvedAt?: string; dimension: Dimension; prompt: string; level?: number; skill: string };
@@ -87,6 +88,11 @@ export default function LearningDashboard({ mode }: { mode: "today" | "review" |
   const [lastRatedCardId, setLastRatedCardId] = useState<string | null>(null);
   const [reviewSaving, setReviewSaving] = useState(false);
   const [learnSavingId, setLearnSavingId] = useState("");
+  const [learnCheckOpen, setLearnCheckOpen] = useState<Record<string, boolean>>({});
+  const [learnCheckAnswers, setLearnCheckAnswers] = useState<Record<string, string>>({});
+  const [learnCheckAttempts, setLearnCheckAttempts] = useState<Record<string, number>>({});
+  const [learnCheckWrong, setLearnCheckWrong] = useState<Record<string, boolean>>({});
+  const [reviewNowFeedback, setReviewNowFeedback] = useState<Record<string, string>>({});
   const [syncState, setSyncState] = useState<"synced" | "local_pending" | "syncing" | "conflict" | "failed">("synced");
   const [planDraftMinutes, setPlanDraftMinutes] = useState<TodayBudgetMinutes>(20);
   const [planDraftLevel, setPlanDraftLevel] = useState(1);
@@ -393,6 +399,12 @@ export default function LearningDashboard({ mode }: { mode: "today" | "review" |
       setSyncState("conflict");
       return action === "configure_today" ? "queued_conflict" : false;
     }
+    if (response && response.status >= 400 && response.status < 500) {
+      const rejected = await response.json();
+      delete operationKeys.current[operation];
+      setError(rejected.error === "TODAY_LEARN_CHECK_REQUIRED" ? "This word was not marked complete because its memory check was missing or incorrect. Reload Today and try again." : "Your progress could not be confirmed. Reload the server copy, then retry.");
+      return false;
+    }
     if (["complete_item", "skip_item", "restore_item", "configure_today"].includes(action) && data) {
       appendPending({ action, payload, idempotencyKey: key, clientRevision: data.revision, queueBinding: data.queueBinding });
       setSyncState("local_pending");
@@ -481,18 +493,44 @@ export default function LearningDashboard({ mode }: { mode: "today" | "review" |
   }
   async function skip(item: Item) { await post("skip_item", { sessionId: data!.session.id, itemId: item.id }, `skip:${data!.session.id}:${item.id}`); }
   async function restore(item: Item) { await post("restore_item", { sessionId: data!.session.id, itemId: item.id }, `restore:${data!.session.id}:${item.id}`); }
-  async function completeLearn(item: Item) {
+  async function completeLearn(item: Item, answer: string, attempts: number) {
     if (!data || !item.learnContent || learnSavingId) return;
     setLearnSavingId(item.id);
     try {
-      const result = await post("complete_item", { sessionId: data.session.id, itemId: item.id, assetId: item.learnContent.assetId }, `complete-learn:${data.session.id}:${item.id}`) as Data | true | false;
+      const result = await post("complete_item", { sessionId: data.session.id, itemId: item.id, assetId: item.learnContent.assetId, answer, attempts }, `complete-learn:${data.session.id}:${item.id}`) as Data | true | false;
       if (!result) return;
+      setLearnCheckOpen((current) => ({ ...current, [item.id]: false }));
+      setLearnCheckAnswers((current) => ({ ...current, [item.id]: "" }));
+      setLearnCheckWrong((current) => ({ ...current, [item.id]: false }));
       const nextSession = typeof result === "object" ? result.session : { ...data.session, items: data.session.items.map((entry) => entry.id === item.id ? { ...entry, status: "completed" as const } : entry) };
       const nextItem = nextSession.items.find((entry) => !entry.deferred && entry.status === "pending" && entry.kind !== "summary");
       if (nextItem) window.requestAnimationFrame(() => document.querySelector<HTMLElement>(`[data-today-item-id="${CSS.escape(nextItem.id)}"]`)?.scrollIntoView({ behavior: "smooth", block: "center" }));
     } finally {
       setLearnSavingId("");
     }
+  }
+  async function submitLearnCheck(item: Item) {
+    const check = item.learnContent?.meaningCheck;
+    const answer = learnCheckAnswers[item.id];
+    if (!check || !answer || learnSavingId) return;
+    const attempts = (learnCheckAttempts[item.id] ?? 0) + 1;
+    setLearnCheckAttempts((current) => ({ ...current, [item.id]: attempts }));
+    if (answer !== check.correctAnswer) {
+      setLearnCheckWrong((current) => ({ ...current, [item.id]: true }));
+      return;
+    }
+    await completeLearn(item, answer, attempts);
+  }
+  function restudyLearnItem(item: Item) {
+    setLearnCheckOpen((current) => ({ ...current, [item.id]: false }));
+    setLearnCheckAnswers((current) => ({ ...current, [item.id]: "" }));
+    setLearnCheckWrong((current) => ({ ...current, [item.id]: false }));
+  }
+  async function markNeedsReview(item: Item) {
+    if (!item.learnContent) return;
+    setReviewNowFeedback((current) => ({ ...current, [item.id]: "Saving…" }));
+    const result = await post("add_to_review", { assetId: item.learnContent.assetId }, `review-now:${item.learnContent.assetId}`);
+    setReviewNowFeedback((current) => ({ ...current, [item.id]: result ? "Added to your review queue." : "Could not update the review queue." }));
   }
   async function configureToday() {
     setPlanFeedback("");
@@ -584,6 +622,7 @@ export default function LearningDashboard({ mode }: { mode: "today" | "review" |
     const reviewGroupItems = plannedTodayTasks.filter((item) => item.kind === "review");
     const completedReviewCount = reviewGroupItems.filter((item) => item.status === "completed").length;
     const incorrectReviewCount = reviewGroupItems.filter((item) => item.status === "completed" && open.some((mistake) => mistake.contentId === item.contentId)).length;
+    const scheduledMistakeCount = reviewGroupItems.filter((item) => open.some((mistake) => mistake.contentId === item.contentId)).length;
     const selectedReviewItems = currentTodayItems.map(({ item }) => item).filter((item) => item.kind === "review" && item.status === "pending");
     const selectedReviewCards = selectedReviewItems
       .map((item) => dueForToday.find((card) => card.id === item.reviewCardId || (!item.reviewCardId && card.contentId === item.contentId && card.dimension === item.dimension)))
@@ -600,7 +639,7 @@ export default function LearningDashboard({ mode }: { mode: "today" | "review" |
     const weakest = Object.entries(data.mastery).sort((a, b) => a[1] - b[1])[0]?.[0]?.replace("context_audio", "context listening").replace("audio", "listening") ?? "vocabulary";
     const recommendedMinutes = recommendTodayMinutes({ monthPoints: reward?.monthPoints ?? 0, openMistakes: open.length, currentStreak: data.streak.current, mastery: data.mastery, cardCount: data.cards.length });
     const summaryComplete = data.session.items.some((item) => item.kind === "summary" && item.status === "completed");
-    const progressPercent = journeyProgress.totalPhases ? Math.round((journeyProgress.completedPhases / journeyProgress.totalPhases) * 100) : 0;
+    const progressPercent = plannedTodayTasks.length ? Math.round(((completedTasks + skippedTasks) / plannedTodayTasks.length) * 100) : 0;
     return <Shell title="Today" active="Today" sub="One guided session: review what matters, learn distinct new words, practise them, then see your result.">
       <div className="today-page">
       <section className="mb-5 overflow-hidden rounded-[28px] border border-blue-200 bg-gradient-to-br from-slate-950 via-blue-950 to-blue-900 text-white shadow-[0_24px_70px_rgba(30,64,175,0.18)]">
@@ -609,7 +648,7 @@ export default function LearningDashboard({ mode }: { mode: "today" | "review" |
             <p className="text-sm font-semibold text-blue-200">Today Session · HSK {data.session.startLevel ?? 1}</p>
             <h2 className="mt-2 text-3xl font-bold text-white">{summaryComplete ? "Today is complete" : activeToday ? label(activeToday) : "Your next session is ready"}</h2>
             <p className="mt-3 max-w-xl text-sm leading-6 text-blue-100">Today chooses the order for you: urgent memory first, then the exact next learning step.</p>
-            <div className="mt-5 grid grid-cols-3 gap-2 text-sm"><p><strong className="block text-white">Current phase</strong>{currentStep} of {journeyProgress.totalPhases}</p><p><strong className="block text-white">Overall progress</strong>{journeyProgress.completedPhases}/{journeyProgress.totalPhases}</p><p><strong className="block text-white">Time</strong>{remainingMinutes} min remaining</p></div>
+            <div className="mt-5 grid grid-cols-3 gap-2 text-sm"><p><strong className="block text-white">Current stage</strong>{currentStep} of {journeyProgress.totalPhases}</p><p><strong className="block text-white">Tasks completed</strong>{completedTasks}/{plannedTodayTasks.length}</p><p><strong className="block text-white">Planned time left</strong>{remainingMinutes} min</p></div>
             <div className="mt-4 h-2 overflow-hidden rounded-full bg-blue-950/80" role="progressbar" aria-label="Today progress" aria-valuemin={0} aria-valuemax={100} aria-valuenow={progressPercent}><div className="h-full rounded-full bg-blue-300 transition-[width] duration-500 motion-reduce:transition-none" style={{ width: `${progressPercent}%` }} /></div>
             {activeToday && <button className="mt-4 min-h-[44px] text-sm font-semibold text-blue-100 underline underline-offset-4" onClick={() => void skip(activeToday)}>Skip and move to tomorrow</button>}
           </div>
@@ -626,7 +665,7 @@ export default function LearningDashboard({ mode }: { mode: "today" | "review" |
         <p><strong>{plannedTodayTasks.length} tasks · {data.session.totalEstimatedMinutes ?? 0} min planned</strong></p>
         <p className="mt-1 text-sm text-slate-600"><strong>Why this plan:</strong> mistakes and due memory come first, then unfinished words and new words, their available listening, and a saved practice result.</p>
         {gapMinutes > 0 && <p className="mt-2 text-sm text-slate-600">{gapMinutes} min remains unfilled because no approved ready task fits the remaining budget. Today does not add filler.</p>}
-        <div className="mt-4 grid gap-2 text-sm text-slate-600 sm:grid-cols-2"><p><strong>Learning Points:</strong> {reward ? `${reward.monthPoints} this month across ${reward.monthLearningDays} qualified days` : "Build from qualified learning days"}</p><p><strong>Why today arranged this:</strong> {open.length ? `${open.length} open mistake${open.length === 1 ? "" : "s"} are prioritised before new work.` : `No open mistake is blocking you; ${weakest} is your lowest mastery area.`}</p></div>
+        <div className="mt-4 grid gap-2 text-sm text-slate-600 sm:grid-cols-2"><p><strong>Learning Points:</strong> {reward ? `${reward.monthPoints} this month across ${reward.monthLearningDays} qualified days. ${reward.remainingSeconds > 0 ? `${Math.ceil(reward.remainingSeconds / 60)} active min remain to qualify today; the current plan has about ${remainingMinutes} min left.` : "Today’s active-time requirement is met."}` : "Build from qualified learning days"}</p><p><strong>Why today arranged this:</strong> {open.length ? `You have ${open.length} unresolved mistake${open.length === 1 ? "" : "s"}; ${scheduledMistakeCount} ${scheduledMistakeCount === 1 ? "is" : "are"} included in today’s time budget.` : `No open mistake is blocking you; ${weakest} is your lowest mastery area.`}</p></div>
         {deferredTodayItems.length > 0 && <p className="mt-4 rounded-xl bg-amber-50 p-4 text-sm text-amber-900" role="status"><strong>{deferredTodayItems.length} saved word{deferredTodayItems.length === 1 ? " is" : "s are"} waiting for room.</strong> Increase the budget to bring {deferredTodayItems.length === 1 ? "it" : "them"} into this session.</p>}
       </section>
       {syncState !== "synced" && <div className={`step7-alert ${syncState === "failed" || syncState === "conflict" ? "error" : "warning"}`} role="status"><strong>Offline sync: {syncState.replaceAll("_", " ")}</strong><p>{syncState === "conflict" ? "Another device changed this learning record. Your action remains pending; retry it against the latest server copy." : syncState === "failed" ? "Sync failed. Your pending action remains on this device." : "Your action is stored locally and will sync with the same operation key."}</p><button className="btn secondary" onClick={() => void retryPending()}>Retry sync</button></div>}
@@ -662,15 +701,24 @@ export default function LearningDashboard({ mode }: { mode: "today" | "review" |
           return <article data-today-item-id={item.id} className={`relative z-[1] grid grid-cols-[48px_minmax(0,1fr)] gap-4 rounded-2xl border ${journeyState === "completed" ? "p-3 sm:p-4" : "p-4 sm:p-5"} ${todayJourneyTone(item.kind, journeyState)}`} key={item.id}>
             <TodayJourneyIcon item={item} state={journeyState} />
             <div className="min-w-0"><div className="flex flex-wrap items-center justify-between gap-2"><span className="text-xs font-extrabold uppercase tracking-[.14em]">{item.dimension?.replace("_", " ") ?? item.kind}</span><TodayStatus state={journeyState} /></div><h2 className="mt-1 text-xl font-bold text-slate-950">{label(item)}</h2>
-              <p className="mt-1 text-slate-600">{journeyState === "completed" ? "Step complete · progress saved." : journeyState === "skipped" ? "Moved to tomorrow · available to restore." : journeyState === "locked" ? "Complete the previous step to unlock." : `Ready now · ${item.estimatedMinutes ?? 0} min`}</p>
+              <p className="mt-1 text-slate-600">{journeyState === "completed" ? item.kind === "learn" ? item.learnCheck ? "Initial learning complete · memory check passed." : "Previously saved learning step · scheduled for review." : "Step complete · progress saved." : journeyState === "skipped" ? "Moved to tomorrow · available to restore." : journeyState === "locked" ? "Complete the previous step to unlock." : `Ready now · ${item.estimatedMinutes ?? 0} min`}</p>
               {journeyState !== "completed" && <p className="mt-2 text-sm text-blue-800"><strong>Why now:</strong> {todayReason(item, open.length, weakest)}</p>}
               {journeyState === "current" && item.kind === "learn" && item.learnContent && <section className="mt-4 rounded-2xl border border-blue-200 bg-white p-5" aria-label={`Learn ${item.learnContent.hanzi}`}>
-                <div className="flex flex-wrap items-start justify-between gap-4"><div><p className="text-4xl font-bold text-slate-950" lang="zh-Hans">{item.learnContent.hanzi}</p><p className="mt-1 text-lg font-semibold text-blue-700">{item.learnContent.pinyin}</p></div><span className="rounded-full bg-blue-50 px-3 py-1 text-xs font-bold uppercase tracking-wide text-blue-700">{item.learnContent.partOfSpeech}</span></div>
-                <p className="mt-4 text-lg text-slate-800"><strong>Meaning:</strong> {item.learnContent.meaning}</p>
-                {item.learnContent.audioSrc && <div className="mt-4"><p className="mb-2 text-sm font-semibold text-slate-700">Formal pronunciation</p><audio controls preload="metadata" src={item.learnContent.audioSrc} className="w-full max-w-full" /></div>}
-                {item.learnContent.example && <div className="mt-4 border-t border-slate-200 pt-4"><p className="text-lg font-semibold text-slate-950" lang="zh-Hans">{item.learnContent.example.hanzi}</p><p className="mt-1 text-blue-700">{item.learnContent.example.pinyin}</p><p className="mt-1 text-sm text-slate-600"><strong>Example translation:</strong> {item.learnContent.example.meaning}</p></div>}
-                <button type="button" disabled={learnSavingId === item.id} onClick={() => void completeLearn(item)} className="mt-5 min-h-[50px] w-full rounded-xl bg-blue-600 px-5 py-3 font-bold text-white shadow-sm hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-blue-200">{learnSavingId === item.id ? "Saving…" : <>I’ve learned “{item.learnContent.hanzi}” · {plannedTodayTasks.find((entry) => entry.status === "pending" && entry.id !== item.id)?.kind === "listen" ? "Continue to listening" : "Continue to next step"}</>}</button>
+                {!learnCheckOpen[item.id] ? <>
+                  <div className="flex flex-wrap items-start justify-between gap-4"><div><p className="text-4xl font-bold text-slate-950" lang="zh-Hans">{item.learnContent.hanzi}</p><p className="mt-1 text-lg font-semibold text-blue-700">{item.learnContent.pinyin}</p></div><span className="rounded-full bg-blue-50 px-3 py-1 text-xs font-bold uppercase tracking-wide text-blue-700">{item.learnContent.partOfSpeech}</span></div>
+                  <p className="mt-4 text-lg text-slate-800"><strong>Meaning:</strong> {item.learnContent.meaning}</p>
+                  {item.learnContent.audioSrc && <div className="mt-4"><p className="mb-2 text-sm font-semibold text-slate-700">Formal pronunciation</p><audio controls preload="metadata" src={item.learnContent.audioSrc} className="w-full max-w-full" /></div>}
+                  {item.learnContent.example && <div className="mt-4 border-t border-slate-200 pt-4"><p className="text-lg font-semibold text-slate-950" lang="zh-Hans">{item.learnContent.example.hanzi}</p><p className="mt-1 text-blue-700">{item.learnContent.example.pinyin}</p><p className="mt-1 text-sm text-slate-600"><strong>Example translation:</strong> {item.learnContent.example.meaning}</p></div>}
+                  <button type="button" disabled={!item.learnContent.meaningCheck} onClick={() => setLearnCheckOpen((current) => ({ ...current, [item.id]: true }))} className="mt-5 min-h-[50px] w-full rounded-xl bg-blue-600 px-5 py-3 font-bold text-white shadow-sm hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-blue-200">{item.learnContent.meaningCheck ? "Start memory check" : "Memory check unavailable"}</button>
+                </> : <div>
+                  <p className="text-xs font-extrabold uppercase tracking-[.14em] text-blue-700">Memory check</p>
+                  <h3 className="mt-2 text-2xl font-bold text-slate-950" lang="zh-Hans">{item.learnContent.hanzi}</h3>
+                  <p className="mt-2 text-sm text-slate-600">Choose from memory. The meaning stays hidden until you answer.</p>
+                  <fieldset className="mt-4 grid gap-2"><legend className="sr-only">{item.learnContent.meaningCheck?.prompt}</legend>{item.learnContent.meaningCheck?.options.map((option) => <label key={option.key} className={`flex min-h-[48px] cursor-pointer items-center gap-3 rounded-xl border px-4 py-3 ${learnCheckAnswers[item.id] === option.key ? "border-blue-600 bg-blue-50" : "border-slate-200 hover:border-blue-300"}`}><input type="radio" name={`learn-check-${item.id}`} value={option.key} checked={learnCheckAnswers[item.id] === option.key} onChange={() => { setLearnCheckAnswers((current) => ({ ...current, [item.id]: option.key })); setLearnCheckWrong((current) => ({ ...current, [item.id]: false })); }} /><span><strong className="mr-2">{option.key}.</strong>{option.text}</span></label>)}</fieldset>
+                  {learnCheckWrong[item.id] ? <div className="mt-4 rounded-xl border border-amber-200 bg-amber-50 p-4 text-amber-950" role="alert"><p className="font-bold">Not quite. “{item.learnContent.hanzi}” means “{item.learnContent.meaning}”.</p><p className="mt-1 text-sm">Review the word, then try the memory check again. This step has not been marked complete.</p><button type="button" onClick={() => restudyLearnItem(item)} className="mt-3 min-h-[44px] rounded-lg bg-white px-4 font-bold text-blue-700 ring-1 ring-blue-200">Study this word again</button></div> : <button type="button" disabled={!learnCheckAnswers[item.id] || learnSavingId === item.id} onClick={() => void submitLearnCheck(item)} className="mt-5 min-h-[50px] w-full rounded-xl bg-blue-600 px-5 py-3 font-bold text-white shadow-sm hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-blue-200">{learnSavingId === item.id ? "Saving…" : "Check answer and continue"}</button>}
+                </div>}
               </section>}
+              {journeyState === "completed" && item.kind === "learn" && item.learnContent && <details className="mt-3 rounded-xl border border-emerald-200 bg-white/80 px-4 py-3"><summary className="cursor-pointer font-semibold text-emerald-900">Review this word and its learning record</summary><div className="mt-3 border-t border-emerald-100 pt-3"><div className="flex flex-wrap items-baseline gap-3"><strong className="text-2xl text-slate-950" lang="zh-Hans">{item.learnContent.hanzi}</strong><span className="font-semibold text-blue-700">{item.learnContent.pinyin}</span><span className="text-slate-600">{item.learnContent.meaning}</span></div><p className="mt-2 text-sm text-slate-600">{item.learnCheck ? item.learnCheck.firstTryCorrect ? "Memory check passed on the first try. A spaced review is scheduled." : `Memory check passed after ${item.learnCheck.attempts} attempts. A spaced review is scheduled.` : "This step was saved before memory checks were introduced. Its scheduled review will verify recall."}</p>{item.learnContent.example && <p className="mt-2 text-sm text-slate-700"><span lang="zh-Hans">{item.learnContent.example.hanzi}</span> · {item.learnContent.example.meaning}</p>}<button type="button" onClick={() => void markNeedsReview(item)} className="mt-3 min-h-[44px] rounded-lg bg-white px-4 font-bold text-blue-700 ring-1 ring-blue-200 hover:bg-blue-50">I don’t remember · review now</button>{reviewNowFeedback[item.id] && <p className="mt-2 text-sm font-semibold text-emerald-800" role="status">{reviewNowFeedback[item.id]}</p>}</div></details>}
               {journeyState === "current" && (item.kind !== "learn" || !item.learnContent) && <div className="mt-4 hidden md:block">{primaryTodayAction(item, data.session.id, currentStep, journeyProgress.totalPhases, selectedReviewItems, selectedReviewCards)}</div>}
               {item.status === "skipped" && <button className="mt-4 min-h-[48px] rounded-xl border border-blue-300 bg-white px-5 py-3 font-bold text-blue-700" onClick={() => void restore(item)}>Restore step</button>}
             </div>
@@ -911,7 +959,7 @@ function primaryTodayAction(item: Item, dailySessionId: string, step: number, to
   return <Link className="inline-flex min-h-[50px] items-center rounded-xl bg-blue-500 px-6 py-3 font-bold text-white shadow-sm hover:bg-blue-400" href={href}>Continue Today Session</Link>;
 }
 function todayReason(item: Item, openMistakes: number, weakest: string) {
-  if (item.kind === "learn") return item.isContinuing ? "You started this word earlier. Finish it before adding more new material." : "This word has not been completed in your earlier Today sessions.";
+  if (item.kind === "learn") return item.isContinuing ? "This word carries over because its Learn step was unfinished. Any parts you already completed stay saved." : "This word has not completed an initial memory check in an earlier Today session.";
   if (item.kind === "listen" && item.isContinuing) return item.dimension === "context_audio" ? "Only this word's context listening remains; completed steps stay saved." : "Finish this word's unfinished listening check; completed Learn steps stay saved.";
   if (item.kind === "listen") return item.dimension === "context_audio" ? "Context listening follows word audio so meaning is tested in a real sentence." : "Word audio follows Learn so sound is attached to the same item.";
   if (item.kind === "practice") return "Practice closes the loop with a scored, server-saved result.";
