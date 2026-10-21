@@ -298,7 +298,7 @@ export default function LearningDashboard({ mode }: { mode: "today" | "review" |
 
   useEffect(() => {
     if (mode !== "review" || !data || !entryResolved || entryIntent.kind === "setup" || reviewIds !== null) return;
-    const reviewCards = entryIntent.kind === "mistake"
+    const reviewCards = entryIntent.kind === "mistake" || entryIntent.kind === "word"
       ? data.cards
       : entryIntent.kind === "today"
         ? (data.session.reviewCardIds ?? []).map((id) => data.cards.find((card) => card.id === id)).filter((card): card is Card => Boolean(card))
@@ -527,10 +527,21 @@ export default function LearningDashboard({ mode }: { mode: "today" | "review" |
     setLearnCheckWrong((current) => ({ ...current, [item.id]: false }));
   }
   async function markNeedsReview(item: Item) {
-    if (!item.learnContent) return;
+    if (!item.learnContent || !data) return;
     setReviewNowFeedback((current) => ({ ...current, [item.id]: "Saving…" }));
-    const result = await post("add_to_review", { assetId: item.learnContent.assetId }, `review-now:${item.learnContent.assetId}`);
-    setReviewNowFeedback((current) => ({ ...current, [item.id]: result ? "Added to your review queue." : "Could not update the review queue." }));
+    const result = await post("add_to_review", { assetId: item.learnContent.assetId }, `review-now:${item.learnContent.assetId}`) as Data | false;
+    if (!result) {
+      setReviewNowFeedback((current) => ({ ...current, [item.id]: "Could not open this review. Please try again." }));
+      return;
+    }
+    const reviewCard = result.cards.find((card) => card.assetId === item.learnContent?.assetId && card.dimension === "reading")
+      ?? result.cards.find((card) => card.contentId === item.contentId && card.dimension === "reading");
+    if (!reviewCard) {
+      setReviewNowFeedback((current) => ({ ...current, [item.id]: "The review was saved, but its question could not be opened." }));
+      return;
+    }
+    setReviewNowFeedback((current) => ({ ...current, [item.id]: "Opening this word’s review…" }));
+    window.location.assign(`/review?source=word&contentId=${encodeURIComponent(reviewCard.contentId)}&cardId=${encodeURIComponent(reviewCard.id)}`);
   }
   async function configureToday() {
     setPlanFeedback("");
@@ -718,7 +729,7 @@ export default function LearningDashboard({ mode }: { mode: "today" | "review" |
                   {learnCheckWrong[item.id] ? <div className="mt-4 rounded-xl border border-amber-200 bg-amber-50 p-4 text-amber-950" role="alert"><p className="font-bold">Not quite. “{item.learnContent.hanzi}” means “{item.learnContent.meaning}”.</p><p className="mt-1 text-sm">Review the word, then try the memory check again. This step has not been marked complete.</p><button type="button" onClick={() => restudyLearnItem(item)} className="mt-3 min-h-[44px] rounded-lg bg-white px-4 font-bold text-blue-700 ring-1 ring-blue-200">Study this word again</button></div> : <button type="button" disabled={!learnCheckAnswers[item.id] || learnSavingId === item.id} onClick={() => void submitLearnCheck(item)} className="mt-5 min-h-[50px] w-full rounded-xl bg-blue-600 px-5 py-3 font-bold text-white shadow-sm hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-blue-200">{learnSavingId === item.id ? "Saving…" : "Check answer and continue"}</button>}
                 </div>}
               </section>}
-              {journeyState === "completed" && item.kind === "learn" && item.learnContent && <details className="mt-3 rounded-xl border border-emerald-200 bg-white/80 px-4 py-3"><summary className="cursor-pointer font-semibold text-emerald-900">Review this word and its learning record</summary><div className="mt-3 border-t border-emerald-100 pt-3"><div className="flex flex-wrap items-baseline gap-3"><strong className="text-2xl text-slate-950" lang="zh-Hans">{item.learnContent.hanzi}</strong><span className="font-semibold text-blue-700">{item.learnContent.pinyin}</span><span className="text-slate-600">{item.learnContent.meaning}</span></div><p className="mt-2 text-sm text-slate-600">{item.learnCheck ? item.learnCheck.firstTryCorrect ? "Memory check passed on the first try. A spaced review is scheduled." : `Memory check passed after ${item.learnCheck.attempts} attempts. A spaced review is scheduled.` : "This step was saved before memory checks were introduced. Its scheduled review will verify recall."}</p>{item.learnContent.example && <p className="mt-2 text-sm text-slate-700"><span lang="zh-Hans">{item.learnContent.example.hanzi}</span> · {item.learnContent.example.meaning}</p>}<button type="button" onClick={() => void markNeedsReview(item)} className="mt-3 min-h-[44px] rounded-lg bg-white px-4 font-bold text-blue-700 ring-1 ring-blue-200 hover:bg-blue-50">I don’t remember · review now</button>{reviewNowFeedback[item.id] && <p className="mt-2 text-sm font-semibold text-emerald-800" role="status">{reviewNowFeedback[item.id]}</p>}</div></details>}
+              {journeyState === "completed" && item.kind === "learn" && item.learnContent && <details className="mt-3 rounded-xl border border-emerald-200 bg-white/80 px-4 py-3"><summary className="cursor-pointer font-semibold text-emerald-900">Review this word and its learning record</summary><div className="mt-3 border-t border-emerald-100 pt-3"><div className="flex flex-wrap items-baseline gap-3"><strong className="text-2xl text-slate-950" lang="zh-Hans">{item.learnContent.hanzi}</strong><span className="font-semibold text-blue-700">{item.learnContent.pinyin}</span><span className="text-slate-600">{item.learnContent.meaning}</span></div><p className="mt-2 text-sm text-slate-600">{item.learnCheck ? item.learnCheck.firstTryCorrect ? "Memory check passed on the first try. A spaced review is scheduled." : `Memory check passed after ${item.learnCheck.attempts} attempts. A spaced review is scheduled.` : "This step was saved before memory checks were introduced. Its scheduled review will verify recall."}</p>{item.learnContent.example && <p className="mt-2 text-sm text-slate-700"><span lang="zh-Hans">{item.learnContent.example.hanzi}</span> · {item.learnContent.example.meaning}</p>}<button type="button" onClick={() => void markNeedsReview(item)} className="mt-3 min-h-[44px] rounded-lg bg-white px-4 font-bold text-blue-700 ring-1 ring-blue-200 hover:bg-blue-50">I don’t remember · start this review</button><p className="mt-2 text-xs text-slate-500">Opens a one-word review now, then returns you to Today.</p>{reviewNowFeedback[item.id] && <p className="mt-2 text-sm font-semibold text-emerald-800" role="status">{reviewNowFeedback[item.id]}</p>}</div></details>}
               {journeyState === "current" && (item.kind !== "learn" || !item.learnContent) && <div className="mt-4 hidden md:block">{primaryTodayAction(item, data.session.id, currentStep, journeyProgress.totalPhases, selectedReviewItems, selectedReviewCards)}</div>}
               {item.status === "skipped" && <button className="mt-4 min-h-[48px] rounded-xl border border-blue-300 bg-white px-5 py-3 font-bold text-blue-700" onClick={() => void restore(item)}>Restore step</button>}
             </div>
@@ -801,7 +812,7 @@ export default function LearningDashboard({ mode }: { mode: "today" | "review" |
   ];
   const selectedReviewLevel = selectedReviewScope === "current" ? data.reviewLevelControl.currentLevel : typeof selectedReviewScope === "number" ? selectedReviewScope : null;
 
-  return <Shell title={entryIntent.kind === "mistake" ? "Mistake correction" : "Review"} active="Review" sub={entryIntent.kind === "mistake" ? "Correct the original wrong answer, understand it, and continue or return to Mistakes." : "Review due memories with a short, explained rating flow."} compact={Boolean(reviewIds?.length)}>
+  return <Shell title={entryIntent.kind === "mistake" ? "Mistake correction" : entryIntent.kind === "word" ? "Review this word" : "Review"} active="Review" sub={entryIntent.kind === "mistake" ? "Correct the original wrong answer, understand it, and continue or return to Mistakes." : entryIntent.kind === "word" ? "Recall the word you selected, rate your memory, then return to Today." : "Review due memories with a short, explained rating flow."} compact={Boolean(reviewIds?.length)}>
     <div className="mx-auto max-w-[880px]">
       {entryIntent.kind === "today" && <section className="mb-5 rounded-2xl border border-blue-200 bg-blue-50 p-4"><p className="text-xs font-bold uppercase tracking-[0.14em] text-blue-700">Today Session</p><p className="mt-1 text-sm text-slate-700">These due cards are the current saved Today step. Your position is restored after refresh or back navigation.</p></section>}
       {directEntryPreparing && <State title="Preparing your review" text="Loading the review items from where you started." />}
@@ -895,7 +906,7 @@ export default function LearningDashboard({ mode }: { mode: "today" | "review" |
         {lastRatedCardId && data.canUndoReview && <button className="mt-4 min-h-[48px] text-sm font-semibold underline underline-offset-4" onClick={() => void undoLastRating()}>Undo last rating</button>}
       </div>}
 
-      {directEntryEmpty && <State title={entryIntent.kind === "mistake" ? "This mistake is no longer open" : "You're caught up"} text={entryIntent.kind === "mistake" ? "It may already have been resolved or is no longer available for review." : "There are no reviews due in today's queue."}><Link className="btn" href={entryIntent.kind === "mistake" ? "/mistakes" : "/today"}>{entryIntent.kind === "mistake" ? "Back to Mistakes" : "Back to Today"}</Link></State>}
+      {directEntryEmpty && <State title={entryIntent.kind === "mistake" ? "This mistake is no longer open" : entryIntent.kind === "word" ? "This word review is unavailable" : "You're caught up"} text={entryIntent.kind === "mistake" ? "It may already have been resolved or is no longer available for review." : entryIntent.kind === "word" ? "The saved review card could not be found. Return to Today and try the word again." : "There are no reviews due in today's queue."}><Link className="btn" href={entryIntent.kind === "mistake" ? "/mistakes" : "/today"}>{entryIntent.kind === "mistake" ? "Back to Mistakes" : "Back to Today"}</Link></State>}
       {entryResolved && entryIntent.kind === "setup" && reviewIds === null && due.length === 0 && data.cards.length > 0 && <section className="overflow-hidden rounded-[28px] border border-slate-200 bg-white shadow-[0_22px_60px_rgba(15,23,42,0.08)]">
         <div className="border-b border-slate-200 bg-slate-950 px-6 py-6 text-white sm:px-8"><p className="text-sm font-semibold text-blue-300">Schedule clear</p><h2 className="mt-2 text-3xl font-bold text-white">Upcoming reviews</h2><p className="mt-2 text-slate-300">Nothing is due now. You can inspect the schedule without changing a future review.</p></div>
         <div className="p-6 sm:p-8"><div className="grid gap-3">{[...data.cards].sort((a, b) => a.dueAt.localeCompare(b.dueAt)).slice(0, 3).map((card) => <article className="rounded-2xl border border-slate-200 p-4" key={card.id}><p className="font-bold text-slate-950">{card.prompt}</p><p className="mt-1 text-sm text-slate-600">{card.skill} · Scheduled {new Date(card.dueAt).toLocaleString()}</p></article>)}</div></div>

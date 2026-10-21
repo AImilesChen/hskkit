@@ -113,7 +113,8 @@ export function reviewCardIdsForScope(control: ReviewLevelControl, scope: Review
 export type ReviewEntryIntent =
   | { kind: "setup" }
   | { kind: "today"; cap?: number; cardIds?: string[] }
-  | { kind: "mistake"; contentId: string; cardId?: string };
+  | { kind: "mistake"; contentId: string; cardId?: string }
+  | { kind: "word"; contentId: string; cardId?: string };
 
 export function reviewEntryIntent(search: string): ReviewEntryIntent {
   const params = new URLSearchParams(search);
@@ -126,6 +127,11 @@ export function reviewEntryIntent(search: string): ReviewEntryIntent {
     const contentId = params.get("contentId")?.trim();
     const cardId = params.get("cardId")?.trim();
     if (contentId) return { kind: "mistake", contentId, ...(cardId ? { cardId } : {}) };
+  }
+  if (params.get("source") === "word") {
+    const contentId = params.get("contentId")?.trim();
+    const cardId = params.get("cardId")?.trim();
+    if (contentId) return { kind: "word", contentId, ...(cardId ? { cardId } : {}) };
   }
   return { kind: "setup" };
 }
@@ -141,6 +147,10 @@ export function buildIntentReviewQueue<T extends ReviewQueueCard & { contentId: 
   if (intent.kind === "mistake") {
     const mistakes = cards.filter((card) => card.isMistake);
     const selected = mistakes.find((card) => card.contentId === intent.contentId && (!intent.cardId || card.id === intent.cardId));
+    return selected ? [selected] : [];
+  }
+  if (intent.kind === "word") {
+    const selected = cards.find((card) => card.contentId === intent.contentId && (!intent.cardId || card.id === intent.cardId));
     return selected ? [selected] : [];
   }
   return [];
