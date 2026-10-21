@@ -65,7 +65,7 @@ jobs:
           npx wrangler r2 object put "$key.manifest.json" --file "$artifact/product.manifest.json" --content-type application/json --remote
       - name: Build Worker
         run: |
-          npx opennextjs-cloudflare build
+          npx opennextjs-cloudflare build --dangerouslyUseUnsupportedNextVersion
           node scripts/patch-open-next-email.mjs
       - name: Upload and deploy Worker version
         run: |
