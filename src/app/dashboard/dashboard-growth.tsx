@@ -48,8 +48,8 @@ export default function DashboardGrowth({
       <p className="mt-2 text-sm leading-6 text-slate-600">Saved activity and submitted answers use your account timezone: {growth.timezone}. Check-ins use the timezone in your learning rewards.</p>
     </header>
 
-    <div className="grid gap-6 lg:grid-cols-[0.9fr_1.1fr]">
-      <article className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6" aria-labelledby="study-calendar-heading">
+    <div className="grid gap-6 lg:grid-cols-2">
+      <article className="min-w-0 rounded-3xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6" aria-labelledby="study-calendar-heading">
         <div className="flex items-baseline justify-between gap-3">
           <h3 id="study-calendar-heading" className="text-xl font-black text-slate-950">Study calendar</h3>
           <span className="text-sm font-bold text-slate-500">{growth.calendar.monthLabel}</span>
@@ -109,18 +109,18 @@ export default function DashboardGrowth({
         </div>}
       </article>
 
-      <article className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6" aria-labelledby="learning-curve-heading">
+      <article className="flex min-w-0 flex-col rounded-3xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6" aria-labelledby="learning-curve-heading">
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div><h3 id="learning-curve-heading" className="text-xl font-black text-slate-950">Learning curve</h3><p className="mt-1 text-sm text-slate-600">{mode === "actions" ? "Saved learning actions per day" : "Correct answers divided by submitted answers"}</p></div>
           <div className="inline-flex rounded-xl bg-slate-100 p-1" aria-label="Learning curve range">
-            {([7, 30] as const).map((days) => <button key={days} type="button" aria-pressed={range === days} onClick={() => setRange(days)} className={["min-h-10 rounded-lg px-3 text-sm font-bold", range === days ? "bg-white text-blue-700 shadow-sm" : "text-slate-600"].join(" ")}>{days} days</button>)}
+            {([7, 30] as const).map((days) => <button key={days} type="button" aria-pressed={range === days} onClick={() => setRange(days)} className={["min-h-[44px] rounded-lg px-3 text-sm font-bold", range === days ? "bg-white text-blue-700 shadow-sm" : "text-slate-600"].join(" ")}>{days} days</button>)}
           </div>
         </div>
         <div className="mt-4 inline-flex rounded-xl border border-slate-200 p-1" aria-label="Learning curve metric">
-          <button type="button" aria-pressed={mode === "actions"} onClick={() => setMode("actions")} className={["min-h-10 rounded-lg px-3 text-sm font-bold", mode === "actions" ? "bg-blue-600 text-white" : "text-slate-600"].join(" ")}>Activity</button>
-          <button type="button" aria-pressed={mode === "accuracy"} onClick={() => setMode("accuracy")} className={["min-h-10 rounded-lg px-3 text-sm font-bold", mode === "accuracy" ? "bg-blue-600 text-white" : "text-slate-600"].join(" ")}>Answer accuracy</button>
+          <button type="button" aria-pressed={mode === "actions"} onClick={() => setMode("actions")} className={["min-h-[44px] rounded-lg px-3 text-sm font-bold", mode === "actions" ? "bg-blue-600 text-white" : "text-slate-600"].join(" ")}>Activity</button>
+          <button type="button" aria-pressed={mode === "accuracy"} onClick={() => setMode("accuracy")} className={["min-h-[44px] rounded-lg px-3 text-sm font-bold", mode === "accuracy" ? "bg-blue-600 text-white" : "text-slate-600"].join(" ")}>Answer accuracy</button>
         </div>
-        {hasChartData ? <div className="mt-5">
+        {hasChartData ? <div className="mt-5 flex-1">
           <p className="mb-2 text-sm font-semibold text-slate-700">{mode === "actions"
             ? plural(totalActions, "saved action") + " in " + range + " days · busiest day: " + maxActions
             : Math.round(correctAnswers / totalAnswers * 100) + "% correct across " + plural(totalAnswers, "submitted answer") + " in " + range + " days"}</p>
@@ -138,7 +138,7 @@ export default function DashboardGrowth({
           </svg>
           <div className="mt-1 flex justify-between text-xs font-semibold text-slate-500"><span>{curve[0]?.label}</span><span>{curve.at(-1)?.label}</span></div>
           {mode === "accuracy" && <p className="mt-3 text-xs leading-5 text-slate-600">Days without submitted answers have no data point. Self-rated reviews are excluded; this is answer accuracy, not a measured forgetting curve.</p>}
-        </div> : <div className="mt-6 flex min-h-48 items-center justify-center rounded-2xl border border-dashed border-slate-300 bg-slate-50 p-6 text-center"><div><p className="font-bold text-slate-900">{mode === "actions" ? "No completed learning activity yet" : "No submitted answers in this range"}</p><p className="mt-1 max-w-sm text-sm leading-6 text-slate-600">{mode === "actions" ? "The curve starts after a real learning action is saved." : "Answer accuracy appears after you submit a practice answer."}</p></div></div>}
+        </div> : <div className="mt-6 flex min-h-48 flex-1 items-center justify-center rounded-2xl border border-dashed border-slate-300 bg-slate-50 p-6 text-center"><div><p className="font-bold text-slate-900">{mode === "actions" ? "No completed learning activity yet" : "No submitted answers in this range"}</p><p className="mt-1 max-w-sm text-sm leading-6 text-slate-600">{mode === "actions" ? "The curve starts after a real learning action is saved." : "Answer accuracy appears after you submit a practice answer."}</p></div></div>}
         <div className="mt-6 border-t border-slate-100 pt-5">
           <div className="flex flex-wrap items-baseline justify-between gap-2">
             <h4 className="font-black text-slate-950">Scheduled review load</h4>
