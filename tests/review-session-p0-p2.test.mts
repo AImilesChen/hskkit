@@ -128,15 +128,18 @@ test("Today starts its due queue directly while Mistakes targets the selected mi
   ];
   assert.deepEqual(reviewEntryIntent("?source=today"), { kind: "today" });
   assert.deepEqual(reviewEntryIntent("?source=mistakes&contentId=question%3Atarget"), { kind: "mistake", contentId: "question:target" });
+  assert.deepEqual(reviewEntryIntent("?source=word&contentId=word%3Aone&cardId=due-1"), { kind: "word", contentId: "word:one", cardId: "due-1" });
   assert.equal(reviewEntryIntent("").kind, "setup");
   assert.deepEqual(buildIntentReviewQueue(cards, { kind: "today" }, 10).map((card: { id: string }) => card.id), ["mistake-1", "mistake-2", "due-1"]);
   assert.deepEqual(buildIntentReviewQueue(cards, { kind: "mistake", contentId: "question:target" }, 10).map((card: { id: string }) => card.id), ["mistake-1"]);
+  assert.deepEqual(buildIntentReviewQueue(cards, { kind: "word", contentId: "word:one", cardId: "due-1" }, 10).map((card: { id: string }) => card.id), ["due-1"]);
 });
 
 test("review entry links preserve Today and selected-mistake context", async () => {
   const client = await source("src/app/components/learning-dashboard.tsx");
   assert.match(client, /`\/review\?source=today&dailySessionId=/);
   assert.match(client, /`\/review\?source=mistakes&contentId=\$\{encodeURIComponent\(mistake\.contentId\)\}\$\{mistake\.cardId/);
+  assert.match(client, /`\/review\?source=word&contentId=\$\{encodeURIComponent\(reviewCard\.contentId\)\}&cardId=\$\{encodeURIComponent\(reviewCard\.id\)\}`/);
 });
 
 test("mistake retry and self-recall use distinct truthful interactions", async () => {
