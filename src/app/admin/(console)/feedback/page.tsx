@@ -22,7 +22,7 @@ export default async function AdminFeedbackPage({ searchParams }: Props) {
       <div className="admin-section-heading">
         <div>
           <h2>Feedback</h2>
-          <p>Filter, review and retain useful messages. Archive before permanent deletion.</p>
+          <p>Read the message first, reply when an email is available, then update its review status.</p>
         </div>
       </div>
 
@@ -40,6 +40,9 @@ export default async function AdminFeedbackPage({ searchParams }: Props) {
         {data.items.map((row) => {
           const email = typeof row.email === "string" ? row.email : "";
           const accountUserId = typeof row.account_user_id === "string" ? row.account_user_id : "";
+          const pagePath = typeof row.page_path === "string" ? row.page_path : "";
+          const browserCategory = typeof row.browser_category === "string" ? row.browser_category : "";
+          const deviceCategory = typeof row.device_category === "string" ? row.device_category : "";
           const reviewStatus = String(row.review_status);
           const retentionStatus = row.retention_status === "archived" ? "archived" : "kept";
           return (
@@ -52,11 +55,17 @@ export default async function AdminFeedbackPage({ searchParams }: Props) {
                 </div>
                 <DateTime value={row.created_at} />
               </header>
-              <p className="admin-feedback-message">{String(row.message)}</p>
-              <dl>
-                {accountUserId ? <div><dt>Account</dt><dd>{accountUserId}</dd></div> : null}
-                <div><dt>Email</dt><dd>{email ? <a href={`mailto:${email}`}>{email}</a> : "Anonymous · direct reply unavailable"}</dd></div>
-              </dl>
+              <div className="admin-feedback-content">
+                <div>
+                  <span className="admin-feedback-label">User message</span>
+                  <p className="admin-feedback-message">{String(row.message)}</p>
+                </div>
+                <dl>
+                  <div><dt>Reply</dt><dd>{email ? <a className="admin-reply-link" href={`mailto:${email}`}>Reply to {email}</a> : "Anonymous · no reply address"}</dd></div>
+                  <div><dt>Submitted from</dt><dd>{pagePath ? <a href={pagePath} target="_blank" rel="noreferrer">{pagePath}</a> : "Page unavailable"}</dd></div>
+                  <div><dt>Context</dt><dd>{[accountUserId ? "Account matched" : "Guest or unmatched", browserCategory, deviceCategory].filter(Boolean).join(" · ")}</dd></div>
+                </dl>
+              </div>
               <FeedbackReviewForm
                 id={String(row.id)}
                 reviewStatus={reviewStatus}
