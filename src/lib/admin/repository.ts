@@ -135,7 +135,7 @@ export async function listAdminFeedback(db: AdminDb, options: ListOptions) {
   const clause = where.length ? `WHERE ${where.join(" AND ")}` : "";
   const total = await count(db, `SELECT COUNT(*) count FROM feedback_submissions f ${clause}`, values);
   const result = await withAdminD1Retry(() => db.prepare(`
-    SELECT f.id,f.type,f.message,f.email,
+    SELECT f.id,f.type,f.message,f.email,f.page_path,f.browser_category,f.device_category,
       f.review_status,f.reviewed_at,f.admin_note,f.retention_status,f.archived_at,f.created_at,
       MAX(oi.user_id) account_user_id
     FROM feedback_submissions f

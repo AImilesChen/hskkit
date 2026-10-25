@@ -7,3 +7,30 @@
 .admin-feedback-filters{grid-template-columns:minmax(220px,2fr) repeat(3,minmax(130px,1fr)) auto auto}.admin-feedback-filters>a{display:inline-flex;min-height:44px;align-items:center;justify-content:center;color:#1d4ed8;font-weight:750}.admin-feedback-badges{display:flex;flex-wrap:wrap;gap:7px}.admin-review-actions{display:flex;flex-wrap:wrap;align-items:center;gap:8px}.admin-review-actions button.secondary{border:1px solid #93b4f4;background:#fff;color:#1d4ed8}.admin-review-actions button.danger{background:#b42318;color:#fff}.admin-empty{border:1px dashed #c8d5e6;border-radius:14px;padding:24px;text-align:center;color:#66748a}.admin-loading{display:flex;align-items:center;gap:14px;min-height:150px;border:1px solid #dbe5f2;border-radius:16px;padding:24px;background:#fff}.admin-loading strong,.admin-loading p{display:block;margin:0}.admin-loading p{margin-top:5px;color:#66748a}.admin-loading-spinner{width:28px;height:28px;flex:0 0 auto;border:3px solid #dbeafe;border-top-color:#1d4ed8;border-radius:50%;animation:admin-spin .8s linear infinite}.admin-error button:disabled,.admin-review button:disabled{cursor:wait;opacity:.72}@keyframes admin-spin{to{transform:rotate(360deg)}}
 @media(max-width:900px){.admin-feedback-filters{grid-template-columns:repeat(2,minmax(0,1fr))}.admin-feedback-filters label:first-child{grid-column:1/-1}}
 @media(max-width:640px){.admin-feedback-filters{grid-template-columns:1fr}.admin-feedback-filters label:first-child{grid-column:auto}.admin-review-actions{align-items:stretch;flex-direction:column}.admin-review-actions button,.admin-feedback-filters>a{width:100%}}
+
+/* Feedback inbox: prioritize the message and contact path; keep administration compact. */
+.admin-feedback{display:grid;gap:16px;padding:20px}
+.admin-feedback-content{display:grid;grid-template-columns:minmax(0,1.65fr) minmax(260px,.85fr);gap:24px;padding:18px;border:1px solid #e3eaf3;border-radius:12px;background:#f8fbff}
+.admin-feedback-label{display:block;margin-bottom:7px;color:#4d5d73;font-size:.75rem;font-weight:850;letter-spacing:.06em;text-transform:uppercase}
+.admin-feedback-message{margin:0;white-space:pre-wrap;color:#172033;font-size:1.05rem;line-height:1.7}
+.admin-feedback dl{display:grid;grid-template-columns:1fr;align-content:start;gap:12px;margin:0;padding-left:20px;border-left:1px solid #dbe5f2}
+.admin-feedback dl>div{min-width:0}
+.admin-feedback dd{overflow-wrap:anywhere;color:#334155;line-height:1.45}
+.admin-feedback dd a{color:#1d4ed8;font-weight:750;text-decoration:none}
+.admin-feedback dd a:hover{text-decoration:underline}
+.admin-reply-link{display:inline-flex;min-height:38px;align-items:center;border:1px solid #93b4f4;border-radius:9px;padding:0 11px;background:#fff}
+.admin-review{display:grid;grid-template-columns:1fr;align-items:stretch;gap:12px;margin-top:0;padding-top:15px;border-top:1px solid #e4eaf2}
+.admin-review>div{grid-column:auto}
+.admin-review-toolbar{display:flex;align-items:end;justify-content:space-between;gap:16px}
+.admin-review-status{width:min(220px,100%)}
+.admin-review-actions{justify-content:flex-end}
+.admin-review-actions button:disabled{cursor:not-allowed;opacity:.5}
+.admin-note{border:1px solid #dbe5f2;border-radius:10px;background:#fff}
+.admin-note summary{display:flex;min-height:44px;align-items:center;justify-content:space-between;gap:12px;padding:0 13px;color:#334155;font-size:.82rem;font-weight:800;cursor:pointer}
+.admin-note summary small{color:#718096;font-weight:650}
+.admin-note>label{padding:2px 13px 0}
+.admin-note textarea{margin-top:2px;resize:vertical}
+.admin-note>p{margin:7px 13px 12px;color:#718096;font-size:.76rem}
+.admin-review-feedback{min-height:18px;margin:0;color:#516079;font-size:.84rem}
+@media(max-width:800px){.admin-feedback-content{grid-template-columns:1fr;gap:16px}.admin-feedback dl{padding:16px 0 0;border-top:1px solid #dbe5f2;border-left:0}.admin-review-toolbar{align-items:stretch;flex-direction:column}.admin-review-status{width:100%}.admin-review-actions{justify-content:flex-start}}
+@media(max-width:640px){.admin-feedback{padding:14px}.admin-feedback-content{padding:14px}.admin-review-actions{align-items:stretch}.admin-review-actions button{width:100%}.admin-reply-link{width:100%;justify-content:center}}

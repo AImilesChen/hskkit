@@ -176,6 +176,9 @@ test("global widget, API route, D1 schema, email binding, and privacy disclosure
   assert.match(widget, /\/api\/feedback/);
   assert.match(widget, /Thanks for helping us improve\./);
   assert.match(widget, /role="dialog"/);
+  assert.match(widget, /I’d like a reply/);
+  assert.match(widget, /required \/>/);
+  assert.match(widget, /submit anonymously/);
   assert.match(css, /\.feedback-overlay[\s\S]*place-items:\s*center/);
   assert.match(css, /@media \(max-width: 700px\)[\s\S]*align-items:\s*flex-end/);
   assert.match(route, /FEEDBACK_EMAIL/);

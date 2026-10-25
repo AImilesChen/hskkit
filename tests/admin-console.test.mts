@@ -216,6 +216,12 @@ test("admin feedback supports search, review, retention filtering and audited de
   assert.match(page, /Feedback type/);
   assert.match(page, /Retention/);
   assert.match(page, /FeedbackReviewForm/);
+  assert.match(page, /Reply to \{email\}/);
+  assert.match(page, /Submitted from/);
+  assert.match(page, /Account matched/);
+  assert.match(form, /<details className="admin-note">/);
+  assert.match(form, /Not visible to the user/);
+  assert.match(form, /disabled=\{busy \|\| !dirty\}/);
   assert.match(form, /Archive/);
   assert.match(form, /Restore/);
   assert.match(form, /Delete permanently/);
