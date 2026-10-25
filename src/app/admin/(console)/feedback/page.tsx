@@ -55,7 +55,7 @@ export default async function AdminFeedbackPage({ searchParams }: Props) {
               <p className="admin-feedback-message">{String(row.message)}</p>
               <dl>
                 {accountUserId ? <div><dt>Account</dt><dd>{accountUserId}</dd></div> : null}
-                <div><dt>Email</dt><dd>{email || "Anonymous"}</dd></div>
+                <div><dt>Email</dt><dd>{email ? <a href={`mailto:${email}`}>{email}</a> : "Anonymous · direct reply unavailable"}</dd></div>
               </dl>
               <FeedbackReviewForm
                 id={String(row.id)}
