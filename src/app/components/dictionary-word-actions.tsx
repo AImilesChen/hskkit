@@ -2,8 +2,6 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { AudioPlaybackControl } from "./audio-playback-control";
-import type { PublicAudioAsset } from "@/lib/audio/assets";
 
 type WordProgress = {
   saved: boolean;
@@ -25,7 +23,7 @@ type LearningView = {
 
 type BusyAction = "save" | "today" | "review";
 
-export function DictionaryWordActions({ assetId, level, audioAsset, layout = "default" }: { assetId: string; level: number; audioAsset?: PublicAudioAsset; layout?: "default" | "panel" }) {
+export function DictionaryWordActions({ assetId, level, layout = "default" }: { assetId: string; level: number; layout?: "default" | "panel" }) {
   const [view, setView] = useState<LearningView | null>(null);
   const [busy, setBusy] = useState<BusyAction | null>(null);
   const [message, setMessage] = useState("");
@@ -97,10 +95,8 @@ export function DictionaryWordActions({ assetId, level, audioAsset, layout = "de
       </div>
       <div className="flex flex-wrap justify-end gap-2">
         <span className={`rounded-full px-3 py-1 text-xs font-bold ${progress?.review === "due" ? "bg-amber-100 text-amber-900" : progress?.learned ? "bg-emerald-100 text-emerald-800" : "bg-slate-100 text-slate-600"}`}>{statusLabel}</span>
-        <span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-600">{audioAsset?.sourceLabel ?? "Audio unavailable"}</span>
       </div>
     </div>
-    <AudioPlaybackControl asset={audioAsset} className="mt-3 sm:mt-4" />
     <div className={`mt-3 grid grid-cols-2 gap-2 ${panel ? "" : "sm:grid-cols-3 lg:grid-cols-5"}`}>
       <Link href={`/word/${encodeURIComponent(assetId)}/practice`} className={`inline-flex min-h-11 items-center justify-center rounded-lg bg-blue-600 px-3 text-sm font-bold text-white hover:bg-blue-700 ${panel ? "col-span-2" : ""}`}>Practice this word</Link>
       <button type="button" disabled={!view || added || Boolean(busy)} onClick={() => void run("add_to_today")} className="min-h-11 rounded-lg border border-slate-300 bg-white px-2 text-xs font-bold sm:px-3 sm:text-sm text-slate-800 transition hover:border-blue-500 disabled:cursor-not-allowed disabled:opacity-50">{busy === "today" ? "Adding…" : added ? "In Today" : "Add to Today"}</button>

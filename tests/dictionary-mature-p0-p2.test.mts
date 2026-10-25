@@ -126,6 +126,7 @@ test("word details prioritise definitions, learning actions and indexed characte
   const page = read("src/app/word/[slug]/page.tsx");
   const toggle = read("src/app/components/word-script-toggle.tsx");
   const actions = read("src/app/components/dictionary-word-actions.tsx");
+  const pronunciation = read("src/app/components/dictionary-pronunciation.tsx");
   const runtime = read("src/lib/dictionary/runtime-word.ts");
   assert.match(page, /Definitions/);
   assert.match(page, /DictionaryWordActions/);
@@ -138,7 +139,9 @@ test("word details prioritise definitions, learning actions and indexed characte
   assert.match(toggle, /my-2.*text-6xl/);
   assert.ok(toggle.indexOf("<h1") < toggle.indexOf('role="group"'), "word form must precede the script controls");
   assert.match(actions, /grid grid-cols-2/);
-  assert.match(actions, /AudioPlaybackControl/);
+  assert.match(pronunciation, /AudioPlaybackControl/);
+  assert.match(pronunciation, /browser voice preview/i);
+  assert.doesNotMatch(actions, /Audio unavailable/);
   assert.match(actions, /hidden text-sm.*sm:block/);
   assert.match(actions, /min-h-\[20px\]/);
   assert.doesNotMatch(actions, /min-h-5/);

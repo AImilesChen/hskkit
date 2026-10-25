@@ -1,7 +1,7 @@
 import { cache } from "react";
+import { publicAudioAsset, publishedContentAudioAsset } from "../audio/assets.ts";
 import { isCatalogWordAssetId } from "../content/catalog-search.ts";
 import { findPublicCatalogWordById } from "../content/public-catalog-index.ts";
-import { formalWordAudioUrlByContentId } from "../content/level-status.ts";
 import { getWordBySlug, type LookupResult, type StudyWord } from "./catalog.ts";
 
 export function splitDictionaryMeanings(meaning: string): string[] {
@@ -17,7 +17,7 @@ export const getPublishedWordBySlug = cache(async (slug: string): Promise<Lookup
   const row = findPublicCatalogWordById(slug);
   if (!row) return { status: "missing" };
 
-  const audioSrc = formalWordAudioUrlByContentId.get(row.id);
+  const audioAsset = publicAudioAsset(publishedContentAudioAsset(row.id, row.hanzi));
   return {
     status: "published",
     item: {
@@ -35,9 +35,10 @@ export const getPublishedWordBySlug = cache(async (slug: string): Promise<Lookup
       qaStatus: "approved",
       contentVersion: Number(row.id.match(/\.v(\d+)$/)?.[1] ?? "1"),
       sourceVersion: row.release_id,
-      audio: audioSrc
-        ? { status: "formal", locale: "zh-CN", src: audioSrc }
+      audio: audioAsset
+        ? { status: "formal", locale: "zh-CN", src: audioAsset.src }
         : { status: "unavailable", locale: "zh-CN" },
+      audioAsset,
     },
   };
 });

@@ -125,9 +125,12 @@ test("the unified advanced band accepts canonical l7 IDs without inventing l8 or
 test("word page removes internal release language and exposes real learning actions", () => {
   const page = read("src/app/word/[slug]/page.tsx");
   const actions = read("src/app/components/dictionary-word-actions.tsx");
+  const pronunciation = read("src/app/components/dictionary-pronunciation.tsx");
   assert.doesNotMatch(page, /Study availability|Content QA|Source version|Release/);
   assert.match(page, /DictionaryWordActions/);
-  assert.match(actions, /AudioPlaybackControl/);
+  assert.match(pronunciation, /AudioPlaybackControl/);
+  assert.match(pronunciation, /AudioButton/);
+  assert.doesNotMatch(actions, /Audio unavailable/);
   assert.match(actions, /"Save"/);
   assert.match(actions, /"Add to Today"/);
   assert.match(actions, />Practice this word</);

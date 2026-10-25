@@ -74,6 +74,7 @@ export function AudioButton({ text, src, label, variant = "text", unavailable = 
     utterance.onstart = () => setPhase("playing");
     utterance.onend = () => setPhase("idle");
     utterance.onerror = () => setPhase("error");
+    setPhase("playing");
     window.speechSynthesis.speak(utterance);
   }
 
