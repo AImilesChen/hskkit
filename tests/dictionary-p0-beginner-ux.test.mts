@@ -130,7 +130,7 @@ test("word page removes internal release language and exposes real learning acti
   assert.match(actions, /AudioPlaybackControl/);
   assert.match(actions, /"Save"/);
   assert.match(actions, /"Add to Today"/);
-  assert.match(actions, />Practice</);
+  assert.match(actions, />Practice this word</);
   assert.match(actions, /\/api\/v1\/learning/);
 });
 

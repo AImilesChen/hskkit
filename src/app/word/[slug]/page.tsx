@@ -61,6 +61,7 @@ export default async function WordPage({ params, searchParams }: Props) {
   const characters = [...word.hanzi].filter((character, index, values) => values.indexOf(character) === index && getIndexedCharacter(character));
   const definitions = splitDictionaryMeanings(word.meaning);
   const related = relatedWordsForWord(word);
+  const additionalExamples = word.examples.slice(1);
   const query = await searchParams;
   const dailySessionId = typeof query?.dailySessionId === "string" ? query.dailySessionId : "";
   const dailyItemId = typeof query?.dailyItemId === "string" ? query.dailyItemId : "";
@@ -76,7 +77,7 @@ export default async function WordPage({ params, searchParams }: Props) {
   };
 
   return <StudyPage>
-    <main className="mx-auto w-full max-w-[1120px] flex-1 px-4 py-5 sm:px-6 md:py-8 lg:px-10">
+    <main className="mx-auto w-full max-w-[1280px] flex-1 px-4 py-5 sm:px-6 md:py-8 lg:px-10">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }} />
       <nav className="mb-3 flex flex-wrap items-center gap-2 text-sm text-slate-500" aria-label="Breadcrumb">
         <Link href="/dictionary" className="font-semibold hover:text-blue-700">Dictionary</Link><span aria-hidden="true">/</span>
@@ -84,73 +85,83 @@ export default async function WordPage({ params, searchParams }: Props) {
         <span className="text-slate-700">{word.hanzi}</span>
       </nav>
 
-      <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_300px] lg:items-start">
-        <div className="min-w-0 space-y-4">
+      <div className="grid gap-5 xl:grid-cols-[minmax(0,1.7fr)_minmax(320px,.75fr)] xl:items-start">
+        <div className="min-w-0">
           <article className="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-[0_20px_60px_-40px_rgba(15,23,42,0.45)]">
-            <div className="grid gap-4 p-4 sm:p-5 md:grid-cols-[minmax(220px,0.8fr)_1.2fr] md:items-center">
-              <div className="rounded-2xl bg-slate-950 px-4 py-4 text-center text-white sm:px-5 sm:py-4">
+            <div className="grid gap-4 p-4 sm:p-6 md:grid-cols-[minmax(250px,.78fr)_1.22fr] md:items-stretch">
+              <div className="flex flex-col justify-center rounded-2xl bg-slate-950 px-5 py-6 text-center text-white sm:px-6 sm:py-7">
                 <div className="flex items-center justify-between gap-3"><p className="text-lg font-semibold tracking-wide text-blue-200">{word.pinyin}</p><span className="inline-flex rounded-full bg-blue-600 px-3 py-1 text-xs font-bold">HSK {levelLabel}</span></div>
                 <WordScriptToggle simplified={word.hanzi} traditional={traditional} />
               </div>
-              <div>
+              <div className="flex min-w-0 flex-col justify-center py-1 sm:py-2">
                 <p className="text-xs font-bold uppercase tracking-[0.16em] text-blue-700">Definitions</p>
                 <ol className="mt-3 space-y-2 text-xl font-semibold leading-snug text-slate-950 sm:text-2xl">{definitions.map((definition, index) => <li key={`${definition}-${index}`} className="flex gap-3"><span className="text-sm font-bold text-blue-700">{index + 1}</span><span>{definition}</span></li>)}</ol>
                 <p className="mt-3 inline-flex rounded-full bg-slate-100 px-3 py-1 text-sm font-semibold text-slate-600">{partOfSpeechLabel(word.partOfSpeech)}</p>
+                {word.examples[0] ? <div className="mt-5 border-t border-slate-100 pt-4"><p className="text-xs font-bold uppercase tracking-[0.12em] text-slate-500">Example in context</p><p className="mt-2 text-lg font-semibold leading-7 text-slate-950">{word.examples[0].hanzi}</p><p className="mt-1 text-sm font-semibold text-blue-700">{word.examples[0].pinyin}</p><p className="mt-1 text-sm leading-6 text-slate-600">{word.examples[0].meaning}</p></div> : null}
               </div>
             </div>
           </article>
+        </div>
 
-          {dailySessionId && dailyItemId && meaningCheck && <TodayWordCompletion assetId={word.id} dailySessionId={dailySessionId} dailyItemId={dailyItemId} meaningCheck={meaningCheck} step={typeof query?.todayStep === "string" ? query.todayStep : undefined} total={typeof query?.todayTotal === "string" ? query.todayTotal : undefined} />}
+        <aside className="space-y-4 xl:sticky xl:top-24">
+          <DictionaryWordActions assetId={word.id} level={word.level} audioAsset={word.audioAsset} layout="panel" />
+          <p className="px-2 text-xs leading-5 text-slate-500">Published synthesized pronunciation is labelled explicitly. When no approved asset exists, this page reports audio as unavailable.</p>
+        </aside>
+      </div>
 
-          <DictionaryWordActions assetId={word.id} level={word.level} audioAsset={word.audioAsset} />
+      {dailySessionId && dailyItemId && meaningCheck && <div className="mt-5"><TodayWordCompletion assetId={word.id} dailySessionId={dailySessionId} dailyItemId={dailyItemId} meaningCheck={meaningCheck} step={typeof query?.todayStep === "string" ? query.todayStep : undefined} total={typeof query?.todayTotal === "string" ? query.todayTotal : undefined} /></div>}
 
-          {toneComparisons.length > 0 ? <section className="rounded-2xl border border-slate-200 bg-white p-5 sm:p-6" aria-labelledby="tone-comparison-title">
+      {(additionalExamples.length > 0 || word.collocations.length > 0 || toneComparisons.length > 0 || characters.length > 0) && <nav aria-label="On this page" className="mt-6 flex flex-wrap gap-2 rounded-2xl border border-slate-200 bg-white p-3 shadow-sm">
+        <span className="inline-flex min-h-10 items-center px-2 text-xs font-bold uppercase tracking-[0.12em] text-slate-500">Study sections</span>
+        {additionalExamples.length > 0 ? <a href="#examples" className="inline-flex min-h-10 items-center rounded-xl bg-slate-50 px-4 text-sm font-bold text-slate-700 hover:bg-blue-50 hover:text-blue-700">Examples</a> : null}
+        {word.collocations.length > 0 ? <a href="#collocations" className="inline-flex min-h-10 items-center rounded-xl bg-slate-50 px-4 text-sm font-bold text-slate-700 hover:bg-blue-50 hover:text-blue-700">Collocations</a> : null}
+        {toneComparisons.length > 0 ? <a href="#tone-comparison" className="inline-flex min-h-10 items-center rounded-xl bg-slate-50 px-4 text-sm font-bold text-slate-700 hover:bg-blue-50 hover:text-blue-700">Tone contrast</a> : null}
+        {characters.length > 0 ? <a href="#characters" className="inline-flex min-h-10 items-center rounded-xl bg-slate-50 px-4 text-sm font-bold text-slate-700 hover:bg-blue-50 hover:text-blue-700">Characters</a> : null}
+      </nav>}
+
+      <div className="mt-5 grid gap-5 xl:grid-cols-12">
+          {additionalExamples.length > 0 && <section id="examples" className={`scroll-mt-24 rounded-2xl border border-slate-200 bg-white p-5 sm:p-6 ${word.collocations.length > 0 ? "xl:col-span-7" : "xl:col-span-12"}`} aria-labelledby="examples-title">
+            <p className="text-xs font-bold uppercase tracking-[0.12em] text-blue-700">In context</p>
+            <h2 id="examples-title" className="mt-2 text-2xl font-bold text-slate-950">More real examples</h2>
+            <div className="mt-4 divide-y divide-slate-100">{additionalExamples.map((example) => <div key={example.hanzi} className="py-4 first:pt-0 last:pb-0"><p className="text-xl font-semibold leading-8 text-slate-950">{example.hanzi}</p><p className="mt-1 text-blue-700">{example.pinyin}</p><p className="mt-1 leading-7 text-slate-600">{example.meaning}</p></div>)}</div>
+          </section>}
+
+          {word.collocations.length > 0 && <section id="collocations" className={`scroll-mt-24 rounded-2xl border border-slate-200 bg-white p-5 sm:p-6 ${additionalExamples.length > 0 ? "xl:col-span-5" : "xl:col-span-12"}`} aria-labelledby="collocations-title">
+            <p className="text-xs font-bold uppercase tracking-[0.12em] text-blue-700">Natural combinations</p>
+            <h2 id="collocations-title" className="mt-2 text-2xl font-bold text-slate-950">Common collocations</h2>
+            <div className={`mt-4 grid gap-3 ${additionalExamples.length > 0 ? "" : "sm:grid-cols-2 xl:grid-cols-3"}`}>{word.collocations.map((item) => <div key={item.hanzi} className="rounded-xl bg-slate-50 p-4"><p className="text-lg font-bold text-slate-950">{item.hanzi}</p><p className="mt-1 text-sm font-semibold text-blue-700">{item.pinyin}</p><p className="mt-2 text-sm text-slate-600">{item.meaning}</p></div>)}</div>
+          </section>}
+
+          {toneComparisons.length > 0 ? <section id="tone-comparison" className={`scroll-mt-24 rounded-2xl border border-slate-200 bg-white p-5 sm:p-6 ${characters.length > 0 ? "xl:col-span-7" : "xl:col-span-12"}`} aria-labelledby="tone-comparison-title">
             <p className="text-xs font-bold uppercase tracking-[0.12em] text-blue-700">Pronunciation contrast</p>
             <h2 id="tone-comparison-title" className="mt-2 text-2xl font-bold text-slate-950">Same sound, compare the tones</h2>
             <p className="mt-2 text-sm leading-6 text-slate-600">These entries share the same tone-free pinyin spelling in the published catalog. Read the tone marks before comparing the meanings.</p>
             <div className="mt-4 grid gap-3 sm:grid-cols-2">{toneComparisons.map((item) => <Link key={item.assetId} href={`/word/${encodeURIComponent(item.assetId)}`} className="rounded-xl border border-slate-200 px-4 py-3 transition hover:border-blue-400 hover:bg-blue-50"><div className="flex items-baseline gap-3"><strong className="text-xl text-slate-950">{item.hanzi}</strong><span className="font-semibold text-blue-700">{item.pinyin}</span></div><p className="mt-1 text-sm text-slate-600">{item.meaning}</p></Link>)}</div>
           </section> : null}
-
-          {word.collocations.length > 0 && <section className="rounded-2xl border border-slate-200 bg-white p-5 sm:p-6" aria-labelledby="collocations-title">
-            <p className="text-xs font-bold uppercase tracking-[0.12em] text-blue-700">Natural combinations</p>
-            <h2 id="collocations-title" className="mt-2 text-2xl font-bold text-slate-950">Common collocations</h2>
-            <div className="mt-4 grid gap-3 sm:grid-cols-2 xl:grid-cols-3">{word.collocations.map((item) => <div key={item.hanzi} className="rounded-xl bg-slate-50 p-4"><p className="text-lg font-bold text-slate-950">{item.hanzi}</p><p className="mt-1 text-sm font-semibold text-blue-700">{item.pinyin}</p><p className="mt-2 text-sm text-slate-600">{item.meaning}</p></div>)}</div>
-          </section>}
-
-          {word.examples.length > 0 && <section className="rounded-2xl border border-slate-200 bg-white p-5 sm:p-6" aria-labelledby="examples-title">
-            <p className="text-xs font-bold uppercase tracking-[0.12em] text-blue-700">In context</p>
-            <h2 id="examples-title" className="mt-2 text-2xl font-bold text-slate-950">More real examples</h2>
-            <div className="mt-4 divide-y divide-slate-100">{word.examples.map((example) => <div key={example.hanzi} className="py-4 first:pt-0 last:pb-0"><p className="text-xl font-semibold leading-8 text-slate-950">{example.hanzi}</p><p className="mt-1 text-blue-700">{example.pinyin}</p><p className="mt-1 leading-7 text-slate-600">{example.meaning}</p></div>)}</div>
-          </section>}
-
-          {characters.length > 0 && <section className="rounded-2xl border border-slate-200 bg-white p-6" aria-labelledby="characters-title">
+          {characters.length > 0 && <section id="characters" className={`scroll-mt-24 rounded-2xl border border-slate-200 bg-white p-6 ${toneComparisons.length > 0 ? "xl:col-span-5" : "xl:col-span-12"}`} aria-labelledby="characters-title">
             <h2 id="characters-title" className="text-xl font-bold text-slate-950">Character breakdown</h2>
-            <div className="mt-4 grid gap-3 sm:grid-cols-2">{characters.map((character) => <Link key={character} href={`/character/${encodeURIComponent(character)}`} className="flex min-h-16 items-center justify-between rounded-xl border border-slate-200 px-4 hover:border-blue-400 hover:bg-blue-50"><span className="text-3xl font-bold text-slate-950">{character}</span><span className="font-semibold text-blue-700">Character details →</span></Link>)}</div>
+            <p className="mt-2 text-sm leading-6 text-slate-600">Open each character to inspect its radical, strokes and connected vocabulary.</p>
+            <div className={`mt-4 grid gap-3 ${toneComparisons.length > 0 ? "" : "sm:grid-cols-2 xl:grid-cols-3"}`}>{characters.map((character) => <Link key={character} href={`/character/${encodeURIComponent(character)}`} className="flex min-h-16 items-center justify-between rounded-xl border border-slate-200 px-4 hover:border-blue-400 hover:bg-blue-50"><span className="text-3xl font-bold text-slate-950">{character}</span><span className="font-semibold text-blue-700">Character details →</span></Link>)}</div>
           </section>}
 
-          {related.length > 0 && <section aria-labelledby="related-title">
+          {related.length > 0 && <section className="xl:col-span-12" aria-labelledby="related-title">
             <div className="mb-4"><p className="text-xs font-bold uppercase tracking-[0.16em] text-blue-700">Connected vocabulary</p><h2 id="related-title" className="mt-1 text-2xl font-bold text-slate-950">Words that connect to {word.hanzi}</h2></div>
             <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">{related.map((item) => <Link key={item.word.slug} href={`/word/${item.word.slug}`} className="rounded-2xl border border-slate-200 bg-white p-5 transition hover:border-blue-400 hover:shadow-md"><div className="flex items-baseline gap-3"><strong className="text-2xl text-slate-950">{item.word.hanzi}</strong><span className="text-sm font-semibold text-blue-700">{item.word.pinyin}</span></div><p className="mt-2 text-sm text-slate-700">{item.word.meaning}</p><p className="mt-3 border-t border-slate-100 pt-3 text-xs font-semibold text-slate-500">{item.relationship}</p></Link>)}</div>
           </section>}
-        </div>
-
-        <aside className="space-y-4 lg:sticky lg:top-24">
-          <section className="rounded-2xl border border-slate-200 bg-slate-50 p-5">
-            <h2 className="text-lg font-bold text-slate-950">Keep going</h2>
-            {nextWord ? <Link href={`/word/${encodeURIComponent(nextWord.assetId)}`} className="mt-4 block rounded-xl border border-blue-200 bg-blue-50 p-4 hover:border-blue-400">
-              <span className="text-xs font-bold uppercase tracking-[0.1em] text-blue-700">Next in HSK {levelLabel}</span>
-              <span className="mt-2 flex items-baseline gap-2"><strong className="text-2xl text-slate-950">{nextWord.hanzi}</strong><span className="text-sm font-semibold text-blue-700">{nextWord.pinyin}</span></span>
-              <span className="mt-1 flex items-center justify-between gap-3 text-sm text-slate-600"><span>{nextWord.meaning}</span><span className="font-bold text-blue-700" aria-hidden="true">→</span></span>
-            </Link> : null}
-            <div className="mt-4 grid gap-2">
-              <Link href={`/vocabulary/${word.level}`} className="inline-flex min-h-11 items-center justify-between rounded-lg bg-white px-4 font-semibold text-slate-800 ring-1 ring-slate-200 hover:ring-blue-400">HSK {levelLabel} word list <span aria-hidden="true">→</span></Link>
-              <Link href="/dictionary" className="inline-flex min-h-11 items-center justify-between rounded-lg bg-white px-4 font-semibold text-slate-800 ring-1 ring-slate-200 hover:ring-blue-400">Find another word <span aria-hidden="true">→</span></Link>
-              <Link href="/today" className="inline-flex min-h-11 items-center justify-between rounded-lg bg-white px-4 font-semibold text-slate-800 ring-1 ring-slate-200 hover:ring-blue-400">Open Today <span aria-hidden="true">→</span></Link>
-            </div>
-          </section>
-          <p className="px-2 text-xs leading-5 text-slate-500">Published synthesized pronunciation is labelled explicitly. When no approved asset exists, the page reports audio as unavailable.</p>
-        </aside>
       </div>
+
+      <section className="mt-6 grid gap-4 rounded-2xl border border-slate-200 bg-slate-50 p-4 sm:p-5 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-center" aria-labelledby="keep-going-title">
+        <div>
+          <p className="text-xs font-bold uppercase tracking-[0.12em] text-blue-700">Continue learning</p>
+          <h2 id="keep-going-title" className="mt-1 text-xl font-bold text-slate-950">Keep going</h2>
+          {nextWord ? <Link href={`/word/${encodeURIComponent(nextWord.assetId)}`} className="mt-3 flex max-w-2xl items-center justify-between gap-4 rounded-xl border border-blue-200 bg-blue-50 p-4 hover:border-blue-400"><span><span className="block text-xs font-bold uppercase tracking-[0.1em] text-blue-700">Next in HSK {levelLabel}</span><span className="mt-1 flex items-baseline gap-2"><strong className="text-2xl text-slate-950">{nextWord.hanzi}</strong><span className="text-sm font-semibold text-blue-700">{nextWord.pinyin}</span></span><span className="mt-1 block text-sm text-slate-600">{nextWord.meaning}</span></span><span className="text-xl font-bold text-blue-700" aria-hidden="true">→</span></Link> : <p className="mt-2 text-sm text-slate-600">You have reached the end of this level sequence.</p>}
+        </div>
+        <div className="grid gap-2 sm:grid-cols-3 lg:grid-cols-1">
+          <Link href={`/vocabulary/${word.level}`} className="inline-flex min-h-11 items-center justify-between gap-4 rounded-lg bg-white px-4 font-semibold text-slate-800 ring-1 ring-slate-200 hover:ring-blue-400">HSK {levelLabel} word list <span aria-hidden="true">→</span></Link>
+          <Link href="/dictionary" className="inline-flex min-h-11 items-center justify-between gap-4 rounded-lg bg-white px-4 font-semibold text-slate-800 ring-1 ring-slate-200 hover:ring-blue-400">Find another word <span aria-hidden="true">→</span></Link>
+          <Link href="/today" className="inline-flex min-h-11 items-center justify-between gap-4 rounded-lg bg-white px-4 font-semibold text-slate-800 ring-1 ring-slate-200 hover:ring-blue-400">Open Today <span aria-hidden="true">→</span></Link>
+        </div>
+      </section>
     </main>
   </StudyPage>;
 }
