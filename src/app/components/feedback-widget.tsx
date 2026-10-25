@@ -24,8 +24,10 @@ export function FeedbackWidget() {
   const [type, setType] = useState<FeedbackType>("bug");
   const [message, setMessage] = useState("");
   const [email, setEmail] = useState("");
+  const [wantsReply, setWantsReply] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [submittedWithReply, setSubmittedWithReply] = useState(false);
   const [error, setError] = useState("");
   const triggerRef = useRef<HTMLButtonElement>(null);
   const dialogRef = useRef<HTMLElement>(null);
@@ -81,6 +83,10 @@ export function FeedbackWidget() {
       setError("Please enter a message.");
       return;
     }
+    if (wantsReply && !email.trim()) {
+      setError("Enter your email so we can reply, or turn off the reply option.");
+      return;
+    }
     setSubmitting(true);
     setError("");
     if (!idempotencyRef.current) idempotencyRef.current = crypto.randomUUID();
@@ -95,7 +101,7 @@ export function FeedbackWidget() {
         body: JSON.stringify({
           type,
           message: trimmedMessage,
-          email: email.trim() || null,
+          email: wantsReply ? email.trim() : null,
           pagePath: `${window.location.pathname}${window.location.search}`,
           browserCategory: browserCategory(),
           deviceCategory: deviceCategory(),
@@ -105,9 +111,11 @@ export function FeedbackWidget() {
         if (response.status === 429) throw new Error("rate_limited");
         throw new Error("request_failed");
       }
+      setSubmittedWithReply(wantsReply);
       setSubmitted(true);
       setMessage("");
       setEmail("");
+      setWantsReply(true);
       idempotencyRef.current = "";
     } catch (requestError) {
       setError(requestError instanceof Error && requestError.message === "rate_limited"
@@ -138,7 +146,7 @@ export function FeedbackWidget() {
               <>
                 <p className="feedback-eyebrow">Help us improve</p>
                 <h2 id="feedback-title">Send feedback</h2>
-                <p className="feedback-intro">Report a bug or share an idea. You can submit anonymously.</p>
+                <p className="feedback-intro">Report a bug or share an idea. Add an email if you would like a reply, or submit anonymously.</p>
                 <form className="feedback-form" onSubmit={submit}>
                   <fieldset>
                     <legend>Feedback type</legend>
@@ -155,11 +163,18 @@ export function FeedbackWidget() {
                     <span>Message <small>{message.length}/2,000</small></span>
                     <textarea aria-label="Message" value={message} onChange={(event) => setMessage(event.target.value)} maxLength={2000} rows={6} required />
                   </label>
-                  <label className="feedback-field">
-                    <span>Email (optional)</span>
-                    <input aria-label="Email (optional)" type="email" value={email} onChange={(event) => setEmail(event.target.value)} maxLength={254} autoComplete="email" />
+                  <label className="feedback-reply-choice">
+                    <input type="checkbox" checked={wantsReply} onChange={(event) => { setWantsReply(event.target.checked); setError(""); }} />
+                    <span><strong>I’d like a reply</strong><small>Share an email address so the HSKKit team can contact you about this feedback.</small></span>
                   </label>
-                  <p className="feedback-privacy">We save your message, optional email, current page, and basic browser/device category. Do not include sensitive information.</p>
+                  {wantsReply ? (
+                    <label className="feedback-field">
+                      <span>Email <small>Required for a reply</small></span>
+                      <input aria-label="Email for reply" aria-describedby="feedback-email-help" type="email" value={email} onChange={(event) => { setEmail(event.target.value); setError(""); }} maxLength={254} autoComplete="email" placeholder="you@example.com" required />
+                      <small id="feedback-email-help" className="feedback-field-help">We’ll only use this address to respond to this feedback.</small>
+                    </label>
+                  ) : null}
+                  <p className="feedback-privacy">We save your message, any reply email you provide, the current page, and basic browser/device category. Do not include sensitive information.</p>
                   {error && <p className="feedback-error" role="alert">{error}</p>}
                   <button className="btn btn-primary feedback-submit" type="submit" disabled={submitting || !message.trim()}>
                     {submitting ? "Submitting…" : "Submit feedback"}
@@ -170,7 +185,7 @@ export function FeedbackWidget() {
               <div className="feedback-success">
                 <p className="feedback-success-icon" aria-hidden="true">✓</p>
                 <h2 id="feedback-title">Thanks for helping us improve.</h2>
-                <p>Your feedback was saved.</p>
+                <p>{submittedWithReply ? "Your feedback was saved. We can reply using the email you provided." : "Your anonymous feedback was saved."}</p>
                 <button className="btn btn-primary" type="button" onClick={closeDialog}>Done</button>
               </div>
             )}
