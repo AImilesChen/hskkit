@@ -62,32 +62,39 @@ export function FeedbackReviewForm({
   }
 
   const busy = state === "saving" || state === "deleting";
+  const dirty = status !== reviewStatus || note !== (adminNote || "");
   return (
     <div className="admin-review">
-      <label>
-        <span>Review status</span>
-        <select value={status} onChange={(event) => setStatus(event.target.value)} disabled={busy}>
-          <option value="unread">Unread</option>
-          <option value="read">Read</option>
-          <option value="resolved">Resolved</option>
-        </select>
-      </label>
-      <label>
-        <span>Internal note</span>
-        <textarea value={note} maxLength={1000} rows={3} onChange={(event) => setNote(event.target.value)} placeholder="Optional internal note" disabled={busy} />
-      </label>
-      <div className="admin-review-actions">
-        <button type="button" onClick={saveReview} disabled={busy}>{state === "saving" ? "Saving…" : "Save review"}</button>
-        {retentionStatus === "kept" ? (
-          <button type="button" className="secondary" onClick={() => setRetention("archived")} disabled={busy}>Archive</button>
-        ) : (
-          <>
-            <button type="button" className="secondary" onClick={() => setRetention("kept")} disabled={busy}>Restore</button>
-            <button type="button" className="danger" onClick={deletePermanently} disabled={busy}>{state === "deleting" ? "Deleting…" : "Delete permanently"}</button>
-          </>
-        )}
-        <span role="status">{state === "saved" ? "Saved" : state === "error" ? "Could not complete this action. Try again." : ""}</span>
+      <div className="admin-review-toolbar">
+        <label className="admin-review-status">
+          <span>Review status</span>
+          <select value={status} onChange={(event) => setStatus(event.target.value)} disabled={busy}>
+            <option value="unread">Unread</option>
+            <option value="read">Read</option>
+            <option value="resolved">Resolved</option>
+          </select>
+        </label>
+        <div className="admin-review-actions">
+          <button type="button" onClick={saveReview} disabled={busy || !dirty}>{state === "saving" ? "Saving…" : "Save changes"}</button>
+          {retentionStatus === "kept" ? (
+            <button type="button" className="secondary" onClick={() => setRetention("archived")} disabled={busy}>Archive</button>
+          ) : (
+            <>
+              <button type="button" className="secondary" onClick={() => setRetention("kept")} disabled={busy}>Restore</button>
+              <button type="button" className="danger" onClick={deletePermanently} disabled={busy}>{state === "deleting" ? "Deleting…" : "Delete permanently"}</button>
+            </>
+          )}
+        </div>
       </div>
+      <details className="admin-note">
+        <summary><span>Internal note</span><small>{note ? "Note added" : "Optional"}</small></summary>
+        <label>
+          <span>Private note for administrators</span>
+          <textarea value={note} maxLength={1000} rows={3} onChange={(event) => setNote(event.target.value)} placeholder="Add context only when it will help a later review" disabled={busy} />
+        </label>
+        <p>Not visible to the user.</p>
+      </details>
+      <p className="admin-review-feedback" role="status">{state === "saved" ? "Changes saved." : state === "error" ? "Could not complete this action. Try again." : ""}</p>
     </div>
   );
 }
