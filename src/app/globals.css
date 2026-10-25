@@ -1168,6 +1168,16 @@
 }
 .feedback-field textarea { min-height: 132px; padding: 12px 14px; resize: vertical; }
 .feedback-field input { min-height: 46px; padding: 10px 14px; }
+.feedback-field-help { margin-top: 7px; color: #64748B; font-size: 12px; line-height: 1.5; }
+.feedback-reply-choice {
+  display: flex; align-items: flex-start; gap: 11px; padding: 13px 14px;
+  border: 1px solid #BFDBFE; border-radius: 12px; background: #EFF6FF; color: var(--color-heading); cursor: pointer;
+}
+.feedback-reply-choice input { width: 18px; height: 18px; margin: 2px 0 0; accent-color: var(--color-primary); }
+.feedback-reply-choice span { display: grid; gap: 3px; }
+.feedback-reply-choice strong { font-size: 14px; line-height: 1.4; }
+.feedback-reply-choice small { color: #475569; font-size: 12px; line-height: 1.45; }
+.feedback-reply-choice input:focus-visible { outline: 3px solid #93C5FD; outline-offset: 2px; }
 .feedback-privacy { margin: -2px 0 0; color: #64748B; font-size: 12px; line-height: 1.5; }
 .feedback-error { margin: 0; color: #B91C1C; font-size: 13px; font-weight: 700; }
 .feedback-submit { width: 100%; min-height: 48px; border: 0; cursor: pointer; }
