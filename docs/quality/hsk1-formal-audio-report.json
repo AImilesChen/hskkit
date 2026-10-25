@@ -1,0 +1,3615 @@
+{
+  "version": "hsk1-formal-audio-2026-10-25",
+  "activeReleaseId": "hsk3-content-truth-v5",
+  "voice": "zh-CN-XiaoxiaoNeural",
+  "rate": "-8%",
+  "hsk1Words": 500,
+  "reusedThisRun": 500,
+  "generatedThisRun": 0,
+  "formalCoverage": 500,
+  "hsk1PipelineAssets": 426,
+  "totalBytes": 4064976,
+  "durationRangeSeconds": [
+    1.056,
+    1.776
+  ],
+  "riskCounts": {
+    "catalog-has-surface-or-pinyin-variant": 12,
+    "catalog-pinyin-differs-from-pypinyin-default": 74,
+    "contains-polyphonic-character": 188
+  },
+  "manualReviewQueue": [
+    {
+      "wordId": "hsk3.word.l1.0003.v1",
+      "hanzi": "八",
+      "pinyin": "bā",
+      "audioId": "hsk3.audio.hsk1.l1-0003.v1",
+      "storageKey": "audio/formal/hsk1/l1-0003-v1.mp3",
+      "checksumSha256": "3dd8b0b55ea11b28b16a77340225de4eeecac4905106cb87dd7b1ca572ba3675",
+      "reused": true,
+      "bytes": 6912,
+      "durationSeconds": 1.152,
+      "bitrate": 48000,
+      "risks": [
+        "contains-polyphonic-character"
+      ]
+    },
+    {
+      "wordId": "hsk3.word.l1.0004.v1",
+      "hanzi": "爸爸",
+      "pinyin": "bàba",
+      "audioId": "hsk3.audio.hsk1.l1-0004.v1",
+      "storageKey": "audio/formal/hsk1/l1-0004-v1.mp3",
+      "checksumSha256": "e1ace268d2a4d835c7632ffa7a1c48e2b9fc9884eeceee15ff799130e6e49f80",
+      "reused": true,
+      "bytes": 8064,
+      "durationSeconds": 1.344,
+      "bitrate": 48000,
+      "risks": [
+        "catalog-pinyin-differs-from-pypinyin-default",
+        "catalog-has-surface-or-pinyin-variant"
+      ]
+    },
+    {
+      "wordId": "hsk3.word.l1.0005.v1",
+      "hanzi": "吧",
+      "pinyin": "ba",
+      "audioId": "hsk3.audio.hsk1.l1-0005.v1",
+      "storageKey": "audio/formal/hsk1/l1-0005-v1.mp3",
+      "checksumSha256": "30a20a9451413e024a5b0129a8f7d5e36e71b34e0461e45c3aed19935d6c999b",
+      "reused": true,
+      "bytes": 6912,
+      "durationSeconds": 1.152,
+      "bitrate": 48000,
+      "risks": [
+        "contains-polyphonic-character"
+      ]
+    },
+    {
+      "wordId": "hsk3.word.l1.0006.v1",
+      "hanzi": "白",
+      "pinyin": "bái",
+      "audioId": "hsk3.audio.hsk1.l1-0006.v1",
+      "storageKey": "audio/formal/hsk1/l1-0006-v1.mp3",
+      "checksumSha256": "13abae0a644c8c0b5cbe60c9a7acaa1e0bac6cc5d5f4a2d47c86f520f2d02a81",
+      "reused": true,
+      "bytes": 6912,
+      "durationSeconds": 1.152,
+      "bitrate": 48000,
+      "risks": [
+        "contains-polyphonic-character"
+      ]
+    },
+    {
+      "wordId": "hsk3.word.l1.0007.v1",
+      "hanzi": "白天",
+      "pinyin": "báitiān",
+      "audioId": "hsk3.audio.hsk1.l1-0007.v1",
+      "storageKey": "audio/formal/hsk1/l1-0007-v1.mp3",
+      "checksumSha256": "2d0ba89124e36c35b9b7f52cd91dbc18a5d9de6c0707cf0fd922afbdde942c8d",
+      "reused": true,
+      "bytes": 8496,
+      "durationSeconds": 1.416,
+      "bitrate": 48000,
+      "risks": [
+        "contains-polyphonic-character"
+      ]
+    },
+    {
+      "wordId": "hsk3.word.l1.0008.v1",
+      "hanzi": "百",
+      "pinyin": "bǎi",
+      "audioId": "hsk3.audio.hsk1.l1-0008.v1",
+      "storageKey": "audio/formal/hsk1/l1-0008-v1.mp3",
+      "checksumSha256": "1f6b4ca7d5fb64f3f6285d7bfc4d6012bf21c89ccbf9fc593cda75cf0cb4c0d4",
+      "reused": true,
+      "bytes": 6912,
+      "durationSeconds": 1.152,
+      "bitrate": 48000,
+      "risks": [
+        "contains-polyphonic-character"
+      ]
+    },
+    {
+      "wordId": "hsk3.word.l1.0010.v1",
+      "hanzi": "半",
+      "pinyin": "bàn",
+      "audioId": "hsk3.audio.topic-p2.l1-0010.v1",
+      "storageKey": "audio/formal/topics/p2-samples/l1-0010-v1.mp3",
+      "checksumSha256": "582d6a6eab2d0b187d6f0924582fc4699362c0bc3e77dcd0cc59fafdf43f2afe",
+      "reused": true,
+      "bytes": 10656,
+      "durationSeconds": 1.776,
+      "bitrate": 48000,
+      "risks": [
+        "contains-polyphonic-character"
+      ]
+    },
+    {
+      "wordId": "hsk3.word.l1.0011.v1",
+      "hanzi": "半年",
+      "pinyin": "bàn nián",
+      "audioId": "hsk3.audio.hsk1.l1-0011.v1",
+      "storageKey": "audio/formal/hsk1/l1-0011-v1.mp3",
+      "checksumSha256": "91fec0d9cf6463234c66484be9db2b9835b50f691826e278ae037e08c74b66cd",
+      "reused": true,
+      "bytes": 8208,
+      "durationSeconds": 1.368,
+      "bitrate": 48000,
+      "risks": [
+        "contains-polyphonic-character"
+      ]
+    },
+    {
+      "wordId": "hsk3.word.l1.0012.v1",
+      "hanzi": "半天",
+      "pinyin": "bàntiān",
+      "audioId": "hsk3.audio.hsk1.l1-0012.v1",
+      "storageKey": "audio/formal/hsk1/l1-0012-v1.mp3",
+      "checksumSha256": "ecf6491fb57593fd4152d4a95a1d0e348a0ecc4098f9fbdfdbbac02da5b7e5d0",
+      "reused": true,
+      "bytes": 8496,
+      "durationSeconds": 1.416,
+      "bitrate": 48000,
+      "risks": [
+        "contains-polyphonic-character"
+      ]
+    },
+    {
+      "wordId": "hsk3.word.l1.0015.v1",
+      "hanzi": "包",
+      "pinyin": "bāo",
+      "audioId": "hsk3.audio.topic-p2.l1-0015.v1",
+      "storageKey": "audio/formal/topics/p2-samples/l1-0015-v1.mp3",
+      "checksumSha256": "b3d5af96117efd53749754f74de98cff6b2c66deb30357a364127a70fb66bd68",
+      "reused": true,
+      "bytes": 10656,
+      "durationSeconds": 1.776,
+      "bitrate": 48000,
+      "risks": [
+        "contains-polyphonic-character"
+      ]
+    },
+    {
+      "wordId": "hsk3.word.l1.0016.v1",
+      "hanzi": "包子",
+      "pinyin": "bāozi",
+      "audioId": "hsk3.audio.hsk1.l1-0016.v1",
+      "storageKey": "audio/formal/hsk1/l1-0016-v1.mp3",
+      "checksumSha256": "f0965879880f8109314920a1d7193efc358d8dfd3264a9abb5a7c718edbd3fef",
+      "reused": true,
+      "bytes": 8064,
+      "durationSeconds": 1.344,
+      "bitrate": 48000,
+      "risks": [
+        "contains-polyphonic-character"
+      ]
+    },
+    {
+      "wordId": "hsk3.word.l1.0019.v1",
+      "hanzi": "北",
+      "pinyin": "běi",
+      "audioId": "hsk3.audio.hsk1.l1-0019.v1",
+      "storageKey": "audio/formal/hsk1/l1-0019-v1.mp3",
+      "checksumSha256": "b69d1b2701cc711639c3ae855c031390cf91f39253ebe81b78737e5b8085a7b9",
+      "reused": true,
+      "bytes": 6912,
+      "durationSeconds": 1.152,
+      "bitrate": 48000,
+      "risks": [
+        "contains-polyphonic-character"
+      ]
+    },
+    {
+      "wordId": "hsk3.word.l1.0020.v1",
+      "hanzi": "北边",
+      "pinyin": "běibian",
+      "audioId": "hsk3.audio.hsk1.l1-0020.v1",
+      "storageKey": "audio/formal/hsk1/l1-0020-v1.mp3",
+      "checksumSha256": "25182657225eb100f0a604f3d83d37e6c2f6bd28bc29097c4a00c8247a0dccf8",
+      "reused": true,
+      "bytes": 8208,
+      "durationSeconds": 1.368,
+      "bitrate": 48000,
+      "risks": [
+        "catalog-pinyin-differs-from-pypinyin-default"
+      ]
+    },
+    {
+      "wordId": "hsk3.word.l1.0022.v1",
+      "hanzi": "本",
+      "pinyin": "běn",
+      "audioId": "hsk3.audio.hsk1.l1-0022.v1",
+      "storageKey": "audio/formal/hsk1/l1-0022-v1.mp3",
+      "checksumSha256": "41274929286acbe65d1f9889bf73ed52cae7c38dacf9d68ccd4df97239fb9f64",
+      "reused": true,
+      "bytes": 6768,
+      "durationSeconds": 1.128,
+      "bitrate": 48000,
+      "risks": [
+        "contains-polyphonic-character"
+      ]
+    },
+    {
+      "wordId": "hsk3.word.l1.0023.v1",
+      "hanzi": "本子",
+      "pinyin": "běnzi",
+      "audioId": "hsk3.audio.hsk1.l1-0023.v1",
+      "storageKey": "audio/formal/hsk1/l1-0023-v1.mp3",
+      "checksumSha256": "15983fec95d1e340a37b39948e0e5b487325612d81dfac767dd64fdaf69971f0",
+      "reused": true,
+      "bytes": 8064,
+      "durationSeconds": 1.344,
+      "bitrate": 48000,
+      "risks": [
+        "contains-polyphonic-character"
+      ]
+    },
+    {
+      "wordId": "hsk3.word.l1.0024.v1",
+      "hanzi": "比",
+      "pinyin": "bǐ",
+      "audioId": "hsk3.audio.hsk1.l1-0024.v1",
+      "storageKey": "audio/formal/hsk1/l1-0024-v1.mp3",
+      "checksumSha256": "118f05b71044a1df1df497a34cbe26652af304bd3a703dd28634f187146188b6",
+      "reused": true,
+      "bytes": 6768,
+      "durationSeconds": 1.128,
+      "bitrate": 48000,
+      "risks": [
+        "contains-polyphonic-character"
+      ]
+    },
+    {
+      "wordId": "hsk3.word.l1.0025.v1",
+      "hanzi": "别",
+      "pinyin": "bié",
+      "audioId": "hsk3.audio.hsk1.l1-0025.v1",
+      "storageKey": "audio/formal/hsk1/l1-0025-v1.mp3",
+      "checksumSha256": "8ccfe0b55b18b59da95a8b300dad91704d6f5bad4b505850ace3b313cbd37993",
+      "reused": true,
+      "bytes": 6768,
+      "durationSeconds": 1.128,
+      "bitrate": 48000,
+      "risks": [
+        "contains-polyphonic-character"
+      ]
+    },
+    {
+      "wordId": "hsk3.word.l1.0026.v1",
+      "hanzi": "别的",
+      "pinyin": "biéde",
+      "audioId": "hsk3.audio.hsk1.l1-0026.v1",
+      "storageKey": "audio/formal/hsk1/l1-0026-v1.mp3",
+      "checksumSha256": "ce5de54499d5a54fb0f5d33c96cb27071eee19f7e229ebaad78b2c032e20a72e",
+      "reused": true,
+      "bytes": 7920,
+      "durationSeconds": 1.32,
+      "bitrate": 48000,
+      "risks": [
+        "contains-polyphonic-character"
+      ]
+    },
+    {
+      "wordId": "hsk3.word.l1.0031.v1",
+      "hanzi": "不对",
+      "pinyin": "bùduì",
+      "audioId": "hsk3.audio.hsk1.l1-0031.v1",
+      "storageKey": "audio/formal/hsk1/l1-0031-v1.mp3",
+      "checksumSha256": "bab38ea6007442cc8469dac908f62eab306f74e1e876beb3e5a92e222cdae6f2",
+      "reused": true,
+      "bytes": 8064,
+      "durationSeconds": 1.344,
+      "bitrate": 48000,
+      "risks": [
+        "catalog-pinyin-differs-from-pypinyin-default"
+      ]
+    },
+    {
+      "wordId": "hsk3.word.l1.0032.v1",
+      "hanzi": "不客气",
+      "pinyin": "bù kèqì",
+      "audioId": "hsk3.audio.hsk1.l1-0032.v1",
+      "storageKey": "audio/formal/hsk1/l1-0032-v1.mp3",
+      "checksumSha256": "b3030615ce26d7306ccba00b0e037791751e377446f600f8b140df570acdd505",
+      "reused": true,
+      "bytes": 9360,
+      "durationSeconds": 1.56,
+      "bitrate": 48000,
+      "risks": [
+        "catalog-pinyin-differs-from-pypinyin-default"
+      ]
+    },
+    {
+      "wordId": "hsk3.word.l1.0034.v1",
+      "hanzi": "不",
+      "pinyin": "bù",
+      "audioId": "hsk3.audio.hsk1.l1-0034.v1",
+      "storageKey": "audio/formal/hsk1/l1-0034-v1.mp3",
+      "checksumSha256": "ec34dcd7615b1012f0ee0c1dac4416792bb41fd0f8f7bcd012229fe8cf01d3a4",
+      "reused": true,
+      "bytes": 6768,
+      "durationSeconds": 1.128,
+      "bitrate": 48000,
+      "risks": [
+        "contains-polyphonic-character"
+      ]
+    },
+    {
+      "wordId": "hsk3.word.l1.0037.v1",
+      "hanzi": "差",
+      "pinyin": "chà",
+      "audioId": "hsk3.audio.hsk1.l1-0037.v1",
+      "storageKey": "audio/formal/hsk1/l1-0037-v1.mp3",
+      "checksumSha256": "d35379037d42fc58e44f50eb60c6eef2346cae89edb16129a8db7399d8c2482f",
+      "reused": true,
+      "bytes": 6912,
+      "durationSeconds": 1.152,
+      "bitrate": 48000,
+      "risks": [
+        "contains-polyphonic-character"
+      ]
+    },
+    {
+      "wordId": "hsk3.word.l1.0042.v1",
+      "hanzi": "车",
+      "pinyin": "chē",
+      "audioId": "hsk3.audio.hsk1.l1-0042.v1",
+      "storageKey": "audio/formal/hsk1/l1-0042-v1.mp3",
+      "checksumSha256": "c6f27b92158a00d6c449c9b78014beb9da243852e6db20a39ce22924b329c943",
+      "reused": true,
+      "bytes": 7056,
+      "durationSeconds": 1.176,
+      "bitrate": 48000,
+      "risks": [
+        "contains-polyphonic-character"
+      ]
+    },
+    {
+      "wordId": "hsk3.word.l1.0044.v1",
+      "hanzi": "车上",
+      "pinyin": "chē shang",
+      "audioId": "hsk3.audio.hsk1.l1-0044.v1",
+      "storageKey": "audio/formal/hsk1/l1-0044-v1.mp3",
+      "checksumSha256": "84606d1e0505e8dccd0dca92f73d559293df8681b6994b0c92692ea69bad458d",
+      "reused": true,
+      "bytes": 8496,
+      "durationSeconds": 1.416,
+      "bitrate": 48000,
+      "risks": [
+        "catalog-pinyin-differs-from-pypinyin-default",
+        "contains-polyphonic-character"
+      ]
+    },
+    {
+      "wordId": "hsk3.word.l1.0046.v1",
+      "hanzi": "吃",
+      "pinyin": "chī",
+      "audioId": "hsk3.audio.topic-p2.l1-0046.v1",
+      "storageKey": "audio/formal/topics/p2-samples/l1-0046-v1.mp3",
+      "checksumSha256": "24285ca066d0192be3d68915134ef9d6cee2fca36b2bc83c116c742a28e6f93d",
+      "reused": true,
+      "bytes": 10656,
+      "durationSeconds": 1.776,
+      "bitrate": 48000,
+      "risks": [
+        "contains-polyphonic-character"
+      ]
+    },
+    {
+      "wordId": "hsk3.word.l1.0047.v1",
+      "hanzi": "吃饭",
+      "pinyin": "chīfàn",
+      "audioId": "hsk3.audio.hsk1.l1-0047.v1",
+      "storageKey": "audio/formal/hsk1/l1-0047-v1.mp3",
+      "checksumSha256": "0cc8380dcff760cf2d9d3cc76eb6fac8ceedcfefc1b7cea3e5b81468d169ccd8",
+      "reused": true,
+      "bytes": 8208,
+      "durationSeconds": 1.368,
+      "bitrate": 48000,
+      "risks": [
+        "contains-polyphonic-character"
+      ]
+    },
+    {
+      "wordId": "hsk3.word.l1.0050.v1",
+      "hanzi": "出去",
+      "pinyin": "chūqù",
+      "audioId": "hsk3.audio.hsk1.l1-0050.v1",
+      "storageKey": "audio/formal/hsk1/l1-0050-v1.mp3",
+      "checksumSha256": "9c175ac84dc99b805434df6855159efa719e694dfe9cd1891b45166315f85e18",
+      "reused": true,
+      "bytes": 8064,
+      "durationSeconds": 1.344,
+      "bitrate": 48000,
+      "risks": [
+        "contains-polyphonic-character"
+      ]
+    },
+    {
+      "wordId": "hsk3.word.l1.0051.v1",
+      "hanzi": "穿",
+      "pinyin": "chuān",
+      "audioId": "hsk3.audio.topic-p2.l1-0051.v1",
+      "storageKey": "audio/formal/topics/p2-samples/l1-0051-v1.mp3",
+      "checksumSha256": "783faa361d588d4dc4e40708aee7ba72e0c759bc965aced0f115a1b8000ef015",
+      "reused": true,
+      "bytes": 10656,
+      "durationSeconds": 1.776,
+      "bitrate": 48000,
+      "risks": [
+        "contains-polyphonic-character"
+      ]
+    },
+    {
+      "wordId": "hsk3.word.l1.0053.v1",
+      "hanzi": "次",
+      "pinyin": "cì",
+      "audioId": "hsk3.audio.hsk1.l1-0053.v1",
+      "storageKey": "audio/formal/hsk1/l1-0053-v1.mp3",
+      "checksumSha256": "ae4ad3141ff895a456748ab4d6e3433c18c98c7d1e3ece9e3c6a0c007da4c154",
+      "reused": true,
+      "bytes": 7056,
+      "durationSeconds": 1.176,
+      "bitrate": 48000,
+      "risks": [
+        "contains-polyphonic-character"
+      ]
+    },
+    {
+      "wordId": "hsk3.word.l1.0054.v1",
+      "hanzi": "从",
+      "pinyin": "cóng",
+      "audioId": "hsk3.audio.hsk1.l1-0054.v1",
+      "storageKey": "audio/formal/hsk1/l1-0054-v1.mp3",
+      "checksumSha256": "c4b735540a1b39a5bf40dcfb18b55f4d854871ced035fd1c48ccb0bb4a157637",
+      "reused": true,
+      "bytes": 6912,
+      "durationSeconds": 1.152,
+      "bitrate": 48000,
+      "risks": [
+        "contains-polyphonic-character"
+      ]
+    },
+    {
+      "wordId": "hsk3.word.l1.0056.v1",
+      "hanzi": "打",
+      "pinyin": "dǎ",
+      "audioId": "hsk3.audio.hsk1.l1-0056.v1",
+      "storageKey": "audio/formal/hsk1/l1-0056-v1.mp3",
+      "checksumSha256": "cb25918e2a683dc119d027de702eb9cc06337347b655c13e9466e5218acf2544",
+      "reused": true,
+      "bytes": 6768,
+      "durationSeconds": 1.128,
+      "bitrate": 48000,
+      "risks": [
+        "contains-polyphonic-character"
+      ]
+    },
+    {
+      "wordId": "hsk3.word.l1.0057.v1",
+      "hanzi": "打车",
+      "pinyin": "dǎchē",
+      "audioId": "hsk3.audio.hsk1.l1-0057.v1",
+      "storageKey": "audio/formal/hsk1/l1-0057-v1.mp3",
+      "checksumSha256": "c6e11b112c64611715345e3ffb33fb6c62128b653152c13af49e4d04cf6be7f0",
+      "reused": true,
+      "bytes": 8496,
+      "durationSeconds": 1.416,
+      "bitrate": 48000,
+      "risks": [
+        "contains-polyphonic-character"
+      ]
+    },
+    {
+      "wordId": "hsk3.word.l1.0061.v1",
+      "hanzi": "大",
+      "pinyin": "dà",
+      "audioId": "hsk3.audio.hsk1.l1-0061.v1",
+      "storageKey": "audio/formal/hsk1/l1-0061-v1.mp3",
+      "checksumSha256": "aa141b4a555bb9e93d8d5058caeb651f663996575a0d87e8af7d6646236bfb04",
+      "reused": true,
+      "bytes": 6912,
+      "durationSeconds": 1.152,
+      "bitrate": 48000,
+      "risks": [
+        "contains-polyphonic-character"
+      ]
+    },
+    {
+      "wordId": "hsk3.word.l1.0065.v1",
+      "hanzi": "得到",
+      "pinyin": "dédào",
+      "audioId": "hsk3.audio.hsk1.l1-0065.v1",
+      "storageKey": "audio/formal/hsk1/l1-0065-v1.mp3",
+      "checksumSha256": "1b43698c555471babf76bca87a2dd465bb7487df0491cfbbaa0811601c01d9a2",
+      "reused": true,
+      "bytes": 7920,
+      "durationSeconds": 1.32,
+      "bitrate": 48000,
+      "risks": [
+        "contains-polyphonic-character"
+      ]
+    },
+    {
+      "wordId": "hsk3.word.l1.0066.v1",
+      "hanzi": "地",
+      "pinyin": "de",
+      "audioId": "hsk3.audio.hsk1.l1-0066.v1",
+      "storageKey": "audio/formal/hsk1/l1-0066-v1.mp3",
+      "checksumSha256": "d4e942b75a75e02c51cf223538971f739565a5fa7b2f63416d4863ac0f1b83f8",
+      "reused": true,
+      "bytes": 6768,
+      "durationSeconds": 1.128,
+      "bitrate": 48000,
+      "risks": [
+        "catalog-pinyin-differs-from-pypinyin-default",
+        "contains-polyphonic-character"
+      ]
+    },
+    {
+      "wordId": "hsk3.word.l1.0067.v1",
+      "hanzi": "的",
+      "pinyin": "de",
+      "audioId": "hsk3.audio.hsk1.l1-0067.v1",
+      "storageKey": "audio/formal/hsk1/l1-0067-v1.mp3",
+      "checksumSha256": "d4e942b75a75e02c51cf223538971f739565a5fa7b2f63416d4863ac0f1b83f8",
+      "reused": true,
+      "bytes": 6768,
+      "durationSeconds": 1.128,
+      "bitrate": 48000,
+      "risks": [
+        "contains-polyphonic-character"
+      ]
+    },
+    {
+      "wordId": "hsk3.word.l1.0069.v1",
+      "hanzi": "地",
+      "pinyin": "dì",
+      "audioId": "hsk3.audio.hsk1.l1-0069.v1",
+      "storageKey": "audio/formal/hsk1/l1-0069-v1.mp3",
+      "checksumSha256": "d1fcda1a282375148ad745ee9eef0ab5123abd4f2d9d44176c26814404d97311",
+      "reused": true,
+      "bytes": 6912,
+      "durationSeconds": 1.152,
+      "bitrate": 48000,
+      "risks": [
+        "contains-polyphonic-character"
+      ]
+    },
+    {
+      "wordId": "hsk3.word.l1.0071.v1",
+      "hanzi": "地方",
+      "pinyin": "dìfang",
+      "audioId": "hsk3.audio.hsk1.l1-0071.v1",
+      "storageKey": "audio/formal/hsk1/l1-0071-v1.mp3",
+      "checksumSha256": "f5ab31afbec8ef9bcd6e20f8f86a4243980a53a5107bb0c6206155fbadb7f389",
+      "reused": true,
+      "bytes": 7920,
+      "durationSeconds": 1.32,
+      "bitrate": 48000,
+      "risks": [
+        "catalog-pinyin-differs-from-pypinyin-default"
+      ]
+    },
+    {
+      "wordId": "hsk3.word.l1.0072.v1",
+      "hanzi": "地上",
+      "pinyin": "dìshang",
+      "audioId": "hsk3.audio.hsk1.l1-0072.v1",
+      "storageKey": "audio/formal/hsk1/l1-0072-v1.mp3",
+      "checksumSha256": "b94b7ef823a22468d90263e33fb19d3dc3f1114303f8f3fb0742d429d3dc450f",
+      "reused": true,
+      "bytes": 8208,
+      "durationSeconds": 1.368,
+      "bitrate": 48000,
+      "risks": [
+        "catalog-pinyin-differs-from-pypinyin-default"
+      ]
+    },
+    {
+      "wordId": "hsk3.word.l1.0074.v1",
+      "hanzi": "弟弟",
+      "pinyin": "dìdi",
+      "audioId": "hsk3.audio.hsk1.l1-0074.v1",
+      "storageKey": "audio/formal/hsk1/l1-0074-v1.mp3",
+      "checksumSha256": "0d7c1f9b2ee0b490473eccfdf62204c5b0a34e7cc848ff62194139ee268a388f",
+      "reused": true,
+      "bytes": 7920,
+      "durationSeconds": 1.32,
+      "bitrate": 48000,
+      "risks": [
+        "catalog-has-surface-or-pinyin-variant"
+      ]
+    },
+    {
+      "wordId": "hsk3.word.l1.0075.v1",
+      "hanzi": "第",
+      "pinyin": "dì",
+      "audioId": "hsk3.audio.hsk1.l1-0075.v1",
+      "storageKey": "audio/formal/hsk1/l1-0075-v1.mp3",
+      "checksumSha256": "d1fcda1a282375148ad745ee9eef0ab5123abd4f2d9d44176c26814404d97311",
+      "reused": true,
+      "bytes": 6912,
+      "durationSeconds": 1.152,
+      "bitrate": 48000,
+      "risks": [
+        "catalog-has-surface-or-pinyin-variant"
+      ]
+    },
+    {
+      "wordId": "hsk3.word.l1.0081.v1",
+      "hanzi": "电视机",
+      "pinyin": "diànshìjī",
+      "audioId": "hsk3.audio.hsk1.l1-0081.v1",
+      "storageKey": "audio/formal/hsk1/l1-0081-v1.mp3",
+      "checksumSha256": "71562294f7a6c66a787cb78e02d0b485606d1c5e08c89bdbbdf24846f36291ed",
+      "reused": true,
+      "bytes": 9360,
+      "durationSeconds": 1.56,
+      "bitrate": 48000,
+      "risks": [
+        "contains-polyphonic-character"
+      ]
+    },
+    {
+      "wordId": "hsk3.word.l1.0085.v1",
+      "hanzi": "东边",
+      "pinyin": "dōngbian",
+      "audioId": "hsk3.audio.hsk1.l1-0085.v1",
+      "storageKey": "audio/formal/hsk1/l1-0085-v1.mp3",
+      "checksumSha256": "62ff0007be8493075bda8acffb702564f94390430534afcf4a713d2091f9668d",
+      "reused": true,
+      "bytes": 8064,
+      "durationSeconds": 1.344,
+      "bitrate": 48000,
+      "risks": [
+        "catalog-pinyin-differs-from-pypinyin-default",
+        "contains-polyphonic-character"
+      ]
+    },
+    {
+      "wordId": "hsk3.word.l1.0086.v1",
+      "hanzi": "东西",
+      "pinyin": "dōngxi",
+      "audioId": "hsk3.audio.hsk1.l1-0086.v1",
+      "storageKey": "audio/formal/hsk1/l1-0086-v1.mp3",
+      "checksumSha256": "1a0b1b53fb2eb523ee1537ab053088cf72704642d6dba92fc04507c21ca154c2",
+      "reused": true,
+      "bytes": 8208,
+      "durationSeconds": 1.368,
+      "bitrate": 48000,
+      "risks": [
+        "catalog-pinyin-differs-from-pypinyin-default"
+      ]
+    },
+    {
+      "wordId": "hsk3.word.l1.0088.v1",
+      "hanzi": "动作",
+      "pinyin": "dòngzuò",
+      "audioId": "hsk3.audio.hsk1.l1-0088.v1",
+      "storageKey": "audio/formal/hsk1/l1-0088-v1.mp3",
+      "checksumSha256": "71478315343430b65b31ea13277e98ae8e093f68b9400c38e4468ffda865c8f5",
+      "reused": true,
+      "bytes": 7920,
+      "durationSeconds": 1.32,
+      "bitrate": 48000,
+      "risks": [
+        "contains-polyphonic-character"
+      ]
+    },
+    {
+      "wordId": "hsk3.word.l1.0089.v1",
+      "hanzi": "都",
+      "pinyin": "dōu",
+      "audioId": "hsk3.audio.hsk1.l1-0089.v1",
+      "storageKey": "audio/formal/hsk1/l1-0089-v1.mp3",
+      "checksumSha256": "d281ac0efedf79ea4238ff2d6421a0b9e4b9e4a673f66444f8cc8322fac86dc0",
+      "reused": true,
+      "bytes": 6768,
+      "durationSeconds": 1.128,
+      "bitrate": 48000,
+      "risks": [
+        "contains-polyphonic-character"
+      ]
+    },
+    {
+      "wordId": "hsk3.word.l1.0090.v1",
+      "hanzi": "读",
+      "pinyin": "dú",
+      "audioId": "hsk3.audio.hsk1.l1-0090.v1",
+      "storageKey": "audio/formal/hsk1/l1-0090-v1.mp3",
+      "checksumSha256": "ff724589b8a07846bd6f789456344d91553314612f40116cccce19ae5c99a2b4",
+      "reused": true,
+      "bytes": 6912,
+      "durationSeconds": 1.152,
+      "bitrate": 48000,
+      "risks": [
+        "contains-polyphonic-character"
+      ]
+    },
+    {
+      "wordId": "hsk3.word.l1.0093.v1",
+      "hanzi": "对不起",
+      "pinyin": "duìbuqǐ",
+      "audioId": "hsk3.audio.hsk1.l1-0093.v1",
+      "storageKey": "audio/formal/hsk1/l1-0093-v1.mp3",
+      "checksumSha256": "dbf5476fb8f13f5aeec881706a6309f0dba81ab18c6ddafa0116e4244e625742",
+      "reused": true,
+      "bytes": 8784,
+      "durationSeconds": 1.464,
+      "bitrate": 48000,
+      "risks": [
+        "catalog-pinyin-differs-from-pypinyin-default"
+      ]
+    },
+    {
+      "wordId": "hsk3.word.l1.0095.v1",
+      "hanzi": "多少",
+      "pinyin": "duōshao",
+      "audioId": "hsk3.audio.topic-grocery-shopping.l1-0095.v1",
+      "storageKey": "audio/formal/topics/grocery-shopping/l1-0095-v1.mp3",
+      "checksumSha256": "ad4364d86f3af3d730509aa120cf25aaa05822d1cffae61f2d8a0faecfac6429",
+      "reused": true,
+      "bytes": 10656,
+      "durationSeconds": 1.776,
+      "bitrate": 48000,
+      "risks": [
+        "catalog-pinyin-differs-from-pypinyin-default"
+      ]
+    },
+    {
+      "wordId": "hsk3.word.l1.0103.v1",
+      "hanzi": "放",
+      "pinyin": "fàng",
+      "audioId": "hsk3.audio.hsk1.l1-0103.v1",
+      "storageKey": "audio/formal/hsk1/l1-0103-v1.mp3",
+      "checksumSha256": "3f685a3649380afaf807d18281ad86bff8a3e0c1b859af7a6136fe0fde331c59",
+      "reused": true,
+      "bytes": 6912,
+      "durationSeconds": 1.152,
+      "bitrate": 48000,
+      "risks": [
+        "contains-polyphonic-character"
+      ]
+    },
+    {
+      "wordId": "hsk3.word.l1.0105.v1",
+      "hanzi": "放学",
+      "pinyin": "fàngxué",
+      "audioId": "hsk3.audio.hsk1.l1-0105.v1",
+      "storageKey": "audio/formal/hsk1/l1-0105-v1.mp3",
+      "checksumSha256": "6e650c360878f52f72ee3cc600ed9d881785c7ab2a06abed0eb8eb4d2572b25c",
+      "reused": true,
+      "bytes": 8496,
+      "durationSeconds": 1.416,
+      "bitrate": 48000,
+      "risks": [
+        "contains-polyphonic-character"
+      ]
+    },
+    {
+      "wordId": "hsk3.word.l1.0107.v1",
+      "hanzi": "飞机",
+      "pinyin": "fēijī",
+      "audioId": "hsk3.audio.topic-p2.l1-0107.v1",
+      "storageKey": "audio/formal/topics/p2-samples/l1-0107-v1.mp3",
+      "checksumSha256": "709ba03c928e235be6b2a5da7ff72c016fd3cd860a95fd1daea58e3a7c2dd1ec",
+      "reused": true,
+      "bytes": 10656,
+      "durationSeconds": 1.776,
+      "bitrate": 48000,
+      "risks": [
+        "contains-polyphonic-character"
+      ]
+    },
+    {
+      "wordId": "hsk3.word.l1.0108.v1",
+      "hanzi": "非常",
+      "pinyin": "fēicháng",
+      "audioId": "hsk3.audio.hsk1.l1-0108.v1",
+      "storageKey": "audio/formal/hsk1/l1-0108-v1.mp3",
+      "checksumSha256": "59d3827dbc8d1a6b985f6cc022dd7836dc5be65526f3fbcca2c07fd091be4422",
+      "reused": true,
+      "bytes": 8496,
+      "durationSeconds": 1.416,
+      "bitrate": 48000,
+      "risks": [
+        "contains-polyphonic-character"
+      ]
+    },
+    {
+      "wordId": "hsk3.word.l1.0109.v1",
+      "hanzi": "分",
+      "pinyin": "fēn",
+      "audioId": "hsk3.audio.hsk1.l1-0109.v1",
+      "storageKey": "audio/formal/hsk1/l1-0109-v1.mp3",
+      "checksumSha256": "1bb438ceb5f903dfebded5859da71c591f13447c24cfc9b81d74c99dc6305323",
+      "reused": true,
+      "bytes": 6912,
+      "durationSeconds": 1.152,
+      "bitrate": 48000,
+      "risks": [
+        "contains-polyphonic-character"
+      ]
+    },
+    {
+      "wordId": "hsk3.word.l1.0111.v1",
+      "hanzi": "干",
+      "pinyin": "gān",
+      "audioId": "hsk3.audio.hsk1.l1-0111.v1",
+      "storageKey": "audio/formal/hsk1/l1-0111-v1.mp3",
+      "checksumSha256": "671607f8996e3d57fac7d5015588606a53d73030a0e2539b931d99db7f9c8373",
+      "reused": true,
+      "bytes": 6912,
+      "durationSeconds": 1.152,
+      "bitrate": 48000,
+      "risks": [
+        "catalog-pinyin-differs-from-pypinyin-default",
+        "contains-polyphonic-character"
+      ]
+    },
+    {
+      "wordId": "hsk3.word.l1.0113.v1",
+      "hanzi": "干",
+      "pinyin": "gàn",
+      "audioId": "hsk3.audio.hsk1.l1-0113.v1",
+      "storageKey": "audio/formal/hsk1/l1-0113-v1.mp3",
+      "checksumSha256": "4e5516000d2888d3dabc8b96bf2b348c24685f513c0995bd9375f7bf83b35e6c",
+      "reused": true,
+      "bytes": 6912,
+      "durationSeconds": 1.152,
+      "bitrate": 48000,
+      "risks": [
+        "contains-polyphonic-character"
+      ]
+    },
+    {
+      "wordId": "hsk3.word.l1.0115.v1",
+      "hanzi": "高",
+      "pinyin": "gāo",
+      "audioId": "hsk3.audio.hsk1.l1-0115.v1",
+      "storageKey": "audio/formal/hsk1/l1-0115-v1.mp3",
+      "checksumSha256": "bf83fbbb75f6f38adbb60d617105b8a9c7297b1d9212575277a09ee594126e46",
+      "reused": true,
+      "bytes": 6768,
+      "durationSeconds": 1.128,
+      "bitrate": 48000,
+      "risks": [
+        "contains-polyphonic-character"
+      ]
+    },
+    {
+      "wordId": "hsk3.word.l1.0117.v1",
+      "hanzi": "告诉",
+      "pinyin": "gàosu",
+      "audioId": "hsk3.audio.hsk1.l1-0117.v1",
+      "storageKey": "audio/formal/hsk1/l1-0117-v1.mp3",
+      "checksumSha256": "2d9dfb637c8f50a87a42e7e587fab8effdb4a6bc6188bbfc30f931430a62316c",
+      "reused": true,
+      "bytes": 8208,
+      "durationSeconds": 1.368,
+      "bitrate": 48000,
+      "risks": [
+        "catalog-pinyin-differs-from-pypinyin-default",
+        "contains-polyphonic-character"
+      ]
+    },
+    {
+      "wordId": "hsk3.word.l1.0118.v1",
+      "hanzi": "哥哥",
+      "pinyin": "gēge",
+      "audioId": "hsk3.audio.hsk1.l1-0118.v1",
+      "storageKey": "audio/formal/hsk1/l1-0118-v1.mp3",
+      "checksumSha256": "af166594abc686f85777d5238e04816169592b93e424b51727f34aa4f67d6c35",
+      "reused": true,
+      "bytes": 8208,
+      "durationSeconds": 1.368,
+      "bitrate": 48000,
+      "risks": [
+        "catalog-pinyin-differs-from-pypinyin-default",
+        "catalog-has-surface-or-pinyin-variant"
+      ]
+    },
+    {
+      "wordId": "hsk3.word.l1.0120.v1",
+      "hanzi": "个",
+      "pinyin": "gè",
+      "audioId": "hsk3.audio.hsk1.l1-0120.v1",
+      "storageKey": "audio/formal/hsk1/l1-0120-v1.mp3",
+      "checksumSha256": "eb84f4851a75bcfde1ae0526e06dd1816c53abfe96074564142a10a69d1906d1",
+      "reused": true,
+      "bytes": 6912,
+      "durationSeconds": 1.152,
+      "bitrate": 48000,
+      "risks": [
+        "contains-polyphonic-character"
+      ]
+    },
+    {
+      "wordId": "hsk3.word.l1.0121.v1",
+      "hanzi": "给",
+      "pinyin": "gěi",
+      "audioId": "hsk3.audio.hsk1.l1-0121.v1",
+      "storageKey": "audio/formal/hsk1/l1-0121-v1.mp3",
+      "checksumSha256": "1cd56503f2a1787d5fac250856b3abd71dc827d3475399927c4ebae6a0da8bc1",
+      "reused": true,
+      "bytes": 6912,
+      "durationSeconds": 1.152,
+      "bitrate": 48000,
+      "risks": [
+        "contains-polyphonic-character"
+      ]
+    },
+    {
+      "wordId": "hsk3.word.l1.0124.v1",
+      "hanzi": "工作",
+      "pinyin": "gōngzuò",
+      "audioId": "hsk3.audio.hsk1.l1-0124.v1",
+      "storageKey": "audio/formal/hsk1/l1-0124-v1.mp3",
+      "checksumSha256": "c8a1d8cb34c862a2a6d1703926543527748dc6b58f1529c245caf196e3d39084",
+      "reused": true,
+      "bytes": 8208,
+      "durationSeconds": 1.368,
+      "bitrate": 48000,
+      "risks": [
+        "contains-polyphonic-character"
+      ]
+    },
+    {
+      "wordId": "hsk3.word.l1.0126.v1",
+      "hanzi": "关上",
+      "pinyin": "guānshang",
+      "audioId": "hsk3.audio.hsk1.l1-0126.v1",
+      "storageKey": "audio/formal/hsk1/l1-0126-v1.mp3",
+      "checksumSha256": "de39f367eaada815af664ee673edf94fc5e1c438b7bded8909fab979a4559eae",
+      "reused": true,
+      "bytes": 8208,
+      "durationSeconds": 1.368,
+      "bitrate": 48000,
+      "risks": [
+        "catalog-pinyin-differs-from-pypinyin-default"
+      ]
+    },
+    {
+      "wordId": "hsk3.word.l1.0131.v1",
+      "hanzi": "过",
+      "pinyin": "guò",
+      "audioId": "hsk3.audio.hsk1.l1-0131.v1",
+      "storageKey": "audio/formal/hsk1/l1-0131-v1.mp3",
+      "checksumSha256": "5755655ed9eb88923b9183c6aa46e23fdc4e45fb8bc00844e28b90fe5c5c21b2",
+      "reused": true,
+      "bytes": 6912,
+      "durationSeconds": 1.152,
+      "bitrate": 48000,
+      "risks": [
+        "contains-polyphonic-character"
+      ]
+    },
+    {
+      "wordId": "hsk3.word.l1.0132.v1",
+      "hanzi": "还",
+      "pinyin": "hái",
+      "audioId": "hsk3.audio.hsk1.l1-0132.v1",
+      "storageKey": "audio/formal/hsk1/l1-0132-v1.mp3",
+      "checksumSha256": "f83f87645917dd1e905c3d3ce598606c07090f9c8622b98425fb8fe80719b0a2",
+      "reused": true,
+      "bytes": 6768,
+      "durationSeconds": 1.128,
+      "bitrate": 48000,
+      "risks": [
+        "contains-polyphonic-character"
+      ]
+    },
+    {
+      "wordId": "hsk3.word.l1.0133.v1",
+      "hanzi": "还是",
+      "pinyin": "háishi",
+      "audioId": "hsk3.audio.hsk1.l1-0133.v1",
+      "storageKey": "audio/formal/hsk1/l1-0133-v1.mp3",
+      "checksumSha256": "87f58bde366fc3518e70a547d4111b163a46717f61fa7469cd15320d9a335f46",
+      "reused": true,
+      "bytes": 8640,
+      "durationSeconds": 1.44,
+      "bitrate": 48000,
+      "risks": [
+        "catalog-pinyin-differs-from-pypinyin-default"
+      ]
+    },
+    {
+      "wordId": "hsk3.word.l1.0134.v1",
+      "hanzi": "还有",
+      "pinyin": "hái yǒu",
+      "audioId": "hsk3.audio.hsk1.l1-0134.v1",
+      "storageKey": "audio/formal/hsk1/l1-0134-v1.mp3",
+      "checksumSha256": "a1a43f331d65ad8eb2def0b2cbc1753ee72b3281b97c5662f01d6482a21611cb",
+      "reused": true,
+      "bytes": 8208,
+      "durationSeconds": 1.368,
+      "bitrate": 48000,
+      "risks": [
+        "contains-polyphonic-character"
+      ]
+    },
+    {
+      "wordId": "hsk3.word.l1.0138.v1",
+      "hanzi": "好",
+      "pinyin": "hǎo",
+      "audioId": "hsk3.audio.hsk1.l1-0138.v1",
+      "storageKey": "audio/formal/hsk1/l1-0138-v1.mp3",
+      "checksumSha256": "406d5f5eeb7f69ebaec5320f1a3dad15cf92cf4a6bcbc389d79d7c67962246fa",
+      "reused": true,
+      "bytes": 6768,
+      "durationSeconds": 1.128,
+      "bitrate": 48000,
+      "risks": [
+        "contains-polyphonic-character"
+      ]
+    },
+    {
+      "wordId": "hsk3.word.l1.0142.v1",
+      "hanzi": "好玩儿",
+      "pinyin": "hǎowánr",
+      "audioId": "hsk3.audio.hsk1.l1-0142.v1",
+      "storageKey": "audio/formal/hsk1/l1-0142-v1.mp3",
+      "checksumSha256": "34af784fcdb3f93602323e2e14187e15f9dbf74aa7c6ed14215a24409d77499d",
+      "reused": true,
+      "bytes": 7776,
+      "durationSeconds": 1.296,
+      "bitrate": 48000,
+      "risks": [
+        "catalog-pinyin-differs-from-pypinyin-default"
+      ]
+    },
+    {
+      "wordId": "hsk3.word.l1.0143.v1",
+      "hanzi": "号",
+      "pinyin": "hào",
+      "audioId": "hsk3.audio.hsk1.l1-0143.v1",
+      "storageKey": "audio/formal/hsk1/l1-0143-v1.mp3",
+      "checksumSha256": "c9e27b1d33ec15013b85c0925a24a4556a4583a313f7e5dee56a289320557d19",
+      "reused": true,
+      "bytes": 6768,
+      "durationSeconds": 1.128,
+      "bitrate": 48000,
+      "risks": [
+        "contains-polyphonic-character"
+      ]
+    },
+    {
+      "wordId": "hsk3.word.l1.0144.v1",
+      "hanzi": "喝",
+      "pinyin": "hē",
+      "audioId": "hsk3.audio.topic-p2.l1-0144.v1",
+      "storageKey": "audio/formal/topics/p2-samples/l1-0144-v1.mp3",
+      "checksumSha256": "cb2e6be1badff21514eccdfce09e6cbffa930b2aab253527d142fe9957d7a573",
+      "reused": true,
+      "bytes": 10656,
+      "durationSeconds": 1.776,
+      "bitrate": 48000,
+      "risks": [
+        "contains-polyphonic-character"
+      ]
+    },
+    {
+      "wordId": "hsk3.word.l1.0145.v1",
+      "hanzi": "和",
+      "pinyin": "hé",
+      "audioId": "hsk3.audio.hsk1.l1-0145.v1",
+      "storageKey": "audio/formal/hsk1/l1-0145-v1.mp3",
+      "checksumSha256": "caad0b14713a06db73f873a9e30b271e331be64cfa76f5a0d4bd7c4af293177b",
+      "reused": true,
+      "bytes": 7056,
+      "durationSeconds": 1.176,
+      "bitrate": 48000,
+      "risks": [
+        "contains-polyphonic-character"
+      ]
+    },
+    {
+      "wordId": "hsk3.word.l1.0148.v1",
+      "hanzi": "后边",
+      "pinyin": "hòubian",
+      "audioId": "hsk3.audio.hsk1.l1-0148.v1",
+      "storageKey": "audio/formal/hsk1/l1-0148-v1.mp3",
+      "checksumSha256": "9a51412fb58441ca48371705a55dbd0e18632415e90bfd99bd9ca0cdeba97214",
+      "reused": true,
+      "bytes": 8064,
+      "durationSeconds": 1.344,
+      "bitrate": 48000,
+      "risks": [
+        "catalog-pinyin-differs-from-pypinyin-default",
+        "contains-polyphonic-character"
+      ]
+    },
+    {
+      "wordId": "hsk3.word.l1.0152.v1",
+      "hanzi": "坏",
+      "pinyin": "huài",
+      "audioId": "hsk3.audio.topic-p2.l1-0152.v1",
+      "storageKey": "audio/formal/topics/p2-samples/l1-0152-v1.mp3",
+      "checksumSha256": "51d22c3b332f67f9fb60b7b930f6b7d33a262a24655c323d5c470590f7011f75",
+      "reused": true,
+      "bytes": 10656,
+      "durationSeconds": 1.776,
+      "bitrate": 48000,
+      "risks": [
+        "contains-polyphonic-character"
+      ]
+    },
+    {
+      "wordId": "hsk3.word.l1.0153.v1",
+      "hanzi": "还",
+      "pinyin": "huán",
+      "audioId": "hsk3.audio.hsk1.l1-0153.v1",
+      "storageKey": "audio/formal/hsk1/l1-0153-v1.mp3",
+      "checksumSha256": "4316dc858a1a95c33a04810c914fa449f74727f0003bd60b211ef46a8be248b5",
+      "reused": true,
+      "bytes": 6912,
+      "durationSeconds": 1.152,
+      "bitrate": 48000,
+      "risks": [
+        "catalog-pinyin-differs-from-pypinyin-default",
+        "contains-polyphonic-character"
+      ]
+    },
+    {
+      "wordId": "hsk3.word.l1.0157.v1",
+      "hanzi": "回家",
+      "pinyin": "huí jiā",
+      "audioId": "hsk3.audio.hsk1.l1-0157.v1",
+      "storageKey": "audio/formal/hsk1/l1-0157-v1.mp3",
+      "checksumSha256": "1894cd4411c4fd29d1458149512026ddad243883caf8a04749f573b94e203bd4",
+      "reused": true,
+      "bytes": 8208,
+      "durationSeconds": 1.368,
+      "bitrate": 48000,
+      "risks": [
+        "contains-polyphonic-character"
+      ]
+    },
+    {
+      "wordId": "hsk3.word.l1.0159.v1",
+      "hanzi": "回去",
+      "pinyin": "huíqù",
+      "audioId": "hsk3.audio.hsk1.l1-0159.v1",
+      "storageKey": "audio/formal/hsk1/l1-0159-v1.mp3",
+      "checksumSha256": "59f721ff285726c037751b7c6ba1426012ea4d412852064fe06376f020cb8699",
+      "reused": true,
+      "bytes": 8208,
+      "durationSeconds": 1.368,
+      "bitrate": 48000,
+      "risks": [
+        "contains-polyphonic-character"
+      ]
+    },
+    {
+      "wordId": "hsk3.word.l1.0160.v1",
+      "hanzi": "会",
+      "pinyin": "huì",
+      "audioId": "hsk3.audio.hsk1.l1-0160.v1",
+      "storageKey": "audio/formal/hsk1/l1-0160-v1.mp3",
+      "checksumSha256": "c4d75201763623cac715c5ce3d3b7a70c859553fcc7551fdb0bb518d7b04aa8c",
+      "reused": true,
+      "bytes": 7200,
+      "durationSeconds": 1.2,
+      "bitrate": 48000,
+      "risks": [
+        "contains-polyphonic-character"
+      ]
+    },
+    {
+      "wordId": "hsk3.word.l1.0163.v1",
+      "hanzi": "机票",
+      "pinyin": "jīpiào",
+      "audioId": "hsk3.audio.topic-p2.l1-0163.v1",
+      "storageKey": "audio/formal/topics/p2-samples/l1-0163-v1.mp3",
+      "checksumSha256": "44372f3243cb9ad3ba93820e2f239f0cfec1708c5d2b905ae0109bc66b9d4188",
+      "reused": true,
+      "bytes": 10656,
+      "durationSeconds": 1.776,
+      "bitrate": 48000,
+      "risks": [
+        "contains-polyphonic-character"
+      ]
+    },
+    {
+      "wordId": "hsk3.word.l1.0165.v1",
+      "hanzi": "几",
+      "pinyin": "jǐ",
+      "audioId": "hsk3.audio.hsk1.l1-0165.v1",
+      "storageKey": "audio/formal/hsk1/l1-0165-v1.mp3",
+      "checksumSha256": "004f3812a54e4e9eca5b7002a07cf1a029a659fffbabbca988c49cd61c1d939c",
+      "reused": true,
+      "bytes": 6912,
+      "durationSeconds": 1.152,
+      "bitrate": 48000,
+      "risks": [
+        "contains-polyphonic-character"
+      ]
+    },
+    {
+      "wordId": "hsk3.word.l1.0169.v1",
+      "hanzi": "家",
+      "pinyin": "jiā",
+      "audioId": "hsk3.audio.hsk1.l1-0169.v1",
+      "storageKey": "audio/formal/hsk1/l1-0169-v1.mp3",
+      "checksumSha256": "42276b965dc19bc50c3e9acdc56368bc73bc39d9f767c28517c221443309d2ed",
+      "reused": true,
+      "bytes": 6912,
+      "durationSeconds": 1.152,
+      "bitrate": 48000,
+      "risks": [
+        "contains-polyphonic-character"
+      ]
+    },
+    {
+      "wordId": "hsk3.word.l1.0170.v1",
+      "hanzi": "家里",
+      "pinyin": "jiā li",
+      "audioId": "hsk3.audio.hsk1.l1-0170.v1",
+      "storageKey": "audio/formal/hsk1/l1-0170-v1.mp3",
+      "checksumSha256": "71fd5a8182bfa33d7e42050b490ee8cd439ccbbe6dc4687dd7756d2b7832e10c",
+      "reused": true,
+      "bytes": 8064,
+      "durationSeconds": 1.344,
+      "bitrate": 48000,
+      "risks": [
+        "catalog-pinyin-differs-from-pypinyin-default"
+      ]
+    },
+    {
+      "wordId": "hsk3.word.l1.0172.v1",
+      "hanzi": "间",
+      "pinyin": "jiān",
+      "audioId": "hsk3.audio.hsk1.l1-0172.v1",
+      "storageKey": "audio/formal/hsk1/l1-0172-v1.mp3",
+      "checksumSha256": "9e7c5c61fcd099a5b779e71353730b61cf840e3f7b3a3474eaf9c43f8bdfc89a",
+      "reused": true,
+      "bytes": 6912,
+      "durationSeconds": 1.152,
+      "bitrate": 48000,
+      "risks": [
+        "contains-polyphonic-character"
+      ]
+    },
+    {
+      "wordId": "hsk3.word.l1.0173.v1",
+      "hanzi": "见",
+      "pinyin": "jiàn",
+      "audioId": "hsk3.audio.hsk1.l1-0173.v1",
+      "storageKey": "audio/formal/hsk1/l1-0173-v1.mp3",
+      "checksumSha256": "7fe621e7375453533ead7f0876b1cd4dba076f133e05290f8cf2bd8f2e7002bc",
+      "reused": true,
+      "bytes": 6912,
+      "durationSeconds": 1.152,
+      "bitrate": 48000,
+      "risks": [
+        "contains-polyphonic-character"
+      ]
+    },
+    {
+      "wordId": "hsk3.word.l1.0175.v1",
+      "hanzi": "教",
+      "pinyin": "jiāo",
+      "audioId": "hsk3.audio.hsk1.l1-0175.v1",
+      "storageKey": "audio/formal/hsk1/l1-0175-v1.mp3",
+      "checksumSha256": "4c16a3cdcd818dfbce949d514066420cdd089575fcafdd14c348b26e9fd28559",
+      "reused": true,
+      "bytes": 6912,
+      "durationSeconds": 1.152,
+      "bitrate": 48000,
+      "risks": [
+        "catalog-pinyin-differs-from-pypinyin-default",
+        "contains-polyphonic-character"
+      ]
+    },
+    {
+      "wordId": "hsk3.word.l1.0177.v1",
+      "hanzi": "教学楼",
+      "pinyin": "jiàoxuélóu",
+      "audioId": "hsk3.audio.hsk1.l1-0177.v1",
+      "storageKey": "audio/formal/hsk1/l1-0177-v1.mp3",
+      "checksumSha256": "e06a7e04c4adaede4c6921b934691c9d50492b33944dda39e5bd8ca61e4996d4",
+      "reused": true,
+      "bytes": 9504,
+      "durationSeconds": 1.584,
+      "bitrate": 48000,
+      "risks": [
+        "contains-polyphonic-character"
+      ]
+    },
+    {
+      "wordId": "hsk3.word.l1.0178.v1",
+      "hanzi": "姐姐",
+      "pinyin": "jiějie",
+      "audioId": "hsk3.audio.hsk1.l1-0178.v1",
+      "storageKey": "audio/formal/hsk1/l1-0178-v1.mp3",
+      "checksumSha256": "455b9335f3a396c9c45ce783b470d3ae0a02b1b3de9c815a6feadc3e40d297b3",
+      "reused": true,
+      "bytes": 8064,
+      "durationSeconds": 1.344,
+      "bitrate": 48000,
+      "risks": [
+        "catalog-pinyin-differs-from-pypinyin-default",
+        "contains-polyphonic-character",
+        "catalog-has-surface-or-pinyin-variant"
+      ]
+    },
+    {
+      "wordId": "hsk3.word.l1.0179.v1",
+      "hanzi": "介绍",
+      "pinyin": "jièshào",
+      "audioId": "hsk3.audio.hsk1.l1-0179.v1",
+      "storageKey": "audio/formal/hsk1/l1-0179-v1.mp3",
+      "checksumSha256": "8d659bf85c3528552086d37a14f50de98974e357e879e9ad6120a462550d3f23",
+      "reused": true,
+      "bytes": 8496,
+      "durationSeconds": 1.416,
+      "bitrate": 48000,
+      "risks": [
+        "contains-polyphonic-character"
+      ]
+    },
+    {
+      "wordId": "hsk3.word.l1.0180.v1",
+      "hanzi": "今年",
+      "pinyin": "jīnnián",
+      "audioId": "hsk3.audio.hsk1.l1-0180.v1",
+      "storageKey": "audio/formal/hsk1/l1-0180-v1.mp3",
+      "checksumSha256": "c3ea86193ee3e91cd98642f722ff30ec03633e00322c10a5e389b92b382c058d",
+      "reused": true,
+      "bytes": 8208,
+      "durationSeconds": 1.368,
+      "bitrate": 48000,
+      "risks": [
+        "contains-polyphonic-character"
+      ]
+    },
+    {
+      "wordId": "hsk3.word.l1.0184.v1",
+      "hanzi": "进去",
+      "pinyin": "jìnqù",
+      "audioId": "hsk3.audio.hsk1.l1-0184.v1",
+      "storageKey": "audio/formal/hsk1/l1-0184-v1.mp3",
+      "checksumSha256": "f22549ec720c5fa62030be26764e065e5bb2fc687b878b6e06d3b48416b1f1fb",
+      "reused": true,
+      "bytes": 8208,
+      "durationSeconds": 1.368,
+      "bitrate": 48000,
+      "risks": [
+        "contains-polyphonic-character"
+      ]
+    },
+    {
+      "wordId": "hsk3.word.l1.0185.v1",
+      "hanzi": "九",
+      "pinyin": "jiǔ",
+      "audioId": "hsk3.audio.hsk1.l1-0185.v1",
+      "storageKey": "audio/formal/hsk1/l1-0185-v1.mp3",
+      "checksumSha256": "f7471087d6ef2452e32dce602c6e69c750622723464ad82e6a0fcc60505cc11a",
+      "reused": true,
+      "bytes": 6768,
+      "durationSeconds": 1.128,
+      "bitrate": 48000,
+      "risks": [
+        "contains-polyphonic-character"
+      ]
+    },
+    {
+      "wordId": "hsk3.word.l1.0192.v1",
+      "hanzi": "看",
+      "pinyin": "kàn",
+      "audioId": "hsk3.audio.hsk1.l1-0192.v1",
+      "storageKey": "audio/formal/hsk1/l1-0192-v1.mp3",
+      "checksumSha256": "7addcd226cdffa63d446b0bb339fdf1b63db65293c438fd87fbc465bb0f0b10f",
+      "reused": true,
+      "bytes": 6912,
+      "durationSeconds": 1.152,
+      "bitrate": 48000,
+      "risks": [
+        "contains-polyphonic-character"
+      ]
+    },
+    {
+      "wordId": "hsk3.word.l1.0194.v1",
+      "hanzi": "看到",
+      "pinyin": "kàndào",
+      "audioId": "hsk3.audio.hsk1.l1-0194.v1",
+      "storageKey": "audio/formal/hsk1/l1-0194-v1.mp3",
+      "checksumSha256": "c35554423fae4504bd92fbc6fc5aa7349d111846f876f378df18731a672a2a61",
+      "reused": true,
+      "bytes": 8064,
+      "durationSeconds": 1.344,
+      "bitrate": 48000,
+      "risks": [
+        "contains-polyphonic-character"
+      ]
+    },
+    {
+      "wordId": "hsk3.word.l1.0198.v1",
+      "hanzi": "渴",
+      "pinyin": "kě",
+      "audioId": "hsk3.audio.hsk1.l1-0198.v1",
+      "storageKey": "audio/formal/hsk1/l1-0198-v1.mp3",
+      "checksumSha256": "0222717bd2fabe9a728ca6b45b5b8cbe8e239744408b63aaaba9afdb944c86ee",
+      "reused": true,
+      "bytes": 6912,
+      "durationSeconds": 1.152,
+      "bitrate": 48000,
+      "risks": [
+        "contains-polyphonic-character"
+      ]
+    },
+    {
+      "wordId": "hsk3.word.l1.0200.v1",
+      "hanzi": "课本",
+      "pinyin": "kèběn",
+      "audioId": "hsk3.audio.hsk1.l1-0200.v1",
+      "storageKey": "audio/formal/hsk1/l1-0200-v1.mp3",
+      "checksumSha256": "be1cd343d76d5c5fb99c34562fae44863a3e14c322b4b7e04499f9dbcac55291",
+      "reused": true,
+      "bytes": 8208,
+      "durationSeconds": 1.368,
+      "bitrate": 48000,
+      "risks": [
+        "contains-polyphonic-character"
+      ]
+    },
+    {
+      "wordId": "hsk3.word.l1.0203.v1",
+      "hanzi": "块",
+      "pinyin": "kuài",
+      "audioId": "hsk3.audio.hsk1.l1-0203.v1",
+      "storageKey": "audio/formal/hsk1/l1-0203-v1.mp3",
+      "checksumSha256": "b83cae2e596c54bb00a0a605070e6150e4fe1298a3a2ee3027ace099d5a0efb7",
+      "reused": true,
+      "bytes": 6912,
+      "durationSeconds": 1.152,
+      "bitrate": 48000,
+      "risks": [
+        "contains-polyphonic-character"
+      ]
+    },
+    {
+      "wordId": "hsk3.word.l1.0210.v1",
+      "hanzi": "了",
+      "pinyin": "le",
+      "audioId": "hsk3.audio.hsk1.l1-0210.v1",
+      "storageKey": "audio/formal/hsk1/l1-0210-v1.mp3",
+      "checksumSha256": "d108975063d50a32ef51727759328237ef014763ffac2f5d1ffc61bbe2cd924e",
+      "reused": true,
+      "bytes": 6768,
+      "durationSeconds": 1.128,
+      "bitrate": 48000,
+      "risks": [
+        "contains-polyphonic-character"
+      ]
+    },
+    {
+      "wordId": "hsk3.word.l1.0211.v1",
+      "hanzi": "累",
+      "pinyin": "lèi",
+      "audioId": "hsk3.audio.hsk1.l1-0211.v1",
+      "storageKey": "audio/formal/hsk1/l1-0211-v1.mp3",
+      "checksumSha256": "bea7679df1796dc89c2ea1ad7324b3deffa5c7ee399b5d8ea71be41b80e4d397",
+      "reused": true,
+      "bytes": 6912,
+      "durationSeconds": 1.152,
+      "bitrate": 48000,
+      "risks": [
+        "contains-polyphonic-character"
+      ]
+    },
+    {
+      "wordId": "hsk3.word.l1.0212.v1",
+      "hanzi": "冷",
+      "pinyin": "lěng",
+      "audioId": "hsk3.audio.topic-p2.l1-0212.v1",
+      "storageKey": "audio/formal/topics/p2-samples/l1-0212-v1.mp3",
+      "checksumSha256": "e99cef722f1ee4916b48e4b46aa9d48b8214a0a206828d0d14ed584c85add86c",
+      "reused": true,
+      "bytes": 10656,
+      "durationSeconds": 1.776,
+      "bitrate": 48000,
+      "risks": [
+        "contains-polyphonic-character"
+      ]
+    },
+    {
+      "wordId": "hsk3.word.l1.0213.v1",
+      "hanzi": "里",
+      "pinyin": "lǐ",
+      "audioId": "hsk3.audio.hsk1.l1-0213.v1",
+      "storageKey": "audio/formal/hsk1/l1-0213-v1.mp3",
+      "checksumSha256": "672bb2de261e6e4586279c6634f6364705fee0b767cf122645d6bf65af724b7e",
+      "reused": true,
+      "bytes": 6768,
+      "durationSeconds": 1.128,
+      "bitrate": 48000,
+      "risks": [
+        "contains-polyphonic-character"
+      ]
+    },
+    {
+      "wordId": "hsk3.word.l1.0214.v1",
+      "hanzi": "里边",
+      "pinyin": "lǐbian",
+      "audioId": "hsk3.audio.hsk1.l1-0214.v1",
+      "storageKey": "audio/formal/hsk1/l1-0214-v1.mp3",
+      "checksumSha256": "16868c87c27011572ae60a4e080f11d7c93704a91d7ec7a909b5621c3a4bd9d8",
+      "reused": true,
+      "bytes": 8208,
+      "durationSeconds": 1.368,
+      "bitrate": 48000,
+      "risks": [
+        "catalog-pinyin-differs-from-pypinyin-default",
+        "contains-polyphonic-character"
+      ]
+    },
+    {
+      "wordId": "hsk3.word.l1.0216.v1",
+      "hanzi": "零",
+      "pinyin": "líng",
+      "audioId": "hsk3.audio.hsk1.l1-0216.v1",
+      "storageKey": "audio/formal/hsk1/l1-0216-v1.mp3",
+      "checksumSha256": "a8d9a230688cf66a5a2f7a0935dcb73e638433a6129b1f5d951f6b9bcf163045",
+      "reused": true,
+      "bytes": 6768,
+      "durationSeconds": 1.128,
+      "bitrate": 48000,
+      "risks": [
+        "contains-polyphonic-character",
+        "catalog-has-surface-or-pinyin-variant"
+      ]
+    },
+    {
+      "wordId": "hsk3.word.l1.0217.v1",
+      "hanzi": "六",
+      "pinyin": "liù",
+      "audioId": "hsk3.audio.hsk1.l1-0217.v1",
+      "storageKey": "audio/formal/hsk1/l1-0217-v1.mp3",
+      "checksumSha256": "fd9355cc7abe70910dda5a50c8d2d24ad054de00a64595f64375b27915520ae0",
+      "reused": true,
+      "bytes": 6912,
+      "durationSeconds": 1.152,
+      "bitrate": 48000,
+      "risks": [
+        "contains-polyphonic-character"
+      ]
+    },
+    {
+      "wordId": "hsk3.word.l1.0221.v1",
+      "hanzi": "路",
+      "pinyin": "lù",
+      "audioId": "hsk3.audio.topic-p2.l1-0221.v1",
+      "storageKey": "audio/formal/topics/p2-samples/l1-0221-v1.mp3",
+      "checksumSha256": "4c1dc633a6ce3ae96c666e19db77810f7e27a1d0c74ea62e6589c215d9e3c2dd",
+      "reused": true,
+      "bytes": 10656,
+      "durationSeconds": 1.776,
+      "bitrate": 48000,
+      "risks": [
+        "contains-polyphonic-character"
+      ]
+    },
+    {
+      "wordId": "hsk3.word.l1.0222.v1",
+      "hanzi": "路口",
+      "pinyin": "lùkǒu",
+      "audioId": "hsk3.audio.topic-p2.l1-0222.v1",
+      "storageKey": "audio/formal/topics/p2-samples/l1-0222-v1.mp3",
+      "checksumSha256": "fdb713dcb152ed1eeba981436f2e1a13af065ee530ffc4ec1c0ba834594ba96b",
+      "reused": true,
+      "bytes": 10656,
+      "durationSeconds": 1.776,
+      "bitrate": 48000,
+      "risks": [
+        "contains-polyphonic-character"
+      ]
+    },
+    {
+      "wordId": "hsk3.word.l1.0223.v1",
+      "hanzi": "路上",
+      "pinyin": "lùshang",
+      "audioId": "hsk3.audio.hsk1.l1-0223.v1",
+      "storageKey": "audio/formal/hsk1/l1-0223-v1.mp3",
+      "checksumSha256": "b8f049440a6fdf165cce13418d6580c008a079f493b17349b2e51e48e179bbfa",
+      "reused": true,
+      "bytes": 7920,
+      "durationSeconds": 1.32,
+      "bitrate": 48000,
+      "risks": [
+        "catalog-pinyin-differs-from-pypinyin-default"
+      ]
+    },
+    {
+      "wordId": "hsk3.word.l1.0224.v1",
+      "hanzi": "妈妈",
+      "pinyin": "māma",
+      "audioId": "hsk3.audio.hsk1.l1-0224.v1",
+      "storageKey": "audio/formal/hsk1/l1-0224-v1.mp3",
+      "checksumSha256": "ffe8369ff7e4cb75c80dc6ccb7076147caf55df50cd20cdfe2c3bfe831745c42",
+      "reused": true,
+      "bytes": 7920,
+      "durationSeconds": 1.32,
+      "bitrate": 48000,
+      "risks": [
+        "catalog-pinyin-differs-from-pypinyin-default",
+        "catalog-has-surface-or-pinyin-variant"
+      ]
+    },
+    {
+      "wordId": "hsk3.word.l1.0225.v1",
+      "hanzi": "马路",
+      "pinyin": "mǎlù",
+      "audioId": "hsk3.audio.hsk1.l1-0225.v1",
+      "storageKey": "audio/formal/hsk1/l1-0225-v1.mp3",
+      "checksumSha256": "1f678a99d94ebdcdeeedf85a2430bab025605840a39bb976c9ad32cb1d65c15c",
+      "reused": true,
+      "bytes": 7920,
+      "durationSeconds": 1.32,
+      "bitrate": 48000,
+      "risks": [
+        "contains-polyphonic-character"
+      ]
+    },
+    {
+      "wordId": "hsk3.word.l1.0227.v1",
+      "hanzi": "吗",
+      "pinyin": "ma",
+      "audioId": "hsk3.audio.hsk1.l1-0227.v1",
+      "storageKey": "audio/formal/hsk1/l1-0227-v1.mp3",
+      "checksumSha256": "8f171c0367e481007b60fe58b35dcbd3fcca60a3c7ac5b72afa13c5ad15f98f5",
+      "reused": true,
+      "bytes": 6768,
+      "durationSeconds": 1.128,
+      "bitrate": 48000,
+      "risks": [
+        "contains-polyphonic-character"
+      ]
+    },
+    {
+      "wordId": "hsk3.word.l1.0229.v1",
+      "hanzi": "慢",
+      "pinyin": "màn",
+      "audioId": "hsk3.audio.hsk1.l1-0229.v1",
+      "storageKey": "audio/formal/hsk1/l1-0229-v1.mp3",
+      "checksumSha256": "0c1cc7cb60a9881afea02ff4215466aa09692d33473f4cf09a82ab5ed5c48845",
+      "reused": true,
+      "bytes": 6768,
+      "durationSeconds": 1.128,
+      "bitrate": 48000,
+      "risks": [
+        "contains-polyphonic-character"
+      ]
+    },
+    {
+      "wordId": "hsk3.word.l1.0231.v1",
+      "hanzi": "毛",
+      "pinyin": "máo",
+      "audioId": "hsk3.audio.hsk1.l1-0231.v1",
+      "storageKey": "audio/formal/hsk1/l1-0231-v1.mp3",
+      "checksumSha256": "796ac76ebe2675dc6fcebdd651760e37810e4381f57525996b97b66e395ab1c7",
+      "reused": true,
+      "bytes": 6336,
+      "durationSeconds": 1.056,
+      "bitrate": 48000,
+      "risks": [
+        "contains-polyphonic-character"
+      ]
+    },
+    {
+      "wordId": "hsk3.word.l1.0232.v1",
+      "hanzi": "没",
+      "pinyin": "méi",
+      "audioId": "hsk3.audio.hsk1.l1-0232.v1",
+      "storageKey": "audio/formal/hsk1/l1-0232-v1.mp3",
+      "checksumSha256": "2db867c3f916b949fbb73f04980b1ab3f25df7ff970deb6b687629ff4e3d3c97",
+      "reused": true,
+      "bytes": 6624,
+      "durationSeconds": 1.104,
+      "bitrate": 48000,
+      "risks": [
+        "contains-polyphonic-character"
+      ]
+    },
+    {
+      "wordId": "hsk3.word.l1.0233.v1",
+      "hanzi": "没关系",
+      "pinyin": "méi guānxi",
+      "audioId": "hsk3.audio.hsk1.l1-0233.v1",
+      "storageKey": "audio/formal/hsk1/l1-0233-v1.mp3",
+      "checksumSha256": "0954076b5d283db94d4a488ab315ab9f048bc461f950bffd036903d696393d71",
+      "reused": true,
+      "bytes": 9504,
+      "durationSeconds": 1.584,
+      "bitrate": 48000,
+      "risks": [
+        "catalog-pinyin-differs-from-pypinyin-default"
+      ]
+    },
+    {
+      "wordId": "hsk3.word.l1.0235.v1",
+      "hanzi": "没事儿",
+      "pinyin": "méishìr",
+      "audioId": "hsk3.audio.hsk1.l1-0235.v1",
+      "storageKey": "audio/formal/hsk1/l1-0235-v1.mp3",
+      "checksumSha256": "d681be85672cd77d1df7b6332ee1cfce8e71c698ab73c3f2a0d9b04112df3f5c",
+      "reused": true,
+      "bytes": 8496,
+      "durationSeconds": 1.416,
+      "bitrate": 48000,
+      "risks": [
+        "catalog-pinyin-differs-from-pypinyin-default"
+      ]
+    },
+    {
+      "wordId": "hsk3.word.l1.0237.v1",
+      "hanzi": "妹妹",
+      "pinyin": "mèimei",
+      "audioId": "hsk3.audio.hsk1.l1-0237.v1",
+      "storageKey": "audio/formal/hsk1/l1-0237-v1.mp3",
+      "checksumSha256": "6d1f407d1b83a4a61917d129b5d7c573f3161bb21fcbf5e4d928acaae127448e",
+      "reused": true,
+      "bytes": 8064,
+      "durationSeconds": 1.344,
+      "bitrate": 48000,
+      "risks": [
+        "catalog-pinyin-differs-from-pypinyin-default",
+        "catalog-has-surface-or-pinyin-variant"
+      ]
+    },
+    {
+      "wordId": "hsk3.word.l1.0241.v1",
+      "hanzi": "们",
+      "pinyin": "men",
+      "audioId": "hsk3.audio.hsk1.l1-0241.v1",
+      "storageKey": "audio/formal/hsk1/l1-0241-v1.mp3",
+      "checksumSha256": "616d87379c8ca3a8d9ded9ef23b118b9c10eee5119606330b33e22091475882b",
+      "reused": true,
+      "bytes": 6768,
+      "durationSeconds": 1.128,
+      "bitrate": 48000,
+      "risks": [
+        "contains-polyphonic-character",
+        "catalog-has-surface-or-pinyin-variant"
+      ]
+    },
+    {
+      "wordId": "hsk3.word.l1.0243.v1",
+      "hanzi": "面包",
+      "pinyin": "miànbāo",
+      "audioId": "hsk3.audio.hsk1.l1-0243.v1",
+      "storageKey": "audio/formal/hsk1/l1-0243-v1.mp3",
+      "checksumSha256": "2ff7a516f6d32bac0ff3bdd6c19de270e3792a600e90082430c6f6933b0415d0",
+      "reused": true,
+      "bytes": 7920,
+      "durationSeconds": 1.32,
+      "bitrate": 48000,
+      "risks": [
+        "contains-polyphonic-character"
+      ]
+    },
+    {
+      "wordId": "hsk3.word.l1.0244.v1",
+      "hanzi": "面条儿",
+      "pinyin": "miàntiáor",
+      "audioId": "hsk3.audio.topic-p2.l1-0244.v1",
+      "storageKey": "audio/formal/topics/p2-samples/l1-0244-v1.mp3",
+      "checksumSha256": "0cfe9c77fcf5ec376db656c91c8cdbc7a3bbfac2d838e0a1189aff14018575a3",
+      "reused": true,
+      "bytes": 10656,
+      "durationSeconds": 1.776,
+      "bitrate": 48000,
+      "risks": [
+        "catalog-pinyin-differs-from-pypinyin-default",
+        "contains-polyphonic-character"
+      ]
+    },
+    {
+      "wordId": "hsk3.word.l1.0245.v1",
+      "hanzi": "名字",
+      "pinyin": "míngzi",
+      "audioId": "hsk3.audio.hsk1.l1-0245.v1",
+      "storageKey": "audio/formal/hsk1/l1-0245-v1.mp3",
+      "checksumSha256": "53c86c9a58b8f1dcf4444ba4f7f37eec5760c41544d447cdc044ab445af3adaa",
+      "reused": true,
+      "bytes": 8064,
+      "durationSeconds": 1.344,
+      "bitrate": 48000,
+      "risks": [
+        "catalog-pinyin-differs-from-pypinyin-default",
+        "contains-polyphonic-character"
+      ]
+    },
+    {
+      "wordId": "hsk3.word.l1.0246.v1",
+      "hanzi": "明白",
+      "pinyin": "míngbai",
+      "audioId": "hsk3.audio.hsk1.l1-0246.v1",
+      "storageKey": "audio/formal/hsk1/l1-0246-v1.mp3",
+      "checksumSha256": "d66cc70af7117a2b0e12896ac16021e905a35c60acff0c27ae7dd2f4c7d00746",
+      "reused": true,
+      "bytes": 8064,
+      "durationSeconds": 1.344,
+      "bitrate": 48000,
+      "risks": [
+        "catalog-pinyin-differs-from-pypinyin-default",
+        "contains-polyphonic-character"
+      ]
+    },
+    {
+      "wordId": "hsk3.word.l1.0247.v1",
+      "hanzi": "明年",
+      "pinyin": "míngnián",
+      "audioId": "hsk3.audio.hsk1.l1-0247.v1",
+      "storageKey": "audio/formal/hsk1/l1-0247-v1.mp3",
+      "checksumSha256": "5e90b431f1136142cfb975b10b7f17fa0a8954d762ea467b063751925b6d1251",
+      "reused": true,
+      "bytes": 8208,
+      "durationSeconds": 1.368,
+      "bitrate": 48000,
+      "risks": [
+        "contains-polyphonic-character"
+      ]
+    },
+    {
+      "wordId": "hsk3.word.l1.0248.v1",
+      "hanzi": "明天",
+      "pinyin": "míngtiān",
+      "audioId": "hsk3.audio.topic-p2.l1-0248.v1",
+      "storageKey": "audio/formal/topics/p2-samples/l1-0248-v1.mp3",
+      "checksumSha256": "06805b2d85a22e245601f56a0c17a9b21834791ac78c4cda08e6bc56bd1f21f2",
+      "reused": true,
+      "bytes": 10656,
+      "durationSeconds": 1.776,
+      "bitrate": 48000,
+      "risks": [
+        "contains-polyphonic-character"
+      ]
+    },
+    {
+      "wordId": "hsk3.word.l1.0250.v1",
+      "hanzi": "哪",
+      "pinyin": "nǎ",
+      "audioId": "hsk3.audio.hsk1.l1-0250.v1",
+      "storageKey": "audio/formal/hsk1/l1-0250-v1.mp3",
+      "checksumSha256": "b032038b1aa3a88abb596ea439dc5f58cf5d4345d0977341dbaf9844c297c8d6",
+      "reused": true,
+      "bytes": 6768,
+      "durationSeconds": 1.128,
+      "bitrate": 48000,
+      "risks": [
+        "contains-polyphonic-character"
+      ]
+    },
+    {
+      "wordId": "hsk3.word.l1.0252.v1",
+      "hanzi": "哪儿",
+      "pinyin": "nǎr",
+      "audioId": "hsk3.audio.hsk1.l1-0252.v1",
+      "storageKey": "audio/formal/hsk1/l1-0252-v1.mp3",
+      "checksumSha256": "9dcb9e26993467e53c7c528136235b1eb5b437add8f8a610644c911390f68427",
+      "reused": true,
+      "bytes": 6624,
+      "durationSeconds": 1.104,
+      "bitrate": 48000,
+      "risks": [
+        "catalog-pinyin-differs-from-pypinyin-default"
+      ]
+    },
+    {
+      "wordId": "hsk3.word.l1.0254.v1",
+      "hanzi": "那",
+      "pinyin": "nà",
+      "audioId": "hsk3.audio.hsk1.l1-0254.v1",
+      "storageKey": "audio/formal/hsk1/l1-0254-v1.mp3",
+      "checksumSha256": "68262eed9e1b091d1c9b195d41875fb46aedb7520801033b6e6bcde7ff77d9ef",
+      "reused": true,
+      "bytes": 6912,
+      "durationSeconds": 1.152,
+      "bitrate": 48000,
+      "risks": [
+        "contains-polyphonic-character"
+      ]
+    },
+    {
+      "wordId": "hsk3.word.l1.0257.v1",
+      "hanzi": "那儿",
+      "pinyin": "nàr",
+      "audioId": "hsk3.audio.hsk1.l1-0257.v1",
+      "storageKey": "audio/formal/hsk1/l1-0257-v1.mp3",
+      "checksumSha256": "e8f1d1d686cbf85f02087adc860d6c623667579f17f4cee076ab3a85f77a2315",
+      "reused": true,
+      "bytes": 6912,
+      "durationSeconds": 1.152,
+      "bitrate": 48000,
+      "risks": [
+        "catalog-pinyin-differs-from-pypinyin-default"
+      ]
+    },
+    {
+      "wordId": "hsk3.word.l1.0258.v1",
+      "hanzi": "那些",
+      "pinyin": "nàxiē",
+      "audioId": "hsk3.audio.hsk1.l1-0258.v1",
+      "storageKey": "audio/formal/hsk1/l1-0258-v1.mp3",
+      "checksumSha256": "c814f2c84bb3b3606306b28174e0e2abbf65d8c65e09528afbc0abee36b678d0",
+      "reused": true,
+      "bytes": 8352,
+      "durationSeconds": 1.392,
+      "bitrate": 48000,
+      "risks": [
+        "contains-polyphonic-character"
+      ]
+    },
+    {
+      "wordId": "hsk3.word.l1.0260.v1",
+      "hanzi": "奶奶",
+      "pinyin": "nǎinai",
+      "audioId": "hsk3.audio.hsk1.l1-0260.v1",
+      "storageKey": "audio/formal/hsk1/l1-0260-v1.mp3",
+      "checksumSha256": "00cd4656a2bca700588ad9fd341568fe9047208c3cceace8dd9bbc84bc52857e",
+      "reused": true,
+      "bytes": 8064,
+      "durationSeconds": 1.344,
+      "bitrate": 48000,
+      "risks": [
+        "catalog-pinyin-differs-from-pypinyin-default"
+      ]
+    },
+    {
+      "wordId": "hsk3.word.l1.0262.v1",
+      "hanzi": "男孩儿",
+      "pinyin": "nánháir",
+      "audioId": "hsk3.audio.hsk1.l1-0262.v1",
+      "storageKey": "audio/formal/hsk1/l1-0262-v1.mp3",
+      "checksumSha256": "b5e5b32a7af3cfee2ae1aa1e10f8f2a591351023c8ec243f3c1d6afeddffe379",
+      "reused": true,
+      "bytes": 8208,
+      "durationSeconds": 1.368,
+      "bitrate": 48000,
+      "risks": [
+        "catalog-pinyin-differs-from-pypinyin-default"
+      ]
+    },
+    {
+      "wordId": "hsk3.word.l1.0263.v1",
+      "hanzi": "男朋友",
+      "pinyin": "nánpéngyou",
+      "audioId": "hsk3.audio.hsk1.l1-0263.v1",
+      "storageKey": "audio/formal/hsk1/l1-0263-v1.mp3",
+      "checksumSha256": "7c5490c88b52d92cdb1cdf24a9c56b21684c1a0217710fdc9a573d3f0682c88e",
+      "reused": true,
+      "bytes": 9360,
+      "durationSeconds": 1.56,
+      "bitrate": 48000,
+      "risks": [
+        "catalog-pinyin-differs-from-pypinyin-default"
+      ]
+    },
+    {
+      "wordId": "hsk3.word.l1.0266.v1",
+      "hanzi": "南",
+      "pinyin": "nán",
+      "audioId": "hsk3.audio.hsk1.l1-0266.v1",
+      "storageKey": "audio/formal/hsk1/l1-0266-v1.mp3",
+      "checksumSha256": "00ad08af812c4e237478675f664faa88b417af6f44544f3c1d1b84ce4bd5fbda",
+      "reused": true,
+      "bytes": 6624,
+      "durationSeconds": 1.104,
+      "bitrate": 48000,
+      "risks": [
+        "contains-polyphonic-character"
+      ]
+    },
+    {
+      "wordId": "hsk3.word.l1.0267.v1",
+      "hanzi": "南边",
+      "pinyin": "nánbian",
+      "audioId": "hsk3.audio.hsk1.l1-0267.v1",
+      "storageKey": "audio/formal/hsk1/l1-0267-v1.mp3",
+      "checksumSha256": "a3e1ea53cf0bc78316f1acb0db4a54cf2df831c84c32f6c17378e949746ddeff",
+      "reused": true,
+      "bytes": 8208,
+      "durationSeconds": 1.368,
+      "bitrate": 48000,
+      "risks": [
+        "catalog-pinyin-differs-from-pypinyin-default"
+      ]
+    },
+    {
+      "wordId": "hsk3.word.l1.0268.v1",
+      "hanzi": "难",
+      "pinyin": "nán",
+      "audioId": "hsk3.audio.hsk1.l1-0268.v1",
+      "storageKey": "audio/formal/hsk1/l1-0268-v1.mp3",
+      "checksumSha256": "73684f03c280c47ec1b7a5c7b6a603a43fd2bfcb9b7685bcaa0b1f73e58f95c3",
+      "reused": true,
+      "bytes": 6624,
+      "durationSeconds": 1.104,
+      "bitrate": 48000,
+      "risks": [
+        "contains-polyphonic-character"
+      ]
+    },
+    {
+      "wordId": "hsk3.word.l1.0269.v1",
+      "hanzi": "呢",
+      "pinyin": "ne",
+      "audioId": "hsk3.audio.hsk1.l1-0269.v1",
+      "storageKey": "audio/formal/hsk1/l1-0269-v1.mp3",
+      "checksumSha256": "8576d5ba90e7cedf8655d56ff26b3a27bd55cf2587ef65114ada28e8a3c1faab",
+      "reused": true,
+      "bytes": 6768,
+      "durationSeconds": 1.128,
+      "bitrate": 48000,
+      "risks": [
+        "contains-polyphonic-character"
+      ]
+    },
+    {
+      "wordId": "hsk3.word.l1.0270.v1",
+      "hanzi": "能",
+      "pinyin": "néng",
+      "audioId": "hsk3.audio.hsk1.l1-0270.v1",
+      "storageKey": "audio/formal/hsk1/l1-0270-v1.mp3",
+      "checksumSha256": "d8efbe7397bc426394d34cc819585f157a3c6fd6730c3f2a9b1f4ac1b8a519e9",
+      "reused": true,
+      "bytes": 6624,
+      "durationSeconds": 1.104,
+      "bitrate": 48000,
+      "risks": [
+        "contains-polyphonic-character"
+      ]
+    },
+    {
+      "wordId": "hsk3.word.l1.0273.v1",
+      "hanzi": "年",
+      "pinyin": "nián",
+      "audioId": "hsk3.audio.topic-p2.l1-0273.v1",
+      "storageKey": "audio/formal/topics/p2-samples/l1-0273-v1.mp3",
+      "checksumSha256": "a8797282910f0106fcaa41a439142de7526db890f6edcd5733c85a5e5d4a103c",
+      "reused": true,
+      "bytes": 10656,
+      "durationSeconds": 1.776,
+      "bitrate": 48000,
+      "risks": [
+        "contains-polyphonic-character"
+      ]
+    },
+    {
+      "wordId": "hsk3.word.l1.0276.v1",
+      "hanzi": "女",
+      "pinyin": "nǚ",
+      "audioId": "hsk3.audio.hsk1.l1-0276.v1",
+      "storageKey": "audio/formal/hsk1/l1-0276-v1.mp3",
+      "checksumSha256": "a38dfa6162b0b0f5fea5d17895ad760242ecd42ebe18a3d8ebf835b5e0bd6020",
+      "reused": true,
+      "bytes": 6624,
+      "durationSeconds": 1.104,
+      "bitrate": 48000,
+      "risks": [
+        "contains-polyphonic-character"
+      ]
+    },
+    {
+      "wordId": "hsk3.word.l1.0278.v1",
+      "hanzi": "女孩儿",
+      "pinyin": "nǚháir",
+      "audioId": "hsk3.audio.hsk1.l1-0278.v1",
+      "storageKey": "audio/formal/hsk1/l1-0278-v1.mp3",
+      "checksumSha256": "d644adc031f7608c7c48f2937b6e1ff8745fcbd0da61f40f26af44c3451a62f7",
+      "reused": true,
+      "bytes": 7920,
+      "durationSeconds": 1.32,
+      "bitrate": 48000,
+      "risks": [
+        "catalog-pinyin-differs-from-pypinyin-default"
+      ]
+    },
+    {
+      "wordId": "hsk3.word.l1.0279.v1",
+      "hanzi": "女朋友",
+      "pinyin": "nǚpéngyou",
+      "audioId": "hsk3.audio.hsk1.l1-0279.v1",
+      "storageKey": "audio/formal/hsk1/l1-0279-v1.mp3",
+      "checksumSha256": "41ce640a7ee0dc7ef676ee95caa1099156901dfa0533d5f9acc88a79a855be6c",
+      "reused": true,
+      "bytes": 9072,
+      "durationSeconds": 1.512,
+      "bitrate": 48000,
+      "risks": [
+        "catalog-pinyin-differs-from-pypinyin-default"
+      ]
+    },
+    {
+      "wordId": "hsk3.word.l1.0283.v1",
+      "hanzi": "跑",
+      "pinyin": "pǎo",
+      "audioId": "hsk3.audio.hsk1.l1-0283.v1",
+      "storageKey": "audio/formal/hsk1/l1-0283-v1.mp3",
+      "checksumSha256": "8ceb37c2a15e9eeb45ddb48e8ad7539712aa59faa842bdf2a5b5e5a54976e837",
+      "reused": true,
+      "bytes": 6624,
+      "durationSeconds": 1.104,
+      "bitrate": 48000,
+      "risks": [
+        "contains-polyphonic-character"
+      ]
+    },
+    {
+      "wordId": "hsk3.word.l1.0284.v1",
+      "hanzi": "朋友",
+      "pinyin": "péngyou",
+      "audioId": "hsk3.audio.hsk1.l1-0284.v1",
+      "storageKey": "audio/formal/hsk1/l1-0284-v1.mp3",
+      "checksumSha256": "4ec71b8fb4b5a7f81c38341d0f679e3f90e332d736a09b80bb5b794f77c9be8f",
+      "reused": true,
+      "bytes": 8064,
+      "durationSeconds": 1.344,
+      "bitrate": 48000,
+      "risks": [
+        "catalog-pinyin-differs-from-pypinyin-default"
+      ]
+    },
+    {
+      "wordId": "hsk3.word.l1.0285.v1",
+      "hanzi": "票",
+      "pinyin": "piào",
+      "audioId": "hsk3.audio.topic-p2.l1-0285.v1",
+      "storageKey": "audio/formal/topics/p2-samples/l1-0285-v1.mp3",
+      "checksumSha256": "f37e158146250919266902fec571a4fc8685ae8ea6741e7daef98cf8a30dd3af",
+      "reused": true,
+      "bytes": 10656,
+      "durationSeconds": 1.776,
+      "bitrate": 48000,
+      "risks": [
+        "contains-polyphonic-character"
+      ]
+    },
+    {
+      "wordId": "hsk3.word.l1.0286.v1",
+      "hanzi": "七",
+      "pinyin": "qī",
+      "audioId": "hsk3.audio.hsk1.l1-0286.v1",
+      "storageKey": "audio/formal/hsk1/l1-0286-v1.mp3",
+      "checksumSha256": "08981cf852ea2b5a84f95c0e9c5f1bd9c4dcae0ff93c545b69eb45233f3bb804",
+      "reused": true,
+      "bytes": 7056,
+      "durationSeconds": 1.176,
+      "bitrate": 48000,
+      "risks": [
+        "contains-polyphonic-character"
+      ]
+    },
+    {
+      "wordId": "hsk3.word.l1.0291.v1",
+      "hanzi": "前",
+      "pinyin": "qián",
+      "audioId": "hsk3.audio.hsk1.l1-0291.v1",
+      "storageKey": "audio/formal/hsk1/l1-0291-v1.mp3",
+      "checksumSha256": "b656722050153edf8862ef3fc0cd85bc10c4264f3cfced4d0e76ae2c2843c653",
+      "reused": true,
+      "bytes": 7056,
+      "durationSeconds": 1.176,
+      "bitrate": 48000,
+      "risks": [
+        "contains-polyphonic-character"
+      ]
+    },
+    {
+      "wordId": "hsk3.word.l1.0292.v1",
+      "hanzi": "前边",
+      "pinyin": "qiánbian",
+      "audioId": "hsk3.audio.hsk1.l1-0292.v1",
+      "storageKey": "audio/formal/hsk1/l1-0292-v1.mp3",
+      "checksumSha256": "73e5ee141090e4d1a72ad6d76e3490d31790325b103b757a9d0dca29808e6f60",
+      "reused": true,
+      "bytes": 8496,
+      "durationSeconds": 1.416,
+      "bitrate": 48000,
+      "risks": [
+        "catalog-pinyin-differs-from-pypinyin-default",
+        "contains-polyphonic-character"
+      ]
+    },
+    {
+      "wordId": "hsk3.word.l1.0293.v1",
+      "hanzi": "前天",
+      "pinyin": "qiántiān",
+      "audioId": "hsk3.audio.hsk1.l1-0293.v1",
+      "storageKey": "audio/formal/hsk1/l1-0293-v1.mp3",
+      "checksumSha256": "276dfbb27d9c16ca69522ac360b7d7a668de033a2e6ea507c7661e1ebdeefbcc",
+      "reused": true,
+      "bytes": 8496,
+      "durationSeconds": 1.416,
+      "bitrate": 48000,
+      "risks": [
+        "contains-polyphonic-character"
+      ]
+    },
+    {
+      "wordId": "hsk3.word.l1.0295.v1",
+      "hanzi": "钱包",
+      "pinyin": "qiánbāo",
+      "audioId": "hsk3.audio.hsk1.l1-0295.v1",
+      "storageKey": "audio/formal/hsk1/l1-0295-v1.mp3",
+      "checksumSha256": "500f1b91b9c7e47f09251c59d061a966287687cedb5f457e0f9b99761316d67b",
+      "reused": true,
+      "bytes": 8208,
+      "durationSeconds": 1.368,
+      "bitrate": 48000,
+      "risks": [
+        "contains-polyphonic-character"
+      ]
+    },
+    {
+      "wordId": "hsk3.word.l1.0302.v1",
+      "hanzi": "去",
+      "pinyin": "qù",
+      "audioId": "hsk3.audio.hsk1.l1-0302.v1",
+      "storageKey": "audio/formal/hsk1/l1-0302-v1.mp3",
+      "checksumSha256": "30cc5f1e843b59446c39859816c0d2763958673daed14ed8b41debf6c0262d9a",
+      "reused": true,
+      "bytes": 7056,
+      "durationSeconds": 1.176,
+      "bitrate": 48000,
+      "risks": [
+        "contains-polyphonic-character"
+      ]
+    },
+    {
+      "wordId": "hsk3.word.l1.0303.v1",
+      "hanzi": "去年",
+      "pinyin": "qùnián",
+      "audioId": "hsk3.audio.hsk1.l1-0303.v1",
+      "storageKey": "audio/formal/hsk1/l1-0303-v1.mp3",
+      "checksumSha256": "f4cb2f1e1c21af951724de98cec7a8677e595e36d025b81abe8b16e6991e90f2",
+      "reused": true,
+      "bytes": 8352,
+      "durationSeconds": 1.392,
+      "bitrate": 48000,
+      "risks": [
+        "contains-polyphonic-character"
+      ]
+    },
+    {
+      "wordId": "hsk3.word.l1.0306.v1",
+      "hanzi": "认识",
+      "pinyin": "rènshi",
+      "audioId": "hsk3.audio.hsk1.l1-0306.v1",
+      "storageKey": "audio/formal/hsk1/l1-0306-v1.mp3",
+      "checksumSha256": "bdbdcc9c1ba1dfb151a3d0bcdfcdab8cb482545cab844795e809e4a0cfc27193",
+      "reused": true,
+      "bytes": 8496,
+      "durationSeconds": 1.416,
+      "bitrate": 48000,
+      "risks": [
+        "catalog-pinyin-differs-from-pypinyin-default"
+      ]
+    },
+    {
+      "wordId": "hsk3.word.l1.0310.v1",
+      "hanzi": "肉",
+      "pinyin": "ròu",
+      "audioId": "hsk3.audio.topic-p2.l1-0310.v1",
+      "storageKey": "audio/formal/topics/p2-samples/l1-0310-v1.mp3",
+      "checksumSha256": "d7e2328dff51a3563333aa53a0c8c71b1fb1b8edb6f92a266582ff9a26bc4fee",
+      "reused": true,
+      "bytes": 10656,
+      "durationSeconds": 1.776,
+      "bitrate": 48000,
+      "risks": [
+        "contains-polyphonic-character"
+      ]
+    },
+    {
+      "wordId": "hsk3.word.l1.0315.v1",
+      "hanzi": "上",
+      "pinyin": "shàng",
+      "audioId": "hsk3.audio.hsk1.l1-0315.v1",
+      "storageKey": "audio/formal/hsk1/l1-0315-v1.mp3",
+      "checksumSha256": "214f5bc1bd57187d9d323e6e15182f8e5f1fe2130a1969a8d76770387e0bfe88",
+      "reused": true,
+      "bytes": 7344,
+      "durationSeconds": 1.224,
+      "bitrate": 48000,
+      "risks": [
+        "contains-polyphonic-character"
+      ]
+    },
+    {
+      "wordId": "hsk3.word.l1.0317.v1",
+      "hanzi": "上边",
+      "pinyin": "shàngbian",
+      "audioId": "hsk3.audio.hsk1.l1-0317.v1",
+      "storageKey": "audio/formal/hsk1/l1-0317-v1.mp3",
+      "checksumSha256": "d0251649bb97fb2d8e0f75d00e1f7d31d01719d8da480b611d7309ea7b42cba1",
+      "reused": true,
+      "bytes": 8496,
+      "durationSeconds": 1.416,
+      "bitrate": 48000,
+      "risks": [
+        "catalog-pinyin-differs-from-pypinyin-default"
+      ]
+    },
+    {
+      "wordId": "hsk3.word.l1.0321.v1",
+      "hanzi": "上网",
+      "pinyin": "shàngwǎng",
+      "audioId": "hsk3.audio.hsk1.l1-0321.v1",
+      "storageKey": "audio/formal/hsk1/l1-0321-v1.mp3",
+      "checksumSha256": "0cd73a4f85ce2a9513aca2f86bafd1a334be431d4a733043e16fd8bdab185217",
+      "reused": true,
+      "bytes": 8496,
+      "durationSeconds": 1.416,
+      "bitrate": 48000,
+      "risks": [
+        "contains-polyphonic-character"
+      ]
+    },
+    {
+      "wordId": "hsk3.word.l1.0324.v1",
+      "hanzi": "少",
+      "pinyin": "shǎo",
+      "audioId": "hsk3.audio.hsk1.l1-0324.v1",
+      "storageKey": "audio/formal/hsk1/l1-0324-v1.mp3",
+      "checksumSha256": "7d2c81afdaf13ebc33caed402d8c45a89aaf8b1eea0d6ca364513cced248a79e",
+      "reused": true,
+      "bytes": 7344,
+      "durationSeconds": 1.224,
+      "bitrate": 48000,
+      "risks": [
+        "contains-polyphonic-character"
+      ]
+    },
+    {
+      "wordId": "hsk3.word.l1.0325.v1",
+      "hanzi": "谁",
+      "pinyin": "shéi/shuí",
+      "audioId": "hsk3.audio.hsk1.l1-0325.v1",
+      "storageKey": "audio/formal/hsk1/l1-0325-v1.mp3",
+      "checksumSha256": "6270a8b4754c9f40713861eac58cdad2761ab50267bb1a637160bedfbf5ad740",
+      "reused": true,
+      "bytes": 7200,
+      "durationSeconds": 1.2,
+      "bitrate": 48000,
+      "risks": [
+        "catalog-pinyin-differs-from-pypinyin-default",
+        "contains-polyphonic-character"
+      ]
+    },
+    {
+      "wordId": "hsk3.word.l1.0326.v1",
+      "hanzi": "身上",
+      "pinyin": "shēnshang",
+      "audioId": "hsk3.audio.hsk1.l1-0326.v1",
+      "storageKey": "audio/formal/hsk1/l1-0326-v1.mp3",
+      "checksumSha256": "d636f2d713a1d1e5ad8f084aa4170ffa51fb40eeede6e2b9062c3988ea09b1bf",
+      "reused": true,
+      "bytes": 8640,
+      "durationSeconds": 1.44,
+      "bitrate": 48000,
+      "risks": [
+        "catalog-pinyin-differs-from-pypinyin-default"
+      ]
+    },
+    {
+      "wordId": "hsk3.word.l1.0330.v1",
+      "hanzi": "生气",
+      "pinyin": "shēngqì",
+      "audioId": "hsk3.audio.hsk1.l1-0330.v1",
+      "storageKey": "audio/formal/hsk1/l1-0330-v1.mp3",
+      "checksumSha256": "b941ea6a78acbaca2c772e0b4c6b44452a45482f625346116aa8494d5a7dc707",
+      "reused": true,
+      "bytes": 8928,
+      "durationSeconds": 1.488,
+      "bitrate": 48000,
+      "risks": [
+        "contains-polyphonic-character"
+      ]
+    },
+    {
+      "wordId": "hsk3.word.l1.0333.v1",
+      "hanzi": "时候",
+      "pinyin": "shíhou",
+      "audioId": "hsk3.audio.topic-p2.l1-0333.v1",
+      "storageKey": "audio/formal/topics/p2-samples/l1-0333-v1.mp3",
+      "checksumSha256": "9cd3c92b659b000737715f8830e8d934dc5f63ac0c20c40fe8e8f3ec154eab6c",
+      "reused": true,
+      "bytes": 10656,
+      "durationSeconds": 1.776,
+      "bitrate": 48000,
+      "risks": [
+        "catalog-pinyin-differs-from-pypinyin-default"
+      ]
+    },
+    {
+      "wordId": "hsk3.word.l1.0335.v1",
+      "hanzi": "事",
+      "pinyin": "shì",
+      "audioId": "hsk3.audio.hsk1.l1-0335.v1",
+      "storageKey": "audio/formal/hsk1/l1-0335-v1.mp3",
+      "checksumSha256": "5a8c561c997afc35dceb33b6073131e2825f57cd40ccb1dbc47e0d29b9477c3a",
+      "reused": true,
+      "bytes": 7344,
+      "durationSeconds": 1.224,
+      "bitrate": 48000,
+      "risks": [
+        "contains-polyphonic-character"
+      ]
+    },
+    {
+      "wordId": "hsk3.word.l1.0337.v1",
+      "hanzi": "是",
+      "pinyin": "shì",
+      "audioId": "hsk3.audio.hsk1.l1-0337.v1",
+      "storageKey": "audio/formal/hsk1/l1-0337-v1.mp3",
+      "checksumSha256": "5a8c561c997afc35dceb33b6073131e2825f57cd40ccb1dbc47e0d29b9477c3a",
+      "reused": true,
+      "bytes": 7344,
+      "durationSeconds": 1.224,
+      "bitrate": 48000,
+      "risks": [
+        "contains-polyphonic-character"
+      ]
+    },
+    {
+      "wordId": "hsk3.word.l1.0338.v1",
+      "hanzi": "是不是",
+      "pinyin": "shì bu shì",
+      "audioId": "hsk3.audio.hsk1.l1-0338.v1",
+      "storageKey": "audio/formal/hsk1/l1-0338-v1.mp3",
+      "checksumSha256": "cde07e0d5484c35ee512d5b66ba5dbd4e2ba23a899630fde88862c92ff8495c6",
+      "reused": true,
+      "bytes": 9360,
+      "durationSeconds": 1.56,
+      "bitrate": 48000,
+      "risks": [
+        "catalog-pinyin-differs-from-pypinyin-default"
+      ]
+    },
+    {
+      "wordId": "hsk3.word.l1.0340.v1",
+      "hanzi": "手机",
+      "pinyin": "shǒujī",
+      "audioId": "hsk3.audio.hsk1.l1-0340.v1",
+      "storageKey": "audio/formal/hsk1/l1-0340-v1.mp3",
+      "checksumSha256": "82cedcec6237b38c8ba51e92fd06148113a59035264f66709f14baad9d36ea05",
+      "reused": true,
+      "bytes": 8640,
+      "durationSeconds": 1.44,
+      "bitrate": 48000,
+      "risks": [
+        "contains-polyphonic-character"
+      ]
+    },
+    {
+      "wordId": "hsk3.word.l1.0342.v1",
+      "hanzi": "书包",
+      "pinyin": "shūbāo",
+      "audioId": "hsk3.audio.hsk1.l1-0342.v1",
+      "storageKey": "audio/formal/hsk1/l1-0342-v1.mp3",
+      "checksumSha256": "7d3f36efec630e092e0484a6e1ba58d6dec1099fc2be375525f9afe0d12e676c",
+      "reused": true,
+      "bytes": 8208,
+      "durationSeconds": 1.368,
+      "bitrate": 48000,
+      "risks": [
+        "contains-polyphonic-character"
+      ]
+    },
+    {
+      "wordId": "hsk3.word.l1.0346.v1",
+      "hanzi": "水果",
+      "pinyin": "shuǐguǒ",
+      "audioId": "hsk3.audio.topic-grocery-shopping.l1-0346.v1",
+      "storageKey": "audio/formal/topics/grocery-shopping/l1-0346-v1.mp3",
+      "checksumSha256": "fe133cbd89a406b4bb2542f4ddf54e69c0bd6d23f2aafcecbdab42f8819fcc82",
+      "reused": true,
+      "bytes": 10656,
+      "durationSeconds": 1.776,
+      "bitrate": 48000,
+      "risks": [
+        "contains-polyphonic-character"
+      ]
+    },
+    {
+      "wordId": "hsk3.word.l1.0349.v1",
+      "hanzi": "说",
+      "pinyin": "shuō",
+      "audioId": "hsk3.audio.hsk1.l1-0349.v1",
+      "storageKey": "audio/formal/hsk1/l1-0349-v1.mp3",
+      "checksumSha256": "fac5e22a38959753c3fde4f4154ada548e8c4a8e171ef3c287b80a685075562d",
+      "reused": true,
+      "bytes": 7344,
+      "durationSeconds": 1.224,
+      "bitrate": 48000,
+      "risks": [
+        "contains-polyphonic-character"
+      ]
+    },
+    {
+      "wordId": "hsk3.word.l1.0354.v1",
+      "hanzi": "他",
+      "pinyin": "tā",
+      "audioId": "hsk3.audio.hsk1.l1-0354.v1",
+      "storageKey": "audio/formal/hsk1/l1-0354-v1.mp3",
+      "checksumSha256": "735118ceef9f77c86c07f4c3b9a2fb367379eb821fe2270a5997be89b2c0d65a",
+      "reused": true,
+      "bytes": 6624,
+      "durationSeconds": 1.104,
+      "bitrate": 48000,
+      "risks": [
+        "contains-polyphonic-character"
+      ]
+    },
+    {
+      "wordId": "hsk3.word.l1.0356.v1",
+      "hanzi": "她",
+      "pinyin": "tā",
+      "audioId": "hsk3.audio.hsk1.l1-0356.v1",
+      "storageKey": "audio/formal/hsk1/l1-0356-v1.mp3",
+      "checksumSha256": "735118ceef9f77c86c07f4c3b9a2fb367379eb821fe2270a5997be89b2c0d65a",
+      "reused": true,
+      "bytes": 6624,
+      "durationSeconds": 1.104,
+      "bitrate": 48000,
+      "risks": [
+        "contains-polyphonic-character"
+      ]
+    },
+    {
+      "wordId": "hsk3.word.l1.0358.v1",
+      "hanzi": "太",
+      "pinyin": "tài",
+      "audioId": "hsk3.audio.hsk1.l1-0358.v1",
+      "storageKey": "audio/formal/hsk1/l1-0358-v1.mp3",
+      "checksumSha256": "f25297003ece1f26c5befccd1cd3f6f84fea16769e0aae585c3e1c522691a485",
+      "reused": true,
+      "bytes": 7056,
+      "durationSeconds": 1.176,
+      "bitrate": 48000,
+      "risks": [
+        "contains-polyphonic-character"
+      ]
+    },
+    {
+      "wordId": "hsk3.word.l1.0360.v1",
+      "hanzi": "天气",
+      "pinyin": "tiānqì",
+      "audioId": "hsk3.audio.topic-p2.l1-0360.v1",
+      "storageKey": "audio/formal/topics/p2-samples/l1-0360-v1.mp3",
+      "checksumSha256": "09fe79557be224b8de24f2bde3fb9268221cd12aac75b3039cc8768464e8515f",
+      "reused": true,
+      "bytes": 10656,
+      "durationSeconds": 1.776,
+      "bitrate": 48000,
+      "risks": [
+        "contains-polyphonic-character"
+      ]
+    },
+    {
+      "wordId": "hsk3.word.l1.0361.v1",
+      "hanzi": "听",
+      "pinyin": "tīng",
+      "audioId": "hsk3.audio.hsk1.l1-0361.v1",
+      "storageKey": "audio/formal/hsk1/l1-0361-v1.mp3",
+      "checksumSha256": "8bd930919c1b3cea68a396c12c2259ac63898b5f5a7f93111f28279bc01bb6c7",
+      "reused": true,
+      "bytes": 6912,
+      "durationSeconds": 1.152,
+      "bitrate": 48000,
+      "risks": [
+        "contains-polyphonic-character"
+      ]
+    },
+    {
+      "wordId": "hsk3.word.l1.0362.v1",
+      "hanzi": "听到",
+      "pinyin": "tīngdào",
+      "audioId": "hsk3.audio.hsk1.l1-0362.v1",
+      "storageKey": "audio/formal/hsk1/l1-0362-v1.mp3",
+      "checksumSha256": "97b36646c9645291bf2c17b9cdded64cafe571c336a41b87aa4019cbde36cf5d",
+      "reused": true,
+      "bytes": 8064,
+      "durationSeconds": 1.344,
+      "bitrate": 48000,
+      "risks": [
+        "contains-polyphonic-character"
+      ]
+    },
+    {
+      "wordId": "hsk3.word.l1.0364.v1",
+      "hanzi": "听写",
+      "pinyin": "tīngxiě",
+      "audioId": "hsk3.audio.hsk1.l1-0364.v1",
+      "storageKey": "audio/formal/hsk1/l1-0364-v1.mp3",
+      "checksumSha256": "09ee8ec1c1f04465105b4b45d8c4131c1ccbfc461a3f161a4c2caef579d1ce2b",
+      "reused": true,
+      "bytes": 8640,
+      "durationSeconds": 1.44,
+      "bitrate": 48000,
+      "risks": [
+        "contains-polyphonic-character"
+      ]
+    },
+    {
+      "wordId": "hsk3.word.l1.0368.v1",
+      "hanzi": "外边",
+      "pinyin": "wàibian",
+      "audioId": "hsk3.audio.hsk1.l1-0368.v1",
+      "storageKey": "audio/formal/hsk1/l1-0368-v1.mp3",
+      "checksumSha256": "f79f70290b12e69637feced57609d0159839f5784d3cc942edffc50652bd9b21",
+      "reused": true,
+      "bytes": 8064,
+      "durationSeconds": 1.344,
+      "bitrate": 48000,
+      "risks": [
+        "catalog-pinyin-differs-from-pypinyin-default",
+        "contains-polyphonic-character"
+      ]
+    },
+    {
+      "wordId": "hsk3.word.l1.0371.v1",
+      "hanzi": "玩儿",
+      "pinyin": "wánr",
+      "audioId": "hsk3.audio.hsk1.l1-0371.v1",
+      "storageKey": "audio/formal/hsk1/l1-0371-v1.mp3",
+      "checksumSha256": "dc94af4c7ff3651368ec8d4efc4c3fe4f264e76eb34d65c26e45ea2a279ae8e3",
+      "reused": true,
+      "bytes": 6912,
+      "durationSeconds": 1.152,
+      "bitrate": 48000,
+      "risks": [
+        "catalog-pinyin-differs-from-pypinyin-default",
+        "contains-polyphonic-character"
+      ]
+    },
+    {
+      "wordId": "hsk3.word.l1.0374.v1",
+      "hanzi": "晚上",
+      "pinyin": "wǎnshang",
+      "audioId": "hsk3.audio.topic-p2.l1-0374.v1",
+      "storageKey": "audio/formal/topics/p2-samples/l1-0374-v1.mp3",
+      "checksumSha256": "e6e91ea26633f9d8a9d188194a91344215403b56ba5df0fb4e56f1577d847dc3",
+      "reused": true,
+      "bytes": 10656,
+      "durationSeconds": 1.776,
+      "bitrate": 48000,
+      "risks": [
+        "catalog-pinyin-differs-from-pypinyin-default",
+        "contains-polyphonic-character"
+      ]
+    },
+    {
+      "wordId": "hsk3.word.l1.0375.v1",
+      "hanzi": "网上",
+      "pinyin": "wǎng shang",
+      "audioId": "hsk3.audio.hsk1.l1-0375.v1",
+      "storageKey": "audio/formal/hsk1/l1-0375-v1.mp3",
+      "checksumSha256": "ddb896772a6f39de43f1d14ae371f9b789eee01f3445763ac598d9283d0d4735",
+      "reused": true,
+      "bytes": 8064,
+      "durationSeconds": 1.344,
+      "bitrate": 48000,
+      "risks": [
+        "catalog-pinyin-differs-from-pypinyin-default",
+        "contains-polyphonic-character"
+      ]
+    },
+    {
+      "wordId": "hsk3.word.l1.0377.v1",
+      "hanzi": "忘",
+      "pinyin": "wàng",
+      "audioId": "hsk3.audio.hsk1.l1-0377.v1",
+      "storageKey": "audio/formal/hsk1/l1-0377-v1.mp3",
+      "checksumSha256": "1b3a684d4df88d113e253ab9c3873bccb42f23b0abbe4a0a093f5e07e3dc635a",
+      "reused": true,
+      "bytes": 6768,
+      "durationSeconds": 1.128,
+      "bitrate": 48000,
+      "risks": [
+        "contains-polyphonic-character"
+      ]
+    },
+    {
+      "wordId": "hsk3.word.l1.0378.v1",
+      "hanzi": "忘记",
+      "pinyin": "wàngjì",
+      "audioId": "hsk3.audio.hsk1.l1-0378.v1",
+      "storageKey": "audio/formal/hsk1/l1-0378-v1.mp3",
+      "checksumSha256": "d8892093cc010ee89960b0895bd7df9ee76c1bd227014347d819196282f57ed1",
+      "reused": true,
+      "bytes": 8496,
+      "durationSeconds": 1.416,
+      "bitrate": 48000,
+      "risks": [
+        "contains-polyphonic-character"
+      ]
+    },
+    {
+      "wordId": "hsk3.word.l1.0385.v1",
+      "hanzi": "西边",
+      "pinyin": "xībian",
+      "audioId": "hsk3.audio.hsk1.l1-0385.v1",
+      "storageKey": "audio/formal/hsk1/l1-0385-v1.mp3",
+      "checksumSha256": "8e6e15a07bb7b2c20f645838bcade58514400c803a924264683d1f7dff96aeef",
+      "reused": true,
+      "bytes": 8496,
+      "durationSeconds": 1.416,
+      "bitrate": 48000,
+      "risks": [
+        "catalog-pinyin-differs-from-pypinyin-default",
+        "contains-polyphonic-character"
+      ]
+    },
+    {
+      "wordId": "hsk3.word.l1.0386.v1",
+      "hanzi": "洗",
+      "pinyin": "xǐ",
+      "audioId": "hsk3.audio.topic-p2.l1-0386.v1",
+      "storageKey": "audio/formal/topics/p2-samples/l1-0386-v1.mp3",
+      "checksumSha256": "31607af0e1cc3b0c2035ad388f2d36e061ec66da4b62bf94dea647d6e077aa2c",
+      "reused": true,
+      "bytes": 10656,
+      "durationSeconds": 1.776,
+      "bitrate": 48000,
+      "risks": [
+        "contains-polyphonic-character"
+      ]
+    },
+    {
+      "wordId": "hsk3.word.l1.0388.v1",
+      "hanzi": "喜欢",
+      "pinyin": "xǐhuan",
+      "audioId": "hsk3.audio.hsk1.l1-0388.v1",
+      "storageKey": "audio/formal/hsk1/l1-0388-v1.mp3",
+      "checksumSha256": "27fc5b370ae9a57df7b821c6c77528d922c6ff13d324221179a6446e946211d8",
+      "reused": true,
+      "bytes": 8496,
+      "durationSeconds": 1.416,
+      "bitrate": 48000,
+      "risks": [
+        "catalog-pinyin-differs-from-pypinyin-default",
+        "contains-polyphonic-character"
+      ]
+    },
+    {
+      "wordId": "hsk3.word.l1.0391.v1",
+      "hanzi": "下边",
+      "pinyin": "xiàbian",
+      "audioId": "hsk3.audio.hsk1.l1-0391.v1",
+      "storageKey": "audio/formal/hsk1/l1-0391-v1.mp3",
+      "checksumSha256": "552a0d7a3e5442667c80370f2e4dbeee7f4d947b47767624f99dee3ead282585",
+      "reused": true,
+      "bytes": 8496,
+      "durationSeconds": 1.416,
+      "bitrate": 48000,
+      "risks": [
+        "catalog-pinyin-differs-from-pypinyin-default",
+        "contains-polyphonic-character"
+      ]
+    },
+    {
+      "wordId": "hsk3.word.l1.0393.v1",
+      "hanzi": "下次",
+      "pinyin": "xià cì",
+      "audioId": "hsk3.audio.hsk1.l1-0393.v1",
+      "storageKey": "audio/formal/hsk1/l1-0393-v1.mp3",
+      "checksumSha256": "d86e469de6d8bdbb733bd9f3db6a9bded70caecfcfe2204927c4658a2716b09a",
+      "reused": true,
+      "bytes": 8640,
+      "durationSeconds": 1.44,
+      "bitrate": 48000,
+      "risks": [
+        "contains-polyphonic-character"
+      ]
+    },
+    {
+      "wordId": "hsk3.word.l1.0398.v1",
+      "hanzi": "先生",
+      "pinyin": "xiānsheng",
+      "audioId": "hsk3.audio.hsk1.l1-0398.v1",
+      "storageKey": "audio/formal/hsk1/l1-0398-v1.mp3",
+      "checksumSha256": "2863b6fa4059ea8e7bb1eb53aec1f27f4245f5b08624825d2e47cf7e34e94abf",
+      "reused": true,
+      "bytes": 8496,
+      "durationSeconds": 1.416,
+      "bitrate": 48000,
+      "risks": [
+        "catalog-pinyin-differs-from-pypinyin-default"
+      ]
+    },
+    {
+      "wordId": "hsk3.word.l1.0402.v1",
+      "hanzi": "小孩儿",
+      "pinyin": "xiǎoháir",
+      "audioId": "hsk3.audio.hsk1.l1-0402.v1",
+      "storageKey": "audio/formal/hsk1/l1-0402-v1.mp3",
+      "checksumSha256": "6e95ee634600ba4af5a5af42f2dab1985e2f88199c90aa3a1a8112994c09d342",
+      "reused": true,
+      "bytes": 8208,
+      "durationSeconds": 1.368,
+      "bitrate": 48000,
+      "risks": [
+        "catalog-pinyin-differs-from-pypinyin-default",
+        "contains-polyphonic-character"
+      ]
+    },
+    {
+      "wordId": "hsk3.word.l1.0403.v1",
+      "hanzi": "小姐",
+      "pinyin": "xiǎojiě",
+      "audioId": "hsk3.audio.hsk1.l1-0403.v1",
+      "storageKey": "audio/formal/hsk1/l1-0403-v1.mp3",
+      "checksumSha256": "7b262a22a96c51477ab3e67db3974c0997705ad8710d99ba2983d67dc72ad36d",
+      "reused": true,
+      "bytes": 8496,
+      "durationSeconds": 1.416,
+      "bitrate": 48000,
+      "risks": [
+        "contains-polyphonic-character"
+      ]
+    },
+    {
+      "wordId": "hsk3.word.l1.0409.v1",
+      "hanzi": "写",
+      "pinyin": "xiě",
+      "audioId": "hsk3.audio.hsk1.l1-0409.v1",
+      "storageKey": "audio/formal/hsk1/l1-0409-v1.mp3",
+      "checksumSha256": "18e64edcdde03515dba740587e81c487cd1da8f32e6ba454abba978bb1b4be3b",
+      "reused": true,
+      "bytes": 7344,
+      "durationSeconds": 1.224,
+      "bitrate": 48000,
+      "risks": [
+        "contains-polyphonic-character"
+      ]
+    },
+    {
+      "wordId": "hsk3.word.l1.0410.v1",
+      "hanzi": "谢谢",
+      "pinyin": "xièxie",
+      "audioId": "hsk3.audio.hsk1.l1-0410.v1",
+      "storageKey": "audio/formal/hsk1/l1-0410-v1.mp3",
+      "checksumSha256": "2c1fb6ce358f2c5bc2df77ab49bf60b123771e37c1bd0670b5749e4b31add269",
+      "reused": true,
+      "bytes": 8352,
+      "durationSeconds": 1.392,
+      "bitrate": 48000,
+      "risks": [
+        "catalog-pinyin-differs-from-pypinyin-default"
+      ]
+    },
+    {
+      "wordId": "hsk3.word.l1.0412.v1",
+      "hanzi": "新年",
+      "pinyin": "xīnnián",
+      "audioId": "hsk3.audio.hsk1.l1-0412.v1",
+      "storageKey": "audio/formal/hsk1/l1-0412-v1.mp3",
+      "checksumSha256": "513271cb8b7b96e602d165c2b41a2ee0b7765e4873e44943cbca0321a347c050",
+      "reused": true,
+      "bytes": 8496,
+      "durationSeconds": 1.416,
+      "bitrate": 48000,
+      "risks": [
+        "contains-polyphonic-character"
+      ]
+    },
+    {
+      "wordId": "hsk3.word.l1.0416.v1",
+      "hanzi": "行",
+      "pinyin": "xíng",
+      "audioId": "hsk3.audio.hsk1.l1-0416.v1",
+      "storageKey": "audio/formal/hsk1/l1-0416-v1.mp3",
+      "checksumSha256": "1214e3c7edfb949bcd43b722b5663e505d562d3e1fa2788cb4339ecafe644746",
+      "reused": true,
+      "bytes": 7344,
+      "durationSeconds": 1.224,
+      "bitrate": 48000,
+      "risks": [
+        "contains-polyphonic-character"
+      ]
+    },
+    {
+      "wordId": "hsk3.word.l1.0417.v1",
+      "hanzi": "休息",
+      "pinyin": "xiūxi",
+      "audioId": "hsk3.audio.hsk1.l1-0417.v1",
+      "storageKey": "audio/formal/hsk1/l1-0417-v1.mp3",
+      "checksumSha256": "6ccd4bfbc6f339eab8482fa65b80633bd23294b5d64449053844fd07d2fb5195",
+      "reused": true,
+      "bytes": 8496,
+      "durationSeconds": 1.416,
+      "bitrate": 48000,
+      "risks": [
+        "catalog-pinyin-differs-from-pypinyin-default"
+      ]
+    },
+    {
+      "wordId": "hsk3.word.l1.0423.v1",
+      "hanzi": "要",
+      "pinyin": "yào",
+      "audioId": "hsk3.audio.hsk1.l1-0423.v1",
+      "storageKey": "audio/formal/hsk1/l1-0423-v1.mp3",
+      "checksumSha256": "85ce4610dbf55193a5a00e360c1cd14800d35e191382bb1bc75603b0fd121f82",
+      "reused": true,
+      "bytes": 6912,
+      "durationSeconds": 1.152,
+      "bitrate": 48000,
+      "risks": [
+        "contains-polyphonic-character"
+      ]
+    },
+    {
+      "wordId": "hsk3.word.l1.0424.v1",
+      "hanzi": "爷爷",
+      "pinyin": "yéye",
+      "audioId": "hsk3.audio.hsk1.l1-0424.v1",
+      "storageKey": "audio/formal/hsk1/l1-0424-v1.mp3",
+      "checksumSha256": "0b59965025038b213d7978afb42a15345d49ebcdfd478d7e45777cac8740ec1a",
+      "reused": true,
+      "bytes": 8064,
+      "durationSeconds": 1.344,
+      "bitrate": 48000,
+      "risks": [
+        "catalog-pinyin-differs-from-pypinyin-default"
+      ]
+    },
+    {
+      "wordId": "hsk3.word.l1.0425.v1",
+      "hanzi": "也",
+      "pinyin": "yě",
+      "audioId": "hsk3.audio.hsk1.l1-0425.v1",
+      "storageKey": "audio/formal/hsk1/l1-0425-v1.mp3",
+      "checksumSha256": "0049afa1485899df16cdbe6837554e3f374dc93eab3161ea06ec9217e14e0571",
+      "reused": true,
+      "bytes": 6624,
+      "durationSeconds": 1.104,
+      "bitrate": 48000,
+      "risks": [
+        "contains-polyphonic-character"
+      ]
+    },
+    {
+      "wordId": "hsk3.word.l1.0427.v1",
+      "hanzi": "一",
+      "pinyin": "yī",
+      "audioId": "hsk3.audio.hsk1.l1-0427.v1",
+      "storageKey": "audio/formal/hsk1/l1-0427-v1.mp3",
+      "checksumSha256": "6abc44600b84ef8e70161276cf5a53e169a093442e5960563d7bcf4d3ee03746",
+      "reused": true,
+      "bytes": 6768,
+      "durationSeconds": 1.128,
+      "bitrate": 48000,
+      "risks": [
+        "contains-polyphonic-character"
+      ]
+    },
+    {
+      "wordId": "hsk3.word.l1.0428.v1",
+      "hanzi": "衣服",
+      "pinyin": "yīfu",
+      "audioId": "hsk3.audio.topic-p2.l1-0428.v1",
+      "storageKey": "audio/formal/topics/p2-samples/l1-0428-v1.mp3",
+      "checksumSha256": "cb022f5bdac27810727b93372a51853b4315233690e972726a567100bb95abe6",
+      "reused": true,
+      "bytes": 10656,
+      "durationSeconds": 1.776,
+      "bitrate": 48000,
+      "risks": [
+        "catalog-pinyin-differs-from-pypinyin-default"
+      ]
+    },
+    {
+      "wordId": "hsk3.word.l1.0429.v1",
+      "hanzi": "医生",
+      "pinyin": "yīshēng",
+      "audioId": "hsk3.audio.hsk1.l1-0429.v1",
+      "storageKey": "audio/formal/hsk1/l1-0429-v1.mp3",
+      "checksumSha256": "875a1b06aed44ea681da01acda3f7181273b1f674dcaa51377da3ab7cd7db352",
+      "reused": true,
+      "bytes": 8064,
+      "durationSeconds": 1.344,
+      "bitrate": 48000,
+      "risks": [
+        "contains-polyphonic-character"
+      ]
+    },
+    {
+      "wordId": "hsk3.word.l1.0430.v1",
+      "hanzi": "医院",
+      "pinyin": "yīyuàn",
+      "audioId": "hsk3.audio.hsk1.l1-0430.v1",
+      "storageKey": "audio/formal/hsk1/l1-0430-v1.mp3",
+      "checksumSha256": "018024743e40e1c8e58991ce334ed3c81191e09cb980af1ec50a351c4a7eff66",
+      "reused": true,
+      "bytes": 8208,
+      "durationSeconds": 1.368,
+      "bitrate": 48000,
+      "risks": [
+        "contains-polyphonic-character"
+      ]
+    },
+    {
+      "wordId": "hsk3.word.l1.0431.v1",
+      "hanzi": "一半",
+      "pinyin": "yībàn",
+      "audioId": "hsk3.audio.hsk1.l1-0431.v1",
+      "storageKey": "audio/formal/hsk1/l1-0431-v1.mp3",
+      "checksumSha256": "ba5996d1ddda0ef29ab591c8bcf621360ad9450514011bdc42858a85b52809f3",
+      "reused": true,
+      "bytes": 7920,
+      "durationSeconds": 1.32,
+      "bitrate": 48000,
+      "risks": [
+        "catalog-pinyin-differs-from-pypinyin-default"
+      ]
+    },
+    {
+      "wordId": "hsk3.word.l1.0432.v1",
+      "hanzi": "一会儿",
+      "pinyin": "yīhuìr",
+      "audioId": "hsk3.audio.hsk1.l1-0432.v1",
+      "storageKey": "audio/formal/hsk1/l1-0432-v1.mp3",
+      "checksumSha256": "0b9def7c110cb2de69dc54e27a5ae7fb80ebb3ec25aa1956a45af64b0bf3e99d",
+      "reused": true,
+      "bytes": 8064,
+      "durationSeconds": 1.344,
+      "bitrate": 48000,
+      "risks": [
+        "catalog-pinyin-differs-from-pypinyin-default"
+      ]
+    },
+    {
+      "wordId": "hsk3.word.l1.0433.v1",
+      "hanzi": "一块儿",
+      "pinyin": "yīkuàir",
+      "audioId": "hsk3.audio.hsk1.l1-0433.v1",
+      "storageKey": "audio/formal/hsk1/l1-0433-v1.mp3",
+      "checksumSha256": "8c791e398ff664572fdd8055f5c256f3d6bd944030b2bbe9022172bd61c07967",
+      "reused": true,
+      "bytes": 8064,
+      "durationSeconds": 1.344,
+      "bitrate": 48000,
+      "risks": [
+        "catalog-pinyin-differs-from-pypinyin-default",
+        "contains-polyphonic-character"
+      ]
+    },
+    {
+      "wordId": "hsk3.word.l1.0434.v1",
+      "hanzi": "一下儿",
+      "pinyin": "yīxiàr",
+      "audioId": "hsk3.audio.hsk1.l1-0434.v1",
+      "storageKey": "audio/formal/hsk1/l1-0434-v1.mp3",
+      "checksumSha256": "92b48b2bcf5db3be9420297a71ff116f0aa4e362ce11456acc912ccf4b23ab40",
+      "reused": true,
+      "bytes": 8064,
+      "durationSeconds": 1.344,
+      "bitrate": 48000,
+      "risks": [
+        "catalog-pinyin-differs-from-pypinyin-default",
+        "contains-polyphonic-character"
+      ]
+    },
+    {
+      "wordId": "hsk3.word.l1.0435.v1",
+      "hanzi": "一样",
+      "pinyin": "yīyàng",
+      "audioId": "hsk3.audio.hsk1.l1-0435.v1",
+      "storageKey": "audio/formal/hsk1/l1-0435-v1.mp3",
+      "checksumSha256": "5332e1c33df4a5ea622ef0e36a922ada44109908b00035f37a55b596aaa4b818",
+      "reused": true,
+      "bytes": 7776,
+      "durationSeconds": 1.296,
+      "bitrate": 48000,
+      "risks": [
+        "contains-polyphonic-character"
+      ]
+    },
+    {
+      "wordId": "hsk3.word.l1.0436.v1",
+      "hanzi": "一边",
+      "pinyin": "yībiān",
+      "audioId": "hsk3.audio.hsk1.l1-0436.v1",
+      "storageKey": "audio/formal/hsk1/l1-0436-v1.mp3",
+      "checksumSha256": "4a761776656993ad5e7bd1f7d9905cb5eb9f13f3aa27e2d5e1731903a2b51804",
+      "reused": true,
+      "bytes": 7920,
+      "durationSeconds": 1.32,
+      "bitrate": 48000,
+      "risks": [
+        "contains-polyphonic-character"
+      ]
+    },
+    {
+      "wordId": "hsk3.word.l1.0437.v1",
+      "hanzi": "一点儿",
+      "pinyin": "yīdiǎnr",
+      "audioId": "hsk3.audio.hsk1.l1-0437.v1",
+      "storageKey": "audio/formal/hsk1/l1-0437-v1.mp3",
+      "checksumSha256": "346d051b0d9c46c87f30be93ef8c8b4eb7b7a76cef57040dde95dd74630e6694",
+      "reused": true,
+      "bytes": 8208,
+      "durationSeconds": 1.368,
+      "bitrate": 48000,
+      "risks": [
+        "catalog-pinyin-differs-from-pypinyin-default",
+        "contains-polyphonic-character"
+      ]
+    },
+    {
+      "wordId": "hsk3.word.l1.0438.v1",
+      "hanzi": "一起",
+      "pinyin": "yīqǐ",
+      "audioId": "hsk3.audio.hsk1.l1-0438.v1",
+      "storageKey": "audio/formal/hsk1/l1-0438-v1.mp3",
+      "checksumSha256": "dbeb36b22a2beb74868a75b0953fb8c284e92554f2db97844187bfb5a416a611",
+      "reused": true,
+      "bytes": 8640,
+      "durationSeconds": 1.44,
+      "bitrate": 48000,
+      "risks": [
+        "catalog-pinyin-differs-from-pypinyin-default"
+      ]
+    },
+    {
+      "wordId": "hsk3.word.l1.0441.v1",
+      "hanzi": "有",
+      "pinyin": "yǒu",
+      "audioId": "hsk3.audio.hsk1.l1-0441.v1",
+      "storageKey": "audio/formal/hsk1/l1-0441-v1.mp3",
+      "checksumSha256": "dbe333b5b2ddb99255fe01e1b381de3a4b7f6815e8679b2f77fbb8e61d11d08e",
+      "reused": true,
+      "bytes": 6768,
+      "durationSeconds": 1.128,
+      "bitrate": 48000,
+      "risks": [
+        "contains-polyphonic-character"
+      ]
+    },
+    {
+      "wordId": "hsk3.word.l1.0444.v1",
+      "hanzi": "有时候",
+      "pinyin": "yǒushíhou",
+      "audioId": "hsk3.audio.hsk1.l1-0444.v1",
+      "storageKey": "audio/formal/hsk1/l1-0444-v1.mp3",
+      "checksumSha256": "5bdbfd6ff9adda7fc68fb692541542108e6805dfe65db722660f0663d4576a3b",
+      "reused": true,
+      "bytes": 8928,
+      "durationSeconds": 1.488,
+      "bitrate": 48000,
+      "risks": [
+        "catalog-pinyin-differs-from-pypinyin-default",
+        "catalog-has-surface-or-pinyin-variant"
+      ]
+    },
+    {
+      "wordId": "hsk3.word.l1.0445.v1",
+      "hanzi": "有些",
+      "pinyin": "yǒuxiē",
+      "audioId": "hsk3.audio.hsk1.l1-0445.v1",
+      "storageKey": "audio/formal/hsk1/l1-0445-v1.mp3",
+      "checksumSha256": "0c68958b404ee962c50fa64f10a3189ee1fe5c46374c6d9fb952d3611d89873c",
+      "reused": true,
+      "bytes": 8208,
+      "durationSeconds": 1.368,
+      "bitrate": 48000,
+      "risks": [
+        "catalog-has-surface-or-pinyin-variant"
+      ]
+    },
+    {
+      "wordId": "hsk3.word.l1.0448.v1",
+      "hanzi": "右边",
+      "pinyin": "yòubian",
+      "audioId": "hsk3.audio.topic-p2.l1-0448.v1",
+      "storageKey": "audio/formal/topics/p2-samples/l1-0448-v1.mp3",
+      "checksumSha256": "43fea9c1cc417d2ca2a32d8f4825afb59d73736ae7240b923d4378f9a0477efe",
+      "reused": true,
+      "bytes": 10656,
+      "durationSeconds": 1.776,
+      "bitrate": 48000,
+      "risks": [
+        "catalog-pinyin-differs-from-pypinyin-default",
+        "contains-polyphonic-character"
+      ]
+    },
+    {
+      "wordId": "hsk3.word.l1.0449.v1",
+      "hanzi": "雨",
+      "pinyin": "yǔ",
+      "audioId": "hsk3.audio.topic-p2.l1-0449.v1",
+      "storageKey": "audio/formal/topics/p2-samples/l1-0449-v1.mp3",
+      "checksumSha256": "8f99a05df29e8c0f1bc7b441e14247325eb54fda6f4a2109c9a0fa024dc5b2b8",
+      "reused": true,
+      "bytes": 10656,
+      "durationSeconds": 1.776,
+      "bitrate": 48000,
+      "risks": [
+        "contains-polyphonic-character"
+      ]
+    },
+    {
+      "wordId": "hsk3.word.l1.0452.v1",
+      "hanzi": "月",
+      "pinyin": "yuè",
+      "audioId": "hsk3.audio.topic-p2.l1-0452.v1",
+      "storageKey": "audio/formal/topics/p2-samples/l1-0452-v1.mp3",
+      "checksumSha256": "c3adccbaecfa84844b3a6a91833ac137676bb6d4f901ee877ac55493443d1b71",
+      "reused": true,
+      "bytes": 10656,
+      "durationSeconds": 1.776,
+      "bitrate": 48000,
+      "risks": [
+        "contains-polyphonic-character"
+      ]
+    },
+    {
+      "wordId": "hsk3.word.l1.0459.v1",
+      "hanzi": "早上",
+      "pinyin": "zǎoshang",
+      "audioId": "hsk3.audio.topic-p2.l1-0459.v1",
+      "storageKey": "audio/formal/topics/p2-samples/l1-0459-v1.mp3",
+      "checksumSha256": "49c95f3ae15751e2b1c455babbf57667811087dc33d5887d7d04f657e37a02f1",
+      "reused": true,
+      "bytes": 10656,
+      "durationSeconds": 1.776,
+      "bitrate": 48000,
+      "risks": [
+        "catalog-pinyin-differs-from-pypinyin-default"
+      ]
+    },
+    {
+      "wordId": "hsk3.word.l1.0461.v1",
+      "hanzi": "站",
+      "pinyin": "zhàn",
+      "audioId": "hsk3.audio.hsk1.l1-0461.v1",
+      "storageKey": "audio/formal/hsk1/l1-0461-v1.mp3",
+      "checksumSha256": "c55b078b172298a8bead615832eabb3ef53beb54058eb57c7381270922cbee59",
+      "reused": true,
+      "bytes": 6912,
+      "durationSeconds": 1.152,
+      "bitrate": 48000,
+      "risks": [
+        "contains-polyphonic-character"
+      ]
+    },
+    {
+      "wordId": "hsk3.word.l1.0462.v1",
+      "hanzi": "找",
+      "pinyin": "zhǎo",
+      "audioId": "hsk3.audio.hsk1.l1-0462.v1",
+      "storageKey": "audio/formal/hsk1/l1-0462-v1.mp3",
+      "checksumSha256": "067b22fb630dc5ac42f300d6ccde3b2066d3b966cd9183d139faf1ddf3397d46",
+      "reused": true,
+      "bytes": 6768,
+      "durationSeconds": 1.128,
+      "bitrate": 48000,
+      "risks": [
+        "contains-polyphonic-character"
+      ]
+    },
+    {
+      "wordId": "hsk3.word.l1.0463.v1",
+      "hanzi": "找到",
+      "pinyin": "zhǎodào",
+      "audioId": "hsk3.audio.hsk1.l1-0463.v1",
+      "storageKey": "audio/formal/hsk1/l1-0463-v1.mp3",
+      "checksumSha256": "a06712f1690c1dcedc62b93885fc84dca89747ee48fa70d3c6d471704be30b50",
+      "reused": true,
+      "bytes": 8064,
+      "durationSeconds": 1.344,
+      "bitrate": 48000,
+      "risks": [
+        "contains-polyphonic-character"
+      ]
+    },
+    {
+      "wordId": "hsk3.word.l1.0464.v1",
+      "hanzi": "这",
+      "pinyin": "zhè",
+      "audioId": "hsk3.audio.hsk1.l1-0464.v1",
+      "storageKey": "audio/formal/hsk1/l1-0464-v1.mp3",
+      "checksumSha256": "571d08a45a7e3afc5bb11f8b9c43d9e3b31c542272f8ae5f0b29a42f613d583a",
+      "reused": true,
+      "bytes": 6912,
+      "durationSeconds": 1.152,
+      "bitrate": 48000,
+      "risks": [
+        "contains-polyphonic-character"
+      ]
+    },
+    {
+      "wordId": "hsk3.word.l1.0467.v1",
+      "hanzi": "这儿",
+      "pinyin": "zhèr",
+      "audioId": "hsk3.audio.hsk1.l1-0467.v1",
+      "storageKey": "audio/formal/hsk1/l1-0467-v1.mp3",
+      "checksumSha256": "237326e12dd66c4128046a7c1b6e031065495ff19013f18b9a4a94dc47713f3d",
+      "reused": true,
+      "bytes": 6912,
+      "durationSeconds": 1.152,
+      "bitrate": 48000,
+      "risks": [
+        "catalog-pinyin-differs-from-pypinyin-default"
+      ]
+    },
+    {
+      "wordId": "hsk3.word.l1.0469.v1",
+      "hanzi": "着",
+      "pinyin": "zhe",
+      "audioId": "hsk3.audio.hsk1.l1-0469.v1",
+      "storageKey": "audio/formal/hsk1/l1-0469-v1.mp3",
+      "checksumSha256": "3d069e40f38b37740c1e65459b943cd8c8326122b8af48ba91027f02cf66c298",
+      "reused": true,
+      "bytes": 6768,
+      "durationSeconds": 1.128,
+      "bitrate": 48000,
+      "risks": [
+        "contains-polyphonic-character"
+      ]
+    },
+    {
+      "wordId": "hsk3.word.l1.0471.v1",
+      "hanzi": "真的",
+      "pinyin": "zhēn de",
+      "audioId": "hsk3.audio.hsk1.l1-0471.v1",
+      "storageKey": "audio/formal/hsk1/l1-0471-v1.mp3",
+      "checksumSha256": "39c5a76c3c72b2ad90974e5bcf61ccbca55cb73f082a832fe4e91ce664125eb6",
+      "reused": true,
+      "bytes": 8064,
+      "durationSeconds": 1.344,
+      "bitrate": 48000,
+      "risks": [
+        "contains-polyphonic-character"
+      ]
+    },
+    {
+      "wordId": "hsk3.word.l1.0472.v1",
+      "hanzi": "正",
+      "pinyin": "zhèng",
+      "audioId": "hsk3.audio.hsk1.l1-0472.v1",
+      "storageKey": "audio/formal/hsk1/l1-0472-v1.mp3",
+      "checksumSha256": "7b130198bdf74c21fb6a934037acc71aba08f20ce2acf9901994424d2f68a399",
+      "reused": true,
+      "bytes": 6912,
+      "durationSeconds": 1.152,
+      "bitrate": 48000,
+      "risks": [
+        "contains-polyphonic-character"
+      ]
+    },
+    {
+      "wordId": "hsk3.word.l1.0475.v1",
+      "hanzi": "知识",
+      "pinyin": "zhīshi",
+      "audioId": "hsk3.audio.hsk1.l1-0475.v1",
+      "storageKey": "audio/formal/hsk1/l1-0475-v1.mp3",
+      "checksumSha256": "4502811c7a5189bcc817c61e89755530d1cede806898632cab40dd8fe947c087",
+      "reused": true,
+      "bytes": 8352,
+      "durationSeconds": 1.392,
+      "bitrate": 48000,
+      "risks": [
+        "catalog-pinyin-differs-from-pypinyin-default"
+      ]
+    },
+    {
+      "wordId": "hsk3.word.l1.0476.v1",
+      "hanzi": "中",
+      "pinyin": "zhōng",
+      "audioId": "hsk3.audio.hsk1.l1-0476.v1",
+      "storageKey": "audio/formal/hsk1/l1-0476-v1.mp3",
+      "checksumSha256": "a7580bc046c2312a4d3a5510dbd24f2f54696a9a9236d337eeb386cdeb3b8158",
+      "reused": true,
+      "bytes": 6768,
+      "durationSeconds": 1.128,
+      "bitrate": 48000,
+      "risks": [
+        "contains-polyphonic-character"
+      ]
+    },
+    {
+      "wordId": "hsk3.word.l1.0478.v1",
+      "hanzi": "中间",
+      "pinyin": "zhōngjiān",
+      "audioId": "hsk3.audio.hsk1.l1-0478.v1",
+      "storageKey": "audio/formal/hsk1/l1-0478-v1.mp3",
+      "checksumSha256": "cd2929795eb06d98f224534fdbbb598b1ab2ee1a9f1ab00cc93558f52cda694e",
+      "reused": true,
+      "bytes": 8208,
+      "durationSeconds": 1.368,
+      "bitrate": 48000,
+      "risks": [
+        "contains-polyphonic-character"
+      ]
+    },
+    {
+      "wordId": "hsk3.word.l1.0479.v1",
+      "hanzi": "中文",
+      "pinyin": "Zhōngwén",
+      "audioId": "hsk3.audio.hsk1.l1-0479.v1",
+      "storageKey": "audio/formal/hsk1/l1-0479-v1.mp3",
+      "checksumSha256": "d1794ec5f53f143bc7201b095cb8e30583a5b19f09fa5c3bdb260b412a550742",
+      "reused": true,
+      "bytes": 8064,
+      "durationSeconds": 1.344,
+      "bitrate": 48000,
+      "risks": [
+        "contains-polyphonic-character"
+      ]
+    },
+    {
+      "wordId": "hsk3.word.l1.0480.v1",
+      "hanzi": "中午",
+      "pinyin": "zhōngwǔ",
+      "audioId": "hsk3.audio.hsk1.l1-0480.v1",
+      "storageKey": "audio/formal/hsk1/l1-0480-v1.mp3",
+      "checksumSha256": "f8728bef716567eb46273d59299ceb24cd244599dab8122893ca5122b2387b70",
+      "reused": true,
+      "bytes": 8064,
+      "durationSeconds": 1.344,
+      "bitrate": 48000,
+      "risks": [
+        "contains-polyphonic-character"
+      ]
+    },
+    {
+      "wordId": "hsk3.word.l1.0481.v1",
+      "hanzi": "中学",
+      "pinyin": "zhōngxué",
+      "audioId": "hsk3.audio.hsk1.l1-0481.v1",
+      "storageKey": "audio/formal/hsk1/l1-0481-v1.mp3",
+      "checksumSha256": "88c7205c8714375a873fbdfcacb4c24d2e869c743d97883a3d3116e94dd33c24",
+      "reused": true,
+      "bytes": 8496,
+      "durationSeconds": 1.416,
+      "bitrate": 48000,
+      "risks": [
+        "contains-polyphonic-character"
+      ]
+    },
+    {
+      "wordId": "hsk3.word.l1.0482.v1",
+      "hanzi": "中学生",
+      "pinyin": "zhōngxuéshēng",
+      "audioId": "hsk3.audio.hsk1.l1-0482.v1",
+      "storageKey": "audio/formal/hsk1/l1-0482-v1.mp3",
+      "checksumSha256": "7cd5ff310c813fce4dcfb0019374272a390adb807593b9d633035c85610e8f79",
+      "reused": true,
+      "bytes": 9360,
+      "durationSeconds": 1.56,
+      "bitrate": 48000,
+      "risks": [
+        "contains-polyphonic-character"
+      ]
+    },
+    {
+      "wordId": "hsk3.word.l1.0483.v1",
+      "hanzi": "重",
+      "pinyin": "zhòng",
+      "audioId": "hsk3.audio.hsk1.l1-0483.v1",
+      "storageKey": "audio/formal/hsk1/l1-0483-v1.mp3",
+      "checksumSha256": "c97ff60e8ed0bd4bd10febc91cc012844f0a13aff8b328d0db9d10a1f4dafacd",
+      "reused": true,
+      "bytes": 6768,
+      "durationSeconds": 1.128,
+      "bitrate": 48000,
+      "risks": [
+        "contains-polyphonic-character"
+      ]
+    },
+    {
+      "wordId": "hsk3.word.l1.0489.v1",
+      "hanzi": "子",
+      "pinyin": "zi",
+      "audioId": "hsk3.audio.hsk1.l1-0489.v1",
+      "storageKey": "audio/formal/hsk1/l1-0489-v1.mp3",
+      "checksumSha256": "f30e9a82a8af153f348941bc617c46ed341757e345305001237d48d236753c5b",
+      "reused": true,
+      "bytes": 6912,
+      "durationSeconds": 1.152,
+      "bitrate": 48000,
+      "risks": [
+        "contains-polyphonic-character",
+        "catalog-has-surface-or-pinyin-variant"
+      ]
+    },
+    {
+      "wordId": "hsk3.word.l1.0491.v1",
+      "hanzi": "走路",
+      "pinyin": "zǒulù",
+      "audioId": "hsk3.audio.hsk1.l1-0491.v1",
+      "storageKey": "audio/formal/hsk1/l1-0491-v1.mp3",
+      "checksumSha256": "7d7b13cae509ef54c70ab8b71c849a9a102122034183f07812194d3050790fd9",
+      "reused": true,
+      "bytes": 7920,
+      "durationSeconds": 1.32,
+      "bitrate": 48000,
+      "risks": [
+        "contains-polyphonic-character"
+      ]
+    },
+    {
+      "wordId": "hsk3.word.l1.0492.v1",
+      "hanzi": "最",
+      "pinyin": "zuì",
+      "audioId": "hsk3.audio.hsk1.l1-0492.v1",
+      "storageKey": "audio/formal/hsk1/l1-0492-v1.mp3",
+      "checksumSha256": "14d530d4594fa0b162053351111e6a9b0dcfb4030a0859b12c7e1bf4bcacd705",
+      "reused": true,
+      "bytes": 6912,
+      "durationSeconds": 1.152,
+      "bitrate": 48000,
+      "risks": [
+        "contains-polyphonic-character"
+      ]
+    },
+    {
+      "wordId": "hsk3.word.l1.0493.v1",
+      "hanzi": "最好",
+      "pinyin": "zuìhǎo",
+      "audioId": "hsk3.audio.hsk1.l1-0493.v1",
+      "storageKey": "audio/formal/hsk1/l1-0493-v1.mp3",
+      "checksumSha256": "b1450fbfab9b403781df944f6bac4bb2ad6925037a793dc633697a5cd4ad9032",
+      "reused": true,
+      "bytes": 8352,
+      "durationSeconds": 1.392,
+      "bitrate": 48000,
+      "risks": [
+        "contains-polyphonic-character"
+      ]
+    },
+    {
+      "wordId": "hsk3.word.l1.0494.v1",
+      "hanzi": "最后",
+      "pinyin": "zuìhòu",
+      "audioId": "hsk3.audio.topic-p2.l1-0494.v1",
+      "storageKey": "audio/formal/topics/p2-samples/l1-0494-v1.mp3",
+      "checksumSha256": "f1325f9569ffd836942e0a20b55c95ab44aa0b3d030d2e11f52d41626f1ae2c9",
+      "reused": true,
+      "bytes": 10656,
+      "durationSeconds": 1.776,
+      "bitrate": 48000,
+      "risks": [
+        "contains-polyphonic-character"
+      ]
+    },
+    {
+      "wordId": "hsk3.word.l1.0497.v1",
+      "hanzi": "左边",
+      "pinyin": "zuǒbian",
+      "audioId": "hsk3.audio.topic-p2.l1-0497.v1",
+      "storageKey": "audio/formal/topics/p2-samples/l1-0497-v1.mp3",
+      "checksumSha256": "3d83a436f847de5c50075cd2d93afe04b9183af9216779a0ac4b26f5fb3251f2",
+      "reused": true,
+      "bytes": 10656,
+      "durationSeconds": 1.776,
+      "bitrate": 48000,
+      "risks": [
+        "catalog-pinyin-differs-from-pypinyin-default",
+        "contains-polyphonic-character"
+      ]
+    },
+    {
+      "wordId": "hsk3.word.l1.0499.v1",
+      "hanzi": "坐下",
+      "pinyin": "zuò xia",
+      "audioId": "hsk3.audio.hsk1.l1-0499.v1",
+      "storageKey": "audio/formal/hsk1/l1-0499-v1.mp3",
+      "checksumSha256": "03c02835a6bc0968b0def145459f838f789a7b66da6d0fda0fd239129a30b6c7",
+      "reused": true,
+      "bytes": 8208,
+      "durationSeconds": 1.368,
+      "bitrate": 48000,
+      "risks": [
+        "catalog-pinyin-differs-from-pypinyin-default"
+      ]
+    }
+  ]
+}

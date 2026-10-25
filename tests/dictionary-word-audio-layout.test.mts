@@ -15,10 +15,10 @@ test("full-catalog word details expose published audio metadata instead of hidin
   assert.equal(withAudio.item.audioAsset?.sourceLabel, "Synthesized pronunciation");
   assert.match(withAudio.item.audioAsset?.src ?? "", /^\/audio\/formal\/.+\.mp3$/);
 
-  const withoutAudio = await getPublishedWordBySlug("hsk3.word.l1.0001.v1");
+  const withoutAudio = await getPublishedWordBySlug("hsk3.word.l2.0001.v1");
   assert.equal(withoutAudio.status, "published");
   if (withoutAudio.status !== "published") return;
-  assert.equal(withoutAudio.item.hanzi, "爱");
+  assert.equal(withoutAudio.item.hanzi, "啊");
   assert.equal(withoutAudio.item.audio.status, "unavailable");
   assert.equal(withoutAudio.item.audioAsset, undefined);
 });
