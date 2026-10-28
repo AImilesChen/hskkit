@@ -10,6 +10,8 @@ type RetryableError = Error & { retryable?: boolean };
 const snapshotTtlMs = 5_000;
 let cachedSnapshot: CachedSnapshot | undefined;
 let inFlight: Promise<unknown> | undefined;
+let cachedSessionSnapshot: CachedSnapshot | undefined;
+let sessionInFlight: Promise<unknown> | undefined;
 let cacheGeneration = 0;
 
 const sleep = (delayMs: number) => new Promise<void>((resolve) => setTimeout(resolve, delayMs));
@@ -46,10 +48,53 @@ async function fetchAccountSnapshot(timeoutMs: number): Promise<unknown> {
   }
 }
 
+async function fetchAccountSessionSnapshot(timeoutMs: number): Promise<unknown> {
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), timeoutMs);
+  try {
+    const response = await fetch("/api/v1/account/session", {
+      cache: "no-store",
+      headers: { "content-type": "application/json" },
+      signal: controller.signal,
+    });
+    const data = await response.json();
+    if (!response.ok) throw new Error(data?.error ?? "ACCOUNT_SESSION_UNAVAILABLE");
+    return data;
+  } finally {
+    clearTimeout(timeout);
+  }
+}
+
 export function clearAccountSnapshot() {
   cacheGeneration += 1;
   cachedSnapshot = undefined;
   inFlight = undefined;
+  cachedSessionSnapshot = undefined;
+  sessionInFlight = undefined;
+}
+
+export function loadAccountSessionSnapshot<T = unknown>({
+  force = false,
+  timeoutMs = 5_000,
+}: Pick<AccountSnapshotOptions, "force" | "timeoutMs"> = {}): Promise<T> {
+  const currentTime = Date.now();
+  if (!force && cachedSessionSnapshot && cachedSessionSnapshot.expiresAt > currentTime) {
+    return Promise.resolve(cachedSessionSnapshot.value as T);
+  }
+  if (!force && sessionInFlight) return sessionInFlight as Promise<T>;
+
+  const generation = cacheGeneration;
+  const request = fetchAccountSessionSnapshot(timeoutMs).then((value) => {
+    if (generation === cacheGeneration) {
+      cachedSessionSnapshot = { value, expiresAt: Date.now() + 30_000 };
+    }
+    return value as T;
+  });
+  sessionInFlight = request;
+  void request.finally(() => {
+    if (sessionInFlight === request) sessionInFlight = undefined;
+  }).catch(() => undefined);
+  return request;
 }
 
 export function loadAccountSnapshot<T = unknown>({

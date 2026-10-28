@@ -51,14 +51,25 @@ const wordById = new Map(words.map((word) => [word.id, word]));
 const wordsByLevel = new Map<string, IndexedWord[]>();
 const wordsByCharacter = new Map<string, IndexedWord[]>();
 const suggestionCandidates = new Map<string, IndexedWord[]>();
+const wordsBySearchPinyin = new Map<string, IndexedWord[]>();
+const wordPositionWithinLevel = new Map<string, number>();
+
+function appendToIndex<Key, Value>(index: Map<Key, Value[]>, key: Key, value: Value) {
+  const existing = index.get(key);
+  if (existing) existing.push(value);
+  else index.set(key, [value]);
+}
 
 for (const word of words) {
-  wordsByLevel.set(word.level_band, [...(wordsByLevel.get(word.level_band) ?? []), word]);
+  const levelWords = wordsByLevel.get(word.level_band);
+  wordPositionWithinLevel.set(word.id, levelWords?.length ?? 0);
+  appendToIndex(wordsByLevel, word.level_band, word);
+  appendToIndex(wordsBySearchPinyin, word.search_pinyin, word);
   for (const character of new Set([...word.hanzi])) {
-    wordsByCharacter.set(character, [...(wordsByCharacter.get(character) ?? []), word]);
+    appendToIndex(wordsByCharacter, character, word);
   }
   for (const first of new Set([word.search_pinyin[0], word.search_english[0]].filter(Boolean))) {
-    suggestionCandidates.set(first, [...(suggestionCandidates.get(first) ?? []), word]);
+    appendToIndex(suggestionCandidates, first, word);
   }
 }
 
@@ -190,10 +201,12 @@ export function findPublicCatalogWordLearningContext(assetId: string) {
   const current = wordById.get(assetId);
   if (!current) return null;
   const levelWords = wordsByLevel.get(current.level_band) ?? [];
-  const currentIndex = levelWords.findIndex((word) => word.id === current.id);
+  const currentIndex = wordPositionWithinLevel.get(current.id) ?? -1;
   const candidates = Array.from({ length: Math.min(8, Math.max(0, levelWords.length - 1)) }, (_, offset) =>
     levelWords[(currentIndex + offset + 1) % levelWords.length],
   );
-  const toneComparisons = words.filter((word) => word.id !== current.id && word.search_pinyin === current.search_pinyin).slice(0, 8);
+  const toneComparisons = (wordsBySearchPinyin.get(current.search_pinyin) ?? [])
+    .filter((word) => word.id !== current.id)
+    .slice(0, 8);
   return { current, candidates, nextWord: candidates[0] ?? null, toneComparisons };
 }

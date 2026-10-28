@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { StudyPage } from "../../../components/study-shell";
-import { categoryForTopic, findTopicBySlug } from "@/lib/topics/catalog";
+import { categoryForTopic, findTopicBySlug, learningTopics } from "@/lib/topics/catalog";
 import { getTrustedTopicPracticeQuestions } from "@/lib/topics/server";
 import { publicTopicPracticeQuestion } from "@/lib/topics/practice";
 import { TopicPracticeClient } from "./topic-practice-client";
@@ -10,7 +10,11 @@ import { TopicIcon } from "../../topic-visuals";
 import { topicIconFor, topicVisualFor } from "@/lib/topics/visuals";
 
 type Props = { params: Promise<{ slug: string }> };
-export const dynamic = "force-dynamic";
+export const revalidate = 86_400;
+
+export function generateStaticParams() {
+  return learningTopics.filter((topic) => topic.status === "published").map((topic) => ({ slug: topic.slug }));
+}
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const topic = findTopicBySlug((await params).slug);

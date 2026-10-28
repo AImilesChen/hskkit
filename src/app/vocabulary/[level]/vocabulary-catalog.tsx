@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { FormEvent, useEffect, useMemo, useRef, useState } from "react";
 import { AudioButton } from "../../components/audio-button";
 import { QuickFlashcards } from "./quick-flashcards";
@@ -71,8 +71,10 @@ function visiblePages(current: number, total: number): PageItem[] {
   return result;
 }
 
-export function VocabularyCatalog({ level, levelLabel, publishedCount, initialMode = "browse" }: { level: number; levelLabel: string; publishedCount: number; initialMode?: "browse" | "flashcards" }) {
+export function VocabularyCatalog({ level, levelLabel, publishedCount }: { level: number; levelLabel: string; publishedCount: number }) {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const initialMode = searchParams.get("mode") === "flashcards" ? "flashcards" : "browse";
   const [mode, setMode] = useState<"browse" | "flashcards">(initialMode);
   useEffect(() => setMode(initialMode), [initialMode]);
 

@@ -7,7 +7,11 @@ import { buildDictionaryPractice } from "../../../../lib/dictionary/p2-learning"
 import { StudyPage } from "../../../components/study-shell";
 import { WordPracticeClient } from "./word-practice-client";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 86_400;
+
+export function generateStaticParams() {
+  return [];
+}
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;

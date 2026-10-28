@@ -8,7 +8,9 @@ import {
   categoryForTopic,
   findTopicBySlug,
   findTopicCategoryBySlug,
+  learningTopics,
   relatedTopicsFor,
+  topicCategories,
   topicsForCategory,
 } from "@/lib/topics/catalog";
 import { getVerifiedTopicsSnapshot, getVerifiedTopicWords, verifiedTopicsFromSnapshot } from "@/lib/topics/server";
@@ -20,7 +22,14 @@ import { topicMeaningForCard } from "@/lib/topics/presentation";
 
 type Props = { params: Promise<{ slug: string }> };
 
-export const dynamic = "force-dynamic";
+export const revalidate = 86_400;
+
+export function generateStaticParams() {
+  return [
+    ...topicCategories.map((category) => ({ slug: category.slug })),
+    ...learningTopics.filter((topic) => topic.status === "published").map((topic) => ({ slug: topic.slug })),
+  ];
+}
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const slug = (await params).slug;

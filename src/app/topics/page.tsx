@@ -7,7 +7,7 @@ import { TopicsBrowser } from "./topics-browser";
 import { CategoryVisual, TopicHeroScene } from "./topic-visuals";
 import { topicVisualFor } from "@/lib/topics/visuals";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 86_400;
 
 const publishedCount = learningTopics.filter((topic) => topic.status === "published").length;
 

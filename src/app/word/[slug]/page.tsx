@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { Suspense } from "react";
 import { DictionaryPronunciation } from "../../components/dictionary-pronunciation";
 import { DictionaryWordActions } from "../../components/dictionary-word-actions";
 import TodayWordCompletion from "../../components/today-word-completion";
@@ -12,7 +13,7 @@ import { getDictionaryLearningContext } from "@/lib/dictionary/p2-server";
 import { getPublishedWordBySlug, splitDictionaryMeanings } from "@/lib/dictionary/runtime-word";
 import { todayContentByAssetId, todayMeaningCheck } from "@/lib/learning/today-content";
 
-type Props = { params: Promise<{ slug: string }>; searchParams?: Promise<Record<string, string | string[] | undefined>> };
+type Props = { params: Promise<{ slug: string }> };
 
 const PART_OF_SPEECH_LABELS: Record<string, string> = {
   V: "Verb",
@@ -31,7 +32,7 @@ function partOfSpeechLabel(value: string) {
   return PART_OF_SPEECH_LABELS[value] ?? value;
 }
 
-export const dynamic = "force-dynamic";
+export const revalidate = 86_400;
 
 export function generateStaticParams() {
   return listPublishedWords().map((word) => ({ slug: word.slug }));
@@ -53,7 +54,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   };
 }
 
-export default async function WordPage({ params, searchParams }: Props) {
+export default async function WordPage({ params }: Props) {
   const result = await getPublishedWordBySlug((await params).slug);
   if (result.status !== "published") notFound();
   const word = result.item;
@@ -70,10 +71,7 @@ export default async function WordPage({ params, searchParams }: Props) {
     + Number(word.collocations.length > 0)
     + Number(toneComparisons.length > 0)
     + Number(characters.length > 0);
-  const query = await searchParams;
-  const dailySessionId = typeof query?.dailySessionId === "string" ? query.dailySessionId : "";
-  const dailyItemId = typeof query?.dailyItemId === "string" ? query.dailyItemId : "";
-  const todayContent = dailySessionId && dailyItemId ? todayContentByAssetId(word.id) : undefined;
+  const todayContent = todayContentByAssetId(word.id);
   const meaningCheck = todayContent ? todayMeaningCheck(todayContent) : undefined;
   const schema = {
     "@context": "https://schema.org",
@@ -115,7 +113,7 @@ export default async function WordPage({ params, searchParams }: Props) {
           </aside>
 
         <div className="min-w-0 xl:col-start-1 xl:row-start-2">
-          {dailySessionId && dailyItemId && meaningCheck && <div className="mt-5"><TodayWordCompletion assetId={word.id} dailySessionId={dailySessionId} dailyItemId={dailyItemId} meaningCheck={meaningCheck} step={typeof query?.todayStep === "string" ? query.todayStep : undefined} total={typeof query?.todayTotal === "string" ? query.todayTotal : undefined} /></div>}
+          {meaningCheck ? <Suspense fallback={null}><div className="mt-5"><TodayWordCompletion assetId={word.id} meaningCheck={meaningCheck} /></div></Suspense> : null}
 
       {studySectionCount >= 3 && <nav aria-label="On this page" className="mt-6 flex flex-wrap gap-2 rounded-2xl border border-slate-200 bg-white p-3 shadow-sm">
         <span className="inline-flex min-h-10 items-center px-2 text-xs font-bold uppercase tracking-[0.12em] text-slate-500">Study sections</span>
