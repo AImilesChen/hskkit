@@ -43,6 +43,19 @@ const parsedReadings = new Map(characters.map((item) => [
   item.hanzi,
   item.pinyin.map(parsePinyinSyllable),
 ]));
+const charactersByRadical = new Map<string, IndexedCharacter[]>();
+const charactersByPlainPinyin = new Map<string, IndexedCharacter[]>();
+
+for (const item of characters) {
+  const radicalItems = charactersByRadical.get(item.radical);
+  if (radicalItems) radicalItems.push(item);
+  else charactersByRadical.set(item.radical, [item]);
+  for (const reading of parsedReadings.get(item.hanzi) ?? []) {
+    const pinyinItems = charactersByPlainPinyin.get(reading.plain);
+    if (pinyinItems) pinyinItems.push(item);
+    else charactersByPlainPinyin.set(reading.plain, [item]);
+  }
+}
 
 export const characterIndexMetadata = {
   releaseId: characterIndexData.releaseId,
@@ -168,11 +181,11 @@ export function getIndexedCharacter(hanzi: string) {
 }
 
 export function relatedIndexedCharacters(item: IndexedCharacter) {
-  const sameRadical = characters.filter((candidate) => candidate.hanzi !== item.hanzi && candidate.radical === item.radical)
+  const sameRadical = (charactersByRadical.get(item.radical) ?? []).filter((candidate) => candidate.hanzi !== item.hanzi)
     .sort((left, right) => left.firstLevel - right.firstLevel || left.strokes - right.strokes || right.wordCount - left.wordCount)
     .slice(0, 12);
   const sound = parsePinyinSyllable(item.pinyin[0]);
-  const samePinyin = characters.filter((candidate) => candidate.hanzi !== item.hanzi && (parsedReadings.get(candidate.hanzi) ?? []).some((reading) => reading.plain === sound.plain))
+  const samePinyin = (charactersByPlainPinyin.get(sound.plain) ?? []).filter((candidate) => candidate.hanzi !== item.hanzi)
     .sort((left, right) => left.firstLevel - right.firstLevel || right.wordCount - left.wordCount)
     .slice(0, 12);
   return { sameRadical, samePinyin };

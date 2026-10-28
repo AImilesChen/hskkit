@@ -6,6 +6,8 @@ interface CloudflareEnv {
   FEEDBACK_HASH_SECRET?: string;
   FEEDBACK_TO_EMAIL?: string;
   COMMERCIAL_EXPORTS_R2: R2Bucket;
+  NEXT_INC_CACHE_R2_BUCKET: R2Bucket;
+  NEXT_INC_CACHE_R2_PREFIX?: string;
   BLOG_MEDIA_R2: R2Bucket;
   COMMERCIAL_EXPORT_QUEUE: Queue<{ jobId: string }>;
   COMMERCE_MODE?: string;

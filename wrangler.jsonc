@@ -37,7 +37,8 @@
 		"STRIPE_HALF_OFF_START_AT": "2026-10-20T03:15:00.000Z",
 		"STRIPE_HALF_OFF_END_AT": "2026-11-03T03:15:00.000Z",
 		"PLACEMENT_DB_MODE": "primary",
-		"GOOGLE_REDIRECT_URI": "https://hskkit.com/api/v1/auth/google/callback"
+		"GOOGLE_REDIRECT_URI": "https://hskkit.com/api/v1/auth/google/callback",
+		"NEXT_INC_CACHE_R2_PREFIX": "system/opennext-cache"
 	},
 	"d1_databases": [{
 		"binding": "LEARNING_DB",
@@ -55,6 +56,9 @@
 	}],
 	"r2_buckets": [{
 		"binding": "COMMERCIAL_EXPORTS_R2",
+		"bucket_name": "hskkit-commercial-exports"
+	}, {
+		"binding": "NEXT_INC_CACHE_R2_BUCKET",
 		"bucket_name": "hskkit-commercial-exports"
 	}, {
 		"binding": "BLOG_MEDIA_R2",

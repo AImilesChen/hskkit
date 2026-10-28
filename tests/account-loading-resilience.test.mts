@@ -101,6 +101,7 @@ test("only the primary account status request touches session recency", () => {
   assert.match(route, /requestIdentity\(\{ touchSession: true \}\)/);
   assert.match(accountClient, /loadAccountSnapshot/);
   assert.match(accountClient, /settleInBatches/);
-  assert.match(header, /loadAccountSnapshot/);
+  assert.match(header, /loadAccountSessionSnapshot/);
+  assert.match(read("../src/app/api/v1/account/session/route.ts"), /!jar\.has\(SESSION_COOKIE\)[\s\S]*!jar\.has\(ACCOUNT_COOKIE\)/);
   assert.doesNotMatch(header, /fetch\("\/api\/v1\/account"/);
 });

@@ -126,7 +126,8 @@ test("P0 topic pages expose SEO, breadcrumbs, readable production cards, real wo
   assert.match(index, /bg-gradient-to-br[^\n]*from-blue-50/);
   assert.match(index, /<h1 className="[^"]*text-slate-950[^"]*">Learn Chinese through real-life topics<\/h1>/);
   assert.doesNotMatch(card, /<dd className="[^"]*truncate[^"]*"[^>]*>\{topic\.levelBands/);
-  assert.match(index, /force-dynamic/);
+  assert.match(index, /revalidate\s*=\s*86_400/);
+  assert.doesNotMatch(index, /force-dynamic/);
   assert.match(index, /robots:\s*ready/);
   assert.match(index, /LearningResource/);
   assert.match(detail, /<h1 className="[^"]*text-white[^"]*">\{topic\.title\}<\/h1>/);

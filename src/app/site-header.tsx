@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
-import { loadAccountSnapshot } from "@/lib/account/browser";
+import { loadAccountSessionSnapshot } from "@/lib/account/browser";
 import {
   isNavigationEntryActive,
   isNavigationGroup,
@@ -42,7 +42,7 @@ export default function SiteHeader() {
 
   useEffect(() => {
     const refreshAuth = () => {
-      void loadAccountSnapshot<{ account: { userId: string } | null }>()
+      void loadAccountSessionSnapshot<{ account: { userId: string } | null }>()
         .then((payload: { account: { userId: string } | null }) => setAuthState(payload.account?.userId ? "account" : "guest"))
         .catch(() => undefined);
     };

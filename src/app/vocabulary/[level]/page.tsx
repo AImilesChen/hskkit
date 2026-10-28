@@ -1,13 +1,14 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { Suspense } from "react";
 import { StudyPage } from "../../components/study-shell";
 import { getHsk3LevelStatus } from "@/lib/content/level-status";
 import { VocabularyCatalog } from "./vocabulary-catalog";
+import { VocabularyLevelNavigation } from "./vocabulary-level-navigation";
 
 interface Props {
   params: Promise<{ level: string }>;
-  searchParams?: Promise<{ mode?: string }>;
 }
 
 const levelOptions = [
@@ -25,7 +26,11 @@ function parseLevel(value: string) {
   return Number.isInteger(level) && level >= 1 && level <= 9 ? level : null;
 }
 
-export const dynamic = "force-dynamic";
+export const revalidate = 86_400;
+
+export function generateStaticParams() {
+  return levelOptions.map((option) => ({ level: String(option.level) }));
+}
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const requestedLevel = parseLevel((await params).level);
@@ -42,7 +47,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   };
 }
 
-export default async function VocabularyPage({ params, searchParams }: Props) {
+export default async function VocabularyPage({ params }: Props) {
   const requestedLevel = parseLevel((await params).level);
   if (!requestedLevel) notFound();
   const level = requestedLevel >= 8 ? 7 : requestedLevel;
@@ -50,7 +55,6 @@ export default async function VocabularyPage({ params, searchParams }: Props) {
   if (status.availability !== "ready") notFound();
 
   const levelLabel = level === 7 ? "HSK 7–9" : `HSK ${level}`;
-  const initialMode = (await searchParams)?.mode === "flashcards" ? "flashcards" : "browse";
   return (
     <StudyPage>
       <main className="mx-auto w-full max-w-[1200px] flex-1 px-5 py-[24px] sm:px-8 md:py-[32px]">
@@ -89,26 +93,17 @@ export default async function VocabularyPage({ params, searchParams }: Props) {
             </div>
           </section>
 
-          <nav className="mt-[12px] flex flex-col gap-2 lg:flex-row lg:items-center" aria-label="HSK vocabulary levels">
-            <p className="shrink-0 text-sm font-semibold text-slate-800">Choose a level</p>
-            <div className="flex gap-2 overflow-x-auto pb-2 lg:pb-0">
-              {levelOptions.map((option) => {
-                const current = option.level === level;
-                return <Link
-                  key={option.level}
-                  href={`/vocabulary/${option.level}${initialMode === "flashcards" ? "?mode=flashcards#vocabulary-activities" : ""}`}
-                  aria-current={current ? "page" : undefined}
-                  className={`inline-flex min-h-11 shrink-0 items-center justify-center rounded-xl border px-4 text-sm font-semibold transition focus:outline-none focus:ring-4 focus:ring-blue-100 ${current ? "border-blue-600 bg-blue-600 text-white" : "border-slate-300 bg-white text-slate-700 hover:border-blue-500 hover:bg-blue-50 hover:text-blue-700"}`}
-                >{option.label}</Link>;
-              })}
-            </div>
-          </nav>
+          <Suspense fallback={<div className="mt-[12px] h-14" aria-hidden="true" />}>
+            <VocabularyLevelNavigation level={level} options={levelOptions} />
+          </Suspense>
 
           {requestedLevel >= 8 && <p className="mt-4 rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm leading-6 text-amber-950">HSK 3.0 publishes Levels 7–9 as one unified HSK 7–9 advanced ability band, not a separate Level {requestedLevel} official word list. This page therefore uses the shared HSK 7–9 catalog.</p>}
         </header>
 
         <div id="vocabulary-activities" className="mt-[20px] scroll-mt-24">
-          <VocabularyCatalog level={level} levelLabel={levelLabel} publishedCount={status.wordCount} initialMode={initialMode} />
+          <Suspense fallback={<div className="min-h-40 rounded-2xl border border-slate-200 bg-white" aria-hidden="true" />}>
+            <VocabularyCatalog level={level} levelLabel={levelLabel} publishedCount={status.wordCount} />
+          </Suspense>
         </div>
 
         <div className="mt-[40px] flex flex-wrap gap-3 border-t border-slate-200 pt-[24px]">

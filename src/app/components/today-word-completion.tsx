@@ -1,11 +1,17 @@
 "use client";
 
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import { useRef, useState } from "react";
 import { todayCompletionProofKey } from "../../lib/learning/today-plan";
 import type { TodayMeaningCheck } from "../../lib/learning/today-content";
 
-export default function TodayWordCompletion({ assetId, dailySessionId, dailyItemId, meaningCheck, step, total }: { assetId: string; dailySessionId: string; dailyItemId: string; meaningCheck: TodayMeaningCheck; step?: string; total?: string }) {
+export default function TodayWordCompletion({ assetId, meaningCheck }: { assetId: string; meaningCheck: TodayMeaningCheck }) {
+  const searchParams = useSearchParams();
+  const dailySessionId = searchParams.get("dailySessionId") ?? "";
+  const dailyItemId = searchParams.get("dailyItemId") ?? "";
+  const step = searchParams.get("todayStep") ?? undefined;
+  const total = searchParams.get("todayTotal") ?? undefined;
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   const [selectedAnswer, setSelectedAnswer] = useState("");
@@ -77,6 +83,8 @@ export default function TodayWordCompletion({ assetId, dailySessionId, dailyItem
     setWrong(false);
     void finish(selectedAnswer, nextAttempts);
   }
+
+  if (!dailySessionId || !dailyItemId) return null;
 
   return <section className="rounded-2xl border border-blue-200 bg-blue-50 p-5" aria-label="Today Session word step">
     <p className="text-xs font-bold uppercase tracking-[0.14em] text-blue-700">Today Session{step && total ? ` · Step ${step} of ${total}` : ""}</p>
