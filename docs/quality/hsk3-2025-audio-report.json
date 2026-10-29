@@ -1,0 +1,4394 @@
+{
+  "level": 3,
+  "voice": "zh-CN-XiaoxiaoNeural",
+  "reused": [
+    {
+      "number": 504,
+      "storageKey": "audio/formal/topics/p2-samples/l2-0004-v1.mp3",
+      "checksumSha256": "59d3e37ad9568860c2e13d1465b99acd59296b339676955a12579155ffa9cbcc"
+    },
+    {
+      "number": 513,
+      "storageKey": "audio/formal/hsk1/l1-0012-v1.mp3",
+      "checksumSha256": "ecf6491fb57593fd4152d4a95a1d0e348a0ecc4098f9fbdfdbbac02da5b7e5d0"
+    },
+    {
+      "number": 515,
+      "storageKey": "audio/formal/topics/p2-samples/l2-0013-v1.mp3",
+      "checksumSha256": "d7eb57d143de49fa8d55faa0e6887c975c381b1e9861c44ea59b202459db7561"
+    },
+    {
+      "number": 517,
+      "storageKey": "audio/formal/hsk1/l1-0019-v1.mp3",
+      "checksumSha256": "b69d1b2701cc711639c3ae855c031390cf91f39253ebe81b78737e5b8085a7b9"
+    },
+    {
+      "number": 531,
+      "storageKey": "audio/formal/hsk1/l1-0026-v1.mp3",
+      "checksumSha256": "ce5de54499d5a54fb0f5d33c96cb27071eee19f7e229ebaad78b2c032e20a72e"
+    },
+    {
+      "number": 532,
+      "storageKey": "audio/formal/hsk1/l1-0027-v1.mp3",
+      "checksumSha256": "48b5a661aec9d6a8eb9ff14b058ce50a27478efe0db50995a3d770d9f68cf6fe"
+    },
+    {
+      "number": 533,
+      "storageKey": "audio/formal/topics/p2-samples/l5-0041-v1.mp3",
+      "checksumSha256": "137faf5b6e120febe13a0cbcc91325213576faf04f1f2cc5af568aee51f30b39"
+    },
+    {
+      "number": 537,
+      "storageKey": "audio/formal/hsk1/l1-0029-v1.mp3",
+      "checksumSha256": "c223ea6789a2a16ffacd4584a1895fd377aa2bb9625627f834e3a6a0b17ecddd"
+    },
+    {
+      "number": 545,
+      "storageKey": "audio/formal/topics/p2-samples/l2-0047-v1.mp3",
+      "checksumSha256": "d39f720d0f0b335307a8c51bea6ab0b7ecd6c3f3427bb6a3b5333a5f97c2c94f"
+    },
+    {
+      "number": 549,
+      "storageKey": "audio/formal/topics/p2-samples/l2-0052-v1.mp3",
+      "checksumSha256": "5a09bc40d9f712971e056738f26978f4cae36d6a31c5f8dbcc15af8f50358cfc"
+    },
+    {
+      "number": 551,
+      "storageKey": "audio/formal/hsk1/l1-0037-v1.mp3",
+      "checksumSha256": "d35379037d42fc58e44f50eb60c6eef2346cae89edb16129a8db7399d8c2482f"
+    },
+    {
+      "number": 554,
+      "storageKey": "audio/formal/hsk1/l1-0038-v1.mp3",
+      "checksumSha256": "1ddc8306d92199bbf349c6a939565a5e545456026a0c8bda6d3a9a05439876bb"
+    },
+    {
+      "number": 557,
+      "storageKey": "audio/formal/hsk1/l1-0039-v1.mp3",
+      "checksumSha256": "f76f27ce8e195eb9e53a07cadc3783482f8b1b7cc1baed4d0d19af9c342b41c9"
+    },
+    {
+      "number": 561,
+      "storageKey": "audio/formal/topics/p2-samples/l4-0095-v1.mp3",
+      "checksumSha256": "a3b65f648422064a7ec82dc9646f3ff9634dcd10515a9803c787ca5f0e82acf7"
+    },
+    {
+      "number": 562,
+      "storageKey": "audio/formal/topics/p2-samples/l2-0068-v1.mp3",
+      "checksumSha256": "a64c57d092149563ae86173bef6ad1d3dca58f31c9d298b12094837c66f3b0bc"
+    },
+    {
+      "number": 568,
+      "storageKey": "audio/formal/topics/p2-samples/l2-0080-v1.mp3",
+      "checksumSha256": "6badf2f0cf71cad18a33f276ecc010ec8334f077f7b739e46bcc00ee0aee0b8c"
+    },
+    {
+      "number": 571,
+      "storageKey": "audio/formal/topics/p2-samples/l4-0138-v1.mp3",
+      "checksumSha256": "bc5a5f8439edeeb4261dbf16f1e739c495f80a1df4c31df66bd3d3b9419d2a22"
+    },
+    {
+      "number": 584,
+      "storageKey": "audio/formal/hsk1/l1-0065-v1.mp3",
+      "checksumSha256": "1b43698c555471babf76bca87a2dd465bb7487df0491cfbbaa0811601c01d9a2"
+    },
+    {
+      "number": 589,
+      "storageKey": "audio/formal/hsk1/l1-0069-v1.mp3",
+      "checksumSha256": "d1fcda1a282375148ad745ee9eef0ab5123abd4f2d9d44176c26814404d97311"
+    },
+    {
+      "number": 590,
+      "storageKey": "audio/formal/hsk1/l1-0070-v1.mp3",
+      "checksumSha256": "2a615b43f7608c4eb474480cb9e7fdd5a51e747d022c0de2d9cb0a0241d488d1"
+    },
+    {
+      "number": 591,
+      "storageKey": "audio/formal/hsk1/l1-0071-v1.mp3",
+      "checksumSha256": "f5ab31afbec8ef9bcd6e20f8f86a4243980a53a5107bb0c6206155fbadb7f389"
+    },
+    {
+      "number": 592,
+      "storageKey": "audio/formal/topics/p2-samples/l1-0073-v1.mp3",
+      "checksumSha256": "2ac1851932cc628ecea481d14ea8a3c93e2cf8ef3d637c8c4572b8fe55d9c3e1"
+    },
+    {
+      "number": 593,
+      "storageKey": "audio/formal/hsk1/l1-0077-v1.mp3",
+      "checksumSha256": "a4239b4b9c9183149e726c78a6b816b3d9cbe635a3f4e381351cd54566ecdc65"
+    },
+    {
+      "number": 594,
+      "storageKey": "audio/formal/topics/p2-samples/l4-0190-v1.mp3",
+      "checksumSha256": "74705e791f9460eaf1529745f415424b92d0c340f0a8c79744b53af4a637af50"
+    },
+    {
+      "number": 597,
+      "storageKey": "audio/formal/hsk1/l1-0084-v1.mp3",
+      "checksumSha256": "0ba2f3a031c7325148d10272a1257e821310ca1c2c29f2ddbaaf1f9ba6f52e5b"
+    },
+    {
+      "number": 601,
+      "storageKey": "audio/formal/topics/p2-samples/l2-0133-v1.mp3",
+      "checksumSha256": "88d11d675b9ce7f756f31a61192ce966ab24e37e40c794eb6fab026ef0b47410"
+    },
+    {
+      "number": 610,
+      "storageKey": "audio/formal/topics/p2-samples/l1-0096-v1.mp3",
+      "checksumSha256": "e3ac98ff316c9db34bcc53fbace6276c075b9cf8d0b6d0046719d5198308d11d"
+    },
+    {
+      "number": 619,
+      "storageKey": "audio/formal/topics/p2-samples/l2-0157-v1.mp3",
+      "checksumSha256": "84d0a9590fd7423733db2ed5b65c217841099c48aa5267fec436859c1a5d2441"
+    },
+    {
+      "number": 622,
+      "storageKey": "audio/formal/topics/p2-samples/l2-0161-v1.mp3",
+      "checksumSha256": "a6edea660d9169b79371cb64fc59ac8e20abaaedec25b2e2fd8c0a23157b8fbd"
+    },
+    {
+      "number": 623,
+      "storageKey": "audio/formal/hsk1/l1-0102-v1.mp3",
+      "checksumSha256": "e282f6c8554d4de2c00bda55d1ac462b8bcc391b33f1ed02dce89f936e556b55"
+    },
+    {
+      "number": 624,
+      "storageKey": "audio/formal/hsk1/l1-0103-v1.mp3",
+      "checksumSha256": "3f685a3649380afaf807d18281ad86bff8a3e0c1b859af7a6136fe0fde331c59"
+    },
+    {
+      "number": 625,
+      "storageKey": "audio/formal/hsk1/l1-0104-v1.mp3",
+      "checksumSha256": "5e4b13096f2204ed676c26417e536f71401490490329fcb5b33e27aa09bb8998"
+    },
+    {
+      "number": 627,
+      "storageKey": "audio/formal/hsk1/l1-0105-v1.mp3",
+      "checksumSha256": "6e650c360878f52f72ee3cc600ed9d881785c7ab2a06abed0eb8eb4d2572b25c"
+    },
+    {
+      "number": 629,
+      "storageKey": "audio/formal/topics/p2-samples/l1-0110-v1.mp3",
+      "checksumSha256": "44a9f384168cbc7ef755aa410f6bde9d1ad1e61cb8082b184e7d41d5ac700f2c"
+    },
+    {
+      "number": 632,
+      "storageKey": "audio/formal/topics/p2-samples/l2-0170-v1.mp3",
+      "checksumSha256": "3f6d22ba24c1bd749330ffe3f420f48e9fb2489751991a702b19f751648f0928"
+    },
+    {
+      "number": 636,
+      "storageKey": "audio/formal/hsk1/l1-0112-v1.mp3",
+      "checksumSha256": "0cbc9dc1aa195a282a83667242dd9f17dfd591863d02645c475a179e4a872213"
+    },
+    {
+      "number": 640,
+      "storageKey": "audio/formal/hsk1/l1-0113-v1.mp3",
+      "checksumSha256": "4e5516000d2888d3dabc8b96bf2b348c24685f513c0995bd9375f7bf83b35e6c"
+    },
+    {
+      "number": 644,
+      "storageKey": "audio/formal/topics/p2-samples/l4-0267-v1.mp3",
+      "checksumSha256": "47bfcf8673d31d0ad087a9cf06f86ec8a4947ce209f1c16c8c7710b78d2d0f8d"
+    },
+    {
+      "number": 647,
+      "storageKey": "audio/formal/topics/grocery-shopping/l2-0190-v1.mp3",
+      "checksumSha256": "a62bc02d09721e83967e545722a15b2ec88291be1104cba47ccb9fbe9bdddf37"
+    },
+    {
+      "number": 652,
+      "storageKey": "audio/formal/hsk1/l1-0125-v1.mp3",
+      "checksumSha256": "38eeeca12fa9132cd28b9faa7fbb8b1d0e77cf6ce24dbea60bddc3131c094c73"
+    },
+    {
+      "number": 658,
+      "storageKey": "audio/formal/hsk1/l1-0129-v1.mp3",
+      "checksumSha256": "c401721a18a993cf502a5c8aeb60b45a05d6e5a153b3290cd4ee927a8e170552"
+    },
+    {
+      "number": 673,
+      "storageKey": "audio/formal/hsk1/l1-0149-v1.mp3",
+      "checksumSha256": "f590b5290ef351cf591c62c3d37c88df2abe44fa95678267b2259050aea4f0ba"
+    },
+    {
+      "number": 674,
+      "storageKey": "audio/formal/topics/p2-samples/l2-0231-v1.mp3",
+      "checksumSha256": "c61fe7f83f098f03ff63d4d1f4bc11c499a5f9a5a55721b931bb20e2332b8aad"
+    },
+    {
+      "number": 678,
+      "storageKey": "audio/formal/hsk1/l1-0153-v1.mp3",
+      "checksumSha256": "4316dc858a1a95c33a04810c914fa449f74727f0003bd60b211ef46a8be248b5"
+    },
+    {
+      "number": 680,
+      "storageKey": "audio/formal/topics/p2-samples/l2-0240-v1.mp3",
+      "checksumSha256": "167ec0f978b6ba911cf5f86114467f5e8544bb9048a3898e6b95df8e38bbf9e9"
+    },
+    {
+      "number": 682,
+      "storageKey": "audio/formal/hsk1/l1-0155-v1.mp3",
+      "checksumSha256": "40e4185e6fc22dc08794365a38b12ad30b34ad26b9b8e3dfc573a939b8bd8c91"
+    },
+    {
+      "number": 687,
+      "storageKey": "audio/formal/topics/p2-samples/l2-0250-v1.mp3",
+      "checksumSha256": "f383bfcdbf7720f00e6b1169d8eaffc1916a2cb300b20f2aa24c6aa745d52402"
+    },
+    {
+      "number": 692,
+      "storageKey": "audio/formal/hsk1/l1-0166-v1.mp3",
+      "checksumSha256": "ba291a6659ad400d6a899bffa4ba1c0dc3a69e6e162104caff11767571fc630c"
+    },
+    {
+      "number": 694,
+      "storageKey": "audio/formal/topics/p2-samples/l4-0367-v1.mp3",
+      "checksumSha256": "e61b485851e7617945f23123128c761580dc46e80d87a96726dc9101045e2eb6"
+    },
+    {
+      "number": 702,
+      "storageKey": "audio/formal/topics/p2-samples/l1-0174-v1.mp3",
+      "checksumSha256": "91b4fc3ce24e8629b6745cabdba6a8553af0a056c1281a4b5f9e0689e1d7cad7"
+    },
+    {
+      "number": 712,
+      "storageKey": "audio/formal/topics/p2-samples/l3-0365-v1.mp3",
+      "checksumSha256": "3e51222727403e898732fa9a733c75f26f437be507cc15ab990aa73c0bfb5e86"
+    },
+    {
+      "number": 716,
+      "storageKey": "audio/formal/topics/grocery-shopping/l2-0293-v1.mp3",
+      "checksumSha256": "f8fa7627c01affb1774d90b835130778efa49c1d28f89e56114d1887b9d5f6a2"
+    },
+    {
+      "number": 720,
+      "storageKey": "audio/formal/topics/p2-samples/l2-0301-v1.mp3",
+      "checksumSha256": "0756bd0535ad3d518133093b2147a6332aa93dcaf76feff0e0936185a3e455f9"
+    },
+    {
+      "number": 727,
+      "storageKey": "audio/formal/hsk1/l1-0190-v1.mp3",
+      "checksumSha256": "960cb7b30828fd3cf1e1e13af085e58b46035b2ddc643e789d3bb60abe2c0a73"
+    },
+    {
+      "number": 732,
+      "storageKey": "audio/formal/hsk1/l1-0198-v1.mp3",
+      "checksumSha256": "0222717bd2fabe9a728ca6b45b5b8cbe8e239744408b63aaaba9afdb944c86ee"
+    },
+    {
+      "number": 736,
+      "storageKey": "audio/formal/hsk1/l1-0200-v1.mp3",
+      "checksumSha256": "be1cd343d76d5c5fb99c34562fae44863a3e14c322b4b7e04499f9dbcac55291"
+    },
+    {
+      "number": 737,
+      "storageKey": "audio/formal/topics/p2-samples/l2-0325-v1.mp3",
+      "checksumSha256": "0ded6867aa98c8f51789704c041006db5c8cf0375e9a20413af255e23431788e"
+    },
+    {
+      "number": 738,
+      "storageKey": "audio/formal/hsk1/l1-0201-v1.mp3",
+      "checksumSha256": "f3ba373161606f4a27abe1d9e8c1be74a2d5fa3e9c8d9debb1cb0011b12226d5"
+    },
+    {
+      "number": 739,
+      "storageKey": "audio/formal/topics/p2-samples/l3-0421-v1.mp3",
+      "checksumSha256": "e36761bd629c1d726263141bb76213d234294ab7513e114feb29cc215f03c17d"
+    },
+    {
+      "number": 741,
+      "storageKey": "audio/formal/topics/p2-samples/l2-0333-v1.mp3",
+      "checksumSha256": "c48235b69450524348d9b51b4488f1e4bc4338717514b44b1f83031e9387c065"
+    },
+    {
+      "number": 746,
+      "storageKey": "audio/formal/hsk1/l1-0208-v1.mp3",
+      "checksumSha256": "e140fccb084e4e12cb2dcdb177036730f1b002063e149eb712dcf738e11d853d"
+    },
+    {
+      "number": 747,
+      "storageKey": "audio/formal/topics/p2-samples/l2-0345-v1.mp3",
+      "checksumSha256": "8315139afbcc66adcd4166db4d7173cef64d3e96fa008947a67b0b73769286fb"
+    },
+    {
+      "number": 753,
+      "storageKey": "audio/formal/topics/p2-samples/l2-0355-v1.mp3",
+      "checksumSha256": "499f4130f4bac896696c72727f7cadbff4eadbf20dc0feb45a8df89bc5eb559a"
+    },
+    {
+      "number": 763,
+      "storageKey": "audio/formal/topics/p2-samples/l1-0222-v1.mp3",
+      "checksumSha256": "fdb713dcb152ed1eeba981436f2e1a13af065ee530ffc4ec1c0ba834594ba96b"
+    },
+    {
+      "number": 765,
+      "storageKey": "audio/formal/hsk1/l1-0225-v1.mp3",
+      "checksumSha256": "1f678a99d94ebdcdeeedf85a2430bab025605840a39bb976c9ad32cb1d65c15c"
+    },
+    {
+      "number": 766,
+      "storageKey": "audio/formal/hsk1/l1-0226-v1.mp3",
+      "checksumSha256": "c0f570d3975a102954c2853d6b121f3ff0f581ad95a5b9b39ba818c01d00bb06"
+    },
+    {
+      "number": 771,
+      "storageKey": "audio/formal/hsk1/l1-0246-v1.mp3",
+      "checksumSha256": "d66cc70af7117a2b0e12896ac16021e905a35c60acff0c27ae7dd2f4c7d00746"
+    },
+    {
+      "number": 774,
+      "storageKey": "audio/formal/hsk1/l1-0266-v1.mp3",
+      "checksumSha256": "00ad08af812c4e237478675f664faa88b417af6f44544f3c1d1b84ce4bd5fbda"
+    },
+    {
+      "number": 775,
+      "storageKey": "audio/formal/hsk1/l1-0268-v1.mp3",
+      "checksumSha256": "73684f03c280c47ec1b7a5c7b6a603a43fd2bfcb9b7685bcaa0b1f73e58f95c3"
+    },
+    {
+      "number": 779,
+      "storageKey": "audio/formal/hsk1/l1-0264-v1.mp3",
+      "checksumSha256": "376cd9070b0f6ce6bfed496c90fb8df5589eb84f578f16f1a3bb3ac3e78af2f3"
+    },
+    {
+      "number": 780,
+      "storageKey": "audio/formal/hsk1/l1-0265-v1.mp3",
+      "checksumSha256": "64b28f068d3ca52dff547232db466b96d1ccfe591d6a36a4dd40b5a1270b7f12"
+    },
+    {
+      "number": 787,
+      "storageKey": "audio/formal/hsk1/l1-0280-v1.mp3",
+      "checksumSha256": "2b8200d3874cab32a793738431173d3243016aa8368d3a4ecc539595845ec76e"
+    },
+    {
+      "number": 788,
+      "storageKey": "audio/formal/hsk1/l1-0281-v1.mp3",
+      "checksumSha256": "defce35fb16eb8269c6f159c7022189025a0f834b9c4eb7501b652acc3142045"
+    },
+    {
+      "number": 792,
+      "storageKey": "audio/formal/topics/p2-samples/l4-0549-v1.mp3",
+      "checksumSha256": "c0ed54cc15c0cfaaa22503233a6f21346ce411e57cde33430ece1c6222ac30bd"
+    },
+    {
+      "number": 801,
+      "storageKey": "audio/formal/hsk1/l1-0287-v1.mp3",
+      "checksumSha256": "d883128328b6e997d8bc305c73b0676a764d104fa4f47d9ad95621b97ca83366"
+    },
+    {
+      "number": 803,
+      "storageKey": "audio/formal/hsk1/l1-0290-v1.mp3",
+      "checksumSha256": "6c8bb1676c31051498d6e481f35bb36fa8ff115ad7081e159125db047b327f09"
+    },
+    {
+      "number": 806,
+      "storageKey": "audio/formal/hsk1/l1-0293-v1.mp3",
+      "checksumSha256": "276dfbb27d9c16ca69522ac360b7d7a668de033a2e6ea507c7661e1ebdeefbcc"
+    },
+    {
+      "number": 808,
+      "storageKey": "audio/formal/hsk1/l1-0297-v1.mp3",
+      "checksumSha256": "d4de22d01bf26078635852d98ed6d57fe64489a08e1b2e09d589c4826b7c3bc9"
+    },
+    {
+      "number": 810,
+      "storageKey": "audio/formal/topics/p2-samples/l2-0445-v1.mp3",
+      "checksumSha256": "b2f69cedeef35bc40cf6d5301c151e4547adac8ee4585fa394ca75ee8e5de9b5"
+    },
+    {
+      "number": 813,
+      "storageKey": "audio/formal/topics/p2-samples/l2-0459-v1.mp3",
+      "checksumSha256": "6bb8e061038a5dc241817dbcbf5dd0cfffcd39d6c27b7afc7926f18a0d043501"
+    },
+    {
+      "number": 817,
+      "storageKey": "audio/formal/hsk1/l1-0307-v1.mp3",
+      "checksumSha256": "5f2944063b2cd4044263baaab0af3f860a78ad9719acf0effa8051f768fd0283"
+    },
+    {
+      "number": 820,
+      "storageKey": "audio/formal/topics/p2-samples/l4-0607-v1.mp3",
+      "checksumSha256": "9895cdc44830e2ee5780b61bb4fb26937137d8c84fd5727490ee56cab18f2e2f"
+    },
+    {
+      "number": 823,
+      "storageKey": "audio/formal/hsk1/l1-0312-v1.mp3",
+      "checksumSha256": "992e0fbb8aa309840899674cb0e61ec23893355293925e0871f8cc8f798df63e"
+    },
+    {
+      "number": 830,
+      "storageKey": "audio/formal/hsk1/l1-0330-v1.mp3",
+      "checksumSha256": "b941ea6a78acbaca2c772e0b4c6b44452a45482f625346116aa8494d5a7dc707"
+    },
+    {
+      "number": 833,
+      "storageKey": "audio/formal/hsk1/l1-0336-v1.mp3",
+      "checksumSha256": "33a522a0b597465412af6801e5a4c8b46da56084547e24151f24b6dae1abb322"
+    },
+    {
+      "number": 842,
+      "storageKey": "audio/formal/hsk1/l1-0344-v1.mp3",
+      "checksumSha256": "5ef66519214a4c25341edef8e2cfe18b65f5a38f8b45d27b06ec0181dc15f5bc"
+    },
+    {
+      "number": 847,
+      "storageKey": "audio/formal/topics/p2-samples/l2-0506-v1.mp3",
+      "checksumSha256": "2ed81f3a991bf01ffbdda1e4211463c2c295886801213b3746b5d009f2564228"
+    },
+    {
+      "number": 849,
+      "storageKey": "audio/formal/topics/p2-samples/l2-0518-v1.mp3",
+      "checksumSha256": "ed62dc3fab352a22fc321b08fb38f8a0d9ecab66d33fdbccbaba714a41e641b9"
+    },
+    {
+      "number": 850,
+      "storageKey": "audio/formal/topics/p2-samples/l3-0698-v1.mp3",
+      "checksumSha256": "3b908c172ca74d843d4cf358c97e52862f02f951e9b119f14f3b7f72a7a24b2a"
+    },
+    {
+      "number": 855,
+      "storageKey": "audio/formal/topics/p2-samples/l3-0707-v1.mp3",
+      "checksumSha256": "fc8b94088eb74c4a1c1bf6df86afce347bd4ed670f49472edc83e91c5983b30d"
+    },
+    {
+      "number": 863,
+      "storageKey": "audio/formal/hsk1/l1-0366-v1.mp3",
+      "checksumSha256": "c65384cf4b0da6a2e2ada216e969e90bb9929bde7bcfa5e906aa65319348d7b0"
+    },
+    {
+      "number": 867,
+      "storageKey": "audio/formal/hsk1/l1-0370-v1.mp3",
+      "checksumSha256": "bb0dee5119636ed0c602499b68db698c241c2c3497a1ea2d18fcacc65b74fef2"
+    },
+    {
+      "number": 869,
+      "storageKey": "audio/formal/topics/p2-samples/l2-0564-v1.mp3",
+      "checksumSha256": "1021ef7b048f715c384410cc3330a72973aab01d5fe74f3f65bc0000a64557ef"
+    },
+    {
+      "number": 870,
+      "storageKey": "audio/formal/topics/p2-samples/l4-0743-v1.mp3",
+      "checksumSha256": "8a64544adbca17ba10df638b69c67ce22f2ea2756b91b19c5c30a03c6504ceaf"
+    },
+    {
+      "number": 874,
+      "storageKey": "audio/formal/hsk1/l1-0378-v1.mp3",
+      "checksumSha256": "d8892093cc010ee89960b0895bd7df9ee76c1bd227014347d819196282f57ed1"
+    },
+    {
+      "number": 880,
+      "storageKey": "audio/formal/hsk1/l1-0384-v1.mp3",
+      "checksumSha256": "e3649eb91655030cbe155684c17095505333159b7cbd9ae39c3016be36043e0c"
+    },
+    {
+      "number": 888,
+      "storageKey": "audio/formal/topics/p2-samples/l2-0588-v1.mp3",
+      "checksumSha256": "af5739f5150d917606332cf38edf8feb2fe6cbffac451301136315188edd5963"
+    },
+    {
+      "number": 889,
+      "storageKey": "audio/formal/topics/p2-samples/l2-0592-v1.mp3",
+      "checksumSha256": "9c277e7a19a018b3380f1bd1748fd397bc99775b33aa3f24948566067751f678"
+    },
+    {
+      "number": 890,
+      "storageKey": "audio/formal/topics/p2-samples/l1-0397-v1.mp3",
+      "checksumSha256": "6f2262809c34a5d1a71a25ac75e0726eb367115bd31edffd25589541d8e2daf7"
+    },
+    {
+      "number": 893,
+      "storageKey": "audio/formal/topics/p2-samples/l4-0800-v1.mp3",
+      "checksumSha256": "5fa6c6db2905c366b31b234cf60d7d029007bb9e75cdb1b6c9b9bad4d4971f32"
+    },
+    {
+      "number": 901,
+      "storageKey": "audio/formal/topics/p2-samples/l2-0612-v1.mp3",
+      "checksumSha256": "cc792940364172484a94916f6cc593746f2fcdc92dc397c5dcf9f753ca5efb03"
+    },
+    {
+      "number": 903,
+      "storageKey": "audio/formal/hsk1/l1-0412-v1.mp3",
+      "checksumSha256": "513271cb8b7b96e602d165c2b41a2ee0b7765e4873e44943cbca0321a347c050"
+    },
+    {
+      "number": 905,
+      "storageKey": "audio/formal/topics/grocery-shopping/l4-0816-v1.mp3",
+      "checksumSha256": "5bc65ac9ebd2992fde83c303c447fdb21d2de43aed64a341df8cfba8baf44939"
+    },
+    {
+      "number": 907,
+      "storageKey": "audio/formal/topics/grocery-shopping/l2-0621-v1.mp3",
+      "checksumSha256": "3810558ec870964946dc0b71a7bb95d9e74f4ae763c11a6b821ab8d0365f89f0"
+    },
+    {
+      "number": 908,
+      "storageKey": "audio/formal/hsk1/l1-0416-v1.mp3",
+      "checksumSha256": "1214e3c7edfb949bcd43b722b5663e505d562d3e1fa2788cb4339ecafe644746"
+    },
+    {
+      "number": 909,
+      "storageKey": "audio/formal/topics/p2-samples/l3-0803-v1.mp3",
+      "checksumSha256": "a86b0717bef4d49acc2633fb33515c7e21a3a27ebc9f2d504a907d73d5e9ee4e"
+    },
+    {
+      "number": 912,
+      "storageKey": "audio/formal/topics/grocery-shopping/l3-0816-v1.mp3",
+      "checksumSha256": "e69690e10518d65ec04801d22e143dc53cd4b0c2acf1b04906f22478d65c2f52"
+    },
+    {
+      "number": 921,
+      "storageKey": "audio/formal/hsk1/l1-0426-v1.mp3",
+      "checksumSha256": "4067567d54609d137eed0fcf19a826204219bc3049d8779e6c153dc42c0bd626"
+    },
+    {
+      "number": 926,
+      "storageKey": "audio/formal/topics/p2-samples/l2-0653-v1.mp3",
+      "checksumSha256": "bf168623ca9c1dec3f25e0e3dac3f3a812e21baa977dacc6e5906942ad4cf1cd"
+    },
+    {
+      "number": 927,
+      "storageKey": "audio/formal/topics/p2-samples/l2-0654-v1.mp3",
+      "checksumSha256": "09dac326704906f48fc1f9e6a0552738391887538a593621c1b6850fad8a3731"
+    },
+    {
+      "number": 938,
+      "storageKey": "audio/formal/topics/p2-samples/l5-0905-v1.mp3",
+      "checksumSha256": "13562d916fe5828926b0ea692747057b4c532a57e0e832861c120c8428b76ffd"
+    },
+    {
+      "number": 941,
+      "storageKey": "audio/formal/hsk1/l1-0440-v1.mp3",
+      "checksumSha256": "0f80884a5a564272a3727cdaf8760f85eaa3eca9f8e6c2c27c19f87e25506a06"
+    },
+    {
+      "number": 947,
+      "storageKey": "audio/formal/hsk1/l1-0443-v1.mp3",
+      "checksumSha256": "7c13b6db30964fab248a1145c7f7de66856b608ba8ce0bbc34f21226efa1257b"
+    },
+    {
+      "number": 948,
+      "storageKey": "audio/formal/hsk1/l1-0446-v1.mp3",
+      "checksumSha256": "b1d80a155f0409e879a5dbb426c49956dd99f698264e34c41e84bdbc662b2c7d"
+    },
+    {
+      "number": 966,
+      "storageKey": "audio/formal/hsk1/l1-0461-v1.mp3",
+      "checksumSha256": "c55b078b172298a8bead615832eabb3ef53beb54058eb57c7381270922cbee59"
+    },
+    {
+      "number": 981,
+      "storageKey": "audio/formal/hsk1/l1-0476-v1.mp3",
+      "checksumSha256": "a7580bc046c2312a4d3a5510dbd24f2f54696a9a9236d337eeb386cdeb3b8158"
+    },
+    {
+      "number": 982,
+      "storageKey": "audio/formal/hsk1/l1-0478-v1.mp3",
+      "checksumSha256": "cd2929795eb06d98f224534fdbbb598b1ab2ee1a9f1ab00cc93558f52cda694e"
+    },
+    {
+      "number": 985,
+      "storageKey": "audio/formal/hsk1/l1-0484-v1.mp3",
+      "checksumSha256": "404e6912af7b64e1eb8af69f8f7eeeba56b5a0c08c255bf1f54b4f73dda4b014"
+    },
+    {
+      "number": 986,
+      "storageKey": "audio/formal/topics/p2-samples/l2-0743-v1.mp3",
+      "checksumSha256": "b889ef9a5dafc8987aa1e1444ca96420a149a54fc123a5fce4dcc4658cdbf001"
+    },
+    {
+      "number": 996,
+      "storageKey": "audio/formal/hsk1/l1-0493-v1.mp3",
+      "checksumSha256": "b1450fbfab9b403781df944f6bac4bb2ad6925037a793dc633697a5cd4ad9032"
+    },
+    {
+      "number": 997,
+      "storageKey": "audio/formal/topics/p2-samples/l1-0494-v1.mp3",
+      "checksumSha256": "f1325f9569ffd836942e0a20b55c95ab44aa0b3d030d2e11f52d41626f1ae2c9"
+    }
+  ],
+  "generated": [
+    {
+      "number": 501,
+      "hanzi": "阿姨",
+      "expectedPinyin": "āyí",
+      "speechText": "阿姨",
+      "storageKey": "audio/formal/hsk3-2025/l3-0501-v1.mp3",
+      "checksumSha256": "75a9b6f9895b551668e8ba866f8f2cc53affc3893e5f96024cba363f9979c1c7",
+      "bytes": 7920,
+      "durationSeconds": 1.32
+    },
+    {
+      "number": 502,
+      "hanzi": "矮",
+      "expectedPinyin": "ǎi",
+      "speechText": "矮",
+      "storageKey": "audio/formal/hsk3-2025/l3-0502-v1.mp3",
+      "checksumSha256": "dd9178d43dcd68cbaa118bbff8c3001662ffc03e572c80d20668bab3c193a510",
+      "bytes": 7056,
+      "durationSeconds": 1.176
+    },
+    {
+      "number": 503,
+      "hanzi": "爱人",
+      "expectedPinyin": "àiren",
+      "speechText": "爱人",
+      "storageKey": "audio/formal/hsk3-2025/l3-0503-v1.mp3",
+      "checksumSha256": "6aadaf8052c22c05d320286766df976efdcde7e4ffaa30f908906af1cd1c04b7",
+      "bytes": 8064,
+      "durationSeconds": 1.344
+    },
+    {
+      "number": 505,
+      "hanzi": "安全",
+      "expectedPinyin": "ānquán",
+      "speechText": "安全",
+      "storageKey": "audio/formal/hsk3-2025/l3-0505-v1.mp3",
+      "checksumSha256": "9c88d170e6cedcd0a2843b052bd23c83ebddd0c200a524fa28bd9b1b46546bfe",
+      "bytes": 8496,
+      "durationSeconds": 1.416
+    },
+    {
+      "number": 506,
+      "hanzi": "把",
+      "expectedPinyin": "bǎ",
+      "speechText": "把",
+      "storageKey": "audio/formal/hsk3-2025/l3-0506-v1.mp3",
+      "checksumSha256": "b040914ae8a423e3243ceb70c8d3a54bcd9236c6707e5e43a38f0809296c61e9",
+      "bytes": 6768,
+      "durationSeconds": 1.128
+    },
+    {
+      "number": 507,
+      "hanzi": "搬",
+      "expectedPinyin": "bān",
+      "speechText": "搬",
+      "storageKey": "audio/formal/hsk3-2025/l3-0507-v1.mp3",
+      "checksumSha256": "812fd20d3418f69df4447934722439726090bf64001407818ee9e04d677b0052",
+      "bytes": 6912,
+      "durationSeconds": 1.152
+    },
+    {
+      "number": 508,
+      "hanzi": "班级",
+      "expectedPinyin": "bānjí",
+      "speechText": "班级",
+      "storageKey": "audio/formal/hsk3-2025/l3-0508-v1.mp3",
+      "checksumSha256": "3e971a4dcc4ccf3ac5b87c72ad71781d889a6c83454d879b515de15400f675ff",
+      "bytes": 8496,
+      "durationSeconds": 1.416
+    },
+    {
+      "number": 509,
+      "hanzi": "搬家",
+      "expectedPinyin": "bānjiā",
+      "speechText": "搬家",
+      "storageKey": "audio/formal/hsk3-2025/l3-0509-v1.mp3",
+      "checksumSha256": "d773258562d2721f0a60db8440200891484de9d5653d27ba4d3c4000002fcd9e",
+      "bytes": 8064,
+      "durationSeconds": 1.344
+    },
+    {
+      "number": 510,
+      "hanzi": "办",
+      "expectedPinyin": "bàn",
+      "speechText": "办",
+      "storageKey": "audio/formal/hsk3-2025/l3-0510-v1.mp3",
+      "checksumSha256": "9bd9bd3e3481bbb575eb7a1bb097db4407575344faa4eed9edd6dab7ec832d51",
+      "bytes": 6912,
+      "durationSeconds": 1.152
+    },
+    {
+      "number": 511,
+      "hanzi": "办法",
+      "expectedPinyin": "bànfǎ",
+      "speechText": "办法",
+      "storageKey": "audio/formal/hsk3-2025/l3-0511-v1.mp3",
+      "checksumSha256": "6359ec6232e025287d6b1e87eec124986a36d0f2c4910ff07894265f864848e1",
+      "bytes": 8064,
+      "durationSeconds": 1.344
+    },
+    {
+      "number": 512,
+      "hanzi": "办公室",
+      "expectedPinyin": "bàngōngshì",
+      "speechText": "办公室",
+      "storageKey": "audio/formal/hsk3-2025/l3-0512-v1.mp3",
+      "checksumSha256": "5df6dccc91fae9d3e5f1b81fda0a640ed171e90f0d8033c3f41d9fedf53f3b30",
+      "bytes": 9360,
+      "durationSeconds": 1.56
+    },
+    {
+      "number": 514,
+      "hanzi": "帮助",
+      "expectedPinyin": "bāngzhù",
+      "speechText": "帮助",
+      "storageKey": "audio/formal/hsk3-2025/l3-0514-v1.mp3",
+      "checksumSha256": "7e1a64cdc690a0186a19223ee31847df2ae49959159f995a103ba50768b3212e",
+      "bytes": 8064,
+      "durationSeconds": 1.344
+    },
+    {
+      "number": 516,
+      "hanzi": "报纸",
+      "expectedPinyin": "bàozhǐ",
+      "speechText": "报纸",
+      "storageKey": "audio/formal/hsk3-2025/l3-0516-v1.mp3",
+      "checksumSha256": "2de16e67015db0562cd1f6d418ad4118fc870c9d2e826813a11942d83a69bf73",
+      "bytes": 8352,
+      "durationSeconds": 1.392
+    },
+    {
+      "number": 518,
+      "hanzi": "北方",
+      "expectedPinyin": "běifāng",
+      "speechText": "北方",
+      "storageKey": "audio/formal/hsk3-2025/l3-0518-v1.mp3",
+      "checksumSha256": "aa462c1440f970e3ffdb7211749c3d46396935edb5b3e57afc22f0c4487d5505",
+      "bytes": 8208,
+      "durationSeconds": 1.368
+    },
+    {
+      "number": 519,
+      "hanzi": "被",
+      "expectedPinyin": "bèi",
+      "speechText": "被",
+      "storageKey": "audio/formal/hsk3-2025/l3-0519-v1.mp3",
+      "checksumSha256": "4240a03cb1ef0301771da2392df660efd464f49170d94810ebcd1cdcdf766c50",
+      "bytes": 7056,
+      "durationSeconds": 1.176
+    },
+    {
+      "number": 520,
+      "hanzi": "笔记",
+      "expectedPinyin": "bǐjì",
+      "speechText": "笔记",
+      "storageKey": "audio/formal/hsk3-2025/l3-0520-v1.mp3",
+      "checksumSha256": "d1961d19c3a51baf56b6dcf0637293872da6533f3488fa428817cfd61845b47c",
+      "bytes": 8352,
+      "durationSeconds": 1.392
+    },
+    {
+      "number": 521,
+      "hanzi": "比较",
+      "expectedPinyin": "bǐjiào",
+      "speechText": "比较",
+      "storageKey": "audio/formal/hsk3-2025/l3-0521-v1.mp3",
+      "checksumSha256": "d70ffc107293acb1b3fb20fe068c59f18ecaa635a9b7d965256b617cae41d4ab",
+      "bytes": 8208,
+      "durationSeconds": 1.368
+    },
+    {
+      "number": 522,
+      "hanzi": "笔记本",
+      "expectedPinyin": "bǐjìběn",
+      "speechText": "笔记本",
+      "storageKey": "audio/formal/hsk3-2025/l3-0522-v1.mp3",
+      "checksumSha256": "f0a7fd4bad94fd9a415016c4e715aeb0e59efac89b10701d1e477e13a3840500",
+      "bytes": 9072,
+      "durationSeconds": 1.512
+    },
+    {
+      "number": 523,
+      "hanzi": "比如",
+      "expectedPinyin": "bǐrú",
+      "speechText": "比如",
+      "storageKey": "audio/formal/hsk3-2025/l3-0523-v1.mp3",
+      "checksumSha256": "d33bc259a8c925c263d0609615ae1806da4ec3d8942ec25a5ea9877b40753022",
+      "bytes": 7920,
+      "durationSeconds": 1.32
+    },
+    {
+      "number": 524,
+      "hanzi": "比赛",
+      "expectedPinyin": "bǐsài",
+      "speechText": "比赛",
+      "storageKey": "audio/formal/hsk3-2025/l3-0524-v1.mp3",
+      "checksumSha256": "1a399c7b9c088e2baa2cf58bf96d0b61eedd81f61a3e423ceacb5c4b5575cd5c",
+      "bytes": 8064,
+      "durationSeconds": 1.344
+    },
+    {
+      "number": 525,
+      "hanzi": "必须",
+      "expectedPinyin": "bìxū",
+      "speechText": "必须",
+      "storageKey": "audio/formal/hsk3-2025/l3-0525-v1.mp3",
+      "checksumSha256": "749013bb4ba31c2fb3255f5757fa9b35e6713bffb1e9fb205e01a5f58fce1510",
+      "bytes": 8208,
+      "durationSeconds": 1.368
+    },
+    {
+      "number": 526,
+      "hanzi": "变",
+      "expectedPinyin": "biàn",
+      "speechText": "变",
+      "storageKey": "audio/formal/hsk3-2025/l3-0526-v1.mp3",
+      "checksumSha256": "7d1dd311eb2eb7d1f3caa7807ef111c3be14f25557d297647272d32d9029e82b",
+      "bytes": 6768,
+      "durationSeconds": 1.128
+    },
+    {
+      "number": 527,
+      "hanzi": "遍",
+      "expectedPinyin": "biàn",
+      "speechText": "遍",
+      "storageKey": "audio/formal/hsk3-2025/l3-0527-v1.mp3",
+      "checksumSha256": "7d1dd311eb2eb7d1f3caa7807ef111c3be14f25557d297647272d32d9029e82b",
+      "bytes": 6768,
+      "durationSeconds": 1.128
+    },
+    {
+      "number": 528,
+      "hanzi": "变成",
+      "expectedPinyin": "biànchéng",
+      "speechText": "变成",
+      "storageKey": "audio/formal/hsk3-2025/l3-0528-v1.mp3",
+      "checksumSha256": "b0d99b2456a3da75a90bfe48a8419b104a3816448eff20b187a0d94982306e98",
+      "bytes": 8496,
+      "durationSeconds": 1.416
+    },
+    {
+      "number": 529,
+      "hanzi": "变化",
+      "expectedPinyin": "biànhuà",
+      "speechText": "变化",
+      "storageKey": "audio/formal/hsk3-2025/l3-0529-v1.mp3",
+      "checksumSha256": "2a8e5fdbde0f065936ce6059f1db337eb508a895ed24260949f2d829e8765a59",
+      "bytes": 8208,
+      "durationSeconds": 1.368
+    },
+    {
+      "number": 530,
+      "hanzi": "表演",
+      "expectedPinyin": "biǎoyǎn",
+      "speechText": "表演",
+      "storageKey": "audio/formal/hsk3-2025/l3-0530-v1.mp3",
+      "checksumSha256": "3fbc0ce5649d683be36b101d5099c7af6527610cad75cf501e609de89c0c57f3",
+      "bytes": 8496,
+      "durationSeconds": 1.416
+    },
+    {
+      "number": 534,
+      "hanzi": "冰",
+      "expectedPinyin": "bīng",
+      "speechText": "冰",
+      "storageKey": "audio/formal/hsk3-2025/l3-0534-v1.mp3",
+      "checksumSha256": "369234fab30cbcdfd73115f7142033213695fbf9e53627d21ea031fb7569d728",
+      "bytes": 6624,
+      "durationSeconds": 1.104
+    },
+    {
+      "number": 535,
+      "hanzi": "冰激凌",
+      "expectedPinyin": "bīngjīlíng",
+      "speechText": "冰激凌",
+      "storageKey": "audio/formal/hsk3-2025/l3-0535-v1.mp3",
+      "checksumSha256": "7db9a391563afaf846d568baf7b966d6e4aa4b8c65b861202a787591b6a1d8c0",
+      "bytes": 9504,
+      "durationSeconds": 1.584
+    },
+    {
+      "number": 536,
+      "hanzi": "冰箱",
+      "expectedPinyin": "bīngxiāng",
+      "speechText": "冰箱",
+      "storageKey": "audio/formal/hsk3-2025/l3-0536-v1.mp3",
+      "checksumSha256": "513bcd2176e258faf405bbf10fbd05422a40773b426bd563d3ba243b6ffe045f",
+      "bytes": 8352,
+      "durationSeconds": 1.392
+    },
+    {
+      "number": 538,
+      "hanzi": "不但",
+      "expectedPinyin": "búdàn",
+      "speechText": "不但",
+      "storageKey": "audio/formal/hsk3-2025/l3-0538-v1.mp3",
+      "checksumSha256": "dde7d8cc29063f8f518e042d8717dfd5a758960f58a09dfed7f9a0f006bf4824",
+      "bytes": 7920,
+      "durationSeconds": 1.32
+    },
+    {
+      "number": 539,
+      "hanzi": "不见",
+      "expectedPinyin": "bújiàn",
+      "speechText": "不见",
+      "storageKey": "audio/formal/hsk3-2025/l3-0539-v1.mp3",
+      "checksumSha256": "527f65177f51174ec0ca7f459d4705f85a7e5eb406f0678115c6abbafc260d47",
+      "bytes": 8064,
+      "durationSeconds": 1.344
+    },
+    {
+      "number": 540,
+      "hanzi": "不用",
+      "expectedPinyin": "búyòng",
+      "speechText": "不用",
+      "storageKey": "audio/formal/hsk3-2025/l3-0540-v1.mp3",
+      "checksumSha256": "cd5a38df3ed37e34c7f6ddd10d1856562e126312d328cabc0833d1fdeb466d8a",
+      "bytes": 7920,
+      "durationSeconds": 1.32
+    },
+    {
+      "number": 541,
+      "hanzi": "不同",
+      "expectedPinyin": "bù tóng",
+      "speechText": "不同",
+      "storageKey": "audio/formal/hsk3-2025/l3-0541-v1.mp3",
+      "checksumSha256": "deb14c17705811673d98e77f8ea9a2c7da0b7e48a1368ef05e6f73d8dc4be271",
+      "bytes": 8064,
+      "durationSeconds": 1.344
+    },
+    {
+      "number": 542,
+      "hanzi": "不久",
+      "expectedPinyin": "bùjiǔ",
+      "speechText": "不久",
+      "storageKey": "audio/formal/hsk3-2025/l3-0542-v1.mp3",
+      "checksumSha256": "6fc69cf1fa7bbf65d12837be1a027036364612ea3f4d75d20e8b6bff803bd33e",
+      "bytes": 8064,
+      "durationSeconds": 1.344
+    },
+    {
+      "number": 543,
+      "hanzi": "不行",
+      "expectedPinyin": "bùxíng",
+      "speechText": "不行",
+      "storageKey": "audio/formal/hsk3-2025/l3-0543-v1.mp3",
+      "checksumSha256": "fec3dd04ee4bd75d62457f14ada351ad061d1ddf8c295a92b09534aaca32cdc2",
+      "bytes": 8208,
+      "durationSeconds": 1.368
+    },
+    {
+      "number": 544,
+      "hanzi": "才",
+      "expectedPinyin": "cái",
+      "speechText": "才",
+      "storageKey": "audio/formal/hsk3-2025/l3-0544-v1.mp3",
+      "checksumSha256": "56e190f3b62e8402f128a5580060c755139c244588df8852bf0da8ca465539d0",
+      "bytes": 6912,
+      "durationSeconds": 1.152
+    },
+    {
+      "number": 546,
+      "hanzi": "参加",
+      "expectedPinyin": "cānjiā",
+      "speechText": "参加",
+      "storageKey": "audio/formal/hsk3-2025/l3-0546-v1.mp3",
+      "checksumSha256": "88ec818317a2ad2806b6a3f45d53f592a586d2d46022f84c2a8e97393e25fcf6",
+      "bytes": 8208,
+      "durationSeconds": 1.368
+    },
+    {
+      "number": 547,
+      "hanzi": "草",
+      "expectedPinyin": "cǎo",
+      "speechText": "草",
+      "storageKey": "audio/formal/hsk3-2025/l3-0547-v1.mp3",
+      "checksumSha256": "7dab8624deb81d61c155026b750f3bb8e6e0cbef1c9ca12689503a6a8e2b38b9",
+      "bytes": 6912,
+      "durationSeconds": 1.152
+    },
+    {
+      "number": 548,
+      "hanzi": "草地",
+      "expectedPinyin": "cǎodì",
+      "speechText": "草地",
+      "storageKey": "audio/formal/hsk3-2025/l3-0548-v1.mp3",
+      "checksumSha256": "3a692e3752381823b009b94dce9b030e946754cf8dd72eeca0ed21fbd98bea0f",
+      "bytes": 8352,
+      "durationSeconds": 1.392
+    },
+    {
+      "number": 550,
+      "hanzi": "查",
+      "expectedPinyin": "chá",
+      "speechText": "查",
+      "storageKey": "audio/formal/hsk3-2025/l3-0550-v1.mp3",
+      "checksumSha256": "0a40f8df1b5ea805253ab3f84bad176d35ecf23d2c865460fa33275b9e45d9b2",
+      "bytes": 6912,
+      "durationSeconds": 1.152
+    },
+    {
+      "number": 552,
+      "hanzi": "差不多",
+      "expectedPinyin": "chàbuduō",
+      "speechText": "差不多",
+      "storageKey": "audio/formal/hsk3-2025/l3-0552-v1.mp3",
+      "checksumSha256": "8fdd59926fc4defebec6864a9b7b3b795d998abedd146fcc9ad4376cc98ca17c",
+      "bytes": 8784,
+      "durationSeconds": 1.464
+    },
+    {
+      "number": 553,
+      "hanzi": "尝",
+      "expectedPinyin": "cháng",
+      "speechText": "尝",
+      "storageKey": "audio/formal/hsk3-2025/l3-0553-v1.mp3",
+      "checksumSha256": "1ddc8306d92199bbf349c6a939565a5e545456026a0c8bda6d3a9a05439876bb",
+      "bytes": 6912,
+      "durationSeconds": 1.152
+    },
+    {
+      "number": 555,
+      "hanzi": "常见",
+      "expectedPinyin": "cháng jiàn",
+      "speechText": "常见",
+      "storageKey": "audio/formal/hsk3-2025/l3-0555-v1.mp3",
+      "checksumSha256": "20976240e97fcd12dcd93e6543f2409aab44057e5dbd42b49cb4a4a634cd4d09",
+      "bytes": 8496,
+      "durationSeconds": 1.416
+    },
+    {
+      "number": 556,
+      "hanzi": "常用",
+      "expectedPinyin": "cháng yòng",
+      "speechText": "常用",
+      "storageKey": "audio/formal/hsk3-2025/l3-0556-v1.mp3",
+      "checksumSha256": "209bc49e969500a9146c04e67fca60808d75a27b4083a64e33aef07f3f5bc318",
+      "bytes": 8352,
+      "durationSeconds": 1.392
+    },
+    {
+      "number": 558,
+      "hanzi": "衬衫",
+      "expectedPinyin": "chènshān",
+      "speechText": "衬衫",
+      "storageKey": "audio/formal/hsk3-2025/l3-0558-v1.mp3",
+      "checksumSha256": "cd500d1948f1583bcbc7e7b5c1ae84e84c7410bc0ff73802b748256fad79f227",
+      "bytes": 8496,
+      "durationSeconds": 1.416
+    },
+    {
+      "number": 559,
+      "hanzi": "成绩",
+      "expectedPinyin": "chéngjì",
+      "speechText": "成绩",
+      "storageKey": "audio/formal/hsk3-2025/l3-0559-v1.mp3",
+      "checksumSha256": "82065a4889d8f333c91fb1556e79a59af60e1a10e2d770c21570781a619239c0",
+      "bytes": 8496,
+      "durationSeconds": 1.416
+    },
+    {
+      "number": 560,
+      "hanzi": "城市",
+      "expectedPinyin": "chéngshì",
+      "speechText": "城市",
+      "storageKey": "audio/formal/hsk3-2025/l3-0560-v1.mp3",
+      "checksumSha256": "c9aafcca1223900f819fa81e5dd1d78b9181464cb711e626f6ced9e863c51df8",
+      "bytes": 8640,
+      "durationSeconds": 1.44
+    },
+    {
+      "number": 563,
+      "hanzi": "出生",
+      "expectedPinyin": "chūshēng",
+      "speechText": "出生",
+      "storageKey": "audio/formal/hsk3-2025/l3-0563-v1.mp3",
+      "checksumSha256": "906c241d7c17e87e1c305608c27f262d5caf7aee3bc3a00ecb8b40f380e3ff87",
+      "bytes": 8064,
+      "durationSeconds": 1.344
+    },
+    {
+      "number": 564,
+      "hanzi": "出院",
+      "expectedPinyin": "chūyuàn",
+      "speechText": "出院",
+      "storageKey": "audio/formal/hsk3-2025/l3-0564-v1.mp3",
+      "checksumSha256": "624fd75aa2e4e9e2b6f052ad587a2c0a9f29acad689628bf1735b6cf68c1d335",
+      "bytes": 8208,
+      "durationSeconds": 1.368
+    },
+    {
+      "number": 565,
+      "hanzi": "初中",
+      "expectedPinyin": "chūzhōng",
+      "speechText": "初中",
+      "storageKey": "audio/formal/hsk3-2025/l3-0565-v1.mp3",
+      "checksumSha256": "ca5b0d586fadca803fa2cf035162c3060c6c36920a4ba6c6871a3bcd5a45b659",
+      "bytes": 8064,
+      "durationSeconds": 1.344
+    },
+    {
+      "number": 566,
+      "hanzi": "除了",
+      "expectedPinyin": "chúle",
+      "speechText": "除了",
+      "storageKey": "audio/formal/hsk3-2025/l3-0566-v1.mp3",
+      "checksumSha256": "f31d73d2fdbb1b75253e83a0c7a94512e76581885b8b356b1170a813ae4973c7",
+      "bytes": 8064,
+      "durationSeconds": 1.344
+    },
+    {
+      "number": 567,
+      "hanzi": "船",
+      "expectedPinyin": "chuán",
+      "speechText": "船",
+      "storageKey": "audio/formal/hsk3-2025/l3-0567-v1.mp3",
+      "checksumSha256": "bd64689dea005db3a804bd25bbaba59a940e1c99078de5d00866e16c489f0626",
+      "bytes": 7056,
+      "durationSeconds": 1.176
+    },
+    {
+      "number": 569,
+      "hanzi": "词典",
+      "expectedPinyin": "cídiǎn",
+      "speechText": "词典",
+      "storageKey": "audio/formal/hsk3-2025/l3-0569-v1.mp3",
+      "checksumSha256": "afeee36a4444f781efa30e157d50efccae2a217f9cb4ed48d655e0580e8f232e",
+      "bytes": 8496,
+      "durationSeconds": 1.416
+    },
+    {
+      "number": 570,
+      "hanzi": "聪明",
+      "expectedPinyin": "cōngmíng",
+      "speechText": "聪明",
+      "storageKey": "audio/formal/hsk3-2025/l3-0570-v1.mp3",
+      "checksumSha256": "9c60a7149dbecf1879a82fe4c3228fb4b87931ec5c6b4d67d419bf493da662c9",
+      "bytes": 8064,
+      "durationSeconds": 1.344
+    },
+    {
+      "number": 572,
+      "hanzi": "打算",
+      "expectedPinyin": "dǎsuàn",
+      "speechText": "打算",
+      "storageKey": "audio/formal/hsk3-2025/l3-0572-v1.mp3",
+      "checksumSha256": "b71bac9881a2f345c729d5df40e28f29a5d0721c5e2e9bdfae51195a43bfb786",
+      "bytes": 8208,
+      "durationSeconds": 1.368
+    },
+    {
+      "number": 573,
+      "hanzi": "大概",
+      "expectedPinyin": "dàgài",
+      "speechText": "大概",
+      "storageKey": "audio/formal/hsk3-2025/l3-0573-v1.mp3",
+      "checksumSha256": "ec033c6db5030b4b8094f5ff1bcd3be6a67d3755c96c150c4448144b4adf26e3",
+      "bytes": 8064,
+      "durationSeconds": 1.344
+    },
+    {
+      "number": 574,
+      "hanzi": "大人",
+      "expectedPinyin": "dàren",
+      "speechText": "大人",
+      "storageKey": "audio/formal/hsk3-2025/l3-0574-v1.mp3",
+      "checksumSha256": "affe8e3a5010379940e0bb947f9e146feaf77e8aab8f2e1f276c910d9ab7c1ac",
+      "bytes": 7920,
+      "durationSeconds": 1.32
+    },
+    {
+      "number": 575,
+      "hanzi": "大小",
+      "expectedPinyin": "dàxiǎo",
+      "speechText": "大小",
+      "storageKey": "audio/formal/hsk3-2025/l3-0575-v1.mp3",
+      "checksumSha256": "c8683046a5b1266c2011c16efb59420b7797edbb743496c3fdd7123456e440f6",
+      "bytes": 8496,
+      "durationSeconds": 1.416
+    },
+    {
+      "number": 576,
+      "hanzi": "大熊猫",
+      "expectedPinyin": "dàxióngmāo",
+      "speechText": "大熊猫",
+      "storageKey": "audio/formal/hsk3-2025/l3-0576-v1.mp3",
+      "checksumSha256": "c0a5c46585e1267e335f22dd3f7a2686c93c5ab69f86b340416cbac9384c7593",
+      "bytes": 9216,
+      "durationSeconds": 1.536
+    },
+    {
+      "number": 577,
+      "hanzi": "大衣",
+      "expectedPinyin": "dàyī",
+      "speechText": "大衣",
+      "storageKey": "audio/formal/hsk3-2025/l3-0577-v1.mp3",
+      "checksumSha256": "6ad392781b1af421a80dd9b6b0349a8f9a4acd481ba1b5da40e96b3257b0ce25",
+      "bytes": 8208,
+      "durationSeconds": 1.368
+    },
+    {
+      "number": 578,
+      "hanzi": "带",
+      "expectedPinyin": "dài",
+      "speechText": "带",
+      "storageKey": "audio/formal/hsk3-2025/l3-0578-v1.mp3",
+      "checksumSha256": "205d3017649ee69fbe47bd69de69f448d33d2d91d6cae6024037209c3fea9342",
+      "bytes": 6912,
+      "durationSeconds": 1.152
+    },
+    {
+      "number": 579,
+      "hanzi": "担心",
+      "expectedPinyin": "dānxīn",
+      "speechText": "担心",
+      "storageKey": "audio/formal/hsk3-2025/l3-0579-v1.mp3",
+      "checksumSha256": "3762e9097f8e77e333572c30b690b68cf675352c1be459e031ad12bc53e28f8e",
+      "bytes": 8064,
+      "durationSeconds": 1.344
+    },
+    {
+      "number": 580,
+      "hanzi": "蛋糕",
+      "expectedPinyin": "dàngāo",
+      "speechText": "蛋糕",
+      "storageKey": "audio/formal/hsk3-2025/l3-0580-v1.mp3",
+      "checksumSha256": "8c8c3dc59a06d0b82d2b12ca34197ec18454b6b80a690c0a12a2a4b20ab3f271",
+      "bytes": 8064,
+      "durationSeconds": 1.344
+    },
+    {
+      "number": 581,
+      "hanzi": "当然",
+      "expectedPinyin": "dāngrán",
+      "speechText": "当然",
+      "storageKey": "audio/formal/hsk3-2025/l3-0581-v1.mp3",
+      "checksumSha256": "706e833a0a8591d7425cfe8903f4714fdddcb15a2560847c9673cf648964d2ca",
+      "bytes": 8208,
+      "durationSeconds": 1.368
+    },
+    {
+      "number": 582,
+      "hanzi": "到处",
+      "expectedPinyin": "dàochù",
+      "speechText": "到处",
+      "storageKey": "audio/formal/hsk3-2025/l3-0582-v1.mp3",
+      "checksumSha256": "5bafb4406d4b94260b186ffa8f4a8b41af2cc02af7c07a3ad3f07488451087e8",
+      "bytes": 8352,
+      "durationSeconds": 1.392
+    },
+    {
+      "number": 585,
+      "hanzi": "得分",
+      "expectedPinyin": "défēn",
+      "speechText": "得分",
+      "storageKey": "audio/formal/hsk3-2025/l3-0585-v1.mp3",
+      "checksumSha256": "af32bfcae1bce74b36e3503c5ef66e6acf59c0b78106976de0a3857955bf3789",
+      "bytes": 8208,
+      "durationSeconds": 1.368
+    },
+    {
+      "number": 586,
+      "hanzi": "的话",
+      "expectedPinyin": "dehuà",
+      "speechText": "的话",
+      "storageKey": "audio/formal/hsk3-2025/l3-0586-v1.mp3",
+      "checksumSha256": "f7d839c0479bfae09b89dd53d43f32159710c6cb969c69ce8e776d6e6c609888",
+      "bytes": 8064,
+      "durationSeconds": 1.344
+    },
+    {
+      "number": 588,
+      "hanzi": "灯",
+      "expectedPinyin": "dēng",
+      "speechText": "灯",
+      "storageKey": "audio/formal/hsk3-2025/l3-0588-v1.mp3",
+      "checksumSha256": "3628369becc8e5795d4816ca557a2742ee4f0276875ec381601fbae1aa9ea322",
+      "bytes": 6624,
+      "durationSeconds": 1.104
+    },
+    {
+      "number": 595,
+      "hanzi": "电子书",
+      "expectedPinyin": "diànzǐshū",
+      "speechText": "电子书",
+      "storageKey": "audio/formal/hsk3-2025/l3-0595-v1.mp3",
+      "checksumSha256": "c9e625ee210b1656b1a3db305500dd6e0a0cba47a6f043a8d4a2e669a978146b",
+      "bytes": 9360,
+      "durationSeconds": 1.56
+    },
+    {
+      "number": 596,
+      "hanzi": "丢",
+      "expectedPinyin": "diū",
+      "speechText": "丢",
+      "storageKey": "audio/formal/hsk3-2025/l3-0596-v1.mp3",
+      "checksumSha256": "7f81ec3630c6305c8f76d4866525ea047d330b9a0bb752cbabe5b8399bb2f61c",
+      "bytes": 6768,
+      "durationSeconds": 1.128
+    },
+    {
+      "number": 598,
+      "hanzi": "东北",
+      "expectedPinyin": "dōngběi",
+      "speechText": "东北",
+      "storageKey": "audio/formal/hsk3-2025/l3-0598-v1.mp3",
+      "checksumSha256": "8d1bd34dfab115a087a2fba223e68a22871e38da7e662d70cbe9778598fe0455",
+      "bytes": 8208,
+      "durationSeconds": 1.368
+    },
+    {
+      "number": 599,
+      "hanzi": "东方",
+      "expectedPinyin": "dōngfāng",
+      "speechText": "东方",
+      "storageKey": "audio/formal/hsk3-2025/l3-0599-v1.mp3",
+      "checksumSha256": "82c2115b241a0b7ff3537ca1c6f05da22a6445917cf7f314517f8d2e6e1fdd7e",
+      "bytes": 7920,
+      "durationSeconds": 1.32
+    },
+    {
+      "number": 600,
+      "hanzi": "东南",
+      "expectedPinyin": "dōngnán",
+      "speechText": "东南",
+      "storageKey": "audio/formal/hsk3-2025/l3-0600-v1.mp3",
+      "checksumSha256": "bb136ae961a5a404bd24ed3c3df2c744728649480822d94ef76c6e29f08cf068",
+      "bytes": 8064,
+      "durationSeconds": 1.344
+    },
+    {
+      "number": 602,
+      "hanzi": "懂得",
+      "expectedPinyin": "dǒngde",
+      "speechText": "懂得",
+      "storageKey": "audio/formal/hsk3-2025/l3-0602-v1.mp3",
+      "checksumSha256": "a2bf857275b8483ae3b8b6f18ee959be0262f830f14f29f9fe024b7f4a1f652e",
+      "bytes": 7920,
+      "durationSeconds": 1.32
+    },
+    {
+      "number": 603,
+      "hanzi": "动物",
+      "expectedPinyin": "dòngwù",
+      "speechText": "动物",
+      "storageKey": "audio/formal/hsk3-2025/l3-0603-v1.mp3",
+      "checksumSha256": "bd3b40ed990f79b0a31efc634d1c04e2231b8ca171162d95eaa3b5ed30733533",
+      "bytes": 7632,
+      "durationSeconds": 1.272
+    },
+    {
+      "number": 604,
+      "hanzi": "动物园",
+      "expectedPinyin": "dòngwùyuán",
+      "speechText": "动物园",
+      "storageKey": "audio/formal/hsk3-2025/l3-0604-v1.mp3",
+      "checksumSha256": "ff128784276ebf2e3c44082da994eed4215296bed97defde01909d1eb4bdaa87",
+      "bytes": 8640,
+      "durationSeconds": 1.44
+    },
+    {
+      "number": 605,
+      "hanzi": "短",
+      "expectedPinyin": "duǎn",
+      "speechText": "短",
+      "storageKey": "audio/formal/hsk3-2025/l3-0605-v1.mp3",
+      "checksumSha256": "12a2e3d992821b2b39975b0ddf45db02522ca691bf4345d6d726e3e7e8b76f84",
+      "bytes": 6912,
+      "durationSeconds": 1.152
+    },
+    {
+      "number": 606,
+      "hanzi": "短裤",
+      "expectedPinyin": "duǎnkù",
+      "speechText": "短裤",
+      "storageKey": "audio/formal/hsk3-2025/l3-0606-v1.mp3",
+      "checksumSha256": "fec16bd89fda181610761ff835672e2c0d176758433d5d899a31166e8dcdc930",
+      "bytes": 8064,
+      "durationSeconds": 1.344
+    },
+    {
+      "number": 607,
+      "hanzi": "段",
+      "expectedPinyin": "duàn",
+      "speechText": "段",
+      "storageKey": "audio/formal/hsk3-2025/l3-0607-v1.mp3",
+      "checksumSha256": "14ba56f48f75d79bd02075f92af4d83d26731154d6d191afbe41b84e6f8776e0",
+      "bytes": 6768,
+      "durationSeconds": 1.128
+    },
+    {
+      "number": 608,
+      "hanzi": "锻炼",
+      "expectedPinyin": "duànliàn",
+      "speechText": "锻炼",
+      "storageKey": "audio/formal/hsk3-2025/l3-0608-v1.mp3",
+      "checksumSha256": "d75b5dd7e8cb07520e0c8a68bd45eb0486b2ec449849eaa06837c619e021ffa4",
+      "bytes": 8064,
+      "durationSeconds": 1.344
+    },
+    {
+      "number": 609,
+      "hanzi": "对话",
+      "expectedPinyin": "duìhuà",
+      "speechText": "对话",
+      "storageKey": "audio/formal/hsk3-2025/l3-0609-v1.mp3",
+      "checksumSha256": "76e5a24c5f6f1c212cad8980a1dd73cb0a324ec38b031bb2580e2adba3b74e26",
+      "bytes": 8208,
+      "durationSeconds": 1.368
+    },
+    {
+      "number": 611,
+      "hanzi": "而且",
+      "expectedPinyin": "érqiě",
+      "speechText": "而且",
+      "storageKey": "audio/formal/hsk3-2025/l3-0611-v1.mp3",
+      "checksumSha256": "714e0ef73a1e168a66c391d53133a1441a5f390972b1a8ed7902c8b4b21e4090",
+      "bytes": 8496,
+      "durationSeconds": 1.416
+    },
+    {
+      "number": 612,
+      "hanzi": "耳朵",
+      "expectedPinyin": "ěrduo",
+      "speechText": "耳朵",
+      "storageKey": "audio/formal/hsk3-2025/l3-0612-v1.mp3",
+      "checksumSha256": "f086886764c4daa46e15602a49642a42083baf0a72e2b825b8cfd64c81520870",
+      "bytes": 8064,
+      "durationSeconds": 1.344
+    },
+    {
+      "number": 613,
+      "hanzi": "耳机",
+      "expectedPinyin": "ěrjī",
+      "speechText": "耳机",
+      "storageKey": "audio/formal/hsk3-2025/l3-0613-v1.mp3",
+      "checksumSha256": "69ecdd5bdb578a4c800cf1ae5afb3f9a408d70c42684f0d13ab2d04f35fc65a0",
+      "bytes": 8352,
+      "durationSeconds": 1.392
+    },
+    {
+      "number": 614,
+      "hanzi": "发",
+      "expectedPinyin": "fā",
+      "speechText": "发",
+      "storageKey": "audio/formal/hsk3-2025/l3-0614-v1.mp3",
+      "checksumSha256": "8a810d04985a9fad73b7d3198d31e10bbce44ae888fb4f38beb129594437b2ec",
+      "bytes": 7056,
+      "durationSeconds": 1.176
+    },
+    {
+      "number": 615,
+      "hanzi": "发烧",
+      "expectedPinyin": "fāshāo",
+      "speechText": "发烧",
+      "storageKey": "audio/formal/hsk3-2025/l3-0615-v1.mp3",
+      "checksumSha256": "a8bf561caacfe3cc16b6ac13bf53b1d0417a891d0a1c31ca2f7938cc9c7ac532",
+      "bytes": 8496,
+      "durationSeconds": 1.416
+    },
+    {
+      "number": 616,
+      "hanzi": "发生",
+      "expectedPinyin": "fāshēng",
+      "speechText": "发生",
+      "storageKey": "audio/formal/hsk3-2025/l3-0616-v1.mp3",
+      "checksumSha256": "6ceeb4868f59987a05618f11b2c3014dd3b3f075ee654312867ba0993e68c08a",
+      "bytes": 8208,
+      "durationSeconds": 1.368
+    },
+    {
+      "number": 617,
+      "hanzi": "发现",
+      "expectedPinyin": "fāxiàn",
+      "speechText": "发现",
+      "storageKey": "audio/formal/hsk3-2025/l3-0617-v1.mp3",
+      "checksumSha256": "c88be167d5195cd9a030bd77eb509e0f16f8c0fbba78cd00d61d8f805a7298b5",
+      "bytes": 8352,
+      "durationSeconds": 1.392
+    },
+    {
+      "number": 618,
+      "hanzi": "发展",
+      "expectedPinyin": "fāzhǎn",
+      "speechText": "发展",
+      "storageKey": "audio/formal/hsk3-2025/l3-0618-v1.mp3",
+      "checksumSha256": "ea612667e37db7a7ab2d0148aef62846ad82801d3dbb98ff04b7e82a0c069c40",
+      "bytes": 8352,
+      "durationSeconds": 1.392
+    },
+    {
+      "number": 620,
+      "hanzi": "方便面",
+      "expectedPinyin": "fāngbiànmiàn",
+      "speechText": "方便面",
+      "storageKey": "audio/formal/hsk3-2025/l3-0620-v1.mp3",
+      "checksumSha256": "06436542b3db1f6ab06a10a2e88704931f391e4d6f03fa998e051eaf5e7cf103",
+      "bytes": 9504,
+      "durationSeconds": 1.584
+    },
+    {
+      "number": 621,
+      "hanzi": "方法",
+      "expectedPinyin": "fāngfǎ",
+      "speechText": "方法",
+      "storageKey": "audio/formal/hsk3-2025/l3-0621-v1.mp3",
+      "checksumSha256": "8597b926f19f3269df43a546658b19bdf19087b8ff6e95744a244b1f672c6ea2",
+      "bytes": 8208,
+      "durationSeconds": 1.368
+    },
+    {
+      "number": 626,
+      "hanzi": "放心",
+      "expectedPinyin": "fàngxīn",
+      "speechText": "放心",
+      "storageKey": "audio/formal/hsk3-2025/l3-0626-v1.mp3",
+      "checksumSha256": "613261ce88ba669223a3d4d61378451381b5a5eaf882d4d1b4ec575ef2dcb9a9",
+      "bytes": 8352,
+      "durationSeconds": 1.392
+    },
+    {
+      "number": 628,
+      "hanzi": "分开",
+      "expectedPinyin": "fēnkāi",
+      "speechText": "分开",
+      "storageKey": "audio/formal/hsk3-2025/l3-0628-v1.mp3",
+      "checksumSha256": "9bcd299dac60de6c85138461dd324005d71c187fa45b743eb206997d8958f927",
+      "bytes": 8352,
+      "durationSeconds": 1.392
+    },
+    {
+      "number": 630,
+      "hanzi": "封",
+      "expectedPinyin": "fēng",
+      "speechText": "封",
+      "storageKey": "audio/formal/hsk3-2025/l3-0630-v1.mp3",
+      "checksumSha256": "c5004c71cb39ae4bbefcfcbf84ba159caa7e9ab90fdb4a9e15978f26893f664d",
+      "bytes": 7056,
+      "durationSeconds": 1.176
+    },
+    {
+      "number": 631,
+      "hanzi": "夫妻",
+      "expectedPinyin": "fūqī",
+      "speechText": "夫妻",
+      "storageKey": "audio/formal/hsk3-2025/l3-0631-v1.mp3",
+      "checksumSha256": "d8479f54806255e4ba3e67667fbd0d41475ed35c35ca5240eaf39e6f6235015d",
+      "bytes": 8496,
+      "durationSeconds": 1.416
+    },
+    {
+      "number": 633,
+      "hanzi": "附近",
+      "expectedPinyin": "fùjìn",
+      "speechText": "附近",
+      "storageKey": "audio/formal/hsk3-2025/l3-0633-v1.mp3",
+      "checksumSha256": "1622527f33f29b19a0d9fd7b9cbc74ce37c3584cdaada77075859492f941af84",
+      "bytes": 8352,
+      "durationSeconds": 1.392
+    },
+    {
+      "number": 634,
+      "hanzi": "复习",
+      "expectedPinyin": "fùxí",
+      "speechText": "复习",
+      "storageKey": "audio/formal/hsk3-2025/l3-0634-v1.mp3",
+      "checksumSha256": "1b6ac92f3dd6358933aa9edcc0a66ebc345af21762a9276402ed8eaf52fc3d5d",
+      "bytes": 8784,
+      "durationSeconds": 1.464
+    },
+    {
+      "number": 635,
+      "hanzi": "该",
+      "expectedPinyin": "gāi",
+      "speechText": "该",
+      "storageKey": "audio/formal/hsk3-2025/l3-0635-v1.mp3",
+      "checksumSha256": "7254ebdface6f7551cf002514278e0679324f27530fcffa436c1095baf17221b",
+      "bytes": 7056,
+      "durationSeconds": 1.176
+    },
+    {
+      "number": 637,
+      "hanzi": "感兴趣",
+      "expectedPinyin": "gǎn xìngqù",
+      "speechText": "感兴趣",
+      "storageKey": "audio/formal/hsk3-2025/l3-0637-v1.mp3",
+      "checksumSha256": "1f3d7aa98a9dff205c803322ae426752d89d4cee3880a59f07a5724dc8013872",
+      "bytes": 9504,
+      "durationSeconds": 1.584
+    },
+    {
+      "number": 638,
+      "hanzi": "感到",
+      "expectedPinyin": "gǎndào",
+      "speechText": "感到",
+      "storageKey": "audio/formal/hsk3-2025/l3-0638-v1.mp3",
+      "checksumSha256": "778646855bfe6badb0dfea4d209cb231e0702106969df12d76447850248c57a0",
+      "bytes": 7920,
+      "durationSeconds": 1.32
+    },
+    {
+      "number": 639,
+      "hanzi": "感冒",
+      "expectedPinyin": "gǎnmào",
+      "speechText": "感冒",
+      "storageKey": "audio/formal/hsk3-2025/l3-0639-v1.mp3",
+      "checksumSha256": "67099d411045e05a2a9a790dc10e9549644e3db0a7a3ebf5003f6f90a721474f",
+      "bytes": 8064,
+      "durationSeconds": 1.344
+    },
+    {
+      "number": 641,
+      "hanzi": "刚",
+      "expectedPinyin": "gāng",
+      "speechText": "刚",
+      "storageKey": "audio/formal/hsk3-2025/l3-0641-v1.mp3",
+      "checksumSha256": "9a8c2b2134e9ef0832bbcc5db1236f6e5db3fe3bb67aad86fdf2976a0fe9582f",
+      "bytes": 6768,
+      "durationSeconds": 1.128
+    },
+    {
+      "number": 642,
+      "hanzi": "刚才",
+      "expectedPinyin": "gāngcái",
+      "speechText": "刚才",
+      "storageKey": "audio/formal/hsk3-2025/l3-0642-v1.mp3",
+      "checksumSha256": "f71f3a2cad7080436a5a1470e4d9346168ff9fee4e872d8385f30b698e94e189",
+      "bytes": 8496,
+      "durationSeconds": 1.416
+    },
+    {
+      "number": 643,
+      "hanzi": "刚刚",
+      "expectedPinyin": "gānggāng",
+      "speechText": "刚刚",
+      "storageKey": "audio/formal/hsk3-2025/l3-0643-v1.mp3",
+      "checksumSha256": "249a70041fee0714df718e40e712ee9f68d6403af7ce9b660f9bb7c347411fcc",
+      "bytes": 7920,
+      "durationSeconds": 1.32
+    },
+    {
+      "number": 645,
+      "hanzi": "根据",
+      "expectedPinyin": "gēnjù",
+      "speechText": "根据",
+      "storageKey": "audio/formal/hsk3-2025/l3-0645-v1.mp3",
+      "checksumSha256": "45690b9a63115a0b1a1be20e7d67c06cb6326cab8b7ac11f0e900a7c4919eff6",
+      "bytes": 8064,
+      "durationSeconds": 1.344
+    },
+    {
+      "number": 646,
+      "hanzi": "更",
+      "expectedPinyin": "gèng",
+      "speechText": "更",
+      "storageKey": "audio/formal/hsk3-2025/l3-0646-v1.mp3",
+      "checksumSha256": "21cb2f9e25afe385a4821876834b9bfe13c7a1068acda37081241ea721d848a4",
+      "bytes": 6768,
+      "durationSeconds": 1.128
+    },
+    {
+      "number": 648,
+      "hanzi": "公园",
+      "expectedPinyin": "gōngyuán",
+      "speechText": "公园",
+      "storageKey": "audio/formal/hsk3-2025/l3-0648-v1.mp3",
+      "checksumSha256": "5a9d5f6338240728f7e157475232f72d53694e6301ae0dddf24a3cc1dc924fd7",
+      "bytes": 8208,
+      "durationSeconds": 1.368
+    },
+    {
+      "number": 649,
+      "hanzi": "工作日",
+      "expectedPinyin": "gōngzuòrì",
+      "speechText": "工作日",
+      "storageKey": "audio/formal/hsk3-2025/l3-0649-v1.mp3",
+      "checksumSha256": "6fed76a630e5c89f8d5783ea3119a063bcda9d2ee3880c5cae31cd09b74f6df9",
+      "bytes": 9216,
+      "durationSeconds": 1.536
+    },
+    {
+      "number": 650,
+      "hanzi": "故事",
+      "expectedPinyin": "gùshi",
+      "speechText": "故事",
+      "storageKey": "audio/formal/hsk3-2025/l3-0650-v1.mp3",
+      "checksumSha256": "ffb7514d7191f6c47d1db669c93fcb2d16aad0a1b0be73829f949bceae74d970",
+      "bytes": 8208,
+      "durationSeconds": 1.368
+    },
+    {
+      "number": 651,
+      "hanzi": "刮",
+      "expectedPinyin": "guā",
+      "speechText": "刮",
+      "storageKey": "audio/formal/hsk3-2025/l3-0651-v1.mp3",
+      "checksumSha256": "f9c540736ce11140e0b7d8c210be5040542c5f4b610a60b1f45e9ad31f79d580",
+      "bytes": 6912,
+      "durationSeconds": 1.152
+    },
+    {
+      "number": 653,
+      "hanzi": "关机",
+      "expectedPinyin": "guānjī",
+      "speechText": "关机",
+      "storageKey": "audio/formal/hsk3-2025/l3-0653-v1.mp3",
+      "checksumSha256": "59b16c3558849bbf2c96400daf5d340b83120c3b8ccc41934f119a209be8fde4",
+      "bytes": 8208,
+      "durationSeconds": 1.368
+    },
+    {
+      "number": 654,
+      "hanzi": "关系",
+      "expectedPinyin": "guānxì",
+      "speechText": "关系",
+      "storageKey": "audio/formal/hsk3-2025/l3-0654-v1.mp3",
+      "checksumSha256": "fec4ba87c12a44392e47e6d8a0a6649563841888f9c3248a4dd6d57bf4c58a9e",
+      "bytes": 8208,
+      "durationSeconds": 1.368
+    },
+    {
+      "number": 655,
+      "hanzi": "关心",
+      "expectedPinyin": "guānxīn",
+      "speechText": "关心",
+      "storageKey": "audio/formal/hsk3-2025/l3-0655-v1.mp3",
+      "checksumSha256": "857029e48d0cac24eba804b5a2e3cf66b71b6117da54762492033c8285ac5a79",
+      "bytes": 8064,
+      "durationSeconds": 1.344
+    },
+    {
+      "number": 656,
+      "hanzi": "关于",
+      "expectedPinyin": "guānyú",
+      "speechText": "关于",
+      "storageKey": "audio/formal/hsk3-2025/l3-0656-v1.mp3",
+      "checksumSha256": "978c615ddaa021aa77ee1017c7617cb04af9c698bc61d12b8f458b503fe4d29f",
+      "bytes": 7920,
+      "durationSeconds": 1.32
+    },
+    {
+      "number": 657,
+      "hanzi": "关注",
+      "expectedPinyin": "guānzhù",
+      "speechText": "关注",
+      "storageKey": "audio/formal/hsk3-2025/l3-0657-v1.mp3",
+      "checksumSha256": "992e1e5ff7f8dfeec42f94f53828b8cac4380766a37d37fe0b4bff94feaf9275",
+      "bytes": 8064,
+      "durationSeconds": 1.344
+    },
+    {
+      "number": 659,
+      "hanzi": "过节",
+      "expectedPinyin": "guòjié",
+      "speechText": "过节",
+      "storageKey": "audio/formal/hsk3-2025/l3-0659-v1.mp3",
+      "checksumSha256": "4b992682070901f03b59bdba227f6979aef1c9ad59c1f7d94501edf83761e64a",
+      "bytes": 8208,
+      "durationSeconds": 1.368
+    },
+    {
+      "number": 660,
+      "hanzi": "过去",
+      "expectedPinyin": "guòqù",
+      "speechText": "过去",
+      "storageKey": "audio/formal/hsk3-2025/l3-0660-v1.mp3",
+      "checksumSha256": "8be3dce66ea433158caef372589bf0cd0add961b89d29e15b46604ed16e13824",
+      "bytes": 8064,
+      "durationSeconds": 1.344
+    },
+    {
+      "number": 661,
+      "hanzi": "海",
+      "expectedPinyin": "hǎi",
+      "speechText": "海",
+      "storageKey": "audio/formal/hsk3-2025/l3-0661-v1.mp3",
+      "checksumSha256": "fa44399d54b0eb75f239973f92258b33317130c4aa19e5384ee72ac439671962",
+      "bytes": 6912,
+      "durationSeconds": 1.152
+    },
+    {
+      "number": 662,
+      "hanzi": "害怕",
+      "expectedPinyin": "hàipà",
+      "speechText": "害怕",
+      "storageKey": "audio/formal/hsk3-2025/l3-0662-v1.mp3",
+      "checksumSha256": "a0531cbf0a7d850d00ea0821a59f5df195ee54b325c61bd400dc35732eee2d6d",
+      "bytes": 8064,
+      "durationSeconds": 1.344
+    },
+    {
+      "number": 663,
+      "hanzi": "好多",
+      "expectedPinyin": "hǎoduō",
+      "speechText": "好多",
+      "storageKey": "audio/formal/hsk3-2025/l3-0663-v1.mp3",
+      "checksumSha256": "3ab0a3280e82b0d7d42bc6c05010d75d13cc006b543ed891ffc484cf43d9a1c0",
+      "bytes": 8208,
+      "durationSeconds": 1.368
+    },
+    {
+      "number": 664,
+      "hanzi": "好久",
+      "expectedPinyin": "hǎojiǔ",
+      "speechText": "好久",
+      "storageKey": "audio/formal/hsk3-2025/l3-0664-v1.mp3",
+      "checksumSha256": "1c6590f4b01a8b16c34321bb342271daedb5b9f515af08e9b35935a013470a12",
+      "bytes": 8352,
+      "durationSeconds": 1.392
+    },
+    {
+      "number": 665,
+      "hanzi": "好像",
+      "expectedPinyin": "hǎoxiàng",
+      "speechText": "好像",
+      "storageKey": "audio/formal/hsk3-2025/l3-0665-v1.mp3",
+      "checksumSha256": "903103d0e8af4783c3619a0b1b5be04afeb545279439261f37cd83d4990ec405",
+      "bytes": 8208,
+      "durationSeconds": 1.368
+    },
+    {
+      "number": 666,
+      "hanzi": "号码",
+      "expectedPinyin": "hàomǎ",
+      "speechText": "号码",
+      "storageKey": "audio/formal/hsk3-2025/l3-0666-v1.mp3",
+      "checksumSha256": "81d9a4e294dda4946ae6e91caa5ab305a56c3cb5ece0b79aa5de09e6c76d0293",
+      "bytes": 7920,
+      "durationSeconds": 1.32
+    },
+    {
+      "number": 667,
+      "hanzi": "河",
+      "expectedPinyin": "hé",
+      "speechText": "河",
+      "storageKey": "audio/formal/hsk3-2025/l3-0667-v1.mp3",
+      "checksumSha256": "caad0b14713a06db73f873a9e30b271e331be64cfa76f5a0d4bd7c4af293177b",
+      "bytes": 7056,
+      "durationSeconds": 1.176
+    },
+    {
+      "number": 668,
+      "hanzi": "合适",
+      "expectedPinyin": "héshì",
+      "speechText": "合适",
+      "storageKey": "audio/formal/hsk3-2025/l3-0668-v1.mp3",
+      "checksumSha256": "dbc9687a91f6fa50a0c147131f88ec3255ed2d85405e4cd647bc0cff652ec7c6",
+      "bytes": 8784,
+      "durationSeconds": 1.464
+    },
+    {
+      "number": 669,
+      "hanzi": "黑板",
+      "expectedPinyin": "hēibǎn",
+      "speechText": "黑板",
+      "storageKey": "audio/formal/hsk3-2025/l3-0669-v1.mp3",
+      "checksumSha256": "f1c6bc744676f384d36ec791a024ec85eed0410bc48121a8963b24bd0dfa2928",
+      "bytes": 8208,
+      "durationSeconds": 1.368
+    },
+    {
+      "number": 670,
+      "hanzi": "红绿灯",
+      "expectedPinyin": "hóng-lǜdēng",
+      "speechText": "红绿灯",
+      "storageKey": "audio/formal/hsk3-2025/l3-0670-v1.mp3",
+      "checksumSha256": "c178347badd8ee13effd0664f3d16eb2e7d1633ec202bd36ddf26ff8ca0936f3",
+      "bytes": 9072,
+      "durationSeconds": 1.512
+    },
+    {
+      "number": 671,
+      "hanzi": "后来",
+      "expectedPinyin": "hòulái",
+      "speechText": "后来",
+      "storageKey": "audio/formal/hsk3-2025/l3-0671-v1.mp3",
+      "checksumSha256": "3678ba39090029665ecc3f117d91e677e89e349b9fa605f349f3a7ce83b6e4a6",
+      "bytes": 7920,
+      "durationSeconds": 1.32
+    },
+    {
+      "number": 672,
+      "hanzi": "后年",
+      "expectedPinyin": "hòunián",
+      "speechText": "后年",
+      "storageKey": "audio/formal/hsk3-2025/l3-0672-v1.mp3",
+      "checksumSha256": "b50d5ea9abda90b2d979cb94f65d6a132d9657a37e07a354f91174c6baa52173",
+      "bytes": 8208,
+      "durationSeconds": 1.368
+    },
+    {
+      "number": 675,
+      "hanzi": "花园",
+      "expectedPinyin": "huāyuán",
+      "speechText": "花园",
+      "storageKey": "audio/formal/hsk3-2025/l3-0675-v1.mp3",
+      "checksumSha256": "e732f7cd59c7f8df7179f4da5a4eb70b1b868fa775932f0dda8d75b5582b12f5",
+      "bytes": 8496,
+      "durationSeconds": 1.416
+    },
+    {
+      "number": 676,
+      "hanzi": "画家",
+      "expectedPinyin": "huàjiā",
+      "speechText": "画家",
+      "storageKey": "audio/formal/hsk3-2025/l3-0676-v1.mp3",
+      "checksumSha256": "aa8913d1ceb383b0c6793a91cc97dc47b837d1997608ecb78b02c76365da5ba5",
+      "bytes": 8208,
+      "durationSeconds": 1.368
+    },
+    {
+      "number": 677,
+      "hanzi": "欢迎",
+      "expectedPinyin": "huānyíng",
+      "speechText": "欢迎",
+      "storageKey": "audio/formal/hsk3-2025/l3-0677-v1.mp3",
+      "checksumSha256": "58255604ed0e192bf7fd108271984ecb26a505bd74a9554f81c07b50b85711ba",
+      "bytes": 8352,
+      "durationSeconds": 1.392
+    },
+    {
+      "number": 679,
+      "hanzi": "环境",
+      "expectedPinyin": "huánjìng",
+      "speechText": "环境",
+      "storageKey": "audio/formal/hsk3-2025/l3-0679-v1.mp3",
+      "checksumSha256": "3f0d6d9ff20756c97b798bb25fed70de957ce062abae3c849071a22ebecc144e",
+      "bytes": 8496,
+      "durationSeconds": 1.416
+    },
+    {
+      "number": 681,
+      "hanzi": "黄色",
+      "expectedPinyin": "huángsè",
+      "speechText": "黄色",
+      "storageKey": "audio/formal/hsk3-2025/l3-0681-v1.mp3",
+      "checksumSha256": "ae5616ed7440670a22e9eefbb2275087c0352f2fb2f4844f0d6c63ea92d2c61b",
+      "bytes": 8496,
+      "durationSeconds": 1.416
+    },
+    {
+      "number": 683,
+      "hanzi": "会",
+      "expectedPinyin": "huì",
+      "speechText": "会",
+      "storageKey": "audio/formal/hsk3-2025/l3-0683-v1.mp3",
+      "checksumSha256": "593215dd4c526417f87ac6e7fc01bbe1b9b4a8f7b67ff317efb630b9ecfad3b3",
+      "bytes": 7200,
+      "durationSeconds": 1.2
+    },
+    {
+      "number": 684,
+      "hanzi": "会议",
+      "expectedPinyin": "huìyì",
+      "speechText": "会议",
+      "storageKey": "audio/formal/hsk3-2025/l3-0684-v1.mp3",
+      "checksumSha256": "323214266b4d97f68db18aa3a1bd5d42846fad0c492ce70c778285457b0b98d9",
+      "bytes": 8352,
+      "durationSeconds": 1.392
+    },
+    {
+      "number": 685,
+      "hanzi": "或",
+      "expectedPinyin": "huò",
+      "speechText": "或",
+      "storageKey": "audio/formal/hsk3-2025/l3-0685-v1.mp3",
+      "checksumSha256": "ddda9d8373c3de1c7b697802399e082edbe7b921e464ea53b8cf875c540d83ed",
+      "bytes": 7200,
+      "durationSeconds": 1.2
+    },
+    {
+      "number": 686,
+      "hanzi": "或者",
+      "expectedPinyin": "huòzhě",
+      "speechText": "或者",
+      "storageKey": "audio/formal/hsk3-2025/l3-0686-v1.mp3",
+      "checksumSha256": "ced513e4176bcc73323c4680fdff653f5623c4dc58f89931571901b727c9d21d",
+      "bytes": 8208,
+      "durationSeconds": 1.368
+    },
+    {
+      "number": 688,
+      "hanzi": "几乎",
+      "expectedPinyin": "jīhū",
+      "speechText": "几乎",
+      "storageKey": "audio/formal/hsk3-2025/l3-0688-v1.mp3",
+      "checksumSha256": "d2580f94cb0fff1e009460f92ef4328f014619d2b154a8cedadf9c54185bc4eb",
+      "bytes": 8352,
+      "durationSeconds": 1.392
+    },
+    {
+      "number": 689,
+      "hanzi": "机会",
+      "expectedPinyin": "jīhuì",
+      "speechText": "机会",
+      "storageKey": "audio/formal/hsk3-2025/l3-0689-v1.mp3",
+      "checksumSha256": "50a3022f998b31c7d14b71cc33d9807847c23e1d50b43a798656981d238be329",
+      "bytes": 8208,
+      "durationSeconds": 1.368
+    },
+    {
+      "number": 690,
+      "hanzi": "极",
+      "expectedPinyin": "jí",
+      "speechText": "极",
+      "storageKey": "audio/formal/hsk3-2025/l3-0690-v1.mp3",
+      "checksumSha256": "b9d8b84cbf3c73b9f7dde4ee033298ab7de8acef9023a0e6c62ec5054358158b",
+      "bytes": 6912,
+      "durationSeconds": 1.152
+    },
+    {
+      "number": 691,
+      "hanzi": "急",
+      "expectedPinyin": "jí",
+      "speechText": "急",
+      "storageKey": "audio/formal/hsk3-2025/l3-0691-v1.mp3",
+      "checksumSha256": "f66047fbf32ed04ebdf090496b09d6f8f77df742ee7d5cf64dee166a36281317",
+      "bytes": 6912,
+      "durationSeconds": 1.152
+    },
+    {
+      "number": 693,
+      "hanzi": "季",
+      "expectedPinyin": "jì",
+      "speechText": "季",
+      "storageKey": "audio/formal/hsk3-2025/l3-0693-v1.mp3",
+      "checksumSha256": "ba291a6659ad400d6a899bffa4ba1c0dc3a69e6e162104caff11767571fc630c",
+      "bytes": 7056,
+      "durationSeconds": 1.176
+    },
+    {
+      "number": 695,
+      "hanzi": "加",
+      "expectedPinyin": "jiā",
+      "speechText": "加",
+      "storageKey": "audio/formal/hsk3-2025/l3-0695-v1.mp3",
+      "checksumSha256": "42276b965dc19bc50c3e9acdc56368bc73bc39d9f767c28517c221443309d2ed",
+      "bytes": 6912,
+      "durationSeconds": 1.152
+    },
+    {
+      "number": 696,
+      "hanzi": "假期",
+      "expectedPinyin": "jiàqī",
+      "speechText": "假期",
+      "storageKey": "audio/formal/hsk3-2025/l3-0696-v1.mp3",
+      "checksumSha256": "8ebd9a335b1069020d559a26f18ca768ffcfa0f1e6ac79cb44d0943ddbcab159",
+      "bytes": 8640,
+      "durationSeconds": 1.44
+    },
+    {
+      "number": 697,
+      "hanzi": "坚持",
+      "expectedPinyin": "jiānchí",
+      "speechText": "坚持",
+      "storageKey": "audio/formal/hsk3-2025/l3-0697-v1.mp3",
+      "checksumSha256": "07072bca79f5dc0d81fdf39cd7d1f24a7a15b5f16e4aba00d238bd7b18e39edf",
+      "bytes": 8640,
+      "durationSeconds": 1.44
+    },
+    {
+      "number": 698,
+      "hanzi": "检查",
+      "expectedPinyin": "jiǎnchá",
+      "speechText": "检查",
+      "storageKey": "audio/formal/hsk3-2025/l3-0698-v1.mp3",
+      "checksumSha256": "fa14a1df8c0b1a96d81cfb89ec00801fc90eeaf2b8c1e46caafbf2e6ccc7f13f",
+      "bytes": 8208,
+      "durationSeconds": 1.368
+    },
+    {
+      "number": 699,
+      "hanzi": "简单",
+      "expectedPinyin": "jiǎndān",
+      "speechText": "简单",
+      "storageKey": "audio/formal/hsk3-2025/l3-0699-v1.mp3",
+      "checksumSha256": "15b26bd8f268ff2f2d5bcdd233dff27d9554b895ae0d731a104ed114edffe426",
+      "bytes": 8064,
+      "durationSeconds": 1.344
+    },
+    {
+      "number": 700,
+      "hanzi": "检票",
+      "expectedPinyin": "jiǎnpiào",
+      "speechText": "检票",
+      "storageKey": "audio/formal/hsk3-2025/l3-0700-v1.mp3",
+      "checksumSha256": "dd5cd00ab01dfe0d1821988b7d4549023aa7ea39ce7c9e820dbc6fe8eabe6757",
+      "bytes": 8640,
+      "durationSeconds": 1.44
+    },
+    {
+      "number": 701,
+      "hanzi": "健康",
+      "expectedPinyin": "jiànkāng",
+      "speechText": "健康",
+      "storageKey": "audio/formal/hsk3-2025/l3-0701-v1.mp3",
+      "checksumSha256": "6e503f3389f278cf2927bae847c01f0468a1c408ddd2a343d11c028097822300",
+      "bytes": 8208,
+      "durationSeconds": 1.368
+    },
+    {
+      "number": 703,
+      "hanzi": "讲",
+      "expectedPinyin": "jiǎng",
+      "speechText": "讲",
+      "storageKey": "audio/formal/hsk3-2025/l3-0703-v1.mp3",
+      "checksumSha256": "b0a8764c92bcd8ee0ffd6ae29219011fff4833ce6374151384948b0004f31a46",
+      "bytes": 6768,
+      "durationSeconds": 1.128
+    },
+    {
+      "number": 704,
+      "hanzi": "角",
+      "expectedPinyin": "jiǎo",
+      "speechText": "角",
+      "storageKey": "audio/formal/hsk3-2025/l3-0704-v1.mp3",
+      "checksumSha256": "d95c702d2f5882b8b952e4c987451f3a297048ec6d3ffcd9fb10abd174299209",
+      "bytes": 6912,
+      "durationSeconds": 1.152
+    },
+    {
+      "number": 705,
+      "hanzi": "脚",
+      "expectedPinyin": "jiǎo",
+      "speechText": "脚",
+      "storageKey": "audio/formal/hsk3-2025/l3-0705-v1.mp3",
+      "checksumSha256": "15c4b627398fe7a3625d71db6b83bdaddfff0544ec31590d02d59cf7d9f6b589",
+      "bytes": 6912,
+      "durationSeconds": 1.152
+    },
+    {
+      "number": 706,
+      "hanzi": "接",
+      "expectedPinyin": "jiē",
+      "speechText": "接",
+      "storageKey": "audio/formal/hsk3-2025/l3-0706-v1.mp3",
+      "checksumSha256": "3026ca85f9fd6492e07dcac3714a5c450636453738bfea7721d32073bdc807f0",
+      "bytes": 6912,
+      "durationSeconds": 1.152
+    },
+    {
+      "number": 707,
+      "hanzi": "街",
+      "expectedPinyin": "jiē",
+      "speechText": "街",
+      "storageKey": "audio/formal/hsk3-2025/l3-0707-v1.mp3",
+      "checksumSha256": "3026ca85f9fd6492e07dcac3714a5c450636453738bfea7721d32073bdc807f0",
+      "bytes": 6912,
+      "durationSeconds": 1.152
+    },
+    {
+      "number": 708,
+      "hanzi": "节",
+      "expectedPinyin": "jié",
+      "speechText": "节",
+      "storageKey": "audio/formal/hsk3-2025/l3-0708-v1.mp3",
+      "checksumSha256": "5a0f3ea0351c5df0476bf10eea933b2e545a3b4f02698aa6e2564713a89a9387",
+      "bytes": 6912,
+      "durationSeconds": 1.152
+    },
+    {
+      "number": 709,
+      "hanzi": "结婚",
+      "expectedPinyin": "jiéhūn",
+      "speechText": "结婚",
+      "storageKey": "audio/formal/hsk3-2025/l3-0709-v1.mp3",
+      "checksumSha256": "bd15a3cca9d5563a30eff2775ca190f5617c92edb066a9b3db1efd44a58e80c8",
+      "bytes": 8208,
+      "durationSeconds": 1.368
+    },
+    {
+      "number": 710,
+      "hanzi": "节目",
+      "expectedPinyin": "jiémù",
+      "speechText": "节目",
+      "storageKey": "audio/formal/hsk3-2025/l3-0710-v1.mp3",
+      "checksumSha256": "52842161f7fdf3e203d1fbbed6636a4cb13512683392c17d7e46abeb3a4690ec",
+      "bytes": 8208,
+      "durationSeconds": 1.368
+    },
+    {
+      "number": 711,
+      "hanzi": "节日",
+      "expectedPinyin": "jiérì",
+      "speechText": "节日",
+      "storageKey": "audio/formal/hsk3-2025/l3-0711-v1.mp3",
+      "checksumSha256": "08c297d8f595aa581b468e8d5aa08e2d13cb539b556555e3eb7122abff432ee3",
+      "bytes": 8352,
+      "durationSeconds": 1.392
+    },
+    {
+      "number": 713,
+      "hanzi": "解决",
+      "expectedPinyin": "jiějué",
+      "speechText": "解决",
+      "storageKey": "audio/formal/hsk3-2025/l3-0713-v1.mp3",
+      "checksumSha256": "28d21df8b25816a06853310b017667a26df5730977fafc592483ce6ad23f7c07",
+      "bytes": 8352,
+      "durationSeconds": 1.392
+    },
+    {
+      "number": 714,
+      "hanzi": "姐妹",
+      "expectedPinyin": "jiěmèi",
+      "speechText": "姐妹",
+      "storageKey": "audio/formal/hsk3-2025/l3-0714-v1.mp3",
+      "checksumSha256": "deb9b99718fe0c635e6288237f62338dbdfc5209ef8956dd2490f648288cf2a9",
+      "bytes": 8208,
+      "durationSeconds": 1.368
+    },
+    {
+      "number": 715,
+      "hanzi": "借",
+      "expectedPinyin": "jiè",
+      "speechText": "借",
+      "storageKey": "audio/formal/hsk3-2025/l3-0715-v1.mp3",
+      "checksumSha256": "a8c0ab413e7012e8669aeaf3f39a2c0e7dbb5e4857f551f6e8ac4b6b52f1c085",
+      "bytes": 6912,
+      "durationSeconds": 1.152
+    },
+    {
+      "number": 717,
+      "hanzi": "经过",
+      "expectedPinyin": "jīngguò",
+      "speechText": "经过",
+      "storageKey": "audio/formal/hsk3-2025/l3-0717-v1.mp3",
+      "checksumSha256": "253f366a43abf5ef4739e2dbc3611b495c1e0dd653b3ae78516e8e9d9b0535d3",
+      "bytes": 8208,
+      "durationSeconds": 1.368
+    },
+    {
+      "number": 718,
+      "hanzi": "经理",
+      "expectedPinyin": "jīnglǐ",
+      "speechText": "经理",
+      "storageKey": "audio/formal/hsk3-2025/l3-0718-v1.mp3",
+      "checksumSha256": "d45c7b162797a1b3e154fcbcd345ee970ee43a6f0557a2f4a9a56a2f19afce64",
+      "bytes": 8208,
+      "durationSeconds": 1.368
+    },
+    {
+      "number": 719,
+      "hanzi": "久",
+      "expectedPinyin": "jiǔ",
+      "speechText": "久",
+      "storageKey": "audio/formal/hsk3-2025/l3-0719-v1.mp3",
+      "checksumSha256": "f7471087d6ef2452e32dce602c6e69c750622723464ad82e6a0fcc60505cc11a",
+      "bytes": 6768,
+      "durationSeconds": 1.128
+    },
+    {
+      "number": 721,
+      "hanzi": "旧",
+      "expectedPinyin": "jiù",
+      "speechText": "旧",
+      "storageKey": "audio/formal/hsk3-2025/l3-0721-v1.mp3",
+      "checksumSha256": "faa9ef20f286aa4f892b1a920fdc57d485d182077289866bc0184aa61a977005",
+      "bytes": 7056,
+      "durationSeconds": 1.176
+    },
+    {
+      "number": 722,
+      "hanzi": "句",
+      "expectedPinyin": "jù",
+      "speechText": "句",
+      "storageKey": "audio/formal/hsk3-2025/l3-0722-v1.mp3",
+      "checksumSha256": "79c529033e4ea8af62b06622e5d67117b7ddf096bcd154dfbf4bb5d4d2fe530b",
+      "bytes": 6912,
+      "durationSeconds": 1.152
+    },
+    {
+      "number": 723,
+      "hanzi": "句子",
+      "expectedPinyin": "jùzi",
+      "speechText": "句子",
+      "storageKey": "audio/formal/hsk3-2025/l3-0723-v1.mp3",
+      "checksumSha256": "08ffeba47763548644b3045825238817ab16a76e08a1171b25a652ecdd674561",
+      "bytes": 8064,
+      "durationSeconds": 1.344
+    },
+    {
+      "number": 724,
+      "hanzi": "决定",
+      "expectedPinyin": "juédìng",
+      "speechText": "决定",
+      "storageKey": "audio/formal/hsk3-2025/l3-0724-v1.mp3",
+      "checksumSha256": "88abdb63d4c4629b4c784fd42b10b3122ee32489d1dde8725831b05a883ad082",
+      "bytes": 8064,
+      "durationSeconds": 1.344
+    },
+    {
+      "number": 725,
+      "hanzi": "卡",
+      "expectedPinyin": "kǎ",
+      "speechText": "卡",
+      "storageKey": "audio/formal/hsk3-2025/l3-0725-v1.mp3",
+      "checksumSha256": "bffe21f5f6906270c33763bca3e5daaa7dc11588dcb27f0c441e91ab9c2bf7df",
+      "bytes": 6768,
+      "durationSeconds": 1.128
+    },
+    {
+      "number": 726,
+      "hanzi": "开花",
+      "expectedPinyin": "kāihuā",
+      "speechText": "开花",
+      "storageKey": "audio/formal/hsk3-2025/l3-0726-v1.mp3",
+      "checksumSha256": "8b71ba942d1dd376986c06f4cf9321f0a810d46b06336f61be591147c588794e",
+      "bytes": 8208,
+      "durationSeconds": 1.368
+    },
+    {
+      "number": 728,
+      "hanzi": "开机",
+      "expectedPinyin": "kāijī",
+      "speechText": "开机",
+      "storageKey": "audio/formal/hsk3-2025/l3-0728-v1.mp3",
+      "checksumSha256": "fe46ab407092a74a2022641954cc175e7ab8b1e09582461b3aa56d9ee7fa57e3",
+      "bytes": 8352,
+      "durationSeconds": 1.392
+    },
+    {
+      "number": 729,
+      "hanzi": "开心",
+      "expectedPinyin": "kāixīn",
+      "speechText": "开心",
+      "storageKey": "audio/formal/hsk3-2025/l3-0729-v1.mp3",
+      "checksumSha256": "3ce8a6e508ea99a36cd3ef6e5fd05090daa8aa7845883529bb859f59dc5b99bb",
+      "bytes": 8208,
+      "durationSeconds": 1.368
+    },
+    {
+      "number": 730,
+      "hanzi": "看来",
+      "expectedPinyin": "kànlái",
+      "speechText": "看来",
+      "storageKey": "audio/formal/hsk3-2025/l3-0730-v1.mp3",
+      "checksumSha256": "28043fe730a1668642001ad635386ecda78bc4d3fafbbd72aa5f79eb51ee0b99",
+      "bytes": 8064,
+      "durationSeconds": 1.344
+    },
+    {
+      "number": 731,
+      "hanzi": "可",
+      "expectedPinyin": "kě",
+      "speechText": "可",
+      "storageKey": "audio/formal/hsk3-2025/l3-0731-v1.mp3",
+      "checksumSha256": "0222717bd2fabe9a728ca6b45b5b8cbe8e239744408b63aaaba9afdb944c86ee",
+      "bytes": 6912,
+      "durationSeconds": 1.152
+    },
+    {
+      "number": 733,
+      "hanzi": "可爱",
+      "expectedPinyin": "kě’ài",
+      "speechText": "可爱",
+      "storageKey": "audio/formal/hsk3-2025/l3-0733-v1.mp3",
+      "checksumSha256": "25e7e89ccca1a269338ae5365f9bf2c7048aeb0f3d7e2cbcdaeb1d83d18976a6",
+      "bytes": 7920,
+      "durationSeconds": 1.32
+    },
+    {
+      "number": 734,
+      "hanzi": "可是",
+      "expectedPinyin": "kěshì",
+      "speechText": "可是",
+      "storageKey": "audio/formal/hsk3-2025/l3-0734-v1.mp3",
+      "checksumSha256": "5c34a826f4edc38a05e667bbebd170b8247e6ccffedb53edb0904f13b6f0fd2c",
+      "bytes": 8640,
+      "durationSeconds": 1.44
+    },
+    {
+      "number": 735,
+      "hanzi": "刻",
+      "expectedPinyin": "kè",
+      "speechText": "刻",
+      "storageKey": "audio/formal/hsk3-2025/l3-0735-v1.mp3",
+      "checksumSha256": "743d4e016a253fcab5ce683fc9eb214a8a31e01a5aa8af336fdf353ea9ebc215",
+      "bytes": 7056,
+      "durationSeconds": 1.176
+    },
+    {
+      "number": 740,
+      "hanzi": "哭",
+      "expectedPinyin": "kū",
+      "speechText": "哭",
+      "storageKey": "audio/formal/hsk3-2025/l3-0740-v1.mp3",
+      "checksumSha256": "3c3ca950afc279414287675b2fa4be4a7fb284dc6261e81475d04d109251ed3a",
+      "bytes": 6912,
+      "durationSeconds": 1.152
+    },
+    {
+      "number": 742,
+      "hanzi": "矿泉水",
+      "expectedPinyin": "kuàngquánshuǐ",
+      "speechText": "矿泉水",
+      "storageKey": "audio/formal/hsk3-2025/l3-0742-v1.mp3",
+      "checksumSha256": "35265daf37983e556168f2f8fd715984eabc796714320b10441049ec1f7d3e12",
+      "bytes": 9936,
+      "durationSeconds": 1.656
+    },
+    {
+      "number": 743,
+      "hanzi": "来自",
+      "expectedPinyin": "láizì",
+      "speechText": "来自",
+      "storageKey": "audio/formal/hsk3-2025/l3-0743-v1.mp3",
+      "checksumSha256": "7a451207222b98ef26f9c13acd0ac556844d40d48a7e7789873b780ac70f90f4",
+      "bytes": 8352,
+      "durationSeconds": 1.392
+    },
+    {
+      "number": 744,
+      "hanzi": "蓝",
+      "expectedPinyin": "lán",
+      "speechText": "蓝",
+      "storageKey": "audio/formal/hsk3-2025/l3-0744-v1.mp3",
+      "checksumSha256": "2f7fb5f78782d723f9aab251414ea879ebcf79526fe654e378da6687abea9a17",
+      "bytes": 6768,
+      "durationSeconds": 1.128
+    },
+    {
+      "number": 745,
+      "hanzi": "老",
+      "expectedPinyin": "lǎo",
+      "speechText": "老",
+      "storageKey": "audio/formal/hsk3-2025/l3-0745-v1.mp3",
+      "checksumSha256": "d98744630fa0fb4215a6bc77e1dd839673db271e91b77599e85a83695207c41e",
+      "bytes": 6624,
+      "durationSeconds": 1.104
+    },
+    {
+      "number": 748,
+      "hanzi": "礼物",
+      "expectedPinyin": "lǐwù",
+      "speechText": "礼物",
+      "storageKey": "audio/formal/hsk3-2025/l3-0748-v1.mp3",
+      "checksumSha256": "5c3aae6bb39b9875e9fb68d5b762e2c4a833c439d5f292e609f0d724259b6148",
+      "bytes": 7920,
+      "durationSeconds": 1.32
+    },
+    {
+      "number": 749,
+      "hanzi": "历史",
+      "expectedPinyin": "lìshǐ",
+      "speechText": "历史",
+      "storageKey": "audio/formal/hsk3-2025/l3-0749-v1.mp3",
+      "checksumSha256": "dc75383a2192d28b8cac35b54d6f01b36f2accc385bafe6341d03deefd561191",
+      "bytes": 8496,
+      "durationSeconds": 1.416
+    },
+    {
+      "number": 750,
+      "hanzi": "脸",
+      "expectedPinyin": "liǎn",
+      "speechText": "脸",
+      "storageKey": "audio/formal/hsk3-2025/l3-0750-v1.mp3",
+      "checksumSha256": "09e51285d083a5b2b8245fb03f6a920ad7e061be662b363d8536142e1254e227",
+      "bytes": 6912,
+      "durationSeconds": 1.152
+    },
+    {
+      "number": 751,
+      "hanzi": "练",
+      "expectedPinyin": "liàn",
+      "speechText": "练",
+      "storageKey": "audio/formal/hsk3-2025/l3-0751-v1.mp3",
+      "checksumSha256": "03f1079e0d4b49eb3ab0938c7b1923f245f2660bd2c8e9ae6de44ea68bd2b6b6",
+      "bytes": 6912,
+      "durationSeconds": 1.152
+    },
+    {
+      "number": 752,
+      "hanzi": "练习",
+      "expectedPinyin": "liànxí",
+      "speechText": "练习",
+      "storageKey": "audio/formal/hsk3-2025/l3-0752-v1.mp3",
+      "checksumSha256": "601c91cefb54e33d8afa1f2db1dbd7b2354fa307650d04d01673bbc005ffef74",
+      "bytes": 8496,
+      "durationSeconds": 1.416
+    },
+    {
+      "number": 754,
+      "hanzi": "辆",
+      "expectedPinyin": "liàng",
+      "speechText": "辆",
+      "storageKey": "audio/formal/hsk3-2025/l3-0754-v1.mp3",
+      "checksumSha256": "d9151e80667fb1a55c1ef1a090bd718b4b635a8475a9433f940bd51a50171a3f",
+      "bytes": 6912,
+      "durationSeconds": 1.152
+    },
+    {
+      "number": 755,
+      "hanzi": "聊",
+      "expectedPinyin": "liáo",
+      "speechText": "聊",
+      "storageKey": "audio/formal/hsk3-2025/l3-0755-v1.mp3",
+      "checksumSha256": "454675caa17d0d51e83876abc5b53004919863f178b23efda75479ce94355d0d",
+      "bytes": 6768,
+      "durationSeconds": 1.128
+    },
+    {
+      "number": 756,
+      "hanzi": "聊天儿",
+      "expectedPinyin": "liáotiānr",
+      "speechText": "聊天儿",
+      "storageKey": "audio/formal/hsk3-2025/l3-0756-v1.mp3",
+      "checksumSha256": "def4588b21e27bfad747c518403cfae6d8e690c016865ad1e1b54a99c72a49a6",
+      "bytes": 8496,
+      "durationSeconds": 1.416
+    },
+    {
+      "number": 757,
+      "hanzi": "了解",
+      "expectedPinyin": "liǎojiě",
+      "speechText": "了解",
+      "storageKey": "audio/formal/hsk3-2025/l3-0757-v1.mp3",
+      "checksumSha256": "1c2ce32ff31c8d3f0041b59805c3b86544d54a0cba3ae4fc8daed1c98014724e",
+      "bytes": 8208,
+      "durationSeconds": 1.368
+    },
+    {
+      "number": 758,
+      "hanzi": "邻居",
+      "expectedPinyin": "línjū",
+      "speechText": "邻居",
+      "storageKey": "audio/formal/hsk3-2025/l3-0758-v1.mp3",
+      "checksumSha256": "bb3db3539e2c1c40e15d6d437d4cd91ca574827239070a62138dc997b7dea0da",
+      "bytes": 8208,
+      "durationSeconds": 1.368
+    },
+    {
+      "number": 759,
+      "hanzi": "留学",
+      "expectedPinyin": "liúxué",
+      "speechText": "留学",
+      "storageKey": "audio/formal/hsk3-2025/l3-0759-v1.mp3",
+      "checksumSha256": "3e013126b4dbcbe19fd1310f91f7de4a8a2d50491f980748b63301e8fe7f88e3",
+      "bytes": 8496,
+      "durationSeconds": 1.416
+    },
+    {
+      "number": 760,
+      "hanzi": "留学生",
+      "expectedPinyin": "liúxuéshēng",
+      "speechText": "留学生",
+      "storageKey": "audio/formal/hsk3-2025/l3-0760-v1.mp3",
+      "checksumSha256": "685c75f5db63b4dede15f98c33b23ebb0321697047037f8f65c6cf7d2a8d2227",
+      "bytes": 9360,
+      "durationSeconds": 1.56
+    },
+    {
+      "number": 761,
+      "hanzi": "楼梯",
+      "expectedPinyin": "lóutī",
+      "speechText": "楼梯",
+      "storageKey": "audio/formal/hsk3-2025/l3-0761-v1.mp3",
+      "checksumSha256": "035f0479b62ff90590fd353756695d0943d727a6dca23b40585ff6c79aa9366f",
+      "bytes": 8208,
+      "durationSeconds": 1.368
+    },
+    {
+      "number": 762,
+      "hanzi": "路边",
+      "expectedPinyin": "lùbiān",
+      "speechText": "路边",
+      "storageKey": "audio/formal/hsk3-2025/l3-0762-v1.mp3",
+      "checksumSha256": "91dfd74e17fbc5b4f3adaad57fff9d726c071b475d4b33224fcf4453ae2c00a2",
+      "bytes": 7920,
+      "durationSeconds": 1.32
+    },
+    {
+      "number": 764,
+      "hanzi": "马",
+      "expectedPinyin": "mǎ",
+      "speechText": "马",
+      "storageKey": "audio/formal/hsk3-2025/l3-0764-v1.mp3",
+      "checksumSha256": "5089923488a84a0014cf53e3d18197cbdbcd3293f8a8cd0d46637a7621a77a8a",
+      "bytes": 6624,
+      "durationSeconds": 1.104
+    },
+    {
+      "number": 767,
+      "hanzi": "满意",
+      "expectedPinyin": "mǎnyì",
+      "speechText": "满意",
+      "storageKey": "audio/formal/hsk3-2025/l3-0767-v1.mp3",
+      "checksumSha256": "75c8667376e2d6e8a6a2b88f8904a33e8b407ab622596f4026681ea4e85051ff",
+      "bytes": 8064,
+      "durationSeconds": 1.344
+    },
+    {
+      "number": 768,
+      "hanzi": "毛",
+      "expectedPinyin": "máo",
+      "speechText": "毛",
+      "storageKey": "audio/formal/hsk3-2025/l3-0768-v1.mp3",
+      "checksumSha256": "6e66c8de5bf881a32c64c7034e42a5afe2357683cf923cb25af61960a4973d60",
+      "bytes": 6336,
+      "durationSeconds": 1.056
+    },
+    {
+      "number": 769,
+      "hanzi": "米",
+      "expectedPinyin": "mǐ",
+      "speechText": "米",
+      "storageKey": "audio/formal/hsk3-2025/l3-0769-v1.mp3",
+      "checksumSha256": "08a7907c98213a14417b6db3e58c34e84c1d144d3b36d393c0bb1e2cb1cd5214",
+      "bytes": 6480,
+      "durationSeconds": 1.08
+    },
+    {
+      "number": 770,
+      "hanzi": "面前",
+      "expectedPinyin": "miànqián",
+      "speechText": "面前",
+      "storageKey": "audio/formal/hsk3-2025/l3-0770-v1.mp3",
+      "checksumSha256": "929ba59351c7063434aebd62fd6e0fb992ea1d14bf63bc0917075b0629a7bafa",
+      "bytes": 8496,
+      "durationSeconds": 1.416
+    },
+    {
+      "number": 772,
+      "hanzi": "名单",
+      "expectedPinyin": "míngdān",
+      "speechText": "名单",
+      "storageKey": "audio/formal/hsk3-2025/l3-0772-v1.mp3",
+      "checksumSha256": "b50cbdca70c8ab4fb960289e75b0e988a57d3b8600d35825e67a16b74ac6369e",
+      "bytes": 8064,
+      "durationSeconds": 1.344
+    },
+    {
+      "number": 773,
+      "hanzi": "名人",
+      "expectedPinyin": "míngrén",
+      "speechText": "名人",
+      "storageKey": "audio/formal/hsk3-2025/l3-0773-v1.mp3",
+      "checksumSha256": "0ad82ca69b856bdd2d4824dfc67f1016e34ff8ed62213a65e7206bde5493b636",
+      "bytes": 8064,
+      "durationSeconds": 1.344
+    },
+    {
+      "number": 776,
+      "hanzi": "南方",
+      "expectedPinyin": "nánfāng",
+      "speechText": "南方",
+      "storageKey": "audio/formal/hsk3-2025/l3-0776-v1.mp3",
+      "checksumSha256": "200797d567974f69a65a74bd10291640533ede3f43f7750c016eb6da6fb60846",
+      "bytes": 8064,
+      "durationSeconds": 1.344
+    },
+    {
+      "number": 777,
+      "hanzi": "难过",
+      "expectedPinyin": "nánguò",
+      "speechText": "难过",
+      "storageKey": "audio/formal/hsk3-2025/l3-0777-v1.mp3",
+      "checksumSha256": "32d632b3a823a02c0ae9712379973e1da5035e896389ea23c398f88fad00d8ca",
+      "bytes": 8352,
+      "durationSeconds": 1.392
+    },
+    {
+      "number": 778,
+      "hanzi": "难看",
+      "expectedPinyin": "nánkàn",
+      "speechText": "难看",
+      "storageKey": "audio/formal/hsk3-2025/l3-0778-v1.mp3",
+      "checksumSha256": "8411bacacdb19622d4cfc8e2111a5730dc89f89fe2a5b711566590a56ce329da",
+      "bytes": 8208,
+      "durationSeconds": 1.368
+    },
+    {
+      "number": 781,
+      "hanzi": "难题",
+      "expectedPinyin": "nántí",
+      "speechText": "难题",
+      "storageKey": "audio/formal/hsk3-2025/l3-0781-v1.mp3",
+      "checksumSha256": "e6ad00c627fc5b64e540d1a36b51657ee67c155e4f2146d1ca0ba64611c3874d",
+      "bytes": 8496,
+      "durationSeconds": 1.416
+    },
+    {
+      "number": 782,
+      "hanzi": "难听",
+      "expectedPinyin": "nántīng",
+      "speechText": "难听",
+      "storageKey": "audio/formal/hsk3-2025/l3-0782-v1.mp3",
+      "checksumSha256": "62b32722b26b66e50a7fb96cd4bea5f0e70169162c5c610208da40814e32ad00",
+      "bytes": 8064,
+      "durationSeconds": 1.344
+    },
+    {
+      "number": 783,
+      "hanzi": "年级",
+      "expectedPinyin": "niánjí",
+      "speechText": "年级",
+      "storageKey": "audio/formal/hsk3-2025/l3-0783-v1.mp3",
+      "checksumSha256": "0b2e4ffe78dcfa6d390885e45127be32183c6178b8efb326eeaa22e116c33463",
+      "bytes": 8496,
+      "durationSeconds": 1.416
+    },
+    {
+      "number": 784,
+      "hanzi": "年轻",
+      "expectedPinyin": "niánqīng",
+      "speechText": "年轻",
+      "storageKey": "audio/formal/hsk3-2025/l3-0784-v1.mp3",
+      "checksumSha256": "6f51ac8f3b9abe672429c03b364368a04c79a025f173e4c7c361bf60a3aa55c9",
+      "bytes": 8208,
+      "durationSeconds": 1.368
+    },
+    {
+      "number": 785,
+      "hanzi": "牛",
+      "expectedPinyin": "niú",
+      "speechText": "牛",
+      "storageKey": "audio/formal/hsk3-2025/l3-0785-v1.mp3",
+      "checksumSha256": "9a16bdf7c1c6fe20493eac8a33b863c4a18abe468c02e287628340f1be9a2c79",
+      "bytes": 6768,
+      "durationSeconds": 1.128
+    },
+    {
+      "number": 786,
+      "hanzi": "努力",
+      "expectedPinyin": "nǔlì",
+      "speechText": "努力",
+      "storageKey": "audio/formal/hsk3-2025/l3-0786-v1.mp3",
+      "checksumSha256": "cd66da63f378644dc537f2da2283fa04959dd2cca707d4e3a3770ac7e8f20912",
+      "bytes": 7920,
+      "durationSeconds": 1.32
+    },
+    {
+      "number": 789,
+      "hanzi": "爬",
+      "expectedPinyin": "pá",
+      "speechText": "爬",
+      "storageKey": "audio/formal/hsk3-2025/l3-0789-v1.mp3",
+      "checksumSha256": "f3186a34632f234cb41564f30eb020102f58cd1fd1810a2f727dbff7f2a9836a",
+      "bytes": 6768,
+      "durationSeconds": 1.128
+    },
+    {
+      "number": 790,
+      "hanzi": "怕",
+      "expectedPinyin": "pà",
+      "speechText": "怕",
+      "storageKey": "audio/formal/hsk3-2025/l3-0790-v1.mp3",
+      "checksumSha256": "c89d0427930c5852fd1ec00f3eda4e13572bb82c20880bcfbca70e25591427c1",
+      "bytes": 6912,
+      "durationSeconds": 1.152
+    },
+    {
+      "number": 791,
+      "hanzi": "拍照",
+      "expectedPinyin": "pāizhào",
+      "speechText": "拍照",
+      "storageKey": "audio/formal/hsk3-2025/l3-0791-v1.mp3",
+      "checksumSha256": "f2bbdd9e72c605e7c0009ad6e52934c433f439e40f0829ec6fd3d2ba6eedc607",
+      "bytes": 8208,
+      "durationSeconds": 1.368
+    },
+    {
+      "number": 793,
+      "hanzi": "胖",
+      "expectedPinyin": "pàng",
+      "speechText": "胖",
+      "storageKey": "audio/formal/hsk3-2025/l3-0793-v1.mp3",
+      "checksumSha256": "7d01e9b036b22dc9abdb55d92aba1b756152fffe7e9d686e7159c1795a67d8ae",
+      "bytes": 6912,
+      "durationSeconds": 1.152
+    },
+    {
+      "number": 794,
+      "hanzi": "啤酒",
+      "expectedPinyin": "píjiǔ",
+      "speechText": "啤酒",
+      "storageKey": "audio/formal/hsk3-2025/l3-0794-v1.mp3",
+      "checksumSha256": "c40a23f843bf8d3f8e27b91952d0298d15c6b639b0f1ec0d8895e47ef153920f",
+      "bytes": 8496,
+      "durationSeconds": 1.416
+    },
+    {
+      "number": 795,
+      "hanzi": "平时",
+      "expectedPinyin": "píngshí",
+      "speechText": "平时",
+      "storageKey": "audio/formal/hsk3-2025/l3-0795-v1.mp3",
+      "checksumSha256": "0d1810b39ef5d2f273fd10b93d4ffca1b7a1784a9198d12b0e78a9cd33aa4858",
+      "bytes": 8784,
+      "durationSeconds": 1.464
+    },
+    {
+      "number": 796,
+      "hanzi": "瓶子",
+      "expectedPinyin": "píngzi",
+      "speechText": "瓶子",
+      "storageKey": "audio/formal/hsk3-2025/l3-0796-v1.mp3",
+      "checksumSha256": "467164c01751ef8963e86ca90ae90b91589c58801006bc5d4c7c24296ba9ad66",
+      "bytes": 8208,
+      "durationSeconds": 1.368
+    },
+    {
+      "number": 797,
+      "hanzi": "骑",
+      "expectedPinyin": "qí",
+      "speechText": "骑",
+      "storageKey": "audio/formal/hsk3-2025/l3-0797-v1.mp3",
+      "checksumSha256": "c88cdcb5e535c183dd7d6126b4ba1a9e7a617e5dd8c696d570e8d8f765c143e2",
+      "bytes": 7056,
+      "durationSeconds": 1.176
+    },
+    {
+      "number": 798,
+      "hanzi": "奇怪",
+      "expectedPinyin": "qíguài",
+      "speechText": "奇怪",
+      "storageKey": "audio/formal/hsk3-2025/l3-0798-v1.mp3",
+      "checksumSha256": "3f932438b22da629b4eb02a5bced267193c5dc8064f9af030dc1b5f8489b5018",
+      "bytes": 8496,
+      "durationSeconds": 1.416
+    },
+    {
+      "number": 799,
+      "hanzi": "其实",
+      "expectedPinyin": "qíshí",
+      "speechText": "其实",
+      "storageKey": "audio/formal/hsk3-2025/l3-0799-v1.mp3",
+      "checksumSha256": "ba5dcf8228bc4e7ee8812b51f0be745436ef4ddac4f5e0ba62614185d25067c4",
+      "bytes": 8640,
+      "durationSeconds": 1.44
+    },
+    {
+      "number": 800,
+      "hanzi": "其他",
+      "expectedPinyin": "qítā",
+      "speechText": "其他",
+      "storageKey": "audio/formal/hsk3-2025/l3-0800-v1.mp3",
+      "checksumSha256": "86f03f51f47a99b5ec7e6ded49eed953e4085b4c39aea624c9d87488b8fde7ba",
+      "bytes": 8064,
+      "durationSeconds": 1.344
+    },
+    {
+      "number": 802,
+      "hanzi": "起飞",
+      "expectedPinyin": "qǐfēi",
+      "speechText": "起飞",
+      "storageKey": "audio/formal/hsk3-2025/l3-0802-v1.mp3",
+      "checksumSha256": "51c0dff415f2dd1d70a42053eb30fa04606e5b20788e0fe98e9ca7d05bec3a6f",
+      "bytes": 8208,
+      "durationSeconds": 1.368
+    },
+    {
+      "number": 804,
+      "hanzi": "铅笔",
+      "expectedPinyin": "qiānbǐ",
+      "speechText": "铅笔",
+      "storageKey": "audio/formal/hsk3-2025/l3-0804-v1.mp3",
+      "checksumSha256": "490249cda12eeb7df1ae210124249e816d644abfe39209109b92b710321da80c",
+      "bytes": 8496,
+      "durationSeconds": 1.416
+    },
+    {
+      "number": 805,
+      "hanzi": "前年",
+      "expectedPinyin": "qiánnián",
+      "speechText": "前年",
+      "storageKey": "audio/formal/hsk3-2025/l3-0805-v1.mp3",
+      "checksumSha256": "c827d8e88d333652b0d0e12057d0645894eaf4c0d67bbb7919aa97210cee74a9",
+      "bytes": 8496,
+      "durationSeconds": 1.416
+    },
+    {
+      "number": 807,
+      "hanzi": "清楚",
+      "expectedPinyin": "qīngchu",
+      "speechText": "清楚",
+      "storageKey": "audio/formal/hsk3-2025/l3-0807-v1.mp3",
+      "checksumSha256": "2046767a290312f59c14df57c6f5e3b0b5710b429e52fe43aa787361f2c99974",
+      "bytes": 8352,
+      "durationSeconds": 1.392
+    },
+    {
+      "number": 809,
+      "hanzi": "请客",
+      "expectedPinyin": "qǐngkè",
+      "speechText": "请客",
+      "storageKey": "audio/formal/hsk3-2025/l3-0809-v1.mp3",
+      "checksumSha256": "f56dd8bfa105e4b9bdc7df41917660063504e89909901bb07975d72017f8faa5",
+      "bytes": 8208,
+      "durationSeconds": 1.368
+    },
+    {
+      "number": 811,
+      "hanzi": "球场",
+      "expectedPinyin": "qiúchǎng",
+      "speechText": "球场",
+      "storageKey": "audio/formal/hsk3-2025/l3-0811-v1.mp3",
+      "checksumSha256": "52ad7ad0f9ae58b71b811fad23cf6acc277814ad6a454bea054b1e8a28d26cb9",
+      "bytes": 8496,
+      "durationSeconds": 1.416
+    },
+    {
+      "number": 812,
+      "hanzi": "裙子",
+      "expectedPinyin": "qúnzi",
+      "speechText": "裙子",
+      "storageKey": "audio/formal/hsk3-2025/l3-0812-v1.mp3",
+      "checksumSha256": "877556143df0033f9b09bfc544e5c77f4291731d547ac8d415f8b0296b0c2226",
+      "bytes": 8208,
+      "durationSeconds": 1.368
+    },
+    {
+      "number": 814,
+      "hanzi": "热情",
+      "expectedPinyin": "rèqíng",
+      "speechText": "热情",
+      "storageKey": "audio/formal/hsk3-2025/l3-0814-v1.mp3",
+      "checksumSha256": "7361ee788d934f29f2cf8a3cfa2db1f38425751ac834006ec6d5ebc65082baa7",
+      "bytes": 8784,
+      "durationSeconds": 1.464
+    },
+    {
+      "number": 815,
+      "hanzi": "认得",
+      "expectedPinyin": "rènde",
+      "speechText": "认得",
+      "storageKey": "audio/formal/hsk3-2025/l3-0815-v1.mp3",
+      "checksumSha256": "75aac953e0fd79f1f8ada888b1a97820f8a901766ef877fc94b5bb11568b00e8",
+      "bytes": 7920,
+      "durationSeconds": 1.32
+    },
+    {
+      "number": 816,
+      "hanzi": "认为",
+      "expectedPinyin": "rènwéi",
+      "speechText": "认为",
+      "storageKey": "audio/formal/hsk3-2025/l3-0816-v1.mp3",
+      "checksumSha256": "f4effea0cfd1c3cb18c5af650564f2bc64832edd823b49b70ce56f1540f37920",
+      "bytes": 8208,
+      "durationSeconds": 1.368
+    },
+    {
+      "number": 818,
+      "hanzi": "容易",
+      "expectedPinyin": "róngyì",
+      "speechText": "容易",
+      "storageKey": "audio/formal/hsk3-2025/l3-0818-v1.mp3",
+      "checksumSha256": "d027d781b9a64cda304e2da58508fff20855a4b3f0f953a79e3c68e7b3b43015",
+      "bytes": 8208,
+      "durationSeconds": 1.368
+    },
+    {
+      "number": 819,
+      "hanzi": "如果",
+      "expectedPinyin": "rúguǒ",
+      "speechText": "如果",
+      "storageKey": "audio/formal/hsk3-2025/l3-0819-v1.mp3",
+      "checksumSha256": "efecd80fae1c9c7ee986f58e6f526a948118a872a7984c141aca855ed5247322",
+      "bytes": 8208,
+      "durationSeconds": 1.368
+    },
+    {
+      "number": 821,
+      "hanzi": "扫",
+      "expectedPinyin": "sǎo",
+      "speechText": "扫",
+      "storageKey": "audio/formal/hsk3-2025/l3-0821-v1.mp3",
+      "checksumSha256": "0019e1f4aef043b3cef4b450523e17c2b6690a22de2000f6f5f022ee6cc6eca1",
+      "bytes": 7056,
+      "durationSeconds": 1.176
+    },
+    {
+      "number": 822,
+      "hanzi": "沙发",
+      "expectedPinyin": "shāfā",
+      "speechText": "沙发",
+      "storageKey": "audio/formal/hsk3-2025/l3-0822-v1.mp3",
+      "checksumSha256": "3e47489f22af5a36458578f6430a6fab135b1bfe4c01eeca913774243b1803ac",
+      "bytes": 8640,
+      "durationSeconds": 1.44
+    },
+    {
+      "number": 824,
+      "hanzi": "上衣",
+      "expectedPinyin": "shàngyī",
+      "speechText": "上衣",
+      "storageKey": "audio/formal/hsk3-2025/l3-0824-v1.mp3",
+      "checksumSha256": "09304af37b1eb90e50649e8a9e85da9733305fa63d8a4803be8c3758a67c2e36",
+      "bytes": 8496,
+      "durationSeconds": 1.416
+    },
+    {
+      "number": 825,
+      "hanzi": "勺子",
+      "expectedPinyin": "sháozi",
+      "speechText": "勺子",
+      "storageKey": "audio/formal/hsk3-2025/l3-0825-v1.mp3",
+      "checksumSha256": "b7ae9b93ea1107cc5acd888e1dfd1bbfffb340d815ec28dd29d72ab3ea0b1a7a",
+      "bytes": 8784,
+      "durationSeconds": 1.464
+    },
+    {
+      "number": 826,
+      "hanzi": "身边",
+      "expectedPinyin": "shēnbiān",
+      "speechText": "身边",
+      "storageKey": "audio/formal/hsk3-2025/l3-0826-v1.mp3",
+      "checksumSha256": "71ca5071980416438ab2def84629f7565ab08776d389b0752ed94359c17cb898",
+      "bytes": 8640,
+      "durationSeconds": 1.44
+    },
+    {
+      "number": 827,
+      "hanzi": "身高",
+      "expectedPinyin": "shēngāo",
+      "speechText": "身高",
+      "storageKey": "audio/formal/hsk3-2025/l3-0827-v1.mp3",
+      "checksumSha256": "42931143bbeaf35fd355a7441114229575f790eac57c1523da1cdd0566050c63",
+      "bytes": 8496,
+      "durationSeconds": 1.416
+    },
+    {
+      "number": 828,
+      "hanzi": "声",
+      "expectedPinyin": "shēng",
+      "speechText": "声",
+      "storageKey": "audio/formal/hsk3-2025/l3-0828-v1.mp3",
+      "checksumSha256": "04edba88594a270d142961ad06686f0aa499a202b0c62b27f81550b083f5ceb3",
+      "bytes": 7200,
+      "durationSeconds": 1.2
+    },
+    {
+      "number": 829,
+      "hanzi": "生活",
+      "expectedPinyin": "shēnghuó",
+      "speechText": "生活",
+      "storageKey": "audio/formal/hsk3-2025/l3-0829-v1.mp3",
+      "checksumSha256": "5da0188835f7a4a2b5a8dc25ce19f003bbccd21c0a181b6c7a40ed09db1ee6a1",
+      "bytes": 8928,
+      "durationSeconds": 1.488
+    },
+    {
+      "number": 831,
+      "hanzi": "声音",
+      "expectedPinyin": "shēngyīn",
+      "speechText": "声音",
+      "storageKey": "audio/formal/hsk3-2025/l3-0831-v1.mp3",
+      "checksumSha256": "5883320c74461b4de4917412eb00475ecf590706d5280d0b6480ccb568bf6fb6",
+      "bytes": 8496,
+      "durationSeconds": 1.416
+    },
+    {
+      "number": 832,
+      "hanzi": "市",
+      "expectedPinyin": "shì",
+      "speechText": "市",
+      "storageKey": "audio/formal/hsk3-2025/l3-0832-v1.mp3",
+      "checksumSha256": "5a8c561c997afc35dceb33b6073131e2825f57cd40ccb1dbc47e0d29b9477c3a",
+      "bytes": 7344,
+      "durationSeconds": 1.224
+    },
+    {
+      "number": 834,
+      "hanzi": "室",
+      "expectedPinyin": "shì",
+      "speechText": "室",
+      "storageKey": "audio/formal/hsk3-2025/l3-0834-v1.mp3",
+      "checksumSha256": "5a8c561c997afc35dceb33b6073131e2825f57cd40ccb1dbc47e0d29b9477c3a",
+      "bytes": 7344,
+      "durationSeconds": 1.224
+    },
+    {
+      "number": 835,
+      "hanzi": "世界",
+      "expectedPinyin": "shìjiè",
+      "speechText": "世界",
+      "storageKey": "audio/formal/hsk3-2025/l3-0835-v1.mp3",
+      "checksumSha256": "4d3e66643d8c5c96933c847e3968c33c7e5c9eadad73a50a82e118cba9fb5fd5",
+      "bytes": 8496,
+      "durationSeconds": 1.416
+    },
+    {
+      "number": 836,
+      "hanzi": "收",
+      "expectedPinyin": "shōu",
+      "speechText": "收",
+      "storageKey": "audio/formal/hsk3-2025/l3-0836-v1.mp3",
+      "checksumSha256": "8dc7584fb58738db4fc6cb3eadf5083e4dff0c722d5395774ea8a725c73a8d6f",
+      "bytes": 7488,
+      "durationSeconds": 1.248
+    },
+    {
+      "number": 837,
+      "hanzi": "收到",
+      "expectedPinyin": "shōudào",
+      "speechText": "收到",
+      "storageKey": "audio/formal/hsk3-2025/l3-0837-v1.mp3",
+      "checksumSha256": "25de6c897178371553549d7f6033a887aada27c1672cb73de007cde5fae864d0",
+      "bytes": 8496,
+      "durationSeconds": 1.416
+    },
+    {
+      "number": 838,
+      "hanzi": "受",
+      "expectedPinyin": "shòu",
+      "speechText": "受",
+      "storageKey": "audio/formal/hsk3-2025/l3-0838-v1.mp3",
+      "checksumSha256": "966c66b90ab1837f4377842c76d42c10538684560be8b5f9b9ecb609f94e5e66",
+      "bytes": 7488,
+      "durationSeconds": 1.248
+    },
+    {
+      "number": 839,
+      "hanzi": "瘦",
+      "expectedPinyin": "shòu",
+      "speechText": "瘦",
+      "storageKey": "audio/formal/hsk3-2025/l3-0839-v1.mp3",
+      "checksumSha256": "b4304bb1d55e6084a977430f31694d98a1ceca9e9b1b9e7979952f0d7670614f",
+      "bytes": 7488,
+      "durationSeconds": 1.248
+    },
+    {
+      "number": 840,
+      "hanzi": "受到",
+      "expectedPinyin": "shòudào",
+      "speechText": "受到",
+      "storageKey": "audio/formal/hsk3-2025/l3-0840-v1.mp3",
+      "checksumSha256": "1e5bd8a2967da83cb82b2e2139cbfd23064b58ef5a53e17b44e963cffb11bad4",
+      "bytes": 8352,
+      "durationSeconds": 1.392
+    },
+    {
+      "number": 841,
+      "hanzi": "叔叔",
+      "expectedPinyin": "shūshu",
+      "speechText": "叔叔",
+      "storageKey": "audio/formal/hsk3-2025/l3-0841-v1.mp3",
+      "checksumSha256": "b752eb6570e3c06031781c1d91a34d68739c6c2f56e8f70bd7d137195b88e5b9",
+      "bytes": 8640,
+      "durationSeconds": 1.44
+    },
+    {
+      "number": 843,
+      "hanzi": "数学",
+      "expectedPinyin": "shùxué",
+      "speechText": "数学",
+      "storageKey": "audio/formal/hsk3-2025/l3-0843-v1.mp3",
+      "checksumSha256": "64f9c06505b58ceb28e8ae575ce3b33f7b979b64f90faeb6400ca96845f677b9",
+      "bytes": 8928,
+      "durationSeconds": 1.488
+    },
+    {
+      "number": 844,
+      "hanzi": "刷",
+      "expectedPinyin": "shuā",
+      "speechText": "刷",
+      "storageKey": "audio/formal/hsk3-2025/l3-0844-v1.mp3",
+      "checksumSha256": "af8b9986691c7a15704a44c7c7a93297b07e3e8c488d18f831f8338422510306",
+      "bytes": 7344,
+      "durationSeconds": 1.224
+    },
+    {
+      "number": 845,
+      "hanzi": "双",
+      "expectedPinyin": "shuāng",
+      "speechText": "双",
+      "storageKey": "audio/formal/hsk3-2025/l3-0845-v1.mp3",
+      "checksumSha256": "d69dbdf883c3d8c9e04159a01bd825151575b52b6e9bbb35d32552c006727b75",
+      "bytes": 7344,
+      "durationSeconds": 1.224
+    },
+    {
+      "number": 846,
+      "hanzi": "水平",
+      "expectedPinyin": "shuǐpíng",
+      "speechText": "水平",
+      "storageKey": "audio/formal/hsk3-2025/l3-0846-v1.mp3",
+      "checksumSha256": "4c4f55990c30262c4e9be9a04d51c961e4c9dd3fee8f55c0a3b553455dbcf89a",
+      "bytes": 8640,
+      "durationSeconds": 1.44
+    },
+    {
+      "number": 848,
+      "hanzi": "四季",
+      "expectedPinyin": "sìjì",
+      "speechText": "四季",
+      "storageKey": "audio/formal/hsk3-2025/l3-0848-v1.mp3",
+      "checksumSha256": "f0e1c58e1495a916a8abc5c50479729821308623dd9ede556eedb4a9aa1f2aae",
+      "bytes": 8640,
+      "durationSeconds": 1.44
+    },
+    {
+      "number": 851,
+      "hanzi": "特别",
+      "expectedPinyin": "tèbié",
+      "speechText": "特别",
+      "storageKey": "audio/formal/hsk3-2025/l3-0851-v1.mp3",
+      "checksumSha256": "318ace8226215a71b56a9b029ffdf2059a4e855da313484de0103cabd71b9b60",
+      "bytes": 8208,
+      "durationSeconds": 1.368
+    },
+    {
+      "number": 852,
+      "hanzi": "提高",
+      "expectedPinyin": "tígāo",
+      "speechText": "提高",
+      "storageKey": "audio/formal/hsk3-2025/l3-0852-v1.mp3",
+      "checksumSha256": "1fdf68767412fd5bcb8e63226c42652bbf99f7f03ac02b1dda0ea6270c1cbce2",
+      "bytes": 8208,
+      "durationSeconds": 1.368
+    },
+    {
+      "number": 853,
+      "hanzi": "体育",
+      "expectedPinyin": "tǐyù",
+      "speechText": "体育",
+      "storageKey": "audio/formal/hsk3-2025/l3-0853-v1.mp3",
+      "checksumSha256": "b051af7d70e029da76f294d2786e3bc43105e6fcb58cdfcaa29114394ec30884",
+      "bytes": 8064,
+      "durationSeconds": 1.344
+    },
+    {
+      "number": 854,
+      "hanzi": "体育馆",
+      "expectedPinyin": "tǐyùguǎn",
+      "speechText": "体育馆",
+      "storageKey": "audio/formal/hsk3-2025/l3-0854-v1.mp3",
+      "checksumSha256": "a6395c32e236e46fce924001e6b86a0dc6c2754af66d90618bb8c03b20a5ab01",
+      "bytes": 9360,
+      "durationSeconds": 1.56
+    },
+    {
+      "number": 856,
+      "hanzi": "跳",
+      "expectedPinyin": "tiào",
+      "speechText": "跳",
+      "storageKey": "audio/formal/hsk3-2025/l3-0856-v1.mp3",
+      "checksumSha256": "505aa43242ffb14b4ebf023ef0d51d5934fa7c1af8f5b2eb12d7b616a8ce8992",
+      "bytes": 7056,
+      "durationSeconds": 1.176
+    },
+    {
+      "number": 857,
+      "hanzi": "听说",
+      "expectedPinyin": "tīngshuō",
+      "speechText": "听说",
+      "storageKey": "audio/formal/hsk3-2025/l3-0857-v1.mp3",
+      "checksumSha256": "a26fe601025c017665a06147a2b367abf66d654b9aefe0f92454088eb00bb4ae",
+      "bytes": 8352,
+      "durationSeconds": 1.392
+    },
+    {
+      "number": 858,
+      "hanzi": "挺",
+      "expectedPinyin": "tǐng",
+      "speechText": "挺",
+      "storageKey": "audio/formal/hsk3-2025/l3-0858-v1.mp3",
+      "checksumSha256": "379a86c08e28a37b9849ef496c3242ff91c7c0a9530cfb7cea52b55353e35e5c",
+      "bytes": 6912,
+      "durationSeconds": 1.152
+    },
+    {
+      "number": 859,
+      "hanzi": "同事",
+      "expectedPinyin": "tóngshì",
+      "speechText": "同事",
+      "storageKey": "audio/formal/hsk3-2025/l3-0859-v1.mp3",
+      "checksumSha256": "092aee13981d8cd100a0cb4af84760a77a37e55451702f3a8e1bcc8c2a504440",
+      "bytes": 8352,
+      "durationSeconds": 1.392
+    },
+    {
+      "number": 860,
+      "hanzi": "同意",
+      "expectedPinyin": "tóngyì",
+      "speechText": "同意",
+      "storageKey": "audio/formal/hsk3-2025/l3-0860-v1.mp3",
+      "checksumSha256": "968f312fe5d3d3c37af20a8738e0a8075cc70eb67d1143fc45a1daf4400408b0",
+      "bytes": 8208,
+      "durationSeconds": 1.368
+    },
+    {
+      "number": 861,
+      "hanzi": "头发",
+      "expectedPinyin": "tóufa",
+      "speechText": "头发",
+      "storageKey": "audio/formal/hsk3-2025/l3-0861-v1.mp3",
+      "checksumSha256": "540caadcd5a5ef4a30fa5cf6a2c4be2b4933263bb8461caa67805b69953a21e9",
+      "bytes": 8064,
+      "durationSeconds": 1.344
+    },
+    {
+      "number": 862,
+      "hanzi": "突然",
+      "expectedPinyin": "tūrán",
+      "speechText": "突然",
+      "storageKey": "audio/formal/hsk3-2025/l3-0862-v1.mp3",
+      "checksumSha256": "595e68d906a659cd797187598a97b6c4122031af56ea25a00125d3806629b8e8",
+      "bytes": 8064,
+      "durationSeconds": 1.344
+    },
+    {
+      "number": 864,
+      "hanzi": "腿",
+      "expectedPinyin": "tuǐ",
+      "speechText": "腿",
+      "storageKey": "audio/formal/hsk3-2025/l3-0864-v1.mp3",
+      "checksumSha256": "b462368f78a46ac3c231bdfd12dbeb889312875482a4866e71ebdc22f5f9f0b0",
+      "bytes": 7056,
+      "durationSeconds": 1.176
+    },
+    {
+      "number": 865,
+      "hanzi": "外地",
+      "expectedPinyin": "wàidì",
+      "speechText": "外地",
+      "storageKey": "audio/formal/hsk3-2025/l3-0865-v1.mp3",
+      "checksumSha256": "0566417832eb36f5665a56331a25253c0a7e2f3fd135cdf798ae0dacd0444a42",
+      "bytes": 8208,
+      "durationSeconds": 1.368
+    },
+    {
+      "number": 866,
+      "hanzi": "外卖",
+      "expectedPinyin": "wàimài",
+      "speechText": "外卖",
+      "storageKey": "audio/formal/hsk3-2025/l3-0866-v1.mp3",
+      "checksumSha256": "98047437ffc6b6c1bc5b9fa725f99e9e342d8db696cb52919842f3a9e95a8800",
+      "bytes": 8064,
+      "durationSeconds": 1.344
+    },
+    {
+      "number": 868,
+      "hanzi": "完成",
+      "expectedPinyin": "wánchéng",
+      "speechText": "完成",
+      "storageKey": "audio/formal/hsk3-2025/l3-0868-v1.mp3",
+      "checksumSha256": "3da80873ed7bb2f351ce687e95e07725f49b06b82a69e7a1e8180c6662669c68",
+      "bytes": 8208,
+      "durationSeconds": 1.368
+    },
+    {
+      "number": 871,
+      "hanzi": "晚会",
+      "expectedPinyin": "wǎnhuì",
+      "speechText": "晚会",
+      "storageKey": "audio/formal/hsk3-2025/l3-0871-v1.mp3",
+      "checksumSha256": "cfa3dbb03204962769aafe9b5b3243e83e5a3d8e97da54ce1fe3cd1185c5fee0",
+      "bytes": 8208,
+      "durationSeconds": 1.368
+    },
+    {
+      "number": 872,
+      "hanzi": "网球",
+      "expectedPinyin": "wǎngqiú",
+      "speechText": "网球",
+      "storageKey": "audio/formal/hsk3-2025/l3-0872-v1.mp3",
+      "checksumSha256": "aab269173666983b2169825a3d8b06badbe5eb8997776bad2da52483b693799b",
+      "bytes": 8352,
+      "durationSeconds": 1.392
+    },
+    {
+      "number": 873,
+      "hanzi": "网站",
+      "expectedPinyin": "wǎngzhàn",
+      "speechText": "网站",
+      "storageKey": "audio/formal/hsk3-2025/l3-0873-v1.mp3",
+      "checksumSha256": "b4e6ee6cb690b27911321700f8c508f0a0de93b1d75a9b9a52a4448754e58bd2",
+      "bytes": 8208,
+      "durationSeconds": 1.368
+    },
+    {
+      "number": 875,
+      "hanzi": "为",
+      "expectedPinyin": "wèi",
+      "speechText": "为",
+      "storageKey": "audio/formal/hsk3-2025/l3-0875-v1.mp3",
+      "checksumSha256": "cbe70941a774dd2d5f467b3253529b845873b6f6e35382310830f11f7c49f6df",
+      "bytes": 6912,
+      "durationSeconds": 1.152
+    },
+    {
+      "number": 876,
+      "hanzi": "为了",
+      "expectedPinyin": "wèile",
+      "speechText": "为了",
+      "storageKey": "audio/formal/hsk3-2025/l3-0876-v1.mp3",
+      "checksumSha256": "9da1dbcea13210e964d7a5949b80b3163efb8de93c52e56350f4412753dade22",
+      "bytes": 7632,
+      "durationSeconds": 1.272
+    },
+    {
+      "number": 877,
+      "hanzi": "卫生间",
+      "expectedPinyin": "wèishēngjiān",
+      "speechText": "卫生间",
+      "storageKey": "audio/formal/hsk3-2025/l3-0877-v1.mp3",
+      "checksumSha256": "6d4a4e054f884efa9851bdb216845f529bea0fc68a50f4259e3d69b097394ff5",
+      "bytes": 9360,
+      "durationSeconds": 1.56
+    },
+    {
+      "number": 878,
+      "hanzi": "文化",
+      "expectedPinyin": "wénhuà",
+      "speechText": "文化",
+      "storageKey": "audio/formal/hsk3-2025/l3-0878-v1.mp3",
+      "checksumSha256": "56d9886c1d82fcadadac3e925f65c1a2f5afe238eb558d24d26a3a4589a61854",
+      "bytes": 8208,
+      "durationSeconds": 1.368
+    },
+    {
+      "number": 879,
+      "hanzi": "屋子",
+      "expectedPinyin": "wūzi",
+      "speechText": "屋子",
+      "storageKey": "audio/formal/hsk3-2025/l3-0879-v1.mp3",
+      "checksumSha256": "495dd802891eec6c8ab546a3cd2cb976e95327b43899c78372d3a9716347f81c",
+      "bytes": 8064,
+      "durationSeconds": 1.344
+    },
+    {
+      "number": 881,
+      "hanzi": "西北",
+      "expectedPinyin": "xīběi",
+      "speechText": "西北",
+      "storageKey": "audio/formal/hsk3-2025/l3-0881-v1.mp3",
+      "checksumSha256": "935477459918e7a53e1022ff351aa7e448b3535d364d7bed73177194cce06b11",
+      "bytes": 8496,
+      "durationSeconds": 1.416
+    },
+    {
+      "number": 882,
+      "hanzi": "西方",
+      "expectedPinyin": "xīfāng",
+      "speechText": "西方",
+      "storageKey": "audio/formal/hsk3-2025/l3-0882-v1.mp3",
+      "checksumSha256": "30d2c40e6f148fd45689551632962bcacc497432194056c0c779004c9acc20ea",
+      "bytes": 8352,
+      "durationSeconds": 1.392
+    },
+    {
+      "number": 883,
+      "hanzi": "西瓜",
+      "expectedPinyin": "xīguā",
+      "speechText": "西瓜",
+      "storageKey": "audio/formal/hsk3-2025/l3-0883-v1.mp3",
+      "checksumSha256": "3a9647ccac17c06ba658d4f6e3920f4b7cc7e9757ccaf5b72d83d6f3279b1369",
+      "bytes": 8208,
+      "durationSeconds": 1.368
+    },
+    {
+      "number": 884,
+      "hanzi": "西南",
+      "expectedPinyin": "xīnán",
+      "speechText": "西南",
+      "storageKey": "audio/formal/hsk3-2025/l3-0884-v1.mp3",
+      "checksumSha256": "b88d0d499702161e40b4c7ad841b1c801623b5c69fd1ce30a8a8183b82fca1e6",
+      "bytes": 8640,
+      "durationSeconds": 1.44
+    },
+    {
+      "number": 885,
+      "hanzi": "习惯",
+      "expectedPinyin": "xíguàn",
+      "speechText": "习惯",
+      "storageKey": "audio/formal/hsk3-2025/l3-0885-v1.mp3",
+      "checksumSha256": "8763a0cfba5e0e66dd53d85f8493ccb139f95e60c6c1812811429940ee2e9ecd",
+      "bytes": 8640,
+      "durationSeconds": 1.44
+    },
+    {
+      "number": 886,
+      "hanzi": "喜爱",
+      "expectedPinyin": "xǐ’ài",
+      "speechText": "喜爱",
+      "storageKey": "audio/formal/hsk3-2025/l3-0886-v1.mp3",
+      "checksumSha256": "c173b7062f517d3362ed996405d1556b556162ba2ba1618056253660daeca551",
+      "bytes": 8208,
+      "durationSeconds": 1.368
+    },
+    {
+      "number": 887,
+      "hanzi": "洗衣机",
+      "expectedPinyin": "xǐyījī",
+      "speechText": "洗衣机",
+      "storageKey": "audio/formal/hsk3-2025/l3-0887-v1.mp3",
+      "checksumSha256": "35e492d6a139adc9c190a5bfd3c5628e67c8f9d7d3035bcc34af84e9527e3eca",
+      "bytes": 9216,
+      "durationSeconds": 1.536
+    },
+    {
+      "number": 891,
+      "hanzi": "香蕉",
+      "expectedPinyin": "xiāngjiāo",
+      "speechText": "香蕉",
+      "storageKey": "audio/formal/hsk3-2025/l3-0891-v1.mp3",
+      "checksumSha256": "715c136fe3cd8c123982bd14f6693c5d025ca16d18f5ffd8cb86f79eaee66ab3",
+      "bytes": 8496,
+      "durationSeconds": 1.416
+    },
+    {
+      "number": 892,
+      "hanzi": "相信",
+      "expectedPinyin": "xiāngxìn",
+      "speechText": "相信",
+      "storageKey": "audio/formal/hsk3-2025/l3-0892-v1.mp3",
+      "checksumSha256": "ce88af16800ed70680f4dcad18a58199fbba805e342d89f33c2f0f60996ed481",
+      "bytes": 8640,
+      "durationSeconds": 1.44
+    },
+    {
+      "number": 894,
+      "hanzi": "向",
+      "expectedPinyin": "xiàng",
+      "speechText": "向",
+      "storageKey": "audio/formal/hsk3-2025/l3-0894-v1.mp3",
+      "checksumSha256": "5db193ac3f797735c8f0328dcf2ceb13b020a8a321271ded6f90a19496c949c0",
+      "bytes": 7344,
+      "durationSeconds": 1.224
+    },
+    {
+      "number": 895,
+      "hanzi": "像",
+      "expectedPinyin": "xiàng",
+      "speechText": "像",
+      "storageKey": "audio/formal/hsk3-2025/l3-0895-v1.mp3",
+      "checksumSha256": "5db193ac3f797735c8f0328dcf2ceb13b020a8a321271ded6f90a19496c949c0",
+      "bytes": 7344,
+      "durationSeconds": 1.224
+    },
+    {
+      "number": 896,
+      "hanzi": "相机",
+      "expectedPinyin": "xiàngjī",
+      "speechText": "相机",
+      "storageKey": "audio/formal/hsk3-2025/l3-0896-v1.mp3",
+      "checksumSha256": "47130e1f3187ecba32447ad6b124da3f8f737d2783fe0d8a97794a5be4f55593",
+      "bytes": 8784,
+      "durationSeconds": 1.464
+    },
+    {
+      "number": 897,
+      "hanzi": "小区",
+      "expectedPinyin": "xiǎoqū",
+      "speechText": "小区",
+      "storageKey": "audio/formal/hsk3-2025/l3-0897-v1.mp3",
+      "checksumSha256": "2688c014e1931fa6b4aa96748bef2756842f38830e21aede8e744ded3d3c79a2",
+      "bytes": 8640,
+      "durationSeconds": 1.44
+    },
+    {
+      "number": 898,
+      "hanzi": "小心",
+      "expectedPinyin": "xiǎoxīn",
+      "speechText": "小心",
+      "storageKey": "audio/formal/hsk3-2025/l3-0898-v1.mp3",
+      "checksumSha256": "56cf8f4fe6a66c5d140fe9307c50f6f26e27ee5a9048be66dca65d7da54e71cc",
+      "bytes": 8352,
+      "durationSeconds": 1.392
+    },
+    {
+      "number": 899,
+      "hanzi": "校园",
+      "expectedPinyin": "xiàoyuán",
+      "speechText": "校园",
+      "storageKey": "audio/formal/hsk3-2025/l3-0899-v1.mp3",
+      "checksumSha256": "42f8ffa992bbeaa5fa88f59f92a71d37b856edbb8ef240f4e3814a2e0870c3fc",
+      "bytes": 8784,
+      "durationSeconds": 1.464
+    },
+    {
+      "number": 900,
+      "hanzi": "校长",
+      "expectedPinyin": "xiàozhǎng",
+      "speechText": "校长",
+      "storageKey": "audio/formal/hsk3-2025/l3-0900-v1.mp3",
+      "checksumSha256": "11f5b17edd24f3a409d881d4351239c04f444c9424e0b80084816f3db0b02d6a",
+      "bytes": 8496,
+      "durationSeconds": 1.416
+    },
+    {
+      "number": 902,
+      "hanzi": "心里",
+      "expectedPinyin": "xīnlǐ",
+      "speechText": "心里",
+      "storageKey": "audio/formal/hsk3-2025/l3-0902-v1.mp3",
+      "checksumSha256": "d1835342b928227d1e80a2e07459e7f2ffae07ec4e1fd966aab433c85c316d55",
+      "bytes": 8352,
+      "durationSeconds": 1.392
+    },
+    {
+      "number": 904,
+      "hanzi": "新闻",
+      "expectedPinyin": "xīnwén",
+      "speechText": "新闻",
+      "storageKey": "audio/formal/hsk3-2025/l3-0904-v1.mp3",
+      "checksumSha256": "2bbadd11b33cf4f15535333dc87cf97ed4b7af2246052e9f7adc83bcbb05d2d9",
+      "bytes": 8496,
+      "durationSeconds": 1.416
+    },
+    {
+      "number": 906,
+      "hanzi": "信",
+      "expectedPinyin": "xìn",
+      "speechText": "信",
+      "storageKey": "audio/formal/hsk3-2025/l3-0906-v1.mp3",
+      "checksumSha256": "b5002740e3a3b037e9c0bf93ff30a83eb3a250ddebfbfbe5d492ca062f51dc0c",
+      "bytes": 7344,
+      "durationSeconds": 1.224
+    },
+    {
+      "number": 910,
+      "hanzi": "兴趣",
+      "expectedPinyin": "xìngqù",
+      "speechText": "兴趣",
+      "storageKey": "audio/formal/hsk3-2025/l3-0910-v1.mp3",
+      "checksumSha256": "d82e01d976a7f4b9d9631e8600d1b6107a9dea7e7ee6582341a1ea315a9100eb",
+      "bytes": 8496,
+      "durationSeconds": 1.416
+    },
+    {
+      "number": 911,
+      "hanzi": "休假",
+      "expectedPinyin": "xiūjià",
+      "speechText": "休假",
+      "storageKey": "audio/formal/hsk3-2025/l3-0911-v1.mp3",
+      "checksumSha256": "0992b1e67befb5e54fc291cac9b6d8c5d54af53599d4e40bff6135929ac3318e",
+      "bytes": 8496,
+      "durationSeconds": 1.416
+    },
+    {
+      "number": 913,
+      "hanzi": "选",
+      "expectedPinyin": "xuǎn",
+      "speechText": "选",
+      "storageKey": "audio/formal/hsk3-2025/l3-0913-v1.mp3",
+      "checksumSha256": "da7dd477e15b23ec0d1a3462ef6d0d45e7562ad26b2670f8ca594aa64c4f231f",
+      "bytes": 7488,
+      "durationSeconds": 1.248
+    },
+    {
+      "number": 914,
+      "hanzi": "选择",
+      "expectedPinyin": "xuǎnzé",
+      "speechText": "选择",
+      "storageKey": "audio/formal/hsk3-2025/l3-0914-v1.mp3",
+      "checksumSha256": "9bc75c90b8feb811683fbdc6bfce19c17a9b40f67ccf13b3cabdc668b47d41d0",
+      "bytes": 8352,
+      "durationSeconds": 1.392
+    },
+    {
+      "number": 915,
+      "hanzi": "学期",
+      "expectedPinyin": "xuéqī",
+      "speechText": "学期",
+      "storageKey": "audio/formal/hsk3-2025/l3-0915-v1.mp3",
+      "checksumSha256": "d5e5cff06c19883d666625247a7805722bcebc9cb167ff3363080be6489ff43b",
+      "bytes": 8640,
+      "durationSeconds": 1.44
+    },
+    {
+      "number": 916,
+      "hanzi": "牙",
+      "expectedPinyin": "yá",
+      "speechText": "牙",
+      "storageKey": "audio/formal/hsk3-2025/l3-0916-v1.mp3",
+      "checksumSha256": "cc3fba2b81c21a9adc13514b460a97373c63fef070cdc8d2ece53ccf5890473a",
+      "bytes": 6912,
+      "durationSeconds": 1.152
+    },
+    {
+      "number": 917,
+      "hanzi": "牙刷",
+      "expectedPinyin": "yáshuā",
+      "speechText": "牙刷",
+      "storageKey": "audio/formal/hsk3-2025/l3-0917-v1.mp3",
+      "checksumSha256": "11c15c8fe682706ed1776987c2252ed022394a3257eead895cefe2646e7e0fd2",
+      "bytes": 8640,
+      "durationSeconds": 1.44
+    },
+    {
+      "number": 918,
+      "hanzi": "羊",
+      "expectedPinyin": "yáng",
+      "speechText": "羊",
+      "storageKey": "audio/formal/hsk3-2025/l3-0918-v1.mp3",
+      "checksumSha256": "2bdaaba33764d796114aa07e076064395ccfe7b339c7fd72616b31b25da6dd57",
+      "bytes": 6768,
+      "durationSeconds": 1.128
+    },
+    {
+      "number": 919,
+      "hanzi": "养",
+      "expectedPinyin": "yǎng",
+      "speechText": "养",
+      "storageKey": "audio/formal/hsk3-2025/l3-0919-v1.mp3",
+      "checksumSha256": "2a4006d562124bc8fc17396934e42a7f818aaff7597aeebd6991d85c1a8f3f9c",
+      "bytes": 6768,
+      "durationSeconds": 1.128
+    },
+    {
+      "number": 920,
+      "hanzi": "要求",
+      "expectedPinyin": "yāoqiú",
+      "speechText": "要求",
+      "storageKey": "audio/formal/hsk3-2025/l3-0920-v1.mp3",
+      "checksumSha256": "8248ee5ce6e50fb9a9abaf31b942725168e0a8eacd430215c60ae33f40559cb7",
+      "bytes": 8640,
+      "durationSeconds": 1.44
+    },
+    {
+      "number": 922,
+      "hanzi": "一定",
+      "expectedPinyin": "yídìng",
+      "speechText": "一定",
+      "storageKey": "audio/formal/hsk3-2025/l3-0922-v1.mp3",
+      "checksumSha256": "fe724c4ac3a5a660b3a4248b2110eb219ae13e9117a738534eebedf9f0231655",
+      "bytes": 7776,
+      "durationSeconds": 1.296
+    },
+    {
+      "number": 923,
+      "hanzi": "一共",
+      "expectedPinyin": "yígòng",
+      "speechText": "一共",
+      "storageKey": "audio/formal/hsk3-2025/l3-0923-v1.mp3",
+      "checksumSha256": "9802aab5e89768b832656eb4e638771763d7e46874e80675cd8aaca823199801",
+      "bytes": 7920,
+      "durationSeconds": 1.32
+    },
+    {
+      "number": 924,
+      "hanzi": "一块儿",
+      "expectedPinyin": "yíkuàir",
+      "speechText": "一块儿",
+      "storageKey": "audio/formal/hsk3-2025/l3-0924-v1.mp3",
+      "checksumSha256": "8c791e398ff664572fdd8055f5c256f3d6bd944030b2bbe9022172bd61c07967",
+      "bytes": 8064,
+      "durationSeconds": 1.344
+    },
+    {
+      "number": 925,
+      "hanzi": "一样",
+      "expectedPinyin": "yíyàng",
+      "speechText": "一样",
+      "storageKey": "audio/formal/hsk3-2025/l3-0925-v1.mp3",
+      "checksumSha256": "5332e1c33df4a5ea622ef0e36a922ada44109908b00035f37a55b596aaa4b818",
+      "bytes": 7776,
+      "durationSeconds": 1.296
+    },
+    {
+      "number": 928,
+      "hanzi": "以上",
+      "expectedPinyin": "yǐshàng",
+      "speechText": "以上",
+      "storageKey": "audio/formal/hsk3-2025/l3-0928-v1.mp3",
+      "checksumSha256": "a152021c581635cb0dbc26d4d9e612df9a33920b2a94efc1d5c940edf6ccdc47",
+      "bytes": 7920,
+      "durationSeconds": 1.32
+    },
+    {
+      "number": 929,
+      "hanzi": "以外",
+      "expectedPinyin": "yǐwài",
+      "speechText": "以外",
+      "storageKey": "audio/formal/hsk3-2025/l3-0929-v1.mp3",
+      "checksumSha256": "60fdba5252d46c059d10fab56f2f93fc1fd276eab553262b3703f26cab7e8aaf",
+      "bytes": 7776,
+      "durationSeconds": 1.296
+    },
+    {
+      "number": 930,
+      "hanzi": "以为",
+      "expectedPinyin": "yǐwéi",
+      "speechText": "以为",
+      "storageKey": "audio/formal/hsk3-2025/l3-0930-v1.mp3",
+      "checksumSha256": "8bb5fb0609cebb0154c43bc8d2eb696dafb499786311e770225997db028427c6",
+      "bytes": 7632,
+      "durationSeconds": 1.272
+    },
+    {
+      "number": 931,
+      "hanzi": "以下",
+      "expectedPinyin": "yǐxià",
+      "speechText": "以下",
+      "storageKey": "audio/formal/hsk3-2025/l3-0931-v1.mp3",
+      "checksumSha256": "9c4104dd2531a0f14bb63cb2a3b527ea0fc29711d76fcf7b7f8571f85c3d25ba",
+      "bytes": 7920,
+      "durationSeconds": 1.32
+    },
+    {
+      "number": 932,
+      "hanzi": "一般",
+      "expectedPinyin": "yìbān",
+      "speechText": "一般",
+      "storageKey": "audio/formal/hsk3-2025/l3-0932-v1.mp3",
+      "checksumSha256": "8ccb389ea968ab482080db8ae7823b3cbb3b6bba9df7386b216c8270f2776ea1",
+      "bytes": 7776,
+      "durationSeconds": 1.296
+    },
+    {
+      "number": 933,
+      "hanzi": "一边",
+      "expectedPinyin": "yìbiān",
+      "speechText": "一边",
+      "storageKey": "audio/formal/hsk3-2025/l3-0933-v1.mp3",
+      "checksumSha256": "4a761776656993ad5e7bd1f7d9905cb5eb9f13f3aa27e2d5e1731903a2b51804",
+      "bytes": 7920,
+      "durationSeconds": 1.32
+    },
+    {
+      "number": 934,
+      "hanzi": "一直",
+      "expectedPinyin": "yìzhí",
+      "speechText": "一直",
+      "storageKey": "audio/formal/hsk3-2025/l3-0934-v1.mp3",
+      "checksumSha256": "8f530d328a6257385ef4e6ba4acbe05f4d41e88b2c82f9fac6db33b79cc437a7",
+      "bytes": 8352,
+      "durationSeconds": 1.392
+    },
+    {
+      "number": 935,
+      "hanzi": "音乐",
+      "expectedPinyin": "yīnyuè",
+      "speechText": "音乐",
+      "storageKey": "audio/formal/hsk3-2025/l3-0935-v1.mp3",
+      "checksumSha256": "1205233b09ac1e399ea4a550316b07b6367bf325e52c15fa3285c27aaf47b88c",
+      "bytes": 8208,
+      "durationSeconds": 1.368
+    },
+    {
+      "number": 936,
+      "hanzi": "银行",
+      "expectedPinyin": "yínháng",
+      "speechText": "银行",
+      "storageKey": "audio/formal/hsk3-2025/l3-0936-v1.mp3",
+      "checksumSha256": "154305bb31f9cd0b398a9421645ddb1f0cd72e4bc73155879236bf812d0ce48d",
+      "bytes": 8064,
+      "durationSeconds": 1.344
+    },
+    {
+      "number": 937,
+      "hanzi": "银行卡",
+      "expectedPinyin": "yínhángkǎ",
+      "speechText": "银行卡",
+      "storageKey": "audio/formal/hsk3-2025/l3-0937-v1.mp3",
+      "checksumSha256": "a8da0fb0caaa1d91d38c6a91b76a7dd7cc371bd6351b94030af384adbd357e39",
+      "bytes": 9360,
+      "durationSeconds": 1.56
+    },
+    {
+      "number": 939,
+      "hanzi": "应该",
+      "expectedPinyin": "yīnggāi",
+      "speechText": "应该",
+      "storageKey": "audio/formal/hsk3-2025/l3-0939-v1.mp3",
+      "checksumSha256": "a79eccaa71d3448b17a5c7ca73920660259b921aaa293a1683d72bd3a4c2b8ac",
+      "bytes": 8208,
+      "durationSeconds": 1.368
+    },
+    {
+      "number": 940,
+      "hanzi": "影响",
+      "expectedPinyin": "yǐngxiǎng",
+      "speechText": "影响",
+      "storageKey": "audio/formal/hsk3-2025/l3-0940-v1.mp3",
+      "checksumSha256": "4d6a15d656ab62464e4eee01331399eb417c2ed5f6c260fb4130645186532dcd",
+      "bytes": 8352,
+      "durationSeconds": 1.392
+    },
+    {
+      "number": 942,
+      "hanzi": "邮件",
+      "expectedPinyin": "yóujiàn",
+      "speechText": "邮件",
+      "storageKey": "audio/formal/hsk3-2025/l3-0942-v1.mp3",
+      "checksumSha256": "3354d1dcfb3388367bc0248d7fda06d8c70a08d47ca66990d960fb1704108996",
+      "bytes": 8208,
+      "durationSeconds": 1.368
+    },
+    {
+      "number": 943,
+      "hanzi": "游客",
+      "expectedPinyin": "yóukè",
+      "speechText": "游客",
+      "storageKey": "audio/formal/hsk3-2025/l3-0943-v1.mp3",
+      "checksumSha256": "267bd278193f6423f26c05b51f486e63b7b11bf79016af42d44fc680cd0fadd2",
+      "bytes": 8352,
+      "durationSeconds": 1.392
+    },
+    {
+      "number": 944,
+      "hanzi": "游戏",
+      "expectedPinyin": "yóuxì",
+      "speechText": "游戏",
+      "storageKey": "audio/formal/hsk3-2025/l3-0944-v1.mp3",
+      "checksumSha256": "81f8faddbe4c068f9d0fca3dfacee3f25c8cb16fbd55b2d3f8bc012a61ca9306",
+      "bytes": 8496,
+      "durationSeconds": 1.416
+    },
+    {
+      "number": 945,
+      "hanzi": "邮箱",
+      "expectedPinyin": "yóuxiāng",
+      "speechText": "邮箱",
+      "storageKey": "audio/formal/hsk3-2025/l3-0945-v1.mp3",
+      "checksumSha256": "52a0446d5ad5151766d16cf5e87f46e3cf95672322836cfef0cea7734db52652",
+      "bytes": 8208,
+      "durationSeconds": 1.368
+    },
+    {
+      "number": 946,
+      "hanzi": "有关",
+      "expectedPinyin": "yǒuguān",
+      "speechText": "有关",
+      "storageKey": "audio/formal/hsk3-2025/l3-0946-v1.mp3",
+      "checksumSha256": "8c933fa406f87630ab291078c79e95a4b93b2b7291c15b042cc093fcaff5596a",
+      "bytes": 8064,
+      "durationSeconds": 1.344
+    },
+    {
+      "number": 949,
+      "hanzi": "又",
+      "expectedPinyin": "yòu",
+      "speechText": "又",
+      "storageKey": "audio/formal/hsk3-2025/l3-0949-v1.mp3",
+      "checksumSha256": "7fe51375d36ee2984a75178defe161442f4139012604d4fa26fe800cb8b73d10",
+      "bytes": 7056,
+      "durationSeconds": 1.176
+    },
+    {
+      "number": 950,
+      "hanzi": "羽毛球",
+      "expectedPinyin": "yǔmáoqiú",
+      "speechText": "羽毛球",
+      "storageKey": "audio/formal/hsk3-2025/l3-0950-v1.mp3",
+      "checksumSha256": "053e7a8627c69311bda945252c6075d7f99ff556efeee2326e8f38cb5e230220",
+      "bytes": 9216,
+      "durationSeconds": 1.536
+    },
+    {
+      "number": 951,
+      "hanzi": "语言",
+      "expectedPinyin": "yǔyán",
+      "speechText": "语言",
+      "storageKey": "audio/formal/hsk3-2025/l3-0951-v1.mp3",
+      "checksumSha256": "0c55076db662b8d11e95d0a3b149c46721adcd2bb56569e91cfbe888ed1b4440",
+      "bytes": 7920,
+      "durationSeconds": 1.32
+    },
+    {
+      "number": 952,
+      "hanzi": "雨衣",
+      "expectedPinyin": "yǔyī",
+      "speechText": "雨衣",
+      "storageKey": "audio/formal/hsk3-2025/l3-0952-v1.mp3",
+      "checksumSha256": "3c3711167b46b5d2d7a68f1749c71788d2ad3e82441db0daca6326e2373c6271",
+      "bytes": 7920,
+      "durationSeconds": 1.32
+    },
+    {
+      "number": 953,
+      "hanzi": "遇到",
+      "expectedPinyin": "yùdào",
+      "speechText": "遇到",
+      "storageKey": "audio/formal/hsk3-2025/l3-0953-v1.mp3",
+      "checksumSha256": "ef71145ffb2cbf988603a4563a208f9cb3ae550fe631a09f13b45a3152b9e92c",
+      "bytes": 7920,
+      "durationSeconds": 1.32
+    },
+    {
+      "number": 954,
+      "hanzi": "遇见",
+      "expectedPinyin": "yùjiàn",
+      "speechText": "遇见",
+      "storageKey": "audio/formal/hsk3-2025/l3-0954-v1.mp3",
+      "checksumSha256": "7e8daf5771977c21f9aff3d46ddecdbff32f28b363acfe3877255325a08ba541",
+      "bytes": 8064,
+      "durationSeconds": 1.344
+    },
+    {
+      "number": 955,
+      "hanzi": "园",
+      "expectedPinyin": "yuán",
+      "speechText": "园",
+      "storageKey": "audio/formal/hsk3-2025/l3-0955-v1.mp3",
+      "checksumSha256": "899c042cbbd0d3a8b7b9947e2903d12e638aa267a444bd0233fd0da0999d8da9",
+      "bytes": 6768,
+      "durationSeconds": 1.128
+    },
+    {
+      "number": 956,
+      "hanzi": "员",
+      "expectedPinyin": "yuán",
+      "speechText": "员",
+      "storageKey": "audio/formal/hsk3-2025/l3-0956-v1.mp3",
+      "checksumSha256": "899c042cbbd0d3a8b7b9947e2903d12e638aa267a444bd0233fd0da0999d8da9",
+      "bytes": 6768,
+      "durationSeconds": 1.128
+    },
+    {
+      "number": 957,
+      "hanzi": "愿意",
+      "expectedPinyin": "yuànyì",
+      "speechText": "愿意",
+      "storageKey": "audio/formal/hsk3-2025/l3-0957-v1.mp3",
+      "checksumSha256": "33041c2eb9752211f6cfd34e9e6bd13b60bfdbf2b291678aeef9b5f93cdbdd99",
+      "bytes": 8064,
+      "durationSeconds": 1.344
+    },
+    {
+      "number": 958,
+      "hanzi": "越",
+      "expectedPinyin": "yuè",
+      "speechText": "越",
+      "storageKey": "audio/formal/hsk3-2025/l3-0958-v1.mp3",
+      "checksumSha256": "ed34c26aa8031e31801c9cf37fc9e9809ccb21c7abcd906734e934413a3003ef",
+      "bytes": 6912,
+      "durationSeconds": 1.152
+    },
+    {
+      "number": 959,
+      "hanzi": "月亮",
+      "expectedPinyin": "yuèliang",
+      "speechText": "月亮",
+      "storageKey": "audio/formal/hsk3-2025/l3-0959-v1.mp3",
+      "checksumSha256": "d85035bf59b0ad55671f4f4833a045c80d95b4c8f295882356ea82d42bd6d9f2",
+      "bytes": 8064,
+      "durationSeconds": 1.344
+    },
+    {
+      "number": 960,
+      "hanzi": "运动会",
+      "expectedPinyin": "yùndònghuì",
+      "speechText": "运动会",
+      "storageKey": "audio/formal/hsk3-2025/l3-0960-v1.mp3",
+      "checksumSha256": "29485740718f700c2cd9d447c524d12a8567f8f63df2a4926c92196b0682ff0d",
+      "bytes": 9072,
+      "durationSeconds": 1.512
+    },
+    {
+      "number": 961,
+      "hanzi": "运动员",
+      "expectedPinyin": "yùndòngyuán",
+      "speechText": "运动员",
+      "storageKey": "audio/formal/hsk3-2025/l3-0961-v1.mp3",
+      "checksumSha256": "65dce0ae4f3903f94f57669f9ef39fc8febc1f64219234607a7b1a8d567cc13f",
+      "bytes": 9360,
+      "durationSeconds": 1.56
+    },
+    {
+      "number": 962,
+      "hanzi": "咱们",
+      "expectedPinyin": "zánmen",
+      "speechText": "咱们",
+      "storageKey": "audio/formal/hsk3-2025/l3-0962-v1.mp3",
+      "checksumSha256": "32cfcc6b56d0726445921fe5981ebc66fda86f63f922d72f1808b2f03ce25c3e",
+      "bytes": 7920,
+      "durationSeconds": 1.32
+    },
+    {
+      "number": 963,
+      "hanzi": "脏",
+      "expectedPinyin": "zāng",
+      "speechText": "脏",
+      "storageKey": "audio/formal/hsk3-2025/l3-0963-v1.mp3",
+      "checksumSha256": "ae98f85e2628ca199bacedc938dd378f6d8e7908d4784d0414a7e9834495bd78",
+      "bytes": 6768,
+      "durationSeconds": 1.128
+    },
+    {
+      "number": 964,
+      "hanzi": "怎么办",
+      "expectedPinyin": "zěnme bàn",
+      "speechText": "怎么办",
+      "storageKey": "audio/formal/hsk3-2025/l3-0964-v1.mp3",
+      "checksumSha256": "6dd3f77e97733c92671420a1394347e3ef3a49accc0d7ec6fbeebe85fe86fb78",
+      "bytes": 8208,
+      "durationSeconds": 1.368
+    },
+    {
+      "number": 965,
+      "hanzi": "怎样",
+      "expectedPinyin": "zěnyàng",
+      "speechText": "怎样",
+      "storageKey": "audio/formal/hsk3-2025/l3-0965-v1.mp3",
+      "checksumSha256": "8be4bdb50566a744bb44113f59de590ce58b68fe7cab537704f0ee6916130f87",
+      "bytes": 8064,
+      "durationSeconds": 1.344
+    },
+    {
+      "number": 967,
+      "hanzi": "张",
+      "expectedPinyin": "zhāng",
+      "speechText": "张",
+      "storageKey": "audio/formal/hsk3-2025/l3-0967-v1.mp3",
+      "checksumSha256": "79205ea14f260be6ae055caa73ca8650d37cdf23b2226a6b8a6f7828ac84a8eb",
+      "bytes": 6624,
+      "durationSeconds": 1.104
+    },
+    {
+      "number": 969,
+      "hanzi": "着急",
+      "expectedPinyin": "zháojí",
+      "speechText": "着急",
+      "storageKey": "audio/formal/hsk3-2025/l3-0969-v1.mp3",
+      "checksumSha256": "4df1896bba87f992ee7f5cba281323cfc8b1140d6c0d13d6b1da572804c4de07",
+      "bytes": 8352,
+      "durationSeconds": 1.392
+    },
+    {
+      "number": 970,
+      "hanzi": "照",
+      "expectedPinyin": "zhào",
+      "speechText": "照",
+      "storageKey": "audio/formal/hsk3-2025/l3-0970-v1.mp3",
+      "checksumSha256": "384b5ca04aee2e33004a4d443c9b54c9abaf1e1a0608d39d674e9fee7b397acb",
+      "bytes": 6768,
+      "durationSeconds": 1.128
+    },
+    {
+      "number": 971,
+      "hanzi": "照顾",
+      "expectedPinyin": "zhàogù",
+      "speechText": "照顾",
+      "storageKey": "audio/formal/hsk3-2025/l3-0971-v1.mp3",
+      "checksumSha256": "cb3f91023999eab6826b5d07c3bcc55af517860c9b67929b4dccccdb02b2e206",
+      "bytes": 8064,
+      "durationSeconds": 1.344
+    },
+    {
+      "number": 972,
+      "hanzi": "照片",
+      "expectedPinyin": "zhàopiàn",
+      "speechText": "照片",
+      "storageKey": "audio/formal/hsk3-2025/l3-0972-v1.mp3",
+      "checksumSha256": "4990b49935a5c6fb8616e5cd5100e023fb1174f5eb9515e41b241b3334982b8b",
+      "bytes": 8496,
+      "durationSeconds": 1.416
+    },
+    {
+      "number": 973,
+      "hanzi": "照相",
+      "expectedPinyin": "zhàoxiàng",
+      "speechText": "照相",
+      "storageKey": "audio/formal/hsk3-2025/l3-0973-v1.mp3",
+      "checksumSha256": "61283cae1514148e228225b98a3c9dbda7da4c150d7c62ea01ffda61ae86009b",
+      "bytes": 8352,
+      "durationSeconds": 1.392
+    },
+    {
+      "number": 974,
+      "hanzi": "直到",
+      "expectedPinyin": "zhídào",
+      "speechText": "直到",
+      "storageKey": "audio/formal/hsk3-2025/l3-0974-v1.mp3",
+      "checksumSha256": "1df5e1e429c734be0f27cf719bf1611f31b5f2047c5e0d458cd2f83031154ec0",
+      "bytes": 8208,
+      "durationSeconds": 1.368
+    },
+    {
+      "number": 975,
+      "hanzi": "只",
+      "expectedPinyin": "zhǐ",
+      "speechText": "只",
+      "storageKey": "audio/formal/hsk3-2025/l3-0975-v1.mp3",
+      "checksumSha256": "c95ddf73d69f90d29bff3c63c3f6f6b73df8bd5a506994cebf3ba54b974631d7",
+      "bytes": 6768,
+      "durationSeconds": 1.128
+    },
+    {
+      "number": 976,
+      "hanzi": "纸",
+      "expectedPinyin": "zhǐ",
+      "speechText": "纸",
+      "storageKey": "audio/formal/hsk3-2025/l3-0976-v1.mp3",
+      "checksumSha256": "113ec126a81041d72c68852307f1928c393025580576ec7ce5c7e3c4aed23929",
+      "bytes": 6768,
+      "durationSeconds": 1.128
+    },
+    {
+      "number": 977,
+      "hanzi": "只能",
+      "expectedPinyin": "zhǐ néng",
+      "speechText": "只能",
+      "storageKey": "audio/formal/hsk3-2025/l3-0977-v1.mp3",
+      "checksumSha256": "16ce9eaaa48a5061aec7adcd008320ab846b8f0f5d01ca5aa9e50e74d3b99685",
+      "bytes": 7776,
+      "durationSeconds": 1.296
+    },
+    {
+      "number": 978,
+      "hanzi": "只是",
+      "expectedPinyin": "zhǐshì",
+      "speechText": "只是",
+      "storageKey": "audio/formal/hsk3-2025/l3-0978-v1.mp3",
+      "checksumSha256": "2c9055a2d6589cbad408b1daff8d5573164d403dac18d160bd4e58512d00eb27",
+      "bytes": 8496,
+      "durationSeconds": 1.416
+    },
+    {
+      "number": 979,
+      "hanzi": "只要",
+      "expectedPinyin": "zhǐyào",
+      "speechText": "只要",
+      "storageKey": "audio/formal/hsk3-2025/l3-0979-v1.mp3",
+      "checksumSha256": "386d248faaf2b77f76e28ce284f04a729c5ec7dc4baf6d0df1b603dc4fdeb864",
+      "bytes": 7920,
+      "durationSeconds": 1.32
+    },
+    {
+      "number": 980,
+      "hanzi": "只有",
+      "expectedPinyin": "zhǐyǒu",
+      "speechText": "只有",
+      "storageKey": "audio/formal/hsk3-2025/l3-0980-v1.mp3",
+      "checksumSha256": "5b874b31437f28dd1f96633582419c9eb84f562f138c0dbf41058944c7fb5b42",
+      "bytes": 8208,
+      "durationSeconds": 1.368
+    },
+    {
+      "number": 983,
+      "hanzi": "终于",
+      "expectedPinyin": "zhōngyú",
+      "speechText": "终于",
+      "storageKey": "audio/formal/hsk3-2025/l3-0983-v1.mp3",
+      "checksumSha256": "c7542925c6a6e05a21b798be81b2fddedf9d635ee33f9d1a36911a037b403822",
+      "bytes": 8064,
+      "durationSeconds": 1.344
+    },
+    {
+      "number": 984,
+      "hanzi": "种",
+      "expectedPinyin": "zhǒng",
+      "speechText": "种",
+      "storageKey": "audio/formal/hsk3-2025/l3-0984-v1.mp3",
+      "checksumSha256": "ce0560e76dcfc29bc76351be3784bc473461ce98a50cca95f3334309dc33cb05",
+      "bytes": 6768,
+      "durationSeconds": 1.128
+    },
+    {
+      "number": 987,
+      "hanzi": "主要",
+      "expectedPinyin": "zhǔyào",
+      "speechText": "主要",
+      "storageKey": "audio/formal/hsk3-2025/l3-0987-v1.mp3",
+      "checksumSha256": "362163fd91ca869d73b9a0c4a05e885b78f2249e7faab17b5b8c983334e88cd8",
+      "bytes": 8208,
+      "durationSeconds": 1.368
+    },
+    {
+      "number": 988,
+      "hanzi": "注意",
+      "expectedPinyin": "zhùyì",
+      "speechText": "注意",
+      "storageKey": "audio/formal/hsk3-2025/l3-0988-v1.mp3",
+      "checksumSha256": "74ec84ebbca4617ead56252b0b28685dc5deb8f28ddd6801bf3cd736bd3be5e5",
+      "bytes": 7920,
+      "durationSeconds": 1.32
+    },
+    {
+      "number": 989,
+      "hanzi": "住院",
+      "expectedPinyin": "zhùyuàn",
+      "speechText": "住院",
+      "storageKey": "audio/formal/hsk3-2025/l3-0989-v1.mp3",
+      "checksumSha256": "48f9c456f7c4cf1d0aeb9311c3754cb39e41f839a0eb161bd69444becc9642e4",
+      "bytes": 8064,
+      "durationSeconds": 1.344
+    },
+    {
+      "number": 990,
+      "hanzi": "字典",
+      "expectedPinyin": "zìdiǎn",
+      "speechText": "字典",
+      "storageKey": "audio/formal/hsk3-2025/l3-0990-v1.mp3",
+      "checksumSha256": "6924425de856f358dcd59c3b1d53f91d66a886d52a20ebc8cdbf8f11b67bb937",
+      "bytes": 8208,
+      "durationSeconds": 1.368
+    },
+    {
+      "number": 991,
+      "hanzi": "自行车",
+      "expectedPinyin": "zìxíngchē",
+      "speechText": "自行车",
+      "storageKey": "audio/formal/hsk3-2025/l3-0991-v1.mp3",
+      "checksumSha256": "cf890d73c19756badb562e6d7dee9b9236884726fa1c2f5efea8e20057367454",
+      "bytes": 9504,
+      "durationSeconds": 1.584
+    },
+    {
+      "number": 992,
+      "hanzi": "子",
+      "expectedPinyin": "zi",
+      "speechText": "子",
+      "storageKey": "audio/formal/hsk3-2025/l3-0992-v1.mp3",
+      "checksumSha256": "2bb4e83554caa186fb236806819b605857441f8aee7f869e121363fba65521d2",
+      "bytes": 6912,
+      "durationSeconds": 1.152
+    },
+    {
+      "number": 993,
+      "hanzi": "总",
+      "expectedPinyin": "zǒng",
+      "speechText": "总",
+      "storageKey": "audio/formal/hsk3-2025/l3-0993-v1.mp3",
+      "checksumSha256": "00ffc2b763ff490a7d0da445d7dc57f9ee90bde4b15c829130a98ca6c53776b1",
+      "bytes": 6768,
+      "durationSeconds": 1.128
+    },
+    {
+      "number": 994,
+      "hanzi": "总是",
+      "expectedPinyin": "zǒngshì",
+      "speechText": "总是",
+      "storageKey": "audio/formal/hsk3-2025/l3-0994-v1.mp3",
+      "checksumSha256": "a0e91bf26c2ba90d09dd650d824e8c20c1994d930b68a7d9d9c1e99ef2abd702",
+      "bytes": 8496,
+      "durationSeconds": 1.416
+    },
+    {
+      "number": 995,
+      "hanzi": "嘴",
+      "expectedPinyin": "zuǐ",
+      "speechText": "嘴",
+      "storageKey": "audio/formal/hsk3-2025/l3-0995-v1.mp3",
+      "checksumSha256": "8a2801e04dfc79b7b49c94e4b6cd5356cebf53770237544794d2210533b7a2e4",
+      "bytes": 6912,
+      "durationSeconds": 1.152
+    },
+    {
+      "number": 998,
+      "hanzi": "最近",
+      "expectedPinyin": "zuìjìn",
+      "speechText": "最近",
+      "storageKey": "audio/formal/hsk3-2025/l3-0998-v1.mp3",
+      "checksumSha256": "5de5bae1818e4d04bfe8210b9732c69afba8e8a722c6fa80b95308e3cde34ccc",
+      "bytes": 8064,
+      "durationSeconds": 1.344
+    },
+    {
+      "number": 999,
+      "hanzi": "做客",
+      "expectedPinyin": "zuòkè",
+      "speechText": "做客",
+      "storageKey": "audio/formal/hsk3-2025/l3-0999-v1.mp3",
+      "checksumSha256": "bc1d91515062fa5d8ad814acc984ddb86243bc9997dd797b29b6b81b50a5a130",
+      "bytes": 8208,
+      "durationSeconds": 1.368
+    },
+    {
+      "number": 1000,
+      "hanzi": "作业",
+      "expectedPinyin": "zuòyè",
+      "speechText": "作业",
+      "storageKey": "audio/formal/hsk3-2025/l3-1000-v1.mp3",
+      "checksumSha256": "923325872ee44bdcc66b90a762fc697d43766b0c263377f58a332089cb914314",
+      "bytes": 8352,
+      "durationSeconds": 1.392
+    }
+  ],
+  "manualReview": [
+    {
+      "number": 583,
+      "hanzi": "得",
+      "expectedPinyin": "dé",
+      "reason": "polyphonic-or-neutral-tone"
+    },
+    {
+      "number": 587,
+      "hanzi": "得",
+      "expectedPinyin": "děi",
+      "reason": "polyphonic-or-neutral-tone"
+    },
+    {
+      "number": 968,
+      "hanzi": "长",
+      "expectedPinyin": "zhǎng",
+      "reason": "polyphonic-or-neutral-tone"
+    }
+  ],
+  "pendingGeneration": []
+}

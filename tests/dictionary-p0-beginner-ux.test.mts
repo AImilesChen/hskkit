@@ -115,7 +115,7 @@ test("a word beyond the bounded runtime index maps to the same Today identity co
 test("catalog detail fallback resolves the active full release without D1", () => {
   const result = findPublicCatalogWordById("hsk3.word.l7.5636.v1");
   assert.equal(result?.id, "hsk3.word.l7.5636.v1");
-  assert.equal(result?.release_id, "hsk3-hsk1-2025-v6");
+  assert.equal(result?.release_id, "hsk3-hsk123-2025-v7");
   assert.equal(result?.level_band, "7-9");
 });
 
