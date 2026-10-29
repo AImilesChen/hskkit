@@ -36,9 +36,9 @@ const levelOptions = [
 const intentLabels: Record<DictionaryQueryType, string> = { empty: "Hanzi, pinyin, or English", hanzi: "Chinese characters detected", pinyin: "Pinyin detected", english: "English detected" };
 const DICTIONARY_REQUEST_TIMEOUT_MS = 8_000;
 const modeCopy: Record<DictionaryMode, { label: string; placeholder: string; description: string; action: string }> = {
-  words: { label: "Words", placeholder: "Search 学习, xue xi, or to study", description: "Search 11,092 published words by Hanzi, pinyin or English.", action: "Search words" },
+  words: { label: "Words", placeholder: "Search 学习, xue xi, or to study", description: "Search 10,892 published words by Hanzi, pinyin or English.", action: "Search words" },
   levels: { label: "HSK levels", placeholder: "Search within an HSK level", description: "Browse the complete published vocabulary from HSK 1 through the unified HSK 7–9 band.", action: "Search level" },
-  characters: { label: "Characters", placeholder: "Search 学, xué, or learning", description: "Search 2,971 characters found in the published HSK vocabulary.", action: "Search characters" },
+  characters: { label: "Characters", placeholder: "Search 学, xué, or learning", description: "Search 2,970 characters found in the published HSK vocabulary.", action: "Search characters" },
   pinyin: { label: "Pinyin", placeholder: "Search xue, xué, or xue2", description: "Find characters by syllable, initial, final and tone.", action: "Search pinyin" },
 };
 

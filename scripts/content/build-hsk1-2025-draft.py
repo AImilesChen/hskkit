@@ -64,6 +64,8 @@ GLOSS_OVERRIDES = {
     127: "noodles", 130: "name", 131: "which", 133: "where",
     134: "where", 135: "which ones", 136: "that", 142: "male",
     144: "sentence-final particle used in questions; what about...?",
+    146: "you (informal)",
+    150: "you (polite)",
     157: "cheap; inexpensive", 163: "in front; before", 164: "money",
     167: "to go", 169: "hot", 172: "day (of the month)",
     175: "on; above; to go up", 177: "to attend class",

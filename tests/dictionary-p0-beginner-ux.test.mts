@@ -5,10 +5,10 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { detectDictionaryQueryType } from "../src/lib/dictionary/search-intent.ts";
 import { addWordToToday, toggleSavedWord, type LearningState } from "../src/lib/learning/domain.ts";
-import { getWordBySlug } from "../src/lib/dictionary/catalog.ts";
+import { getPublishedWordBySlug } from "../src/lib/dictionary/runtime-word.ts";
 import { isCatalogWordAssetId } from "../src/lib/content/catalog-search.ts";
 import { findPublicCatalogWordById } from "../src/lib/content/public-catalog-index.ts";
-import { todayContentByAssetId, todayContentFromCatalogRow } from "../src/lib/learning/today-content.ts";
+import { selectTodayContent, todayContentByAssetId, todayContentFromCatalogRow } from "../src/lib/learning/today-content.ts";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const read = (relative: string) => fs.readFileSync(path.join(root, relative), "utf8");
@@ -74,15 +74,19 @@ test("saved words and Today additions are durable, idempotent learning-state ope
   assert.equal(added.dailySessions[0].items.at(-1)?.kind, "summary");
 });
 
-test("every browsable catalog result can open a truthful word page and enter Today", () => {
-  const result = getWordBySlug("hsk3.word.l1.0001.v1");
+test("every browsable catalog result can open a truthful word page and enter Today", async () => {
+  const result = await getPublishedWordBySlug("hsk2025.word.l1.0001.v1");
   assert.equal(result.status, "published");
   if (result.status !== "published") return;
-  assert.equal(result.item.hanzi, "爱");
   assert.equal(result.item.example, undefined);
   const todayItem = todayContentByAssetId(result.item.id);
   assert.equal(todayItem?.studySlug, result.item.id);
   assert.equal(todayItem?.hanzi, result.item.hanzi);
+  const historical = await getPublishedWordBySlug("hsk3.word.l1.0001.v1");
+  assert.equal(historical.status, "published");
+  const pinned = selectTodayContent(1, 1, { pinnedContentIds: ["catalog:hsk3.word.l1.0001"], freezePinned: true });
+  assert.equal(pinned.status, "ready");
+  if (pinned.status === "ready") assert.equal(pinned.item.assetId, "hsk3.word.l1.0001.v1");
 });
 
 test("a word beyond the bounded runtime index maps to the same Today identity contract", () => {
@@ -111,7 +115,7 @@ test("a word beyond the bounded runtime index maps to the same Today identity co
 test("catalog detail fallback resolves the active full release without D1", () => {
   const result = findPublicCatalogWordById("hsk3.word.l7.5636.v1");
   assert.equal(result?.id, "hsk3.word.l7.5636.v1");
-  assert.equal(result?.release_id, "hsk3-content-truth-v5");
+  assert.equal(result?.release_id, "hsk3-hsk1-2025-v6");
   assert.equal(result?.level_band, "7-9");
 });
 

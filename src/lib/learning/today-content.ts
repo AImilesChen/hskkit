@@ -1,5 +1,7 @@
 import runtimeIndex from "../content/runtime-content-index.json" with { type: "json" };
+import { publishedContentAudioAsset } from "../audio/assets.ts";
 import type { CatalogSearchRow } from "../content/catalog-search.ts";
+import { findPublicCatalogWordById } from "../content/public-catalog-index.ts";
 import { getHsk3LevelStatus } from "../content/level-status.ts";
 import { listPublishedWords, type StudyWord } from "../dictionary/catalog.ts";
 import type { DailySession } from "./domain.ts";
@@ -175,6 +177,14 @@ export function selectTodayContent(startLevel: number, requestedCount = 1, selec
   } else {
     const pool = availableItems(result.catalogLevel);
     const byId = new Map(pool.map((item) => [item.contentId, item]));
+    // Existing sessions may pin a retired 2021 ID. Keep that specific word
+    // available to finish or review without putting it back in new-word picks.
+    for (const id of [...(selection.pinnedContentIds ?? []), ...(selection.continuingContentIds ?? [])]) {
+      if (!byId.has(id)) {
+        const historical = todayContentByContentId(id);
+        if (historical?.level === result.catalogLevel) byId.set(id, historical);
+      }
+    }
     const completed = new Set(selection.completedContentIds ?? []);
     const continuing = new Set(selection.continuingContentIds ?? []);
     const pinned = (selection.pinnedContentIds ?? []).flatMap((id) => byId.has(id) ? [byId.get(id)!] : []);
@@ -225,13 +235,16 @@ export function todayContentByContentId(contentId: string): TodayContentItem | u
     ? runtimeIndex.dictionaryAssets.find((candidate) => candidate.logicalId === logicalId)
       ?? runtimeWordAssets.find((candidate) => candidate.logicalId === logicalId)
     : undefined;
-  return asset ? todayContentByAssetId(asset.id) : undefined;
+  return asset ? todayContentByAssetId(asset.id) : logicalId ? todayContentByAssetId(`${logicalId}.v1`) : undefined;
 }
 
 export function todayContentByAssetId(assetId: string): TodayContentItem | undefined {
   const asset = runtimeIndex.dictionaryAssets.find((candidate) => candidate.id === assetId)
     ?? runtimeWordAssets.find((candidate) => candidate.id === assetId);
-  if (!asset) return undefined;
+  if (!asset) {
+    const historical = findPublicCatalogWordById(assetId);
+    return historical ? todayContentFromCatalogRow(historical) : undefined;
+  }
   const words = listPublishedWords();
   const word = words.find((candidate) => candidate.id === asset.id);
   return mapItem(asset, word, runtimeIndex.releaseId);
@@ -251,6 +264,6 @@ export function todayContentFromCatalogRow(row: CatalogSearchRow): TodayContentI
     partOfSpeech: row.part_of_speech,
     studySlug: row.id,
     example: undefined,
-    audioSrc: undefined,
+    audioSrc: publishedContentAudioAsset(row.id, row.hanzi)?.src,
   };
 }

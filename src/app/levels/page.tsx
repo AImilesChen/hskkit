@@ -4,8 +4,8 @@ import { StudyPage } from "../components/study-shell";
 import { getHsk3LevelStatuses } from "@/lib/content/level-status";
 
 export const metadata: Metadata = {
-  title: "HSK Levels 1–9 Study Catalog (2021 Standard) | HSKKit",
-  description: "Explore HSKKit's published Level 1–9 vocabulary based on the 2021 Chinese Proficiency Grading Standards, with transparent content status.",
+  title: "HSK Levels 1–9 Vocabulary Study Catalog | HSKKit",
+  description: "Explore the 2025 HSK 1 exam-syllabus word list and HSKKit's published Levels 2–9 study vocabulary, with each source clearly labelled.",
   alternates: { canonical: "/levels" },
 };
 
@@ -26,8 +26,8 @@ export default function LevelsPage() {
   return (
     <StudyPage>
       <main className="mx-auto w-full max-w-[1140px] flex-1 px-5 py-12 md:px-16 md:py-16">
-        <header className="max-w-3xl"><p className="text-sm font-bold uppercase tracking-[0.15em] text-blue-600">2021 grading standard · study catalog</p><h1 className="mt-3 text-4xl font-bold tracking-tight md:text-5xl">Choose a Level 1–9 study path</h1><p className="mt-5 text-lg leading-8 text-slate-600">These published words and counts follow the 2021 Chinese Proficiency Grading Standards (GF0025-2021). They are not the official 2025 HSK 3.0 examination syllabus. Levels 7–9 share one advanced ability band.</p><p className="mt-3 text-sm text-slate-600">Preparing for an exam? <Link href="/hsk-3-0" className="font-semibold text-blue-700 underline">Check the HSK 3.0 exam transition and official syllabus.</Link></p></header>
-        <div className="mt-8 rounded-2xl border border-green-200 bg-green-50 p-5 text-green-950"><strong>Published study content is available.</strong><p className="mt-1 leading-7">The counts below describe approved entries in HSKKit's 2021-standard catalog. Levels 7–9 are published once under the Level 7 route as one advanced ability band.</p></div>
+        <header className="max-w-3xl"><p className="text-sm font-bold uppercase tracking-[0.15em] text-blue-600">Published vocabulary · source by level</p><h1 className="mt-3 text-4xl font-bold tracking-tight md:text-5xl">Choose a Level 1–9 study path</h1><p className="mt-5 text-lg leading-8 text-slate-600">HSK 1 now has 300 words aligned with the official 2025 exam syllabus. Levels 2–9 still follow the 2021 Chinese Proficiency Grading Standards (GF0025-2021) while their migration is prepared. Levels 7–9 share one advanced ability band.</p><p className="mt-3 text-sm text-slate-600">Preparing for an exam? <Link href="/hsk-3-0" className="font-semibold text-blue-700 underline">Check the HSK 3.0 exam transition and official syllabus.</Link></p></header>
+        <div className="mt-8 rounded-2xl border border-green-200 bg-green-50 p-5 text-green-950"><strong>Published study content is available.</strong><p className="mt-1 leading-7">The counts below describe approved entries in the currently published catalog. HSK 1 uses the 2025 exam word list; Levels 2–9 still use the 2021 study standard. The 2025 HSK 1 English explanations and audio are HSKKit study content, not official exam material.</p></div>
         <section className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-3" aria-label="HSK 3.0 levels">
           {levels.map((entry, index) => (
             <article key={entry.level} className="flex flex-col rounded-2xl border border-slate-200 bg-white p-6">

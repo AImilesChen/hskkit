@@ -1,4 +1,5 @@
 import runtimeIndex from "./runtime-content-index.json" with { type: "json" };
+import legacyHsk1Audio from "./legacy-hsk1-audio.json" with { type: "json" };
 
 export interface LevelPublicationStatus {
   standard: "hsk3";
@@ -55,3 +56,6 @@ const formalWordAudioAssets = (runtimeIndex.publishedAudioAssets as PublishedAud
   .filter((asset) => asset.audioKind === "word" && asset.qaStatus === "approved");
 export const formalWordAudioAssetIds = formalWordAudioAssets.map((asset) => asset.contentAssetId);
 export const formalWordAudioUrlByContentId = new Map(formalWordAudioAssets.map((asset) => [asset.contentAssetId, `/${asset.storageKey}`]));
+for (const [contentAssetId, storageKey] of legacyHsk1Audio.audio as Array<[string, string]>) {
+  if (!formalWordAudioUrlByContentId.has(contentAssetId)) formalWordAudioUrlByContentId.set(contentAssetId, `/${storageKey}`);
+}

@@ -22,8 +22,8 @@ test("every published HSK 1 word has released checksum-verified formal audio", (
     .filter((item: { id: string; qaStatus: string }) => audioIds.has(item.id) && item.qaStatus === "approved")
     .map((item: { contentAssetId: string }) => [item.contentAssetId, item]));
 
-  assert.equal(words.length, 500);
-  assert.equal(new Set([...audioByContent.keys()].filter((id) => words.some((word: { id: string }) => word.id === id))).size, 500);
+  assert.equal(words.length, 300);
+  assert.equal(new Set([...audioByContent.keys()].filter((id) => words.some((word: { id: string }) => word.id === id))).size, 300);
   const storageKeys = new Set<string>();
   for (const word of words) {
     const audio = audioByContent.get(word.id) as { storageKey: string; checksumSha256: string } | undefined;
@@ -35,6 +35,13 @@ test("every published HSK 1 word has released checksum-verified formal audio", (
     assert.ok(statSync(fileUrl).size >= 1000, `undersized ${audio.storageKey}`);
     assert.equal(createHash("sha256").update(readFileSync(fileUrl)).digest("hex"), audio.checksumSha256);
   }
+});
+
+test("new HSK 1 audio report tracks the 265 reused and 35 generated files", () => {
+  const report = readJson("docs/quality/hsk1-2025-audio-report.json");
+  assert.equal(report.reused.length, 265);
+  assert.equal(report.generated.length, 35);
+  assert.equal(new Set([...report.reused, ...report.generated].map((item: { number: number }) => item.number)).size, 300);
 });
 
 test("polyphonic HSK 1 entries have distinct pronunciations and exceptional prompts are documented", () => {

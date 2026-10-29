@@ -1,5 +1,6 @@
 import type {Metadata} from "next";
 import {notFound} from "next/navigation";
+import Link from "next/link";
 import {getCloudflareContext} from "@opennextjs/cloudflare";
 import SiteHeader from "@/app/site-header";
 import SiteFooter from "@/app/site-footer";
@@ -29,5 +30,6 @@ export default async function ResourceProductPage({params}:{params:Promise<{prod
   const currentProduct=config.products.find(item=>item.id===product.slug);
   const offer=Object.fromEntries([["@type","Offer"],["price",((currentProduct?.saleAmountCents??product.amountCents)/100).toFixed(2)],["priceCurrency","USD"],["url",`https://hskkit.com/store/${product.slug}`]]);
   const productJson={"@context":"https://schema.org","@type":"Product",name:product.name,description:product.summary,image:`https://hskkit.com${product.previewImage}`,offers:offer};
-  return <><StoreMobileStyle/><SiteHeader/><main data-store-route className="mx-auto w-full max-w-[1160px] px-5 py-8 sm:py-12"><script type="application/ld+json" dangerouslySetInnerHTML={{__html:JSON.stringify(productJson)}}/><ResourceProductDetail product={product}/></main><SiteFooter/></>;
+  const hasEarlierLevelOnePdf=["level-1","starter-1-3","complete-1-9"].includes(productId);
+  return <><StoreMobileStyle/><SiteHeader/><main data-store-route className="mx-auto w-full max-w-[1160px] px-5 py-8 sm:py-12"><script type="application/ld+json" dangerouslySetInnerHTML={{__html:JSON.stringify(productJson)}}/>{hasEarlierLevelOnePdf&&<p className="mb-6 rounded-xl border border-amber-200 bg-amber-50 px-5 py-3 text-sm leading-6 text-amber-950">This download includes the original 500-entry Level 1 PDF. The online <Link className="font-semibold underline" href="/vocabulary/1">HSK 1 vocabulary list</Link> now follows the 2025 exam syllabus with 300 words. The PDF is a separately versioned product; please review its samples before purchase.</p>}<ResourceProductDetail product={product}/></main><SiteFooter/></>;
 }

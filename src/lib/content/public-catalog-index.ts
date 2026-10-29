@@ -1,4 +1,5 @@
 import publicCatalog from "./public-catalog-index.json" with { type: "json" };
+import legacyHsk1 from "./legacy-hsk1-words.json" with { type: "json" };
 import {
   CatalogQueryError,
   normalizeCatalogQuery,
@@ -48,6 +49,13 @@ const words: IndexedWord[] = packedWords.map((packed) => ({
   sort_level: packed[3] === "7-9" ? 7 : Number(packed[3]),
 }));
 const wordById = new Map(words.map((word) => [word.id, word]));
+// Lookup only: retired HSK 1 IDs remain readable in saved learning records.
+// These rows are intentionally excluded from the live level list and search.
+const legacyWordById = new Map((legacyHsk1.words as Array<[string, string, string, string, string, string, string, string, string]>).map((row) => [row[0], {
+  id: row[0], release_id: legacyHsk1.releaseId, standard_version: row[1],
+  content_version: row[2], level_band: row[3], hanzi: row[4], traditional: row[5],
+  pinyin: row[6], meaning: row[7], part_of_speech: row[8],
+}] as const));
 const wordsByLevel = new Map<string, IndexedWord[]>();
 const wordsByCharacter = new Map<string, IndexedWord[]>();
 const suggestionCandidates = new Map<string, IndexedWord[]>();
@@ -84,7 +92,7 @@ function flashcardScore(word: IndexedWord, seed: number) {
 }
 
 export function findPublicCatalogWordById(assetId: string): CatalogSearchRow | null {
-  return wordById.get(assetId) ?? null;
+  return wordById.get(assetId) ?? legacyWordById.get(assetId) ?? null;
 }
 
 export function findPublicCatalogWordsContainingCharacter(hanzi: string, limit = 36): CatalogSearchRow[] {
@@ -93,7 +101,7 @@ export function findPublicCatalogWordsContainingCharacter(hanzi: string, limit =
 
 export function findPublicCatalogWordsByIds(assetIds: string[]): CatalogSearchRow[] {
   return [...new Set(assetIds)].flatMap((assetId) => {
-    const word = wordById.get(assetId);
+    const word = wordById.get(assetId) ?? legacyWordById.get(assetId);
     return word ? [word] : [];
   });
 }

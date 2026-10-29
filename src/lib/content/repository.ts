@@ -345,7 +345,7 @@ function validateRepositoryInternal(repository: ContentRepository, enforceActive
     assertVersion(asset.version, `ContentAsset ${asset.id}`);
     const releaseMetadata = [asset.standard_version, asset.level_band, asset.content_version, asset.source_ref, asset.license_ref, asset.qa_status, asset.publish_status];
     if (releaseMetadata.some((value) => value !== undefined)) {
-      if (asset.standard_version !== "GF0025-2021") throw new Error(`ContentAsset ${asset.id} has invalid standard_version`);
+      if (asset.standard_version !== "GF0025-2021" && asset.standard_version !== "HSK-EXAM-2025") throw new Error(`ContentAsset ${asset.id} has invalid standard_version`);
       const expectedBand = asset.level >= 7 ? "7-9" : String(asset.level);
       if (asset.level_band !== expectedBand) throw new Error(`ContentAsset ${asset.id} has invalid level_band`);
       for (const [key, value] of [["content_version", asset.content_version], ["source_ref", asset.source_ref], ["license_ref", asset.license_ref]] as const) {
