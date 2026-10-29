@@ -25,8 +25,9 @@ CURATED_HANZI = {
 }
 
 
-def runtime_word(asset: dict) -> dict:
+def runtime_word(asset: dict, audio_by_content: dict[str, list[dict]]) -> dict:
     payload = asset["payload"]
+    audio = (audio_by_content.get(asset["id"]) or [None])[0]
     return {
         "id": asset["id"],
         "logicalId": asset["logicalId"],
@@ -41,6 +42,7 @@ def runtime_word(asset: dict) -> dict:
         "levelBand": str(asset.get("level_band") or asset["level"]),
         "sourceRef": str(asset.get("source_ref") or ""),
         "licenseRef": str(asset.get("license_ref") or ""),
+        "audioSrc": f"/{audio['storageKey']}" if audio else None,
     }
 
 
@@ -113,7 +115,7 @@ def main() -> None:
                 else "QA-approved study content is not yet available for this level.",
         })
         runtime_words[str(level)] = [
-            runtime_word(asset) for asset in word_assets[: args.runtime_word_limit]
+            runtime_word(asset, audio_by_content) for asset in word_assets[: args.runtime_word_limit]
         ]
 
     dictionary_assets = []
@@ -121,9 +123,7 @@ def main() -> None:
         payload = asset["payload"]
         if payload.get("hanzi") not in CURATED_HANZI:
             continue
-        audio = (audio_by_content.get(asset["id"]) or [None])[0]
-        item = runtime_word(asset)
-        item["audioSrc"] = f"/{audio['storageKey']}" if audio else None
+        item = runtime_word(asset, audio_by_content)
         dictionary_assets.append(item)
 
     snapshot = {

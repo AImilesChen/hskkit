@@ -13,8 +13,8 @@ import {
 const read = async (path: string) => readFile(new URL(path, import.meta.url), "utf8");
 
 test("public static catalog contains the complete active approved HSK 3.0 word release", () => {
-  assert.equal(publicIndex.releaseId, "hsk3-hsk1-2025-v6");
-  assert.equal(publicIndex.words.length, 10_892);
+  assert.equal(publicIndex.releaseId, "hsk3-hsk123-2025-v7");
+  assert.equal(publicIndex.words.length, 9_847);
   assert.equal(publicIndex.wordCount, publicIndex.words.length);
 });
 

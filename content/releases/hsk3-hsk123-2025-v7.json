@@ -1,0 +1,31 @@
+{
+  "release_id": "hsk3-hsk123-2025-v7",
+  "release_version": 7,
+  "published_at": "2026-10-29T15:00:00.000Z",
+  "standard_version_by_level": {
+    "1": "HSK-EXAM-2025",
+    "2": "HSK-EXAM-2025",
+    "3": "HSK-EXAM-2025",
+    "4-9": "GF0025-2021"
+  },
+  "word_count_by_level": {
+    "4": 1002,
+    "5": 1073,
+    "6": 1142,
+    "7": 5638,
+    "3": 2,
+    "2": 3,
+    "1": 302
+  },
+  "hsk2_word_count": 200,
+  "hsk3_word_count": 500,
+  "audio_count": 696,
+  "manual_audio_review_numbers": [
+    351,
+    583,
+    587,
+    968
+  ],
+  "source_url": "https://www.chinesetest.cn/HSK",
+  "source_pdf_sha256": "ec74ce0439e837bbb15154be13e747ae798903b2fd3a331629df6c3b45504941"
+}
