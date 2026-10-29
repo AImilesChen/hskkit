@@ -35,6 +35,7 @@ export const siteNavigation: NavigationEntry[] = [
   {
     label: "Tests",
     items: [
+      { href: "/hsk-3-0", label: "HSK 3.0 Exam Guide", description: "Check exam dates, the official syllabus and word counts by level." },
       { href: "/placement", label: "Placement", description: "Find a suggested starting point, not an official score." },
       { href: "/mock/basic", label: "Basic Skills Check", description: "Choose HSK 1-6 for a short, level-specific diagnostic." },
       { href: "/mock/advanced", label: "Advanced Skills Check", description: "Sample reading, listening and grammar in the unified HSK 7-9 band." },
