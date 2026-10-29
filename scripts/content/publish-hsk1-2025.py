@@ -37,6 +37,14 @@ def main() -> None:
 
     catalog_path = ROOT / "src/lib/content/catalog.json"
     repository = json.loads(catalog_path.read_text(encoding="utf-8"))
+    if repository["activeReleaseByStandard"]["hsk3"] == RELEASE_ID:
+        # Permit a corrected editorial draft to regenerate the same rollout
+        # without duplicating assets in the versioned source catalog.
+        repository["releases"] = [item for item in repository["releases"] if item["id"] != RELEASE_ID]
+        repository["contentAssets"] = [item for item in repository["contentAssets"] if not item["id"].startswith("hsk2025.word.l1.")]
+        repository["audioAssets"] = [item for item in repository["audioAssets"] if not item["id"].startswith("hsk2025.audio.hsk1.")]
+        repository["releaseEvents"] = [item for item in repository["releaseEvents"] if item.get("releaseId") != RELEASE_ID]
+        repository["activeReleaseByStandard"]["hsk3"] = "hsk3-content-truth-v5"
     if repository["activeReleaseByStandard"]["hsk3"] != "hsk3-content-truth-v5":
         raise ValueError("Unexpected source release")
     old_release = next(item for item in repository["releases"] if item["id"] == "hsk3-content-truth-v5")
@@ -65,6 +73,8 @@ def main() -> None:
             raise ValueError(f"Missing editorial field: {number}")
         if "[" in entry["meaning"] or "|" in entry["meaning"] or len(entry["meaning"]) > 100:
             raise ValueError(f"Unedited English gloss: {number}")
+        if "|" in entry["traditional"]:
+            raise ValueError(f"Unedited traditional variant: {number}")
         word_id = entry["id"]
         logical_id = word_id.removesuffix(".v1")
         new_content_ids.append(word_id)
