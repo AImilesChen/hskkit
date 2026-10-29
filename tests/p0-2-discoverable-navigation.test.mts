@@ -59,4 +59,3 @@ test("P0-2 every frozen destination has a real route", async () => {
     assert.equal(fs.existsSync(new URL(route, import.meta.url)), true, `${item.label} must resolve to ${item.href}`);
   }
 });
-
