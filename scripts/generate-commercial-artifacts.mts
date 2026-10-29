@@ -4,7 +4,7 @@ import { createHash } from "node:crypto";
 import { buildPackManifest, selectPackAssets, type PackSelection } from "../src/lib/commercial/catalog.ts";
 import { generatePackPdf, generateZipFiles, HSK30_MIT_NOTICE } from "../src/lib/commercial/generator.ts";
 import { generateDifferentiatedProductArtifact, type AssessmentLevelAudio } from "../src/lib/commercial/product-generator.ts";
-import { buildProductDeliveries, DEFAULT_PRODUCT_GENERATION_VERSION, DIGITAL_PRODUCTS, generationVersionForProduct, productLicenseNotice } from "../src/lib/commercial/products.ts";
+import { buildProductDeliveries, DIGITAL_PRODUCTS, HSK1_VOCABULARY_GENERATION_VERSION, generationVersionForProduct, productLicenseNotice } from "../src/lib/commercial/products.ts";
 
 const selectedProductIds=(process.env.PRODUCT_IDS||process.env.PRODUCT_ID||"").split(",").map(id=>id.trim()).filter(Boolean);
 const vocabularyOnly=process.env.VOCABULARY_ONLY==="1";
@@ -30,20 +30,24 @@ async function loadAssessmentLevelAudio():Promise<AssessmentLevelAudio>{
   return {index,tracks};
 }
 const assessmentLevelAudio=await loadAssessmentLevelAudio();
-const levelGenerationVersion=requestedGenerationVersion||DEFAULT_PRODUCT_GENERATION_VERSION;
-const levelArtifacts=new Map<number,{bytes:Uint8Array;manifest:Record<string,unknown>;selection:PackSelection}>();
-const requestedVocabularyProducts=DIGITAL_PRODUCTS.filter(product=>(!selectedProductIds.length||selectedProductIds.includes(product.id))&&(product.category==="level"||product.category==="bundle"));
-const requiredLevels=new Set(requestedVocabularyProducts.flatMap(product=>product.levels));
-for(const level of [...requiredLevels].sort((a,b)=>a-b)){
-  const selection=selectPackAssets(level);const packManifest=buildPackManifest(selection,levelGenerationVersion);const manifest=packManifest as unknown as Record<string,unknown>;
-  levelArtifacts.set(level,{bytes:await generatePackPdf(selection,packManifest,fontBytes,emojiBytes),manifest,selection});
+const levelArtifacts=new Map<string,{bytes:Uint8Array;manifest:Record<string,unknown>;selection:PackSelection}>();
+async function getLevelArtifact(level:number,generationVersion:string){
+  const key=`${generationVersion}:${level}`;
+  let artifact=levelArtifacts.get(key);
+  if(!artifact){
+    const selection=selectPackAssets(level,generationVersion===HSK1_VOCABULARY_GENERATION_VERSION?"hsk1-2025":"legacy");
+    const packManifest=buildPackManifest(selection,generationVersion);
+    artifact={bytes:await generatePackPdf(selection,packManifest,fontBytes,emojiBytes),manifest:packManifest as unknown as Record<string,unknown>,selection};
+    levelArtifacts.set(key,artifact);
+  }
+  return artifact;
 }
-async function advancedVolumeArtifacts(){
-  const complete=levelArtifacts.get(7)!;const total=complete.selection.words.length;const size=Math.ceil(total/3);
+async function advancedVolumeArtifacts(generationVersion:string){
+  const complete=await getLevelArtifact(7,generationVersion);const total=complete.selection.words.length;const size=Math.ceil(total/3);
   const volumes=[];
   for(let index=0;index<3;index++){
     const selection={...complete.selection,words:complete.selection.words.slice(index*size,Math.min((index+1)*size,total)),exercises:[]} satisfies PackSelection;
-    const manifest=buildPackManifest(selection,levelGenerationVersion);
+    const manifest=buildPackManifest(selection,generationVersion);
     volumes.push({name:`HSKKit-Advanced-7-9-Reading-Volume-${index+1}-of-3.pdf`,data:await generatePackPdf(selection,manifest,fontBytes,emojiBytes,{label:`Advanced 7–9 · Reading Volume ${index+1}/3`,entryNumberOffset:index*size,totalAdvancedCount:total})});
   }
   return volumes;
@@ -58,15 +62,21 @@ async function save(productId:string,deliveryKey:string,format:"pdf"|"zip",bytes
   console.log(JSON.stringify({productId,deliveryKey,format,bytes:bytes.byteLength,sha256:templateChecksumSha256}));
 }
 function checksumFile(files:Array<{name:string;data:Uint8Array}>){return new TextEncoder().encode(files.map(file=>`${createHash("sha256").update(file.data).digest("hex")}  ${file.name}`).join("\n")+"\n");}
-async function vocabularyBundleFiles(productId:string,levels:number[]){
+async function vocabularyBundleFiles(productId:string,levels:number[],generationVersion:string){
   const files:Array<{name:string;data:Uint8Array}>=[];
   for(const level of levels){
-    const artifact=levelArtifacts.get(level)!;
+    const artifact=await getLevelArtifact(level,generationVersion);
     files.push({name:level===7?"HSKKit-Advanced-7-9-Complete-Index.pdf":`HSKKit-Level-${level}-Complete-Vocabulary.pdf`,data:artifact.bytes});
-    if(level===7)files.push(...await advancedVolumeArtifacts());
+    if(level===7)files.push(...await advancedVolumeArtifacts(generationVersion));
   }
-  const readme=new TextEncoder().encode(`HSKKit ${productId} offline vocabulary library.\nThe GF0025-2021 standard determines the level scope. Pinyin and available POS labels draw on the MIT-licensed ivankra/hsk30 data; English dictionary-style glosses draw on CC-CEDICT under CC BY-SA 4.0. These are independent HSKKit study materials, not an official exam product.\n\nIncluded PDFs:\n${files.map(file=>`- ${file.name}`).join("\n")}\n\nThe Advanced 7–9 complete index contains all 5,636 Advanced entries. Three HSKKit reading volumes repeat that index in smaller parts; do not add their counts to the total. They are not official separate Level 7, 8 and 9 lists. Use the pinyin-initial index and page numbers in each PDF, or search the PDF text.\n\nSee LICENSE.txt for purchaser permissions and preserved third-party rights; manifest.json and checksums.sha256 document file integrity and sources.\n`);
-  const licence=new TextEncoder().encode(`${productLicenseNotice(productId)}\n\nSource credits: GF0025-2021 (level membership); ivankra/hsk30 commit 4ff9e391 (MIT; pinyin, POS and variants); CC-CEDICT snapshot e0d756cb (CC BY-SA 4.0; English definitions). Source and licence links: https://hskkit.com/content-license and https://creativecommons.org/licenses/by-sa/4.0/. Full per-entry references are preserved in manifest.json.\n\n${HSK30_MIT_NOTICE}\n`);
+  const includes2025Hsk1=levels.includes(1)&&generationVersion===HSK1_VOCABULARY_GENERATION_VERSION;
+  const scope=includes2025Hsk1
+    ?"The Level 1 PDF follows the 2025 HSK exam syllabus and contains 300 entries. Other level PDFs retain their separately published scope and version."
+    :"The GF0025-2021 standard determines the level scope.";
+  const advancedNote=levels.includes(7)?"The Advanced 7–9 complete index contains all 5,636 Advanced entries. Three HSKKit reading volumes repeat that index in smaller parts; do not add their counts to the total. They are not official separate Level 7, 8 and 9 lists.\n\n":"";
+  const readme=new TextEncoder().encode(`HSKKit ${productId} offline vocabulary library.\n${scope} These are independent HSKKit study materials, not an official exam product.\n\nIncluded PDFs:\n${files.map(file=>`- ${file.name}`).join("\n")}\n\n${advancedNote}Use the pinyin-initial index and page numbers in each PDF, or search the PDF text.\n\nSee LICENSE.txt for purchaser permissions and preserved third-party rights; manifest.json and checksums.sha256 document file integrity and sources.\n`);
+  const credits=includes2025Hsk1?"Level 1 placement: 2025 HSK exam syllabus (https://www.chinesetest.cn/HSK); HSKKit-edited pinyin, POS and glosses, with adapted definitions under CC BY-SA 4.0. Other level PDFs: GF0025-2021 level membership; ivankra/hsk30 commit 4ff9e391 (MIT; pinyin, POS and variants); CC-CEDICT snapshot e0d756cb (CC BY-SA 4.0; English definitions).":"GF0025-2021 level membership; ivankra/hsk30 commit 4ff9e391 (MIT; pinyin, POS and variants); CC-CEDICT snapshot e0d756cb (CC BY-SA 4.0; English definitions).";
+  const licence=new TextEncoder().encode(`${productLicenseNotice(productId)}\n\nSource credits: ${credits} Source and licence links: https://hskkit.com/content-license and https://creativecommons.org/licenses/by-sa/4.0/. Full per-entry references are preserved in manifest.json.\n\n${HSK30_MIT_NOTICE}\n`);
   return [...files,{name:"README.txt",data:readme},{name:"LICENSE.txt",data:licence}];
 }
 for(const product of DIGITAL_PRODUCTS){
@@ -75,15 +85,17 @@ for(const product of DIGITAL_PRODUCTS){
   const generationVersion=requestedGenerationVersion||generationVersionForProduct(product.id);
   const deliveries=buildProductDeliveries(product.id);
   if(product.category==="level"){
-    const level=product.levels[0];const artifact=levelArtifacts.get(level)!;await save(product.id,deliveries[0].deliveryKey,"pdf",artifact.bytes,artifact.manifest,generationVersion);continue;
+    const level=product.levels[0];const artifact=await getLevelArtifact(level,generationVersion);await save(product.id,deliveries[0].deliveryKey,"pdf",artifact.bytes,artifact.manifest,generationVersion);continue;
   }
   if(product.category==="bundle"){
     for(const delivery of deliveries.filter(item=>item.artifactType==="level")){
-      const artifact=levelArtifacts.get(delivery.level!)!;await save(product.id,delivery.deliveryKey,"pdf",artifact.bytes,artifact.manifest,generationVersion);
+      const artifact=await getLevelArtifact(delivery.level!,generationVersion);await save(product.id,delivery.deliveryKey,"pdf",artifact.bytes,artifact.manifest,generationVersion);
     }
-    const assets=product.levels.flatMap(level=>levelArtifacts.get(level)!.manifest.assets as unknown[]);
-    const manifest={schemaVersion:"hskkit-bundle-manifest-v2",productId:product.id,standard:"HSK 3.0",standardVersion:"GF0025-2021",generationVersion,officialExam:false,levels:product.levels,vocabularyCount:product.vocabularyCount,advancedBandDisclosure:"HSK 3.0 defines one unified Advanced 7–9 vocabulary band. Reading volumes are HSKKit usability divisions, not official separate level lists.",assets,licenseNotice:productLicenseNotice(product.id)};
-    const files=await vocabularyBundleFiles(product.id,product.levels);const manifestFile={name:"manifest.json",data:new TextEncoder().encode(JSON.stringify(manifest,null,2))};const payload=[...files,manifestFile];
+    const components=await Promise.all(product.levels.map(level=>getLevelArtifact(level,generationVersion)));
+    const assets=components.flatMap(artifact=>artifact.manifest.assets as unknown[]);
+    const includes2025Hsk1=product.levels.includes(1)&&generationVersion===HSK1_VOCABULARY_GENERATION_VERSION;
+    const manifest={schemaVersion:"hskkit-bundle-manifest-v2",productId:product.id,standard:"HSK 3.0",standardVersion:includes2025Hsk1?"mixed-hsk1-2025-and-earlier-levels":"GF0025-2021",generationVersion,officialExam:false,levels:product.levels,vocabularyCount:product.vocabularyCount,advancedBandDisclosure:"HSK 3.0 defines one unified Advanced 7–9 vocabulary band. Reading volumes are HSKKit usability divisions, not official separate level lists.",assets,licenseNotice:productLicenseNotice(product.id)};
+    const files=await vocabularyBundleFiles(product.id,product.levels,generationVersion);const manifestFile={name:"manifest.json",data:new TextEncoder().encode(JSON.stringify(manifest,null,2))};const payload=[...files,manifestFile];
     const bytes=generateZipFiles([...payload,{name:"checksums.sha256",data:checksumFile(payload)}]);
     await save(product.id,"bundle-zip","zip",bytes,manifest,generationVersion);continue;
   }
