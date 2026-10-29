@@ -1,5 +1,6 @@
 import runtimeIndex from "../content/runtime-content-index.json" with { type: "json" };
 import canonicalRelease from "../../../content/releases/hsk3-gf0025-2021-v2.json" with { type: "json" };
+import hsk1CommercialRelease from "../../../content/releases/hsk1-2025-commercial-v1.json" with { type: "json" };
 import {VOCABULARY_PRODUCT_LICENSE} from "./products.ts";
 
 export type PackWord = {
@@ -24,15 +25,16 @@ export type PackManifest = {
   schemaVersion: "hskkit-pack-manifest-v1";
   generationVersion: string;
   standard: "HSK 3.0";
-  standardVersion: "GF0025-2021";
+  standardVersion: "GF0025-2021" | "HSK-EXAM-2025";
   level: number;
   assets: Array<{ id: string; version: string; contentVersion: string; sourceRef: string; licenseRef: string }>;
   excludedAudioReason: "offline_redistribution_not_authorized";
   licenseNotice: string;
 };
 
-type CanonicalEntry=(typeof canonicalRelease.entries)[number];
+type CanonicalEntry=(typeof canonicalRelease.entries)[number] | (typeof hsk1CommercialRelease.entries)[number];
 const contentAssets=canonicalRelease.entries;
+const currentHsk1Assets=hsk1CommercialRelease.entries;
 const audioAssets = runtimeIndex.publishedAudioAssets;
 
 function canonicalLevelBand(level:number){
@@ -49,9 +51,10 @@ function toPackWord(asset:CanonicalEntry,level:number):PackWord{
   };
 }
 
-export function selectPackAssets(level: number): PackSelection {
+export function selectPackAssets(level: number, catalogVersion: "legacy" | "hsk1-2025" = "legacy"): PackSelection {
   const band=canonicalLevelBand(level);
-  const eligible=contentAssets.filter(asset=>asset.level_band===band&&asset.publish_status==="published"&&asset.qa_status==="approved"&&Boolean(asset.source_ref)&&Boolean(asset.license_ref));
+  const source=catalogVersion==="hsk1-2025"&&level===1?currentHsk1Assets:contentAssets;
+  const eligible=source.filter(asset=>asset.level_band===band&&asset.publish_status==="published"&&asset.qa_status==="approved"&&Boolean(asset.source_ref)&&Boolean(asset.license_ref));
   if (!eligible.length) throw new Error("CONTENT_NOT_RELEASED");
   const words:PackWord[]=eligible.map(asset=>toPackWord(asset,level));
   const exerciseCount=Math.min(20,words.length);
@@ -70,7 +73,7 @@ export function selectPackAssets(level: number): PackSelection {
 export function manifestStillAuthorized(manifestJson:string|null|undefined){
   if(!manifestJson)return false;
   try{const manifest=JSON.parse(manifestJson) as {schemaVersion?:string;productId?:string;sourceIndependent?:boolean;assets?:PackManifest["assets"]}; if(!Array.isArray(manifest.assets))return false;if(manifest.assets.length===0)return manifest.schemaVersion==="hskkit-product-manifest-v1"&&["30-day-planner","practice-assessment-pack"].includes(manifest.productId??"")&&manifest.sourceIndependent===true;
-    const byId=new Map(contentAssets.map(asset=>[asset.id,asset]));
+    const byId=new Map([...contentAssets,...currentHsk1Assets].map(asset=>[asset.id,asset]));
     return manifest.assets.every(ref=>{const asset=byId.get(ref.id); return Boolean(
       asset&&(asset.id.match(/\.v(\d+)$/)?.[1]??"1")===ref.version&&Boolean(asset.source_ref)&&Boolean(asset.license_ref),
     );});
@@ -83,10 +86,12 @@ export function buildPackManifest(selection: PackSelection, generationVersion: s
     schemaVersion: "hskkit-pack-manifest-v1",
     generationVersion,
     standard: "HSK 3.0",
-    standardVersion: "GF0025-2021",
+    standardVersion: selection.level===1&&selection.words.every(word=>word.standardVersion==="HSK-EXAM-2025")?"HSK-EXAM-2025":"GF0025-2021",
     level: selection.level,
     assets: selection.words.map((word) => ({ id: word.id, version: word.version, contentVersion: word.contentVersion, sourceRef: word.sourceRef, licenseRef: word.licenseRef })),
     excludedAudioReason: "offline_redistribution_not_authorized",
-    licenseNotice: `HSK 3.0 level membership follows GF0025-2021. Pinyin and available POS labels are adapted from ivankra/hsk30 (MIT); English definitions are adapted from CC-CEDICT (CC BY-SA 4.0). Source details: https://hskkit.com/content-license. ${VOCABULARY_PRODUCT_LICENSE}`,
+    licenseNotice: selection.level===1&&selection.words[0]?.standardVersion==="HSK-EXAM-2025"
+      ?`Level 1 placement follows the 2025 HSK exam syllabus. Pinyin, part-of-speech labels and English learner glosses were edited by HSKKit; adapted earlier definitions retain CC BY-SA 4.0 rights. Source details: https://hskkit.com/content-license. ${VOCABULARY_PRODUCT_LICENSE}`
+      :`HSK 3.0 level membership follows GF0025-2021. Pinyin and available POS labels are adapted from ivankra/hsk30 (MIT); English definitions are adapted from CC-CEDICT (CC BY-SA 4.0). Source details: https://hskkit.com/content-license. ${VOCABULARY_PRODUCT_LICENSE}`,
   };
 }
