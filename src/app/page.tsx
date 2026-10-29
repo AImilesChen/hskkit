@@ -18,7 +18,7 @@ import {
 
 export const metadata: Metadata = {
   title: "HSKKit — Study HSK 1 Vocabulary from the 2025 Exam Syllabus",
-  description: "Study 300 HSK 1 words aligned with the 2025 exam syllabus, then learn and review each word. Other levels currently use the 2021 study standard.",
+  description: "Study HSK 1–3 words aligned with the 2025 exam syllabus, then learn and review each word. Levels 4–9 currently use the 2021 study standard.",
   alternates: { canonical: "/" },
 };
 
@@ -147,7 +147,7 @@ export default function HomePage() {
             <span className="home-title-line">when it matters.</span>
           </span>
         </h1>
-        <p className="home-lede">Browse {publishedWordCount.toLocaleString("en-US")} published words with pinyin and English meanings. HSK 1 follows the 2025 exam syllabus; other levels still use the 2021 study standard. Formal audio appears only where it has been published and approved.</p>
+        <p className="home-lede">Browse {publishedWordCount.toLocaleString("en-US")} published words with pinyin and English meanings. HSK 1–3 follow the 2025 exam syllabus; Levels 4–9 still use the 2021 study standard. Formal audio appears only where it has been published and approved.</p>
         <p className="mt-3 text-sm text-slate-600">Preparing for the 2025 HSK 3.0 exam syllabus? <Link href="/hsk-3-0" className="font-semibold text-blue-700 underline">Check the exam transition and choose the right resource.</Link></p>
         <HomeNextStep />
       </div>
