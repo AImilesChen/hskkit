@@ -66,4 +66,3 @@ export function isNavigationEntryActive(pathname: string, entry: NavigationEntry
     ? entry.items.some((item) => isNavigationItemActive(pathname, item))
     : isNavigationItemActive(pathname, entry);
 }
-
