@@ -32,7 +32,7 @@ NEW_WORD_EDITORIAL = {
 # The old dictionary has extra senses and cross references that distract a
 # beginner. Keep these learner glosses short and review them with context.
 GLOSS_OVERRIDES = {
-    1: "to love; to like", 6: "one hundred", 7: "half",
+    1: "to love; to like", 3: "father; dad", 4: "particle for suggestion or request", 6: "one hundred", 7: "half",
     10: "classifier for books and similar items", 13: "not",
     14: "you're welcome; don't mention it", 15: "don't; do not",
     16: "vegetable; dish (of food)", 18: "to sing", 19: "supermarket",
@@ -42,7 +42,7 @@ GLOSS_OVERRIDES = {
     33: "o'clock; point", 34: "shop; store", 40: "thing; stuff",
     41: "all; both", 42: "to read", 43: "to read; to study",
     44: "correct; toward; to", 45: "sorry; excuse me",
-    46: "many; much", 47: "how many; how much", 49: "two",
+    46: "many; much", 47: "how many; how much", 49: "two", 50: "cooked rice; meal",
     53: "very", 55: "minute; cent; to divide", 58: "song",
     60: "general classifier", 61: "to give; for", 63: "to work; work; job",
     65: "expensive", 66: "country", 67: "still; also", 71: "good",
@@ -54,12 +54,12 @@ GLOSS_OVERRIDES = {
     86: "home; family; classifier for businesses", 87: "family member",
     88: "to see; to meet",
     89: "classifier for clothes and other items", 91: "to be called; to call",
-    94: "today", 97: "to open; to turn on", 98: "to drive a car",
+    94: "today", 96: "to think; to feel", 97: "to open; to turn on", 98: "to drive a car",
     99: "to look at; to see; to read; to watch",
     100: "to see a doctor", 102: "can; may", 104: "mouth; classifier for people",
     105: "piece; yuan (colloquial)", 106: "to come",
     108: "particle marking completion or a change of state",
-    110: "inside; in", 111: "two", 117: "to sell", 118: "busy",
+    110: "inside; in", 111: "two", 112: "zero", 114: "mother; mom", 117: "to sell", 118: "busy",
     119: "cat", 122: "to not have; there is not", 123: "younger sister",
     127: "noodles", 130: "name", 131: "which", 133: "where",
     134: "where", 135: "which ones", 136: "that", 142: "male",
@@ -149,7 +149,9 @@ def main() -> None:
             old = old_by_id.get(old_id)
             if old is None:
                 raise ValueError(f"Missing legacy word {old_id}")
-            traditional = old[5]
+            # Legacy dictionary records may list multiple traditional
+            # alternatives separated by a pipe. Display one actual form.
+            traditional = old[5].split("|", 1)[0]
             meaning = old[7]
             meaning_source = "existing-hskkit-catalog"
         else:
