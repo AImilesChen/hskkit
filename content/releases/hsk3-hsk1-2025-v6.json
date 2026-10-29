@@ -1,0 +1,21 @@
+{
+  "release_id": "hsk3-hsk1-2025-v6",
+  "release_version": 6,
+  "published_at": "2026-10-29T10:00:00.000Z",
+  "hsk1_standard_version": "HSK-EXAM-2025",
+  "other_levels_standard_version": "GF0025-2021",
+  "hsk1_word_count": 300,
+  "hsk1_audio_count": 300,
+  "entry_count": 10907,
+  "counts_by_level_band": {
+    "2": 775,
+    "3": 975,
+    "4": 1002,
+    "5": 1073,
+    "6": 1142,
+    "7-9": 5638,
+    "1": 302
+  },
+  "source_url": "https://www.chinesetest.cn/HSK",
+  "source_pdf_sha256": "ec74ce0439e837bbb15154be13e747ae798903b2fd3a331629df6c3b45504941"
+}

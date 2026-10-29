@@ -5,7 +5,7 @@ import { characterIndexMetadata, strokeDirectory } from "@/lib/dictionary/charac
 
 export const metadata: Metadata = {
   title: "Chinese Characters by Stroke Count — HSKKit",
-  description: "Browse 2,971 HSK characters from 1 to 23 strokes, with exact character counts for every group.",
+  description: "Browse 2,970 HSK characters from 1 to 23 strokes, with exact character counts for every group.",
   alternates: { canonical: "/dictionary/strokes" },
 };
 

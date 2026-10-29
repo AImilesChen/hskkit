@@ -13,13 +13,15 @@ import {
 const read = async (path: string) => readFile(new URL(path, import.meta.url), "utf8");
 
 test("public static catalog contains the complete active approved HSK 3.0 word release", () => {
-  assert.equal(publicIndex.releaseId, "hsk3-content-truth-v5");
-  assert.equal(publicIndex.words.length, 11_092);
+  assert.equal(publicIndex.releaseId, "hsk3-hsk1-2025-v6");
+  assert.equal(publicIndex.words.length, 10_892);
   assert.equal(publicIndex.wordCount, publicIndex.words.length);
 });
 
 test("public static catalog supports Hanzi, pinyin, English, detail, and character lookups", () => {
   assert.equal(findPublicCatalogWordById("hsk3.word.l1.0001.v1")?.hanzi, "爱");
+  assert.equal(findPublicCatalogWordById("hsk2025.word.l1.0001.v1")?.hanzi, "爱");
+  assert.equal(searchPublicCatalogWords({ q: "", level: 1, page: 1, pageSize: 50 }).pagination.total, 300);
   assert.ok(searchPublicCatalogWords({ q: "学习", page: 1, pageSize: 20 }).contentAssets.some((word) => word.payload.hanzi === "学习"));
   assert.ok(searchPublicCatalogWords({ q: "xue xi", page: 1, pageSize: 20 }).contentAssets.some((word) => word.payload.hanzi === "学习"));
   assert.ok(searchPublicCatalogWords({ q: "learn", page: 1, pageSize: 20 }).contentAssets.some((word) => word.payload.hanzi === "学习"));

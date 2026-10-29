@@ -248,7 +248,7 @@ export interface CatalogSearchDatabase {
 }
 
 export function isCatalogWordAssetId(assetId: string): boolean {
-  return /^hsk3\.word\.l[1-7]\.\d{4}\.v\d+$/.test(assetId);
+  return /^(?:hsk3|hsk2025)\.word\.l[1-7]\.\d{4}\.v\d+$/.test(assetId);
 }
 
 export async function getActiveCatalogSearchRelease(db: CatalogSearchDatabase) {

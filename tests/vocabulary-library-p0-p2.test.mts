@@ -6,6 +6,7 @@ import { DatabaseSync } from "node:sqlite";
 import { buildCatalogQuery, parseCatalogSearchParams } from "../src/lib/content/catalog-search.ts";
 
 const pageSource = fs.readFileSync(new URL("../src/app/vocabulary/[level]/page.tsx", import.meta.url), "utf8");
+const navigationSource = fs.readFileSync(new URL("../src/app/vocabulary/[level]/vocabulary-level-navigation.tsx", import.meta.url), "utf8");
 const clientSource = fs.readFileSync(new URL("../src/app/vocabulary/[level]/vocabulary-catalog.tsx", import.meta.url), "utf8");
 const audioButtonSource = fs.readFileSync(new URL("../src/app/components/audio-button.tsx", import.meta.url), "utf8");
 const routeSource = fs.readFileSync(new URL("../src/lib/content/catalog-route.ts", import.meta.url), "utf8");
@@ -15,7 +16,7 @@ test("vocabulary route exposes a task-first HSK 1-6 and unified HSK 7-9 level sw
   assert.match(pageSource, /\{levelLabel\} Vocabulary/);
   assert.match(pageSource, /HSK 7–9/);
   assert.match(pageSource, /VocabularyCatalog/);
-  assert.match(pageSource, /aria-current/);
+  assert.match(navigationSource, /aria-current/);
   assert.doesNotMatch(pageSource, /hsk3-content-truth-v5|Formal audio assets|catalog API exposes|Published vocabulary preview/);
 });
 
@@ -34,7 +35,7 @@ test("vocabulary catalog requests every level through searchable pages of 50", (
 });
 
 test("vocabulary totals count words rather than unrelated published grammar or reading assets", () => {
-  assert.deepEqual(runtimeIndex.levels.map((item) => item.wordCount), [500, 772, 973, 1000, 1071, 1140, 5636, 5636, 5636]);
+  assert.deepEqual(runtimeIndex.levels.map((item) => item.wordCount), [300, 772, 973, 1000, 1071, 1140, 5636, 5636, 5636]);
   assert.ok(runtimeIndex.levels.every((item) => item.wordCount <= item.contentCount));
   assert.match(pageSource, /status\.wordCount/);
   assert.doesNotMatch(pageSource, /status\.contentCount/);

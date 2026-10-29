@@ -15,8 +15,9 @@ UNIHAN = ROOT / "content/sources/unihan-17.0-hsk-characters.json"
 STRUCTURES = ROOT / "content/sources/makemeahanzi-618dbab8-hsk-structures.json"
 CEDICT = ROOT / "content/sources/cc-cedict-e0d756cb.txt.gz"
 OUTPUT = ROOT / "src/lib/dictionary/character-index.json"
-EXPECTED_CHARACTER_COUNT = 2971
-EXPECTED_RELEASE_ID = "hsk3-content-truth-v5"
+EXPECTED_CHARACTER_COUNT = 2970
+SOURCE_CHARACTER_COUNT = 2971  # Frozen licensed source still contains one retired HSK 1 character.
+EXPECTED_RELEASE_ID = "hsk3-hsk1-2025-v6"
 HAN = re.compile(r"[\u3400-\u9fff]")
 VARIANT = re.compile(r"U\+([0-9A-F]{4,6})")
 RADICAL_STROKE = re.compile(r"^(\d+)'?\.(-?\d+)")
@@ -117,15 +118,15 @@ def main() -> None:
     source_by_hanzi = {item["hanzi"]: item for item in source_records}
     structure_by_hanzi = {item["hanzi"]: item for item in structure_records}
     expected_hanzi = sorted({character for word in words for character in str(word["payload"].get("hanzi", "")) if HAN.fullmatch(character)})
-    if len(source_records) != len(source_by_hanzi) or len(expected_hanzi) != EXPECTED_CHARACTER_COUNT or set(expected_hanzi) != set(source_by_hanzi):
+    if len(source_records) != len(source_by_hanzi) or len(source_records) != SOURCE_CHARACTER_COUNT or len(expected_hanzi) != EXPECTED_CHARACTER_COUNT or not set(expected_hanzi).issubset(source_by_hanzi):
         raise SystemExit(
             f"Unapproved HSK character count drift: catalog={len(expected_hanzi)}, source={len(source_by_hanzi)}, expected={EXPECTED_CHARACTER_COUNT}"
         )
     if (
-        structures.get("characterCount") != EXPECTED_CHARACTER_COUNT
-        or len(structure_records) != EXPECTED_CHARACTER_COUNT
+        structures.get("characterCount") != SOURCE_CHARACTER_COUNT
+        or len(structure_records) != SOURCE_CHARACTER_COUNT
         or len(structure_records) != len(structure_by_hanzi)
-        or set(expected_hanzi) != set(structure_by_hanzi)
+        or not set(expected_hanzi).issubset(structure_by_hanzi)
     ):
         raise SystemExit(
             f"Unapproved HSK structure coverage drift: source={len(structure_by_hanzi)}, expected={EXPECTED_CHARACTER_COUNT}"

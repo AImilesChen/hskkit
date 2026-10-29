@@ -65,7 +65,7 @@ def main() -> None:
         asset for asset in repository["contentAssets"]
         if asset["id"] in active_content_ids
         and asset["standard"] == "hsk3"
-        and asset.get("standard_version") == "GF0025-2021"
+        and asset.get("standard_version") in ("GF0025-2021", "HSK-EXAM-2025")
         and asset.get("qa_status") == "approved"
         and asset.get("publish_status") == "published"
         and asset.get("authorization", {}).get("status") == "authorized"
