@@ -17,8 +17,8 @@ import {
 } from "@/lib/public-copy";
 
 export const metadata: Metadata = {
-  title: "HSKKit — Learn the published HSK 3.0 vocabulary",
-  description: "Browse the published HSK 3.0 vocabulary, start a 7-day Pro trial without a card, and follow one connected path through learning and spaced review.",
+  title: "HSKKit — Learn Chinese with the 2021 HSK Level 1–9 Study Catalog",
+  description: "Browse HSKKit's published vocabulary based on the 2021 grading standard, then learn and review each word. Check the separate 2025 HSK 3.0 exam syllabus when preparing for a test.",
   alternates: { canonical: "/" },
 };
 
@@ -48,7 +48,7 @@ const learningSteps: { number: string; title: string; text: string; href: string
 const faqItems = [
   {
     question: "Which version of HSK does HSKKit use?",
-    answer: "HSKKit organises its published vocabulary and study routes around the nine-level HSK 3.0 framework. Levels 1–6 appear separately, while Levels 7–9 form one unified advanced band.",
+    answer: "HSKKit's current Level 1–9 vocabulary catalog follows the 2021 Chinese Proficiency Grading Standards (GF0025-2021). It is separate from the official 2025 HSK 3.0 examination syllabus; older resources are labelled HSK 2.0.",
     href: "/hsk-3-0",
     linkLabel: "Read the HSK 3.0 guide",
   },
@@ -136,18 +136,19 @@ export default function HomePage() {
 
     <section className="home-hero" aria-labelledby="home-title">
       <div className="home-hero-copy">
-        <p className="home-eyebrow">HSK 3.0 · Levels 1–9</p>
-        <h1 id="home-title" aria-label="Learn the published HSK 3.0 vocabulary. Review each word when it matters.">
+        <p className="home-eyebrow">2021 grading standard · Levels 1–9</p>
+        <h1 id="home-title" aria-label="Learn the published 2021-standard HSK vocabulary. Review each word when it matters.">
           <span className="home-title-primary" aria-hidden="true">
             <span className="home-title-line">Learn the published</span>
-            <span className="home-title-line">HSK 3.0 vocabulary.</span>
+            <span className="home-title-line">HSK study vocabulary.</span>
           </span>
           <span className="home-title-secondary" aria-hidden="true">
             <span className="home-title-line">Review each word</span>
             <span className="home-title-line">when it matters.</span>
           </span>
         </h1>
-        <p className="home-lede">Browse {publishedWordCount.toLocaleString("en-US")} published HSK 3.0 words with pinyin and English meanings. Formal audio appears only where it has been published and approved.</p>
+        <p className="home-lede">Browse {publishedWordCount.toLocaleString("en-US")} words from our 2021-standard study catalog with pinyin and English meanings. Formal audio appears only where it has been published and approved.</p>
+        <p className="mt-3 text-sm text-slate-600">Preparing for the 2025 HSK 3.0 exam syllabus? <Link href="/hsk-3-0" className="font-semibold text-blue-700 underline">Check the exam transition and choose the right resource.</Link></p>
         <HomeNextStep />
       </div>
 
@@ -197,7 +198,7 @@ export default function HomePage() {
     </section>
 
     <section className="home-section home-catalog" aria-labelledby="catalog-heading">
-      <div className="home-section-heading"><div className="home-section-copy"><p className="home-eyebrow">HSK 3.0 vocabulary</p><h2 id="catalog-heading">Explore the published HSK 3.0 catalog.</h2><p>Choose a level without reading the same explanation seven times.</p></div><Link href="/levels" className="home-text-link">Level details <HomeIcon name="arrow" className="h-4 w-4" /></Link></div>
+      <div className="home-section-heading"><div className="home-section-copy"><p className="home-eyebrow">2021-standard vocabulary</p><h2 id="catalog-heading">Explore the published study catalog.</h2><p>Choose a level without reading the same explanation seven times.</p></div><Link href="/levels" className="home-text-link">Level details <HomeIcon name="arrow" className="h-4 w-4" /></Link></div>
       <div className="home-level-list">{foundationLevels.map((entry) => <Link key={entry.level} href={`/vocabulary/${entry.level}`} className="home-level-row">
         <span className="home-level-index">0{entry.level}</span><h3>Level {entry.level}</h3><strong>{entry.wordCount.toLocaleString("en-US")} words</strong><HomeIcon name="arrow" className="h-4 w-4" />
       </Link>)}{advancedLevel ? <Link href="/vocabulary/7" className="home-level-row home-level-row-advanced"><span className="home-level-index">07–09</span><h3>Levels 7–9</h3><strong>{advancedLevel.wordCount.toLocaleString("en-US")} words · Unified advanced band</strong><HomeIcon name="arrow" className="h-4 w-4" /></Link> : null}</div>
@@ -210,7 +211,7 @@ export default function HomePage() {
 
     <section className="home-section home-transparency" aria-labelledby="scope-heading">
       <div className="home-transparency-heading"><p className="home-eyebrow">Content transparency</p><h2 id="scope-heading">Published. Clear. Ready to start.</h2><p>See what the product covers before you begin.</p><Link href="/content-license">How content and audio are published <HomeIcon name="arrow" className="h-4 w-4" /></Link></div>
-      <div className="home-scope-stats"><div><strong>HSK 3.0 Levels 1–9</strong><span>Six foundation levels and one Unified advanced band.</span></div><div><strong>Published vocabulary catalog</strong><span>{foundationCount.toLocaleString("en-US")} Level 1–6 entries plus the published advanced catalog.</span></div><div><strong>Guest start and optional account sync</strong><span>Begin without an account; sign in later for eligible sync.</span></div></div>
+      <div className="home-scope-stats"><div><strong>2021-standard Levels 1–9</strong><span>Six foundation levels and one unified advanced band.</span></div><div><strong>Published vocabulary catalog</strong><span>{foundationCount.toLocaleString("en-US")} Level 1–6 entries plus the published advanced catalog.</span></div><div><strong>Guest start and optional account sync</strong><span>Begin without an account; sign in later for eligible sync.</span></div></div>
       <p className="home-sr-only">{PUBLIC_FORMAL_CONTENT_SCOPE}{" "}{PUBLIC_DICTIONARY_SCOPE}{" "}{PUBLIC_ACCOUNT_SCOPE}</p>
     </section>
 
@@ -222,3 +223,4 @@ export default function HomePage() {
     <section className="home-final-cta"><p className="home-eyebrow">Your next useful step</p><h2>Start with the right level.</h2><p>Get a learning suggestion, then follow one connected route through vocabulary, listening, practice and review.</p><Link href="/placement">Find my starting level</Link></section>
   </main><SiteFooter/></>;
 }
+

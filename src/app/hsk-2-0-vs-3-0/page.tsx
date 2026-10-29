@@ -1,30 +1,28 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { StudyPage } from "../components/study-shell";
-import {PUBLIC_FORMAL_CONTENT_SCOPE} from "@/lib/public-copy";
 
 export const metadata: Metadata = {
-  title: "HSK 2.0 vs HSK 3.0 — HSKKit",
-  description: "See how HSKKit keeps traditional HSK 2.0 resources separate from the current HSK 3.0 Level 1–9 learning path.",
+  title: "HSK 2.0 vs HSK 3.0: Exam and Vocabulary Differences | HSKKit",
+  description: "Compare the older six-level HSK with the HSK 3.0 exam transition, and understand why HSKKit's 2021-standard word counts differ from the 2025 exam syllabus.",
   alternates: { canonical: "/hsk-2-0-vs-3-0" },
 };
 
-const differences = [
-  { topic: "Level structure", old: "Six levels (HSK 1–6)", next: "Nine learning levels; Levels 7–9 form one unified HSK 7–9 advanced ability band" },
-  { topic: "HSKKit URLs", old: "Retained /hsk-N-vocabulary and /hsk-N-practice-test resources carry a Traditional HSK 2.0 notice", next: "/levels and /vocabulary/N are the primary HSK 3.0 paths" },
-  { topic: "Content eligibility", old: "Traditional resources keep their original labels and evidence", next: "Only source-locked, license-recorded, QA-approved entries in the active HSK 3.0 release" },
-  { topic: "Conversion", old: "No automatic conversion", next: "No traditional word, score, or attempt is silently counted as HSK 3.0 evidence" },
+const rows = [
+  { topic: "Level structure", old: "Six exam levels, HSK 1–6.", updated: "Nine-level proficiency framework; advanced Levels 7–9 are handled as one advanced band." },
+  { topic: "Exam preparation", old: "Use the syllabus and sample questions for the older exam version.", updated: "Use the official 2025 HSK 3.0 examination syllabus and sample questions, and confirm your test center's arrangements." },
+  { topic: "Vocabulary on HSKKit", old: "Pages marked Traditional HSK 2.0 preserve the older vocabulary scope.", updated: "The current Level 1–9 catalog follows the 2021 grading standard (GF0025-2021). It is not a copy of the 2025 examination syllabus." },
+  { topic: "Study records", old: "Earlier vocabulary and test activity keeps its original version label.", updated: "HSKKit does not silently convert older attempts into a new exam score." },
 ];
 
 export default function ComparisonPage() {
-  return (
-    <StudyPage>
-      <main className="mx-auto w-full max-w-[1000px] flex-1 px-5 py-12 md:px-16 md:py-16">
-        <header className="max-w-3xl"><p className="text-sm font-bold uppercase tracking-[0.15em] text-blue-600">Standards comparison</p><h1 className="mt-3 text-4xl font-bold md:text-5xl">HSK 2.0 vs HSK 3.0</h1><p className="mt-5 text-lg leading-8 text-slate-600">Both systems can be useful, but their level labels are not interchangeable. HSKKit keeps their routes, content, and progress evidence separate.</p></header>
-        <section className="mt-10 overflow-hidden rounded-2xl border border-slate-200"><div className="hidden grid-cols-[.8fr_1fr_1fr] bg-slate-900 px-5 py-4 font-bold text-white sm:grid"><span>Topic</span><span>Traditional HSK 2.0</span><span>HSK 3.0 path</span></div>{differences.map((item) => <article key={item.topic} className="grid gap-3 border-t border-slate-200 p-5 first:border-t-0 sm:grid-cols-[.8fr_1fr_1fr]"><h2 className="text-base font-bold">{item.topic}</h2><p className="text-slate-600"><span className="mb-1 block text-xs font-bold uppercase text-slate-400 sm:hidden">Traditional HSK 2.0</span>{item.old}</p><p className="text-slate-600"><span className="mb-1 block text-xs font-bold uppercase text-slate-400 sm:hidden">HSK 3.0 path</span>{item.next}</p></article>)}</section>
-        <aside className="mt-8 rounded-2xl border border-green-200 bg-green-50 p-6"><h2 className="text-xl font-bold">Current formal release</h2><p className="mt-2 leading-7 text-green-950">{PUBLIC_FORMAL_CONTENT_SCOPE} Levels 8 and 9 do not have separate vocabulary catalogs.</p></aside>
-        <div className="mt-9 flex flex-wrap gap-3"><Link href="/levels" className="inline-flex min-h-11 items-center rounded-lg bg-blue-600 px-5 py-3 font-bold text-white">Open HSK 3.0 Levels</Link><Link href="/hsk-3-0" className="inline-flex min-h-11 items-center rounded-lg border border-slate-300 px-5 py-3 font-bold text-slate-800">Read the HSK 3.0 guide</Link></div>
-      </main>
-    </StudyPage>
-  );
+  return <StudyPage><main className="mx-auto w-full max-w-[1000px] flex-1 px-5 py-12 md:px-16 md:py-16">
+    <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({ "@context": "https://schema.org", "@type": "BreadcrumbList", itemListElement: [{ "@type": "ListItem", position: 1, name: "Home", item: "https://hskkit.com/" }, { "@type": "ListItem", position: 2, name: "HSK 3.0 guide", item: "https://hskkit.com/hsk-3-0" }, { "@type": "ListItem", position: 3, name: "HSK 2.0 vs HSK 3.0", item: "https://hskkit.com/hsk-2-0-vs-3-0" }] }) }} />
+    <nav aria-label="Breadcrumb" className="text-sm text-slate-600"><Link href="/">Home</Link> / <Link href="/hsk-3-0">HSK 3.0</Link> / Comparison</nav>
+    <header className="mt-6 max-w-3xl"><p className="text-sm font-bold uppercase tracking-[0.15em] text-blue-600">Exam version guide</p><h1 className="mt-3 text-4xl font-bold md:text-5xl">HSK 2.0 vs HSK 3.0</h1><p className="mt-5 text-lg leading-8 text-slate-700">The exam provider has announced a worldwide HSK 3.0 launch on 13 December 2026. Your choice of preparation material depends on the exam version offered by your test center. HSKKit also has a separate 2021-standard learning catalog.</p><p className="mt-3 text-sm text-slate-500">Reviewed 29 October 2026 · <a className="underline" href="https://old.chinesetest.cn/gonewcontent.do?flag=kdnew&id=51336883">Official launch notice</a></p></header>
+    <section className="mt-10 overflow-hidden rounded-2xl border border-slate-200 bg-white"><div className="hidden grid-cols-[.7fr_1fr_1fr] bg-slate-900 px-5 py-4 font-bold text-white sm:grid"><span>Topic</span><span>HSK 2.0</span><span>HSK 3.0 and current study resources</span></div>{rows.map((item) => <article key={item.topic} className="grid gap-3 border-t border-slate-200 p-5 first:border-t-0 sm:grid-cols-[.7fr_1fr_1fr]"><h2 className="font-bold">{item.topic}</h2><p className="text-slate-600"><span className="mb-1 block text-xs font-bold uppercase text-slate-500 sm:hidden">HSK 2.0</span>{item.old}</p><p className="text-slate-600"><span className="mb-1 block text-xs font-bold uppercase text-slate-500 sm:hidden">HSK 3.0</span>{item.updated}</p></article>)}</section>
+    <section className="mt-9 rounded-2xl border border-blue-200 bg-blue-50 p-6"><h2 className="text-xl font-bold">Which should I prepare for?</h2><p className="mt-2 leading-7">Confirm your exam date, test center and version on the <a className="font-semibold text-blue-700 underline" href="https://www.chinesetest.cn/syllabus">official exam website</a>. For independent vocabulary study, browse <Link className="font-semibold text-blue-700 underline" href="/levels">HSKKit's 2021-standard catalog</Link>. Its counts are not exam-syllabus counts.</p></section>
+    <Link href="/hsk-3-0" className="mt-8 inline-flex min-h-11 items-center rounded-lg bg-blue-600 px-5 py-3 font-bold text-white">Read the full HSK 3.0 guide</Link>
+  </main></StudyPage>;
 }
+
