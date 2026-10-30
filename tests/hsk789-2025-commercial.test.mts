@@ -8,6 +8,8 @@ test("current advanced and complete vocabulary products use the 2025 syllabus re
   assert.equal(advanced.words.length, 5600);
   assert.equal(new Set(advanced.words.map((word) => word.id)).size, 5600);
   assert.ok(advanced.words.every((word) => word.id.startsWith("hsk2025.word.l7.") && word.standardVersion === "HSK-EXAM-2025"));
+  assert.equal(advanced.words.find((word) => word.id === "hsk2025.word.l7.05401.v1")?.meaning, "in order; in sequence; close to; adjacent to");
+  assert.equal(advanced.words.find((word) => word.id === "hsk2025.word.l7.08659.v1")?.meaning, "to irritate the nose; to choke on smoke or a strong smell; pungent");
   const manifest = buildPackManifest(advanced, HSK123456789_VOCABULARY_GENERATION_VERSION);
   assert.equal(manifest.standardVersion, "HSK-EXAM-2025");
   assert.ok(manifestStillAuthorized(JSON.stringify(manifest)));
