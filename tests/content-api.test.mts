@@ -14,10 +14,10 @@ test("catalog API defaults to paged HSK 3.0 data without returning the full cata
   const body = await response.json();
   assert.equal(response.status, 200);
   assert.equal(body.standard, "hsk3");
-  assert.equal(body.releaseId, "hsk3-hsk1234-2025-v8");
+  assert.equal(body.releaseId, "hsk3-hsk12345-2025-v9");
   assert.equal(body.availability, "ready");
   assert.equal(body.contentAssets.length, 50);
-  assert.deepEqual(body.pagination, { page: 1, pageSize: 50, total: 9_847, totalPages: 197, hasPrevious: false, hasNext: true });
+  assert.deepEqual(body.pagination, { page: 1, pageSize: 50, total: 10_376, totalPages: 208, hasPrevious: false, hasNext: true });
 });
 
 test("catalog API maps Levels 7–9 to one advanced shard and combines keyword and POS filters", async () => {

@@ -226,9 +226,9 @@ test("Today selects a source-locked word from the active versioned HSK 3.0 relea
   const plan = selectTodayContent(1);
   assert.equal(plan.status, "ready");
   if (plan.status !== "ready") return;
-  assert.equal(plan.releaseId, "hsk3-hsk1234-2025-v8");
+  assert.equal(plan.releaseId, "hsk3-hsk12345-2025-v9");
   assert.match(plan.item.contentId, /^catalog:hsk2025\.word\.l1\./);
-  assert.match(plan.item.contentVersion, /^hsk3-hsk1234-2025-v8:/);
+  assert.match(plan.item.contentVersion, /^hsk3-hsk12345-2025-v9:/);
   assert.equal(plan.item.level, 1);
   assert.ok(plan.item.example.hanzi.includes(plan.item.hanzi));
 });

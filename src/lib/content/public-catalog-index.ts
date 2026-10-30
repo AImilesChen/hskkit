@@ -2,6 +2,7 @@ import publicCatalog from "./public-catalog-index.json" with { type: "json" };
 import legacyHsk1 from "./legacy-hsk1-words.json" with { type: "json" };
 import legacyHsk23 from "./legacy-hsk23-words.json" with { type: "json" };
 import legacyHsk4 from "./legacy-hsk4-words.json" with { type: "json" };
+import legacyHsk5 from "./legacy-hsk5-words.json" with { type: "json" };
 import {
   CatalogQueryError,
   normalizeCatalogQuery,
@@ -53,8 +54,8 @@ const words: IndexedWord[] = packedWords.map((packed) => ({
 const wordById = new Map(words.map((word) => [word.id, word]));
 // Lookup only: retired IDs remain readable in saved learning records.
 // These rows are intentionally excluded from the live level list and search.
-const legacyWordById = new Map([...legacyHsk1.words, ...legacyHsk23.words, ...legacyHsk4.words].map((row) => [row[0], {
-  id: row[0], release_id: row[3] === "1" ? legacyHsk1.releaseId : row[3] === "4" ? legacyHsk4.releaseId : legacyHsk23.releaseId, standard_version: row[1],
+const legacyWordById = new Map([...legacyHsk1.words, ...legacyHsk23.words, ...legacyHsk4.words, ...legacyHsk5.words].map((row) => [row[0], {
+  id: row[0], release_id: row[3] === "1" ? legacyHsk1.releaseId : row[3] === "4" ? legacyHsk4.releaseId : row[3] === "5" ? legacyHsk5.releaseId : legacyHsk23.releaseId, standard_version: row[1],
   content_version: row[2], level_band: row[3], hanzi: row[4], traditional: row[5],
   pinyin: row[6], meaning: row[7], part_of_speech: row[8],
 }] as const));
