@@ -18,7 +18,7 @@ import {
 
 export const metadata: Metadata = {
   title: "HSKKit — Study HSK 1 Vocabulary from the 2025 Exam Syllabus",
-  description: "Study HSK 1–6 words aligned with the 2025 exam syllabus, then learn and review each word. Advanced 7–9 currently uses the earlier study standard.",
+  description: "Study all 11,000 published vocabulary entries aligned with the 2025 HSK exam syllabus, including one unified Advanced 7–9 band.",
   alternates: { canonical: "/" },
 };
 
@@ -48,7 +48,7 @@ const learningSteps: { number: string; title: string; text: string; href: string
 const faqItems = [
   {
     question: "Which version of HSK does HSKKit use?",
-    answer: "HSK 1–6 now have 300, 200, 500, 1,000, 1,600 and 1,800 distinct words aligned with the official 2025 exam syllabus. Advanced 7–9 still uses the 2021 Chinese Proficiency Grading Standards while it is migrated. The English glosses and audio are HSKKit study materials.",
+    answer: "HSKKit's published vocabulary follows the 2025 exam syllabus: 5,400 distinct entries across HSK 1–6 and 5,600 in one unified Advanced 7–9 band. English glosses and available audio are independent HSKKit study materials.",
     href: "/hsk-3-0",
     linkLabel: "Read the HSK 3.0 guide",
   },
@@ -147,7 +147,7 @@ export default function HomePage() {
             <span className="home-title-line">when it matters.</span>
           </span>
         </h1>
-        <p className="home-lede">Browse {publishedWordCount.toLocaleString("en-US")} published words with pinyin and English meanings. HSK 1–6 follow the 2025 exam syllabus; Advanced 7–9 still uses the earlier study standard. Formal audio appears only where it has been published and approved.</p>
+        <p className="home-lede">Browse {publishedWordCount.toLocaleString("en-US")} published words with pinyin and English meanings, aligned with the 2025 exam syllabus. Levels 7–9 share one advanced vocabulary band. Formal audio appears only where it has been published and approved.</p>
         <p className="mt-3 text-sm text-slate-600">Preparing for the 2025 HSK 3.0 exam syllabus? <Link href="/hsk-3-0" className="font-semibold text-blue-700 underline">Check the exam transition and choose the right resource.</Link></p>
         <HomeNextStep />
       </div>
@@ -211,7 +211,7 @@ export default function HomePage() {
 
     <section className="home-section home-transparency" aria-labelledby="scope-heading">
       <div className="home-transparency-heading"><p className="home-eyebrow">Content transparency</p><h2 id="scope-heading">Published. Clear. Ready to start.</h2><p>See what the product covers before you begin.</p><Link href="/content-license">How content and audio are published <HomeIcon name="arrow" className="h-4 w-4" /></Link></div>
-      <div className="home-scope-stats"><div><strong>HSK 1–6: 2025 exam syllabus</strong><span>Advanced 7–9 retains its existing study catalog during migration.</span></div><div><strong>Published vocabulary catalog</strong><span>{foundationCount.toLocaleString("en-US")} Level 1–6 entries plus the published advanced catalog.</span></div><div><strong>Guest start and optional account sync</strong><span>Begin without an account; sign in later for eligible sync.</span></div></div>
+      <div className="home-scope-stats"><div><strong>HSK 1–9: 2025 exam syllabus</strong><span>Advanced 7–9 is one unified 5,600-word band.</span></div><div><strong>Published vocabulary catalog</strong><span>{foundationCount.toLocaleString("en-US")} Level 1–6 entries plus 5,600 advanced entries.</span></div><div><strong>Guest start and optional account sync</strong><span>Begin without an account; sign in later for eligible sync.</span></div></div>
       <p className="home-sr-only">{PUBLIC_FORMAL_CONTENT_SCOPE}{" "}{PUBLIC_DICTIONARY_SCOPE}{" "}{PUBLIC_ACCOUNT_SCOPE}</p>
     </section>
 

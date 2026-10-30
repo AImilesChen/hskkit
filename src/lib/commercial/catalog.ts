@@ -5,6 +5,7 @@ import hsk23CommercialRelease from "../../../content/releases/hsk23-2025-commerc
 import hsk4CommercialRelease from "../../../content/releases/hsk4-2025-commercial-v1.json" with { type: "json" };
 import hsk5CommercialRelease from "../../../content/releases/hsk5-2025-commercial-v1.json" with { type: "json" };
 import hsk6CommercialRelease from "../../../content/releases/hsk6-2025-commercial-v1.json" with { type: "json" };
+import hsk789CommercialRelease from "../../../content/releases/hsk789-2025-commercial-v1.json" with { type: "json" };
 import {VOCABULARY_PRODUCT_LICENSE} from "./products.ts";
 
 export type PackWord = {
@@ -36,13 +37,14 @@ export type PackManifest = {
   licenseNotice: string;
 };
 
-type CanonicalEntry=(typeof canonicalRelease.entries)[number] | (typeof hsk1CommercialRelease.entries)[number] | (typeof hsk23CommercialRelease.entries)[number] | (typeof hsk4CommercialRelease.entries)[number] | (typeof hsk5CommercialRelease.entries)[number] | (typeof hsk6CommercialRelease.entries)[number];
+type CanonicalEntry=(typeof canonicalRelease.entries)[number] | (typeof hsk1CommercialRelease.entries)[number] | (typeof hsk23CommercialRelease.entries)[number] | (typeof hsk4CommercialRelease.entries)[number] | (typeof hsk5CommercialRelease.entries)[number] | (typeof hsk6CommercialRelease.entries)[number] | (typeof hsk789CommercialRelease.entries)[number];
 const contentAssets=canonicalRelease.entries;
 const currentHsk1Assets=hsk1CommercialRelease.entries;
 const currentHsk23Assets=hsk23CommercialRelease.entries;
 const currentHsk4Assets=hsk4CommercialRelease.entries;
 const currentHsk5Assets=hsk5CommercialRelease.entries;
 const currentHsk6Assets=hsk6CommercialRelease.entries;
+const currentAdvancedAssets=hsk789CommercialRelease.entries;
 const audioAssets = runtimeIndex.publishedAudioAssets;
 
 function canonicalLevelBand(level:number){
@@ -59,13 +61,15 @@ function toPackWord(asset:CanonicalEntry,level:number):PackWord{
   };
 }
 
-export function selectPackAssets(level: number, catalogVersion: "legacy" | "hsk1-2025" | "hsk123-2025" | "hsk1234-2025" | "hsk12345-2025" | "hsk123456-2025" = "legacy"): PackSelection {
+export function selectPackAssets(level: number, catalogVersion: "legacy" | "hsk1-2025" | "hsk123-2025" | "hsk1234-2025" | "hsk12345-2025" | "hsk123456-2025" | "hsk123456789-2025" = "legacy"): PackSelection {
   const band=canonicalLevelBand(level);
+  const newAll=catalogVersion==="hsk123456789-2025";
   const source=(catalogVersion!=="legacy")&&level===1?currentHsk1Assets:
-    (catalogVersion==="hsk123-2025"||catalogVersion==="hsk1234-2025"||catalogVersion==="hsk12345-2025"||catalogVersion==="hsk123456-2025")&&(level===2||level===3)?currentHsk23Assets:
-    (catalogVersion==="hsk1234-2025"||catalogVersion==="hsk12345-2025"||catalogVersion==="hsk123456-2025")&&level===4?currentHsk4Assets:
-    (catalogVersion==="hsk12345-2025"||catalogVersion==="hsk123456-2025")&&level===5?currentHsk5Assets:
-    catalogVersion==="hsk123456-2025"&&level===6?currentHsk6Assets:contentAssets;
+    (newAll||catalogVersion==="hsk123-2025"||catalogVersion==="hsk1234-2025"||catalogVersion==="hsk12345-2025"||catalogVersion==="hsk123456-2025")&&(level===2||level===3)?currentHsk23Assets:
+    (newAll||catalogVersion==="hsk1234-2025"||catalogVersion==="hsk12345-2025"||catalogVersion==="hsk123456-2025")&&level===4?currentHsk4Assets:
+    (newAll||catalogVersion==="hsk12345-2025"||catalogVersion==="hsk123456-2025")&&level===5?currentHsk5Assets:
+    (newAll||catalogVersion==="hsk123456-2025")&&level===6?currentHsk6Assets:
+    newAll&&level>=7?currentAdvancedAssets:contentAssets;
   const eligible=source.filter(asset=>asset.level_band===band&&asset.publish_status==="published"&&asset.qa_status==="approved"&&Boolean(asset.source_ref)&&Boolean(asset.license_ref));
   if (!eligible.length) throw new Error("CONTENT_NOT_RELEASED");
   const words:PackWord[]=eligible.map(asset=>toPackWord(asset,level));
@@ -85,7 +89,7 @@ export function selectPackAssets(level: number, catalogVersion: "legacy" | "hsk1
 export function manifestStillAuthorized(manifestJson:string|null|undefined){
   if(!manifestJson)return false;
   try{const manifest=JSON.parse(manifestJson) as {schemaVersion?:string;productId?:string;sourceIndependent?:boolean;assets?:PackManifest["assets"]}; if(!Array.isArray(manifest.assets))return false;if(manifest.assets.length===0)return manifest.schemaVersion==="hskkit-product-manifest-v1"&&["30-day-planner","practice-assessment-pack"].includes(manifest.productId??"")&&manifest.sourceIndependent===true;
-    const byId=new Map([...contentAssets,...currentHsk1Assets,...currentHsk23Assets,...currentHsk4Assets,...currentHsk5Assets,...currentHsk6Assets].map(asset=>[asset.id,asset]));
+    const byId=new Map([...contentAssets,...currentHsk1Assets,...currentHsk23Assets,...currentHsk4Assets,...currentHsk5Assets,...currentHsk6Assets,...currentAdvancedAssets].map(asset=>[asset.id,asset]));
     return manifest.assets.every(ref=>{const asset=byId.get(ref.id); return Boolean(
       asset&&(asset.id.match(/\.v(\d+)$/)?.[1]??"1")===ref.version&&Boolean(asset.source_ref)&&Boolean(asset.license_ref),
     );});
@@ -98,12 +102,12 @@ export function buildPackManifest(selection: PackSelection, generationVersion: s
     schemaVersion: "hskkit-pack-manifest-v1",
     generationVersion,
     standard: "HSK 3.0",
-    standardVersion: selection.level<=6&&selection.words.every(word=>word.standardVersion==="HSK-EXAM-2025")?"HSK-EXAM-2025":"GF0025-2021",
+    standardVersion: selection.words.every(word=>word.standardVersion==="HSK-EXAM-2025")?"HSK-EXAM-2025":"GF0025-2021",
     level: selection.level,
     assets: selection.words.map((word) => ({ id: word.id, version: word.version, contentVersion: word.contentVersion, sourceRef: word.sourceRef, licenseRef: word.licenseRef })),
     excludedAudioReason: "offline_redistribution_not_authorized",
-    licenseNotice: selection.level<=6&&selection.words[0]?.standardVersion==="HSK-EXAM-2025"
-      ?`Level ${selection.level} placement follows the 2025 HSK exam syllabus. Pinyin, part-of-speech labels and English learner glosses were edited by HSKKit; adapted earlier definitions retain CC BY-SA 4.0 rights. Source details: https://hskkit.com/content-license. ${VOCABULARY_PRODUCT_LICENSE}`
+    licenseNotice: selection.words[0]?.standardVersion==="HSK-EXAM-2025"
+      ?`${selection.level>=7?"Unified Advanced 7–9 band":"Level "+selection.level} placement follows the 2025 HSK exam syllabus. Pinyin, part-of-speech labels and English learner glosses were edited by HSKKit; adapted earlier definitions retain CC BY-SA 4.0 rights. Source details: https://hskkit.com/content-license. ${VOCABULARY_PRODUCT_LICENSE}`
       :`HSK 3.0 level membership follows GF0025-2021. Pinyin and available POS labels are adapted from ivankra/hsk30 (MIT); English definitions are adapted from CC-CEDICT (CC BY-SA 4.0). Source details: https://hskkit.com/content-license. ${VOCABULARY_PRODUCT_LICENSE}`,
   };
 }

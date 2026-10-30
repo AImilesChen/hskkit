@@ -35,7 +35,7 @@ test("vocabulary catalog requests every level through searchable pages of 50", (
 });
 
 test("vocabulary totals count words rather than unrelated published grammar or reading assets", () => {
-  assert.deepEqual(runtimeIndex.levels.map((item) => item.wordCount), [300, 200, 500, 1000, 1600, 1140, 5636, 5636, 5636]);
+  assert.deepEqual(runtimeIndex.levels.map((item) => item.wordCount), [300, 200, 500, 1000, 1600, 1800, 5600, 5600, 5600]);
   assert.ok(runtimeIndex.levels.every((item) => item.wordCount <= item.contentCount));
   assert.match(pageSource, /status\.wordCount/);
   assert.doesNotMatch(pageSource, /status\.contentCount/);

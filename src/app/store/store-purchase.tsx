@@ -10,7 +10,7 @@ const categories=["level","bundle","resource","resource_bundle","teacher"] as co
 const categoryLinks={level:"HSK levels",bundle:"Vocabulary bundles",resource:"Study resources",resource_bundle:"Resource bundles",teacher:"Teacher pack"} as const;
 const sectionCopy={
   level:{eyebrow:"Complete HSK 3.0 level files",title:"Choose one complete level",copy:"Six complete Levels 1–6 vocabulary PDFs with canonical counts, searchable text and source IDs."},
-  bundle:{eyebrow:"Complete vocabulary Bundles",title:"Study across levels",copy:"Starter, Progression, unified Advanced 7–9 and the 11,036-entry library combining 2025 HSK 1–6 with the earlier Advanced band—each with explicit contents and real samples."},
+  bundle:{eyebrow:"Complete vocabulary Bundles",title:"Study across levels",copy:"Starter, Progression, unified Advanced 7–9 and the 11,000-entry library aligned with the 2025 HSK exam syllabus—each with explicit contents and real samples."},
   resource:{eyebrow:"Practice, planning and assessment",title:"Build a repeatable study system",copy:"Open the actual sample pages, inspect every included file, then choose the complete resource that fits your work."},
   resource_bundle:{eyebrow:"Connected resource Bundles",title:"Combine practice and review",copy:"Complete component products packaged together at a lower one-time price; no shortened Bundle editions."},
   teacher:{eyebrow:"For independent teachers",title:"Teach from ready-to-edit files",copy:"Classroom plans, handouts, checks and editable office files with flexible printing for learners you teach."},

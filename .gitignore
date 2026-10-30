@@ -22,3 +22,6 @@ tsconfig.tsbuildinfo
 
 # Local Placement migration exports contain production user state
 .placement-migration/
+
+# Locally generated commercial deliveries, migration staging, and CLI state
+tmp/
