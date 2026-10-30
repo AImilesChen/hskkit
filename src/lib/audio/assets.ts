@@ -2,6 +2,7 @@ import runtimeIndex from "../content/runtime-content-index.json" with { type: "j
 import legacyHsk1Audio from "../content/legacy-hsk1-audio.json" with { type: "json" };
 import legacyHsk23Audio from "../content/legacy-hsk23-audio.json" with { type: "json" };
 import legacyHsk4Audio from "../content/legacy-hsk4-audio.json" with { type: "json" };
+import legacyHsk5Audio from "../content/legacy-hsk5-audio.json" with { type: "json" };
 import listeningBank from "../learning/listening-library.json" with { type: "json" };
 import listeningManifest from "../learning/listening-library-audio.json" with { type: "json" };
 import practiceManifest from "../practice/audio-assets.json" with { type: "json" };
@@ -65,7 +66,7 @@ const contentAssets = new Map(runtimeIndex.publishedAudioAssets.flatMap((asset) 
   };
   return [[asset.contentAssetId, published] as const];
 }));
-for (const [contentAssetId, storageKey] of [...legacyHsk1Audio.audio, ...legacyHsk23Audio.audio, ...legacyHsk4Audio.audio] as Array<[string, string, string]>) {
+for (const [contentAssetId, storageKey] of [...legacyHsk1Audio.audio, ...legacyHsk23Audio.audio, ...legacyHsk4Audio.audio, ...legacyHsk5Audio.audio] as Array<[string, string, string]>) {
   if (contentAssets.has(contentAssetId)) continue;
   contentAssets.set(contentAssetId, {
     id: `legacy-audio:${contentAssetId}`, src: `/${storageKey}`, text: "",
@@ -76,7 +77,7 @@ for (const [contentAssetId, storageKey] of [...legacyHsk1Audio.audio, ...legacyH
   });
 }
 const contentLogicalIdToContentAssetId = new Map(runtimeIndex.publishedAudioAssets.map((asset) => [asset.logicalId, asset.contentAssetId]));
-for (const [contentAssetId, , logicalId] of [...legacyHsk1Audio.audio, ...legacyHsk23Audio.audio, ...legacyHsk4Audio.audio] as Array<[string, string, string]>) {
+for (const [contentAssetId, , logicalId] of [...legacyHsk1Audio.audio, ...legacyHsk23Audio.audio, ...legacyHsk4Audio.audio, ...legacyHsk5Audio.audio] as Array<[string, string, string]>) {
   if (!contentLogicalIdToContentAssetId.has(logicalId)) contentLogicalIdToContentAssetId.set(logicalId, contentAssetId);
 }
 

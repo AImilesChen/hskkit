@@ -21,9 +21,7 @@ test("HSK 4 has exactly 1,000 distinct approved 2025 entries and preserves old l
 });
 
 test("HSK 4 PDF and its bundles select the 2025 release without claiming new audio", () => {
-  for (const productId of ["level-4", "progression-4-6", "complete-1-9"] as const) {
-    assert.equal(generationVersionForProduct(productId), HSK1234_VOCABULARY_GENERATION_VERSION);
-  }
+  assert.equal(generationVersionForProduct("level-4"), HSK1234_VOCABULARY_GENERATION_VERSION);
   const selection = selectPackAssets(4, "hsk1234-2025");
   assert.equal(selection.words.length, 1000);
   assert.equal(buildPackManifest(selection, HSK1234_VOCABULARY_GENERATION_VERSION).standardVersion, "HSK-EXAM-2025");

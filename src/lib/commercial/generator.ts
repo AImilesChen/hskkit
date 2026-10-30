@@ -48,7 +48,7 @@ export async function generatePackPdf(selection: PackSelection, manifest: PackMa
   const font = await pdf.embedFont(fontBytes, { subset: false });
   const levelLabel=options?.label??(selection.level>=7?"Advanced 7–9":`Level ${selection.level}`);
   const isVolume=options?.totalAdvancedCount!==undefined;
-  const is2025ExamLevel=selection.level<=4&&manifest.standardVersion==="HSK-EXAM-2025";
+  const is2025ExamLevel=selection.level<=5&&manifest.standardVersion==="HSK-EXAM-2025";
   pdf.setTitle(`HSKKit HSK 3.0 ${levelLabel}${isVolume?" Vocabulary":" Complete Vocabulary"}`);
   pdf.setAuthor("HSKKit");
   pdf.setSubject(`HSK 3.0 ${levelLabel} vocabulary reference; ${manifest.generationVersion}`);

@@ -18,7 +18,7 @@ import {
 
 export const metadata: Metadata = {
   title: "HSKKit — Study HSK 1 Vocabulary from the 2025 Exam Syllabus",
-  description: "Study HSK 1–4 words aligned with the 2025 exam syllabus, then learn and review each word. Levels 5–9 currently use the 2021 study standard.",
+  description: "Study HSK 1–5 words aligned with the 2025 exam syllabus, then learn and review each word. Level 6 and Advanced 7–9 currently use the 2021 study standard.",
   alternates: { canonical: "/" },
 };
 
@@ -48,7 +48,7 @@ const learningSteps: { number: string; title: string; text: string; href: string
 const faqItems = [
   {
     question: "Which version of HSK does HSKKit use?",
-    answer: "HSK 1–4 now have 300, 200, 500 and 1,000 distinct words aligned with the official 2025 exam syllabus. Levels 5–9 still use the 2021 Chinese Proficiency Grading Standards while they are migrated. The English glosses and audio are HSKKit study materials.",
+    answer: "HSK 1–5 now have 300, 200, 500, 1,000 and 1,600 distinct words aligned with the official 2025 exam syllabus. Level 6 and Advanced 7–9 still use the 2021 Chinese Proficiency Grading Standards while they are migrated. The English glosses and audio are HSKKit study materials.",
     href: "/hsk-3-0",
     linkLabel: "Read the HSK 3.0 guide",
   },
@@ -147,7 +147,7 @@ export default function HomePage() {
             <span className="home-title-line">when it matters.</span>
           </span>
         </h1>
-        <p className="home-lede">Browse {publishedWordCount.toLocaleString("en-US")} published words with pinyin and English meanings. HSK 1–4 follow the 2025 exam syllabus; Levels 5–9 still use the 2021 study standard. Formal audio appears only where it has been published and approved.</p>
+        <p className="home-lede">Browse {publishedWordCount.toLocaleString("en-US")} published words with pinyin and English meanings. HSK 1–5 follow the 2025 exam syllabus; Level 6 and Advanced 7–9 still use the 2021 study standard. Formal audio appears only where it has been published and approved.</p>
         <p className="mt-3 text-sm text-slate-600">Preparing for the 2025 HSK 3.0 exam syllabus? <Link href="/hsk-3-0" className="font-semibold text-blue-700 underline">Check the exam transition and choose the right resource.</Link></p>
         <HomeNextStep />
       </div>
@@ -211,7 +211,7 @@ export default function HomePage() {
 
     <section className="home-section home-transparency" aria-labelledby="scope-heading">
       <div className="home-transparency-heading"><p className="home-eyebrow">Content transparency</p><h2 id="scope-heading">Published. Clear. Ready to start.</h2><p>See what the product covers before you begin.</p><Link href="/content-license">How content and audio are published <HomeIcon name="arrow" className="h-4 w-4" /></Link></div>
-      <div className="home-scope-stats"><div><strong>HSK 1–4: 2025 exam syllabus</strong><span>Levels 5–9 retain their existing study catalog during migration.</span></div><div><strong>Published vocabulary catalog</strong><span>{foundationCount.toLocaleString("en-US")} Level 1–6 entries plus the published advanced catalog.</span></div><div><strong>Guest start and optional account sync</strong><span>Begin without an account; sign in later for eligible sync.</span></div></div>
+      <div className="home-scope-stats"><div><strong>HSK 1–5: 2025 exam syllabus</strong><span>Level 6 and Advanced 7–9 retain their existing study catalog during migration.</span></div><div><strong>Published vocabulary catalog</strong><span>{foundationCount.toLocaleString("en-US")} Level 1–6 entries plus the published advanced catalog.</span></div><div><strong>Guest start and optional account sync</strong><span>Begin without an account; sign in later for eligible sync.</span></div></div>
       <p className="home-sr-only">{PUBLIC_FORMAL_CONTENT_SCOPE}{" "}{PUBLIC_DICTIONARY_SCOPE}{" "}{PUBLIC_ACCOUNT_SCOPE}</p>
     </section>
 
