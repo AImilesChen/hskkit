@@ -4,7 +4,7 @@ import { createHash } from "node:crypto";
 import { buildPackManifest, selectPackAssets, type PackSelection } from "../src/lib/commercial/catalog.ts";
 import { generatePackPdf, generateZipFiles, HSK30_MIT_NOTICE } from "../src/lib/commercial/generator.ts";
 import { generateDifferentiatedProductArtifact, type AssessmentLevelAudio } from "../src/lib/commercial/product-generator.ts";
-import { buildProductDeliveries, DIGITAL_PRODUCTS, HSK1_VOCABULARY_GENERATION_VERSION, HSK123_VOCABULARY_GENERATION_VERSION, HSK1234_VOCABULARY_GENERATION_VERSION, HSK12345_VOCABULARY_GENERATION_VERSION, generationVersionForProduct, productLicenseNotice } from "../src/lib/commercial/products.ts";
+import { buildProductDeliveries, DIGITAL_PRODUCTS, HSK1_VOCABULARY_GENERATION_VERSION, HSK123_VOCABULARY_GENERATION_VERSION, HSK1234_VOCABULARY_GENERATION_VERSION, HSK12345_VOCABULARY_GENERATION_VERSION, HSK123456_VOCABULARY_GENERATION_VERSION, generationVersionForProduct, productLicenseNotice } from "../src/lib/commercial/products.ts";
 
 const selectedProductIds=(process.env.PRODUCT_IDS||process.env.PRODUCT_ID||"").split(",").map(id=>id.trim()).filter(Boolean);
 const vocabularyOnly=process.env.VOCABULARY_ONLY==="1";
@@ -35,7 +35,7 @@ async function getLevelArtifact(level:number,generationVersion:string){
   const key=`${generationVersion}:${level}`;
   let artifact=levelArtifacts.get(key);
   if(!artifact){
-    const selection=selectPackAssets(level,generationVersion===HSK12345_VOCABULARY_GENERATION_VERSION?"hsk12345-2025":generationVersion===HSK1234_VOCABULARY_GENERATION_VERSION?"hsk1234-2025":generationVersion===HSK123_VOCABULARY_GENERATION_VERSION?"hsk123-2025":generationVersion===HSK1_VOCABULARY_GENERATION_VERSION?"hsk1-2025":"legacy");
+    const selection=selectPackAssets(level,generationVersion===HSK123456_VOCABULARY_GENERATION_VERSION?"hsk123456-2025":generationVersion===HSK12345_VOCABULARY_GENERATION_VERSION?"hsk12345-2025":generationVersion===HSK1234_VOCABULARY_GENERATION_VERSION?"hsk1234-2025":generationVersion===HSK123_VOCABULARY_GENERATION_VERSION?"hsk123-2025":generationVersion===HSK1_VOCABULARY_GENERATION_VERSION?"hsk1-2025":"legacy");
     const packManifest=buildPackManifest(selection,generationVersion);
     artifact={bytes:await generatePackPdf(selection,packManifest,fontBytes,emojiBytes),manifest:packManifest as unknown as Record<string,unknown>,selection};
     levelArtifacts.set(key,artifact);
@@ -69,10 +69,11 @@ async function vocabularyBundleFiles(productId:string,levels:number[],generation
     files.push({name:level===7?"HSKKit-Advanced-7-9-Complete-Index.pdf":`HSKKit-Level-${level}-Complete-Vocabulary.pdf`,data:artifact.bytes});
     if(level===7)files.push(...await advancedVolumeArtifacts(generationVersion));
   }
-  const includes2025Hsk5=generationVersion===HSK12345_VOCABULARY_GENERATION_VERSION;
+  const includes2025Hsk6=generationVersion===HSK123456_VOCABULARY_GENERATION_VERSION;
+  const includes2025Hsk5=generationVersion===HSK12345_VOCABULARY_GENERATION_VERSION||includes2025Hsk6;
   const includes2025Hsk4=generationVersion===HSK1234_VOCABULARY_GENERATION_VERSION||includes2025Hsk5;
   const includes2025Hsk123=generationVersion===HSK123_VOCABULARY_GENERATION_VERSION||includes2025Hsk4;
-  const alignedLevels=levels.filter(level=>level<=(includes2025Hsk5?5:4)).join(", ");
+  const alignedLevels=levels.filter(level=>level<=(includes2025Hsk6?6:includes2025Hsk5?5:4)).join(", ");
   const includes2025Hsk1=levels.includes(1)&&generationVersion===HSK1_VOCABULARY_GENERATION_VERSION;
   const scope=includes2025Hsk4
     ?`Included Levels ${alignedLevels} follow the 2025 HSK exam syllabus. Other level PDFs retain their separately published scope and version.`
@@ -102,10 +103,11 @@ for(const product of DIGITAL_PRODUCTS){
     const components=await Promise.all(product.levels.map(level=>getLevelArtifact(level,generationVersion)));
     const assets=components.flatMap(artifact=>artifact.manifest.assets as unknown[]);
     const includes2025Hsk1=product.levels.includes(1)&&generationVersion===HSK1_VOCABULARY_GENERATION_VERSION;
+    const includes2025Hsk6=generationVersion===HSK123456_VOCABULARY_GENERATION_VERSION;
     const includes2025Hsk5=generationVersion===HSK12345_VOCABULARY_GENERATION_VERSION;
     const includes2025Hsk4=generationVersion===HSK1234_VOCABULARY_GENERATION_VERSION;
     const includes2025Hsk123=generationVersion===HSK123_VOCABULARY_GENERATION_VERSION;
-    const manifest={schemaVersion:"hskkit-bundle-manifest-v2",productId:product.id,standard:"HSK 3.0",standardVersion:includes2025Hsk5?"mixed-hsk12345-2025-and-earlier-levels":includes2025Hsk4?"mixed-hsk1234-2025-and-earlier-levels":includes2025Hsk123?(product.id==="starter-1-3"?"HSK-EXAM-2025":"mixed-hsk123-2025-and-earlier-levels"):includes2025Hsk1?"mixed-hsk1-2025-and-earlier-levels":"GF0025-2021",generationVersion,officialExam:false,levels:product.levels,vocabularyCount:product.vocabularyCount,advancedBandDisclosure:"HSK 3.0 defines one unified Advanced 7–9 vocabulary band. Reading volumes are HSKKit usability divisions, not official separate level lists.",assets,licenseNotice:productLicenseNotice(product.id)};
+    const manifest={schemaVersion:"hskkit-bundle-manifest-v2",productId:product.id,standard:"HSK 3.0",standardVersion:includes2025Hsk6?(product.levels.includes(7)?"mixed-hsk123456-2025-and-advanced-earlier-band":"HSK-EXAM-2025"):includes2025Hsk5?"mixed-hsk12345-2025-and-earlier-levels":includes2025Hsk4?"mixed-hsk1234-2025-and-earlier-levels":includes2025Hsk123?(product.id==="starter-1-3"?"HSK-EXAM-2025":"mixed-hsk123-2025-and-earlier-levels"):includes2025Hsk1?"mixed-hsk1-2025-and-earlier-levels":"GF0025-2021",generationVersion,officialExam:false,levels:product.levels,vocabularyCount:product.vocabularyCount,advancedBandDisclosure:"HSK 3.0 defines one unified Advanced 7–9 vocabulary band. Reading volumes are HSKKit usability divisions, not official separate level lists.",assets,licenseNotice:productLicenseNotice(product.id)};
     const files=await vocabularyBundleFiles(product.id,product.levels,generationVersion);const manifestFile={name:"manifest.json",data:new TextEncoder().encode(JSON.stringify(manifest,null,2))};const payload=[...files,manifestFile];
     const bytes=generateZipFiles([...payload,{name:"checksums.sha256",data:checksumFile(payload)}]);
     await save(product.id,"bundle-zip","zip",bytes,manifest,generationVersion);continue;
