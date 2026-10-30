@@ -10,7 +10,7 @@ const publicIndex = JSON.parse(readFileSync("src/lib/content/public-catalog-inde
 const runtime = JSON.parse(readFileSync("src/lib/content/runtime-content-index.json", "utf8"));
 
 test("2025 HSK 2 and 3 release has exact distinct level counts and preserves old learning links", () => {
-  assert.equal(publicIndex.releaseId, "hsk3-hsk123-2025-v7");
+  assert.equal(publicIndex.releaseId, "hsk3-hsk1234-2025-v8");
   assert.deepEqual(runtime.levels.slice(0, 3).map((level: { wordCount: number }) => level.wordCount), [300, 200, 500]);
   assert.equal(publicIndex.wordCount, 9847);
   assert.equal(searchPublicCatalogWords(parseCatalogSearchParams(new URL("https://hskkit.com/?level=2"))).pagination.total, 200);
@@ -28,7 +28,7 @@ test("commercial Level 2, Level 3 and Starter use the same approved 2025 release
   for (const selection of selections) {
     assert.equal(buildPackManifest(selection, generationVersionForProduct(`level-${selection.level}`)).standardVersion, "HSK-EXAM-2025");
   }
-  assert.equal(generationVersionForProduct("starter-1-3"), generationVersionForProduct("complete-1-9"));
+  assert.notEqual(generationVersionForProduct("starter-1-3"), generationVersionForProduct("complete-1-9"));
 });
 
 test("unreviewed polyphonic and neutral-tone audio remains unavailable", () => {
