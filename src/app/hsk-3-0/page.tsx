@@ -19,7 +19,7 @@ const examWordCounts = [
 
 export const metadata: Metadata = {
   title: "HSK 3.0 Guide (2026): Exam Date, Syllabus & Word Counts | HSKKit",
-  description: "See the HSK 3.0 exam date, official 2025 syllabus and vocabulary counts. Study HSKKit's 2025-aligned HSK 1–6 lists and check the source label for Advanced 7–9.",
+  description: "See the HSK 3.0 exam date, official 2025 syllabus and vocabulary counts. Study HSKKit's 2025-aligned HSK 1–6 and unified Advanced 7–9 vocabulary lists.",
   alternates: { canonical: "/hsk-3-0" },
   openGraph: { title: "HSK 3.0 Guide (2026): Exam Date, Syllabus & Word Counts", description: "Official exam word counts, syllabus scope and a clear route to the right study material.", url: "https://hskkit.com/hsk-3-0", type: "article" },
 };
@@ -28,7 +28,7 @@ const faqs = [
   ["When does HSK 3.0 start?", "The exam provider has announced a worldwide launch on 13 December 2026. Confirm the version, format and registration details with your test center."],
   ["How many words are in the HSK 3.0 exam syllabus?", "The official 2025 exam syllabus lists 300 cumulative entries at HSK 1, 500 at HSK 2, 1,000 at HSK 3, 2,000 at HSK 4, 3,600 at HSK 5, 5,400 at HSK 6 and 11,000 across HSK 7–9. These are exam-syllabus counts, not HSKKit catalog totals."],
   ["What does the HSK 3.0 syllabus cover?", "The provider organizes it around tasks, topics, vocabulary, Chinese characters and grammar. Exam sections and scoring vary by level, so check the official level page and sample questions for the test you plan to take."],
-  ["Is HSKKit's vocabulary catalog the 2025 exam syllabus?", "HSKKit's HSK 1–6 lists have 300, 200, 500, 1,000, 1,600 and 1,800 distinct words aligned with the official 2025 exam syllabus. Advanced 7–9 still follows the 2021 Chinese Proficiency Grading Standards while its migration is prepared. HSKKit's English explanations and pronunciation audio are independent study materials."],
+  ["Is HSKKit's vocabulary catalog the 2025 exam syllabus?", "HSKKit's HSK 1–6 lists have 300, 200, 500, 1,000, 1,600 and 1,800 distinct words, plus a unified Advanced 7–9 band of 5,600 words, aligned with the official 2025 exam syllabus. HSKKit's English explanations are independent study materials; pronunciation audio is available only where approved recordings exist."],
   ["What if I studied for HSK 2.0?", "Your language skills remain useful. Check which exam version your test center offers, then use the matching syllabus and sample questions for exam preparation."],
   ["Are HSK 7, 8 and 9 three separate tests?", "No. The exam provider presents HSK 7–9 as one advanced test that returns a level evaluation. Check its official level page for the current sections, scoring and duration."],
 ];
@@ -44,12 +44,12 @@ export default function Hsk30Page() {
           <div>
             <p className="text-sm font-bold uppercase tracking-[0.15em] text-blue-700">Exam and study standards</p>
             <h1 className="mt-4 text-4xl font-bold leading-[1.13] tracking-tight text-slate-950 sm:text-5xl lg:text-[3.35rem]">HSK 3.0: what changes in 2026?</h1>
-            <p className="mt-5 text-lg leading-8 text-slate-700">The exam provider has announced a worldwide launch for <strong>13 December 2026</strong>. For a test, check the official exam syllabus. HSKKit&apos;s HSK 1–6 study lists follow its 2025 vocabulary section; Advanced 7–9 is still being migrated.</p>
+            <p className="mt-5 text-lg leading-8 text-slate-700">The exam provider has announced a worldwide launch for <strong>13 December 2026</strong>. For a test, check the official exam syllabus. HSKKit&apos;s HSK 1–6 and unified Advanced 7–9 vocabulary lists follow its 2025 vocabulary section.</p>
             <div className="mt-7 flex flex-wrap gap-3">
               <a className="inline-flex min-h-11 items-center rounded-xl bg-blue-600 px-5 py-3 font-semibold text-white hover:bg-blue-700" href={syllabus}>Official exam syllabus <span aria-hidden="true" className="ml-2">↗</span></a>
               <Link className="inline-flex min-h-11 items-center rounded-xl border border-slate-300 bg-white px-5 py-3 font-semibold text-slate-900 hover:border-blue-400 hover:text-blue-700" href="/levels">Explore study levels <span aria-hidden="true" className="ml-2">→</span></Link>
             </div>
-            <p className="mt-5 text-sm text-slate-500">Reviewed 29 October 2026 · Independent study guide, not an official exam notice.</p>
+            <p className="mt-5 text-sm text-slate-500">Reviewed 30 October 2026 · Independent study guide, not an official exam notice.</p>
           </div>
           <figure aria-labelledby="standards-figure-title" className="rounded-[28px] border border-blue-200 bg-gradient-to-br from-blue-50 via-white to-cyan-50 p-5 shadow-sm sm:p-7">
             <figcaption id="standards-figure-title" className="text-sm font-bold uppercase tracking-[0.14em] text-blue-800">Which source is for which goal?</figcaption>
@@ -57,7 +57,7 @@ export default function Hsk30Page() {
             <div aria-hidden="true" className="mx-auto h-6 w-px bg-blue-300" />
             <div className="grid gap-3 sm:grid-cols-2">
               <div className="rounded-2xl border border-blue-200 bg-white p-5"><span className="rounded-full bg-blue-100 px-3 py-1 text-xs font-bold uppercase text-blue-800">Taking an exam</span><p className="mt-4 text-lg font-bold">2025 exam syllabus</p><p className="mt-2 text-sm leading-6 text-slate-600">Provider&apos;s exam vocabulary, tasks and sample questions.</p></div>
-              <div className="rounded-2xl border border-emerald-200 bg-white p-5"><span className="rounded-full bg-emerald-100 px-3 py-1 text-xs font-bold uppercase text-emerald-800">Studying vocabulary</span><p className="mt-4 text-lg font-bold">HSK 1–6: 2025 exam lists</p><p className="mt-2 text-sm leading-6 text-slate-600">HSKKit&apos;s HSK 1–6 words align with the 2025 syllabus. Advanced 7–9 currently uses the earlier study standard.</p></div>
+              <div className="rounded-2xl border border-emerald-200 bg-white p-5"><span className="rounded-full bg-emerald-100 px-3 py-1 text-xs font-bold uppercase text-emerald-800">Studying vocabulary</span><p className="mt-4 text-lg font-bold">HSK 1–9: 2025 exam lists</p><p className="mt-2 text-sm leading-6 text-slate-600">HSKKit&apos;s vocabulary aligns with the 2025 syllabus. Advanced 7–9 uses one shared 5,600-word band.</p></div>
             </div>
             <p className="mt-3 rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm leading-6 text-slate-600"><strong className="text-slate-900">Older HSK 2.0 materials:</strong> the previous six-level system. Check the label before using them for exam practice.</p>
           </figure>
@@ -98,7 +98,7 @@ export default function Hsk30Page() {
             </div>
             <aside className="rounded-2xl border border-amber-200 bg-amber-50 p-6">
               <h3 className="text-lg font-bold text-slate-950">Why do other HSK 3.0 lists show different counts?</h3>
-              <p className="mt-3 text-sm leading-7 text-slate-700">Some lists use the 2021 Chinese Proficiency Grading Standards. HSKKit&apos;s HSK 1–6 lists now align with the <strong>2025 examination syllabus</strong> and contain 300, 200, 500, 1,000, 1,600 and 1,800 distinct words. Official cumulative totals for those levels are 300, 500, 1,000, 2,000, 3,600 and 5,400. Advanced 7–9 still uses the earlier study standard.</p>
+              <p className="mt-3 text-sm leading-7 text-slate-700">Some older lists use a different standard and show different counts. HSKKit&apos;s <strong>2025 examination syllabus</strong> lists contain 300, 200, 500, 1,000, 1,600 and 1,800 distinct words at Levels 1–6, plus 5,600 in the unified Advanced 7–9 band. The official cumulative total is 11,000.</p>
               <Link className="mt-4 inline-flex font-semibold text-blue-700 hover:underline" href="/levels">View HSKKit&apos;s level-labelled study catalog →</Link>
             </aside>
           </div>
@@ -126,7 +126,7 @@ export default function Hsk30Page() {
             <div><p className="text-sm font-bold uppercase tracking-[0.14em] text-blue-700">Find your route</p><h2 id="route-title" className="mt-2 text-3xl font-bold tracking-tight">Start with your goal</h2><p className="mt-4 max-w-md leading-7 text-slate-600">These resources serve different purposes. Choose the one that matches what you are doing today.</p></div>
             <div className="grid gap-4 sm:grid-cols-3">
               <article className="flex flex-col rounded-2xl border border-slate-200 bg-white p-5 shadow-sm"><span className="text-sm font-bold text-blue-700">01 / EXAM</span><h3 className="mt-3 text-lg font-bold">Preparing to test?</h3><p className="mt-2 flex-1 text-sm leading-6 text-slate-600">Confirm your test center&apos;s version, then follow the official syllabus.</p><a className="mt-5 font-semibold text-blue-700 hover:underline" href={syllabus}>Open syllabus ↗</a></article>
-              <article className="flex flex-col rounded-2xl border border-slate-200 bg-white p-5 shadow-sm"><span className="text-sm font-bold text-emerald-700">02 / STUDY</span><h3 className="mt-3 text-lg font-bold">Growing vocabulary?</h3><p className="mt-2 flex-1 text-sm leading-6 text-slate-600">Browse the 2025-aligned HSK 1–6 lists or the other published, source-labelled level lists.</p><Link className="mt-5 font-semibold text-blue-700 hover:underline" href="/levels">Choose a level →</Link></article>
+              <article className="flex flex-col rounded-2xl border border-slate-200 bg-white p-5 shadow-sm"><span className="text-sm font-bold text-emerald-700">02 / STUDY</span><h3 className="mt-3 text-lg font-bold">Growing vocabulary?</h3><p className="mt-2 flex-1 text-sm leading-6 text-slate-600">Browse the 2025-aligned HSK 1–6 lists and unified Advanced 7–9 band.</p><Link className="mt-5 font-semibold text-blue-700 hover:underline" href="/levels">Choose a level →</Link></article>
               <article className="flex flex-col rounded-2xl border border-slate-200 bg-white p-5 shadow-sm"><span className="text-sm font-bold text-slate-600">03 / COMPARE</span><h3 className="mt-3 text-lg font-bold">Using older materials?</h3><p className="mt-2 flex-1 text-sm leading-6 text-slate-600">See how HSK 2.0 and the newer learning framework differ.</p><Link className="mt-5 font-semibold text-blue-700 hover:underline" href="/hsk-2-0-vs-3-0">Compare versions →</Link></article>
             </div>
           </div>
@@ -138,7 +138,7 @@ export default function Hsk30Page() {
             <li className="border-l-2 border-blue-400 pl-5"><span className="text-sm font-bold text-blue-300">01 · CHECK YOUR SITTING</span><h3 className="mt-2 text-lg font-bold">Confirm the version</h3><p className="mt-2 text-sm leading-6 text-slate-300">Check your date, test center and paper or computer format before choosing materials.</p></li>
             <li className="border-l-2 border-cyan-400 pl-5"><span className="text-sm font-bold text-cyan-300">02 · SET THE SCOPE</span><h3 className="mt-2 text-lg font-bold">Read your level&apos;s syllabus</h3><p className="mt-2 text-sm leading-6 text-slate-300">Look at its tasks, topics, words, characters and grammar rather than a word count alone.</p></li>
             <li className="border-l-2 border-emerald-400 pl-5"><span className="text-sm font-bold text-emerald-300">03 · TEST YOURSELF</span><h3 className="mt-2 text-lg font-bold">Try sample questions</h3><p className="mt-2 text-sm leading-6 text-slate-300">Use the provider&apos;s sample questions to find which skills need more practice.</p></li>
-            <li className="border-l-2 border-violet-400 pl-5"><span className="text-sm font-bold text-violet-300">04 · BUILD A ROUTINE</span><h3 className="mt-2 text-lg font-bold">Study and review</h3><p className="mt-2 text-sm leading-6 text-slate-300">Use HSKKit&apos;s 2025-aligned HSK 1–6 lists or check the source label before studying another level.</p></li>
+            <li className="border-l-2 border-violet-400 pl-5"><span className="text-sm font-bold text-violet-300">04 · BUILD A ROUTINE</span><h3 className="mt-2 text-lg font-bold">Study and review</h3><p className="mt-2 text-sm leading-6 text-slate-300">Use HSKKit&apos;s 2025-aligned vocabulary lists for your level and revisit words you miss.</p></li>
           </ol>
           <div className="mt-7 flex flex-wrap gap-x-6 gap-y-3 text-sm font-semibold"><a className="text-blue-200 hover:underline" href={syllabus}>Official syllabus ↗</a><a className="text-blue-200 hover:underline" href={officialHsk}>Official sample questions ↗</a><Link className="text-blue-200 hover:underline" href="/levels">HSKKit study levels →</Link></div>
         </section>

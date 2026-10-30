@@ -48,7 +48,7 @@ export async function generatePackPdf(selection: PackSelection, manifest: PackMa
   const font = await pdf.embedFont(fontBytes, { subset: false });
   const levelLabel=options?.label??(selection.level>=7?"Advanced 7–9":`Level ${selection.level}`);
   const isVolume=options?.totalAdvancedCount!==undefined;
-  const is2025ExamLevel=selection.level<=5&&manifest.standardVersion==="HSK-EXAM-2025";
+  const is2025ExamLevel=manifest.standardVersion==="HSK-EXAM-2025";
   pdf.setTitle(`HSKKit HSK 3.0 ${levelLabel}${isVolume?" Vocabulary":" Complete Vocabulary"}`);
   pdf.setAuthor("HSKKit");
   pdf.setSubject(`HSK 3.0 ${levelLabel} vocabulary reference; ${manifest.generationVersion}`);
@@ -103,7 +103,7 @@ export async function generatePackPdf(selection: PackSelection, manifest: PackMa
   page.drawText("Sources, rights and traceability", { x: 40, y, size: 16, font, color: rgb(0.06,0.35,0.32) }); y -= 28;
   y=drawWrapped(page,manifest.licenseNotice,font,9,40,y,515,13)-16;
   y=drawWrapped(page,is2025ExamLevel
-    ?`Level ${selection.level} placement: 2025 HSK exam syllabus (https://www.chinesetest.cn/HSK). HSKKit edited the pinyin, parts of speech and learner glosses for this publication. Adapted English definitions retain CC BY-SA 4.0 rights (https://creativecommons.org/licenses/by-sa/4.0/). Every entry retains its source ID; the versioned delivery manifest records per-entry references.`
+    ?`${selection.level>=7?"Unified Advanced 7–9 band":"Level "+selection.level} placement: 2025 HSK exam syllabus (https://www.chinesetest.cn/HSK). HSKKit edited the pinyin, parts of speech and learner glosses for this publication. Adapted English definitions retain CC BY-SA 4.0 rights (https://creativecommons.org/licenses/by-sa/4.0/). Every entry retains its source ID; the versioned delivery manifest records per-entry references.`
     :"Level membership: PRC Ministry of Education, GF0025-2021 (https://www.moe.gov.cn/). Pinyin, variants and available POS: ivankra/hsk30 commit 4ff9e391 (MIT; https://github.com/ivankra/hsk30). English definitions: CC-CEDICT snapshot e0d756cb (CC BY-SA 4.0; https://www.mdbg.net/chinese/dictionary?page=cc-cedict and https://creativecommons.org/licenses/by-sa/4.0/). HSKKit adapts the source data for this publication. Every entry retains its source ID; the versioned delivery manifest records the full per-entry references.",font,9,40,y,515,13)-16;
   const sourceGroups=new Map<string,number>();for(const asset of manifest.assets){const key=`${asset.sourceRef} · ${asset.licenseRef}`;sourceGroups.set(key,(sourceGroups.get(key)??0)+1);}
   for(const [source,count] of sourceGroups){ensure(80);y=drawWrapped(page,`${count} entries: ${source}`,font,8,40,y,515,11)-8;}

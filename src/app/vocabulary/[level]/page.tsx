@@ -68,7 +68,7 @@ export default async function VocabularyPage({ params }: Props) {
 
         <header className="mt-[12px] border-b border-slate-200 pb-[24px]">
           <div className="max-w-3xl">
-            <p className="text-xs font-semibold uppercase tracking-[.14em] text-blue-700">{level <= 6 ? "HSK 3.0 · 2025 exam syllabus" : "HSK 3.0 · GF0025-2021"}</p>
+            <p className="text-xs font-semibold uppercase tracking-[.14em] text-blue-700">HSK 3.0 · 2025 exam syllabus</p>
             <h1 className="mt-[8px] text-4xl font-bold tracking-[-.035em] text-slate-950">{levelLabel} Vocabulary</h1>
             <p className="mt-[10px] text-base leading-7 text-slate-600">Browse all {status.wordCount.toLocaleString("en-US")} published words with Chinese, pinyin, English meanings, and parts of speech.</p>
           </div>

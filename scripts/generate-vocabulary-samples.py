@@ -23,13 +23,21 @@ def main() -> None:
     parser.add_argument("--generation-version", default="complete-vocabulary-v2")
     parser.add_argument("--hsk1-2025-only", action="store_true")
     parser.add_argument("--hsk6-2025-only", action="store_true")
+    parser.add_argument("--hsk789-2025-only", action="store_true")
     args = parser.parse_args()
     root = args.artifact_root / args.generation_version
     destination = Path(__file__).resolve().parents[1] / "public/store/samples/vocabulary"
     destination.mkdir(parents=True, exist_ok=True)
 
     previews = []
-    if args.hsk6_2025_only:
+    if args.hsk789_2025_only:
+        previews = [
+            (root / "advanced-7-9/level-7.pdf", 1, "advanced-7-9-sample-1.webp"),
+            (root / "advanced-7-9/level-7.pdf", 35, "advanced-7-9-sample-2.webp"),
+            (root / "complete-1-9/level-1.pdf", 2, "complete-1-9-sample-1.webp"),
+            (root / "complete-1-9/level-7.pdf", 35, "complete-1-9-sample-2.webp"),
+        ]
+    elif args.hsk6_2025_only:
         previews = [
             (root / "level-6/level-6.pdf", 2, "level-6-sample-1.webp"),
             (root / "level-6/level-6.pdf", 18, "level-6-sample-2.webp"),
@@ -82,7 +90,7 @@ def main() -> None:
 
     card_directory = destination.parents[1] / "previews/vocabulary"
     card_directory.mkdir(parents=True, exist_ok=True)
-    product_ids = ["level-6", "progression-4-6", "complete-1-9"] if args.hsk6_2025_only else ["level-1", "starter-1-3", "complete-1-9"] if args.hsk1_2025_only else [*(f"level-{level}" for level in range(1, 7)), "starter-1-3", "progression-4-6", "advanced-7-9", "complete-1-9"]
+    product_ids = ["advanced-7-9", "complete-1-9"] if args.hsk789_2025_only else ["level-6", "progression-4-6", "complete-1-9"] if args.hsk6_2025_only else ["level-1", "starter-1-3", "complete-1-9"] if args.hsk1_2025_only else [*(f"level-{level}" for level in range(1, 7)), "starter-1-3", "progression-4-6", "advanced-7-9", "complete-1-9"]
     for product_id in product_ids:
         sample_image = Image.open(destination / f"{product_id}-sample-1.webp").convert("RGB")
         card_image = sample_image.crop((0, 0, sample_image.width, min(sample_image.height, round(sample_image.width * 0.75))))

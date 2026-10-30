@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "prebuild": "npm run practice:quality && npm run content:validate && python3 scripts/content/build-catalog-search-index.py --output migrations/0052_catalog_search_index_hsk123456_2025.sql && python3 scripts/content/build-public-catalog-index.py && python3 scripts/content/build-runtime-content-index.py && python3 scripts/content/build-character-index.py",
+    "prebuild": "npm run practice:quality && npm run content:validate && python scripts/content/build-catalog-search-index.py --output migrations/0053_catalog_search_index_hsk123456789_2025.sql && python scripts/content/build-public-catalog-index.py && python scripts/content/build-runtime-content-index.py && python scripts/content/build-character-index.py",
     "build": "next build",
     "dev": "next dev",
     "start": "next start",

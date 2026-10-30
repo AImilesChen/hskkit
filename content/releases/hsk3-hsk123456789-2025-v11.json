@@ -1,0 +1,23 @@
+{
+  "release_id": "hsk3-hsk123456789-2025-v11",
+  "release_version": 11,
+  "published_at": "2026-10-30T12:12:48.240Z",
+  "standard_version_by_level": {
+    "1-6": "HSK-EXAM-2025",
+    "7-9": "HSK-EXAM-2025"
+  },
+  "word_count_by_level": {
+    "1": 300,
+    "2": 200,
+    "3": 500,
+    "4": 1000,
+    "5": 1600,
+    "6": 1800,
+    "7": 5600
+  },
+  "advanced_word_count": 5600,
+  "advanced_new_audio_count": 0,
+  "new_audio_reason": "no free audio source with confirmed public-commercial redistribution rights",
+  "source_url": "https://www.chinesetest.cn/HSK",
+  "source_pdf_sha256": "ec74ce0439e837bbb15154be13e747ae798903b2fd3a331629df6c3b45504941"
+}

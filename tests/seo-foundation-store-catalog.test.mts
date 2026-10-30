@@ -10,9 +10,9 @@ test("published vocabulary totals count words rather than every content asset", 
     levels: Array<{ level: number; contentCount: number; wordCount: number }>;
   };
   const published = runtime.levels.filter((level) => level.level <= 7);
-  assert.equal(published.slice(0, 6).reduce((sum, level) => sum + level.wordCount, 0), 5456);
-  assert.equal(published[6].wordCount, 5636);
-  assert.equal(published.reduce((sum, level) => sum + level.wordCount, 0), 11092);
+  assert.equal(published.slice(0, 6).reduce((sum, level) => sum + level.wordCount, 0), 5400);
+  assert.equal(published[6].wordCount, 5600);
+  assert.equal(published.reduce((sum, level) => sum + level.wordCount, 0), 11000);
   assert.equal(published.reduce((sum, level) => sum + level.contentCount - level.wordCount, 0), 15);
   const catalog = JSON.parse(readFileSync("src/lib/content/catalog.json", "utf8")) as {
     activeReleaseByStandard: { hsk3: string };
@@ -28,7 +28,7 @@ test("published vocabulary totals count words rather than every content asset", 
     { grammar: 7, reading: 7, sentence: 1 },
   );
   const publicCopy = readFileSync("src/lib/public-copy.ts", "utf8");
-  assert.match(publicCopy, /11,092.*5,456.*5,636/);
+  assert.match(publicCopy, /11,000.*5,400.*5,600/);
   assert.doesNotMatch(publicCopy, /11,107.*vocabulary/);
 });
 
