@@ -115,22 +115,31 @@ def render_csv(csv_bytes: bytes, title: str, destination: Path) -> None:
     title_font, header_font, body_font = font(38), font(22), font(19)
     draw.rectangle((0, 0, width, 120), fill="#064e3b")
     draw.text((50, 32), title, font=title_font, fill="white")
-    draw.text((50, 84), "Actual UTF-8 CSV columns and sample rows from the delivery", font=body_font, fill="#d1fae5")
-    visible_columns = min(7, len(headers))
-    column_width = (width - 80) // visible_columns
+    tracker_vocabulary = destination.parent.name == "assessment-tracker" and destination.stem == "vocabulary-tracker"
+    draw.text((50, 84), "Selected actual CSV columns and sample rows from the delivery" if tracker_vocabulary else "Actual UTF-8 CSV columns and sample rows from the delivery", font=body_font, fill="#d1fae5")
+    columns = [0, 3, 4, 5, 6, 7, 8] if tracker_vocabulary else list(range(min(7, len(headers))))
+    column_widths = [86, 375, 115, 165, 410, 175, 175] if tracker_vocabulary else [(width - 80) // len(columns)] * len(columns)
+    def fitted(value: str, max_width: int, text_font) -> str:
+        if draw.textlength(value, font=text_font) <= max_width:
+            return value
+        while value and draw.textlength(value + "…", font=text_font) > max_width:
+            value = value[:-1]
+        return value + "…"
     top, row_height = 155, 58
-    for column, value in enumerate(headers[:visible_columns]):
-        x = 40 + column * column_width
+    x = 40
+    for column, column_width in zip(columns, column_widths):
         draw.rectangle((x, top, x + column_width, top + row_height), fill="#d1fae5", outline="#94a3b8")
-        draw.text((x + 10, top + 16), value[:18], font=header_font, fill="#064e3b")
+        draw.text((x + 10, top + 16), fitted(headers[column], column_width - 20, header_font), font=header_font, fill="#064e3b")
+        x += column_width
     for row_index, row in enumerate(body):
         y = top + (row_index + 1) * row_height
         fill = "#f8fafc" if row_index % 2 == 0 else "white"
-        for column in range(visible_columns):
-            x = 40 + column * column_width
+        x = 40
+        for column, column_width in zip(columns, column_widths):
             value = row[column] if column < len(row) else ""
             draw.rectangle((x, y, x + column_width, y + row_height), fill=fill, outline="#cbd5e1")
-            draw.text((x + 10, y + 17), value[:22], font=body_font, fill="#334155")
+            draw.text((x + 10, y + 17), fitted(value, column_width - 20, body_font), font=body_font, fill="#334155")
+            x += column_width
     watermark(image).save(destination, "WEBP", quality=95, method=6)
 
 
