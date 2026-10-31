@@ -5,7 +5,7 @@ import test from "node:test";
 
 import { buildCatalogQuery, parseCatalogSearchParams } from "../src/lib/content/catalog-search.ts";
 import { handleCatalogWordsRequest } from "../src/lib/content/catalog-route.ts";
-import { flashcardSummary, splitFlashcardForms } from "../src/lib/learning/flashcards.ts";
+import { flashcardReviewIds, flashcardSummary, splitFlashcardForms } from "../src/lib/learning/flashcards.ts";
 
 const catalogSource = fs.readFileSync(new URL("../src/app/vocabulary/[level]/vocabulary-catalog.tsx", import.meta.url), "utf8");
 const quickSource = fs.readFileSync(new URL("../src/app/vocabulary/[level]/quick-flashcards.tsx", import.meta.url), "utf8");
@@ -170,4 +170,15 @@ test("flashcard self-check repeats only missed or skipped words and keeps altern
   assert.equal(summary.markedForPractice, 1);
   assert.equal(summary.skipped, 1);
   assert.deepEqual(summary.retryWords.map((word) => word.id), ["b", "c"]);
+  assert.deepEqual(flashcardReviewIds(words, { a: "known", b: "retry" }), ["b"]);
+});
+
+test("flashcard review saving is explicit, account-only and bounded to published word IDs", () => {
+  const route = fs.readFileSync(new URL("../src/app/api/v1/learning/route.ts", import.meta.url), "utf8");
+  assert.match(quickSource, /action: "flashcard_batch_review"/);
+  assert.match(quickSource, /learningView\?\.scope !== "account"/);
+  assert.match(route, /action === "flashcard_batch_review" && !identity\.account/);
+  assert.match(route, /assetIds\.length > 50/);
+  assert.match(route, /getDictionaryLearningContext\(assetId\)/);
+  assert.match(route, /addFlashcardWordsToReview/);
 });

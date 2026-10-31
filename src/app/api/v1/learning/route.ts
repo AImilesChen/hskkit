@@ -10,6 +10,7 @@ import {
   assertCurrentDailySession,
   addWordToToday,
   addWordToReview,
+  addFlashcardWordsToReview,
   recordDictionarySearch,
   toggleSavedWord,
 
@@ -209,7 +210,7 @@ function view(state: LearningState, ownerId: string, offsetMinutes: number, capa
       .reduce((count, practice) => Math.max(count, practice.answers.length), 0),
   };
 }
-function response(data: ReturnType<typeof view>, fresh: boolean, id: string, revision: number, account: boolean, capabilities: ProductCapabilities, usage: { dailyNewItems: number; dailyReviewGrades: number }, feedback?: { correct: boolean; correctAnswerText: string; explanation?: string }, savedWords: Awaited<ReturnType<typeof getDictionaryWordsByIds>> = []) {
+function response(data: ReturnType<typeof view>, fresh: boolean, id: string, revision: number, account: boolean, capabilities: ProductCapabilities, usage: { dailyNewItems: number; dailyReviewGrades: number }, feedback?: { correct: boolean; correctAnswerText: string; explanation?: string }, savedWords: Awaited<ReturnType<typeof getDictionaryWordsByIds>> = [], flashcardReview?: { added: number; already: number }) {
   const queueBinding = queueBindingFor(id);
   const dictionaryAssetIds = new Set<string>(data.state.savedWordIds ?? []);
   for (const card of data.state.cards) if (card.contentId.startsWith("word:")) dictionaryAssetIds.add(card.contentId.slice(5));
@@ -243,6 +244,7 @@ function response(data: ReturnType<typeof view>, fresh: boolean, id: string, rev
     queueBinding,
     revision,
     scope: account ? "account" : "guest",
+    ...(flashcardReview ? { flashcardReview } : {}),
     ...(feedback ? { feedback } : {}),
   }, { headers: PRIVATE_RESPONSE_HEADERS });
   if (fresh) res.cookies.set(COOKIE, id, { httpOnly: true, sameSite: "lax", secure: true, maxAge: 31_536_000, path: "/" });
@@ -285,6 +287,7 @@ async function postLearning(req: NextRequest) {
   if (!key) return errorResponse("INVALID_IDEMPOTENCY_KEY", 422);
   const topicAction = action === "touch_topic" || action === "topic_batch_today" || action === "topic_batch_review";
   if (topicAction && !identity.account) return errorResponse("ACCOUNT_REQUIRED", 403);
+  if (action === "flashcard_batch_review" && !identity.account) return errorResponse("ACCOUNT_REQUIRED", 403);
   const capabilities = await resolveCapabilities(identity.id);
   const periodKey = learningLocalDay(new Date().toISOString(), tz, identity.account?.timezone);
   let usage = await usageSnapshot(identity.id, periodKey);
@@ -416,7 +419,7 @@ async function postLearning(req: NextRequest) {
 
   for (let turn = 0; turn < 3; turn += 1) {
     const loaded = await loadState(identity.id);
-    const dailyAction = action === "complete_item" || action === "skip_item" || action === "restore_item" || action === "configure_today" || action === "save_word" || action === "add_to_today" || action === "add_to_review" || action === "dictionary_search" || action === "clear_dictionary_searches" || topicAction;
+    const dailyAction = action === "complete_item" || action === "skip_item" || action === "restore_item" || action === "configure_today" || action === "save_word" || action === "add_to_today" || action === "add_to_review" || action === "flashcard_batch_review" || action === "dictionary_search" || action === "clear_dictionary_searches" || topicAction;
     if (dailyAction && (loaded.state.dailyOperationKeys ?? []).includes(key)) {
       return response(view(loaded.state, identity.id, tz, capabilities, identity.account?.timezone), identity.fresh, identity.id, loaded.revision, Boolean(identity.account), capabilities, usage);
     }
@@ -444,6 +447,7 @@ async function postLearning(req: NextRequest) {
     }
     let state = view(loaded.state, identity.id, tz, capabilities, identity.account?.timezone).state;
     let feedback: { correct: boolean; correctAnswerText: string; explanation?: string } | undefined;
+    let flashcardReview: { added: number; already: number } | undefined;
     let usageCharge: UsageCharge | undefined;
     try {
       if (action === "attempt") {
@@ -708,6 +712,15 @@ async function postLearning(req: NextRequest) {
         }
         state = recordTopicVisit(state, { topicSlug: topic.slug, lastAssetId: topic.wordAssetIds[0], visitedAt: new Date().toISOString() });
         state = { ...state, dailyOperationKeys: [...(state.dailyOperationKeys ?? []), key].slice(-400) };
+      } else if (action === "flashcard_batch_review") {
+        const assetIds = payload.assetIds;
+        if (!Array.isArray(assetIds) || assetIds.length < 1 || assetIds.length > 50 || assetIds.some((id) => typeof id !== "string" || !id.trim() || id.length > 120) || new Set(assetIds).size !== assetIds.length) throw new Error("INVALID_FLASHCARD_SELECTION");
+        const contexts = await Promise.all(assetIds.map((assetId: string) => getDictionaryLearningContext(assetId)));
+        if (contexts.some((context) => !context)) throw new Error("INVALID_FLASHCARD_SELECTION");
+        const result = addFlashcardWordsToReview(state, contexts.map((context) => context!.current), new Date().toISOString());
+        state = result.state;
+        flashcardReview = { added: result.added, already: result.already };
+        state = { ...state, dailyOperationKeys: [...(state.dailyOperationKeys ?? []), key].slice(-400) };
       } else if (action === "add_to_review") {
         const assetId = short(payload.assetId, 120);
         const context = assetId ? await getDictionaryLearningContext(assetId) : null;
@@ -810,7 +823,7 @@ async function postLearning(req: NextRequest) {
       }
       if (usageCharge?.metric === "daily_new_items") usage = { ...usage, dailyNewItems: usage.dailyNewItems + usageCharge.units };
       if (usageCharge?.metric === "daily_review_grades") usage = { ...usage, dailyReviewGrades: usage.dailyReviewGrades + usageCharge.units };
-      return response(data, identity.fresh, identity.id, loaded.revision + 1, Boolean(identity.account), capabilities, usage, feedback);
+      return response(data, identity.fresh, identity.id, loaded.revision + 1, Boolean(identity.account), capabilities, usage, feedback, [], flashcardReview);
     } catch (error) {
       const unavailable = d1UnavailableResponse(error);
       if (unavailable) return unavailable;
