@@ -56,4 +56,3 @@ export default function StorePurchase({initialConfig}:{initialConfig:CommerceCon
     <p className="mt-[48px] border-t border-slate-200 pt-6 text-xs leading-5 text-slate-500">All payments are processed securely by Stripe. Each product detail page states its exact contents, licence, 14-day download window and successful-download limit before checkout.</p>
   </section>;
 }
-

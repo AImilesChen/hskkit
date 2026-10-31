@@ -31,4 +31,3 @@ test("store sample galleries lead with product content", () => {
     assert.doesNotMatch(first.label, /start here|quick start|instructions|guide/i, productId);
   }
 });
-

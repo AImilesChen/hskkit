@@ -138,4 +138,3 @@ export default function ResourceSampleGallery({samples,productName}:{samples:Sam
     </dialog>}
   </>;
 }
-

@@ -65,4 +65,3 @@ export const storeProductDetails:StoreProductDetail[]=DIGITAL_PRODUCTS.map(produ
   return vocabularyDetail(product);
 });
 export function storeProductDetail(id:unknown){return storeProductDetails.find(product=>product.id===id||product.slug===id)??null;}
-
