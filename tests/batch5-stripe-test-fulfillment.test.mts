@@ -53,13 +53,15 @@ async function subscriptionDb(){
   db.exec("ALTER TABLE subscription_orders ADD COLUMN stripe_livemode INTEGER NOT NULL DEFAULT 0 CHECK(stripe_livemode IN (0,1)); ALTER TABLE subscriptions ADD COLUMN stripe_livemode INTEGER NOT NULL DEFAULT 0 CHECK(stripe_livemode IN (0,1)); ALTER TABLE subscription_entitlements ADD COLUMN stripe_livemode INTEGER NOT NULL DEFAULT 0 CHECK(stripe_livemode IN (0,1)); CREATE UNIQUE INDEX subscription_entitlements_test_mode_idx ON subscription_entitlements(owner_id,stripe_livemode); ALTER TABLE subscription_charges ADD COLUMN stripe_livemode INTEGER NOT NULL DEFAULT 0 CHECK(stripe_livemode IN (0,1));");
   db.exec("CREATE TABLE promotional_entitlements(owner_id TEXT,kind TEXT,status TEXT,updated_at TEXT,starts_at TEXT,ends_at TEXT,ai_credits INTEGER,created_at TEXT);");
   db.exec(await read("migrations/0032_welcome_credit_rollover.sql"));
+  db.exec("CREATE TABLE post_trial_ai_credits(owner_id TEXT PRIMARY KEY,trial_id TEXT NOT NULL UNIQUE,granted_units INTEGER NOT NULL,remaining_units INTEGER NOT NULL,created_at TEXT NOT NULL);");
   return db;
 }
 async function activate(db:DatabaseSync,planId:"pro_monthly"|"pro_yearly",suffix:string){
-  const plan=SUBSCRIPTION_PLANS[planId]; const at="2026-08-25T00:00:00.000Z";
+  const plan=SUBSCRIPTION_PLANS[planId]; const at=new Date(Date.now()-60_000).toISOString();
+  const periodEnd=new Date(Date.now()+(plan.interval==="year"?365:30)*86_400_000).toISOString();
   db.prepare("INSERT INTO subscription_orders(id,owner_id,user_id,plan_id,amount_cents,currency,status,idempotency_key,provider_customer_id,provider_subscription_id,created_at,updated_at) VALUES(?,?,?,?,?,?,'completed',?,?,?,?,?)")
     .run(`order-${suffix}`,`user:user-${suffix}`,`user-${suffix}`,planId,plan.amountCents,"usd",`idem-${suffix}`,`cus_${suffix}`,`sub_${suffix}`,at,at);
-  const event={kind:"subscription_updated" as const,eventId:`evt_active_${suffix}`,subscriptionId:`sub_${suffix}`,customerId:`cus_${suffix}`,ownerId:`user:user-${suffix}`,userId:`user-${suffix}`,planId,orderId:`order-${suffix}`,status:"active" as const,cancelAtPeriodEnd:false,currentPeriodStart:at,currentPeriodEnd:"2026-09-25T00:00:00.000Z",amountCents:plan.amountCents,currency:"usd"};
+  const event={kind:"subscription_updated" as const,eventId:`evt_active_${suffix}`,subscriptionId:`sub_${suffix}`,customerId:`cus_${suffix}`,ownerId:`user:user-${suffix}`,userId:`user-${suffix}`,planId,orderId:`order-${suffix}`,status:"active" as const,cancelAtPeriodEnd:false,currentPeriodStart:at,currentPeriodEnd:periodEnd,amountCents:plan.amountCents,currency:"usd"};
   await applySubscriptionEvent(event,envFor(db));
   return {plan,at,event};
 }
@@ -84,7 +86,7 @@ test("monthly and yearly activate, cancel at period end, fail, renew and refund 
     const paid={kind:"invoice_paid" as const,eventId:`evt_paid_${suffix}`,invoiceId:`in_paid_${suffix}`,subscriptionId:`sub_${suffix}`,customerId:`cus_${suffix}`,paymentIntentId:`pi_${suffix}`,chargeId:`ch_${suffix}`,amountCents:plan.amountCents,currency:"usd",chargedAt:at};
     await applySubscriptionEvent(paid,env); await applySubscriptionEvent(paid,env);
     assert.equal((db.prepare("SELECT status FROM subscription_entitlements").get() as {status:string}).status,"active");
-    await applySubscriptionEvent({...event,eventId:`evt_renewed_${suffix}`,currentPeriodStart:"2026-09-25T00:00:00.000Z",currentPeriodEnd:"2026-10-25T00:00:00.000Z"},env);
+    await applySubscriptionEvent({...event,eventId:`evt_renewed_${suffix}`,currentPeriodStart:event.currentPeriodEnd,currentPeriodEnd:new Date(Date.parse(event.currentPeriodEnd)+(plan.interval==="year"?365:30)*86_400_000).toISOString()},env);
     assert.equal((db.prepare("SELECT status FROM subscription_entitlements").get() as {status:string}).status,"active");
     assert.equal((db.prepare("SELECT COUNT(*) n FROM subscription_charges WHERE status='paid'").get() as {n:number}).n,1);
     await applySubscriptionEvent({kind:"charge_refunded",eventId:`evt_refund_${suffix}`,chargeId:`ch_${suffix}`,paymentIntentId:`pi_${suffix}`,amountRefundedCents:plan.amountCents,currency:"usd"},env);

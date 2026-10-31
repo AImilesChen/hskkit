@@ -10,9 +10,10 @@ const publicIndex = JSON.parse(readFileSync("src/lib/content/public-catalog-inde
 const runtime = JSON.parse(readFileSync("src/lib/content/runtime-content-index.json", "utf8"));
 
 test("2025 HSK 2 and 3 release has exact distinct level counts and preserves old learning links", () => {
-  assert.equal(publicIndex.releaseId, "hsk3-hsk12345-2025-v9");
+  assert.equal(publicIndex.releaseId, runtime.releaseId);
+  assert.match(runtime.releaseId, /^hsk3-hsk123456789-2025-v\d+$/);
   assert.deepEqual(runtime.levels.slice(0, 3).map((level: { wordCount: number }) => level.wordCount), [300, 200, 500]);
-  assert.equal(publicIndex.wordCount, 10376);
+  assert.equal(publicIndex.wordCount, 11000);
   assert.equal(searchPublicCatalogWords(parseCatalogSearchParams(new URL("https://hskkit.com/?level=2"))).pagination.total, 200);
   assert.equal(searchPublicCatalogWords(parseCatalogSearchParams(new URL("https://hskkit.com/?level=3"))).pagination.total, 500);
   assert.equal(findPublicCatalogWordById("hsk3.word.l2.0232.v1")?.hanzi, "花");

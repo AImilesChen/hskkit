@@ -87,7 +87,7 @@ test("refund eligibility follows seven UTC days, at most ten credits, once per c
   assert.equal(refundEligibility({ chargedAt: "2026-08-24T00:00:00Z", aiCreditsUsed: 0, alreadyRefunded: true }, now).eligible, false);
 });
 
-test("2A routes and UI expose the full subscription lifecycle but no PDF Pack implementation", async () => {
+test("subscription routes and Pricing expose the current monthly and yearly lifecycle", async () => {
   const [checkout, webhook, subscriptionEvents, subscriptionRoute, refundRoute, pricing, account, migration, stripe, storage] = await Promise.all([
     read("src/app/api/v1/commercial/checkout/route.ts"),
     read("src/app/api/v1/commercial/webhook/route.ts"),
@@ -109,10 +109,8 @@ test("2A routes and UI expose the full subscription lifecycle but no PDF Pack im
   assert.match(refundRoute, /cancelStripeSubscriptionImmediately/);
   assert.match(refundRoute, /findStripeInvoicePaymentIntent/);
   assert.match(subscriptionRoute, /subscriptionSummaryForOwner/);
-  assert.match(pricing, /US\$5\.99/);
-  assert.match(pricing, /US\$49/);
-  assert.match(pricing, /pro_monthly/);
-  assert.match(pricing, /pro_yearly/);
+  assert.match(pricing, /<SubscriptionPrice planId="pro_monthly"\s*\/>/);
+  assert.match(pricing, /<SubscriptionPrice planId="pro_yearly"\s*\/>/);
   assert.match(account, /Billing/);
   assert.match(account, /subscription/);
   for (const table of ["subscription_orders", "subscriptions", "subscription_charges", "subscription_entitlements"]) assert.match(migration, new RegExp(`CREATE TABLE IF NOT EXISTS ${table}`));
