@@ -1,7 +1,7 @@
 # Practice question-bank editorial quality report
 
 ## Released scope
-- Questions audited: 1352
+- Questions audited: 2020
 - Scope: authorized, approved, published Practice questions only.
 
 ## Duplicate and near-duplicate review

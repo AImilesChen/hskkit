@@ -9,6 +9,7 @@ import { LISTENING_LIBRARY_HISTORY_QUESTIONS } from "../learning/listening-libra
 import { READING_LIBRARY_QUESTIONS } from "../learning/reading-library.ts";
 import practiceAudioManifest from "./audio-assets.json" with { type: "json" };
 import practiceV3History from "./practice-v3-history.json" with { type: "json" };
+import practiceV4VocabularyHistory from "./practice-v4-vocabulary-history.json" with { type: "json" };
 
 export const PRACTICE_VERSION = "hskkit-practice-authored-v4";
 const LEGACY_MULTISKILL_VERSION = "hskkit-practice-multiskill-v2";
@@ -20,7 +21,7 @@ export type PracticeAnswerChoice = "a" | "b" | "c" | "d";
 export interface PracticeQuestion {
   id: string;
   standardVersion: "HSK 3.0";
-  standardRef: "GF0025-2021";
+  standardRef: "GF0025-2021" | "HSK-EXAM-2025";
   contentVersion: string;
   setVersion: string;
   level: number;
@@ -263,7 +264,7 @@ const answerChoice = (answer: string): PracticeAnswerChoice => {
 const itemDigest = (value: string) => createHash("sha256").update(value).digest("base64url").slice(0, 16);
 const v3Base = (level: number, skill: PracticeSkill, contentVersion: string, sourceLevel = level) => ({
   standardVersion: "HSK 3.0" as const,
-  standardRef: "GF0025-2021" as const,
+  standardRef: "GF0025-2021" as "GF0025-2021" | "HSK-EXAM-2025",
   contentVersion,
   setVersion: "",
   level,
@@ -289,24 +290,34 @@ function v3VocabularyQuestions(level: number): PracticeQuestion[] {
           seen.add(key);
           advanced.push({ word, sourceLevel });
           added += 1;
-          if (added === 8) break;
+          if (added === 40) break;
         }
       }
       return advanced;
     })()
-    : wordsForLevel(level).slice(0, 32).map((word) => ({ word, sourceLevel: level }));
-  const unique = [...new Map(sources.map((entry) => [entry.word.hanzi.normalize("NFC"), entry])).values()].slice(0, level === 7 ? 24 : 32);
+    : wordsForLevel(level).map((word) => ({ word, sourceLevel: level }));
+  const unique = [...new Map(sources.map((entry) => [entry.word.hanzi.normalize("NFC"), entry])).values()];
   if (unique.length < 24) return [];
-  return unique.slice(0, 24).map(({ word, sourceLevel }, index) => {
-    const distractors = [unique[(index + 5) % unique.length].word, unique[(index + 11) % unique.length].word, unique[(index + 17) % unique.length].word];
+  return unique.map(({ word, sourceLevel }, index) => {
     const family = index % 5;
-    const values = family === 1 ? [word.meaning, ...distractors.map((item) => item.meaning)] : family === 3 ? [word.pinyin, ...distractors.map((item) => item.pinyin)] : [word.hanzi, ...distractors.map((item) => item.hanzi)];
-    const arranged = rotateOptions(values, `v4:${word.logicalId}:${word.contentVersion}:${family}`);
+    const display = (item: RuntimeWord) => family === 1 ? item.meaning : family === 3 ? item.pinyin : item.hanzi;
+    const values = [display(word)];
+    const normalized = new Set([display(word).normalize("NFKC").trim().toLocaleLowerCase("en")]);
+    for (let offset = 1; offset < unique.length && values.length < 4; offset += 1) {
+      const candidate = display(unique[(index + offset * 7) % unique.length].word);
+      const key = candidate.normalize("NFKC").trim().toLocaleLowerCase("en");
+      if (!key || normalized.has(key)) continue;
+      normalized.add(key);
+      values.push(candidate);
+    }
+    if (values.length !== 4) throw new Error(`PRACTICE_VOCABULARY_OPTIONS_UNAVAILABLE:${level}:${word.logicalId}`);
+    const arranged = rotateOptions(values, `v5:${word.logicalId}:${word.contentVersion}:${family}`);
     const prompts = [`Which Chinese entry means “${word.meaning}”?`, `What does “${word.hanzi}” mean?`, `Which Chinese entry is pronounced “${word.pinyin}”?`, `Which pinyin matches “${word.hanzi}”?`, `Which entry matches both “${word.pinyin}” and “${word.meaning}”?`];
     const tags = ["meaning-to-hanzi", "hanzi-to-meaning", "pinyin-to-hanzi", "hanzi-to-pinyin", "combined-recognition"];
     return {
-      ...v3Base(level, "vocabulary", `${PRACTICE_VERSION}:word:${word.logicalId}:${word.contentVersion}`, sourceLevel),
-      id: `practice-v4-${bandLabel(level)}-vocabulary-${itemDigest(`${sourceLevel}:${word.logicalId}:${family}`)}`,
+      ...v3Base(level, "vocabulary", `${PRACTICE_VERSION}:2025-word:${word.logicalId}:${word.contentVersion}`, sourceLevel),
+      standardRef: "HSK-EXAM-2025",
+      id: `practice-v5-${bandLabel(level)}-vocabulary-${itemDigest(`${sourceLevel}:${word.logicalId}:${family}`)}`,
       prompt: prompts[family],
       ...arranged,
       explanation: `${word.hanzi} (${word.pinyin}) means “${word.meaning}.”`,
@@ -525,7 +536,7 @@ const LEGACY_PRACTICE_QUESTIONS = [...LEGACY_LEVEL_ONE, ...[2, 3, 4, 5, 6].flatM
 
 export const WITHDRAWN_PRACTICE_QUESTION_ID = "practice-v1-l1-vocab-retired-sample";
 const WITHDRAWN_SNAPSHOT: PracticeQuestion = { ...base(1, "vocabulary"), id: WITHDRAWN_PRACTICE_QUESTION_ID, contentVersion: "hskkit-practice-l1-vocabulary-v1", setVersion: "hskkit-practice-l1-vocabulary-v1", prompt: "Retired sample", options: { a: "甲", b: "乙", c: "丙", d: "丁" }, correctAnswer: "a", explanation: "Retained only for historical audit.", weaknessTag: "retired", sourceRef: "hskkit-retired-sample", sourceUrl: "https://hskkit.com/content-license", lifecycleStatus: "withdrawn" };
-const HISTORY = [...ALL_V3_QUESTIONS, ...PRE_TEMPLATE_DIVERSITY_QUESTIONS, ...(practiceV3History as PracticeQuestion[]), ...ALL_V2_QUESTIONS, ...LEGACY_PRACTICE_QUESTIONS, WITHDRAWN_SNAPSHOT];
+const HISTORY = [...ALL_V3_QUESTIONS, ...PRE_TEMPLATE_DIVERSITY_QUESTIONS, ...(practiceV4VocabularyHistory as PracticeQuestion[]), ...(practiceV3History as PracticeQuestion[]), ...ALL_V2_QUESTIONS, ...LEGACY_PRACTICE_QUESTIONS, WITHDRAWN_SNAPSHOT];
 
 export function practiceQuestionLifecycle(id: string) { return HISTORY.find((question) => question.id === id)?.lifecycleStatus; }
 export function practiceQuestionSet(level: number, skill: string) { return PRACTICE_QUESTIONS.filter((question) => question.level === level && question.skill === skill && question.lifecycleStatus === "published"); }

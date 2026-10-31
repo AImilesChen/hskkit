@@ -187,7 +187,7 @@ test("Practice levels 2-6 use versioned questions derived from the active formal
     const questions = practiceQuestionSet(level, "vocabulary");
     assert.ok(questions.length >= 3);
     assert.ok(questions.every((question) => question.level === level));
-    assert.ok(questions.every((question) => question.id.startsWith(`practice-v4-level-${level}-vocabulary-`)));
+    assert.ok(questions.every((question) => question.id.startsWith(`practice-v5-level-${level}-vocabulary-`)));
     assert.ok(questions.every((question) => question.setVersion.startsWith("hskkit-practice-authored-v4:")));
     const created = createPracticeSession(emptyLearningState(), {
       ownerId: `guest-l${level}`, level, skill: "vocabulary", idempotencyKey: `create-l${level}`, now,
@@ -357,8 +357,9 @@ test("Today practice completes only after the whole session and inserts wrong an
   }
   const review = state.dailySessions[0].items.find((item) => item.kind === "review");
   assert.equal(review?.status, "pending");
+  assert.equal(review?.deferred, true);
   assert.equal(state.dailySessions[0].items.at(-1)?.kind, "summary");
-  assert.equal(state.dailySessions[0].items.at(-1)?.status, "pending");
+  assert.equal(state.dailySessions[0].items.at(-1)?.status, "completed");
   const graded = gradeReview(state, {
     cardId: state.cards[0].id, grade: "good", observedAt: "2026-08-21T10:10:00.000Z",
     clientRevision: state.cards[0].revision, idempotencyKey: "grade-1",

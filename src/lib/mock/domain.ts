@@ -126,7 +126,8 @@ export function evaluateMockGate(band: MockBand, questions = mockBank(band), tar
   if (questions.some((question) => !question.correctAnswer || !question.explanation || !question.contentVersion || !question.sourceReleaseId)) return { ready: false, reason: "SCORING_GATE" };
   if (DIAGNOSTIC_SKILLS.some((skill) => questions.filter((question) => question.dimension === skill).length < QUESTIONS_PER_SKILL)) return { ready: false, reason: "SKILL_COVERAGE_GATE" };
   if (band === "advanced" && DIAGNOSTIC_SKILLS.some((skill) => [7, 8, 9].some((sourceLevel) => !questions.some((question) => question.dimension === skill && question.sourceLevel === sourceLevel)))) return { ready: false, reason: "ADVANCED_LEVEL_COVERAGE_GATE" };
-  if (DIAGNOSTIC_SKILLS.filter((skill) => skill !== "grammar").some((skill) => new Set(questions.filter((question) => question.dimension === skill).map((question) => question.sourceGroupId)).size < QUESTIONS_PER_SKILL)) return { ready: false, reason: "SOURCE_DIVERSITY_GATE" };
+  // A published pool must support two attempts without repeating a source group.
+  if (DIAGNOSTIC_SKILLS.some((skill) => new Set(questions.filter((question) => question.dimension === skill).map((question) => question.sourceGroupId)).size < QUESTIONS_PER_SKILL * 2)) return { ready: false, reason: "SOURCE_DIVERSITY_GATE" };
   if (questions.some((question) => question.dimension === "listening" && !question.audioSrc)) return { ready: false, reason: "LISTENING_AUDIO_GATE" };
   return { ready: true, reason: null };
 }

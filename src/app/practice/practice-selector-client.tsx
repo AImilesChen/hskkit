@@ -23,7 +23,7 @@ const SKILLS = [
   {
     slug: "grammar",
     label: "Grammar",
-    detail: "Natural Chinese word order",
+    detail: "Sentence patterns and expressions",
     support: "Answer explanations",
   },
   {
@@ -48,7 +48,7 @@ export default function PracticeSelectorClient() {
     <header className="max-w-3xl">
       <p className="text-xs font-extrabold uppercase tracking-[0.18em] text-blue-700">HSK 3.0 practice</p>
       <h1 className="mt-[8px] text-4xl font-black tracking-tight text-slate-950 sm:text-5xl">Choose your HSK practice</h1>
-      <p className="mt-[12px] text-base leading-7 text-slate-600 sm:text-lg sm:leading-8">Choose your HSK level, then open the skill you want to practise. Every session has eight published questions with immediate feedback.</p>
+      <p className="mt-[12px] text-base leading-7 text-slate-600 sm:text-lg sm:leading-8">Choose your HSK level, then open the skill you want to practise. Every session has eight published questions with immediate feedback. Vocabulary questions use the current 2025 exam word lists; the other skills use HSKKit-authored practice material.</p>
     </header>
 
     <section aria-labelledby="choose-level" className="mt-[24px] rounded-3xl border border-slate-200 bg-white p-[16px] shadow-sm sm:p-[24px]">
