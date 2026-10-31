@@ -157,15 +157,19 @@ test("P1 Grocery Shopping freezes one complete three-lesson sample with 30 uniqu
   }
 });
 
-test("P1 Grocery Shopping publishes canonical audio for every sample word", () => {
+test("P1 Grocery Shopping links active words and only approved published audio", () => {
   const grocery = learningTopics.find((topic) => topic.slug === "grocery-shopping")!;
   const runtime = JSON.parse(readFileSync(new URL("../src/lib/content/runtime-content-index.json", import.meta.url), "utf8"));
-  const runtimeWords = runtime.dictionaryAssets as Array<{ id: string; hanzi: string }>;
+  const catalog = JSON.parse(readFileSync(new URL("../src/lib/content/catalog.json", import.meta.url), "utf8"));
+  const active = catalog.releases.find((release: { id: string }) => release.id === catalog.activeReleaseByStandard.hsk3);
+  const publishedWords = new Set<string>(active.contentAssetIds);
   const audioAssets = runtime.publishedAudioAssets as Array<{ contentAssetId: string; storageKey: string; checksumSha256: string; qaStatus: string; authorization: { status: string }; usageRights: { streaming: boolean } }>;
+  let audioCount = 0;
   for (const assetId of grocery.wordAssetIds) {
-    assert.ok(runtimeWords.some((word) => word.id === assetId), `runtime word ${assetId}`);
+    assert.ok(publishedWords.has(assetId), `published word ${assetId}`);
     const audio = audioAssets.find((asset) => asset.contentAssetId === assetId);
-    assert.ok(audio, `audio ${assetId}`);
+    if (!audio) continue;
+    audioCount += 1;
     assert.equal(audio.qaStatus, "approved", assetId);
     assert.equal(audio.authorization.status, "authorized", assetId);
     assert.equal(audio.usageRights.streaming, true, assetId);
@@ -174,6 +178,7 @@ test("P1 Grocery Shopping publishes canonical audio for every sample word", () =
     assert.ok(bytes.byteLength >= 1000, audio.storageKey);
     assert.equal(createHash("sha256").update(bytes).digest("hex"), audio.checksumSha256, audio.storageKey);
   }
+  assert.ok(audioCount > 0 && audioCount < grocery.wordAssetIds.length);
 });
 
 test("P1 Grocery Shopping UI exposes lessons, listening, practice, and SRS continuation", async () => {

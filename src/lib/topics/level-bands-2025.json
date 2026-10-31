@@ -1,0 +1,14 @@
+{
+  "morning-routine": ["1", "2", "3", "4", "5"],
+  "time-and-plans": ["1", "2", "3", "4"],
+  "weather-and-seasons": ["1", "2", "3", "4", "5", "6", "7-9"],
+  "restaurant-basics": ["1", "2", "3", "4", "5"],
+  "grocery-shopping": ["1", "3", "4", "5", "6", "7-9"],
+  "cooking-at-home": ["1", "2", "3", "4", "5", "6"],
+  "departure-and-arrival": ["1", "2", "3", "4", "5", "7-9"],
+  "getting-around-town": ["1", "2", "3", "4", "5"],
+  "hotel-stay": ["1", "2", "3", "4", "5", "6", "7-9"],
+  "home-chores": ["1", "2", "3", "4", "5"],
+  "cafe-and-drinks": ["1", "2", "3", "4", "5"],
+  "travel-problems": ["1", "2", "3", "4", "5", "7-9"]
+}

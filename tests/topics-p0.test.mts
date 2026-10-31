@@ -95,7 +95,7 @@ test("P0 topic catalog uses original published collections backed by active HSK 
   for (const topic of learningTopics) {
     assert.equal(new Set(topic.wordAssetIds).size, topic.wordAssetIds.length, `${topic.slug} must not repeat a word`);
     for (const assetId of topic.wordAssetIds) {
-      assert.match(assetId, /^hsk3\.word\.l[1-7]\.\d{4}\.v\d+$/);
+      assert.match(assetId, /^hsk2025\.word\.l[1-7]\.\d{4,5}\.v\d+$/);
       assert.equal(activeIds.has(assetId), true, `${assetId} must belong to the active release`);
     }
   }

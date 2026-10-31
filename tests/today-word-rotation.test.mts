@@ -200,12 +200,14 @@ test("words without a verified recording stay in Learn without a broken listenin
   assert.equal(built.session.items.filter((item) => item.kind === "listen").length, 0);
 });
 
-test("exhausted Today pool gives an honest empty state instead of restarting at the first word", () => {
+test("Today continues through all published HSK 2 words before reporting completion", () => {
   const completed: string[] = [];
-  for (let batch = 0; batch < 30; batch++) {
+  for (let batch = 0; batch < 45; batch++) {
     const content = selectTodayContent(2, 5, { completedContentIds: completed });
     if (content.status === "empty") {
       assert.equal(content.code, "NO_NEW_WORDS");
+      assert.equal(completed.length, 200);
+      assert.equal(new Set(completed).size, 200);
       return;
     }
     completed.push(...content.items.map((item) => item.contentId));
