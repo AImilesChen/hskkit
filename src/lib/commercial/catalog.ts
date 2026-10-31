@@ -88,7 +88,7 @@ export function selectPackAssets(level: number, catalogVersion: "legacy" | "hsk1
 
 export function manifestStillAuthorized(manifestJson:string|null|undefined){
   if(!manifestJson)return false;
-  try{const manifest=JSON.parse(manifestJson) as {schemaVersion?:string;productId?:string;sourceIndependent?:boolean;assets?:PackManifest["assets"]}; if(!Array.isArray(manifest.assets))return false;if(manifest.assets.length===0)return manifest.schemaVersion==="hskkit-product-manifest-v1"&&["30-day-planner","practice-assessment-pack"].includes(manifest.productId??"")&&manifest.sourceIndependent===true;
+  try{const manifest=JSON.parse(manifestJson) as {schemaVersion?:string;productId?:string;sourceIndependent?:boolean;assets?:PackManifest["assets"]}; if(!Array.isArray(manifest.assets))return false;if(manifest.assets.length===0)return manifest.schemaVersion==="hskkit-product-manifest-v1"&&["worksheet-pack","30-day-planner","practice-assessment-pack"].includes(manifest.productId??"")&&manifest.sourceIndependent===true;
     const byId=new Map([...contentAssets,...currentHsk1Assets,...currentHsk23Assets,...currentHsk4Assets,...currentHsk5Assets,...currentHsk6Assets,...currentAdvancedAssets].map(asset=>[asset.id,asset]));
     return manifest.assets.every(ref=>{const asset=byId.get(ref.id); return Boolean(
       asset&&(asset.id.match(/\.v(\d+)$/)?.[1]??"1")===ref.version&&Boolean(asset.source_ref)&&Boolean(asset.license_ref),

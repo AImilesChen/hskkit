@@ -5,6 +5,7 @@ import PracticeTest from "../components/practice-test";
 import questions from "../../lib/data/hsk1.json";
 
 export const metadata: Metadata = {
+  robots: { index: false, follow: true },
   title: "HSK 1 Practice Test (Traditional HSK 2.0) | HSKKit",
   description:
     "Traditional HSK 2.0 practice: answer 10 random HSK 1 questions from a 50-question bank, then see scoring, explanations and next steps.",

@@ -48,8 +48,8 @@ test("five practical resources expose complete, reusable merchandising details",
     assert.ok(detail.howToUse.length>=3,detail.id);
     assert.ok(detail.previewPages.length>=2,detail.id);
     assert.ok(detail.faqs.length>=3,detail.id);
-    assert.match(detail.previewImage,/^\/store\/previews\/[a-z0-9-]+\.webp$/);
-    await access(new URL(`../public${detail.previewImage}`,import.meta.url));
+    assert.match(detail.previewImage,/^\/store\/previews\/[a-z0-9-]+\.webp(?:\?v=[a-z0-9-]+)?$/);
+    await access(new URL(`../public${detail.previewImage.split("?")[0]}`,import.meta.url));
   }
 });
 
@@ -58,10 +58,10 @@ test("each practical resource provides readable real sample pages and an explici
     assert.ok(detail.samplePages.length>=4&&detail.samplePages.length<=7,`${detail.id}: sample count`);
     assert.equal(new Set(detail.samplePages.map(sample=>sample.src)).size,detail.samplePages.length,`${detail.id}: unique samples`);
     for(const sample of detail.samplePages){
-      assert.match(sample.src,new RegExp(`^/store/samples/${detail.id}/[a-z0-9-]+\\.webp$`));
+      assert.match(sample.src,new RegExp(`^/store/samples/${detail.id}/[a-z0-9-]+\\.webp(?:\\?v=[a-z0-9-]+)?$`));
       assert.ok(sample.alt.length>=24,`${detail.id}: descriptive sample alt`);
       assert.ok(sample.caption.length>=20,`${detail.id}: decision-useful sample caption`);
-      const sampleFile=new URL(`../public${sample.src}`,import.meta.url);
+      const sampleFile=new URL(`../public${sample.src.split("?")[0]}`,import.meta.url);
       await access(sampleFile);
       assert.ok((await stat(sampleFile)).size>=20_000,`${detail.id}: sample is a substantive readable image`);
     }
