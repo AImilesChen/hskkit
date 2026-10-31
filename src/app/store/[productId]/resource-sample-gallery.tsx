@@ -19,6 +19,7 @@ export default function ResourceSampleGallery({samples,productName}:{samples:Sam
   const triggerRefs=useRef<Array<HTMLButtonElement|null>>([]);
   const touchStart=useRef<{x:number;y:number;distance?:number;zoom:Zoom}|null>(null);
   const active=activeIndex===null?null:samples[activeIndex];
+  const vocabularySamples=samples.every(sample=>sample.src.startsWith("/store/samples/vocabulary/"));
 
   const close=useCallback(()=>{
     const previous=activeIndex;
@@ -115,7 +116,7 @@ export default function ResourceSampleGallery({samples,productName}:{samples:Sam
   return <>
     <div className="grid gap-5 sm:grid-cols-2">
       {samples.map((sample,index)=><button key={sample.src} ref={node=>{triggerRefs.current[index]=node;}} type="button" onClick={()=>{setActiveIndex(index);setZoom(1);}} className="group overflow-hidden rounded-2xl border border-slate-200 bg-white text-left shadow-sm transition hover:-translate-y-0.5 hover:border-emerald-400 hover:shadow-lg focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-emerald-200" aria-label={`Open full-size sample ${index+1} of ${samples.length}: ${sample.label}`}>
-        <span className="relative block aspect-[4/5] overflow-hidden bg-slate-100"><Image src={sample.src} alt={sample.alt} fill priority={index===0} sizes="(max-width: 639px) 100vw, (max-width: 1023px) 50vw, 28vw" className="object-cover object-top transition duration-300 group-hover:scale-[1.02]"/></span>
+        <span className="relative block aspect-[4/5] overflow-hidden bg-slate-100"><Image src={sample.src} alt={sample.alt} fill priority={index===0} sizes="(max-width: 639px) 100vw, (max-width: 1023px) 50vw, 28vw" className={vocabularySamples?"object-contain p-3":"object-cover object-top transition duration-300 group-hover:scale-[1.02]"}/></span>
         <span className="block p-5"><span className="block text-sm font-extrabold text-slate-950">{sample.label}</span><span className="mt-2 block text-sm leading-6 text-slate-600">{sample.caption}</span><span className="mt-4 inline-flex min-h-11 items-center text-sm font-extrabold text-emerald-800">Click to view full size →</span></span>
       </button>)}
     </div>

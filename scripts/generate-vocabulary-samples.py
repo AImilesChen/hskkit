@@ -88,13 +88,7 @@ def main() -> None:
         watermark(image).save(destination / filename, "WEBP", quality=84, method=6)
         print(filename)
 
-    card_directory = destination.parents[1] / "previews/vocabulary"
-    card_directory.mkdir(parents=True, exist_ok=True)
-    product_ids = ["advanced-7-9", "complete-1-9"] if args.hsk789_2025_only else ["level-6", "progression-4-6", "complete-1-9"] if args.hsk6_2025_only else ["level-1", "starter-1-3", "complete-1-9"] if args.hsk1_2025_only else [*(f"level-{level}" for level in range(1, 7)), "starter-1-3", "progression-4-6", "advanced-7-9", "complete-1-9"]
-    for product_id in product_ids:
-        sample_image = Image.open(destination / f"{product_id}-sample-1.webp").convert("RGB")
-        card_image = sample_image.crop((0, 0, sample_image.width, min(sample_image.height, round(sample_image.width * 0.75))))
-        card_image.save(card_directory / f"{product_id}.webp", "WEBP", quality=86, method=6)
+    # Catalog cards reuse these complete watermarked pages directly.
 
 
 if __name__ == "__main__":

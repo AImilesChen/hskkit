@@ -16,7 +16,6 @@ from PIL import Image
 ROOT = Path(__file__).resolve().parents[1]
 WATERMARK = runpy.run_path(str(ROOT / "scripts/generate-store-samples.py"))["watermark"]
 SAMPLE_DIR = ROOT / "public/store/samples/vocabulary"
-PREVIEW_DIR = ROOT / "public/store/previews/vocabulary"
 SOURCES_FILE = ROOT / "src/lib/commercial/store-sample-sources.json"
 
 
@@ -53,7 +52,6 @@ def main() -> None:
     parser.add_argument("--card-from", type=int, choices=[1, 2], default=1)
     args = parser.parse_args()
     SAMPLE_DIR.mkdir(parents=True, exist_ok=True)
-    PREVIEW_DIR.mkdir(parents=True, exist_ok=True)
     sources = json.loads(SOURCES_FILE.read_text(encoding="utf-8")) if SOURCES_FILE.exists() else {}
     samples = []
     for index, (pdf, page) in enumerate(((args.first_pdf, args.first_page), (args.second_pdf, args.second_page)), 1):
@@ -61,9 +59,7 @@ def main() -> None:
         filename = f"{args.product_id}-sample-{index}.webp"
         WATERMARK(render(pdf, page)).save(SAMPLE_DIR / filename, "WEBP", quality=84, method=6)
         samples.append({"file": filename, "page": page, "sourcePdfSha256": sha})
-    sample_image = Image.open(SAMPLE_DIR / samples[args.card_from - 1]["file"]).convert("RGB")
-    card = sample_image.crop((0, 0, sample_image.width, min(sample_image.height, round(sample_image.width * 0.75))))
-    card.save(PREVIEW_DIR / f"{args.product_id}.webp", "WEBP", quality=86, method=6)
+    # The catalog reuses a complete watermarked sample page; never crop the PDF page for a card.
     sources[args.product_id] = {"generationVersion": args.version, "samples": samples, "cardFrom": args.card_from}
     SOURCES_FILE.write_text(json.dumps(sources, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
     print(f"Rendered {args.product_id} from {args.version}")
