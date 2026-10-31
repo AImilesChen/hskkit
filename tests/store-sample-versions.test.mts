@@ -19,7 +19,8 @@ test("updated vocabulary samples and cards are tied to the current delivery gene
       assert.ok(existsSync(new URL(`../public/store/samples/vocabulary/${sample.file}`, import.meta.url)), sample.file);
       assert.ok(detail.samplePages.some(page => page.src.startsWith(`/store/samples/vocabulary/${sample.file}?v=${source.generationVersion}`)), sample.file);
     }
-    assert.ok(existsSync(new URL(`../public/store/previews/vocabulary/${productId}.webp`, import.meta.url)), productId);
+    assert.equal(detail.previewImage, detail.samplePages[0].src, productId);
+    assert.match(detail.previewAlt, /Complete watermarked sample page/, productId);
   }
 });
 
@@ -30,3 +31,4 @@ test("store sample galleries lead with product content", () => {
     assert.doesNotMatch(first.label, /start here|quick start|instructions|guide/i, productId);
   }
 });
+
