@@ -6,6 +6,7 @@ import { fileURLToPath } from "node:url";
 import {
   addWordToToday,
   addWordToReview,
+  addFlashcardWordsToReview,
   buildDailySession,
   recordDictionarySearch,
   type LearningState,
@@ -66,6 +67,18 @@ test("Add to Review creates one due card with an immutable word snapshot", () =>
   assert.equal(first.cards[0].dimension, "reading");
   assert.equal(first.attempts[0].reviewSnapshot?.correctAnswerText, "爱 · ài · to love");
   assert.deepEqual(replay, first);
+});
+
+test("flashcard batch saves only new review cards and leaves existing due dates unchanged", () => {
+  const first = word();
+  const second = distractors[0];
+  const scheduled = addWordToReview(empty(), { word: first, observedAt: "2026-10-30T12:00:00.000Z", dueAt: "2026-11-03T12:00:00.000Z" });
+  const result = addFlashcardWordsToReview(scheduled, [first, second, second], "2026-10-31T12:00:00.000Z");
+  assert.equal(result.added, 1);
+  assert.equal(result.already, 2);
+  assert.equal(result.state.cards.length, 2);
+  assert.equal(result.state.cards.find((card) => card.contentId === first.contentId)?.dueAt, "2026-11-03T12:00:00.000Z");
+  assert.equal(result.state.cards.find((card) => card.contentId === second.contentId)?.dueAt, "2026-10-31T12:00:00.000Z");
 });
 
 test("adding a Review card does not remove an explicitly added Today word", () => {

@@ -10,3 +10,7 @@ export function flashcardSummary<T extends { id: string }>(words: T[], ratings: 
   const retryWords = words.filter((word) => ratings[word.id] !== "known");
   return { known, markedForPractice, skipped: words.length - known - markedForPractice, retryWords };
 }
+
+export function flashcardReviewIds<T extends { id: string }>(words: T[], ratings: Record<string, FlashcardRating>) {
+  return [...new Set(words.filter((word) => ratings[word.id] === "retry").map((word) => word.id))];
+}

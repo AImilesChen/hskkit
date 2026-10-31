@@ -624,6 +624,9 @@ export default function LearningDashboard({ mode }: { mode: "today" | "review" |
       .map((item, index) => ({ item, index }))
       .filter(({ item }) => item.kind === "summary" || (!item.deferred && (item.estimatedMinutes ?? 0) > 0));
     const deferredTodayItems = data.session.items.filter((item) => item.deferred);
+    const reviewNow = new Date().toISOString();
+    const reviewDueNow = data.cards.filter((card) => card.dueAt <= reviewNow).length;
+    const reviewLater = data.cards.length - reviewDueNow;
     const plannedTodayTasks = currentTodayItems.map(({ item }) => item).filter((item) => item.kind !== "summary");
     const newWordItems = plannedTodayTasks.filter((item) => item.kind === "learn" && !item.isContinuing);
     const continuingWordItems = plannedTodayTasks.filter((item) => item.kind === "learn" && item.isContinuing);
@@ -674,6 +677,7 @@ export default function LearningDashboard({ mode }: { mode: "today" | "review" |
       {planFeedback && <p className="mb-5 rounded-xl bg-emerald-50 px-4 py-3 text-sm font-bold text-emerald-700" role="status">{planFeedback}</p>}
       <section className="mb-5 rounded-2xl border border-blue-100 bg-blue-50/70 p-5">
         <p><strong>{plannedTodayTasks.length} tasks · {data.session.totalEstimatedMinutes ?? 0} min planned</strong></p>
+        <p className="mt-1 text-sm text-slate-700">{reviewDueNow} review cards due now · {reviewLater} scheduled for later. Today includes only the steps that fit your plan; the full queue is in <Link href="/review" className="font-bold text-blue-700 underline">Review</Link>.</p>
         <p className="mt-1 text-sm text-slate-600"><strong>Why this plan:</strong> mistakes and due memory come first, then unfinished words and new words, their available listening, and a saved practice result.</p>
         {gapMinutes > 0 && <p className="mt-2 text-sm text-slate-600">{gapMinutes} min remains unfilled because no approved ready task fits the remaining budget. Today does not add filler.</p>}
         <div className="mt-4 grid gap-2 text-sm text-slate-600 sm:grid-cols-2"><p><strong>Learning Points:</strong> {reward ? `${reward.monthPoints} this month across ${reward.monthLearningDays} qualified days. ${reward.remainingSeconds > 0 ? `${Math.ceil(reward.remainingSeconds / 60)} active min remain to qualify today; the current plan has about ${remainingMinutes} min left.` : "Today’s active-time requirement is met."}` : "Build from qualified learning days"}</p><p><strong>Why today arranged this:</strong> {open.length ? `You have ${open.length} unresolved mistake${open.length === 1 ? "" : "s"}; ${scheduledMistakeCount} ${scheduledMistakeCount === 1 ? "is" : "are"} included in today’s time budget.` : `No open mistake is blocking you; ${weakest} is your lowest mastery area.`}</p></div>
@@ -686,6 +690,8 @@ export default function LearningDashboard({ mode }: { mode: "today" | "review" |
         {orderedTodayItems.map(({ item, index }) => {
           const locked = item.status === "pending" && activeToday?.id !== item.id;
           const journeyState = item.status === "completed" ? "completed" : item.status === "skipped" ? "skipped" : locked ? "locked" : "current";
+          const learningReviewCard = item.kind === "learn" ? data.cards.find((card) => card.contentId === item.contentId && card.dimension === "reading") : undefined;
+          const completedLearningStatus = `${item.learnCheck ? "Initial learning complete · memory check passed" : "Previously saved learning step · scheduled for review"} · ${learningReviewCard ? learningReviewCard.dueAt <= reviewNow ? "separate review due now" : `next review ${new Date(learningReviewCard.dueAt).toLocaleDateString()}` : "review timing unavailable"}.`;
           if (item.kind === "review" && index !== firstReviewIndex) return null;
           if (item.kind === "review") return <article data-today-item-id={item.id} className={`relative z-[1] grid grid-cols-[48px_minmax(0,1fr)] gap-4 rounded-2xl border ${journeyState === "completed" ? "p-3 sm:p-4" : "p-4 sm:p-5"} ${todayJourneyTone("review", journeyState)}`} key={item.id}>
             <TodayJourneyIcon item={item} state={journeyState} />
@@ -712,7 +718,7 @@ export default function LearningDashboard({ mode }: { mode: "today" | "review" |
           return <article data-today-item-id={item.id} className={`relative z-[1] grid grid-cols-[48px_minmax(0,1fr)] gap-4 rounded-2xl border ${journeyState === "completed" ? "p-3 sm:p-4" : "p-4 sm:p-5"} ${todayJourneyTone(item.kind, journeyState)}`} key={item.id}>
             <TodayJourneyIcon item={item} state={journeyState} />
             <div className="min-w-0"><div className="flex flex-wrap items-center justify-between gap-2"><span className="text-xs font-extrabold uppercase tracking-[.14em]">{item.dimension?.replace("_", " ") ?? item.kind}</span><TodayStatus state={journeyState} /></div><h2 className="mt-1 text-xl font-bold text-slate-950">{label(item)}</h2>
-              <p className="mt-1 text-slate-600">{journeyState === "completed" ? item.kind === "learn" ? item.learnCheck ? "Initial learning complete · memory check passed." : "Previously saved learning step · scheduled for review." : "Step complete · progress saved." : journeyState === "skipped" ? "Moved to tomorrow · available to restore." : journeyState === "locked" ? "Complete the previous step to unlock." : `Ready now · ${item.estimatedMinutes ?? 0} min`}</p>
+              <p className="mt-1 text-slate-600">{journeyState === "completed" ? item.kind === "learn" ? completedLearningStatus : "Step complete · progress saved." : journeyState === "skipped" ? "Moved to tomorrow · available to restore." : journeyState === "locked" ? "Complete the previous step to unlock." : `Ready now · ${item.estimatedMinutes ?? 0} min`}</p>
               {journeyState !== "completed" && <p className="mt-2 text-sm text-blue-800"><strong>Why now:</strong> {todayReason(item, open.length, weakest)}</p>}
               {journeyState === "current" && item.kind === "learn" && item.learnContent && <section className="mt-4 rounded-2xl border border-blue-200 bg-white p-5" aria-label={`Learn ${item.learnContent.hanzi}`}>
                 {!learnCheckOpen[item.id] ? <>
@@ -767,6 +773,7 @@ export default function LearningDashboard({ mode }: { mode: "today" | "review" |
   </Shell>;
 
   const due = data.capabilities.focusedReview ? data.focusedReview : data.cards.filter((card) => card.dueAt <= new Date().toISOString());
+  const futureReviewCards = data.cards.filter((card) => card.dueAt > new Date().toISOString());
   const serverScopedReviewIds = reviewCardIdsForScope(data.reviewLevelControl, selectedReviewScope);
   const dueById = new Map<string, Card>();
   for (const card of due) dueById.set(card.id, card);
@@ -820,7 +827,7 @@ export default function LearningDashboard({ mode }: { mode: "today" | "review" |
         <div className="border-b border-slate-200 bg-slate-950 px-[24px] py-[24px] text-white sm:px-[32px] sm:py-[32px]">
           <p className="text-sm font-semibold text-blue-300">{data.capabilities.focusedReview ? "Focused Review · Pro" : "Review setup"}</p>
           <h2 className="mt-2 text-3xl font-bold tracking-tight text-white sm:text-4xl">Choose a focused session</h2>
-          <p className="mt-3 max-w-2xl text-slate-300">{data.reviewLevelControl.allCount} item{data.reviewLevelControl.allCount === 1 ? " is" : "s are"} due across all levels. Your current level is HSK {data.reviewLevelControl.currentLevel}.</p>
+          <p className="mt-3 max-w-2xl text-slate-300">{data.reviewLevelControl.allCount} item{data.reviewLevelControl.allCount === 1 ? " is" : "s are"} due now · {futureReviewCards.length} scheduled for later. Your current level is HSK {data.reviewLevelControl.currentLevel}.</p>
           <p className="mt-4 text-sm font-semibold text-blue-200">Recommended review: {recommendedCount} item{recommendedCount === 1 ? "" : "s"} from the selected level and difficult-item history.</p>
         </div>
         <div className="p-[24px] sm:p-[32px]">
@@ -909,9 +916,9 @@ export default function LearningDashboard({ mode }: { mode: "today" | "review" |
       {directEntryEmpty && <State title={entryIntent.kind === "mistake" ? "This mistake is no longer open" : entryIntent.kind === "word" ? "This word review is unavailable" : "You're caught up"} text={entryIntent.kind === "mistake" ? "It may already have been resolved or is no longer available for review." : entryIntent.kind === "word" ? "The saved review card could not be found. Return to Today and try the word again." : "There are no reviews due in today's queue."}><Link className="btn" href={entryIntent.kind === "mistake" ? "/mistakes" : "/today"}>{entryIntent.kind === "mistake" ? "Back to Mistakes" : "Back to Today"}</Link></State>}
       {entryResolved && entryIntent.kind === "setup" && reviewIds === null && due.length === 0 && data.cards.length > 0 && <section className="overflow-hidden rounded-[28px] border border-slate-200 bg-white shadow-[0_22px_60px_rgba(15,23,42,0.08)]">
         <div className="border-b border-slate-200 bg-slate-950 px-6 py-6 text-white sm:px-8"><p className="text-sm font-semibold text-blue-300">Schedule clear</p><h2 className="mt-2 text-3xl font-bold text-white">Upcoming reviews</h2><p className="mt-2 text-slate-300">Nothing is due now. You can inspect the schedule without changing a future review.</p></div>
-        <div className="p-6 sm:p-8"><div className="grid gap-3">{[...data.cards].sort((a, b) => a.dueAt.localeCompare(b.dueAt)).slice(0, 3).map((card) => <article className="rounded-2xl border border-slate-200 p-4" key={card.id}><p className="font-bold text-slate-950">{card.prompt}</p><p className="mt-1 text-sm text-slate-600">{card.skill} · Scheduled {new Date(card.dueAt).toLocaleString()}</p></article>)}</div></div>
+        <div className="p-6 sm:p-8"><div className="grid gap-3">{[...futureReviewCards].sort((a, b) => a.dueAt.localeCompare(b.dueAt)).slice(0, 3).map((card) => <article className="rounded-2xl border border-slate-200 p-4" key={card.id}><p className="font-bold text-slate-950">{card.prompt}</p><p className="mt-1 text-sm text-slate-600">{card.skill} · Scheduled {new Date(card.dueAt).toLocaleString()}</p></article>)}</div><Link href={`/vocabulary/${data.reviewLevelControl.currentLevel}?mode=flashcards#vocabulary-activities`} className="mt-5 inline-flex min-h-11 items-center rounded-xl bg-blue-600 px-5 font-bold text-white">Practise with flashcards</Link></div>
       </section>}
-      {entryResolved && entryIntent.kind === "setup" && reviewIds === null && due.length === 0 && data.cards.length === 0 && <State title="No review history yet" text="A completed Practice or Listening answer creates your first scheduled memory card. Wrong answers become due immediately."><div className="flex flex-wrap gap-2"><Link className="btn" href="/practice">Start practice</Link><Link className="btn secondary" href="/listen">Start listening</Link></div></State>}
+      {entryResolved && entryIntent.kind === "setup" && reviewIds === null && due.length === 0 && data.cards.length === 0 && <State title="No review history yet" text="A completed Practice or Listening answer creates your first scheduled memory card. Wrong answers become due immediately."><div className="flex flex-wrap gap-2"><Link className="btn" href="/practice">Start practice</Link><Link className="btn secondary" href="/listen">Start listening</Link><Link className="btn secondary" href={`/vocabulary/${data.reviewLevelControl.currentLevel}?mode=flashcards#vocabulary-activities`}>Try flashcards</Link></div></State>}
       {audioError && <p className="mt-4 rounded-xl bg-red-50 p-4 text-sm text-red-700" role="alert">{audioError}</p>}
     </div>
   </Shell>;

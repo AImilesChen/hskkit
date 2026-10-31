@@ -400,6 +400,22 @@ export function addWordToReview(state: LearningState, input: { word: DictionaryP
   return { ...state, attempts: [...state.attempts, attempt], cards: [...state.cards, card] };
 }
 
+export function addFlashcardWordsToReview(state: LearningState, words: DictionaryPracticeWord[], observedAt: string) {
+  let next = state;
+  let added = 0;
+  let already = 0;
+  for (const word of words) {
+    // A flashcard self-check must never pull an existing scheduled review forward.
+    if (next.cards.some((card) => card.contentId === word.contentId && card.dimension === "reading")) {
+      already += 1;
+      continue;
+    }
+    next = addWordToReview(next, { word, observedAt });
+    added += 1;
+  }
+  return { state: next, added, already };
+}
+
 export function addWordToToday(state: LearningState, input: {
   sessionId: string;
   assetId: string;

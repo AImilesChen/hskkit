@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { AudioButton } from "../../components/audio-button";
-import { flashcardSummary, splitFlashcardForms, type FlashcardRating } from "@/lib/learning/flashcards";
+import { flashcardReviewIds, flashcardSummary, splitFlashcardForms, type FlashcardRating } from "@/lib/learning/flashcards";
 
 const sessionSizes = [10, 20, 50] as const;
 type SessionSize = typeof sessionSizes[number];
@@ -25,6 +25,8 @@ type FlashcardResponse = {
   pagination: { total: number };
 };
 
+type LearningView = { scope: "guest" | "account"; queueBinding: string; revision: number; flashcardReview?: { added: number; already: number }; message?: string };
+
 function randomSeed() {
   if (typeof crypto !== "undefined" && "getRandomValues" in crypto) {
     return (crypto.getRandomValues(new Uint32Array(1))[0] & 0x7fffffff) || 1;
@@ -44,6 +46,9 @@ export function QuickFlashcards({ level, levelLabel, publishedCount }: { level: 
   const [round, setRound] = useState(1);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [learningView, setLearningView] = useState<LearningView | null>(null);
+  const [learningStatus, setLearningStatus] = useState<"idle" | "loading" | "ready" | "failed" | "saving" | "saved">("idle");
+  const [saveMessage, setSaveMessage] = useState("");
 
   useEffect(() => setSeed(randomSeed()), []);
 
@@ -64,6 +69,9 @@ export function QuickFlashcards({ level, levelLabel, publishedCount }: { level: 
     setComplete(false);
     setRatings({});
     setRound(1);
+    setLearningView(null);
+    setLearningStatus("idle");
+    setSaveMessage("");
     void fetch(`/api/v1/catalog/words?${params.toString()}`, { signal: controller.signal, cache: "no-store" })
       .then(async (response) => {
         const body = await response.json() as FlashcardResponse & { message?: string };
@@ -90,6 +98,24 @@ export function QuickFlashcards({ level, levelLabel, publishedCount }: { level: 
   const otherHanzi = hanziForms.slice(1).join(" · ");
   const pinyin = splitFlashcardForms(currentWord?.payload.pinyin ?? "").join(" · ");
   const { known: knownCount, markedForPractice, retryWords } = flashcardSummary(words, ratings);
+  const reviewAssetIds = flashcardReviewIds(words, ratings);
+
+  useEffect(() => {
+    if (!complete || markedForPractice === 0) return;
+    const controller = new AbortController();
+    setLearningStatus("loading");
+    void fetch("/api/v1/learning", { signal: controller.signal, cache: "no-store" })
+      .then(async (response) => {
+        const body = await response.json() as LearningView;
+        if (!response.ok) throw new Error(body.message || "Learning status is unavailable.");
+        setLearningView(body);
+        setLearningStatus("ready");
+      })
+      .catch((reason: unknown) => {
+        if (!(reason instanceof DOMException && reason.name === "AbortError")) setLearningStatus("failed");
+      });
+    return () => controller.abort();
+  }, [complete, markedForPractice]);
   const partOfSpeech = useMemo(() => currentWord?.payload.partOfSpeech || "Part of speech not specified", [currentWord]);
   const traditional = useMemo(() => currentWord?.payload.traditional
     .split("|")
@@ -131,6 +157,28 @@ export function QuickFlashcards({ level, levelLabel, publishedCount }: { level: 
     setComplete(false);
     setRatings({});
     setRound((value) => value + 1);
+    setSaveMessage("");
+  }
+
+  async function saveMarkedWords() {
+    if (learningView?.scope !== "account" || !reviewAssetIds.length || learningStatus === "saving") return;
+    setLearningStatus("saving");
+    setSaveMessage("");
+    try {
+      const response = await fetch("/api/v1/learning", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ action: "flashcard_batch_review", queueBinding: learningView.queueBinding, clientRevision: learningView.revision, payload: { assetIds: reviewAssetIds, idempotencyKey: crypto.randomUUID() } }),
+      });
+      const body = await response.json() as LearningView;
+      if (!response.ok) throw new Error(body.message || "Could not save these words.");
+      setLearningView(body);
+      setLearningStatus("saved");
+      setSaveMessage(`${body.flashcardReview?.added ?? 0} added to Review${body.flashcardReview?.already ? ` · ${body.flashcardReview.already} already scheduled` : ""}.`);
+    } catch (reason) {
+      setLearningStatus("failed");
+      setSaveMessage(reason instanceof Error ? reason.message : "Could not save these words. Try again.");
+    }
   }
 
   return <section className="overflow-hidden rounded-[28px] border border-blue-200 bg-blue-50/60 shadow-[0_24px_70px_-48px_rgba(30,64,175,.65)]" aria-labelledby="quick-flashcards-heading">
@@ -153,7 +201,21 @@ export function QuickFlashcards({ level, levelLabel, publishedCount }: { level: 
     <div className="px-4 py-5 sm:px-7 sm:py-7">
       {loading ? <div className="mx-auto max-w-[720px] rounded-2xl border border-blue-100 bg-white p-10 text-center" aria-live="polite"><div className="mx-auto h-8 w-8 animate-spin rounded-full border-4 border-blue-100 border-t-blue-600" aria-hidden="true" /><p className="mt-4 font-semibold text-slate-800">Building a fresh {levelLabel} set…</p></div>
         : error ? <div className="mx-auto max-w-[720px] rounded-2xl border border-red-200 bg-white p-8 text-center" role="alert"><h3 className="text-xl font-bold text-red-950">Flashcards unavailable</h3><p className="mt-2 text-red-800">{error}</p><button type="button" onClick={() => newRandomSet()} className="mt-5 inline-flex min-h-11 items-center rounded-xl bg-red-700 px-5 font-bold text-white">Try again</button></div>
-        : complete ? <div className="mx-auto max-w-[720px] rounded-3xl border border-emerald-200 bg-white p-7 text-center sm:p-10" aria-live="polite"><div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-emerald-100 text-2xl text-emerald-800" aria-hidden="true">✓</div><p className="mt-4 text-xs font-bold uppercase tracking-[.14em] text-emerald-700">Round {round} complete</p><h3 className="mt-2 text-2xl font-bold text-slate-950">{knownCount} of {words.length} marked as remembered</h3><p className="mt-2 text-sm leading-6 text-slate-600">{retryWords.length ? `${retryWords.length} ${retryWords.length === 1 ? "word was" : "words were"} marked for practice or skipped. Review ${retryWords.length === 1 ? "it" : "just those words"} next.` : `You finished this round of your ${initialSetCount}-word set. Start another random set when ready.`} These checks disappear when you leave or reload this page and do not change your scheduled reviews.</p><div className="mt-6 flex flex-wrap justify-center gap-3">{retryWords.length ? <button type="button" onClick={reviewUncertain} className="inline-flex min-h-11 items-center justify-center rounded-xl bg-blue-600 px-6 font-bold text-white hover:bg-blue-700">Review {retryWords.length} {retryWords.length === 1 ? "word" : "words"} again</button> : null}<button type="button" onClick={() => newRandomSet()} className="inline-flex min-h-11 items-center justify-center rounded-xl border border-blue-300 bg-white px-6 font-bold text-blue-700 hover:bg-blue-50">Start another set</button></div></div>
+        : complete ? <div className="mx-auto max-w-[720px] rounded-3xl border border-emerald-200 bg-white p-7 text-center sm:p-10" aria-live="polite">
+          <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-emerald-100 text-2xl text-emerald-800" aria-hidden="true">✓</div>
+          <p className="mt-4 text-xs font-bold uppercase tracking-[.14em] text-emerald-700">Round {round} complete</p>
+          <h3 className="mt-2 text-2xl font-bold text-slate-950">{knownCount} of {words.length} marked as remembered</h3>
+          <p className="mt-2 text-sm leading-6 text-slate-600">{retryWords.length ? `${retryWords.length} ${retryWords.length === 1 ? "word needs" : "words need"} another look (${markedForPractice} marked for practice, ${retryWords.length - markedForPractice} skipped).` : `You finished this round of your ${initialSetCount}-word set. Start another random set when ready.`}</p>
+          {reviewAssetIds.length > 0 && <div className="mt-5 rounded-2xl border border-blue-200 bg-blue-50 p-4 text-left">
+            <p className="font-bold text-slate-950">Keep practising these {reviewAssetIds.length} words</p>
+            {learningStatus === "loading" ? <p className="mt-1 text-sm text-slate-600">Checking your learning account…</p>
+              : learningView?.scope === "account" ? <><p className="mt-1 text-sm text-slate-600">Save only words you marked “Practice again” to your Review queue. Existing review dates will stay unchanged.</p><button type="button" disabled={learningStatus === "saving" || learningStatus === "saved"} onClick={() => void saveMarkedWords()} className="mt-3 min-h-11 rounded-xl bg-blue-600 px-4 font-bold text-white disabled:opacity-50">{learningStatus === "saving" ? "Saving…" : learningStatus === "saved" ? "Saved to Review" : `Add ${reviewAssetIds.length} to Review`}</button></>
+                : learningStatus === "failed" ? <p className="mt-1 text-sm text-red-700">Learning status could not be checked. Your flashcard choices are still temporary. Reload to try again.</p>
+                  : <p className="mt-1 text-sm text-slate-600">Flashcard choices are temporary for guests. <Link href="/account" className="font-bold text-blue-700 underline">Sign in</Link> to save marked words to Review.</p>}
+            {saveMessage && <p className="mt-2 text-sm font-semibold text-blue-900" role="status">{saveMessage} {learningStatus === "saved" && <Link href="/review" className="underline">Open Review</Link>}</p>}
+          </div>}
+          <div className="mt-6 flex flex-wrap justify-center gap-3">{retryWords.length ? <button type="button" onClick={reviewUncertain} className="inline-flex min-h-11 items-center justify-center rounded-xl bg-blue-600 px-6 font-bold text-white hover:bg-blue-700">Review {retryWords.length} {retryWords.length === 1 ? "word" : "words"} again</button> : null}<button type="button" onClick={() => newRandomSet()} className="inline-flex min-h-11 items-center justify-center rounded-xl border border-blue-300 bg-white px-6 font-bold text-blue-700 hover:bg-blue-50">Start another set</button></div>
+        </div>
         : currentWord ? <div className="mx-auto max-w-[720px]">
           <div className="mb-3 flex flex-wrap items-center justify-between gap-2 text-sm font-semibold text-slate-600" aria-live="polite"><span>Card {currentIndex + 1} of {words.length}{round > 1 ? ` · Practice round ${round}` : ""}</span><span>{knownCount} remembered · {markedForPractice} to practice</span></div>
           <div className="mb-4 h-2 overflow-hidden rounded-full bg-blue-100" aria-hidden="true"><div className="h-full rounded-full bg-blue-600 transition-[width] duration-300" style={{ width: `${progress}%` }} /></div>
@@ -188,7 +250,7 @@ export function QuickFlashcards({ level, levelLabel, publishedCount }: { level: 
           <div className="mt-4 flex justify-center"><button type="button" onClick={() => newRandomSet()} className="inline-flex min-h-11 items-center justify-center px-4 text-sm font-bold text-blue-700 hover:underline">New random set</button></div>
         </div>
         : <div className="mx-auto max-w-[720px] rounded-2xl border border-slate-200 bg-white p-8 text-center" aria-live="polite"><h3 className="text-xl font-bold text-slate-950">No cards available</h3><p className="mt-2 text-slate-600">The published vocabulary table remains available in Browse vocabulary.</p></div>}
-      <p className="mx-auto mt-5 max-w-[720px] text-center text-xs leading-5 text-slate-500">Quick Flashcards is a lightweight self-check. Your choices are temporary; they are not saved to your account or used to schedule SRS reviews.</p>
+      <p className="mx-auto mt-5 max-w-[720px] text-center text-xs leading-5 text-slate-500">Quick Flashcards is a lightweight self-check. Choices stay on this page unless you sign in and explicitly add marked words to Review.</p>
     </div>
   </section>;
 }
