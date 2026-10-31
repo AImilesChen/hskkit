@@ -109,6 +109,18 @@ export function findPublicCatalogWordsByIds(assetIds: string[]): CatalogSearchRo
   });
 }
 
+export function findNextPublicCatalogWordsForToday(level: number, excludedContentIds: ReadonlySet<string>, limit: number): CatalogSearchRow[] {
+  const levelBand = level >= 7 ? "7-9" : String(level);
+  const result: CatalogSearchRow[] = [];
+  for (const word of wordsByLevel.get(levelBand) ?? []) {
+    const contentId = `catalog:${word.id.replace(/\.v\d+$/, "")}`;
+    if (excludedContentIds.has(contentId)) continue;
+    result.push(word);
+    if (result.length >= limit) break;
+  }
+  return result;
+}
+
 export function searchPublicCatalogWords(params: CatalogSearchParams, formalAudioIds: readonly string[] = []) {
   const levelBand = params.level === undefined ? undefined : params.level >= 7 ? "7-9" : String(params.level);
   const source = levelBand ? wordsByLevel.get(levelBand) ?? [] : words;

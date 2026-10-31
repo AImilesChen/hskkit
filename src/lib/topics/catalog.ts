@@ -1,5 +1,6 @@
 import { p2TopicExpansions } from "./p2-expansions.ts";
 import { p3AdditionalTopics } from "./p3-additional-topics.ts";
+import currentLevelBands from "./level-bands-2025.json" with { type: "json" };
 
 export type TopicStatus = "draft" | "published" | "withdrawn";
 
@@ -55,7 +56,7 @@ export interface LearningTopic {
   marker: string;
 }
 
-export const topicsSourceReleaseId = "hsk3-content-truth-v5";
+export const topicsSourceReleaseId = "hsk3-hsk123456789-2025-v11";
 
 export const topicCategories: TopicCategory[] = [
   {
@@ -101,11 +102,11 @@ const baseLearningTopics: LearningTopic[] = [
     learningGoal: "Describe the main actions in a weekday morning.",
     levelBands: ["1", "2", "4"],
     wordAssetIds: [
-      "hsk3.word.l1.0459.v1", "hsk3.word.l1.0288.v1", "hsk3.word.l4.0672.v1",
-      "hsk3.word.l2.0706.v1", "hsk3.word.l2.0071.v1", "hsk3.word.l1.0316.v1",
-      "hsk3.word.l1.0323.v1", "hsk3.word.l1.0386.v1",
+      "hsk2025.word.l1.0275.v1", "hsk2025.word.l1.0161.v1", "hsk2025.word.l3.0844.v1",
+      "hsk2025.word.l4.1918.v1", "hsk2025.word.l2.0319.v1", "hsk2025.word.l1.0176.v1",
+      "hsk3.word.l1.0323.v1", "hsk2025.word.l2.0456.v1",
     ],
-    featuredWordAssetIds: ["hsk3.word.l1.0459.v1", "hsk3.word.l1.0288.v1", "hsk3.word.l2.0706.v1"],
+    featuredWordAssetIds: ["hsk2025.word.l1.0275.v1", "hsk2025.word.l1.0161.v1", "hsk2025.word.l4.1918.v1"],
     estimatedMinutes: 12,
     difficulty: "starter",
     expressions: [{"hanzi": "我每天七点起床。", "pinyin": "Wǒ měitiān qī diǎn qǐchuáng.", "meaning": "I get up at seven every day."}, {"hanzi": "吃完早饭，我就出门。", "pinyin": "Chī wán zǎofàn, wǒ jiù chūmén.", "meaning": "After breakfast, I head out."}, {"hanzi": "今天早上有点儿忙。", "pinyin": "Jīntiān zǎoshang yǒudiǎnr máng.", "meaning": "This morning is a little busy."}],
@@ -130,12 +131,12 @@ const baseLearningTopics: LearningTopic[] = [
     learningGoal: "Say when something happens and whether it is planned or on time.",
     levelBands: ["1", "2", "3", "4", "6"],
     wordAssetIds: [
-      "hsk3.word.l1.0181.v1", "hsk3.word.l1.0248.v1", "hsk3.word.l1.0399.v1",
-      "hsk3.word.l1.0333.v1", "hsk3.word.l1.0334.v1", "hsk3.word.l2.0253.v1",
-      "hsk3.word.l3.0002.v1", "hsk3.word.l4.0095.v1", "hsk3.word.l4.0984.v1",
-      "hsk3.word.l6.1002.v1",
+      "hsk2025.word.l1.0094.v1", "hsk2025.word.l1.0129.v1", "hsk3.word.l1.0399.v1",
+      "hsk2025.word.l1.0185.v1", "hsk2025.word.l1.0186.v1", "hsk2025.word.l4.1329.v1",
+      "hsk2025.word.l4.1005.v1", "hsk2025.word.l3.0561.v1", "hsk2025.word.l4.1977.v1",
+      "hsk2025.word.l5.3427.v1",
     ],
-    featuredWordAssetIds: ["hsk3.word.l1.0334.v1", "hsk3.word.l2.0253.v1", "hsk3.word.l3.0002.v1"],
+    featuredWordAssetIds: ["hsk2025.word.l1.0186.v1", "hsk2025.word.l4.1329.v1", "hsk2025.word.l4.1005.v1"],
     estimatedMinutes: 15,
     difficulty: "developing",
     expressions: [{"hanzi": "我们明天下午见。", "pinyin": "Wǒmen míngtiān xiàwǔ jiàn.", "meaning": "Let’s meet tomorrow afternoon."}, {"hanzi": "你周末有时间吗？", "pinyin": "Nǐ zhōumò yǒu shíjiān ma?", "meaning": "Do you have time this weekend?"}, {"hanzi": "请准时到。", "pinyin": "Qǐng zhǔnshí dào.", "meaning": "Please arrive on time."}],
@@ -160,12 +161,12 @@ const baseLearningTopics: LearningTopic[] = [
     learningGoal: "Understand and give a short everyday weather description.",
     levelBands: ["1", "2"],
     wordAssetIds: [
-      "hsk3.word.l1.0360.v1", "hsk3.word.l2.0441.v1", "hsk3.word.l2.0668.v1",
-      "hsk3.word.l1.0396.v1", "hsk3.word.l2.0590.v1", "hsk3.word.l1.0110.v1",
-      "hsk3.word.l1.0304.v1", "hsk3.word.l1.0212.v1", "hsk3.word.l2.0080.v1",
-      "hsk3.word.l2.0592.v1", "hsk3.word.l2.0445.v1", "hsk3.word.l2.0133.v1",
+      "hsk2025.word.l1.0208.v1", "hsk2025.word.l2.0420.v1", "hsk2025.word.l2.0475.v1",
+      "hsk2025.word.l1.0227.v1", "hsk2025.word.l3.0534.v1", "hsk2025.word.l3.0629.v1",
+      "hsk2025.word.l1.0169.v1", "hsk2025.word.l1.0109.v1", "hsk2025.word.l3.0568.v1",
+      "hsk2025.word.l3.0889.v1", "hsk2025.word.l3.0810.v1", "hsk2025.word.l3.0601.v1",
     ],
-    featuredWordAssetIds: ["hsk3.word.l1.0360.v1", "hsk3.word.l1.0396.v1", "hsk3.word.l2.0590.v1"],
+    featuredWordAssetIds: ["hsk2025.word.l1.0208.v1", "hsk2025.word.l1.0227.v1", "hsk2025.word.l3.0534.v1"],
     estimatedMinutes: 16,
     difficulty: "starter",
     expressions: [{"hanzi": "今天天气很好。", "pinyin": "Jīntiān tiānqì hěn hǎo.", "meaning": "The weather is nice today."}, {"hanzi": "外面正在下雨。", "pinyin": "Wàimiàn zhèngzài xiàyǔ.", "meaning": "It is raining outside."}, {"hanzi": "冬天比秋天冷。", "pinyin": "Dōngtiān bǐ qiūtiān lěng.", "meaning": "Winter is colder than autumn."}],
@@ -190,11 +191,11 @@ const baseLearningTopics: LearningTopic[] = [
     learningGoal: "Recognize core words needed to choose and discuss a meal.",
     levelBands: ["1", "2", "4", "5"],
     wordAssetIds: [
-      "hsk3.word.l2.0156.v1", "hsk3.word.l5.0076.v1", "hsk3.word.l2.0047.v1",
-      "hsk3.word.l1.0242.v1", "hsk3.word.l1.0139.v1", "hsk3.word.l4.0455.v1",
-      "hsk3.word.l1.0294.v1", "hsk3.word.l1.0228.v1",
+      "hsk3.word.l2.0156.v1", "hsk2025.word.l4.1064.v1", "hsk2025.word.l3.0545.v1",
+      "hsk2025.word.l1.0125.v1", "hsk3.word.l1.0139.v1", "hsk2025.word.l4.1449.v1",
+      "hsk2025.word.l1.0164.v1", "hsk2025.word.l1.0116.v1",
     ],
-    featuredWordAssetIds: ["hsk3.word.l2.0156.v1", "hsk3.word.l2.0047.v1", "hsk3.word.l1.0139.v1"],
+    featuredWordAssetIds: ["hsk3.word.l2.0156.v1", "hsk2025.word.l3.0545.v1", "hsk3.word.l1.0139.v1"],
     estimatedMinutes: 12,
     difficulty: "starter",
     expressions: [{"hanzi": "请给我看一下菜单。", "pinyin": "Qǐng gěi wǒ kàn yíxià càidān.", "meaning": "Please let me see the menu."}, {"hanzi": "我要一碗米饭。", "pinyin": "Wǒ yào yì wǎn mǐfàn.", "meaning": "I would like a bowl of rice."}, {"hanzi": "这个菜不太辣。", "pinyin": "Zhège cài bú tài là.", "meaning": "This dish is not very spicy."}],
@@ -219,14 +220,14 @@ const baseLearningTopics: LearningTopic[] = [
     learningGoal: "Find groceries, compare price and quantity, and complete checkout in a natural exchange.",
     levelBands: ["1", "2", "3", "4", "5", "7"],
     wordAssetIds: [
-      "hsk3.word.l1.0314.v1", "hsk3.word.l2.0060.v1", "hsk3.word.l4.0283.v1", "hsk3.word.l1.0228.v1", "hsk3.word.l2.0372.v1",
-      "hsk3.word.l3.0816.v1", "hsk3.word.l1.0346.v1", "hsk3.word.l5.0707.v1", "hsk3.word.l3.0539.v1", "hsk3.word.l1.0275.v1",
-      "hsk3.word.l4.0816.v1", "hsk3.word.l3.0334.v1", "hsk3.word.l3.0335.v1", "hsk3.word.l2.0414.v1", "hsk3.word.l1.0127.v1",
-      "hsk3.word.l1.0095.v1", "hsk3.word.l1.0294.v1", "hsk3.word.l2.0190.v1", "hsk3.word.l2.0293.v1", "hsk3.word.l2.0422.v1",
-      "hsk3.word.l4.0139.v1", "hsk3.word.l3.0782.v1", "hsk3.word.l2.0621.v1", "hsk3.word.l3.0904.v1", "hsk3.word.l7.3760.v1",
-      "hsk3.word.l2.0408.v1", "hsk3.word.l4.0686.v1", "hsk3.word.l4.0220.v1", "hsk3.word.l4.0991.v1", "hsk3.word.l3.0309.v1",
+      "hsk2025.word.l1.0174.v1", "hsk2025.word.l1.0019.v1", "hsk2025.word.l4.1262.v1", "hsk2025.word.l1.0116.v1", "hsk2025.word.l1.0117.v1",
+      "hsk2025.word.l3.0912.v1", "hsk2025.word.l1.0193.v1", "hsk2025.word.l5.3055.v1", "hsk2025.word.l1.0159.v1", "hsk2025.word.l1.0151.v1",
+      "hsk2025.word.l3.0905.v1", "hsk2025.word.l4.1346.v1", "hsk2025.word.l4.1347.v1", "hsk2025.word.l1.0157.v1", "hsk2025.word.l1.0065.v1",
+      "hsk2025.word.l1.0047.v1", "hsk2025.word.l1.0164.v1", "hsk2025.word.l3.0647.v1", "hsk2025.word.l3.0716.v1", "hsk2025.word.l3.0796.v1",
+      "hsk2025.word.l4.1121.v1", "hsk2025.word.l4.1797.v1", "hsk2025.word.l3.0907.v1", "hsk2025.word.l4.1940.v1", "hsk2025.word.l7.09119.v1",
+      "hsk2025.word.l4.1545.v1", "hsk2025.word.l4.1133.v1", "hsk2025.word.l6.3955.v1", "hsk2025.word.l5.3582.v1", "hsk2025.word.l4.1310.v1",
     ],
-    featuredWordAssetIds: ["hsk3.word.l2.0060.v1", "hsk3.word.l1.0346.v1", "hsk3.word.l3.0334.v1", "hsk3.word.l3.0904.v1"],
+    featuredWordAssetIds: ["hsk2025.word.l1.0019.v1", "hsk2025.word.l1.0193.v1", "hsk2025.word.l4.1346.v1", "hsk2025.word.l4.1940.v1"],
     estimatedMinutes: 45,
     difficulty: "developing",
     expressions: [{"hanzi": "请问，牛奶在哪儿？", "pinyin": "Qǐngwèn, niúnǎi zài nǎr?", "meaning": "Excuse me, where is the milk?"}, {"hanzi": "这个多少钱一斤？", "pinyin": "Zhège duōshao qián yì jīn?", "meaning": "How much is this per jin?"}, {"hanzi": "我用信用卡支付。", "pinyin": "Wǒ yòng xìnyòngkǎ zhīfù.", "meaning": "I’ll pay by credit card."}, {"hanzi": "请给我收据。", "pinyin": "Qǐng gěi wǒ shōujù.", "meaning": "Please give me the receipt."}],
@@ -234,21 +235,21 @@ const baseLearningTopics: LearningTopic[] = [
     lessons: [
       {
         id: "find-and-buy", title: "Find what you need", titleZh: "找到并购买商品", outcome: "Ask where an item is and choose ten common grocery words.",
-        wordAssetIds: ["hsk3.word.l1.0314.v1", "hsk3.word.l2.0060.v1", "hsk3.word.l4.0283.v1", "hsk3.word.l1.0228.v1", "hsk3.word.l2.0372.v1", "hsk3.word.l3.0816.v1", "hsk3.word.l1.0346.v1", "hsk3.word.l5.0707.v1", "hsk3.word.l3.0539.v1", "hsk3.word.l1.0275.v1"],
+        wordAssetIds: ["hsk2025.word.l1.0174.v1", "hsk2025.word.l1.0019.v1", "hsk2025.word.l4.1262.v1", "hsk2025.word.l1.0116.v1", "hsk2025.word.l1.0117.v1", "hsk2025.word.l3.0912.v1", "hsk2025.word.l1.0193.v1", "hsk2025.word.l5.3055.v1", "hsk2025.word.l1.0159.v1", "hsk2025.word.l1.0151.v1"],
         expressions: [{"hanzi": "我需要买水果和蔬菜。", "pinyin": "Wǒ xūyào mǎi shuǐguǒ hé shūcài.", "meaning": "I need to buy fruit and vegetables."}, {"hanzi": "请问，牛奶在哪儿？", "pinyin": "Qǐngwèn, niúnǎi zài nǎr?", "meaning": "Excuse me, where is the milk?"}, {"hanzi": "这个商店卖苹果吗？", "pinyin": "Zhège shāngdiàn mài píngguǒ ma?", "meaning": "Does this shop sell apples?"}],
         dialogue: [{"speaker": "A", "hanzi": "请问，水果在哪儿？", "pinyin": "Qǐngwèn, shuǐguǒ zài nǎr?", "meaning": "Excuse me, where is the fruit?"}, {"speaker": "B", "hanzi": "在前面，蔬菜旁边。", "pinyin": "Zài qiánmiàn, shūcài pángbiān.", "meaning": "Ahead, beside the vegetables."}, {"speaker": "A", "hanzi": "这里卖牛奶吗？", "pinyin": "Zhèlǐ mài niúnǎi ma?", "meaning": "Do you sell milk here?"}, {"speaker": "B", "hanzi": "卖，在右边的冰箱里。", "pinyin": "Mài, zài yòubiān de bīngxiāng lǐ.", "meaning": "Yes, in the refrigerator on the right."}],
         task: { title: "Find four items", scenario: "You enter an unfamiliar supermarket with a list: apples, vegetables, fruit and milk. Ask a clerk where two items are, then say what you need to buy.", successCriteria: ["Ask where an item is", "Name at least four groceries", "Use 需要 and 买 in one natural sentence"] },
       },
       {
         id: "compare-and-measure", title: "Compare price and quantity", titleZh: "比较价格和数量", outcome: "Check freshness, ask a price, and choose the right unit or container.",
-        wordAssetIds: ["hsk3.word.l4.0816.v1", "hsk3.word.l3.0334.v1", "hsk3.word.l3.0335.v1", "hsk3.word.l2.0414.v1", "hsk3.word.l1.0127.v1", "hsk3.word.l1.0095.v1", "hsk3.word.l1.0294.v1", "hsk3.word.l2.0190.v1", "hsk3.word.l2.0293.v1", "hsk3.word.l2.0422.v1"],
+        wordAssetIds: ["hsk2025.word.l3.0905.v1", "hsk2025.word.l4.1346.v1", "hsk2025.word.l4.1347.v1", "hsk2025.word.l1.0157.v1", "hsk2025.word.l1.0065.v1", "hsk2025.word.l1.0047.v1", "hsk2025.word.l1.0164.v1", "hsk2025.word.l3.0647.v1", "hsk2025.word.l3.0716.v1", "hsk2025.word.l3.0796.v1"],
         expressions: [{"hanzi": "这些苹果新鲜吗？", "pinyin": "Zhèxiē píngguǒ xīnxiān ma?", "meaning": "Are these apples fresh?"}, {"hanzi": "这个多少钱一斤？", "pinyin": "Zhège duōshao qián yì jīn?", "meaning": "How much is this per jin?"}, {"hanzi": "我要一公斤，再要一瓶牛奶。", "pinyin": "Wǒ yào yì gōngjīn, zài yào yì píng niúnǎi.", "meaning": "I’ll take one kilogram, plus a bottle of milk."}],
         dialogue: [{"speaker": "A", "hanzi": "这些苹果新鲜吗？", "pinyin": "Zhèxiē píngguǒ xīnxiān ma?", "meaning": "Are these apples fresh?"}, {"speaker": "B", "hanzi": "很新鲜，八块钱一斤。", "pinyin": "Hěn xīnxiān, bā kuài qián yì jīn.", "meaning": "Very fresh, eight yuan per jin."}, {"speaker": "A", "hanzi": "旁边的价格更便宜吗？", "pinyin": "Pángbiān de jiàgé gèng piányi ma?", "meaning": "Is the price of the ones beside them cheaper?"}, {"speaker": "B", "hanzi": "对，但是那些苹果小一点儿。", "pinyin": "Duì, dànshì nàxiē píngguǒ xiǎo yìdiǎnr.", "meaning": "Yes, but those apples are a little smaller."}],
         task: { title: "Choose the better buy", scenario: "Two apple displays use different prices and units. Ask the price, confirm whether it is per jin or kilogram, and choose one kilogram without confusing the total.", successCriteria: ["Ask 多少钱", "Use 斤 or 公斤 correctly", "Compare 便宜 and 贵 before choosing"] },
       },
       {
         id: "pay-and-leave", title: "Pay and finish checkout", titleZh: "付款并完成结账", outcome: "Understand a discount, choose a payment method, and ask for checkout documents.",
-        wordAssetIds: ["hsk3.word.l4.0139.v1", "hsk3.word.l3.0782.v1", "hsk3.word.l2.0621.v1", "hsk3.word.l3.0904.v1", "hsk3.word.l7.3760.v1", "hsk3.word.l2.0408.v1", "hsk3.word.l4.0686.v1", "hsk3.word.l4.0220.v1", "hsk3.word.l4.0991.v1", "hsk3.word.l3.0309.v1"],
+        wordAssetIds: ["hsk2025.word.l4.1121.v1", "hsk2025.word.l4.1797.v1", "hsk2025.word.l3.0907.v1", "hsk2025.word.l4.1940.v1", "hsk2025.word.l7.09119.v1", "hsk2025.word.l4.1545.v1", "hsk2025.word.l4.1133.v1", "hsk2025.word.l6.3955.v1", "hsk2025.word.l5.3582.v1", "hsk2025.word.l4.1310.v1"],
         expressions: [{"hanzi": "这个会员价打折吗？", "pinyin": "Zhège huìyuán jià dǎzhé ma?", "meaning": "Is this member price discounted?"}, {"hanzi": "我用信用卡支付。", "pinyin": "Wǒ yòng xìnyòngkǎ zhīfù.", "meaning": "I’ll pay by credit card."}, {"hanzi": "请给我收据和发票。", "pinyin": "Qǐng gěi wǒ shōujù hé fāpiào.", "meaning": "Please give me the receipt and invoice."}],
         dialogue: [{"speaker": "A", "hanzi": "您好，会员商品今天打折。", "pinyin": "Nínhǎo, huìyuán shāngpǐn jīntiān dǎzhé.", "meaning": "Hello, member items are discounted today."}, {"speaker": "B", "hanzi": "好的，总共多少钱？", "pinyin": "Hǎo de, zǒnggòng duōshao qián?", "meaning": "Okay, how much is it altogether?"}, {"speaker": "A", "hanzi": "五十八块。用现金还是信用卡？", "pinyin": "Wǔshíbā kuài. Yòng xiànjīn háishi xìnyòngkǎ?", "meaning": "Fifty-eight yuan. Cash or card?"}, {"speaker": "B", "hanzi": "信用卡。请给我一个塑料袋和收据。", "pinyin": "Xìnyòngkǎ. Qǐng gěi wǒ yí ge sùliàodài hé shōujù.", "meaning": "Card. Please give me a plastic bag and the receipt."}],
         task: { title: "Complete checkout", scenario: "You reach a staffed checkout after waiting in line. Confirm the discounted total, choose cash or card, pay, and request the document and bag you need.", successCriteria: ["Confirm the total with 总共", "State a payment method", "Ask for a 收据, 发票 or 塑料袋"] },
@@ -274,12 +275,12 @@ const baseLearningTopics: LearningTopic[] = [
     learningGoal: "Follow and describe the main steps of preparing a simple meal.",
     levelBands: ["1", "2", "3", "4", "5", "6"],
     wordAssetIds: [
-      "hsk3.word.l2.0772.v1", "hsk3.word.l5.0129.v1", "hsk3.word.l5.0307.v1",
-      "hsk3.word.l3.0141.v1", "hsk3.word.l1.0386.v1", "hsk3.word.l4.0581.v1",
-      "hsk3.word.l1.0103.v1", "hsk3.word.l4.0850.v1", "hsk3.word.l3.0698.v1",
-      "hsk3.word.l2.0681.v1", "hsk3.word.l6.1097.v1", "hsk3.word.l6.0114.v1",
+      "hsk2025.word.l1.0300.v1", "hsk2025.word.l4.1093.v1", "hsk2025.word.l5.2449.v1",
+      "hsk2025.word.l4.1137.v1", "hsk2025.word.l2.0456.v1", "hsk2025.word.l5.2877.v1",
+      "hsk3.word.l1.0103.v1", "hsk2025.word.l4.1844.v1", "hsk2025.word.l3.0850.v1",
+      "hsk2025.word.l4.1885.v1", "hsk2025.word.l5.3540.v1", "hsk2025.word.l5.2123.v1",
     ],
-    featuredWordAssetIds: ["hsk3.word.l2.0772.v1", "hsk3.word.l5.0129.v1", "hsk3.word.l4.0581.v1"],
+    featuredWordAssetIds: ["hsk2025.word.l1.0300.v1", "hsk2025.word.l4.1093.v1", "hsk2025.word.l5.2877.v1"],
     estimatedMinutes: 18,
     difficulty: "stretch",
     expressions: [{"hanzi": "先把菜洗干净。", "pinyin": "Xiān bǎ cài xǐ gānjìng.", "meaning": "First wash the vegetables clean."}, {"hanzi": "锅热了以后再放油。", "pinyin": "Guō rè le yǐhòu zài fàng yóu.", "meaning": "Add oil after the pan is hot."}, {"hanzi": "最后加一点儿盐。", "pinyin": "Zuìhòu jiā yìdiǎnr yán.", "meaning": "Finally add a little salt."}],
@@ -304,11 +305,11 @@ const baseLearningTopics: LearningTopic[] = [
     learningGoal: "Follow the basic sequence from terminal arrival to reaching a destination.",
     levelBands: ["1", "2", "3", "4"],
     wordAssetIds: [
-      "hsk3.word.l1.0107.v1", "hsk3.word.l1.0162.v1", "hsk3.word.l1.0161.v1",
-      "hsk3.word.l1.0043.v1", "hsk3.word.l2.0231.v1", "hsk3.word.l3.0803.v1",
-      "hsk3.word.l2.0068.v1", "hsk3.word.l3.0143.v1", "hsk3.word.l4.0311.v1",
+      "hsk2025.word.l1.0054.v1", "hsk2025.word.l2.0363.v1", "hsk2025.word.l1.0083.v1",
+      "hsk3.word.l1.0043.v1", "hsk2025.word.l3.0674.v1", "hsk2025.word.l3.0909.v1",
+      "hsk2025.word.l3.0562.v1", "hsk2025.word.l5.2256.v1", "hsk2025.word.l4.1289.v1",
     ],
-    featuredWordAssetIds: ["hsk3.word.l1.0107.v1", "hsk3.word.l2.0231.v1", "hsk3.word.l3.0803.v1"],
+    featuredWordAssetIds: ["hsk2025.word.l1.0054.v1", "hsk2025.word.l3.0674.v1", "hsk2025.word.l3.0909.v1"],
     estimatedMinutes: 14,
     difficulty: "developing",
     expressions: [{"hanzi": "请问，登机口在哪儿？", "pinyin": "Qǐngwèn, dēngjīkǒu zài nǎr?", "meaning": "Excuse me, where is the boarding gate?"}, {"hanzi": "我想取一下火车票。", "pinyin": "Wǒ xiǎng qǔ yíxià huǒchēpiào.", "meaning": "I would like to collect my train ticket."}, {"hanzi": "飞机准时到达。", "pinyin": "Fēijī zhǔnshí dàodá.", "meaning": "The plane arrives on time."}],
@@ -333,12 +334,12 @@ const baseLearningTopics: LearningTopic[] = [
     learningGoal: "Understand the core words needed to complete a local transport journey.",
     levelBands: ["1", "2"],
     wordAssetIds: [
-      "hsk3.word.l2.0125.v1", "hsk3.word.l2.0188.v1", "hsk3.word.l2.0076.v1",
-      "hsk3.word.l1.0461.v1", "hsk3.word.l1.0318.v1", "hsk3.word.l1.0392.v1",
-      "hsk3.word.l2.0240.v1", "hsk3.word.l1.0221.v1", "hsk3.word.l2.0161.v1",
-      "hsk3.word.l2.0506.v1",
+      "hsk2025.word.l2.0335.v1", "hsk2025.word.l3.0803.v1", "hsk2025.word.l1.0022.v1",
+      "hsk3.word.l1.0461.v1", "hsk2025.word.l1.0175.v1", "hsk2025.word.l1.0226.v1",
+      "hsk2025.word.l3.0680.v1", "hsk2025.word.l2.0392.v1", "hsk2025.word.l3.0622.v1",
+      "hsk2025.word.l3.0847.v1",
     ],
-    featuredWordAssetIds: ["hsk3.word.l2.0125.v1", "hsk3.word.l2.0188.v1", "hsk3.word.l2.0076.v1"],
+    featuredWordAssetIds: ["hsk2025.word.l2.0335.v1", "hsk2025.word.l3.0803.v1", "hsk2025.word.l1.0022.v1"],
     estimatedMinutes: 15,
     difficulty: "starter",
     expressions: [{"hanzi": "请问，地铁站怎么走？", "pinyin": "Qǐngwèn, dìtiězhàn zěnme zǒu?", "meaning": "Excuse me, how do I get to the subway station?"}, {"hanzi": "坐三站以后下车。", "pinyin": "Zuò sān zhàn yǐhòu xiàchē.", "meaning": "Get off after three stops."}, {"hanzi": "我需要换一次车。", "pinyin": "Wǒ xūyào huàn yí cì chē.", "meaning": "I need to transfer once."}],
@@ -363,11 +364,11 @@ const baseLearningTopics: LearningTopic[] = [
     learningGoal: "Handle basic room, booking and hotel facility vocabulary.",
     levelBands: ["1", "2", "4", "5", "7–9"],
     wordAssetIds: [
-      "hsk3.word.l5.0041.v1", "hsk3.word.l2.0302.v1", "hsk3.word.l1.0101.v1",
-      "hsk3.word.l4.0907.v1", "hsk3.word.l7.3259.v1", "hsk3.word.l7.4847.v1",
-      "hsk3.word.l4.0190.v1", "hsk3.word.l1.0387.v1",
+      "hsk2025.word.l3.0533.v1", "hsk2025.word.l2.0375.v1", "hsk2025.word.l1.0052.v1",
+      "hsk2025.word.l5.3423.v1", "hsk2025.word.l7.08630.v1", "hsk2025.word.l4.1860.v1",
+      "hsk2025.word.l3.0594.v1", "hsk2025.word.l2.0457.v1",
     ],
-    featuredWordAssetIds: ["hsk3.word.l2.0302.v1", "hsk3.word.l1.0101.v1", "hsk3.word.l4.0907.v1"],
+    featuredWordAssetIds: ["hsk2025.word.l2.0375.v1", "hsk2025.word.l1.0052.v1", "hsk2025.word.l5.3423.v1"],
     estimatedMinutes: 12,
     difficulty: "developing",
     expressions: [{"hanzi": "我预订了一个房间。", "pinyin": "Wǒ yùdìng le yí ge fángjiān.", "meaning": "I booked a room."}, {"hanzi": "请问，早餐几点开始？", "pinyin": "Qǐngwèn, zǎocān jǐ diǎn kāishǐ?", "meaning": "Excuse me, what time does breakfast begin?"}, {"hanzi": "房卡打不开门。", "pinyin": "Fángkǎ dǎ bu kāi mén.", "meaning": "The room key card will not open the door."}],
@@ -387,7 +388,11 @@ const baseLearningTopics: LearningTopic[] = [
 export const learningTopics: LearningTopic[] = baseLearningTopics.map((topic) => {
   const expansion = p2TopicExpansions[topic.slug];
   return expansion ? { ...topic, ...expansion } : topic;
-}).concat(p3AdditionalTopics);
+}).concat(p3AdditionalTopics).map((topic) => ({
+  ...topic,
+  levelBands: currentLevelBands[topic.slug as keyof typeof currentLevelBands],
+  sourceReleaseId: topicsSourceReleaseId,
+}));
 
 export function findTopicCategoryBySlug(slug: string) {
   return topicCategories.find((category) => category.slug === slug) ?? null;

@@ -1,7 +1,7 @@
 import runtimeIndex from "../content/runtime-content-index.json" with { type: "json" };
 import { publishedContentAudioAsset } from "../audio/assets.ts";
 import type { CatalogSearchRow } from "../content/catalog-search.ts";
-import { findPublicCatalogWordById } from "../content/public-catalog-index.ts";
+import { findNextPublicCatalogWordsForToday, findPublicCatalogWordById } from "../content/public-catalog-index.ts";
 import { getHsk3LevelStatus } from "../content/level-status.ts";
 import { listPublishedWords, type StudyWord } from "../dictionary/catalog.ts";
 import type { DailySession } from "./domain.ts";
@@ -203,7 +203,14 @@ export function selectTodayContent(startLevel: number, requestedCount = 1, selec
       ...remaining.filter((item) => !item.audioSrc),
     ];
     const alreadyNew = items.filter((item) => !item.isContinuing).length;
-    for (const item of ordered.slice(0, freezePinned ? 0 : Math.max(0, count - alreadyNew))) items.push(item);
+    const needed = freezePinned ? 0 : Math.max(0, count - alreadyNew);
+    const picked = ordered.slice(0, needed);
+    items.push(...picked);
+    if (picked.length < needed && !freezePinned) {
+      const excluded = new Set([...completed, ...pool.map((item) => item.contentId), ...items.map((item) => item.contentId)]);
+      const fallback = findNextPublicCatalogWordsForToday(result.catalogLevel, excluded, needed - picked.length);
+      items.push(...fallback.map(todayContentFromCatalogRow));
+    }
     plan = items.length ? {
       status: "ready",
       startLevel: level,

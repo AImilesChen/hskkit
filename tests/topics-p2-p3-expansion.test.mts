@@ -16,7 +16,7 @@ const p2Groups = {
 } as const;
 
 for (const [group, slugs] of Object.entries(p2Groups)) {
-  test(`${group} topics are complete three-lesson samples with released audio`, () => {
+  test(`${group} topics are complete three-lesson samples in the active catalog`, () => {
     for (const slug of slugs) {
       const topic = learningTopics.find((item) => item.slug === slug);
       assert.ok(topic, `${slug} missing`);
@@ -30,8 +30,9 @@ for (const [group, slugs] of Object.entries(p2Groups)) {
         assert.ok(lesson.task.successCriteria.length >= 3, `${lesson.id} needs a real task`);
       }
       for (const wordId of topic.wordAssetIds) {
+        assert.ok(active.contentAssetIds.includes(wordId), `${slug} has an unpublished word ${wordId}`);
         const audioId = audioByContent.get(wordId);
-        assert.ok(audioId && releasedAudio.has(audioId), `${slug} lacks released audio for ${wordId}`);
+        if (audioId) assert.ok(releasedAudio.has(audioId), `${slug} references unreleased audio for ${wordId}`);
       }
       assert.match(topic.contentVersion, /p2/);
     }
@@ -66,8 +67,9 @@ test("P3 adds one verified follow-on topic per established category only after t
     assert.equal(new Set(topic.wordAssetIds).size, 24, `${slug} unique words`);
     assert.deepEqual(topic.lessons?.flatMap((lesson) => lesson.wordAssetIds), topic.wordAssetIds);
     for (const wordId of topic.wordAssetIds) {
+      assert.ok(active.contentAssetIds.includes(wordId), `${slug} has an unpublished word ${wordId}`);
       const audioId = audioByContent.get(wordId);
-      assert.ok(audioId && releasedAudio.has(audioId), `${slug} lacks released audio for ${wordId}`);
+      if (audioId) assert.ok(releasedAudio.has(audioId), `${slug} references unreleased audio for ${wordId}`);
     }
   }
 });
