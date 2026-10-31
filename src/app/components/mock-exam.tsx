@@ -189,7 +189,7 @@ export function MockExam({ band }: { band: MockBand }) {
       <p><strong className="block text-slate-950">{advanced ? "35 minutes" : "30 minutes"}</strong>Timed attempt</p>
       <p><strong className="block text-slate-950">Autosaved</strong>Answers saved automatically</p>
     </div>
-    <p className="mt-5 max-w-2xl text-sm leading-6 text-slate-600">This short learning check is not an official or full-length HSK exam. It samples three skills; writing, translation and speaking are not tested. Recent diagnostic questions are avoided when the pool allows.</p>
+    <p className="mt-5 max-w-2xl text-sm leading-6 text-slate-600">This short learning check uses HSKKit-authored grammar, reading and listening material. It is not an official or full-length HSK exam. Writing, translation and speaking are not tested. Recent diagnostic questions are avoided when the pool allows.</p>
     <button className="btn btn-primary mt-7 min-h-11 disabled:cursor-not-allowed disabled:bg-slate-300 disabled:text-slate-500" disabled={busy || ready !== true} onClick={start}>Start {advanced ? "Advanced" : `HSK ${targetLevel}`} Skills Check</button>
     <p aria-live="polite" className="mt-3 text-sm font-semibold text-slate-600">{ready === false ? `Unavailable right now: ${selectedAvailability?.reason ?? "please try again later"}` : status}</p>
     <details className="mt-5 rounded-2xl border border-slate-200 p-4 text-sm leading-6 text-slate-600">
@@ -203,6 +203,10 @@ export function MockExam({ band }: { band: MockBand }) {
     const unansweredCount = result.items.filter((item) => !item.answer).length;
     const incorrectCount = result.items.filter((item) => Boolean(item.answer) && !item.correct).length;
     const correctCount = result.items.filter((item) => item.correct).length;
+    const skillScores = (["grammar", "reading", "listening"] as const).map((skill) => ({ skill, correct: result.dimensionEvidence[skill]?.correct ?? 0, total: result.dimensionEvidence[skill]?.total ?? 0 }));
+    const nextSkill = skillScores.slice().sort((left, right) => left.correct / (left.total || 1) - right.correct / (right.total || 1))[0];
+    const needsPractice = nextSkill.correct < nextSkill.total;
+    const practiceLevel = advanced ? 7 : session.questions[0]?.level ?? targetLevel;
     const reviewItems = result.items.filter((item) => reviewFilter === "all" || (reviewFilter === "correct" && item.correct) || (reviewFilter === "unanswered" && !item.answer) || (reviewFilter === "incorrect" && Boolean(item.answer) && !item.correct));
     const primaryReview = advanced ? { label: `Review ${result.totalCount} tasks`, filter: "all" as ReviewFilter } : incorrectCount > 0 ? { label: `Review mistakes (${incorrectCount})`, filter: "incorrect" as ReviewFilter } : unansweredCount > 0 ? { label: `Review unanswered (${unansweredCount})`, filter: "unanswered" as ReviewFilter } : { label: "Review all answers", filter: "all" as ReviewFilter };
     const filters: Array<{ key: ReviewFilter; label: string; count: number }> = [
@@ -224,6 +228,11 @@ export function MockExam({ band }: { band: MockBand }) {
         </div>
         <div className="mt-5 grid gap-3 sm:grid-cols-3" aria-label="Results by skill">
           {(["grammar", "reading", "listening"] as const).map((skill) => <div key={skill} className="rounded-xl border border-slate-200 p-3"><span className="font-bold capitalize text-slate-900">{skill}</span><span className="ml-2 text-slate-700">{result.dimensionEvidence[skill]?.correct ?? 0}/{result.dimensionEvidence[skill]?.total ?? 0}</span></div>)}
+        </div>
+        <div className="mt-5 rounded-2xl border border-blue-200 bg-blue-50 p-4 sm:p-5">
+          <h2 className="text-lg font-black text-slate-950">{needsPractice ? `Next step: practise ${nextSkill.skill}` : "Next step: try another question set"}</h2>
+          <p className="mt-2 text-sm leading-6 text-slate-700">{needsPractice ? `You answered ${nextSkill.correct} of ${nextSkill.total} ${nextSkill.skill} questions correctly in this short set. Review those answers, then practise the same skill at this level.` : "You answered every question in this short set correctly. Another set will check different material."}</p>
+          {needsPractice ? <Link className="btn btn-primary mt-4 min-h-11" href={`/practice/${practiceLevel}/${nextSkill.skill}`}>Practise {nextSkill.skill} now</Link> : null}
         </div>
         <div className="mt-6 flex flex-col gap-3 sm:flex-row">
           <a className="btn btn-primary min-h-11 text-center" href="#mock-question-review" onClick={() => setReviewFilter(primaryReview.filter)}>{primaryReview.label}</a>
@@ -248,7 +257,7 @@ export function MockExam({ band }: { band: MockBand }) {
           const correctLabel = snapshot?.options?.[item.correctAnswer] ?? item.correctAnswer;
           return <details key={item.questionId} className={`rounded-2xl border p-4 ${item.correct ? "border-emerald-200 bg-emerald-50" : item.answer ? "border-amber-200 bg-amber-50" : "border-slate-200 bg-slate-50"}`}>
             <summary className="cursor-pointer font-bold text-slate-950">{itemState} | {item.dimension} | {item.prompt}</summary>
-            <div className="mt-4 border-t border-current/10 pt-4"><p className="text-sm">Your answer: {answerLabel}</p><p className="mt-1 text-sm">Correct answer: {correctLabel}</p><p className="mt-3 text-sm leading-6 text-slate-700">{item.explanation}</p></div>
+            <div className="mt-4 border-t border-current/10 pt-4">{snapshot?.context ? <p className="mb-3 rounded-xl bg-white/80 p-3 text-sm leading-6 text-slate-800">{snapshot.context}</p> : null}{snapshot?.audioSrc ? <audio aria-label="Replay the question recording" className="mb-3 w-full" controls preload="none" src={snapshot.audioSrc}>Audio playback is unavailable in this browser.</audio> : null}<p className="text-sm">Your answer: {answerLabel}</p><p className="mt-1 text-sm">Correct answer: {correctLabel}</p><p className="mt-3 text-sm leading-6 text-slate-700">{item.explanation}</p></div>
           </details>;
         })}</div>
         {reviewItems.length === 0 ? <p className="mt-5 rounded-2xl bg-slate-50 p-5 text-slate-600">No questions match this filter.</p> : null}
