@@ -12,7 +12,7 @@ const formula=(ref:string,value:string,style=0)=>`<c r="${ref}" s="${style}"><f>
 const row=(index:number,cells:string[],height?:number)=>`<row r="${index}"${height?` ht="${height}" customHeight="1"`:""}>${cells.join("")}</row>`;
 const worksheet=(body:string,extra="")=>`<?xml version="1.0" encoding="UTF-8" standalone="yes"?><worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships">${body}${extra}</worksheet>`;
 
-function instructionsSheet(){
+function instructionsSheet(totalWords:number,advancedWords:number){
   const rows=[
     row(1,[inline("A1","HSKKit Assessment Tracker · Start here",1)],32),
     row(2,[inline("A2","Use Blank.xlsx for your records. Example.xlsx contains fictional scores and two dated checks of the same word.",2)],32),
@@ -25,7 +25,7 @@ function instructionsSheet(){
     row(11,[inline("A11","Enter a date, exact Word ID and all three scores in Assessment Log. Only rows marked Ready enter Weekly Review. Set Week Start and Target source level there.",2)],42),
     row(12,[inline("A12","The weekly view preserves history because it reads dated log events, not the editable current snapshot. Record evidence, next action and next review date.",2)],38),
     row(14,[inline("A14","3 · Source and compatibility",1)],28),
-    row(15,[inline("A15","HSK Levels 7–9 share one canonical advanced source band. The 5,636 advanced word IDs appear once under source level 7; Dashboard labels that row Advanced 7–9.",2)],42),
+    row(15,[inline("A15",`This edition tracks ${totalWords.toLocaleString("en-US")} entries. HSK Levels 7–9 share one advanced source band: ${advancedWords.toLocaleString("en-US")} word IDs appear once under source level 7.`,2)],42),
     row(16,[inline("A16","The workbook is intended for desktop Excel or LibreOffice. CSV files are optional exports; other spreadsheet app imports have not been verified.",2)],36),
   ];
   const merged=[1,2,4,5,6,7,9,10,11,12,14,15,16].map(i=>`<mergeCell ref="A${i}:H${i}"/>`).join("");
@@ -133,7 +133,7 @@ export function generateAssessmentWorkbook(words:TrackerWord[],example=false){
     {name:"xl/workbook.xml",data:encoder.encode(workbook)},
     {name:"xl/_rels/workbook.xml.rels",data:encoder.encode(workbookRels)},
     {name:"xl/styles.xml",data:encoder.encode(styles)},
-    {name:"xl/worksheets/sheet1.xml",data:encoder.encode(instructionsSheet())},
+    {name:"xl/worksheets/sheet1.xml",data:encoder.encode(instructionsSheet(words.length,words.filter(word=>word.level===7).length))},
     {name:"xl/worksheets/sheet2.xml",data:encoder.encode(dashboardSheet(lastRow))},
     {name:"xl/worksheets/_rels/sheet2.xml.rels",data:encoder.encode(sheet2Rels)},
     {name:"xl/worksheets/sheet3.xml",data:encoder.encode(trackerSheet(words,example))},

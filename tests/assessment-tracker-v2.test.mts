@@ -3,6 +3,7 @@ import test from "node:test";
 import {readFile} from "node:fs/promises";
 import {PDFDocument} from "pdf-lib";
 import {generateDifferentiatedProductArtifact} from "../src/lib/commercial/product-generator.ts";
+import {generationVersionForProduct} from "../src/lib/commercial/products.ts";
 
 function zipEntries(zip:Uint8Array){
   const result=new Map<string,Uint8Array>();
@@ -17,6 +18,31 @@ function zipEntries(zip:Uint8Array){
   return result;
 }
 const text=(bytes:Uint8Array|undefined)=>new TextDecoder().decode(bytes);
+
+test("current Assessment Tracker exports the 2025 catalog consistently",async()=>{
+  const [font,emoji]=await Promise.all([
+    readFile(new URL("../assets/fonts/HskKitSansSubset.ttf",import.meta.url)),
+    readFile(new URL("../assets/fonts/HskKitEmoji.ttf",import.meta.url)),
+  ]);
+  const version=generationVersionForProduct("assessment-tracker");
+  assert.equal(version,"assessment-tracker-2025-v6");
+  assert.equal(generationVersionForProduct("learner-practice-toolkit"),"learner-toolkit-tracker-2025-v7");
+  const artifact=await generateDifferentiatedProductArtifact("assessment-tracker",new Uint8Array(font),new Uint8Array(emoji),version);
+  const files=zipEntries(artifact.bytes);
+  const csv=text(files.get("HSKKit-Assessment-Tracker-Raw-Data.csv"));
+  const rows=csv.trim().split(/\r?\n/);
+  assert.equal(rows.length,11001);
+  assert.equal(artifact.manifest.standardVersion,"HSK-EXAM-2025");
+  assert.equal(artifact.manifest.assets.length,11000);
+  for(const [level,count] of Object.entries({1:300,2:200,3:500,4:1000,5:1600,6:1800,7:5600})){
+    assert.equal(rows.filter(row=>row.startsWith(`"${level}",`)).length,count,`Level/band ${level}`);
+  }
+  assert.match(csv,/hsk2025\.word\.l1\./);
+  assert.doesNotMatch(csv,/hsk3\.word\.l1\./);
+  const workbook=zipEntries(files.get("HSKKit-Assessment-Tracker-Blank.xlsx")!);
+  assert.match(text(workbook.get("xl/worksheets/sheet1.xml")),/11,000 entries/);
+  assert.match(text(workbook.get("xl/worksheets/sheet1.xml")),/5,600 word IDs/);
+});
 
 test("Assessment Tracker preserves dated retests and excludes partial scores",async()=>{
   const [font,emoji]=await Promise.all([

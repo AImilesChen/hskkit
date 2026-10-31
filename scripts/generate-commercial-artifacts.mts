@@ -30,6 +30,16 @@ async function loadAssessmentLevelAudio():Promise<AssessmentLevelAudio>{
   return {index,tracks};
 }
 const assessmentLevelAudio=await loadAssessmentLevelAudio();
+const differentiatedArtifacts=new Map<string,ReturnType<typeof generateDifferentiatedProductArtifact>>();
+function differentiatedArtifact(productId:Parameters<typeof generateDifferentiatedProductArtifact>[0],generationVersion:string){
+  const key=`${generationVersion}:${productId}`;
+  let artifact=differentiatedArtifacts.get(key);
+  if(!artifact){
+    artifact=generateDifferentiatedProductArtifact(productId,fontBytes,emojiBytes,generationVersion,assessmentAudio,assessmentLevelAudio);
+    differentiatedArtifacts.set(key,artifact);
+  }
+  return artifact;
+}
 const levelArtifacts=new Map<string,{bytes:Uint8Array;manifest:Record<string,unknown>;selection:PackSelection}>();
 async function getLevelArtifact(level:number,generationVersion:string){
   const key=`${generationVersion}:${level}`;
@@ -118,19 +128,20 @@ for(const product of DIGITAL_PRODUCTS){
   }
   if(product.category==="resource_bundle"){
     const componentFiles=[] as Array<{name:string;data:Uint8Array}>;
-    const componentVersions=[] as Array<{productId:string;generationVersion:string;sha256:string}>;
+    const componentVersions=[] as Array<{productId:string;generationVersion:string;standardVersion:string;sha256:string}>;
     for(const componentId of product.componentProductIds??[]){
       const componentVersion=generationVersionForProduct(componentId);
-      const component=await generateDifferentiatedProductArtifact(componentId,fontBytes,emojiBytes,componentVersion,assessmentAudio,assessmentLevelAudio);
+      const component=await differentiatedArtifact(componentId,componentVersion);
       componentFiles.push({name:`${componentId}.${component.format}`,data:component.bytes});
-      componentVersions.push({productId:componentId,generationVersion:componentVersion,sha256:createHash("sha256").update(component.bytes).digest("hex")});
+      componentVersions.push({productId:componentId,generationVersion:componentVersion,standardVersion:component.manifest.standardVersion,sha256:createHash("sha256").update(component.bytes).digest("hex")});
     }
     const isLearnerToolkit=product.id==="learner-practice-toolkit";
-    const manifest={schemaVersion:"hskkit-product-manifest-v1",productId:product.id,generationVersion,standard:"HSK 3.0",standardVersion:"GF0025-2021",officialExam:false,levels:product.levels,componentProductIds:product.componentProductIds,files:componentFiles.map(file=>file.name),components:componentVersions,licenseNotice:productLicenseNotice(product.id)};
+    const manifest={schemaVersion:"hskkit-product-manifest-v1",productId:product.id,generationVersion,standard:"HSK 3.0",standardVersion:componentVersions.every(component=>component.standardVersion==="HSK-EXAM-2025")?"HSK-EXAM-2025":componentVersions.some(component=>component.standardVersion==="HSK-EXAM-2025")?"mixed-resource-components":"GF0025-2021",officialExam:false,levels:product.levels,componentProductIds:product.componentProductIds,files:componentFiles.map(file=>file.name),components:componentVersions,licenseNotice:productLicenseNotice(product.id)};
     const manifestFile={name:"manifest.json",data:new TextEncoder().encode(JSON.stringify(manifest,null,2))};
     const learnerReadme=[
       "HSKKit Learner Practice Toolkit | START HERE",
       "This bundle includes the complete current Worksheet Pack, Assessment Tracker and 30-Day Planner as three separate ZIPs. Unzip the outer bundle, then unzip the component you need. Each component has its own README.",
+      "The Tracker vocabulary index contains the current 11,000 entries from the 2025 HSK exam syllabus. The Worksheet Pack is a separate set of authored exercises and the Planner is a reusable schedule; neither is a second copy of that index.",
       "",
       "1. Choose a current HSK level and start with the Assessment Tracker Blank workbook. Follow its guide to record a small first attempt; the worked example is fictional and must not be entered as your own result.",
       "2. Set a goal and choose one 20, 30 or 45-minute route in the 30-Day Planner. The planner is a schedule, not a self-contained course: use level-appropriate material for tasks it does not supply, especially keyed listening audio and writing feedback.",
@@ -159,6 +170,6 @@ for(const product of DIGITAL_PRODUCTS){
     const bytes=generateZipFiles([...payload,{name:"checksums.sha256",data:checksumFile(payload)}]);
     await save(product.id,"product","zip",bytes,manifest,generationVersion);continue;
   }
-  const artifact=await generateDifferentiatedProductArtifact(product.id,fontBytes,emojiBytes,generationVersion,assessmentAudio,assessmentLevelAudio);
+  const artifact=await differentiatedArtifact(product.id,generationVersion);
   await save(product.id,deliveries[0].deliveryKey,artifact.format,artifact.bytes,artifact.manifest as unknown as Record<string,unknown>,generationVersion);
 }
