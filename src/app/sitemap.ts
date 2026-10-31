@@ -18,17 +18,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
   const publishedBlogRoutes = blogManifest.articles.filter((post) => Date.parse(post.publishedAt) <= Date.now());
   const existingPublicRoutes = [
     "",
-    "/hsk-1-vocabulary",
-    "/hsk-1-practice-test",
-    "/hsk-2-vocabulary",
-    "/hsk-2-practice-test",
-    "/hsk-3-vocabulary",
-    "/hsk-3-practice-test",
-    "/hsk-4-vocabulary",
-    "/hsk-4-practice-test",
-    "/hsk-5-vocabulary",
-    "/hsk-5-practice-test",
-    "/hsk-1-reading-practice",
     "/tools/chinese-character-practice-sheet-generator",
     "/contact",
     "/hsk-3-0",

@@ -52,22 +52,9 @@ These pages can use saved learner state. Guest access may be available, while an
 
 - [HSK Level Check](https://hskkit.com/hsk-level-test): Self-assessment aid for choosing a study starting point, not an official placement result.
 - [Chinese Character Practice Sheet Generator](https://hskkit.com/tools/chinese-character-practice-sheet-generator): Create printable character-writing worksheets.
-- [Traditional HSK 1 Reading Practice](https://hskkit.com/hsk-1-reading-practice): Five original beginner stories aligned to the traditional HSK 2.0 framework.
-
-## Traditional HSK 2.0 guides
-
-The following legacy guides are explicitly labelled as Traditional HSK 2.0 content. They should not be presented as complete HSK 3.0 catalogs.
-
-- [Traditional HSK 1 Vocabulary](https://hskkit.com/hsk-1-vocabulary)
-- [Traditional HSK 2 Vocabulary](https://hskkit.com/hsk-2-vocabulary)
-- [Traditional HSK 3 Vocabulary](https://hskkit.com/hsk-3-vocabulary)
-- [Traditional HSK 4 Vocabulary](https://hskkit.com/hsk-4-vocabulary)
-- [Traditional HSK 5 Vocabulary](https://hskkit.com/hsk-5-vocabulary)
-- [Traditional HSK 1 Practice Test](https://hskkit.com/hsk-1-practice-test)
-- [Traditional HSK 2 Practice Test](https://hskkit.com/hsk-2-practice-test)
-- [Traditional HSK 3 Practice Test](https://hskkit.com/hsk-3-practice-test)
-- [Traditional HSK 4 Practice Test](https://hskkit.com/hsk-4-practice-test)
-- [Traditional HSK 5 Practice Test](https://hskkit.com/hsk-5-practice-test)
+- [Reading](https://hskkit.com/reading): Current reading lessons and articles with level guidance.
+- [Basic Mock](https://hskkit.com/mock/basic): Choose a level-specific current skills check for HSK 1–6.
+- [Advanced Mock](https://hskkit.com/mock/advanced): A short unified HSK 7–9 diagnostic.
 
 ## Blog, plans, and downloadable resources
 

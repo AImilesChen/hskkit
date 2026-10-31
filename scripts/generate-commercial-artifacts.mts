@@ -136,7 +136,7 @@ for(const product of DIGITAL_PRODUCTS){
       componentVersions.push({productId:componentId,generationVersion:componentVersion,standardVersion:component.manifest.standardVersion,sha256:createHash("sha256").update(component.bytes).digest("hex")});
     }
     const isLearnerToolkit=product.id==="learner-practice-toolkit";
-    const manifest={schemaVersion:"hskkit-product-manifest-v1",productId:product.id,generationVersion,standard:"HSK 3.0",standardVersion:componentVersions.every(component=>component.standardVersion==="HSK-EXAM-2025")?"HSK-EXAM-2025":componentVersions.some(component=>component.standardVersion==="HSK-EXAM-2025")?"mixed-resource-components":"GF0025-2021",officialExam:false,levels:product.levels,componentProductIds:product.componentProductIds,files:componentFiles.map(file=>file.name),components:componentVersions,licenseNotice:productLicenseNotice(product.id)};
+    const manifest={schemaVersion:"hskkit-product-manifest-v1",productId:product.id,generationVersion,standard:"HSK 3.0",standardVersion:componentVersions.every(component=>component.standardVersion==="HSK-EXAM-2025")?"HSK-EXAM-2025":"mixed-resource-components",officialExam:false,levels:product.levels,componentProductIds:product.componentProductIds,files:componentFiles.map(file=>file.name),components:componentVersions,licenseNotice:productLicenseNotice(product.id)};
     const manifestFile={name:"manifest.json",data:new TextEncoder().encode(JSON.stringify(manifest,null,2))};
     const learnerReadme=[
       "HSKKit Learner Practice Toolkit | START HERE",
@@ -160,7 +160,7 @@ for(const product of DIGITAL_PRODUCTS){
       "3. Enter the lowest measured skill in the Planner's Assessment mapping. Choose a 20, 30 or 45-minute route and use the Worksheet Pack for level-matched practice. The Planner and Worksheet do not sync with the Assessment score tracker; record progress yourself.",
       "4. Use fresh questions on Form B around the midpoint and Form C at the end. Compare results with the same scoring method; review missed question IDs and keep a dated record of your next action.",
       "",
-      "The Practice Assessment Pack includes three full-form MP3s spanning all levels and 27 level-only MP3s. Levels 7-9 use one unified advanced source band. The three component ZIPs are complete products, not shortened bundle editions. Read each component README for page maps and honest limits.",
+      "The Practice Assessment Pack includes three full-form MP3s spanning all levels and 27 level-only MP3s. Its forms and the Worksheet Pack are original practice, not a complete reproduction of the 2025 vocabulary list. Levels 7-9 use one unified advanced source band. The three component ZIPs are complete products, not shortened bundle editions. Read each component README for page maps and honest limits.",
       "The 14-day access window and three-download allowance limit retrieval of this outer ZIP only. Downloaded files do not expire. See LICENSE.txt for the purchaser's printing rights.",
     ].join("\n")+"\n";
     const readme={name:"README.txt",data:new TextEncoder().encode(isLearnerToolkit?learnerReadme:examReadme)};

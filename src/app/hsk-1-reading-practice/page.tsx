@@ -8,6 +8,7 @@ import { StoryCard } from "./story-card";
 import { ReadingAnalytics } from "./reading-analytics";
 
 export const metadata: Metadata = {
+  robots: { index: false, follow: true },
   metadataBase: new URL("https://hskkit.com"),
   title: "HSK 1 Reading Practice (Traditional HSK 2.0) | HSKKit",
   description:

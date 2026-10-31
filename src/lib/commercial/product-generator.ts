@@ -2,7 +2,7 @@ import fontkit from "@pdf-lib/fontkit";
 import {PDFDict,PDFDocument,PDFName,PDFString,rgb,type PDFFont,type PDFPage} from "pdf-lib";
 import {selectPackAssets} from "./catalog.ts";
 import {generateZipFiles} from "./generator.ts";
-import {ASSESSMENT_TRACKER_GENERATION_VERSION,digitalProduct,generationVersionForProduct,productLicenseNotice,type DigitalProduct,type DigitalProductId} from "./products.ts";
+import {ASSESSMENT_TRACKER_GENERATION_VERSION,TEACHER_PACK_GENERATION_VERSION,WORKSHEET_GENERATION_VERSION,digitalProduct,generationVersionForProduct,productLicenseNotice,type DigitalProduct,type DigitalProductId} from "./products.ts";
 import {assessmentListeningScript,assessmentScenario,type AssessmentForm} from "./mock-assessment-content.ts";
 import {generateAssessmentWorkbook} from "./assessment-workbook.ts";
 import {buildWorksheetLevel,type WorksheetLevel} from "./worksheet-pack.ts";
@@ -13,7 +13,7 @@ import {generatePlannerProgressWorkbook,generatePracticeAssessmentScoreWorkbook}
 import {makeHomeworkPdf,makeStudentHandoutPdf,makeTeacherCutPdf,makeTeacherPlanPdf,makeTeacherQuickStartPdf,TEACHER_PAGE_SIZES} from "./teacher-pdf.ts";
 
 const encoder=new TextEncoder();
-export type ProductArtifactManifest={schemaVersion:string;productId:string;generationVersion:string;standard:"HSK 3.0";standardVersion:"GF0025-2021"|"HSK-EXAM-2025";officialExam:false;levels:number[];lessonLevels?:number[];advancedBandDisclosure:string;licenseNotice:string;files:string[];sourceIndependent:boolean;assets:Array<{id:string;version:string;sourceRef:string;licenseRef:string}>;audioProvenance?:{provider:string;voices:Record<AssessmentForm,string>;generatedOn:string;responsePauseSeconds:number;redistributionStatus:string;sha256:Record<AssessmentForm,string>;levelTrackCount?:number;sourceSha256?:string}};
+export type ProductArtifactManifest={schemaVersion:string;productId:string;generationVersion:string;standard:"HSK 3.0";standardVersion:"GF0025-2021"|"HSK-EXAM-2025"|"HSKKIT-ORIGINAL";officialExam:false;levels:number[];lessonLevels?:number[];advancedBandDisclosure:string;licenseNotice:string;files:string[];sourceIndependent:boolean;assets:Array<{id:string;version:string;sourceRef:string;licenseRef:string}>;audioProvenance?:{provider:string;voices:Record<AssessmentForm,string>;generatedOn:string;responsePauseSeconds:number;redistributionStatus:string;sha256:Record<AssessmentForm,string>;levelTrackCount?:number;sourceSha256?:string}};
 export type AssessmentLevelAudio={index:Uint8Array;tracks:Record<string,Uint8Array>};
 const ASSESSMENT_AUDIO_SHA256:Record<AssessmentForm,string>={A:"cf154c20136be54156d068cc03e9180ebfa0883875a0bf5a6ef40fe19c26b185",B:"4a086bf48f798148f820e8e4f541a4b752a359dd25b52f71cc5c838cc6bee618",C:"33add7444d6adebec22eacc0a2b0a2570cbbc9e411f45456ba57ca94ff50d55a"};
 const ASSESSMENT_SOURCE_SHA256="72a8161c4beafc6f9c9fd97a17e1e0870c947721bb2cc9d828b4e7010fe5b422";
@@ -36,13 +36,18 @@ async function validateAssessmentLevelAudio(audio:Partial<Record<AssessmentForm,
 }
 type PdfSection={heading:string;body:string[];pageBreakBefore?:boolean;bookmark?:string};
 type Selection=ReturnType<typeof selectPackAssets>;
-const TEACHER_LESSON_WORDS:Record<number,string[]>={
+const LEGACY_TEACHER_LESSON_WORDS:Record<number,string[]>={
   1:["爱","爱好","常常","唱歌","读书","高兴"],2:["安全","办法","帮助","必须","不同","参加"],3:["安排","保证","标准","表达","处理","成果"],
   4:["背景","材料","采访","参与","测试","诚信"],5:["病毒","补偿","成本","成效","产业","冲突"],6:["本质","策略","差异","常规","场景","波动"],
   7:["癌症","艾滋病","安抚","安宁","保障","保质期"],8:["安定","安抚","安稳","安心","包容","保障"],9:["颁布","罢免","百分比","半信半疑","半真半假","报复"],
 };
-function teacherLessonSources(selections:Selection[]){return selections.map(selection=>{
-  const words=TEACHER_LESSON_WORDS[selection.level].map(hanzi=>{
+const CURRENT_TEACHER_LESSON_WORDS:Record<number,string[]>={
+  1:["爱","白天","杯子","读书","高兴","唱"],2:["爱好","帮忙","车站","但是","地铁","告诉"],3:["安全","办法","帮助","必须","不同","参加"],
+  4:["安排","保证","材料","标准","表现","报名"],5:["背景","成本","本质","产业","报告","保质期"],6:["保障","策略","差异","常规","场景","爆发"],
+  7:["癌症","艾滋病","安抚","安宁","安置","案件"],8:["安定","安抚","安稳","安心","包容","案件"],9:["颁布","罢免","百分比","半信半疑","报复","巴结"],
+};
+function teacherLessonSources(selections:Selection[],current:boolean){return selections.map(selection=>{
+  const words=(current?CURRENT_TEACHER_LESSON_WORDS:LEGACY_TEACHER_LESSON_WORDS)[selection.level].map(hanzi=>{
     const word=selection.words.find(candidate=>candidate.hanzi===hanzi);
     if(!word)throw new Error(`TEACHER_LESSON_WORD_MISSING:Level ${selection.level}:${hanzi}`);
     return word;
@@ -94,17 +99,19 @@ function sourceWords(selection:Selection,wordCount:number,exerciseCount:number){
   for(const exercise of selection.exercises.slice(0,exerciseCount))ids.add(exercise.sourceAssetId);
   return selection.words.filter(word=>ids.has(word.id));
 }
-function productAssets(product:DigitalProduct,selections:Selection[]){
+function productAssets(product:DigitalProduct,selections:Selection[],generationVersion:string){
   const selected=product.id==="assessment-tracker"?selections.flatMap(selection=>selection.words)
-    :product.id==="worksheet-pack"?selections.flatMap(selection=>sourceWords(selection,53,0))
+    :product.id==="worksheet-pack"&&generationVersion!==WORKSHEET_GENERATION_VERSION?selections.flatMap(selection=>sourceWords(selection,53,0))
     :product.id==="practice-assessment-pack"?[]
-    :product.id==="teacher-lesson-plan-pack"?teacherLessonSources(selections).flatMap(source=>source.words):[];
+    :product.id==="teacher-lesson-plan-pack"?teacherLessonSources(selections,generationVersion===TEACHER_PACK_GENERATION_VERSION).flatMap(source=>source.words):[];
   const unique=new Map<string,{id:string;version:string;sourceRef:string;licenseRef:string}>();
   for(const asset of selected)unique.set(`${asset.id}:${asset.version}`,{id:asset.id,version:asset.version,sourceRef:asset.sourceRef,licenseRef:asset.licenseRef});
   return [...unique.values()];
 }
 function manifestFor(product:DigitalProduct,files:string[],selections:Selection[],generationVersion:string):ProductArtifactManifest{
-  return {schemaVersion:"hskkit-product-manifest-v1",productId:product.id,generationVersion,standard:"HSK 3.0",standardVersion:product.id==="assessment-tracker"&&generationVersion===ASSESSMENT_TRACKER_GENERATION_VERSION?"HSK-EXAM-2025":"GF0025-2021",officialExam:false,levels:product.id==="practice-assessment-pack"?[1,2,3,4,5,6,7,8,9]:product.levels,...(product.id==="teacher-lesson-plan-pack"?{lessonLevels:[1,2,3,4,5,6,7,8,9]}:{}),advancedBandDisclosure:product.id==="30-day-planner"?"The same 30-day task sequence is used at all levels; the purchaser supplies practice material matched to their current level. This planner includes no source word list or question bank.":"HSK 3.0 defines one unified Levels 7–9 advanced ability band; Level 7, 8 and 9 labels in this resource use the same canonical approved advanced source set.",licenseNotice:productLicenseNotice(product.id),files,sourceIndependent:product.id==="30-day-planner"||product.id==="practice-assessment-pack",assets:productAssets(product,selections),...(product.id==="practice-assessment-pack"?{audioProvenance:ASSESSMENT_AUDIO_PROVENANCE}:{})};
+  const originalWorksheet=product.id==="worksheet-pack"&&generationVersion===WORKSHEET_GENERATION_VERSION;
+  const currentVocabulary=(product.id==="assessment-tracker"&&generationVersion===ASSESSMENT_TRACKER_GENERATION_VERSION)||(product.id==="teacher-lesson-plan-pack"&&generationVersion===TEACHER_PACK_GENERATION_VERSION);
+  return {schemaVersion:"hskkit-product-manifest-v1",productId:product.id,generationVersion,standard:"HSK 3.0",standardVersion:originalWorksheet?"HSKKIT-ORIGINAL":currentVocabulary?"HSK-EXAM-2025":"GF0025-2021",officialExam:false,levels:product.id==="practice-assessment-pack"?[1,2,3,4,5,6,7,8,9]:product.levels,...(product.id==="teacher-lesson-plan-pack"?{lessonLevels:[1,2,3,4,5,6,7,8,9]}:{}),advancedBandDisclosure:product.id==="30-day-planner"?"The same 30-day task sequence is used at all levels; the purchaser supplies practice material matched to their current level. This planner includes no source word list or question bank.":"HSK 3.0 defines one unified Levels 7–9 advanced ability band; Level 7, 8 and 9 labels in this resource use the same canonical approved advanced source set.",licenseNotice:productLicenseNotice(product.id),files,sourceIndependent:originalWorksheet||product.id==="30-day-planner"||product.id==="practice-assessment-pack",assets:productAssets(product,selections,generationVersion),...(product.id==="practice-assessment-pack"?{audioProvenance:ASSESSMENT_AUDIO_PROVENANCE}:{})};
 }
 
 function lines(text:string,font:PDFFont,size:number,width:number){
@@ -222,7 +229,8 @@ function readme(product:DigitalProduct,files:string[],manifest:ProductArtifactMa
     "2. Read the worked example or situation, then answer all three IDs in one module without opening the Answer Key. Keep the printed response area for your own writing.",
     "3. Check matching IDs in the Answer Key. Read Why and Common mistake; correct each missed item using the supplied evidence. Completed Samples demonstrate how to check, not text to copy.",
     "4. On a different day, retry missed items without the key. Mark the printable Progress Checklist and jot down the error clue and next review action; no spreadsheet entry is required.",
-    "Levels 1–2: recognition and short routines; 3–4: context and reconstruction; 5–6: extended evidence; 7–9: cross-text reasoning and formal response."
+    "Levels 1–2: recognition and short routines; 3–4: context and reconstruction; 5–6: extended evidence; 7–9: cross-text reasoning and formal response.",
+    "These 270 original questions are level-focused practice, not a reproduction or complete coverage of the 2025 HSK vocabulary list. The ZIP contains no official word-list index."
   ]:product.id==="assessment-tracker"?[
     "1. Open HSKKit-Assessment-Tracker-Blank.xlsx. Instructions explains the 0–2 rubric; Example.xlsx contains fictional entries and must not be used for real learners.",
     "2. For a current word snapshot, enter recognition, recall and usage in Vocabulary Tracker. Mastery stays blank until all three skills are scored. Blank means not measured; zero means tested and unsuccessful.",
@@ -798,7 +806,11 @@ export async function generateDifferentiatedProductArtifact(productId:DigitalPro
   // that same band; corpus exports include the canonical band only once.
   const selections=(product.id==="assessment-tracker"||product.id==="30-day-planner"
     ?[1,2,3,4,5,6,7]
-    :[1,2,3,4,5,6,7,8,9]).map(level=>selectPackAssets(level,product.id==="assessment-tracker"&&generationVersion===ASSESSMENT_TRACKER_GENERATION_VERSION?"hsk123456789-2025":"legacy"));
+    :[1,2,3,4,5,6,7,8,9]).map(level=>selectPackAssets(level,
+      (product.id==="assessment-tracker"&&generationVersion===ASSESSMENT_TRACKER_GENERATION_VERSION)
+      ||(product.id==="worksheet-pack"&&generationVersion===WORKSHEET_GENERATION_VERSION)
+      ||(product.id==="teacher-lesson-plan-pack"&&generationVersion===TEACHER_PACK_GENERATION_VERSION)
+        ?"hsk123456789-2025":"legacy"));
   if(product.id==="30-day-planner"){
     const plan=buildPlannerPack();
     const quickStart=await makePdf("HSK 30-Day Planner · Quick Start",plan.positioning,[{heading:"Before you start: bring your own practice materials",body:["This is a guided plan, not a course or question bank. It does not include word lists, graded questions or answers, audio/transcripts, or writing feedback.","Prepare level-matched vocabulary, keyed reading items, transcript-backed listening questions, and writing prompts with a model or teacher check. Read the two preparation/example pages of the main PDF before Day 1."]},{heading:"Score fairly, then choose a route",body:["Day 1 covers vocabulary and reading; the 30/45-minute routes add writing. Measure listening separately before comparing four skills—it is outside Day 1's timer.","Convert first-attempt correct / total to a score out of 100. Mark absent checks NOT MEASURED, never zero. Pick the lowest measured skill on the two-page mapping and reserve its first assignment.","Complete only your chosen 20/30/45-minute route. Record evidence in the PDF. The optional XLSX summarizes statuses; it does not supply practice or grade work."]},{heading:"Review and recover",body:["Review on Days 7, 14, 21, and 28 with fresh input. Move only unfinished work when you miss a day; keep completed work. On Day 30 compare against a fresh sample using the same scoring method."]}],fontBytes);
@@ -909,7 +921,7 @@ export async function generateDifferentiatedProductArtifact(productId:DigitalPro
     return {bytes:packageZip(product,files,manifest),format:"zip" as const,manifest};
   }
   // Every printed lesson word is the exact authorized catalog object represented by this artifact manifest.
-  const pack=buildTeacherLessonPack(teacherLessonSources(selections));
+  const pack=buildTeacherLessonPack(teacherLessonSources(selections,generationVersion===TEACHER_PACK_GENERATION_VERSION));
   // Fontkit mutates font parsing state; create the PDF files sequentially.
   const quickStart=await makeTeacherQuickStartPdf(pack,fontBytes);
   const teacherA4=await makeTeacherPlanPdf(pack,fontBytes,TEACHER_PAGE_SIZES.A4);
