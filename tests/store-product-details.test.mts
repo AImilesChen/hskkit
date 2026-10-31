@@ -33,3 +33,20 @@ test("the dynamic Store route prebuilds all products and rejects unknown IDs",as
   assert.match(page,/if\(!product\)notFound\(\)/);
   assert.match(view,/ResourceProductCheckout/);
 });
+
+test("vocabulary buying guidance matches the levels included in each product",async()=>{
+  const [{DIGITAL_PRODUCTS},{storeProductDetail}]=await Promise.all([
+    import("../src/lib/commercial/products.ts"),import("../src/lib/commercial/product-details.ts"),
+  ]);
+  for(const product of DIGITAL_PRODUCTS.filter(item=>item.category==="level"||item.category==="bundle")){
+    const detail=storeProductDetail(product.id);
+    assert.ok(detail,product.id);
+    const guidance=[...detail.fit.notFor,...detail.howToUse,...detail.faqs.flatMap(item=>[item.question,item.answer])].join(" ");
+    if(product.id==="advanced-7-9"||product.id==="complete-1-9"){
+      assert.match(guidance,/unified Advanced 7–9 vocabulary band/,product.id);
+    }else{
+      assert.doesNotMatch(guidance,/Advanced (Levels|reading volumes)|official separate Level 7/i,product.id);
+      assert.match(guidance,/Which HSK levels are included\?/,product.id);
+    }
+  }
+});

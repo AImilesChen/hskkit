@@ -32,7 +32,7 @@ test("public refund and support copy uses the frozen 2/5/3 UTC-day SLA", async (
   }
 });
 
-test("Pricing states the exact Free, shared Pro, and separate PDF Pack capabilities", async () => {
+test("Pricing states Free and Pro capabilities and links to separate Store products", async () => {
   const pricing = await read("src/app/pricing/page.tsx");
   for (const copy of [
     "10 new items daily",
@@ -46,10 +46,10 @@ test("Pricing states the exact Free, shared Pro, and separate PDF Pack capabilit
     "Long-term history, up to 10,000 entries",
     "Sync up to 3 active devices",
     "same Pro entitlement",
-    "From US$3.99",
     "3 successful downloads",
     "14-day private access window",
   ]) assert.match(pricing, new RegExp(copy.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), "i"));
+  assert.match(pricing, /<Link href="\/store"/);
   assert.match(pricing, /anti-abuse safeguards/i);
   assert.match(pricing, /not included in Pro/i);
 });

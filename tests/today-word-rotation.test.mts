@@ -92,18 +92,42 @@ test("an older unfinished audio step does not reopen after a later completion", 
   assert.ok(!history.continuingContentIds?.includes(content.item.contentId));
 });
 
-test("when only context listening is unfinished, it resumes without replaying Learn or word audio", () => {
-  const { content, session } = firstDay();
-  assert.equal(content.status, "ready");
-  if (content.status !== "ready") return;
-  assert.ok(content.item.example);
+test("a word without an example completes after Learn and word audio without a phantom context step", () => {
+  const selected = selectTodayContent(2, 1);
+  assert.equal(selected.status, "ready");
+  if (selected.status !== "ready") return;
+  const item = { ...selected.item, example: undefined };
+  const content = { ...selected, item, items: [item] };
+  const session = buildDailySession(emptyLearningState(), {
+    ownerId: "learner", localDay: "2026-10-04", ruleVersion: "today-v10", now,
+    dailyContent: content, budgetMinutes: 20, newWordCount: 1, listeningEnabled: true,
+  }).session;
+  assert.equal(session.items.some((item) => item.contentId === content.item.contentId && item.dimension === "context_audio"), false);
   const yesterday = {
     ...session,
     items: session.items.map((item) => item.kind === "learn" || item.dimension === "audio"
       ? { ...item, status: "completed" as const } : item),
   };
   const history = todayWordHistory([yesterday], "learner", "2026-10-05", 2);
-  const next = selectTodayContent(2, 1, { ...history, listeningEnabled: true });
+  assert.equal(history.continuingContentIds?.includes(content.item.contentId), false);
+});
+
+test("when only context listening is unfinished, it resumes without replaying Learn or word audio", () => {
+  const content = selectTodayContent(3, 1, { pinnedContentIds: ["catalog:hsk2025.word.l3.0885"], freezePinned: true });
+  assert.equal(content.status, "ready");
+  if (content.status !== "ready") return;
+  assert.ok(content.item.example && content.item.audioSrc);
+  const session = buildDailySession(emptyLearningState(), {
+    ownerId: "learner", localDay: "2026-10-04", ruleVersion: "today-v10", now,
+    dailyContent: content, budgetMinutes: 20, newWordCount: 1, listeningEnabled: true,
+  }).session;
+  const yesterday = {
+    ...session,
+    items: session.items.map((item) => item.kind === "learn" || item.dimension === "audio"
+      ? { ...item, status: "completed" as const } : item),
+  };
+  const history = todayWordHistory([yesterday], "learner", "2026-10-05", 3);
+  const next = selectTodayContent(3, 1, { ...history, listeningEnabled: true });
   assert.equal(next.status, "ready");
   if (next.status !== "ready") return;
   const built = buildDailySession({ ...emptyLearningState(), dailySessions: [yesterday] }, {
