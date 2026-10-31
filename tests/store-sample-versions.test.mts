@@ -17,7 +17,7 @@ test("updated vocabulary samples and cards are tied to the current delivery gene
       assert.ok(Number.isInteger(sample.page) && sample.page > 0, productId);
       assert.match(sample.sourcePdfSha256, /^[0-9a-f]{64}$/, productId);
       assert.ok(existsSync(new URL(`../public/store/samples/vocabulary/${sample.file}`, import.meta.url)), sample.file);
-      assert.ok(detail.samplePages.some(page => page.src.endsWith(sample.file)), sample.file);
+      assert.ok(detail.samplePages.some(page => page.src.startsWith(`/store/samples/vocabulary/${sample.file}?v=${source.generationVersion}`)), sample.file);
     }
     assert.ok(existsSync(new URL(`../public/store/previews/vocabulary/${productId}.webp`, import.meta.url)), productId);
   }
