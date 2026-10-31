@@ -1,0 +1,114 @@
+{
+  "level-1": {
+    "generationVersion": "complete-vocabulary-hsk123-2025-v2",
+    "samples": [
+      {
+        "file": "level-1-sample-1.webp",
+        "page": 1,
+        "sourcePdfSha256": "429c9a86e3d49f7b9a1df7e96fe60d671fd2560d35f9cf93c435d5a7b38fbc2c"
+      },
+      {
+        "file": "level-1-sample-2.webp",
+        "page": 18,
+        "sourcePdfSha256": "429c9a86e3d49f7b9a1df7e96fe60d671fd2560d35f9cf93c435d5a7b38fbc2c"
+      }
+    ],
+    "cardFrom": 1
+  },
+  "level-2": {
+    "generationVersion": "complete-vocabulary-hsk123-2025-v2",
+    "samples": [
+      {
+        "file": "level-2-sample-1.webp",
+        "page": 1,
+        "sourcePdfSha256": "7295a000cef6115c971fabee2668ceb28ff60a5b6f4a1e7dfe3889e12240216e"
+      },
+      {
+        "file": "level-2-sample-2.webp",
+        "page": 18,
+        "sourcePdfSha256": "7295a000cef6115c971fabee2668ceb28ff60a5b6f4a1e7dfe3889e12240216e"
+      }
+    ],
+    "cardFrom": 1
+  },
+  "level-3": {
+    "generationVersion": "complete-vocabulary-hsk123-2025-v2",
+    "samples": [
+      {
+        "file": "level-3-sample-1.webp",
+        "page": 1,
+        "sourcePdfSha256": "b4c9bb3839d109049b17a0fda92e358dc7c125c2574e46f5ab83c975ece9981d"
+      },
+      {
+        "file": "level-3-sample-2.webp",
+        "page": 18,
+        "sourcePdfSha256": "b4c9bb3839d109049b17a0fda92e358dc7c125c2574e46f5ab83c975ece9981d"
+      }
+    ],
+    "cardFrom": 1
+  },
+  "starter-1-3": {
+    "generationVersion": "complete-vocabulary-hsk123-2025-v2",
+    "samples": [
+      {
+        "file": "starter-1-3-sample-1.webp",
+        "page": 1,
+        "sourcePdfSha256": "429c9a86e3d49f7b9a1df7e96fe60d671fd2560d35f9cf93c435d5a7b38fbc2c"
+      },
+      {
+        "file": "starter-1-3-sample-2.webp",
+        "page": 18,
+        "sourcePdfSha256": "b4c9bb3839d109049b17a0fda92e358dc7c125c2574e46f5ab83c975ece9981d"
+      }
+    ],
+    "cardFrom": 1
+  },
+  "level-4": {
+    "generationVersion": "complete-vocabulary-hsk1234-2025-v1",
+    "samples": [
+      {
+        "file": "level-4-sample-1.webp",
+        "page": 2,
+        "sourcePdfSha256": "dce89f80dae37d8aad0ee8b6745d48e918c1cdd696d2fc69c08c2d5393c99473"
+      },
+      {
+        "file": "level-4-sample-2.webp",
+        "page": 18,
+        "sourcePdfSha256": "dce89f80dae37d8aad0ee8b6745d48e918c1cdd696d2fc69c08c2d5393c99473"
+      }
+    ],
+    "cardFrom": 1
+  },
+  "advanced-7-9": {
+    "generationVersion": "complete-vocabulary-hsk123456789-2025-v1",
+    "samples": [
+      {
+        "file": "advanced-7-9-sample-1.webp",
+        "page": 1,
+        "sourcePdfSha256": "d7806056a174adc80d6335288eb51674e6ac5b3a0670fa12dfd33b22cf330f46"
+      },
+      {
+        "file": "advanced-7-9-sample-2.webp",
+        "page": 35,
+        "sourcePdfSha256": "d7806056a174adc80d6335288eb51674e6ac5b3a0670fa12dfd33b22cf330f46"
+      }
+    ],
+    "cardFrom": 2
+  },
+  "complete-1-9": {
+    "generationVersion": "complete-vocabulary-hsk123456789-2025-v2",
+    "samples": [
+      {
+        "file": "complete-1-9-sample-1.webp",
+        "page": 1,
+        "sourcePdfSha256": "34f04e8f9ab75a2416770398c4ca8ab2015866f31870f22193277663ce0d28d9"
+      },
+      {
+        "file": "complete-1-9-sample-2.webp",
+        "page": 35,
+        "sourcePdfSha256": "8bca5612a0335bcc3d3152b48cc27e35be17ae40aedfa182a0fb9d0c19c65288"
+      }
+    ],
+    "cardFrom": 1
+  }
+}

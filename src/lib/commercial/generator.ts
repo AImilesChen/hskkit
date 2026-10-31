@@ -68,11 +68,19 @@ export async function generatePackPdf(selection: PackSelection, manifest: PackMa
   cover.drawText("汉字 · Pinyin · English · Source ID", { x: 40, y, size: 13, font }); y -= 32;
   const entryStatement=isVolume?`This reading volume repeats ${selection.words.length} of ${options.totalAdvancedCount} entries from the complete Advanced 7–9 index; numbering is continuous across the three volumes.`:`${selection.words.length} entries in this complete ${selection.level>=7?"unified Advanced 7–9 band":`Level ${selection.level}`} reference.`;
   y=drawWrapped(cover,`${entryStatement}\nGeneration: ${manifest.generationVersion}. Standard scope: ${manifest.standardVersion}. Audio is not included.`,font,10,40,y,515,15)-22;
-  y=drawWrapped(cover,`How to use this reference: find a pinyin initial below, then use page numbers or PDF search for an exact Hanzi, pinyin, English gloss or source ID. Dictionary-style glosses can include several senses; they are not graded lesson translations. A part-of-speech label appears only when the source assigns one.${is2025ExamLevel?"":" A vertical bar separates alternative headwords and matching pronunciations."}`,font,10,40,y,515,15)-16;
+  const compactOpening=is2025ExamLevel&&selection.level<=3&&!isVolume;
+  const findingTip=compactOpening?"Use PDF search to find an exact Hanzi, pinyin, English gloss or source ID.":"Find a pinyin initial below, then use page numbers or PDF search for an exact Hanzi, pinyin, English gloss or source ID.";
+  y=drawWrapped(cover,`How to use this reference: ${findingTip} Dictionary-style glosses can include several senses; they are not graded lesson translations. A part-of-speech label appears only when the source assigns one.${is2025ExamLevel?"":" A vertical bar separates alternative headwords and matching pronunciations."}`,font,10,40,y,515,15)-16;
   if(selection.level>=7)y=drawWrapped(cover,"Advanced 7–9 is one unified vocabulary band. The reading volumes are HSKKit usability divisions, not official separate Level 7, 8 and 9 lists.",font,10,40,y,515,15)-16;
-  cover.drawText("Find words by pinyin initial",{x:40,y,size:16,font,color:rgb(0.06,0.35,0.32)});
-  const indexTop=y-30;
-  page=pdf.addPage(pageSize);y=790;addHeader(page);
+  let indexTop=0;
+  if(compactOpening){
+    cover.drawText("Vocabulary entries / 词汇",{x:40,y,size:16,font,color:rgb(0.06,0.35,0.32)});
+    y-=32;
+  }else{
+    cover.drawText("Find words by pinyin initial",{x:40,y,size:16,font,color:rgb(0.06,0.35,0.32)});
+    indexTop=y-30;
+    page=pdf.addPage(pageSize);y=790;addHeader(page);
+  }
   const initialPages=new Map<string,number>();
   const pageRanges=new Map<number,{first:number;last:number}>();
   for (const [index, word] of selection.words.entries()) {
@@ -113,11 +121,13 @@ export async function generatePackPdf(selection: PackSelection, manifest: PackMa
     ensure(130);page.drawText("MIT source notice",{x:40,y,size:12,font,color:rgb(0.06,0.35,0.32)});y-=20;
     for(const paragraph of HSK30_MIT_NOTICE.split("\n")){ensure(65);y=drawWrapped(page,paragraph,font,8,40,y,515,11)-2;}
   }
-  const initials=[...initialPages.entries()].sort(([a],[b])=>a.localeCompare(b));
-  for(const [index,[letter,pageNumber]] of initials.entries()){
-    const column=index>=Math.ceil(initials.length/2)?1:0;
-    const row=column?index-Math.ceil(initials.length/2):index;
-    cover.drawText(`${letter}  ·  page ${pageNumber}`,{x:40+column*265,y:indexTop-row*23,size:11,font,color:rgb(0.12,0.16,0.24)});
+  if(!compactOpening){
+    const initials=[...initialPages.entries()].sort(([a],[b])=>a.localeCompare(b));
+    for(const [index,[letter,pageNumber]] of initials.entries()){
+      const column=index>=Math.ceil(initials.length/2)?1:0;
+      const row=column?index-Math.ceil(initials.length/2):index;
+      cover.drawText(`${letter}  ·  page ${pageNumber}`,{x:40+column*265,y:indexTop-row*23,size:11,font,color:rgb(0.12,0.16,0.24)});
+    }
   }
   const totalPages=pdf.getPageCount();
   for(const [index,target] of pdf.getPages().entries()){

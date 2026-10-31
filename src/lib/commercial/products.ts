@@ -4,11 +4,12 @@ export const DIGITAL_REFUND_DAYS=7;
 export const DIGITAL_DOWNLOAD_LIMIT=3;
 export const DEFAULT_PRODUCT_GENERATION_VERSION="complete-vocabulary-v2";
 export const HSK1_VOCABULARY_GENERATION_VERSION="complete-vocabulary-hsk1-2025-v3";
-export const HSK123_VOCABULARY_GENERATION_VERSION="complete-vocabulary-hsk123-2025-v1";
+export const HSK123_VOCABULARY_GENERATION_VERSION="complete-vocabulary-hsk123-2025-v2";
 export const HSK1234_VOCABULARY_GENERATION_VERSION="complete-vocabulary-hsk1234-2025-v1";
 export const HSK12345_VOCABULARY_GENERATION_VERSION="complete-vocabulary-hsk12345-2025-v1";
 export const HSK123456_VOCABULARY_GENERATION_VERSION="complete-vocabulary-hsk123456-2025-v1";
 export const HSK123456789_VOCABULARY_GENERATION_VERSION="complete-vocabulary-hsk123456789-2025-v1";
+export const HSK123456789_LIBRARY_LAYOUT_GENERATION_VERSION="complete-vocabulary-hsk123456789-2025-v2";
 export const ASSESSMENT_TRACKER_GENERATION_VERSION="assessment-tracker-2025-v6";
 export const PLANNER_GENERATION_VERSION="planner-guided-v6";
 export const PLANNER_BUNDLE_GENERATION_VERSION="learner-toolkit-tracker-2025-v7";
@@ -57,7 +58,7 @@ export const DIGITAL_PRODUCTS:readonly DigitalProduct[]=[
 
 export function digitalProduct(value:unknown){return DIGITAL_PRODUCTS.find(product=>product.id===value)??null;}
 export function productLicenseNotice(productId:unknown){const product=digitalProduct(productId);return product?.category==="level"||product?.category==="bundle"?VOCABULARY_PRODUCT_LICENSE:productId==="teacher-lesson-plan-pack"?TEACHER_PRODUCT_LICENSE:PURCHASED_PRODUCT_LICENSE;}
-export function generationVersionForProduct(productId:unknown){return productId==="advanced-7-9"||productId==="complete-1-9"?HSK123456789_VOCABULARY_GENERATION_VERSION:productId==="level-6"||productId==="progression-4-6"?HSK123456_VOCABULARY_GENERATION_VERSION:productId==="level-5"?HSK12345_VOCABULARY_GENERATION_VERSION:productId==="level-4"?HSK1234_VOCABULARY_GENERATION_VERSION:productId==="level-1"||productId==="level-2"||productId==="level-3"||productId==="starter-1-3"?HSK123_VOCABULARY_GENERATION_VERSION:productId==="assessment-tracker"?ASSESSMENT_TRACKER_GENERATION_VERSION:productId==="learner-practice-toolkit"?PLANNER_BUNDLE_GENERATION_VERSION:productId==="exam-preparation-bundle"?EXAM_BUNDLE_GENERATION_VERSION:productId==="worksheet-pack"?WORKSHEET_GENERATION_VERSION:productId==="30-day-planner"?PLANNER_GENERATION_VERSION:productId==="practice-assessment-pack"?PRACTICE_ASSESSMENT_GENERATION_VERSION:productId==="teacher-lesson-plan-pack"?TEACHER_PACK_GENERATION_VERSION:DEFAULT_PRODUCT_GENERATION_VERSION;}
+export function generationVersionForProduct(productId:unknown){return productId==="advanced-7-9"?HSK123456789_VOCABULARY_GENERATION_VERSION:productId==="complete-1-9"?HSK123456789_LIBRARY_LAYOUT_GENERATION_VERSION:productId==="level-6"||productId==="progression-4-6"?HSK123456_VOCABULARY_GENERATION_VERSION:productId==="level-5"?HSK12345_VOCABULARY_GENERATION_VERSION:productId==="level-4"?HSK1234_VOCABULARY_GENERATION_VERSION:productId==="level-1"||productId==="level-2"||productId==="level-3"||productId==="starter-1-3"?HSK123_VOCABULARY_GENERATION_VERSION:productId==="assessment-tracker"?ASSESSMENT_TRACKER_GENERATION_VERSION:productId==="learner-practice-toolkit"?PLANNER_BUNDLE_GENERATION_VERSION:productId==="exam-preparation-bundle"?EXAM_BUNDLE_GENERATION_VERSION:productId==="worksheet-pack"?WORKSHEET_GENERATION_VERSION:productId==="30-day-planner"?PLANNER_GENERATION_VERSION:productId==="practice-assessment-pack"?PRACTICE_ASSESSMENT_GENERATION_VERSION:productId==="teacher-lesson-plan-pack"?TEACHER_PACK_GENERATION_VERSION:DEFAULT_PRODUCT_GENERATION_VERSION;}
 export function productDeliverableLabels(productId:unknown):string[]{
   const product=digitalProduct(productId);if(!product)throw new Error("INVALID_PRODUCT");
   if(product.category==="level")return [`${product.vocabularyCount?.toLocaleString("en-US")} entries in one searchable PDF`,`Source and licence notes inside the PDF`];

@@ -40,9 +40,18 @@ const rawResourceProductDetails:ResourceProductDetail[]=[
   }
 ];
 
+const firstSampleByProduct:Partial<Record<string,string>>={
+  "worksheet-pack":"level-1-student-meaning-match.webp",
+  "30-day-planner":"day-8-routes.webp",
+  "practice-assessment-pack":"reading-section.webp",
+  "teacher-lesson-plan-pack":"teacher-modelling.webp",
+};
+
 export const resourceProductDetails:ResourceProductDetail[]=rawResourceProductDetails.map(detail=>{
   const product=digitalProduct(detail.id);if(!product)throw new Error(`MISSING_RESOURCE_PRODUCT:${detail.id}`);
-  return {...detail,name:product.name,amountCents:product.amountCents};
+  const firstSample=firstSampleByProduct[detail.id];
+  const samplePages=firstSample?[...detail.samplePages].sort((a,b)=>Number(b.src.endsWith(firstSample))-Number(a.src.endsWith(firstSample))):detail.samplePages;
+  return {...detail,name:product.name,amountCents:product.amountCents,samplePages};
 });
 
 export function resourceProductDetail(id:unknown){return resourceProductDetails.find(product=>product.id===id||product.slug===id)??null;}

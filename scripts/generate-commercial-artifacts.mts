@@ -4,7 +4,7 @@ import { createHash } from "node:crypto";
 import { buildPackManifest, selectPackAssets, type PackSelection } from "../src/lib/commercial/catalog.ts";
 import { generatePackPdf, generateZipFiles, HSK30_MIT_NOTICE } from "../src/lib/commercial/generator.ts";
 import { generateDifferentiatedProductArtifact, type AssessmentLevelAudio } from "../src/lib/commercial/product-generator.ts";
-import { buildProductDeliveries, DIGITAL_PRODUCTS, HSK1_VOCABULARY_GENERATION_VERSION, HSK123_VOCABULARY_GENERATION_VERSION, HSK1234_VOCABULARY_GENERATION_VERSION, HSK12345_VOCABULARY_GENERATION_VERSION, HSK123456_VOCABULARY_GENERATION_VERSION, HSK123456789_VOCABULARY_GENERATION_VERSION, generationVersionForProduct, productLicenseNotice } from "../src/lib/commercial/products.ts";
+import { buildProductDeliveries, DIGITAL_PRODUCTS, HSK1_VOCABULARY_GENERATION_VERSION, HSK123_VOCABULARY_GENERATION_VERSION, HSK1234_VOCABULARY_GENERATION_VERSION, HSK12345_VOCABULARY_GENERATION_VERSION, HSK123456_VOCABULARY_GENERATION_VERSION, HSK123456789_VOCABULARY_GENERATION_VERSION, HSK123456789_LIBRARY_LAYOUT_GENERATION_VERSION, generationVersionForProduct, productLicenseNotice } from "../src/lib/commercial/products.ts";
 
 const selectedProductIds=(process.env.PRODUCT_IDS||process.env.PRODUCT_ID||"").split(",").map(id=>id.trim()).filter(Boolean);
 const vocabularyOnly=process.env.VOCABULARY_ONLY==="1";
@@ -45,7 +45,7 @@ async function getLevelArtifact(level:number,generationVersion:string){
   const key=`${generationVersion}:${level}`;
   let artifact=levelArtifacts.get(key);
   if(!artifact){
-    const selection=selectPackAssets(level,generationVersion===HSK123456789_VOCABULARY_GENERATION_VERSION?"hsk123456789-2025":generationVersion===HSK123456_VOCABULARY_GENERATION_VERSION?"hsk123456-2025":generationVersion===HSK12345_VOCABULARY_GENERATION_VERSION?"hsk12345-2025":generationVersion===HSK1234_VOCABULARY_GENERATION_VERSION?"hsk1234-2025":generationVersion===HSK123_VOCABULARY_GENERATION_VERSION?"hsk123-2025":generationVersion===HSK1_VOCABULARY_GENERATION_VERSION?"hsk1-2025":"legacy");
+    const selection=selectPackAssets(level,generationVersion===HSK123456789_VOCABULARY_GENERATION_VERSION||generationVersion===HSK123456789_LIBRARY_LAYOUT_GENERATION_VERSION?"hsk123456789-2025":generationVersion===HSK123456_VOCABULARY_GENERATION_VERSION?"hsk123456-2025":generationVersion===HSK12345_VOCABULARY_GENERATION_VERSION?"hsk12345-2025":generationVersion===HSK1234_VOCABULARY_GENERATION_VERSION?"hsk1234-2025":generationVersion===HSK123_VOCABULARY_GENERATION_VERSION?"hsk123-2025":generationVersion===HSK1_VOCABULARY_GENERATION_VERSION?"hsk1-2025":"legacy");
     const packManifest=buildPackManifest(selection,generationVersion);
     artifact={bytes:await generatePackPdf(selection,packManifest,fontBytes,emojiBytes),manifest:packManifest as unknown as Record<string,unknown>,selection};
     levelArtifacts.set(key,artifact);
@@ -79,7 +79,7 @@ async function vocabularyBundleFiles(productId:string,levels:number[],generation
     files.push({name:level===7?"HSKKit-Advanced-7-9-Complete-Index.pdf":`HSKKit-Level-${level}-Complete-Vocabulary.pdf`,data:artifact.bytes});
     if(level===7)files.push(...await advancedVolumeArtifacts(generationVersion));
   }
-  const includes2025Advanced=generationVersion===HSK123456789_VOCABULARY_GENERATION_VERSION;
+  const includes2025Advanced=generationVersion===HSK123456789_VOCABULARY_GENERATION_VERSION||generationVersion===HSK123456789_LIBRARY_LAYOUT_GENERATION_VERSION;
   const includes2025Hsk6=generationVersion===HSK123456_VOCABULARY_GENERATION_VERSION||includes2025Advanced;
   const includes2025Hsk5=generationVersion===HSK12345_VOCABULARY_GENERATION_VERSION||includes2025Hsk6;
   const includes2025Hsk4=generationVersion===HSK1234_VOCABULARY_GENERATION_VERSION||includes2025Hsk5;
@@ -96,7 +96,7 @@ async function vocabularyBundleFiles(productId:string,levels:number[],generation
     ?"The Level 1 PDF follows the 2025 HSK exam syllabus and contains 300 entries. Other level PDFs retain their separately published scope and version."
     :"The GF0025-2021 standard determines the level scope.";
   const advancedNote=levels.includes(7)?`The Advanced 7–9 complete index contains all ${includes2025Advanced?"5,600":"5,636"} Advanced entries. Three HSKKit reading volumes repeat that index in smaller parts; do not add their counts to the total. They are not official separate Level 7, 8 and 9 lists.\n\n`:"";
-  const readme=new TextEncoder().encode(`HSKKit ${productId} offline vocabulary library.\n${scope} These are independent HSKKit study materials, not an official exam product.\n\nIncluded PDFs:\n${files.map(file=>`- ${file.name}`).join("\n")}\n\n${advancedNote}Use the pinyin-initial index and page numbers in each PDF, or search the PDF text.\n\nSee LICENSE.txt for purchaser permissions and preserved third-party rights; manifest.json and checksums.sha256 document file integrity and sources.\n`);
+  const readme=new TextEncoder().encode(`HSKKit ${productId} offline vocabulary library.\n${scope} These are independent HSKKit study materials, not an official exam product.\n\nIncluded PDFs:\n${files.map(file=>`- ${file.name}`).join("\n")}\n\n${advancedNote}Search the PDF text to find a word. Longer level PDFs also provide a pinyin-initial index and page numbers.\n\nSee LICENSE.txt for purchaser permissions and preserved third-party rights; manifest.json and checksums.sha256 document file integrity and sources.\n`);
   const credits=includes2025Advanced?"All included vocabulary placement: 2025 HSK exam syllabus (https://www.chinesetest.cn/HSK); HSKKit-edited learner glosses and POS labels, with adapted CC-CEDICT definitions under CC BY-SA 4.0. Advanced 7–9 is one unified source band.":includes2025Hsk4?`Included Levels ${alignedLevels} placement: 2025 HSK exam syllabus (https://www.chinesetest.cn/HSK); HSKKit-edited pinyin, POS and glosses, with adapted definitions under CC BY-SA 4.0. Other level PDFs: GF0025-2021 level membership; ivankra/hsk30 commit 4ff9e391 (MIT; pinyin, POS and variants); CC-CEDICT snapshot e0d756cb (CC BY-SA 4.0; English definitions).`:includes2025Hsk123?"Levels 1–3 placement: 2025 HSK exam syllabus (https://www.chinesetest.cn/HSK); HSKKit-edited pinyin, POS and glosses, with adapted definitions under CC BY-SA 4.0. Other level PDFs: GF0025-2021 level membership; ivankra/hsk30 commit 4ff9e391 (MIT; pinyin, POS and variants); CC-CEDICT snapshot e0d756cb (CC BY-SA 4.0; English definitions).":includes2025Hsk1?"Level 1 placement: 2025 HSK exam syllabus (https://www.chinesetest.cn/HSK); HSKKit-edited pinyin, POS and glosses, with adapted definitions under CC BY-SA 4.0. Other level PDFs: GF0025-2021 level membership; ivankra/hsk30 commit 4ff9e391 (MIT; pinyin, POS and variants); CC-CEDICT snapshot e0d756cb (CC BY-SA 4.0; English definitions).":"GF0025-2021 level membership; ivankra/hsk30 commit 4ff9e391 (MIT; pinyin, POS and variants); CC-CEDICT snapshot e0d756cb (CC BY-SA 4.0; English definitions).";
   const licence=new TextEncoder().encode(`${productLicenseNotice(productId)}\n\nSource credits: ${credits} Source and licence links: https://hskkit.com/content-license and https://creativecommons.org/licenses/by-sa/4.0/. Full per-entry references are preserved in manifest.json.\n\n${HSK30_MIT_NOTICE}\n`);
   return [...files,{name:"README.txt",data:readme},{name:"LICENSE.txt",data:licence}];
@@ -116,7 +116,7 @@ for(const product of DIGITAL_PRODUCTS){
     const components=await Promise.all(product.levels.map(level=>getLevelArtifact(level,generationVersion)));
     const assets=components.flatMap(artifact=>artifact.manifest.assets as unknown[]);
     const includes2025Hsk1=product.levels.includes(1)&&generationVersion===HSK1_VOCABULARY_GENERATION_VERSION;
-    const includes2025Advanced=generationVersion===HSK123456789_VOCABULARY_GENERATION_VERSION;
+    const includes2025Advanced=generationVersion===HSK123456789_VOCABULARY_GENERATION_VERSION||generationVersion===HSK123456789_LIBRARY_LAYOUT_GENERATION_VERSION;
     const includes2025Hsk6=generationVersion===HSK123456_VOCABULARY_GENERATION_VERSION;
     const includes2025Hsk5=generationVersion===HSK12345_VOCABULARY_GENERATION_VERSION;
     const includes2025Hsk4=generationVersion===HSK1234_VOCABULARY_GENERATION_VERSION;
