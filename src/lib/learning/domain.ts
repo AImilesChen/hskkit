@@ -406,7 +406,7 @@ export function addFlashcardWordsToReview(state: LearningState, words: Dictionar
   let already = 0;
   for (const word of words) {
     // A flashcard self-check must never pull an existing scheduled review forward.
-    if (next.cards.some((card) => card.contentId === word.contentId && card.dimension === "reading")) {
+    if (next.cards.some((card) => card.contentId === word.contentId && card.contentVersion === word.contentVersion && card.dimension === "reading")) {
       already += 1;
       continue;
     }

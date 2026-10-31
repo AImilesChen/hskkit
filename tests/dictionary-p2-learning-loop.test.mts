@@ -81,6 +81,15 @@ test("flashcard batch saves only new review cards and leaves existing due dates 
   assert.equal(result.state.cards.find((card) => card.contentId === second.contentId)?.dueAt, "2026-10-31T12:00:00.000Z");
 });
 
+test("flashcard batch can add a current version while retaining old review history", () => {
+  const old = word({ contentVersion: "legacy-release:1" });
+  const current = word({ contentVersion: "current-release:2" });
+  const history = addWordToReview(empty(), { word: old, observedAt: "2026-10-01T12:00:00.000Z" });
+  const result = addFlashcardWordsToReview(history, [current], "2026-10-31T12:00:00.000Z");
+  assert.equal(result.added, 1);
+  assert.deepEqual(result.state.cards.map((card) => card.contentVersion), ["legacy-release:1", "current-release:2"]);
+});
+
 test("adding a Review card does not remove an explicitly added Today word", () => {
   const ownerId = "guest-p2-continuity";
   const localDay = "2026-08-30";
