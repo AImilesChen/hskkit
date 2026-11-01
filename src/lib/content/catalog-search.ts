@@ -171,7 +171,7 @@ export function buildCatalogQuery(
   const orderBy = params.sort === "pinyin" ? "pinyin COLLATE NOCASE, id" : "sort_level, id";
   if (params.mode === "flashcards") {
     return {
-      sql: `SELECT ${select} FROM catalog_search_index WHERE ${where} ORDER BY ((((CAST(substr(id, -7, 4) AS INTEGER) + ?) * 1103515245 + 12345) & 2147483647)), id LIMIT ?`,
+      sql: `SELECT ${select} FROM catalog_search_index WHERE ${where} ORDER BY ((((CAST(substr(id, instr(id, '.l') + 4) AS INTEGER) + ?) * 1103515245 + 12345) & 2147483647)), id LIMIT ?`,
       bindings: [...filterBindings, params.seed ?? 0, params.pageSize + 1],
       countSql: `SELECT COUNT(*) AS total FROM catalog_search_index WHERE ${where}`,
       countBindings: filterBindings,
@@ -248,7 +248,7 @@ export interface CatalogSearchDatabase {
 }
 
 export function isCatalogWordAssetId(assetId: string): boolean {
-  return /^(?:hsk3|hsk2025)\.word\.l[1-7]\.\d{4}\.v\d+$/.test(assetId);
+  return /^(?:hsk3\.word\.l[1-7]\.\d{4}|hsk2025\.word\.l(?:[1-6]\.\d{4}|7\.\d{5}))\.v\d+$/.test(assetId);
 }
 
 export async function getActiveCatalogSearchRelease(db: CatalogSearchDatabase) {

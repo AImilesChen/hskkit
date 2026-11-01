@@ -4,10 +4,11 @@ import hsk23Examples from "./hsk23-2025-examples.json" with { type: "json" };
 import hsk4Examples from "./hsk4-2025-examples.json" with { type: "json" };
 import hsk5Examples from "./hsk5-2025-examples.json" with { type: "json" };
 import hsk6Examples from "./hsk6-2025-examples.json" with { type: "json" };
+import hsk789Examples from "./hsk789-2025-examples.json" with { type: "json" };
 
 export type WordExample = { hanzi: string; pinyin: string; meaning: string };
 
-// Reuse only HSKKit's existing editorial examples when the headword and
+// Reuse only reviewed examples when the headword and
 // tone-marked reading both match the active 2025 entry. The 2025 level comes
 // from the caller; this file does not import old level assignments.
 const hsk1Examples = new Map<string, WordExample>(legacyHsk1
@@ -20,8 +21,8 @@ const hsk1Examples = new Map<string, WordExample>(legacyHsk1
   }]));
 
 export function matchedWordExample(level: number, hanzi: string, pinyin: string, assetId?: string): WordExample | undefined {
-  if (level === 4 || level === 5 || level === 6) {
-    const examples = level === 4 ? hsk4Examples : level === 5 ? hsk5Examples : hsk6Examples;
+  if (level === 4 || level === 5 || level === 6 || level === 7 || level === 8 || level === 9) {
+    const examples = level === 4 ? hsk4Examples : level === 5 ? hsk5Examples : level === 6 ? hsk6Examples : hsk789Examples;
     const entry = assetId ? (examples as Record<string, string[]>)[assetId] : undefined;
     return entry?.length === 5 && entry[0] === hanzi && entry[1] === pinyin
       ? { hanzi: entry[2], pinyin: entry[3], meaning: entry[4] }

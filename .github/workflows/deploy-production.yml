@@ -67,6 +67,18 @@ jobs:
         run: |
           npx opennextjs-cloudflare build --dangerouslyUseUnsupportedNextVersion
           node scripts/patch-open-next-email.mjs
+      - name: Check whether reviewed advanced search glosses changed
+        id: advanced_glosses
+        run: |
+          if ! git diff --quiet HEAD^ HEAD -- migrations/0055_hsk789_example_gloss_corrections.sql; then
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          fi
+      - name: Apply and verify reviewed advanced search glosses
+        if: steps.advanced_glosses.outputs.changed == 'true'
+        run: |
+          npx wrangler d1 execute hskkit-learning --remote --file migrations/0055_hsk789_example_gloss_corrections.sql --yes
+          npx wrangler d1 execute hskkit-learning --remote --command "SELECT id, meaning, search_english, search_text FROM catalog_search_index WHERE release_id='hsk3-hsk123456789-2025-v11' AND id IN ('hsk2025.word.l7.05448.v1','hsk2025.word.l7.05629.v1','hsk2025.word.l7.05631.v1','hsk2025.word.l7.05641.v1')" --json > "$RUNNER_TEMP/hsk789-gloss-results.json"
+          python scripts/content/verify-hsk789-gloss-results.py "$RUNNER_TEMP/hsk789-gloss-results.json"
       - name: Upload and deploy Worker version
         run: |
           npx wrangler versions upload | tee "$RUNNER_TEMP/worker-upload.log"

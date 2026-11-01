@@ -271,7 +271,7 @@ export function todayContentFromCatalogRow(row: CatalogSearchRow): TodayContentI
     meaning: row.meaning,
     partOfSpeech: row.part_of_speech,
     studySlug: row.id,
-    example: matchedWordExample(Number(row.level_band), row.hanzi, row.pinyin, row.id),
+    example: matchedWordExample(row.level_band === "7-9" ? 7 : Number(row.level_band), row.hanzi, row.pinyin, row.id),
     audioSrc: publishedContentAudioAsset(row.id, row.hanzi)?.src,
   };
 }

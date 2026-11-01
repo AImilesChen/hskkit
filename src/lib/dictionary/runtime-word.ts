@@ -19,7 +19,7 @@ export const getPublishedWordBySlug = cache(async (slug: string): Promise<Lookup
   if (!row) return { status: "missing" };
 
   const audioAsset = publicAudioAsset(publishedContentAudioAsset(row.id, row.hanzi));
-  const example = matchedWordExample(Number(row.level_band), row.hanzi, row.pinyin, row.id);
+  const example = matchedWordExample(row.level_band === "7-9" ? 7 : Number(row.level_band), row.hanzi, row.pinyin, row.id);
   return {
     status: "published",
     item: {

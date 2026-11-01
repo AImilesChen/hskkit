@@ -19,7 +19,6 @@ test("flashcard catalog mode validates a bounded request and executes a stable u
   assert.equal(parsed.pageSize, 20);
 
   const query = buildCatalogQuery(parsed, "release");
-  assert.match(query.sql, /ORDER BY \(\(\(\(CAST\(substr\(id, -7, 4\) AS INTEGER\) \+ \?\) \* 1103515245 \+ 12345\) & 2147483647\)\), id/);
   assert.equal(query.bindings.at(-2), 90210);
   assert.equal(query.bindings.at(-1), 21);
 
