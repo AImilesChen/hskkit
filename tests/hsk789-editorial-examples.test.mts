@@ -19,7 +19,7 @@ const get = (n: number) => (examples as Record<string, string[]>)[`hsk2025.word.
 
 test("public search serves corrected advanced glosses and flashcards without a legacy D1 catalog", async () => {
   const unavailableDatabase = new Proxy({}, { get() { throw new Error("Legacy D1 catalog must not be accessed"); } });
-  for (const n of [5448, 5629, 5631, 5641]) {
+  for (const n of [5448, 5629, 5631, 5641, 6627, 6682, 6849, 7063, 7100, 7157, 7208, 7294]) {
     const id = `hsk2025.word.l7.${String(n).padStart(5, "0")}.v1`;
     const row = catalog.words.find(r => r[0] === id)!;
     const response = await handleCatalogWordsRequest(new Request(`https://hskkit.com/api/v1/catalog/words?level=7&pageSize=100&q=${encodeURIComponent(row[4])}`), unavailableDatabase);
@@ -72,12 +72,12 @@ test("advanced flashcards randomize five-digit sequences identically in static a
 test("search database migration preserves the catalog's reviewed meanings and normalized search fields", () => {
   const db = new DatabaseSync(":memory:");
   try {
-    for (const file of ["0053_catalog_search_index_hsk123456789_2025.sql", "0054_hsk789_polyphonic_gloss_corrections.sql", "0055_hsk789_example_gloss_corrections.sql"]) {
+    for (const file of ["0053_catalog_search_index_hsk123456789_2025.sql", "0054_hsk789_polyphonic_gloss_corrections.sql", "0055_hsk789_example_gloss_corrections.sql", "0056_hsk789_common_sense_gloss_corrections.sql"]) {
       db.exec(readFileSync(new URL(`../migrations/${file}`, import.meta.url), "utf8"));
     }
     const check = () => {
       assert.equal(db.prepare("SELECT COUNT(*) AS n FROM catalog_search_index").get()?.n, 11000);
-      for (const n of [5448, 5629, 5631, 5641]) {
+      for (const n of [5448, 5629, 5631, 5641, 6627, 6682, 6849, 7063, 7100, 7157, 7208, 7294]) {
         const id = `hsk2025.word.l7.${String(n).padStart(5, "0")}.v1`;
         const row = catalog.words.find(r => r[0] === id)!;
         const stored = db.prepare("SELECT meaning, search_english, search_text FROM catalog_search_index WHERE id=? AND release_id=?").get(id, catalog.releaseId);
@@ -86,6 +86,7 @@ test("search database migration preserves the catalog's reviewed meanings and no
     };
     check();
     db.exec(readFileSync(new URL("../migrations/0055_hsk789_example_gloss_corrections.sql", import.meta.url), "utf8"));
+    db.exec(readFileSync(new URL("../migrations/0056_hsk789_common_sense_gloss_corrections.sql", import.meta.url), "utf8"));
     check();
   } finally {
     db.close();
@@ -94,7 +95,7 @@ test("search database migration preserves the catalog's reviewed meanings and no
 
 test("reviewed advanced examples reach word detail and Today through runtime and catalog paths", async () => {
   assert.equal(catalog.words.filter(r => r[3] === "7-9").length, 5600);
-  assert.equal(Object.keys(examples).length, 1000);
+  assert.equal(Object.keys(examples).length, 2000);
   assert.deepEqual(Object.keys(examples), Object.keys(review.entries));
   for (const [id, entry] of Object.entries(examples)) {
     const row = findPublicCatalogWordById(id);
@@ -125,10 +126,10 @@ test("reviewed advanced examples reach word detail and Today through runtime and
 });
 
 test("the single 7–9 band preserves pending coverage and rejects stale lexical matches", () => {
-  assert.equal(progress.reviewedExamples, 1000);
-  assert.equal(progress.pendingExamples, 4600);
+  assert.equal(progress.reviewedExamples, 2000);
+  assert.equal(progress.pendingExamples, 3600);
   assert.equal(progress.fullBandReviewComplete, false);
-  assert.equal(progress.pendingIds.length, 4600);
+  assert.equal(progress.pendingIds.length, 3600);
   const reviewed = new Set(Object.keys(examples));
   for (const row of catalog.words.filter(r => r[3] === "7-9")) {
     assert.equal(progress.pendingIds.includes(row[0]), !reviewed.has(row[0]), row[0]);
@@ -185,4 +186,46 @@ test("second batch distinguishes polyphones, lexical roles and unrelated charact
   assert.equal(matchedWordExample(7, "大意", "dàyi", "hsk2025.word.l7.06146.v1"), undefined);
   assert.equal(matchedWordExample(7, "担", "dàn", "hsk2025.word.l7.06160.v1"), undefined);
   assert.equal(matchedWordExample(7, "都会", "dōuhuì", "hsk2025.word.l7.06362.v1"), undefined);
+});
+
+test("batches three and four reject accidental matches and preserve the intended lexical sense", () => {
+  assert.match(get(6411)[2], /几只鹅/);
+  assert.doesNotMatch(get(6411)[2], /企鹅/);
+  assert.match(get(6454)[4], /legal entity/);
+  assert.match(get(6458)[4], /rule of law/);
+  assert.match(get(6568)[4], /noodles/);
+  assert.match(get(6569)[4], /\bfans?\b/i);
+  assert.match(get(6616)[3], /féng/);
+  assert.match(get(6619)[3], /fèng/);
+  assert.match(get(6690)[2], /一杆秤/);
+  assert.doesNotMatch(get(6690)[2], /旗杆|钓鱼竿/);
+  assert.match(get(6866)[2], /奖金.*表现挂钩/);
+  assert.match(get(7019)[4], /stone/);
+  assert.match(get(7208)[4], /meat and vegetarian/);
+  assert.match(get(7216)[4], /served him right/);
+  assert.match(get(7302)[3], /jìdu/);
+  assert.match(get(7341)[2], /驾着马车/);
+  const meaning = (n: number) => findPublicCatalogWordById(`hsk2025.word.l7.${String(n).padStart(5, "0")}.v1`)!.meaning;
+  assert.match(meaning(6627), /perfunctorily/);
+  assert.match(meaning(6682), /without exception/);
+  assert.match(meaning(6849), /therefore/);
+  assert.match(meaning(7063), /to bake/);
+  assert.match(meaning(7100), /to trick/);
+  assert.match(meaning(7157), /to neglect/);
+  assert.match(meaning(7208), /non-vegetarian food/);
+  assert.match(meaning(7294), /to avoid/);
+});
+
+test("phonetic review removes duplicated syllables and corrects contextual readings", () => {
+  for (const n of [6494, 6499, 6617, 6634, 6691, 6758, 6766, 6783, 6793, 6824, 6920, 6961, 6992, 6994, 7044, 7053, 7324, 7355, 7390]) {
+    assert.equal(review.entries[`hsk2025.word.l7.${String(n).padStart(5, "0")}.v1`].source.kind, "editorial-replacement");
+  }
+  assert.match(get(6474)[3], /diàopèi/);
+  assert.match(get(6645)[3], /fǎngfú/);
+  assert.match(get(6956)[3], /yīnggāi/);
+  assert.match(get(7237)[3], /jì hǎo ānquándài/);
+  assert.match(get(5682)[3], /yīqiè/);
+  assert.match(get(5729)[3], /xiūxi/);
+  assert.match(get(5957)[3], /Jiànghu/);
+  assert.match(get(5976)[3], /línguó/);
 });
