@@ -41,6 +41,8 @@ def main():
             assert source["upstreamExample"] == example
         examples[asset_id] = [row[4], row[6], *example]
         attribution[asset_id] = {"provider": source["provider"], "license": source["license"], "upstreamId": source.get("upstreamId")}
+        if source.get("replaces"):
+            attribution[asset_id]["replaces"] = source["replaces"]
     output = ROOT / "src/lib/learning/hsk789-2025-examples.json"
     output.write_text(json.dumps(examples, ensure_ascii=False, indent=2) + "\n", encoding="utf8", newline="\n")
     public = ROOT / "public/content/hsk789-example-attribution.json"
