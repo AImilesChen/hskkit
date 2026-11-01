@@ -76,6 +76,9 @@ word detail and Today, and exclusion of all pending IDs from editorial lookup.
   the final advanced word 做主. License-page attribution was checked as well.
 - Source-catalog comparison confirmed exactly the four intended gloss changes.
 
-No production deployment or remote database migration was performed. Apply 0055
-to the production search database as part of a later authorized release, so D1
-search and the static catalog use the same corrected glosses.
+At the original review, no production deployment or remote migration had been
+performed. Public search, suggestions, detail, practice and Today all read the
+build-time public catalog. Releasing these corrections requires the updated Worker
+and static indexes, not migration of the unused legacy D1 search table. Migration
+0055 is retained for separate legacy-table maintenance if that table is used again.
+See hsk789-release-routing-review.md for the verified release dependency.
