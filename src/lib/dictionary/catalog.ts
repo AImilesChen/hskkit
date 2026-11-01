@@ -1,6 +1,7 @@
 import runtimeIndex from "../content/runtime-content-index.json" with { type: "json" };
 import { publicAudioAsset, publishedContentAudioAsset, type PublicAudioAsset } from "../audio/assets.ts";
 import { P1_CHARACTER_RECORDS } from "./p1-character-data.ts";
+import { matchedWordExample } from "../learning/word-example-editorial.ts";
 
 const dictionaryAssets = runtimeIndex.dictionaryAssets;
 const runtimeWordAssets = Object.values(runtimeIndex.runtimeWords).flat();
@@ -95,7 +96,8 @@ function studyWordFromAsset(
   example?: StudyWord["example"],
 ): StudyWord {
   const editorial = wordEditorial[slug];
-  const examples = editorial?.examples ?? (example ? [example] : []);
+  const primaryExample = example ?? matchedWordExample(asset.level, asset.hanzi, asset.pinyin, asset.id);
+  const examples = editorial?.examples ?? (primaryExample ? [primaryExample] : []);
   return {
     id: asset.id,
     slug,
@@ -104,7 +106,7 @@ function studyWordFromAsset(
     pinyin: asset.pinyin,
     meaning: asset.meaning,
     partOfSpeech: asset.partOfSpeech,
-    example,
+    example: primaryExample,
     examples,
     collocations: editorial?.collocations ?? [],
     releaseStatus: "published",

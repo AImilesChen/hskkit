@@ -5,6 +5,7 @@ import { findNextPublicCatalogWordsForToday, findPublicCatalogWordById } from ".
 import { getHsk3LevelStatus } from "../content/level-status.ts";
 import { listPublishedWords, type StudyWord } from "../dictionary/catalog.ts";
 import type { DailySession } from "./domain.ts";
+import { matchedWordExample } from "./word-example-editorial.ts";
 
 const poolCache = new Map<number, TodayContentItem[]>();
 const runtimeWordAssets = Object.values(runtimeIndex.runtimeWords).flat();
@@ -110,7 +111,7 @@ function mapItem(asset: RuntimeTodayAsset, word: StudyWord | undefined, releaseI
     meaning: asset.meaning,
     partOfSpeech: asset.partOfSpeech,
     studySlug: word?.slug ?? asset.id,
-    example: word?.example,
+    example: word?.example ?? matchedWordExample(asset.level, asset.hanzi, asset.pinyin, asset.id),
     audioSrc: word?.audio.status === "formal" ? word.audio.src : (asset as unknown as { audioSrc?: string | null }).audioSrc || undefined,
   };
 }
@@ -270,7 +271,7 @@ export function todayContentFromCatalogRow(row: CatalogSearchRow): TodayContentI
     meaning: row.meaning,
     partOfSpeech: row.part_of_speech,
     studySlug: row.id,
-    example: undefined,
+    example: matchedWordExample(Number(row.level_band), row.hanzi, row.pinyin, row.id),
     audioSrc: publishedContentAudioAsset(row.id, row.hanzi)?.src,
   };
 }
