@@ -6,10 +6,10 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[2]
-release_id = "hsk3-hsk123456-2025-v10"
+release_id = "hsk3-hsk123456789-2025-v11"
 catalog = json.loads((ROOT / "src/lib/content/catalog.json").read_text(encoding="utf-8"))
 if catalog["activeReleaseByStandard"]["hsk3"] != release_id:
-    raise SystemExit("Expected the HSK 1–6 2025 release to be active")
+    raise SystemExit("Expected the complete HSK 1–9 2025 release to be active")
 release = next(item for item in catalog["releases"] if item["id"] == release_id)
 by_id = {item["id"]: item for item in catalog["contentAssets"]}
 entries = []
@@ -33,7 +33,7 @@ for asset_id in release["contentAssetIds"]:
     })
 if len(entries) != 1800:
     raise SystemExit(f"Expected 1,800 approved HSK 6 words, got {len(entries)}")
-output = ROOT / "content/releases/hsk6-2025-commercial-v1.json"
-output.write_text(json.dumps({"releaseId": release_id, "entries": entries},
+output = ROOT / "content/releases/hsk6-2025-commercial-v2.json"
+output.write_text(json.dumps({"releaseId": release_id, "reviewedAt": "2026-11-01T00:00:00Z", "entries": entries},
                              ensure_ascii=False, separators=(",", ":")) + "\n", encoding="utf-8")
 print(f"Wrote {len(entries)} HSK 6 commercial words to {output}")

@@ -7,6 +7,17 @@ import { storeProductDetail } from "../src/lib/commercial/product-details.ts";
 type SampleSource = { generationVersion: string; samples: Array<{ file: string; page: number; sourcePdfSha256: string }>; cardFrom: number };
 const sources = JSON.parse(readFileSync(new URL("../src/lib/commercial/store-sample-sources.json", import.meta.url), "utf8")) as Record<string, SampleSource>;
 
+test("reviewed vocabulary previews reference the exact approved delivery PDFs", () => {
+  const release = JSON.parse(readFileSync(new URL("../content/releases/reviewed-vocabulary-artifacts-20261101.json", import.meta.url), "utf8")) as { files: Array<{productId: string; generationVersion: string; file: string; sha256: string}> };
+  for (const productId of ["level-6", "progression-4-6", "advanced-7-9", "complete-1-9"]) {
+    const pdfs = release.files.filter(file => file.productId === productId && file.generationVersion === generationVersionForProduct(productId) && file.file.endsWith(".pdf"));
+    assert.ok(pdfs.length, productId);
+    for (const sample of sources[productId].samples) {
+      assert.ok(pdfs.some(pdf => pdf.sha256 === sample.sourcePdfSha256), sample.file);
+    }
+  }
+});
+
 test("updated vocabulary samples and cards are tied to the current delivery generation", () => {
   for (const [productId, source] of Object.entries(sources)) {
     assert.equal(source.generationVersion, generationVersionForProduct(productId), productId);

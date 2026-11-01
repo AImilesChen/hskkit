@@ -33,7 +33,7 @@ for asset_id in release["contentAssetIds"]:
     })
 if len(entries) != 5600:
     raise SystemExit(f"Expected 5,600 approved HSK 7–9 words, got {len(entries)}")
-output = ROOT / "content/releases/hsk789-2025-commercial-v1.json"
-output.write_text(json.dumps({"releaseId": release_id, "entries": entries},
+output = ROOT / "content/releases/hsk789-2025-commercial-v2.json"
+output.write_text(json.dumps({"releaseId": release_id, "reviewedAt": "2026-11-01T00:00:00Z", "entries": entries},
                              ensure_ascii=False, separators=(",", ":")) + "\n", encoding="utf-8")
 print(f"Wrote {len(entries)} HSK 7–9 commercial words to {output}")
