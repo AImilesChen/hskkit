@@ -24,6 +24,9 @@ REVIEWED_LINEAGE = {
     10674: "hsk3.word.l7.5339.v1", 10731: None, 10913: None,
 }
 DIFFERENT_SENSE_VARIANTS = {7058, 7667, 8659}
+# Learner labels can be corrected without changing the source's original label.
+# 空前 describes something unprecedented; the retained crosswalk labels it 动.
+REVIEWED_STUDY_POS = {7774: "Adj"}
 
 
 def dictionary_entries() -> dict[str, list[tuple[str, str, str]]]:
@@ -133,7 +136,7 @@ def main() -> None:
             "officialOrder": number, "hanzi": row["word"],
             "traditional": traditional, "pinyin": row["pinyin"],
             "officialPartOfSpeech": row["part_of_speech"],
-            "partOfSpeech": display_pos(row["part_of_speech"], old),
+            "partOfSpeech": REVIEWED_STUDY_POS.get(number, display_pos(row["part_of_speech"], old)),
             "meaning": meaning, "meaningSource": meaning_source,
             "legacyId": legacy_id, "matchStatus": row["category"],
             "meaningQaStatus": "needs-editorial-review",
