@@ -91,6 +91,42 @@ OVERRIDES.update({
 })
 
 
+OVERRIDES.update({
+    "hsk2025.word.l2.0304.v1": ("我们班有二十个学生。", "Wǒmen bān yǒu èrshí gè xuésheng.", "There are twenty students in our class."),
+    "hsk2025.word.l2.0319.v1": ("出门前请关灯。", "Chūmén qián qǐng guān dēng.", "Please turn off the light before going out."),
+    "hsk2025.word.l2.0321.v1": ("床上有一本书。", "Chuáng shang yǒu yì běn shū.", "There is a book on the bed."),
+    "hsk2025.word.l2.0336.v1": ("我想点一杯茶。", "Wǒ xiǎng diǎn yì bēi chá.", "I would like to order a cup of tea."),
+    "hsk2025.word.l2.0338.v1": ("这张桌子动了。", "Zhè zhāng zhuōzi dòng le.", "This table moved."),
+    "hsk2025.word.l2.0352.v1": ("你想喝茶还是咖啡？", "Nǐ xiǎng hē chá háishi kāfēi?", "Would you like tea or coffee?"),
+    "hsk2025.word.l2.0358.v1": ("桌上有一朵花。", "Zhuō shang yǒu yì duǒ huā.", "There is a flower on the table."),
+    "hsk2025.word.l2.0359.v1": ("她喜欢画画。", "Tā xǐhuan huà huà.", "She likes to draw."),
+    "hsk2025.word.l2.0366.v1": ("这是一间教室。", "Zhè shì yì jiān jiàoshì.", "This is a classroom."),
+    "hsk2025.word.l2.0372.v1": ("请进来坐。", "Qǐng jìnlái zuò.", "Please come in and sit down."),
+    "hsk2025.word.l2.0375.v1": ("我们住在这家酒店。", "Wǒmen zhù zài zhè jiā jiǔdiàn.", "We are staying at this hotel."),
+    "hsk2025.word.l2.0379.v1": ("下周一开学。", "Xià zhōuyī kāixué.", "School starts next Monday."),
+    "hsk2025.word.l2.0380.v1": ("明天要考汉语。", "Míngtiān yào kǎo Hànyǔ.", "We have a Chinese exam tomorrow."),
+    "hsk2025.word.l2.0403.v1": ("请看前面。", "Qǐng kàn qiánmiàn.", "Please look ahead."),
+    "hsk2025.word.l2.0420.v1": ("雨停了，天晴了。", "Yǔ tíng le, tiān qíng le.", "The rain has stopped and the sky has cleared."),
+    "hsk2025.word.l2.0425.v1": ("请上来。", "Qǐng shànglái.", "Please come up."),
+    "hsk2025.word.l2.0426.v1": ("书在桌子上面。", "Shū zài zhuōzi shàngmiàn.", "The book is on the table."),
+    "hsk2025.word.l2.0431.v1": ("我来时他正在看书。", "Wǒ lái shí tā zhèngzài kàn shū.", "He was reading when I arrived."),
+    "hsk2025.word.l2.0433.v1": ("请把手洗干净。", "Qǐng bǎ shǒu xǐ gānjìng.", "Please wash your hands."),
+    "hsk2025.word.l2.0437.v1": ("我送你到车站。", "Wǒ sòng nǐ dào chēzhàn.", "I'll take you to the station."),
+    "hsk2025.word.l2.0438.v1": ("虽然下雨了，但我们还是去了。", "Suīrán xià yǔ le, dàn wǒmen háishi qù le.", "Although it rained, we still went."),
+    "hsk2025.word.l2.0442.v1": ("这道题很难。", "Zhè dào tí hěn nán.", "This question is difficult."),
+    "hsk2025.word.l2.0443.v1": ("河里有一条鱼。", "Hé lǐ yǒu yì tiáo yú.", "There is a fish in the river."),
+    "hsk2025.word.l2.0445.v1": ("我的头很疼。", "Wǒ de tóu hěn téng.", "My head hurts."),
+    "hsk2025.word.l2.0453.v1": ("这位老师很亲切。", "Zhè wèi lǎoshī hěn qīnqiè.", "This teacher is very kind."),
+    "hsk2025.word.l2.0476.v1": ("我没去，因为我生病了。", "Wǒ méi qù, yīnwèi wǒ shēng bìng le.", "I didn't go because I was ill."),
+    "hsk2025.word.l2.0477.v1": ("鱼在水里游。", "Yú zài shuǐ lǐ yóu.", "The fish is swimming in the water."),
+    "hsk2025.word.l2.0486.v1": ("下一站是北京。", "Xià yí zhàn shì Běijīng.", "The next stop is Beijing."),
+    "hsk2025.word.l2.0493.v1": ("我在准备考试。", "Wǒ zài zhǔnbèi kǎoshì.", "I am preparing for an exam."),
+    "hsk2025.word.l2.0495.v1": ("我们走吧。", "Wǒmen zǒu ba.", "Let's go."),
+    "hsk2025.word.l2.0498.v1": ("这是我最喜欢的书。", "Zhè shì wǒ zuì xǐhuan de shū.", "This is my favorite book."),
+    "hsk2025.word.l2.0499.v1": ("请往左走。", "Qǐng wǎng zuǒ zǒu.", "Please go left."),
+})
+
+
 def untoned(value: str) -> str:
     return "".join(character for character in unicodedata.normalize("NFD", value.lower())
                    if "a" <= character <= "z")
