@@ -44,6 +44,6 @@ jobs:
         env:
           PRODUCT_IDS: level-6,progression-4-6,advanced-7-9,complete-1-9
         run: |
-          node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --test tests/hsk789-editorial-examples.test.mts tests/hsk789-2025-commercial.test.mts tests/store-sample-versions.test.mts
+          node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --test tests/hsk789-editorial-examples.test.mts tests/hsk789-2025-commercial.test.mts tests/store-sample-versions.test.mts tests/reviewed-vocabulary-publisher.test.mts
           node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/generate-commercial-artifacts.mts "$RUNNER_TEMP/hskkit-reviewed-vocabulary"
           node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/publish-reviewed-vocabulary-artifacts.mts "$RUNNER_TEMP/hskkit-reviewed-vocabulary" --check-only

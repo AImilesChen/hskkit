@@ -89,3 +89,6 @@ jobs:
             exit 1
           fi
           npx wrangler versions deploy "$version_id@100%" --yes
+      - name: Remove any temporary vocabulary publisher
+        if: always()
+        run: node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/publish-reviewed-vocabulary-artifacts.mts "$RUNNER_TEMP/hskkit-reviewed-vocabulary" --cleanup-only

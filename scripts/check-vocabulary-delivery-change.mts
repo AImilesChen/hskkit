@@ -10,11 +10,13 @@ const groups = [
   ["HSK123456789_LIBRARY_LAYOUT_GENERATION_VERSION", ["complete-1-9"]],
 ] as const;
 const products: string[] = [];
+const changedFiles = execFileSync("git", ["diff", "HEAD^", "HEAD", "--name-only"], { encoding: "utf8" }).split(/\r?\n/);
+const publisherChanged = changedFiles.some(file => ["scripts/publish-reviewed-vocabulary-artifacts.mts", "scripts/reviewed-vocabulary-publisher-worker.mjs", "scripts/check-vocabulary-delivery-change.mts"].includes(file));
 for (const [symbol, ids] of groups) {
   const pattern = new RegExp(`^export const ${symbol}="([a-z0-9._-]+)";`, "m");
   const before = old.match(pattern)?.[1], after = current.match(pattern)?.[1];
   if (!before || !after) throw Error(`VOCABULARY_VERSION_MISSING:${symbol}`);
-  if (before !== after) products.push(...ids);
+  if (before !== after || publisherChanged) products.push(...ids);
 }
 const result = `changed=${products.length > 0}\nproducts=${products.join(",")}\n`;
 if (process.env.GITHUB_OUTPUT) appendFileSync(process.env.GITHUB_OUTPUT, result);
