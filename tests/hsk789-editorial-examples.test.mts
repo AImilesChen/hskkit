@@ -10,10 +10,27 @@ import { getPublishedWordBySlug } from "../src/lib/dictionary/runtime-word.ts";
 import { todayContentFromCatalogRow, todayContentByAssetId } from "../src/lib/learning/today-content.ts";
 import { findPublicCatalogWordById, searchPublicCatalogWords } from "../src/lib/content/public-catalog-index.ts";
 import { isCatalogWordAssetId, buildCatalogQuery } from "../src/lib/content/catalog-search.ts";
+import { handleCatalogWordsRequest } from "../src/lib/content/catalog-route.ts";
 
 const review = JSON.parse(readFileSync(new URL("../scripts/hsk789-example-review.json", import.meta.url), "utf8"));
+const attribution = JSON.parse(readFileSync(new URL("../public/content/hsk789-example-attribution.json", import.meta.url), "utf8"));
 const reading = (value: string) => value.toLowerCase().replace(/[^a-züāáǎàēéěèīíǐìōóǒòūúǔùǖǘǚǜ]/g, "");
 const get = (n: number) => (examples as Record<string, string[]>)[`hsk2025.word.l7.${String(n).padStart(5, "0")}.v1`];
+
+test("public search serves corrected advanced glosses and flashcards without a legacy D1 catalog", async () => {
+  const unavailableDatabase = new Proxy({}, { get() { throw new Error("Legacy D1 catalog must not be accessed"); } });
+  for (const n of [5448, 5629, 5631, 5641]) {
+    const id = `hsk2025.word.l7.${String(n).padStart(5, "0")}.v1`;
+    const row = catalog.words.find(r => r[0] === id)!;
+    const response = await handleCatalogWordsRequest(new Request(`https://hskkit.com/api/v1/catalog/words?level=7&pageSize=100&q=${encodeURIComponent(row[4])}`), unavailableDatabase);
+    assert.equal(response.status, 200, id);
+    const result = await response.json();
+    assert.equal(result.contentAssets.find((word: { id: string }) => word.id === id)?.payload.meaning, row[7], id);
+  }
+  const response = await handleCatalogWordsRequest(new Request("https://hskkit.com/api/v1/catalog/words?level=7&mode=flashcards&seed=90210&pageSize=20"), unavailableDatabase);
+  assert.equal(response.status, 200);
+  assert.equal((await response.json()).contentAssets.length, 20);
+});
 
 test("all 5600 five-digit advanced IDs resolve, while invented split bands remain invalid", async () => {
   for (const row of catalog.words.filter(r => r[3] === "7-9")) {
@@ -77,13 +94,17 @@ test("search database migration preserves the catalog's reviewed meanings and no
 
 test("reviewed advanced examples reach word detail and Today through runtime and catalog paths", async () => {
   assert.equal(catalog.words.filter(r => r[3] === "7-9").length, 5600);
-  assert.equal(Object.keys(examples).length, 500);
+  assert.equal(Object.keys(examples).length, 1000);
   assert.deepEqual(Object.keys(examples), Object.keys(review.entries));
   for (const [id, entry] of Object.entries(examples)) {
     const row = findPublicCatalogWordById(id);
     assert.ok(row, id);
     const approved = review.entries[id];
     assert.equal(approved.status, "reviewed", id);
+    assert.equal(attribution.entries[id].provider, approved.source.provider, id);
+    assert.equal(attribution.entries[id].license, approved.source.license, id);
+    assert.equal(attribution.entries[id].upstreamId, approved.source.upstreamId ?? null, id);
+    if (approved.source.replaces) assert.deepEqual(attribution.entries[id].replaces, approved.source.replaces, id);
     assert.equal(approved.meaningReviewed, row.meaning, id);
     assert.equal(approved.partOfSpeechReviewed, row.part_of_speech, id);
     assert.deepEqual(entry, [approved.hanzi, approved.pinyin, ...approved.example], id);
@@ -104,10 +125,10 @@ test("reviewed advanced examples reach word detail and Today through runtime and
 });
 
 test("the single 7–9 band preserves pending coverage and rejects stale lexical matches", () => {
-  assert.equal(progress.reviewedExamples, 500);
-  assert.equal(progress.pendingExamples, 5100);
+  assert.equal(progress.reviewedExamples, 1000);
+  assert.equal(progress.pendingExamples, 4600);
   assert.equal(progress.fullBandReviewComplete, false);
-  assert.equal(progress.pendingIds.length, 5100);
+  assert.equal(progress.pendingIds.length, 4600);
   const reviewed = new Set(Object.keys(examples));
   for (const row of catalog.words.filter(r => r[3] === "7-9")) {
     assert.equal(progress.pendingIds.includes(row[0]), !reviewed.has(row[0]), row[0]);
@@ -139,4 +160,29 @@ test("review catches incorrect senses, proper names and accidental character bou
   assert.match(row(5629)[7], /dialectical/);
   assert.match(row(5631)[7], /to mark/);
   assert.equal(row(5641)[7], "beautiful; pretty; good-looking");
+});
+
+test("second batch distinguishes polyphones, lexical roles and unrelated character substrings", () => {
+  assert.match(get(5920)[2], /销售额.*持平/);
+  assert.match(get(6021)[2], /穿着很朴素/);
+  assert.match(get(6073)[2], /次要问题/);
+  assert.match(get(6075)[2], /一丛竹子/);
+  assert.match(get(6114)[2], /^打那以后/);
+  assert.match(get(6143)[2], /大为惊讶/);
+  assert.match(get(6145)[3], /dàyi/);
+  assert.match(get(6146)[2], /文章的大意/);
+  assert.match(get(6146)[3], /dàyì/);
+  assert.match(get(6160)[2], /担着两桶水/);
+  assert.match(get(6173)[3], /dàn/);
+  assert.match(get(6258)[2], /一条地道/);
+  assert.match(get(6298)[2], /歌的调/);
+  assert.match(get(6308)[2], /甲、乙、丙、丁/);
+  assert.match(get(6325)[2], /定做书柜/);
+  assert.match(get(6339)[2], /充满动感/);
+  assert.match(get(6351)[2], /动员居民/);
+  assert.match(get(6362)[3], /dūhuì/);
+  assert.equal(matchedWordExample(7, "大意", "dàyì", "hsk2025.word.l7.06145.v1"), undefined);
+  assert.equal(matchedWordExample(7, "大意", "dàyi", "hsk2025.word.l7.06146.v1"), undefined);
+  assert.equal(matchedWordExample(7, "担", "dàn", "hsk2025.word.l7.06160.v1"), undefined);
+  assert.equal(matchedWordExample(7, "都会", "dōuhuì", "hsk2025.word.l7.06362.v1"), undefined);
 });
