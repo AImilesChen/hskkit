@@ -44,6 +44,12 @@ export const HSK30_MIT_NOTICE=`MIT License\nCopyright (c) 2023 Ivan Krasilnikov\
 
 export async function generatePackPdf(selection: PackSelection, manifest: PackManifest, fontBytes: Uint8Array, _emojiFontBytes: Uint8Array,options?:{label?:string;entryNumberOffset?:number;totalAdvancedCount?:number}) {
   const pdf = await PDFDocument.create();
+  if (manifest.contentReviewedAt) {
+    // A frozen content release produces identical PDFs locally and in CI.
+    const reviewedAt = new Date(manifest.contentReviewedAt);
+    pdf.setCreationDate(reviewedAt);
+    pdf.setModificationDate(reviewedAt);
+  }
   pdf.registerFontkit(fontkit);
   const font = await pdf.embedFont(fontBytes, { subset: false });
   const levelLabel=options?.label??(selection.level>=7?"Advanced 7–9":`Level ${selection.level}`);

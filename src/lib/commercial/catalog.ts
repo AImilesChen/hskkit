@@ -4,9 +4,9 @@ import hsk1CommercialRelease from "../../../content/releases/hsk1-2025-commercia
 import hsk23CommercialRelease from "../../../content/releases/hsk23-2025-commercial-v1.json" with { type: "json" };
 import hsk4CommercialRelease from "../../../content/releases/hsk4-2025-commercial-v1.json" with { type: "json" };
 import hsk5CommercialRelease from "../../../content/releases/hsk5-2025-commercial-v1.json" with { type: "json" };
-import hsk6CommercialRelease from "../../../content/releases/hsk6-2025-commercial-v1.json" with { type: "json" };
-import hsk789CommercialRelease from "../../../content/releases/hsk789-2025-commercial-v1.json" with { type: "json" };
-import {VOCABULARY_PRODUCT_LICENSE} from "./products.ts";
+import hsk6CommercialRelease from "../../../content/releases/hsk6-2025-commercial-v2.json" with { type: "json" };
+import hsk789CommercialRelease from "../../../content/releases/hsk789-2025-commercial-v2.json" with { type: "json" };
+import {VOCABULARY_PRODUCT_LICENSE, HSK123456_VOCABULARY_GENERATION_VERSION, HSK123456789_VOCABULARY_GENERATION_VERSION, HSK123456789_LIBRARY_LAYOUT_GENERATION_VERSION} from "./products.ts";
 
 export type PackWord = {
   id: string;
@@ -29,6 +29,7 @@ export type PackSelection = { level: number; words: PackWord[]; exercises: PackE
 export type PackManifest = {
   schemaVersion: "hskkit-pack-manifest-v1";
   generationVersion: string;
+  contentReviewedAt?: string;
   standard: "HSK 3.0";
   standardVersion: "GF0025-2021" | "HSK-EXAM-2025";
   level: number;
@@ -101,6 +102,7 @@ export function buildPackManifest(selection: PackSelection, generationVersion: s
   return {
     schemaVersion: "hskkit-pack-manifest-v1",
     generationVersion,
+    ...([HSK123456_VOCABULARY_GENERATION_VERSION, HSK123456789_VOCABULARY_GENERATION_VERSION, HSK123456789_LIBRARY_LAYOUT_GENERATION_VERSION].includes(generationVersion) ? { contentReviewedAt: hsk789CommercialRelease.reviewedAt } : {}),
     standard: "HSK 3.0",
     standardVersion: selection.words.every(word=>word.standardVersion==="HSK-EXAM-2025")?"HSK-EXAM-2025":"GF0025-2021",
     level: selection.level,

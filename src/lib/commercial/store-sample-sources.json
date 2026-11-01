@@ -80,33 +80,65 @@
     "cardFrom": 1
   },
   "advanced-7-9": {
-    "generationVersion": "complete-vocabulary-hsk123456789-2025-v1",
+    "generationVersion": "complete-vocabulary-hsk123456789-2025-v3",
     "samples": [
       {
         "file": "advanced-7-9-sample-1.webp",
         "page": 1,
-        "sourcePdfSha256": "d7806056a174adc80d6335288eb51674e6ac5b3a0670fa12dfd33b22cf330f46"
+        "sourcePdfSha256": "bd6b8556623789cbc9dccdd37c8212ca69e2f9a75dbe6ae6f48c7e4cd5c21a54"
       },
       {
         "file": "advanced-7-9-sample-2.webp",
         "page": 35,
-        "sourcePdfSha256": "d7806056a174adc80d6335288eb51674e6ac5b3a0670fa12dfd33b22cf330f46"
+        "sourcePdfSha256": "bd6b8556623789cbc9dccdd37c8212ca69e2f9a75dbe6ae6f48c7e4cd5c21a54"
       }
     ],
-    "cardFrom": 2
+    "cardFrom": 1
   },
   "complete-1-9": {
-    "generationVersion": "complete-vocabulary-hsk123456789-2025-v2",
+    "generationVersion": "complete-vocabulary-hsk123456789-2025-v3",
     "samples": [
       {
         "file": "complete-1-9-sample-1.webp",
-        "page": 1,
-        "sourcePdfSha256": "34f04e8f9ab75a2416770398c4ca8ab2015866f31870f22193277663ce0d28d9"
+        "page": 2,
+        "sourcePdfSha256": "baabbfdfa59b98a2e948752809c63ef31579bf92e1b91c1b837c5c048cf5f0cc"
       },
       {
         "file": "complete-1-9-sample-2.webp",
         "page": 35,
-        "sourcePdfSha256": "8bca5612a0335bcc3d3152b48cc27e35be17ae40aedfa182a0fb9d0c19c65288"
+        "sourcePdfSha256": "bd6b8556623789cbc9dccdd37c8212ca69e2f9a75dbe6ae6f48c7e4cd5c21a54"
+      }
+    ],
+    "cardFrom": 1
+  },
+  "level-6": {
+    "generationVersion": "complete-vocabulary-hsk123456-2025-v2",
+    "samples": [
+      {
+        "file": "level-6-sample-1.webp",
+        "page": 2,
+        "sourcePdfSha256": "8b321b27aaa8f5395c00f9385adcb62bf4c7d2d15fd192ab6d26777509ea3ccd"
+      },
+      {
+        "file": "level-6-sample-2.webp",
+        "page": 18,
+        "sourcePdfSha256": "8b321b27aaa8f5395c00f9385adcb62bf4c7d2d15fd192ab6d26777509ea3ccd"
+      }
+    ],
+    "cardFrom": 1
+  },
+  "progression-4-6": {
+    "generationVersion": "complete-vocabulary-hsk123456-2025-v2",
+    "samples": [
+      {
+        "file": "progression-4-6-sample-1.webp",
+        "page": 2,
+        "sourcePdfSha256": "6a996d84cd1ea7fb6e4db1c1f38e8d2f28cc473fe2340d6b49faf74650cfa89d"
+      },
+      {
+        "file": "progression-4-6-sample-2.webp",
+        "page": 18,
+        "sourcePdfSha256": "8b321b27aaa8f5395c00f9385adcb62bf4c7d2d15fd192ab6d26777509ea3ccd"
       }
     ],
     "cardFrom": 1

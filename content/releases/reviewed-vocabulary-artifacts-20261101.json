@@ -1,0 +1,185 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {
+      "productId": "advanced-7-9",
+      "generationVersion": "complete-vocabulary-hsk123456789-2025-v3",
+      "file": "bundle-zip.manifest.json",
+      "sha256": "84974b12587af7c83922dec320de64443895b68de7a980622ceef3081da7e9be"
+    },
+    {
+      "productId": "advanced-7-9",
+      "generationVersion": "complete-vocabulary-hsk123456789-2025-v3",
+      "file": "bundle-zip.zip",
+      "sha256": "56dc94cab0162112ddd3c05ba9eaebfd87098d6e50f48e2ed8bb76c8a4ff282d"
+    },
+    {
+      "productId": "advanced-7-9",
+      "generationVersion": "complete-vocabulary-hsk123456789-2025-v3",
+      "file": "level-7.manifest.json",
+      "sha256": "28eebc5a0e326c5d5b1a9a042ea21439505466d38242cfebb961a23365cd1ee2"
+    },
+    {
+      "productId": "advanced-7-9",
+      "generationVersion": "complete-vocabulary-hsk123456789-2025-v3",
+      "file": "level-7.pdf",
+      "sha256": "bd6b8556623789cbc9dccdd37c8212ca69e2f9a75dbe6ae6f48c7e4cd5c21a54"
+    },
+    {
+      "productId": "complete-1-9",
+      "generationVersion": "complete-vocabulary-hsk123456789-2025-v3",
+      "file": "bundle-zip.manifest.json",
+      "sha256": "ad37239a319927c3df050033fee201546afb116e0e6a61b6d0265487230248ba"
+    },
+    {
+      "productId": "complete-1-9",
+      "generationVersion": "complete-vocabulary-hsk123456789-2025-v3",
+      "file": "bundle-zip.zip",
+      "sha256": "1f22af3fb6ae3828eb1fdf076a75a01a0958d7471bd71883ce1d2d3ac0d52431"
+    },
+    {
+      "productId": "complete-1-9",
+      "generationVersion": "complete-vocabulary-hsk123456789-2025-v3",
+      "file": "level-1.manifest.json",
+      "sha256": "9b918b9c8738a2f66103417a9c28b50a3cdcb4ae5ba809f5e112f93d93533ca8"
+    },
+    {
+      "productId": "complete-1-9",
+      "generationVersion": "complete-vocabulary-hsk123456789-2025-v3",
+      "file": "level-1.pdf",
+      "sha256": "baabbfdfa59b98a2e948752809c63ef31579bf92e1b91c1b837c5c048cf5f0cc"
+    },
+    {
+      "productId": "complete-1-9",
+      "generationVersion": "complete-vocabulary-hsk123456789-2025-v3",
+      "file": "level-2.manifest.json",
+      "sha256": "5ae31897d70c747ad72dd316493400adaa987232b1157b4e6d6c745cd702df3d"
+    },
+    {
+      "productId": "complete-1-9",
+      "generationVersion": "complete-vocabulary-hsk123456789-2025-v3",
+      "file": "level-2.pdf",
+      "sha256": "ebf845c3ff0f2cde6f5b11ed144e681f27360ee8420d9fd7bee0ce9960c007fa"
+    },
+    {
+      "productId": "complete-1-9",
+      "generationVersion": "complete-vocabulary-hsk123456789-2025-v3",
+      "file": "level-3.manifest.json",
+      "sha256": "4e9823c88e922b823cecd2aab92481a1d3cba2668595ec24a03c8fccd67400db"
+    },
+    {
+      "productId": "complete-1-9",
+      "generationVersion": "complete-vocabulary-hsk123456789-2025-v3",
+      "file": "level-3.pdf",
+      "sha256": "fdbb0bc095d9de8b3833147cb024e08da1e248000eb9292b1df5bf9521a622a1"
+    },
+    {
+      "productId": "complete-1-9",
+      "generationVersion": "complete-vocabulary-hsk123456789-2025-v3",
+      "file": "level-4.manifest.json",
+      "sha256": "852b05ccce0a0bc0c408812c714a3351528c54bfdfce4c78a5bbe3fa276cbedd"
+    },
+    {
+      "productId": "complete-1-9",
+      "generationVersion": "complete-vocabulary-hsk123456789-2025-v3",
+      "file": "level-4.pdf",
+      "sha256": "76654038bb5bd4fb588e0d947918478797a212dc3541fc395f4a5810c17fdc62"
+    },
+    {
+      "productId": "complete-1-9",
+      "generationVersion": "complete-vocabulary-hsk123456789-2025-v3",
+      "file": "level-5.manifest.json",
+      "sha256": "769850a5eb37241f767bc22f20d751ba82f8910b80e34f7631b24dba7df84899"
+    },
+    {
+      "productId": "complete-1-9",
+      "generationVersion": "complete-vocabulary-hsk123456789-2025-v3",
+      "file": "level-5.pdf",
+      "sha256": "4653ac58ee0b0fad258e5bcd3ab7c0032a3a3285447812f1e38002f3b65091ff"
+    },
+    {
+      "productId": "complete-1-9",
+      "generationVersion": "complete-vocabulary-hsk123456789-2025-v3",
+      "file": "level-6.manifest.json",
+      "sha256": "dd1143695d286864fc8facc8ac2a5c6eab618c47c83041419e3341a8101edf72"
+    },
+    {
+      "productId": "complete-1-9",
+      "generationVersion": "complete-vocabulary-hsk123456789-2025-v3",
+      "file": "level-6.pdf",
+      "sha256": "fe8ffe08adc4aa3c570ef7d4a9a175471ca21af0954c3fee74e3312a05570c16"
+    },
+    {
+      "productId": "complete-1-9",
+      "generationVersion": "complete-vocabulary-hsk123456789-2025-v3",
+      "file": "level-7.manifest.json",
+      "sha256": "58c1a30ca72a6d36edd2d71ec578b4061d4abebd86a585c98f713131b5aefc4c"
+    },
+    {
+      "productId": "complete-1-9",
+      "generationVersion": "complete-vocabulary-hsk123456789-2025-v3",
+      "file": "level-7.pdf",
+      "sha256": "bd6b8556623789cbc9dccdd37c8212ca69e2f9a75dbe6ae6f48c7e4cd5c21a54"
+    },
+    {
+      "productId": "level-6",
+      "generationVersion": "complete-vocabulary-hsk123456-2025-v2",
+      "file": "level-6.manifest.json",
+      "sha256": "202ba56f90552aac0d3034715c1b0bdbb7c968d68621db52acb8e68a58bc9d42"
+    },
+    {
+      "productId": "level-6",
+      "generationVersion": "complete-vocabulary-hsk123456-2025-v2",
+      "file": "level-6.pdf",
+      "sha256": "8b321b27aaa8f5395c00f9385adcb62bf4c7d2d15fd192ab6d26777509ea3ccd"
+    },
+    {
+      "productId": "progression-4-6",
+      "generationVersion": "complete-vocabulary-hsk123456-2025-v2",
+      "file": "bundle-zip.manifest.json",
+      "sha256": "937bebf4510d65d1de0246ef9d79a4cd97e325643f225135740951ae87414062"
+    },
+    {
+      "productId": "progression-4-6",
+      "generationVersion": "complete-vocabulary-hsk123456-2025-v2",
+      "file": "bundle-zip.zip",
+      "sha256": "fee5c9850763afba4d006553a4ec93990539843633fc999562dbd3113280fde1"
+    },
+    {
+      "productId": "progression-4-6",
+      "generationVersion": "complete-vocabulary-hsk123456-2025-v2",
+      "file": "level-4.manifest.json",
+      "sha256": "94dbe7c2ea5972b3b501ba620ea52b862930fbd60825ae4fb9b20560c72c30e4"
+    },
+    {
+      "productId": "progression-4-6",
+      "generationVersion": "complete-vocabulary-hsk123456-2025-v2",
+      "file": "level-4.pdf",
+      "sha256": "6a996d84cd1ea7fb6e4db1c1f38e8d2f28cc473fe2340d6b49faf74650cfa89d"
+    },
+    {
+      "productId": "progression-4-6",
+      "generationVersion": "complete-vocabulary-hsk123456-2025-v2",
+      "file": "level-5.manifest.json",
+      "sha256": "6dcbe863f080d439a1cbbeab54c60de5d515ca5a9385b738fdba3f63292df64c"
+    },
+    {
+      "productId": "progression-4-6",
+      "generationVersion": "complete-vocabulary-hsk123456-2025-v2",
+      "file": "level-5.pdf",
+      "sha256": "e04d969583a294c1bc511947deb4bc4cace16cdc1f80803f9b12efec170d4234"
+    },
+    {
+      "productId": "progression-4-6",
+      "generationVersion": "complete-vocabulary-hsk123456-2025-v2",
+      "file": "level-6.manifest.json",
+      "sha256": "1ed35dc0c6951f720be4adfcbcb8fb17a4b864812d290564075f1249d890492c"
+    },
+    {
+      "productId": "progression-4-6",
+      "generationVersion": "complete-vocabulary-hsk123456-2025-v2",
+      "file": "level-6.pdf",
+      "sha256": "8b321b27aaa8f5395c00f9385adcb62bf4c7d2d15fd192ab6d26777509ea3ccd"
+    }
+  ]
+}
