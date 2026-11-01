@@ -26,7 +26,7 @@ REVIEWED_LINEAGE = {
 DIFFERENT_SENSE_VARIANTS = {7058, 7667, 8659}
 # Learner labels can be corrected without changing the source's original label.
 # 空前 describes something unprecedented; the retained crosswalk labels it 动.
-REVIEWED_STUDY_POS = {7774: "Adj", 9245: "N"}
+REVIEWED_STUDY_POS = {7774: "Adj", 9245: "N", 9722: "Adj", 10704: "Prep/Conj", 10755: "Adj", 10846: "Adv", 10937: "N/V"}
 REVIEWED_STUDY_PINYIN = {8815: "rènxìng"}
 
 
