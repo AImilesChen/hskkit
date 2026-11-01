@@ -1,0 +1,103 @@
+{
+  "scope": "Catalog discrepancies found and corrected during HSK 6 sentence review; corrections also retained in draft-generation overrides.",
+  "releaseBlockedUntilCatalogReview": false,
+  "entries": [
+    {
+      "id": "hsk2025.word.l6.3847.v1",
+      "hanzi": "大都",
+      "pinyin": "dàdū",
+      "currentMeaning": "for the most part",
+      "partOfSpeech": "Adv",
+      "reviewReason": "The catalog combines the reading dàdū with an adverb gloss. Confirm the syllabus reading and intended sense before publishing.",
+      "correction": {
+        "pinyin": "dàdōu"
+      },
+      "status": "corrected"
+    },
+    {
+      "id": "hsk2025.word.l6.4341.v1",
+      "hanzi": "局",
+      "pinyin": "jú",
+      "currentMeaning": "office",
+      "partOfSpeech": "M",
+      "reviewReason": "Classifier entry currently has the noun gloss office; the example teaches a round of a game.",
+      "correction": {
+        "meaning": "classifier for a round of a game"
+      },
+      "status": "corrected"
+    },
+    {
+      "id": "hsk2025.word.l6.4451.v1",
+      "hanzi": "料",
+      "pinyin": "liào",
+      "currentMeaning": "material",
+      "partOfSpeech": "V",
+      "reviewReason": "Verb entry currently has the noun gloss material; the example teaches anticipating an outcome.",
+      "correction": {
+        "meaning": "to anticipate; to expect"
+      },
+      "status": "corrected"
+    },
+    {
+      "id": "hsk2025.word.l6.4513.v1",
+      "hanzi": "面子",
+      "pinyin": "miànzi",
+      "currentMeaning": "outer surface",
+      "partOfSpeech": "N",
+      "reviewReason": "The short gloss only states outer surface; the example teaches face/reputation.",
+      "correction": {
+        "meaning": "face; reputation; outer surface"
+      },
+      "status": "corrected"
+    },
+    {
+      "id": "hsk2025.word.l6.5063.v1",
+      "hanzi": "心灵",
+      "pinyin": "xīnlíng",
+      "currentMeaning": "bright",
+      "partOfSpeech": "N",
+      "reviewReason": "The noun 心灵 currently has the adjective gloss bright; review the intended heart/mind sense.",
+      "correction": {
+        "meaning": "heart; mind; spirit"
+      },
+      "status": "corrected"
+    },
+    {
+      "id": "hsk2025.word.l6.5195.v1",
+      "hanzi": "用人",
+      "pinyin": "yòngrén",
+      "currentMeaning": "servant",
+      "partOfSpeech": "V",
+      "reviewReason": "Verb 用人 currently has the noun gloss servant; the example teaches employing people.",
+      "correction": {
+        "meaning": "to employ people; to select personnel"
+      },
+      "status": "corrected"
+    },
+    {
+      "id": "hsk2025.word.l6.5206.v1",
+      "hanzi": "于",
+      "pinyin": "yú",
+      "currentMeaning": "to go",
+      "partOfSpeech": "Prep",
+      "reviewReason": "Preposition 于 currently has the verb gloss to go; review the preposition gloss.",
+      "correction": {
+        "meaning": "in; at; to; by (a preposition)"
+      },
+      "status": "corrected"
+    },
+    {
+      "id": "hsk2025.word.l6.5357.v1",
+      "hanzi": "著作",
+      "pinyin": "zhùzuò",
+      "currentMeaning": "to write",
+      "partOfSpeech": "N",
+      "reviewReason": "Noun 著作 currently has the verb gloss to write; the example teaches a written work.",
+      "correction": {
+        "meaning": "a written work; writings"
+      },
+      "status": "corrected"
+    }
+  ],
+  "readingReference": "https://dict.revised.moe.edu.tw/dictView.jsp?ID=40749&la=0&powerMode=0"
+}
