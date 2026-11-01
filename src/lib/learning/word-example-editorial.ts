@@ -1,5 +1,6 @@
 import legacyHsk1 from "../data/hsk1_vocab.json" with { type: "json" };
 import { HSK1_2025_NEW_EXAMPLES } from "./hsk1-2025-new-examples.ts";
+import hsk23Examples from "./hsk23-2025-examples.json" with { type: "json" };
 
 export type WordExample = { hanzi: string; pinyin: string; meaning: string };
 
@@ -16,6 +17,13 @@ const hsk1Examples = new Map<string, WordExample>(legacyHsk1
   }]));
 
 export function matchedWordExample(level: number, hanzi: string, pinyin: string, assetId?: string): WordExample | undefined {
+  if (level === 2 || level === 3) {
+    if (!assetId?.startsWith(`hsk2025.word.l${level}.`)) return undefined;
+    const example = (hsk23Examples as Record<string, string[]>)[assetId];
+    return example?.length === 3 && example[0].includes(hanzi)
+      ? { hanzi: example[0], pinyin: example[1], meaning: example[2] }
+      : undefined;
+  }
   if (level !== 1) return undefined;
   const existing = hsk1Examples.get(`${hanzi}\u0000${pinyin}`);
   if (existing) return existing;
