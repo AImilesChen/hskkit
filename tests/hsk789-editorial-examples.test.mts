@@ -19,13 +19,16 @@ const get = (n: number) => (examples as Record<string, string[]>)[`hsk2025.word.
 
 test("public search serves corrected advanced glosses and flashcards without a legacy D1 catalog", async () => {
   const unavailableDatabase = new Proxy({}, { get() { throw new Error("Legacy D1 catalog must not be accessed"); } });
-  for (const n of [5448, 5629, 5631, 5641, 6627, 6682, 6849, 7063, 7100, 7157, 7208, 7294, 7514, 7554, 7569, 7774, 8126, 8127, 8376]) {
+  for (const n of [5448, 5629, 5631, 5641, 6627, 6682, 6849, 7063, 7100, 7157, 7208, 7294, 7514, 7554, 7569, 7774, 8126, 8127, 8376, 8565, 8815, 9245, 9382]) {
     const id = `hsk2025.word.l7.${String(n).padStart(5, "0")}.v1`;
     const row = catalog.words.find(r => r[0] === id)!;
     const response = await handleCatalogWordsRequest(new Request(`https://hskkit.com/api/v1/catalog/words?level=7&pageSize=100&q=${encodeURIComponent(row[4])}`), unavailableDatabase);
     assert.equal(response.status, 200, id);
     const result = await response.json();
-    assert.equal(result.contentAssets.find((word: { id: string }) => word.id === id)?.payload.meaning, row[7], id);
+    const word = result.contentAssets.find((word: { id: string }) => word.id === id);
+    assert.equal(word?.payload.meaning, row[7], id);
+    assert.equal(word?.payload.pinyin, row[6], id);
+    assert.equal(word?.payload.partOfSpeech, row[8], id);
   }
   const response = await handleCatalogWordsRequest(new Request("https://hskkit.com/api/v1/catalog/words?level=7&mode=flashcards&seed=90210&pageSize=20"), unavailableDatabase);
   assert.equal(response.status, 200);
@@ -72,14 +75,15 @@ test("advanced flashcards randomize five-digit sequences identically in static a
 test("search database migration preserves the catalog's reviewed meanings and normalized search fields", () => {
   const db = new DatabaseSync(":memory:");
   try {
-    for (const file of ["0053_catalog_search_index_hsk123456789_2025.sql", "0054_hsk789_polyphonic_gloss_corrections.sql", "0055_hsk789_example_gloss_corrections.sql", "0056_hsk789_common_sense_gloss_corrections.sql", "0057_hsk789_example_sense_corrections.sql"]) {
+    for (const file of ["0053_catalog_search_index_hsk123456789_2025.sql", "0054_hsk789_polyphonic_gloss_corrections.sql", "0055_hsk789_example_gloss_corrections.sql", "0056_hsk789_common_sense_gloss_corrections.sql", "0057_hsk789_example_sense_corrections.sql", "0058_hsk789_reading_and_sense_corrections.sql"]) {
       db.exec(readFileSync(new URL(`../migrations/${file}`, import.meta.url), "utf8"));
     }
     const check = () => {
       assert.equal(db.prepare("SELECT COUNT(*) AS n FROM catalog_search_index").get()?.n, 11000);
-      for (const n of [5448, 5629, 5631, 5641, 6627, 6682, 6849, 7063, 7100, 7157, 7208, 7294, 7514, 7554, 7569, 7774, 8126, 8127, 8376]) {
+      for (const n of [5448, 5629, 5631, 5641, 6627, 6682, 6849, 7063, 7100, 7157, 7208, 7294, 7514, 7554, 7569, 7774, 8126, 8127, 8376, 8565, 8815, 9245, 9382]) {
         const id = `hsk2025.word.l7.${String(n).padStart(5, "0")}.v1`;
         const row = catalog.words.find(r => r[0] === id)!;
+        assert.equal(db.prepare("SELECT pinyin FROM catalog_search_index WHERE id=? AND release_id=?").get(id, catalog.releaseId)?.pinyin, row[6]);
         const stored = db.prepare("SELECT meaning, search_english, search_text FROM catalog_search_index WHERE id=? AND release_id=?").get(id, catalog.releaseId);
         assert.deepEqual({ ...stored }, { meaning: row[7], search_english: row[11], search_text: `${row[9]} ${row[10]} ${row[11]}` });
         assert.equal(db.prepare("SELECT part_of_speech FROM catalog_search_index WHERE id=? AND release_id=?").get(id, catalog.releaseId)?.part_of_speech, row[8]);
@@ -89,6 +93,7 @@ test("search database migration preserves the catalog's reviewed meanings and no
     db.exec(readFileSync(new URL("../migrations/0055_hsk789_example_gloss_corrections.sql", import.meta.url), "utf8"));
     db.exec(readFileSync(new URL("../migrations/0056_hsk789_common_sense_gloss_corrections.sql", import.meta.url), "utf8"));
     db.exec(readFileSync(new URL("../migrations/0057_hsk789_example_sense_corrections.sql", import.meta.url), "utf8"));
+    db.exec(readFileSync(new URL("../migrations/0058_hsk789_reading_and_sense_corrections.sql", import.meta.url), "utf8"));
     check();
   } finally {
     db.close();
@@ -97,7 +102,7 @@ test("search database migration preserves the catalog's reviewed meanings and no
 
 test("reviewed advanced examples reach word detail and Today through runtime and catalog paths", async () => {
   assert.equal(catalog.words.filter(r => r[3] === "7-9").length, 5600);
-  assert.equal(Object.keys(examples).length, 3000);
+  assert.equal(Object.keys(examples).length, 4000);
   assert.deepEqual(Object.keys(examples), Object.keys(review.entries));
   for (const [id, entry] of Object.entries(examples)) {
     const row = findPublicCatalogWordById(id);
@@ -128,10 +133,10 @@ test("reviewed advanced examples reach word detail and Today through runtime and
 });
 
 test("the single 7–9 band preserves pending coverage and rejects stale lexical matches", () => {
-  assert.equal(progress.reviewedExamples, 3000);
-  assert.equal(progress.pendingExamples, 2600);
+  assert.equal(progress.reviewedExamples, 4000);
+  assert.equal(progress.pendingExamples, 1600);
   assert.equal(progress.fullBandReviewComplete, false);
-  assert.equal(progress.pendingIds.length, 2600);
+  assert.equal(progress.pendingIds.length, 1600);
   const reviewed = new Set(Object.keys(examples));
   for (const row of catalog.words.filter(r => r[3] === "7-9")) {
     assert.equal(progress.pendingIds.includes(row[0]), !reviewed.has(row[0]), row[0]);
@@ -263,4 +268,39 @@ test("batches five and six distinguish verbal, nominal and classifier senses", (
   assert.equal(findPublicCatalogWordById("hsk2025.word.l7.07774.v1")!.part_of_speech, "Adj");
   assert.equal(matchedWordExample(7, "圈", "juàn", "hsk2025.word.l7.07667.v1"), undefined);
   assert.equal(matchedWordExample(7, "拧", "níng", "hsk2025.word.l7.08376.v1"), undefined);
+});
+
+test("batches seven and eight reject cross-boundary matches and incorrect contextual readings", () => {
+  assert.match(get(8410)[4], /climbed/);
+  assert.match(get(8454)[4], /spleen/);
+  assert.match(get(8576)[4], /windpipe/);
+  assert.match(get(8580)[4], /utensils/);
+  assert.match(get(8685)[2], /亲身监督/);
+  assert.match(get(8735)[2], /外地求学/);
+  assert.match(get(8766)[4], /all-round athlete/);
+  assert.match(get(8806)[4], /human world/);
+  assert.match(get(8811)[4], /personal attacks/);
+  assert.match(get(8814)[3], /rénxìng/);
+  assert.match(get(8815)[3], /rènxìng/);
+  assert.match(get(8920)[4], /business opportunity/);
+  assert.doesNotMatch(get(8920)[2], /磋商机制/);
+  assert.match(get(8928)[4], /reported/);
+  assert.match(get(8933)[4], /above the house/);
+  assert.match(get(8941)[4], /going up/);
+  assert.match(get(8955)[3], /shé le/);
+  assert.match(get(9015)[4], /life of this writer/);
+  assert.match(get(9016)[4], /when he was alive/);
+  assert.match(get(9166)[4], /secretary/);
+  assert.match(get(9201)[4], /led the team/);
+  assert.match(get(9240)[4], /plead for his friend/);
+  assert.match(get(9307)[4], /at random/);
+  assert.match(get(9332)[4], /peaceful lives/);
+  assert.match(get(9373)[4], /asked a neighbor/);
+  assert.match(get(9382)[4], /make some room/);
+  assert.match(get(8581)[3], /jì hǎo/);
+  assert.match(get(8816)[3], /tiāotī/);
+  assert.match(get(8989)[3], /liúlù/);
+  assert.equal(findPublicCatalogWordById("hsk2025.word.l7.08815.v1")!.pinyin, "rènxìng");
+  assert.equal(findPublicCatalogWordById("hsk2025.word.l7.09245.v1")!.part_of_speech, "N");
+  assert.equal(matchedWordExample(7, "任性", "rénxìng", "hsk2025.word.l7.08815.v1"), undefined);
 });

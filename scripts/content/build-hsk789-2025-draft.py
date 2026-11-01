@@ -26,7 +26,8 @@ REVIEWED_LINEAGE = {
 DIFFERENT_SENSE_VARIANTS = {7058, 7667, 8659}
 # Learner labels can be corrected without changing the source's original label.
 # 空前 describes something unprecedented; the retained crosswalk labels it 动.
-REVIEWED_STUDY_POS = {7774: "Adj"}
+REVIEWED_STUDY_POS = {7774: "Adj", 9245: "N"}
+REVIEWED_STUDY_PINYIN = {8815: "rènxìng"}
 
 
 def dictionary_entries() -> dict[str, list[tuple[str, str, str]]]:
@@ -134,7 +135,8 @@ def main() -> None:
         entries.append({
             "id": f"hsk2025.word.l7.{number:05d}.v1", "level": 7,
             "officialOrder": number, "hanzi": row["word"],
-            "traditional": traditional, "pinyin": row["pinyin"],
+            "traditional": traditional, "pinyin": REVIEWED_STUDY_PINYIN.get(number, row["pinyin"]),
+            "sourcePinyin": row["pinyin"],
             "officialPartOfSpeech": row["part_of_speech"],
             "partOfSpeech": REVIEWED_STUDY_POS.get(number, display_pos(row["part_of_speech"], old)),
             "meaning": meaning, "meaningSource": meaning_source,
