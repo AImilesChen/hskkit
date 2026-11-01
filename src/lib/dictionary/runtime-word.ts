@@ -3,6 +3,7 @@ import { publicAudioAsset, publishedContentAudioAsset } from "../audio/assets.ts
 import { isCatalogWordAssetId } from "../content/catalog-search.ts";
 import { findPublicCatalogWordById } from "../content/public-catalog-index.ts";
 import { getWordBySlug, type LookupResult, type StudyWord } from "./catalog.ts";
+import { matchedWordExample } from "../learning/word-example-editorial.ts";
 
 export function splitDictionaryMeanings(meaning: string): string[] {
   const values = meaning.split(/\s*;\s*|\s*\/\s*/).map((value) => value.trim()).filter(Boolean);
@@ -18,6 +19,7 @@ export const getPublishedWordBySlug = cache(async (slug: string): Promise<Lookup
   if (!row) return { status: "missing" };
 
   const audioAsset = publicAudioAsset(publishedContentAudioAsset(row.id, row.hanzi));
+  const example = matchedWordExample(Number(row.level_band), row.hanzi, row.pinyin, row.id);
   return {
     status: "published",
     item: {
@@ -29,7 +31,8 @@ export const getPublishedWordBySlug = cache(async (slug: string): Promise<Lookup
       pinyin: row.pinyin,
       meaning: row.meaning,
       partOfSpeech: row.part_of_speech,
-      examples: [],
+      example,
+      examples: example ? [example] : [],
       collocations: [],
       releaseStatus: "published",
       qaStatus: "approved",
