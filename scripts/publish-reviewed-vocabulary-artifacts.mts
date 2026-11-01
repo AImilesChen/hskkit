@@ -10,15 +10,19 @@ const root = resolve(process.argv[2] ?? "");
 const helperDir = resolve(root, "publisher-worker");
 const marker = resolve(helperDir, "active.json");
 const wrangler = (...args: string[]) => execFileSync(process.execPath, [resolve("node_modules/wrangler/bin/wrangler.js"), ...args], { encoding: "utf8", maxBuffer: 8_000_000 });
-function cleanup() {
+async function cleanup() {
   if (!existsSync(marker)) return;
   const active = JSON.parse(readFileSync(marker, "utf8"));
   if (!/^hskkit-artifacts-[a-z0-9-]+$/.test(active.name) || active.config !== resolve(helperDir, "wrangler.json")) throw Error("INVALID_TEMPORARY_PUBLISHER");
-  console.log(wrangler("delete", active.name, "--config", active.config, "--force"));
+  const account = process.env.CLOUDFLARE_ACCOUNT_ID;
+  if (!account || !/^[a-f0-9]{32}$/.test(account) || !process.env.CLOUDFLARE_API_TOKEN) throw Error("PUBLISHER_CLEANUP_CREDENTIAL_MISSING");
+  // Delete only this helper script; Wrangler delete also queries unrelated KV namespaces.
+  const response = await fetch(`https://api.cloudflare.com/client/v4/accounts/${account}/workers/scripts/${active.name}?force=true`, { method: "DELETE", headers: { authorization: `Bearer ${process.env.CLOUDFLARE_API_TOKEN}` }, signal: AbortSignal.timeout(30000) });
+  if (!response.ok && response.status !== 404) throw Error(`PUBLISHER_CLEANUP_HTTP_${response.status}`);
   unlinkSync(marker);
   console.log("Temporary artifact publisher removed");
 }
-if (process.argv.includes("--cleanup-only")) { cleanup(); process.exit(0); }
+if (process.argv.includes("--cleanup-only")) { await cleanup(); process.exit(0); }
 const expected = JSON.parse(readFileSync(new URL("../content/releases/reviewed-vocabulary-artifacts-20261101.json", import.meta.url), "utf8")) as { files: Array<{ productId: string; generationVersion: string; file: string; sha256: string }> };
 const dryRun = process.argv.includes("--check-only");
 const selected = (process.env.PRODUCT_IDS ?? "level-6,progression-4-6,advanced-7-9,complete-1-9").split(",");
@@ -83,7 +87,7 @@ if (!dryRun) {
       console.log(`R2 read-back SHA-256 verified: ${file.key}`);
     }
   } finally {
-    cleanup();
+    await cleanup();
   }
 }
 console.log(JSON.stringify({ status: dryRun ? "checked" : "published-and-read-back-verified", files: files.length, products: selected }));
