@@ -1,0 +1,34 @@
+{
+  "schemaVersion": 1,
+  "bucket": "hskkit-commercial-exports",
+  "prefix": "system/artifacts/",
+  "uploadedOn": "2026-11-01",
+  "method": "authenticated-cloudflare-dashboard-in-app-browser",
+  "artifactManifestSha256": "159e968a7d064d7e23c408ac5043e9531da0df940011e65207cea485fc62563a",
+  "batches": [
+    {
+      "generationVersion": "complete-vocabulary-hsk123456789-2025-v3",
+      "productIds": ["advanced-7-9", "complete-1-9"],
+      "uploadedFileCount": 20,
+      "observedResult": "all-files-uploaded-successfully"
+    },
+    {
+      "generationVersion": "complete-vocabulary-hsk123456-2025-v2",
+      "productIds": ["level-6", "progression-4-6"],
+      "uploadedFileCount": 10,
+      "observedResult": "all-files-uploaded-successfully"
+    }
+  ],
+  "readBackScope": "sampled-complete-bundle-only",
+  "readBackSamples": [
+    {
+      "productId": "complete-1-9",
+      "generationVersion": "complete-vocabulary-hsk123456789-2025-v3",
+      "file": "bundle-zip.zip",
+      "bytes": 15523408,
+      "sha256": "1f22af3fb6ae3828eb1fdf076a75a01a0958d7471bd71883ce1d2d3ac0d52431",
+      "sourceAssetCount": 11000,
+      "zipInternalChecksumsVerified": true
+    }
+  ]
+}
