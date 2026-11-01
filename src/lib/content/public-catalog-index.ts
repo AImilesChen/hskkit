@@ -90,7 +90,7 @@ function hasPartOfSpeech(word: IndexedWord, requested?: string) {
 }
 
 function flashcardScore(word: IndexedWord, seed: number) {
-  const sequence = Number(word.id.match(/\.(\d{4})\.v\d+$/)?.[1] ?? 0);
+  const sequence = Number(word.id.match(/\.(\d{4,5})\.v\d+$/)?.[1] ?? 0);
   return (Math.imul(sequence + seed, 1_103_515_245) + 12_345) & 0x7fffffff;
 }
 
