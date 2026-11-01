@@ -109,7 +109,7 @@ def main() -> None:
             meaning_source = "independent-editorial-draft"
         entries.append({"id": f"hsk2025.word.l6.{number:04d}.v1", "level": 6,
                         "officialOrder": number, "hanzi": row["word"],
-                        "traditional": traditional, "pinyin": row["pinyin"],
+                        "traditional": traditional, "pinyin": "dàdōu" if number == 3847 else row["pinyin"],
                         "officialPartOfSpeech": row["part_of_speech"],
                         "partOfSpeech": display_pos(row["part_of_speech"], number),
                         "meaning": meaning, "meaningSource": meaning_source,
