@@ -63,19 +63,8 @@ jobs:
           key="hskkit-commercial-exports/system/artifacts/practice-guided-edition-v4/practice-assessment-pack/product"
           npx wrangler r2 object put "$key.zip" --file "$artifact/product.zip" --content-type application/zip --remote
           npx wrangler r2 object put "$key.manifest.json" --file "$artifact/product.manifest.json" --content-type application/json --remote
-      - name: Check whether vocabulary delivery changed
-        id: vocabulary
-        run: node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/check-vocabulary-delivery-change.mts
-      - name: Generate reviewed vocabulary deliveries
-        if: steps.vocabulary.outputs.changed == 'true'
-        env:
-          PRODUCT_IDS: ${{ steps.vocabulary.outputs.products }}
-        run: node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/generate-commercial-artifacts.mts "$RUNNER_TEMP/hskkit-reviewed-vocabulary"
-      - name: Publish and read back reviewed vocabulary before deploying its catalog versions
-        if: steps.vocabulary.outputs.changed == 'true'
-        env:
-          PRODUCT_IDS: ${{ steps.vocabulary.outputs.products }}
-        run: node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/publish-reviewed-vocabulary-artifacts.mts "$RUNNER_TEMP/hskkit-reviewed-vocabulary"
+      - name: Verify publication record for the already uploaded vocabulary deliveries
+        run: node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/check-reviewed-vocabulary-publication.mts
       - name: Build Worker
         run: |
           npx opennextjs-cloudflare build --dangerouslyUseUnsupportedNextVersion
@@ -89,6 +78,3 @@ jobs:
             exit 1
           fi
           npx wrangler versions deploy "$version_id@100%" --yes
-      - name: Remove any temporary vocabulary publisher
-        if: always()
-        run: node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/publish-reviewed-vocabulary-artifacts.mts "$RUNNER_TEMP/hskkit-reviewed-vocabulary" --cleanup-only

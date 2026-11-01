@@ -40,10 +40,7 @@ jobs:
           node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --test --test-name-pattern="Batch 4 AI provider hard timeout|AI provider retries one transient" tests/batch4-pro-ai-loop.test.mts tests/batch13-content-ai-contract.test.mts
       - name: Build
         run: npm run build
-      - name: Verify reviewed vocabulary and frozen delivery checksums
-        env:
-          PRODUCT_IDS: level-6,progression-4-6,advanced-7-9,complete-1-9
+      - name: Verify reviewed vocabulary and existing publication record
         run: |
-          node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --test tests/hsk789-editorial-examples.test.mts tests/hsk789-2025-commercial.test.mts tests/store-sample-versions.test.mts tests/reviewed-vocabulary-publisher.test.mts
-          node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/generate-commercial-artifacts.mts "$RUNNER_TEMP/hskkit-reviewed-vocabulary"
-          node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/publish-reviewed-vocabulary-artifacts.mts "$RUNNER_TEMP/hskkit-reviewed-vocabulary" --check-only
+          node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --test tests/hsk789-editorial-examples.test.mts tests/hsk789-2025-commercial.test.mts tests/store-sample-versions.test.mts tests/reviewed-vocabulary-publication.test.mts
+          node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/check-reviewed-vocabulary-publication.mts
