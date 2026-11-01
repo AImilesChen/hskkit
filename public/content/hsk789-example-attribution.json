@@ -16675,6 +16675,5354 @@
       "provider": "zhongdex",
       "license": "CC-BY-SA-4.0",
       "upstreamId": "dex:s:8a2e6f6e833e"
+    },
+    "hsk2025.word.l7.08401.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:c5ddfdaa22ae"
+    },
+    "hsk2025.word.l7.08402.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:67f9860e424b"
+    },
+    "hsk2025.word.l7.08403.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:ecad81ca3999"
+    },
+    "hsk2025.word.l7.08404.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:048d97871731"
+    },
+    "hsk2025.word.l7.08405.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:feab28dd58a6"
+    },
+    "hsk2025.word.l7.08406.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:b037adfb515b"
+    },
+    "hsk2025.word.l7.08407.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:3d8a9033928e"
+    },
+    "hsk2025.word.l7.08408.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:634cde968dab"
+    },
+    "hsk2025.word.l7.08409.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:73ca747c33c4"
+    },
+    "hsk2025.word.l7.08410.v1": {
+      "provider": "HSKKit",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": null,
+      "replaces": {
+        "provider": "gushi",
+        "upstreamId": "gushi:攀:pān"
+      }
+    },
+    "hsk2025.word.l7.08411.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:f7aeff4a73fc"
+    },
+    "hsk2025.word.l7.08412.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:be507b53434f"
+    },
+    "hsk2025.word.l7.08413.v1": {
+      "provider": "HSKKit",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": null
+    },
+    "hsk2025.word.l7.08414.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:ce73ea7cffaa"
+    },
+    "hsk2025.word.l7.08415.v1": {
+      "provider": "gushi",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "gushi:判:pàn"
+    },
+    "hsk2025.word.l7.08416.v1": {
+      "provider": "gushi",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "gushi:盼:pàn"
+    },
+    "hsk2025.word.l7.08417.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:977a14e83402"
+    },
+    "hsk2025.word.l7.08418.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:49dd163c8c73"
+    },
+    "hsk2025.word.l7.08419.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:afbe6d8759c1"
+    },
+    "hsk2025.word.l7.08420.v1": {
+      "provider": "gushi",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "gushi:叛逆:pànnì"
+    },
+    "hsk2025.word.l7.08421.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:cffb8acaaba8"
+    },
+    "hsk2025.word.l7.08422.v1": {
+      "provider": "HSKKit",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": null
+    },
+    "hsk2025.word.l7.08423.v1": {
+      "provider": "HSKKit",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": null
+    },
+    "hsk2025.word.l7.08424.v1": {
+      "provider": "gushi",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "gushi:抛弃:pāoqì"
+    },
+    "hsk2025.word.l7.08425.v1": {
+      "provider": "HSKKit",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": null
+    },
+    "hsk2025.word.l7.08426.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:11dc5649a80e"
+    },
+    "hsk2025.word.l7.08427.v1": {
+      "provider": "gushi",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "gushi:炮:pào"
+    },
+    "hsk2025.word.l7.08428.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:619fb196eef2"
+    },
+    "hsk2025.word.l7.08429.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:636d2c11ce09"
+    },
+    "hsk2025.word.l7.08430.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:6050f99e4b8f"
+    },
+    "hsk2025.word.l7.08431.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:88344da74c04"
+    },
+    "hsk2025.word.l7.08432.v1": {
+      "provider": "gushi",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "gushi:配件:pèijiàn"
+    },
+    "hsk2025.word.l7.08433.v1": {
+      "provider": "HSKKit",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": null
+    },
+    "hsk2025.word.l7.08434.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:4d234302c2d3"
+    },
+    "hsk2025.word.l7.08435.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:300758bb9056"
+    },
+    "hsk2025.word.l7.08436.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:4d5d0fe656f3"
+    },
+    "hsk2025.word.l7.08437.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:d6053b1c95cd"
+    },
+    "hsk2025.word.l7.08438.v1": {
+      "provider": "HSKKit",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": null
+    },
+    "hsk2025.word.l7.08439.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:8cc8e04c643b"
+    },
+    "hsk2025.word.l7.08440.v1": {
+      "provider": "gushi",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "gushi:烹饪:pēngrèn"
+    },
+    "hsk2025.word.l7.08441.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:4f4274be9359"
+    },
+    "hsk2025.word.l7.08442.v1": {
+      "provider": "gushi",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "gushi:棚:péng"
+    },
+    "hsk2025.word.l7.08443.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:2df493402a29"
+    },
+    "hsk2025.word.l7.08444.v1": {
+      "provider": "HSKKit",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": null,
+      "replaces": {
+        "provider": "zhongdex",
+        "upstreamId": "dex:s:917644bf4304"
+      }
+    },
+    "hsk2025.word.l7.08445.v1": {
+      "provider": "gushi",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "gushi:澎湃:péngpài"
+    },
+    "hsk2025.word.l7.08446.v1": {
+      "provider": "gushi",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "gushi:膨胀:péngzhàng"
+    },
+    "hsk2025.word.l7.08447.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:f4a5239c726c"
+    },
+    "hsk2025.word.l7.08448.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:eeb1bfb7db6b"
+    },
+    "hsk2025.word.l7.08449.v1": {
+      "provider": "gushi",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "gushi:碰巧:pèngqiǎo"
+    },
+    "hsk2025.word.l7.08450.v1": {
+      "provider": "HSKKit",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": null,
+      "replaces": {
+        "provider": "gushi",
+        "upstreamId": "gushi:劈:pī"
+      }
+    },
+    "hsk2025.word.l7.08451.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:b9e52578b402"
+    },
+    "hsk2025.word.l7.08452.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:1cd38a6148af"
+    },
+    "hsk2025.word.l7.08453.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:9d3771f7f8d6"
+    },
+    "hsk2025.word.l7.08454.v1": {
+      "provider": "HSKKit",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": null,
+      "replaces": {
+        "provider": "gushi",
+        "upstreamId": "gushi:脾:pí"
+      }
+    },
+    "hsk2025.word.l7.08455.v1": {
+      "provider": "gushi",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "gushi:疲惫:píbèi"
+    },
+    "hsk2025.word.l7.08456.v1": {
+      "provider": "HSKKit",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": null,
+      "replaces": {
+        "provider": "gushi",
+        "upstreamId": "gushi:皮革:pígé"
+      }
+    },
+    "hsk2025.word.l7.08457.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:5ee9752e0340"
+    },
+    "hsk2025.word.l7.08458.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:c85d6ec4845d"
+    },
+    "hsk2025.word.l7.08459.v1": {
+      "provider": "HSKKit",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": null
+    },
+    "hsk2025.word.l7.08460.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:f05280ac2bdc"
+    },
+    "hsk2025.word.l7.08461.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:5a99c7cf76b2"
+    },
+    "hsk2025.word.l7.08462.v1": {
+      "provider": "gushi",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "gushi:譬如:pìrú"
+    },
+    "hsk2025.word.l7.08463.v1": {
+      "provider": "gushi",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "gushi:偏:piān"
+    },
+    "hsk2025.word.l7.08464.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:0815b16da0d0"
+    },
+    "hsk2025.word.l7.08465.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:917894cc82e9"
+    },
+    "hsk2025.word.l7.08466.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:f5874e2320a3"
+    },
+    "hsk2025.word.l7.08467.v1": {
+      "provider": "gushi",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "gushi:偏见:piānjiàn"
+    },
+    "hsk2025.word.l7.08468.v1": {
+      "provider": "HSKKit",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": null,
+      "replaces": {
+        "provider": "zhongdex",
+        "upstreamId": "dex:s:c02287ee87c9"
+      }
+    },
+    "hsk2025.word.l7.08469.v1": {
+      "provider": "HSKKit",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": null
+    },
+    "hsk2025.word.l7.08470.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:ed925eb0ef73"
+    },
+    "hsk2025.word.l7.08471.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:38199294317b"
+    },
+    "hsk2025.word.l7.08472.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:693dede0812d"
+    },
+    "hsk2025.word.l7.08473.v1": {
+      "provider": "gushi",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "gushi:偏远:piānyuǎn"
+    },
+    "hsk2025.word.l7.08474.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:10dfe072d0c4"
+    },
+    "hsk2025.word.l7.08475.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:214ddef11085"
+    },
+    "hsk2025.word.l7.08476.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:f29613e772ae"
+    },
+    "hsk2025.word.l7.08477.v1": {
+      "provider": "HSKKit",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": null
+    },
+    "hsk2025.word.l7.08478.v1": {
+      "provider": "gushi",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "gushi:漂浮:piāofú"
+    },
+    "hsk2025.word.l7.08479.v1": {
+      "provider": "HSKKit",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": null
+    },
+    "hsk2025.word.l7.08480.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:a57e9c64b998"
+    },
+    "hsk2025.word.l7.08481.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:c94eb17e8799"
+    },
+    "hsk2025.word.l7.08482.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:5769b9a12f33"
+    },
+    "hsk2025.word.l7.08483.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:cd5cd8221df7"
+    },
+    "hsk2025.word.l7.08484.v1": {
+      "provider": "HSKKit",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": null
+    },
+    "hsk2025.word.l7.08485.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:2e9ed8d566bf"
+    },
+    "hsk2025.word.l7.08486.v1": {
+      "provider": "HSKKit",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": null
+    },
+    "hsk2025.word.l7.08487.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:9093f9c6ccb6"
+    },
+    "hsk2025.word.l7.08488.v1": {
+      "provider": "gushi",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "gushi:贫穷:pínqióng"
+    },
+    "hsk2025.word.l7.08489.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:905db464d37e"
+    },
+    "hsk2025.word.l7.08490.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:db345ca7bedc"
+    },
+    "hsk2025.word.l7.08491.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:608ab9c6c3b6"
+    },
+    "hsk2025.word.l7.08492.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:898587635dfc"
+    },
+    "hsk2025.word.l7.08493.v1": {
+      "provider": "gushi",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "gushi:聘:pìn"
+    },
+    "hsk2025.word.l7.08494.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:b58d97c9a298"
+    },
+    "hsk2025.word.l7.08495.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:009b1eb511d3"
+    },
+    "hsk2025.word.l7.08496.v1": {
+      "provider": "gushi",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "gushi:屏蔽:píngbì"
+    },
+    "hsk2025.word.l7.08497.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:9846a2deaf76"
+    },
+    "hsk2025.word.l7.08498.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:ed0947587dc8"
+    },
+    "hsk2025.word.l7.08499.v1": {
+      "provider": "HSKKit",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": null
+    },
+    "hsk2025.word.l7.08500.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:d19fb752cef9"
+    },
+    "hsk2025.word.l7.08501.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:08bc614aaf19"
+    },
+    "hsk2025.word.l7.08502.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:5a076abe6221"
+    },
+    "hsk2025.word.l7.08503.v1": {
+      "provider": "HSKKit",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": null,
+      "replaces": {
+        "provider": "zhongdex",
+        "upstreamId": "dex:s:a4237c542271"
+      }
+    },
+    "hsk2025.word.l7.08504.v1": {
+      "provider": "gushi",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "gushi:评判:píngpàn"
+    },
+    "hsk2025.word.l7.08505.v1": {
+      "provider": "gushi",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "gushi:平日:píngrì"
+    },
+    "hsk2025.word.l7.08506.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:170c9c2ed65c"
+    },
+    "hsk2025.word.l7.08507.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:80d3ada86e69"
+    },
+    "hsk2025.word.l7.08508.v1": {
+      "provider": "HSKKit",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": null,
+      "replaces": {
+        "provider": "zhongdex",
+        "upstreamId": "dex:s:189163adcc61"
+      }
+    },
+    "hsk2025.word.l7.08509.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:d624fb602913"
+    },
+    "hsk2025.word.l7.08510.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:30bc50efe7ed"
+    },
+    "hsk2025.word.l7.08511.v1": {
+      "provider": "gushi",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "gushi:平息:píngxī"
+    },
+    "hsk2025.word.l7.08512.v1": {
+      "provider": "gushi",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "gushi:平行:píngxíng"
+    },
+    "hsk2025.word.l7.08513.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:a2f9206f9a8e"
+    },
+    "hsk2025.word.l7.08514.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:58d83821f5fd"
+    },
+    "hsk2025.word.l7.08515.v1": {
+      "provider": "HSKKit",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": null,
+      "replaces": {
+        "provider": "zhongdex",
+        "upstreamId": "dex:s:133307edd767"
+      }
+    },
+    "hsk2025.word.l7.08516.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:1d77ba2563ba"
+    },
+    "hsk2025.word.l7.08517.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:beae0d1ea009"
+    },
+    "hsk2025.word.l7.08518.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:8a03bd49ac10"
+    },
+    "hsk2025.word.l7.08519.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:4061f6dedf61"
+    },
+    "hsk2025.word.l7.08520.v1": {
+      "provider": "gushi",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "gushi:迫不及待:pòbùjídài"
+    },
+    "hsk2025.word.l7.08521.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:6185133435a4"
+    },
+    "hsk2025.word.l7.08522.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:9d5edb0d8702"
+    },
+    "hsk2025.word.l7.08523.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:76bfc5d568ef"
+    },
+    "hsk2025.word.l7.08524.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:5ed35f1861e7"
+    },
+    "hsk2025.word.l7.08525.v1": {
+      "provider": "gushi",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "gushi:破例:pòlì"
+    },
+    "hsk2025.word.l7.08526.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:865d2614efb7"
+    },
+    "hsk2025.word.l7.08527.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:b910fcb65c7b"
+    },
+    "hsk2025.word.l7.08528.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:5ca61fe65eb5"
+    },
+    "hsk2025.word.l7.08529.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:64f39f13e78c"
+    },
+    "hsk2025.word.l7.08530.v1": {
+      "provider": "gushi",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "gushi:破碎:pòsuì"
+    },
+    "hsk2025.word.l7.08531.v1": {
+      "provider": "gushi",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "gushi:扑克:pūkè"
+    },
+    "hsk2025.word.l7.08532.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:07f23a42a4e1"
+    },
+    "hsk2025.word.l7.08533.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:06e952b5752e"
+    },
+    "hsk2025.word.l7.08534.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:350613576bf3"
+    },
+    "hsk2025.word.l7.08535.v1": {
+      "provider": "gushi",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "gushi:谱:pǔ"
+    },
+    "hsk2025.word.l7.08536.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:bfeb185821a9"
+    },
+    "hsk2025.word.l7.08537.v1": {
+      "provider": "gushi",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "gushi:瀑布:pùbù"
+    },
+    "hsk2025.word.l7.08538.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:562ccbc99d23"
+    },
+    "hsk2025.word.l7.08539.v1": {
+      "provider": "gushi",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "gushi:漆:qī"
+    },
+    "hsk2025.word.l7.08540.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:3c133bca7920"
+    },
+    "hsk2025.word.l7.08541.v1": {
+      "provider": "gushi",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "gushi:漆黑:qīhēi"
+    },
+    "hsk2025.word.l7.08542.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:db37a1763da3"
+    },
+    "hsk2025.word.l7.08543.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:1d8219a2a4f9"
+    },
+    "hsk2025.word.l7.08544.v1": {
+      "provider": "HSKKit",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": null
+    },
+    "hsk2025.word.l7.08545.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:2ff63438c4ba"
+    },
+    "hsk2025.word.l7.08546.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:dd0561f14526"
+    },
+    "hsk2025.word.l7.08547.v1": {
+      "provider": "gushi",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "gushi:祈祷:qídǎo"
+    },
+    "hsk2025.word.l7.08548.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:4c7b9fcf046a"
+    },
+    "hsk2025.word.l7.08549.v1": {
+      "provider": "gushi",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "gushi:奇妙:qímiào"
+    },
+    "hsk2025.word.l7.08550.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:3c2e66a473ea"
+    },
+    "hsk2025.word.l7.08551.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:f8adb22c901f"
+    },
+    "hsk2025.word.l7.08552.v1": {
+      "provider": "gushi",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "gushi:歧视:qíshì"
+    },
+    "hsk2025.word.l7.08553.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:bf2dcaa37bc6"
+    },
+    "hsk2025.word.l7.08554.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:73fbc942c955"
+    },
+    "hsk2025.word.l7.08555.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:a57e9c64b998"
+    },
+    "hsk2025.word.l7.08556.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:0bfbb1a5fbfc"
+    },
+    "hsk2025.word.l7.08557.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:bf5e7636a8bc"
+    },
+    "hsk2025.word.l7.08558.v1": {
+      "provider": "gushi",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "gushi:启程:qǐchéng"
+    },
+    "hsk2025.word.l7.08559.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:dc4716834c57"
+    },
+    "hsk2025.word.l7.08560.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:4e5fc80ab384"
+    },
+    "hsk2025.word.l7.08561.v1": {
+      "provider": "gushi",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "gushi:起伏:qǐfú"
+    },
+    "hsk2025.word.l7.08562.v1": {
+      "provider": "gushi",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "gushi:乞丐:qǐgài"
+    },
+    "hsk2025.word.l7.08563.v1": {
+      "provider": "HSKKit",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": null
+    },
+    "hsk2025.word.l7.08564.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:0976087e5504"
+    },
+    "hsk2025.word.l7.08565.v1": {
+      "provider": "HSKKit",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": null,
+      "replaces": {
+        "provider": "gushi",
+        "upstreamId": "gushi:起码:qǐmǎ"
+      }
+    },
+    "hsk2025.word.l7.08566.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:701be3f68e7f"
+    },
+    "hsk2025.word.l7.08567.v1": {
+      "provider": "HSKKit",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": null,
+      "replaces": {
+        "provider": "zhongdex",
+        "upstreamId": "dex:s:745772fccfea"
+      }
+    },
+    "hsk2025.word.l7.08568.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:ce30074b38fb"
+    },
+    "hsk2025.word.l7.08569.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:018251c94c3f"
+    },
+    "hsk2025.word.l7.08570.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:46cfbffb3275"
+    },
+    "hsk2025.word.l7.08571.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:4a9dcbe5e74e"
+    },
+    "hsk2025.word.l7.08572.v1": {
+      "provider": "HSKKit",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": null
+    },
+    "hsk2025.word.l7.08573.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:6fdf8949b882"
+    },
+    "hsk2025.word.l7.08574.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:02840720313a"
+    },
+    "hsk2025.word.l7.08575.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:bb657ca442b2"
+    },
+    "hsk2025.word.l7.08576.v1": {
+      "provider": "HSKKit",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": null,
+      "replaces": {
+        "provider": "zhongdex",
+        "upstreamId": "dex:s:5c25dec245c3"
+      }
+    },
+    "hsk2025.word.l7.08577.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:90829b2e81a8"
+    },
+    "hsk2025.word.l7.08578.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:1097ad0abbe8"
+    },
+    "hsk2025.word.l7.08579.v1": {
+      "provider": "gushi",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "gushi:迄今:qìjīn"
+    },
+    "hsk2025.word.l7.08580.v1": {
+      "provider": "HSKKit",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": null,
+      "replaces": {
+        "provider": "zhongdex",
+        "upstreamId": "dex:s:77638cd6dcbd"
+      }
+    },
+    "hsk2025.word.l7.08581.v1": {
+      "provider": "HSKKit",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": null,
+      "replaces": {
+        "provider": "zhongdex",
+        "upstreamId": "dex:s:c912339af235"
+      }
+    },
+    "hsk2025.word.l7.08582.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:243d42f3efcf"
+    },
+    "hsk2025.word.l7.08583.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:0bffe7936268"
+    },
+    "hsk2025.word.l7.08584.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:7c5d616e9aad"
+    },
+    "hsk2025.word.l7.08585.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:5a8df683b496"
+    },
+    "hsk2025.word.l7.08586.v1": {
+      "provider": "gushi",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "gushi:弃权:qìquán"
+    },
+    "hsk2025.word.l7.08587.v1": {
+      "provider": "gushi",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "gushi:气色:qìsè"
+    },
+    "hsk2025.word.l7.08588.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:77c87f45da04"
+    },
+    "hsk2025.word.l7.08589.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:514273496de7"
+    },
+    "hsk2025.word.l7.08590.v1": {
+      "provider": "gushi",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "gushi:气象:qìxiàng"
+    },
+    "hsk2025.word.l7.08591.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:9df5b42fe864"
+    },
+    "hsk2025.word.l7.08592.v1": {
+      "provider": "HSKKit",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": null
+    },
+    "hsk2025.word.l7.08593.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:dea2ac887946"
+    },
+    "hsk2025.word.l7.08594.v1": {
+      "provider": "HSKKit",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": null
+    },
+    "hsk2025.word.l7.08595.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:361ba703f0c3"
+    },
+    "hsk2025.word.l7.08596.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:51ed0fe42df8"
+    },
+    "hsk2025.word.l7.08597.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:1b9aa8839032"
+    },
+    "hsk2025.word.l7.08598.v1": {
+      "provider": "gushi",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "gushi:恰巧:qiàqiǎo"
+    },
+    "hsk2025.word.l7.08599.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:b859a6ed059c"
+    },
+    "hsk2025.word.l7.08600.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:e3a109c661a4"
+    },
+    "hsk2025.word.l7.08601.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:4eafdc2486d7"
+    },
+    "hsk2025.word.l7.08602.v1": {
+      "provider": "gushi",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "gushi:签:qiān"
+    },
+    "hsk2025.word.l7.08603.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:5cf30c9deb38"
+    },
+    "hsk2025.word.l7.08604.v1": {
+      "provider": "gushi",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "gushi:牵扯:qiānchě"
+    },
+    "hsk2025.word.l7.08605.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:a8948a31507c"
+    },
+    "hsk2025.word.l7.08606.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:98deef3620f4"
+    },
+    "hsk2025.word.l7.08607.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:6b0d2a42c62f"
+    },
+    "hsk2025.word.l7.08608.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:5324bddb59e6"
+    },
+    "hsk2025.word.l7.08609.v1": {
+      "provider": "HSKKit",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": null
+    },
+    "hsk2025.word.l7.08610.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:073774f9afce"
+    },
+    "hsk2025.word.l7.08611.v1": {
+      "provider": "gushi",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "gushi:签署:qiānshǔ"
+    },
+    "hsk2025.word.l7.08612.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:f1f9052f0115"
+    },
+    "hsk2025.word.l7.08613.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:56eecfbf71bf"
+    },
+    "hsk2025.word.l7.08614.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:c50a89db19b4"
+    },
+    "hsk2025.word.l7.08615.v1": {
+      "provider": "gushi",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "gushi:迁移:qiānyí"
+    },
+    "hsk2025.word.l7.08616.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:d6848fe09db8"
+    },
+    "hsk2025.word.l7.08617.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:3da3ebe4064a"
+    },
+    "hsk2025.word.l7.08618.v1": {
+      "provider": "HSKKit",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": null
+    },
+    "hsk2025.word.l7.08619.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:8b20cc3dfb09"
+    },
+    "hsk2025.word.l7.08620.v1": {
+      "provider": "gushi",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "gushi:钱财:qiáncái"
+    },
+    "hsk2025.word.l7.08621.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:1dae488e8fe0"
+    },
+    "hsk2025.word.l7.08622.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:d939dacbf950"
+    },
+    "hsk2025.word.l7.08623.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:ea7b7306152f"
+    },
+    "hsk2025.word.l7.08624.v1": {
+      "provider": "HSKKit",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": null,
+      "replaces": {
+        "provider": "zhongdex",
+        "upstreamId": "dex:s:575cbdfff45d"
+      }
+    },
+    "hsk2025.word.l7.08625.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:fd9ed35b736d"
+    },
+    "hsk2025.word.l7.08626.v1": {
+      "provider": "HSKKit",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": null,
+      "replaces": {
+        "provider": "zhongdex",
+        "upstreamId": "dex:s:7def9487d8ff"
+      }
+    },
+    "hsk2025.word.l7.08627.v1": {
+      "provider": "HSKKit",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": null
+    },
+    "hsk2025.word.l7.08628.v1": {
+      "provider": "gushi",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "gushi:潜水:qiánshuǐ"
+    },
+    "hsk2025.word.l7.08629.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:98d8c90f66f9"
+    },
+    "hsk2025.word.l7.08630.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:849e191dbbe8"
+    },
+    "hsk2025.word.l7.08631.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:4ca06446d3f9"
+    },
+    "hsk2025.word.l7.08632.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:35c9ba2ba13e"
+    },
+    "hsk2025.word.l7.08633.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:2c3bacdc9065"
+    },
+    "hsk2025.word.l7.08634.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:f03b760c6511"
+    },
+    "hsk2025.word.l7.08635.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:e9ccd0b56467"
+    },
+    "hsk2025.word.l7.08636.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:acec803dc318"
+    },
+    "hsk2025.word.l7.08637.v1": {
+      "provider": "HSKKit",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": null,
+      "replaces": {
+        "provider": "zhongdex",
+        "upstreamId": "dex:s:b4f0fb5c3530"
+      }
+    },
+    "hsk2025.word.l7.08638.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:c519760ed539"
+    },
+    "hsk2025.word.l7.08639.v1": {
+      "provider": "HSKKit",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": null
+    },
+    "hsk2025.word.l7.08640.v1": {
+      "provider": "gushi",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "gushi:谴责:qiǎnzé"
+    },
+    "hsk2025.word.l7.08641.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:8c3d1836cad0"
+    },
+    "hsk2025.word.l7.08642.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:fbbb6489cb14"
+    },
+    "hsk2025.word.l7.08643.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:04f11f2c3f63"
+    },
+    "hsk2025.word.l7.08644.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:37fe2775692c"
+    },
+    "hsk2025.word.l7.08645.v1": {
+      "provider": "gushi",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "gushi:腔:qiāng"
+    },
+    "hsk2025.word.l7.08646.v1": {
+      "provider": "HSKKit",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": null,
+      "replaces": {
+        "provider": "zhongdex",
+        "upstreamId": "dex:s:123d73edace4"
+      }
+    },
+    "hsk2025.word.l7.08647.v1": {
+      "provider": "HSKKit",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": null,
+      "replaces": {
+        "provider": "gushi",
+        "upstreamId": "gushi:强盗:qiángdào"
+      }
+    },
+    "hsk2025.word.l7.08648.v1": {
+      "provider": "HSKKit",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": null,
+      "replaces": {
+        "provider": "zhongdex",
+        "upstreamId": "dex:s:ab56c188e949"
+      }
+    },
+    "hsk2025.word.l7.08649.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:5a2e4668d9d2"
+    },
+    "hsk2025.word.l7.08650.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:08f88e98e587"
+    },
+    "hsk2025.word.l7.08651.v1": {
+      "provider": "gushi",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "gushi:强项:qiángxiàng"
+    },
+    "hsk2025.word.l7.08652.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:503aab0e0ac5"
+    },
+    "hsk2025.word.l7.08653.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:3e508d8d0de7"
+    },
+    "hsk2025.word.l7.08654.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:82168ee89449"
+    },
+    "hsk2025.word.l7.08655.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:5ee757737c6d"
+    },
+    "hsk2025.word.l7.08656.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:6631312d17c7"
+    },
+    "hsk2025.word.l7.08657.v1": {
+      "provider": "gushi",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "gushi:抢劫:qiǎngjié"
+    },
+    "hsk2025.word.l7.08658.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:405a66d6dda4"
+    },
+    "hsk2025.word.l7.08659.v1": {
+      "provider": "HSKKit",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": null,
+      "replaces": {
+        "provider": "zhongdex",
+        "upstreamId": "dex:s:db8f69968875"
+      }
+    },
+    "hsk2025.word.l7.08660.v1": {
+      "provider": "HSKKit",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": null,
+      "replaces": {
+        "provider": "zhongdex",
+        "upstreamId": "dex:s:d131063da22f"
+      }
+    },
+    "hsk2025.word.l7.08661.v1": {
+      "provider": "HSKKit",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": null
+    },
+    "hsk2025.word.l7.08662.v1": {
+      "provider": "gushi",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "gushi:巧合:qiǎohé"
+    },
+    "hsk2025.word.l7.08663.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:f0d8580c1335"
+    },
+    "hsk2025.word.l7.08664.v1": {
+      "provider": "gushi",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "gushi:撬:qiào"
+    },
+    "hsk2025.word.l7.08665.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:4204f48c47a8"
+    },
+    "hsk2025.word.l7.08666.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:d370cc0614bb"
+    },
+    "hsk2025.word.l7.08667.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:d22189186505"
+    },
+    "hsk2025.word.l7.08668.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:822550915ea7"
+    },
+    "hsk2025.word.l7.08669.v1": {
+      "provider": "HSKKit",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": null
+    },
+    "hsk2025.word.l7.08670.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:6b80b00ce8ba"
+    },
+    "hsk2025.word.l7.08671.v1": {
+      "provider": "HSKKit",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": null
+    },
+    "hsk2025.word.l7.08672.v1": {
+      "provider": "HSKKit",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": null
+    },
+    "hsk2025.word.l7.08673.v1": {
+      "provider": "HSKKit",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": null
+    },
+    "hsk2025.word.l7.08674.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:0196a6941621"
+    },
+    "hsk2025.word.l7.08675.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:5801f4a4fee0"
+    },
+    "hsk2025.word.l7.08676.v1": {
+      "provider": "HSKKit",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": null
+    },
+    "hsk2025.word.l7.08677.v1": {
+      "provider": "gushi",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "gushi:侵犯:qīnfàn"
+    },
+    "hsk2025.word.l7.08678.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:018251c94c3f"
+    },
+    "hsk2025.word.l7.08679.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:005365370c2e"
+    },
+    "hsk2025.word.l7.08680.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:3d2c3ac8c49f"
+    },
+    "hsk2025.word.l7.08681.v1": {
+      "provider": "gushi",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "gushi:侵略:qīnlüè"
+    },
+    "hsk2025.word.l7.08682.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:0b14740e91e1"
+    },
+    "hsk2025.word.l7.08683.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:59272a860e94"
+    },
+    "hsk2025.word.l7.08684.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:266a32ffd0a7"
+    },
+    "hsk2025.word.l7.08685.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:ffe5deceb295"
+    },
+    "hsk2025.word.l7.08686.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:7bab32ef6d24"
+    },
+    "hsk2025.word.l7.08687.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:42505ccf4bf5"
+    },
+    "hsk2025.word.l7.08688.v1": {
+      "provider": "gushi",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "gushi:亲眼:qīnyǎn"
+    },
+    "hsk2025.word.l7.08689.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:2c04d22eae0b"
+    },
+    "hsk2025.word.l7.08690.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:65c653132d49"
+    },
+    "hsk2025.word.l7.08691.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:abac0666556d"
+    },
+    "hsk2025.word.l7.08692.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:9835a6b3c8a3"
+    },
+    "hsk2025.word.l7.08693.v1": {
+      "provider": "HSKKit",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": null
+    },
+    "hsk2025.word.l7.08694.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:f0d04a878d97"
+    },
+    "hsk2025.word.l7.08695.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:61c06fe549bc"
+    },
+    "hsk2025.word.l7.08696.v1": {
+      "provider": "gushi",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "gushi:清澈:qīngchè"
+    },
+    "hsk2025.word.l7.08697.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:06a7c204f858"
+    },
+    "hsk2025.word.l7.08698.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:bdba3ed04e02"
+    },
+    "hsk2025.word.l7.08699.v1": {
+      "provider": "gushi",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "gushi:清单:qīngdān"
+    },
+    "hsk2025.word.l7.08700.v1": {
+      "provider": "HSKKit",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": null
+    },
+    "hsk2025.word.l7.08701.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:9890ea06f4d1"
+    },
+    "hsk2025.word.l7.08702.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:610f2b5bbf39"
+    },
+    "hsk2025.word.l7.08703.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:6aab833bac38"
+    },
+    "hsk2025.word.l7.08704.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:67052f511459"
+    },
+    "hsk2025.word.l7.08705.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:f67a6015c0da"
+    },
+    "hsk2025.word.l7.08706.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:351269969f5b"
+    },
+    "hsk2025.word.l7.08707.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:8e967e3ae7e7"
+    },
+    "hsk2025.word.l7.08708.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:1915a57e8dfa"
+    },
+    "hsk2025.word.l7.08709.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:aa27401e38c5"
+    },
+    "hsk2025.word.l7.08710.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:9da01ef4398e"
+    },
+    "hsk2025.word.l7.08711.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:b500ba3be555"
+    },
+    "hsk2025.word.l7.08712.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:8c40e37ba886"
+    },
+    "hsk2025.word.l7.08713.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:fb61c1d8b307"
+    },
+    "hsk2025.word.l7.08714.v1": {
+      "provider": "gushi",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "gushi:情报:qíngbào"
+    },
+    "hsk2025.word.l7.08715.v1": {
+      "provider": "gushi",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "gushi:情不自禁:qíngbúzìjīn"
+    },
+    "hsk2025.word.l7.08716.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:561b67ab2d4b"
+    },
+    "hsk2025.word.l7.08717.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:535e9a874027"
+    },
+    "hsk2025.word.l7.08718.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:a76940d926f4"
+    },
+    "hsk2025.word.l7.08719.v1": {
+      "provider": "gushi",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "gushi:情境:qíngjìng"
+    },
+    "hsk2025.word.l7.08720.v1": {
+      "provider": "gushi",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "gushi:情理:qínglǐ"
+    },
+    "hsk2025.word.l7.08721.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:4b98c6cd30c5"
+    },
+    "hsk2025.word.l7.08722.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:4137fbcda9b5"
+    },
+    "hsk2025.word.l7.08723.v1": {
+      "provider": "HSKKit",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": null
+    },
+    "hsk2025.word.l7.08724.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:5d544a18ba83"
+    },
+    "hsk2025.word.l7.08725.v1": {
+      "provider": "gushi",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "gushi:情愿:qíngyuàn"
+    },
+    "hsk2025.word.l7.08726.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:db345ca7bedc"
+    },
+    "hsk2025.word.l7.08727.v1": {
+      "provider": "HSKKit",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": null
+    },
+    "hsk2025.word.l7.08728.v1": {
+      "provider": "gushi",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "gushi:请帖:qǐngtiě"
+    },
+    "hsk2025.word.l7.08729.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:b6cf12c7c186"
+    },
+    "hsk2025.word.l7.08730.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:3856970b9b63"
+    },
+    "hsk2025.word.l7.08731.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:04b146fd859a"
+    },
+    "hsk2025.word.l7.08732.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:7293fdc782ed"
+    },
+    "hsk2025.word.l7.08733.v1": {
+      "provider": "gushi",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "gushi:囚犯:qiúfàn"
+    },
+    "hsk2025.word.l7.08734.v1": {
+      "provider": "HSKKit",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": null
+    },
+    "hsk2025.word.l7.08735.v1": {
+      "provider": "HSKKit",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": null,
+      "replaces": {
+        "provider": "gushi",
+        "upstreamId": "gushi:求学:qiúxué"
+      }
+    },
+    "hsk2025.word.l7.08736.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:6b6953936457"
+    },
+    "hsk2025.word.l7.08737.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:77531aa2cb1a"
+    },
+    "hsk2025.word.l7.08738.v1": {
+      "provider": "gushi",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "gushi:驱动:qūdòng"
+    },
+    "hsk2025.word.l7.08739.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:78161a88d6aa"
+    },
+    "hsk2025.word.l7.08740.v1": {
+      "provider": "HSKKit",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": null,
+      "replaces": {
+        "provider": "zhongdex",
+        "upstreamId": "dex:s:5dbde0c7808e"
+      }
+    },
+    "hsk2025.word.l7.08741.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:4de3edeadd78"
+    },
+    "hsk2025.word.l7.08742.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:82edf4a848d7"
+    },
+    "hsk2025.word.l7.08743.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:da8b407ae9ee"
+    },
+    "hsk2025.word.l7.08744.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:8d4387f419b9"
+    },
+    "hsk2025.word.l7.08745.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:24e86e065bd2"
+    },
+    "hsk2025.word.l7.08746.v1": {
+      "provider": "HSKKit",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": null,
+      "replaces": {
+        "provider": "zhongdex",
+        "upstreamId": "dex:s:24ba1f2fb0f9"
+      }
+    },
+    "hsk2025.word.l7.08747.v1": {
+      "provider": "HSKKit",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": null
+    },
+    "hsk2025.word.l7.08748.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:4233612d48bb"
+    },
+    "hsk2025.word.l7.08749.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:b6af2660fc21"
+    },
+    "hsk2025.word.l7.08750.v1": {
+      "provider": "gushi",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "gushi:取决:qǔjué"
+    },
+    "hsk2025.word.l7.08751.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:e6a4260a33f6"
+    },
+    "hsk2025.word.l7.08752.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:f238fd3f7ac2"
+    },
+    "hsk2025.word.l7.08753.v1": {
+      "provider": "gushi",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "gushi:取笑:qǔxiào"
+    },
+    "hsk2025.word.l7.08754.v1": {
+      "provider": "HSKKit",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": null
+    },
+    "hsk2025.word.l7.08755.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:c3c9dc8998fd"
+    },
+    "hsk2025.word.l7.08756.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:9036006648e7"
+    },
+    "hsk2025.word.l7.08757.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:69d1c918bb71"
+    },
+    "hsk2025.word.l7.08758.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:e70e1d0dee8a"
+    },
+    "hsk2025.word.l7.08759.v1": {
+      "provider": "gushi",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "gushi:圈子:quānzi"
+    },
+    "hsk2025.word.l7.08760.v1": {
+      "provider": "gushi",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "gushi:拳:quán"
+    },
+    "hsk2025.word.l7.08761.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:b4e52e5b02a9"
+    },
+    "hsk2025.word.l7.08762.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:0472393bc1a9"
+    },
+    "hsk2025.word.l7.08763.v1": {
+      "provider": "gushi",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "gushi:拳击:quánjī"
+    },
+    "hsk2025.word.l7.08764.v1": {
+      "provider": "gushi",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "gushi:全局:quánjú"
+    },
+    "hsk2025.word.l7.08765.v1": {
+      "provider": "gushi",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "gushi:全力以赴:quánlìyǐfù"
+    },
+    "hsk2025.word.l7.08766.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:976c01489543"
+    },
+    "hsk2025.word.l7.08767.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:3e39000c467f"
+    },
+    "hsk2025.word.l7.08768.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:abbb33a6ac82"
+    },
+    "hsk2025.word.l7.08769.v1": {
+      "provider": "HSKKit",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": null
+    },
+    "hsk2025.word.l7.08770.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:f9a4c9932b54"
+    },
+    "hsk2025.word.l7.08771.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:abcdcf915c09"
+    },
+    "hsk2025.word.l7.08772.v1": {
+      "provider": "gushi",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "gushi:全心全意:quánxīn-quányì"
+    },
+    "hsk2025.word.l7.08773.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:8c8af966edfa"
+    },
+    "hsk2025.word.l7.08774.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:5656706ffa7d"
+    },
+    "hsk2025.word.l7.08775.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:819708d0c3ab"
+    },
+    "hsk2025.word.l7.08776.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:3bf1790eb50e"
+    },
+    "hsk2025.word.l7.08777.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:45e891cbfd4e"
+    },
+    "hsk2025.word.l7.08778.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:f89d1c998b9f"
+    },
+    "hsk2025.word.l7.08779.v1": {
+      "provider": "gushi",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "gushi:缺席:quēxí"
+    },
+    "hsk2025.word.l7.08780.v1": {
+      "provider": "HSKKit",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": null
+    },
+    "hsk2025.word.l7.08781.v1": {
+      "provider": "gushi",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "gushi:确切:quèqiè"
+    },
+    "hsk2025.word.l7.08782.v1": {
+      "provider": "gushi",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "gushi:确信:quèxìn"
+    },
+    "hsk2025.word.l7.08783.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:ccaaa5dba14e"
+    },
+    "hsk2025.word.l7.08784.v1": {
+      "provider": "HSKKit",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": null,
+      "replaces": {
+        "provider": "zhongdex",
+        "upstreamId": "dex:s:1c31a1567000"
+      }
+    },
+    "hsk2025.word.l7.08785.v1": {
+      "provider": "HSKKit",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": null,
+      "replaces": {
+        "provider": "zhongdex",
+        "upstreamId": "dex:s:bf74fc371a29"
+      }
+    },
+    "hsk2025.word.l7.08786.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:c373508191d5"
+    },
+    "hsk2025.word.l7.08787.v1": {
+      "provider": "gushi",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "gushi:燃油:rányóu"
+    },
+    "hsk2025.word.l7.08788.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:364c355614ee"
+    },
+    "hsk2025.word.l7.08789.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:0267b7cd92e4"
+    },
+    "hsk2025.word.l7.08790.v1": {
+      "provider": "gushi",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "gushi:饶:ráo"
+    },
+    "hsk2025.word.l7.08791.v1": {
+      "provider": "gushi",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "gushi:饶恕:ráoshù"
+    },
+    "hsk2025.word.l7.08792.v1": {
+      "provider": "HSKKit",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": null,
+      "replaces": {
+        "provider": "gushi",
+        "upstreamId": "gushi:扰乱:rǎoluàn"
+      }
+    },
+    "hsk2025.word.l7.08793.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:414c42fbab48"
+    },
+    "hsk2025.word.l7.08794.v1": {
+      "provider": "HSKKit",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": null
+    },
+    "hsk2025.word.l7.08795.v1": {
+      "provider": "gushi",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "gushi:惹:rě"
+    },
+    "hsk2025.word.l7.08796.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:0cd11302f9aa"
+    },
+    "hsk2025.word.l7.08797.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:8b680a4ce710"
+    },
+    "hsk2025.word.l7.08798.v1": {
+      "provider": "gushi",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "gushi:热泪盈眶:rèlèi-yíngkuàng"
+    },
+    "hsk2025.word.l7.08799.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:ca2282601e24"
+    },
+    "hsk2025.word.l7.08800.v1": {
+      "provider": "HSKKit",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": null
+    },
+    "hsk2025.word.l7.08801.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:7bc8ace60141"
+    },
+    "hsk2025.word.l7.08802.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:915242ab06d5"
+    },
+    "hsk2025.word.l7.08803.v1": {
+      "provider": "HSKKit",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": null,
+      "replaces": {
+        "provider": "zhongdex",
+        "upstreamId": "dex:s:92eacac87403"
+      }
+    },
+    "hsk2025.word.l7.08804.v1": {
+      "provider": "gushi",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "gushi:人道:réndào"
+    },
+    "hsk2025.word.l7.08805.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:3f89bf676d40"
+    },
+    "hsk2025.word.l7.08806.v1": {
+      "provider": "HSKKit",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": null,
+      "replaces": {
+        "provider": "gushi",
+        "upstreamId": "gushi:人间:rénjiān"
+      }
+    },
+    "hsk2025.word.l7.08807.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:732a5c17a9fa"
+    },
+    "hsk2025.word.l7.08808.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:4f958b556f87"
+    },
+    "hsk2025.word.l7.08809.v1": {
+      "provider": "gushi",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "gushi:人情:rénqíng"
+    },
+    "hsk2025.word.l7.08810.v1": {
+      "provider": "gushi",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "gushi:人权:rénquán"
+    },
+    "hsk2025.word.l7.08811.v1": {
+      "provider": "HSKKit",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": null,
+      "replaces": {
+        "provider": "gushi",
+        "upstreamId": "gushi:人身:rénshēn"
+      }
+    },
+    "hsk2025.word.l7.08812.v1": {
+      "provider": "gushi",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "gushi:人手:rénshǒu"
+    },
+    "hsk2025.word.l7.08813.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:186e6dfbf3d3"
+    },
+    "hsk2025.word.l7.08814.v1": {
+      "provider": "HSKKit",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": null,
+      "replaces": {
+        "provider": "zhongdex",
+        "upstreamId": "dex:s:90cfb8d269a0"
+      }
+    },
+    "hsk2025.word.l7.08815.v1": {
+      "provider": "HSKKit",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": null
+    },
+    "hsk2025.word.l7.08816.v1": {
+      "provider": "HSKKit",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": null,
+      "replaces": {
+        "provider": "zhongdex",
+        "upstreamId": "dex:s:8633ba4e380d"
+      }
+    },
+    "hsk2025.word.l7.08817.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:96bc679e40ff"
+    },
+    "hsk2025.word.l7.08818.v1": {
+      "provider": "gushi",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "gushi:人造:rénzào"
+    },
+    "hsk2025.word.l7.08819.v1": {
+      "provider": "gushi",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "gushi:人质:rénzhì"
+    },
+    "hsk2025.word.l7.08820.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:007efb81fd29"
+    },
+    "hsk2025.word.l7.08821.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:e5f8c63b754f"
+    },
+    "hsk2025.word.l7.08822.v1": {
+      "provider": "gushi",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "gushi:任:rèn"
+    },
+    "hsk2025.word.l7.08823.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:6df9cc7c0a6f"
+    },
+    "hsk2025.word.l7.08824.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:efd3ae1f4beb"
+    },
+    "hsk2025.word.l7.08825.v1": {
+      "provider": "gushi",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "gushi:韧性:rènxìng"
+    },
+    "hsk2025.word.l7.08826.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:5026654838bd"
+    },
+    "hsk2025.word.l7.08827.v1": {
+      "provider": "HSKKit",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": null,
+      "replaces": {
+        "provider": "zhongdex",
+        "upstreamId": "dex:s:c98fe20a37ac"
+      }
+    },
+    "hsk2025.word.l7.08828.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:06df5ed88fbb"
+    },
+    "hsk2025.word.l7.08829.v1": {
+      "provider": "HSKKit",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": null
+    },
+    "hsk2025.word.l7.08830.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:9dfe7e75252a"
+    },
+    "hsk2025.word.l7.08831.v1": {
+      "provider": "HSKKit",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": null
+    },
+    "hsk2025.word.l7.08832.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:0fc190db2a5a"
+    },
+    "hsk2025.word.l7.08833.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:73aa024dcf10"
+    },
+    "hsk2025.word.l7.08834.v1": {
+      "provider": "HSKKit",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": null,
+      "replaces": {
+        "provider": "gushi",
+        "upstreamId": "gushi:融:róng"
+      }
+    },
+    "hsk2025.word.l7.08835.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:7514158e2aad"
+    },
+    "hsk2025.word.l7.08836.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:b55509b47836"
+    },
+    "hsk2025.word.l7.08837.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:d57a0116d99e"
+    },
+    "hsk2025.word.l7.08838.v1": {
+      "provider": "HSKKit",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": null
+    },
+    "hsk2025.word.l7.08839.v1": {
+      "provider": "gushi",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "gushi:容纳:róngnà"
+    },
+    "hsk2025.word.l7.08840.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:d01abdc54a6b"
+    },
+    "hsk2025.word.l7.08841.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:e8fb995adbcf"
+    },
+    "hsk2025.word.l7.08842.v1": {
+      "provider": "gushi",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "gushi:容忍:róngrěn"
+    },
+    "hsk2025.word.l7.08843.v1": {
+      "provider": "gushi",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "gushi:荣幸:róngxìng"
+    },
+    "hsk2025.word.l7.08844.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:6aafeb2172c5"
+    },
+    "hsk2025.word.l7.08845.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:4c9c94850ad1"
+    },
+    "hsk2025.word.l7.08846.v1": {
+      "provider": "HSKKit",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": null
+    },
+    "hsk2025.word.l7.08847.v1": {
+      "provider": "HSKKit",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": null
+    },
+    "hsk2025.word.l7.08848.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:6b87f073570e"
+    },
+    "hsk2025.word.l7.08849.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:fe11d38a09fd"
+    },
+    "hsk2025.word.l7.08850.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:e7bf94d6c8a6"
+    },
+    "hsk2025.word.l7.08851.v1": {
+      "provider": "HSKKit",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": null
+    },
+    "hsk2025.word.l7.08852.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:bb8db0a998db"
+    },
+    "hsk2025.word.l7.08853.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:0cc3ad2d7bf9"
+    },
+    "hsk2025.word.l7.08854.v1": {
+      "provider": "gushi",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "gushi:如意:rúyì"
+    },
+    "hsk2025.word.l7.08855.v1": {
+      "provider": "HSKKit",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": null,
+      "replaces": {
+        "provider": "gushi",
+        "upstreamId": "gushi:如一:rúyī"
+      }
+    },
+    "hsk2025.word.l7.08856.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:276cb5fa3915"
+    },
+    "hsk2025.word.l7.08857.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:9ee26cb7ce5c"
+    },
+    "hsk2025.word.l7.08858.v1": {
+      "provider": "gushi",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "gushi:入场:rùchǎng"
+    },
+    "hsk2025.word.l7.08859.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:27aa96976e9c"
+    },
+    "hsk2025.word.l7.08860.v1": {
+      "provider": "gushi",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "gushi:入侵:rùqīn"
+    },
+    "hsk2025.word.l7.08861.v1": {
+      "provider": "HSKKit",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": null,
+      "replaces": {
+        "provider": "zhongdex",
+        "upstreamId": "dex:s:48779ae5a1ac"
+      }
+    },
+    "hsk2025.word.l7.08862.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:681e4afbebdb"
+    },
+    "hsk2025.word.l7.08863.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:2462b1f0be7d"
+    },
+    "hsk2025.word.l7.08864.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:c6b1e5d488cf"
+    },
+    "hsk2025.word.l7.08865.v1": {
+      "provider": "HSKKit",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": null,
+      "replaces": {
+        "provider": "gushi",
+        "upstreamId": "gushi:润:rùn"
+      }
+    },
+    "hsk2025.word.l7.08866.v1": {
+      "provider": "gushi",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "gushi:若:ruò"
+    },
+    "hsk2025.word.l7.08867.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:2609328cb356"
+    },
+    "hsk2025.word.l7.08868.v1": {
+      "provider": "gushi",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "gushi:若是:ruòshì"
+    },
+    "hsk2025.word.l7.08869.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:78610bf265c3"
+    },
+    "hsk2025.word.l7.08870.v1": {
+      "provider": "HSKKit",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": null
+    },
+    "hsk2025.word.l7.08871.v1": {
+      "provider": "HSKKit",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": null,
+      "replaces": {
+        "provider": "gushi",
+        "upstreamId": "gushi:撒:sā"
+      }
+    },
+    "hsk2025.word.l7.08872.v1": {
+      "provider": "gushi",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "gushi:撒谎:sāhuǎng"
+    },
+    "hsk2025.word.l7.08873.v1": {
+      "provider": "HSKKit",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": null,
+      "replaces": {
+        "provider": "gushi",
+        "upstreamId": "gushi:赛:sài"
+      }
+    },
+    "hsk2025.word.l7.08874.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:743c95cb31fd"
+    },
+    "hsk2025.word.l7.08875.v1": {
+      "provider": "HSKKit",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": null
+    },
+    "hsk2025.word.l7.08876.v1": {
+      "provider": "gushi",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "gushi:赛跑:sàipǎo"
+    },
+    "hsk2025.word.l7.08877.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:662f2e5c4ff7"
+    },
+    "hsk2025.word.l7.08878.v1": {
+      "provider": "gushi",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "gushi:三角:sānjiǎo"
+    },
+    "hsk2025.word.l7.08879.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:53893e9f4df7"
+    },
+    "hsk2025.word.l7.08880.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:caf05da5b988"
+    },
+    "hsk2025.word.l7.08881.v1": {
+      "provider": "HSKKit",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": null
+    },
+    "hsk2025.word.l7.08882.v1": {
+      "provider": "gushi",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "gushi:桑拿:sāngná"
+    },
+    "hsk2025.word.l7.08883.v1": {
+      "provider": "gushi",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "gushi:嗓音:sǎngyīn"
+    },
+    "hsk2025.word.l7.08884.v1": {
+      "provider": "gushi",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "gushi:丧生:sàngshēng"
+    },
+    "hsk2025.word.l7.08885.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:814b9d022f72"
+    },
+    "hsk2025.word.l7.08886.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:f01811b4957b"
+    },
+    "hsk2025.word.l7.08887.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:b8d4c3fbf08f"
+    },
+    "hsk2025.word.l7.08888.v1": {
+      "provider": "gushi",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "gushi:扫墓:sǎomù"
+    },
+    "hsk2025.word.l7.08889.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:c914e6cbc4e7"
+    },
+    "hsk2025.word.l7.08890.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:2665829f53a3"
+    },
+    "hsk2025.word.l7.08891.v1": {
+      "provider": "HSKKit",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": null
+    },
+    "hsk2025.word.l7.08892.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:7abe5792b153"
+    },
+    "hsk2025.word.l7.08893.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:0fd5e62eb29e"
+    },
+    "hsk2025.word.l7.08894.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:acbcccda3064"
+    },
+    "hsk2025.word.l7.08895.v1": {
+      "provider": "gushi",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "gushi:杀害:shāhài"
+    },
+    "hsk2025.word.l7.08896.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:0811cffb4837"
+    },
+    "hsk2025.word.l7.08897.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:77578bca4e2d"
+    },
+    "hsk2025.word.l7.08898.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:9fe863b48404"
+    },
+    "hsk2025.word.l7.08899.v1": {
+      "provider": "HSKKit",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": null,
+      "replaces": {
+        "provider": "gushi",
+        "upstreamId": "gushi:傻瓜:shǎguā"
+      }
+    },
+    "hsk2025.word.l7.08900.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:a117145cc561"
+    },
+    "hsk2025.word.l7.08901.v1": {
+      "provider": "HSKKit",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": null
+    },
+    "hsk2025.word.l7.08902.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:0c00df26392c"
+    },
+    "hsk2025.word.l7.08903.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:8d0107c3d9ea"
+    },
+    "hsk2025.word.l7.08904.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:7a36df6f6e34"
+    },
+    "hsk2025.word.l7.08905.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:c5b95f5f1f22"
+    },
+    "hsk2025.word.l7.08906.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:c8fe725160e7"
+    },
+    "hsk2025.word.l7.08907.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:4c8df34543ff"
+    },
+    "hsk2025.word.l7.08908.v1": {
+      "provider": "gushi",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "gushi:闪烁:shǎnshuò"
+    },
+    "hsk2025.word.l7.08909.v1": {
+      "provider": "gushi",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "gushi:善:shàn"
+    },
+    "hsk2025.word.l7.08910.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:986d9aeb4155"
+    },
+    "hsk2025.word.l7.08911.v1": {
+      "provider": "gushi",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "gushi:赡养:shànyǎng"
+    },
+    "hsk2025.word.l7.08912.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:47b1fb78f4ba"
+    },
+    "hsk2025.word.l7.08913.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:02237e4c747c"
+    },
+    "hsk2025.word.l7.08914.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:fb3db158c0c0"
+    },
+    "hsk2025.word.l7.08915.v1": {
+      "provider": "HSKKit",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": null,
+      "replaces": {
+        "provider": "zhongdex",
+        "upstreamId": "dex:s:4d648872f18b"
+      }
+    },
+    "hsk2025.word.l7.08916.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:61ffcd8ed7d9"
+    },
+    "hsk2025.word.l7.08917.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:87dbc4b82ac9"
+    },
+    "hsk2025.word.l7.08918.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:33a810e5c65c"
+    },
+    "hsk2025.word.l7.08919.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:dad2cad0c22f"
+    },
+    "hsk2025.word.l7.08920.v1": {
+      "provider": "HSKKit",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": null,
+      "replaces": {
+        "provider": "zhongdex",
+        "upstreamId": "dex:s:8e278b8dde8b"
+      }
+    },
+    "hsk2025.word.l7.08921.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:87678dddf050"
+    },
+    "hsk2025.word.l7.08922.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:03afcf9c4998"
+    },
+    "hsk2025.word.l7.08923.v1": {
+      "provider": "HSKKit",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": null
+    },
+    "hsk2025.word.l7.08924.v1": {
+      "provider": "HSKKit",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": null
+    },
+    "hsk2025.word.l7.08925.v1": {
+      "provider": "HSKKit",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": null
+    },
+    "hsk2025.word.l7.08926.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:8c9a2b6b7e5a"
+    },
+    "hsk2025.word.l7.08927.v1": {
+      "provider": "HSKKit",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": null
+    },
+    "hsk2025.word.l7.08928.v1": {
+      "provider": "HSKKit",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": null,
+      "replaces": {
+        "provider": "zhongdex",
+        "upstreamId": "dex:s:9a6afc38c49e"
+      }
+    },
+    "hsk2025.word.l7.08929.v1": {
+      "provider": "HSKKit",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": null
+    },
+    "hsk2025.word.l7.08930.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:79e409e8742c"
+    },
+    "hsk2025.word.l7.08931.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:dfc25611b3ac"
+    },
+    "hsk2025.word.l7.08932.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:2cad621d5be0"
+    },
+    "hsk2025.word.l7.08933.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:45bfc69110a8"
+    },
+    "hsk2025.word.l7.08934.v1": {
+      "provider": "HSKKit",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": null
+    },
+    "hsk2025.word.l7.08935.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:ad68fba91615"
+    },
+    "hsk2025.word.l7.08936.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:1598fda70826"
+    },
+    "hsk2025.word.l7.08937.v1": {
+      "provider": "gushi",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "gushi:上诉:shàngsù"
+    },
+    "hsk2025.word.l7.08938.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:578751799524"
+    },
+    "hsk2025.word.l7.08939.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:17b590a1a5f8"
+    },
+    "hsk2025.word.l7.08940.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:aa929511915d"
+    },
+    "hsk2025.word.l7.08941.v1": {
+      "provider": "HSKKit",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": null,
+      "replaces": {
+        "provider": "gushi",
+        "upstreamId": "gushi:上行:shàngxíng"
+      }
+    },
+    "hsk2025.word.l7.08942.v1": {
+      "provider": "gushi",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "gushi:上演:shàngyǎn"
+    },
+    "hsk2025.word.l7.08943.v1": {
+      "provider": "HSKKit",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": null,
+      "replaces": {
+        "provider": "zhongdex",
+        "upstreamId": "dex:s:b7ce19483d65"
+      }
+    },
+    "hsk2025.word.l7.08944.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:20e1b55d8a11"
+    },
+    "hsk2025.word.l7.08945.v1": {
+      "provider": "HSKKit",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": null,
+      "replaces": {
+        "provider": "zhongdex",
+        "upstreamId": "dex:s:85ebd0744441"
+      }
+    },
+    "hsk2025.word.l7.08946.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:89eb70e8f778"
+    },
+    "hsk2025.word.l7.08947.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:e20fff3fb38d"
+    },
+    "hsk2025.word.l7.08948.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:e69b6f2fb21f"
+    },
+    "hsk2025.word.l7.08949.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:0ea1d0adb0de"
+    },
+    "hsk2025.word.l7.08950.v1": {
+      "provider": "HSKKit",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": null
+    },
+    "hsk2025.word.l7.08951.v1": {
+      "provider": "gushi",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "gushi:哨:shào"
+    },
+    "hsk2025.word.l7.08952.v1": {
+      "provider": "gushi",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "gushi:少女:shàonǚ"
+    },
+    "hsk2025.word.l7.08953.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:34735b28e007"
+    },
+    "hsk2025.word.l7.08954.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:2e3c408f6abd"
+    },
+    "hsk2025.word.l7.08955.v1": {
+      "provider": "HSKKit",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": null,
+      "replaces": {
+        "provider": "zhongdex",
+        "upstreamId": "dex:s:acacb17ba4a8"
+      }
+    },
+    "hsk2025.word.l7.08956.v1": {
+      "provider": "HSKKit",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": null,
+      "replaces": {
+        "provider": "gushi",
+        "upstreamId": "gushi:设:shè"
+      }
+    },
+    "hsk2025.word.l7.08957.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:31d4932bbfd5"
+    },
+    "hsk2025.word.l7.08958.v1": {
+      "provider": "gushi",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "gushi:设法:shèfǎ"
+    },
+    "hsk2025.word.l7.08959.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:1bf984642f04"
+    },
+    "hsk2025.word.l7.08960.v1": {
+      "provider": "gushi",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "gushi:社交:shèjiāo"
+    },
+    "hsk2025.word.l7.08961.v1": {
+      "provider": "HSKKit",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": null
+    },
+    "hsk2025.word.l7.08962.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:bb071a4d7d1f"
+    },
+    "hsk2025.word.l7.08963.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:ef26f008c6eb"
+    },
+    "hsk2025.word.l7.08964.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:719c914f9d91"
+    },
+    "hsk2025.word.l7.08965.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:309632edc52d"
+    },
+    "hsk2025.word.l7.08966.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:4db084a9cc1f"
+    },
+    "hsk2025.word.l7.08967.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:683ca6f21824"
+    },
+    "hsk2025.word.l7.08968.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:186e6dfbf3d3"
+    },
+    "hsk2025.word.l7.08969.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:dc66cee84df8"
+    },
+    "hsk2025.word.l7.08970.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:5967179c975a"
+    },
+    "hsk2025.word.l7.08971.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:c83e178f52fe"
+    },
+    "hsk2025.word.l7.08972.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:92593b3f12bd"
+    },
+    "hsk2025.word.l7.08973.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:1b8a2574e738"
+    },
+    "hsk2025.word.l7.08974.v1": {
+      "provider": "HSKKit",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": null
+    },
+    "hsk2025.word.l7.08975.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:58afa5e000eb"
+    },
+    "hsk2025.word.l7.08976.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:ad7852a11760"
+    },
+    "hsk2025.word.l7.08977.v1": {
+      "provider": "gushi",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "gushi:绅士:shēnshì"
+    },
+    "hsk2025.word.l7.08978.v1": {
+      "provider": "gushi",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "gushi:伸手:shēnshǒu"
+    },
+    "hsk2025.word.l7.08979.v1": {
+      "provider": "gushi",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "gushi:深思:shēnsī"
+    },
+    "hsk2025.word.l7.08980.v1": {
+      "provider": "HSKKit",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": null
+    },
+    "hsk2025.word.l7.08981.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:342418213629"
+    },
+    "hsk2025.word.l7.08982.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:718caa3a620a"
+    },
+    "hsk2025.word.l7.08983.v1": {
+      "provider": "HSKKit",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": null
+    },
+    "hsk2025.word.l7.08984.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:01e54f5a9311"
+    },
+    "hsk2025.word.l7.08985.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:a109d9a514ed"
+    },
+    "hsk2025.word.l7.08986.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:82a5263e634d"
+    },
+    "hsk2025.word.l7.08987.v1": {
+      "provider": "HSKKit",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": null,
+      "replaces": {
+        "provider": "gushi",
+        "upstreamId": "gushi:身子:shēnzi"
+      }
+    },
+    "hsk2025.word.l7.08988.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:6f77a1e11368"
+    },
+    "hsk2025.word.l7.08989.v1": {
+      "provider": "HSKKit",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": null,
+      "replaces": {
+        "provider": "zhongdex",
+        "upstreamId": "dex:s:2c485a608550"
+      }
+    },
+    "hsk2025.word.l7.08990.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:06a2e7073232"
+    },
+    "hsk2025.word.l7.08991.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:c2434e256f42"
+    },
+    "hsk2025.word.l7.08992.v1": {
+      "provider": "gushi",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "gushi:神仙:shénxiān"
+    },
+    "hsk2025.word.l7.08993.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:0b8557a0de6d"
+    },
+    "hsk2025.word.l7.08994.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:3ccc13bf8910"
+    },
+    "hsk2025.word.l7.08995.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:473a8a934a8e"
+    },
+    "hsk2025.word.l7.08996.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:faed3033c152"
+    },
+    "hsk2025.word.l7.08997.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:ad9db3a4d4aa"
+    },
+    "hsk2025.word.l7.08998.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:c345a48a881d"
+    },
+    "hsk2025.word.l7.08999.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:ae3e79937b17"
+    },
+    "hsk2025.word.l7.09000.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:c02ef1c8d1d0"
+    },
+    "hsk2025.word.l7.09001.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:1b165e692b59"
+    },
+    "hsk2025.word.l7.09002.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:1040b9275d14"
+    },
+    "hsk2025.word.l7.09003.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:69d9e4ebe7a5"
+    },
+    "hsk2025.word.l7.09004.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:93feeb606b6c"
+    },
+    "hsk2025.word.l7.09005.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:eb5b9395d315"
+    },
+    "hsk2025.word.l7.09006.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:82957d48cafc"
+    },
+    "hsk2025.word.l7.09007.v1": {
+      "provider": "gushi",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "gushi:声称:shēngchēng"
+    },
+    "hsk2025.word.l7.09008.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:80b3ced679ef"
+    },
+    "hsk2025.word.l7.09009.v1": {
+      "provider": "HSKKit",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": null,
+      "replaces": {
+        "provider": "zhongdex",
+        "upstreamId": "dex:s:714f0a65a336"
+      }
+    },
+    "hsk2025.word.l7.09010.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:b4f92dc8e486"
+    },
+    "hsk2025.word.l7.09011.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:8dbd54df8cc3"
+    },
+    "hsk2025.word.l7.09012.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:ca4e3ba3dd54"
+    },
+    "hsk2025.word.l7.09013.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:603152555cde"
+    },
+    "hsk2025.word.l7.09014.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:7777569d0214"
+    },
+    "hsk2025.word.l7.09015.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:47da9a66a90e"
+    },
+    "hsk2025.word.l7.09016.v1": {
+      "provider": "HSKKit",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": null,
+      "replaces": {
+        "provider": "gushi",
+        "upstreamId": "gushi:生前:shēngqián"
+      }
+    },
+    "hsk2025.word.l7.09017.v1": {
+      "provider": "HSKKit",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": null
+    },
+    "hsk2025.word.l7.09018.v1": {
+      "provider": "HSKKit",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": null
+    },
+    "hsk2025.word.l7.09019.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:e131859992fa"
+    },
+    "hsk2025.word.l7.09020.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:207c78388e7f"
+    },
+    "hsk2025.word.l7.09021.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:6097c8201d3a"
+    },
+    "hsk2025.word.l7.09022.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:11dc5649a80e"
+    },
+    "hsk2025.word.l7.09023.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:3591a7582e5e"
+    },
+    "hsk2025.word.l7.09024.v1": {
+      "provider": "gushi",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "gushi:生育:shēngyù"
+    },
+    "hsk2025.word.l7.09025.v1": {
+      "provider": "gushi",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "gushi:声誉:shēngyù"
+    },
+    "hsk2025.word.l7.09026.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:0843687e9452"
+    },
+    "hsk2025.word.l7.09027.v1": {
+      "provider": "gushi",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "gushi:绳子:shéngzi"
+    },
+    "hsk2025.word.l7.09028.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:07d29324f84a"
+    },
+    "hsk2025.word.l7.09029.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:4f7a0100617e"
+    },
+    "hsk2025.word.l7.09030.v1": {
+      "provider": "HSKKit",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": null
+    },
+    "hsk2025.word.l7.09031.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:a8a86f8be941"
+    },
+    "hsk2025.word.l7.09032.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:7d760eefe4ef"
+    },
+    "hsk2025.word.l7.09033.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:a3ea184f1254"
+    },
+    "hsk2025.word.l7.09034.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:efa776d5f04c"
+    },
+    "hsk2025.word.l7.09035.v1": {
+      "provider": "gushi",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "gushi:盛开:shèngkāi"
+    },
+    "hsk2025.word.l7.09036.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:49e599c6d312"
+    },
+    "hsk2025.word.l7.09037.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:206e07b08508"
+    },
+    "hsk2025.word.l7.09038.v1": {
+      "provider": "gushi",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "gushi:胜任:shèngrèn"
+    },
+    "hsk2025.word.l7.09039.v1": {
+      "provider": "HSKKit",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": null
+    },
+    "hsk2025.word.l7.09040.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:da5d6d5f9aa1"
+    },
+    "hsk2025.word.l7.09041.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:15082b3c8197"
+    },
+    "hsk2025.word.l7.09042.v1": {
+      "provider": "HSKKit",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": null
+    },
+    "hsk2025.word.l7.09043.v1": {
+      "provider": "HSKKit",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": null,
+      "replaces": {
+        "provider": "zhongdex",
+        "upstreamId": "dex:s:07d960352786"
+      }
+    },
+    "hsk2025.word.l7.09044.v1": {
+      "provider": "HSKKit",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": null
+    },
+    "hsk2025.word.l7.09045.v1": {
+      "provider": "gushi",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "gushi:师范:shīfàn"
+    },
+    "hsk2025.word.l7.09046.v1": {
+      "provider": "gushi",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "gushi:施工:shīgōng"
+    },
+    "hsk2025.word.l7.09047.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:3b9023454edd"
+    },
+    "hsk2025.word.l7.09048.v1": {
+      "provider": "gushi",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "gushi:失控:shīkòng"
+    },
+    "hsk2025.word.l7.09049.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:fcf57a2b049c"
+    },
+    "hsk2025.word.l7.09050.v1": {
+      "provider": "gushi",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "gushi:失礼:shīlǐ"
+    },
+    "hsk2025.word.l7.09051.v1": {
+      "provider": "HSKKit",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": null,
+      "replaces": {
+        "provider": "zhongdex",
+        "upstreamId": "dex:s:bfea1a8044f4"
+      }
+    },
+    "hsk2025.word.l7.09052.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:8059c097382d"
+    },
+    "hsk2025.word.l7.09053.v1": {
+      "provider": "gushi",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "gushi:失明:shīmíng"
+    },
+    "hsk2025.word.l7.09054.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:7890c6109ccb"
+    },
+    "hsk2025.word.l7.09055.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:ce441d301d7a"
+    },
+    "hsk2025.word.l7.09056.v1": {
+      "provider": "HSKKit",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": null
+    },
+    "hsk2025.word.l7.09057.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:c2680c722442"
+    },
+    "hsk2025.word.l7.09058.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:37f9bb42bd28"
+    },
+    "hsk2025.word.l7.09059.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:aba891ce6d2f"
+    },
+    "hsk2025.word.l7.09060.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:42f048a28c3c"
+    },
+    "hsk2025.word.l7.09061.v1": {
+      "provider": "HSKKit",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": null
+    },
+    "hsk2025.word.l7.09062.v1": {
+      "provider": "HSKKit",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": null,
+      "replaces": {
+        "provider": "zhongdex",
+        "upstreamId": "dex:s:215bdf7e4924"
+      }
+    },
+    "hsk2025.word.l7.09063.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:f6fa59352f69"
+    },
+    "hsk2025.word.l7.09064.v1": {
+      "provider": "gushi",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "gushi:失踪:shīzōng"
+    },
+    "hsk2025.word.l7.09065.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:da6787bb2697"
+    },
+    "hsk2025.word.l7.09066.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:9eedca26a325"
+    },
+    "hsk2025.word.l7.09067.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:7e51a02aabba"
+    },
+    "hsk2025.word.l7.09068.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:27cce69574dd"
+    },
+    "hsk2025.word.l7.09069.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:44f54f177fa7"
+    },
+    "hsk2025.word.l7.09070.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:6e78d293c4bb"
+    },
+    "hsk2025.word.l7.09071.v1": {
+      "provider": "gushi",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "gushi:时节:shíjié"
+    },
+    "hsk2025.word.l7.09072.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:c6c9ad19a7ba"
+    },
+    "hsk2025.word.l7.09073.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:cd2eb2b9cb9a"
+    },
+    "hsk2025.word.l7.09074.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:0b5e547989f6"
+    },
+    "hsk2025.word.l7.09075.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:88727d6e3188"
+    },
+    "hsk2025.word.l7.09076.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:9e86036fa69f"
+    },
+    "hsk2025.word.l7.09077.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:1b105a958f31"
+    },
+    "hsk2025.word.l7.09078.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:68a6a0e9c83c"
+    },
+    "hsk2025.word.l7.09079.v1": {
+      "provider": "HSKKit",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": null,
+      "replaces": {
+        "provider": "zhongdex",
+        "upstreamId": "dex:s:01eef9a3adcf"
+      }
+    },
+    "hsk2025.word.l7.09080.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:ff585b09206b"
+    },
+    "hsk2025.word.l7.09081.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:473d454b6a2a"
+    },
+    "hsk2025.word.l7.09082.v1": {
+      "provider": "HSKKit",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": null
+    },
+    "hsk2025.word.l7.09083.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:17a6a3ce8dfb"
+    },
+    "hsk2025.word.l7.09084.v1": {
+      "provider": "gushi",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "gushi:使命:shǐmìng"
+    },
+    "hsk2025.word.l7.09085.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:8d8b9825a09b"
+    },
+    "hsk2025.word.l7.09086.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:0c0efcf73cc7"
+    },
+    "hsk2025.word.l7.09087.v1": {
+      "provider": "HSKKit",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": null,
+      "replaces": {
+        "provider": "zhongdex",
+        "upstreamId": "dex:s:07fc78ad43d1"
+      }
+    },
+    "hsk2025.word.l7.09088.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:61ed4892612b"
+    },
+    "hsk2025.word.l7.09089.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:117cb47e9ef6"
+    },
+    "hsk2025.word.l7.09090.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:3547dd3a9327"
+    },
+    "hsk2025.word.l7.09091.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:e9adeb32363c"
+    },
+    "hsk2025.word.l7.09092.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:6f12cf3d3ba1"
+    },
+    "hsk2025.word.l7.09093.v1": {
+      "provider": "gushi",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "gushi:是非:shìfēi"
+    },
+    "hsk2025.word.l7.09094.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:37c8d14f02d9"
+    },
+    "hsk2025.word.l7.09095.v1": {
+      "provider": "gushi",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "gushi:嗜好:shìhào"
+    },
+    "hsk2025.word.l7.09096.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:b0ef4c2239ce"
+    },
+    "hsk2025.word.l7.09097.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:6c8dea0fddf2"
+    },
+    "hsk2025.word.l7.09098.v1": {
+      "provider": "gushi",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "gushi:世间:shìjiān"
+    },
+    "hsk2025.word.l7.09099.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:35be600df298"
+    },
+    "hsk2025.word.l7.09100.v1": {
+      "provider": "HSKKit",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": null,
+      "replaces": {
+        "provider": "zhongdex",
+        "upstreamId": "dex:s:da0d5a3b999d"
+      }
+    },
+    "hsk2025.word.l7.09101.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:c5d5cfa1f0aa"
+    },
+    "hsk2025.word.l7.09102.v1": {
+      "provider": "HSKKit",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": null
+    },
+    "hsk2025.word.l7.09103.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:4251f4b20625"
+    },
+    "hsk2025.word.l7.09104.v1": {
+      "provider": "gushi",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "gushi:逝世:shìshì"
+    },
+    "hsk2025.word.l7.09105.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:f1236a033896"
+    },
+    "hsk2025.word.l7.09106.v1": {
+      "provider": "HSKKit",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": null
+    },
+    "hsk2025.word.l7.09107.v1": {
+      "provider": "HSKKit",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": null
+    },
+    "hsk2025.word.l7.09108.v1": {
+      "provider": "gushi",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "gushi:示威:shìwēi"
+    },
+    "hsk2025.word.l7.09109.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:5aa9080f1f1a"
+    },
+    "hsk2025.word.l7.09110.v1": {
+      "provider": "gushi",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "gushi:视线:shìxiàn"
+    },
+    "hsk2025.word.l7.09111.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:b1739c3b53c9"
+    },
+    "hsk2025.word.l7.09112.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:7532cad9edf8"
+    },
+    "hsk2025.word.l7.09113.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:ee663cb8462d"
+    },
+    "hsk2025.word.l7.09114.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:6bf2f5749518"
+    },
+    "hsk2025.word.l7.09115.v1": {
+      "provider": "HSKKit",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": null
+    },
+    "hsk2025.word.l7.09116.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:4bc5e5a8c595"
+    },
+    "hsk2025.word.l7.09117.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:d5bb564cabc4"
+    },
+    "hsk2025.word.l7.09118.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:7c69c04638dd"
+    },
+    "hsk2025.word.l7.09119.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:cbbbcc362320"
+    },
+    "hsk2025.word.l7.09120.v1": {
+      "provider": "HSKKit",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": null,
+      "replaces": {
+        "provider": "zhongdex",
+        "upstreamId": "dex:s:ff5dc5dc5256"
+      }
+    },
+    "hsk2025.word.l7.09121.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:70448d7e48cb"
+    },
+    "hsk2025.word.l7.09122.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:e3475e685ff3"
+    },
+    "hsk2025.word.l7.09123.v1": {
+      "provider": "HSKKit",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": null
+    },
+    "hsk2025.word.l7.09124.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:b7ee63276228"
+    },
+    "hsk2025.word.l7.09125.v1": {
+      "provider": "gushi",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "gushi:收养:shōuyǎng"
+    },
+    "hsk2025.word.l7.09126.v1": {
+      "provider": "gushi",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "gushi:收音机:shōuyīnjī"
+    },
+    "hsk2025.word.l7.09127.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:9d3d9c794156"
+    },
+    "hsk2025.word.l7.09128.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:49a07080a7ce"
+    },
+    "hsk2025.word.l7.09129.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:0602616edae9"
+    },
+    "hsk2025.word.l7.09130.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:f0550ddf0008"
+    },
+    "hsk2025.word.l7.09131.v1": {
+      "provider": "HSKKit",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": null
+    },
+    "hsk2025.word.l7.09132.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:832179c6b27e"
+    },
+    "hsk2025.word.l7.09133.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:d3b7c3331bd2"
+    },
+    "hsk2025.word.l7.09134.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:10b2a029ebff"
+    },
+    "hsk2025.word.l7.09135.v1": {
+      "provider": "gushi",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "gushi:手脚:shǒujiǎo"
+    },
+    "hsk2025.word.l7.09136.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:383bfac5509f"
+    },
+    "hsk2025.word.l7.09137.v1": {
+      "provider": "gushi",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "gushi:手帕:shǒupà"
+    },
+    "hsk2025.word.l7.09138.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:bec9f5f710e6"
+    },
+    "hsk2025.word.l7.09139.v1": {
+      "provider": "gushi",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "gushi:手枪:shǒuqiāng"
+    },
+    "hsk2025.word.l7.09140.v1": {
+      "provider": "gushi",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "gushi:首饰:shǒushì"
+    },
+    "hsk2025.word.l7.09141.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:1756e799f5a8"
+    },
+    "hsk2025.word.l7.09142.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:a26c4e1e32f6"
+    },
+    "hsk2025.word.l7.09143.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:1f034c6d8cfc"
+    },
+    "hsk2025.word.l7.09144.v1": {
+      "provider": "gushi",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "gushi:守信:shǒuxìn"
+    },
+    "hsk2025.word.l7.09145.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:c680e30cce91"
+    },
+    "hsk2025.word.l7.09146.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:6b5106721cca"
+    },
+    "hsk2025.word.l7.09147.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:036f771fdbeb"
+    },
+    "hsk2025.word.l7.09148.v1": {
+      "provider": "HSKKit",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": null
+    },
+    "hsk2025.word.l7.09149.v1": {
+      "provider": "HSKKit",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": null
+    },
+    "hsk2025.word.l7.09150.v1": {
+      "provider": "gushi",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "gushi:受害:shòuhài"
+    },
+    "hsk2025.word.l7.09151.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:1d4219451694"
+    },
+    "hsk2025.word.l7.09152.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:6ef6c83550be"
+    },
+    "hsk2025.word.l7.09153.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:ba390a489ded"
+    },
+    "hsk2025.word.l7.09154.v1": {
+      "provider": "gushi",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "gushi:受苦:shòukǔ"
+    },
+    "hsk2025.word.l7.09155.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:70aef495da5a"
+    },
+    "hsk2025.word.l7.09156.v1": {
+      "provider": "gushi",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "gushi:受骗:shòupiàn"
+    },
+    "hsk2025.word.l7.09157.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:e0c938d198aa"
+    },
+    "hsk2025.word.l7.09158.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:aaa8fc107147"
+    },
+    "hsk2025.word.l7.09159.v1": {
+      "provider": "HSKKit",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": null,
+      "replaces": {
+        "provider": "zhongdex",
+        "upstreamId": "dex:s:c685b11e2351"
+      }
+    },
+    "hsk2025.word.l7.09160.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:c0780831e2f3"
+    },
+    "hsk2025.word.l7.09161.v1": {
+      "provider": "HSKKit",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": null
+    },
+    "hsk2025.word.l7.09162.v1": {
+      "provider": "HSKKit",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": null,
+      "replaces": {
+        "provider": "gushi",
+        "upstreamId": "gushi:梳:shū"
+      }
+    },
+    "hsk2025.word.l7.09163.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:08abd475aeac"
+    },
+    "hsk2025.word.l7.09164.v1": {
+      "provider": "HSKKit",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": null,
+      "replaces": {
+        "provider": "zhongdex",
+        "upstreamId": "dex:s:030a7095ae40"
+      }
+    },
+    "hsk2025.word.l7.09165.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:00e7609f819b"
+    },
+    "hsk2025.word.l7.09166.v1": {
+      "provider": "HSKKit",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": null,
+      "replaces": {
+        "provider": "zhongdex",
+        "upstreamId": "dex:s:8bbb18c0240e"
+      }
+    },
+    "hsk2025.word.l7.09167.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:cbdb3952cb95"
+    },
+    "hsk2025.word.l7.09168.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:7baf6a27baf5"
+    },
+    "hsk2025.word.l7.09169.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:dba8af6abd8b"
+    },
+    "hsk2025.word.l7.09170.v1": {
+      "provider": "gushi",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "gushi:疏散:shūsàn"
+    },
+    "hsk2025.word.l7.09171.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:3b24455206bb"
+    },
+    "hsk2025.word.l7.09172.v1": {
+      "provider": "HSKKit",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": null,
+      "replaces": {
+        "provider": "zhongdex",
+        "upstreamId": "dex:s:9b8efb54cd2b"
+      }
+    },
+    "hsk2025.word.l7.09173.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:35093246596f"
+    },
+    "hsk2025.word.l7.09174.v1": {
+      "provider": "HSKKit",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": null,
+      "replaces": {
+        "provider": "zhongdex",
+        "upstreamId": "dex:s:742eba12ac89"
+      }
+    },
+    "hsk2025.word.l7.09175.v1": {
+      "provider": "HSKKit",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": null
+    },
+    "hsk2025.word.l7.09176.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:5b932cd2ad87"
+    },
+    "hsk2025.word.l7.09177.v1": {
+      "provider": "HSKKit",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": null,
+      "replaces": {
+        "provider": "zhongdex",
+        "upstreamId": "dex:s:5ba723dd9142"
+      }
+    },
+    "hsk2025.word.l7.09178.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:154a7a93643c"
+    },
+    "hsk2025.word.l7.09179.v1": {
+      "provider": "HSKKit",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": null
+    },
+    "hsk2025.word.l7.09180.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:2a995424c17b"
+    },
+    "hsk2025.word.l7.09181.v1": {
+      "provider": "HSKKit",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": null
+    },
+    "hsk2025.word.l7.09182.v1": {
+      "provider": "HSKKit",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": null,
+      "replaces": {
+        "provider": "zhongdex",
+        "upstreamId": "dex:s:e057b1896534"
+      }
+    },
+    "hsk2025.word.l7.09183.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:03f5ff5b6c75"
+    },
+    "hsk2025.word.l7.09184.v1": {
+      "provider": "gushi",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "gushi:树干:shùgàn"
+    },
+    "hsk2025.word.l7.09185.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:790b13c1a0a7"
+    },
+    "hsk2025.word.l7.09186.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:4585e357e146"
+    },
+    "hsk2025.word.l7.09187.v1": {
+      "provider": "gushi",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "gushi:数码:shùmǎ"
+    },
+    "hsk2025.word.l7.09188.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:e6ab8e0812f0"
+    },
+    "hsk2025.word.l7.09189.v1": {
+      "provider": "HSKKit",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": null
+    },
+    "hsk2025.word.l7.09190.v1": {
+      "provider": "HSKKit",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": null,
+      "replaces": {
+        "provider": "zhongdex",
+        "upstreamId": "dex:s:5fcf0dd3142c"
+      }
+    },
+    "hsk2025.word.l7.09191.v1": {
+      "provider": "HSKKit",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": null,
+      "replaces": {
+        "provider": "zhongdex",
+        "upstreamId": "dex:s:09b116844e8c"
+      }
+    },
+    "hsk2025.word.l7.09192.v1": {
+      "provider": "gushi",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "gushi:耍:shuǎ"
+    },
+    "hsk2025.word.l7.09193.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:bbf05bb65db2"
+    },
+    "hsk2025.word.l7.09194.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:93fe5516d4d7"
+    },
+    "hsk2025.word.l7.09195.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:bdff75f61dea"
+    },
+    "hsk2025.word.l7.09196.v1": {
+      "provider": "HSKKit",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": null,
+      "replaces": {
+        "provider": "zhongdex",
+        "upstreamId": "dex:s:ba78953e0ff0"
+      }
+    },
+    "hsk2025.word.l7.09197.v1": {
+      "provider": "HSKKit",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": null
+    },
+    "hsk2025.word.l7.09198.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:bfc54b4feb89"
+    },
+    "hsk2025.word.l7.09199.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:3ea720923a69"
+    },
+    "hsk2025.word.l7.09200.v1": {
+      "provider": "gushi",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "gushi:甩:shuǎi"
+    },
+    "hsk2025.word.l7.09201.v1": {
+      "provider": "HSKKit",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": null,
+      "replaces": {
+        "provider": "zhongdex",
+        "upstreamId": "dex:s:38f83e924b4c"
+      }
+    },
+    "hsk2025.word.l7.09202.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:d72bf15c9240"
+    },
+    "hsk2025.word.l7.09203.v1": {
+      "provider": "gushi",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "gushi:涮:shuàn"
+    },
+    "hsk2025.word.l7.09204.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:22ec1154bec8"
+    },
+    "hsk2025.word.l7.09205.v1": {
+      "provider": "gushi",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "gushi:双胞胎:shuāngbāotāi"
+    },
+    "hsk2025.word.l7.09206.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:3a3c48b2d4bd"
+    },
+    "hsk2025.word.l7.09207.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:9e27cd4276ef"
+    },
+    "hsk2025.word.l7.09208.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:ae55c64a3b3a"
+    },
+    "hsk2025.word.l7.09209.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:a0058f47cf1b"
+    },
+    "hsk2025.word.l7.09210.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:47375cf837d8"
+    },
+    "hsk2025.word.l7.09211.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:7cc49933ae10"
+    },
+    "hsk2025.word.l7.09212.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:5779dfe33db3"
+    },
+    "hsk2025.word.l7.09213.v1": {
+      "provider": "gushi",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "gushi:水滴石穿:shuǐdī-shíchuān"
+    },
+    "hsk2025.word.l7.09214.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:b2f3c032f1cf"
+    },
+    "hsk2025.word.l7.09215.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:2b1b6ffb4763"
+    },
+    "hsk2025.word.l7.09216.v1": {
+      "provider": "gushi",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "gushi:水龙头:shuǐlóngtóu"
+    },
+    "hsk2025.word.l7.09217.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:6635f7ea42f0"
+    },
+    "hsk2025.word.l7.09218.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:cb5e5d8facd4"
+    },
+    "hsk2025.word.l7.09219.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:38769a272a0b"
+    },
+    "hsk2025.word.l7.09220.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:45d4c73f82a9"
+    },
+    "hsk2025.word.l7.09221.v1": {
+      "provider": "gushi",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "gushi:水源:shuǐyuán"
+    },
+    "hsk2025.word.l7.09222.v1": {
+      "provider": "HSKKit",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": null,
+      "replaces": {
+        "provider": "zhongdex",
+        "upstreamId": "dex:s:e37b5acf8695"
+      }
+    },
+    "hsk2025.word.l7.09223.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:22351763f92e"
+    },
+    "hsk2025.word.l7.09224.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:418890a4df86"
+    },
+    "hsk2025.word.l7.09225.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:7d1b849991fa"
+    },
+    "hsk2025.word.l7.09226.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:7b0c069f4112"
+    },
+    "hsk2025.word.l7.09227.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:3a3642e7c276"
+    },
+    "hsk2025.word.l7.09228.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:45185a9eb8df"
+    },
+    "hsk2025.word.l7.09229.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:3e25df15ca47"
+    },
+    "hsk2025.word.l7.09230.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:09cdb520bd1a"
+    },
+    "hsk2025.word.l7.09231.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:940f1416c322"
+    },
+    "hsk2025.word.l7.09232.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:a5f53acf5bb9"
+    },
+    "hsk2025.word.l7.09233.v1": {
+      "provider": "HSKKit",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": null,
+      "replaces": {
+        "provider": "zhongdex",
+        "upstreamId": "dex:s:3f29c858544d"
+      }
+    },
+    "hsk2025.word.l7.09234.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:f42cb6071da7"
+    },
+    "hsk2025.word.l7.09235.v1": {
+      "provider": "HSKKit",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": null,
+      "replaces": {
+        "provider": "zhongdex",
+        "upstreamId": "dex:s:df708954948d"
+      }
+    },
+    "hsk2025.word.l7.09236.v1": {
+      "provider": "gushi",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "gushi:顺延:shùnyán"
+    },
+    "hsk2025.word.l7.09237.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:dfd356d7a16d"
+    },
+    "hsk2025.word.l7.09238.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:d5bd9cb8c62a"
+    },
+    "hsk2025.word.l7.09239.v1": {
+      "provider": "gushi",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "gushi:说谎:shuōhuǎng"
+    },
+    "hsk2025.word.l7.09240.v1": {
+      "provider": "HSKKit",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": null,
+      "replaces": {
+        "provider": "gushi",
+        "upstreamId": "gushi:说情:shuōqíng"
+      }
+    },
+    "hsk2025.word.l7.09241.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:cdccfbfb3301"
+    },
+    "hsk2025.word.l7.09242.v1": {
+      "provider": "gushi",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "gushi:丝:sī"
+    },
+    "hsk2025.word.l7.09243.v1": {
+      "provider": "gushi",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "gushi:撕:sī"
+    },
+    "hsk2025.word.l7.09244.v1": {
+      "provider": "gushi",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "gushi:丝绸:sīchóu"
+    },
+    "hsk2025.word.l7.09245.v1": {
+      "provider": "HSKKit",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": null,
+      "replaces": {
+        "provider": "zhongdex",
+        "upstreamId": "dex:s:ce256f0bed3d"
+      }
+    },
+    "hsk2025.word.l7.09246.v1": {
+      "provider": "gushi",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "gushi:丝毫:sīháo"
+    },
+    "hsk2025.word.l7.09247.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:ef35f3b391b2"
+    },
+    "hsk2025.word.l7.09248.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:9657a5eab205"
+    },
+    "hsk2025.word.l7.09249.v1": {
+      "provider": "gushi",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "gushi:私立:sīlì"
+    },
+    "hsk2025.word.l7.09250.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:af395927811b"
+    },
+    "hsk2025.word.l7.09251.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:55b224b04587"
+    },
+    "hsk2025.word.l7.09252.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:5c388b0ac392"
+    },
+    "hsk2025.word.l7.09253.v1": {
+      "provider": "gushi",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "gushi:思索:sīsuǒ"
+    },
+    "hsk2025.word.l7.09254.v1": {
+      "provider": "gushi",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "gushi:私下:sīxià"
+    },
+    "hsk2025.word.l7.09255.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:013e7c399aab"
+    },
+    "hsk2025.word.l7.09256.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:7f544f14d4fd"
+    },
+    "hsk2025.word.l7.09257.v1": {
+      "provider": "HSKKit",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": null,
+      "replaces": {
+        "provider": "zhongdex",
+        "upstreamId": "dex:s:a56bee32fadb"
+      }
+    },
+    "hsk2025.word.l7.09258.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:33f6448ca1a8"
+    },
+    "hsk2025.word.l7.09259.v1": {
+      "provider": "HSKKit",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": null,
+      "replaces": {
+        "provider": "zhongdex",
+        "upstreamId": "dex:s:4eb76ae1870d"
+      }
+    },
+    "hsk2025.word.l7.09260.v1": {
+      "provider": "gushi",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "gushi:寺:sì"
+    },
+    "hsk2025.word.l7.09261.v1": {
+      "provider": "gushi",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "gushi:似曾相识:sìcéng-xiāngshí"
+    },
+    "hsk2025.word.l7.09262.v1": {
+      "provider": "HSKKit",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": null
+    },
+    "hsk2025.word.l7.09263.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:42e5610ea190"
+    },
+    "hsk2025.word.l7.09264.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:521dc7c025ad"
+    },
+    "hsk2025.word.l7.09265.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:44222c8f08c6"
+    },
+    "hsk2025.word.l7.09266.v1": {
+      "provider": "gushi",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "gushi:寺庙:sìmiào"
+    },
+    "hsk2025.word.l7.09267.v1": {
+      "provider": "HSKKit",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": null
+    },
+    "hsk2025.word.l7.09268.v1": {
+      "provider": "HSKKit",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": null
+    },
+    "hsk2025.word.l7.09269.v1": {
+      "provider": "HSKKit",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": null
+    },
+    "hsk2025.word.l7.09270.v1": {
+      "provider": "gushi",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "gushi:饲养:sìyǎng"
+    },
+    "hsk2025.word.l7.09271.v1": {
+      "provider": "HSKKit",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": null
+    },
+    "hsk2025.word.l7.09272.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:0affe72ac5a9"
+    },
+    "hsk2025.word.l7.09273.v1": {
+      "provider": "gushi",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "gushi:松树:sōngshù"
+    },
+    "hsk2025.word.l7.09274.v1": {
+      "provider": "HSKKit",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": null
+    },
+    "hsk2025.word.l7.09275.v1": {
+      "provider": "HSKKit",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": null,
+      "replaces": {
+        "provider": "gushi",
+        "upstreamId": "gushi:耸:sǒng"
+      }
+    },
+    "hsk2025.word.l7.09276.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:c0c7aca0c9f5"
+    },
+    "hsk2025.word.l7.09277.v1": {
+      "provider": "HSKKit",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": null
+    },
+    "hsk2025.word.l7.09278.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:62756f5aa939"
+    },
+    "hsk2025.word.l7.09279.v1": {
+      "provider": "gushi",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "gushi:送行:sòngxíng"
+    },
+    "hsk2025.word.l7.09280.v1": {
+      "provider": "gushi",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "gushi:搜查:sōuchá"
+    },
+    "hsk2025.word.l7.09281.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:ab45bc2fa68a"
+    },
+    "hsk2025.word.l7.09282.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:47b3358047a7"
+    },
+    "hsk2025.word.l7.09283.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:70a939eaefc4"
+    },
+    "hsk2025.word.l7.09284.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:1067db0b0f7a"
+    },
+    "hsk2025.word.l7.09285.v1": {
+      "provider": "gushi",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "gushi:俗:sú"
+    },
+    "hsk2025.word.l7.09286.v1": {
+      "provider": "HSKKit",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": null
+    },
+    "hsk2025.word.l7.09287.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:6fa889716e60"
+    },
+    "hsk2025.word.l7.09288.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:409020dbd681"
+    },
+    "hsk2025.word.l7.09289.v1": {
+      "provider": "gushi",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "gushi:素:sù"
+    },
+    "hsk2025.word.l7.09290.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:fcc06bbbd4ab"
+    },
+    "hsk2025.word.l7.09291.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:7f71a55be28b"
+    },
+    "hsk2025.word.l7.09292.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:73fa859d61db"
+    },
+    "hsk2025.word.l7.09293.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:b66486c859b5"
+    },
+    "hsk2025.word.l7.09294.v1": {
+      "provider": "gushi",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "gushi:素食:sùshí"
+    },
+    "hsk2025.word.l7.09295.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:976a8c921652"
+    },
+    "hsk2025.word.l7.09296.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:eb9fb2c85c72"
+    },
+    "hsk2025.word.l7.09297.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:bc2cb1f2bf3f"
+    },
+    "hsk2025.word.l7.09298.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:775d767191f4"
+    },
+    "hsk2025.word.l7.09299.v1": {
+      "provider": "gushi",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "gushi:蒜:suàn"
+    },
+    "hsk2025.word.l7.09300.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:fc8b8452ed20"
+    },
+    "hsk2025.word.l7.09301.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:6a24c6c9e2b1"
+    },
+    "hsk2025.word.l7.09302.v1": {
+      "provider": "gushi",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "gushi:算数:suànshù"
+    },
+    "hsk2025.word.l7.09303.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:bc1ceaaf3954"
+    },
+    "hsk2025.word.l7.09304.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:031a93b03a20"
+    },
+    "hsk2025.word.l7.09305.v1": {
+      "provider": "gushi",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "gushi:随处可见:suíchùkějiàn"
+    },
+    "hsk2025.word.l7.09306.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:f3ef98c19f39"
+    },
+    "hsk2025.word.l7.09307.v1": {
+      "provider": "HSKKit",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": null,
+      "replaces": {
+        "provider": "zhongdex",
+        "upstreamId": "dex:s:3394d9715424"
+      }
+    },
+    "hsk2025.word.l7.09308.v1": {
+      "provider": "gushi",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "gushi:随身:suíshēn"
+    },
+    "hsk2025.word.l7.09309.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:b3f0e99317ef"
+    },
+    "hsk2025.word.l7.09310.v1": {
+      "provider": "gushi",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "gushi:随心所欲:suíxīnsuǒyù"
+    },
+    "hsk2025.word.l7.09311.v1": {
+      "provider": "gushi",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "gushi:隧道:suìdào"
+    },
+    "hsk2025.word.l7.09312.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:4ad86fafa247"
+    },
+    "hsk2025.word.l7.09313.v1": {
+      "provider": "gushi",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "gushi:缩:suō"
+    },
+    "hsk2025.word.l7.09314.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:a505897640c9"
+    },
+    "hsk2025.word.l7.09315.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:ea240ecd0259"
+    },
+    "hsk2025.word.l7.09316.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:7ea6d03e242f"
+    },
+    "hsk2025.word.l7.09317.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:80523b8e5b99"
+    },
+    "hsk2025.word.l7.09318.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:b5adf6912e6b"
+    },
+    "hsk2025.word.l7.09319.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:39ef0fcbce71"
+    },
+    "hsk2025.word.l7.09320.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:450d4cb6dcdb"
+    },
+    "hsk2025.word.l7.09321.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:9c77f5000083"
+    },
+    "hsk2025.word.l7.09322.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:23ba9e7ba76a"
+    },
+    "hsk2025.word.l7.09323.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:f7753fd98033"
+    },
+    "hsk2025.word.l7.09324.v1": {
+      "provider": "gushi",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "gushi:所在:suǒzài"
+    },
+    "hsk2025.word.l7.09325.v1": {
+      "provider": "gushi",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "gushi:所作所为:suǒzuò-suǒwéi"
+    },
+    "hsk2025.word.l7.09326.v1": {
+      "provider": "gushi",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "gushi:塌:tā"
+    },
+    "hsk2025.word.l7.09327.v1": {
+      "provider": "HSKKit",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": null,
+      "replaces": {
+        "provider": "gushi",
+        "upstreamId": "gushi:踏:tà"
+      }
+    },
+    "hsk2025.word.l7.09328.v1": {
+      "provider": "gushi",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "gushi:胎:tāi"
+    },
+    "hsk2025.word.l7.09329.v1": {
+      "provider": "HSKKit",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": null,
+      "replaces": {
+        "provider": "zhongdex",
+        "upstreamId": "dex:s:f7c198bf69f8"
+      }
+    },
+    "hsk2025.word.l7.09330.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:8eb24e04ef05"
+    },
+    "hsk2025.word.l7.09331.v1": {
+      "provider": "gushi",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "gushi:太极:tàijí"
+    },
+    "hsk2025.word.l7.09332.v1": {
+      "provider": "HSKKit",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": null,
+      "replaces": {
+        "provider": "gushi",
+        "upstreamId": "gushi:太平:tàipíng"
+      }
+    },
+    "hsk2025.word.l7.09333.v1": {
+      "provider": "HSKKit",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": null,
+      "replaces": {
+        "provider": "zhongdex",
+        "upstreamId": "dex:s:f552847881ee"
+      }
+    },
+    "hsk2025.word.l7.09334.v1": {
+      "provider": "gushi",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "gushi:贪:tān"
+    },
+    "hsk2025.word.l7.09335.v1": {
+      "provider": "gushi",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "gushi:摊:tān"
+    },
+    "hsk2025.word.l7.09336.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:7db055b1b402"
+    },
+    "hsk2025.word.l7.09337.v1": {
+      "provider": "HSKKit",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": null
+    },
+    "hsk2025.word.l7.09338.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:3c8df15e0c78"
+    },
+    "hsk2025.word.l7.09339.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:ab5fa352978b"
+    },
+    "hsk2025.word.l7.09340.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:6d52d10ed54d"
+    },
+    "hsk2025.word.l7.09341.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:62990614d009"
+    },
+    "hsk2025.word.l7.09342.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:8b28cfb7065a"
+    },
+    "hsk2025.word.l7.09343.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:e3077cdfb208"
+    },
+    "hsk2025.word.l7.09344.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:a35a8ac46764"
+    },
+    "hsk2025.word.l7.09345.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:549d7b1658f3"
+    },
+    "hsk2025.word.l7.09346.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:55069f566d92"
+    },
+    "hsk2025.word.l7.09347.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:96c5f12bbc17"
+    },
+    "hsk2025.word.l7.09348.v1": {
+      "provider": "gushi",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "gushi:坦率:tǎnshuài"
+    },
+    "hsk2025.word.l7.09349.v1": {
+      "provider": "HSKKit",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": null
+    },
+    "hsk2025.word.l7.09350.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:7dbc9826b44f"
+    },
+    "hsk2025.word.l7.09351.v1": {
+      "provider": "gushi",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "gushi:炭:tàn"
+    },
+    "hsk2025.word.l7.09352.v1": {
+      "provider": "gushi",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "gushi:探:tàn"
+    },
+    "hsk2025.word.l7.09353.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:97760b03f7f9"
+    },
+    "hsk2025.word.l7.09354.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:887b903a21cf"
+    },
+    "hsk2025.word.l7.09355.v1": {
+      "provider": "gushi",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "gushi:叹气:tànqì"
+    },
+    "hsk2025.word.l7.09356.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:ecfaf250cff8"
+    },
+    "hsk2025.word.l7.09357.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:a8a8fcf109a1"
+    },
+    "hsk2025.word.l7.09358.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:23974cd2eae8"
+    },
+    "hsk2025.word.l7.09359.v1": {
+      "provider": "gushi",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "gushi:探险:tànxiǎn"
+    },
+    "hsk2025.word.l7.09360.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:03afcf9c4998"
+    },
+    "hsk2025.word.l7.09361.v1": {
+      "provider": "gushi",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "gushi:糖尿病:tángniàobìng"
+    },
+    "hsk2025.word.l7.09362.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:8b0ece0afdd5"
+    },
+    "hsk2025.word.l7.09363.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:b06f1adce1c0"
+    },
+    "hsk2025.word.l7.09364.v1": {
+      "provider": "HSKKit",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": null
+    },
+    "hsk2025.word.l7.09365.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:829b95670599"
+    },
+    "hsk2025.word.l7.09366.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:6935c1b240d4"
+    },
+    "hsk2025.word.l7.09367.v1": {
+      "provider": "gushi",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "gushi:逃避:táobì"
+    },
+    "hsk2025.word.l7.09368.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:6355293b3bf1"
+    },
+    "hsk2025.word.l7.09369.v1": {
+      "provider": "gushi",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "gushi:逃生:táoshēng"
+    },
+    "hsk2025.word.l7.09370.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:68eae62d7b47"
+    },
+    "hsk2025.word.l7.09371.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:39608fe16cf7"
+    },
+    "hsk2025.word.l7.09372.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:525ad8f3e341"
+    },
+    "hsk2025.word.l7.09373.v1": {
+      "provider": "HSKKit",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": null,
+      "replaces": {
+        "provider": "gushi",
+        "upstreamId": "gushi:讨:tǎo"
+      }
+    },
+    "hsk2025.word.l7.09374.v1": {
+      "provider": "gushi",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "gushi:讨好:tǎohǎo"
+    },
+    "hsk2025.word.l7.09375.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:7def8f5c7c94"
+    },
+    "hsk2025.word.l7.09376.v1": {
+      "provider": "HSKKit",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": null
+    },
+    "hsk2025.word.l7.09377.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:e92c0522a93c"
+    },
+    "hsk2025.word.l7.09378.v1": {
+      "provider": "gushi",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "gushi:特权:tèquán"
+    },
+    "hsk2025.word.l7.09379.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:15199eea0408"
+    },
+    "hsk2025.word.l7.09380.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:fdfe2f56345f"
+    },
+    "hsk2025.word.l7.09381.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:929bf1fcf249"
+    },
+    "hsk2025.word.l7.09382.v1": {
+      "provider": "HSKKit",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": null,
+      "replaces": {
+        "provider": "gushi",
+        "upstreamId": "gushi:腾:téng"
+      }
+    },
+    "hsk2025.word.l7.09383.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:88ccc759183b"
+    },
+    "hsk2025.word.l7.09384.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:9ef647aa4fa8"
+    },
+    "hsk2025.word.l7.09385.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:ba16dbefd33d"
+    },
+    "hsk2025.word.l7.09386.v1": {
+      "provider": "gushi",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "gushi:梯子:tīzi"
+    },
+    "hsk2025.word.l7.09387.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:2ebc95aba853"
+    },
+    "hsk2025.word.l7.09388.v1": {
+      "provider": "HSKKit",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": null
+    },
+    "hsk2025.word.l7.09389.v1": {
+      "provider": "HSKKit",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": null
+    },
+    "hsk2025.word.l7.09390.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:9b650c6f36de"
+    },
+    "hsk2025.word.l7.09391.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:d46434ae8efe"
+    },
+    "hsk2025.word.l7.09392.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:9a42b8c9a423"
+    },
+    "hsk2025.word.l7.09393.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:4495573ddcbb"
+    },
+    "hsk2025.word.l7.09394.v1": {
+      "provider": "gushi",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "gushi:提议:tíyì"
+    },
+    "hsk2025.word.l7.09395.v1": {
+      "provider": "HSKKit",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": null
+    },
+    "hsk2025.word.l7.09396.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:fe7ba1867155"
+    },
+    "hsk2025.word.l7.09397.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:38a1b7f231a0"
+    },
+    "hsk2025.word.l7.09398.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:b681bb10f288"
+    },
+    "hsk2025.word.l7.09399.v1": {
+      "provider": "zhongdex",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": "dex:s:9541e87d7233"
+    },
+    "hsk2025.word.l7.09400.v1": {
+      "provider": "HSKKit",
+      "license": "CC-BY-SA-4.0",
+      "upstreamId": null
     }
   }
 }
