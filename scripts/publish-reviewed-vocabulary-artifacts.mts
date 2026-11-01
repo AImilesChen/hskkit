@@ -1,11 +1,28 @@
-import { readFileSync, readdirSync, mkdirSync } from "node:fs";
+import { readFileSync, readdirSync, mkdirSync, writeFileSync, existsSync, unlinkSync } from "node:fs";
 import { resolve } from "node:path";
-import { createHash } from "node:crypto";
+import { fileURLToPath } from "node:url";
+import { createHash, randomBytes } from "node:crypto";
 import { execFileSync } from "node:child_process";
 import { buildProductDeliveries, digitalProduct, generationVersionForProduct } from "../src/lib/commercial/products.ts";
 import { validateProductArtifactTemplate } from "../src/lib/commercial/processor.ts";
 
 const root = resolve(process.argv[2] ?? "");
+const helperDir = resolve(root, "publisher-worker");
+const marker = resolve(helperDir, "active.json");
+const wrangler = (...args: string[]) => execFileSync(process.execPath, [resolve("node_modules/wrangler/bin/wrangler.js"), ...args], { encoding: "utf8", maxBuffer: 8_000_000 });
+async function cleanup() {
+  if (!existsSync(marker)) return;
+  const active = JSON.parse(readFileSync(marker, "utf8"));
+  if (!/^hskkit-artifacts-[a-z0-9-]+$/.test(active.name) || active.config !== resolve(helperDir, "wrangler.json")) throw Error("INVALID_TEMPORARY_PUBLISHER");
+  const account = process.env.CLOUDFLARE_ACCOUNT_ID;
+  if (!account || !/^[a-f0-9]{32}$/.test(account) || !process.env.CLOUDFLARE_API_TOKEN) throw Error("PUBLISHER_CLEANUP_CREDENTIAL_MISSING");
+  // Delete only this helper script; Wrangler delete also queries unrelated KV namespaces.
+  const response = await fetch(`https://api.cloudflare.com/client/v4/accounts/${account}/workers/scripts/${active.name}?force=true`, { method: "DELETE", headers: { authorization: `Bearer ${process.env.CLOUDFLARE_API_TOKEN}` }, signal: AbortSignal.timeout(30000) });
+  if (!response.ok && response.status !== 404) throw Error(`PUBLISHER_CLEANUP_HTTP_${response.status}`);
+  unlinkSync(marker);
+  console.log("Temporary artifact publisher removed");
+}
+if (process.argv.includes("--cleanup-only")) { await cleanup(); process.exit(0); }
 const expected = JSON.parse(readFileSync(new URL("../content/releases/reviewed-vocabulary-artifacts-20261101.json", import.meta.url), "utf8")) as { files: Array<{ productId: string; generationVersion: string; file: string; sha256: string }> };
 const dryRun = process.argv.includes("--check-only");
 const selected = (process.env.PRODUCT_IDS ?? "level-6,progression-4-6,advanced-7-9,complete-1-9").split(",");
@@ -35,15 +52,42 @@ for (const productId of selected) {
 }
 // Validate every local artifact before any remote mutation.
 if (!dryRun) {
-  const verifyDir = resolve(root, "remote-verification");mkdirSync(verifyDir, { recursive: true });
-  for (const [index, file] of files.entries()) {
-    const contentType = file.file.endsWith(".json") ? "application/json" : file.file.endsWith(".pdf") ? "application/pdf" : "application/zip";
-    const wrangler = (...args: string[]) => execFileSync(process.execPath, [resolve("node_modules/wrangler/bin/wrangler.js"), ...args], { stdio: "inherit" });
-    wrangler("r2", "object", "put", file.key, "--file", file.local, "--content-type", contentType, "--remote");
-    const downloaded = resolve(verifyDir, `${index}-${file.file}`);
-    wrangler("r2", "object", "get", file.key, "--file", downloaded, "--remote");
-    if (sha(readFileSync(downloaded)) !== file.sha256) throw Error(`REMOTE_ARTIFACT_MISMATCH:${file.key}`);
-    console.log(`R2 read-back SHA-256 verified: ${file.key}`);
+  mkdirSync(helperDir, { recursive: true });
+  const token = randomBytes(32).toString("base64url");
+  if (process.env.GITHUB_ACTIONS) console.log(`::add-mask::${token}`);
+  const name = `hskkit-artifacts-${process.env.GITHUB_RUN_ID ?? "local"}-${randomBytes(6).toString("hex")}`;
+  const approved = Object.fromEntries(files.map(file => [file.key.replace(/^hskkit-commercial-exports\//, ""), {
+    sha256: file.sha256, bytes: readFileSync(file.local).byteLength,
+    contentType: file.file.endsWith(".json") ? "application/json" : file.file.endsWith(".pdf") ? "application/pdf" : "application/zip",
+  }]));
+  const config = resolve(helperDir, "wrangler.json");
+  writeFileSync(config, JSON.stringify({ name, account_id: process.env.CLOUDFLARE_ACCOUNT_ID, main: fileURLToPath(new URL("./reviewed-vocabulary-publisher-worker.mjs", import.meta.url)), compatibility_date: "2026-05-24", workers_dev: true, preview_urls: false, r2_buckets: [{ binding: "BUCKET", bucket_name: "hskkit-commercial-exports" }], vars: { RUN_TOKEN_SHA256: sha(new TextEncoder().encode(token)), EXPIRES_AT: String(Date.now() + 15 * 60_000), APPROVED_ARTIFACTS: JSON.stringify(approved) } }));
+  writeFileSync(marker, JSON.stringify({ name, config }));
+  try {
+    const output = wrangler("deploy", "--config", config);
+    console.log(output);
+    const origin = output.match(/https:\/\/[a-z0-9.-]+\.workers\.dev/)?.[0];
+    if (!origin) throw Error("PUBLISHER_URL_MISSING");
+    async function request(key: string, method: "GET" | "PUT", bytes?: Uint8Array) {
+      let error;
+      for (let attempt = 0; attempt < 5; attempt++) {
+        try {
+          const response = await fetch(`${origin}/${encodeURI(key)}`, { method, headers: { authorization: `Bearer ${token}`, ...(bytes ? { "content-length": String(bytes.byteLength) } : {}) }, body: bytes, signal: AbortSignal.timeout(60000) });
+          if (!response.ok) throw Error(`PUBLISHER_HTTP_${response.status}:${key}`);
+          return response;
+        } catch (e) { error = e; if (attempt < 4) await new Promise(done => setTimeout(done, 1000 * (attempt + 1))); }
+      }
+      throw error;
+    }
+    for (const file of files) {
+      const key = file.key.replace(/^hskkit-commercial-exports\//, "");
+      await (await request(key, "PUT", readFileSync(file.local))).arrayBuffer();
+      const downloaded = new Uint8Array(await (await request(key, "GET")).arrayBuffer());
+      if (sha(downloaded) !== file.sha256) throw Error(`REMOTE_ARTIFACT_MISMATCH:${file.key}`);
+      console.log(`R2 read-back SHA-256 verified: ${file.key}`);
+    }
+  } finally {
+    await cleanup();
   }
 }
 console.log(JSON.stringify({ status: dryRun ? "checked" : "published-and-read-back-verified", files: files.length, products: selected }));
