@@ -57,6 +57,40 @@ OVERRIDES = {
 }
 
 
+OVERRIDES.update({
+    "hsk2025.word.l2.0316.v1": ("火车一进一出。", "Huǒchē yí jìn yì chū.", "Trains go in and out."),
+    "hsk2025.word.l2.0326.v1": ("这个字写错了。", "Zhège zì xiě cuò le.", "This character is written incorrectly."),
+    "hsk2025.word.l2.0330.v1": ("我想去，但今天没时间。", "Wǒ xiǎng qù, dàn jīntiān méi shíjiān.", "I want to go, but I don't have time today."),
+    "hsk2025.word.l2.0332.v1": ("他说得很清楚。", "Tā shuō de hěn qīngchu.", "He spoke very clearly."),
+    "hsk2025.word.l2.0376.v1": ("我现在就去。", "Wǒ xiànzài jiù qù.", "I will go right now."),
+    "hsk2025.word.l2.0392.v1": ("这条路很宽。", "Zhè tiáo lù hěn kuān.", "This road is wide."),
+    "hsk2025.word.l2.0397.v1": ("请慢一点儿说。", "Qǐng màn yìdiǎnr shuō.", "Please speak more slowly."),
+    "hsk2025.word.l2.0404.v1": ("班里有三十名学生。", "Bān lǐ yǒu sānshí míng xuéshēng.", "There are thirty students in the class."),
+    "hsk2025.word.l2.0414.v1": ("他每天早上跑五公里。", "Tā měitiān zǎoshang pǎo wǔ gōnglǐ.", "He runs five kilometers every morning."),
+    "hsk2025.word.l2.0449.v1": ("这里有一万人。", "Zhèlǐ yǒu yí wàn gè rén.", "There are ten thousand people here."),
+    "hsk2025.word.l2.0485.v1": ("我每天都运动。", "Wǒ měitiān dōu yùndòng.", "I exercise every day."),
+    "hsk2025.word.l3.0551.v1": ("他的中文还很差。", "Tā de Zhōngwén hái hěn chà.", "His Chinese is still poor."),
+    "hsk2025.word.l3.0578.v1": ("请带上你的书。", "Qǐng dài shang nǐ de shū.", "Please bring your book."),
+    "hsk2025.word.l3.0589.v1": ("孩子们坐在地上。", "Háizimen zuò zài dì shang.", "The children are sitting on the ground."),
+    "hsk2025.word.l3.0593.v1": ("这台机器用电。", "Zhè tái jīqì yòng diàn.", "This machine uses electricity."),
+    "hsk2025.word.l3.0597.v1": ("从东到西要走一天。", "Cóng dōng dào xī yào zǒu yì tiān.", "It takes a day to walk from east to west."),
+    "hsk2025.word.l3.0663.v1": ("这里有好多书。", "Zhèlǐ yǒu hǎoduō shū.", "There are many books here."),
+    "hsk2025.word.l3.0691.v1": ("别急，我们还有时间。", "Bié jí, wǒmen hái yǒu shíjiān.", "Don't rush; we still have time."),
+    "hsk2025.word.l3.0692.v1": ("请把地址记在本子上。", "Qǐng bǎ dìzhǐ jì zài běnzi shang.", "Please write down the address in your notebook."),
+    "hsk2025.word.l3.0731.v1": ("此事可办。", "Cǐ shì kě bàn.", "This matter can be handled."),
+    "hsk2025.word.l3.0828.v1": ("门外传来一声响。", "Mén wài chuán lái yì shēng xiǎng.", "A sound came from outside the door."),
+    "hsk2025.word.l3.0844.v1": ("他在刷牙。", "Tā zài shuā yá.", "He is brushing his teeth."),
+    "hsk2025.word.l3.0880.v1": ("从东到西要走一天。", "Cóng dōng dào xī yào zǒu yì tiān.", "It takes a day to walk from east to west."),
+    "hsk2025.word.l3.0896.v1": ("我带了相机去旅行。", "Wǒ dài le xiàngjī qù lǚxíng.", "I brought a camera on the trip."),
+    "hsk2025.word.l3.0941.v1": ("我用笔写字。", "Wǒ yòng bǐ xiě zì.", "I write with a pen."),
+    "hsk2025.word.l3.0955.v1": ("园里有很多花。", "Yuán lǐ yǒu hěn duō huā.", "There are many flowers in the garden."),
+    "hsk2025.word.l3.0958.v1": ("跑得越快越好。", "Pǎo de yuè kuài yuè hǎo.", "The faster you run, the better."),
+    "hsk2025.word.l3.0975.v1": ("我只要一杯水。", "Wǒ zhǐ yào yì bēi shuǐ.", "I only want a glass of water."),
+    "hsk2025.word.l3.0976.v1": ("我需要一张纸。", "Wǒ xūyào yì zhāng zhǐ.", "I need a sheet of paper."),
+    "hsk2025.word.l3.0979.v1": ("只要你愿意，就可以参加。", "Zhǐyào nǐ yuànyì, jiù kěyǐ cānjiā.", "As long as you want to, you can join."),
+})
+
+
 def untoned(value: str) -> str:
     return "".join(character for character in unicodedata.normalize("NFD", value.lower())
                    if "a" <= character <= "z")
