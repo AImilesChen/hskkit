@@ -25,16 +25,16 @@ function expectInOrder(source: string, markers: string[]) {
 }
 
 test("homepage leads with a concise result and a complete dynamic learning scene", () => {
-  assert.match(home, /Learn the published HSK 3\.0 vocabulary\./);
-  assert.match(home, /Review each word when it matters\./);
+  assert.match(home, /Build your HSK vocabulary\. Remember what you learn\./);
+  assert.match(home, /Free HSK learning platform/);
   assert.match(home, /home-title-primary/);
   assert.match(home, /home-title-secondary/);
   assert.equal((home.match(/home-title-line/g) ?? []).length, 4, "hero title must use four intentional semantic lines");
   assert.match(styles, /\.home-title-line\s*\{[^}]*display:\s*block/s);
   assert.match(styles, /\.home-title-primary\s*\{[^}]*color:\s*var\(--home-blue\)/s);
   assert.match(styles, /\.home-title-secondary\s*\{[^}]*color:\s*var\(--home-ink\)/s);
-  assert.match(home, /Browse \{publishedWordCount\.toLocaleString\("en-US"\)\} published HSK 3\.0 words/);
-  assert.match(home, /Formal audio appears only where it has been published and approved\./);
+  assert.match(home, /\{publishedWordCount\.toLocaleString\("en-US"\)\} HSK words with pinyin, English meanings and spaced review\./);
+  assert.match(home, /Not every published word has audio/);
   assert.match(home, /Study flow preview/);
   assert.match(home, /Illustrative flow/);
   assert.doesNotMatch(home, /Live study preview|HSK 1 · Today|About 4 min/);
@@ -58,25 +58,29 @@ test("homepage demo resolves exactly five real published HSK 1 words", () => {
 });
 
 test("homepage CTA uses one learning label and the server-side learning dispatcher", () => {
-  assert.match(nextStep, /Start learning/);
+  assert.match(nextStep, /Start learning free/);
   assert.match(nextStep, /Preview five flashcards/);
   assert.match(nextStep, /href="\/start"/);
   assert.doesNotMatch(nextStep, /action\.href|returningAccount|\/api\/v1\/learning/);
-  assert.match(nextStep, /Start with published HSK 3\.0 vocabulary and build your review plan as you learn\./);
+  assert.doesNotMatch(nextStep, /home-cta-explanation/);
   assert.doesNotMatch(nextStep, /Start my free Pro trial/);
   assert.doesNotMatch(nextStep, /Continue today’s study/);
   assert.doesNotMatch(nextStep, /Review due items/);
   assert.match(nextStep, /home-cta-primary/);
   assert.match(nextStep, /home-cta-secondary/);
   assert.match(nextStep, /No card required/);
-  assert.match(nextStep, /Returns to Free automatically/);
-  assert.match(nextStep, /After the trial: Free includes 10 new items and 20 successful SRS ratings daily\./);
+  assert.match(nextStep, /Free daily practice/);
+  assert.match(nextStep, /Start without an account/);
+  assert.doesNotMatch(nextStep, /7-day Pro trial/);
+  assert.match(home, /7-day Pro trial requires no card and returns to Free automatically/);
+  assert.doesNotMatch(nextStep, /home-cta-free/);
+  assert.match(home, /Free includes the published catalog, core practice, 10 new items and 20 successful SRS ratings daily\./);
   assert.doesNotMatch(nextStep, /home-cta-panel/);
 });
 
 test("homepage tells one learning story before compact catalog, tools, trust, FAQ and final action", () => {
   expectInOrder(home, [
-    "Learn the published HSK 3.0 vocabulary.",
+    "Build your HSK vocabulary.",
     "<HomeQuickFlashcards cards={demoCards}",
     "One connected path from level check to daily review.",
     "Study fits the rhythm of real life.",
