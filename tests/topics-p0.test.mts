@@ -121,16 +121,13 @@ test("P0 topic pages expose SEO, breadcrumbs, readable production cards, real wo
   const sitemap = read("../src/app/sitemap.ts");
   assert.match(index, /canonical:\s*"\/topics"/);
   assert.match(index, /Learn Chinese through real-life topics/);
-  assert.match(index, /href=\{`\/topics\/\$\{visibleCategories\[0\]\.slug\}`\}/);
-  assert.match(index, /Start with \{visibleCategories\[0\]\.title\}/);
-  assert.match(index, /bg-gradient-to-br[^\n]*from-blue-50/);
-  assert.match(index, /<h1 className="[^"]*text-slate-950[^"]*">Learn Chinese through real-life topics<\/h1>/);
+  assert.match(index, /href="#all-topics-title"/);
+  assert.match(detail, /<h1>\{topic\.title\}<\/h1>/);
   assert.doesNotMatch(card, /<dd className="[^"]*truncate[^"]*"[^>]*>\{topic\.levelBands/);
   assert.match(index, /revalidate\s*=\s*86_400/);
   assert.doesNotMatch(index, /force-dynamic/);
   assert.match(index, /robots:\s*ready/);
   assert.match(index, /LearningResource/);
-  assert.match(detail, /<h1 className="[^"]*text-white[^"]*">\{topic\.title\}<\/h1>/);
   assert.match(detail, /href=\{`\/topics\/\$\{topics\[0\]\.slug\}`\}/);
   assert.match(detail, /Start recommended topic/);
   assert.ok((detail.match(/href="\/" className="inline-flex min-h-11[^\n]*px-1/g) ?? []).length >= 2);

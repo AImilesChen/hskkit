@@ -12,7 +12,7 @@ test("topic word cards use the shared compact icon audio variant and keep one do
   assert.match(detail, /label=\{word\.hanzi\}/);
   assert.match(detail, /published synthesized pronunciation/i);
   assert.match(detail, /Learn word/);
-  assert.match(detail, /Details →/);
+  assert.match(detail, /topics-word-name[^\n]*href=\{`\/word\//);
   assert.doesNotMatch(detail, /<AudioPlaybackControl asset=\{word\.audioAsset\} className="mt-[34]" \/>/);
   assert.doesNotMatch(detail, /sm:grid-cols-2[^\n]*grid-cols-2/);
 });

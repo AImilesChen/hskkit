@@ -50,7 +50,7 @@ test("P3 exposes listening discovery and continuous topic audio controls", () =>
   assert.match(card, /Audio complete/);
   assert.match(detail, /TopicLessonAudioPlayer/);
   assert.match(detail, /Next mini-lesson/);
-  assert.match(detail, /Continue listening practice/);
+  assert.match(detail, /Practice topic/);
   assert.match(player, /Play lesson/);
   assert.match(player, /playbackRate/);
   assert.match(player, /Auto-play/);

@@ -55,10 +55,10 @@ test("one outlined SVG icon system and small contextual scenes are shared across
   assert.match(visuals, /TopicScene/);
   assert.match(visuals, /TopicHeroScene/);
   assert.doesNotMatch(visuals, /[\u{1F300}-\u{1FAFF}]/u);
-  assert.match(index, /TopicHeroScene/);
-  assert.match(index, /CategoryVisual/);
+  assert.doesNotMatch(index, /<TopicHeroScene/);
+  assert.match(index, /topics-category-card/);
   assert.match(card, /TopicScene/);
-  assert.match(detail, /TopicHeroScene/);
+  assert.doesNotMatch(detail, /<TopicHeroScene/);
   assert.match(practice, /TopicIcon/);
   assert.match(client, /TopicIcon/);
 });
@@ -85,8 +85,8 @@ test("mobile Topics keeps browsing and the primary practice action inside a comp
     source("src/app/topics/page.tsx"),
     source("src/app/topics/[slug]/page.tsx"),
   ]);
-  assert.match(index, /py-4[^\n]*md:py-12/);
-  assert.match(index, /hidden sm:block/);
+  assert.match(index, /topics-page/);
+  assert.match(index, /topics-index-hero/);
   assert.match(detail, /Start practice/);
   assert.match(detail, /href=\{`\/topics\/\$\{topic\.slug\}\/practice`\}/);
 });
@@ -120,10 +120,10 @@ test("shared topic detail uses a compact brand-blue hero and gives Chinese equal
     source("src/app/topics/[slug]/page.tsx"),
     source("src/app/topics/topic-visuals.tsx"),
   ]);
-  assert.match(detail, /from-\[#0b1f4b\]/);
-  assert.match(detail, /to-\[#123b75\]/);
+  assert.match(await source("src/app/topics/topics.css"), /#0b1f4b/);
+  assert.match(detail, /topics-hero/);
   assert.doesNotMatch(detail, /bg-slate-950 text-white/);
-  assert.match(detail, /text-lg font-black[^\n]*sm:text-xl[^\n]*\{topic\.titleZh\}/);
+  assert.match(detail, /topics-chinese[^\n]*lang="zh-Hans"/);
   assert.match(visuals, /min-h-\[164px\]/);
 });
 
@@ -134,6 +134,8 @@ test("topic word cards use contextual display meanings and one dominant practice
   ]);
   assert.equal(presentation.topicMeaningForCard("to wash; to develop photographs; to shuffle cards"), "to wash");
   assert.equal(presentation.topicMeaningForCard("to leave home"), "to leave home");
+  assert.equal(presentation.topicContextMeaning("morning-routine", "hsk2025.word.l2.0307.v1", "to cover"), "bag");
+  assert.equal(presentation.topicContextMeaning("another-topic", "hsk2025.word.l2.0307.v1", "to cover"), "to cover");
   assert.match(detail, /topicMeaningForCard\(word\.meaning\)/);
   assert.match(detail, />Word details →<\/Link>/);
   assert.match(detail, />Practice<\/Link>/);
@@ -143,13 +145,13 @@ test("topic word cards use contextual display meanings and one dominant practice
 
 test("detail support content is lighter, naturally sized and uses a consistent practice vocabulary", async () => {
   const detail = await source("src/app/topics/[slug]/page.tsx");
-  assert.match(detail, /Core words<\/h2><p className="mt-2 text-sm[^\n]*Ordered for this learning situation/);
+  assert.match(detail, /Choose a lesson/);
   assert.match(detail, /divide-y divide-slate-100/);
   assert.doesNotMatch(detail, /topic\.expressions[^\n]*rounded-xl bg-slate-50 p-4/);
   assert.match(detail, /grid size-7 shrink-0/);
   assert.match(detail, /border-slate-200 bg-slate-50\/80[^\n]*Culture tip/);
   assert.doesNotMatch(detail, /Continuous topic practice/);
-  assert.match(detail, /Continue practice/);
+  assert.match(detail, /Practice topic/);
 });
 
 test("recommended topic cards keep metadata compact instead of repeating a heavy three-cell table", async () => {
