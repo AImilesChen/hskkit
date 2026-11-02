@@ -181,18 +181,18 @@ export function QuickFlashcards({ level, levelLabel, publishedCount }: { level: 
     }
   }
 
-  return <section className="overflow-hidden rounded-[28px] border border-blue-200 bg-blue-50/60 shadow-[0_24px_70px_-48px_rgba(30,64,175,.65)]" aria-labelledby="quick-flashcards-heading">
-    <header className="bg-slate-950 px-5 py-5 text-white sm:px-7 sm:py-6">
+  return <section className="overflow-hidden rounded-[28px] border border-violet-100 bg-white shadow-sm" aria-labelledby="quick-flashcards-heading">
+    <header className="border-b border-violet-100 bg-violet-50/70 px-5 py-5 text-slate-900 sm:px-7 sm:py-6">
       <div className="flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
         <div className="max-w-2xl">
-          <p className="text-xs font-bold uppercase tracking-[.16em] text-blue-300">Fast recognition practice</p>
-          <h2 id="quick-flashcards-heading" className="mt-2 text-2xl font-bold tracking-tight text-white sm:text-3xl">Quick Flashcards · {levelLabel}</h2>
-          <p className="mt-2 max-w-xl text-sm leading-6 text-slate-300">Review a random set of unique words from {publishedCount.toLocaleString()} published HSK 3.0 words. After revealing each answer, mark what needs more practice. No sign-in required.</p>
+          <p className="text-xs font-bold uppercase tracking-[.16em] text-violet-700">Fast recognition practice</p>
+          <h2 id="quick-flashcards-heading" className="mt-2 text-2xl font-bold tracking-tight text-slate-950 sm:text-3xl">Quick Flashcards · {levelLabel}</h2>
+          <p className="mt-2 max-w-xl text-sm leading-6 text-slate-600">Practise words from the {publishedCount.toLocaleString()}-word {levelLabel} catalog. Reveal each meaning, then choose what needs another look. No sign-in required.</p>
         </div>
         <div>
-          <p className="mb-2 text-xs font-bold uppercase tracking-[.12em] text-slate-400">Cards per set</p>
+          <p className="mb-2 text-xs font-bold uppercase tracking-[.12em] text-slate-500">Cards per set</p>
           <div className="flex gap-2" aria-label="Cards per flashcard set">
-            {sessionSizes.map((size) => <button key={size} type="button" aria-pressed={sessionSize === size} disabled={loading && sessionSize === size} onClick={() => newRandomSet(size)} className={`inline-flex min-h-11 min-w-11 items-center justify-center rounded-xl border px-3 text-sm font-bold transition focus:outline-none focus:ring-4 focus:ring-blue-400/30 ${sessionSize === size ? "border-blue-400 bg-blue-500 text-white" : "border-slate-600 bg-slate-900 text-slate-200 hover:border-blue-400"}`}>{size}</button>)}
+            {sessionSizes.map((size) => <button key={size} type="button" aria-pressed={sessionSize === size} disabled={loading && sessionSize === size} onClick={() => newRandomSet(size)} className={`inline-flex min-h-11 min-w-11 items-center justify-center rounded-xl border px-3 text-sm font-bold transition focus:outline-none focus:ring-4 focus:ring-blue-400/30 ${sessionSize === size ? "border-blue-600 bg-blue-600 text-white" : "border-slate-200 bg-white text-slate-700 hover:border-blue-400"}`}>{size}</button>)}
           </div>
         </div>
       </div>
@@ -220,13 +220,13 @@ export function QuickFlashcards({ level, levelLabel, publishedCount }: { level: 
           <div className="mb-3 flex flex-wrap items-center justify-between gap-2 text-sm font-semibold text-slate-600" aria-live="polite"><span>Card {currentIndex + 1} of {words.length}{round > 1 ? ` · Practice round ${round}` : ""}</span><span>{knownCount} remembered · {markedForPractice} to practice</span></div>
           <div className="mb-4 h-2 overflow-hidden rounded-full bg-blue-100" aria-hidden="true"><div className="h-full rounded-full bg-blue-600 transition-[width] duration-300" style={{ width: `${progress}%` }} /></div>
 
-          <button type="button" onClick={() => setRevealed((value) => !value)} aria-label={revealed ? `Hide answer for ${currentWord.payload.hanzi}` : `Show answer for ${currentWord.payload.hanzi}`} aria-pressed={revealed} className={`flex min-h-[300px] w-full flex-col items-center justify-center rounded-3xl border px-5 py-8 text-center transition focus:outline-none focus:ring-4 focus:ring-blue-200 sm:min-h-[340px] sm:px-10 ${revealed ? "border-blue-200 bg-white shadow-[0_24px_55px_-38px_rgba(15,23,42,.55)]" : "border-slate-800 bg-gradient-to-br from-slate-950 via-blue-950 to-blue-900 text-white shadow-[0_28px_65px_-38px_rgba(30,64,175,.9)]"}`}>
+          <button type="button" onClick={() => setRevealed((value) => !value)} aria-label={revealed ? `Hide answer for ${currentWord.payload.hanzi}` : `Show answer for ${currentWord.payload.hanzi}`} aria-pressed={revealed} className={`flex min-h-[300px] w-full flex-col items-center justify-center rounded-3xl border px-5 py-8 text-center transition focus:outline-none focus:ring-4 focus:ring-blue-200 sm:min-h-[340px] sm:px-10 ${revealed ? "border-emerald-100 bg-emerald-50/60 text-slate-950 shadow-sm" : "border-violet-100 bg-violet-50/70 text-slate-950 shadow-sm"}`}>
             {!revealed ? <>
-              <span className="text-xs font-bold uppercase tracking-[.16em] text-blue-300">Recognize the word</span>
+              <span className="text-xs font-bold uppercase tracking-[.16em] text-violet-700">Recognize the word</span>
               <strong className={`mt-6 max-w-full break-words font-black leading-tight ${primaryHanzi.length > 4 ? "text-3xl sm:text-5xl" : "text-5xl sm:text-7xl"}`}>{primaryHanzi}</strong>
-              {otherHanzi ? <span className="mt-2 text-lg font-semibold text-blue-100">Also: {otherHanzi}</span> : null}
-              {traditional ? <span className="mt-3 text-lg text-blue-200">Traditional: {traditional}</span> : null}
-              <span className="mt-7 rounded-full border border-white/20 bg-white/10 px-4 py-2 text-sm font-semibold text-blue-100">Tap to show the answer</span>
+              {otherHanzi ? <span className="mt-2 text-lg font-semibold text-slate-600">Also: {otherHanzi}</span> : null}
+              {traditional ? <span className="mt-3 text-lg text-slate-600">Traditional: {traditional}</span> : null}
+              <span className="mt-7 rounded-full border border-white/20 bg-white/10 px-4 py-2 text-sm font-semibold text-slate-600">Take a moment to remember.</span>
             </> : <>
               <span className="text-xs font-bold uppercase tracking-[.16em] text-blue-700">Answer</span>
               <strong className="mt-4 text-4xl font-black leading-tight text-slate-950 sm:text-5xl">{primaryHanzi}</strong>
@@ -245,7 +245,7 @@ export function QuickFlashcards({ level, levelLabel, publishedCount }: { level: 
           <p className="mt-4 text-center text-sm leading-6 text-slate-600">{revealed ? "Did you recall the meaning before flipping? Choose one to continue." : "Try to recall the meaning, then reveal the answer."}</p>
           <div className="mt-3 grid grid-cols-3 gap-2 sm:gap-3">
             <button type="button" onClick={previous} disabled={currentIndex === 0} className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-xl border border-slate-300 bg-white px-2 text-sm font-bold text-slate-700 hover:border-blue-500 hover:text-blue-700 disabled:cursor-not-allowed disabled:opacity-40 sm:px-4">Previous</button>
-            {revealed ? <><button type="button" onClick={() => rate("retry")} className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-xl border border-amber-400 bg-amber-100 px-2 text-sm font-extrabold text-amber-950 hover:bg-amber-200 sm:px-4">Practice again</button><button type="button" onClick={() => rate("known")} className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-xl bg-blue-600 px-2 text-sm font-bold text-white hover:bg-blue-700 sm:px-4">Remembered</button></> : <><button type="button" onClick={() => setRevealed(true)} className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-xl border border-amber-400 bg-amber-300 px-2 text-sm font-extrabold text-slate-950 hover:bg-amber-200 sm:px-4">Show answer</button><button type="button" onClick={next} className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-xl bg-blue-600 px-2 text-sm font-bold text-white hover:bg-blue-700 sm:px-4">{currentIndex === words.length - 1 ? "Finish" : "Skip"}</button></>}
+            {revealed ? <><button type="button" onClick={() => rate("retry")} className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-xl border border-amber-400 bg-amber-100 px-2 text-sm font-extrabold text-amber-950 hover:bg-amber-200 sm:px-4">Practice again</button><button type="button" onClick={() => rate("known")} className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-xl bg-blue-600 px-2 text-sm font-bold text-white hover:bg-blue-700 sm:px-4">Remembered</button></> : <><button type="button" onClick={() => setRevealed(true)} className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-xl border border-blue-600 bg-blue-600 px-2 text-sm font-bold text-white hover:bg-blue-700 sm:px-4">Show answer</button><button type="button" onClick={next} className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-xl border border-slate-300 bg-white px-2 text-sm font-bold text-slate-700 hover:bg-slate-50 sm:px-4">{currentIndex === words.length - 1 ? "Finish" : "Skip"}</button></>}
           </div>
           <div className="mt-4 flex justify-center"><button type="button" onClick={() => newRandomSet()} className="inline-flex min-h-11 items-center justify-center px-4 text-sm font-bold text-blue-700 hover:underline">New random set</button></div>
         </div>

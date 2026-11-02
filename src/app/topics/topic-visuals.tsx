@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { categoryIconNames, topicIconFor, topicVisualFor } from "@/lib/topics/visuals";
+import { topicIconFor, topicVisualFor } from "@/lib/topics/visuals";
 
 type IconProps = { name: string; className?: string; title?: string };
 
@@ -46,38 +46,27 @@ export function TopicIcon({ name, className = "size-6", title }: IconProps) {
   return <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden={title ? undefined : true} role={title ? "img" : undefined}>{title ? <title>{title}</title> : null}{paths}</svg>;
 }
 
-export function CategoryVisual({ categorySlug, title }: { categorySlug: string; title: string }) {
-  const visual = topicVisualFor(categorySlug);
-  return <div className={`relative grid h-[92px] grid-cols-[64px_minmax(0,1fr)] items-center gap-4 overflow-hidden rounded-2xl border px-4 ${visual.border} ${visual.softSurface}`} aria-hidden="true">
-    <span className={`absolute -right-5 -top-8 size-24 rounded-full opacity-55 ${visual.iconSurface}`} />
-    <span className={`relative grid size-14 place-items-center rounded-2xl bg-white/90 shadow-sm ${visual.iconText}`}><TopicIcon name={categoryIconNames[categorySlug]} className="size-8" /></span>
-    <span className="relative min-w-0">
-      <span className={`block text-[11px] font-black uppercase tracking-[0.14em] ${visual.mutedText}`}>{visual.label}</span>
-      <span className={`mt-2 block h-1.5 w-16 rounded-full opacity-55 ${visual.line}`} />
-    </span>
-    <span className="sr-only">{title} scene</span>
+function sceneImage(categorySlug: string) {
+  return ["daily-life", "food-drink", "travel-transport"].includes(categorySlug) ? categorySlug : "daily-life";
+}
+
+export function CategoryVisual({ categorySlug }: { categorySlug: string; title: string }) {
+  return <div className="topics-category-art" aria-hidden="true">
+    <img src={`/illustrations/${sceneImage(categorySlug)}.webp`} alt="" width="768" height="512" loading="lazy" decoding="async" />
   </div>;
 }
 
-export function TopicScene({ topicSlug, categorySlug, title }: { topicSlug: string; categorySlug: string; title: string }) {
+export function TopicScene({ topicSlug, categorySlug }: { topicSlug: string; categorySlug: string; title: string }) {
   const visual = topicVisualFor(categorySlug);
-  return <div className={`relative h-[84px] overflow-hidden rounded-2xl border ${visual.border} ${visual.softSurface}`} aria-hidden="true">
-    <span className={`absolute -right-4 -top-5 size-20 rounded-full opacity-75 ${visual.iconSurface}`} />
-    <span className="absolute bottom-0 left-0 h-8 w-full bg-white/35" />
-    <span className={`absolute left-4 top-4 grid size-12 place-items-center rounded-2xl bg-white/90 shadow-sm ${visual.iconText}`}><TopicIcon name={topicIconFor(topicSlug)} className="size-7" /></span>
-    <span className={`absolute bottom-3 right-4 text-[10px] font-black uppercase tracking-[0.13em] ${visual.mutedText}`}>{visual.label}</span>
-    <span className="sr-only">{title} scene</span>
+  return <div className="topics-scene" aria-hidden="true">
+    <img src={`/illustrations/${sceneImage(categorySlug)}.webp`} alt="" width="768" height="512" loading="lazy" decoding="async" />
+    <span className={`topics-scene-icon ${visual.iconText}`}><TopicIcon name={topicIconFor(topicSlug)} className="size-6" /></span>
+    <span className="topics-scene-label">{visual.label}</span>
   </div>;
 }
 
-export function TopicHeroScene({ visualKey, categorySlug, title, titleZh }: { visualKey: string; categorySlug: string; title: string; titleZh: string }) {
-  const visual = topicVisualFor(categorySlug);
-  return <div className={`relative min-h-[164px] overflow-hidden rounded-3xl border p-4 ${visual.border} ${visual.softSurface}`} aria-label={`${title} learning scene`}>
-    <span className={`absolute -right-10 -top-10 size-36 rounded-full opacity-60 ${visual.iconSurface}`} aria-hidden="true" />
-    <span className={`absolute -bottom-12 left-12 size-28 rounded-full opacity-30 ${visual.iconSurface}`} aria-hidden="true" />
-    <div className="relative flex h-full min-h-[130px] flex-col justify-between">
-      <div className="flex items-start justify-between gap-4"><span className={`grid size-14 place-items-center rounded-2xl bg-white/90 shadow-sm ${visual.iconText}`}><TopicIcon name={topicIconFor(visualKey)} className="size-8" title={`${title} icon`} /></span><span className={`rounded-full bg-white/75 px-3 py-1 text-xs font-black ${visual.mutedText}`}>{visual.label}</span></div>
-      <div><p className={`text-xl font-black ${visual.text}`} lang="zh-Hans">{titleZh}</p><p className={`mt-1 text-sm font-bold ${visual.mutedText}`}>{title}</p></div>
-    </div>
+export function TopicHeroScene({ categorySlug }: { visualKey: string; categorySlug: string; title: string; titleZh: string }) {
+  return <div className="topics-hero-art" aria-hidden="true">
+    <img src={`/illustrations/${sceneImage(categorySlug)}.webp`} alt="" width="768" height="512" decoding="async" />
   </div>;
 }

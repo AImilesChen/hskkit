@@ -90,8 +90,11 @@ test("listening UI uses the shared synthesized-audio state control and states th
   assert.match(player, /AudioPlaybackControl/);
   assert.match(player, /beforePlay=\{authorizePlayback\}/);
   assert.doesNotMatch(player, /speechSynthesis/);
-  assert.match(page, /HSKKit levelled listening practice library/);
-  assert.match(page, /10 questions/);
-  assert.match(page, /20 questions/);
+  assert.match(page, /Listening practice/);
+  const picker = readFileSync(new URL("src/app/listen/listening-library-picker.tsx", root), "utf8");
+  assert.match(picker, /action="\/listen\/start" method="get"/);
+  assert.match(picker, /name="level"/);
+  assert.match(picker, /name="size"/);
+  assert.match(picker, /\[10, 20\]/);
   assert.match(page, /not an official exam question bank/i);
 });

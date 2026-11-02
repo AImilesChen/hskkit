@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { StudyPage } from "../../components/study-shell";
 import { AudioPlaybackControl } from "../../components/audio-playback-control";
 import { TopicCard } from "../topic-card";
+import { CategoryVisual, TopicHeroScene } from "../topic-visuals";
 import {
   categoryForTopic,
   findTopicBySlug,
@@ -84,7 +85,7 @@ async function CategoryPage({ slug }: { slug: string }) {
       <nav className="flex min-h-11 flex-wrap items-center gap-2 text-sm text-slate-500" aria-label="Breadcrumb"><Link href="/" className="inline-flex min-h-11 items-center px-1 font-semibold hover:text-blue-700">Home</Link><span aria-hidden="true">/</span><Link href="/topics" className="inline-flex min-h-11 items-center font-semibold hover:text-blue-700">Topics</Link><span aria-hidden="true">/</span><span className="text-slate-800">{category.title}</span></nav>
       <header className={`topics-category-hero border ${categoryVisual.border} ${categoryVisual.softSurface}`}>
         <div><p className={`text-sm font-bold ${categoryVisual.mutedText}`}>{category.titleZh}</p><h1 className="mt-1 text-3xl font-black tracking-tight text-slate-950 sm:text-4xl">{category.title}</h1><p className="mt-3 max-w-2xl leading-7 text-slate-600">{category.description}</p></div>
-        <div className="rounded-2xl bg-white/80 p-4 shadow-sm"><p className={`text-xs font-bold uppercase tracking-[0.12em] ${categoryVisual.mutedText}`}>Learning outcome</p><p className="mt-2 text-sm font-semibold leading-6 text-slate-800">{category.outcome}</p>{categoryReady && topics[0] ? <Link href={`/topics/${topics[0].slug}`} className="mt-4 inline-flex min-h-11 w-full items-center justify-between rounded-xl bg-blue-600 px-4 text-sm font-bold text-white hover:bg-blue-700">Start recommended topic <span aria-hidden="true">→</span></Link> : null}</div>
+        <div className="topics-category-outcome"><CategoryVisual categorySlug={category.slug} title={category.title} /><div className="p-4"><p className={`text-xs font-bold uppercase tracking-[0.12em] ${categoryVisual.mutedText}`}>Learning outcome</p><p className="mt-2 text-sm font-semibold leading-6 text-slate-800">{category.outcome}</p>{categoryReady && topics[0] ? <Link href={`/topics/${topics[0].slug}`} className="mt-4 inline-flex min-h-11 w-full items-center justify-between rounded-xl bg-blue-600 px-4 text-sm font-bold text-white hover:bg-blue-700">Start recommended topic <span aria-hidden="true">→</span></Link> : null}</div></div>
       </header>
       {!categoryReady ? <section className="mt-8 rounded-2xl border border-amber-200 bg-amber-50 p-5 text-amber-950"><h2 className="font-black">This category is temporarily unavailable</h2><p className="mt-2 text-sm leading-6">HSKKit could not verify every mapped word against the active release, so incomplete topic collections are hidden.</p></section> : <section className="mt-9" aria-labelledby="category-topics-title"><div className="flex flex-wrap items-end justify-between gap-3"><div><p className="text-xs font-bold uppercase tracking-[0.15em] text-blue-700">Recommended sequence</p><h2 id="category-topics-title" className="mt-2 text-2xl font-black text-slate-950">Choose a focused topic</h2></div><p className="text-sm text-slate-600">{topics.length} original topic collections</p></div><div className="mt-5 grid gap-4 md:grid-cols-2 xl:grid-cols-3">{topics.map((topic) => <TopicCard key={topic.id} topic={topic} />)}</div></section>}
       <Link href="/topics" className="mt-10 inline-flex min-h-11 items-center rounded-xl border border-slate-300 bg-white px-5 font-bold text-slate-800 hover:border-blue-400 hover:text-blue-700">← All topic categories</Link>
@@ -142,8 +143,9 @@ async function TopicDetailPage({ slug }: { slug: string }) {
           <h1>{topic.title}</h1>
           <p>{topic.description}</p>
           <div className="topics-meta"><span>HSK {topic.levelBands.join(" · ")}</span><span>{wordsAvailable ? words.length : "—"} words</span><span>{topic.estimatedMinutes} min</span><span>{wordsAvailable ? `${audioAvailableCount}/${words.length} with audio` : "Audio unavailable"}</span></div>
-        </div>
         {wordsAvailable ? <Link href={`/topics/${topic.slug}/practice`} className="topics-primary">Start practice →</Link> : null}
+        </div>
+        <TopicHeroScene visualKey={topic.slug} categorySlug={category.slug} title={topic.title} titleZh={topic.titleZh} />
       </header>
 
       <div>

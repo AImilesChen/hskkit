@@ -1209,3 +1209,14 @@
 @media (prefers-reduced-motion: reduce) {
   .feedback-trigger, .feedback-dialog { scroll-behavior: auto; }
 }
+
+/* Keep feedback reachable without covering the study controls on small screens. */
+@media (max-width: 639px) {
+  body:has(:is(.home-main, .vocabulary-page, .listening-library)) .feedback-trigger {
+    position: static;
+    align-self: flex-end;
+    width: max-content;
+    margin: 0 20px 20px auto;
+    box-shadow: none;
+  }
+}

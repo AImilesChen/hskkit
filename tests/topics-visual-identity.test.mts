@@ -58,7 +58,7 @@ test("one outlined SVG icon system and small contextual scenes are shared across
   assert.doesNotMatch(index, /<TopicHeroScene/);
   assert.match(index, /topics-category-card/);
   assert.match(card, /TopicScene/);
-  assert.doesNotMatch(detail, /<TopicHeroScene/);
+  assert.match(detail, /<TopicHeroScene/);
   assert.match(practice, /TopicIcon/);
   assert.match(client, /TopicIcon/);
 });
@@ -109,7 +109,7 @@ test("category cards separate illustration, label and count without competing fo
     source("src/app/topics/topic-visuals.tsx"),
     source("src/app/topics/page.tsx"),
   ]);
-  assert.match(visuals, /grid-cols-\[64px_minmax\(0,1fr\)\]/);
+  assert.match(visuals, /topics-category-art/);
   assert.doesNotMatch(visuals, /absolute bottom-3 left-4[^\n]*visual\.label/);
   assert.match(index, /items-center justify-between[^\n]*category\.titleZh[^\n]*\{count\} topics/);
   assert.doesNotMatch(index, /items-start justify-between[^\n]*category\.title[^\n]*\{count\} topics/);
@@ -120,11 +120,11 @@ test("shared topic detail uses a compact brand-blue hero and gives Chinese equal
     source("src/app/topics/[slug]/page.tsx"),
     source("src/app/topics/topic-visuals.tsx"),
   ]);
-  assert.match(await source("src/app/topics/topics.css"), /#0b1f4b/);
+  assert.match(await source("src/app/topics/topics.css"), /#f3f0f8/);
   assert.match(detail, /topics-hero/);
   assert.doesNotMatch(detail, /bg-slate-950 text-white/);
   assert.match(detail, /topics-chinese[^\n]*lang="zh-Hans"/);
-  assert.match(visuals, /min-h-\[164px\]/);
+  assert.match(visuals, /topics-hero-art/);
 });
 
 test("topic word cards use contextual display meanings and one dominant practice action", async () => {
