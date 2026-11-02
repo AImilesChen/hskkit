@@ -5,6 +5,7 @@ import { learningTopics, topicCategories } from "@/lib/topics/catalog";
 import { getVerifiedTopicsSnapshot, verifiedTopicsFromSnapshot } from "@/lib/topics/server";
 import { TopicsBrowser } from "./topics-browser";
 import { topicVisualFor } from "@/lib/topics/visuals";
+import { CategoryVisual } from "./topic-visuals";
 
 import "./topics.css";
 
@@ -77,7 +78,7 @@ export default async function TopicsPage() {
           <div className="mt-5 grid gap-4 md:grid-cols-3">{visibleCategories.map((category) => {
             const count = topicsFor(category.id).length;
             const visual = topicVisualFor(category.slug);
-            return <Link key={category.id} href={`/topics/${category.slug}`} className={`topics-category-card group flex h-full flex-col rounded-2xl border bg-white transition hover:-translate-y-0.5 hover:shadow-[0_18px_45px_-32px_rgba(15,23,42,0.35)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 ${visual.border}`}><div className="mt-4"><h3 className="min-h-[56px] text-xl font-black leading-7 text-slate-950">{category.title}</h3><div className="mt-2 flex items-center justify-between gap-3"><p className={`font-semibold ${visual.mutedText}`}>{category.titleZh}</p><span className={`shrink-0 whitespace-nowrap rounded-full px-3 py-1 text-xs font-bold ${visual.surface} ${visual.mutedText}`}>{count} topics</span></div></div><p className="mt-3 flex-1 text-sm leading-6 text-slate-600">{category.description}</p><span className="mt-4 inline-flex min-h-11 items-center font-bold text-blue-700">Explore category <span className="ml-2" aria-hidden="true">→</span></span></Link>;
+            return <Link key={category.id} href={`/topics/${category.slug}`} className={`topics-category-card group flex h-full flex-col rounded-2xl border bg-white transition hover:-translate-y-0.5 hover:shadow-[0_18px_45px_-32px_rgba(15,23,42,0.35)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 ${visual.border}`}><CategoryVisual categorySlug={category.slug} title={category.title} /><div className="mt-4"><h3 className="min-h-[56px] text-xl font-black leading-7 text-slate-950">{category.title}</h3><div className="mt-2 flex items-center justify-between gap-3"><p className={`font-semibold ${visual.mutedText}`}>{category.titleZh}</p><span className={`shrink-0 whitespace-nowrap rounded-full px-3 py-1 text-xs font-bold ${visual.surface} ${visual.mutedText}`}>{count} topics</span></div></div><p className="mt-3 flex-1 text-sm leading-6 text-slate-600">{category.description}</p><span className="mt-4 inline-flex min-h-11 items-center font-bold text-blue-700">Explore category <span className="ml-2" aria-hidden="true">→</span></span></Link>;
           })}</div>
         </section>
 

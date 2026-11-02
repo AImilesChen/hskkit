@@ -57,7 +57,7 @@ export default async function VocabularyPage({ params }: Props) {
   const levelLabel = level === 7 ? "HSK 7–9" : `HSK ${level}`;
   return (
     <StudyPage>
-      <main className="mx-auto w-full max-w-[1200px] flex-1 px-5 py-[24px] sm:px-8 md:py-[32px]">
+      <main className="vocabulary-page mx-auto w-full max-w-[1200px] flex-1 px-5 py-[24px] sm:px-8 md:py-[32px]">
         <nav className="flex flex-wrap items-center gap-2 text-sm text-slate-500" aria-label="Breadcrumb">
           <Link href="/" className="inline-flex min-h-11 items-center hover:text-blue-700">Learn</Link>
           <span aria-hidden="true">/</span>
@@ -79,17 +79,17 @@ export default async function VocabularyPage({ params }: Props) {
             <Link href="/content-license" className="inline-flex min-h-11 items-center font-semibold text-blue-700 hover:underline">Verified HSK 3.0 source</Link>
           </div>
 
-          <section className="mt-5 min-w-0 max-w-full overflow-hidden rounded-2xl bg-slate-950 text-white shadow-sm" aria-labelledby="quick-review-heading">
+          <section className="mt-5 min-w-0 max-w-full overflow-hidden rounded-2xl border border-violet-100 bg-violet-50/60 text-slate-900" aria-labelledby="quick-review-heading">
             <div className="grid min-w-0 gap-5 p-5 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-center sm:p-6">
               <div className="min-w-0">
-                <p className="text-xs font-bold uppercase tracking-[.14em] text-cyan-300">Quick Flashcards</p>
-                <h2 id="quick-review-heading" className="mt-2 break-words text-2xl font-black tracking-tight !text-white">Turn this level into a short review.</h2>
-                <p className="mt-2 max-w-2xl break-words text-sm leading-6 text-slate-300">Choose 10, 20, or 50 cards from the complete published {levelLabel} catalog. No sign-in required.</p>
-                <ul className="mt-3 flex flex-wrap gap-x-4 gap-y-2 text-xs font-semibold text-slate-200" aria-label="Quick review facts">
+                <p className="text-xs font-bold uppercase tracking-[.14em] text-violet-700">Quick Flashcards</p>
+                <h2 id="quick-review-heading" className="mt-2 break-words text-2xl font-black tracking-tight !text-slate-950">A few words. A little progress.</h2>
+                <p className="mt-2 max-w-2xl break-words text-sm leading-6 text-slate-600">Practise 10, 20, or 50 {levelLabel} words. No sign-in required.</p>
+                <ul className="sr-only text-xs font-semibold text-slate-600" aria-label="Quick review facts">
                   <li>{levelLabel}</li><li>{status.wordCount.toLocaleString("en-US")} published words</li><li>Guest-ready</li>
                 </ul>
               </div>
-              <Link href={`/vocabulary/${level}?mode=flashcards#vocabulary-activities`} className="inline-flex min-h-12 w-full max-w-full items-center justify-center rounded-xl bg-amber-300 px-5 py-3 text-center text-sm font-black text-slate-950 shadow-sm transition hover:bg-amber-200 focus:outline-none focus:ring-4 focus:ring-amber-100 sm:w-auto">Start quick review</Link>
+              <Link href={`/vocabulary/${level}?mode=flashcards#vocabulary-activities`} className="inline-flex min-h-12 w-full max-w-full items-center justify-center rounded-xl bg-blue-600 px-5 py-3 text-center text-sm font-bold text-white transition hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-200 sm:w-auto">Start quick review</Link>
             </div>
           </section>
 
