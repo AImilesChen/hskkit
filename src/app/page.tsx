@@ -17,8 +17,8 @@ import {
 } from "@/lib/public-copy";
 
 export const metadata: Metadata = {
-  title: "HSKKit — Study HSK 1 Vocabulary from the 2025 Exam Syllabus",
-  description: "Study all 11,000 published vocabulary entries aligned with the 2025 HSK exam syllabus, including one unified Advanced 7–9 band.",
+  title: "HSKKit — Build Your HSK Vocabulary",
+  description: "Build your HSK vocabulary with 11,000 words, daily practice and spaced review. Start learning free, with pinyin and English meanings.",
   alternates: { canonical: "/" },
 };
 
@@ -60,7 +60,7 @@ const faqItems = [
   },
   {
     question: "What is included in Free and Pro?",
-    answer: "Free includes the published catalog, core practice and bounded daily learning and review. Pro adds unlimited learning and review subject to safeguards, Focused Review, AI credits, longer history and three-device sync.",
+    answer: "Free includes the published catalog, core practice, 10 new items and 20 successful SRS ratings daily. Pro adds unlimited learning and review subject to safeguards, Focused Review, AI credits, longer history and three-device sync. The 7-day Pro trial requires no card and returns to Free automatically.",
     href: "/pricing",
     linkLabel: "Compare current plans",
   },
@@ -136,19 +136,18 @@ export default function HomePage() {
 
     <section className="home-hero" aria-labelledby="home-title">
       <div className="home-hero-copy">
-        <p className="home-eyebrow">HSK 1 · 2025 exam syllabus</p>
-        <h1 id="home-title" aria-label="Learn HSK 1 vocabulary aligned with the 2025 exam syllabus. Review each word when it matters.">
+        <p className="home-eyebrow">Free HSK learning platform</p>
+        <h1 id="home-title" aria-label="Build your HSK vocabulary. Remember what you learn.">
           <span className="home-title-primary" aria-hidden="true">
-            <span className="home-title-line">Learn the published</span>
-            <span className="home-title-line">HSK study vocabulary.</span>
+            <span className="home-title-line">Build your HSK</span>
+            <span className="home-title-line">vocabulary.</span>
           </span>
           <span className="home-title-secondary" aria-hidden="true">
-            <span className="home-title-line">Review each word</span>
-            <span className="home-title-line">when it matters.</span>
+            <span className="home-title-line">Remember what</span>
+            <span className="home-title-line">you learn.</span>
           </span>
         </h1>
-        <p className="home-lede">Browse {publishedWordCount.toLocaleString("en-US")} published words with pinyin and English meanings, aligned with the 2025 exam syllabus. Levels 7–9 share one advanced vocabulary band. Formal audio appears only where it has been published and approved.</p>
-        <p className="mt-3 text-sm text-slate-600">Preparing for the 2025 HSK 3.0 exam syllabus? <Link href="/hsk-3-0" className="font-semibold text-blue-700 underline">Check the exam transition and choose the right resource.</Link></p>
+        <p className="home-lede">{publishedWordCount.toLocaleString("en-US")} HSK words with pinyin, English meanings and spaced review.</p>
         <HomeNextStep />
       </div>
 
