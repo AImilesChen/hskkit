@@ -187,13 +187,13 @@ test("P1 Grocery Shopping UI exposes lessons, listening, practice, and SRS conti
     source("src/app/topics/topic-learning-panel.tsx"),
     source("src/app/topics/[slug]/practice/topic-practice-client.tsx"),
   ]);
-  assert.match(detail, /Three practical lessons/);
+  assert.match(detail, /TopicLessons topic=\{topic\}/);
   assert.match(detail, /Real-world task/);
-  assert.match(detail, /Listen and learn/);
+  assert.match(detail, /TopicLessonAudioPlayer/);
   assert.match(detail, /lesson\.wordAssetIds/);
   assert.match(learningPanel, /Add lesson to Today/);
   assert.match(learningPanel, /lessonId/);
   assert.match(practice, /Listening/);
   assert.match(practice, /Open Review/);
-  assert.match(detail, /href="\/review"/);
+  assert.match(learningPanel, /href="\/review"/);
 });

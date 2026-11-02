@@ -27,8 +27,8 @@ export function TopicCard({ topic, progress, progressState = "hidden" }: { topic
       ? "border border-slate-300 bg-slate-100 text-slate-900 hover:bg-slate-200"
       : "border border-blue-200 bg-blue-50 text-blue-700 hover:bg-blue-100";
 
-  return <article className={`group flex min-w-0 flex-col rounded-2xl border bg-white p-4 transition hover:-translate-y-0.5 hover:shadow-[0_18px_45px_-32px_rgba(15,23,42,0.35)] focus-within:ring-2 focus-within:ring-blue-500 focus-within:ring-offset-2 sm:p-5 ${visual.border}`}>
-    <TopicScene topicSlug={topic.slug} categorySlug={categorySlug} title={topic.title} />
+  return <article className={`topics-card group flex min-w-0 flex-col rounded-2xl border bg-white p-4 transition hover:-translate-y-0.5 hover:shadow-[0_18px_45px_-32px_rgba(15,23,42,0.35)] focus-within:ring-2 focus-within:ring-blue-500 focus-within:ring-offset-2 sm:p-5 ${visual.border}`}>
+    <div className="topics-card-scene"><TopicScene topicSlug={topic.slug} categorySlug={categorySlug} title={topic.title} /></div>
     <div className="mt-4 flex items-start justify-between gap-4">
       <div className="min-w-0">
         <p className={`text-sm font-bold ${visual.mutedText}`}>{topic.titleZh}</p>
