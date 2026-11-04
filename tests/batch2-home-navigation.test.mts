@@ -61,7 +61,7 @@ test("shared study shell and footer use the same first-layer navigation", () => 
 });
 
 test("old generic entry routes have explicit 301 consolidation while traditional resources remain labelled", () => {
-  for (const [from, to] of [["/hsk-levels", "/levels"], ["/hsk-level-test", "/placement"], ["/new-hsk-3-0", "/hsk-3-0"]]) {
+  for (const [from, to] of [["/hsk-levels", "/levels"], ["/hsk-level-test", "/hsk-placement-test"], ["/new-hsk-3-0", "/hsk-3-0"]]) {
     assert.ok(middleware.includes(`"${from}": "${to}"`), `${from} must consolidate to ${to}`);
   }
   assert.match(middleware, /NextResponse\.redirect\([^\n]+,\s*301\)/);

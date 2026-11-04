@@ -5,7 +5,7 @@ import PlacementClient from "./placement-client";
 
 export const metadata: Metadata = {
   title: "HSK 3.0 Placement Diagnostic — HSKKit",
-  description: "Get a low-confidence HSK 3.0 learning-level suggestion from a resumable nine-question diagnostic. Not an official HSK score.",
+  description: "Complete an adaptive 18–24-question HSK learning diagnostic across vocabulary, grammar, reading and listening. Resume saved progress and get a starting-level suggestion, not an official score.",
   alternates: { canonical: "/placement" },
   robots: { index: false, follow: true },
 };
