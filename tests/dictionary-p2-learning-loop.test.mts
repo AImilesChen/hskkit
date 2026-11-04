@@ -153,7 +153,7 @@ test("P2 UI exposes the complete learner loop and keeps stroke order gated", () 
   assert.match(actions, /\/saved/);
   assert.match(wordPage, /Same sound, compare the tones/);
   assert.match(wordPage, /Next in HSK/);
-  assert.match(scriptToggle, /<h1 className="[^"]*text-white/);
+  assert.match(scriptToggle, /dictionary-word-hanzi/);
   assert.match(practice, /Listen and choose|Choose the meaning|Choose the pinyin/);
   assert.match(saved, /Saved words/);
   assert.doesNotMatch(wordPage, /Stroke order|strokeOrder/);

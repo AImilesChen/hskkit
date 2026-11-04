@@ -86,7 +86,7 @@ export function DictionaryWordActions({ assetId, level, layout = "default" }: { 
 
   const panel = layout === "panel";
 
-  return <section className={`rounded-2xl border border-slate-200 bg-white ${panel ? "p-5 shadow-[0_18px_50px_-38px_rgba(15,23,42,.5)]" : "p-3 sm:p-5"}`} aria-labelledby="word-actions-title">
+  return <section className={`dictionary-word-actions rounded-2xl border border-slate-200 bg-white ${panel ? "p-5 shadow-[0_18px_50px_-38px_rgba(15,23,42,.5)]" : "p-3 sm:p-5"}`} aria-labelledby="word-actions-title">
     <div className={`flex flex-wrap items-start justify-between gap-3 ${panel ? "border-b border-slate-100 pb-4" : ""}`}>
       <div>
         <p className="text-xs font-bold uppercase tracking-[0.14em] text-blue-700">Learning actions</p>
