@@ -23,14 +23,14 @@ test("full-catalog word details expose published audio metadata instead of hidin
   assert.equal(withoutAudio.item.audioAsset, undefined);
 });
 
-test("word detail keeps pronunciation beside the word and learning actions in an independent rail", () => {
+test("word detail keeps pronunciation beside the word and learning actions in the overview", () => {
   const page = read("src/app/word/[slug]/page.tsx");
   const actions = read("src/app/components/dictionary-word-actions.tsx");
   const pronunciation = read("src/app/components/dictionary-pronunciation.tsx");
 
   assert.match(page, /DictionaryPronunciation/);
-  assert.match(page, /xl:grid-cols-\[minmax\(0,1fr\)_320px\]/);
-  assert.match(page, /xl:sticky xl:top-24/);
+  assert.match(page, /dictionary-entry-actions/);
+  assert.doesNotMatch(page, /xl:sticky xl:top-24/);
   assert.match(page, /studySectionCount >= 3/);
   assert.doesNotMatch(page, /When no approved asset exists/);
   assert.doesNotMatch(actions, /AudioPlaybackControl|Audio unavailable/);
