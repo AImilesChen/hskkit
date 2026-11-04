@@ -21,6 +21,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "/tools/chinese-character-practice-sheet-generator",
     "/contact",
     "/hsk-3-0",
+    "/chinese-for-travel",
     "/hsk-2-0-vs-3-0",
     "/levels",
     "/reading",
