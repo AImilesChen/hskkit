@@ -35,10 +35,8 @@ export const siteNavigation: NavigationEntry[] = [
   {
     label: "Tests",
     items: [
-      { href: "/hsk-test-prep", label: "Test Center", description: "Compare free placement and level-specific skills checks." },
-      { href: "/hsk-placement-test", label: "HSK Placement Test", description: "Find a practical starting level across four skill areas.", match: "/placement" },
-      { href: "/mock/basic", label: "Basic Skills Check", description: "Choose HSK 1-6 for a short, level-specific diagnostic." },
-      { href: "/mock/advanced", label: "Advanced Skills Check", description: "Sample reading, listening and grammar in the unified HSK 7-9 band." },
+      { href: "/hsk-test-prep", label: "HSK Practice Tests", description: "Choose HSK 1–6 or Advanced 7–9 and preview the test.", match: "/mock" },
+      { href: "/hsk-placement-test", label: "Find My HSK Level", description: "Not sure of your level? Get an adaptive starting suggestion.", match: "/placement" },
       { href: "/hsk-3-0", label: "HSK 3.0 Exam Guide", description: "Check exam dates, the official syllabus and word counts by level." },
     ],
   },
