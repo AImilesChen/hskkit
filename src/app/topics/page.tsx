@@ -82,6 +82,7 @@ export default async function TopicsPage() {
           })}</div>
         </section>
 
+        <section className="mt-8 rounded-2xl border border-violet-200 bg-violet-50 p-5"><h2 className="text-xl font-bold">Planning a trip to China?</h2><p className="mt-2 text-sm leading-6 text-slate-600">Find 50 useful words and phrases, show Chinese on your phone and practise for free.</p><Link href="/chinese-for-travel" className="mt-3 inline-flex min-h-11 items-center font-bold text-violet-800">Open the travel phrasebook →</Link></section>
         <TopicsBrowser topics={verifiedTopics} />
       </> : null}
 

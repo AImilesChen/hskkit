@@ -1,0 +1,92 @@
+.travel-page { width:min(1180px,100%); margin:0 auto; padding:20px 28px 72px; color:#25243a; }
+.travel-page * { box-sizing:border-box; }
+.travel-page button,.travel-page input { font:inherit; }
+.travel-page button,.travel-page a { -webkit-tap-highlight-color:transparent; }
+.travel-page button { display:inline-flex; align-items:center; justify-content:center; gap:8px; min-height:44px; border:1px solid #dcd9ea; border-radius:10px; padding:9px 14px; background:#fff; color:#44405f; font-size:14px; font-weight:650; cursor:pointer; }
+.travel-page button:hover { border-color:#6660cb; background:#f5f3ff; }
+.travel-page button:disabled { opacity:.5; cursor:not-allowed; }
+.travel-page :is(a,button,input,summary):focus-visible { outline:3px solid #6255c7; outline-offset:3px; }
+.travel-page .aqua-icon { display:inline-block; flex-shrink:0; width:19px; height:19px; background:currentColor; mask-repeat:no-repeat; mask-position:center; mask-size:contain; -webkit-mask-repeat:no-repeat; -webkit-mask-position:center; -webkit-mask-size:contain; }
+.travel-breadcrumb { display:flex; align-items:center; flex-wrap:wrap; gap:12px; font-size:13px; color:#66647b; }
+.travel-breadcrumb a { display:inline-flex; align-items:center; min-height:44px; }
+.travel-hero { padding:16px 0 20px; border-bottom:1px solid #e1deed; }
+.travel-kicker { margin:0; font-size:11px; font-weight:800; line-height:1.5; letter-spacing:.13em; text-transform:uppercase; color:#6551b4; }
+.travel-hero h1 { max-width:1000px; margin:10px 0; font-size:clamp(30px,3.5vw,42px); line-height:1.15; font-weight:800; letter-spacing:-.035em; }
+.travel-desktop-break { display:none; }
+.travel-hero>p:not(.travel-kicker) { margin:16px 0; font-size:18px; line-height:1.6; color:#625f78; }
+.travel-benefits { display:flex; flex-wrap:wrap; gap:8px 22px; margin-top:22px; color:#625a7c; font-size:12px; font-weight:600; }
+.travel-benefits span { border-left:3px solid #e09ab8; padding-left:9px; }
+.travel-workspace { padding-top:20px; }
+.travel-filter-panel { border:1px solid #dedbec; border-radius:18px; padding:16px 20px; background:#f6f4fc; }
+.travel-search label { display:block; font-size:17px; font-weight:750; margin-bottom:10px; }
+.travel-search>div { position:relative; display:flex; align-items:center; }
+.travel-search input { width:100%; min-width:0; border:1px solid #cfc9e3; border-radius:11px; padding:13px 76px 13px 15px; background:#fff; color:#25243a; font-size:16px; min-height:50px; }
+.travel-search input::-webkit-search-cancel-button { display:none; }
+.travel-search>div>button { position:absolute; right:5px; border:0; min-height:40px; padding:7px 10px; }
+.travel-search>p { margin:8px 0 0; font-size:12px; line-height:1.6; color:#6c6681; }
+.travel-categories { display:flex; flex-wrap:wrap; gap:8px; margin-top:18px; }
+.travel-page button[aria-pressed=true] { border-color:#6557c8; background:#eeeafb; color:#4b37a1; }
+.travel-tools { display:flex; align-items:center; flex-wrap:wrap; gap:8px 22px; margin-top:12px; padding-top:12px; border-top:1px solid #e3dfed; font-size:12px; color:#615a77; }
+.travel-tools label { display:flex; align-items:center; gap:8px; min-height:44px; cursor:pointer; }
+.travel-tools input { width:17px; height:17px; accent-color:#6251bd; }
+.travel-tools>button { margin-left:auto; border:0; padding-inline:5px; font-size:12px; background:transparent; }
+.travel-results-heading { display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:16px; margin:30px 0 8px; }
+.travel-results-heading { scroll-margin-top:92px; }
+.travel-results-heading h2 { margin:5px 0; font-size:27px; line-height:1.25; font-weight:800; letter-spacing:-.025em; }
+.travel-results-heading p:not(.travel-kicker) { margin:7px 0; font-size:14px; line-height:1.6; color:#6c6681; }
+.travel-page .travel-primary { border-color:#5b4cc4; background:#5b4cc4; color:white; }
+.travel-page .travel-primary:hover { border-color:#493ba3; background:#493ba3; }
+.travel-audio-note { margin:9px 0; font-size:12px; line-height:1.65; color:#706981; }
+.travel-status { min-height:20px; margin:8px 0; font-size:12px; color:#635a7a; }
+.travel-error { padding:12px; border-radius:8px; background:#fff1f2; color:#a12246; font-size:13px; }
+.travel-group { margin-top:24px; scroll-margin-top:95px; }
+.travel-group>header { display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:8px 16px; margin-bottom:14px; }
+.travel-group h3 { display:flex; align-items:center; gap:12px; margin:0; font-size:21px; font-weight:750; }
+.travel-group h3 span { font-size:12px; font-weight:600; border-radius:6px; padding:3px 7px; background:#eeeaf8; color:#6c5aa1; }
+.travel-group>header p { margin:5px 0 0; font-size:13px; line-height:1.5; color:#6c6681; }
+.travel-group>header>button { border:0; background:transparent; padding-inline:0; color:#6551b4; font-size:13px; }
+.travel-entry-list { border:1px solid #e0dce9; border-radius:15px; background:#fff; overflow:hidden; }
+.travel-entry { display:grid; grid-template-columns:minmax(0,1.05fr) minmax(0,1fr) 230px; align-items:center; gap:20px; padding:20px; }
+.travel-entry+.travel-entry { border-top:1px solid #efecf4; }
+.travel-kind { display:block; color:#7b708a; font-size:10px; letter-spacing:.05em; text-transform:uppercase; }
+.travel-entry h4 { margin:5px 0; font-size:16px; font-weight:700; line-height:1.45; }
+.travel-entry-meaning>p { max-width:38ch; margin:6px 0 0; color:#777085; font-size:12px; line-height:1.6; }
+.travel-entry-chinese>p[lang] { margin:0; font-family:var(--font-chinese),sans-serif; color:#262237; font-size:24px; line-height:1.55; overflow-wrap:anywhere; }
+.travel-pinyin { margin:3px 0 0; font-size:13px; line-height:1.6; color:#75609b; }
+.travel-entry-actions { display:flex; align-items:center; justify-content:flex-end; flex-wrap:wrap; gap:7px; }
+.travel-entry-actions>button { padding:8px 9px; font-size:12px; }
+.travel-page .travel-icon-button { width:40px; padding:8px; flex-shrink:0; color:#6551b4; }
+.travel-group>footer { display:flex; justify-content:flex-end; padding:8px 0; }
+.travel-group>footer>a { display:inline-flex; align-items:center; gap:6px; min-height:44px; font-size:13px; font-weight:650; color:#6551b4; }
+.travel-empty { padding:36px 20px; text-align:center; border:1px dashed #c9c0df; border-radius:15px; }
+.travel-empty h3 { font-size:22px; font-weight:750; }
+.travel-empty p { margin:12px auto 20px; color:#6c6681; max-width:50ch; }
+.travel-guide { display:grid; grid-template-columns:1fr 1.6fr; gap:45px; margin-top:50px; padding-top:35px; border-top:1px solid #e0dce9; }
+.travel-guide h2 { margin:10px 0; font-size:27px; line-height:1.25; font-weight:750; }
+.travel-guide details { border-bottom:1px solid #e0dce9; }
+.travel-guide summary { padding:16px 0; cursor:pointer; font-size:15px; font-weight:650; }
+.travel-guide details p { margin:0 0 18px; color:#6c6681; font-size:14px; line-height:1.8; }
+.travel-guide a { text-decoration:underline; color:#6551b4; }
+.travel-dialog { position:fixed; inset:0; margin:auto; border:1px solid #ddd7ed; border-radius:22px; padding:0; width:min(650px,calc(100% - 28px)); max-height:calc(100dvh - 32px); background:#fff; color:#25243a; box-shadow:0 24px 100px #231b4b33; }
+.travel-dialog::backdrop { background:#211c3b99; }
+.travel-dialog-content { padding:26px; }
+.travel-dialog-content>header { display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:22px; }
+.travel-dialog h2 { font-size:22px; font-weight:750; line-height:1.4; }
+.travel-show-hanzi { margin:28px 0 16px; font-family:var(--font-chinese),sans-serif; font-size:clamp(34px,7vw,66px); font-weight:650; line-height:1.6; overflow-wrap:anywhere; user-select:text; }
+.travel-show-pinyin { margin:8px 0 16px; color:#74609a; font-size:18px; line-height:1.6; }
+.travel-page .travel-show-long { font-size:clamp(34px,4.5vw,46px); text-wrap:balance; }
+.travel-dialog-content>p:not([lang]) { line-height:1.7; }
+.travel-dialog-actions { display:flex; align-items:center; flex-wrap:wrap; gap:10px; margin:22px 0; }
+.travel-dialog-content>a { display:inline-flex; align-items:center; min-height:44px; font-size:14px; color:#6551b4; text-decoration:underline; }
+.travel-practice-progress { color:#756983; font-size:13px; }
+.travel-practice-english { font-size:25px; font-weight:650; margin:20px 0; }
+.travel-answer { display:flex; align-items:flex-start; flex-direction:column; justify-content:center; min-height:200px; padding:20px; background:#f6f3fc; border-radius:14px; margin:16px 0; }
+.travel-answer>p[lang] { font-family:var(--font-chinese),sans-serif; font-size:34px; line-height:1.5; overflow-wrap:anywhere; }
+.travel-answer>p { font-size:14px; line-height:1.7; }
+.travel-answer .travel-show-pinyin { font-size:18px; }
+.travel-reveal { width:100%; }
+.travel-score { color:#6551b4; font-size:48px; font-weight:750; }
+@media(max-width:1000px) { .travel-entry { grid-template-columns:minmax(0,1fr) minmax(0,1fr); } .travel-entry-actions { grid-column:1/-1; justify-content:flex-start; } }
+@media(max-width:600px) { .travel-page { padding:12px 18px 45px; } .travel-hero { padding:24px 0; } .travel-hero h1 { font-size:34px; } .travel-desktop-break { display:none; } .travel-hero>p:not(.travel-kicker) { font-size:16px; } .travel-benefits { gap:10px; flex-direction:column; } .travel-filter-panel { padding:16px; } .travel-categories { flex-wrap:nowrap; overflow-x:auto; padding:3px 3px 10px; margin-inline:-3px; } .travel-categories button { flex-shrink:0; } .travel-tools { gap:4px; flex-direction:column; align-items:flex-start; } .travel-tools>button { margin-left:0; } .travel-results-heading h2 { font-size:25px; } .travel-entry { grid-template-columns:1fr; gap:12px; padding:18px; } .travel-entry-meaning>p { max-width:none; } .travel-entry-chinese>p[lang] { font-size:27px; } .travel-entry-actions { grid-column:auto; } .travel-entry-actions>button { padding:8px 12px; } .travel-guide { grid-template-columns:1fr; gap:12px; } .travel-dialog-content { padding:20px; } .travel-show-hanzi { font-size:42px; } .travel-dialog-actions>button { flex:1; } .travel-dialog-actions>.travel-icon-button { flex:none; } }
+@media(prefers-reduced-motion:reduce) { .travel-page * { scroll-behavior:auto!important; transition:none!important; } }
+@media print { .travel-filter-panel,.travel-results-heading>button,.travel-entry-actions,.travel-group>header>button,.travel-dialog,.travel-group>footer,.travel-breadcrumb,.travel-status,.travel-guide { display:none!important; } body { background:white!important; } body>div>header,body>div>footer { display:none!important; } .travel-page { width:100%; padding:0; color:#000; } .travel-hero { padding:10px 0; } .travel-hero h1 { font-size:28px; } .travel-entry { grid-template-columns:1fr 1fr; padding:12px; break-inside:avoid; } .travel-entry-list { overflow:visible; } .travel-pinyin { color:#333; } }
