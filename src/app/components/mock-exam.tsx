@@ -1,8 +1,11 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { MockAnswer, MockBand, MockQuestion, MockResult } from "@/lib/mock/domain";
+import { mockAttemptLevel, mockAttemptMatches, mockAttemptStorageKey, mockPreparationHref } from "@/lib/tests/mock-entry";
+import { trackEvent } from "@/lib/analytics";
 
 const MOBILE_QA_WIDTH = 390;
 type PublicQuestion = Omit<MockQuestion, "correctAnswer" | "explanation" | "approval" | "authorization" | "lifecycle" | "audioText">;
@@ -25,14 +28,19 @@ const key = (band: MockBand) => `hskkit_mock_${band}`;
 const requestKey = (prefix: string) => `${prefix}-${crypto.randomUUID()}`;
 const formatTime = (seconds: number) => `${String(Math.floor(seconds / 60)).padStart(2, "0")}:${String(seconds % 60).padStart(2, "0")}`;
 
-export function MockExam({ band }: { band: MockBand }) {
+export function MockExam({ band, initialLevel = 3, entrySource = "direct" }: { band: MockBand; initialLevel?: number; entrySource?: "direct" | "level_landing" }) {
+  const router = useRouter();
   const [session, setSession] = useState<PublicSession>();
   const [index, setIndex] = useState(0);
   const [draft, setDraft] = useState("");
   const [seconds, setSeconds] = useState(0);
   const [status, setStatus] = useState("Checking availability...");
   const [availability, setAvailability] = useState<{ basicLevels?: Record<number, { ready: boolean; reason: string | null }>; advanced?: { ready: boolean; reason: string | null } }>();
-  const [targetLevel, setTargetLevel] = useState(3);
+  const [targetLevel, setTargetLevel] = useState(initialLevel);
+  const [restoring, setRestoring] = useState(true);
+  const [otherAttempt, setOtherAttempt] = useState<{ level: number; status: string }>();
+  const attemptSource = useRef(entrySource);
+  const trackedCompletions = useRef(new Set<string>());
   const [busy, setBusy] = useState(false);
   const [reviewFilter, setReviewFilter] = useState<ReviewFilter>("all");
   const autoSubmitting = useRef(false);
@@ -46,30 +54,43 @@ export function MockExam({ band }: { band: MockBand }) {
     if (!response.ok || !data.session) throw new Error(data.error ?? "Skills check request failed");
     setSession(data.session);
     localStorage.setItem(key(band), data.session.id);
+    const returnedLevel = mockAttemptLevel(data.session);
+    if (returnedLevel) localStorage.setItem(mockAttemptStorageKey(band, returnedLevel), data.session.id);
     return data.session;
   }, [band]);
 
   useEffect(() => {
+    let alive = true;
     fetch("/api/v1/mock").then(async (response) => {
       const data = await response.json() as { availability?: typeof availability };
       if (!response.ok || !data.availability) throw new Error("Availability unavailable");
-      setAvailability(data.availability);
-      setStatus("Ready to start");
-    }).catch(() => setStatus("Temporarily unavailable. Refresh the page or try again later."));
-    const sessionId = localStorage.getItem(key(band));
-    if (!sessionId) return;
+      if (alive) { setAvailability(data.availability); setStatus(current => current === "Checking availability..." ? "Ready to start" : current); }
+    }).catch(() => { if (alive) setStatus("Temporarily unavailable. Refresh the page or try again later."); });
+    const scopedKey = mockAttemptStorageKey(band, advanced ? 7 : initialLevel);
+    const storedKey = localStorage.getItem(scopedKey) ? scopedKey : key(band);
+    const sessionId = localStorage.getItem(storedKey);
+    if (!sessionId) { setRestoring(false); return () => { alive = false; }; }
     fetch(`/api/v1/mock?sessionId=${encodeURIComponent(sessionId)}`).then(async (response) => {
       const data = await response.json() as { session?: PublicSession };
+      if (!alive) return;
       if (!response.ok || !data.session || data.session.band !== band) {
-        localStorage.removeItem(key(band));
-        setStatus("Previous attempt is unavailable. Refresh to recheck the release gate.");
+        if (response.status === 404) localStorage.removeItem(storedKey);
+        setStatus("Could not restore the previous attempt. You can retry by refreshing.");
+        return;
+      }
+      const savedLevel = mockAttemptLevel(data.session);
+      if (savedLevel) localStorage.setItem(mockAttemptStorageKey(band, savedLevel), data.session.id);
+      if (!mockAttemptMatches(data.session, band, initialLevel)) {
+        if (savedLevel) setOtherAttempt({ level: savedLevel, status: data.session.status });
+        if (storedKey === scopedKey) localStorage.removeItem(scopedKey);
         return;
       }
       setSession(data.session);
-      if (band === "basic" && data.session.questions.length && data.session.questions.every((question) => question.level === data.session!.questions[0].level)) setTargetLevel(data.session.questions[0].level);
+      attemptSource.current = localStorage.getItem(`hskkit_mock_origin_${data.session.id}`) === "level_landing" ? "level_landing" : "direct";
       setStatus(data.session.status === "submitted" ? "Result restored" : "Progress restored");
-    }).catch(() => setStatus("Could not restore. Retry when online."));
-  }, [band]);
+    }).catch(() => { if (alive) setStatus("Could not restore. Retry when online."); }).finally(() => { if (alive) setRestoring(false); });
+    return () => { alive = false; };
+  }, [band, advanced, initialLevel]);
 
   const submit = useCallback(async (automatic = false) => {
     if (!session || session.status !== "in_progress" || busy) return;
@@ -81,11 +102,15 @@ export function MockExam({ band }: { band: MockBand }) {
       const idempotencyKey = localStorage.getItem(pendingKey) ?? requestKey(`submit-${session.id}`);
       localStorage.setItem(pendingKey, idempotencyKey);
       await call({ action: "submit", payload: { sessionId: session.id, idempotencyKey } });
+      if (!trackedCompletions.current.has(session.id)) {
+        trackedCompletions.current.add(session.id);
+        trackEvent("skills_check_complete", { level: advanced ? "7-9" : String(mockAttemptLevel(session) ?? targetLevel), source: attemptSource.current });
+      }
       localStorage.removeItem(pendingKey);
       setStatus("Submitted and saved");
     } catch (error) { setStatus(error instanceof Error ? error.message : "Submit failed. Retry safely."); }
     finally { setBusy(false); }
-  }, [busy, call, session]);
+  }, [busy, call, session, advanced, targetLevel]);
 
   useEffect(() => {
     if (!session || session.status !== "in_progress") return;
@@ -110,7 +135,10 @@ export function MockExam({ band }: { band: MockBand }) {
       const pendingKey = `hskkit_mock_pending_start_${band}_${advanced ? "7-9" : targetLevel}`;
       const idempotencyKey = localStorage.getItem(pendingKey) ?? requestKey(`start-${band}`);
       localStorage.setItem(pendingKey, idempotencyKey);
-      await call({ action: "start", payload: { band, targetLevel: advanced ? undefined : targetLevel, idempotencyKey } });
+      const started = await call({ action: "start", payload: { band, targetLevel: advanced ? undefined : targetLevel, idempotencyKey } });
+      attemptSource.current = entrySource;
+      localStorage.setItem(`hskkit_mock_origin_${started.id}`, entrySource);
+      trackEvent("skills_check_start", { level: advanced ? "7-9" : String(targetLevel), source: entrySource });
       localStorage.removeItem(pendingKey);
       setIndex(0); setStatus("Diagnostic started"); autoSubmitting.current = false;
     } catch (error) { setStatus(error instanceof Error ? error.message : "This diagnostic remains safely closed."); }
@@ -135,7 +163,9 @@ export function MockExam({ band }: { band: MockBand }) {
   function chooseAnotherLevel() {
     if (advanced || !session || busy) return;
     if (session.status === "submitted") {
-      localStorage.removeItem(key(band));
+      const level = mockAttemptLevel(session);
+      if (level) localStorage.removeItem(mockAttemptStorageKey(band, level));
+      if (localStorage.getItem(key(band)) === session.id) localStorage.removeItem(key(band));
       setSession(undefined);
       setIndex(0);
       setStatus("Choose an HSK level to begin a new skills check.");
@@ -156,7 +186,8 @@ export function MockExam({ band }: { band: MockBand }) {
         });
         const data = await response.json() as { discarded?: boolean; error?: string };
         if (!response.ok || !data.discarded) throw new Error(data.error ?? "Could not discard this attempt. Please retry.");
-        localStorage.removeItem(key(band));
+        localStorage.removeItem(mockAttemptStorageKey(band, level));
+        if (localStorage.getItem(key(band)) === session.id) localStorage.removeItem(key(band));
         setSession(undefined);
         setIndex(0);
         setStatus("Choose an HSK level to begin a new skills check.");
@@ -175,26 +206,27 @@ export function MockExam({ band }: { band: MockBand }) {
     })();
   }
 
-  if (!session) return <section className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
-    <p className="text-sm font-bold uppercase tracking-[.16em] text-blue-700">{advanced ? "Unified HSK 7-9 | Short diagnostic" : "HSK 1-6 | Level-specific diagnostic"}</p>
-    <h1 className="mt-3 font-serif text-4xl font-bold text-slate-950 sm:text-6xl">{advanced ? "Advanced Skills Check" : "Basic Skills Check"}</h1>
-    <p className="mt-5 max-w-2xl text-lg leading-8 text-slate-600">{advanced ? "Try a fresh selection from the unified HSK 7-9 practice pool and see which skills need more work." : "Choose one HSK level, try a fresh selection of practice questions, and see which skills need more work."}</p>
-    {!advanced ? <label className="mt-6 block max-w-xs font-bold text-slate-900" htmlFor="mock-target-level">Target HSK level
-      <select id="mock-target-level" className="mt-2 block min-h-11 w-full rounded-xl border border-slate-300 bg-white px-3 text-slate-950" value={targetLevel} onChange={(event) => setTargetLevel(Number(event.target.value))}>
+  if (!session) return <section className="mock-preparation">
+    <header className="test-public-hero"><p className="test-eyebrow">{advanced ? "Unified advanced band" : "Level-specific practice"}</p>
+    <h1>{advanced ? "Advanced 7–9" : `HSK ${targetLevel}`} <span className="test-title-accent">skills check</span></h1>
+    <p>Check grammar, reading and listening. Your timer starts when you choose Start.</p></header>
+    {otherAttempt && <aside className="test-saved-attempt"><strong>A different level is saved.</strong><p>Your {otherAttempt.level === 7 ? "Advanced 7–9" : `HSK ${otherAttempt.level}`} {otherAttempt.status === "submitted" ? "result" : "unfinished test"} is still available. This page is for HSK {targetLevel}.</p><Link href={mockPreparationHref(otherAttempt.level)} className="test-text-link">{otherAttempt.status === "submitted" ? "View" : "Continue"} saved HSK {otherAttempt.level} check →</Link></aside>}
+    {!advanced ? <label className="mock-level-picker" htmlFor="mock-target-level">Target HSK level
+      <select id="mock-target-level" value={targetLevel} onChange={(event) => { const level = Number(event.target.value); setTargetLevel(level); router.replace(`/mock/basic?level=${level}${entrySource === "level_landing" ? "&from=level-page" : ""}`, { scroll: false }); }}>
         {[1, 2, 3, 4, 5, 6].map((level) => <option key={level} value={level}>HSK {level}</option>)}
       </select>
     </label> : null}
-    <div className="mt-6 grid gap-3 rounded-2xl bg-blue-50 p-5 text-sm text-blue-950 lg:grid-cols-3">
-      <p><strong className="block text-slate-950">15 questions</strong>5 grammar | 5 reading | 5 listening</p>
-      <p><strong className="block text-slate-950">{advanced ? "35 minutes" : "30 minutes"}</strong>Timed attempt</p>
-      <p><strong className="block text-slate-950">Autosaved</strong>Answers saved automatically</p>
+    <div className="mock-preparation-facts">
+      <p><strong>15 questions</strong>5 grammar · 5 reading · 5 listening</p>
+      <p><strong>{advanced ? "35 minutes" : "30 minutes"}</strong>Timer continues if you leave</p>
+      <p><strong>Progress saved</strong>Return in this browser</p>
     </div>
-    <p className="mt-5 max-w-2xl text-sm leading-6 text-slate-600">This short learning check uses HSKKit-authored grammar, reading and listening material. It is not an official or full-length HSK exam. Writing, translation and speaking are not tested. Recent diagnostic questions are avoided when the pool allows.</p>
-    <button className="btn btn-primary mt-7 min-h-11 disabled:cursor-not-allowed disabled:bg-slate-300 disabled:text-slate-500" disabled={busy || ready !== true} onClick={start}>Start {advanced ? "Advanced" : `HSK ${targetLevel}`} Skills Check</button>
-    <p aria-live="polite" className="mt-3 text-sm font-semibold text-slate-600">{ready === false ? `Unavailable right now: ${selectedAvailability?.reason ?? "please try again later"}` : status}</p>
-    <details className="mt-5 rounded-2xl border border-slate-200 p-4 text-sm leading-6 text-slate-600">
-      <summary className="cursor-pointer font-bold text-slate-800">How this skills check works</summary>
-      <p className="mt-3">Each attempt draws from the approved practice pool, with different passages and recordings within the attempt. Answers are saved and previous results remain available. Your score describes only this short set, not an official proficiency level.</p>
+    <div className="test-hero-actions"><button className="test-primary-link" disabled={busy || restoring || ready !== true} aria-busy={busy || restoring} onClick={start}>{busy ? "Starting…" : `Start ${advanced ? "Advanced 7–9" : `HSK ${targetLevel}`} Skills Check`}</button><Link className="test-text-link" href="/hsk-test-prep">Browse test levels →</Link></div>
+    <p aria-live="polite" className="test-entry-note">{restoring ? "Checking saved progress…" : ready === false ? `Unavailable right now: ${selectedAvailability?.reason ?? "please try again later"}` : status}</p>
+    <p className="test-boundary-note">A short HSKKit learning check, not an official or full-length HSK exam. Writing, translation and speaking are not assessed.</p>
+    <details className="test-runner-details">
+      <summary>How this skills check works</summary>
+      <p>Each attempt draws from the approved practice pool, with different passages and recordings within the attempt. Answers are saved and previous results remain available. Your score describes this short set, not an official proficiency level.</p>
     </details>
   </section>;
 
@@ -218,7 +250,7 @@ export function MockExam({ band }: { band: MockBand }) {
     return <section className="space-y-6">
       <div className="rounded-3xl border border-emerald-200 bg-white p-6 shadow-sm sm:p-9">
         <p className="text-sm font-bold uppercase tracking-[.16em] text-emerald-700">Saved result</p>
-        <h1 className="mt-3 font-serif text-3xl font-bold text-slate-950 sm:text-4xl">{result.correctCount}/{result.totalCount} correct</h1>
+        <h1 className="test-result-title mt-3">{result.correctCount}/{result.totalCount} correct</h1>
         <p className="mt-3 max-w-2xl leading-7 text-slate-700">{result.percentage}% on this {advanced ? "HSK 7-9" : "level-specific"} skills check. This score describes only the questions in this attempt.</p>
         <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-600">{result.disclaimer}</p>
         <div className="mt-6 grid grid-cols-3 gap-2 sm:gap-3">
@@ -232,7 +264,7 @@ export function MockExam({ band }: { band: MockBand }) {
         <div className="mt-5 rounded-2xl border border-blue-200 bg-blue-50 p-4 sm:p-5">
           <h2 className="text-lg font-black text-slate-950">{needsPractice ? `Next step: practise ${nextSkill.skill}` : "Next step: try another question set"}</h2>
           <p className="mt-2 text-sm leading-6 text-slate-700">{needsPractice ? `You answered ${nextSkill.correct} of ${nextSkill.total} ${nextSkill.skill} questions correctly in this short set. Review those answers, then practise the same skill at this level.` : "You answered every question in this short set correctly. Another set will check different material."}</p>
-          {needsPractice ? <Link className="btn btn-primary mt-4 min-h-11" href={`/practice/${practiceLevel}/${nextSkill.skill}`}>Practise {nextSkill.skill} now</Link> : null}
+          {needsPractice ? <Link className="btn btn-primary mt-4 min-h-11" href={`/practice/${practiceLevel}/${nextSkill.skill}`} onClick={() => trackEvent("skills_check_learning_click", { level: advanced ? "7-9" : String(practiceLevel), skill: nextSkill.skill, source: attemptSource.current })}>Practise {nextSkill.skill} now</Link> : null}
         </div>
         <div className="mt-6 flex flex-col gap-3 sm:flex-row">
           <a className="btn btn-primary min-h-11 text-center" href="#mock-question-review" onClick={() => setReviewFilter(primaryReview.filter)}>{primaryReview.label}</a>
