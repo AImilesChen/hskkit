@@ -3,7 +3,7 @@ import { shouldBlockCrawler } from "./lib/traffic/bot-guard";
 
 const consolidatedRoutes: Record<string, string> = {
   "/hsk-levels": "/levels",
-  "/hsk-level-test": "/placement",
+  "/hsk-level-test": "/hsk-placement-test",
   "/new-hsk-3-0": "/hsk-3-0",
 };
 

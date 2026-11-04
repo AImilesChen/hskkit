@@ -35,10 +35,11 @@ export const siteNavigation: NavigationEntry[] = [
   {
     label: "Tests",
     items: [
-      { href: "/hsk-3-0", label: "HSK 3.0 Exam Guide", description: "Check exam dates, the official syllabus and word counts by level." },
-      { href: "/placement", label: "Placement", description: "Find a suggested starting point, not an official score." },
+      { href: "/hsk-test-prep", label: "Test Center", description: "Compare free placement and level-specific skills checks." },
+      { href: "/hsk-placement-test", label: "HSK Placement Test", description: "Find a practical starting level across four skill areas.", match: "/placement" },
       { href: "/mock/basic", label: "Basic Skills Check", description: "Choose HSK 1-6 for a short, level-specific diagnostic." },
       { href: "/mock/advanced", label: "Advanced Skills Check", description: "Sample reading, listening and grammar in the unified HSK 7-9 band." },
+      { href: "/hsk-3-0", label: "HSK 3.0 Exam Guide", description: "Check exam dates, the official syllabus and word counts by level." },
     ],
   },
   { href: "/dictionary", label: "Dictionary", description: "Search the published HSK 3.0 catalog." },
@@ -57,8 +58,7 @@ export function flattenNavigation(): NavigationItem[] {
 }
 
 export function isNavigationItemActive(pathname: string, item: NavigationItem): boolean {
-  const match = item.match ?? item.href;
-  return pathname === match || pathname.startsWith(`${match}/`);
+  return [item.href, item.match].some(match => Boolean(match) && (pathname === match || pathname.startsWith(`${match}/`)));
 }
 
 export function isNavigationEntryActive(pathname: string, entry: NavigationEntry): boolean {

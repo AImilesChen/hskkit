@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { loadPlacementSession, placementPublicError, placementRetakeLocked } from "./client-recovery";
+import { trackEvent } from "@/lib/analytics";
 
 type Question = {
   id: string;
@@ -173,6 +174,7 @@ export default function PlacementClient() {
     setAnswerError(undefined);
     try {
       const data = await placementRequest("/api/v1/placement/sessions", { idempotencyKey: key("placement-start") });
+      if (data.session?.id) trackEvent("placement_test_start", { source: "placement_runner" });
       setSession(data.session ?? null);
       setExpired(false);
       setPlacementStatus("active");
@@ -227,6 +229,7 @@ export default function PlacementClient() {
         idempotencyKey: `placement-submit:${session.id}`,
       });
       if (!data.result?.id) throw new Error("PLACEMENT_RESULT_NOT_FOUND");
+      trackEvent("placement_test_complete");
       router.push(`/placement/result/${encodeURIComponent(data.result.id)}`);
     } catch (reason) {
       const code = reason instanceof Error ? reason.message : "PLACEMENT_SUBMIT_FAILED";
