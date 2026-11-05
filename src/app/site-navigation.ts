@@ -3,33 +3,66 @@ export type NavigationItem = {
   label: string;
   description: string;
   match?: string;
+  highlightGroup?: boolean;
+};
+
+export type NavigationSection = { title: string; items: NavigationItem[] };
+export type NavigationGroup = {
+  label: string;
+  items: NavigationItem[];
+  sections?: NavigationSection[];
+  quickLinks?: NavigationItem[];
 };
 
 export type NavigationEntry =
-  | { label: string; items: NavigationItem[] }
+  | NavigationGroup
   | NavigationItem;
+
+export const learnNavigationSections: NavigationSection[] = [
+  { title: "HSK & Guides", items: [
+    { href: "/levels", label: "HSK Levels", description: "Explore the current HSK learning path." },
+    { href: "/vocabulary/1", label: "Vocabulary", description: "Browse words by HSK level.", match: "/vocabulary" },
+    { href: "/hsk-3-0", label: "HSK 3.0 Guide", description: "Understand the current exam syllabus.", highlightGroup: false },
+    { href: "/blog/hsk-3-0-levels-explained", label: "HSK Levels Explained", description: "Find your way through Levels 1–9." },
+  ] },
+  { title: "Language Skills", items: [
+    { href: "/grammar", label: "Grammar", description: "Learn grammar patterns." },
+    { href: "/reading", label: "Reading", description: "Read levelled passages." },
+    { href: "/listen", label: "Listening", description: "Practise listening by level." },
+    { href: "/blog/chinese-pinyin-guide", label: "Pinyin Guide", description: "Understand Mandarin pronunciation." },
+    { href: "/blog/chinese-tones-guide", label: "Chinese Tones Guide", description: "Learn how Mandarin tones work." },
+  ] },
+  { title: "Learning Tools", items: [
+    { href: "/vocabulary/1?mode=flashcards#vocabulary-activities", label: "Flashcards", description: "Practise recalling a short word set." },
+    { href: "/tools/chinese-tone-trainer", label: "Tone Trainer", description: "Listen and identify Mandarin tones." },
+    { href: "/tools/chinese-character-practice-sheet-generator", label: "Character Worksheets", description: "Create printable handwriting sheets." },
+  ] },
+  { title: "Topics", items: [
+    { href: "/topics", label: "Browse All Topics", description: "Explore real-life learning situations." },
+    { href: "/topics/daily-life", label: "Daily Life", description: "Learn words for daily routines." },
+    { href: "/topics/food-drink", label: "Food & Drink", description: "Learn words for food and meals." },
+    { href: "/topics/travel-transport", label: "Travel & Transport", description: "Learn words for getting around." },
+    { href: "/chinese-for-travel", label: "Chinese for Travel", description: "Find useful phrases for your trip." },
+  ] },
+];
+
+export const learnQuickLinks: NavigationItem[] = [
+  { href: "/today", label: "Today", description: "Continue today's learning." },
+  { href: "/planner", label: "Study Planner", description: "Plan your learning schedule." },
+];
 
 export const siteNavigation: NavigationEntry[] = [
   {
     label: "Learn",
-    items: [
-      { href: "/today", label: "Today", description: "Open due reviews and the next learning task." },
-      { href: "/planner", label: "Planner", description: "Build a feasible plan from your goal and progress." },
-      { href: "/levels", label: "Levels", description: "Browse the HSK 3.0 Levels 1-9 learning path." },
-      { href: "/vocabulary/1", label: "Vocabulary", description: "Browse the published catalog by level.", match: "/vocabulary" },
-      { href: "/vocabulary/1?mode=flashcards#vocabulary-activities", label: "Flashcards", description: "Review a short HSK word set and repeat the words you missed." },
-      { href: "/topics", label: "Topics", description: "Learn published HSK 3.0 vocabulary through practical themes." },
-      { href: "/grammar", label: "Grammar", description: "Study published grammar patterns and exercises." },
-      { href: "/reading", label: "Reading", description: "Open levelled reading passages and exercises." },
-      { href: "/listen", label: "Listening library", description: "Build listening momentum with level sessions and continuous topic audio." },
-      { href: "/tools/chinese-tone-trainer", label: "Tone trainer", description: "Hear Mandarin tones, check your answers and practise confusing pairs." },
-    ],
+    sections: learnNavigationSections,
+    quickLinks: learnQuickLinks,
+    items: [...learnNavigationSections.flatMap(section => section.items), ...learnQuickLinks],
   },
   {
     label: "Practice",
     items: [
-      { href: "/practice", label: "Practice", description: "Choose a level and skill, then save the attempt." },
-      { href: "/review", label: "Review", description: "Review due SRS cards from your learning record." },
+      { href: "/practice", label: "Skill Practice", description: "Choose a level and skill." },
+      { href: "/review", label: "Spaced Review", description: "Review cards that are due." },
       { href: "/mistakes", label: "Mistakes", description: "Revisit saved mistakes and send them to review." },
     ],
   },
@@ -48,12 +81,14 @@ export const siteNavigation: NavigationEntry[] = [
   { href: "/account", label: "Sign in", description: "Sign in with Google or manage your synced account and private exports." },
 ];
 
-export function isNavigationGroup(entry: NavigationEntry): entry is { label: string; items: NavigationItem[] } {
+export function isNavigationGroup(entry: NavigationEntry): entry is NavigationGroup {
   return "items" in entry;
 }
 
 export function flattenNavigation(): NavigationItem[] {
-  return siteNavigation.flatMap((entry) => isNavigationGroup(entry) ? entry.items : [entry]);
+  const seen = new Set<string>();
+  return siteNavigation.flatMap((entry) => isNavigationGroup(entry) ? entry.items : [entry])
+    .filter(item => { if (seen.has(item.href)) return false; seen.add(item.href); return true; });
 }
 
 export function isNavigationItemActive(pathname: string, item: NavigationItem): boolean {
@@ -62,6 +97,6 @@ export function isNavigationItemActive(pathname: string, item: NavigationItem): 
 
 export function isNavigationEntryActive(pathname: string, entry: NavigationEntry): boolean {
   return isNavigationGroup(entry)
-    ? entry.items.some((item) => isNavigationItemActive(pathname, item))
-    : isNavigationItemActive(pathname, entry);
+    ? entry.items.some((item) => item.highlightGroup !== false && isNavigationItemActive(pathname, item))
+    : isNavigationItemActive(pathname, entry) && !siteNavigation.some(group => isNavigationGroup(group) && group.items.some(item => item.highlightGroup !== false && isNavigationItemActive(pathname, item)));
 }
