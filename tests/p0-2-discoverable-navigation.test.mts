@@ -10,11 +10,11 @@ const pricing = read("../src/app/pricing/page.tsx");
 test("P0-2 exposes one frozen information architecture on desktop and mobile", async () => {
   const { siteNavigation, flattenNavigation } = await import("../src/app/site-navigation.ts");
   assert.deepEqual(siteNavigation.map((entry) => entry.label), ["Learn", "Practice", "Tests", "Dictionary", "Blog", "Pricing", "Store", "Sign in"]);
-  assert.deepEqual(siteNavigation[0].items?.map((item) => item.label), ["Today", "Planner", "Levels", "Vocabulary", "Flashcards", "Topics", "Grammar", "Reading", "Listening library"]);
+  assert.deepEqual(siteNavigation[0].items?.map((item) => item.label), ["Today", "Planner", "Levels", "Vocabulary", "Flashcards", "Topics", "Grammar", "Reading", "Listening library", "Tone trainer"]);
   assert.deepEqual(siteNavigation[1].items?.map((item) => item.label), ["Practice", "Review", "Mistakes"]);
   assert.deepEqual(siteNavigation[2].items?.map((item) => item.label), ["HSK Practice Tests", "Find My HSK Level", "HSK 3.0 Exam Guide"]);
   assert.deepEqual(flattenNavigation().map((item) => item.href), [
-    "/today", "/planner", "/levels", "/vocabulary/1", "/vocabulary/1?mode=flashcards#vocabulary-activities", "/topics", "/grammar", "/reading", "/listen",
+    "/today", "/planner", "/levels", "/vocabulary/1", "/vocabulary/1?mode=flashcards#vocabulary-activities", "/topics", "/grammar", "/reading", "/listen", "/tools/chinese-tone-trainer",
     "/practice", "/review", "/mistakes", "/hsk-test-prep", "/hsk-placement-test", "/hsk-3-0",
     "/dictionary", "/blog", "/pricing", "/store", "/account",
   ]);

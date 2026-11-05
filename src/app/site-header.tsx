@@ -120,7 +120,7 @@ export default function SiteHeader() {
                 {entry.label}<span aria-hidden="true" className="text-xs">▾</span>
               </button>
               {desktopGroup === entry.label && (
-                <div id={`desktop-${entry.label.toLowerCase()}-menu`} className="absolute left-1/2 top-full w-[340px] -translate-x-1/2 rounded-xl border border-slate-200 bg-white p-2 shadow-xl">
+                <div id={`desktop-${entry.label.toLowerCase()}-menu`} className="absolute left-1/2 top-full max-h-[calc(100dvh-96px)] overflow-y-auto w-[340px] -translate-x-1/2 rounded-xl border border-slate-200 bg-white p-2 shadow-xl">
                   {entry.items.map((item) => (
                     <Link prefetch={false} key={item.href} href={item.href} aria-current={isNavigationItemActive(pathname, item) ? "page" : undefined} className="block min-h-14 rounded-lg px-4 py-3 hover:bg-blue-50 aria-[current=page]:bg-blue-50" onClick={closeNavigation}>
                       <span className="block font-semibold text-slate-900">{item.label}</span>

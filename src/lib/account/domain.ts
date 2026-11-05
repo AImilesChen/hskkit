@@ -1,4 +1,5 @@
 import type { DailySession, LearningState } from "../learning/domain";
+import { mergeToneHistory } from "../tones/domain.ts";
 
 export type MergeStrategy = "account_wins_conflicts";
 export type DataRequestType = "export" | "delete";
@@ -82,6 +83,7 @@ export function mergeLearningStates(account: LearningState, guest: LearningState
       dailyOperationKeys: mergeStrings(account.dailyOperationKeys, guest.dailyOperationKeys),
       savedWordIds: mergeStrings(account.savedWordIds, guest.savedWordIds),
       recentDictionarySearches: mergeRecentSearches(account.recentDictionarySearches, guest.recentDictionarySearches),
+      ...((account.toneTrainingSessions?.length || guest.toneTrainingSessions?.length) ? { toneTrainingSessions: mergeToneHistory(account.toneTrainingSessions ?? [], guest.toneTrainingSessions ?? []) } : {}),
     } satisfies LearningState,
     conflicts: attempts.conflicts + cards.conflicts + mistakes.conflicts + sessions.conflicts + placementSessions.conflicts + placementResults.conflicts + practiceSessions.conflicts + questionReports.conflicts,
   };

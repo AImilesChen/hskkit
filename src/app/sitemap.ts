@@ -20,6 +20,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
   const existingPublicRoutes = [
     "",
     "/tools/chinese-character-practice-sheet-generator",
+    "/tools/chinese-tone-trainer",
     "/contact",
     "/hsk-3-0",
     "/chinese-for-travel",
