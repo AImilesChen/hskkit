@@ -22,6 +22,7 @@ export default function ChineseForTravelPage() {
       <div className="travel-benefits"><span>50 useful words &amp; phrases</span><span>Free · No account needed</span><span>Mandarin · Simplified Chinese</span></div>
     </header>
     <TravelPhrasebook entries={getTravelCards()} />
+    <aside className="rounded-xl border border-orange-200 bg-orange-50 p-5 text-sm text-orange-950"><strong>Catch the price. Confirm the time.</strong><p className="mt-2">Read and hear amounts, dates and times, then try a short listening round.</p><Link className="mt-2 inline-flex min-h-11 items-center font-semibold underline underline-offset-4" href="/tools/chinese-number-converter?mode=prices">Explore Chinese numbers &amp; listening →</Link></aside>
     <section className="travel-guide" aria-labelledby="travel-tips"><div><p className="travel-kicker">Before you go</p><h2 id="travel-tips">A few things worth knowing</h2></div><div>
       <details open><summary>Do I need to read Chinese?</summary><p>No. Each entry includes pinyin and an English meaning. Use “Show Chinese” to display an entry in large text for someone to read. Keep your destination’s Chinese address with you too.</p></details>
       <details><summary>How do I pronounce these phrases?</summary><p>The marks above pinyin vowels indicate tones. Word audio uses published synthesized pronunciation where available. Phrase audio is not included; an individual word recording is never used as a recording of a whole sentence. <Link href="/dictionary">Look up word pronunciation</Link>.</p></details>

@@ -6,8 +6,6 @@ import type { PublicAudioAsset } from "@/lib/audio/assets";
 export type AudioPlaybackState = "loading" | "ready" | "playing" | "paused" | "error" | "unavailable";
 export type PlayableAudioAsset = Pick<PublicAudioAsset, "id" | "src" | "sourceLabel" | "durationSeconds">;
 
-type VerificationState = "idle" | "verifying" | "verified";
-
 function AudioIcon({ state }: { state: AudioPlaybackState }) {
   if (state === "playing") {
     return <svg viewBox="0 0 24 24" className="size-5" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true"><path d="M9 6v12M15 6v12" /></svg>;
@@ -39,6 +37,7 @@ export function AudioPlaybackControl({
   variant = "default",
   label,
   showProgress = false,
+  playbackRate = 1,
   verificationState = "idle",
 }: {
   asset?: PlayableAudioAsset;
@@ -50,6 +49,7 @@ export function AudioPlaybackControl({
   variant?: "default" | "icon";
   label?: string;
   showProgress?: boolean;
+  playbackRate?: number;
   verificationState?: "idle" | "verifying" | "verified";
 }) {
   const audioRef = useRef<HTMLAudioElement>(null);
@@ -57,19 +57,36 @@ export function AudioPlaybackControl({
   const [state, setState] = useState<AudioPlaybackState>(asset ? "loading" : "unavailable");
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(asset?.durationSeconds ?? 0);
+  const assetId = asset?.id;
+  const assetSrc = asset?.src;
+  const assetDuration = asset?.durationSeconds;
 
   useEffect(() => {
     const audio = audioRef.current;
-    setState(asset ? "loading" : "unavailable");
+    if (!audio) return;
+    const rate = Math.min(1.5, Math.max(0.5, playbackRate));
+    // load() restores playbackRate from defaultPlaybackRate on a new source.
+    audio.defaultPlaybackRate = rate;
+    audio.playbackRate = rate;
+  }, [playbackRate, asset?.id]);
+
+  useEffect(() => {
+    const audio = audioRef.current;
+    return () => { audio?.pause(); };
+  }, [asset?.id]);
+
+  useEffect(() => {
+    const audio = audioRef.current;
+    setState(assetSrc ? "loading" : "unavailable");
     setCurrentTime(0);
-    setDuration(asset?.durationSeconds ?? 0);
-    if (!audio || !asset) return;
+    setDuration(assetDuration ?? 0);
+    if (!audio || !assetSrc) return;
     audio.load();
     if (audio.readyState >= HTMLMediaElement.HAVE_METADATA) {
-      setDuration(Number.isFinite(audio.duration) ? audio.duration : asset.durationSeconds ?? 0);
+      setDuration(Number.isFinite(audio.duration) ? audio.duration : assetDuration ?? 0);
       setState("ready");
     }
-  }, [asset?.durationSeconds, asset?.id, asset?.src]);
+  }, [assetDuration, assetId, assetSrc]);
 
   useEffect(() => {
     onStateChange?.(state);
