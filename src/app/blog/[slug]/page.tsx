@@ -6,6 +6,7 @@ import { StudyPage } from "@/app/components/study-shell";
 import { estimateReadingMinutes, extractBlogFaqs, extractBlogHeadings, markdownToSafeHtml } from "@/lib/blog/domain";
 import { blogLearningActions, recommendedBlogLearningAction } from "@/lib/blog/learning-actions";
 import { blogMediaUrl, getPublishedBlogPostBySlug, listRelatedBlogPosts } from "@/lib/blog/repository";
+import { guideNextSteps } from "@/lib/guides/catalog";
 import BlogActionLink from "../blog-action-link";
 
 export const dynamic = "force-dynamic";
@@ -38,6 +39,8 @@ export default async function BlogArticlePage({ params }: { params: Promise<{ sl
   const related = await listRelatedBlogPosts(post);
   const actions = blogLearningActions(post.hskLevel);
   const recommended = recommendedBlogLearningAction(post.hskLevel);
+  const guideStep = guideNextSteps[post.slug];
+  const nextGuides = guideStep ? (await Promise.all(guideStep.related.map(slug => getPublishedBlogPostBySlug(slug)))).filter(Boolean) : [];
   const levelName = post.hskLevel ? `HSK ${post.hskLevel >= 7 ? "7–9" : post.hskLevel}` : "All HSK levels";
   const articleUrl = absolute(`/blog/${post.slug}`);
   const blogPosting = {
@@ -66,15 +69,14 @@ export default async function BlogArticlePage({ params }: { params: Promise<{ sl
         <div className="blog-article-grid">
           <aside className="blog-toc"><div><p>On this page</p><ol>{headings.map((heading) => <li className={heading.level === 3 ? "nested" : ""} key={heading.id}><a href={`#${heading.id}`}>{heading.text}</a></li>)}</ol></div></aside>
           <div className="blog-reading-column">
-            {["chinese-tones-guide", "chinese-pinyin-guide"].includes(post.slug) && <aside className="blog-inline-actions"><p>Put the sounds into practice.</p><Link className="inline-flex min-h-11 items-center font-semibold text-violet-700" href="/tools/chinese-tone-trainer">Try the free Chinese tone trainer →</Link></aside>}
-            <section className="blog-inline-actions" aria-labelledby="article-actions-heading"><div><p className="blog-eyebrow">Turn the guide into practice</p><h2 id="article-actions-heading">Use this article with your learning tools</h2></div><div className="blog-inline-action-grid">{actions.slice(0, 3).map((action) => <BlogActionLink key={action.id} action={action} articleSlug={post.slug} hskLevel={post.hskLevel} compact />)}</div></section>
+            {!guideStep && <section className="blog-inline-actions" aria-labelledby="article-actions-heading"><div><p className="blog-eyebrow">Turn the guide into practice</p><h2 id="article-actions-heading">Use this article with your learning tools</h2></div><div className="blog-inline-action-grid">{actions.slice(0, 3).map((action) => <BlogActionLink key={action.id} action={action} articleSlug={post.slug} hskLevel={post.hskLevel} compact />)}</div></section>}
             <div className="blog-prose" dangerouslySetInnerHTML={{ __html: bodyHtml }} />
 
             {faqs.length > 0 && <section className="blog-faq" aria-labelledby="faq-heading"><p className="blog-eyebrow">Quick answers</p><h2 id="faq-heading">Frequently asked questions</h2>{faqs.map((faq) => <details key={faq.question}><summary>{faq.question}</summary><p>{faq.answer}</p></details>)}</section>}
 
-            <section className="blog-next-step" aria-labelledby="next-step-heading"><div><p className="blog-eyebrow">Recommended next step</p><h2 id="next-step-heading">Continue while this idea is fresh</h2><p>{recommended.description}</p></div><BlogActionLink action={recommended} articleSlug={post.slug} hskLevel={post.hskLevel} /></section>
+            {guideStep ? <section className="blog-next-step" aria-labelledby="next-step-heading"><div><p className="blog-eyebrow">Your next step</p><h2 id="next-step-heading">{guideStep.title}</h2><p>{guideStep.description}</p><p>{nextGuides.map(guide => guide && <Link key={guide.slug} href={`/blog/${guide.slug}`}>Continue reading: {guide.title} →</Link>)}</p><Link href="/learn">Explore all learning guides →</Link></div><Link className="inline-flex min-h-11 items-center font-semibold text-blue-700" href={guideStep.href}>{guideStep.label} →</Link></section> : <section className="blog-next-step" aria-labelledby="next-step-heading"><div><p className="blog-eyebrow">Recommended next step</p><h2 id="next-step-heading">Continue while this idea is fresh</h2><p>{recommended.description}</p></div><BlogActionLink action={recommended} articleSlug={post.slug} hskLevel={post.hskLevel} /></section>}
 
-            <section className="blog-more-actions" aria-labelledby="more-actions-heading"><h2 id="more-actions-heading">More ways to apply this guide</h2><div>{actions.filter((action) => action.id !== recommended.id).map((action) => <BlogActionLink key={action.id} action={action} articleSlug={post.slug} hskLevel={post.hskLevel} />)}</div></section>
+            {!guideStep && <section className="blog-more-actions" aria-labelledby="more-actions-heading"><h2 id="more-actions-heading">More ways to apply this guide</h2><div>{actions.filter((action) => action.id !== recommended.id).map((action) => <BlogActionLink key={action.id} action={action} articleSlug={post.slug} hskLevel={post.hskLevel} />)}</div></section>}
           </div>
         </div>
       </article>

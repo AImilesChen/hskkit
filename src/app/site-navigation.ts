@@ -20,6 +20,7 @@ export type NavigationEntry =
 
 export const learnNavigationSections: NavigationSection[] = [
   { title: "HSK & Guides", items: [
+    { href: "/learn", label: "Learning Guides", description: "Find a clear next step in learning Chinese." },
     { href: "/levels", label: "HSK Levels", description: "Explore the current HSK learning path." },
     { href: "/vocabulary/1", label: "Vocabulary", description: "Browse words by HSK level.", match: "/vocabulary" },
     { href: "/hsk-3-0", label: "HSK 3.0 Guide", description: "Understand the current exam syllabus.", highlightGroup: false },

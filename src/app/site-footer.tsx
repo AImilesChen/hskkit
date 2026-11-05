@@ -134,6 +134,7 @@ const footerGroups = [
   {
     "title": "Guides",
     "links": [
+      { "href": "/learn", "label": "Learning Guides" },
       {
         "href": "/hsk-3-0",
         "label": "HSK 3.0 Exam Guide"
