@@ -178,6 +178,7 @@ export interface QuestionReport {
   createdAt: string;
 }
 export interface LearningState {
+  toneTrainingSessions?: import('../tones/domain.ts').ToneSession[];
   attempts: Attempt[];
   cards: SrsCard[];
   mistakes: Mistake[];

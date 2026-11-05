@@ -22,6 +22,7 @@ export const siteNavigation: NavigationEntry[] = [
       { href: "/grammar", label: "Grammar", description: "Study published grammar patterns and exercises." },
       { href: "/reading", label: "Reading", description: "Open levelled reading passages and exercises." },
       { href: "/listen", label: "Listening library", description: "Build listening momentum with level sessions and continuous topic audio." },
+      { href: "/tools/chinese-tone-trainer", label: "Tone trainer", description: "Hear Mandarin tones, check your answers and practise confusing pairs." },
     ],
   },
   {

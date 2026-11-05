@@ -66,6 +66,7 @@ export default async function BlogArticlePage({ params }: { params: Promise<{ sl
         <div className="blog-article-grid">
           <aside className="blog-toc"><div><p>On this page</p><ol>{headings.map((heading) => <li className={heading.level === 3 ? "nested" : ""} key={heading.id}><a href={`#${heading.id}`}>{heading.text}</a></li>)}</ol></div></aside>
           <div className="blog-reading-column">
+            {["chinese-tones-guide", "chinese-pinyin-guide"].includes(post.slug) && <aside className="blog-inline-actions"><p>Put the sounds into practice.</p><Link className="inline-flex min-h-11 items-center font-semibold text-violet-700" href="/tools/chinese-tone-trainer">Try the free Chinese tone trainer →</Link></aside>}
             <section className="blog-inline-actions" aria-labelledby="article-actions-heading"><div><p className="blog-eyebrow">Turn the guide into practice</p><h2 id="article-actions-heading">Use this article with your learning tools</h2></div><div className="blog-inline-action-grid">{actions.slice(0, 3).map((action) => <BlogActionLink key={action.id} action={action} articleSlug={post.slug} hskLevel={post.hskLevel} compact />)}</div></section>
             <div className="blog-prose" dangerouslySetInnerHTML={{ __html: bodyHtml }} />
 
