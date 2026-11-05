@@ -92,6 +92,7 @@ const footerGroups = [
   {
     "title": "Learning Tools",
     "links": [
+      { "href": "/tools/chinese-stroke-order", "label": "Stroke Order & Writing" },
       {
         "href": "/vocabulary/1?mode=flashcards#vocabulary-activities",
         "label": "Flashcards"

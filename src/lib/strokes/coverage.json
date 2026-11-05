@@ -1,0 +1,29 @@
+{
+  "catalogCount": 3088,
+  "supportedCount": 3084,
+  "missing": [],
+  "strokeCountMismatch": [
+    {
+      "character": "范",
+      "catalog": 9,
+      "source": 8
+    },
+    {
+      "character": "荧",
+      "catalog": 10,
+      "source": 9
+    },
+    {
+      "character": "莹",
+      "catalog": 11,
+      "source": 10
+    },
+    {
+      "character": "骨",
+      "catalog": 10,
+      "source": 9
+    }
+  ],
+  "sourceVersion": "2.0.1",
+  "humanReview": "Not all characters reviewed; source forms may differ by region. Count mismatches withheld."
+}

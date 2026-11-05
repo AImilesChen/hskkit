@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import StrokePlayer from "@/app/components/stroke-player";
 import { AudioButton } from "../../components/audio-button";
 import { StudyPage } from "../../components/study-shell";
 import { getIndexedCharacter } from "@/lib/dictionary/character-index";
@@ -70,6 +71,8 @@ export default async function CharacterPage({ params }: Props) {
         </div>
       </div>
     </article>
+
+    <StrokePlayer character={item.hanzi} embedded/>
 
     <section className="mt-6 rounded-2xl border border-slate-200 bg-white p-5 sm:p-6" aria-labelledby="containing-words"><div className="flex flex-wrap items-end justify-between gap-3"><div><p className="text-xs font-bold uppercase tracking-[.14em] text-blue-700">Vocabulary connection</p><h2 id="containing-words" className="mt-1 text-2xl font-bold text-slate-950">Published words containing {item.hanzi}</h2></div><Link href={`/dictionary?q=${encodeURIComponent(item.hanzi)}&mode=words`} className="inline-flex min-h-11 items-center font-bold text-blue-700 hover:underline">See all results →</Link></div>
       <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">{item.wordsContainingCharacter.map((word) => <Link key={word.id} href={`/word/${encodeURIComponent(word.id)}`} className="rounded-xl border border-slate-200 bg-white p-4 transition hover:border-blue-400 hover:bg-blue-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600"><span className="flex items-baseline justify-between gap-3"><strong className="text-xl text-slate-950">{word.hanzi}</strong><span className="shrink-0 text-xs font-bold text-slate-500">HSK {word.levelBand === "7-9" ? "7–9" : word.level}</span></span><span className="mt-1 block font-semibold text-blue-700">{word.pinyin}</span><span className="mt-2 block line-clamp-2 text-sm leading-5 text-slate-600">{word.meaning}</span></Link>)}</div>

@@ -18,6 +18,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
   const verifiedTopicRoutes = publishedTopicRoutesForVerifiedAssets(topicsSourceReleaseId, topicAssetIds);
   const publishedBlogRoutes = blogManifest.articles.filter((post) => Date.parse(post.publishedAt) <= Date.now());
   const existingPublicRoutes = [
+    "/tools/chinese-stroke-order",
     "/learn",
     "",
     "/tools/chinese-character-practice-sheet-generator",
