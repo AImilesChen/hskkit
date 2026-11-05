@@ -1,0 +1,39 @@
+name: Check Chinese numbers and listening
+
+on:
+  pull_request:
+    branches:
+      - fix/review-playback-current-prod-20261004
+    paths:
+      - ".github/workflows/check-chinese-numbers.yml"
+      - "src/app/tools/chinese-number-converter/**"
+      - "src/lib/numbers/**"
+      - "public/number-audio/**"
+      - "public/_headers"
+      - "src/app/components/audio-playback-control.tsx"
+      - "scripts/*number*"
+      - "tests/chinese-numbers.test.mts"
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          cache: npm
+      - name: Install locked dependencies
+        run: npm ci
+      - name: Lint feature and shared playback
+        run: npx eslint --max-warnings=0 src/app/tools/chinese-number-converter src/lib/numbers src/app/components/audio-playback-control.tsx scripts/build-number-bank.mts scripts/check-number-release-assets.mjs tests/chinese-numbers.test.mts
+      - name: Check conversion, every recording and existing playback flows
+        run: node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --test tests/chinese-numbers.test.mts tests/review-playback-binding.test.mts tests/listening-answer-flow.test.mts tests/dictionary-word-audio-layout.test.mts tests/learning-guides.test.mts tests/footer-density.test.mts
+      - name: Build and typecheck the Cloudflare artifact
+        run: npx opennextjs-cloudflare build --dangerouslyUseUnsupportedNextVersion
+      - name: Verify packaged recordings and static teaching content
+        run: node scripts/check-number-release-assets.mjs

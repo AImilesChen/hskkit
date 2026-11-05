@@ -1,0 +1,4458 @@
+{
+  "version": "number-practice-v1",
+  "voice": "Microsoft zh-CN-XiaoxiaoNeural, synthesized complete utterances",
+  "audioPolicy": "Fixed whole-utterance MP3 recordings. No runtime synthesis service or spliced word clips. Pinyin shows dictionary tones; connected-speech tone changes may be audible.",
+  "items": [
+    {
+      "id": "numbers-01",
+      "mode": "numbers",
+      "value": "0",
+      "hanzi": "零",
+      "pinyin": "líng",
+      "written": "零",
+      "parts": [
+        {
+          "label": "Remaining units",
+          "value": "0",
+          "hanzi": "零"
+        }
+      ],
+      "explanation": "Chinese groups large numbers by 万 (10,000) and 亿 (100,000,000). Internal gaps are read with 零.",
+      "audioSrc": "/number-audio/v1/numbers-01-36d6814a1939.mp3",
+      "audioSha256": "36d6814a1939b9c70086c90aac20902b3f4f8e99c22eafb1e3035b8e3b6a085d",
+      "durationSeconds": 1.152,
+      "audioScriptSha256": "c24aaef6e0a9ea83de87de25b78a251696accc09283bfceaaf34edd16dbad6a1"
+    },
+    {
+      "id": "numbers-02",
+      "mode": "numbers",
+      "value": "1",
+      "hanzi": "一",
+      "pinyin": "yī",
+      "written": "壹",
+      "parts": [
+        {
+          "label": "Remaining units",
+          "value": "1",
+          "hanzi": "一"
+        }
+      ],
+      "explanation": "Chinese groups large numbers by 万 (10,000) and 亿 (100,000,000). Internal gaps are read with 零.",
+      "audioSrc": "/number-audio/v1/numbers-02-d43bf4218be0.mp3",
+      "audioSha256": "d43bf4218be02b84cdef3eb32315e488be7b54b0289a04ec0b8c1320c6017472",
+      "durationSeconds": 1.152,
+      "audioScriptSha256": "de1316655cb2e5355bb3e167b8fbbf8ba64e6e6cc6bebf33b333685ebf3e1ddf"
+    },
+    {
+      "id": "numbers-03",
+      "mode": "numbers",
+      "value": "2",
+      "hanzi": "二",
+      "pinyin": "èr",
+      "written": "贰",
+      "parts": [
+        {
+          "label": "Remaining units",
+          "value": "2",
+          "hanzi": "二"
+        }
+      ],
+      "explanation": "Chinese groups large numbers by 万 (10,000) and 亿 (100,000,000). Internal gaps are read with 零.",
+      "audioSrc": "/number-audio/v1/numbers-03-084e2d689c66.mp3",
+      "audioSha256": "084e2d689c66c1a2b4fa27cb0afac1319d6061deadea4146b9605b38633df0d0",
+      "durationSeconds": 1.2,
+      "audioScriptSha256": "9dcdeb52fd08b4809f5ebc5bbaf01b3e8dd616074f53b601792648a9ad4442bd"
+    },
+    {
+      "id": "numbers-04",
+      "mode": "numbers",
+      "value": "4",
+      "hanzi": "四",
+      "pinyin": "sì",
+      "written": "肆",
+      "parts": [
+        {
+          "label": "Remaining units",
+          "value": "4",
+          "hanzi": "四"
+        }
+      ],
+      "explanation": "Chinese groups large numbers by 万 (10,000) and 亿 (100,000,000). Internal gaps are read with 零.",
+      "audioSrc": "/number-audio/v1/numbers-04-13ebe704b31c.mp3",
+      "audioSha256": "13ebe704b31ca49563336bfaad4208b4017a99747016ea393a4bdd0baa3f03fe",
+      "durationSeconds": 1.248,
+      "audioScriptSha256": "775081fc179df4c1524dfb519a3c25f487e10acac70a2775abf0ae5ef3c989a4"
+    },
+    {
+      "id": "numbers-05",
+      "mode": "numbers",
+      "value": "7",
+      "hanzi": "七",
+      "pinyin": "qī",
+      "written": "柒",
+      "parts": [
+        {
+          "label": "Remaining units",
+          "value": "7",
+          "hanzi": "七"
+        }
+      ],
+      "explanation": "Chinese groups large numbers by 万 (10,000) and 亿 (100,000,000). Internal gaps are read with 零.",
+      "audioSrc": "/number-audio/v1/numbers-05-b937d3596e3c.mp3",
+      "audioSha256": "b937d3596e3cc7d541d9acdb37f12f4133da2be924383bf79240351c10427024",
+      "durationSeconds": 1.224,
+      "audioScriptSha256": "3881ab6da81efb65a4df28f3f7b129376ff6db31f583fc93c58fbaadb28f4e05"
+    },
+    {
+      "id": "numbers-06",
+      "mode": "numbers",
+      "value": "10",
+      "hanzi": "十",
+      "pinyin": "shí",
+      "written": "拾",
+      "parts": [
+        {
+          "label": "Remaining units",
+          "value": "10",
+          "hanzi": "十"
+        }
+      ],
+      "explanation": "Chinese groups large numbers by 万 (10,000) and 亿 (100,000,000). Internal gaps are read with 零.",
+      "audioSrc": "/number-audio/v1/numbers-06-a91adb0a9acc.mp3",
+      "audioSha256": "a91adb0a9acc78705310b2f1c296c0a690092cfbf84d055b9b1f43057c661a0d",
+      "durationSeconds": 1.272,
+      "audioScriptSha256": "e880f585e8d05a09c3adebc82962d67ced8e8a0bebee66a38bb7513857cdadda"
+    },
+    {
+      "id": "numbers-07",
+      "mode": "numbers",
+      "value": "11",
+      "hanzi": "十一",
+      "pinyin": "shí yī",
+      "written": "拾壹",
+      "parts": [
+        {
+          "label": "Remaining units",
+          "value": "11",
+          "hanzi": "十一"
+        }
+      ],
+      "explanation": "Chinese groups large numbers by 万 (10,000) and 亿 (100,000,000). Internal gaps are read with 零.",
+      "audioSrc": "/number-audio/v1/numbers-07-b97b082dad37.mp3",
+      "audioSha256": "b97b082dad37b978c700d36a05a3a079685d197b0d1f920a0f4af53e77a8585d",
+      "durationSeconds": 1.44,
+      "audioScriptSha256": "812bbb818d8dc315488971d94810a104367eb461bb9238318792455b622b78de"
+    },
+    {
+      "id": "numbers-08",
+      "mode": "numbers",
+      "value": "12",
+      "hanzi": "十二",
+      "pinyin": "shí èr",
+      "written": "拾贰",
+      "parts": [
+        {
+          "label": "Remaining units",
+          "value": "12",
+          "hanzi": "十二"
+        }
+      ],
+      "explanation": "Chinese groups large numbers by 万 (10,000) and 亿 (100,000,000). Internal gaps are read with 零.",
+      "audioSrc": "/number-audio/v1/numbers-08-5916af1b679b.mp3",
+      "audioSha256": "5916af1b679baeefcefa1d2b7fae6bcf15ab852dc808bade1cbd1044616faf8f",
+      "durationSeconds": 1.416,
+      "audioScriptSha256": "5437055231b5526de767d032b1f30597487d72bb06ccf891ff86cc1ec93ecccf"
+    },
+    {
+      "id": "numbers-09",
+      "mode": "numbers",
+      "value": "14",
+      "hanzi": "十四",
+      "pinyin": "shí sì",
+      "written": "拾肆",
+      "parts": [
+        {
+          "label": "Remaining units",
+          "value": "14",
+          "hanzi": "十四"
+        }
+      ],
+      "explanation": "Chinese groups large numbers by 万 (10,000) and 亿 (100,000,000). Internal gaps are read with 零.",
+      "audioSrc": "/number-audio/v1/numbers-09-18839013fc51.mp3",
+      "audioSha256": "18839013fc51e1c576f78ce80cd7d60e73cdfa2a121e155be0d19876f5fbc935",
+      "durationSeconds": 1.488,
+      "audioScriptSha256": "1bd3f2fb3e374db6fd37042cc55496f4807e2ff3e67e3ac1162ae66fb47e772b"
+    },
+    {
+      "id": "numbers-10",
+      "mode": "numbers",
+      "value": "17",
+      "hanzi": "十七",
+      "pinyin": "shí qī",
+      "written": "拾柒",
+      "parts": [
+        {
+          "label": "Remaining units",
+          "value": "17",
+          "hanzi": "十七"
+        }
+      ],
+      "explanation": "Chinese groups large numbers by 万 (10,000) and 亿 (100,000,000). Internal gaps are read with 零.",
+      "audioSrc": "/number-audio/v1/numbers-10-4e9179e00615.mp3",
+      "audioSha256": "4e9179e006154a7f221f90cfbfe6e9f07226ac048187aa5587815a35bf8b4faa",
+      "durationSeconds": 1.488,
+      "audioScriptSha256": "15498f7fbc8e52b80661ff16b2fc5f5950f6c47aef4bf293f381f329e0866599"
+    },
+    {
+      "id": "numbers-11",
+      "mode": "numbers",
+      "value": "20",
+      "hanzi": "二十",
+      "pinyin": "èr shí",
+      "written": "贰拾",
+      "parts": [
+        {
+          "label": "Remaining units",
+          "value": "20",
+          "hanzi": "二十"
+        }
+      ],
+      "explanation": "Chinese groups large numbers by 万 (10,000) and 亿 (100,000,000). Internal gaps are read with 零.",
+      "audioSrc": "/number-audio/v1/numbers-11-35e9cc5fdf4f.mp3",
+      "audioSha256": "35e9cc5fdf4fb0c81eaaee16ad1891f4b81f80a0553ffb9a085f77525fe9bf80",
+      "durationSeconds": 1.44,
+      "audioScriptSha256": "a69c8624b51f30109c7ceaae1ae809458bab2049242f89066c766a71a4227ceb"
+    },
+    {
+      "id": "numbers-12",
+      "mode": "numbers",
+      "value": "21",
+      "hanzi": "二十一",
+      "pinyin": "èr shí yī",
+      "written": "贰拾壹",
+      "parts": [
+        {
+          "label": "Remaining units",
+          "value": "21",
+          "hanzi": "二十一"
+        }
+      ],
+      "explanation": "Chinese groups large numbers by 万 (10,000) and 亿 (100,000,000). Internal gaps are read with 零.",
+      "audioSrc": "/number-audio/v1/numbers-12-7c5937d10448.mp3",
+      "audioSha256": "7c5937d104486aa6ca0b020b899d543b398d2437d95a1f5fb078f59f585453c6",
+      "durationSeconds": 1.512,
+      "audioScriptSha256": "f004d89847865685153da33eab311f60fadb00e3295a4021ae667f9c471cfc11"
+    },
+    {
+      "id": "numbers-13",
+      "mode": "numbers",
+      "value": "28",
+      "hanzi": "二十八",
+      "pinyin": "èr shí bā",
+      "written": "贰拾捌",
+      "parts": [
+        {
+          "label": "Remaining units",
+          "value": "28",
+          "hanzi": "二十八"
+        }
+      ],
+      "explanation": "Chinese groups large numbers by 万 (10,000) and 亿 (100,000,000). Internal gaps are read with 零.",
+      "audioSrc": "/number-audio/v1/numbers-13-03421185307c.mp3",
+      "audioSha256": "03421185307c9ab5c399309e57f42f5b311d3a756b487c9a7aafdba7a6b4decc",
+      "durationSeconds": 1.512,
+      "audioScriptSha256": "2e2167b88134674f42e4b94824a62837bfb4066cc9e0b0803064f836638bfcec"
+    },
+    {
+      "id": "numbers-14",
+      "mode": "numbers",
+      "value": "35",
+      "hanzi": "三十五",
+      "pinyin": "sān shí wǔ",
+      "written": "叁拾伍",
+      "parts": [
+        {
+          "label": "Remaining units",
+          "value": "35",
+          "hanzi": "三十五"
+        }
+      ],
+      "explanation": "Chinese groups large numbers by 万 (10,000) and 亿 (100,000,000). Internal gaps are read with 零.",
+      "audioSrc": "/number-audio/v1/numbers-14-b4611f7232f4.mp3",
+      "audioSha256": "b4611f7232f4eba5b5ca1744a495f94829ea53154ef090d26cf8e958ac1ebbbd",
+      "durationSeconds": 1.632,
+      "audioScriptSha256": "e46d0987f61e6f063ff7af4d6e2cc97a8343a8b633af7edf3a3488f30496c962"
+    },
+    {
+      "id": "numbers-15",
+      "mode": "numbers",
+      "value": "40",
+      "hanzi": "四十",
+      "pinyin": "sì shí",
+      "written": "肆拾",
+      "parts": [
+        {
+          "label": "Remaining units",
+          "value": "40",
+          "hanzi": "四十"
+        }
+      ],
+      "explanation": "Chinese groups large numbers by 万 (10,000) and 亿 (100,000,000). Internal gaps are read with 零.",
+      "audioSrc": "/number-audio/v1/numbers-15-e7647c5a8299.mp3",
+      "audioSha256": "e7647c5a8299e9cb2256e2da0076d76af2ff095059ed04992593caf74a28e073",
+      "durationSeconds": 1.512,
+      "audioScriptSha256": "4a7051be1931e4f4040e13110bd0553f416a7bfae4a686c179a6e3ec279286e9"
+    },
+    {
+      "id": "numbers-16",
+      "mode": "numbers",
+      "value": "50",
+      "hanzi": "五十",
+      "pinyin": "wǔ shí",
+      "written": "伍拾",
+      "parts": [
+        {
+          "label": "Remaining units",
+          "value": "50",
+          "hanzi": "五十"
+        }
+      ],
+      "explanation": "Chinese groups large numbers by 万 (10,000) and 亿 (100,000,000). Internal gaps are read with 零.",
+      "audioSrc": "/number-audio/v1/numbers-16-f7602367981a.mp3",
+      "audioSha256": "f7602367981a66126bae95d21fc850a1f8b0059333afd4ec041e69a1b9b30968",
+      "durationSeconds": 1.416,
+      "audioScriptSha256": "692903c84705ca74d12bc084bd00744c3514b4cab18b25ce6e3dd89642c2125f"
+    },
+    {
+      "id": "numbers-17",
+      "mode": "numbers",
+      "value": "70",
+      "hanzi": "七十",
+      "pinyin": "qī shí",
+      "written": "柒拾",
+      "parts": [
+        {
+          "label": "Remaining units",
+          "value": "70",
+          "hanzi": "七十"
+        }
+      ],
+      "explanation": "Chinese groups large numbers by 万 (10,000) and 亿 (100,000,000). Internal gaps are read with 零.",
+      "audioSrc": "/number-audio/v1/numbers-17-ba96d79690b0.mp3",
+      "audioSha256": "ba96d79690b0f490151a81abe3aec400c86496389e76042e663476bc9fec7eb8",
+      "durationSeconds": 1.488,
+      "audioScriptSha256": "93eaaf72e2abd13749acd20e176f90117fd654e77a99bfc76914faa68b98dc46"
+    },
+    {
+      "id": "numbers-18",
+      "mode": "numbers",
+      "value": "99",
+      "hanzi": "九十九",
+      "pinyin": "jiǔ shí jiǔ",
+      "written": "玖拾玖",
+      "parts": [
+        {
+          "label": "Remaining units",
+          "value": "99",
+          "hanzi": "九十九"
+        }
+      ],
+      "explanation": "Chinese groups large numbers by 万 (10,000) and 亿 (100,000,000). Internal gaps are read with 零.",
+      "audioSrc": "/number-audio/v1/numbers-18-0cf793ed486e.mp3",
+      "audioSha256": "0cf793ed486e86b8fefde33eb20537a3b44822f71e3096aba12890064d5c8d0c",
+      "durationSeconds": 1.584,
+      "audioScriptSha256": "c174be34967014f861b98a8efba8bad9462b5333173f1887b09242d61951a6d7"
+    },
+    {
+      "id": "numbers-19",
+      "mode": "numbers",
+      "value": "101",
+      "hanzi": "一百零一",
+      "pinyin": "yī bǎi líng yī",
+      "written": "壹佰零壹",
+      "parts": [
+        {
+          "label": "Remaining units",
+          "value": "101",
+          "hanzi": "一百零一"
+        }
+      ],
+      "explanation": "Chinese groups large numbers by 万 (10,000) and 亿 (100,000,000). Internal gaps are read with 零.",
+      "audioSrc": "/number-audio/v1/numbers-19-352adb545068.mp3",
+      "audioSha256": "352adb545068343ed548097b2d1dbb9d261312f7b9732e6573101280a69c0bee",
+      "durationSeconds": 1.68,
+      "audioScriptSha256": "ebc03aeb0c78fe22988431577ccb2749be4dee7540d5f01e60ffd0a94f4dafd1"
+    },
+    {
+      "id": "numbers-20",
+      "mode": "numbers",
+      "value": "105",
+      "hanzi": "一百零五",
+      "pinyin": "yī bǎi líng wǔ",
+      "written": "壹佰零伍",
+      "parts": [
+        {
+          "label": "Remaining units",
+          "value": "105",
+          "hanzi": "一百零五"
+        }
+      ],
+      "explanation": "Chinese groups large numbers by 万 (10,000) and 亿 (100,000,000). Internal gaps are read with 零.",
+      "audioSrc": "/number-audio/v1/numbers-20-ab1cb5159151.mp3",
+      "audioSha256": "ab1cb51591513824bcc6065f7323a362346b5cdc93b23048335e119aba84bb95",
+      "durationSeconds": 1.752,
+      "audioScriptSha256": "4531d6aadf4bd5874e9ef5a391b19b01d17f220a15f838c756a082435a226f3f"
+    },
+    {
+      "id": "numbers-21",
+      "mode": "numbers",
+      "value": "110",
+      "hanzi": "一百一十",
+      "pinyin": "yī bǎi yī shí",
+      "written": "壹佰壹拾",
+      "parts": [
+        {
+          "label": "Remaining units",
+          "value": "110",
+          "hanzi": "一百一十"
+        }
+      ],
+      "explanation": "Chinese groups large numbers by 万 (10,000) and 亿 (100,000,000). Internal gaps are read with 零.",
+      "audioSrc": "/number-audio/v1/numbers-21-e78e079ff05e.mp3",
+      "audioSha256": "e78e079ff05e99ff6aaff7d5ee8de1f6c2d67c6616adc4e000c3fe0c7909dbbd",
+      "durationSeconds": 1.824,
+      "audioScriptSha256": "74501c155652ea160bf456cfc0b756ccc8b5b7be737b7a37a407e8dd5214efd9"
+    },
+    {
+      "id": "numbers-22",
+      "mode": "numbers",
+      "value": "128",
+      "hanzi": "一百二十八",
+      "pinyin": "yī bǎi èr shí bā",
+      "written": "壹佰贰拾捌",
+      "parts": [
+        {
+          "label": "Remaining units",
+          "value": "128",
+          "hanzi": "一百二十八"
+        }
+      ],
+      "explanation": "Chinese groups large numbers by 万 (10,000) and 亿 (100,000,000). Internal gaps are read with 零.",
+      "audioSrc": "/number-audio/v1/numbers-22-92f6c498b1d3.mp3",
+      "audioSha256": "92f6c498b1d37138ec54fb590f88e1102692cc318fe60ded08b14499f5d7d773",
+      "durationSeconds": 1.776,
+      "audioScriptSha256": "ea1f9c315aab755164269623c9d15a9f3ab79d850949c4ec79a0ea7e0901514e"
+    },
+    {
+      "id": "numbers-23",
+      "mode": "numbers",
+      "value": "150",
+      "hanzi": "一百五十",
+      "pinyin": "yī bǎi wǔ shí",
+      "written": "壹佰伍拾",
+      "parts": [
+        {
+          "label": "Remaining units",
+          "value": "150",
+          "hanzi": "一百五十"
+        }
+      ],
+      "explanation": "Chinese groups large numbers by 万 (10,000) and 亿 (100,000,000). Internal gaps are read with 零.",
+      "audioSrc": "/number-audio/v1/numbers-23-82407fc76a1c.mp3",
+      "audioSha256": "82407fc76a1cba299c42f0aa4abdcc2997f519896a6f611ecc06d273e9028303",
+      "durationSeconds": 1.8,
+      "audioScriptSha256": "741d1ecbdc94c8eec51d3c01ec3755f51e8e1d7a8b702c2ad095f738dafe631a"
+    },
+    {
+      "id": "numbers-24",
+      "mode": "numbers",
+      "value": "200",
+      "hanzi": "二百",
+      "pinyin": "èr bǎi",
+      "written": "贰佰",
+      "parts": [
+        {
+          "label": "Remaining units",
+          "value": "200",
+          "hanzi": "二百"
+        }
+      ],
+      "explanation": "Chinese groups large numbers by 万 (10,000) and 亿 (100,000,000). Internal gaps are read with 零.",
+      "audioSrc": "/number-audio/v1/numbers-24-070479d561ae.mp3",
+      "audioSha256": "070479d561aea2a78aadc5256597bb005d1c4bb4f1e76a896c81986f155d5be1",
+      "durationSeconds": 1.368,
+      "audioScriptSha256": "de62a8eacc9711bef6f6b5a2302d440e07849b4f990247bfb82964258f8834f3"
+    },
+    {
+      "id": "numbers-25",
+      "mode": "numbers",
+      "value": "250",
+      "hanzi": "二百五十",
+      "pinyin": "èr bǎi wǔ shí",
+      "written": "贰佰伍拾",
+      "parts": [
+        {
+          "label": "Remaining units",
+          "value": "250",
+          "hanzi": "二百五十"
+        }
+      ],
+      "explanation": "Chinese groups large numbers by 万 (10,000) and 亿 (100,000,000). Internal gaps are read with 零.",
+      "audioSrc": "/number-audio/v1/numbers-25-faf9ae21654e.mp3",
+      "audioSha256": "faf9ae21654e3dee5bc686f2011eec5425ce38ab4ff4c742346caf43ae229382",
+      "durationSeconds": 1.848,
+      "audioScriptSha256": "af3712182fc946a3466f0b962470b6b79aaf89610101abd9740a2686d1d4aaf2"
+    },
+    {
+      "id": "numbers-26",
+      "mode": "numbers",
+      "value": "305",
+      "hanzi": "三百零五",
+      "pinyin": "sān bǎi líng wǔ",
+      "written": "叁佰零伍",
+      "parts": [
+        {
+          "label": "Remaining units",
+          "value": "305",
+          "hanzi": "三百零五"
+        }
+      ],
+      "explanation": "Chinese groups large numbers by 万 (10,000) and 亿 (100,000,000). Internal gaps are read with 零.",
+      "audioSrc": "/number-audio/v1/numbers-26-217ee28a0964.mp3",
+      "audioSha256": "217ee28a09642486ecb897905ef50257c08319c4bf38044890cc4998f4fe5de4",
+      "durationSeconds": 1.848,
+      "audioScriptSha256": "5a0baf695e434f1e843c78d7be310b1c4e1de70f56488aa9744e7b9b97af9042"
+    },
+    {
+      "id": "numbers-27",
+      "mode": "numbers",
+      "value": "350",
+      "hanzi": "三百五十",
+      "pinyin": "sān bǎi wǔ shí",
+      "written": "叁佰伍拾",
+      "parts": [
+        {
+          "label": "Remaining units",
+          "value": "350",
+          "hanzi": "三百五十"
+        }
+      ],
+      "explanation": "Chinese groups large numbers by 万 (10,000) and 亿 (100,000,000). Internal gaps are read with 零.",
+      "audioSrc": "/number-audio/v1/numbers-27-462b373be2f9.mp3",
+      "audioSha256": "462b373be2f9c2f0fa6f3e067b9a1412fcb9eed9c3432ab75b8f93db91f15995",
+      "durationSeconds": 1.872,
+      "audioScriptSha256": "57719a62fdb906281eb3fbd7b9f605223869914e60b2cf0c2d198660e90a3e75"
+    },
+    {
+      "id": "numbers-28",
+      "mode": "numbers",
+      "value": "1001",
+      "hanzi": "一千零一",
+      "pinyin": "yī qiān líng yī",
+      "written": "壹仟零壹",
+      "parts": [
+        {
+          "label": "Remaining units",
+          "value": "1001",
+          "hanzi": "一千零一"
+        }
+      ],
+      "explanation": "Chinese groups large numbers by 万 (10,000) and 亿 (100,000,000). Internal gaps are read with 零.",
+      "audioSrc": "/number-audio/v1/numbers-28-11c7680238b1.mp3",
+      "audioSha256": "11c7680238b11cf780318710e97e5f0416e20b9b3de2bd65ba0157467f93ad48",
+      "durationSeconds": 1.728,
+      "audioScriptSha256": "96b26c6dc42357e68aeeeed8fffc770645204aed5140585319364f5a3646b72e"
+    },
+    {
+      "id": "numbers-29",
+      "mode": "numbers",
+      "value": "1010",
+      "hanzi": "一千零一十",
+      "pinyin": "yī qiān líng yī shí",
+      "written": "壹仟零壹拾",
+      "parts": [
+        {
+          "label": "Remaining units",
+          "value": "1010",
+          "hanzi": "一千零一十"
+        }
+      ],
+      "explanation": "Chinese groups large numbers by 万 (10,000) and 亿 (100,000,000). Internal gaps are read with 零.",
+      "audioSrc": "/number-audio/v1/numbers-29-113a76823b89.mp3",
+      "audioSha256": "113a76823b8989917d0e659b23158ded69e419a6596b6a23c40ea7d5c6873605",
+      "durationSeconds": 2.064,
+      "audioScriptSha256": "9c8ab05128173a9f6fcdfc0667e82c792f7486f576670baf74736064c41956b5"
+    },
+    {
+      "id": "numbers-30",
+      "mode": "numbers",
+      "value": "1200",
+      "hanzi": "一千二百",
+      "pinyin": "yī qiān èr bǎi",
+      "written": "壹仟贰佰",
+      "parts": [
+        {
+          "label": "Remaining units",
+          "value": "1200",
+          "hanzi": "一千二百"
+        }
+      ],
+      "explanation": "Chinese groups large numbers by 万 (10,000) and 亿 (100,000,000). Internal gaps are read with 零.",
+      "audioSrc": "/number-audio/v1/numbers-30-35619959e036.mp3",
+      "audioSha256": "35619959e036565ba5da4d5cf60c8386ddc79f4725f2b2d7df6fe03d8c03515c",
+      "durationSeconds": 1.752,
+      "audioScriptSha256": "bba757b749ef0f5790a78d0b03abc43c4f2a833ba7dc445e09d04c2b6fcd0f70"
+    },
+    {
+      "id": "numbers-31",
+      "mode": "numbers",
+      "value": "2025",
+      "hanzi": "二千零二十五",
+      "pinyin": "èr qiān líng èr shí wǔ",
+      "written": "贰仟零贰拾伍",
+      "parts": [
+        {
+          "label": "Remaining units",
+          "value": "2025",
+          "hanzi": "二千零二十五"
+        }
+      ],
+      "explanation": "Chinese groups large numbers by 万 (10,000) and 亿 (100,000,000). Internal gaps are read with 零.",
+      "audioSrc": "/number-audio/v1/numbers-31-e092f11c52c5.mp3",
+      "audioSha256": "e092f11c52c5e60b519c9ab776f7aa0e684cdc9049971efc65afd030d505dff7",
+      "durationSeconds": 2.16,
+      "audioScriptSha256": "afa64735e5a642cdceffa31048f3589adbf147a8ebcdf4e17e9fe515e72847a6"
+    },
+    {
+      "id": "numbers-32",
+      "mode": "numbers",
+      "value": "10001",
+      "hanzi": "一万零一",
+      "pinyin": "yī wàn líng yī",
+      "written": "壹万零壹",
+      "parts": [
+        {
+          "label": "Ten-thousands",
+          "value": "1",
+          "hanzi": "万"
+        },
+        {
+          "label": "Remaining units",
+          "value": "1",
+          "hanzi": "一"
+        }
+      ],
+      "explanation": "Chinese groups large numbers by 万 (10,000) and 亿 (100,000,000). Internal gaps are read with 零.",
+      "audioSrc": "/number-audio/v1/numbers-32-768606d78ba2.mp3",
+      "audioSha256": "768606d78ba277affbb2e594b4cdcd9b56f46179410a8784521f843b80dfff82",
+      "durationSeconds": 1.752,
+      "audioScriptSha256": "99d074c99020a01917d40f3d4ca0ad113af64a549e222930d7a07d92e7fd365a"
+    },
+    {
+      "id": "numbers-33",
+      "mode": "numbers",
+      "value": "10010",
+      "hanzi": "一万零一十",
+      "pinyin": "yī wàn líng yī shí",
+      "written": "壹万零壹拾",
+      "parts": [
+        {
+          "label": "Ten-thousands",
+          "value": "1",
+          "hanzi": "万"
+        },
+        {
+          "label": "Remaining units",
+          "value": "10",
+          "hanzi": "十"
+        }
+      ],
+      "explanation": "Chinese groups large numbers by 万 (10,000) and 亿 (100,000,000). Internal gaps are read with 零.",
+      "audioSrc": "/number-audio/v1/numbers-33-7c8dfdba3322.mp3",
+      "audioSha256": "7c8dfdba33226d2f4cb89aa4f39a363a27064e85c42883f9a9cf2a065882317d",
+      "durationSeconds": 2.016,
+      "audioScriptSha256": "ef926eabd31dd0f3315b74689590d6ccb9b803b6f5b0f9b94e5797158a06d1ca"
+    },
+    {
+      "id": "numbers-34",
+      "mode": "numbers",
+      "value": "12000",
+      "hanzi": "一万二千",
+      "pinyin": "yī wàn èr qiān",
+      "written": "壹万贰仟",
+      "parts": [
+        {
+          "label": "Ten-thousands",
+          "value": "1",
+          "hanzi": "万"
+        },
+        {
+          "label": "Remaining units",
+          "value": "2000",
+          "hanzi": "二千"
+        }
+      ],
+      "explanation": "Chinese groups large numbers by 万 (10,000) and 亿 (100,000,000). Internal gaps are read with 零.",
+      "audioSrc": "/number-audio/v1/numbers-34-1aa655298f38.mp3",
+      "audioSha256": "1aa655298f38a58a29fe0defaa79791c8b680d31b71e77f3fd42e775ca8c3161",
+      "durationSeconds": 1.776,
+      "audioScriptSha256": "b735805d113c93e1ffe225434bc33f14afdeab82326027990f442ed537008ad9"
+    },
+    {
+      "id": "numbers-35",
+      "mode": "numbers",
+      "value": "25000",
+      "hanzi": "二万五千",
+      "pinyin": "èr wàn wǔ qiān",
+      "written": "贰万伍仟",
+      "parts": [
+        {
+          "label": "Ten-thousands",
+          "value": "2",
+          "hanzi": "万"
+        },
+        {
+          "label": "Remaining units",
+          "value": "5000",
+          "hanzi": "五千"
+        }
+      ],
+      "explanation": "Chinese groups large numbers by 万 (10,000) and 亿 (100,000,000). Internal gaps are read with 零.",
+      "audioSrc": "/number-audio/v1/numbers-35-d3483e448da5.mp3",
+      "audioSha256": "d3483e448da5dd8c199d9aef45060f74865af4b416a2e08300ca4145982aae2d",
+      "durationSeconds": 1.776,
+      "audioScriptSha256": "62ada51aed0086ed64daf8ca1e9ae111a953b6666d313b528d52f8b1a03d3ac4"
+    },
+    {
+      "id": "numbers-36",
+      "mode": "numbers",
+      "value": "100000",
+      "hanzi": "十万",
+      "pinyin": "shí wàn",
+      "written": "拾万",
+      "parts": [
+        {
+          "label": "Ten-thousands",
+          "value": "10",
+          "hanzi": "万"
+        },
+        {
+          "label": "Remaining units",
+          "value": "0",
+          "hanzi": "零"
+        }
+      ],
+      "explanation": "Chinese groups large numbers by 万 (10,000) and 亿 (100,000,000). Internal gaps are read with 零.",
+      "audioSrc": "/number-audio/v1/numbers-36-208dd46f5b2a.mp3",
+      "audioSha256": "208dd46f5b2a9fe1cf607f25dfce90f0faf63d9c66c55d40824aee9170d71395",
+      "durationSeconds": 1.488,
+      "audioScriptSha256": "f06ab3daee8ab4f92a6645144ff101b3a275a17b1af8d4aa134681350837d133"
+    },
+    {
+      "id": "numbers-37",
+      "mode": "numbers",
+      "value": "120000",
+      "hanzi": "十二万",
+      "pinyin": "shí èr wàn",
+      "written": "拾贰万",
+      "parts": [
+        {
+          "label": "Ten-thousands",
+          "value": "12",
+          "hanzi": "万"
+        },
+        {
+          "label": "Remaining units",
+          "value": "0",
+          "hanzi": "零"
+        }
+      ],
+      "explanation": "Chinese groups large numbers by 万 (10,000) and 亿 (100,000,000). Internal gaps are read with 零.",
+      "audioSrc": "/number-audio/v1/numbers-37-6aa3b49f3e22.mp3",
+      "audioSha256": "6aa3b49f3e2272a46a4cb16e7e966b478e4d7578b85c36f44dd5bdd55e633297",
+      "durationSeconds": 1.584,
+      "audioScriptSha256": "5747c22336bd2f499e1beb09b189d0b7638c5eb7cd38c8e2f14bd46683909b80"
+    },
+    {
+      "id": "numbers-38",
+      "mode": "numbers",
+      "value": "1000000",
+      "hanzi": "一百万",
+      "pinyin": "yī bǎi wàn",
+      "written": "壹佰万",
+      "parts": [
+        {
+          "label": "Ten-thousands",
+          "value": "100",
+          "hanzi": "万"
+        },
+        {
+          "label": "Remaining units",
+          "value": "0",
+          "hanzi": "零"
+        }
+      ],
+      "explanation": "Chinese groups large numbers by 万 (10,000) and 亿 (100,000,000). Internal gaps are read with 零.",
+      "audioSrc": "/number-audio/v1/numbers-38-1268820f1706.mp3",
+      "audioSha256": "1268820f1706e691936d195e6826252ba78996f27f49db323024046d4eb8bde0",
+      "durationSeconds": 1.536,
+      "audioScriptSha256": "57601b16f6551ec911ac3503658cdbc15f713d1cb1f60957e93975dbdd3d8519"
+    },
+    {
+      "id": "numbers-39",
+      "mode": "numbers",
+      "value": "12.05",
+      "hanzi": "十二点零五",
+      "pinyin": "shí èr diǎn líng wǔ",
+      "written": "拾贰点零伍",
+      "parts": [
+        {
+          "label": "Remaining units",
+          "value": "12",
+          "hanzi": "十二"
+        },
+        {
+          "label": "After the point",
+          "value": "05",
+          "hanzi": "零五"
+        }
+      ],
+      "explanation": "Read the digits after 点 one by one. Trailing decimal zeros are retained in this reading.",
+      "audioSrc": "/number-audio/v1/numbers-39-2b249c57227e.mp3",
+      "audioSha256": "2b249c57227e372e12d1f7754d5be6c37e26179dcf9aa1ee592bbe330eedf4db",
+      "durationSeconds": 1.968,
+      "audioScriptSha256": "ae8d854b801dcd26b112e987398df7bcb72855f704bc583cce5636126a068475"
+    },
+    {
+      "id": "numbers-40",
+      "mode": "numbers",
+      "value": "-12.5",
+      "hanzi": "负十二点五",
+      "pinyin": "fù shí èr diǎn wǔ",
+      "written": "负拾贰点伍",
+      "parts": [
+        {
+          "label": "Remaining units",
+          "value": "12",
+          "hanzi": "十二"
+        },
+        {
+          "label": "After the point",
+          "value": "5",
+          "hanzi": "五"
+        }
+      ],
+      "explanation": "Read the digits after 点 one by one. Trailing decimal zeros are retained in this reading.",
+      "audioSrc": "/number-audio/v1/numbers-40-a7eb16cd161f.mp3",
+      "audioSha256": "a7eb16cd161fe845ab463d08f19d2fd130058606a79d1b5483378ea0d1003db3",
+      "durationSeconds": 1.968,
+      "audioScriptSha256": "99063d0e8053cfe11f5b13e84370f61658fd56fc511ca73c8e73718d2905c249"
+    },
+    {
+      "id": "prices-01",
+      "mode": "prices",
+      "value": "0.05",
+      "hanzi": "五分",
+      "pinyin": "wǔ fēn",
+      "written": "零元五分",
+      "explanation": "Prices here are in RMB. 块 and 毛 are everyday spoken units; 元 and 角 are written units. 1 元 = 10 角 = 100 分. No currency exchange is performed.",
+      "parts": [
+        {
+          "label": "Yuan",
+          "value": "0",
+          "hanzi": "元 / 块"
+        },
+        {
+          "label": "Jiao",
+          "value": "0",
+          "hanzi": "角 / 毛"
+        },
+        {
+          "label": "Fen",
+          "value": "5",
+          "hanzi": "分"
+        }
+      ],
+      "audioSrc": "/number-audio/v1/prices-01-fd2a5acbb977.mp3",
+      "audioSha256": "fd2a5acbb9776d36ac8901b1c71fe1343579967b3bf446578342ea9cd899e1a0",
+      "durationSeconds": 1.344,
+      "audioScriptSha256": "5fdd8a79d0269916eaaa79c4d9780357d7ec206ff594e35a42ded72fb3f01ca2"
+    },
+    {
+      "id": "prices-02",
+      "mode": "prices",
+      "value": "0.10",
+      "hanzi": "一毛",
+      "pinyin": "yī máo",
+      "written": "零元一角",
+      "explanation": "Prices here are in RMB. 块 and 毛 are everyday spoken units; 元 and 角 are written units. 1 元 = 10 角 = 100 分. No currency exchange is performed.",
+      "parts": [
+        {
+          "label": "Yuan",
+          "value": "0",
+          "hanzi": "元 / 块"
+        },
+        {
+          "label": "Jiao",
+          "value": "1",
+          "hanzi": "角 / 毛"
+        },
+        {
+          "label": "Fen",
+          "value": "0",
+          "hanzi": "分"
+        }
+      ],
+      "audioSrc": "/number-audio/v1/prices-02-58b70965ee84.mp3",
+      "audioSha256": "58b70965ee84b94fb81e89bf16b6554e37cf1344f11652b6c19b3e041343a577",
+      "durationSeconds": 1.368,
+      "audioScriptSha256": "170390adda0d715e0d6cc24240e97038930203a28f3f328ecd2191112a70f224"
+    },
+    {
+      "id": "prices-03",
+      "mode": "prices",
+      "value": "0.50",
+      "hanzi": "五毛",
+      "pinyin": "wǔ máo",
+      "written": "零元五角",
+      "explanation": "Prices here are in RMB. 块 and 毛 are everyday spoken units; 元 and 角 are written units. 1 元 = 10 角 = 100 分. No currency exchange is performed.",
+      "parts": [
+        {
+          "label": "Yuan",
+          "value": "0",
+          "hanzi": "元 / 块"
+        },
+        {
+          "label": "Jiao",
+          "value": "5",
+          "hanzi": "角 / 毛"
+        },
+        {
+          "label": "Fen",
+          "value": "0",
+          "hanzi": "分"
+        }
+      ],
+      "audioSrc": "/number-audio/v1/prices-03-9ecff7ac8ff9.mp3",
+      "audioSha256": "9ecff7ac8ff9b8b674f949863b90ae8d7c41b05d79df91b852b366ef5c179524",
+      "durationSeconds": 1.296,
+      "audioScriptSha256": "0651744984df64a304037d5000c1bb0118bd2565ab7f4c0fa513f54c5b10d0a2"
+    },
+    {
+      "id": "prices-04",
+      "mode": "prices",
+      "value": "1.00",
+      "hanzi": "一块",
+      "pinyin": "yī kuài",
+      "written": "一元整",
+      "explanation": "Prices here are in RMB. 块 and 毛 are everyday spoken units; 元 and 角 are written units. 1 元 = 10 角 = 100 分. No currency exchange is performed.",
+      "parts": [
+        {
+          "label": "Yuan",
+          "value": "1",
+          "hanzi": "元 / 块"
+        },
+        {
+          "label": "Jiao",
+          "value": "0",
+          "hanzi": "角 / 毛"
+        },
+        {
+          "label": "Fen",
+          "value": "0",
+          "hanzi": "分"
+        }
+      ],
+      "audioSrc": "/number-audio/v1/prices-04-e6eda41fc025.mp3",
+      "audioSha256": "e6eda41fc0257606c73750a62d20b634d9c76c8efe4a12017c24567241230b4a",
+      "durationSeconds": 1.392,
+      "audioScriptSha256": "5aaa517b26f8ff290123d298b070a31cf4d8f5c5acb1b3af8e7459a6b21090fc"
+    },
+    {
+      "id": "prices-05",
+      "mode": "prices",
+      "value": "1.50",
+      "hanzi": "一块五毛",
+      "pinyin": "yī kuài wǔ máo",
+      "written": "一元五角",
+      "explanation": "Prices here are in RMB. 块 and 毛 are everyday spoken units; 元 and 角 are written units. 1 元 = 10 角 = 100 分. No currency exchange is performed.",
+      "parts": [
+        {
+          "label": "Yuan",
+          "value": "1",
+          "hanzi": "元 / 块"
+        },
+        {
+          "label": "Jiao",
+          "value": "5",
+          "hanzi": "角 / 毛"
+        },
+        {
+          "label": "Fen",
+          "value": "0",
+          "hanzi": "分"
+        }
+      ],
+      "audioSrc": "/number-audio/v1/prices-05-379e3109ee5e.mp3",
+      "audioSha256": "379e3109ee5e0772699c5fe4e829214499a7c05581b3bf0575128de45d58f24c",
+      "durationSeconds": 1.704,
+      "audioScriptSha256": "b0e27b8c02a8b4153afddbdbe0c004d673a8d9775264d5322f0b2d11625ac0b3"
+    },
+    {
+      "id": "prices-06",
+      "mode": "prices",
+      "value": "2.00",
+      "hanzi": "两块",
+      "pinyin": "liǎng kuài",
+      "written": "二元整",
+      "explanation": "Prices here are in RMB. 块 and 毛 are everyday spoken units; 元 and 角 are written units. 1 元 = 10 角 = 100 分. No currency exchange is performed.",
+      "parts": [
+        {
+          "label": "Yuan",
+          "value": "2",
+          "hanzi": "元 / 块"
+        },
+        {
+          "label": "Jiao",
+          "value": "0",
+          "hanzi": "角 / 毛"
+        },
+        {
+          "label": "Fen",
+          "value": "0",
+          "hanzi": "分"
+        }
+      ],
+      "audioSrc": "/number-audio/v1/prices-06-c2b8448e61c7.mp3",
+      "audioSha256": "c2b8448e61c7c5fd31b40876811a26ca1ae3075041a961738b623b36d9b29731",
+      "durationSeconds": 1.416,
+      "audioScriptSha256": "0152f6362939a5f33bae555346b7812adb3a0057353e22e2c9559560934a6505"
+    },
+    {
+      "id": "prices-07",
+      "mode": "prices",
+      "value": "2.50",
+      "hanzi": "两块五毛",
+      "pinyin": "liǎng kuài wǔ máo",
+      "written": "二元五角",
+      "explanation": "Prices here are in RMB. 块 and 毛 are everyday spoken units; 元 and 角 are written units. 1 元 = 10 角 = 100 分. No currency exchange is performed.",
+      "parts": [
+        {
+          "label": "Yuan",
+          "value": "2",
+          "hanzi": "元 / 块"
+        },
+        {
+          "label": "Jiao",
+          "value": "5",
+          "hanzi": "角 / 毛"
+        },
+        {
+          "label": "Fen",
+          "value": "0",
+          "hanzi": "分"
+        }
+      ],
+      "audioSrc": "/number-audio/v1/prices-07-0fb73f8be1dd.mp3",
+      "audioSha256": "0fb73f8be1ddff427bcc54e401bda308d61c61a6bf10596d930192852bfe0b7a",
+      "durationSeconds": 1.752,
+      "audioScriptSha256": "71eb66b9a08b38173efb2ae9170ff9d71eaf4ac0f042c34b7d756c258f6eb6f3"
+    },
+    {
+      "id": "prices-08",
+      "mode": "prices",
+      "value": "3.50",
+      "hanzi": "三块五毛",
+      "pinyin": "sān kuài wǔ máo",
+      "written": "三元五角",
+      "explanation": "Prices here are in RMB. 块 and 毛 are everyday spoken units; 元 and 角 are written units. 1 元 = 10 角 = 100 分. No currency exchange is performed.",
+      "parts": [
+        {
+          "label": "Yuan",
+          "value": "3",
+          "hanzi": "元 / 块"
+        },
+        {
+          "label": "Jiao",
+          "value": "5",
+          "hanzi": "角 / 毛"
+        },
+        {
+          "label": "Fen",
+          "value": "0",
+          "hanzi": "分"
+        }
+      ],
+      "audioSrc": "/number-audio/v1/prices-08-163dc451eba7.mp3",
+      "audioSha256": "163dc451eba7702f401ed43a9c73abf3942f5e5c31d710373f6433e5658530cf",
+      "durationSeconds": 1.8,
+      "audioScriptSha256": "5524c52b090bc1f8108b957532f5a4f41d4590475e2292a7e6abe78e64958054"
+    },
+    {
+      "id": "prices-09",
+      "mode": "prices",
+      "value": "4.00",
+      "hanzi": "四块",
+      "pinyin": "sì kuài",
+      "written": "四元整",
+      "explanation": "Prices here are in RMB. 块 and 毛 are everyday spoken units; 元 and 角 are written units. 1 元 = 10 角 = 100 分. No currency exchange is performed.",
+      "parts": [
+        {
+          "label": "Yuan",
+          "value": "4",
+          "hanzi": "元 / 块"
+        },
+        {
+          "label": "Jiao",
+          "value": "0",
+          "hanzi": "角 / 毛"
+        },
+        {
+          "label": "Fen",
+          "value": "0",
+          "hanzi": "分"
+        }
+      ],
+      "audioSrc": "/number-audio/v1/prices-09-a97d711a18a5.mp3",
+      "audioSha256": "a97d711a18a512915ae70e46e25803ba7547cc617c59a0bc67f90bae1d6837d4",
+      "durationSeconds": 1.464,
+      "audioScriptSha256": "225a5f2c7064bc463b9ef192aff1a7ee3a86b8ec3f6dcecc96bd5b7427c8b140"
+    },
+    {
+      "id": "prices-10",
+      "mode": "prices",
+      "value": "5.00",
+      "hanzi": "五块",
+      "pinyin": "wǔ kuài",
+      "written": "五元整",
+      "explanation": "Prices here are in RMB. 块 and 毛 are everyday spoken units; 元 and 角 are written units. 1 元 = 10 角 = 100 分. No currency exchange is performed.",
+      "parts": [
+        {
+          "label": "Yuan",
+          "value": "5",
+          "hanzi": "元 / 块"
+        },
+        {
+          "label": "Jiao",
+          "value": "0",
+          "hanzi": "角 / 毛"
+        },
+        {
+          "label": "Fen",
+          "value": "0",
+          "hanzi": "分"
+        }
+      ],
+      "audioSrc": "/number-audio/v1/prices-10-298afada9e51.mp3",
+      "audioSha256": "298afada9e51098670982976ec9edda2d1aac45533a075bb6b4bdcfef6ae4bfd",
+      "durationSeconds": 1.344,
+      "audioScriptSha256": "c658277f90a677490cfc20de5d3e41c1e8ab72c0ab38f2b968454f403f1dfb67"
+    },
+    {
+      "id": "prices-11",
+      "mode": "prices",
+      "value": "5.50",
+      "hanzi": "五块五毛",
+      "pinyin": "wǔ kuài wǔ máo",
+      "written": "五元五角",
+      "explanation": "Prices here are in RMB. 块 and 毛 are everyday spoken units; 元 and 角 are written units. 1 元 = 10 角 = 100 分. No currency exchange is performed.",
+      "parts": [
+        {
+          "label": "Yuan",
+          "value": "5",
+          "hanzi": "元 / 块"
+        },
+        {
+          "label": "Jiao",
+          "value": "5",
+          "hanzi": "角 / 毛"
+        },
+        {
+          "label": "Fen",
+          "value": "0",
+          "hanzi": "分"
+        }
+      ],
+      "audioSrc": "/number-audio/v1/prices-11-005c90286bfb.mp3",
+      "audioSha256": "005c90286bfb3fe0c018e2737cbe08eb2528b036f1437b5886bbcc5fe842cc7d",
+      "durationSeconds": 1.704,
+      "audioScriptSha256": "8724aff28289606871298e0279bec21f63745016be115a3c2187931b1a5fb982"
+    },
+    {
+      "id": "prices-12",
+      "mode": "prices",
+      "value": "6.80",
+      "hanzi": "六块八毛",
+      "pinyin": "liù kuài bā máo",
+      "written": "六元八角",
+      "explanation": "Prices here are in RMB. 块 and 毛 are everyday spoken units; 元 and 角 are written units. 1 元 = 10 角 = 100 分. No currency exchange is performed.",
+      "parts": [
+        {
+          "label": "Yuan",
+          "value": "6",
+          "hanzi": "元 / 块"
+        },
+        {
+          "label": "Jiao",
+          "value": "8",
+          "hanzi": "角 / 毛"
+        },
+        {
+          "label": "Fen",
+          "value": "0",
+          "hanzi": "分"
+        }
+      ],
+      "audioSrc": "/number-audio/v1/prices-12-1036edfe4464.mp3",
+      "audioSha256": "1036edfe4464da6f7dbe85fc7911d8f3a51658a747ecf8ed0fa41316c1dc1687",
+      "durationSeconds": 1.776,
+      "audioScriptSha256": "bc2a4babab05572ce3a219d7f08ba849f1264be2f43c2683a1cdb8a854caa4af"
+    },
+    {
+      "id": "prices-13",
+      "mode": "prices",
+      "value": "7.50",
+      "hanzi": "七块五毛",
+      "pinyin": "qī kuài wǔ máo",
+      "written": "七元五角",
+      "explanation": "Prices here are in RMB. 块 and 毛 are everyday spoken units; 元 and 角 are written units. 1 元 = 10 角 = 100 分. No currency exchange is performed.",
+      "parts": [
+        {
+          "label": "Yuan",
+          "value": "7",
+          "hanzi": "元 / 块"
+        },
+        {
+          "label": "Jiao",
+          "value": "5",
+          "hanzi": "角 / 毛"
+        },
+        {
+          "label": "Fen",
+          "value": "0",
+          "hanzi": "分"
+        }
+      ],
+      "audioSrc": "/number-audio/v1/prices-13-b8b21c19dd67.mp3",
+      "audioSha256": "b8b21c19dd671cd5e333456c125f9db8ec390f21851b482048e17b24201f750c",
+      "durationSeconds": 1.8,
+      "audioScriptSha256": "c16600baa965c97a37a312cc4c2ff6588293201f7c90865f7468cafebd885097"
+    },
+    {
+      "id": "prices-14",
+      "mode": "prices",
+      "value": "8.00",
+      "hanzi": "八块",
+      "pinyin": "bā kuài",
+      "written": "八元整",
+      "explanation": "Prices here are in RMB. 块 and 毛 are everyday spoken units; 元 and 角 are written units. 1 元 = 10 角 = 100 分. No currency exchange is performed.",
+      "parts": [
+        {
+          "label": "Yuan",
+          "value": "8",
+          "hanzi": "元 / 块"
+        },
+        {
+          "label": "Jiao",
+          "value": "0",
+          "hanzi": "角 / 毛"
+        },
+        {
+          "label": "Fen",
+          "value": "0",
+          "hanzi": "分"
+        }
+      ],
+      "audioSrc": "/number-audio/v1/prices-14-0de75047bed1.mp3",
+      "audioSha256": "0de75047bed1ec03de1265f122e2ad428588433b3b3f54528ddf47bbc81e1a0f",
+      "durationSeconds": 1.416,
+      "audioScriptSha256": "68d2e4b45b2f2b3864b5d99347c352048700452168bd6328e9f94a550f137ba0"
+    },
+    {
+      "id": "prices-15",
+      "mode": "prices",
+      "value": "8.50",
+      "hanzi": "八块五毛",
+      "pinyin": "bā kuài wǔ máo",
+      "written": "八元五角",
+      "explanation": "Prices here are in RMB. 块 and 毛 are everyday spoken units; 元 and 角 are written units. 1 元 = 10 角 = 100 分. No currency exchange is performed.",
+      "parts": [
+        {
+          "label": "Yuan",
+          "value": "8",
+          "hanzi": "元 / 块"
+        },
+        {
+          "label": "Jiao",
+          "value": "5",
+          "hanzi": "角 / 毛"
+        },
+        {
+          "label": "Fen",
+          "value": "0",
+          "hanzi": "分"
+        }
+      ],
+      "audioSrc": "/number-audio/v1/prices-15-d963c9488428.mp3",
+      "audioSha256": "d963c948842841c2952a7da50574a8ae9d9810913ec8ca9a97d04eb8a6e8640e",
+      "durationSeconds": 1.728,
+      "audioScriptSha256": "69a6afb9db34597fc6b951fd06e88999b9b429c294409ae278c5d4a3e9f7338a"
+    },
+    {
+      "id": "prices-16",
+      "mode": "prices",
+      "value": "9.90",
+      "hanzi": "九块九毛",
+      "pinyin": "jiǔ kuài jiǔ máo",
+      "written": "九元九角",
+      "explanation": "Prices here are in RMB. 块 and 毛 are everyday spoken units; 元 and 角 are written units. 1 元 = 10 角 = 100 分. No currency exchange is performed.",
+      "parts": [
+        {
+          "label": "Yuan",
+          "value": "9",
+          "hanzi": "元 / 块"
+        },
+        {
+          "label": "Jiao",
+          "value": "9",
+          "hanzi": "角 / 毛"
+        },
+        {
+          "label": "Fen",
+          "value": "0",
+          "hanzi": "分"
+        }
+      ],
+      "audioSrc": "/number-audio/v1/prices-16-4c48e55eccd6.mp3",
+      "audioSha256": "4c48e55eccd606e128e4eb14ce556ded2e415e5ccae0edd06c71b0ae1d6df67d",
+      "durationSeconds": 1.8,
+      "audioScriptSha256": "0499abdb990225212ae6479b0494f5ccee03aa81fe00b3578a36269e07e371cc"
+    },
+    {
+      "id": "prices-17",
+      "mode": "prices",
+      "value": "10.00",
+      "hanzi": "十块",
+      "pinyin": "shí kuài",
+      "written": "十元整",
+      "explanation": "Prices here are in RMB. 块 and 毛 are everyday spoken units; 元 and 角 are written units. 1 元 = 10 角 = 100 分. No currency exchange is performed.",
+      "parts": [
+        {
+          "label": "Yuan",
+          "value": "10",
+          "hanzi": "元 / 块"
+        },
+        {
+          "label": "Jiao",
+          "value": "0",
+          "hanzi": "角 / 毛"
+        },
+        {
+          "label": "Fen",
+          "value": "0",
+          "hanzi": "分"
+        }
+      ],
+      "audioSrc": "/number-audio/v1/prices-17-9aa37ed12799.mp3",
+      "audioSha256": "9aa37ed127995e199280e23298427bd94a0cf94e7a808ac3bd0c617a7135cc9f",
+      "durationSeconds": 1.488,
+      "audioScriptSha256": "7cf55e5e9ab3065461996a42cd233883a77c120f66442eeadc03a5b1cb7e1fb6"
+    },
+    {
+      "id": "prices-18",
+      "mode": "prices",
+      "value": "10.50",
+      "hanzi": "十块五毛",
+      "pinyin": "shí kuài wǔ máo",
+      "written": "十元五角",
+      "explanation": "Prices here are in RMB. 块 and 毛 are everyday spoken units; 元 and 角 are written units. 1 元 = 10 角 = 100 分. No currency exchange is performed.",
+      "parts": [
+        {
+          "label": "Yuan",
+          "value": "10",
+          "hanzi": "元 / 块"
+        },
+        {
+          "label": "Jiao",
+          "value": "5",
+          "hanzi": "角 / 毛"
+        },
+        {
+          "label": "Fen",
+          "value": "0",
+          "hanzi": "分"
+        }
+      ],
+      "audioSrc": "/number-audio/v1/prices-18-94a05baec53c.mp3",
+      "audioSha256": "94a05baec53c58c125eebcb4baacf30bcbd709207732ef16d424e78c3994adba",
+      "durationSeconds": 1.824,
+      "audioScriptSha256": "6f4f08146c22c3c9d41358eae35edf969ea759e84f349d99961bf0479756ee74"
+    },
+    {
+      "id": "prices-19",
+      "mode": "prices",
+      "value": "12.00",
+      "hanzi": "十二块",
+      "pinyin": "shí èr kuài",
+      "written": "十二元整",
+      "explanation": "Prices here are in RMB. 块 and 毛 are everyday spoken units; 元 and 角 are written units. 1 元 = 10 角 = 100 分. No currency exchange is performed.",
+      "parts": [
+        {
+          "label": "Yuan",
+          "value": "12",
+          "hanzi": "元 / 块"
+        },
+        {
+          "label": "Jiao",
+          "value": "0",
+          "hanzi": "角 / 毛"
+        },
+        {
+          "label": "Fen",
+          "value": "0",
+          "hanzi": "分"
+        }
+      ],
+      "audioSrc": "/number-audio/v1/prices-19-e0cae2890243.mp3",
+      "audioSha256": "e0cae2890243adf21a771ce7a409e5dce1c88889f3d0d99547e1656cbafa01d4",
+      "durationSeconds": 1.608,
+      "audioScriptSha256": "42542326ecbad87f420e94ee01540ea78db5765dbb5a5d3f0c80564ac32a66c9"
+    },
+    {
+      "id": "prices-20",
+      "mode": "prices",
+      "value": "12.50",
+      "hanzi": "十二块五毛",
+      "pinyin": "shí èr kuài wǔ máo",
+      "written": "十二元五角",
+      "explanation": "Prices here are in RMB. 块 and 毛 are everyday spoken units; 元 and 角 are written units. 1 元 = 10 角 = 100 分. No currency exchange is performed.",
+      "parts": [
+        {
+          "label": "Yuan",
+          "value": "12",
+          "hanzi": "元 / 块"
+        },
+        {
+          "label": "Jiao",
+          "value": "5",
+          "hanzi": "角 / 毛"
+        },
+        {
+          "label": "Fen",
+          "value": "0",
+          "hanzi": "分"
+        }
+      ],
+      "audioSrc": "/number-audio/v1/prices-20-51a69b83aee5.mp3",
+      "audioSha256": "51a69b83aee54c7d35e8127541ce04ec6bb278bf59c8231ba6bdfa7f4663e01b",
+      "durationSeconds": 1.944,
+      "audioScriptSha256": "33196659dace5a5f5d0187c13b79699bbe2d6198d5b7de9d1e52db33ec9aeba1"
+    },
+    {
+      "id": "prices-21",
+      "mode": "prices",
+      "value": "14.00",
+      "hanzi": "十四块",
+      "pinyin": "shí sì kuài",
+      "written": "十四元整",
+      "explanation": "Prices here are in RMB. 块 and 毛 are everyday spoken units; 元 and 角 are written units. 1 元 = 10 角 = 100 分. No currency exchange is performed.",
+      "parts": [
+        {
+          "label": "Yuan",
+          "value": "14",
+          "hanzi": "元 / 块"
+        },
+        {
+          "label": "Jiao",
+          "value": "0",
+          "hanzi": "角 / 毛"
+        },
+        {
+          "label": "Fen",
+          "value": "0",
+          "hanzi": "分"
+        }
+      ],
+      "audioSrc": "/number-audio/v1/prices-21-901f4890be6c.mp3",
+      "audioSha256": "901f4890be6c373e73fd4ccfe3c63371745fa0b01288d6d25389ded1b1a6b5dd",
+      "durationSeconds": 1.68,
+      "audioScriptSha256": "bc423f0d273faa4111913bf3349d73b625a9ec2e2cd06f08839b09952d8b4f27"
+    },
+    {
+      "id": "prices-22",
+      "mode": "prices",
+      "value": "15.00",
+      "hanzi": "十五块",
+      "pinyin": "shí wǔ kuài",
+      "written": "十五元整",
+      "explanation": "Prices here are in RMB. 块 and 毛 are everyday spoken units; 元 and 角 are written units. 1 元 = 10 角 = 100 分. No currency exchange is performed.",
+      "parts": [
+        {
+          "label": "Yuan",
+          "value": "15",
+          "hanzi": "元 / 块"
+        },
+        {
+          "label": "Jiao",
+          "value": "0",
+          "hanzi": "角 / 毛"
+        },
+        {
+          "label": "Fen",
+          "value": "0",
+          "hanzi": "分"
+        }
+      ],
+      "audioSrc": "/number-audio/v1/prices-22-3f90c996d150.mp3",
+      "audioSha256": "3f90c996d15022f22ccfc8eaf5af6f0ee99669320bcb0a80640f396a2042c0c1",
+      "durationSeconds": 1.632,
+      "audioScriptSha256": "1d25e5dba2563bab8c3a0c2b1a2441627d3bc6ea7084076c47876b016995f1a7"
+    },
+    {
+      "id": "prices-23",
+      "mode": "prices",
+      "value": "17.50",
+      "hanzi": "十七块五毛",
+      "pinyin": "shí qī kuài wǔ máo",
+      "written": "十七元五角",
+      "explanation": "Prices here are in RMB. 块 and 毛 are everyday spoken units; 元 and 角 are written units. 1 元 = 10 角 = 100 分. No currency exchange is performed.",
+      "parts": [
+        {
+          "label": "Yuan",
+          "value": "17",
+          "hanzi": "元 / 块"
+        },
+        {
+          "label": "Jiao",
+          "value": "5",
+          "hanzi": "角 / 毛"
+        },
+        {
+          "label": "Fen",
+          "value": "0",
+          "hanzi": "分"
+        }
+      ],
+      "audioSrc": "/number-audio/v1/prices-23-c6cae62a44ec.mp3",
+      "audioSha256": "c6cae62a44ec554217901e4ab4a6587d84faf43fc9b08c57585d44eb9315fe97",
+      "durationSeconds": 1.992,
+      "audioScriptSha256": "c1dfaaa0b09bbc01665ce6949459d42c902917c3dcd42ccc1a79a041317098b5"
+    },
+    {
+      "id": "prices-24",
+      "mode": "prices",
+      "value": "18.00",
+      "hanzi": "十八块",
+      "pinyin": "shí bā kuài",
+      "written": "十八元整",
+      "explanation": "Prices here are in RMB. 块 and 毛 are everyday spoken units; 元 and 角 are written units. 1 元 = 10 角 = 100 分. No currency exchange is performed.",
+      "parts": [
+        {
+          "label": "Yuan",
+          "value": "18",
+          "hanzi": "元 / 块"
+        },
+        {
+          "label": "Jiao",
+          "value": "0",
+          "hanzi": "角 / 毛"
+        },
+        {
+          "label": "Fen",
+          "value": "0",
+          "hanzi": "分"
+        }
+      ],
+      "audioSrc": "/number-audio/v1/prices-24-d4b4263f2106.mp3",
+      "audioSha256": "d4b4263f21061386186c536ff463d970bf7f9708e7d81009f919a78c8ade876c",
+      "durationSeconds": 1.656,
+      "audioScriptSha256": "20bcd917004dcb880816b9542a3dc728a43909043da1786eff573f61cd804b4a"
+    },
+    {
+      "id": "prices-25",
+      "mode": "prices",
+      "value": "20.00",
+      "hanzi": "二十块",
+      "pinyin": "èr shí kuài",
+      "written": "二十元整",
+      "explanation": "Prices here are in RMB. 块 and 毛 are everyday spoken units; 元 and 角 are written units. 1 元 = 10 角 = 100 分. No currency exchange is performed.",
+      "parts": [
+        {
+          "label": "Yuan",
+          "value": "20",
+          "hanzi": "元 / 块"
+        },
+        {
+          "label": "Jiao",
+          "value": "0",
+          "hanzi": "角 / 毛"
+        },
+        {
+          "label": "Fen",
+          "value": "0",
+          "hanzi": "分"
+        }
+      ],
+      "audioSrc": "/number-audio/v1/prices-25-3a3017d8fb24.mp3",
+      "audioSha256": "3a3017d8fb24360e10fe1c754e9a49a3b7637155ac0a2bd07abd677c4a068367",
+      "durationSeconds": 1.56,
+      "audioScriptSha256": "c52dd5d60c26ff8f970a318e5b2bae29485fd20e158dbd4adacaeb36b1c1ae4c"
+    },
+    {
+      "id": "prices-26",
+      "mode": "prices",
+      "value": "21.50",
+      "hanzi": "二十一块五毛",
+      "pinyin": "èr shí yī kuài wǔ máo",
+      "written": "二十一元五角",
+      "explanation": "Prices here are in RMB. 块 and 毛 are everyday spoken units; 元 and 角 are written units. 1 元 = 10 角 = 100 分. No currency exchange is performed.",
+      "parts": [
+        {
+          "label": "Yuan",
+          "value": "21",
+          "hanzi": "元 / 块"
+        },
+        {
+          "label": "Jiao",
+          "value": "5",
+          "hanzi": "角 / 毛"
+        },
+        {
+          "label": "Fen",
+          "value": "0",
+          "hanzi": "分"
+        }
+      ],
+      "audioSrc": "/number-audio/v1/prices-26-2228b50f4948.mp3",
+      "audioSha256": "2228b50f49486f88aeed0ea7b4c8634d84f410e73fd46acacd443aaac893ae1f",
+      "durationSeconds": 2.088,
+      "audioScriptSha256": "3ba5a37ad1a5283f95a9aaa96144d9e5b3afb46bbd645c87ae212714ab329649"
+    },
+    {
+      "id": "prices-27",
+      "mode": "prices",
+      "value": "25.50",
+      "hanzi": "二十五块五毛",
+      "pinyin": "èr shí wǔ kuài wǔ máo",
+      "written": "二十五元五角",
+      "explanation": "Prices here are in RMB. 块 and 毛 are everyday spoken units; 元 and 角 are written units. 1 元 = 10 角 = 100 分. No currency exchange is performed.",
+      "parts": [
+        {
+          "label": "Yuan",
+          "value": "25",
+          "hanzi": "元 / 块"
+        },
+        {
+          "label": "Jiao",
+          "value": "5",
+          "hanzi": "角 / 毛"
+        },
+        {
+          "label": "Fen",
+          "value": "0",
+          "hanzi": "分"
+        }
+      ],
+      "audioSrc": "/number-audio/v1/prices-27-2e76f50bb92c.mp3",
+      "audioSha256": "2e76f50bb92c269aecf69a47d9e4420f19033fe7535d636c0d0707b28784de9a",
+      "durationSeconds": 2.064,
+      "audioScriptSha256": "21b2a0cd74cc5db4df32e3b19843cfe0a50b3eaf05bad9cb25cfb89e99fe103a"
+    },
+    {
+      "id": "prices-28",
+      "mode": "prices",
+      "value": "28.00",
+      "hanzi": "二十八块",
+      "pinyin": "èr shí bā kuài",
+      "written": "二十八元整",
+      "explanation": "Prices here are in RMB. 块 and 毛 are everyday spoken units; 元 and 角 are written units. 1 元 = 10 角 = 100 分. No currency exchange is performed.",
+      "parts": [
+        {
+          "label": "Yuan",
+          "value": "28",
+          "hanzi": "元 / 块"
+        },
+        {
+          "label": "Jiao",
+          "value": "0",
+          "hanzi": "角 / 毛"
+        },
+        {
+          "label": "Fen",
+          "value": "0",
+          "hanzi": "分"
+        }
+      ],
+      "audioSrc": "/number-audio/v1/prices-28-73463c1f7a92.mp3",
+      "audioSha256": "73463c1f7a92429b0c9ea363d46aa1e4c55722d0403dff6b75694d4b15d11110",
+      "durationSeconds": 1.776,
+      "audioScriptSha256": "16fcecb6c47f8e7af6feb3549dec0e7deee4cd00df8efe5bf1a4b584bde48a1b"
+    },
+    {
+      "id": "prices-29",
+      "mode": "prices",
+      "value": "30.00",
+      "hanzi": "三十块",
+      "pinyin": "sān shí kuài",
+      "written": "三十元整",
+      "explanation": "Prices here are in RMB. 块 and 毛 are everyday spoken units; 元 and 角 are written units. 1 元 = 10 角 = 100 分. No currency exchange is performed.",
+      "parts": [
+        {
+          "label": "Yuan",
+          "value": "30",
+          "hanzi": "元 / 块"
+        },
+        {
+          "label": "Jiao",
+          "value": "0",
+          "hanzi": "角 / 毛"
+        },
+        {
+          "label": "Fen",
+          "value": "0",
+          "hanzi": "分"
+        }
+      ],
+      "audioSrc": "/number-audio/v1/prices-29-6168ae9ef3e9.mp3",
+      "audioSha256": "6168ae9ef3e9d0dd1d17d77ecf0460edb03fb5e4babf2bb1e25e3094a66e1e12",
+      "durationSeconds": 1.608,
+      "audioScriptSha256": "a619986abd3bc4b95bb1a87c6e3ce298f0c183ed4ec2709ad4019abd8fed9a46"
+    },
+    {
+      "id": "prices-30",
+      "mode": "prices",
+      "value": "35.50",
+      "hanzi": "三十五块五毛",
+      "pinyin": "sān shí wǔ kuài wǔ máo",
+      "written": "三十五元五角",
+      "explanation": "Prices here are in RMB. 块 and 毛 are everyday spoken units; 元 and 角 are written units. 1 元 = 10 角 = 100 分. No currency exchange is performed.",
+      "parts": [
+        {
+          "label": "Yuan",
+          "value": "35",
+          "hanzi": "元 / 块"
+        },
+        {
+          "label": "Jiao",
+          "value": "5",
+          "hanzi": "角 / 毛"
+        },
+        {
+          "label": "Fen",
+          "value": "0",
+          "hanzi": "分"
+        }
+      ],
+      "audioSrc": "/number-audio/v1/prices-30-3f1730484c6a.mp3",
+      "audioSha256": "3f1730484c6a228e25a6cd90ccc30fb7e11ab1534089431981c4cec67d90e6ea",
+      "durationSeconds": 2.112,
+      "audioScriptSha256": "81c13611b57cb2c6c8da99a7d133c6094d9bde96b1aad5e1e3a76fbadd429f58"
+    },
+    {
+      "id": "prices-31",
+      "mode": "prices",
+      "value": "40.00",
+      "hanzi": "四十块",
+      "pinyin": "sì shí kuài",
+      "written": "四十元整",
+      "explanation": "Prices here are in RMB. 块 and 毛 are everyday spoken units; 元 and 角 are written units. 1 元 = 10 角 = 100 分. No currency exchange is performed.",
+      "parts": [
+        {
+          "label": "Yuan",
+          "value": "40",
+          "hanzi": "元 / 块"
+        },
+        {
+          "label": "Jiao",
+          "value": "0",
+          "hanzi": "角 / 毛"
+        },
+        {
+          "label": "Fen",
+          "value": "0",
+          "hanzi": "分"
+        }
+      ],
+      "audioSrc": "/number-audio/v1/prices-31-1ed81b534b03.mp3",
+      "audioSha256": "1ed81b534b03878702aff4443772fc11fc3a972ec4e4981a77ffbfa34ca08f6e",
+      "durationSeconds": 1.608,
+      "audioScriptSha256": "e6aa9f768c028c3b2213df4868695d5d3f307bd4455a356ffacf679fabd7de37"
+    },
+    {
+      "id": "prices-32",
+      "mode": "prices",
+      "value": "48.50",
+      "hanzi": "四十八块五毛",
+      "pinyin": "sì shí bā kuài wǔ máo",
+      "written": "四十八元五角",
+      "explanation": "Prices here are in RMB. 块 and 毛 are everyday spoken units; 元 and 角 are written units. 1 元 = 10 角 = 100 分. No currency exchange is performed.",
+      "parts": [
+        {
+          "label": "Yuan",
+          "value": "48",
+          "hanzi": "元 / 块"
+        },
+        {
+          "label": "Jiao",
+          "value": "5",
+          "hanzi": "角 / 毛"
+        },
+        {
+          "label": "Fen",
+          "value": "0",
+          "hanzi": "分"
+        }
+      ],
+      "audioSrc": "/number-audio/v1/prices-32-8de887446708.mp3",
+      "audioSha256": "8de887446708abcdceabae8ea6c9c381649c3bcb1b2971b4717d7f178518e462",
+      "durationSeconds": 2.136,
+      "audioScriptSha256": "6f7ebc71c5c63a347cf93f57756d681cd7765aed25171eadf49f6493a44c43c9"
+    },
+    {
+      "id": "prices-33",
+      "mode": "prices",
+      "value": "50.00",
+      "hanzi": "五十块",
+      "pinyin": "wǔ shí kuài",
+      "written": "五十元整",
+      "explanation": "Prices here are in RMB. 块 and 毛 are everyday spoken units; 元 and 角 are written units. 1 元 = 10 角 = 100 分. No currency exchange is performed.",
+      "parts": [
+        {
+          "label": "Yuan",
+          "value": "50",
+          "hanzi": "元 / 块"
+        },
+        {
+          "label": "Jiao",
+          "value": "0",
+          "hanzi": "角 / 毛"
+        },
+        {
+          "label": "Fen",
+          "value": "0",
+          "hanzi": "分"
+        }
+      ],
+      "audioSrc": "/number-audio/v1/prices-33-972142b8b961.mp3",
+      "audioSha256": "972142b8b961b70025a313c31b2ecfafab9aa2c1f494dfd9ed4e351d4e051ba8",
+      "durationSeconds": 1.536,
+      "audioScriptSha256": "37dfc8ee4ee621d6f3da1be97d217c3406a17a108fa28ee78dd09f710eb93e8b"
+    },
+    {
+      "id": "prices-34",
+      "mode": "prices",
+      "value": "68.00",
+      "hanzi": "六十八块",
+      "pinyin": "liù shí bā kuài",
+      "written": "六十八元整",
+      "explanation": "Prices here are in RMB. 块 and 毛 are everyday spoken units; 元 and 角 are written units. 1 元 = 10 角 = 100 分. No currency exchange is performed.",
+      "parts": [
+        {
+          "label": "Yuan",
+          "value": "68",
+          "hanzi": "元 / 块"
+        },
+        {
+          "label": "Jiao",
+          "value": "0",
+          "hanzi": "角 / 毛"
+        },
+        {
+          "label": "Fen",
+          "value": "0",
+          "hanzi": "分"
+        }
+      ],
+      "audioSrc": "/number-audio/v1/prices-34-357839cff460.mp3",
+      "audioSha256": "357839cff46057f504becc0da0048523d535dce22d7195ce252a2260de7df37b",
+      "durationSeconds": 1.752,
+      "audioScriptSha256": "bdf113e4ed027760c4cd35079914e62c0659474107a096bef3ca90d52a387092"
+    },
+    {
+      "id": "prices-35",
+      "mode": "prices",
+      "value": "70.00",
+      "hanzi": "七十块",
+      "pinyin": "qī shí kuài",
+      "written": "七十元整",
+      "explanation": "Prices here are in RMB. 块 and 毛 are everyday spoken units; 元 and 角 are written units. 1 元 = 10 角 = 100 分. No currency exchange is performed.",
+      "parts": [
+        {
+          "label": "Yuan",
+          "value": "70",
+          "hanzi": "元 / 块"
+        },
+        {
+          "label": "Jiao",
+          "value": "0",
+          "hanzi": "角 / 毛"
+        },
+        {
+          "label": "Fen",
+          "value": "0",
+          "hanzi": "分"
+        }
+      ],
+      "audioSrc": "/number-audio/v1/prices-35-68d8f96fbcec.mp3",
+      "audioSha256": "68d8f96fbcec83e91d9d405f0fd694008b34f752e0b33c996d0f9049bd1ddfdd",
+      "durationSeconds": 1.584,
+      "audioScriptSha256": "f88929601bfd2b9041a367d43c5f32948b4a98fcce616e3c1a7c2222488bc079"
+    },
+    {
+      "id": "prices-36",
+      "mode": "prices",
+      "value": "88.80",
+      "hanzi": "八十八块八毛",
+      "pinyin": "bā shí bā kuài bā máo",
+      "written": "八十八元八角",
+      "explanation": "Prices here are in RMB. 块 and 毛 are everyday spoken units; 元 and 角 are written units. 1 元 = 10 角 = 100 分. No currency exchange is performed.",
+      "parts": [
+        {
+          "label": "Yuan",
+          "value": "88",
+          "hanzi": "元 / 块"
+        },
+        {
+          "label": "Jiao",
+          "value": "8",
+          "hanzi": "角 / 毛"
+        },
+        {
+          "label": "Fen",
+          "value": "0",
+          "hanzi": "分"
+        }
+      ],
+      "audioSrc": "/number-audio/v1/prices-36-c02c1d4a08e7.mp3",
+      "audioSha256": "c02c1d4a08e77534b9108bd1fc5eb0348adea1eebc5c0a0bf3a00ca0517c8c4c",
+      "durationSeconds": 2.136,
+      "audioScriptSha256": "149255f4758a6e5a6eb1319f944684e0f7c52024e59676d82fd6812cb11a1e1d"
+    },
+    {
+      "id": "prices-37",
+      "mode": "prices",
+      "value": "99.00",
+      "hanzi": "九十九块",
+      "pinyin": "jiǔ shí jiǔ kuài",
+      "written": "九十九元整",
+      "explanation": "Prices here are in RMB. 块 and 毛 are everyday spoken units; 元 and 角 are written units. 1 元 = 10 角 = 100 分. No currency exchange is performed.",
+      "parts": [
+        {
+          "label": "Yuan",
+          "value": "99",
+          "hanzi": "元 / 块"
+        },
+        {
+          "label": "Jiao",
+          "value": "0",
+          "hanzi": "角 / 毛"
+        },
+        {
+          "label": "Fen",
+          "value": "0",
+          "hanzi": "分"
+        }
+      ],
+      "audioSrc": "/number-audio/v1/prices-37-8d7031f9d0c8.mp3",
+      "audioSha256": "8d7031f9d0c83ef853609522e5126b2bd89c5566d480e72bf4d769c6b78a624c",
+      "durationSeconds": 1.8,
+      "audioScriptSha256": "bcc282122517e985b2ea11b9139654d50f4e731380f744b83a64d744334e9752"
+    },
+    {
+      "id": "prices-38",
+      "mode": "prices",
+      "value": "100.00",
+      "hanzi": "一百块",
+      "pinyin": "yī bǎi kuài",
+      "written": "一百元整",
+      "explanation": "Prices here are in RMB. 块 and 毛 are everyday spoken units; 元 and 角 are written units. 1 元 = 10 角 = 100 分. No currency exchange is performed.",
+      "parts": [
+        {
+          "label": "Yuan",
+          "value": "100",
+          "hanzi": "元 / 块"
+        },
+        {
+          "label": "Jiao",
+          "value": "0",
+          "hanzi": "角 / 毛"
+        },
+        {
+          "label": "Fen",
+          "value": "0",
+          "hanzi": "分"
+        }
+      ],
+      "audioSrc": "/number-audio/v1/prices-38-ed15d56c4331.mp3",
+      "audioSha256": "ed15d56c4331c669b017ae48b3e3ab11348ac4c6c76dfb064d353167bf775020",
+      "durationSeconds": 1.584,
+      "audioScriptSha256": "7fa037e3b364bc6919f85b3c91867f296209528329fda25605ff62a03a6d37c5"
+    },
+    {
+      "id": "prices-39",
+      "mode": "prices",
+      "value": "108.05",
+      "hanzi": "一百零八块零五分",
+      "pinyin": "yī bǎi líng bā kuài líng wǔ fēn",
+      "written": "一百零八元零五分",
+      "explanation": "Prices here are in RMB. 块 and 毛 are everyday spoken units; 元 and 角 are written units. 1 元 = 10 角 = 100 分. No currency exchange is performed.",
+      "parts": [
+        {
+          "label": "Yuan",
+          "value": "108",
+          "hanzi": "元 / 块"
+        },
+        {
+          "label": "Jiao",
+          "value": "0",
+          "hanzi": "角 / 毛"
+        },
+        {
+          "label": "Fen",
+          "value": "5",
+          "hanzi": "分"
+        }
+      ],
+      "audioSrc": "/number-audio/v1/prices-39-92875bca28d9.mp3",
+      "audioSha256": "92875bca28d900ada6a5bdecf4ecf8d694e4815dcd853491a2bc8f304ce25edf",
+      "durationSeconds": 2.472,
+      "audioScriptSha256": "afec81c02eaa1e6aa4b36b905cd20bfb664cb5e915f12a0cd4fd3dbee7738fce"
+    },
+    {
+      "id": "prices-40",
+      "mode": "prices",
+      "value": "200.00",
+      "hanzi": "两百块",
+      "pinyin": "liǎng bǎi kuài",
+      "written": "二百元整",
+      "explanation": "Prices here are in RMB. 块 and 毛 are everyday spoken units; 元 and 角 are written units. 1 元 = 10 角 = 100 分. No currency exchange is performed.",
+      "parts": [
+        {
+          "label": "Yuan",
+          "value": "200",
+          "hanzi": "元 / 块"
+        },
+        {
+          "label": "Jiao",
+          "value": "0",
+          "hanzi": "角 / 毛"
+        },
+        {
+          "label": "Fen",
+          "value": "0",
+          "hanzi": "分"
+        }
+      ],
+      "audioSrc": "/number-audio/v1/prices-40-3c2e94632342.mp3",
+      "audioSha256": "3c2e94632342f05bb1071e3b437b1b39b2aeeb21fafae9bc5d5b7ee8f3a7589c",
+      "durationSeconds": 1.584,
+      "audioScriptSha256": "8a664173d4caf8838d97922082427cb1e987f892127f2950c29931b0fda9edc6"
+    },
+    {
+      "id": "dates-01",
+      "mode": "dates",
+      "value": "2024-02-29",
+      "hanzi": "二零二四年二月二十九号",
+      "pinyin": "èr líng èr sì nián èr yuè èr shí jiǔ hào",
+      "written": "二零二四年二月二十九日",
+      "parts": [
+        {
+          "label": "Year · digit by digit",
+          "value": "2024",
+          "hanzi": "二零二四年"
+        },
+        {
+          "label": "Month",
+          "value": "2",
+          "hanzi": "二月"
+        },
+        {
+          "label": "Day",
+          "value": "29",
+          "hanzi": "二十九号"
+        }
+      ],
+      "explanation": "Use year → month → day. Read the year digit by digit, but read the month and day as numbers. 号 is common in speech; 日 is used in written dates.",
+      "audioSrc": "/number-audio/v1/dates-01-6290a03d8e22.mp3",
+      "audioSha256": "6290a03d8e2294a1b52bb103dfb7c47fc8a7287be4903d736ad1af8ba97d5ff1",
+      "durationSeconds": 3.168,
+      "audioScriptSha256": "777c240f94c9a1be49d8b8daf27dc05710a0dda808b2443d47cf4ba374486867"
+    },
+    {
+      "id": "dates-02",
+      "mode": "dates",
+      "value": "2025-01-01",
+      "hanzi": "二零二五年一月一号",
+      "pinyin": "èr líng èr wǔ nián yī yuè yī hào",
+      "written": "二零二五年一月一日",
+      "parts": [
+        {
+          "label": "Year · digit by digit",
+          "value": "2025",
+          "hanzi": "二零二五年"
+        },
+        {
+          "label": "Month",
+          "value": "1",
+          "hanzi": "一月"
+        },
+        {
+          "label": "Day",
+          "value": "1",
+          "hanzi": "一号"
+        }
+      ],
+      "explanation": "Use year → month → day. Read the year digit by digit, but read the month and day as numbers. 号 is common in speech; 日 is used in written dates.",
+      "audioSrc": "/number-audio/v1/dates-02-63abf9cfd6ad.mp3",
+      "audioSha256": "63abf9cfd6ada98af6ffb0b4a373bc41e27e8e75229588312efabd6df616c3c5",
+      "durationSeconds": 2.64,
+      "audioScriptSha256": "148ae62a4b99a9df2287bfb8e37821573efbb61ab8cfa74a84a1b83b16c0cb29"
+    },
+    {
+      "id": "dates-03",
+      "mode": "dates",
+      "value": "2025-02-02",
+      "hanzi": "二零二五年二月二号",
+      "pinyin": "èr líng èr wǔ nián èr yuè èr hào",
+      "written": "二零二五年二月二日",
+      "parts": [
+        {
+          "label": "Year · digit by digit",
+          "value": "2025",
+          "hanzi": "二零二五年"
+        },
+        {
+          "label": "Month",
+          "value": "2",
+          "hanzi": "二月"
+        },
+        {
+          "label": "Day",
+          "value": "2",
+          "hanzi": "二号"
+        }
+      ],
+      "explanation": "Use year → month → day. Read the year digit by digit, but read the month and day as numbers. 号 is common in speech; 日 is used in written dates.",
+      "audioSrc": "/number-audio/v1/dates-03-962444abcd31.mp3",
+      "audioSha256": "962444abcd31a5db0cbc2402b993c2311b7b4f8feba2d67f5ebafe57d0492c31",
+      "durationSeconds": 2.688,
+      "audioScriptSha256": "f344281eba871466daf729719b57b9541c114e24143828ae104b4b3677d26012"
+    },
+    {
+      "id": "dates-04",
+      "mode": "dates",
+      "value": "2025-03-08",
+      "hanzi": "二零二五年三月八号",
+      "pinyin": "èr líng èr wǔ nián sān yuè bā hào",
+      "written": "二零二五年三月八日",
+      "parts": [
+        {
+          "label": "Year · digit by digit",
+          "value": "2025",
+          "hanzi": "二零二五年"
+        },
+        {
+          "label": "Month",
+          "value": "3",
+          "hanzi": "三月"
+        },
+        {
+          "label": "Day",
+          "value": "8",
+          "hanzi": "八号"
+        }
+      ],
+      "explanation": "Use year → month → day. Read the year digit by digit, but read the month and day as numbers. 号 is common in speech; 日 is used in written dates.",
+      "audioSrc": "/number-audio/v1/dates-04-2928bc90ffeb.mp3",
+      "audioSha256": "2928bc90ffeb7b2c4be5a29882face347bea4b0f4f9da943394aa980ba25725d",
+      "durationSeconds": 2.688,
+      "audioScriptSha256": "1e58b3aae51eae7a0e168d75dbf0880a226604a1f94f6e910c7487b0f544942a"
+    },
+    {
+      "id": "dates-05",
+      "mode": "dates",
+      "value": "2025-04-15",
+      "hanzi": "二零二五年四月十五号",
+      "pinyin": "èr líng èr wǔ nián sì yuè shí wǔ hào",
+      "written": "二零二五年四月十五日",
+      "parts": [
+        {
+          "label": "Year · digit by digit",
+          "value": "2025",
+          "hanzi": "二零二五年"
+        },
+        {
+          "label": "Month",
+          "value": "4",
+          "hanzi": "四月"
+        },
+        {
+          "label": "Day",
+          "value": "15",
+          "hanzi": "十五号"
+        }
+      ],
+      "explanation": "Use year → month → day. Read the year digit by digit, but read the month and day as numbers. 号 is common in speech; 日 is used in written dates.",
+      "audioSrc": "/number-audio/v1/dates-05-7c0dcf3420ad.mp3",
+      "audioSha256": "7c0dcf3420adac0e11fc2c6f9da05ac3ae794f507d76fc061e1d7d71aa88784b",
+      "durationSeconds": 2.904,
+      "audioScriptSha256": "27ddac2a2913c43eab55120ac8b821d2124d8283dda464186f2180c888ad82fe"
+    },
+    {
+      "id": "dates-06",
+      "mode": "dates",
+      "value": "2025-05-01",
+      "hanzi": "二零二五年五月一号",
+      "pinyin": "èr líng èr wǔ nián wǔ yuè yī hào",
+      "written": "二零二五年五月一日",
+      "parts": [
+        {
+          "label": "Year · digit by digit",
+          "value": "2025",
+          "hanzi": "二零二五年"
+        },
+        {
+          "label": "Month",
+          "value": "5",
+          "hanzi": "五月"
+        },
+        {
+          "label": "Day",
+          "value": "1",
+          "hanzi": "一号"
+        }
+      ],
+      "explanation": "Use year → month → day. Read the year digit by digit, but read the month and day as numbers. 号 is common in speech; 日 is used in written dates.",
+      "audioSrc": "/number-audio/v1/dates-06-09ee85a06ae5.mp3",
+      "audioSha256": "09ee85a06ae5c3820702673e27ece8dfe6428fe23045ae9b2c4cfba0315e4a13",
+      "durationSeconds": 2.712,
+      "audioScriptSha256": "e3bd485cc83ee21d33e40cccaf5236b8d9b13fa3c3520a75e577f9b67dcc9a30"
+    },
+    {
+      "id": "dates-07",
+      "mode": "dates",
+      "value": "2025-06-10",
+      "hanzi": "二零二五年六月十号",
+      "pinyin": "èr líng èr wǔ nián liù yuè shí hào",
+      "written": "二零二五年六月十日",
+      "parts": [
+        {
+          "label": "Year · digit by digit",
+          "value": "2025",
+          "hanzi": "二零二五年"
+        },
+        {
+          "label": "Month",
+          "value": "6",
+          "hanzi": "六月"
+        },
+        {
+          "label": "Day",
+          "value": "10",
+          "hanzi": "十号"
+        }
+      ],
+      "explanation": "Use year → month → day. Read the year digit by digit, but read the month and day as numbers. 号 is common in speech; 日 is used in written dates.",
+      "audioSrc": "/number-audio/v1/dates-07-a215e3f39003.mp3",
+      "audioSha256": "a215e3f390032bbf70c42374fc3ebd2ca058b45bb4c0e9e8bab734b175643b81",
+      "durationSeconds": 2.664,
+      "audioScriptSha256": "82cab59cbb4a2f6d61fb5fef4c755acaf94b538e87e2898d76ef9804882bfa5b"
+    },
+    {
+      "id": "dates-08",
+      "mode": "dates",
+      "value": "2025-07-20",
+      "hanzi": "二零二五年七月二十号",
+      "pinyin": "èr líng èr wǔ nián qī yuè èr shí hào",
+      "written": "二零二五年七月二十日",
+      "parts": [
+        {
+          "label": "Year · digit by digit",
+          "value": "2025",
+          "hanzi": "二零二五年"
+        },
+        {
+          "label": "Month",
+          "value": "7",
+          "hanzi": "七月"
+        },
+        {
+          "label": "Day",
+          "value": "20",
+          "hanzi": "二十号"
+        }
+      ],
+      "explanation": "Use year → month → day. Read the year digit by digit, but read the month and day as numbers. 号 is common in speech; 日 is used in written dates.",
+      "audioSrc": "/number-audio/v1/dates-08-245f9b7012fa.mp3",
+      "audioSha256": "245f9b7012faa8aba72f4d950250bc7036a9fb342be98d0e73ed82048eb065cc",
+      "durationSeconds": 2.76,
+      "audioScriptSha256": "a67fb4cf6562692de07b1884016ecdedbbafa06ce72793be658e799d6969d99b"
+    },
+    {
+      "id": "dates-09",
+      "mode": "dates",
+      "value": "2025-08-18",
+      "hanzi": "二零二五年八月十八号",
+      "pinyin": "èr líng èr wǔ nián bā yuè shí bā hào",
+      "written": "二零二五年八月十八日",
+      "parts": [
+        {
+          "label": "Year · digit by digit",
+          "value": "2025",
+          "hanzi": "二零二五年"
+        },
+        {
+          "label": "Month",
+          "value": "8",
+          "hanzi": "八月"
+        },
+        {
+          "label": "Day",
+          "value": "18",
+          "hanzi": "十八号"
+        }
+      ],
+      "explanation": "Use year → month → day. Read the year digit by digit, but read the month and day as numbers. 号 is common in speech; 日 is used in written dates.",
+      "audioSrc": "/number-audio/v1/dates-09-b5d5e46bfbb8.mp3",
+      "audioSha256": "b5d5e46bfbb88f12ed56ecc648d5b6f9fe80ec3f546f3d372f52abdf0e489e8a",
+      "durationSeconds": 2.856,
+      "audioScriptSha256": "91eb3e544a0506161c8ef73674d7496a084ca30013971938a741ca9774b62cc3"
+    },
+    {
+      "id": "dates-10",
+      "mode": "dates",
+      "value": "2025-09-30",
+      "hanzi": "二零二五年九月三十号",
+      "pinyin": "èr líng èr wǔ nián jiǔ yuè sān shí hào",
+      "written": "二零二五年九月三十日",
+      "parts": [
+        {
+          "label": "Year · digit by digit",
+          "value": "2025",
+          "hanzi": "二零二五年"
+        },
+        {
+          "label": "Month",
+          "value": "9",
+          "hanzi": "九月"
+        },
+        {
+          "label": "Day",
+          "value": "30",
+          "hanzi": "三十号"
+        }
+      ],
+      "explanation": "Use year → month → day. Read the year digit by digit, but read the month and day as numbers. 号 is common in speech; 日 is used in written dates.",
+      "audioSrc": "/number-audio/v1/dates-10-3b4d6a943ca7.mp3",
+      "audioSha256": "3b4d6a943ca78c44986983dd3625f859ddc78c9f569c132ec200a5a8e5412472",
+      "durationSeconds": 2.832,
+      "audioScriptSha256": "584494947d961eb2de2077c34dbeaedaa157adcff65b0b695f1983df66399119"
+    },
+    {
+      "id": "dates-11",
+      "mode": "dates",
+      "value": "2025-10-01",
+      "hanzi": "二零二五年十月一号",
+      "pinyin": "èr líng èr wǔ nián shí yuè yī hào",
+      "written": "二零二五年十月一日",
+      "parts": [
+        {
+          "label": "Year · digit by digit",
+          "value": "2025",
+          "hanzi": "二零二五年"
+        },
+        {
+          "label": "Month",
+          "value": "10",
+          "hanzi": "十月"
+        },
+        {
+          "label": "Day",
+          "value": "1",
+          "hanzi": "一号"
+        }
+      ],
+      "explanation": "Use year → month → day. Read the year digit by digit, but read the month and day as numbers. 号 is common in speech; 日 is used in written dates.",
+      "audioSrc": "/number-audio/v1/dates-11-4197d947057e.mp3",
+      "audioSha256": "4197d947057e0257c9b9be958d2239c726a5e211b4f63148acb34ab25ab611e2",
+      "durationSeconds": 2.688,
+      "audioScriptSha256": "8383622e19fd38bc0a2949fb3bf456fa576b3682150b2faf74e913bcdda46070"
+    },
+    {
+      "id": "dates-12",
+      "mode": "dates",
+      "value": "2025-11-11",
+      "hanzi": "二零二五年十一月十一号",
+      "pinyin": "èr líng èr wǔ nián shí yī yuè shí yī hào",
+      "written": "二零二五年十一月十一日",
+      "parts": [
+        {
+          "label": "Year · digit by digit",
+          "value": "2025",
+          "hanzi": "二零二五年"
+        },
+        {
+          "label": "Month",
+          "value": "11",
+          "hanzi": "十一月"
+        },
+        {
+          "label": "Day",
+          "value": "11",
+          "hanzi": "十一号"
+        }
+      ],
+      "explanation": "Use year → month → day. Read the year digit by digit, but read the month and day as numbers. 号 is common in speech; 日 is used in written dates.",
+      "audioSrc": "/number-audio/v1/dates-12-44a90171fc39.mp3",
+      "audioSha256": "44a90171fc393acd28fe4275ef330f3dde7182725c5014172859bef306fb4c6c",
+      "durationSeconds": 3.024,
+      "audioScriptSha256": "fe66167312fb0bd130dbe33d5a5e5114b3b3ddeb8ac8b0bfaadb64de5d67021d"
+    },
+    {
+      "id": "dates-13",
+      "mode": "dates",
+      "value": "2025-12-25",
+      "hanzi": "二零二五年十二月二十五号",
+      "pinyin": "èr líng èr wǔ nián shí èr yuè èr shí wǔ hào",
+      "written": "二零二五年十二月二十五日",
+      "parts": [
+        {
+          "label": "Year · digit by digit",
+          "value": "2025",
+          "hanzi": "二零二五年"
+        },
+        {
+          "label": "Month",
+          "value": "12",
+          "hanzi": "十二月"
+        },
+        {
+          "label": "Day",
+          "value": "25",
+          "hanzi": "二十五号"
+        }
+      ],
+      "explanation": "Use year → month → day. Read the year digit by digit, but read the month and day as numbers. 号 is common in speech; 日 is used in written dates.",
+      "audioSrc": "/number-audio/v1/dates-13-b6d3f691b4fa.mp3",
+      "audioSha256": "b6d3f691b4faab31d941e4bfbfaedcec84eef25c06bc5e1416ac57f3a58075fa",
+      "durationSeconds": 3.264,
+      "audioScriptSha256": "6d52f93e4027ddf72d78845b29155163cf22ac362a7c229e5236da297ca6030f"
+    },
+    {
+      "id": "dates-14",
+      "mode": "dates",
+      "value": "2026-01-05",
+      "hanzi": "二零二六年一月五号",
+      "pinyin": "èr líng èr liù nián yī yuè wǔ hào",
+      "written": "二零二六年一月五日",
+      "parts": [
+        {
+          "label": "Year · digit by digit",
+          "value": "2026",
+          "hanzi": "二零二六年"
+        },
+        {
+          "label": "Month",
+          "value": "1",
+          "hanzi": "一月"
+        },
+        {
+          "label": "Day",
+          "value": "5",
+          "hanzi": "五号"
+        }
+      ],
+      "explanation": "Use year → month → day. Read the year digit by digit, but read the month and day as numbers. 号 is common in speech; 日 is used in written dates.",
+      "audioSrc": "/number-audio/v1/dates-14-9e8ef72efc7b.mp3",
+      "audioSha256": "9e8ef72efc7b6caf0883168b27bdf25e1f2d1a2f32eeda9fb52969a6e6be9ff2",
+      "durationSeconds": 2.712,
+      "audioScriptSha256": "1976b5721c2b83c7da3f95dab340fc226cd0d0c325cb8e494e6d81cdb6cb4a9a"
+    },
+    {
+      "id": "dates-15",
+      "mode": "dates",
+      "value": "2026-02-14",
+      "hanzi": "二零二六年二月十四号",
+      "pinyin": "èr líng èr liù nián èr yuè shí sì hào",
+      "written": "二零二六年二月十四日",
+      "parts": [
+        {
+          "label": "Year · digit by digit",
+          "value": "2026",
+          "hanzi": "二零二六年"
+        },
+        {
+          "label": "Month",
+          "value": "2",
+          "hanzi": "二月"
+        },
+        {
+          "label": "Day",
+          "value": "14",
+          "hanzi": "十四号"
+        }
+      ],
+      "explanation": "Use year → month → day. Read the year digit by digit, but read the month and day as numbers. 号 is common in speech; 日 is used in written dates.",
+      "audioSrc": "/number-audio/v1/dates-15-7d91a361d024.mp3",
+      "audioSha256": "7d91a361d024549aa88c828044cab785fb9d54d182200492030f1c7082956a1c",
+      "durationSeconds": 2.976,
+      "audioScriptSha256": "cd8928a83674e441509d2e631a1979a190c00e42fb5be58d1d92988f78068425"
+    },
+    {
+      "id": "dates-16",
+      "mode": "dates",
+      "value": "2026-03-15",
+      "hanzi": "二零二六年三月十五号",
+      "pinyin": "èr líng èr liù nián sān yuè shí wǔ hào",
+      "written": "二零二六年三月十五日",
+      "parts": [
+        {
+          "label": "Year · digit by digit",
+          "value": "2026",
+          "hanzi": "二零二六年"
+        },
+        {
+          "label": "Month",
+          "value": "3",
+          "hanzi": "三月"
+        },
+        {
+          "label": "Day",
+          "value": "15",
+          "hanzi": "十五号"
+        }
+      ],
+      "explanation": "Use year → month → day. Read the year digit by digit, but read the month and day as numbers. 号 is common in speech; 日 is used in written dates.",
+      "audioSrc": "/number-audio/v1/dates-16-b127c477aafb.mp3",
+      "audioSha256": "b127c477aafb33c4a23cf561aef7348b4a759d5b1df1610bb7abdf0a2d73e3b8",
+      "durationSeconds": 2.952,
+      "audioScriptSha256": "aaaa88343c68b219f3ce47568be51e3589035f8ea281ce653ac882b8aabdc9c6"
+    },
+    {
+      "id": "dates-17",
+      "mode": "dates",
+      "value": "2026-04-06",
+      "hanzi": "二零二六年四月六号",
+      "pinyin": "èr líng èr liù nián sì yuè liù hào",
+      "written": "二零二六年四月六日",
+      "parts": [
+        {
+          "label": "Year · digit by digit",
+          "value": "2026",
+          "hanzi": "二零二六年"
+        },
+        {
+          "label": "Month",
+          "value": "4",
+          "hanzi": "四月"
+        },
+        {
+          "label": "Day",
+          "value": "6",
+          "hanzi": "六号"
+        }
+      ],
+      "explanation": "Use year → month → day. Read the year digit by digit, but read the month and day as numbers. 号 is common in speech; 日 is used in written dates.",
+      "audioSrc": "/number-audio/v1/dates-17-251a2998bfd3.mp3",
+      "audioSha256": "251a2998bfd3b9a564972277a5d85aa3ff822ee47b0245cccd7f9d6b58b41009",
+      "durationSeconds": 2.76,
+      "audioScriptSha256": "4631250c3db3bbbf770940ecff15a348fffb3257b9af90abd8b9575e1fba477e"
+    },
+    {
+      "id": "dates-18",
+      "mode": "dates",
+      "value": "2026-05-20",
+      "hanzi": "二零二六年五月二十号",
+      "pinyin": "èr líng èr liù nián wǔ yuè èr shí hào",
+      "written": "二零二六年五月二十日",
+      "parts": [
+        {
+          "label": "Year · digit by digit",
+          "value": "2026",
+          "hanzi": "二零二六年"
+        },
+        {
+          "label": "Month",
+          "value": "5",
+          "hanzi": "五月"
+        },
+        {
+          "label": "Day",
+          "value": "20",
+          "hanzi": "二十号"
+        }
+      ],
+      "explanation": "Use year → month → day. Read the year digit by digit, but read the month and day as numbers. 号 is common in speech; 日 is used in written dates.",
+      "audioSrc": "/number-audio/v1/dates-18-21385b972327.mp3",
+      "audioSha256": "21385b9723277019e9ab814321e28ef2e0f209d6376d4a1885cba331c39ff478",
+      "durationSeconds": 2.88,
+      "audioScriptSha256": "5db0925196af4b03f4755d9ab06273fb59aead7388fa162ed32677686aaf7f26"
+    },
+    {
+      "id": "dates-19",
+      "mode": "dates",
+      "value": "2026-06-01",
+      "hanzi": "二零二六年六月一号",
+      "pinyin": "èr líng èr liù nián liù yuè yī hào",
+      "written": "二零二六年六月一日",
+      "parts": [
+        {
+          "label": "Year · digit by digit",
+          "value": "2026",
+          "hanzi": "二零二六年"
+        },
+        {
+          "label": "Month",
+          "value": "6",
+          "hanzi": "六月"
+        },
+        {
+          "label": "Day",
+          "value": "1",
+          "hanzi": "一号"
+        }
+      ],
+      "explanation": "Use year → month → day. Read the year digit by digit, but read the month and day as numbers. 号 is common in speech; 日 is used in written dates.",
+      "audioSrc": "/number-audio/v1/dates-19-c6ec3d7ec36a.mp3",
+      "audioSha256": "c6ec3d7ec36a5fbbf262029459a8f8e8abd45fbdd2cb2e4f81e4835c8def9307",
+      "durationSeconds": 2.76,
+      "audioScriptSha256": "b2cb957c352106f7582ddd35be27477b48d99b2b852d1efe3e08ed3b9cd4ddfe"
+    },
+    {
+      "id": "dates-20",
+      "mode": "dates",
+      "value": "2026-07-08",
+      "hanzi": "二零二六年七月八号",
+      "pinyin": "èr líng èr liù nián qī yuè bā hào",
+      "written": "二零二六年七月八日",
+      "parts": [
+        {
+          "label": "Year · digit by digit",
+          "value": "2026",
+          "hanzi": "二零二六年"
+        },
+        {
+          "label": "Month",
+          "value": "7",
+          "hanzi": "七月"
+        },
+        {
+          "label": "Day",
+          "value": "8",
+          "hanzi": "八号"
+        }
+      ],
+      "explanation": "Use year → month → day. Read the year digit by digit, but read the month and day as numbers. 号 is common in speech; 日 is used in written dates.",
+      "audioSrc": "/number-audio/v1/dates-20-1f8c0461f844.mp3",
+      "audioSha256": "1f8c0461f844055a4bd5744211dd6dbfc8a304eba3fe58d2ce9219e5cb8eacfd",
+      "durationSeconds": 2.76,
+      "audioScriptSha256": "afd237006693d55709327b1da3f3c3310041b9c15b53bdb64816bc73c677b94b"
+    },
+    {
+      "id": "dates-21",
+      "mode": "dates",
+      "value": "2026-08-16",
+      "hanzi": "二零二六年八月十六号",
+      "pinyin": "èr líng èr liù nián bā yuè shí liù hào",
+      "written": "二零二六年八月十六日",
+      "parts": [
+        {
+          "label": "Year · digit by digit",
+          "value": "2026",
+          "hanzi": "二零二六年"
+        },
+        {
+          "label": "Month",
+          "value": "8",
+          "hanzi": "八月"
+        },
+        {
+          "label": "Day",
+          "value": "16",
+          "hanzi": "十六号"
+        }
+      ],
+      "explanation": "Use year → month → day. Read the year digit by digit, but read the month and day as numbers. 号 is common in speech; 日 is used in written dates.",
+      "audioSrc": "/number-audio/v1/dates-21-e08d8abcc624.mp3",
+      "audioSha256": "e08d8abcc624f6fd06ee17af812d2ca9cb1dffebb6f0a954683253fea20b45e7",
+      "durationSeconds": 2.928,
+      "audioScriptSha256": "32f6a554212d7602f3e316c55f0f25e5d5eeece705b9692ab342e6c289d13794"
+    },
+    {
+      "id": "dates-22",
+      "mode": "dates",
+      "value": "2026-09-09",
+      "hanzi": "二零二六年九月九号",
+      "pinyin": "èr líng èr liù nián jiǔ yuè jiǔ hào",
+      "written": "二零二六年九月九日",
+      "parts": [
+        {
+          "label": "Year · digit by digit",
+          "value": "2026",
+          "hanzi": "二零二六年"
+        },
+        {
+          "label": "Month",
+          "value": "9",
+          "hanzi": "九月"
+        },
+        {
+          "label": "Day",
+          "value": "9",
+          "hanzi": "九号"
+        }
+      ],
+      "explanation": "Use year → month → day. Read the year digit by digit, but read the month and day as numbers. 号 is common in speech; 日 is used in written dates.",
+      "audioSrc": "/number-audio/v1/dates-22-6b5b1a75f239.mp3",
+      "audioSha256": "6b5b1a75f239a4b8a47ccfeac8d42671ea662ff12159f7f18ab3df168746eaf9",
+      "durationSeconds": 2.76,
+      "audioScriptSha256": "1a8eb6587412d574d4fcb7e1751f16a3fa28535ac7ee5305b38c4cc1fc86cc68"
+    },
+    {
+      "id": "dates-23",
+      "mode": "dates",
+      "value": "2026-10-10",
+      "hanzi": "二零二六年十月十号",
+      "pinyin": "èr líng èr liù nián shí yuè shí hào",
+      "written": "二零二六年十月十日",
+      "parts": [
+        {
+          "label": "Year · digit by digit",
+          "value": "2026",
+          "hanzi": "二零二六年"
+        },
+        {
+          "label": "Month",
+          "value": "10",
+          "hanzi": "十月"
+        },
+        {
+          "label": "Day",
+          "value": "10",
+          "hanzi": "十号"
+        }
+      ],
+      "explanation": "Use year → month → day. Read the year digit by digit, but read the month and day as numbers. 号 is common in speech; 日 is used in written dates.",
+      "audioSrc": "/number-audio/v1/dates-23-c0c496f58f8b.mp3",
+      "audioSha256": "c0c496f58f8b9dad70c522ae61a65719d6874617d297924f77b76ce1b906c46d",
+      "durationSeconds": 2.76,
+      "audioScriptSha256": "43ae4794d679ef9d92f4402708f70717bb4e606d878f6a771f352e6f36ca97d5"
+    },
+    {
+      "id": "dates-24",
+      "mode": "dates",
+      "value": "2026-11-05",
+      "hanzi": "二零二六年十一月五号",
+      "pinyin": "èr líng èr liù nián shí yī yuè wǔ hào",
+      "written": "二零二六年十一月五日",
+      "parts": [
+        {
+          "label": "Year · digit by digit",
+          "value": "2026",
+          "hanzi": "二零二六年"
+        },
+        {
+          "label": "Month",
+          "value": "11",
+          "hanzi": "十一月"
+        },
+        {
+          "label": "Day",
+          "value": "5",
+          "hanzi": "五号"
+        }
+      ],
+      "explanation": "Use year → month → day. Read the year digit by digit, but read the month and day as numbers. 号 is common in speech; 日 is used in written dates.",
+      "audioSrc": "/number-audio/v1/dates-24-be817a07bc01.mp3",
+      "audioSha256": "be817a07bc01673acd4c45c0cc69d42865ba4178d0dbb0365e06d138baba1be3",
+      "durationSeconds": 2.928,
+      "audioScriptSha256": "c4673b533ff19c4c4bac974c719d91ddcbea28beb4d0f3adcbe19682f0f20733"
+    },
+    {
+      "id": "dates-25",
+      "mode": "dates",
+      "value": "2026-12-31",
+      "hanzi": "二零二六年十二月三十一号",
+      "pinyin": "èr líng èr liù nián shí èr yuè sān shí yī hào",
+      "written": "二零二六年十二月三十一日",
+      "parts": [
+        {
+          "label": "Year · digit by digit",
+          "value": "2026",
+          "hanzi": "二零二六年"
+        },
+        {
+          "label": "Month",
+          "value": "12",
+          "hanzi": "十二月"
+        },
+        {
+          "label": "Day",
+          "value": "31",
+          "hanzi": "三十一号"
+        }
+      ],
+      "explanation": "Use year → month → day. Read the year digit by digit, but read the month and day as numbers. 号 is common in speech; 日 is used in written dates.",
+      "audioSrc": "/number-audio/v1/dates-25-029ffd9c9a6a.mp3",
+      "audioSha256": "029ffd9c9a6a2eaac6f0d4f3da104df047366a8e92503103dc4c15468dd3744c",
+      "durationSeconds": 3.336,
+      "audioScriptSha256": "a2fb4e8b3b22f221275cc06e948a70c2831d231273d6a5dfcc23b62c64fd4014"
+    },
+    {
+      "id": "dates-26",
+      "mode": "dates",
+      "value": "2027-01-12",
+      "hanzi": "二零二七年一月十二号",
+      "pinyin": "èr líng èr qī nián yī yuè shí èr hào",
+      "written": "二零二七年一月十二日",
+      "parts": [
+        {
+          "label": "Year · digit by digit",
+          "value": "2027",
+          "hanzi": "二零二七年"
+        },
+        {
+          "label": "Month",
+          "value": "1",
+          "hanzi": "一月"
+        },
+        {
+          "label": "Day",
+          "value": "12",
+          "hanzi": "十二号"
+        }
+      ],
+      "explanation": "Use year → month → day. Read the year digit by digit, but read the month and day as numbers. 号 is common in speech; 日 is used in written dates.",
+      "audioSrc": "/number-audio/v1/dates-26-4660d30feab7.mp3",
+      "audioSha256": "4660d30feab7eeb3cf41fe959eb288736c598125444a1f9e257b41b2d3493872",
+      "durationSeconds": 2.928,
+      "audioScriptSha256": "cdb373a747ef60d91fd42119ad02c188b07493607b654dfd43bfd38abab84edc"
+    },
+    {
+      "id": "dates-27",
+      "mode": "dates",
+      "value": "2027-02-28",
+      "hanzi": "二零二七年二月二十八号",
+      "pinyin": "èr líng èr qī nián èr yuè èr shí bā hào",
+      "written": "二零二七年二月二十八日",
+      "parts": [
+        {
+          "label": "Year · digit by digit",
+          "value": "2027",
+          "hanzi": "二零二七年"
+        },
+        {
+          "label": "Month",
+          "value": "2",
+          "hanzi": "二月"
+        },
+        {
+          "label": "Day",
+          "value": "28",
+          "hanzi": "二十八号"
+        }
+      ],
+      "explanation": "Use year → month → day. Read the year digit by digit, but read the month and day as numbers. 号 is common in speech; 日 is used in written dates.",
+      "audioSrc": "/number-audio/v1/dates-27-6366d95433d4.mp3",
+      "audioSha256": "6366d95433d43419830ec4959134d6372c96171edc8a9a2688336e63d435123b",
+      "durationSeconds": 3.12,
+      "audioScriptSha256": "c859d0471db49c4ae3078e05e074b9b31f1816d88f7998e54bac6767ea8e7dc7"
+    },
+    {
+      "id": "dates-28",
+      "mode": "dates",
+      "value": "2027-03-21",
+      "hanzi": "二零二七年三月二十一号",
+      "pinyin": "èr líng èr qī nián sān yuè èr shí yī hào",
+      "written": "二零二七年三月二十一日",
+      "parts": [
+        {
+          "label": "Year · digit by digit",
+          "value": "2027",
+          "hanzi": "二零二七年"
+        },
+        {
+          "label": "Month",
+          "value": "3",
+          "hanzi": "三月"
+        },
+        {
+          "label": "Day",
+          "value": "21",
+          "hanzi": "二十一号"
+        }
+      ],
+      "explanation": "Use year → month → day. Read the year digit by digit, but read the month and day as numbers. 号 is common in speech; 日 is used in written dates.",
+      "audioSrc": "/number-audio/v1/dates-28-5e1320aa4ff5.mp3",
+      "audioSha256": "5e1320aa4ff5a990ab525f318b2d11fa3cbc58b8e832c5a6b4e1bb64c77e0a21",
+      "durationSeconds": 3.12,
+      "audioScriptSha256": "c28e0005df4c573656f3f77eb193a32a259c357602bd481b562bc606c698ec36"
+    },
+    {
+      "id": "dates-29",
+      "mode": "dates",
+      "value": "2027-04-30",
+      "hanzi": "二零二七年四月三十号",
+      "pinyin": "èr líng èr qī nián sì yuè sān shí hào",
+      "written": "二零二七年四月三十日",
+      "parts": [
+        {
+          "label": "Year · digit by digit",
+          "value": "2027",
+          "hanzi": "二零二七年"
+        },
+        {
+          "label": "Month",
+          "value": "4",
+          "hanzi": "四月"
+        },
+        {
+          "label": "Day",
+          "value": "30",
+          "hanzi": "三十号"
+        }
+      ],
+      "explanation": "Use year → month → day. Read the year digit by digit, but read the month and day as numbers. 号 is common in speech; 日 is used in written dates.",
+      "audioSrc": "/number-audio/v1/dates-29-d5d7e6fd0b92.mp3",
+      "audioSha256": "d5d7e6fd0b9209a6de0da805579406b8fcf43289a20144c4f5158f1fd03521be",
+      "durationSeconds": 2.952,
+      "audioScriptSha256": "d1141f3d2ab24e15cebf1fd9778c11dfc5b592fabe931b37d8a881c02c99e282"
+    },
+    {
+      "id": "dates-30",
+      "mode": "dates",
+      "value": "2027-05-25",
+      "hanzi": "二零二七年五月二十五号",
+      "pinyin": "èr líng èr qī nián wǔ yuè èr shí wǔ hào",
+      "written": "二零二七年五月二十五日",
+      "parts": [
+        {
+          "label": "Year · digit by digit",
+          "value": "2027",
+          "hanzi": "二零二七年"
+        },
+        {
+          "label": "Month",
+          "value": "5",
+          "hanzi": "五月"
+        },
+        {
+          "label": "Day",
+          "value": "25",
+          "hanzi": "二十五号"
+        }
+      ],
+      "explanation": "Use year → month → day. Read the year digit by digit, but read the month and day as numbers. 号 is common in speech; 日 is used in written dates.",
+      "audioSrc": "/number-audio/v1/dates-30-a6d38f88278c.mp3",
+      "audioSha256": "a6d38f88278c111b60d587a7ceffae931d69a96b617d35c4f789c70d46fc07ad",
+      "durationSeconds": 3.12,
+      "audioScriptSha256": "b9884e336fc11d750100b0ede30e661af5f8ea6fd45fa26564a5a2d417f3239d"
+    },
+    {
+      "id": "dates-31",
+      "mode": "dates",
+      "value": "2027-06-18",
+      "hanzi": "二零二七年六月十八号",
+      "pinyin": "èr líng èr qī nián liù yuè shí bā hào",
+      "written": "二零二七年六月十八日",
+      "parts": [
+        {
+          "label": "Year · digit by digit",
+          "value": "2027",
+          "hanzi": "二零二七年"
+        },
+        {
+          "label": "Month",
+          "value": "6",
+          "hanzi": "六月"
+        },
+        {
+          "label": "Day",
+          "value": "18",
+          "hanzi": "十八号"
+        }
+      ],
+      "explanation": "Use year → month → day. Read the year digit by digit, but read the month and day as numbers. 号 is common in speech; 日 is used in written dates.",
+      "audioSrc": "/number-audio/v1/dates-31-a5877d08ffc9.mp3",
+      "audioSha256": "a5877d08ffc9b87899d8691b1498b39ef4b251b6fe13ec588a6d00650788fa5a",
+      "durationSeconds": 2.952,
+      "audioScriptSha256": "c3f9726142f4022a42fe8a4e847d7f02c8d9ce879e63dd23ac3528d47a2690fb"
+    },
+    {
+      "id": "dates-32",
+      "mode": "dates",
+      "value": "2027-07-07",
+      "hanzi": "二零二七年七月七号",
+      "pinyin": "èr líng èr qī nián qī yuè qī hào",
+      "written": "二零二七年七月七日",
+      "parts": [
+        {
+          "label": "Year · digit by digit",
+          "value": "2027",
+          "hanzi": "二零二七年"
+        },
+        {
+          "label": "Month",
+          "value": "7",
+          "hanzi": "七月"
+        },
+        {
+          "label": "Day",
+          "value": "7",
+          "hanzi": "七号"
+        }
+      ],
+      "explanation": "Use year → month → day. Read the year digit by digit, but read the month and day as numbers. 号 is common in speech; 日 is used in written dates.",
+      "audioSrc": "/number-audio/v1/dates-32-56b30d6269fc.mp3",
+      "audioSha256": "56b30d6269fc1ce1935f0ea6888891841bbd4eaca7d77548607a7a014801ec4e",
+      "durationSeconds": 2.856,
+      "audioScriptSha256": "ef55fe4a8bbf53c0a2598c0fc57fdb0de535b59949f6ad640911144266429ec1"
+    },
+    {
+      "id": "dates-33",
+      "mode": "dates",
+      "value": "2027-08-08",
+      "hanzi": "二零二七年八月八号",
+      "pinyin": "èr líng èr qī nián bā yuè bā hào",
+      "written": "二零二七年八月八日",
+      "parts": [
+        {
+          "label": "Year · digit by digit",
+          "value": "2027",
+          "hanzi": "二零二七年"
+        },
+        {
+          "label": "Month",
+          "value": "8",
+          "hanzi": "八月"
+        },
+        {
+          "label": "Day",
+          "value": "8",
+          "hanzi": "八号"
+        }
+      ],
+      "explanation": "Use year → month → day. Read the year digit by digit, but read the month and day as numbers. 号 is common in speech; 日 is used in written dates.",
+      "audioSrc": "/number-audio/v1/dates-33-5f520251ac00.mp3",
+      "audioSha256": "5f520251ac00130dd1472e40c5491fd03fc51c2291b006c789c96ea371583465",
+      "durationSeconds": 2.76,
+      "audioScriptSha256": "6c40cc853a9d78a082d6fb4f21819bbae65fbde71d56e8608d3ae12132a30002"
+    },
+    {
+      "id": "dates-34",
+      "mode": "dates",
+      "value": "2027-09-15",
+      "hanzi": "二零二七年九月十五号",
+      "pinyin": "èr líng èr qī nián jiǔ yuè shí wǔ hào",
+      "written": "二零二七年九月十五日",
+      "parts": [
+        {
+          "label": "Year · digit by digit",
+          "value": "2027",
+          "hanzi": "二零二七年"
+        },
+        {
+          "label": "Month",
+          "value": "9",
+          "hanzi": "九月"
+        },
+        {
+          "label": "Day",
+          "value": "15",
+          "hanzi": "十五号"
+        }
+      ],
+      "explanation": "Use year → month → day. Read the year digit by digit, but read the month and day as numbers. 号 is common in speech; 日 is used in written dates.",
+      "audioSrc": "/number-audio/v1/dates-34-eedab5b7bdad.mp3",
+      "audioSha256": "eedab5b7bdad2a562dd80480cb8a2952b417cda0bbca690ce2bc8b983f9a06d7",
+      "durationSeconds": 2.928,
+      "audioScriptSha256": "5fb4200cdfbe7f6b4b593f09870f841ed8053f7d3e9c88e5843f34b0172f089c"
+    },
+    {
+      "id": "dates-35",
+      "mode": "dates",
+      "value": "2027-10-20",
+      "hanzi": "二零二七年十月二十号",
+      "pinyin": "èr líng èr qī nián shí yuè èr shí hào",
+      "written": "二零二七年十月二十日",
+      "parts": [
+        {
+          "label": "Year · digit by digit",
+          "value": "2027",
+          "hanzi": "二零二七年"
+        },
+        {
+          "label": "Month",
+          "value": "10",
+          "hanzi": "十月"
+        },
+        {
+          "label": "Day",
+          "value": "20",
+          "hanzi": "二十号"
+        }
+      ],
+      "explanation": "Use year → month → day. Read the year digit by digit, but read the month and day as numbers. 号 is common in speech; 日 is used in written dates.",
+      "audioSrc": "/number-audio/v1/dates-35-8091e949a7ad.mp3",
+      "audioSha256": "8091e949a7ad0e6f4f5ad22966030755fe8af0845e6f7e88fb12127135b43800",
+      "durationSeconds": 2.904,
+      "audioScriptSha256": "a4439fb8d09c08a74050fdb9cfde2516977311e3d3450493fcf1976a4057583e"
+    },
+    {
+      "id": "dates-36",
+      "mode": "dates",
+      "value": "2027-11-23",
+      "hanzi": "二零二七年十一月二十三号",
+      "pinyin": "èr líng èr qī nián shí yī yuè èr shí sān hào",
+      "written": "二零二七年十一月二十三日",
+      "parts": [
+        {
+          "label": "Year · digit by digit",
+          "value": "2027",
+          "hanzi": "二零二七年"
+        },
+        {
+          "label": "Month",
+          "value": "11",
+          "hanzi": "十一月"
+        },
+        {
+          "label": "Day",
+          "value": "23",
+          "hanzi": "二十三号"
+        }
+      ],
+      "explanation": "Use year → month → day. Read the year digit by digit, but read the month and day as numbers. 号 is common in speech; 日 is used in written dates.",
+      "audioSrc": "/number-audio/v1/dates-36-a83c8a5fe294.mp3",
+      "audioSha256": "a83c8a5fe29456193937a185888edf45b4d05cb1b135a3ab72301c763a3b4329",
+      "durationSeconds": 3.336,
+      "audioScriptSha256": "e5d4933ed6f3b6d92548137da07a6dec4de5ba0f409e596b1ad17e6e6f14b4d4"
+    },
+    {
+      "id": "dates-37",
+      "mode": "dates",
+      "value": "2027-12-24",
+      "hanzi": "二零二七年十二月二十四号",
+      "pinyin": "èr líng èr qī nián shí èr yuè èr shí sì hào",
+      "written": "二零二七年十二月二十四日",
+      "parts": [
+        {
+          "label": "Year · digit by digit",
+          "value": "2027",
+          "hanzi": "二零二七年"
+        },
+        {
+          "label": "Month",
+          "value": "12",
+          "hanzi": "十二月"
+        },
+        {
+          "label": "Day",
+          "value": "24",
+          "hanzi": "二十四号"
+        }
+      ],
+      "explanation": "Use year → month → day. Read the year digit by digit, but read the month and day as numbers. 号 is common in speech; 日 is used in written dates.",
+      "audioSrc": "/number-audio/v1/dates-37-de5bb1b07095.mp3",
+      "audioSha256": "de5bb1b07095617810c7ff76f50c2cf35553956448ea7f1dd663c01ad135dab7",
+      "durationSeconds": 3.312,
+      "audioScriptSha256": "6e14a5c82c9a38c6a96e518796579642ac6b4cde81bac1e1b43cc0b342a5930c"
+    },
+    {
+      "id": "dates-38",
+      "mode": "dates",
+      "value": "2028-02-29",
+      "hanzi": "二零二八年二月二十九号",
+      "pinyin": "èr líng èr bā nián èr yuè èr shí jiǔ hào",
+      "written": "二零二八年二月二十九日",
+      "parts": [
+        {
+          "label": "Year · digit by digit",
+          "value": "2028",
+          "hanzi": "二零二八年"
+        },
+        {
+          "label": "Month",
+          "value": "2",
+          "hanzi": "二月"
+        },
+        {
+          "label": "Day",
+          "value": "29",
+          "hanzi": "二十九号"
+        }
+      ],
+      "explanation": "Use year → month → day. Read the year digit by digit, but read the month and day as numbers. 号 is common in speech; 日 is used in written dates.",
+      "audioSrc": "/number-audio/v1/dates-38-452ccdbe39d8.mp3",
+      "audioSha256": "452ccdbe39d8a57e2670293e8e297dcdf303ad828539916d1eb183f989d284ff",
+      "durationSeconds": 3.12,
+      "audioScriptSha256": "872b1d4b449a74498163a05d10646d79d7596d13b63d56bb7b0fb40673b3fb7b"
+    },
+    {
+      "id": "dates-39",
+      "mode": "dates",
+      "value": "2028-06-05",
+      "hanzi": "二零二八年六月五号",
+      "pinyin": "èr líng èr bā nián liù yuè wǔ hào",
+      "written": "二零二八年六月五日",
+      "parts": [
+        {
+          "label": "Year · digit by digit",
+          "value": "2028",
+          "hanzi": "二零二八年"
+        },
+        {
+          "label": "Month",
+          "value": "6",
+          "hanzi": "六月"
+        },
+        {
+          "label": "Day",
+          "value": "5",
+          "hanzi": "五号"
+        }
+      ],
+      "explanation": "Use year → month → day. Read the year digit by digit, but read the month and day as numbers. 号 is common in speech; 日 is used in written dates.",
+      "audioSrc": "/number-audio/v1/dates-39-2fa1804e1349.mp3",
+      "audioSha256": "2fa1804e1349a9923c482b40e755c8a6ef0ba5533c9661ddf0c0a0d8fe2be038",
+      "durationSeconds": 2.736,
+      "audioScriptSha256": "af383a4b016d5f76a129537461dbc612210cb6bca239748bd1c396ed02af3573"
+    },
+    {
+      "id": "dates-40",
+      "mode": "dates",
+      "value": "2030-10-01",
+      "hanzi": "二零三零年十月一号",
+      "pinyin": "èr líng sān líng nián shí yuè yī hào",
+      "written": "二零三零年十月一日",
+      "parts": [
+        {
+          "label": "Year · digit by digit",
+          "value": "2030",
+          "hanzi": "二零三零年"
+        },
+        {
+          "label": "Month",
+          "value": "10",
+          "hanzi": "十月"
+        },
+        {
+          "label": "Day",
+          "value": "1",
+          "hanzi": "一号"
+        }
+      ],
+      "explanation": "Use year → month → day. Read the year digit by digit, but read the month and day as numbers. 号 is common in speech; 日 is used in written dates.",
+      "audioSrc": "/number-audio/v1/dates-40-12b24cb28915.mp3",
+      "audioSha256": "12b24cb28915b860cbbfd3904540d3dd5f5c2f448e7ab0b0611bf2fd7a538a98",
+      "durationSeconds": 2.808,
+      "audioScriptSha256": "77d393951901179d51a07319a253b1ce34dbcf3d82094ce2c90e058f23243040"
+    },
+    {
+      "id": "times-01",
+      "mode": "times",
+      "value": "00:00",
+      "hanzi": "凌晨零点整",
+      "pinyin": "líng chén líng diǎn zhěng",
+      "written": "凌晨零点整",
+      "explanation": "The input uses a 24-hour clock. The spoken reading includes the part of the day: 两点 for two o’clock, 半 for thirty minutes and 一刻 for fifteen minutes. This is a clock reading, not a timezone conversion.",
+      "parts": [
+        {
+          "label": "Part of the day",
+          "value": "AM",
+          "hanzi": "凌晨"
+        },
+        {
+          "label": "Hour",
+          "value": "00",
+          "hanzi": "零点"
+        },
+        {
+          "label": "Minutes",
+          "value": "00",
+          "hanzi": "整"
+        }
+      ],
+      "audioSrc": "/number-audio/v1/times-01-49091e64a66a.mp3",
+      "audioSha256": "49091e64a66a556814e87a15c8133341e06c975b30a6adb0381b09ae1dd53372",
+      "durationSeconds": 2.064,
+      "audioScriptSha256": "b54b5440063148f3e9abedf8c854243d04f34b21d2f0dfe1e7f90584aeb4f31d"
+    },
+    {
+      "id": "times-02",
+      "mode": "times",
+      "value": "00:30",
+      "hanzi": "凌晨零点半",
+      "pinyin": "líng chén líng diǎn bàn",
+      "written": "凌晨零点三十分",
+      "explanation": "The input uses a 24-hour clock. The spoken reading includes the part of the day: 两点 for two o’clock, 半 for thirty minutes and 一刻 for fifteen minutes. This is a clock reading, not a timezone conversion.",
+      "parts": [
+        {
+          "label": "Part of the day",
+          "value": "AM",
+          "hanzi": "凌晨"
+        },
+        {
+          "label": "Hour",
+          "value": "00",
+          "hanzi": "零点"
+        },
+        {
+          "label": "Minutes",
+          "value": "30",
+          "hanzi": "半"
+        }
+      ],
+      "audioSrc": "/number-audio/v1/times-02-08992851f504.mp3",
+      "audioSha256": "08992851f504f65f4844f34e25d136e98e8f9b0a96d6b6fb808b013478b47ea5",
+      "durationSeconds": 2.016,
+      "audioScriptSha256": "fe51ee5d9994114491afb4060ea429af4c1c9a789d04eaced8c2324da0de3600"
+    },
+    {
+      "id": "times-03",
+      "mode": "times",
+      "value": "01:05",
+      "hanzi": "凌晨一点零五分",
+      "pinyin": "líng chén yī diǎn líng wǔ fēn",
+      "written": "凌晨一点零五分",
+      "explanation": "The input uses a 24-hour clock. The spoken reading includes the part of the day: 两点 for two o’clock, 半 for thirty minutes and 一刻 for fifteen minutes. This is a clock reading, not a timezone conversion.",
+      "parts": [
+        {
+          "label": "Part of the day",
+          "value": "AM",
+          "hanzi": "凌晨"
+        },
+        {
+          "label": "Hour",
+          "value": "01",
+          "hanzi": "一点"
+        },
+        {
+          "label": "Minutes",
+          "value": "05",
+          "hanzi": "零五分"
+        }
+      ],
+      "audioSrc": "/number-audio/v1/times-03-1f0bec484e12.mp3",
+      "audioSha256": "1f0bec484e12090ee4111564a6ee2d0c30bddb9f065913876002c417e820aba4",
+      "durationSeconds": 2.352,
+      "audioScriptSha256": "19516456fd3e18498df1d67423ad9c12a3cba778a5d18b9e06fb458657c07e4e"
+    },
+    {
+      "id": "times-04",
+      "mode": "times",
+      "value": "02:00",
+      "hanzi": "凌晨两点整",
+      "pinyin": "líng chén liǎng diǎn zhěng",
+      "written": "凌晨两点整",
+      "explanation": "The input uses a 24-hour clock. The spoken reading includes the part of the day: 两点 for two o’clock, 半 for thirty minutes and 一刻 for fifteen minutes. This is a clock reading, not a timezone conversion.",
+      "parts": [
+        {
+          "label": "Part of the day",
+          "value": "AM",
+          "hanzi": "凌晨"
+        },
+        {
+          "label": "Hour",
+          "value": "02",
+          "hanzi": "两点"
+        },
+        {
+          "label": "Minutes",
+          "value": "00",
+          "hanzi": "整"
+        }
+      ],
+      "audioSrc": "/number-audio/v1/times-04-b621e78b7872.mp3",
+      "audioSha256": "b621e78b7872c4307689e60262ca317f45cd48978bc22bc65344d7aeaad7bdc2",
+      "durationSeconds": 2.04,
+      "audioScriptSha256": "a7027aa8f3f4e74ed33ec3c90144693bd8d5a439b6877a83c1a14e543bebe2aa"
+    },
+    {
+      "id": "times-05",
+      "mode": "times",
+      "value": "02:05",
+      "hanzi": "凌晨两点零五分",
+      "pinyin": "líng chén liǎng diǎn líng wǔ fēn",
+      "written": "凌晨两点零五分",
+      "explanation": "The input uses a 24-hour clock. The spoken reading includes the part of the day: 两点 for two o’clock, 半 for thirty minutes and 一刻 for fifteen minutes. This is a clock reading, not a timezone conversion.",
+      "parts": [
+        {
+          "label": "Part of the day",
+          "value": "AM",
+          "hanzi": "凌晨"
+        },
+        {
+          "label": "Hour",
+          "value": "02",
+          "hanzi": "两点"
+        },
+        {
+          "label": "Minutes",
+          "value": "05",
+          "hanzi": "零五分"
+        }
+      ],
+      "audioSrc": "/number-audio/v1/times-05-0ab747b1c658.mp3",
+      "audioSha256": "0ab747b1c658035268572b87a12709e4104970e8b454e6a16a5b9f70ff442a7b",
+      "durationSeconds": 2.424,
+      "audioScriptSha256": "4a79350db3c7c883c3003da7fe196af139acda3a5cd87becfc7c9108d7b22cb6"
+    },
+    {
+      "id": "times-06",
+      "mode": "times",
+      "value": "03:15",
+      "hanzi": "凌晨三点一刻",
+      "pinyin": "líng chén sān diǎn yī kè",
+      "written": "凌晨三点十五分",
+      "explanation": "The input uses a 24-hour clock. The spoken reading includes the part of the day: 两点 for two o’clock, 半 for thirty minutes and 一刻 for fifteen minutes. This is a clock reading, not a timezone conversion.",
+      "parts": [
+        {
+          "label": "Part of the day",
+          "value": "AM",
+          "hanzi": "凌晨"
+        },
+        {
+          "label": "Hour",
+          "value": "03",
+          "hanzi": "三点"
+        },
+        {
+          "label": "Minutes",
+          "value": "15",
+          "hanzi": "一刻"
+        }
+      ],
+      "audioSrc": "/number-audio/v1/times-06-ad81878396c3.mp3",
+      "audioSha256": "ad81878396c3432ffad030b04fb9850667bd31b09bfaebb3440ab9baec7b766d",
+      "durationSeconds": 2.28,
+      "audioScriptSha256": "f63123b32a62618da05e0f8f19765b8c463a1e5b71cd7a0157a2ee84223a9ead"
+    },
+    {
+      "id": "times-07",
+      "mode": "times",
+      "value": "04:30",
+      "hanzi": "凌晨四点半",
+      "pinyin": "líng chén sì diǎn bàn",
+      "written": "凌晨四点三十分",
+      "explanation": "The input uses a 24-hour clock. The spoken reading includes the part of the day: 两点 for two o’clock, 半 for thirty minutes and 一刻 for fifteen minutes. This is a clock reading, not a timezone conversion.",
+      "parts": [
+        {
+          "label": "Part of the day",
+          "value": "AM",
+          "hanzi": "凌晨"
+        },
+        {
+          "label": "Hour",
+          "value": "04",
+          "hanzi": "四点"
+        },
+        {
+          "label": "Minutes",
+          "value": "30",
+          "hanzi": "半"
+        }
+      ],
+      "audioSrc": "/number-audio/v1/times-07-7df54ca60530.mp3",
+      "audioSha256": "7df54ca605302bc9bd09ff85f7dd38f208c4e877d3d31e1ee9642630489d4577",
+      "durationSeconds": 2.016,
+      "audioScriptSha256": "bc7b82e81cd546c57b6245c51d901ccbbc26cbcb0e1fdb7bb536cffe363d3b9f"
+    },
+    {
+      "id": "times-08",
+      "mode": "times",
+      "value": "05:45",
+      "hanzi": "凌晨五点四十五分",
+      "pinyin": "líng chén wǔ diǎn sì shí wǔ fēn",
+      "written": "凌晨五点四十五分",
+      "explanation": "The input uses a 24-hour clock. The spoken reading includes the part of the day: 两点 for two o’clock, 半 for thirty minutes and 一刻 for fifteen minutes. This is a clock reading, not a timezone conversion.",
+      "parts": [
+        {
+          "label": "Part of the day",
+          "value": "AM",
+          "hanzi": "凌晨"
+        },
+        {
+          "label": "Hour",
+          "value": "05",
+          "hanzi": "五点"
+        },
+        {
+          "label": "Minutes",
+          "value": "45",
+          "hanzi": "四十五分"
+        }
+      ],
+      "audioSrc": "/number-audio/v1/times-08-acb600c64ad4.mp3",
+      "audioSha256": "acb600c64ad4accd98234ce576d2e295c993d8574db5f97d46650ca5e315c4e4",
+      "durationSeconds": 2.592,
+      "audioScriptSha256": "338ad513fc8279866c05a0211aad2c2eeff162665acc8143b139b56bd60c57e4"
+    },
+    {
+      "id": "times-09",
+      "mode": "times",
+      "value": "06:00",
+      "hanzi": "上午六点整",
+      "pinyin": "shàng wǔ liù diǎn zhěng",
+      "written": "上午六点整",
+      "explanation": "The input uses a 24-hour clock. The spoken reading includes the part of the day: 两点 for two o’clock, 半 for thirty minutes and 一刻 for fifteen minutes. This is a clock reading, not a timezone conversion.",
+      "parts": [
+        {
+          "label": "Part of the day",
+          "value": "AM",
+          "hanzi": "上午"
+        },
+        {
+          "label": "Hour",
+          "value": "06",
+          "hanzi": "六点"
+        },
+        {
+          "label": "Minutes",
+          "value": "00",
+          "hanzi": "整"
+        }
+      ],
+      "audioSrc": "/number-audio/v1/times-09-2976cb69d7c6.mp3",
+      "audioSha256": "2976cb69d7c6a478b467f35bf4e1f32eb3a765cc2ef5459276ec77e4e26b0d28",
+      "durationSeconds": 1.968,
+      "audioScriptSha256": "b06e7a38fcca7e2d68876213c9c6084e82bc3870214f0ed24c45a17b680fd82d"
+    },
+    {
+      "id": "times-10",
+      "mode": "times",
+      "value": "06:15",
+      "hanzi": "上午六点一刻",
+      "pinyin": "shàng wǔ liù diǎn yī kè",
+      "written": "上午六点十五分",
+      "explanation": "The input uses a 24-hour clock. The spoken reading includes the part of the day: 两点 for two o’clock, 半 for thirty minutes and 一刻 for fifteen minutes. This is a clock reading, not a timezone conversion.",
+      "parts": [
+        {
+          "label": "Part of the day",
+          "value": "AM",
+          "hanzi": "上午"
+        },
+        {
+          "label": "Hour",
+          "value": "06",
+          "hanzi": "六点"
+        },
+        {
+          "label": "Minutes",
+          "value": "15",
+          "hanzi": "一刻"
+        }
+      ],
+      "audioSrc": "/number-audio/v1/times-10-a98936285ebf.mp3",
+      "audioSha256": "a98936285ebf5c96dec8d2e4cf9c5364e2ae0069c02cec9e77a84529284f5829",
+      "durationSeconds": 2.184,
+      "audioScriptSha256": "289fa12125bda20cf230d36c6e14190d57d0aea83d0bc69dabb0fa396e34714c"
+    },
+    {
+      "id": "times-11",
+      "mode": "times",
+      "value": "06:30",
+      "hanzi": "上午六点半",
+      "pinyin": "shàng wǔ liù diǎn bàn",
+      "written": "上午六点三十分",
+      "explanation": "The input uses a 24-hour clock. The spoken reading includes the part of the day: 两点 for two o’clock, 半 for thirty minutes and 一刻 for fifteen minutes. This is a clock reading, not a timezone conversion.",
+      "parts": [
+        {
+          "label": "Part of the day",
+          "value": "AM",
+          "hanzi": "上午"
+        },
+        {
+          "label": "Hour",
+          "value": "06",
+          "hanzi": "六点"
+        },
+        {
+          "label": "Minutes",
+          "value": "30",
+          "hanzi": "半"
+        }
+      ],
+      "audioSrc": "/number-audio/v1/times-11-43c7257edcaa.mp3",
+      "audioSha256": "43c7257edcaa313fed527aa63d96274ff1b00e4324304b9050c0427405f0746d",
+      "durationSeconds": 1.944,
+      "audioScriptSha256": "75aeadb4c0a2ae55a8ab336a9e1bd5ccb4066586cd152c291e31a767028447a7"
+    },
+    {
+      "id": "times-12",
+      "mode": "times",
+      "value": "07:00",
+      "hanzi": "上午七点整",
+      "pinyin": "shàng wǔ qī diǎn zhěng",
+      "written": "上午七点整",
+      "explanation": "The input uses a 24-hour clock. The spoken reading includes the part of the day: 两点 for two o’clock, 半 for thirty minutes and 一刻 for fifteen minutes. This is a clock reading, not a timezone conversion.",
+      "parts": [
+        {
+          "label": "Part of the day",
+          "value": "AM",
+          "hanzi": "上午"
+        },
+        {
+          "label": "Hour",
+          "value": "07",
+          "hanzi": "七点"
+        },
+        {
+          "label": "Minutes",
+          "value": "00",
+          "hanzi": "整"
+        }
+      ],
+      "audioSrc": "/number-audio/v1/times-12-4433893c1622.mp3",
+      "audioSha256": "4433893c1622f7a77ac5b792a4b7f2db445b7f5a6c8e0217a3a4cb0e387412b0",
+      "durationSeconds": 2.04,
+      "audioScriptSha256": "e3965eef738ecad59cb273de3bcfda71f4166f13d50ad8ed1f1098be472bd8ed"
+    },
+    {
+      "id": "times-13",
+      "mode": "times",
+      "value": "07:05",
+      "hanzi": "上午七点零五分",
+      "pinyin": "shàng wǔ qī diǎn líng wǔ fēn",
+      "written": "上午七点零五分",
+      "explanation": "The input uses a 24-hour clock. The spoken reading includes the part of the day: 两点 for two o’clock, 半 for thirty minutes and 一刻 for fifteen minutes. This is a clock reading, not a timezone conversion.",
+      "parts": [
+        {
+          "label": "Part of the day",
+          "value": "AM",
+          "hanzi": "上午"
+        },
+        {
+          "label": "Hour",
+          "value": "07",
+          "hanzi": "七点"
+        },
+        {
+          "label": "Minutes",
+          "value": "05",
+          "hanzi": "零五分"
+        }
+      ],
+      "audioSrc": "/number-audio/v1/times-13-0bd3c1b70611.mp3",
+      "audioSha256": "0bd3c1b70611284b3b6e2110b1f0434c63ce865520c1b75e6b189230333229b1",
+      "durationSeconds": 2.376,
+      "audioScriptSha256": "24d1647c6ec4d343465bc474fd21335c9c47847812d2f7bc51a29c2726e2055c"
+    },
+    {
+      "id": "times-14",
+      "mode": "times",
+      "value": "07:30",
+      "hanzi": "上午七点半",
+      "pinyin": "shàng wǔ qī diǎn bàn",
+      "written": "上午七点三十分",
+      "explanation": "The input uses a 24-hour clock. The spoken reading includes the part of the day: 两点 for two o’clock, 半 for thirty minutes and 一刻 for fifteen minutes. This is a clock reading, not a timezone conversion.",
+      "parts": [
+        {
+          "label": "Part of the day",
+          "value": "AM",
+          "hanzi": "上午"
+        },
+        {
+          "label": "Hour",
+          "value": "07",
+          "hanzi": "七点"
+        },
+        {
+          "label": "Minutes",
+          "value": "30",
+          "hanzi": "半"
+        }
+      ],
+      "audioSrc": "/number-audio/v1/times-14-bf39c7b638b3.mp3",
+      "audioSha256": "bf39c7b638b3b1ea08c624f11cabcfa1f5e64b7ca2e455da4ec3358761f13f73",
+      "durationSeconds": 1.968,
+      "audioScriptSha256": "d9b458262bb6e8aea54ee9d0f4e756fd3c2b92c3c7d85b23e35a7f08c568aa29"
+    },
+    {
+      "id": "times-15",
+      "mode": "times",
+      "value": "08:00",
+      "hanzi": "上午八点整",
+      "pinyin": "shàng wǔ bā diǎn zhěng",
+      "written": "上午八点整",
+      "explanation": "The input uses a 24-hour clock. The spoken reading includes the part of the day: 两点 for two o’clock, 半 for thirty minutes and 一刻 for fifteen minutes. This is a clock reading, not a timezone conversion.",
+      "parts": [
+        {
+          "label": "Part of the day",
+          "value": "AM",
+          "hanzi": "上午"
+        },
+        {
+          "label": "Hour",
+          "value": "08",
+          "hanzi": "八点"
+        },
+        {
+          "label": "Minutes",
+          "value": "00",
+          "hanzi": "整"
+        }
+      ],
+      "audioSrc": "/number-audio/v1/times-15-da56776b7b13.mp3",
+      "audioSha256": "da56776b7b13b9c969c6817d1c662a5d39b18b30fd8103fbc57558e1c6e0919b",
+      "durationSeconds": 2.016,
+      "audioScriptSha256": "d5f3243ddd182f123c2267111c8c15bace0ab02714b6361d75a6a87c6501dbce"
+    },
+    {
+      "id": "times-16",
+      "mode": "times",
+      "value": "08:15",
+      "hanzi": "上午八点一刻",
+      "pinyin": "shàng wǔ bā diǎn yī kè",
+      "written": "上午八点十五分",
+      "explanation": "The input uses a 24-hour clock. The spoken reading includes the part of the day: 两点 for two o’clock, 半 for thirty minutes and 一刻 for fifteen minutes. This is a clock reading, not a timezone conversion.",
+      "parts": [
+        {
+          "label": "Part of the day",
+          "value": "AM",
+          "hanzi": "上午"
+        },
+        {
+          "label": "Hour",
+          "value": "08",
+          "hanzi": "八点"
+        },
+        {
+          "label": "Minutes",
+          "value": "15",
+          "hanzi": "一刻"
+        }
+      ],
+      "audioSrc": "/number-audio/v1/times-16-79f089f0dbf7.mp3",
+      "audioSha256": "79f089f0dbf77c848f84d2624d1c5bb37cfb54d90bf459875605115d127991ba",
+      "durationSeconds": 2.208,
+      "audioScriptSha256": "872152316867d5b75fe43ae9e3548d2e8cb36f75f2f54e97141ecf9332a31d29"
+    },
+    {
+      "id": "times-17",
+      "mode": "times",
+      "value": "08:30",
+      "hanzi": "上午八点半",
+      "pinyin": "shàng wǔ bā diǎn bàn",
+      "written": "上午八点三十分",
+      "explanation": "The input uses a 24-hour clock. The spoken reading includes the part of the day: 两点 for two o’clock, 半 for thirty minutes and 一刻 for fifteen minutes. This is a clock reading, not a timezone conversion.",
+      "parts": [
+        {
+          "label": "Part of the day",
+          "value": "AM",
+          "hanzi": "上午"
+        },
+        {
+          "label": "Hour",
+          "value": "08",
+          "hanzi": "八点"
+        },
+        {
+          "label": "Minutes",
+          "value": "30",
+          "hanzi": "半"
+        }
+      ],
+      "audioSrc": "/number-audio/v1/times-17-7931b0a5b266.mp3",
+      "audioSha256": "7931b0a5b266b64e8d15185ec5f004d9e41763256625082568c724c0c506528d",
+      "durationSeconds": 1.944,
+      "audioScriptSha256": "1e8ea650074ef94ee6b3a175d19cc0178c1f6d8df53a9bb479f77d76e7bfd1b0"
+    },
+    {
+      "id": "times-18",
+      "mode": "times",
+      "value": "08:45",
+      "hanzi": "上午八点四十五分",
+      "pinyin": "shàng wǔ bā diǎn sì shí wǔ fēn",
+      "written": "上午八点四十五分",
+      "explanation": "The input uses a 24-hour clock. The spoken reading includes the part of the day: 两点 for two o’clock, 半 for thirty minutes and 一刻 for fifteen minutes. This is a clock reading, not a timezone conversion.",
+      "parts": [
+        {
+          "label": "Part of the day",
+          "value": "AM",
+          "hanzi": "上午"
+        },
+        {
+          "label": "Hour",
+          "value": "08",
+          "hanzi": "八点"
+        },
+        {
+          "label": "Minutes",
+          "value": "45",
+          "hanzi": "四十五分"
+        }
+      ],
+      "audioSrc": "/number-audio/v1/times-18-5daf424721bd.mp3",
+      "audioSha256": "5daf424721bd647c245efcf1ac46ef7654decf72fde9dcf76f4a2151e9a2d99a",
+      "durationSeconds": 2.616,
+      "audioScriptSha256": "277215c1489cd7ef799ca21ad4ba556c4a18ee0d62546ea4627bd6862e1d7036"
+    },
+    {
+      "id": "times-19",
+      "mode": "times",
+      "value": "09:00",
+      "hanzi": "上午九点整",
+      "pinyin": "shàng wǔ jiǔ diǎn zhěng",
+      "written": "上午九点整",
+      "explanation": "The input uses a 24-hour clock. The spoken reading includes the part of the day: 两点 for two o’clock, 半 for thirty minutes and 一刻 for fifteen minutes. This is a clock reading, not a timezone conversion.",
+      "parts": [
+        {
+          "label": "Part of the day",
+          "value": "AM",
+          "hanzi": "上午"
+        },
+        {
+          "label": "Hour",
+          "value": "09",
+          "hanzi": "九点"
+        },
+        {
+          "label": "Minutes",
+          "value": "00",
+          "hanzi": "整"
+        }
+      ],
+      "audioSrc": "/number-audio/v1/times-19-1eed8617214d.mp3",
+      "audioSha256": "1eed8617214d03018f29f3fc590dbf32dd93ab3b2d1502be4725f159d119435e",
+      "durationSeconds": 1.968,
+      "audioScriptSha256": "fc084a95d3ddc161e1ebd1aaaa3b3eef9ad6d10d8ae1e0d98cf8f0aee86bf8a0"
+    },
+    {
+      "id": "times-20",
+      "mode": "times",
+      "value": "09:20",
+      "hanzi": "上午九点二十分",
+      "pinyin": "shàng wǔ jiǔ diǎn èr shí fēn",
+      "written": "上午九点二十分",
+      "explanation": "The input uses a 24-hour clock. The spoken reading includes the part of the day: 两点 for two o’clock, 半 for thirty minutes and 一刻 for fifteen minutes. This is a clock reading, not a timezone conversion.",
+      "parts": [
+        {
+          "label": "Part of the day",
+          "value": "AM",
+          "hanzi": "上午"
+        },
+        {
+          "label": "Hour",
+          "value": "09",
+          "hanzi": "九点"
+        },
+        {
+          "label": "Minutes",
+          "value": "20",
+          "hanzi": "二十分"
+        }
+      ],
+      "audioSrc": "/number-audio/v1/times-20-3b9adab4e4bc.mp3",
+      "audioSha256": "3b9adab4e4bc58b3a5888764e2c129597259dc1bdf495fdd6490c5745bd38010",
+      "durationSeconds": 2.328,
+      "audioScriptSha256": "a0486f8a8edef219ca3c3690327ad06baeaa26c1b646cd451ba3ee2857fbfb9a"
+    },
+    {
+      "id": "times-21",
+      "mode": "times",
+      "value": "09:50",
+      "hanzi": "上午九点五十分",
+      "pinyin": "shàng wǔ jiǔ diǎn wǔ shí fēn",
+      "written": "上午九点五十分",
+      "explanation": "The input uses a 24-hour clock. The spoken reading includes the part of the day: 两点 for two o’clock, 半 for thirty minutes and 一刻 for fifteen minutes. This is a clock reading, not a timezone conversion.",
+      "parts": [
+        {
+          "label": "Part of the day",
+          "value": "AM",
+          "hanzi": "上午"
+        },
+        {
+          "label": "Hour",
+          "value": "09",
+          "hanzi": "九点"
+        },
+        {
+          "label": "Minutes",
+          "value": "50",
+          "hanzi": "五十分"
+        }
+      ],
+      "audioSrc": "/number-audio/v1/times-21-e870d1e611fc.mp3",
+      "audioSha256": "e870d1e611fcafb17fee23d075fc43f6d8ca605d5ed42549cb3db7f9a27afd8f",
+      "durationSeconds": 2.352,
+      "audioScriptSha256": "aae3fe74c1c9cec98fd3cb726f17560ed954743ccef1cf47ac62faa3d14db3c2"
+    },
+    {
+      "id": "times-22",
+      "mode": "times",
+      "value": "10:00",
+      "hanzi": "上午十点整",
+      "pinyin": "shàng wǔ shí diǎn zhěng",
+      "written": "上午十点整",
+      "explanation": "The input uses a 24-hour clock. The spoken reading includes the part of the day: 两点 for two o’clock, 半 for thirty minutes and 一刻 for fifteen minutes. This is a clock reading, not a timezone conversion.",
+      "parts": [
+        {
+          "label": "Part of the day",
+          "value": "AM",
+          "hanzi": "上午"
+        },
+        {
+          "label": "Hour",
+          "value": "10",
+          "hanzi": "十点"
+        },
+        {
+          "label": "Minutes",
+          "value": "00",
+          "hanzi": "整"
+        }
+      ],
+      "audioSrc": "/number-audio/v1/times-22-121d7418fd6b.mp3",
+      "audioSha256": "121d7418fd6b15ef09e3f89824db8c638a9f9702b19d6017434ca716e08cb6a4",
+      "durationSeconds": 1.968,
+      "audioScriptSha256": "ebfe30e977259b610eb8e72856621f8e1dae5f353ccffd67225ff09e7d48b00e"
+    },
+    {
+      "id": "times-23",
+      "mode": "times",
+      "value": "10:10",
+      "hanzi": "上午十点十分",
+      "pinyin": "shàng wǔ shí diǎn shí fēn",
+      "written": "上午十点十分",
+      "explanation": "The input uses a 24-hour clock. The spoken reading includes the part of the day: 两点 for two o’clock, 半 for thirty minutes and 一刻 for fifteen minutes. This is a clock reading, not a timezone conversion.",
+      "parts": [
+        {
+          "label": "Part of the day",
+          "value": "AM",
+          "hanzi": "上午"
+        },
+        {
+          "label": "Hour",
+          "value": "10",
+          "hanzi": "十点"
+        },
+        {
+          "label": "Minutes",
+          "value": "10",
+          "hanzi": "十分"
+        }
+      ],
+      "audioSrc": "/number-audio/v1/times-23-16bf66090c9c.mp3",
+      "audioSha256": "16bf66090c9c4b4e4a6ec73d0ed741d727b2f2a7840e3e09f07160818e35cce0",
+      "durationSeconds": 2.208,
+      "audioScriptSha256": "ab7d6f8398542947ad4d38683c54658207a913c17a2a9d8e776f3afec8b66293"
+    },
+    {
+      "id": "times-24",
+      "mode": "times",
+      "value": "10:30",
+      "hanzi": "上午十点半",
+      "pinyin": "shàng wǔ shí diǎn bàn",
+      "written": "上午十点三十分",
+      "explanation": "The input uses a 24-hour clock. The spoken reading includes the part of the day: 两点 for two o’clock, 半 for thirty minutes and 一刻 for fifteen minutes. This is a clock reading, not a timezone conversion.",
+      "parts": [
+        {
+          "label": "Part of the day",
+          "value": "AM",
+          "hanzi": "上午"
+        },
+        {
+          "label": "Hour",
+          "value": "10",
+          "hanzi": "十点"
+        },
+        {
+          "label": "Minutes",
+          "value": "30",
+          "hanzi": "半"
+        }
+      ],
+      "audioSrc": "/number-audio/v1/times-24-5bd0849cce89.mp3",
+      "audioSha256": "5bd0849cce89c0e1d46a494880795893e0f4073ac4a76a5dde4438cb5ad6a1d7",
+      "durationSeconds": 1.968,
+      "audioScriptSha256": "91edc2279daa49a6bdde67df47016dcdc37b1cbfde80a63022e2ceafee456772"
+    },
+    {
+      "id": "times-25",
+      "mode": "times",
+      "value": "11:15",
+      "hanzi": "上午十一点一刻",
+      "pinyin": "shàng wǔ shí yī diǎn yī kè",
+      "written": "上午十一点十五分",
+      "explanation": "The input uses a 24-hour clock. The spoken reading includes the part of the day: 两点 for two o’clock, 半 for thirty minutes and 一刻 for fifteen minutes. This is a clock reading, not a timezone conversion.",
+      "parts": [
+        {
+          "label": "Part of the day",
+          "value": "AM",
+          "hanzi": "上午"
+        },
+        {
+          "label": "Hour",
+          "value": "11",
+          "hanzi": "十一点"
+        },
+        {
+          "label": "Minutes",
+          "value": "15",
+          "hanzi": "一刻"
+        }
+      ],
+      "audioSrc": "/number-audio/v1/times-25-a1eb835e00b7.mp3",
+      "audioSha256": "a1eb835e00b72447aecd24b9adeecc4878e93f23add112583202dbd22784a152",
+      "durationSeconds": 2.376,
+      "audioScriptSha256": "add60b3565e60a1996d132414c0da030c7c216bb7bebd9c72e8e3284be968b96"
+    },
+    {
+      "id": "times-26",
+      "mode": "times",
+      "value": "11:45",
+      "hanzi": "上午十一点四十五分",
+      "pinyin": "shàng wǔ shí yī diǎn sì shí wǔ fēn",
+      "written": "上午十一点四十五分",
+      "explanation": "The input uses a 24-hour clock. The spoken reading includes the part of the day: 两点 for two o’clock, 半 for thirty minutes and 一刻 for fifteen minutes. This is a clock reading, not a timezone conversion.",
+      "parts": [
+        {
+          "label": "Part of the day",
+          "value": "AM",
+          "hanzi": "上午"
+        },
+        {
+          "label": "Hour",
+          "value": "11",
+          "hanzi": "十一点"
+        },
+        {
+          "label": "Minutes",
+          "value": "45",
+          "hanzi": "四十五分"
+        }
+      ],
+      "audioSrc": "/number-audio/v1/times-26-012c20b88935.mp3",
+      "audioSha256": "012c20b88935fba396d3566a77707322d3bb88264e51be3d417466baae746f27",
+      "durationSeconds": 2.76,
+      "audioScriptSha256": "bb12dfc620976ddf3ead5cd6063f1da66a87cd5a11cb3e70d76ee8da867694a8"
+    },
+    {
+      "id": "times-27",
+      "mode": "times",
+      "value": "12:00",
+      "hanzi": "中午十二点整",
+      "pinyin": "zhōng wǔ shí èr diǎn zhěng",
+      "written": "中午十二点整",
+      "explanation": "The input uses a 24-hour clock. The spoken reading includes the part of the day: 两点 for two o’clock, 半 for thirty minutes and 一刻 for fifteen minutes. This is a clock reading, not a timezone conversion.",
+      "parts": [
+        {
+          "label": "Part of the day",
+          "value": "PM",
+          "hanzi": "中午"
+        },
+        {
+          "label": "Hour",
+          "value": "12",
+          "hanzi": "十二点"
+        },
+        {
+          "label": "Minutes",
+          "value": "00",
+          "hanzi": "整"
+        }
+      ],
+      "audioSrc": "/number-audio/v1/times-27-9e389b368d94.mp3",
+      "audioSha256": "9e389b368d9485ae8b7b6ab2036070d8c56149a02d52697cfcce2ed97bf7332f",
+      "durationSeconds": 2.04,
+      "audioScriptSha256": "5eef08a38066dc7482d653328cc2af49af3e18038c8633fed8b9a6c08e723a07"
+    },
+    {
+      "id": "times-28",
+      "mode": "times",
+      "value": "12:30",
+      "hanzi": "中午十二点半",
+      "pinyin": "zhōng wǔ shí èr diǎn bàn",
+      "written": "中午十二点三十分",
+      "explanation": "The input uses a 24-hour clock. The spoken reading includes the part of the day: 两点 for two o’clock, 半 for thirty minutes and 一刻 for fifteen minutes. This is a clock reading, not a timezone conversion.",
+      "parts": [
+        {
+          "label": "Part of the day",
+          "value": "PM",
+          "hanzi": "中午"
+        },
+        {
+          "label": "Hour",
+          "value": "12",
+          "hanzi": "十二点"
+        },
+        {
+          "label": "Minutes",
+          "value": "30",
+          "hanzi": "半"
+        }
+      ],
+      "audioSrc": "/number-audio/v1/times-28-0d03801cbff4.mp3",
+      "audioSha256": "0d03801cbff487b26be12206e1bcdeb16aa8349aa891ccf4febd0d2a68fc1a9e",
+      "durationSeconds": 2.016,
+      "audioScriptSha256": "c373e9f6d9771b102f738a18fab44cd3f360b57647da0036a6ebbff22c426151"
+    },
+    {
+      "id": "times-29",
+      "mode": "times",
+      "value": "13:00",
+      "hanzi": "下午一点整",
+      "pinyin": "xià wǔ yī diǎn zhěng",
+      "written": "下午一点整",
+      "explanation": "The input uses a 24-hour clock. The spoken reading includes the part of the day: 两点 for two o’clock, 半 for thirty minutes and 一刻 for fifteen minutes. This is a clock reading, not a timezone conversion.",
+      "parts": [
+        {
+          "label": "Part of the day",
+          "value": "PM",
+          "hanzi": "下午"
+        },
+        {
+          "label": "Hour",
+          "value": "13",
+          "hanzi": "一点"
+        },
+        {
+          "label": "Minutes",
+          "value": "00",
+          "hanzi": "整"
+        }
+      ],
+      "audioSrc": "/number-audio/v1/times-29-ef6727c71ded.mp3",
+      "audioSha256": "ef6727c71dede9bdb169bde23434f42e9db83aa081927324871efd104e6970c8",
+      "durationSeconds": 1.968,
+      "audioScriptSha256": "4e085ed5d04c9f8e2ccccf8d593dd44fea3599aa7f6670740b18117371c13d45"
+    },
+    {
+      "id": "times-30",
+      "mode": "times",
+      "value": "13:15",
+      "hanzi": "下午一点一刻",
+      "pinyin": "xià wǔ yī diǎn yī kè",
+      "written": "下午一点十五分",
+      "explanation": "The input uses a 24-hour clock. The spoken reading includes the part of the day: 两点 for two o’clock, 半 for thirty minutes and 一刻 for fifteen minutes. This is a clock reading, not a timezone conversion.",
+      "parts": [
+        {
+          "label": "Part of the day",
+          "value": "PM",
+          "hanzi": "下午"
+        },
+        {
+          "label": "Hour",
+          "value": "13",
+          "hanzi": "一点"
+        },
+        {
+          "label": "Minutes",
+          "value": "15",
+          "hanzi": "一刻"
+        }
+      ],
+      "audioSrc": "/number-audio/v1/times-30-1273eed61a35.mp3",
+      "audioSha256": "1273eed61a356e5ee7f97b58d45e22d8c1998b592cd558201fe13a562c4511be",
+      "durationSeconds": 2.136,
+      "audioScriptSha256": "cb793961aa8c9822e1e3e00f062c4ceb1e6685e0f9bef8ff875d70b5233c1ad5"
+    },
+    {
+      "id": "times-31",
+      "mode": "times",
+      "value": "14:00",
+      "hanzi": "下午两点整",
+      "pinyin": "xià wǔ liǎng diǎn zhěng",
+      "written": "下午两点整",
+      "explanation": "The input uses a 24-hour clock. The spoken reading includes the part of the day: 两点 for two o’clock, 半 for thirty minutes and 一刻 for fifteen minutes. This is a clock reading, not a timezone conversion.",
+      "parts": [
+        {
+          "label": "Part of the day",
+          "value": "PM",
+          "hanzi": "下午"
+        },
+        {
+          "label": "Hour",
+          "value": "14",
+          "hanzi": "两点"
+        },
+        {
+          "label": "Minutes",
+          "value": "00",
+          "hanzi": "整"
+        }
+      ],
+      "audioSrc": "/number-audio/v1/times-31-4a56ae13a3c2.mp3",
+      "audioSha256": "4a56ae13a3c272abf311f2200ee9ef05d6e3436bb519c64366d60b68765e4eb1",
+      "durationSeconds": 1.992,
+      "audioScriptSha256": "e38d2a22a9a4f2d544c3c3ee73918912ef506938428c4dec81652ae8255dc645"
+    },
+    {
+      "id": "times-32",
+      "mode": "times",
+      "value": "14:30",
+      "hanzi": "下午两点半",
+      "pinyin": "xià wǔ liǎng diǎn bàn",
+      "written": "下午两点三十分",
+      "explanation": "The input uses a 24-hour clock. The spoken reading includes the part of the day: 两点 for two o’clock, 半 for thirty minutes and 一刻 for fifteen minutes. This is a clock reading, not a timezone conversion.",
+      "parts": [
+        {
+          "label": "Part of the day",
+          "value": "PM",
+          "hanzi": "下午"
+        },
+        {
+          "label": "Hour",
+          "value": "14",
+          "hanzi": "两点"
+        },
+        {
+          "label": "Minutes",
+          "value": "30",
+          "hanzi": "半"
+        }
+      ],
+      "audioSrc": "/number-audio/v1/times-32-d7b112930a81.mp3",
+      "audioSha256": "d7b112930a81338579e936b0a4bb06ad0b83547eaab6ac582f259faf91bc1395",
+      "durationSeconds": 1.968,
+      "audioScriptSha256": "d54f89568d1f9777c88232e230f4c7ef6e0936791dd323d97cfcf105f514467a"
+    },
+    {
+      "id": "times-33",
+      "mode": "times",
+      "value": "15:20",
+      "hanzi": "下午三点二十分",
+      "pinyin": "xià wǔ sān diǎn èr shí fēn",
+      "written": "下午三点二十分",
+      "explanation": "The input uses a 24-hour clock. The spoken reading includes the part of the day: 两点 for two o’clock, 半 for thirty minutes and 一刻 for fifteen minutes. This is a clock reading, not a timezone conversion.",
+      "parts": [
+        {
+          "label": "Part of the day",
+          "value": "PM",
+          "hanzi": "下午"
+        },
+        {
+          "label": "Hour",
+          "value": "15",
+          "hanzi": "三点"
+        },
+        {
+          "label": "Minutes",
+          "value": "20",
+          "hanzi": "二十分"
+        }
+      ],
+      "audioSrc": "/number-audio/v1/times-33-b5e431f86cec.mp3",
+      "audioSha256": "b5e431f86cec3f79669eb3a4b4adb1e5cb9f7e29d8afa52d887266f9ff3874d2",
+      "durationSeconds": 2.4,
+      "audioScriptSha256": "db1663bc3094232920afeff5f5d8a5d76f21967384fffcbdbb2623bf035330f1"
+    },
+    {
+      "id": "times-34",
+      "mode": "times",
+      "value": "16:45",
+      "hanzi": "下午四点四十五分",
+      "pinyin": "xià wǔ sì diǎn sì shí wǔ fēn",
+      "written": "下午四点四十五分",
+      "explanation": "The input uses a 24-hour clock. The spoken reading includes the part of the day: 两点 for two o’clock, 半 for thirty minutes and 一刻 for fifteen minutes. This is a clock reading, not a timezone conversion.",
+      "parts": [
+        {
+          "label": "Part of the day",
+          "value": "PM",
+          "hanzi": "下午"
+        },
+        {
+          "label": "Hour",
+          "value": "16",
+          "hanzi": "四点"
+        },
+        {
+          "label": "Minutes",
+          "value": "45",
+          "hanzi": "四十五分"
+        }
+      ],
+      "audioSrc": "/number-audio/v1/times-34-8eedea81c108.mp3",
+      "audioSha256": "8eedea81c108cf5157c85991925d2800b6bb92b628206ff98be60e3d80e99bbd",
+      "durationSeconds": 2.616,
+      "audioScriptSha256": "22ef77315c0409aa3491c0d819f8f14baedeb099a280697ab408e22577ea1141"
+    },
+    {
+      "id": "times-35",
+      "mode": "times",
+      "value": "17:30",
+      "hanzi": "下午五点半",
+      "pinyin": "xià wǔ wǔ diǎn bàn",
+      "written": "下午五点三十分",
+      "explanation": "The input uses a 24-hour clock. The spoken reading includes the part of the day: 两点 for two o’clock, 半 for thirty minutes and 一刻 for fifteen minutes. This is a clock reading, not a timezone conversion.",
+      "parts": [
+        {
+          "label": "Part of the day",
+          "value": "PM",
+          "hanzi": "下午"
+        },
+        {
+          "label": "Hour",
+          "value": "17",
+          "hanzi": "五点"
+        },
+        {
+          "label": "Minutes",
+          "value": "30",
+          "hanzi": "半"
+        }
+      ],
+      "audioSrc": "/number-audio/v1/times-35-d502e641f781.mp3",
+      "audioSha256": "d502e641f7811e23c1dbffca334f6d7fcb28574ece1b8948096a4a77f232273f",
+      "durationSeconds": 1.896,
+      "audioScriptSha256": "52b10dd3a3276e4aeb1134e140cd64c887ef35ea53ab46758d48911b99345cf4"
+    },
+    {
+      "id": "times-36",
+      "mode": "times",
+      "value": "18:00",
+      "hanzi": "晚上六点整",
+      "pinyin": "wǎn shàng liù diǎn zhěng",
+      "written": "晚上六点整",
+      "explanation": "The input uses a 24-hour clock. The spoken reading includes the part of the day: 两点 for two o’clock, 半 for thirty minutes and 一刻 for fifteen minutes. This is a clock reading, not a timezone conversion.",
+      "parts": [
+        {
+          "label": "Part of the day",
+          "value": "PM",
+          "hanzi": "晚上"
+        },
+        {
+          "label": "Hour",
+          "value": "18",
+          "hanzi": "六点"
+        },
+        {
+          "label": "Minutes",
+          "value": "00",
+          "hanzi": "整"
+        }
+      ],
+      "audioSrc": "/number-audio/v1/times-36-dbc017eaec53.mp3",
+      "audioSha256": "dbc017eaec537f6aad0c142085a4d1c5b742fa5e0ac562975d8c20092cc5865c",
+      "durationSeconds": 1.968,
+      "audioScriptSha256": "408f688b1cacc65bbdcdfce2ba6c066d017fa27a54b4ba149b668f2e6c8ec490"
+    },
+    {
+      "id": "times-37",
+      "mode": "times",
+      "value": "19:15",
+      "hanzi": "晚上七点一刻",
+      "pinyin": "wǎn shàng qī diǎn yī kè",
+      "written": "晚上七点十五分",
+      "explanation": "The input uses a 24-hour clock. The spoken reading includes the part of the day: 两点 for two o’clock, 半 for thirty minutes and 一刻 for fifteen minutes. This is a clock reading, not a timezone conversion.",
+      "parts": [
+        {
+          "label": "Part of the day",
+          "value": "PM",
+          "hanzi": "晚上"
+        },
+        {
+          "label": "Hour",
+          "value": "19",
+          "hanzi": "七点"
+        },
+        {
+          "label": "Minutes",
+          "value": "15",
+          "hanzi": "一刻"
+        }
+      ],
+      "audioSrc": "/number-audio/v1/times-37-ae0fa02775f0.mp3",
+      "audioSha256": "ae0fa02775f0fcf319ee9b8e9a7053a6809cacafb0db26db1c63544d66c2faf3",
+      "durationSeconds": 2.208,
+      "audioScriptSha256": "c199a6fdec36956849130297cb09c8a43faa2274f2efd00f558325490fafc7bc"
+    },
+    {
+      "id": "times-38",
+      "mode": "times",
+      "value": "20:30",
+      "hanzi": "晚上八点半",
+      "pinyin": "wǎn shàng bā diǎn bàn",
+      "written": "晚上八点三十分",
+      "explanation": "The input uses a 24-hour clock. The spoken reading includes the part of the day: 两点 for two o’clock, 半 for thirty minutes and 一刻 for fifteen minutes. This is a clock reading, not a timezone conversion.",
+      "parts": [
+        {
+          "label": "Part of the day",
+          "value": "PM",
+          "hanzi": "晚上"
+        },
+        {
+          "label": "Hour",
+          "value": "20",
+          "hanzi": "八点"
+        },
+        {
+          "label": "Minutes",
+          "value": "30",
+          "hanzi": "半"
+        }
+      ],
+      "audioSrc": "/number-audio/v1/times-38-bcdb1399dd26.mp3",
+      "audioSha256": "bcdb1399dd26f121d6d5cb152dd01ae27268ed16bab8c8f7d71e82495f191a90",
+      "durationSeconds": 1.968,
+      "audioScriptSha256": "cca4f5c3d8420bd42a2e7c5d663a5280630d8bad2ff89573fe0884f47240f992"
+    },
+    {
+      "id": "times-39",
+      "mode": "times",
+      "value": "21:45",
+      "hanzi": "晚上九点四十五分",
+      "pinyin": "wǎn shàng jiǔ diǎn sì shí wǔ fēn",
+      "written": "晚上九点四十五分",
+      "explanation": "The input uses a 24-hour clock. The spoken reading includes the part of the day: 两点 for two o’clock, 半 for thirty minutes and 一刻 for fifteen minutes. This is a clock reading, not a timezone conversion.",
+      "parts": [
+        {
+          "label": "Part of the day",
+          "value": "PM",
+          "hanzi": "晚上"
+        },
+        {
+          "label": "Hour",
+          "value": "21",
+          "hanzi": "九点"
+        },
+        {
+          "label": "Minutes",
+          "value": "45",
+          "hanzi": "四十五分"
+        }
+      ],
+      "audioSrc": "/number-audio/v1/times-39-782f8601df18.mp3",
+      "audioSha256": "782f8601df18b5881753356168c7ddeb566ed30de1e88d13de27d0e1430810b2",
+      "durationSeconds": 2.568,
+      "audioScriptSha256": "f28bdeba332f0c4bab3897ac7672ce41dbc28fdb8643200e841de3cbcd01583f"
+    },
+    {
+      "id": "times-40",
+      "mode": "times",
+      "value": "23:59",
+      "hanzi": "晚上十一点五十九分",
+      "pinyin": "wǎn shàng shí yī diǎn wǔ shí jiǔ fēn",
+      "written": "晚上十一点五十九分",
+      "explanation": "The input uses a 24-hour clock. The spoken reading includes the part of the day: 两点 for two o’clock, 半 for thirty minutes and 一刻 for fifteen minutes. This is a clock reading, not a timezone conversion.",
+      "parts": [
+        {
+          "label": "Part of the day",
+          "value": "PM",
+          "hanzi": "晚上"
+        },
+        {
+          "label": "Hour",
+          "value": "23",
+          "hanzi": "十一点"
+        },
+        {
+          "label": "Minutes",
+          "value": "59",
+          "hanzi": "五十九分"
+        }
+      ],
+      "audioSrc": "/number-audio/v1/times-40-f6b6f3cf89ea.mp3",
+      "audioSha256": "f6b6f3cf89eacc29fd4742223183bb106987a412d19cd412eb506b8230be4c1a",
+      "durationSeconds": 2.736,
+      "audioScriptSha256": "29cee32b586b018dfeb04664f2b0de53cecd2223d5e869b37d6dc0d4a48dcf8b"
+    }
+  ],
+  "audioBuild": {
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "rate": "-10%",
+    "edgeTtsVersion": "7.3.1",
+    "review": "All files checked for transcript pairing, checksum and decodable duration. Representative listening checks are recorded separately; no full human-review claim."
+  }
+}
