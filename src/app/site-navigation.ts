@@ -34,6 +34,7 @@ export const learnNavigationSections: NavigationSection[] = [
     { href: "/blog/chinese-tones-guide", label: "Chinese Tones Guide", description: "Learn how Mandarin tones work." },
   ] },
   { title: "Learning Tools", items: [
+    { href: "/tools/chinese-stroke-order", label: "Stroke Order & Writing", description: "Watch character strokes and practise writing." },
     { href: "/vocabulary/1?mode=flashcards#vocabulary-activities", label: "Flashcards", description: "Practise recalling a short word set." },
     { href: "/tools/chinese-tone-trainer", label: "Tone Trainer", description: "Listen and identify Mandarin tones." },
     { href: "/tools/chinese-character-practice-sheet-generator", label: "Character Worksheets", description: "Create printable handwriting sheets." },
