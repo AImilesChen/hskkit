@@ -8,17 +8,21 @@ const home = read("../src/app/page.tsx");
 const pricing = read("../src/app/pricing/page.tsx");
 
 test("P0-2 exposes one frozen information architecture on desktop and mobile", async () => {
-  const { siteNavigation, flattenNavigation } = await import("../src/app/site-navigation.ts");
+  const { siteNavigation, flattenNavigation, learnNavigationSections, learnQuickLinks } = await import("../src/app/site-navigation.ts");
   assert.deepEqual(siteNavigation.map((entry) => entry.label), ["Learn", "Practice", "Tests", "Dictionary", "Blog", "Pricing", "Store", "Sign in"]);
-  assert.deepEqual(siteNavigation[0].items?.map((item) => item.label), ["Today", "Planner", "Levels", "Vocabulary", "Flashcards", "Topics", "Grammar", "Reading", "Listening library", "Tone trainer"]);
-  assert.deepEqual(siteNavigation[1].items?.map((item) => item.label), ["Practice", "Review", "Mistakes"]);
+  assert.deepEqual(learnNavigationSections.map(section => section.title), ["HSK & Guides", "Language Skills", "Learning Tools", "Topics"]);
+  assert.ok(learnNavigationSections.every(section => section.items.length <= 5), "each column should stay easy to scan");
+  assert.deepEqual(learnQuickLinks.map(item => item.href), ["/today", "/planner"]);
+  assert.deepEqual(siteNavigation[0].items, [...learnNavigationSections.flatMap(section => section.items), ...learnQuickLinks]);
+  assert.deepEqual(siteNavigation[1].items?.map((item) => item.label), ["Skill Practice", "Spaced Review", "Mistakes"]);
   assert.deepEqual(siteNavigation[2].items?.map((item) => item.label), ["HSK Practice Tests", "Find My HSK Level", "HSK 3.0 Exam Guide"]);
-  assert.deepEqual(flattenNavigation().map((item) => item.href), [
+  const hrefs = flattenNavigation().map((item) => item.href);
+  for (const href of [
     "/today", "/planner", "/levels", "/vocabulary/1", "/vocabulary/1?mode=flashcards#vocabulary-activities", "/topics", "/grammar", "/reading", "/listen", "/tools/chinese-tone-trainer",
     "/practice", "/review", "/mistakes", "/hsk-test-prep", "/hsk-placement-test", "/hsk-3-0",
     "/dictionary", "/blog", "/pricing", "/store", "/account",
-  ]);
-  const hrefs = flattenNavigation().map((item) => item.href);
+  ]) assert.ok(hrefs.includes(href), `existing entry remains reachable: ${href}`);
+  for (const href of ["/blog/chinese-pinyin-guide", "/blog/chinese-tones-guide", "/tools/chinese-character-practice-sheet-generator", "/topics/daily-life", "/topics/food-drink", "/topics/travel-transport", "/chinese-for-travel"]) assert.ok(hrefs.includes(href));
   assert.equal(new Set(hrefs).size, hrefs.length, "the shared navigation must not contain duplicate destinations");
   assert.match(header, /navigation\.map/g);
   assert.equal((header.match(/navigation\.map/g) ?? []).length, 2, "desktop and mobile must render the same shared navigation data");
@@ -34,6 +38,13 @@ test("P0-2 grouped navigation keeps accessible responsive behavior", () => {
   assert.match(header, /<\/header>\s*\{mobileOpen && \(/, "the fixed mobile drawer must sit outside the backdrop-filter header containing block");
   assert.match(header, /focus\(\)/);
   assert.match(header, /overflow-y-auto/);
+});
+
+test("P0-2 shared guide shortcuts retain one primary top-level owner", async () => {
+  const { siteNavigation, isNavigationEntryActive } = await import("../src/app/site-navigation.ts");
+  for (const [path, owner] of [["/hsk-3-0", "Tests"], ["/blog/chinese-tones-guide", "Learn"], ["/blog", "Blog"], ["/tools/chinese-tone-trainer", "Learn"], ["/dictionary", "Dictionary"]]) {
+    assert.deepEqual(siteNavigation.filter(entry => isNavigationEntryActive(path, entry)).map(entry => entry.label), [owner]);
+  }
 });
 
 test("P0-2 homepage and pricing expose truthful entry boundaries", () => {
@@ -55,7 +66,7 @@ test("P0-2 every frozen destination has a real route", async () => {
     "/mock/advanced": "../src/app/mock/[band]/page.tsx",
   };
   for (const item of flattenNavigation()) {
-    const route = routeOverrides[item.href] ?? `../src/app${item.href}/page.tsx`;
+    const route = routeOverrides[item.href] ?? (item.href.startsWith("/blog/") ? "../src/app/blog/[slug]/page.tsx" : item.href.startsWith("/topics/") ? "../src/app/topics/[slug]/page.tsx" : `../src/app${item.href}/page.tsx`);
     assert.equal(fs.existsSync(new URL(route, import.meta.url)), true, `${item.label} must resolve to ${item.href}`);
   }
 });
