@@ -1,0 +1,17 @@
+export const guideSections = [
+ { id: "getting-started", title: "Getting Started", description: "Set a realistic goal and find a routine you can keep.", stage: "Start here", slugs: ["is-chinese-hard-to-learn", "how-long-does-it-take-to-learn-chinese", "common-chinese-learning-mistakes"] },
+ { id: "pronunciation", title: "Pinyin & Pronunciation", description: "Connect written pinyin to the sounds and tones you hear.", stage: "Beginner", slugs: ["chinese-pinyin-guide", "chinese-tones-guide"] },
+ { id: "characters", title: "Characters & Vocabulary", description: "Understand character structure, then practise recalling words.", stage: "Build your foundation", slugs: ["chinese-radicals-guide", "how-to-memorize-chinese-characters"] },
+ { id: "hsk-preparation", title: "HSK Exam Preparation", description: "Understand the levels and turn a study goal into focused practice.", stage: "HSK preparation", slugs: ["hsk-3-0-levels-explained", "how-to-prepare-for-the-hsk"] },
+];
+export const guideNextSteps: Record<string, { title: string; description: string; href: string; label: string; related: string[] }> = {
+ "is-chinese-hard-to-learn": { title: "Start with the sounds", description: "Learn how pinyin represents Mandarin pronunciation before building your first word set.", href: "/blog/chinese-pinyin-guide", label: "Read the Pinyin Guide", related: ["how-long-does-it-take-to-learn-chinese"] },
+ "how-long-does-it-take-to-learn-chinese": { title: "Make time for your next step", description: "Use your available time to plan a manageable study routine.", href: "/planner", label: "Open Study Planner", related: ["common-chinese-learning-mistakes"] },
+ "common-chinese-learning-mistakes": { title: "Revisit what needs attention", description: "Review mistakes saved from your practice and choose what to work on next.", href: "/mistakes", label: "Open My Mistakes", related: ["how-to-memorize-chinese-characters"] },
+ "chinese-pinyin-guide": { title: "Get to know the four tones", description: "Continue with pitch movement, tone changes and a practical listening routine.", href: "/blog/chinese-tones-guide", label: "Read the Tones Guide", related: [] },
+ "chinese-tones-guide": { title: "Put Mandarin tones into practice", description: "Listen to a sound, choose its tone and revisit the tricky ones.", href: "/tools/chinese-tone-trainer", label: "Open Tone Trainer", related: ["chinese-pinyin-guide"] },
+ "chinese-radicals-guide": { title: "Explore characters in real words", description: "Use the dictionary to look up characters and the words that contain them.", href: "/dictionary", label: "Open Chinese Dictionary", related: ["how-to-memorize-chinese-characters"] },
+ "how-to-memorize-chinese-characters": { title: "Practise recalling your vocabulary", description: "Try a short flashcard round with words, pronunciation and examples.", href: "/vocabulary/1?mode=flashcards#vocabulary-activities", label: "Open Flashcards", related: ["chinese-radicals-guide"] },
+ "hsk-3-0-levels-explained": { title: "Find a learning starting point", description: "Use an adaptive learning check to help choose where to begin.", href: "/hsk-placement-test", label: "Find My HSK Level", related: ["how-to-prepare-for-the-hsk"] },
+ "how-to-prepare-for-the-hsk": { title: "Choose a level to practise", description: "Preview a level-specific grammar, reading and listening check.", href: "/hsk-test-prep", label: "Browse HSK Practice Tests", related: ["hsk-3-0-levels-explained"] },
+};
