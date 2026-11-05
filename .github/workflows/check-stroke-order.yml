@@ -1,0 +1,37 @@
+name: Check stroke order and self-hosted data
+
+on:
+  pull_request:
+    branches:
+      - fix/review-playback-current-prod-20261004
+    paths:
+      - ".github/workflows/check-stroke-order.yml"
+      - "public/stroke-data/**"
+      - "src/lib/strokes/**"
+      - "src/app/components/stroke-player*"
+      - "src/app/tools/chinese-stroke-order/**"
+      - "src/app/character/**"
+      - "scripts/build-stroke-assets.py"
+      - "tests/stroke-order.test.mts"
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          cache: npm
+      - name: Install locked dependencies
+        run: npm ci
+      - name: Lint stroke tool
+        run: npx eslint --max-warnings=0 src/app/components/stroke-player.tsx src/app/tools/chinese-stroke-order/*.tsx src/lib/strokes/domain.ts src/lib/strokes/load.ts
+      - name: Verify all character data and connected resources
+        run: node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --test tests/stroke-order.test.mts tests/learning-guides.test.mts tests/footer-density.test.mts
+      - name: Build and typecheck production pages
+        run: npm run build
