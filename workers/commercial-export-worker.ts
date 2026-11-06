@@ -9,7 +9,7 @@ interface CommercialExportMessage {
 }
 
 interface CommercialExportEnv extends CloudflareEnv {
-  PAGE_CACHE_R2?: R2Bucket;
+  PAGE_CACHE_R2?: Parameters<typeof maintainPageCache>[0];
   STORAGE_CACHE_CLEANUP_MODE?: "dry-run" | "apply";
 }
 
