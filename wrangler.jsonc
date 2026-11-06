@@ -59,7 +59,7 @@
 		"bucket_name": "hskkit-commercial-exports"
 	}, {
 		"binding": "NEXT_INC_CACHE_R2_BUCKET",
-		"bucket_name": "hskkit-commercial-exports"
+		"bucket_name": "hskkit-page-cache"
 	}, {
 		"binding": "BLOG_MEDIA_R2",
 		"bucket_name": "hskkit-blog-media"

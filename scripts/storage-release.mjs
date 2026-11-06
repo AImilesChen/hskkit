@@ -16,11 +16,11 @@ async function inspect() {
   const deployments=await cf('workers/scripts/hskkit/deployments');
   // This report intentionally excludes plain-text environment values, users,
   // script content, credentials and object names.
-  return {checkedAt:new Date().toISOString(),mainR2:(main.bindings??[]).filter(b=>b.type==='r2_bucket').map(b=>({binding:b.name,bucket:b.bucket_name})),commercialR2:(commercial.bindings??[]).filter(b=>b.type==='r2_bucket').map(b=>({binding:b.name,bucket:b.bucket_name})),commercialBindingNames:(commercial.bindings??[]).map(b=>({name:b.name,type:b.type})),schedules,activeVersions:deployments.deployments?.[0]?.versions??deployments[0]?.versions??[]};
+  return {checkedAt:new Date().toISOString(),mainR2:(main.bindings??[]).filter(b=>b.type==='r2_bucket').map(b=>({binding:b.name,bucket:b.bucket_name})),commercialR2:(commercial.bindings??[]).filter(b=>b.type==='r2_bucket').map(b=>({binding:b.name,bucket:b.bucket_name})),commercialBindingNames:(commercial.bindings??[]).map(b=>({name:b.name,type:b.type})),cacheCleanupMode:(commercial.bindings??[]).find(b=>b.name==='STORAGE_CACHE_CLEANUP_MODE')?.text??'not-configured',schedules,activeVersions:deployments.deployments?.[0]?.versions??deployments[0]?.versions??[]};
 }
 async function ensureBucket() {
-  const buckets=await cf('r2/buckets');
-  if(!(buckets.buckets??buckets).some(b=>b.name===CACHE_BUCKET))await cf('r2/buckets',{method:'POST',body:JSON.stringify({name:CACHE_BUCKET})});
+  try {await cf(`r2/buckets/${CACHE_BUCKET}`);}
+  catch(error){if(error.message!=='CLOUDFLARE_HTTP_404')throw error;await cf('r2/buckets',{method:'POST',body:JSON.stringify({name:CACHE_BUCKET})});}
   console.log('Dedicated page-cache bucket is available');
 }
 async function register() {
@@ -44,8 +44,11 @@ async function register() {
 try {
   const task=process.argv[2];
   if(!process.env.CLOUDFLARE_API_TOKEN)throw Error('MISSING_DEPLOYMENT_CREDENTIAL');
-  if(task==='inspect'){
+  if(task==='inspect'||task==='verify'){
     const report=await inspect();await writeFile(process.argv[3],JSON.stringify(report,null,2));
+    if(task==='verify'){
+      if(!report.mainR2.some(b=>b.binding==='NEXT_INC_CACHE_R2_BUCKET'&&b.bucket===CACHE_BUCKET)||!report.mainR2.some(b=>b.binding==='COMMERCIAL_EXPORTS_R2'&&b.bucket==='hskkit-commercial-exports')||!report.commercialR2.some(b=>b.binding==='PAGE_CACHE_R2'&&b.bucket===CACHE_BUCKET)||(report.schedules.schedules??[]).every(s=>s.cron!=='*/15 * * * *'))throw Error('STORAGE_DEPLOYMENT_MISMATCH');
+    }
     console.log('Read-only storage deployment inspection completed');
   }else if(task==='ensure-bucket')await ensureBucket();
   else if(task==='register')await register();

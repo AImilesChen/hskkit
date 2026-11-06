@@ -1,0 +1,6 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {"incremental": false},
+  "include": ["src/lib/storage/*.ts", "tests/storage-maintenance.test.mts"],
+  "exclude": ["node_modules"]
+}

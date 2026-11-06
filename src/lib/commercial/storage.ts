@@ -111,6 +111,7 @@ export async function revokePackPurchase(input:{packPurchaseId:string;reason:str
 }
 
 export async function expireReadyExports(limit=100,env?:Pick<CloudflareEnv,"LEARNING_DB">){
+  if(!Number.isSafeInteger(limit)||limit<1||limit>100) throw new Error("INVALID_EXPORT_CLEANUP_LIMIT");
   const db=commerceDb(env);const at=nowIso();
   await db.prepare(`UPDATE pack_purchases SET status='expired',version=version+1,updated_at=? WHERE status='active' AND expires_at<=?`).bind(at,at).run();
   await db.prepare(`UPDATE digital_product_entitlements SET status='expired',version=version+1,updated_at=? WHERE status='active' AND expires_at<=?`).bind(at,at).run();
@@ -119,7 +120,7 @@ export async function expireReadyExports(limit=100,env?:Pick<CloudflareEnv,"LEAR
     const result=await db.prepare(`UPDATE commercial_export_jobs SET state='expired',lease_owner=NULL,lease_expires_at=NULL,updated_at=? WHERE id=? AND state IN ('queued','generating','ready','failed') AND expires_at<=?`).bind(at,row.id,at).run();
     if(result.meta.changes===1) await db.prepare(`DELETE FROM commercial_download_tokens WHERE job_id=? AND consumed_at IS NULL`).bind(row.id).run();
   }
-  return (await db.prepare(`SELECT id,object_key objectKey FROM commercial_export_jobs WHERE state IN ('expired','revoked') AND object_key IS NOT NULL ORDER BY updated_at ASC LIMIT ?`).bind(limit).all<{id:string;objectKey:string}>()).results;
+  return (await db.prepare(`SELECT id,user_id userId,kind,object_key objectKey FROM commercial_export_jobs WHERE state IN ('expired','revoked') AND object_key IS NOT NULL ORDER BY updated_at ASC LIMIT ?`).bind(limit).all<{id:string;userId:string;kind:string;objectKey:string}>()).results;
 }
 export async function listPackOrders(userId:string){return (await commerceDb().prepare(`SELECT o.id,o.sku,o.selected_level,o.amount_cents,o.currency,o.status,o.created_at,o.paid_at,o.refunded_at,p.status purchase_status,p.starts_at,p.expires_at,p.download_limit,p.successful_downloads FROM commerce_orders o LEFT JOIN pack_purchases p ON p.order_id=o.id WHERE o.user_id=? ORDER BY o.created_at DESC LIMIT 50`).bind(userId).all()).results;}
 export async function packCheckoutResultForUser(sessionId:string,userId:string){return commerceDb().prepare(`SELECT o.id order_id,o.status order_status,o.selected_level,o.amount_cents,o.currency,p.id pack_purchase_id,p.status purchase_status,p.expires_at,p.download_limit,p.successful_downloads FROM commerce_orders o LEFT JOIN pack_purchases p ON p.order_id=o.id WHERE o.stripe_checkout_session_id=? AND o.user_id=?`).bind(sessionId,userId).first<Record<string,unknown>>();}

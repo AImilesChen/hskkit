@@ -39,6 +39,10 @@ jobs:
             echo "Missing repository secret CLOUDFLARE_API_TOKEN" >&2
             exit 1
           fi
+      - name: Check storage maintenance protection
+        run: node --test tests/storage-maintenance.test.mts
+      - name: Ensure dedicated private page-cache bucket
+        run: node scripts/storage-release.mjs ensure-bucket
       - name: Check whether assessment delivery changed
         id: assessment
         run: |
@@ -65,14 +69,6 @@ jobs:
           npx wrangler r2 object put "$key.manifest.json" --file "$artifact/product.manifest.json" --content-type application/json --remote
       - name: Verify publication record for the already uploaded vocabulary deliveries
         run: node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/check-reviewed-vocabulary-publication.mts
-      - name: Restore and verify Chinese-name static assets
-        run: |
-          python3 scripts/restore-name-assets.py
-          npx eslint --max-warnings=0 src/app/tools/chinese-name-generator src/lib/names scripts/check-name-release-assets.mjs
-          node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --test tests/chinese-names.test.mts tests/chinese-names-custom.test.mts tests/chinese-names-expansion.test.mts tests/chinese-names-meanings.test.mts tests/stroke-order.test.mts tests/learning-guides.test.mts tests/footer-density.test.mts
-          npm run check:chinese-names
-          # The full offline inventory is checked above, not served to learners.
-          rm public/name-data/v3/audio-manifest.json
       - name: Build Worker
         run: |
           npx opennextjs-cloudflare build --dangerouslyUseUnsupportedNextVersion
@@ -86,3 +82,24 @@ jobs:
             exit 1
           fi
           npx wrangler versions deploy "$version_id@100%" --yes
+          echo "STORAGE_WORKER_VERSION=$version_id" >> "$GITHUB_ENV"
+      - name: Register verified production cache release
+        run: node scripts/storage-release.mjs register
+      - name: Deploy bounded cache and export maintenance without changing queue or cron settings
+        run: |
+          npx wrangler versions upload --config wrangler.commercial-worker.jsonc --keep-vars | tee "$RUNNER_TEMP/storage-worker-upload.log"
+          storage_version_id=$(grep -Eo 'Worker Version ID: [0-9a-f-]{36}' "$RUNNER_TEMP/storage-worker-upload.log" | tail -1 | awk '{print $4}')
+          if [ -z "$storage_version_id" ]; then
+            echo "Wrangler did not return a storage Worker version ID" >&2
+            exit 1
+          fi
+          npx wrangler versions deploy "$storage_version_id@100%" --config wrangler.commercial-worker.jsonc --yes
+      - name: Verify storage bindings and existing schedule
+        run: node scripts/storage-release.mjs verify "$RUNNER_TEMP/storage-after-deploy.json"
+      - name: Retain storage deployment verification
+        uses: actions/upload-artifact@v4
+        with:
+          name: storage-after-deploy-${{ github.run_id }}
+          path: ${{ runner.temp }}/storage-after-deploy.json
+          retention-days: 7
+          if-no-files-found: error

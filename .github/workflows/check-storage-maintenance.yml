@@ -8,7 +8,7 @@ permissions:
 jobs:
   check:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -16,6 +16,20 @@ jobs:
           node-version: "24"
       - name: Verify retention and export deletion guards
         run: node --test tests/storage-maintenance.test.mts
+      - name: Install locked build dependencies
+        run: npm ci
+      - name: Typecheck and lint storage modules
+        run: |
+          npx tsc --project tsconfig.storage.json --pretty false
+          npx eslint src/lib/storage/cache-retention.ts src/lib/storage/export-cleanup.ts workers/commercial-export-worker.ts open-next.config.ts --max-warnings=0
+      - name: Bundle export Worker without deployment
+        run: npx wrangler versions upload --config wrangler.commercial-worker.jsonc --dry-run --outdir "$RUNNER_TEMP/storage-worker"
+      - name: Build production app without deployment
+        env:
+          NODE_OPTIONS: --max-old-space-size=6144
+        run: |
+          npx opennextjs-cloudflare build --dangerouslyUseUnsupportedNextVersion
+          node scripts/patch-open-next-email.mjs
       - name: Inspect existing storage bindings and schedules
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
