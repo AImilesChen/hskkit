@@ -21,6 +21,9 @@ jobs:
     timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
+        with:
+          sparse-checkout: scripts/audit-r2-cache.py
+          sparse-checkout-cone-mode: false
       - name: Inventory metadata only
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}

@@ -117,6 +117,12 @@ def objects():
         if info.get('is_truncated') is False:
             return
         next_cursor = info.get('cursor')
+        if not next_cursor and info.get('is_truncated') is not True:
+            # The production endpoint can omit is_truncated on its final page.
+            # Confirm the boundary with a separate supported start_after query.
+            probe = cf_get(f'r2/buckets/{BUCKET}/objects', {'per_page': 1, 'start_after': previous}) if previous else response
+            if probe['result'] == [] and probe.get('result_info', {}).get('is_truncated') is not True:
+                return
         if not next_cursor or next_cursor in seen_cursors:
             raise RuntimeError('Pagination did not prove completion')
         seen_cursors.add(next_cursor)

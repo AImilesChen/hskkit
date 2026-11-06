@@ -2,6 +2,7 @@ import importlib.util
 from datetime import datetime, timezone
 from pathlib import Path
 import unittest
+from unittest.mock import patch
 
 spec = importlib.util.spec_from_file_location('audit', Path(__file__).resolve().parents[1] / 'scripts/audit-r2-cache.py')
 audit = importlib.util.module_from_spec(spec)
@@ -38,6 +39,15 @@ class AuditTests(unittest.TestCase):
             audit.aggregate([{**one, 'key': audit.CACHE_PREFIX + 'unexpected/file'}])
         with self.assertRaises(ValueError):
             audit.classify(audit.aggregate([one]), ACTIVE, datetime.now(timezone.utc))
+
+    def test_missing_terminal_flag_requires_an_empty_boundary_probe(self):
+        one = cache(OLD, '2026-10-01T00:00:00Z')
+        with patch.object(audit, 'cf_get', side_effect=[{'result': [one], 'result_info': {}}, {'result': [], 'result_info': {}}]) as get:
+            self.assertEqual(list(audit.objects()), [one])
+            self.assertEqual(get.call_args.args[1], {'per_page': 1, 'start_after': one['key']})
+        with patch.object(audit, 'cf_get', side_effect=[{'result': [one], 'result_info': {}}, {'result': [one], 'result_info': {}}]):
+            with self.assertRaises(RuntimeError):
+                list(audit.objects())
 
 
 if __name__ == '__main__':
