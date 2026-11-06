@@ -40,7 +40,7 @@ jobs:
             exit 1
           fi
       - name: Check storage maintenance protection
-        run: node --test tests/storage-maintenance.test.mts
+        run: node --test tests/storage-maintenance.test.mts tests/storage-build-check.test.mts
       - name: Ensure dedicated private page-cache bucket
         run: node scripts/storage-release.mjs ensure-bucket
       - name: Check whether assessment delivery changed

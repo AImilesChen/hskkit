@@ -1,5 +1,6 @@
 import {readFile, writeFile} from 'node:fs/promises';
 import {spawnSync} from 'node:child_process';
+import {waitForPublishedBuild} from './storage-build-check.mjs';
 
 const ACCOUNT='77bc392d46985cd3425691358f5e8a77';
 const CACHE_BUCKET='hskkit-page-cache';
@@ -30,8 +31,10 @@ async function register() {
   const deployments=await cf('workers/scripts/hskkit/deployments');
   const versions=(deployments.deployments??deployments)[0]?.versions;
   if(versions?.length!==1||versions[0].version_id!==version||versions[0].percentage!==100)throw Error('DEPLOYMENT_NOT_EXCLUSIVELY_ACTIVE');
-  const response=await fetch('https://hskkit.com/BUILD_ID',{signal:AbortSignal.timeout(20000),redirect:'error'});
-  if(!response.ok||(await response.text()).trim()!==build)throw Error('LIVE_BUILD_MISMATCH');
+  await waitForPublishedBuild(build);
+  const fresh=await cf('workers/scripts/hskkit/deployments');
+  const freshVersions=(fresh.deployments??fresh)[0]?.versions;
+  if(freshVersions?.length!==1||freshVersions[0].version_id!==version||freshVersions[0].percentage!==100)throw Error('DEPLOYMENT_CHANGED_DURING_VERIFICATION');
   const deployedAt=Date.now();
   const record={schemaVersion:1,worker:'hskkit',version,build,bucket:CACHE_BUCKET,prefix:'system/opennext-cache/',deployedAt:new Date(deployedAt).toISOString(),commit:process.env.GITHUB_SHA};
   const file=`${process.env.RUNNER_TEMP}/hskkit-cache-release.json`;
