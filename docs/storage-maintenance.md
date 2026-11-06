@@ -4,7 +4,7 @@ Production releases separate public page caches (`hskkit-page-cache`) from comme
 
 ## Release and rollback protection
 
-The production workflow verifies a single Worker version at 100% traffic and a matching public `BUILD_ID` before writing its release record under `system/cache-releases/` in the dedicated cache bucket. Use this workflow for releases; an unrecorded deployment or manual rollback freezes cache cleanup until the registry is reconciled.
+The production workflow verifies a single Worker version at 100% traffic and a matching public `BUILD_ID`, with bounded propagation retries. It passes that verified identity to the maintenance Worker through non-secret bindings. At its next scheduled invocation, the Worker checks the live build again and writes its release record under `system/cache-releases/` using its existing R2 binding. This does not require R2 object-write permissions on the CI credential. A bounded history carries release identities across deployments between cron invocations. Use this workflow for releases; an unrecorded deployment or manual rollback freezes cache cleanup until the registry is reconciled.
 
 The existing commercial export Worker's 15-minute schedule also performs bounded cache maintenance. It protects the active version and the two most recent distinct rollback builds. An older build becomes eligible only 72 hours after its successor was deployed. Recently written objects remain protected as well. Each run inspects at most 500 cache objects across the dedicated and legacy buckets, plus bounded release-marker listings. Only exact hashed `.cache` and `.fetch` keys beneath `system/opennext-cache/` are accepted. Production identity is rechecked immediately before deletion.
 

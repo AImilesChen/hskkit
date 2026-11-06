@@ -29,6 +29,30 @@ export function parseRelease(key: string): CacheRelease {
   return { deployedAt: Number(match[1]), version: match[2], build: match[3] };
 }
 
+async function writeReleaseRecord(store: CacheStore, release: CacheRelease) {
+  const key = releaseKey(release);
+  const existing = await store.get(key);
+  if (existing) {
+    const saved = await existing.json() as {build?: string; version?: string; bucket?: string};
+    if (saved.build !== release.build || saved.version !== release.version || saved.bucket !== CACHE_BUCKET) throw new Error("RELEASE_RECORD_CONFLICT");
+    return;
+  }
+  await store.put(key, JSON.stringify({schemaVersion:1,worker:"hskkit",bucket:CACHE_BUCKET,prefix:CACHE_PREFIX,...release}), {onlyIf:{etagDoesNotMatch:"*"},httpMetadata:{contentType:"application/json"}});
+}
+
+export async function registerBoundRelease(store: CacheStore, release: CacheRelease, readActiveBuild: () => Promise<string>, now = Date.now()) {
+  releaseKey(release);
+  if (release.deployedAt > now + 60_000 || await readActiveBuild() !== release.build) throw new Error("RELEASE_REGISTRY_OUT_OF_SYNC");
+  await writeReleaseRecord(store,release);
+}
+
+export async function registerBoundHistory(store: CacheStore, history: CacheRelease[], current: CacheRelease, readActiveBuild: () => Promise<string>) {
+  if (!Array.isArray(history) || history.length > 20) throw new Error("INVALID_RELEASE_HISTORY");
+  for (const release of history) {releaseKey(release);if(release.deployedAt>current.deployedAt)throw new Error("INVALID_RELEASE_HISTORY");}
+  if (await readActiveBuild() !== current.build) throw new Error("RELEASE_REGISTRY_OUT_OF_SYNC");
+  for (const release of history) if (release.build !== current.build) await writeReleaseRecord(store,release);
+}
+
 export function retentionPlan(releases: CacheRelease[], activeBuild: string, now: number) {
   if (!BUILD.test(activeBuild) || !Number.isFinite(now) || releases.length === 0) throw new Error("MISSING_CURRENT_RELEASE");
   const byBuild = new Map<string, CacheRelease>();

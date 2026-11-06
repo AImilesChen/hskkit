@@ -1,7 +1,7 @@
 import { processCommercialExport } from "../src/lib/commercial/processor";
 import { retryDelaySeconds } from "../src/lib/commercial/queue-retry";
 import { clearExportObjectKey, commerceDb, expireReadyExports, getExportJob } from "../src/lib/commercial/storage";
-import { legacyCutover, maintainLegacyCache, maintainPageCache } from "../src/lib/storage/cache-retention";
+import { legacyCutover, maintainLegacyCache, maintainPageCache, registerBoundRelease, registerBoundHistory } from "../src/lib/storage/cache-retention";
 import { cleanupExpiredExportObjects } from "../src/lib/storage/export-cleanup";
 
 interface CommercialExportMessage {
@@ -11,6 +11,10 @@ interface CommercialExportMessage {
 interface CommercialExportEnv extends CloudflareEnv {
   PAGE_CACHE_R2?: Parameters<typeof maintainPageCache>[0];
   STORAGE_CACHE_CLEANUP_MODE?: "dry-run" | "apply";
+  STORAGE_SITE_BUILD?: string;
+  STORAGE_SITE_VERSION?: string;
+  STORAGE_SITE_DEPLOYED_AT?: string;
+  STORAGE_SITE_HISTORY?: string;
 }
 
 const commercialExportWorker = {
@@ -45,6 +49,9 @@ const commercialExportWorker = {
           if (!response.ok) throw new Error("ACTIVE_BUILD_UNAVAILABLE");
           return (await response.text()).trim();
         };
+        const release = {build:env.STORAGE_SITE_BUILD??"",version:env.STORAGE_SITE_VERSION??"",deployedAt:Number(env.STORAGE_SITE_DEPLOYED_AT)};
+        await registerBoundRelease(env.PAGE_CACHE_R2, release, readActiveBuild);
+        await registerBoundHistory(env.PAGE_CACHE_R2, JSON.parse(env.STORAGE_SITE_HISTORY??"[]"), release, readActiveBuild);
         const summary = await maintainPageCache(env.PAGE_CACHE_R2, {
           mode: env.STORAGE_CACHE_CLEANUP_MODE === "apply" ? "apply" : "dry-run",
           readActiveBuild,
