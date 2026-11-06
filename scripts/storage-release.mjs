@@ -60,7 +60,7 @@ try {
   if(task==='inspect'||task==='verify'){
     const report=await inspect();await writeFile(process.argv[3],JSON.stringify(report,null,2));
     if(task==='verify'){
-      if(!report.mainR2.some(b=>b.binding==='NEXT_INC_CACHE_R2_BUCKET'&&b.bucket===CACHE_BUCKET)||!report.mainR2.some(b=>b.binding==='COMMERCIAL_EXPORTS_R2'&&b.bucket==='hskkit-commercial-exports')||!report.commercialR2.some(b=>b.binding==='PAGE_CACHE_R2'&&b.bucket===CACHE_BUCKET)||(report.schedules.schedules??[]).every(s=>s.cron!=='*/15 * * * *'))throw Error('STORAGE_DEPLOYMENT_MISMATCH');
+      if(!report.mainR2.some(b=>b.binding==='NEXT_INC_CACHE_R2_BUCKET'&&b.bucket===CACHE_BUCKET)||!report.mainR2.some(b=>b.binding==='COMMERCIAL_EXPORTS_R2'&&b.bucket==='hskkit-commercial-exports')||!report.commercialR2.some(b=>b.binding==='PAGE_CACHE_R2'&&b.bucket===CACHE_BUCKET)||report.cacheCleanupMode!=='apply'||(report.schedules.schedules??[]).every(s=>s.cron!=='*/15 * * * *'))throw Error('STORAGE_DEPLOYMENT_MISMATCH');
     }
     console.log('Read-only storage deployment inspection completed');
   }else if(task==='ensure-bucket')await ensureBucket();

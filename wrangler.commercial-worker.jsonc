@@ -3,7 +3,7 @@
   "name": "hskkit-commercial-export-worker",
   "main": "workers/commercial-export-worker.ts",
   "compatibility_date": "2026-05-24",
-  "compatibility_flags": ["nodejs_compat"],
+  "compatibility_flags": ["nodejs_compat", "global_fetch_strictly_public"],
   "workers_dev": false,
   "vars": {"STORAGE_CACHE_CLEANUP_MODE": "apply"},
   "d1_databases": [{
