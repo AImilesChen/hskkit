@@ -1,4 +1,4 @@
-name: Complete approved storage release
+name: Disable added cache maintenance
 on:
   push:
     branches: [maintenance/r2-storage-optimization-20261106]
@@ -9,46 +9,37 @@ concurrency:
   group: hskkit-production-deploy
   cancel-in-progress: false
 jobs:
-  complete:
+  disable:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     env:
       CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
       CLOUDFLARE_ACCOUNT_ID: 77bc392d46985cd3425691358f5e8a77
       WRANGLER_SEND_METRICS: "false"
-      STORAGE_WORKER_VERSION: 6870b95b-276e-4ba7-a497-49a33fd40284
-      EXPECTED_BUILD: Uio0kWJQ6kZBYHTBd2FrD
     steps:
       - uses: actions/checkout@v4
-        with:
-          fetch-depth: 2
       - uses: actions/setup-node@v4
         with:
           node-version: "24"
       - run: npm ci --ignore-scripts
-      - name: Verify protected commercial paths and retention behavior
+      - name: Verify existing export cleanup protections
         run: |
-          git fetch --depth=1 origin 4728b138548f26f5f37264cfc6ddbf7c2255b576
-          git diff --exit-code 4728b138548f26f5f37264cfc6ddbf7c2255b576 -- src/lib/storage/export-cleanup.ts src/lib/commercial/storage.ts wrangler.commercial-worker.jsonc
           node --test tests/storage-maintenance.test.mts tests/storage-build-check.test.mts
-      - name: Complete registration of the already deployed approved app
+          npx tsc --project tsconfig.storage.json --pretty false
+          npx eslint workers/commercial-export-worker.ts --max-warnings=0
+      - name: Remove added cache cleanup runtime and bucket binding
         run: |
-          mkdir -p .next
-          printf '%s' "$EXPECTED_BUILD" > .next/BUILD_ID
-          node scripts/storage-release.mjs register
-      - name: Activate the approved maintenance runtime
-        run: |
-          npx wrangler versions upload --config wrangler.commercial-worker.jsonc --keep-vars --var "STORAGE_SITE_BUILD:$STORAGE_SITE_BUILD" --var "STORAGE_SITE_VERSION:$STORAGE_SITE_VERSION" --var "STORAGE_SITE_DEPLOYED_AT:$STORAGE_SITE_DEPLOYED_AT" --var "STORAGE_SITE_HISTORY:$STORAGE_SITE_HISTORY" | tee "$RUNNER_TEMP/storage-worker-upload.log"
-          storage_version_id=$(grep -Eo 'Worker Version ID: [0-9a-f-]{36}' "$RUNNER_TEMP/storage-worker-upload.log" | tail -1 | awk '{print $4}')
-          test -n "$storage_version_id"
-          npx wrangler versions deploy "$storage_version_id@100%" --config wrangler.commercial-worker.jsonc --yes
-      - name: Verify actual bucket bindings and apply mode
-        run: node scripts/storage-release.mjs verify "$RUNNER_TEMP/storage-after-recovery.json"
-      - name: Check public pages and anonymous download protections
-        run: python3 scripts/check-storage-live.py --expected-build "$EXPECTED_BUILD"
+          npx wrangler versions upload --config wrangler.commercial-worker.jsonc --keep-vars --var "STORAGE_CACHE_CLEANUP_MODE:disabled" | tee "$RUNNER_TEMP/storage-worker-upload.log"
+          version_id=$(grep -Eo 'Worker Version ID: [0-9a-f-]{36}' "$RUNNER_TEMP/storage-worker-upload.log" | tail -1 | awk '{print $4}')
+          test -n "$version_id"
+          npx wrangler versions deploy "$version_id@100%" --config wrangler.commercial-worker.jsonc --yes
+      - name: Verify cache cleanup disabled and original export schedule retained
+        run: node scripts/storage-release.mjs verify-disabled "$RUNNER_TEMP/storage-disabled.json"
+      - name: Check unchanged public pages and anonymous download protections
+        run: python3 scripts/check-storage-live.py --expected-build Uio0kWJQ6kZBYHTBd2FrD
       - uses: actions/upload-artifact@v4
         with:
-          name: storage-after-recovery-${{ github.run_id }}
-          path: ${{ runner.temp }}/storage-after-recovery.json
+          name: storage-disabled-${{ github.run_id }}
+          path: ${{ runner.temp }}/storage-disabled.json
           retention-days: 7
           if-no-files-found: error

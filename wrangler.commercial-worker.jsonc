@@ -5,7 +5,7 @@
   "compatibility_date": "2026-05-24",
   "compatibility_flags": ["nodejs_compat", "global_fetch_strictly_public"],
   "workers_dev": false,
-  "vars": {"STORAGE_CACHE_CLEANUP_MODE": "apply"},
+  "vars": {"STORAGE_CACHE_CLEANUP_MODE": "disabled"},
   "d1_databases": [{
     "binding": "LEARNING_DB",
     "database_name": "hskkit-learning",
@@ -14,9 +14,6 @@
   "r2_buckets": [{
     "binding": "COMMERCIAL_EXPORTS_R2",
     "bucket_name": "hskkit-commercial-exports"
-  }, {
-    "binding": "PAGE_CACHE_R2",
-    "bucket_name": "hskkit-page-cache"
   }],
   "triggers": {
     "crons": ["*/15 * * * *"]
