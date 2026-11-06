@@ -27,7 +27,8 @@ test("every offered file has valid geometry, exact catalog count and original ch
     const filename = strokeDataPath(char)!.split("/").pop()!;
     const raw = await readFile(`${base}/${filename}`);
     assert.equal(createHash("sha256").update(raw).digest("hex"), notice.files[filename], char);
-    assert.equal(strokeCounts[char], indexed.get(char), char);
+    if(indexed.has(char))assert.equal(strokeCounts[char], indexed.get(char), char);
+    else assert.ok(notice.additionalNameCharacters.includes(char),`Unattributed name-only addition: ${char}`);
     assert.ok(validStrokeData(JSON.parse(raw.toString()), strokeCounts[char]), char);
   }
   for (const c of starterCharacters) assert.ok(strokeDataPath(c));

@@ -65,6 +65,14 @@ jobs:
           npx wrangler r2 object put "$key.manifest.json" --file "$artifact/product.manifest.json" --content-type application/json --remote
       - name: Verify publication record for the already uploaded vocabulary deliveries
         run: node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/check-reviewed-vocabulary-publication.mts
+      - name: Restore and verify Chinese-name static assets
+        run: |
+          python3 scripts/restore-name-assets.py
+          npx eslint --max-warnings=0 src/app/tools/chinese-name-generator src/lib/names scripts/check-name-release-assets.mjs
+          node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --test tests/chinese-names.test.mts tests/chinese-names-custom.test.mts tests/chinese-names-expansion.test.mts tests/chinese-names-meanings.test.mts tests/stroke-order.test.mts tests/learning-guides.test.mts tests/footer-density.test.mts
+          npm run check:chinese-names
+          # The full offline inventory is checked above, not served to learners.
+          rm public/name-data/v3/audio-manifest.json
       - name: Build Worker
         run: |
           npx opennextjs-cloudflare build --dangerouslyUseUnsupportedNextVersion
