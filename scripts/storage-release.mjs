@@ -1,0 +1,53 @@
+import {readFile, writeFile} from 'node:fs/promises';
+import {spawnSync} from 'node:child_process';
+
+const ACCOUNT='77bc392d46985cd3425691358f5e8a77';
+const CACHE_BUCKET='hskkit-page-cache';
+const API=`https://api.cloudflare.com/client/v4/accounts/${ACCOUNT}/`;
+async function cf(path,options={}) {
+  const response=await fetch(API+path,{...options,headers:{Authorization:`Bearer ${process.env.CLOUDFLARE_API_TOKEN}`,...(options.body?{'Content-Type':'application/json'}:{})},redirect:'error',signal:AbortSignal.timeout(30000)});
+  if(!response.ok)throw Error(`CLOUDFLARE_HTTP_${response.status}`);
+  const body=await response.json();if(body.success!==true)throw Error('CLOUDFLARE_REQUEST_FAILED');return body.result;
+}
+async function inspect() {
+  const main=await cf('workers/scripts/hskkit/settings');
+  const commercial=await cf('workers/scripts/hskkit-commercial-export-worker/settings');
+  const schedules=await cf('workers/scripts/hskkit-commercial-export-worker/schedules');
+  const deployments=await cf('workers/scripts/hskkit/deployments');
+  // This report intentionally excludes plain-text environment values, users,
+  // script content, credentials and object names.
+  return {checkedAt:new Date().toISOString(),mainR2:(main.bindings??[]).filter(b=>b.type==='r2_bucket').map(b=>({binding:b.name,bucket:b.bucket_name})),commercialR2:(commercial.bindings??[]).filter(b=>b.type==='r2_bucket').map(b=>({binding:b.name,bucket:b.bucket_name})),commercialBindingNames:(commercial.bindings??[]).map(b=>({name:b.name,type:b.type})),schedules,activeVersions:deployments.deployments?.[0]?.versions??deployments[0]?.versions??[]};
+}
+async function ensureBucket() {
+  const buckets=await cf('r2/buckets');
+  if(!(buckets.buckets??buckets).some(b=>b.name===CACHE_BUCKET))await cf('r2/buckets',{method:'POST',body:JSON.stringify({name:CACHE_BUCKET})});
+  console.log('Dedicated page-cache bucket is available');
+}
+async function register() {
+  const version=process.env.STORAGE_WORKER_VERSION;
+  const build=(await readFile('.next/BUILD_ID','utf8')).trim();
+  if(!/^[a-f0-9-]{36}$/.test(version??'')||!/^[A-Za-z0-9_-]{21}$/.test(build))throw Error('INVALID_RELEASE_IDENTITY');
+  const deployments=await cf('workers/scripts/hskkit/deployments');
+  const versions=(deployments.deployments??deployments)[0]?.versions;
+  if(versions?.length!==1||versions[0].version_id!==version||versions[0].percentage!==100)throw Error('DEPLOYMENT_NOT_EXCLUSIVELY_ACTIVE');
+  const response=await fetch('https://hskkit.com/BUILD_ID',{signal:AbortSignal.timeout(20000),redirect:'error'});
+  if(!response.ok||(await response.text()).trim()!==build)throw Error('LIVE_BUILD_MISMATCH');
+  const deployedAt=Date.now();
+  const record={schemaVersion:1,worker:'hskkit',version,build,bucket:CACHE_BUCKET,prefix:'system/opennext-cache/',deployedAt:new Date(deployedAt).toISOString(),commit:process.env.GITHUB_SHA};
+  const file=`${process.env.RUNNER_TEMP}/hskkit-cache-release.json`;
+  await writeFile(file,JSON.stringify(record));
+  const key=`${CACHE_BUCKET}/system/cache-releases/${deployedAt}-${version}-${build}.json`;
+  const result=spawnSync(process.platform==='win32'?'npx.cmd':'npx',['wrangler','r2','object','put',key,'--file',file,'--content-type','application/json','--remote'],{stdio:'inherit',env:process.env});
+  if(result.status!==0)throw Error('RELEASE_RECORD_UPLOAD_FAILED');
+  console.log('Verified active release was registered');
+}
+try {
+  const task=process.argv[2];
+  if(!process.env.CLOUDFLARE_API_TOKEN)throw Error('MISSING_DEPLOYMENT_CREDENTIAL');
+  if(task==='inspect'){
+    const report=await inspect();await writeFile(process.argv[3],JSON.stringify(report,null,2));
+    console.log('Read-only storage deployment inspection completed');
+  }else if(task==='ensure-bucket')await ensureBucket();
+  else if(task==='register')await register();
+  else throw Error('UNKNOWN_STORAGE_RELEASE_TASK');
+}catch(error){console.error('Storage release stopped:',/^[A-Z_0-9]+$/.test(error.message)?error.message:'REMOTE_OPERATION_FAILED');process.exitCode=1;}

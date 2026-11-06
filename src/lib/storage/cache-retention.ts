@@ -1,0 +1,102 @@
+// This module only manages the dedicated page-cache bucket. Commercial files
+// are deliberately not part of its interface.
+export const CACHE_PREFIX = "system/opennext-cache/";
+export const RELEASE_PREFIX = "system/cache-releases/";
+export const CACHE_BUCKET = "hskkit-page-cache";
+export const GRACE_MS = 72 * 60 * 60 * 1000;
+const BUILD = /^[A-Za-z0-9_-]{21}$/;
+const UUID = "[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}";
+const RELEASE_KEY = new RegExp(`^${RELEASE_PREFIX}(\\d{13})-(${UUID})-([A-Za-z0-9_-]{21})\\.json$`);
+
+export type CacheRelease = { build: string; version: string; deployedAt: number };
+export type CacheObject = { key: string; uploaded: Date; size: number };
+type CacheStore = {
+  list(options: {prefix: string; limit: number; cursor?: string}): Promise<{objects: CacheObject[]; truncated: boolean; cursor?: string}>;
+  delete(keys: string[]): Promise<void>;
+  put(key: string, body: string, options?: unknown): Promise<unknown>;
+};
+
+export function releaseKey(release: CacheRelease) {
+  const key = `${RELEASE_PREFIX}${release.deployedAt}-${release.version}-${release.build}.json`;
+  if (!RELEASE_KEY.test(key)) throw new Error("INVALID_CACHE_RELEASE");
+  return key;
+}
+
+export function parseRelease(key: string): CacheRelease {
+  const match = RELEASE_KEY.exec(key);
+  if (!match) throw new Error("INVALID_CACHE_RELEASE");
+  return { deployedAt: Number(match[1]), version: match[2], build: match[3] };
+}
+
+export function retentionPlan(releases: CacheRelease[], activeBuild: string, now: number) {
+  if (!BUILD.test(activeBuild) || !Number.isFinite(now) || releases.length === 0) throw new Error("MISSING_CURRENT_RELEASE");
+  const byBuild = new Map<string, CacheRelease>();
+  for (const record of releases) {
+    releaseKey(record);
+    if (record.deployedAt > now + 60_000) throw new Error("FUTURE_CACHE_RELEASE");
+    if (!byBuild.has(record.build) || byBuild.get(record.build)!.deployedAt < record.deployedAt) byBuild.set(record.build, record);
+  }
+  const ordered = [...byBuild.values()].sort((a, b) => b.deployedAt - a.deployedAt);
+  // An unrecorded deploy or a manual rollback freezes cleanup until its release
+  // record is reconciled. Never infer the active version from object age.
+  if (ordered[0].build !== activeBuild) throw new Error("RELEASE_REGISTRY_OUT_OF_SYNC");
+  const protectedBuilds = new Set(ordered.slice(0, 3).map(record => record.build));
+  const retired = ordered.filter((record, index) => index >= 3 && now - ordered[index - 1].deployedAt >= GRACE_MS);
+  return {protectedBuilds, retired};
+}
+
+export function validateCachePage(objects: CacheObject[], build: string, now: number) {
+  if (!BUILD.test(build)) throw new Error("INVALID_CACHE_BUILD");
+  const prefix = CACHE_PREFIX + build + "/";
+  const seen = new Set<string>();
+  for (const object of objects) {
+    if (!object.key.startsWith(prefix) || !/^[a-f0-9]{64}\.(cache|fetch)$/.test(object.key.slice(prefix.length)) || seen.has(object.key)) throw new Error("CACHE_SCOPE_MISMATCH");
+    if (!Number.isSafeInteger(object.size) || object.size < 0 || !Number.isFinite(object.uploaded.getTime()) || object.uploaded.getTime() > now - GRACE_MS) throw new Error("CACHE_OBJECT_STILL_RECENT");
+    seen.add(object.key);
+  }
+}
+
+export async function maintainPageCache(store: CacheStore, options: {mode: "apply" | "dry-run"; readActiveBuild(): Promise<string>; now?: number; maxDeletes?: number}) {
+  const now = options.now ?? Date.now();
+  const budget = options.maxDeletes ?? 500;
+  if (!Number.isSafeInteger(budget) || budget < 1 || budget > 500) throw new Error("INVALID_CLEANUP_BUDGET");
+  const activeBuild = await options.readActiveBuild();
+  const releases: CacheRelease[] = [];
+  const cursors = new Set<string>();
+  let cursor: string | undefined;
+  for (let page = 0; ; page++) {
+    if (page >= 10) throw new Error("RELEASE_LIST_LIMIT");
+    const result = await store.list({prefix: RELEASE_PREFIX, limit: 1000, ...(cursor ? {cursor} : {})});
+    releases.push(...result.objects.map(object => parseRelease(object.key)));
+    if (!result.truncated) break;
+    if (!result.cursor || cursors.has(result.cursor)) throw new Error("RELEASE_CURSOR_REPEATED");
+    cursors.add(result.cursor); cursor = result.cursor;
+  }
+  const plan = retentionPlan(releases, activeBuild, now);
+  let inspected = 0, deleted = 0, deletedBytes = 0;
+  // One page per retired build per run; never walk an unbounded cache or run
+  // cleanup on a user's request. Later cron runs resume from remaining objects.
+  for (const record of plan.retired.slice(0, 6)) {
+    const remaining = budget - inspected;
+    if (remaining <= 0) break;
+    const result = await store.list({prefix: CACHE_PREFIX + record.build + "/", limit: remaining});
+    if (result.objects.length > remaining) throw new Error("CACHE_LIST_EXCEEDED_BUDGET");
+    validateCachePage(result.objects, record.build, now);
+    inspected += result.objects.length;
+    if (options.mode === "apply" && result.objects.length === 0 && !result.truncated) {
+      if (await options.readActiveBuild() !== activeBuild) throw new Error("PRODUCTION_CHANGED_DURING_CLEANUP");
+      // Removing an exhausted retired marker prevents empty old builds from
+      // starving later candidates on subsequent bounded runs.
+      await store.delete([releaseKey(record)]);
+    }
+    if (options.mode === "apply" && result.objects.length) {
+      if (await options.readActiveBuild() !== activeBuild) throw new Error("PRODUCTION_CHANGED_DURING_CLEANUP");
+      await store.delete(result.objects.map(object => object.key));
+      deleted += result.objects.length;
+      deletedBytes += result.objects.reduce((sum, object) => sum + object.size, 0);
+    }
+  }
+  const summary = {schemaVersion: 1, mode: options.mode, checkedAt: new Date(now).toISOString(), protectedBuilds: plan.protectedBuilds.size, retiredBuilds: plan.retired.length, inspectedObjects: inspected, deletedObjects: deleted, deletedBytes};
+  await store.put("system/maintenance/cache-latest.json", JSON.stringify(summary), {httpMetadata: {contentType: "application/json"}});
+  return summary;
+}
