@@ -1,0 +1,47 @@
+name: Apply approved old-cache cleanup
+on:
+  push:
+    branches: [maintenance/r2-cache-audit-20261106]
+    paths:
+      - scripts/cleanup-r2-cache.mjs
+      - .github/workflows/cleanup-r2-cache.yml
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: hskkit-r2-approved-cleanup
+  cancel-in-progress: false
+jobs:
+  cleanup:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: |
+            scripts/cleanup-r2-cache.mjs
+            package.json
+            package-lock.json
+          sparse-checkout-cone-mode: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Install locked SDK dependencies without package scripts
+        run: npm ci --ignore-scripts
+      - uses: actions/download-artifact@v4
+        with:
+          name: r2-cache-inventory-42216246708
+          run-id: 42216246708
+          github-token: ${{ github.token }}
+          path: ${{ runner.temp }}/approved-inventory
+      - name: Apply the exact user-approved forty-prefix plan
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          APPROVED_R2_CLEANUP_SHA: c5a007413a7d9949002d15fd0c3606f40067d1f2f3394d7134c44334f658720d
+        run: node scripts/cleanup-r2-cache.mjs --report "$RUNNER_TEMP/approved-inventory/r2-cache-inventory.json" --output "$RUNNER_TEMP/r2-cleanup-result.json" --apply
+      - uses: actions/upload-artifact@v4
+        with:
+          name: r2-cleanup-result-${{ github.run_id }}
+          path: ${{ runner.temp }}/r2-cleanup-result.json
+          retention-days: 7
+          if-no-files-found: error
