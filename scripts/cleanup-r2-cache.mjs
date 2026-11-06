@@ -124,7 +124,9 @@ async function main() {
       if(fingerprint(fresh).metadataSha256!==fingerprint(items).metadataSha256)fail('Old-prefix contents changed during preflight');
       for(let start=0;start<items.length;start+=1000){
         const keys=items.slice(start,start+1000).map(o=>({Key:o.Key}));
-        const result=await client.send(new DeleteObjectsCommand({Bucket:BUCKET,Delete:{Objects:keys,Quiet:false}}));
+        let result;
+        try { result=await client.send(new DeleteObjectsCommand({Bucket:BUCKET,Delete:{Objects:keys,Quiet:false}})); }
+        catch(error) { error.cleanupPhase='delete-objects'; throw error; }
         if(result.Errors?.length||result.Deleted?.length!==keys.length)fail('Batch delete was incomplete; stopped');
         const permitted=new Set(keys.map(k=>k.Key));
         if(result.Deleted.some(k=>!permitted.has(k.Key)))fail('Delete response mismatch');
@@ -146,5 +148,10 @@ async function main() {
 }
 
 if(process.argv[1]&&import.meta.url===pathToFileURL(process.argv[1]).href){
-  main().catch(error=>{console.error('R2 cleanup stopped:',error instanceof Error&&error.name==='CleanupGuardError'?error.message:'Remote operation failed; no credentials or object keys logged');process.exitCode=1;});
+  main().catch(error=>{
+    const remoteName=typeof error?.name==='string'&&/^[A-Za-z]{1,80}$/.test(error.name)?error.name:'RemoteError';
+    console.error('R2 cleanup stopped:',error instanceof Error&&error.name==='CleanupGuardError'?error.message:
+      JSON.stringify({phase:error?.cleanupPhase??'preflight',type:remoteName,httpStatus:error?.$metadata?.httpStatusCode??null}));
+    process.exitCode=1;
+  });
 }
