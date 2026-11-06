@@ -1,21 +1,13 @@
 import { processCommercialExport } from "../src/lib/commercial/processor";
 import { retryDelaySeconds } from "../src/lib/commercial/queue-retry";
 import { clearExportObjectKey, commerceDb, expireReadyExports, getExportJob } from "../src/lib/commercial/storage";
-import { legacyCutover, maintainLegacyCache, maintainPageCache, registerBoundRelease, registerBoundHistory } from "../src/lib/storage/cache-retention";
 import { cleanupExpiredExportObjects } from "../src/lib/storage/export-cleanup";
 
 interface CommercialExportMessage {
   jobId: string;
 }
 
-interface CommercialExportEnv extends CloudflareEnv {
-  PAGE_CACHE_R2?: Parameters<typeof maintainPageCache>[0];
-  STORAGE_CACHE_CLEANUP_MODE?: "dry-run" | "apply";
-  STORAGE_SITE_BUILD?: string;
-  STORAGE_SITE_VERSION?: string;
-  STORAGE_SITE_DEPLOYED_AT?: string;
-  STORAGE_SITE_HISTORY?: string;
-}
+type CommercialExportEnv = CloudflareEnv;
 
 const commercialExportWorker = {
   async queue(batch: { messages: Array<{ body: CommercialExportMessage; ack(): void; retry(options?:{delaySeconds?:number}):void }> }, env: CommercialExportEnv) {
@@ -41,32 +33,6 @@ const commercialExportWorker = {
       console.log("storage_export_cleanup", JSON.stringify(exports));
     } catch {
       console.error("storage_export_cleanup_blocked");
-    }
-    if (env.PAGE_CACHE_R2) {
-      try {
-        const readActiveBuild = async () => {
-          const response = await fetch("https://hskkit.com/BUILD_ID", {redirect: "error", signal: AbortSignal.timeout(15000), headers: {"Cache-Control": "no-cache"}});
-          if (!response.ok) throw new Error("ACTIVE_BUILD_UNAVAILABLE");
-          return (await response.text()).trim();
-        };
-        const release = {build:env.STORAGE_SITE_BUILD??"",version:env.STORAGE_SITE_VERSION??"",deployedAt:Number(env.STORAGE_SITE_DEPLOYED_AT)};
-        await registerBoundRelease(env.PAGE_CACHE_R2, release, readActiveBuild);
-        await registerBoundHistory(env.PAGE_CACHE_R2, JSON.parse(env.STORAGE_SITE_HISTORY??"[]"), release, readActiveBuild);
-        const summary = await maintainPageCache(env.PAGE_CACHE_R2, {
-          mode: env.STORAGE_CACHE_CLEANUP_MODE === "apply" ? "apply" : "dry-run",
-          readActiveBuild,
-        });
-        if (env.STORAGE_CACHE_CLEANUP_MODE === "apply") {
-          const cutoverAt = await legacyCutover(env.PAGE_CACHE_R2, summary.registeredBuilds);
-          const legacy = await maintainLegacyCache(env.COMMERCIAL_EXPORTS_R2, {cutoverAt,registeredBuilds:summary.registeredBuilds,activeBuild:summary.activeBuild,maxDeletes:500-summary.inspectedObjects,readActiveBuild});
-          await env.PAGE_CACHE_R2.put("system/maintenance/legacy-latest.json", JSON.stringify({...legacy,checkedAt:new Date().toISOString(),cutoverAt}), {httpMetadata:{contentType:"application/json"}});
-        }
-        console.log("storage_cache_cleanup", JSON.stringify(summary));
-      } catch {
-        // No sensitive object names, bindings, exception messages, or credentials.
-        console.error("storage_cache_cleanup_blocked");
-        await env.PAGE_CACHE_R2.put("system/maintenance/cache-latest.json", JSON.stringify({schemaVersion:1,status:"blocked",checkedAt:new Date().toISOString()}), {httpMetadata:{contentType:"application/json"}}).catch(()=>undefined);
-      }
     }
   },
 };

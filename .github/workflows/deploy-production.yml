@@ -85,11 +85,9 @@ jobs:
           fi
           npx wrangler versions deploy "$version_id@100%" --yes
           echo "STORAGE_WORKER_VERSION=$version_id" >> "$GITHUB_ENV"
-      - name: Register verified production cache release
-        run: node scripts/storage-release.mjs register
-      - name: Deploy bounded cache and export maintenance without changing queue or cron settings
+      - name: Deploy export-only maintenance without changing queue or cron settings
         run: |
-          npx wrangler versions upload --config wrangler.commercial-worker.jsonc --keep-vars --var "STORAGE_SITE_BUILD:$STORAGE_SITE_BUILD" --var "STORAGE_SITE_VERSION:$STORAGE_SITE_VERSION" --var "STORAGE_SITE_DEPLOYED_AT:$STORAGE_SITE_DEPLOYED_AT" --var "STORAGE_SITE_HISTORY:$STORAGE_SITE_HISTORY" | tee "$RUNNER_TEMP/storage-worker-upload.log"
+          npx wrangler versions upload --config wrangler.commercial-worker.jsonc --keep-vars --var "STORAGE_CACHE_CLEANUP_MODE:disabled" | tee "$RUNNER_TEMP/storage-worker-upload.log"
           storage_version_id=$(grep -Eo 'Worker Version ID: [0-9a-f-]{36}' "$RUNNER_TEMP/storage-worker-upload.log" | tail -1 | awk '{print $4}')
           if [ -z "$storage_version_id" ]; then
             echo "Wrangler did not return a storage Worker version ID" >&2
@@ -97,7 +95,7 @@ jobs:
           fi
           npx wrangler versions deploy "$storage_version_id@100%" --config wrangler.commercial-worker.jsonc --yes
       - name: Verify storage bindings and existing schedule
-        run: node scripts/storage-release.mjs verify "$RUNNER_TEMP/storage-after-deploy.json"
+        run: node scripts/storage-release.mjs verify-disabled "$RUNNER_TEMP/storage-after-deploy.json"
       - name: Retain storage deployment verification
         uses: actions/upload-artifact@v4
         with:

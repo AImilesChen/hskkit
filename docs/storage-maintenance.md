@@ -1,25 +1,11 @@
 # Storage maintenance
 
-Production releases separate public page caches (`hskkit-page-cache`) from commercial resources (`hskkit-commercial-exports`). Both buckets remain private. Old Worker versions retain their original bindings; no cache or commercial file is copied during cutover.
+Automatic page-cache cleanup was removed at the user's request on 2026-11-06. The deployed export Worker has no page-cache cleanup handler or PAGE_CACHE_R2 binding. No daily cache-cleanup schedule is installed. Future production deployments keep this disabled state.
 
-## Release and rollback protection
+Public page caches remain in the private hskkit-page-cache bucket. Commercial resources remain in hskkit-commercial-exports. The completed, explicitly confirmed manual cleanup is retained; no additional object deletion is requested by this change. Regional OpenNext caching remains enabled.
 
-The production workflow verifies a single Worker version at 100% traffic and a matching public `BUILD_ID`, with bounded propagation retries. It passes that verified identity to the maintenance Worker through non-secret bindings. At its next scheduled invocation, the Worker checks the live build again and writes its release record under `system/cache-releases/` using its existing R2 binding. This does not require R2 object-write permissions on the CI credential. A bounded history carries release identities across deployments between cron invocations. Use this workflow for releases; an unrecorded deployment or manual rollback freezes cache cleanup until the registry is reconciled.
+The pre-existing */15 * * * * schedule continues to maintain expired commercial exports. This schedule predates the cache project. The export cleanup validates fresh expired/revoked state, the exact owner/job object path and R2 ownership metadata; failures remain retryable. It does not delete formal products, fonts, orders, entitlements, download ledgers or audit records.
 
-The existing commercial export Worker's 15-minute schedule also performs bounded cache maintenance. It protects the active version and the two most recent distinct rollback builds. An older build becomes eligible only 72 hours after its successor was deployed. Recently written objects remain protected as well. Each run inspects at most 500 cache objects across the dedicated and legacy buckets, plus bounded release-marker listings. Only exact hashed `.cache` and `.fetch` keys beneath `system/opennext-cache/` are accepted. Production identity is rechecked immediately before deletion.
+Production publishing no longer registers cache-retention releases. It deploys the export-only Worker and verifies that PAGE_CACHE_R2 is absent, the disabled marker is set and the original export schedule remains. The main app is not rebuilt solely to disable maintenance.
 
-Once three distinct verified releases use the dedicated cache bucket, an immutable cutover timestamp starts a separate 72-hour grace period. Only after that grace expires may the old commercial bucket's cache prefix be cleaned. Formal resources, fonts, blog media, user exports, and every other prefix are excluded from this cache operation.
-
-`STORAGE_CACHE_CLEANUP_MODE=dry-run` disables cache deletion. `apply` enables the guarded rules. A registry mismatch, unknown key shape, public build lookup failure, invalid timestamp or exceeded scan bound stops cache deletion. Aggregate status is written to `system/maintenance/cache-latest.json`; legacy cleanup status is written to `legacy-latest.json`. These objects contain no user names, private filenames or credentials. A blocked status must not be reported as a successful cleanup.
-
-## Existing export expiry
-
-Export expiry remains on its existing schedule and uses the database's existing access-expiry timestamps. Before deleting any object, maintenance rechecks the job's expired/revoked state, exact owner/job path, and R2 ownership metadata. It clears the database object reference only after successful deletion or proof that the object is absent. Individual failures remain retryable and do not prevent processing other expired files. No order, entitlement, download ledger or audit record is deleted by the object cleanup helper.
-
-## Cache reads and validation
-
-OpenNext uses its short-lived regional cache (up to one minute), keeps tag checks enabled, and does not perform an R2 background read on every regional hit. This is separate from retention and does not extend an export's access window. It applies to OpenNext incremental caching, not private account API responses.
-
-Run `node --test tests/storage-maintenance.test.mts`, `npx tsc --project tsconfig.storage.json`, and the scoped lint checks. The check workflow also builds the app and bundles the commercial Worker without deployment. Full local typechecking may exceed the legacy catalog's default Node heap; the clean CI build uses an explicit 6 GB heap.
-
-After deployment, verify the main Worker's cache binding, the commercial Worker's additional cache binding, and the unchanged cron/queue configuration. Rerun only the `runtime` check job after the next scheduled invocation to read its aggregate report. GitHub verification artifacts expire after seven days. Keep raw object inventories and private filenames out of public repository commits and workflow logs.
+Validation uses the existing behavior tests, targeted TypeScript/lint, actual Worker deployment and read-only settings verification. Diagnostic and cache-retention test utilities may remain in source, but are not called by the deployed scheduled handler.

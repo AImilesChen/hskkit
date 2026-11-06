@@ -67,11 +67,12 @@ async function runtimeReport() {
 try {
   const task=process.argv[2];
   if(!process.env.CLOUDFLARE_API_TOKEN)throw Error('MISSING_DEPLOYMENT_CREDENTIAL');
-  if(task==='inspect'||task==='verify'){
+  if(task==='inspect'||task==='verify'||task==='verify-disabled'){
     const report=await inspect();await writeFile(process.argv[3],JSON.stringify(report,null,2));
     if(task==='verify'){
       if(!report.mainR2.some(b=>b.binding==='NEXT_INC_CACHE_R2_BUCKET'&&b.bucket===CACHE_BUCKET)||!report.mainR2.some(b=>b.binding==='COMMERCIAL_EXPORTS_R2'&&b.bucket==='hskkit-commercial-exports')||!report.commercialR2.some(b=>b.binding==='PAGE_CACHE_R2'&&b.bucket===CACHE_BUCKET)||report.cacheCleanupMode!=='apply'||(report.schedules.schedules??[]).every(s=>s.cron!=='*/15 * * * *'))throw Error('STORAGE_DEPLOYMENT_MISMATCH');
     }
+    if(task==='verify-disabled'&&(report.commercialR2.some(b=>b.binding==='PAGE_CACHE_R2')||report.cacheCleanupMode!=='disabled'||(report.schedules.schedules??[]).every(s=>s.cron!=='*/15 * * * *')))throw Error('CACHE_MAINTENANCE_NOT_DISABLED');
     console.log('Read-only storage deployment inspection completed');
   }else if(task==='ensure-bucket')await ensureBucket();
   else if(task==='register')await register();
