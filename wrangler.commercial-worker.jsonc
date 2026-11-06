@@ -5,7 +5,7 @@
   "compatibility_date": "2026-05-24",
   "compatibility_flags": ["nodejs_compat"],
   "workers_dev": false,
-  "vars": {"STORAGE_CACHE_CLEANUP_MODE": "dry-run"},
+  "vars": {"STORAGE_CACHE_CLEANUP_MODE": "apply"},
   "d1_databases": [{
     "binding": "LEARNING_DB",
     "database_name": "hskkit-learning",

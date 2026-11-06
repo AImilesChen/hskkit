@@ -70,6 +70,8 @@ jobs:
       - name: Verify publication record for the already uploaded vocabulary deliveries
         run: node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/check-reviewed-vocabulary-publication.mts
       - name: Build Worker
+        env:
+          NODE_OPTIONS: --max-old-space-size=6144
         run: |
           npx opennextjs-cloudflare build --dangerouslyUseUnsupportedNextVersion
           node scripts/patch-open-next-email.mjs

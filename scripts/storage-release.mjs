@@ -41,6 +41,19 @@ async function register() {
   if(result.status!==0)throw Error('RELEASE_RECORD_UPLOAD_FAILED');
   console.log('Verified active release was registered');
 }
+async function runtimeReport() {
+  const reports={checkedAt:new Date().toISOString(),cache:null,legacy:null};
+  for(const [label,name] of [['cache','cache-latest.json'],['legacy','legacy-latest.json']]){
+    const file=`${process.env.RUNNER_TEMP}/hskkit-${name}`;
+    const result=spawnSync(process.platform==='win32'?'npx.cmd':'npx',['wrangler','r2','object','get',`${CACHE_BUCKET}/system/maintenance/${name}`,'--file',file,'--remote'],{stdio:'pipe',env:process.env});
+    if(result.status===0){
+      const value=JSON.parse(await readFile(file,'utf8'));
+      // These files are written by our cron and contain aggregate counts only.
+      if(value.schemaVersion===1||label==='legacy')reports[label]=value;
+    }
+  }
+  return reports;
+}
 try {
   const task=process.argv[2];
   if(!process.env.CLOUDFLARE_API_TOKEN)throw Error('MISSING_DEPLOYMENT_CREDENTIAL');
@@ -52,5 +65,9 @@ try {
     console.log('Read-only storage deployment inspection completed');
   }else if(task==='ensure-bucket')await ensureBucket();
   else if(task==='register')await register();
+  else if(task==='runtime'){
+    await writeFile(process.argv[3],JSON.stringify(await runtimeReport(),null,2));
+    console.log('Aggregate maintenance runtime report saved');
+  }
   else throw Error('UNKNOWN_STORAGE_RELEASE_TASK');
 }catch(error){console.error('Storage release stopped:',/^[A-Z_0-9]+$/.test(error.message)?error.message:'REMOTE_OPERATION_FAILED');process.exitCode=1;}
