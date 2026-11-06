@@ -28,6 +28,7 @@ jobs:
       - run: npm ci --ignore-scripts
       - name: Verify protected commercial paths and retention behavior
         run: |
+          git fetch --depth=1 origin 4728b138548f26f5f37264cfc6ddbf7c2255b576
           git diff --exit-code 4728b138548f26f5f37264cfc6ddbf7c2255b576 -- src/lib/storage/export-cleanup.ts src/lib/commercial/storage.ts wrangler.commercial-worker.jsonc
           node --test tests/storage-maintenance.test.mts tests/storage-build-check.test.mts
       - name: Complete registration of the already deployed approved app
@@ -43,6 +44,8 @@ jobs:
           npx wrangler versions deploy "$storage_version_id@100%" --config wrangler.commercial-worker.jsonc --yes
       - name: Verify actual bucket bindings and apply mode
         run: node scripts/storage-release.mjs verify "$RUNNER_TEMP/storage-after-recovery.json"
+      - name: Check public pages and anonymous download protections
+        run: python3 scripts/check-storage-live.py --expected-build "$EXPECTED_BUILD"
       - uses: actions/upload-artifact@v4
         with:
           name: storage-after-recovery-${{ github.run_id }}
