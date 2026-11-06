@@ -1,0 +1,721 @@
+{
+  "version": 1,
+  "audioFiles": 42226,
+  "audioBytes": 448087680,
+  "archives": [
+    {
+      "path": "resources/chinese-names/audio-000.tar.gz",
+      "sha256": "c44917edf603c47a4faf3208a21445990e36b4dbc5ececf4fd88c619bc2e2f9e",
+      "bytes": 2881946,
+      "files": 367
+    },
+    {
+      "path": "resources/chinese-names/audio-001.tar.gz",
+      "sha256": "518259f222bd2115c72860c9850c84a672795c4f91c3c0e7868953983a7c47b0",
+      "bytes": 2869716,
+      "files": 368
+    },
+    {
+      "path": "resources/chinese-names/audio-002.tar.gz",
+      "sha256": "929902225adb70c7ec96bd8b6fdb42daadf3e349fe438a9e18b75dce245172e5",
+      "bytes": 2911490,
+      "files": 361
+    },
+    {
+      "path": "resources/chinese-names/audio-003.tar.gz",
+      "sha256": "7e0173a9c91a7c2959d61ce553a21330763551c4ea3dab699138d85fb3016958",
+      "bytes": 2867111,
+      "files": 366
+    },
+    {
+      "path": "resources/chinese-names/audio-004.tar.gz",
+      "sha256": "0c5761d2a90cbb6d82185b0152c3ab01125747381a4a3dd766b340e0733e9ac2",
+      "bytes": 2884027,
+      "files": 362
+    },
+    {
+      "path": "resources/chinese-names/audio-005.tar.gz",
+      "sha256": "9d46cafe00096cac3ab4bb6c9d8ccf664ed4225d3dd8eca0c332c6c1d462ef81",
+      "bytes": 2977715,
+      "files": 340
+    },
+    {
+      "path": "resources/chinese-names/audio-006.tar.gz",
+      "sha256": "85b742a11579986109bb13f96883612d8ceefe6169d9e7603992dd81216e446d",
+      "bytes": 2872973,
+      "files": 363
+    },
+    {
+      "path": "resources/chinese-names/audio-007.tar.gz",
+      "sha256": "aea24af7fe6e045c7d1b796f81ebd0cea3c0fc67852b68ab5a8d25d6ae94bad9",
+      "bytes": 2873682,
+      "files": 361
+    },
+    {
+      "path": "resources/chinese-names/audio-008.tar.gz",
+      "sha256": "90bb7c8575b2e909e325241e33924faa8d20c8e4d1e7dbeab0ae2799a50a3bc1",
+      "bytes": 2879530,
+      "files": 361
+    },
+    {
+      "path": "resources/chinese-names/audio-009.tar.gz",
+      "sha256": "008acebe8b707bfdd3ba6b9489506599ab39f0f6c53c6796d0e4e158b93b8c37",
+      "bytes": 2889849,
+      "files": 365
+    },
+    {
+      "path": "resources/chinese-names/audio-010.tar.gz",
+      "sha256": "1d2c650f388daec3096fc2b1340e31683285631147b6cc746ffcbd14f736e7fb",
+      "bytes": 2870100,
+      "files": 364
+    },
+    {
+      "path": "resources/chinese-names/audio-011.tar.gz",
+      "sha256": "dc89602254f683a0aacbf1c858c7e3317ea2ef5a8c7ae7655c15e79f4251d027",
+      "bytes": 2823891,
+      "files": 369
+    },
+    {
+      "path": "resources/chinese-names/audio-012.tar.gz",
+      "sha256": "58652fbb3c0aed7bbee829fc3722f653acd4af6a4ee7c74506f967a85a8a4315",
+      "bytes": 2846634,
+      "files": 369
+    },
+    {
+      "path": "resources/chinese-names/audio-013.tar.gz",
+      "sha256": "2222e16a0450089b77f055b58c4e9c73b90ad73e85dcfe9493c41a7cf072300a",
+      "bytes": 2838979,
+      "files": 368
+    },
+    {
+      "path": "resources/chinese-names/audio-014.tar.gz",
+      "sha256": "498ede9e11ccdeba596e66fd4bcc8d242caa17cd039600dcd3f98473132f771a",
+      "bytes": 2848957,
+      "files": 368
+    },
+    {
+      "path": "resources/chinese-names/audio-015.tar.gz",
+      "sha256": "d3f583cab87eb84c44aef0b0c542c40b299c8cfc91b306dee397042a2828d10d",
+      "bytes": 2973602,
+      "files": 335
+    },
+    {
+      "path": "resources/chinese-names/audio-016.tar.gz",
+      "sha256": "2186dd7c39de83d777a0007612afe3cfd706067f191e12e1e4bff2f66fb1b370",
+      "bytes": 2862643,
+      "files": 368
+    },
+    {
+      "path": "resources/chinese-names/audio-017.tar.gz",
+      "sha256": "7888ccac8aeb6dcb0dbedc44fc9a5210d39a305a08588eb673d344e3f21dad6b",
+      "bytes": 2861120,
+      "files": 369
+    },
+    {
+      "path": "resources/chinese-names/audio-018.tar.gz",
+      "sha256": "d371194254091a688ea139b16318617e774b1ee042c5449f3be03db74d31d06a",
+      "bytes": 2987484,
+      "files": 338
+    },
+    {
+      "path": "resources/chinese-names/audio-019.tar.gz",
+      "sha256": "fb69ca31aaef672f400589d6c8ccb94a42c356e5616f8b13dd20bb7a3f2298e3",
+      "bytes": 2983752,
+      "files": 337
+    },
+    {
+      "path": "resources/chinese-names/audio-020.tar.gz",
+      "sha256": "7c2540c45a78dd5549922589382d9a41ff488eeb8902611be2eab8b2b621f281",
+      "bytes": 2871675,
+      "files": 364
+    },
+    {
+      "path": "resources/chinese-names/audio-021.tar.gz",
+      "sha256": "46e0eb477409dd05ef5a75290aac5bf49099253f1585b6e67506b64bf249fd4b",
+      "bytes": 2871661,
+      "files": 363
+    },
+    {
+      "path": "resources/chinese-names/audio-022.tar.gz",
+      "sha256": "7311ea371e1867a5dfbdc8201a39524ca516cead6bba9c6dd5dc7288a9d64749",
+      "bytes": 2854447,
+      "files": 365
+    },
+    {
+      "path": "resources/chinese-names/audio-023.tar.gz",
+      "sha256": "8c87fa14ea402570b4d3ab828fb0aab379630347711ba10579866403ed3f01d0",
+      "bytes": 2844491,
+      "files": 369
+    },
+    {
+      "path": "resources/chinese-names/audio-024.tar.gz",
+      "sha256": "17f2f309960d41d44195903d1c9ef4985fff6965e55d53852ef9230acfbfcf13",
+      "bytes": 2837504,
+      "files": 366
+    },
+    {
+      "path": "resources/chinese-names/audio-025.tar.gz",
+      "sha256": "46f8062df52e95cb0383084f8533b049102fbec448382d5807ae1c97828a30bb",
+      "bytes": 3023121,
+      "files": 332
+    },
+    {
+      "path": "resources/chinese-names/audio-026.tar.gz",
+      "sha256": "b80f2342a965188e6121bb4b38625444a196d1d86c70539a7f3a88fa377c50b7",
+      "bytes": 2987701,
+      "files": 333
+    },
+    {
+      "path": "resources/chinese-names/audio-027.tar.gz",
+      "sha256": "f9b2de25239310baed91fc63863f49be527d004c7eccf334df61dd90ee2d4f59",
+      "bytes": 2862115,
+      "files": 369
+    },
+    {
+      "path": "resources/chinese-names/audio-028.tar.gz",
+      "sha256": "21e480e73b07fd735d607154c7358238131c8c0ff87e7c11040eb0f9326b8701",
+      "bytes": 2835637,
+      "files": 373
+    },
+    {
+      "path": "resources/chinese-names/audio-029.tar.gz",
+      "sha256": "38e46d8700fd54c9d1a5200c88849d916cbec45005a9ffd776764f9ba49bcf70",
+      "bytes": 2836281,
+      "files": 369
+    },
+    {
+      "path": "resources/chinese-names/audio-030.tar.gz",
+      "sha256": "98525cb0d60efc2b9af1a0b114a082fea5732ce255d037a6f9ff3e5fd78b972e",
+      "bytes": 2878919,
+      "files": 365
+    },
+    {
+      "path": "resources/chinese-names/audio-031.tar.gz",
+      "sha256": "e096c4e78a0ab0935977c91ebbbdd752e7e4473a993a97c16706f165125056e1",
+      "bytes": 2860129,
+      "files": 367
+    },
+    {
+      "path": "resources/chinese-names/audio-032.tar.gz",
+      "sha256": "6cef66e23545dda533159173ed1223f49d18818bead7b0c45f7687a928f335c5",
+      "bytes": 2889160,
+      "files": 363
+    },
+    {
+      "path": "resources/chinese-names/audio-033.tar.gz",
+      "sha256": "54851e5d68f1a861e1b741344a341ef529f3315c2aac6ced9a6b860b963fc934",
+      "bytes": 2853306,
+      "files": 365
+    },
+    {
+      "path": "resources/chinese-names/audio-034.tar.gz",
+      "sha256": "d559b1d4c401dc71cb53eaeb53fd4cb19582886c9b3e7f92269fd43237e18798",
+      "bytes": 2845396,
+      "files": 367
+    },
+    {
+      "path": "resources/chinese-names/audio-035.tar.gz",
+      "sha256": "a06b0692ae1eab179775cf38faf71fd9c5946bb785cb37ae9edfed5cb7c04948",
+      "bytes": 2848013,
+      "files": 365
+    },
+    {
+      "path": "resources/chinese-names/audio-036.tar.gz",
+      "sha256": "4fa317bb76a4c358f88dd1168fe35452453c8448b218c6f770f7fb411bb524d7",
+      "bytes": 2929577,
+      "files": 350
+    },
+    {
+      "path": "resources/chinese-names/audio-037.tar.gz",
+      "sha256": "f3c7353bcdcddb1e9a4c2e4689d49f2408e64baf152e226705cc1c1df4613c76",
+      "bytes": 2950654,
+      "files": 340
+    },
+    {
+      "path": "resources/chinese-names/audio-038.tar.gz",
+      "sha256": "dc04c003eaa0e271a587c980aa6dd3bb265990884faae3c04efe345c7615a27d",
+      "bytes": 2867587,
+      "files": 364
+    },
+    {
+      "path": "resources/chinese-names/audio-039.tar.gz",
+      "sha256": "9232add63bfd4c4cb25dde352a7d84476793441c90b7bf114d292d06562c988d",
+      "bytes": 2865967,
+      "files": 365
+    },
+    {
+      "path": "resources/chinese-names/audio-040.tar.gz",
+      "sha256": "7b0ca797d4def912bd747e8b293a9712145300f1b51e50126093d245acd2abb6",
+      "bytes": 2847760,
+      "files": 366
+    },
+    {
+      "path": "resources/chinese-names/audio-041.tar.gz",
+      "sha256": "5f84f256fcf57de1e7186dede1853e3c4ca92307a215fec746afc22a9fe0ebc9",
+      "bytes": 2872904,
+      "files": 367
+    },
+    {
+      "path": "resources/chinese-names/audio-042.tar.gz",
+      "sha256": "9cba5f96f5e2a539e9e16629faac67f509a9e25c72ce75a35b0fe61468487aa4",
+      "bytes": 2867861,
+      "files": 366
+    },
+    {
+      "path": "resources/chinese-names/audio-043.tar.gz",
+      "sha256": "1b72660473146b1fe224a4da3222bcf1e9e8cca637c389cb047d5d61407b2dd8",
+      "bytes": 2815718,
+      "files": 374
+    },
+    {
+      "path": "resources/chinese-names/audio-044.tar.gz",
+      "sha256": "4b8b6d2ad54c23895e8f0bceed52bbcf06eb478f5eb449e5e3b8c33882c15e5f",
+      "bytes": 2860888,
+      "files": 366
+    },
+    {
+      "path": "resources/chinese-names/audio-045.tar.gz",
+      "sha256": "188f0652eaa4246b9f5c33bc54b62453b1c31a2a31903bc873815f1e8d9a0bfa",
+      "bytes": 2849870,
+      "files": 368
+    },
+    {
+      "path": "resources/chinese-names/audio-046.tar.gz",
+      "sha256": "930707d6eee97309f0cec0463530e09cb594bda24719f0c5137e5efd450bcdf3",
+      "bytes": 2988129,
+      "files": 342
+    },
+    {
+      "path": "resources/chinese-names/audio-047.tar.gz",
+      "sha256": "0edd3609a3e4a9815bf1628e3457a163dd07e16016a9d2b671e3580e9d1f41bd",
+      "bytes": 2909220,
+      "files": 355
+    },
+    {
+      "path": "resources/chinese-names/audio-048.tar.gz",
+      "sha256": "84b39810bff48f7e3aebd80fd9dcd4f74d17694e6a837077d54ef7a9315f71ae",
+      "bytes": 2838599,
+      "files": 369
+    },
+    {
+      "path": "resources/chinese-names/audio-049.tar.gz",
+      "sha256": "ab3622a34059d9380ed5a73457313ddf37dc733bf452af4e627ebb8ea1984d0a",
+      "bytes": 2845570,
+      "files": 364
+    },
+    {
+      "path": "resources/chinese-names/audio-050.tar.gz",
+      "sha256": "0396173863434b2ebd335539c068915b49a3b6192741a252716c1b160df3d51f",
+      "bytes": 2854280,
+      "files": 373
+    },
+    {
+      "path": "resources/chinese-names/audio-051.tar.gz",
+      "sha256": "401edf4be9d16264a075a69e0af6fb051391be4c0d5b83ec43bf38ded5a10ab5",
+      "bytes": 2802435,
+      "files": 381
+    },
+    {
+      "path": "resources/chinese-names/audio-052.tar.gz",
+      "sha256": "70c01091c6309f7faa34896f6f28a268b5fef03147ca1bbfc2c1c72a97bfc450",
+      "bytes": 2848143,
+      "files": 371
+    },
+    {
+      "path": "resources/chinese-names/audio-053.tar.gz",
+      "sha256": "dea9871dae2ad66e89edcd2f41e34e4a0510b19a5fc32652324867c41d11c065",
+      "bytes": 2837747,
+      "files": 370
+    },
+    {
+      "path": "resources/chinese-names/audio-054.tar.gz",
+      "sha256": "f3c27f943f15a6ad9c39be202c695c29312b0f1e5166b2f659a84005adc93e07",
+      "bytes": 2861211,
+      "files": 369
+    },
+    {
+      "path": "resources/chinese-names/audio-055.tar.gz",
+      "sha256": "2ba239f88ca3e9a7707ef1e53f31a3f6767b904cd5ae0d77323b192356679496",
+      "bytes": 2839745,
+      "files": 368
+    },
+    {
+      "path": "resources/chinese-names/audio-056.tar.gz",
+      "sha256": "5df8a0e4552baca9c6a70d67532712b8f5e2710931b64811a401b957c1bb8ad6",
+      "bytes": 2870312,
+      "files": 366
+    },
+    {
+      "path": "resources/chinese-names/audio-057.tar.gz",
+      "sha256": "a0a13b198d82ad56087fbe35a2bcc4904e474f585085b8d3babefcc72e00378b",
+      "bytes": 2941782,
+      "files": 343
+    },
+    {
+      "path": "resources/chinese-names/audio-058.tar.gz",
+      "sha256": "7f5ebf3f9169d872fdce07a1614c341f8655295e0ba4046f7bf2beb9cfac4007",
+      "bytes": 2985662,
+      "files": 337
+    },
+    {
+      "path": "resources/chinese-names/audio-059.tar.gz",
+      "sha256": "0317fb3f40b8c4ee817dcbd00c451c36ef4e5d54c809b6093d3b75d49553ec43",
+      "bytes": 2865002,
+      "files": 362
+    },
+    {
+      "path": "resources/chinese-names/audio-060.tar.gz",
+      "sha256": "0408ef608f7f6d00b0021271fe302535ee9cb68161034cc4f1aa9e8cf8617e18",
+      "bytes": 3005205,
+      "files": 334
+    },
+    {
+      "path": "resources/chinese-names/audio-061.tar.gz",
+      "sha256": "ecab0a05a600c12748f24b2352d6a2da0f9da6480c98bc589691a34cf8aca830",
+      "bytes": 2830550,
+      "files": 366
+    },
+    {
+      "path": "resources/chinese-names/audio-062.tar.gz",
+      "sha256": "6fae0501f31ffd92cf71570046f8bf1dcf222244b20038c19435ac2690bcb365",
+      "bytes": 2873853,
+      "files": 365
+    },
+    {
+      "path": "resources/chinese-names/audio-063.tar.gz",
+      "sha256": "eb3576e7f76a42cf18407921be55e5ac9af71a641faf8cceb415fc9955fe8e47",
+      "bytes": 2892072,
+      "files": 362
+    },
+    {
+      "path": "resources/chinese-names/audio-064.tar.gz",
+      "sha256": "b5010b638992cbae751934f34ec861d64c4581aaa44d669309d5dc36c54cc1e2",
+      "bytes": 2869916,
+      "files": 362
+    },
+    {
+      "path": "resources/chinese-names/audio-065.tar.gz",
+      "sha256": "00932d4dc51236b2a20549f3c34364fd4f1d3fddff05c403748961aabd9b950d",
+      "bytes": 2854481,
+      "files": 364
+    },
+    {
+      "path": "resources/chinese-names/audio-066.tar.gz",
+      "sha256": "e609f596cadf44bb690a5df5ea252f0a15705f89a8faa325e932ed1ebc565628",
+      "bytes": 2929371,
+      "files": 356
+    },
+    {
+      "path": "resources/chinese-names/audio-067.tar.gz",
+      "sha256": "6148f22a2f19369b384a8847a707bb9438372e552ca4d405bd6dafb11c68f0d9",
+      "bytes": 3019509,
+      "files": 329
+    },
+    {
+      "path": "resources/chinese-names/audio-068.tar.gz",
+      "sha256": "72b2c9e471e9032295918618630036fa640c0f94c88f41dd4a21a9d6f2efbc80",
+      "bytes": 2884814,
+      "files": 358
+    },
+    {
+      "path": "resources/chinese-names/audio-069.tar.gz",
+      "sha256": "3f2e00ee5ea8084f1b25ba15adb68426b239091221f22a97e159d3089a11f632",
+      "bytes": 2874182,
+      "files": 358
+    },
+    {
+      "path": "resources/chinese-names/audio-070.tar.gz",
+      "sha256": "0fafd2d8b6c972fe5bc90cce574d812d2ddf4620813443884dd89a469c63b6dc",
+      "bytes": 2890204,
+      "files": 358
+    },
+    {
+      "path": "resources/chinese-names/audio-071.tar.gz",
+      "sha256": "a207293887a04d782c19f8f6885b721fb72b15a9951a9c12f176149775cb5b3b",
+      "bytes": 2912198,
+      "files": 351
+    },
+    {
+      "path": "resources/chinese-names/audio-072.tar.gz",
+      "sha256": "f21622285ce5a9556d904206de4c87a83acace5e63e9a1e76612ecf702cdb638",
+      "bytes": 3031895,
+      "files": 327
+    },
+    {
+      "path": "resources/chinese-names/audio-073.tar.gz",
+      "sha256": "5a95797351c1b4fb15c0b60f80d0b999e18dd2f1034f0ad7f36573e1e2af63e2",
+      "bytes": 3037955,
+      "files": 327
+    },
+    {
+      "path": "resources/chinese-names/audio-074.tar.gz",
+      "sha256": "1fbbf8b19f54562fbfd9a021fd014acdd0557f129132c2be2980bde7af48dc86",
+      "bytes": 3016345,
+      "files": 326
+    },
+    {
+      "path": "resources/chinese-names/audio-075.tar.gz",
+      "sha256": "85ef88c81339bd8aaa2752d26a8f2bd59a40780c7998a2492b4ef7b5020c7853",
+      "bytes": 2856946,
+      "files": 363
+    },
+    {
+      "path": "resources/chinese-names/audio-076.tar.gz",
+      "sha256": "7b427b6b2bd035ac61c9d575fdb72144abab2cf8a67dd9ac0263264e171abfed",
+      "bytes": 2871751,
+      "files": 363
+    },
+    {
+      "path": "resources/chinese-names/audio-077.tar.gz",
+      "sha256": "13523360f0ef1671201f2f57143e24c90901350b6a01c630ac4ed583f69fde77",
+      "bytes": 2857528,
+      "files": 362
+    },
+    {
+      "path": "resources/chinese-names/audio-078.tar.gz",
+      "sha256": "cbf22049a90ab5728c58db00a255154bd45b7705cc4e8e3d183cbefe4d4776b9",
+      "bytes": 2857173,
+      "files": 364
+    },
+    {
+      "path": "resources/chinese-names/audio-079.tar.gz",
+      "sha256": "172d7f5f8264b26471b34c9ddab79015acb43e373e8a7e97022c829e85ea7601",
+      "bytes": 2864977,
+      "files": 363
+    },
+    {
+      "path": "resources/chinese-names/audio-080.tar.gz",
+      "sha256": "6272b45ddf9064eaef259be091b2e0d5482608c6bf94a933cdba713b76a4ff85",
+      "bytes": 2871435,
+      "files": 363
+    },
+    {
+      "path": "resources/chinese-names/audio-081.tar.gz",
+      "sha256": "7c689213ecc36a0ef3dd1d1b337d9f1042f68b3f9325844a0362da88f52e0fff",
+      "bytes": 2876934,
+      "files": 363
+    },
+    {
+      "path": "resources/chinese-names/audio-082.tar.gz",
+      "sha256": "a8b8f403e751d0c193c115bf1bd0b042e8b8d0342ddca9e3340305328899e9f3",
+      "bytes": 2845282,
+      "files": 368
+    },
+    {
+      "path": "resources/chinese-names/audio-083.tar.gz",
+      "sha256": "8af11ea195c48292d71fd42462fb586bdc09e7f397bb07592ea7b87ad2d8d379",
+      "bytes": 2834658,
+      "files": 375
+    },
+    {
+      "path": "resources/chinese-names/audio-084.tar.gz",
+      "sha256": "96beaf41c7b0e11ce14f16a896d51f1878cc57476616ec425ecb9fbd65e1fca7",
+      "bytes": 2898720,
+      "files": 359
+    },
+    {
+      "path": "resources/chinese-names/audio-085.tar.gz",
+      "sha256": "041c77e29bb24f18925ddbc0a7ae7d6b123bca9033eea714fd818eda8c3ae202",
+      "bytes": 2830862,
+      "files": 376
+    },
+    {
+      "path": "resources/chinese-names/audio-086.tar.gz",
+      "sha256": "1e9595e65398b4a59a89b53569c1ac1a46f35faef94d0c2e04a08d056ca047e9",
+      "bytes": 2847635,
+      "files": 369
+    },
+    {
+      "path": "resources/chinese-names/audio-087.tar.gz",
+      "sha256": "77a2ff90808bab8adf59e5cb44221cb603fa6d766dfa2f472b307abc1b68ee6c",
+      "bytes": 2835936,
+      "files": 369
+    },
+    {
+      "path": "resources/chinese-names/audio-088.tar.gz",
+      "sha256": "75e654cb5ef16b7ccda2fd80a64f787f96a89b201073bcf5621a74ffb9e52a93",
+      "bytes": 2868881,
+      "files": 368
+    },
+    {
+      "path": "resources/chinese-names/audio-089.tar.gz",
+      "sha256": "eaca14416a876a725c58fb048265637e48f93ea700adbccb913e12359463b48e",
+      "bytes": 2791641,
+      "files": 373
+    },
+    {
+      "path": "resources/chinese-names/audio-090.tar.gz",
+      "sha256": "18b31bd29cc72cc657fa293a9be19795814c85d823210b8246a010b0eda58b7f",
+      "bytes": 2917815,
+      "files": 355
+    },
+    {
+      "path": "resources/chinese-names/audio-091.tar.gz",
+      "sha256": "5735f58a7cae0830ef5ca19e1f6223dc033f50320b70144736b0771e8e8a4010",
+      "bytes": 3017056,
+      "files": 331
+    },
+    {
+      "path": "resources/chinese-names/audio-092.tar.gz",
+      "sha256": "de203f5f0cda7fe7b2151607504ad48c10d500721f24e9ea742609484a34c52d",
+      "bytes": 2903041,
+      "files": 360
+    },
+    {
+      "path": "resources/chinese-names/audio-093.tar.gz",
+      "sha256": "2c13e4f41d3d40a523696043d1300f37f5d671d9f7f2f49be964c0746afc02bb",
+      "bytes": 2880251,
+      "files": 361
+    },
+    {
+      "path": "resources/chinese-names/audio-094.tar.gz",
+      "sha256": "83cd4d26198c9077a2658d03cac7fbee006182916f077c8d37b25c933fed2bf3",
+      "bytes": 2890969,
+      "files": 360
+    },
+    {
+      "path": "resources/chinese-names/audio-095.tar.gz",
+      "sha256": "cd20fc853d2c17aa5f1e7e292cbc848ea814aa942511a745b03bbc2b45444108",
+      "bytes": 2892549,
+      "files": 359
+    },
+    {
+      "path": "resources/chinese-names/audio-096.tar.gz",
+      "sha256": "cd62b31d1b8f02b00ccaac29e312559bea5c48ccc522a474ff99dfb94bbbc635",
+      "bytes": 2904373,
+      "files": 361
+    },
+    {
+      "path": "resources/chinese-names/audio-097.tar.gz",
+      "sha256": "f4e1318fcafd356b95fdaf0868eb82dc6cf40410abdfbdc62c3a387934711ae2",
+      "bytes": 2875375,
+      "files": 360
+    },
+    {
+      "path": "resources/chinese-names/audio-098.tar.gz",
+      "sha256": "c50ac0d722f19f091c9525ef22b24f79e40583f996295e46fbc1271a9829972c",
+      "bytes": 2867865,
+      "files": 362
+    },
+    {
+      "path": "resources/chinese-names/audio-099.tar.gz",
+      "sha256": "90954e8838f8a915ccafd0647430f45a10f3b4e60e18d4a7565bdd6dee8a13d4",
+      "bytes": 2869930,
+      "files": 363
+    },
+    {
+      "path": "resources/chinese-names/audio-100.tar.gz",
+      "sha256": "26ca7dd28c03db1387b9aacb5ef14b0ef266a0d3aa589503120a8c6582faca0a",
+      "bytes": 2872646,
+      "files": 364
+    },
+    {
+      "path": "resources/chinese-names/audio-101.tar.gz",
+      "sha256": "4482f45abef452f9bc89dbd8ca3b1d24d22bab62a0eb1ea917ef73f5fbd8fb94",
+      "bytes": 2862265,
+      "files": 365
+    },
+    {
+      "path": "resources/chinese-names/audio-102.tar.gz",
+      "sha256": "5b06ac38fe7896b37ba3882d067260630f599abb09944bef5d2d072fe75039a4",
+      "bytes": 2832493,
+      "files": 368
+    },
+    {
+      "path": "resources/chinese-names/audio-103.tar.gz",
+      "sha256": "3d4a1967c71b30c2d93b7c8b1256c78ab9d023448f0556e46fab2428833abc4b",
+      "bytes": 2867371,
+      "files": 370
+    },
+    {
+      "path": "resources/chinese-names/audio-104.tar.gz",
+      "sha256": "83ee14f3960f2a8ca76268baab9132d6f55ee385bf64be2394916adedc5f2ad3",
+      "bytes": 2862512,
+      "files": 367
+    },
+    {
+      "path": "resources/chinese-names/audio-105.tar.gz",
+      "sha256": "f3130d0d3d3c815877f44edd5f649c192fe99b2cebbcb0eeb38c9115d17baaa6",
+      "bytes": 2920306,
+      "files": 346
+    },
+    {
+      "path": "resources/chinese-names/audio-106.tar.gz",
+      "sha256": "ebfef680b6b92eae86d881091df8c28efb4d5260f2f90d0334fc0fbaa3b8c15c",
+      "bytes": 3004958,
+      "files": 335
+    },
+    {
+      "path": "resources/chinese-names/audio-107.tar.gz",
+      "sha256": "095d953470a05c07c9656913bb9c58cb2ccfe19fda66fc1e25e19fbf15a42632",
+      "bytes": 2918312,
+      "files": 351
+    },
+    {
+      "path": "resources/chinese-names/audio-108.tar.gz",
+      "sha256": "a6233d6905848f0c6cfef19c7a7480a1a92d0f7c409f5237cc92611f8ebbdf23",
+      "bytes": 2858698,
+      "files": 366
+    },
+    {
+      "path": "resources/chinese-names/audio-109.tar.gz",
+      "sha256": "58ce951330da7bf0bab64f05acf612dde4cab057fdbb8b69678395ee577628ec",
+      "bytes": 2828767,
+      "files": 369
+    },
+    {
+      "path": "resources/chinese-names/audio-110.tar.gz",
+      "sha256": "699f059ef126ccdafdccedf2bd26df3b65ae5a9145b5010b496a260b0ab536fe",
+      "bytes": 3022579,
+      "files": 327
+    },
+    {
+      "path": "resources/chinese-names/audio-111.tar.gz",
+      "sha256": "b435f9e28595badb309e8f23dcc695dbeb05a13d7a5c5fbfee045b6f19e71abf",
+      "bytes": 2855309,
+      "files": 366
+    },
+    {
+      "path": "resources/chinese-names/audio-112.tar.gz",
+      "sha256": "74b27e1129bb4fa34c3377aff677d34ca2c0945c059159e7d56008e2d6b7bb66",
+      "bytes": 2844453,
+      "files": 369
+    },
+    {
+      "path": "resources/chinese-names/audio-113.tar.gz",
+      "sha256": "ae6c0f7b277b38842974a8848a24a5fa81b8d7b266a11d8150ab444a544a02d3",
+      "bytes": 2839623,
+      "files": 367
+    },
+    {
+      "path": "resources/chinese-names/audio-114.tar.gz",
+      "sha256": "06179ffb5f2ef699276b6cf307200b44b0cdef87972d96f93d9f5da7b9066742",
+      "bytes": 2878444,
+      "files": 370
+    },
+    {
+      "path": "resources/chinese-names/audio-115.tar.gz",
+      "sha256": "db7c17a9c1c8433fd29ae539fdcf110b962ee07fe78558492bad1c8696de562f",
+      "bytes": 2919665,
+      "files": 349
+    },
+    {
+      "path": "resources/chinese-names/audio-116.tar.gz",
+      "sha256": "64cd104027bf8ba96c23057e2d8d4c3baa362240164dc2e93d763afd12d30864",
+      "bytes": 2888069,
+      "files": 358
+    },
+    {
+      "path": "resources/chinese-names/audio-117.tar.gz",
+      "sha256": "95313be37ce9405713277190cb798ba7fa2519c171aa38fb7b6bbbaf45464e12",
+      "bytes": 857834,
+      "files": 116
+    },
+    {
+      "path": "resources/chinese-names/metadata.tar.gz",
+      "sha256": "b405ccce7c018486654963159be4b2b1b76a15aa56ef71e18d2d7fe709b4e810",
+      "bytes": 3984585,
+      "files": 1
+    }
+  ]
+}

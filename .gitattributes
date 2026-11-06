@@ -2,3 +2,7 @@
 # Keep vendored stroke assets byte-for-byte across platforms.
 public/stroke-data/** -text
 public/number-audio/** -text
+
+# Preserve packaged name audio across checkout platforms.
+resources/chinese-names/*.tar.gz -text
+public/name-audio/** -text

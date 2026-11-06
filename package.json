@@ -8,6 +8,7 @@
     "dev": "next dev",
     "start": "next start",
     "test": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --test tests/*.test.mts",
+    "check:chinese-names": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/check-name-release-assets.mjs",
     "audit:formal-audio": "node scripts/audit-formal-audio.mjs",
     "typecheck": "tsc --noEmit",
     "content:import:batch1": "python3 scripts/content/import-hsk3-batch1.py",

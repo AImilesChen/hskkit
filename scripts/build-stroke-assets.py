@@ -45,3 +45,6 @@ notice = {'source': 'hanzi-writer-data', 'version': VERSION, 'archiveSha256': SH
 report = {'catalogCount': len(catalog['characters']), 'supportedCount': len(supported), 'missing': missing, 'strokeCountMismatch': mismatch, 'sourceVersion': VERSION, 'humanReview': 'Not all characters reviewed; source forms may differ by region. Count mismatches withheld.'}
 (ROOT / 'src/lib/strokes/coverage.json').write_text(json.dumps(report, ensure_ascii=False, indent=2), encoding='utf8')
 print(json.dumps({k: len(v) if isinstance(v, list) else v for k, v in report.items()}, ensure_ascii=True))
+if (ROOT / 'src/lib/names/required-characters.json').exists():
+    import runpy
+    runpy.run_path(str(ROOT / 'scripts/build-name-strokes.py'))
