@@ -11,6 +11,7 @@ const RELEASE_KEY = new RegExp(`^${RELEASE_PREFIX}(\\d{13})-(${UUID})-([A-Za-z0-
 export type CacheRelease = { build: string; version: string; deployedAt: number };
 export type CacheObject = { key: string; uploaded: Date; size: number };
 type CacheStore = {
+  get(key: string): Promise<{json(): Promise<unknown>} | null>;
   list(options: {prefix: string; limit: number; cursor?: string}): Promise<{objects: CacheObject[]; truncated: boolean; cursor?: string}>;
   delete(keys: string[]): Promise<void>;
   put(key: string, body: string, options?: unknown): Promise<unknown>;
@@ -96,7 +97,41 @@ export async function maintainPageCache(store: CacheStore, options: {mode: "appl
       deletedBytes += result.objects.reduce((sum, object) => sum + object.size, 0);
     }
   }
-  const summary = {schemaVersion: 1, mode: options.mode, checkedAt: new Date(now).toISOString(), protectedBuilds: plan.protectedBuilds.size, retiredBuilds: plan.retired.length, inspectedObjects: inspected, deletedObjects: deleted, deletedBytes};
+  const summary = {schemaVersion: 1, mode: options.mode, checkedAt: new Date(now).toISOString(), activeBuild, registeredBuilds: new Set(releases.map(r=>r.build)).size, protectedBuilds: plan.protectedBuilds.size, retiredBuilds: plan.retired.length, inspectedObjects: inspected, deletedObjects: deleted, deletedBytes};
   await store.put("system/maintenance/cache-latest.json", JSON.stringify(summary), {httpMetadata: {contentType: "application/json"}});
   return summary;
+}
+
+export async function legacyCutover(store: CacheStore, registeredBuilds: number, now = Date.now()) {
+  const key = "system/maintenance/legacy-cutover.json";
+  const existing = await store.get(key);
+  if (existing) {
+    const record = await existing.json() as {schemaVersion?: number; bucket?: string; retiredAt?: number};
+    if (record.schemaVersion !== 1 || record.bucket !== CACHE_BUCKET || !Number.isSafeInteger(record.retiredAt) || record.retiredAt! > now) throw new Error("INVALID_LEGACY_CUTOVER");
+    return record.retiredAt!;
+  }
+  if (registeredBuilds < 3) return null;
+  // This starts the grace period only after all three protected rollback slots
+  // have moved to the dedicated bucket. A conditional put makes it immutable.
+  await store.put(key, JSON.stringify({schemaVersion: 1, bucket: CACHE_BUCKET, retiredAt: now}), {onlyIf:{etagDoesNotMatch:"*"},httpMetadata:{contentType:"application/json"}});
+  return now;
+}
+
+export async function maintainLegacyCache(store: Pick<CacheStore, "list" | "delete">, options: {cutoverAt: number | null; registeredBuilds: number; activeBuild: string; now?: number; maxDeletes: number; readActiveBuild(): Promise<string>}) {
+  const now = options.now ?? Date.now();
+  if (options.cutoverAt === null || now - options.cutoverAt < GRACE_MS || options.registeredBuilds < 3 || options.maxDeletes === 0) return {deletedObjects:0,deletedBytes:0};
+  if (!Number.isSafeInteger(options.cutoverAt) || options.cutoverAt < 0 || !BUILD.test(options.activeBuild) || !Number.isSafeInteger(options.maxDeletes) || options.maxDeletes < 1 || options.maxDeletes > 500) throw new Error("INVALID_LEGACY_CLEANUP");
+  const page = await store.list({prefix:CACHE_PREFIX,limit:options.maxDeletes});
+  if (page.objects.length > options.maxDeletes) throw new Error("CACHE_LIST_EXCEEDED_BUDGET");
+  const candidates: CacheObject[] = [];
+  for (const object of page.objects) {
+    const match = /^system\/opennext-cache\/([A-Za-z0-9_-]{21})\/[a-f0-9]{64}\.(cache|fetch)$/.exec(object.key);
+    if (!match || match[1] === options.activeBuild || !Number.isSafeInteger(object.size) || object.size < 0 || !Number.isFinite(object.uploaded.getTime())) throw new Error("LEGACY_CACHE_SCOPE_MISMATCH");
+    if (object.uploaded.getTime() <= now - GRACE_MS) candidates.push(object);
+  }
+  if (candidates.length) {
+    if (await options.readActiveBuild() !== options.activeBuild) throw new Error("PRODUCTION_CHANGED_DURING_CLEANUP");
+    await store.delete(candidates.map(object=>object.key));
+  }
+  return {deletedObjects:candidates.length,deletedBytes:candidates.reduce((sum,object)=>sum+object.size,0)};
 }

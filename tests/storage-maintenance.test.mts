@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import {CACHE_PREFIX, RELEASE_PREFIX, GRACE_MS, releaseKey, retentionPlan, maintainPageCache} from "../src/lib/storage/cache-retention.ts";
+import {CACHE_PREFIX, RELEASE_PREFIX, GRACE_MS, releaseKey, retentionPlan, maintainPageCache, legacyCutover, maintainLegacyCache} from "../src/lib/storage/cache-retention.ts";
 import {cleanupExpiredExportObjects} from "../src/lib/storage/export-cleanup.ts";
 
 const now = Date.parse("2026-11-15T12:00:00Z");
@@ -9,13 +9,15 @@ const record = (n: number, days: number) => ({build: build(n), version: `0000000
 function store(records = [record(1,0),record(2,1),record(3,2),record(4,10),record(5,20)]) {
   const objects = new Map<string, {key:string;size:number;uploaded:Date}>();
   const deleted: string[][] = [];
+  const data = new Map<string,string>();
   for (const r of records) objects.set(releaseKey(r), {key:releaseKey(r),size:1,uploaded:new Date(r.deployedAt)});
   const cacheKey = (n: number, index = 0) => `${CACHE_PREFIX}${build(n)}/${String(index).padStart(64,"a")}.cache`;
   const putCache = (n: number,index=0,uploaded=now-10*86_400_000) => {const key=cacheKey(n,index); objects.set(key,{key,size:100,uploaded:new Date(uploaded)}); return key;};
   return {objects,deleted,cacheKey,putCache,
     async list({prefix,limit,cursor}:{prefix:string;limit:number;cursor?:string}) {assert.equal(cursor,undefined); const all=[...objects.values()].filter(o=>o.key.startsWith(prefix)).sort((a,b)=>a.key.localeCompare(b.key)); return {objects:all.slice(0,limit),truncated:all.length>limit,cursor:all.length>limit?"more":undefined};},
     async delete(keys:string[]) {deleted.push(keys); for(const key of keys) objects.delete(key);},
-    async put(_key:string,_body:string) {},
+    async get(key:string) {const body=data.get(key);return body?{async json(){return JSON.parse(body);}}:null;},
+    async put(key:string,body:string) {data.set(key,body);},
   };
 }
 
@@ -56,6 +58,23 @@ test("recent writes, foreign keys and production change all stop deletion",async
   const foreign=store();foreign.objects.set(`${CACHE_PREFIX}${build(5)}/product.zip`,{key:`${CACHE_PREFIX}${build(5)}/product.zip`,size:1,uploaded:new Date(0)});
   await assert.rejects(maintainPageCache(foreign,{mode:"apply",now,readActiveBuild:async()=>build(1)}),/SCOPE_MISMATCH/);
   assert.equal(recent.deleted.length+changed.deleted.length+foreign.deleted.length,0);
+});
+
+test("legacy cache waits for three new builds and a separate 72-hour rollback grace",async()=>{
+  const s=store();s.putCache(5);
+  assert.equal(await legacyCutover(s,2,now),null);
+  assert.equal(await legacyCutover(s,3,now),now);
+  assert.equal(await legacyCutover(s,4,now+1000),now);
+  const options={cutoverAt:now,registeredBuilds:3,activeBuild:build(1),maxDeletes:500,readActiveBuild:async()=>build(1)};
+  assert.equal((await maintainLegacyCache(s,{...options,now:now+GRACE_MS-1})).deletedObjects,0);
+  assert.equal(s.deleted.length,0);
+  assert.equal((await maintainLegacyCache(s,{...options,now:now+GRACE_MS})).deletedObjects,1);
+  assert.ok(s.deleted.flat().every(k=>k.startsWith(CACHE_PREFIX)));
+});
+test("legacy cleanup rejects active-build cache and foreign objects",async()=>{
+  const s=store();s.putCache(1);
+  await assert.rejects(maintainLegacyCache(s,{cutoverAt:now-GRACE_MS,registeredBuilds:3,activeBuild:build(1),now,maxDeletes:500,readActiveBuild:async()=>build(1)}),/LEGACY_CACHE_SCOPE_MISMATCH/);
+  assert.equal(s.deleted.length,0);
 });
 
 test("expired export cleanup validates fresh state, ownership and path; failures remain retryable",async()=>{
