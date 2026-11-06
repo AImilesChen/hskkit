@@ -20,7 +20,7 @@ export type NavigationEntry =
 
 export const learnNavigationSections: NavigationSection[] = [
   { title: "HSK & Guides", items: [
-    { href: "/learn", label: "Learning Guides", description: "Find a clear next step in learning Chinese.", match: "/tools/chinese-name-generator" },
+    { href: "/learn", label: "Learning Guides", description: "Find a clear next step in learning Chinese." },
     { href: "/levels", label: "HSK Levels", description: "Explore the current HSK learning path." },
     { href: "/vocabulary/1", label: "Vocabulary", description: "Browse words by HSK level.", match: "/vocabulary" },
     { href: "/hsk-3-0", label: "HSK 3.0 Guide", description: "Understand the current exam syllabus.", highlightGroup: false },
@@ -34,6 +34,7 @@ export const learnNavigationSections: NavigationSection[] = [
     { href: "/blog/chinese-tones-guide", label: "Chinese Tones Guide", description: "Learn how Mandarin tones work." },
   ] },
   { title: "Learning Tools", items: [
+    { href: "/tools/chinese-name-generator", label: "Chinese Name Generator", description: "Create a Chinese name, hear its pronunciation and practise writing." },
     { href: "/tools/chinese-number-converter", label: "Numbers & Listening", description: "Read and hear Chinese numbers, prices, dates and times." },
     { href: "/tools/chinese-stroke-order", label: "Stroke Order & Writing", description: "Watch character strokes and practise writing." },
     { href: "/vocabulary/1?mode=flashcards#vocabulary-activities", label: "Flashcards", description: "Practise recalling a short word set." },
