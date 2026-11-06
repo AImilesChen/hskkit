@@ -11,7 +11,7 @@ test("P0-2 exposes one frozen information architecture on desktop and mobile", a
   const { siteNavigation, flattenNavigation, learnNavigationSections, learnQuickLinks } = await import("../src/app/site-navigation.ts");
   assert.deepEqual(siteNavigation.map((entry) => entry.label), ["Learn", "Practice", "Tests", "Dictionary", "Blog", "Pricing", "Store", "Sign in"]);
   assert.deepEqual(learnNavigationSections.map(section => section.title), ["HSK & Guides", "Language Skills", "Learning Tools", "Topics"]);
-  assert.ok(learnNavigationSections.every(section => section.items.length <= 5), "each column should stay easy to scan");
+  assert.ok(learnNavigationSections.every(section => section.items.length <= (section.title === "Learning Tools" ? 6 : 5)), "each column should stay easy to scan");
   assert.deepEqual(learnQuickLinks.map(item => item.href), ["/today", "/planner"]);
   assert.deepEqual(siteNavigation[0].items, [...learnNavigationSections.flatMap(section => section.items), ...learnQuickLinks]);
   assert.deepEqual(siteNavigation[1].items?.map((item) => item.label), ["Skill Practice", "Spaced Review", "Mistakes"]);
@@ -20,7 +20,7 @@ test("P0-2 exposes one frozen information architecture on desktop and mobile", a
   for (const href of [
     "/today", "/planner", "/levels", "/vocabulary/1", "/vocabulary/1?mode=flashcards#vocabulary-activities", "/topics", "/grammar", "/reading", "/listen", "/tools/chinese-tone-trainer",
     "/practice", "/review", "/mistakes", "/hsk-test-prep", "/hsk-placement-test", "/hsk-3-0",
-    "/dictionary", "/blog", "/pricing", "/store", "/account",
+    "/dictionary", "/blog", "/pricing", "/store", "/account", "/tools/chinese-name-generator",
   ]) assert.ok(hrefs.includes(href), `existing entry remains reachable: ${href}`);
   for (const href of ["/blog/chinese-pinyin-guide", "/blog/chinese-tones-guide", "/tools/chinese-character-practice-sheet-generator", "/topics/daily-life", "/topics/food-drink", "/topics/travel-transport", "/chinese-for-travel"]) assert.ok(hrefs.includes(href));
   assert.equal(new Set(hrefs).size, hrefs.length, "the shared navigation must not contain duplicate destinations");
@@ -42,7 +42,7 @@ test("P0-2 grouped navigation keeps accessible responsive behavior", () => {
 
 test("P0-2 shared guide shortcuts retain one primary top-level owner", async () => {
   const { siteNavigation, isNavigationEntryActive } = await import("../src/app/site-navigation.ts");
-  for (const [path, owner] of [["/hsk-3-0", "Tests"], ["/blog/chinese-tones-guide", "Learn"], ["/blog", "Blog"], ["/tools/chinese-tone-trainer", "Learn"], ["/dictionary", "Dictionary"]]) {
+  for (const [path, owner] of [["/hsk-3-0", "Tests"], ["/blog/chinese-tones-guide", "Learn"], ["/blog", "Blog"], ["/tools/chinese-tone-trainer", "Learn"], ["/tools/chinese-name-generator", "Learn"], ["/dictionary", "Dictionary"]]) {
     assert.deepEqual(siteNavigation.filter(entry => isNavigationEntryActive(path, entry)).map(entry => entry.label), [owner]);
   }
 });
