@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import {CACHE_PREFIX, RELEASE_PREFIX, GRACE_MS, releaseKey, retentionPlan, maintainPageCache, legacyCutover, maintainLegacyCache} from "../src/lib/storage/cache-retention.ts";
+import {CACHE_PREFIX, RELEASE_PREFIX, GRACE_MS, releaseKey, retentionPlan, maintainPageCache, legacyCutover, maintainLegacyCache, registerBoundRelease, registerBoundHistory} from "../src/lib/storage/cache-retention.ts";
 import {cleanupExpiredExportObjects} from "../src/lib/storage/export-cleanup.ts";
 
 const now = Date.parse("2026-11-15T12:00:00Z");
@@ -17,7 +17,7 @@ function store(records = [record(1,0),record(2,1),record(3,2),record(4,10),recor
     async list({prefix,limit,cursor}:{prefix:string;limit:number;cursor?:string}) {assert.equal(cursor,undefined); const all=[...objects.values()].filter(o=>o.key.startsWith(prefix)).sort((a,b)=>a.key.localeCompare(b.key)); return {objects:all.slice(0,limit),truncated:all.length>limit,cursor:all.length>limit?"more":undefined};},
     async delete(keys:string[]) {deleted.push(keys); for(const key of keys) objects.delete(key);},
     async get(key:string) {const body=data.get(key);return body?{async json(){return JSON.parse(body);}}:null;},
-    async put(key:string,body:string) {data.set(key,body);},
+    async put(key:string,body:string) {data.set(key,body);objects.set(key,{key,size:body.length,uploaded:new Date(now)});},
   };
 }
 
@@ -27,10 +27,27 @@ test("keeps current and two rollback builds and measures grace from retirement",
   // Build 4 stopped serving only two days ago, despite being deployed ten days ago.
   assert.deepEqual(plan.retired.map(r=>r.build),[build(5)]);
 });
+test("bound release registration requires the exact live build and is idempotent",async()=>{
+  const s=store([]),r=record(1,0);
+  await assert.rejects(registerBoundRelease(s,r,async()=>build(2),now),/OUT_OF_SYNC/);
+  assert.equal(s.objects.size,0);
+  await registerBoundRelease(s,r,async()=>build(1),now);
+  const first=await s.get(releaseKey(r));
+  assert.equal((await first!.json()).version,r.version);
+  await registerBoundRelease(s,r,async()=>build(1),now);
+  assert.equal(s.objects.size,1);
+});
 test("manual rollback and unrecorded production build freeze deletion",async()=>{
   const s=store();s.putCache(5);
   for(const active of [build(2),build(99)])await assert.rejects(maintainPageCache(s,{mode:"apply",now,readActiveBuild:async()=>active}),/REGISTRY_OUT_OF_SYNC/);
   assert.equal(s.deleted.length,0);
+});
+test("release history keeps rollback records across deployments between cron invocations",async()=>{
+  const s=store([]);const current=record(1,0),old=record(2,1);
+  await registerBoundRelease(s,current,async()=>build(1),now);
+  await registerBoundHistory(s,[old],current,async()=>build(1));
+  assert.ok(await s.get(releaseKey(old)));
+  await assert.rejects(registerBoundHistory(s,[record(3,-1)],current,async()=>build(1)),/INVALID_RELEASE_HISTORY/);
 });
 test("dry run has no delete even with retired objects",async()=>{
   const s=store();s.putCache(5);

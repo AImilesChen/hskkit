@@ -26,9 +26,9 @@ jobs:
         with:
           node-version: "24"
       - run: npm ci --ignore-scripts
-      - name: Verify maintenance runtime is identical to the approved source
+      - name: Verify protected commercial paths and retention behavior
         run: |
-          git diff --exit-code 4728b138548f26f5f37264cfc6ddbf7c2255b576 -- workers/commercial-export-worker.ts src/lib/storage src/lib/commercial/storage.ts wrangler.commercial-worker.jsonc
+          git diff --exit-code 4728b138548f26f5f37264cfc6ddbf7c2255b576 -- src/lib/storage/export-cleanup.ts src/lib/commercial/storage.ts wrangler.commercial-worker.jsonc
           node --test tests/storage-maintenance.test.mts tests/storage-build-check.test.mts
       - name: Complete registration of the already deployed approved app
         run: |
@@ -37,7 +37,7 @@ jobs:
           node scripts/storage-release.mjs register
       - name: Activate the approved maintenance runtime
         run: |
-          npx wrangler versions upload --config wrangler.commercial-worker.jsonc --keep-vars | tee "$RUNNER_TEMP/storage-worker-upload.log"
+          npx wrangler versions upload --config wrangler.commercial-worker.jsonc --keep-vars --var "STORAGE_SITE_BUILD:$STORAGE_SITE_BUILD" --var "STORAGE_SITE_VERSION:$STORAGE_SITE_VERSION" --var "STORAGE_SITE_DEPLOYED_AT:$STORAGE_SITE_DEPLOYED_AT" --var "STORAGE_SITE_HISTORY:$STORAGE_SITE_HISTORY" | tee "$RUNNER_TEMP/storage-worker-upload.log"
           storage_version_id=$(grep -Eo 'Worker Version ID: [0-9a-f-]{36}' "$RUNNER_TEMP/storage-worker-upload.log" | tail -1 | awk '{print $4}')
           test -n "$storage_version_id"
           npx wrangler versions deploy "$storage_version_id@100%" --config wrangler.commercial-worker.jsonc --yes

@@ -1,4 +1,4 @@
-import {readFile, writeFile} from 'node:fs/promises';
+import {readFile, writeFile, appendFile} from 'node:fs/promises';
 import {spawnSync} from 'node:child_process';
 import {waitForPublishedBuild} from './storage-build-check.mjs';
 
@@ -36,13 +36,20 @@ async function register() {
   const freshVersions=(fresh.deployments??fresh)[0]?.versions;
   if(freshVersions?.length!==1||freshVersions[0].version_id!==version||freshVersions[0].percentage!==100)throw Error('DEPLOYMENT_CHANGED_DURING_VERIFICATION');
   const deployedAt=Date.now();
+  const previous=await cf('workers/scripts/hskkit-commercial-export-worker/settings');
+  const plain=Object.fromEntries((previous.bindings??[]).filter(b=>b.type==='plain_text').map(b=>[b.name,b.text]));
+  let history=[];
+  if(plain.STORAGE_SITE_HISTORY)history=JSON.parse(plain.STORAGE_SITE_HISTORY);
+  if(!Array.isArray(history))throw Error('INVALID_RELEASE_HISTORY');
+  if(plain.STORAGE_SITE_BUILD&&plain.STORAGE_SITE_VERSION&&plain.STORAGE_SITE_DEPLOYED_AT)history.push({build:plain.STORAGE_SITE_BUILD,version:plain.STORAGE_SITE_VERSION,deployedAt:Number(plain.STORAGE_SITE_DEPLOYED_AT)});
+  history=[...new Map(history.map(r=>[`${r.deployedAt}-${r.version}-${r.build}`,r])).values()].filter(r=>r.build!==build).slice(-20);
+  if(history.some(r=>!/^[A-Za-z0-9_-]{21}$/.test(r.build)||!/^[a-f0-9-]{36}$/.test(r.version)||!Number.isSafeInteger(r.deployedAt)||r.deployedAt>deployedAt))throw Error('INVALID_RELEASE_HISTORY');
   const record={schemaVersion:1,worker:'hskkit',version,build,bucket:CACHE_BUCKET,prefix:'system/opennext-cache/',deployedAt:new Date(deployedAt).toISOString(),commit:process.env.GITHUB_SHA};
   const file=`${process.env.RUNNER_TEMP}/hskkit-cache-release.json`;
   await writeFile(file,JSON.stringify(record));
-  const key=`${CACHE_BUCKET}/system/cache-releases/${deployedAt}-${version}-${build}.json`;
-  const result=spawnSync(process.platform==='win32'?'npx.cmd':'npx',['wrangler','r2','object','put',key,'--file',file,'--content-type','application/json','--remote'],{stdio:'inherit',env:process.env});
-  if(result.status!==0)throw Error('RELEASE_RECORD_UPLOAD_FAILED');
-  console.log('Verified active release was registered');
+  if(!process.env.GITHUB_ENV)throw Error('MISSING_RELEASE_ENVIRONMENT');
+  await appendFile(process.env.GITHUB_ENV,`STORAGE_SITE_BUILD=${build}\nSTORAGE_SITE_VERSION=${version}\nSTORAGE_SITE_DEPLOYED_AT=${deployedAt}\nSTORAGE_SITE_HISTORY=${JSON.stringify(history)}\n`);
+  console.log('Verified release identity prepared for the bound maintenance Worker');
 }
 async function runtimeReport() {
   const reports={checkedAt:new Date().toISOString(),cache:null,legacy:null};
