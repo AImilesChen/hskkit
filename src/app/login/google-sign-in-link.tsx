@@ -1,7 +1,7 @@
 "use client";
 
 import type { AnchorHTMLAttributes, MouseEvent } from "react";
-import { signInReturnFromPage } from "@/lib/account/sign-in";
+import { encodeSignInReturnTo, signInReturnFromPage } from "@/lib/account/sign-in";
 
 type Props = AnchorHTMLAttributes<HTMLAnchorElement> & { href: string; currentPage?: boolean };
 
@@ -10,7 +10,7 @@ export default function GoogleSignInLink({ href, children, currentPage = false, 
     onClick?.(event);
     if (event.defaultPrevented) return;
     const url = new URL(href, window.location.origin);
-    if (currentPage) url.searchParams.set('returnTo', signInReturnFromPage(`${window.location.pathname}${window.location.search}${window.location.hash}`));
+    if (currentPage) url.searchParams.set('returnTo', encodeSignInReturnTo(signInReturnFromPage(`${window.location.pathname}${window.location.search}${window.location.hash}`)));
     try {
       const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
       if (timezone) url.searchParams.set("timezone", timezone);

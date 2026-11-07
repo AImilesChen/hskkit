@@ -4,6 +4,15 @@ export const SIGN_IN_NOTICE_PARAM = 'hskkit_signed_in';
 export const GOOGLE_START_PATH = '/api/v1/auth/google/start';
 
 export function signInReturnTo(value?: string | null) {
+  // Keep nested query separators out of the outer OAuth URL. The production
+  // adapter reconstructs decoded query values before passing them to Next.
+  if (value?.startsWith('v1.')) {
+    try {
+      if (value.length > 8192 || !/^v1\.[A-Za-z0-9_-]+$/.test(value)) return '/account';
+      const bytes = Uint8Array.from(atob(value.slice(3).replaceAll('-', '+').replaceAll('_', '/')), character => character.charCodeAt(0));
+      value = new TextDecoder('utf-8', { fatal: true }).decode(bytes);
+    } catch { return '/account'; }
+  }
   const safe = safeReturnTo(value, '/account');
   const url = new URL(safe, 'https://hskkit.local');
   // Do not return to another sign-in, callback or mutation endpoint.
@@ -15,8 +24,13 @@ export function signInReturnTo(value?: string | null) {
   return `${url.pathname}${url.search}${url.hash}`;
 }
 
+export function encodeSignInReturnTo(value?: string | null) {
+  const bytes = new TextEncoder().encode(signInReturnTo(value));
+  return `v1.${btoa(String.fromCharCode(...bytes)).replaceAll('+', '-').replaceAll('/', '_').replaceAll('=', '')}`;
+}
+
 export function googleSignInHref(returnTo?: string | null, selectAccount = false) {
-  const query = new URLSearchParams({ returnTo: signInReturnTo(returnTo) });
+  const query = new URLSearchParams({ returnTo: encodeSignInReturnTo(returnTo) });
   if (selectAccount) query.set('selectAccount', '1');
   return `${GOOGLE_START_PATH}?${query}`;
 }

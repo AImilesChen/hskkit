@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import { OAUTH_RETURN_COOKIE, OAUTH_STATE_COOKIE, OAUTH_VERIFIER_COOKIE, OAUTH_SWITCH_COOKIE, SESSION_COOKIE, requestIdentity } from "@/lib/account/identity";
-import { signInReturnTo as safeReturnTo, canReuseGoogleSession } from "@/lib/account/sign-in";
+import { signInReturnTo as safeReturnTo, canReuseGoogleSession, encodeSignInReturnTo } from "@/lib/account/sign-in";
 import { googleAuthorizationUrl, googleOAuthConfig, pkceChallenge, randomOAuthValue } from "@/lib/account/oauth";
 import { OAUTH_REFERRAL_COOKIE, REFERRAL_DEVICE_COOKIE, safeReferralCode } from "@/lib/commercial/referrals";
 
@@ -47,6 +47,6 @@ export async function GET(request: Request) {
     response.cookies.set(REFERRAL_DEVICE_COOKIE, existingDevice ?? crypto.randomUUID(), { ...cookie, maxAge: 30 * 24 * 60 * 60 });
     return response;
   } catch {
-    return privateRedirect(new URL(`/login?error=oauth_not_configured&returnTo=${encodeURIComponent(returnTo)}${selectAccount ? '&selectAccount=1' : ''}${referralCode ? `&ref=${encodeURIComponent(referralCode)}` : ''}`, request.url));
+    return privateRedirect(new URL(`/login?error=oauth_not_configured&returnTo=${encodeSignInReturnTo(returnTo)}${selectAccount ? '&selectAccount=1' : ''}${referralCode ? `&ref=${encodeURIComponent(referralCode)}` : ''}`, request.url));
   }
 }

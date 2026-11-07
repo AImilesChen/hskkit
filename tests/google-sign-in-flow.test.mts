@@ -3,7 +3,7 @@ import { createRequire } from 'node:module';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import test from 'node:test';
 import { build } from 'esbuild';
-import { canReuseGoogleSession, googleReturnDestination, googleSignInHref, signInReturnFromPage, signInReturnTo } from '../src/lib/account/sign-in.ts';
+import { canReuseGoogleSession, encodeSignInReturnTo, googleReturnDestination, googleSignInHref, signInReturnFromPage, signInReturnTo } from '../src/lib/account/sign-in.ts';
 
 test('sign-in preserves learning query and anchor while rejecting external and authentication return loops', () => {
   const learning = '/reading/article/a-market-morning?view=pinyin#vocabulary';
@@ -17,9 +17,19 @@ test('sign-in preserves learning query and anchor while rejecting external and a
   assert.equal(signInReturnFromPage(learning), learning);
   const normal = new URL(googleSignInHref(learning), 'https://hskkit.test');
   assert.equal(normal.pathname, '/api/v1/auth/google/start');
-  assert.equal(normal.searchParams.get('returnTo'), learning);
+  assert.equal(signInReturnTo(normal.searchParams.get('returnTo')), learning);
   assert.equal(normal.searchParams.has('selectAccount'), false);
   assert.equal(new URL(googleSignInHref(learning, true), normal).searchParams.get('selectAccount'), '1');
+});
+
+test('return URL transport survives decoded query reconstruction, including Unicode and reserved characters', () => {
+  for (const path of ['/today?level=2&view=pinyin#task', '/dictionary?q=学习&source=header#results', '/reading?query=a%2Bb%26c#words']) {
+    const value = encodeSignInReturnTo(path);
+    assert.match(value, /^v1\.[A-Za-z0-9_-]+$/);
+    assert.equal(signInReturnTo(value), new URL(path, 'https://hskkit.test').pathname + new URL(path, 'https://hskkit.test').search + new URL(path, 'https://hskkit.test').hash);
+    assert.equal(signInReturnFromPage('/login?returnTo=' + value), signInReturnTo(path));
+  }
+  for (const value of ['v1.%', 'v1._w', 'v1.' + btoa('https://other.example')]) assert.equal(signInReturnTo(value), '/account');
 });
 
 test('only a validated active Google session skips OAuth; guest review is optional and retains the anchor', () => {
@@ -74,6 +84,12 @@ function reset() {
   fixture.identityReads = 0; fixture.configured = true; fixture.writes.length = 0;
 }
 function location(response: Response) { assert.equal(response.status, 307); assert.equal(response.headers.get('cache-control'), 'no-store'); return new URL(response.headers.get('location')!); }
+function adapterRequest(href: string) {
+  const url = new URL(href, 'https://hskkit.test');
+  // Model the pinned adapter's decoded query -> query string conversion.
+  const query = [...url.searchParams].map(([key, value]) => `${key}=${value}`).join('&');
+  return new Request(`${url.origin}${url.pathname}?${query}`);
+}
 function transientCookies(response: Response) {
   const cookies = response.headers.getSetCookie();
   for (const name of ['state', 'verifier', 'return']) {
@@ -92,6 +108,19 @@ test('anonymous start goes directly to Google with PKCE and private short-lived 
   assert.ok(url.searchParams.get('code_challenge')); assert.ok(url.searchParams.get('state'));
   assert.equal(url.searchParams.has('prompt'), false); assert.equal(fixture.identityReads, 0);
   transientCookies(response); assert.deepEqual(fixture.writes, []);
+});
+
+test('start and error retry preserve the complete destination through production adapter query reconstruction', async () => {
+  reset();
+  const target = '/reading/article/a-market-morning?view=pinyin&level=1#key-vocabulary';
+  const request = adapterRequest(googleSignInHref(target));
+  const response = await handlers.start(request);
+  assert.equal(location(response).origin, 'https://accounts.google.com');
+  const cookie = response.headers.getSetCookie().find(value => value.startsWith('hskkit_oauth_return='))!;
+  assert.equal(decodeURIComponent(cookie.split(';')[0].slice('hskkit_oauth_return='.length)), target);
+  fixture.configured = false;
+  const retry = location(await handlers.start(request));
+  assert.equal(signInReturnTo(new URL(adapterRequest(retry.href).url).searchParams.get('returnTo')), target);
 });
 
 test('active sessions return to the requested page; invalid sessions and identity read failure still require Google', async () => {
@@ -130,7 +159,7 @@ test('invalid state, missing verifier and provider cancellation never exchange c
       if (query !== '?code=test-code&state=expected') fixture.jar.set('hskkit_oauth_verifier', 'test-verifier');
       const response = await handlers.callback(new Request(`https://hskkit.test/api/v1/auth/google/callback${query}`));
       const url = location(response);
-      assert.equal(url.pathname, '/login'); assert.equal(url.searchParams.get('returnTo'), '/today#task'); assert.equal(url.searchParams.get('selectAccount'), '1');
+      assert.equal(url.pathname, '/login'); assert.equal(signInReturnTo(url.searchParams.get('returnTo')), '/today#task'); assert.equal(url.searchParams.get('selectAccount'), '1');
       assert.equal(url.searchParams.get('error'), query.includes('error=') ? 'google_cancelled' : 'invalid_callback');
       assert.deepEqual(fixture.writes, []);
       assert.ok(response.headers.getSetCookie().some(cookie => cookie.startsWith('hskkit_oauth_switch=;')));
@@ -149,7 +178,7 @@ test('provider exchange failure preserves the destination and existing session w
     const response = await handlers.callback(new Request('https://hskkit.test/api/v1/auth/google/callback?code=test-code&state=expected'));
     const url = location(response);
     assert.equal(url.pathname, '/login'); assert.equal(url.searchParams.get('error'), 'google_failed');
-    assert.equal(url.searchParams.get('returnTo'), '/today?level=2#task');
+    assert.equal(signInReturnTo(url.searchParams.get('returnTo')), '/today?level=2#task');
     assert.deepEqual(fixture.writes, []);
     assert.ok(!response.headers.getSetCookie().some(cookie => cookie.startsWith('hskkit_session=')));
   } finally { globalThis.fetch = originalFetch; }

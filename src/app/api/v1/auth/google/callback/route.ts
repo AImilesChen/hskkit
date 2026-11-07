@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import { OAUTH_RETURN_COOKIE, OAUTH_STATE_COOKIE, OAUTH_VERIFIER_COOKIE, OAUTH_SWITCH_COOKIE, GUEST_COOKIE, SESSION_COOKIE } from "@/lib/account/identity";
-import { signInReturnTo as safeReturnTo, googleReturnDestination } from "@/lib/account/sign-in";
+import { signInReturnTo as safeReturnTo, googleReturnDestination, encodeSignInReturnTo } from "@/lib/account/sign-in";
 import { exchangeGoogleCode, googleOAuthConfig, loadGoogleProfile } from "@/lib/account/oauth";
 import { createAccountSession, updateTimezone, upsertGoogleAccount, validTimezone } from "@/lib/account/storage";
 import { activateWelcomeTrialAndReferral, sha256ReferralDevice } from "@/lib/commercial/referral-storage";
@@ -16,7 +16,7 @@ function privateRedirect(url: URL) {
 const OAUTH_TIMEZONE_COOKIE = "hskkit_oauth_timezone";
 
 function failure(request: Request, code: string, returnTo: string, selectAccount: boolean) {
-  const response = privateRedirect(new URL(`/login?error=${encodeURIComponent(code)}&returnTo=${encodeURIComponent(returnTo)}${selectAccount ? '&selectAccount=1' : ''}`, request.url));
+  const response = privateRedirect(new URL(`/login?error=${encodeURIComponent(code)}&returnTo=${encodeSignInReturnTo(returnTo)}${selectAccount ? '&selectAccount=1' : ''}`, request.url));
   response.cookies.delete(OAUTH_STATE_COOKIE);
   response.cookies.delete(OAUTH_VERIFIER_COOKIE);
   response.cookies.delete(OAUTH_RETURN_COOKIE);

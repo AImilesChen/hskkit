@@ -32,7 +32,7 @@ export default async function LoginPage({ searchParams }: { searchParams: Promis
   }
   const referralSuffix = params.ref ? `&ref=${encodeURIComponent(params.ref)}` : "";
   const message = params.error ? messages[params.error] ?? messages.google_failed : undefined;
-  const guestHref = params.returnTo === "/start" ? "/placement?onboarding=1" : "/today";
+  const guestHref = returnTo === "/start" ? "/placement?onboarding=1" : "/today";
   return (
     <>
       <SiteHeader />
