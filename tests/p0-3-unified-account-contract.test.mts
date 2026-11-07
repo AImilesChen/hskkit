@@ -29,7 +29,7 @@ test("P0-3 publishes a real Google OAuth login, callback, failure retry and logo
   assert.match(start, /safeReturnTo/);
   assert.match(callback, /OAUTH_RETURN_COOKIE/);
   assert.match(callback, /safeReturnTo/);
-  assert.match(callback, /NextResponse\.redirect\(new URL\(returnTo, request\.url\)\)/);
+  assert.match(callback, /privateRedirect\(new URL\(googleReturnDestination\(returnTo,/);
   assert.match(logout, /revokeAccountSession/);
 });
 

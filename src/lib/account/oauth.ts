@@ -43,7 +43,7 @@ export function googleOAuthConfig(env?: OAuthEnv): GoogleOAuthConfig {
   return { clientId, clientSecret, redirectUri };
 }
 
-export function googleAuthorizationUrl(config: GoogleOAuthConfig, state: string, codeChallenge: string) {
+export function googleAuthorizationUrl(config: GoogleOAuthConfig, state: string, codeChallenge: string, selectAccount = false) {
   const url = new URL("https://accounts.google.com/o/oauth2/v2/auth");
   url.search = new URLSearchParams({
     client_id: config.clientId,
@@ -55,8 +55,8 @@ export function googleAuthorizationUrl(config: GoogleOAuthConfig, state: string,
     code_challenge_method: "S256",
     access_type: "online",
     include_granted_scopes: "true",
-    prompt: "select_account",
   }).toString();
+  if (selectAccount) url.searchParams.set("prompt", "select_account");
   return url;
 }
 

@@ -2,8 +2,11 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState, type AnchorHTMLAttributes } from "react";
 import { loadAccountSessionSnapshot } from "@/lib/account/browser";
+import { googleSignInHref } from "@/lib/account/sign-in";
+import GoogleSignInLink from "./login/google-sign-in-link";
+import SignInProgressNotice from "./components/sign-in-progress-notice";
 import {
   isNavigationEntryActive,
   isNavigationGroup,
@@ -14,6 +17,11 @@ import {
 import "./site-header.css";
 
 export const legacyRoutePattern = /^\/(?:hsk-[1-6]-(?:vocabulary|practice-test)|hsk-1-reading-practice)(?:\/|$)/;
+
+function HeaderDestinationLink({ signedIn, returnTo, href, ...props }: AnchorHTMLAttributes<HTMLAnchorElement> & { href: string; signedIn: boolean; returnTo: string }) {
+  if (href === "/account" && !signedIn) return <GoogleSignInLink {...props} href={googleSignInHref(returnTo)} currentPage aria-label="Sign in with Google"/>;
+  return <Link {...props} prefetch={false} href={href}/>;
+}
 
 export default function SiteHeader() {
   const pathname = usePathname();
@@ -181,9 +189,9 @@ export default function SiteHeader() {
               )}
             </div>
           ) : (
-            <Link prefetch={false} key={entry.href} href={entry.href} aria-label={`${entry.href === "/account" && signedIn ? "Account" : entry.label} — ${navigationDescription(entry)}`} aria-current={isNavigationEntryActive(pathname, entry) ? "page" : undefined} className={entry.href === "/account" ? "ml-5 inline-flex h-[40px] min-h-[40px] items-center rounded-lg border border-blue-200 bg-white px-4 text-sm font-semibold text-blue-700 hover:border-blue-300 hover:bg-blue-50 hover:text-blue-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 aria-[current=page]:border-blue-400 aria-[current=page]:bg-blue-50" : "inline-flex min-h-11 items-center border-b-2 border-transparent px-3 text-sm font-semibold text-slate-600 hover:border-blue-200 hover:text-blue-700 aria-[current=page]:border-blue-600 aria-[current=page]:text-blue-700"} onClick={closeNavigation}>
-              {entry.href === "/account" ? (signedIn ? "Account" : entry.label) : entry.label}
-            </Link>
+            <HeaderDestinationLink signedIn={signedIn} returnTo={pathname} key={entry.href} href={entry.href} aria-label={`${entry.href === "/account" && signedIn ? "Account" : entry.label} — ${navigationDescription(entry)}`} aria-current={isNavigationEntryActive(pathname, entry) ? "page" : undefined} className={entry.href === "/account" ? "ml-5 inline-flex h-[40px] min-h-[40px] items-center rounded-lg border border-blue-200 bg-white px-4 text-sm font-semibold text-blue-700 hover:border-blue-300 hover:bg-blue-50 hover:text-blue-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 aria-[current=page]:border-blue-400 aria-[current=page]:bg-blue-50" : "inline-flex min-h-11 items-center border-b-2 border-transparent px-3 text-sm font-semibold text-slate-600 hover:border-blue-200 hover:text-blue-700 aria-[current=page]:border-blue-600 aria-[current=page]:text-blue-700"} onClick={closeNavigation}>
+              {entry.href === "/account" ? (signedIn ? "Account" : "Sign in") : entry.label}
+            </HeaderDestinationLink>
           ))}
         </div>
 
@@ -221,13 +229,14 @@ export default function SiteHeader() {
                 )}
               </div>
             ) : (
-              <Link prefetch={false} key={entry.href} href={entry.href} aria-label={`${entry.href === "/account" && signedIn ? "Account" : entry.label} — ${navigationDescription(entry)}`} aria-current={isNavigationEntryActive(pathname, entry) ? "page" : undefined} className={entry.href === "/account" ? "flex min-h-12 items-center rounded-xl border border-blue-200 bg-blue-50 px-4 py-3 text-blue-700 hover:border-blue-300 hover:bg-blue-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2" : "flex min-h-12 items-center rounded-xl border border-slate-200 px-4 py-2 hover:bg-blue-50 aria-[current=page]:border-blue-300 aria-[current=page]:bg-blue-50"} onClick={closeNavigation}>
-                <span className={entry.href === "/account" ? "font-bold text-blue-700" : "font-bold text-slate-900"}>{entry.href === "/account" ? (signedIn ? "Account" : entry.label) : entry.label}</span>
-              </Link>
+              <HeaderDestinationLink signedIn={signedIn} returnTo={pathname} key={entry.href} href={entry.href} aria-label={`${entry.href === "/account" && signedIn ? "Account" : entry.label} — ${navigationDescription(entry)}`} aria-current={isNavigationEntryActive(pathname, entry) ? "page" : undefined} className={entry.href === "/account" ? "flex min-h-12 items-center rounded-xl border border-blue-200 bg-blue-50 px-4 py-3 text-blue-700 hover:border-blue-300 hover:bg-blue-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2" : "flex min-h-12 items-center rounded-xl border border-slate-200 px-4 py-2 hover:bg-blue-50 aria-[current=page]:border-blue-300 aria-[current=page]:bg-blue-50"} onClick={closeNavigation}>
+                <span className={entry.href === "/account" ? "font-bold text-blue-700" : "font-bold text-slate-900"}>{entry.href === "/account" ? (signedIn ? "Account" : "Sign in") : entry.label}</span>
+              </HeaderDestinationLink>
             ))}
           </nav>
         </div>
       )}
+      <SignInProgressNotice/>
     </>
   );
 }

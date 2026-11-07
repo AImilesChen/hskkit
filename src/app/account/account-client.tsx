@@ -1,6 +1,8 @@
 "use client";
 
 import Link from "next/link";
+import GoogleSignInLink from "../login/google-sign-in-link";
+import { googleSignInHref } from "@/lib/account/sign-in";
 import { useCallback, useEffect, useRef, useState } from "react";
 
 import { clearAccountSnapshot, loadAccountSnapshot } from "@/lib/account/browser";
@@ -250,7 +252,7 @@ export default function AccountClient() {
       <p className="account-kicker">One secure account</p>
       <h2>Keep your HSK progress with you</h2>
       <p>Sign in with Google to continue learning across devices and manage your access in one place.</p>
-      <Link className="btn account-primary-action" href="/login?returnTo=%2Faccount">Continue with Google</Link>
+      <GoogleSignInLink className="btn account-primary-action" href={googleSignInHref("/account")}>Continue with Google</GoogleSignInLink>
       <p className="account-note">You can keep using Placement, Today and Planner as a guest. Any eligible guest progress can be reviewed before it is merged.</p>
     </section> : view.account.status === "deleted" ? <div className="state"><h2>Account data deleted</h2><p>Learning data is no longer available. The minimal request status remains on the data page.</p><Link className="btn secondary" href="/account/data">View request status</Link></div> : <>
       <section className="account-profile-overview">
@@ -268,7 +270,7 @@ export default function AccountClient() {
             <div><dt>Member since</dt><dd>{memberSince(view.account.createdAt)}</dd></div>
             <div><dt>Account access</dt><dd>{view.connection === "google" ? "Google sign-in" : "Private sign-in"}</dd></div>
           </dl>
-          <div className="account-identity-actions"><Link className="account-text-link" href="#profile" onClick={() => setProfileOpen(true)}>Account details</Link><Link className="account-text-link" href="#billing" onClick={() => setBillingOpen(true)}>Manage membership</Link><button className="account-text-link account-signout-link" disabled={busy} onClick={() => void signOut()}>Sign out</button></div>
+          <div className="account-identity-actions"><Link className="account-text-link" href="#profile" onClick={() => setProfileOpen(true)}>Account details</Link><Link className="account-text-link" href="#billing" onClick={() => setBillingOpen(true)}>Manage membership</Link><GoogleSignInLink className="account-text-link" href={googleSignInHref("/account", true)}>Switch Google account</GoogleSignInLink><button className="account-text-link account-signout-link" disabled={busy} onClick={() => void signOut()}>Sign out</button></div>
         </div>
 
         <div className="account-study-focus">
@@ -292,7 +294,7 @@ export default function AccountClient() {
       </section>}
 
       {view.guest.hasData && <section className="card account-merge">
-        <div className="account-card-heading"><span className="account-icon-tile"><AccountIcon name="clock"/></span><div><p className="account-kicker">Before you continue</p><h2>Guest progress found</h2></div></div>
+        <div className="account-card-heading"><span className="account-icon-tile"><AccountIcon name="clock"/></span><div><p className="account-kicker">Before you continue</p><h2 id="guest-progress" style={{ scrollMarginTop: 100 }}>Guest progress found</h2></div></div>
         <p>{view.guest.attempts} guest attempt(s), {view.guest.learningSessions} Placement/Practice session(s), and {view.guest.plannerVersions} Planner version(s) are available. Nothing changes until you confirm.</p>
         {!merge ? <button className="btn" disabled={busy} onClick={preview}>Preview merge</button> : <div className="merge-preview">
           <dl><div><dt>Account attempts</dt><dd>{merge.preview.accountAttempts}</dd></div><div><dt>Guest attempts</dt><dd>{merge.preview.guestAttempts}</dd></div><div><dt>Guest learning sessions</dt><dd>{merge.preview.guestLearningSessions}</dd></div><div><dt>Planner versions</dt><dd>{merge.preview.plannerVersions}</dd></div><div><dt>New attempts</dt><dd>{merge.preview.additions}</dd></div><div><dt>New learning sessions</dt><dd>{merge.preview.sessionAdditions}</dd></div><div><dt>Conflicts</dt><dd>{merge.preview.conflicts}</dd></div></dl>
