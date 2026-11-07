@@ -6,21 +6,23 @@ const read = (path: string) => fs.readFileSync(new URL(path, import.meta.url), "
 const page = read("../src/app/account/page.tsx");
 const client = read("../src/app/account/account-client.tsx");
 const css = read("../src/app/globals.css");
+const accountCss = read("../src/app/account/account-page.css");
 const login = read("../src/app/login/google-sign-in-link.tsx");
 const oauthStart = read("../src/app/api/v1/auth/google/start/route.ts");
 const oauthCallback = read("../src/app/api/v1/auth/google/callback/route.ts");
 
 test("account page prioritizes account access and keeps a single study shortcut", () => {
-  assert.match(page, /Manage your plan, AI credits, devices and data in one place/);
-  assert.match(client, /Your next study action/);
-  assert.match(client, /View learning progress on Dashboard/);
+  assert.match(page, /Manage your plan, credits and account settings/);
+  assert.match(client, /Continue learning/);
+  assert.match(client, /Learning dashboard/);
+  assert.doesNotMatch(client, /account-identity-actions|account-study-focus/);
   assert.doesNotMatch(client, /Your real learning signals/);
   assert.doesNotMatch(client, /Weekly progress/);
 });
 
 test("guest merge is visible before membership and settings, but still requires confirmation", () => {
   const mergeAt = client.indexOf("Guest progress found");
-  assert.ok(mergeAt > 0 && mergeAt < client.indexOf("Your plan and AI credits"));
+  assert.ok(mergeAt > 0 && mergeAt < client.indexOf('id="account-plan-title"'));
   assert.match(client, /Nothing changes until you confirm/);
   assert.match(client, /Preview merge/);
   assert.match(client, /Confirm merge/);
@@ -57,8 +59,9 @@ test("account keeps billing, data, sync and merge routes with accessible respons
   for (const route of ["/api/v1/account", "/api/v1/account/merge", "/api/v1/account/sync", "/api/v1/commercial/subscription", "/account/data"]) {
     assert.ok(client.includes(route), `${route} remains wired`);
   }
-  assert.match(client, /Account details/);
+  assert.match(client, /Profile & sign-in/);
+  assert.match(client, /Switch Google account/);
   assert.match(client, /Sign out/);
-  assert.match(css, /@media \(max-width: 639px\)[\s\S]*\.account-profile-overview\s*\{[^}]*grid-template-columns:\s*1fr/);
+  assert.match(accountCss, /@media \(max-width: 760px\)[\s\S]*\.account-benefits-grid\s*\{[^}]*grid-template-columns:\s*1fr/);
   assert.match(css, /\.account-setting > summary:focus-visible/);
 });

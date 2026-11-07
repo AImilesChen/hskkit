@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import AccountClient from "./account-client";
 import SiteFooter from "../site-footer";
 import SiteHeader from "../site-header";
+import "./account-page.css";
 
 export const metadata: Metadata = {
   title: "Your HSKKit Account | HSKKit",
@@ -10,11 +11,10 @@ export const metadata: Metadata = {
 };
 
 export default function AccountPage() {
-  return <><SiteHeader/><main className="learn account-page">
+  return <><SiteHeader/><main className="learn account-page account-overview-page">
     <header className="account-page-header">
-      <p className="eyebrow">Account & access</p>
-      <h1>Your HSKKit account</h1>
-      <p>Manage your plan, AI credits, devices and data in one place. Google sign-in keeps your account private across devices.</p>
+      <h1>Account</h1>
+      <p>Manage your plan, credits and account settings.</p>
     </header>
     <AccountClient />
   </main><SiteFooter/></>;

@@ -1,0 +1,101 @@
+.account-overview-page .account-overview-page-header { max-width: none; margin-bottom: 24px !important; }
+.account-overview-page .account-overview-page-header h1 { margin: 0 0 6px; font-size: 32px; line-height: 1.2; }
+.account-overview-page .account-overview-page-header > p { font-size: 16px; line-height: 1.6; }
+.account-overview-page .account-overview-shell { gap: 20px; }
+.account-overview-page .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; font-size: 15px; font-weight: 650; line-height: 1.5; }
+.account-overview-page .btn.secondary { text-transform: none; }
+.account-overview-page .account-profile-overview { display: flex; align-items: center; justify-content: space-between; gap: 20px; padding: 24px; border-radius: 18px; background: #fff; box-shadow: 0 6px 20px rgb(15 23 42 / 3%); }
+.account-overview-page .account-identity-top { flex: 1; grid-template-columns: 52px minmax(0, 1fr) auto; gap: 16px; }
+.account-overview-page .account-avatar { width: 52px; height: 52px; font-size: 23px; border-radius: 14px; }
+.account-overview-page .account-identity-copy h2 { margin: 0 0 8px; font-size: 24px; line-height: 1.25; white-space: normal; overflow-wrap: anywhere; text-overflow: clip; }
+.account-overview-page .account-identity-copy > p:last-child { font-size: 14px; line-height: 1.5; }
+.account-overview-page .account-plan-badge { margin: 0 12px; }
+.account-overview-page .account-settings-jump { display: inline-flex; flex: none; align-items: center; gap: 8px; min-height: 44px; color: #475569; font-size: 14px; font-weight: 650; text-decoration: none; }
+.account-overview-page .account-study-shortcut { display: flex; align-items: center; justify-content: space-between; gap: 12px 24px; padding: 8px 16px; border: 1px solid #dfe8f2; border-radius: 12px; background: #f4f8fc; }
+.account-overview-page .account-study-shortcut > span { display: flex; align-items: center; gap: 9px; color: #475569; font-size: 14px; }
+.account-overview-page .account-study-shortcut > div { display: flex; align-items: center; flex-wrap: wrap; gap: 4px 20px; }
+.account-overview-page .account-study-shortcut :is(a,button) { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 0; background: transparent; font-size: 14px; font-weight: 650; color: #1d4ed8; text-decoration: none; }
+.account-overview-page .account-study-shortcut button { padding: 0; border: 0; background: transparent; cursor: pointer; }
+.account-overview-page .account-study-shortcut .account-dashboard-shortcut { color: #526278; font-weight: 500; }
+.account-overview-page .account-study-shortcut [role="status"] { color: #64748b; font-size: 14px; }
+.account-overview-page .account-benefits-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; align-items: start; }
+.account-overview-page :is(.account-membership-card,.account-ai-card) { min-width: 0; min-height: 260px; padding: 24px; border: 1px solid #e0e5ee; border-radius: 18px; background: #fff; box-shadow: none; }
+.account-overview-page .account-membership-card { border-top: 3px solid #d6a340; }
+.account-overview-page .account-ai-card { border-top: 3px solid #9574c2; }
+.account-overview-page .account-card-heading { gap: 12px; }
+.account-overview-page .account-card-heading h2 { margin: 0; font-size: 21px; line-height: 1.35; }
+.account-overview-page .account-icon-tile.credits { background: #f1ebfa; color: #7650a6; }
+.account-overview-page .account-membership-card .account-plan-name { margin: 22px 0 8px !important; color: #0f172a !important; font-size: 30px; font-weight: 750; line-height: 1.2; }
+.account-overview-page .account-membership-card > p:not(.account-plan-name) { margin: 8px 0 18px !important; color: #526278 !important; font-size: 15px; line-height: 1.65; }
+.account-overview-page .account-membership-card .account-plan-period { font-size: 14px !important; }
+.account-overview-page .account-data-unavailable { margin-top: 22px; color: #526278; font-size: 15px; line-height: 1.7; }
+.account-overview-page .account-data-unavailable .btn { margin-top: 14px; }
+.account-overview-page .account-credit-balance { gap: 12px; margin-top: 20px; border: 0; padding: 0; background: transparent; }
+.account-overview-page .account-credit-heading { align-items: baseline; justify-content: flex-start; gap: 10px; }
+.account-overview-page .account-credit-heading strong { color: #563780; font-size: 44px; line-height: 1.15; }
+.account-overview-page .account-credit-heading > span { color: #665779; font-size: 15px; font-weight: 500; text-transform: none; letter-spacing: 0; }
+.account-overview-page .account-credit-track { height: 6px; background: #eee7f6; }
+.account-overview-page .account-credit-track span { background: #9874c7; }
+.account-overview-page .account-reset-date { margin: 0 !important; color: #64748b !important; font-size: 14px; }
+.account-overview-page :is(.account-billing-details,.account-credit-details) { margin-top: 16px; }
+.account-overview-page :is(.account-billing-details,.account-credit-details) > summary { min-height: 44px; align-content: center; width: fit-content; max-width: 100%; cursor: pointer; color: #475569; font-size: 15px; font-weight: 650; }
+.account-overview-page .account-billing-details .account-setting-content { margin-top: 10px; border: 1px solid #e7eaf0; border-radius: 10px; padding: 16px; }
+.account-overview-page .account-credit-details[open] { margin-bottom: 16px; }
+.account-overview-page .account-credit-details > p { color: #526278; font-size: 14px; line-height: 1.7; }
+.account-overview-page .account-credit-details .account-benefit-list { font-size: 14px; line-height: 1.65; }
+.account-overview-page .account-inline-link { display: inline-flex; align-items: center; min-height: 44px; color: #1d4ed8; font-size: 14px; font-weight: 650; text-underline-offset: 4px; }
+.account-overview-page .account-settings-section { margin-top: 10px; scroll-margin-top: 100px; }
+.account-overview-page .account-section-heading { align-items: center; margin-bottom: 16px; }
+.account-overview-page .account-section-heading h2 { margin: 0; font-size: 22px; }
+.account-overview-page .account-section-heading > p { font-size: 14px; }
+.account-overview-page .account-settings-list { border-radius: 16px; box-shadow: none; }
+.account-overview-page .account-setting { scroll-margin-top: 100px; }
+.account-overview-page .account-setting > summary { min-height: 80px; gap: 14px; }
+.account-overview-page .account-setting > summary small { white-space: normal; line-height: 1.5; }
+.account-overview-page .account-setting-content { font-size: 15px; line-height: 1.7; }
+.account-overview-page .account-profile-fields { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; width: 100%; margin: 0; }
+.account-overview-page .account-profile-fields > div { min-width: 0; }
+.account-overview-page .account-profile-fields dt { color: #64748b; font-size: 13px; }
+.account-overview-page .account-profile-fields dd { margin: 3px 0 0; color: #1e293b; font-weight: 650; overflow-wrap: anywhere; }
+.account-overview-page :is(.account-signout-row,.account-admin-access) { display: flex; align-items: center; justify-content: space-between; gap: 20px; margin-top: 20px; border-top: 1px solid #dfe5ed; padding: 20px 0 0; }
+.account-overview-page :is(.account-signout-row,.account-admin-access) h3 { margin: 0 0 4px; color: #334155; font-size: 16px; }
+.account-overview-page :is(.account-signout-row,.account-admin-access) p { margin: 0; color: #64748b; font-size: 14px; }
+.account-overview-page .account-signout-row .btn { flex: none; border: 1px solid #cbd5e1; background: #fff; color: #475569; }
+.account-overview-page .account-signin { max-width: 620px; margin: 12px auto 0; padding: 28px !important; }
+.account-overview-page .account-signin h2 { margin-top: 16px; font-size: 26px; line-height: 1.3; }
+.account-overview-page .account-signin > p { font-size: 15px; line-height: 1.7; }
+.account-overview-page :is(.account-settings-jump,.account-study-shortcut a):hover { text-decoration: underline; text-underline-offset: 4px; }
+.account-overview-page :is(a,button,summary):focus-visible { outline: 3px solid #2563eb; outline-offset: 3px; }
+.account-overview-page #billing { scroll-margin-top: 100px; }
+@media (max-width: 760px) {
+  .account-overview-page .account-benefits-grid { grid-template-columns: 1fr; }
+  .account-overview-page .account-study-shortcut { flex-wrap: wrap; }
+  .account-overview-page .account-study-shortcut > div { gap: 4px 16px; }
+  .account-overview-page .account-profile-overview { flex-wrap: wrap; }
+  .account-overview-page .account-identity-top { min-width: 0; flex-basis: 100%; }
+  .account-overview-page .account-settings-jump { margin-left: 68px; }
+}
+@media (max-width: 639px) {
+  .account-overview-page .account-overview-page-header h1 { font-size: 30px; }
+  .account-overview-page .account-profile-overview { padding: 20px 18px; gap: 6px; }
+  .account-overview-page .account-identity-top { grid-template-columns: 44px minmax(0, 1fr); gap: 12px; }
+  .account-overview-page .account-avatar { width: 44px; height: 44px; font-size: 21px; }
+  .account-overview-page .account-identity-copy h2 { font-size: 22px; }
+  .account-overview-page .account-plan-badge { grid-column: 2; justify-self: start; margin: 0; }
+  .account-overview-page .account-settings-jump { margin-left: 56px; }
+  .account-overview-page .account-study-shortcut { gap: 4px; padding: 12px 16px; }
+  .account-overview-page .account-study-shortcut > div { width: 100%; justify-content: space-between; }
+  .account-overview-page :is(.account-membership-card,.account-ai-card) { min-height: 0; padding: 20px; }
+  .account-overview-page .account-section-heading { display: block; }
+  .account-overview-page .account-section-heading > p { margin-top: 6px !important; text-align: left; }
+  .account-overview-page .account-setting > summary { grid-template-columns: 36px minmax(0, 1fr) auto; gap: 10px; padding: 14px; }
+  .account-overview-page .account-setting > summary > .account-icon-tile { width: 36px; height: 36px; }
+  .account-overview-page .account-setting-action { font-size: 13px; }
+  .account-overview-page .account-setting-action::after { margin-left: 6px; }
+  .account-overview-page .account-setting-content { padding: 18px 16px; }
+  .account-overview-page .account-profile-fields { grid-template-columns: 1fr; gap: 12px; }
+  .account-overview-page .account-signout-row { align-items: flex-start; }
+  .account-overview-page .account-signin { margin-top: 0; padding: 22px !important; }
+  .account-overview-page .account-signin h2 { font-size: 24px; }
+  .account-overview-page .account-sync-summary { flex-wrap: wrap; }
+}

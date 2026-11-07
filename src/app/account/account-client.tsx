@@ -97,6 +97,9 @@ export default function AccountClient() {
   const [auxiliary, setAuxiliary] = useState<AuxiliaryState>(loadingAuxiliaryState);
   const [profileOpen, setProfileOpen] = useState(false);
   const [billingOpen, setBillingOpen] = useState(false);
+  const [devicesOpen, setDevicesOpen] = useState(false);
+  const [referralsOpen, setReferralsOpen] = useState(false);
+  const [privacyOpen, setPrivacyOpen] = useState(false);
   const [busy, setBusy] = useState(false);
   const [detectedTimezone, setDetectedTimezone] = useState("");
   const [checkoutSuccess, setCheckoutSuccess] = useState(false);
@@ -218,11 +221,9 @@ export default function AccountClient() {
   const plan = auxiliary.planner === "ready" ? planner?.latest : undefined;
   const planTasks = plan?.sessions?.flatMap((session: any) => session.tasks ?? []) ?? [];
   const completedTasks = plannerCompletions(plan);
-  const completedCount = planTasks.filter((task: any) => Object.prototype.hasOwnProperty.call(completedTasks, task.id)).length;
   const nextPlanTask = planTasks.find((task: any) => !Object.prototype.hasOwnProperty.call(completedTasks, task.id));
   const dueReviews = auxiliary.planner === "ready" ? planner?.realSignals?.dueCards ?? 0 : null;
   const nextHref = nextPlanTask?.href ?? (dueReviews !== null && dueReviews > 0 ? "/review" : "/today");
-  const nextTitle = nextPlanTask?.title ?? (dueReviews !== null && dueReviews > 0 ? `Review ${dueReviews} due item${dueReviews === 1 ? "" : "s"}` : "Start today’s learning");
   const referralItems: any[] | null = auxiliary.referrals === "ready" ? referrals?.referrals ?? [] : null;
   const referralCount = referralItems?.length ?? null;
   const qualifiedReferrals = referralItems?.filter((item: any) => ["qualified", "paid_pending", "paid"].includes(item.status)).length ?? null;
@@ -249,49 +250,32 @@ export default function AccountClient() {
 
     {!view.account ? <section className="card account-signin">
       <span className="account-icon-tile"><AccountIcon name="profile"/></span>
-      <p className="account-kicker">One secure account</p>
-      <h2>Keep your HSK progress with you</h2>
-      <p>Sign in with Google to continue learning across devices and manage your access in one place.</p>
+            <h2>Save your learning progress</h2>
+      <p>Sign in with Google to sync your progress across devices.</p>
       <GoogleSignInLink className="btn account-primary-action" href={googleSignInHref("/account")}>Continue with Google</GoogleSignInLink>
-      <p className="account-note">You can keep using Placement, Today and Planner as a guest. Any eligible guest progress can be reviewed before it is merged.</p>
+      <p className="account-note">Keep learning as a guest, or sign in to save your progress. Guest data is only merged after you confirm.</p>
     </section> : view.account.status === "deleted" ? <div className="state"><h2>Account data deleted</h2><p>Learning data is no longer available. The minimal request status remains on the data page.</p><Link className="btn secondary" href="/account/data">View request status</Link></div> : <>
-      <section className="account-profile-overview">
-        <div className="account-identity-card">
-          <div className="account-identity-top">
-            <span className="account-avatar" aria-hidden="true">{view.account.displayName.trim().charAt(0).toUpperCase() || "H"}</span>
-            <div className="account-identity-copy">
-              <p className="account-kicker">Your learning account</p>
-              <h2>{view.account.displayName}</h2>
-              <p><span className="account-status-dot"/>{view.connection === "google" ? "Google connected" : "Private sync connected"}</p>
-            </div>
-            <span className={`account-plan-badge ${tier?.toLowerCase() ?? "pending"}`}>{tier ?? (auxiliary.subscription === "error" ? "Unavailable" : "Loading")}</span>
+      <section className="account-profile-overview" aria-label="Account overview">
+        <div className="account-identity-top">
+          <span className="account-avatar" aria-hidden="true">{view.account.displayName.trim().charAt(0).toUpperCase() || "H"}</span>
+          <div className="account-identity-copy">
+            <h2>{view.account.displayName}</h2>
+            <p><span className="account-status-dot"/>{view.connection === "google" ? "Google connected" : "Private sync connected"}</p>
           </div>
-          <dl className="account-identity-meta">
-            <div><dt>Member since</dt><dd>{memberSince(view.account.createdAt)}</dd></div>
-            <div><dt>Account access</dt><dd>{view.connection === "google" ? "Google sign-in" : "Private sign-in"}</dd></div>
-          </dl>
-          <div className="account-identity-actions"><Link className="account-text-link" href="#profile" onClick={() => setProfileOpen(true)}>Account details</Link><Link className="account-text-link" href="#billing" onClick={() => setBillingOpen(true)}>Manage membership</Link><GoogleSignInLink className="account-text-link" href={googleSignInHref("/account", true)}>Switch Google account</GoogleSignInLink><button className="account-text-link account-signout-link" disabled={busy} onClick={() => void signOut()}>Sign out</button></div>
+          <span className={`account-plan-badge ${tier?.toLowerCase() ?? "pending"}`}>{tier ?? (auxiliary.subscription === "error" ? "Unavailable" : "Loading")}</span>
         </div>
-
-        <div className="account-study-focus">
-          <div className="account-section-label"><AccountIcon name="learn"/><span>Your next study action</span></div>
-          {auxiliary.planner !== "ready" ? <>
-            <h2>{auxiliary.planner === "error" ? "Study plan unavailable" : "Loading your study plan…"}</h2>
-            <p>{auxiliary.planner === "error" ? "We could not verify your current plan or due reviews. Retry before relying on these signals." : "Checking your saved plan and due reviews."}</p>
-            {auxiliary.planner === "error" && <button className="btn account-primary-action" onClick={() => void refresh()}>Retry account details</button>}
-          </> : <>
-            <h2>{nextTitle}</h2>
-            <p>{plan ? `HSK ${plan.inputs.goalLevel} plan · ${completedCount} of ${planTasks.length} weekly tasks complete` : dueReviews! > 0 ? "Clear due reviews first to keep your memory schedule current." : "No saved weekly plan yet. Start today or build one in Planner."}</p>
-            <Link className="btn account-primary-action" href={nextHref}>Continue learning <AccountIcon name="arrow"/></Link>
-            <Link className="account-study-dashboard-link" href="/dashboard">View learning progress on Dashboard</Link>
-          </>}
-        </div>
+        <Link className="account-settings-jump" href="#account-settings">Account settings <span aria-hidden="true">↓</span></Link>
       </section>
 
-      {auxiliary.referrals === "ready" && auxiliary.ai === "ready" && referrals?.access?.source === "trial" && <section className="account-banner trial" role="status">
-        <div><p className="account-kicker">Welcome trial active</p><h2>Your 7-day Pro trial is active</h2><p>Pro study and review access is enabled until {formatDate(referrals.access.endsAt)} · {referrals.access.baseAiCredits} trial AI credits granted · {aiQuota.quota.remaining} total AI credits available. No card stored · no automatic charge.</p></div>
-        <Link className="btn secondary" href="/pricing#ai-value">See what AI credits can do</Link>
-      </section>}
+      <nav className="account-study-shortcut" aria-label="Learning shortcuts">
+        <span><AccountIcon name="learn"/>Keep your learning going.</span>
+        <div>
+          <Link className="account-dashboard-shortcut" href="/dashboard">Learning dashboard</Link>
+          {auxiliary.planner === "ready" ? <Link className="account-continue-shortcut" href={nextHref}>Continue learning <AccountIcon name="arrow"/></Link>
+            : auxiliary.planner === "error" ? <button type="button" onClick={() => void refresh()}>Retry study shortcut</button>
+            : <span role="status">Loading study shortcut…</span>}
+        </div>
+      </nav>
 
       {view.guest.hasData && <section className="card account-merge">
         <div className="account-card-heading"><span className="account-icon-tile"><AccountIcon name="clock"/></span><div><p className="account-kicker">Before you continue</p><h2 id="guest-progress" style={{ scrollMarginTop: 100 }}>Guest progress found</h2></div></div>
@@ -304,55 +288,20 @@ export default function AccountClient() {
       </section>}
 
       <div className="account-benefits-grid">
-        <section className="account-membership-card">
-            <div className="account-card-heading"><span className="account-icon-tile gold"><AccountIcon name="spark"/></span><div><p className="account-kicker">Membership & AI</p><h2>Your plan and AI credits</h2></div></div>
-          {auxiliary.subscription !== "ready" || auxiliary.ai !== "ready" || auxiliary.referrals !== "ready" ? <div className="account-data-unavailable" role="status">
-            <p>{[auxiliary.subscription, auxiliary.ai, auxiliary.referrals].includes("error") ? "Membership or AI details are unavailable. No plan or credit values are shown until they can be verified." : "Loading verified membership and AI details…"}</p>
-            {[auxiliary.subscription, auxiliary.ai, auxiliary.referrals].includes("error") && <button className="btn secondary" onClick={() => void refresh()}>Retry account details</button>}
+        <section className="account-membership-card" aria-labelledby="account-plan-title">
+          <div className="account-card-heading"><span className="account-icon-tile gold"><AccountIcon name="billing"/></span><h2 id="account-plan-title">Plan &amp; billing</h2></div>
+          {auxiliary.subscription !== "ready" || auxiliary.referrals !== "ready" ? <div className="account-data-unavailable" role="status">
+            <p>{[auxiliary.subscription, auxiliary.referrals].includes("error") ? "Plan details are unavailable. Retry to check your membership." : "Loading your plan…"}</p>
+            {[auxiliary.subscription, auxiliary.referrals].includes("error") && <button className="btn secondary" onClick={() => void refresh()}>Retry plan details</button>}
           </div> : <>
-            <p>{tier === "Pro" ? referrals?.access?.source === "paid" ? "Unlimited regular study and review, Focused Review, expanded history and 500 AI credits each month are active." : referrals?.access?.source === "trial" ? `Unlimited regular study and review and Focused Review are active during your trial, with ${referrals.access.baseAiCredits} trial AI credits granted.` : "Unlimited regular study and review and Focused Review are active through your promotional Pro access. Your available AI credits are shown below." : "Keep learning free with daily study and review allowances, or compare Pro when you need more."}</p>
-            <div className="account-credit-balance">
-              <div className="account-credit-heading"><span>AI credit balance</span><strong>{remainingCredits}{creditAllowance > 0 ? <small> / {creditAllowance}</small> : null}</strong></div>
-              {creditAllowance > 0 ? <div className="account-credit-track" role="progressbar" aria-label="AI credits remaining" aria-valuemin={0} aria-valuemax={creditAllowance} aria-valuenow={remainingCredits}><span style={{ width: `${creditPercent}%` }}/></div> : <div className="account-credit-track" aria-hidden="true"><span style={{ width: "0%" }}/></div>}
-              <div className="account-credit-meta"><span>{aiQuota?.quota?.resetAt ? `Next reset ${formatDate(aiQuota.quota.resetAt)}` : "Next reset follows your billing period"} · {aiQuota?.quota?.used ?? 0} credits used{referrals?.bonusCredits > 0 ? ` · Includes ${referrals.bonusCredits} referral reward credits` : ""}{referrals?.postTrialGiftCredits > 0 ? ` · ${referrals.postTrialGiftCredits} post-trial gift credits remain usable without Pro` : ""}</span><Link href="/pricing#ai-value">How credits work</Link></div>
-            </div>
-            <ul className="account-benefit-list"><li>Regular study and review never spend AI credits.</li><li>AI explanations use 1 credit after success.</li><li>AI plan suggestions use 5 credits after success.</li><li>Analyzing one uploaded mistake uses 5 credits after a successful result; one text correction is free.</li></ul>
-            <div className="account-actions">{tier === "Pro" ? <><Link className="btn secondary" href="/mistakes">Open AI Explanation</Link><Link className="btn secondary" href="/planner">Open Planner AI tips</Link></> : <Link className="btn" href="/pricing">Compare Pro</Link>}</div>
-          </>}
-        </section>
-
-      </div>
-
-      <section className="account-settings-section">
-        <div className="account-section-heading"><div><p className="account-kicker">Account controls</p><h2>Manage your account</h2></div><p>Profile, device access, billing and privacy in one place.</p></div>
-
-        <div className="account-settings-group">
-          <div className="account-group-heading"><span className="account-icon-tile"><AccountIcon name="devices"/></span><div><h3>Profile & devices</h3><p>Sign-in details and device access</p></div></div>
-          <div className="account-settings-list">
-            <details className="account-setting" id="profile" open={profileOpen} onToggle={(event) => setProfileOpen(event.currentTarget.open)}>
-              <summary><span className="account-icon-tile"><AccountIcon name="profile"/></span><span><strong>Profile & sign-in</strong><small>{view.connection === "google" ? "Google connected" : "Private sign-in connected"} · Local learning day</small></span><span className="account-setting-action">View</span></summary>
-              <div className="account-setting-content account-form">
-                <div className="account-field-summary"><span>Display name</span><strong>{view.account.displayName}</strong></div>
-                <p className="account-note">Learning days and streaks follow this device&apos;s time zone automatically{detectedTimezone ? ` (${detectedTimezone})` : ""}. Your display name comes from your sign-in account.</p>
-              </div>
-            </details>
-            <details className="account-setting" id="devices">
-              <summary><span className="account-icon-tile"><AccountIcon name="devices"/></span><span><strong>Devices & sync</strong><small>{auxiliary.sync === "ready" ? `${sync?.devices?.length ?? 0} of ${sync?.capabilities?.syncDevices ?? 1} device slots in use` : auxiliary.sync === "error" ? "Sync details unavailable" : "Loading sync details"}</small></span><span className="account-setting-action">Manage</span></summary>
-              <div className="account-setting-content">
-                {auxiliary.sync !== "ready" ? <p>{auxiliary.sync === "error" ? "Sync details could not be verified. Retry account details before managing devices." : "Loading verified sync details…"}</p> : <><div className="account-sync-summary"><div><span className={`account-status-dot ${currentDevice ? "" : "pending"}`}/><div><strong>{currentDevice ? "This device is connected" : "This device is not connected"}</strong><small>{currentDevice ? `Last synced ${formatDateTime(currentDevice.last_seen_at)}` : "Learning progress on this device has not been synced"}</small></div></div><button className="btn secondary" disabled={busy || deviceSlotsFull} onClick={checkpoint}>{currentDevice ? "Check sync" : "Connect this device"}</button></div>
-                {deviceSlotsFull && <p className="account-device-warning">All device slots are in use. Remove an old device below before connecting this one.</p>}
-                {!!sync?.devices?.length && <ul className="account-device-list">{sync.devices.map((device: any) => <li key={device.device_id}><div><strong>{device.device_id === currentDeviceId ? "Current device" : "Connected device"}</strong><small>Last synced {formatDateTime(device.last_seen_at)}</small></div>{device.device_id !== currentDeviceId && <button className="account-remove-action" disabled={busy} onClick={() => void removeDevice(device.device_id)}>Remove</button>}</li>)}</ul>}
-                {sync?.capabilities?.tier === "free" && <p className="account-note">Free includes one device. Pro includes three active devices.</p>}</>}
-              </div>
-            </details>
-          </div>
-        </div>
-
-        <div className="account-settings-group">
-          <div className="account-group-heading"><span className="account-icon-tile gold"><AccountIcon name="billing"/></span><div><h3>Membership & rewards</h3><p>Subscription, billing and referral status</p></div></div>
-          <div className="account-settings-list">
-            <details className="account-setting" id="billing" open={billingOpen} onToggle={(event) => setBillingOpen(event.currentTarget.open)}>
-              <summary><span className="account-icon-tile gold"><AccountIcon name="billing"/></span><span><strong>Membership & billing</strong><small>{auxiliary.subscription === "ready" ? `${tier} plan · ${subscription?.subscription?.status ?? "No active subscription"}` : auxiliary.subscription === "error" ? "Membership details unavailable" : "Loading membership details"}</small></span><span className="account-setting-action">Billing</span></summary>
+            <p className="account-plan-name">{tier === "Free" ? "Free" : referrals?.access?.source === "trial" ? "Pro trial" : subscription?.subscription?.planId === "pro_yearly" ? "Pro Yearly" : subscription?.subscription?.planId === "pro_monthly" ? "Pro Monthly" : "Pro access"}</p>
+            <p>{tier === "Free" ? "Daily study and review with free allowances."
+              : referrals?.access?.source === "trial" ? `Your trial ends ${formatDate(referrals.access.endsAt)}. No card stored and no automatic charge.`
+              : "Unlimited regular study and review, Focused Review and expanded history."}</p>
+            {tier === "Pro" && referrals?.access?.source !== "trial" && subscription?.subscription?.currentPeriodEnd && <p className="account-plan-period">{subscription.subscription.cancelAtPeriodEnd ? "Access until" : "Current period ends"} {formatDate(subscription.subscription.currentPeriodEnd)}</p>}
+            {tier === "Free" && <Link className="btn" href="/pricing">Compare Pro</Link>}
+            {subscription?.subscription ? <details className="account-billing-details" id="billing" open={billingOpen} onToggle={(event) => setBillingOpen(event.currentTarget.open)}>
+              <summary>Manage billing</summary>
               <div className="account-setting-content">
                 {auxiliary.subscription !== "ready" ? <p>{auxiliary.subscription === "error" ? "Membership details could not be verified. Retry account details before managing billing." : "Loading verified membership details…"}</p> : !subscription?.subscription ? <><p>You are on Free. Monthly and yearly Pro use the same account access.</p><Link className="btn" href="/pricing">View Pro pricing</Link></> : <>
                   <p><strong>{subscription.subscription.planId === "pro_yearly" ? "Pro Yearly" : "Pro Monthly"}</strong> · {subscription.subscription.status}</p>
@@ -361,8 +310,58 @@ export default function AccountClient() {
                   <p className="account-note">Refund review: within 7 days of the charge and no more than 10 AI credits used.</p>
                 </>}
               </div>
+            
+            </details> : tier === "Pro" && <Link className="account-inline-link" href="/pricing">View Pro plans</Link>}
+          </>}
+        </section>
+
+        <section className="account-ai-card" aria-labelledby="account-ai-title">
+          <div className="account-card-heading"><span className="account-icon-tile credits"><AccountIcon name="spark"/></span><h2 id="account-ai-title">AI credits</h2></div>
+          {auxiliary.ai !== "ready" || auxiliary.referrals !== "ready" ? <div className="account-data-unavailable" role="status">
+            <p>{[auxiliary.ai, auxiliary.referrals].includes("error") ? "Credit details are unavailable. Retry to check your balance." : "Loading your credit balance…"}</p>
+            {[auxiliary.ai, auxiliary.referrals].includes("error") && <button className="btn secondary" onClick={() => void refresh()}>Retry credit details</button>}
+          </div> : <>
+            <div className="account-credit-balance">
+              <div className="account-credit-heading"><strong>{remainingCredits}</strong><span>credits available</span></div>
+              {creditAllowance > 0 && <div className="account-credit-track" role="progressbar" aria-label="AI credits remaining" aria-valuemin={0} aria-valuemax={Math.max(creditAllowance, remainingCredits)} aria-valuenow={remainingCredits}><span style={{ width: `${creditPercent}%` }}/></div>}
+              {aiQuota?.quota?.resetAt && <p className="account-reset-date">Next reset {formatDate(aiQuota.quota.resetAt)}</p>}
+            </div>
+            <details className="account-credit-details">
+              <summary>Usage &amp; credit details</summary>
+              <p>{aiQuota?.quota?.used ?? 0} credits used{creditAllowance > 0 ? ` · ${creditAllowance} period allowance` : ""}{referrals?.bonusCredits > 0 ? ` · Includes ${referrals.bonusCredits} referral reward credits` : ""}{referrals?.postTrialGiftCredits > 0 ? ` · ${referrals.postTrialGiftCredits} post-trial gift credits remain usable without Pro` : ""}.</p>
+              <ul className="account-benefit-list"><li>Regular study and review never spend AI credits.</li><li>AI explanations use 1 credit after success.</li><li>AI plan suggestions use 5 credits after success.</li><li>Analyzing one uploaded mistake uses 5 credits after a successful result; one text correction is free.</li></ul>
+              <div className="account-actions"><Link className="account-inline-link" href="/pricing#ai-value">How credits work</Link>{tier === "Pro" && <Link className="account-inline-link" href="/planner">Open Planner AI tips</Link>}</div>
             </details>
-            <details className="account-setting" id="referrals">
+            {(tier === "Pro" || remainingCredits > 0) && <Link className="btn secondary" href="/mistakes">Open AI explanations</Link>}
+          </>}
+        </section>
+      </div>
+
+      <section className="account-settings-section" id="account-settings" tabIndex={-1} aria-labelledby="account-settings-title">
+        <div className="account-section-heading"><h2 id="account-settings-title">Account settings</h2><p>Profile, devices, rewards and privacy.</p></div>
+        <div className="account-settings-list">
+          <details className="account-setting" id="profile" open={profileOpen} onToggle={(event) => setProfileOpen(event.currentTarget.open)}>
+              <summary><span className="account-icon-tile"><AccountIcon name="profile"/></span><span><strong>Profile & sign-in</strong><small>Name, sign-in and learning day</small></span><span className="account-setting-action">View</span></summary>
+              <div className="account-setting-content account-form">
+                <dl className="account-profile-fields">
+                  <div><dt>Display name</dt><dd>{view.account.displayName}</dd></div>
+                  <div><dt>Member since</dt><dd>{memberSince(view.account.createdAt)}</dd></div>
+                  <div><dt>Account access</dt><dd>{view.connection === "google" ? "Google sign-in" : "Private sign-in"}</dd></div>
+                </dl>
+                <p className="account-note">Learning days and streaks follow this device&apos;s time zone automatically{detectedTimezone ? ` (${detectedTimezone})` : ""}. Your display name comes from your sign-in account.</p>
+                <GoogleSignInLink className="btn secondary" href={googleSignInHref("/account", true)}>Switch Google account</GoogleSignInLink>
+              </div>
+            </details>
+          <details className="account-setting" id="devices" open={devicesOpen} onToggle={(event) => setDevicesOpen(event.currentTarget.open)}>
+              <summary><span className="account-icon-tile"><AccountIcon name="devices"/></span><span><strong>Devices & sync</strong><small>{auxiliary.sync === "ready" ? `${sync?.devices?.length ?? 0} of ${sync?.capabilities?.syncDevices ?? 1} device slots in use` : auxiliary.sync === "error" ? "Sync details unavailable" : "Loading sync details"}</small></span><span className="account-setting-action">Manage</span></summary>
+              <div className="account-setting-content">
+                {auxiliary.sync !== "ready" ? <p>{auxiliary.sync === "error" ? "Sync details could not be verified. Retry account details before managing devices." : "Loading verified sync details…"}</p> : <><div className="account-sync-summary"><div><span className={`account-status-dot ${currentDevice ? "" : "pending"}`}/><div><strong>{currentDevice ? "This device is connected" : "This device is not connected"}</strong><small>{currentDevice ? `Last synced ${formatDateTime(currentDevice.last_seen_at)}` : "Learning progress on this device has not been synced"}</small></div></div><button className="btn secondary" disabled={busy || deviceSlotsFull} onClick={checkpoint}>{currentDevice ? "Check sync" : "Connect this device"}</button></div>
+                {deviceSlotsFull && <p className="account-device-warning">All device slots are in use. Remove an old device below before connecting this one.</p>}
+                {!!sync?.devices?.length && <ul className="account-device-list">{sync.devices.map((device: any) => <li key={device.device_id}><div><strong>{device.device_id === currentDeviceId ? "Current device" : "Connected device"}</strong><small>Last synced {formatDateTime(device.last_seen_at)}</small></div>{device.device_id !== currentDeviceId && <button className="account-remove-action" disabled={busy} onClick={() => void removeDevice(device.device_id)}>Remove</button>}</li>)}</ul>}
+                {sync?.capabilities?.tier === "free" && <p className="account-note">Free includes one device. Pro includes three active devices.</p>}</>}
+              </div>
+            </details>
+          <details className="account-setting" id="referrals" open={referralsOpen} onToggle={(event) => setReferralsOpen(event.currentTarget.open)}>
               <summary><span className="account-icon-tile reward"><AccountIcon name="gift"/></span><span><strong>Referral rewards</strong><small>{auxiliary.referrals === "ready" ? `${referrals?.bonusCredits ?? 0} bonus AI credits available` : auxiliary.referrals === "error" ? "Reward details unavailable" : "Loading reward details"}</small></span><span className="account-setting-action">View</span></summary>
               <div className="account-setting-content">
                 {auxiliary.referrals !== "ready" ? <p>{auxiliary.referrals === "error" ? "Referral details could not be verified. Retry account details before relying on reward totals." : "Loading verified referral details…"}</p> : <><p>Your invited friend qualifies after learning on 3 different days and completing 30 real learning actions.</p>
@@ -373,18 +372,7 @@ export default function AccountClient() {
                 {!!referrals?.referrals?.length && <ul className="account-referral-list">{referrals.referrals.map((item: any) => <li key={item.id}><strong>{item.referred_name ?? "Friend"}</strong><span>{referralProgress(item)}</span></li>)}</ul>}</>}
               </div>
             </details>
-          </div>
-        </div>
-
-        {blogAdmin && <div className="account-settings-group">
-          <div className="account-group-heading"><span className="account-icon-tile"><AccountIcon name="learn"/></span><div><h3>Blog publishing</h3><p>Private versioned publishing studio</p></div></div>
-          <div className="account-settings-list"><div className="account-setting-content"><p>Create, preview, schedule, publish, restore and withdraw HSKKit articles.</p><Link className="btn secondary" href="/admin/blog">Open Blog studio</Link></div></div>
-        </div>}
-
-        <div className="account-settings-group">
-          <div className="account-group-heading"><span className="account-icon-tile privacy"><AccountIcon name="privacy"/></span><div><h3>Privacy & account</h3><p>Export, deletion and sign-out controls</p></div></div>
-          <div className="account-settings-list">
-            <details className="account-setting" id="privacy">
+          <details className="account-setting" id="privacy" open={privacyOpen} onToggle={(event) => setPrivacyOpen(event.currentTarget.open)}>
               <summary><span className="account-icon-tile privacy"><AccountIcon name="privacy"/></span><span><strong>Privacy & data</strong><small>Export, deletion and account access</small></span><span className="account-setting-action">Manage</span></summary>
               <div className="account-setting-content">
                 <p>Download your account data, check request status or start account deletion from the dedicated data page.</p>
@@ -392,8 +380,11 @@ export default function AccountClient() {
                 <div className="account-danger-zone"><strong>Need to delete your account?</strong><span>The confirmation and request history live on the data page so this action cannot be triggered accidentally.</span><Link href="/account/data">Review deletion options</Link></div>
               </div>
             </details>
-          </div>
         </div>
+
+        {blogAdmin && <div className="account-admin-access"><div><h3>Blog publishing</h3><p>Private publishing studio</p></div><Link className="btn secondary" href="/admin/blog">Open Blog studio</Link></div>}
+
+        <div className="account-signout-row"><div><h3>Browser session</h3><p>Sign out of this account on this browser.</p></div><button type="button" className="btn secondary" disabled={busy} onClick={() => void signOut()}>Sign out</button></div>
       </section>
 
     </>}

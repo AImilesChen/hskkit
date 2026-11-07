@@ -89,7 +89,7 @@ test("P0-3 removes contradictory account language and publishes a visible sign-i
   assert.match(contact, /sign in with Google/i);
   assert.match(planner, /Guests can try Planner/);
   assert.match(planner, /sign in to save it across devices/i);
-  assert.match(account, /Google sign-in/);
+  assert.match(read("../src/app/account/account-client.tsx"), /Continue with Google/);
   assert.doesNotMatch(account, /Sync Key/);
   assert.match(navigation, /href: "\/account", label: "Sign in"/);
 });
