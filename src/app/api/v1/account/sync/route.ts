@@ -3,7 +3,7 @@ import { accountOwnerId, requestIdentity } from "../../../../../lib/account/iden
 import { listSyncConflicts, listSyncDevices, registerSyncDevice, revokeSyncDevice, syncCheckpoint } from "../../../../../lib/account/storage";
 import { resolveCapabilities } from "../../../../../lib/commercial/storage";
 import { loadState } from "../../../../../lib/learning/storage";
-import { projectLearningHistory } from "../../../../../lib/learning/projection";
+import { projectLearningCheckpoint } from "../../../../../lib/learning/projection";
 import { accessDecision, createAuditEvent, errorContract } from "../../../../../lib/account/access-policy";
 import { recordPolicyAudit } from "../../../../../lib/account/audit-storage";
 
@@ -34,7 +34,7 @@ export async function GET(req: NextRequest) {
       listSyncConflicts(identity.account.userId),
       listSyncDevices(identity.account.userId),
     ]);
-    return NextResponse.json({ state: "synced", revision: loaded.revision, snapshot: projectLearningHistory(loaded.state, capabilities), conflicts, devices, capabilities });
+    return NextResponse.json({ state: "synced", revision: loaded.revision, snapshot: projectLearningCheckpoint(loaded.state, capabilities), conflicts, devices, capabilities });
   } catch (error) {
     const code = error instanceof Error ? error.message : "SYNC_FAILED";
     return errorResponse(code, code === "SYNC_DEVICE_LIMIT_REACHED" ? 409 : 500, code === "SYNC_DEVICE_LIMIT_REACHED" ? { upgradeHref: "/pricing" } : {});
@@ -55,7 +55,7 @@ export async function POST(req: NextRequest) {
     const capabilities = await resolveCapabilities(accountOwnerId(identity.account.userId));
     await registerSyncDevice(identity.account.userId, deviceId, capabilities.syncDevices);
     const result = await syncCheckpoint(identity.account.userId, clientRevision, deviceId);
-    const projectedResult = { ...result, snapshot: projectLearningHistory(result.snapshot, capabilities) };
+    const projectedResult = { ...result, snapshot: projectLearningCheckpoint(result.snapshot, capabilities) };
     if (result.state !== "conflict") {
       await recordPolicyAudit(createAuditEvent({ subjectId: access.subjectId, action: "account_sync", resourceType: "account", resourceId: access.subjectId, result: "success", idempotencyKey: `sync:${deviceId}:${clientRevision}`, metadata: { revision: result.serverRevision } }));
       return NextResponse.json(projectedResult);

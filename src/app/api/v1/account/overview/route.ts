@@ -9,7 +9,7 @@ import { trialAndReferralSnapshot, resolveCommercialAccess } from "@/lib/commerc
 import { subscriptionSummaryForOwner } from "@/lib/commercial/storage";
 import { d1UnavailableResponse, withUserD1ReadProtection } from "@/lib/d1/user-protection";
 import { loadState } from "@/lib/learning/storage";
-import { projectLearningHistory } from "@/lib/learning/projection";
+import { projectLearningCheckpoint } from "@/lib/learning/projection";
 import { plannerSignalsFromLearning } from "@/lib/planner/domain";
 import { listPlans } from "@/lib/planner/storage";
 
@@ -48,7 +48,7 @@ export async function GET(req: NextRequest) {
       const quota = await quotaSnapshot(ownerId, productAiRuntimePolicy(env, capabilities, commercial.access.baseAiCredits));
       const subscription = { ...publicSubscriptionSummary(subscriptionRaw), access: commercial.access, capabilities };
       const streak = computeSessionStreak(loaded.state.dailySessions, account.timezone, new Date().toISOString());
-      const sync = { state: "synced", revision: loaded.revision, snapshot: projectLearningHistory(loaded.state, capabilities), conflicts, devices, capabilities };
+      const sync = { state: "synced", revision: loaded.revision, snapshot: projectLearningCheckpoint(loaded.state, capabilities), conflicts, devices, capabilities };
       const planner = { latest: plans[0] ?? null, versions: plans, nextCursor: plans.length === 20 ? plans.at(-1)?.version ?? null : null, realSignals: plannerSignalsFromLearning(loaded.state, new Date().toISOString()), scope: "account" };
       return NextResponse.json({ streak, sync, subscription, ai: { quota, capabilities, scope: "account" }, referrals, planner }, { headers: { "cache-control": "private, no-store" } });
     });

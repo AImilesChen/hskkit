@@ -1,108 +1,114 @@
 "use client";
 
 import Link from "next/link";
-import {useEffect,useState} from "react";
+import { useEffect, useState } from "react";
+import { googleSignInHref } from "@/lib/account/sign-in";
+import { SUBSCRIPTION_PLANS, type SubscriptionPlanId } from "@/lib/commercial/subscription";
+import { PRO_CAPABILITIES } from "@/lib/commercial/capabilities";
+import { PRO_PLAN_BENEFITS as PRO_FEATURES, annualPriceSummary, checkoutAction, pricingReturnTo, selectedPricingPlan, type PricingState } from "@/lib/commercial/plan-presentation";
 
-type PlanId="pro_monthly"|"pro_yearly";
-type PricingState={
-  authenticated:boolean;
-  statusAvailable:boolean;
-  checkoutEnabled:boolean;
-  sale:null|{percentOff:number;endAt:string};
-  salePrices:Partial<Record<PlanId,number>>;
-  subscription:null|{planId:PlanId;status:string;cancelAtPeriodEnd:boolean};
-  access:{tier:"free"|"pro";source:"paid"|"trial"|"promo"|"free";endsAt:string|null};
-};
-
-const freeAccess:PricingState["access"]={tier:"free",source:"free",endsAt:null};
-
-let pricingStatePromise:Promise<PricingState>|null=null;
-function loadPricingState(){
-  if(!pricingStatePromise)pricingStatePromise=Promise.all([
-    fetch("/api/v1/commercial/config",{cache:"no-store"}).then(response=>response.ok?response.json():Promise.reject(new Error("CONFIG_UNAVAILABLE"))),
-    fetch("/api/v1/commercial/subscription",{cache:"no-store"}).then(async response=>response.status===401?{authenticated:false,statusAvailable:true,subscription:null,access:freeAccess}:response.ok?{authenticated:true,statusAvailable:true,...await response.json()}:Promise.reject(new Error("SUBSCRIPTION_UNAVAILABLE"))),
-  ]).then(([config,account])=>({authenticated:account.authenticated,statusAvailable:account.statusAvailable,checkoutEnabled:config.checkoutEnabled===true,sale:config.sale??null,salePrices:Object.fromEntries((config.subscriptions??[]).filter((plan:{saleAmountCents:number|null})=>plan.saleAmountCents!==null).map((plan:{id:PlanId;saleAmountCents:number})=>[plan.id,plan.saleAmountCents])),subscription:account.subscription??null,access:account.access??freeAccess}));
+const freeAccess: PricingState["access"] = { tier: "free", source: "free", endsAt: null };
+let pricingStatePromise: Promise<PricingState> | null = null;
+function loadPricingState() {
+  if (!pricingStatePromise) pricingStatePromise = Promise.all([
+    fetch("/api/v1/commercial/config", { cache: "no-store" }).then(response => response.ok ? response.json() : Promise.reject(new Error("CONFIG_UNAVAILABLE"))),
+    fetch("/api/v1/commercial/subscription", { cache: "no-store" }).then(async response => response.status === 401 ? { authenticated: false, statusAvailable: true, subscription: null, access: freeAccess } : response.ok ? { authenticated: true, statusAvailable: true, ...await response.json() } : Promise.reject(new Error("SUBSCRIPTION_UNAVAILABLE"))),
+  ]).then(([config, account]) => ({ authenticated: account.authenticated, statusAvailable: account.statusAvailable, checkoutEnabled: config.checkoutEnabled === true, sale: config.sale ?? null, salePrices: Object.fromEntries((config.subscriptions ?? []).filter((plan: { saleAmountCents: number | null }) => typeof plan.saleAmountCents === "number").map((plan: { id: SubscriptionPlanId; saleAmountCents: number }) => [plan.id, plan.saleAmountCents])), subscription: account.subscription ?? null, access: account.access ?? freeAccess }));
   return pricingStatePromise;
 }
 
-function usePricingState(){
-  const [state,setState]=useState<PricingState|null>(null);
-  useEffect(()=>{let active=true;void loadPricingState().then(value=>{if(active)setState(value);}).catch(()=>{if(active)setState({authenticated:false,statusAvailable:false,checkoutEnabled:false,sale:null,salePrices:{},subscription:null,access:freeAccess});});return()=>{active=false;};},[]);
+function usePricingState() {
+  const [state, setState] = useState<PricingState | null>(null);
+  useEffect(() => {
+    let active = true;
+    void loadPricingState().then(value => { if (active) setState(value); }).catch(() => {
+      pricingStatePromise = null;
+      if (active) setState({ authenticated: false, statusAvailable: false, checkoutEnabled: false, sale: null, salePrices: {}, subscription: null, access: freeAccess });
+    });
+    return () => { active = false; };
+  }, []);
   return state;
 }
 
-export function SubscriptionPrice({planId}:{planId:PlanId}){
-  const state=usePricingState();
-  const regular=planId==="pro_monthly"?599:4900;
-  const amount=state?.salePrices[planId];
-  const monthly=planId==="pro_monthly";
-  return <><h2 className={`mt-2 text-4xl font-extrabold ${monthly?"text-white":"text-slate-950"}`}>{amount!==undefined?<><span className="mr-2 text-lg font-medium line-through opacity-70">US${(regular/100).toFixed(2)}</span>US${(amount/100).toFixed(2)}</>:`US$${(regular/100).toFixed(2)}`} <span className={`text-base font-medium ${monthly?"text-slate-300":"text-slate-600"}`}>/ {monthly?"month":"year"}</span></h2>{amount!==undefined&&<p className={`mt-2 text-sm font-semibold ${monthly?"text-blue-200":"text-emerald-800"}`}>First payment 50% off. Renews at US${(regular/100).toFixed(2)} per {monthly?"month":"year"}.</p>}</>;
+function accessEnd(endsAt: string | null) {
+  return endsAt ? new Intl.DateTimeFormat("en", { year: "numeric", month: "short", day: "numeric" }).format(new Date(endsAt)) : "";
 }
 
-function accessEnd(endsAt:string|null){
-  if(!endsAt)return "";
-  return new Intl.DateTimeFormat("en",{year:"numeric",month:"short",day:"numeric"}).format(new Date(endsAt));
+export function SubscriptionPrice({ planId }: { planId: SubscriptionPlanId }) {
+  const state = usePricingState();
+  const regular = SUBSCRIPTION_PLANS[planId].amountCents;
+  const sale = state?.salePrices[planId];
+  const interval = SUBSCRIPTION_PLANS[planId].interval;
+  return <div className="pricing-price" aria-live="polite" aria-atomic="true">
+    <p><strong>US${((sale ?? regular) / 100).toFixed(2)}</strong><span> / {interval}</span></p>
+    {sale !== undefined ? <p className="pricing-price-detail">First payment {state?.sale?.percentOff ?? 50}% off <s>US${(regular / 100).toFixed(2)}</s>. Renews at US${(regular / 100).toFixed(2)} per {interval}.</p> : <p className="pricing-price-detail">{interval === "year" ? `About $${annualPriceSummary().monthlyEquivalent}/month · Billed annually` : "Billed monthly"}</p>}
+    <p className="pricing-renewal">Renews automatically. Cancel anytime.</p>
+  </div>;
 }
 
-export function WelcomeTrialAction(){
-  const state=usePricingState();
-  const buttonClass="inline-flex min-h-12 items-center justify-center rounded-xl bg-blue-700 px-5 font-bold text-white";
-  if(!state)return <button type="button" disabled className={`${buttonClass} opacity-60`}>Checking your access…</button>;
-  if(!state.statusAvailable)return <button type="button" disabled className={`${buttonClass} opacity-60`}>Account status unavailable</button>;
-  if(!state.authenticated)return <Link href="/login?returnTo=%2Faccount" className={buttonClass}>Create account and start free trial</Link>;
-  if(state.access.source==="paid")return <Link href="/account" className={buttonClass}>Manage subscription</Link>;
-  if(state.access.source==="trial")return <span><Link href="/account" className={buttonClass}>Free Pro trial active</Link>{state.access.endsAt&&<span className="mt-2 block text-sm font-semibold text-blue-900">Ends {accessEnd(state.access.endsAt)}</span>}</span>;
-  if(state.access.source==="promo")return <Link href="/account" className={buttonClass}>Current Pro access</Link>;
-  return <Link href="/today" className={buttonClass}>Continue Free</Link>;
+export function WelcomeTrialAction() {
+  const state = usePricingState();
+  if (!state) return <p role="status">Checking trial availability…</p>;
+  if (!state.statusAvailable) return <p>Account status unavailable. <button type="button" className="pricing-text-button" onClick={() => location.reload()}>Retry</button></p>;
+  if (!state.authenticated) return <p>New accounts get a 7-day Pro trial and 20 AI credits. No card required. <Link href={googleSignInHref("/account")}>Start free trial →</Link></p>;
+  if (state.access.source === "trial") return <p>Your free Pro trial is active{state.access.endsAt ? ` until ${accessEnd(state.access.endsAt)}` : ""}. <Link href="/account">View trial details →</Link></p>;
+  if (state.access.source === "paid") return <p>Pro is active on your account. <Link href="/account">Manage subscription →</Link></p>;
+  if (state.access.source === "promo") return <p>Your promotional Pro access is active. <Link href="/account">View access details →</Link></p>;
+  return <p>Continue Free, or choose Pro when you need more. Your saved progress stays with your account.</p>;
 }
 
-export function FreePlanAction(){
-  const state=usePricingState();
-  if(!state)return <div className="mt-auto pt-7"><button type="button" disabled className="inline-flex min-h-12 w-full items-center justify-center rounded-xl border border-blue-600 px-5 font-bold text-blue-700 opacity-60">Checking your access…</button></div>;
-  if(!state.statusAvailable)return <div className="mt-auto pt-7"><button type="button" disabled className="inline-flex min-h-12 w-full items-center justify-center rounded-xl border border-blue-600 px-5 font-bold text-blue-700 opacity-60">Account status unavailable</button></div>;
-  if(state.access.source==="trial")return <div className="mt-auto pt-7"><p className="mb-3 inline-flex rounded-full bg-blue-100 px-3 py-1 text-xs font-extrabold tracking-wide text-blue-900">FREE PRO TRIAL ACTIVE</p><Link href="/account" className="inline-flex min-h-12 w-full items-center justify-center rounded-xl border border-blue-600 px-5 font-bold text-blue-700">View trial details</Link><p className="mt-3 text-sm text-slate-600">{state.access.endsAt?`Your Pro trial ends ${accessEnd(state.access.endsAt)}.`:"Your Pro trial is active."}</p></div>;
-  if(state.access.tier==="pro")return <div className="mt-auto pt-7"><Link href="/account" className="inline-flex min-h-12 w-full items-center justify-center rounded-xl border border-emerald-600 px-5 font-bold text-emerald-700">Current access: Pro</Link><p className="mt-3 text-sm text-slate-600">Free remains available if Pro ends.</p></div>;
-  return <Link href="/today" className="mt-auto inline-flex min-h-12 w-full items-center justify-center rounded-xl border border-blue-600 px-5 font-bold text-blue-700">Continue Free</Link>;
+export function FreePlanAction() {
+  return <Link href="/today" className="pricing-button pricing-button-secondary">Start learning free <span aria-hidden="true">→</span></Link>;
 }
 
-export default function SubscriptionCheckout({planId,label}:{planId:PlanId;label:string}){
-  const state=usePricingState();const [busy,setBusy]=useState(false);const [error,setError]=useState("");
-  const subscription=state?.subscription;const active=Boolean(subscription&&["active","trialing"].includes(subscription.status));
-  const isCurrent=active&&subscription?.planId===planId;
-  const isMonthlyToYearly=active&&subscription?.planId==="pro_monthly"&&planId==="pro_yearly";
-  const buttonClass=planId==="pro_yearly"?"bg-emerald-700":"bg-blue-700";
+const checkoutErrors: Record<string, string> = {
+  CHECKOUT_FAILED: "Checkout could not open. Please try again.",
+  UPGRADE_PORTAL_FAILED: "Billing could not open. Please try again.",
+  SUBSCRIPTION_EXISTS: "A subscription already exists. Manage it from your account.",
+};
 
-  const checkout=async()=>{
-    setBusy(true);setError("");
-    try{
-      const response=await fetch("/api/v1/commercial/checkout",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({planRef:planId,idempotencyKey:crypto.randomUUID()})});
-      const data=await response.json();
-      if(response.status===401){location.href=`/login?next=${encodeURIComponent("/pricing")}`;return;}
-      if(!response.ok||typeof data.checkoutUrl!=="string")throw new Error(data.error??"CHECKOUT_FAILED");
-      location.href=data.checkoutUrl;
-    }catch(cause){setError(cause instanceof Error?cause.message:"CHECKOUT_FAILED");setBusy(false);}
+export default function SubscriptionCheckout({ planId, label, onBusyChange }: { planId: SubscriptionPlanId; label: string; onBusyChange?: (busy: boolean) => void }) {
+  const state = usePricingState();
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState("");
+  useEffect(() => { setError(""); }, [planId]);
+  const buttonClass = "pricing-button pricing-button-primary";
+  if (!state) return <div className="pricing-checkout"><button type="button" disabled className={buttonClass}>Checking your plan…</button></div>;
+  const action = checkoutAction(state, planId);
+  if (action === "unavailable") return <div className="pricing-checkout" role="status"><p>Account status unavailable. Your plan could not be verified.</p><button type="button" className={buttonClass} onClick={() => location.reload()}>Retry plan details</button></div>;
+  if (action === "manage" || action === "scheduled_cancellation") return <div className="pricing-checkout"><Link href="/account#billing" className={buttonClass}>Manage subscription</Link><p>{action === "scheduled_cancellation" ? "Cancellation is scheduled. Manage it before switching plans." : state.subscription?.planId === planId ? `Your ${SUBSCRIPTION_PLANS[planId].name} plan is active.` : "You already have a subscription. Manage your existing plan in your account."}</p></div>;
+  if (action === "checkout_unavailable") return <div className="pricing-checkout"><button type="button" disabled className={buttonClass}>Checkout temporarily unavailable</button><button className="pricing-text-button" type="button" onClick={() => location.reload()}>Retry</button></div>;
+  if (action === "sign_in") return <div className="pricing-checkout"><Link href={googleSignInHref(pricingReturnTo(planId))} className={buttonClass}>Sign in to choose {SUBSCRIPTION_PLANS[planId].name} <span aria-hidden="true">→</span></Link><p>Sign in, then confirm your plan before payment.</p></div>;
+  const switchYearly = action === "switch_yearly";
+  const checkout = async () => {
+    setBusy(true); onBusyChange?.(true); setError("");
+    try {
+      const response = await fetch(switchYearly ? "/api/v1/commercial/subscription" : "/api/v1/commercial/checkout", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify(switchYearly ? { action: "switch_to_yearly", idempotencyKey: crypto.randomUUID() } : { planRef: planId, idempotencyKey: crypto.randomUUID() }) });
+      const data = await response.json();
+      if (response.status === 401) { location.href = googleSignInHref(pricingReturnTo(planId)); return; }
+      const target = switchYearly ? data.portalUrl : data.checkoutUrl;
+      if (!response.ok || typeof target !== "string") throw new Error(switchYearly ? "UPGRADE_PORTAL_FAILED" : data.error ?? "CHECKOUT_FAILED");
+      location.href = target;
+    } catch (cause) { const code = cause instanceof Error ? cause.message : "CHECKOUT_FAILED"; setError(checkoutErrors[code] ?? "Checkout is unavailable. Please try again or manage your plan from your account."); setBusy(false); onBusyChange?.(false); }
   };
-  const switchToYearly=async()=>{
-    setBusy(true);setError("");
-    try{
-      const response=await fetch("/api/v1/commercial/subscription",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({action:"switch_to_yearly",idempotencyKey:crypto.randomUUID()})});
-      const data=await response.json();
-      if(response.status===401){location.href=`/login?next=${encodeURIComponent("/pricing")}`;return;}
-      if(!response.ok||typeof data.portalUrl!=="string")throw new Error(data.error??"UPGRADE_PORTAL_FAILED");
-      location.href=data.portalUrl;
-    }catch(cause){setError(cause instanceof Error?cause.message:"UPGRADE_PORTAL_FAILED");setBusy(false);}
-  };
+  return <div className="pricing-checkout"><button type="button" disabled={busy} onClick={checkout} className={buttonClass}>{busy ? "Opening secure billing…" : switchYearly ? "Switch to Pro Yearly" : label}</button>
+    {switchYearly ? <p>Review the prorated charge in Stripe before confirming.</p> : state.access.source === "trial" ? <p className="pricing-billing-notice">Your free Pro trial is active. Buying starts a paid subscription now.</p> : state.access.source === "promo" ? <p className="pricing-billing-notice">Buying starts a paid subscription now, during your promotional access.</p> : null}
+    {error && <p className="pricing-error" role="alert">{error} <Link href="/account">Account →</Link></p>}
+  </div>;
+}
 
-  if(!state)return <div className="mt-auto pt-7"><button type="button" disabled className={`inline-flex min-h-11 w-full items-center justify-center rounded-lg ${buttonClass} px-5 font-bold text-white opacity-60`}>Checking your plan…</button></div>;
-  if(isCurrent){
-    const currentPlanText=planId==="pro_monthly"?"Your Pro Monthly plan is active.":"Your Pro Yearly plan is active.";
-    return <div className="mt-auto pt-7"><p className={`mb-3 inline-flex rounded-full px-3 py-1 text-xs font-extrabold tracking-wide ${planId==="pro_monthly"?"bg-blue-100 text-blue-900":"bg-emerald-100 text-emerald-900"}`}>CURRENT PLAN</p><Link href="/account" className={`inline-flex min-h-11 w-full items-center justify-center rounded-lg ${buttonClass} px-5 font-bold text-white`}>Manage subscription</Link><p className={`mt-3 text-sm ${planId==="pro_monthly"?"text-slate-300":"text-slate-600"}`}>{currentPlanText}</p></div>;
-  }
-  if(isMonthlyToYearly){
-    const blocked=subscription?.cancelAtPeriodEnd===true;
-    return <div className="mt-auto pt-7"><button type="button" disabled={busy||blocked} onClick={switchToYearly} className="inline-flex min-h-11 w-full items-center justify-center rounded-lg bg-emerald-700 px-5 font-bold text-white disabled:opacity-60">{busy?"Opening secure billing…":blocked?"Cancellation is scheduled":"Switch to Pro Yearly"}</button><p className="mt-3 text-sm text-slate-600">{blocked?"Manage the scheduled cancellation before changing plans.":"Review the prorated charge in Stripe before confirming."}</p>{error&&<p className="mt-3 text-sm font-semibold text-red-700" role="alert">{error}</p>}</div>;
-  }
-  if(active)return <div className="mt-auto pt-7"><button type="button" disabled className={`inline-flex min-h-11 w-full items-center justify-center rounded-lg ${buttonClass} px-5 font-bold text-white opacity-60`}>Pro Yearly is active</button><p className="mt-3 text-sm text-slate-300">Downgrades are not offered from this page.</p></div>;
-  const trialNote=state.access.source==="trial"?"Your free Pro trial is active. Buying starts a paid subscription now.":"";
-  return <div className="mt-auto pt-7"><button type="button" disabled={busy||!state.checkoutEnabled} onClick={checkout} className={`inline-flex min-h-11 w-full items-center justify-center rounded-lg ${buttonClass} px-5 font-bold text-white disabled:opacity-60`}>{busy?"Opening secure Checkout…":state.checkoutEnabled?label:"Checkout temporarily unavailable"}</button>{trialNote&&<p className={`mt-3 text-sm ${planId==="pro_monthly"?"text-slate-300":"text-slate-600"}`}>{trialNote}</p>}{error&&<p className="mt-3 text-sm font-semibold text-red-700" role="alert">{error}</p>}</div>;
+export function ProPlanChoice() {
+  const [planId, setPlanId] = useState<SubscriptionPlanId>("pro_yearly");
+  const [busy, setBusy] = useState(false);
+  useEffect(() => { setPlanId(selectedPricingPlan(new URLSearchParams(location.search).get("plan"))); }, []);
+  return <>
+    <SubscriptionPrice planId={planId}/>
+    <fieldset className="pricing-cycle" disabled={busy}><legend>Billing period</legend><div>
+      <button type="button" aria-pressed={planId === "pro_monthly"} onClick={() => setPlanId("pro_monthly")}>Monthly</button>
+      <button type="button" aria-pressed={planId === "pro_yearly"} onClick={() => setPlanId("pro_yearly")}>Yearly <span>Save {annualPriceSummary().savingsPercent}%</span></button>
+    </div></fieldset>
+    <ul className="pricing-benefits">{PRO_FEATURES.map(item => <li key={item.title}><span aria-hidden="true">✓</span><div><strong>{item.title}</strong><p>{item.detail}</p></div></li>)}</ul>
+    <div className="pricing-ai-allowance"><strong>{PRO_CAPABILITIES.aiMonthlyCredits} AI credits every month</strong><span>For supported explanations, plan suggestions and uploaded mistake analysis.</span></div>
+    <SubscriptionCheckout key={planId} planId={planId} label={`Choose ${SUBSCRIPTION_PLANS[planId].name}`} onBusyChange={setBusy}/>
+  </>;
 }

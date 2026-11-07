@@ -17,10 +17,10 @@ export type ProductCapabilities = {
 export const FREE_CAPABILITIES: ProductCapabilities = Object.freeze({
   tier: "free",
   dailyNewItems: 10,
-  dailyReviewGrades: 20,
+  dailyReviewGrades: null,
   syncDevices: 1,
-  historyMaxEntries: 100,
-  historyRetentionDays: 7,
+  historyMaxEntries: 500,
+  historyRetentionDays: 30,
   focusedReview: false,
   aiMonthlyCredits: 0,
   aiRequestsPerHour: 0,

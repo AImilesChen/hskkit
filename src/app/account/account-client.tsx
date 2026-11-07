@@ -1,6 +1,8 @@
 "use client";
 
 import Link from "next/link";
+import { freeStudyDescription, historyDescription } from "@/lib/commercial/plan-presentation";
+import { FREE_CAPABILITIES } from "@/lib/commercial/capabilities";
 import GoogleSignInLink from "../login/google-sign-in-link";
 import { googleSignInHref } from "@/lib/account/sign-in";
 import { useCallback, useEffect, useRef, useState } from "react";
@@ -295,7 +297,7 @@ export default function AccountClient() {
             {[auxiliary.subscription, auxiliary.referrals].includes("error") && <button className="btn secondary" onClick={() => void refresh()}>Retry plan details</button>}
           </div> : <>
             <p className="account-plan-name">{tier === "Free" ? "Free" : referrals?.access?.source === "trial" ? "Pro trial" : subscription?.subscription?.planId === "pro_yearly" ? "Pro Yearly" : subscription?.subscription?.planId === "pro_monthly" ? "Pro Monthly" : "Pro access"}</p>
-            <p>{tier === "Free" ? "Daily study and review with free allowances."
+            <p>{tier === "Free" ? `${freeStudyDescription()} ${historyDescription(FREE_CAPABILITIES)}.`
               : referrals?.access?.source === "trial" ? `Your trial ends ${formatDate(referrals.access.endsAt)}. No card stored and no automatic charge.`
               : "Unlimited regular study and review, Focused Review and expanded history."}</p>
             {tier === "Pro" && referrals?.access?.source !== "trial" && subscription?.subscription?.currentPeriodEnd && <p className="account-plan-period">{subscription.subscription.cancelAtPeriodEnd ? "Access until" : "Current period ends"} {formatDate(subscription.subscription.currentPeriodEnd)}</p>}

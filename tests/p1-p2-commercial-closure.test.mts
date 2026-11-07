@@ -32,26 +32,18 @@ test("public refund and support copy uses the frozen 2/5/3 UTC-day SLA", async (
   }
 });
 
-test("Pricing states Free and Pro capabilities and links to separate Store products", async () => {
-  const pricing = await read("src/app/pricing/page.tsx");
-  for (const copy of [
-    "10 new items daily",
-    "20 successful SRS ratings daily",
-    "Recent 7 days, up to 100 history entries",
-    "After the trial: no Focused Review or monthly AI credits",
-    "Sync 1 active device",
-    "500 AI credits each month",
-    "10 AI requests per hour",
-    "1 concurrent AI request",
-    "Long-term history, up to 10,000 entries",
-    "Sync up to 3 active devices",
-    "same Pro entitlement",
-    "3 successful downloads",
-    "14-day private access window",
-  ]) assert.match(pricing, new RegExp(copy.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), "i"));
-  assert.match(pricing, /<Link href="\/store"/);
-  assert.match(pricing, /anti-abuse safeguards/i);
-  assert.match(pricing, /not included in Pro/i);
+test("Pricing compares two tiers, keeps usage rules and separates Store purchases", async () => {
+  const [pricing, presentation] = await Promise.all([read("src/app/pricing/page.tsx"), read("src/lib/commercial/plan-presentation.ts")]);
+  assert.match(pricing, /<ProPlanChoice\s*\/>/);
+  assert.match(pricing, /PLAN_COMPARISON/);
+  assert.match(pricing, /same Pro entitlement/);
+  assert.match(pricing, /3 successful downloads/);
+  assert.match(pricing, /14-day private access window/);
+  assert.match(pricing, /Store products are not included in Pro/);
+  assert.match(pricing, /href="\/store"/);
+  assert.match(pricing, /Anti-abuse safeguards/i);
+  assert.match(presentation, /FREE_CAPABILITIES.dailyNewItems/);
+  assert.match(presentation, /PRO_CAPABILITIES.aiMonthlyCredits/);
 });
 
 test("Free to Pro, period-end cancellation, payment failure, and refund downgrade capabilities without deleting history", () => {

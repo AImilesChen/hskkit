@@ -109,8 +109,11 @@ test("subscription routes and Pricing expose the current monthly and yearly life
   assert.match(refundRoute, /cancelStripeSubscriptionImmediately/);
   assert.match(refundRoute, /findStripeInvoicePaymentIntent/);
   assert.match(subscriptionRoute, /subscriptionSummaryForOwner/);
-  assert.match(pricing, /<SubscriptionPrice planId="pro_monthly"\s*\/>/);
-  assert.match(pricing, /<SubscriptionPrice planId="pro_yearly"\s*\/>/);
+  assert.match(pricing, /<ProPlanChoice\s*\/>/);
+  const choice = await read("src/app/pricing/subscription-checkout.tsx");
+  assert.match(choice, /<SubscriptionPrice planId=\{planId\}/);
+  assert.match(choice, /setPlanId\("pro_monthly"\)/);
+  assert.match(choice, /setPlanId\("pro_yearly"\)/);
   assert.match(account, /Billing/);
   assert.match(account, /subscription/);
   for (const table of ["subscription_orders", "subscriptions", "subscription_charges", "subscription_entitlements"]) assert.match(migration, new RegExp(`CREATE TABLE IF NOT EXISTS ${table}`));

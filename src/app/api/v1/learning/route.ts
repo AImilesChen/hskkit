@@ -31,7 +31,7 @@ import { completeStep7PlaybackTicket, consumeStep7PlaybackTicket, createStep7Pla
 import { trustedQuestion } from "../../../../lib/learning/questions";
 import { requestIdentity, GUEST_COOKIE } from "../../../../lib/account/identity";
 import { loadState, saveState, usageSnapshot, type ReferralLearningActivity, type UsageCharge } from "../../../../lib/learning/storage";
-import { projectLearningHistory } from "../../../../lib/learning/projection";
+import { projectLearningCheckpoint } from "../../../../lib/learning/projection";
 import { resolveCapabilities } from "../../../../lib/commercial/storage";
 import { type ProductCapabilities } from "../../../../lib/commercial/capabilities";
 import { reconcileReferralLearningMilestone } from "../../../../lib/commercial/referral-storage";
@@ -111,9 +111,9 @@ function view(state: LearningState, ownerId: string, offsetMinutes: number, capa
     focus: savedPreferences?.focus ?? "balanced" as const,
   };
   const wordHistory = todayWordHistory(state.dailySessions, ownerId, localDay, startLevel);
-  const availableReviewCardIds = new Set(projectLearningHistory(state, capabilities, new Date(now)).cards.map((card) => card.id));
+  const availableReviewCardIds = new Set(projectLearningCheckpoint(state, capabilities, new Date(now)).cards.map((card) => card.id));
   const built = buildDailySession(state, { ownerId, localDay, ruleVersion: "today-v10", now, dailyContent: selectTodayContent(startLevel, preferences.newWordCount, { ...wordHistory, listeningEnabled: preferences.listeningEnabled }), budgetMinutes, availableReviewCardIds, ...preferences });
-  const projected = projectLearningHistory(built.state, capabilities, new Date(now));
+  const projected = projectLearningCheckpoint(built.state, capabilities, new Date(now));
   const visibleCards = projected.cards;
   const cards = visibleCards.map((card) => {
     const attempt = built.state.attempts.find((candidate) => candidate.id === card.sourceAttemptId);
@@ -803,7 +803,7 @@ async function postLearning(req: NextRequest) {
         state = { ...state, ...(requestedLevel ? { preferredLearningLevel: requestedLevel } : {}), todayPreferences };
         const localDay = learningLocalDay(observedAt, tz, identity.account?.timezone);
         const wordHistory = todayWordHistory(state.dailySessions, identity.id, localDay, startLevel);
-        const availableReviewCardIds = new Set(projectLearningHistory(state, capabilities, new Date(observedAt)).cards.map((card) => card.id));
+        const availableReviewCardIds = new Set(projectLearningCheckpoint(state, capabilities, new Date(observedAt)).cards.map((card) => card.id));
         state = buildDailySession(state, { ownerId: identity.id, localDay, ruleVersion: "today-v10", now: observedAt, dailyContent: selectTodayContent(startLevel, newWordCount, { ...wordHistory, listeningEnabled, freezePinned: false }), budgetMinutes, availableReviewCardIds, ...todayPreferences }).state;
         state = { ...state, dailyOperationKeys: [...(state.dailyOperationKeys ?? []), key].slice(-400) };
       } else {

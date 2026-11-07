@@ -18,10 +18,10 @@ test("P0 freezes Free and Pro product capabilities without adding another plan",
   assert.deepEqual(FREE_CAPABILITIES, {
     tier: "free",
     dailyNewItems: 10,
-    dailyReviewGrades: 20,
+    dailyReviewGrades: null,
     syncDevices: 1,
-    historyMaxEntries: 100,
-    historyRetentionDays: 7,
+    historyMaxEntries: 500,
+    historyRetentionDays: 30,
     focusedReview: false,
     aiMonthlyCredits: 0,
     aiRequestsPerHour: 0,
@@ -62,7 +62,7 @@ test("usage periods and AI costs are deterministic", () => {
 test("history projection applies Free retention and Pro maximum entry count", () => {
   const rows = [
     { id: "new", observedAt: "2026-08-24T10:00:00Z" },
-    { id: "old", observedAt: "2026-08-01T10:00:00Z" },
+    { id: "old", observedAt: "2026-07-01T10:00:00Z" },
   ];
   assert.deepEqual(historyWindow(rows, FREE_CAPABILITIES, new Date("2026-08-24T12:00:00Z")).map((row) => row.id), ["new"]);
   assert.deepEqual(historyWindow(rows, PRO_CAPABILITIES, new Date("2026-08-24T12:00:00Z")).map((row) => row.id), ["new", "old"]);
@@ -71,7 +71,7 @@ test("history projection applies Free retention and Pro maximum entry count", ()
 test("server history projection blocks expired Free history without deleting Pro history", () => {
   const state = {
     attempts: [
-      { id: "old-attempt", observedAt: "2026-08-01T10:00:00Z" },
+      { id: "old-attempt", observedAt: "2026-07-01T10:00:00Z" },
       { id: "new-attempt", observedAt: "2026-08-24T10:00:00Z" },
     ],
     cards: [
@@ -79,11 +79,11 @@ test("server history projection blocks expired Free history without deleting Pro
       { id: "new-card", sourceAttemptId: "new-attempt" },
     ],
     mistakes: [
-      { id: "old-mistake", sourceAttemptId: "old-attempt", createdAt: "2026-08-01T10:00:00Z" },
+      { id: "old-mistake", sourceAttemptId: "old-attempt", createdAt: "2026-07-01T10:00:00Z" },
       { id: "new-mistake", sourceAttemptId: "new-attempt", createdAt: "2026-08-24T10:00:00Z" },
     ],
     dailySessions: [
-      { id: "old-session", createdAt: "2026-08-01T10:00:00Z" },
+      { id: "old-session", createdAt: "2026-07-01T10:00:00Z" },
       { id: "new-session", createdAt: "2026-08-24T10:00:00Z" },
     ],
   } as unknown as LearningState;
@@ -120,11 +120,11 @@ test("P0 is wired into entitlement, learning, sync, AI, account UI and a dedicat
   assert.match(learningStorage, /SELECT 1 replayed FROM entitlement_usage_events/);
   assert.match(sync, /DEVICE_LIMIT_REACHED/);
   assert.match(sync, /searchParams\.get\("deviceId"\)/);
-  assert.match(sync, /projectLearningHistory/);
+  assert.match(sync, /projectLearningCheckpoint/);
   assert.match(ai, /cost_units/);
   assert.match(ai, /rateLimitPerHour/);
   assert.match(account, /Focused Review/);
-  assert.match(account, /500 AI credits/);
+  assert.match(account, /aiQuota\?\.quota\?\.used/);
   assert.match(migration, /allowance BETWEEN 0 AND 500/);
   assert.match(migration, /credit_units INTEGER NOT NULL DEFAULT 1/);
   for (const table of ["entitlement_usage_counters", "entitlement_usage_events", "account_devices"]) {

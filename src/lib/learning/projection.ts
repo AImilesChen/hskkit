@@ -28,3 +28,22 @@ export function projectLearningHistory(state: LearningState, capabilities: Produ
     dailyOperationKeys: state.dailyOperationKeys ? capped(state.dailyOperationKeys, capabilities.historyMaxEntries) : undefined,
   };
 }
+
+/** A history window limits past activity, not the memory schedule of learned items. */
+export function projectLearningCheckpoint(state: LearningState, capabilities: ProductCapabilities, now = new Date()): LearningState {
+  const history = projectLearningHistory(state, capabilities, now);
+  const sourceIds = new Set(state.cards.map(card => card.sourceAttemptId));
+  const historyIds = new Set(history.attempts.map(attempt => attempt.id));
+  const attempts = state.attempts.filter(attempt => historyIds.has(attempt.id) || sourceIds.has(attempt.id));
+  const attemptIds = new Set(attempts.map(attempt => attempt.id));
+  const cards = state.cards.filter(card => attemptIds.has(card.sourceAttemptId));
+  const cardIds = new Set(cards.map(card => card.id));
+  const historyMistakeIds = new Set(history.mistakes.map(mistake => mistake.id));
+  return {
+    ...history,
+    attempts,
+    cards,
+    mistakes: state.mistakes.filter(mistake => historyMistakeIds.has(mistake.id) || (mistake.status === "open" && sourceIds.has(mistake.sourceAttemptId))),
+    audioReviewReady: state.audioReviewReady?.filter(item => cardIds.has(item.cardId)),
+  };
+}
