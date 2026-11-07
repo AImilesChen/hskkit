@@ -20,20 +20,18 @@ test("homepage gives guests a five-word preview and a free learning entry", () =
   assert.match(demo, /answer for/);
   assert.match(demo, /Remembered/);
   assert.match(demo, /Practice again/);
-  assert.match(demo, /Keep learning free/);
+  assert.match(demo, /Continue learning/);
   assert.match(demo, /\/vocabulary\/1\?mode=flashcards#vocabulary-activities/);
   assert.doesNotMatch(demo, /fetch\(/, "the homepage demo must use server-supplied published words");
 });
 
-test("hero product preview is a motion-safe learning scene rather than an isolated word", () => {
+test("hero keeps the real-word illustration and respects reduced motion", () => {
   assert.match(home, /A word worth remembering/);
   assert.match(home, /HSK 1 · Example/);
   assert.doesNotMatch(home, /Live study preview|HSK 1 · Today|About 4 min/);
   assert.match(home, /Learn it. Use it. Remember it./);
   assert.match(home, /home-study-scene/);
   assert.match(home, /One word at a time/);
-  assert.match(home, /Example flashcard/);
-  assert.match(home, /Audio where available/);
   assert.match(styles, /@keyframes home-answer-in/);
   assert.match(styles, /@media \(prefers-reduced-motion: reduce\)/);
 });

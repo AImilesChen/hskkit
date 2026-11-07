@@ -4,8 +4,10 @@ import SiteFooter from "./site-footer";
 import SiteHeader from "./site-header";
 import HomeNextStep from "./components/home-next-step";
 import HomeQuickFlashcards from "./components/home-quick-flashcards";
-import HomeIcon, { type HomeIconName } from "./components/home-icon";
+import HomeIcon from "./components/home-icon";
 import "./homepage.css";
+import {HomeTools,HomeSkills,HomeGuides} from "./components/home-discovery";
+import {cumulativeWordCounts} from "@/lib/home/discovery";
 import { matchedWordExample } from "@/lib/learning/word-example-editorial";
 import {
   getHsk3LevelPreview,
@@ -19,12 +21,6 @@ export const metadata: Metadata = {
   alternates: { canonical: "/" },
 };
 
-const learningSteps: { number: string; title: string; text: string; href: string; icon: HomeIconName }[] = [
-  { number: "01", title: "Find your starting level", text: "Get a practical learning suggestion.", href: "/placement", icon: "target" },
-  { number: "02", title: "Learn focused vocabulary", text: "Study words by level or topic.", href: "/topics", icon: "book" },
-  { number: "03", title: "Practise listening", text: "Hear, answer and save the attempt.", href: "/listen", icon: "headphones" },
-  { number: "04", title: "Complete today’s review", text: "Bring due words and mistakes back.", href: "/review", icon: "review" },
-];
 
 const faqItems = [
   {
@@ -74,6 +70,7 @@ const sceneItems = [
 export default function HomePage() {
   const levels = getHsk3LevelStatuses();
   const foundationLevels = levels.slice(0, 6);
+  const cumulativeCounts = cumulativeWordCounts(levels);
   const advancedLevel = levels.find((entry) => entry.level === 7);
   const levelOnePreviewWords = getHsk3LevelPreview(1, 120);
   const previewWord = levelOnePreviewWords[0];
@@ -106,7 +103,7 @@ export default function HomePage() {
             <span className="home-title-line">you learn.</span>
           </span>
         </h1>
-        <p className="home-lede">{publishedWordCount.toLocaleString("en-US")} HSK words with pinyin, English meanings and spaced review.</p>
+        <p className="home-lede">{publishedWordCount.toLocaleString("en-US")} HSK words. Build vocabulary, train your ear and practise writing—with tools for your next step.</p>
         <HomeNextStep />
       </div>
 
@@ -116,36 +113,28 @@ export default function HomePage() {
           <span>HSK 1 · Example</span>
         </div>
         {previewWord ? <div className="home-study-stage">
-          <div className="home-study-meta"><span>Example flashcard</span><span>Vocabulary · HSK 1</span></div>
-          <div className="home-study-progress" aria-hidden="true"><span /></div>
           <div className="home-study-card">
             <span className="home-study-badge">One word at a time</span>
             <div className="home-product-word"><div><p lang="zh-Hans">{previewWord.hanzi}</p><span>{previewWord.pinyin}</span></div><span className="home-study-check" aria-hidden="true">✓</span></div>
             <p className="home-product-meaning">{previewWord.meaning}</p>
-            <p className="home-study-example">A small step today. A stronger vocabulary tomorrow.</p>
           </div>
-          <ol className="home-study-flow" aria-label="Preview learning flow">
-            <li className="is-complete"><span>1</span><div><strong>Learn</strong><small>Word and meaning</small></div></li>
-            <li className="is-active"><span>2</span><div><strong>Listen</strong><small>Audio where available</small></div></li>
-            <li><span>3</span><div><strong>Review</strong><small>Remember for longer</small></div></li>
-          </ol>
         </div> : null}
       </div>
     </section>
 
     <HomeQuickFlashcards cards={demoCards} />
 
-    <section className="home-section home-path-section" aria-labelledby="path-heading">
-      <div className="home-section-copy"><p className="home-eyebrow">How HSKKit works</p><h2 id="path-heading">A simple rhythm for lasting progress.</h2><p>Find your level, learn useful words, and keep them fresh with regular review.</p></div>
-      <ol className="home-learning-path">{learningSteps.map((step, index) => <li key={step.number} className="home-flow-node">
-        <Link href={step.href} className="home-flow-card">
-          <span className="home-flow-number">{step.number}</span>
-          <span className="home-flow-icon"><HomeIcon name={step.icon} className="h-5 w-5" /></span>
-          <div className="home-flow-copy"><h3>{step.title}</h3><small>{step.text}</small></div>
-        </Link>
-        {index < learningSteps.length - 1 ? <span className="home-flow-connector" aria-hidden="true"><HomeIcon name="arrow" className="h-4 w-4" /></span> : null}
-      </li>)}</ol>
-    </section>
+    <HomeTools/>
+
+
+    <section className="home-section home-catalog" id="hsk-levels" aria-labelledby="catalog-heading">
+      <div className="home-section-heading"><div className="home-section-copy"><p className="home-eyebrow">Your starting point</p><h2 id="catalog-heading">Find your starting point.</h2><p>Choose a comfortable starting level, then build a regular learning habit.</p></div><Link href="/levels" className="home-text-link">Level details <HomeIcon name="arrow" className="h-4 w-4" /></Link></div>
+      <div className="home-start-options"><Link href="/learn"><strong>New to Chinese?</strong><span>Start with the learning guides →</span></Link><Link href="/hsk-placement-test"><strong>Not sure of your level?</strong><span>Get a learning suggestion →</span></Link><a href="#home-level-list"><strong>Know your level?</strong><span>Choose your vocabulary below ↓</span></a></div><p className="home-level-explanation">Entry counts follow the 2025 syllabus. “At this level” is new to that level; “through this level” includes earlier levels.</p><div className="home-level-list" id="home-level-list">{foundationLevels.map((entry) => <Link key={entry.level} href={`/vocabulary/${entry.level}`} className="home-level-row">
+        <span className="home-level-index">0{entry.level}</span><h3>Level {entry.level}</h3><div className="home-level-counts"><strong>{entry.wordCount.toLocaleString("en-US")} <span>at this level</span></strong><span>{cumulativeCounts.get(entry.level)?.toLocaleString("en-US")} through this level</span></div><HomeIcon name="arrow" className="h-4 w-4" />
+      </Link>)}{advancedLevel ? <Link href="/vocabulary/7" className="home-level-row home-level-row-advanced"><span className="home-level-index">07–09</span><h3>Levels 7–9</h3><div className="home-level-counts"><strong>{advancedLevel.wordCount.toLocaleString("en-US")} <span>at this band</span></strong><span>{cumulativeCounts.get(advancedLevel.level)?.toLocaleString("en-US")} through this band · Unified advanced band</span></div><HomeIcon name="arrow" className="h-4 w-4" /></Link> : null}</div>
+    <nav className="home-learning-rhythm" aria-label="A regular learning rhythm"><Link href="/vocabulary/1">Learn focused vocabulary</Link><span aria-hidden="true">→</span><Link href="/listen">Practise listening</Link><span aria-hidden="true">→</span><Link href="/review">Complete today’s review</Link></nav></section>
+
+    <HomeSkills/>
 
     <section className="home-section home-scenes" aria-labelledby="scenes-heading">
       <div className="home-section-copy"><p className="home-eyebrow">Chinese for your everyday</p><h2 id="scenes-heading">Learn words you can put to use.</h2><p>Choose a familiar situation and build the vocabulary to take part.</p></div>
@@ -155,12 +144,9 @@ export default function HomePage() {
       </Link>)}</div>
     </section>
 
-    <section className="home-section home-catalog" aria-labelledby="catalog-heading">
-      <div className="home-section-heading"><div className="home-section-copy"><p className="home-eyebrow">Your starting point</p><h2 id="catalog-heading">Find your level. Take the next step.</h2><p>Explore 11,000 words across HSK 1–9, aligned with the 2025 exam syllabus.</p></div><Link href="/levels" className="home-text-link">Level details <HomeIcon name="arrow" className="h-4 w-4" /></Link></div>
-      <div className="home-level-list">{foundationLevels.map((entry) => <Link key={entry.level} href={`/vocabulary/${entry.level}`} className="home-level-row">
-        <span className="home-level-index">0{entry.level}</span><h3>Level {entry.level}</h3><strong>{entry.wordCount.toLocaleString("en-US")} words</strong><HomeIcon name="arrow" className="h-4 w-4" />
-      </Link>)}{advancedLevel ? <Link href="/vocabulary/7" className="home-level-row home-level-row-advanced"><span className="home-level-index">07–09</span><h3>Levels 7–9</h3><strong>{advancedLevel.wordCount.toLocaleString("en-US")} words · Unified advanced band</strong><HomeIcon name="arrow" className="h-4 w-4" /></Link> : null}</div>
-    </section>
+
+
+    <HomeGuides/>
 
     <div className="home-trust-note">
       <span><HomeIcon name="book" className="h-4 w-4" /> HSK 1–9 · 2025 syllabus</span>
@@ -172,7 +158,7 @@ export default function HomePage() {
       <div className="home-faq-list">{faqItems.map((item, index) => <details key={item.question} open={index === 0}><summary><span>{item.question}</span><HomeIcon name="arrow" className="h-5 w-5" /></summary><div><p>{item.answer}</p><Link href={item.href}>{item.linkLabel} <span aria-hidden="true">→</span></Link></div></details>)}</div>
     </section>
 
-    <section className="home-final-cta"><p className="home-eyebrow">Make a little progress today</p><h2>Start with the right level.</h2><p>Find a comfortable starting point and make Chinese part of your day.</p><Link href="/placement">Find my starting level</Link></section>
+    <section className="home-final-cta"><p className="home-eyebrow">Make a little progress today</p><h2>Start with the right level.</h2><p>Find a comfortable starting point and make Chinese part of your day.</p><Link href="/start">Start learning free</Link></section>
   </main><SiteFooter/></>;
 }
 

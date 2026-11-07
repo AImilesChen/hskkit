@@ -79,9 +79,9 @@ export default function HomeQuickFlashcards({ cards }: { cards: DemoCard[] }) {
   return <section id="quick-flashcards-demo" className="home-section home-demo" aria-labelledby="home-demo-title">
     <div className="home-demo-copy">
       <p className="home-eyebrow">A little practice. A real start.</p>
-      <h2 id="home-demo-title">Try your first<br /> five words.</h2>
+      <h2 id="home-demo-title" aria-label="Try your first five words.">Try your first<br /> <span className="home-demo-title-accent">five words.</span></h2>
       <p>Five HSK 1 flashcards. No sign-up needed.</p>
-      <p className="home-demo-instruction">Reveal a word, hear it, then choose what needs another look.</p>
+      <p className="home-demo-instruction">Reveal the meaning, listen, and choose what to review.</p>
       <Link className="home-demo-full-link" href="/vocabulary/1?mode=flashcards#vocabulary-activities">Open full flashcards <FlashcardIcon name="arrow-up-right" /></Link>
       <p className="home-demo-full-note">Choose 10, 20, or 50 cards. No sign-in required.</p>
     </div>
@@ -93,7 +93,7 @@ export default function HomeQuickFlashcards({ cards }: { cards: DemoCard[] }) {
         <h3>You reviewed all five words.</h3>
         <p><strong>{known}</strong> remembered <span aria-hidden="true">·</span> <strong>{uncertain}</strong> to practise</p>
         <p className="aqua-summary-note">Your choices are for this preview only; they do not update your saved learning progress.</p>
-        <Link className="aqua-button aqua-button-primary" href="/vocabulary/1?mode=flashcards#vocabulary-activities">Keep learning free <FlashcardIcon name="arrow-right" /></Link>
+        <Link className="aqua-button aqua-button-primary" href="/vocabulary/1?mode=flashcards#vocabulary-activities">Continue learning <FlashcardIcon name="arrow-right" /></Link>
         {uncertain > 0 ? <button type="button" className="aqua-button aqua-button-secondary" onClick={() => { setSession(repeatUncertain(session)); setMessage(""); }}>Practise {uncertain} {uncertain === 1 ? "word" : "words"} again</button> : null}
         <button type="button" className="aqua-reset" onClick={reset}>Repeat this demo</button>
       </div> : <>

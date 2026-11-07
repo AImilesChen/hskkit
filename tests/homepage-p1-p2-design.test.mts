@@ -23,7 +23,7 @@ function expectInOrder(source: string, markers: string[]) {
   }
 }
 
-test("homepage leads with a concise result and a complete dynamic learning scene", () => {
+test("homepage leads with a concise result and a compact real-word illustration", () => {
   assert.match(home, /Build your HSK vocabulary\. Remember what you learn\./);
   assert.match(home, /Free HSK learning platform/);
   assert.match(home, /home-title-primary/);
@@ -32,10 +32,9 @@ test("homepage leads with a concise result and a complete dynamic learning scene
   assert.match(styles, /\.home-title-line\s*\{[^}]*display:\s*block/s);
   assert.match(styles, /\.home-title-primary\s*\{[^}]*color:\s*var\(--home-blue\)/s);
   assert.match(styles, /\.home-title-secondary\s*\{[^}]*color:\s*var\(--home-ink\)/s);
-  assert.match(home, /\{publishedWordCount\.toLocaleString\("en-US"\)\} HSK words with pinyin, English meanings and spaced review\./);
+  assert.match(home, /\{publishedWordCount\.toLocaleString\("en-US"\)\} HSK words\. Build vocabulary, train your ear and practise writing/);
   assert.match(home, /Not every published word has audio/);
   assert.match(home, /A word worth remembering/);
-  assert.match(home, /Example flashcard/);
   assert.doesNotMatch(home, /Live study preview|HSK 1 · Today|About 4 min/);
   assert.match(home, /Learn it. Use it. Remember it./);
   assert.match(home, /Learn focused vocabulary/);
@@ -43,8 +42,6 @@ test("homepage leads with a concise result and a complete dynamic learning scene
   assert.match(home, /Complete today’s review/);
   assert.match(home, /getHsk3LevelPreview\(1, 120\)/);
   assert.match(home, /One word at a time/);
-  assert.match(home, /Audio where available/);
-  assert.match(home, /Remember for longer/);
   assert.doesNotMatch(home, /<audio/);
   assert.doesNotMatch(home, /home-product-route|home-product-options|Which meaning matches this word\?|home-word-card/);
   assert.doesNotMatch(styles, /\.home-word-card\s*\{[^}]*position:\s*absolute/s);
@@ -81,9 +78,11 @@ test("homepage tells one learning story before compact catalog, trust, FAQ and f
   expectInOrder(home, [
     "Build your HSK vocabulary.",
     "<HomeQuickFlashcards cards={demoCards}",
-    "A simple rhythm for lasting progress.",
+    "<HomeTools/>",
+    "Find your starting point.",
+    "<HomeSkills/>",
     "Learn words you can put to use.",
-    "Find your level. Take the next step.",
+    "<HomeGuides/>",
     "home-trust-note",
     "Frequently asked questions",
     "Start with the right level.",
@@ -146,6 +145,6 @@ test("visual system is scoped, responsive, accessible and motion-safe", () => {
   assert.match(styles, /overflow-wrap/);
   assert.match(styles, /\.home-faq-list summary\s*\{[^}]*font-size:\s*18px/s);
   assert.match(styles, /@media \(max-width: 639px\)[\s\S]*\.home-faq-list summary\s*\{[^}]*font-size:\s*17px/s);
-  assert.match(footer, /footer-density-shell/);
-  assert.match(footer, /pb-\[32px\]/);
+  assert.match(footer, /resource-footer-inner/);
+  assert.match(footer, /resource-footer-mobile/);
 });
