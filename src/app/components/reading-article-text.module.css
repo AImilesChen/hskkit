@@ -1,0 +1,23 @@
+.paper{min-width:0;border:1px solid #dce4ee;border-radius:20px;background:#fff;box-shadow:0 12px 32px #18253f06;padding:30px 34px}
+.toolbar{display:flex;justify-content:space-between;align-items:center;gap:20px;padding-bottom:22px;border-bottom:1px solid #e7ecf2}
+.kicker{font-size:13px;font-weight:750;letter-spacing:.05em;color:#2563eb}
+.toolbar h2{margin:7px 0 0;font-size:22px;line-height:1.4;color:#18253f}
+.controls{display:flex;align-items:center;gap:12px 20px;flex-wrap:wrap;font-size:15px;color:#334155}
+.controls label{display:flex;align-items:center;gap:8px;min-height:44px;cursor:pointer}
+.controls input{width:18px;height:18px;accent-color:#16765d}
+.controls select{max-width:100%;min-height:44px;border:1px solid #cbd5e1;background:#fff;border-radius:9px;padding:7px 10px;color:#1e3a5f;font:inherit}
+.hint{margin:16px 0 28px;color:#59677d;font-size:15px;line-height:1.7}
+.text{max-width:800px;margin:0 auto}
+.paragraphGroup+.paragraphGroup{margin-top:25px}
+.paragraph{margin:0;padding:5px 8px;color:#18253f;font-size:24px;line-height:1.9;letter-spacing:.025em;scroll-margin-top:110px;border-radius:10px;overflow-wrap:break-word}
+.large .paragraph{font-size:28px}
+.paragraph:target{background:#fff5dd;outline:2px solid #e2b74d;outline-offset:6px}
+.paragraph:focus-visible{outline:3px solid #2563eb;outline-offset:5px}
+.word{display:inline;padding:0 2px;border:0;border-bottom:1px solid #5d9f89;border-radius:3px;background:#edf8f2;color:#17694e;cursor:pointer;font:inherit;line-height:inherit;letter-spacing:inherit}
+.word:hover,.word[aria-pressed=true]{background:#d6eee2;color:#124c3b}
+.word ruby{ruby-align:center}.word rt{font-size:13px;letter-spacing:normal;font-family:var(--font-body);font-weight:500}
+.definition{display:flex;justify-content:space-between;align-items:center;gap:18px;margin:15px 8px 0;padding:16px 18px;border:1px solid #bcdccb;border-radius:12px;background:#f1faf5;font-size:16px;line-height:1.6;color:#225942}
+.definition strong{font-size:23px;margin-right:14px}.definition span{color:#316e55}.definition p{margin:5px 0 0}.definition button{flex:none;min-height:44px;padding:7px 10px;border:1px solid #b2d1c0;border-radius:8px;background:white;color:#225942;font:inherit;font-size:14px;cursor:pointer}
+.continue{display:inline-flex;align-items:center;gap:9px;min-height:44px;margin-top:26px;color:#2563eb;font-size:15px;font-weight:650}
+.paper :is(a,button,input,select):focus-visible{outline:3px solid #2563eb;outline-offset:3px}
+@media(max-width:760px){.paper{padding:22px 18px}.toolbar{align-items:flex-start;flex-direction:column;gap:12px}.controls{gap:10px 18px}.hint{margin:14px 0 20px}.paragraph{padding:4px 2px;font-size:21px;line-height:1.9}.large .paragraph{font-size:25px}.definition{margin-inline:0;align-items:flex-start;flex-direction:column;gap:6px}.toolbar h2{font-size:21px}}
