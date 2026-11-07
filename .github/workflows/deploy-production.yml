@@ -41,6 +41,12 @@ jobs:
           fi
       - name: Check storage maintenance protection
         run: node --test tests/storage-maintenance.test.mts tests/storage-build-check.test.mts
+      - name: Build and verify pinned vocabulary comparison
+        run: |
+          python scripts/content/build-hsk-vocabulary-comparison.py
+          git diff --exit-code -- src/lib/vocabulary-comparison/manifest.json
+          node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --test tests/hsk-vocabulary-comparison.test.mts tests/flashcard-preview.test.mts
+          node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --test --test-name-pattern='P0-2 (exposes|grouped|shared|every)' tests/p0-2-discoverable-navigation.test.mts
       - name: Ensure dedicated private page-cache bucket
         run: node scripts/storage-release.mjs ensure-bucket
       - name: Check whether assessment delivery changed
@@ -96,10 +102,14 @@ jobs:
           npx wrangler versions deploy "$storage_version_id@100%" --config wrangler.commercial-worker.jsonc --yes
       - name: Verify storage bindings and existing schedule
         run: node scripts/storage-release.mjs verify-disabled "$RUNNER_TEMP/storage-after-deploy.json"
+      - name: Verify comparison delivery and existing tools
+        run: python3 scripts/check-comparison-release.py
       - name: Retain storage deployment verification
         uses: actions/upload-artifact@v4
         with:
           name: storage-after-deploy-${{ github.run_id }}
-          path: ${{ runner.temp }}/storage-after-deploy.json
+          path: |
+            ${{ runner.temp }}/storage-after-deploy.json
+            storage-comparison-live.json
           retention-days: 7
           if-no-files-found: error

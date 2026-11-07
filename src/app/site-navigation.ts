@@ -34,6 +34,7 @@ export const learnNavigationSections: NavigationSection[] = [
     { href: "/blog/chinese-tones-guide", label: "Chinese Tones Guide", description: "Learn how Mandarin tones work." },
   ] },
   { title: "Learning Tools", items: [
+    { href: "/tools/hsk-vocabulary-comparison", label: "HSK Vocabulary Comparison", description: "Compare old and new HSK word lists and study the words to add." },
     { href: "/tools/chinese-name-generator", label: "Chinese Name Generator", description: "Create a Chinese name, hear its pronunciation and practise writing." },
     { href: "/tools/chinese-number-converter", label: "Numbers & Listening", description: "Read and hear Chinese numbers, prices, dates and times." },
     { href: "/tools/chinese-stroke-order", label: "Stroke Order & Writing", description: "Watch character strokes and practise writing." },

@@ -1,0 +1,65 @@
+{
+  "schema": 1,
+  "version": "hsk2015-hsk2025-8d7547d65e2bb51d",
+  "bankUrl": "/vocabulary-comparison/v1/bank-8d7547d65e2bb51d.json",
+  "bankSha256": "8d7547d65e2bb51dda31ece89d410b655883c1f99d599f7fe08b0cf9075fc5d2",
+  "bankBytes": 1326384,
+  "release": "hsk3-hsk123456789-2025-v11",
+  "summary": {
+    "oldEntries": 5000,
+    "oldHeadwords": 4992,
+    "newEntries": 11000,
+    "newHeadwords": 10896,
+    "oldByLevel": {
+      "1": 150,
+      "2": 150,
+      "3": 300,
+      "4": 600,
+      "5": 1300,
+      "6": 2500
+    },
+    "newByLevel": {
+      "1": 300,
+      "2": 200,
+      "3": 500,
+      "4": 1000,
+      "5": 1600,
+      "6": 1800,
+      "7": 5600
+    },
+    "oldOnlyEnriched": 138,
+    "recordedNewEntries": 996
+  },
+  "sources": {
+    "old": {
+      "title": "Chinese Testing International, HSK vocabulary workbook (2015)",
+      "url": "https://www.chinesetest.cn/userfiles/file/HSK/HSK-2015.xlsx",
+      "sha256": "7e3c8cac7f8c2be9c0f8b48ed155db234d065b1d874bb98bdc8b845e7a70c76c",
+      "fields": [
+        "introduced level",
+        "source headword"
+      ],
+      "retrieved": "2026-11-06"
+    },
+    "new": {
+      "title": "HSK examination syllabus (2025)",
+      "url": "https://www.chinesetest.cn/HSK",
+      "pdfSha256": "ec74ce0439e837bbb15154be13e747ae798903b2fd3a331629df6c3b45504941",
+      "catalogSha256": "0d974b08522b19b66116de750a844c4fc23529ce9a180a36146a78d152c582be",
+      "fields": [
+        "source record ID",
+        "introduced level",
+        "headword",
+        "pinyin",
+        "part of speech"
+      ]
+    },
+    "enrichment": {
+      "title": "HSKKit published catalog and frozen CC-CEDICT snapshot",
+      "url": "/content-license",
+      "dictionaryUrl": "https://cc-cedict.org/wiki/",
+      "license": "CC-BY-SA-4.0 for CC-CEDICT-derived glosses; existing HSKKit content attribution applies",
+      "cedictSha256": "08eb651aeee769991f87b1373303ecddd5abab400e98b1db79cdc78927284f2d"
+    }
+  }
+}

@@ -92,6 +92,7 @@ const footerGroups = [
   {
     "title": "Learning Tools",
     "links": [
+      { "href": "/tools/hsk-vocabulary-comparison", "label": "HSK Vocabulary Comparison" },
       { "href": "/tools/chinese-name-generator", "label": "Chinese Name Generator" },
       { "href": "/tools/chinese-number-converter", "label": "Numbers & Listening" },
       { "href": "/tools/chinese-stroke-order", "label": "Stroke Order & Writing" },
