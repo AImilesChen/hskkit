@@ -79,6 +79,7 @@ export const siteNavigation: NavigationEntry[] = [
       { href: "/hsk-test-prep/hsk-2/mock", label: "HSK 2 Mock Exams", description: "Listening, reading and writing. Free A and Pro B/C." },
       { href: "/hsk-test-prep/hsk-3/mock", label: "HSK 3 Mock Exams", description: "Listening, reading and writing. Free A and Pro B/C." },
       { href: "/hsk-test-prep/hsk-4/mock", label: "HSK 4 Mock Exams", description: "Single-reading listening, reading and short-passage writing. Free A and Pro B/C." },
+      { href: "/hsk-test-prep/hsk-5/mock", label: "HSK 5 Mock Exams", description: "Single-reading listening, paragraph ordering and two writing tasks. Free A and Pro B/C." },
       { href: "/hsk-placement-test", label: "Find My HSK Level", description: "Not sure of your level? Get an adaptive starting suggestion.", match: "/placement" },
       { href: "/hsk-3-0", label: "HSK 3.0 Exam Guide", description: "Check exam dates, the official syllabus and word counts by level." },
     ],
