@@ -82,7 +82,7 @@ test("all seven choices preserve actual level, timer, saved progress, scoring an
 test("Tests menu separates grade practice from adaptive placement", () => {
   const tests = siteNavigation.find(item => item.label === "Tests");
   assert.ok(tests && isNavigationGroup(tests));
-  assert.deepEqual(tests.items.map(item => item.label), ["HSK Practice Tests", "Find My HSK Level", "HSK 3.0 Exam Guide"]);
+  assert.deepEqual(tests.items.map(item => item.label), ["HSK Practice Tests", "HSK 1 Mock Exams", "Find My HSK Level", "HSK 3.0 Exam Guide"]);
   const practice = tests.items[0];
   assert.ok(isNavigationItemActive("/hsk-test-prep/hsk-2", practice));
   assert.ok(isNavigationItemActive("/mock/basic", practice));

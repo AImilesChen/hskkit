@@ -56,7 +56,7 @@ async function getMock(req: NextRequest) {
   }
   const identity = await owner();
   const session = await loadMockSession(identity.id, sessionId);
-  if (!session) return response(req, { error: "MOCK_SESSION_NOT_FOUND" }, identity, 404);
+  if (!session || session.id.startsWith("formal_")) return response(req, { error: "MOCK_SESSION_NOT_FOUND" }, identity, 404);
   return response(req, { session: publicMockSession(session), scope: identity.account ? "account" : "guest" }, identity);
 }
 
@@ -89,6 +89,7 @@ async function postMock(req: NextRequest) {
       const targetLevel = requestedBand === "basic" ? payload.targetLevel : undefined;
       if (requestedBand === "basic" && (typeof targetLevel !== "number" || !Number.isInteger(targetLevel) || targetLevel < 1 || targetLevel > 6)) throw new Error("INVALID_MOCK_LEVEL");
       const prior = await findMockByStartKey(identity.id, requestedBand, idempotencyKey);
+      if (prior?.id.startsWith("formal_")) throw new Error("MOCK_SESSION_NOT_FOUND");
       if (prior) return response(req, { session: publicMockSession(prior), scope: identity.account ? "account" : "guest" }, identity);
       const recent = await recentMockExposure(identity.id, requestedBand, targetLevel as number | undefined);
       const session = await createMockSession(startMock({ band: requestedBand, ownerId: identity.id, idempotencyKey, now: new Date().toISOString(), targetLevel: targetLevel as number | undefined, recentQuestionIds: recent.questionIds, recentGroupIds: recent.groupIds }));
@@ -98,7 +99,7 @@ async function postMock(req: NextRequest) {
     if (!sessionId) throw new Error("INVALID_MOCK_REQUEST");
     const session = await loadMockSession(identity.id, sessionId);
     if (action === "discard" && !session) return response(req, { discarded: true }, identity);
-    if (!session) throw new Error("MOCK_SESSION_NOT_FOUND");
+    if (!session || session.id.startsWith("formal_")) throw new Error("MOCK_SESSION_NOT_FOUND");
     if (action === "discard") {
       if (session.status !== "in_progress") throw new Error("MOCK_ALREADY_SUBMITTED");
       await discardMockSession(session, session.revision);

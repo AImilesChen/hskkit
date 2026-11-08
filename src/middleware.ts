@@ -14,6 +14,10 @@ function gonePage(item: string) {
 
 export function middleware(request: NextRequest) {
   const path = decodeURIComponent(request.nextUrl.pathname);
+  // Only the authorized media API may reach these assets through the ASSETS binding.
+  if (path === "/formal-media" || path.startsWith("/formal-media/")) {
+    return new NextResponse(null, { status: 404, headers: { "cache-control": "private, no-store", "x-robots-tag": "noindex" } });
+  }
   if (path !== "/robots.txt" && shouldBlockCrawler(request.headers.get("user-agent"))) {
     return new NextResponse("Crawler access denied.\n", {
       status: 403,

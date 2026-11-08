@@ -10,7 +10,8 @@
 	],
 	"assets": {
 		"directory": ".open-next/assets",
-		"binding": "ASSETS"
+		"binding": "ASSETS",
+		"run_worker_first": ["/formal-media/*"]
 	},
 	"services": [
 		{
@@ -71,4 +72,5 @@
 		}]
 	}
 }
+
 

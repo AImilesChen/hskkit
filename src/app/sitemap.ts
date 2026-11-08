@@ -30,6 +30,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "/hsk-3-0",
     "/chinese-for-travel",
     "/hsk-test-prep",
+    "/hsk-test-prep/hsk-1/mock",
     "/hsk-placement-test",
     "/hsk-2-0-vs-3-0",
     "/levels",
