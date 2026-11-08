@@ -1,0 +1,15 @@
+Copyright (C) 1999 Arphic Technology Co., Ltd. Source: hanzi-writer-data 2.0.1, derived through Make Me a Hanzi. HSKKit modifications: selected radical paths are omitted in the question SVGs; pinyin, guides and layout are added. Complete original per-character JSONs and editable SVG modifications are included. These component artwork derivatives remain under the Arphic Public License. Other scene illustrations are original HSKKit artwork.
+
+Original unmodified glyph sources, delivered through the authorized media API:
+/api/v1/formal-exams/hsk2/media/a/glyph-4ed6.json
+/api/v1/formal-exams/hsk2/media/a/glyph-4eec.json
+/api/v1/formal-exams/hsk2/media/a/glyph-5403.json
+/api/v1/formal-exams/hsk2/media/a/glyph-5417.json
+/api/v1/formal-exams/hsk2/media/a/glyph-597d.json
+/api/v1/formal-exams/hsk2/media/a/glyph-5988.json
+/api/v1/formal-exams/hsk2/media/a/glyph-5b50.json
+/api/v1/formal-exams/hsk2/media/a/glyph-624b.json
+/api/v1/formal-exams/hsk2/media/a/glyph-676f.json
+/api/v1/formal-exams/hsk2/media/a/glyph-6d17.json
+/api/v1/formal-exams/hsk2/media/a/glyph-770b.json
+/api/v1/formal-exams/hsk2/media/a/glyph-996d.json

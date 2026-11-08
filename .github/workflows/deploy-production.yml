@@ -47,6 +47,8 @@ jobs:
           git diff --exit-code -- src/lib/vocabulary-comparison/manifest.json
           node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --test tests/hsk-vocabulary-comparison.test.mts tests/flashcard-preview.test.mts
           node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --test --test-name-pattern='P0-2 (exposes|grouped|shared|every)' tests/p0-2-discoverable-navigation.test.mts
+      - name: Verify HSK 1 and HSK 2 formal exam contracts
+        run: node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --test tests/formal-exams.test.mts tests/hsk2-formal-exams.test.mts
       - name: Ensure dedicated private page-cache bucket
         run: node scripts/storage-release.mjs ensure-bucket
       - name: Check whether assessment delivery changed
@@ -113,3 +115,4 @@ jobs:
             storage-comparison-live.json
           retention-days: 7
           if-no-files-found: error
+

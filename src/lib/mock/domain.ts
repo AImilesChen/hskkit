@@ -2,7 +2,7 @@ import { normalizeStep7Answer } from "../learning/step7-content.ts";
 import { PRACTICE_QUESTIONS, PRACTICE_VERSION, type PracticeQuestion } from "../practice/questions.ts";
 
 export type MockBand = "basic" | "advanced";
-export type MockDimension = "grammar" | "reading" | "listening" | "pragmatics";
+export type MockDimension = "grammar" | "reading" | "listening" | "pragmatics" | "writing";
 export type MockAbilityInterval = "developing" | "functional" | "strong";
 export const MOCK_QUESTION_SET_VERSION = "hsk3-level-diagnostic-v2";
 export const BASIC_MOCK_DURATION_SECONDS = 30 * 60;

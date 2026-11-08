@@ -23,13 +23,13 @@ export const FREE_PLAN_BENEFITS = [
   "Unlimited standard review of learned items",
   "Published HSK vocabulary, Placement and Today",
   "Practice and mistakes",
-  "HSK 1 complete mock exam: Paper A",
+  "HSK 1 and HSK 2 complete mock exams: Paper A",
   historyDescription(FREE_CAPABILITIES),
   `Sync ${FREE_CAPABILITIES.syncDevices} active device`,
 ];
 
 export const PRO_PLAN_BENEFITS = [
-  { title: "Practise complete HSK 1 papers", detail: "Papers A, B and C with timed listening, reading and answer explanations" },
+  { title: "Practise complete HSK 1 and HSK 2 papers", detail: "Papers A, B and C with timed listening, reading, HSK 2 writing and answer explanations" },
   { title: "Learn at your own pace", detail: "Unlimited daily new items and standard review" },
   { title: "Focus on your weak spots", detail: "Focused Review prioritizes unresolved mistakes and due weak memories" },
   { title: "Understand your mistakes", detail: "AI explanations after supported practice and review answers" },
@@ -42,7 +42,7 @@ export const PLAN_COMPARISON = [
   ["Standard review of learned items", "Unlimited", "Unlimited"],
   ["Published vocabulary, Placement & Today", "Included", "Included"],
   ["Practice & mistakes", "Included", "Included"],
-  ["HSK 1 complete mock exams", "Paper A", "Papers A, B and C"],
+  ["HSK 1 and HSK 2 complete mock exams", "Paper A", "Papers A, B and C"],
   ["Focused Review", "Not included", "Weak items first"],
   ["Monthly AI credits", "No recurring allowance", `${PRO_CAPABILITIES.aiMonthlyCredits} per month`],
   ["Learning history", historyDescription(FREE_CAPABILITIES), historyDescription(PRO_CAPABILITIES)],

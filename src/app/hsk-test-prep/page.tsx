@@ -27,7 +27,7 @@ export default function TestPrepPage() {
       <p className="test-free-note">Free to take · No account needed</p>
     </header>
 
-    <section className="test-placement-invitation" aria-labelledby="full-mock-title"><div><p className="test-eyebrow">Complete papers · HSK 1 now available</p><h2 id="full-mock-title">Practise the full exam format.</h2><p>40 questions · Listening and reading · Free Paper A, plus Pro Papers B and C.</p></div><Link href="/hsk-test-prep/hsk-1/mock" className="test-primary-link">Explore HSK 1 mock exams →</Link></section>
+    <section className="test-placement-invitation" aria-labelledby="full-mock-title"><div><p className="test-eyebrow">Complete papers · HSK 1 and HSK 2 now available</p><h2 id="full-mock-title">Practise the full exam format.</h2><p>HSK 1: 40 questions · HSK 2: 60 questions including writing. Free Paper A, plus Pro Papers B and C.</p></div><Link href="/hsk-test-prep/hsk-1/mock" className="test-primary-link">Explore HSK 1 mock exams →</Link><Link href="/hsk-test-prep/hsk-2/mock" className="test-secondary-link">Explore HSK 2 mock exams →</Link></section>
     <section id="choose-test" className="test-public-section test-level-choice" aria-labelledby="choose-test-title">
       <div className="test-section-heading"><div><h2 id="choose-test-title">Choose your HSK level</h2><p>Preview the questions and format before starting.</p></div><Link href="/hsk-placement-test" className="test-text-link">Not sure of your level? Find it here →</Link></div>
       <div className="test-level-grid">{TEST_LEVELS.slice(0, 6).map(level => <article className="test-level-card" key={level.slug}>

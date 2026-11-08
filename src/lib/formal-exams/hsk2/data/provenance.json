@@ -1,0 +1,23 @@
+[
+  {
+    "form": "a",
+    "paperSha256": "cec10223cf445779a32bb6e7cef1490f3e42bcbe8eb644dd24897a364d1d9a0f",
+    "audioSha256": "ace5b26afddddead27caed27d02105bcfe18bbe48feec7ae00f7813e488d803b",
+    "mediaFiles": 62,
+    "acceptedOn": "2026-11-08"
+  },
+  {
+    "form": "b",
+    "paperSha256": "04c55550dfd234ac5ba472fc331d2648b59f48c5418b674a7dde687fd0151f25",
+    "audioSha256": "91e816cef3ac626445028b17872acc99f48a74f22955147d754f316ebd3d8186",
+    "mediaFiles": 63,
+    "acceptedOn": "2026-11-08"
+  },
+  {
+    "form": "c",
+    "paperSha256": "7bdebfd5a6c3405676d4094e6e07bd478d85c8dcf5e2b05e4f2395cf35e2dae8",
+    "audioSha256": "aae35529ec00f9fff7584646290c2175619c12a5a151b314aea0de215de985c9",
+    "mediaFiles": 64,
+    "acceptedOn": "2026-11-08"
+  }
+]
