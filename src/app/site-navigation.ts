@@ -77,6 +77,7 @@ export const siteNavigation: NavigationEntry[] = [
       { href: "/hsk-test-prep", label: "HSK Practice Tests", description: "Choose HSK 1–6 or Advanced 7–9 and preview the test.", match: "/mock" },
       { href: "/hsk-test-prep/hsk-1/mock", label: "HSK 1 Mock Exams", description: "Free complete Paper A and Pro Papers B and C." },
       { href: "/hsk-test-prep/hsk-2/mock", label: "HSK 2 Mock Exams", description: "Listening, reading and writing. Free A and Pro B/C." },
+      { href: "/hsk-test-prep/hsk-3/mock", label: "HSK 3 Mock Exams", description: "Listening, reading and writing. Free A and Pro B/C." },
       { href: "/hsk-placement-test", label: "Find My HSK Level", description: "Not sure of your level? Get an adaptive starting suggestion.", match: "/placement" },
       { href: "/hsk-3-0", label: "HSK 3.0 Exam Guide", description: "Check exam dates, the official syllabus and word counts by level." },
     ],

@@ -15,7 +15,7 @@ test("P0-2 exposes one frozen information architecture on desktop and mobile", a
   assert.deepEqual(learnQuickLinks.map(item => item.href), ["/today", "/planner"]);
   assert.deepEqual(siteNavigation[0].items, [...learnNavigationSections.flatMap(section => section.items), ...learnQuickLinks]);
   assert.deepEqual(siteNavigation[1].items?.map((item) => item.label), ["Skill Practice", "Spaced Review", "Mistakes"]);
-  assert.deepEqual(siteNavigation[2].items?.map((item) => item.label), ["HSK Practice Tests", "HSK 1 Mock Exams", "HSK 2 Mock Exams", "Find My HSK Level", "HSK 3.0 Exam Guide"]);
+  assert.deepEqual(siteNavigation[2].items?.map((item) => item.label), ["HSK Practice Tests", "HSK 1 Mock Exams", "HSK 2 Mock Exams", "HSK 3 Mock Exams", "Find My HSK Level", "HSK 3.0 Exam Guide"]);
   const hrefs = flattenNavigation().map((item) => item.href);
   for (const href of [
     "/today", "/planner", "/levels", "/vocabulary/1", "/vocabulary/1?mode=flashcards#vocabulary-activities", "/topics", "/grammar", "/reading", "/listen", "/tools/chinese-tone-trainer",
