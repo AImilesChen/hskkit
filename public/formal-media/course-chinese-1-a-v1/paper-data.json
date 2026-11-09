@@ -1,0 +1,3171 @@
+{
+  "id": "course-chinese-1-a-v1",
+  "product": "HSKKit Chinese 1 Course Review",
+  "paperCode": "A",
+  "version": "content-draft-v1",
+  "authoredOn": "2026-11-09",
+  "status": "content_complete_pending_audio_listening_and_teacher_pilot",
+  "officialExam": false,
+  "purpose": "Review only the published HSKKit Chinese 1 course scope; no official school credit, ACTFL/HSK equivalence or placement certification.",
+  "blueprint": {
+    "id": "course-chinese-1-a-blueprint-v1",
+    "source": "docs/course-level-stage1-20261109/chinese-1-blueprint.json",
+    "sha256": "ac1b916e507d606ed48b308bf1f888f56d60d50dbe3437aa16984a32108d3856"
+  },
+  "provenance": {
+    "original": true,
+    "aiAssisted": true,
+    "competitorQuestionsCopied": false,
+    "relabelledHskQuestions": false,
+    "humanListeningAcceptance": false,
+    "teacherReview": false,
+    "learnerPilot": false,
+    "userAcceptance": false,
+    "traditionalScript": "OpenCC s2t; author comparison only, pending independent editorial review"
+  },
+  "order": [
+    "listening",
+    "reading",
+    "writing",
+    "speaking"
+  ],
+  "sections": [
+    {
+      "id": "listening",
+      "seconds": 900,
+      "objectiveItems": 20,
+      "groups": 4,
+      "itemsPerGroup": 5,
+      "sourcePlays": 2
+    },
+    {
+      "id": "reading",
+      "seconds": 1200,
+      "objectiveItems": 20,
+      "groups": 4,
+      "itemsPerGroup": 5
+    },
+    {
+      "id": "writing",
+      "seconds": 900,
+      "manualTasks": 2,
+      "sharedClock": true
+    },
+    {
+      "id": "speaking",
+      "seconds": 600,
+      "manualTasks": 2
+    }
+  ],
+  "counts": {
+    "listening": 20,
+    "reading": 20,
+    "writing": 2,
+    "speaking": 2,
+    "speakingRecordings": 5,
+    "topLevelTasks": 44
+  },
+  "scoring": {
+    "listeningMax": 20,
+    "readingMax": 20,
+    "pointsPerObjectiveItem": 1,
+    "incorrectOrUnansweredPoints": 0,
+    "manualTaskMax": 8,
+    "combinedScore": null,
+    "passCutoff": null,
+    "officialConversion": null,
+    "unsubmittedManual": "unsubmitted",
+    "technicalFailureManual": "needs_rerecording"
+  },
+  "materials": [
+    {
+      "id": "C1A-M01",
+      "title": "A new classmate",
+      "section": "listening",
+      "kind": "short-audio",
+      "original": true,
+      "script": [
+        {
+          "speaker": "male",
+          "text": {
+            "zh-Hans": "大家好，我叫王明。我今年十七岁，在明华学校上学。我哥哥十九岁，他在上海学习。",
+            "zh-Hant": "大家好，我叫王明。我今年十七歲，在明華學校上學。我哥哥十九歲，他在上海學習。"
+          }
+        }
+      ]
+    },
+    {
+      "id": "C1A-M02",
+      "title": "Jobs in the family",
+      "section": "listening",
+      "kind": "short-audio",
+      "original": true,
+      "script": [
+        {
+          "speaker": "female",
+          "text": {
+            "zh-Hans": "我家有四个人。爸爸是老师，妈妈是医生。我和弟弟都是学生。妈妈每天早上八点去医院。",
+            "zh-Hant": "我家有四個人。爸爸是老師，媽媽是醫生。我和弟弟都是學生。媽媽每天早上八點去醫院。"
+          }
+        }
+      ]
+    },
+    {
+      "id": "C1A-M03",
+      "title": "Two younger relatives",
+      "section": "listening",
+      "kind": "short-audio",
+      "original": true,
+      "script": [
+        {
+          "speaker": "male",
+          "text": {
+            "zh-Hans": "这是我妹妹的照片，她今年十五岁，喜欢唱歌。我弟弟只有九岁，喜欢画画。我每天和妹妹一起上学。",
+            "zh-Hant": "這是我妹妹的照片，她今年十五歲，喜歡唱歌。我弟弟只有九歲，喜歡畫畫。我每天和妹妹一起上學。"
+          }
+        }
+      ]
+    },
+    {
+      "id": "C1A-M04",
+      "title": "Where a classmate is from",
+      "section": "listening",
+      "kind": "short-audio",
+      "original": true,
+      "script": [
+        {
+          "speaker": "female",
+          "text": {
+            "zh-Hans": "我叫李安，是韩国人。现在我在北京学中文。我们班的老师是中国人，我的好朋友是美国人。",
+            "zh-Hant": "我叫李安，是韓國人。現在我在北京學中文。我們班的老師是中國人，我的好朋友是美國人。"
+          }
+        }
+      ]
+    },
+    {
+      "id": "C1A-M05",
+      "title": "Meeting at school",
+      "section": "listening",
+      "kind": "short-audio",
+      "original": true,
+      "script": [
+        {
+          "speaker": "male",
+          "text": {
+            "zh-Hans": "我是明华学校的学生。今天是星期一，我在学校门口等朋友。她是新同学，今天第一次来这里上课。",
+            "zh-Hant": "我是明華學校的學生。今天是星期一，我在學校門口等朋友。她是新同學，今天第一次來這裏上課。"
+          }
+        }
+      ]
+    },
+    {
+      "id": "C1A-M06",
+      "title": "A pencil for class",
+      "section": "listening",
+      "kind": "short-audio",
+      "original": true,
+      "script": [
+        {
+          "speaker": "female",
+          "text": {
+            "zh-Hans": "上课要用铅笔。你有铅笔吗？",
+            "zh-Hant": "上課要用鉛筆。你有鉛筆嗎？"
+          }
+        },
+        {
+          "speaker": "male",
+          "text": {
+            "zh-Hans": "我只有一支钢笔，没有铅笔。",
+            "zh-Hant": "我只有一支鋼筆，沒有鉛筆。"
+          }
+        },
+        {
+          "speaker": "female",
+          "text": {
+            "zh-Hans": "你可以先用我的，我有两支铅笔。",
+            "zh-Hant": "你可以先用我的，我有兩支鉛筆。"
+          }
+        }
+      ]
+    },
+    {
+      "id": "C1A-M07",
+      "title": "Borrowing a book",
+      "section": "listening",
+      "kind": "short-audio",
+      "original": true,
+      "script": [
+        {
+          "speaker": "male",
+          "text": {
+            "zh-Hans": "你的中文书能借我看一下吗？",
+            "zh-Hant": "你的中文書能借我看一下嗎？"
+          }
+        },
+        {
+          "speaker": "female",
+          "text": {
+            "zh-Hans": "可以，书在桌子上。",
+            "zh-Hant": "可以，書在桌子上。"
+          }
+        },
+        {
+          "speaker": "male",
+          "text": {
+            "zh-Hans": "谢谢。我的中文书在家里，英语书在书包里。",
+            "zh-Hant": "謝謝。我的中文書在家裏，英語書在書包裏。"
+          }
+        }
+      ]
+    },
+    {
+      "id": "C1A-M08",
+      "title": "Finding a classroom",
+      "section": "listening",
+      "kind": "short-audio",
+      "original": true,
+      "script": [
+        {
+          "speaker": "female",
+          "text": {
+            "zh-Hans": "老师，今天在哪儿上课？",
+            "zh-Hant": "老師，今天在哪兒上課？"
+          }
+        },
+        {
+          "speaker": "male",
+          "text": {
+            "zh-Hans": "在三楼的三零二教室，不是二楼。",
+            "zh-Hant": "在三樓的三零二教室，不是二樓。"
+          }
+        },
+        {
+          "speaker": "female",
+          "text": {
+            "zh-Hans": "好的，我现在去三楼等同学。",
+            "zh-Hant": "好的，我現在去三樓等同學。"
+          }
+        }
+      ]
+    },
+    {
+      "id": "C1A-M09",
+      "title": "After the lesson",
+      "section": "listening",
+      "kind": "short-audio",
+      "original": true,
+      "script": [
+        {
+          "speaker": "male",
+          "text": {
+            "zh-Hans": "下课后你去哪儿？去食堂吃饭吗？",
+            "zh-Hant": "下課後你去哪兒？去食堂喫飯嗎？"
+          }
+        },
+        {
+          "speaker": "female",
+          "text": {
+            "zh-Hans": "我先去图书馆借书，然后回家。今天我不在学校吃饭。",
+            "zh-Hant": "我先去圖書館借書，然後回家。今天我不在學校喫飯。"
+          }
+        }
+      ]
+    },
+    {
+      "id": "C1A-M10",
+      "title": "Today’s starting time",
+      "section": "listening",
+      "kind": "short-audio",
+      "original": true,
+      "script": [
+        {
+          "speaker": "female",
+          "text": {
+            "zh-Hans": "今天的中文课还是九点开始吗？",
+            "zh-Hant": "今天的中文課還是九點開始嗎？"
+          }
+        },
+        {
+          "speaker": "male",
+          "text": {
+            "zh-Hans": "不是，今天九点半开始，十点半下课。",
+            "zh-Hant": "不是，今天九點半開始，十點半下課。"
+          }
+        },
+        {
+          "speaker": "female",
+          "text": {
+            "zh-Hans": "好，那我九点二十到教室。",
+            "zh-Hant": "好，那我九點二十到教室。"
+          }
+        }
+      ]
+    },
+    {
+      "id": "C1A-M11",
+      "title": "Lunch and dinner",
+      "section": "listening",
+      "kind": "short-audio",
+      "original": true,
+      "script": [
+        {
+          "speaker": "male",
+          "text": {
+            "zh-Hans": "中午吃什么？你想吃面条吗？",
+            "zh-Hant": "中午喫什麼？你想喫麪條嗎？"
+          }
+        },
+        {
+          "speaker": "female",
+          "text": {
+            "zh-Hans": "晚上我想吃面条。现在我想吃米饭和鸡蛋，不想吃肉。",
+            "zh-Hant": "晚上我想喫麪條。現在我想喫米飯和雞蛋，不想喫肉。"
+          }
+        }
+      ]
+    },
+    {
+      "id": "C1A-M12",
+      "title": "Three breakfast drinks",
+      "section": "listening",
+      "kind": "short-audio",
+      "original": true,
+      "script": [
+        {
+          "speaker": "female",
+          "text": {
+            "zh-Hans": "早上妈妈喝茶，爸爸喝咖啡。我不喝茶，也不喝咖啡。我每天喝一杯牛奶，然后去上学。",
+            "zh-Hant": "早上媽媽喝茶，爸爸喝咖啡。我不喝茶，也不喝咖啡。我每天喝一杯牛奶，然後去上學。"
+          }
+        }
+      ]
+    },
+    {
+      "id": "C1A-M13",
+      "title": "Buying fruit",
+      "section": "listening",
+      "kind": "short-audio",
+      "original": true,
+      "script": [
+        {
+          "speaker": "female",
+          "text": {
+            "zh-Hans": "你要几个苹果？",
+            "zh-Hant": "你要幾個蘋果？"
+          }
+        },
+        {
+          "speaker": "male",
+          "text": {
+            "zh-Hans": "我要四个苹果，再要两个香蕉。",
+            "zh-Hant": "我要四個蘋果，再要兩個香蕉。"
+          }
+        },
+        {
+          "speaker": "female",
+          "text": {
+            "zh-Hans": "好的，四个苹果、两个香蕉，放在这个袋子里。",
+            "zh-Hant": "好的，四個蘋果、兩個香蕉，放在這個袋子裏。"
+          }
+        }
+      ]
+    },
+    {
+      "id": "C1A-M14",
+      "title": "The price of lunch",
+      "section": "listening",
+      "kind": "short-audio",
+      "original": true,
+      "script": [
+        {
+          "speaker": "male",
+          "text": {
+            "zh-Hans": "这份午饭多少钱？",
+            "zh-Hant": "這份午飯多少錢？"
+          }
+        },
+        {
+          "speaker": "female",
+          "text": {
+            "zh-Hans": "十二块。",
+            "zh-Hant": "十二塊。"
+          }
+        },
+        {
+          "speaker": "male",
+          "text": {
+            "zh-Hans": "给你二十块。",
+            "zh-Hant": "給你二十塊。"
+          }
+        },
+        {
+          "speaker": "female",
+          "text": {
+            "zh-Hans": "谢谢，找你八块。你的午饭在桌子上。",
+            "zh-Hant": "謝謝，找你八塊。你的午飯在桌子上。"
+          }
+        }
+      ]
+    },
+    {
+      "id": "C1A-M15",
+      "title": "Choosing a shirt",
+      "section": "listening",
+      "kind": "short-audio",
+      "original": true,
+      "script": [
+        {
+          "speaker": "female",
+          "text": {
+            "zh-Hans": "你喜欢这件红色的衣服吗？",
+            "zh-Hant": "你喜歡這件紅色的衣服嗎？"
+          }
+        },
+        {
+          "speaker": "male",
+          "text": {
+            "zh-Hans": "我喜欢蓝色的，不喜欢红色的。蓝色这件也不大，我就买这件吧。",
+            "zh-Hant": "我喜歡藍色的，不喜歡紅色的。藍色這件也不大，我就買這件吧。"
+          }
+        }
+      ]
+    },
+    {
+      "id": "C1A-M16",
+      "title": "Choosing a day",
+      "section": "listening",
+      "kind": "short-audio",
+      "original": true,
+      "script": [
+        {
+          "speaker": "male",
+          "text": {
+            "zh-Hans": "星期六一起去看电影，好吗？",
+            "zh-Hant": "星期六一起去看電影，好嗎？"
+          }
+        },
+        {
+          "speaker": "female",
+          "text": {
+            "zh-Hans": "星期六我要上课。星期天下午我有时间。",
+            "zh-Hant": "星期六我要上課。星期天下午我有時間。"
+          }
+        },
+        {
+          "speaker": "male",
+          "text": {
+            "zh-Hans": "好，我们星期天下午见。",
+            "zh-Hant": "好，我們星期天下午見。"
+          }
+        }
+      ]
+    },
+    {
+      "id": "C1A-M17",
+      "title": "Leaving after breakfast",
+      "section": "listening",
+      "kind": "short-audio",
+      "original": true,
+      "script": [
+        {
+          "speaker": "female",
+          "text": {
+            "zh-Hans": "你早上几点出门？",
+            "zh-Hant": "你早上幾點出門？"
+          }
+        },
+        {
+          "speaker": "male",
+          "text": {
+            "zh-Hans": "我六点半起床，七点吃早饭，七点半出门。学校很近，八点以前就能到。",
+            "zh-Hant": "我六點半起牀，七點喫早飯，七點半出門。學校很近，八點以前就能到。"
+          }
+        }
+      ]
+    },
+    {
+      "id": "C1A-M18",
+      "title": "A cold morning",
+      "section": "listening",
+      "kind": "short-audio",
+      "original": true,
+      "script": [
+        {
+          "speaker": "male",
+          "text": {
+            "zh-Hans": "今天外面很冷，你穿这件衣服去学校吗？",
+            "zh-Hant": "今天外面很冷，你穿這件衣服去學校嗎？"
+          }
+        },
+        {
+          "speaker": "female",
+          "text": {
+            "zh-Hans": "不穿这件薄的。我穿那件厚外套。",
+            "zh-Hant": "不穿這件薄的。我穿那件厚外套。"
+          }
+        },
+        {
+          "speaker": "male",
+          "text": {
+            "zh-Hans": "好，别忘了你的书包。",
+            "zh-Hant": "好，別忘了你的書包。"
+          }
+        }
+      ]
+    },
+    {
+      "id": "C1A-M19",
+      "title": "A shared activity",
+      "section": "listening",
+      "kind": "short-audio",
+      "original": true,
+      "script": [
+        {
+          "speaker": "female",
+          "text": {
+            "zh-Hans": "下午一起去打篮球吧？",
+            "zh-Hant": "下午一起去打籃球吧？"
+          }
+        },
+        {
+          "speaker": "male",
+          "text": {
+            "zh-Hans": "我不太会打篮球。我想去公园走走，你去吗？",
+            "zh-Hant": "我不太會打籃球。我想去公園走走，你去嗎？"
+          }
+        },
+        {
+          "speaker": "female",
+          "text": {
+            "zh-Hans": "好，我也想去公园。",
+            "zh-Hant": "好，我也想去公園。"
+          }
+        }
+      ]
+    },
+    {
+      "id": "C1A-M20",
+      "title": "A free afternoon",
+      "section": "listening",
+      "kind": "short-audio",
+      "original": true,
+      "script": [
+        {
+          "speaker": "male",
+          "text": {
+            "zh-Hans": "周末你喜欢做什么？",
+            "zh-Hant": "週末你喜歡做什麼？"
+          }
+        },
+        {
+          "speaker": "female",
+          "text": {
+            "zh-Hans": "我喜欢画画，也喜欢听音乐。这周六下午我要在家画画。星期天再去听音乐。",
+            "zh-Hant": "我喜歡畫畫，也喜歡聽音樂。這週六下午我要在家畫畫。星期天再去聽音樂。"
+          }
+        }
+      ]
+    },
+    {
+      "id": "C1A-M21",
+      "title": "Classmate profile",
+      "section": "reading",
+      "kind": "text-card",
+      "original": true,
+      "text": {
+        "zh-Hans": "新同学：金娜\n年龄：十六岁\n来自：韩国\n学校：明华学校\n家人：爸爸、妈妈、弟弟\n爱好：听音乐",
+        "zh-Hant": "新同學：金娜\n年齡：十六歲\n來自：韓國\n學校：明華學校\n家人：爸爸、媽媽、弟弟\n愛好：聽音樂"
+      }
+    },
+    {
+      "id": "C1A-M22",
+      "title": "A message about family",
+      "section": "reading",
+      "kind": "text-card",
+      "original": true,
+      "text": {
+        "zh-Hans": "小雨，你好！我爸爸在学校教中文，妈妈在医院工作，是医生。我哥哥在大学读书。我还在中学上学。\n王宁",
+        "zh-Hant": "小雨，你好！我爸爸在學校教中文，媽媽在醫院工作，是醫生。我哥哥在大學讀書。我還在中學上學。\n王寧"
+      }
+    },
+    {
+      "id": "C1A-M23",
+      "title": "Photo note",
+      "section": "reading",
+      "kind": "text-card",
+      "original": true,
+      "text": {
+        "zh-Hans": "照片上是我和妹妹。我今年十六岁，妹妹十二岁。她喜欢红色，我喜欢蓝色。我们星期天常常一起去公园。",
+        "zh-Hant": "照片上是我和妹妹。我今年十六歲，妹妹十二歲。她喜歡紅色，我喜歡藍色。我們星期天常常一起去公園。"
+      }
+    },
+    {
+      "id": "C1A-M24",
+      "title": "Who lives with whom",
+      "section": "reading",
+      "kind": "text-card",
+      "original": true,
+      "text": {
+        "zh-Hans": "你好，我是安娜。我现在和爸爸妈妈住在北京。哥哥在上海工作，不和我们一起住。我们星期日晚上给哥哥打电话。",
+        "zh-Hant": "你好，我是安娜。我現在和爸爸媽媽住在北京。哥哥在上海工作，不和我們一起住。我們星期日晚上給哥哥打電話。"
+      }
+    },
+    {
+      "id": "C1A-M25",
+      "title": "A welcome note",
+      "section": "reading",
+      "kind": "text-card",
+      "original": true,
+      "text": {
+        "zh-Hans": "新同学林明：\n欢迎来二班！我们在三楼302教室上课。请带中文书。今天九点上课，老师姓王。\n二班班长 小李",
+        "zh-Hant": "新同學林明：\n歡迎來二班！我們在三樓302教室上課。請帶中文書。今天九點上課，老師姓王。\n二班班長 小李"
+      }
+    },
+    {
+      "id": "C1A-M26",
+      "title": "What to bring tomorrow",
+      "section": "reading",
+      "kind": "text-card",
+      "original": true,
+      "text": {
+        "zh-Hans": "同学们：\n明天有画画课，请带铅笔和彩色笔。老师有纸，大家不用带纸。书包请放在桌子下面。\n刘老师",
+        "zh-Hant": "同學們：\n明天有畫畫課，請帶鉛筆和彩色筆。老師有紙，大家不用帶紙。書包請放在桌子下面。\n劉老師"
+      }
+    },
+    {
+      "id": "C1A-M27",
+      "title": "Morning timetable",
+      "section": "reading",
+      "kind": "text-card",
+      "original": true,
+      "text": {
+        "zh-Hans": "星期二上午课表\n中文：9:00—9:40\n英语：10:00—10:40\n数学：11:00—11:40\n请在上课前到教室。",
+        "zh-Hant": "星期二上午課表\n中文：9:00—9:40\n英語：10:00—10:40\n數學：11:00—11:40\n請在上課前到教室。"
+      }
+    },
+    {
+      "id": "C1A-M28",
+      "title": "Where to return a book",
+      "section": "reading",
+      "kind": "text-card",
+      "original": true,
+      "text": {
+        "zh-Hans": "小陈：\n你的书我看完了。今天下课后我把书放在王老师的桌子上。请你去办公室拿，不用来我们教室。\n小周",
+        "zh-Hant": "小陳：\n你的書我看完了。今天下課後我把書放在王老師的桌子上。請你去辦公室拿，不用來我們教室。\n小周"
+      }
+    },
+    {
+      "id": "C1A-M29",
+      "title": "A book left at home",
+      "section": "reading",
+      "kind": "text-card",
+      "original": true,
+      "text": {
+        "zh-Hans": "老师：\n我的中文书在家里，英语书在书包里。今天能借您的中文书用一下吗？下课后我就还给您。\n李小文",
+        "zh-Hant": "老師：\n我的中文書在家裏，英語書在書包裏。今天能借您的中文書用一下嗎？下課後我就還給您。\n李小文"
+      }
+    },
+    {
+      "id": "C1A-M30",
+      "title": "Two weekly activities",
+      "section": "reading",
+      "kind": "text-card",
+      "original": true,
+      "text": {
+        "zh-Hans": "小林的一周\n星期一下午：在学校打篮球\n星期三下午：在图书馆看书\n星期六上午：和妈妈买水果\n星期天：在家休息",
+        "zh-Hant": "小林的一週\n星期一下午：在學校打籃球\n星期三下午：在圖書館看書\n星期六上午：和媽媽買水果\n星期天：在家休息"
+      }
+    },
+    {
+      "id": "C1A-M31",
+      "title": "Lunch menu",
+      "section": "reading",
+      "kind": "text-card",
+      "original": true,
+      "text": {
+        "zh-Hans": "学校食堂菜单\n米饭：四元\n面条：六元\n鸡蛋：两元\n牛奶：五元\n中午十一点开始卖，下午一点结束。",
+        "zh-Hant": "學校食堂菜單\n米飯：四元\n麪條：六元\n雞蛋：兩元\n牛奶：五元\n中午十一點開始賣，下午一點結束。"
+      }
+    },
+    {
+      "id": "C1A-M32",
+      "title": "An order message",
+      "section": "reading",
+      "kind": "text-card",
+      "original": true,
+      "text": {
+        "zh-Hans": "妈妈：\n今天午饭我想吃米饭和鸡蛋，不要肉。妹妹想吃面条。请再给我买一瓶水，谢谢！我十二点回家。\n小安",
+        "zh-Hant": "媽媽：\n今天午飯我想喫米飯和雞蛋，不要肉。妹妹想喫麪條。請再給我買一瓶水，謝謝！我十二點回家。\n小安"
+      }
+    },
+    {
+      "id": "C1A-M33",
+      "title": "Fruit-shopping note",
+      "section": "reading",
+      "kind": "text-card",
+      "original": true,
+      "text": {
+        "zh-Hans": "爸爸：\n家里还有三个苹果，今天不用买苹果。请买两个香蕉和四个橙子。香蕉给妹妹，橙子我们一起吃。\n小美",
+        "zh-Hant": "爸爸：\n家裏還有三個蘋果，今天不用買蘋果。請買兩個香蕉和四個橙子。香蕉給妹妹，橙子我們一起喫。\n小美"
+      }
+    },
+    {
+      "id": "C1A-M34",
+      "title": "A drink request",
+      "section": "reading",
+      "kind": "text-card",
+      "original": true,
+      "text": {
+        "zh-Hans": "小李：\n今天有点儿冷，我不想喝冷水。请给我一杯热茶，不加糖。你的咖啡在桌子上。我在教室等你。\n小文",
+        "zh-Hant": "小李：\n今天有點兒冷，我不想喝冷水。請給我一杯熱茶，不加糖。你的咖啡在桌子上。我在教室等你。\n小文"
+      }
+    },
+    {
+      "id": "C1A-M35",
+      "title": "Choosing clothes",
+      "section": "reading",
+      "kind": "text-card",
+      "original": true,
+      "text": {
+        "zh-Hans": "小青：\n商店里有蓝色和白色的衬衫。我喜欢蓝色的，要小号。白色那件太大了，我不买。请你帮我看看蓝色小号多少钱。",
+        "zh-Hant": "小青：\n商店裏有藍色和白色的襯衫。我喜歡藍色的，要小號。白色那件太大了，我不買。請你幫我看看藍色小號多少錢。"
+      }
+    },
+    {
+      "id": "C1A-M36",
+      "title": "Changing the day",
+      "section": "reading",
+      "kind": "text-card",
+      "original": true,
+      "text": {
+        "zh-Hans": "小白：周六上午来我家，好吗？\n小林：周六我有课。周日上午九点可以吗？\n小白：可以，我九点在家等你。",
+        "zh-Hant": "小白：週六上午來我家，好嗎？\n小林：週六我有課。週日上午九點可以嗎？\n小白：可以，我九點在家等你。"
+      }
+    },
+    {
+      "id": "C1A-M37",
+      "title": "School-day morning",
+      "section": "reading",
+      "kind": "text-card",
+      "original": true,
+      "text": {
+        "zh-Hans": "我的早上\n六点起床，六点半吃早饭，七点坐公共汽车去学校。八点开始上课。爸爸七点半出门去工作。",
+        "zh-Hant": "我的早上\n六點起牀，六點半喫早飯，七點坐公共汽車去學校。八點開始上課。爸爸七點半出門去工作。"
+      }
+    },
+    {
+      "id": "C1A-M38",
+      "title": "A note before going out",
+      "section": "reading",
+      "kind": "text-card",
+      "original": true,
+      "text": {
+        "zh-Hans": "小雨：\n今天很热。去公园时请带帽子和水，不用带厚外套。你的蓝帽子在门口，白帽子在学校。\n妈妈",
+        "zh-Hant": "小雨：\n今天很熱。去公園時請帶帽子和水，不用帶厚外套。你的藍帽子在門口，白帽子在學校。\n媽媽"
+      }
+    },
+    {
+      "id": "C1A-M39",
+      "title": "A weekend invitation",
+      "section": "reading",
+      "kind": "text-card",
+      "original": true,
+      "text": {
+        "zh-Hans": "小周：周日下午一起去看电影吗？\n小陈：好啊！我上午要打篮球，下午有空。\n小周：那我们两点在电影院门口见。",
+        "zh-Hant": "小周：週日下午一起去看電影嗎？\n小陳：好啊！我上午要打籃球，下午有空。\n小周：那我們兩點在電影院門口見。"
+      }
+    },
+    {
+      "id": "C1A-M40",
+      "title": "Choosing a club",
+      "section": "reading",
+      "kind": "text-card",
+      "original": true,
+      "text": {
+        "zh-Hans": "学校活动\n画画：星期二下午，王老师教。\n唱歌：星期四下午，刘老师教。\n小红喜欢画画，不喜欢唱歌。她周二下午有空。",
+        "zh-Hant": "學校活動\n畫畫：星期二下午，王老師教。\n唱歌：星期四下午，劉老師教。\n小紅喜歡畫畫，不喜歡唱歌。她週二下午有空。"
+      }
+    }
+  ],
+  "questions": [
+    {
+      "id": "course-zh1-a-q01",
+      "number": 1,
+      "section": "listening",
+      "group": "L1",
+      "theme": "identity",
+      "materialId": "C1A-M01",
+      "target": "Identify the age of the speaker rather than a relative.",
+      "promptEn": "How old is Wang Ming?",
+      "options": {
+        "A": {
+          "zh-Hans": "十六岁",
+          "zh-Hant": "十六歲"
+        },
+        "B": {
+          "zh-Hans": "十七岁",
+          "zh-Hant": "十七歲"
+        },
+        "C": {
+          "zh-Hans": "十九岁",
+          "zh-Hant": "十九歲"
+        }
+      },
+      "correctAnswer": "B",
+      "evidence": {
+        "materialId": "C1A-M01",
+        "quote": {
+          "zh-Hans": "我今年十七岁",
+          "zh-Hant": "我今年十七歲"
+        }
+      },
+      "explanation": {
+        "en": "Wang Ming explicitly says he is seventeen.",
+        "zh": "王明说自己今年十七岁。"
+      },
+      "distractors": {
+        "A": {
+          "en": "Sixteen is not the age given.",
+          "zh": "稿件没有说王明十六岁。"
+        },
+        "C": {
+          "en": "Nineteen is his older brother’s age.",
+          "zh": "十九岁是哥哥的年龄。"
+        }
+      },
+      "reviewStatus": "author_self_checked_pending_teacher_and_user_review"
+    },
+    {
+      "id": "course-zh1-a-q02",
+      "number": 2,
+      "section": "listening",
+      "group": "L1",
+      "theme": "identity",
+      "materialId": "C1A-M02",
+      "target": "Identify a family member’s occupation.",
+      "promptEn": "What does the speaker’s mother do?",
+      "options": {
+        "A": {
+          "zh-Hans": "医生",
+          "zh-Hant": "醫生"
+        },
+        "B": {
+          "zh-Hans": "老师",
+          "zh-Hant": "老師"
+        },
+        "C": {
+          "zh-Hans": "学生",
+          "zh-Hant": "學生"
+        }
+      },
+      "correctAnswer": "A",
+      "evidence": {
+        "materialId": "C1A-M02",
+        "quote": {
+          "zh-Hans": "妈妈是医生",
+          "zh-Hant": "媽媽是醫生"
+        }
+      },
+      "explanation": {
+        "en": "The mother is identified as a doctor.",
+        "zh": "妈妈的工作是医生。"
+      },
+      "distractors": {
+        "B": {
+          "en": "The father, not the mother, is a teacher.",
+          "zh": "老师是爸爸的工作。"
+        },
+        "C": {
+          "en": "The speaker and younger brother are students.",
+          "zh": "学生指说话者和弟弟。"
+        }
+      },
+      "reviewStatus": "author_self_checked_pending_teacher_and_user_review"
+    },
+    {
+      "id": "course-zh1-a-q03",
+      "number": 3,
+      "section": "listening",
+      "group": "L1",
+      "theme": "identity",
+      "materialId": "C1A-M03",
+      "target": "Match an age to a family relationship.",
+      "promptEn": "Who is fifteen years old?",
+      "options": {
+        "A": {
+          "zh-Hans": "弟弟",
+          "zh-Hant": "弟弟"
+        },
+        "B": {
+          "zh-Hans": "哥哥",
+          "zh-Hant": "哥哥"
+        },
+        "C": {
+          "zh-Hans": "妹妹",
+          "zh-Hant": "妹妹"
+        }
+      },
+      "correctAnswer": "C",
+      "evidence": {
+        "materialId": "C1A-M03",
+        "quote": {
+          "zh-Hans": "我妹妹的照片，她今年十五岁",
+          "zh-Hant": "我妹妹的照片，她今年十五歲"
+        }
+      },
+      "explanation": {
+        "en": "The younger sister is explicitly fifteen.",
+        "zh": "说话者明确说妹妹十五岁。"
+      },
+      "distractors": {
+        "A": {
+          "en": "The younger brother is nine.",
+          "zh": "弟弟九岁，不是十五岁。"
+        },
+        "B": {
+          "en": "No older brother is described.",
+          "zh": "材料没有介绍哥哥。"
+        }
+      },
+      "reviewStatus": "author_self_checked_pending_teacher_and_user_review"
+    },
+    {
+      "id": "course-zh1-a-q04",
+      "number": 4,
+      "section": "listening",
+      "group": "L1",
+      "theme": "identity",
+      "materialId": "C1A-M04",
+      "target": "Distinguish the speaker’s nationality from others’ nationalities.",
+      "promptEn": "Where is Li An from?",
+      "options": {
+        "A": {
+          "zh-Hans": "中国",
+          "zh-Hant": "中國"
+        },
+        "B": {
+          "zh-Hans": "韩国",
+          "zh-Hant": "韓國"
+        },
+        "C": {
+          "zh-Hans": "美国",
+          "zh-Hant": "美國"
+        }
+      },
+      "correctAnswer": "B",
+      "evidence": {
+        "materialId": "C1A-M04",
+        "quote": {
+          "zh-Hans": "我叫李安，是韩国人",
+          "zh-Hant": "我叫李安，是韓國人"
+        }
+      },
+      "explanation": {
+        "en": "Li An introduces herself as Korean.",
+        "zh": "李安说自己是韩国人。"
+      },
+      "distractors": {
+        "A": {
+          "en": "The teacher is Chinese; Li An is not described that way.",
+          "zh": "中国人指老师。"
+        },
+        "C": {
+          "en": "Her friend, rather than Li An, is American.",
+          "zh": "美国人指她的好朋友。"
+        }
+      },
+      "reviewStatus": "author_self_checked_pending_teacher_and_user_review"
+    },
+    {
+      "id": "course-zh1-a-q05",
+      "number": 5,
+      "section": "listening",
+      "group": "L1",
+      "theme": "school",
+      "materialId": "C1A-M05",
+      "target": "Locate a familiar school meeting point.",
+      "promptEn": "Where is the speaker waiting?",
+      "options": {
+        "A": {
+          "zh-Hans": "家门口",
+          "zh-Hant": "家門口"
+        },
+        "B": {
+          "zh-Hans": "商店门口",
+          "zh-Hant": "商店門口"
+        },
+        "C": {
+          "zh-Hans": "学校门口",
+          "zh-Hant": "學校門口"
+        }
+      },
+      "correctAnswer": "C",
+      "evidence": {
+        "materialId": "C1A-M05",
+        "quote": {
+          "zh-Hans": "我在学校门口等朋友",
+          "zh-Hant": "我在學校門口等朋友"
+        }
+      },
+      "explanation": {
+        "en": "He says he is waiting at the school entrance.",
+        "zh": "他明确说在学校门口等朋友。"
+      },
+      "distractors": {
+        "A": {
+          "en": "The speaker is not waiting at home.",
+          "zh": "说话者没有在家门口等人。"
+        },
+        "B": {
+          "en": "No shop is mentioned.",
+          "zh": "材料没有提到商店。"
+        }
+      },
+      "reviewStatus": "author_self_checked_pending_teacher_and_user_review"
+    },
+    {
+      "id": "course-zh1-a-q06",
+      "number": 6,
+      "section": "listening",
+      "group": "L2",
+      "theme": "school",
+      "materialId": "C1A-M06",
+      "target": "Identify a missing classroom item.",
+      "promptEn": "What does the boy need for class?",
+      "options": {
+        "A": {
+          "zh-Hans": "铅笔",
+          "zh-Hant": "鉛筆"
+        },
+        "B": {
+          "zh-Hans": "钢笔",
+          "zh-Hant": "鋼筆"
+        },
+        "C": {
+          "zh-Hans": "尺子",
+          "zh-Hant": "尺子"
+        }
+      },
+      "correctAnswer": "A",
+      "evidence": {
+        "materialId": "C1A-M06",
+        "quote": {
+          "zh-Hans": "上课要用铅笔",
+          "zh-Hant": "上課要用鉛筆"
+        }
+      },
+      "explanation": {
+        "en": "The class requires a pencil, and he does not have one.",
+        "zh": "上课要用铅笔，男生没有。"
+      },
+      "distractors": {
+        "B": {
+          "en": "He already has a pen; it is not the requested item.",
+          "zh": "男生已有钢笔，但课堂需要铅笔。"
+        },
+        "C": {
+          "en": "A ruler is not mentioned.",
+          "zh": "材料没有提到尺子。"
+        }
+      },
+      "reviewStatus": "author_self_checked_pending_teacher_and_user_review"
+    },
+    {
+      "id": "course-zh1-a-q07",
+      "number": 7,
+      "section": "listening",
+      "group": "L2",
+      "theme": "school",
+      "materialId": "C1A-M07",
+      "target": "Identify the book being requested.",
+      "promptEn": "Which book does the boy want to borrow?",
+      "options": {
+        "A": {
+          "zh-Hans": "英语书",
+          "zh-Hant": "英語書"
+        },
+        "B": {
+          "zh-Hans": "数学书",
+          "zh-Hant": "數學書"
+        },
+        "C": {
+          "zh-Hans": "中文书",
+          "zh-Hant": "中文書"
+        }
+      },
+      "correctAnswer": "C",
+      "evidence": {
+        "materialId": "C1A-M07",
+        "quote": {
+          "zh-Hans": "你的中文书能借我看一下吗",
+          "zh-Hant": "你的中文書能借我看一下嗎"
+        }
+      },
+      "explanation": {
+        "en": "He directly asks to borrow the Chinese book.",
+        "zh": "男生直接提出借中文书。"
+      },
+      "distractors": {
+        "A": {
+          "en": "His English book is already in his bag.",
+          "zh": "他的英语书已经在书包里。"
+        },
+        "B": {
+          "en": "No mathematics book is requested.",
+          "zh": "他没有提出借数学书。"
+        }
+      },
+      "reviewStatus": "author_self_checked_pending_teacher_and_user_review"
+    },
+    {
+      "id": "course-zh1-a-q08",
+      "number": 8,
+      "section": "listening",
+      "group": "L2",
+      "theme": "school",
+      "materialId": "C1A-M08",
+      "target": "Identify a classroom number and floor.",
+      "promptEn": "Which classroom should the girl go to?",
+      "options": {
+        "A": {
+          "zh-Hans": "二楼201",
+          "zh-Hant": "二樓201"
+        },
+        "B": {
+          "zh-Hans": "三楼302",
+          "zh-Hant": "三樓302"
+        },
+        "C": {
+          "zh-Hans": "四楼402",
+          "zh-Hant": "四樓402"
+        }
+      },
+      "correctAnswer": "B",
+      "evidence": {
+        "materialId": "C1A-M08",
+        "quote": {
+          "zh-Hans": "在三楼的三零二教室",
+          "zh-Hant": "在三樓的三零二教室"
+        }
+      },
+      "explanation": {
+        "en": "The room is 302 on the third floor.",
+        "zh": "教室是三楼302。"
+      },
+      "distractors": {
+        "A": {
+          "en": "The teacher explicitly says not the second floor.",
+          "zh": "老师明确说不是二楼。"
+        },
+        "C": {
+          "en": "No fourth-floor room is given.",
+          "zh": "材料没有说去四楼。"
+        }
+      },
+      "reviewStatus": "author_self_checked_pending_teacher_and_user_review"
+    },
+    {
+      "id": "course-zh1-a-q09",
+      "number": 9,
+      "section": "listening",
+      "group": "L2",
+      "theme": "school",
+      "materialId": "C1A-M09",
+      "target": "Identify the first action in a short sequence.",
+      "promptEn": "What will the girl do first after class?",
+      "options": {
+        "A": {
+          "zh-Hans": "借书",
+          "zh-Hant": "借書"
+        },
+        "B": {
+          "zh-Hans": "吃饭",
+          "zh-Hant": "喫飯"
+        },
+        "C": {
+          "zh-Hans": "买衣服",
+          "zh-Hant": "買衣服"
+        }
+      },
+      "correctAnswer": "A",
+      "evidence": {
+        "materialId": "C1A-M09",
+        "quote": {
+          "zh-Hans": "我先去图书馆借书",
+          "zh-Hant": "我先去圖書館借書"
+        }
+      },
+      "explanation": {
+        "en": "She will first borrow books at the library.",
+        "zh": "女生说先去图书馆借书。"
+      },
+      "distractors": {
+        "B": {
+          "en": "She says she is not eating at school today.",
+          "zh": "她今天不在学校吃饭，吃饭也不是先做的事。"
+        },
+        "C": {
+          "en": "Buying clothes is not mentioned.",
+          "zh": "材料没有提到买衣服。"
+        }
+      },
+      "reviewStatus": "author_self_checked_pending_teacher_and_user_review"
+    },
+    {
+      "id": "course-zh1-a-q10",
+      "number": 10,
+      "section": "listening",
+      "group": "L2",
+      "theme": "schedule",
+      "materialId": "C1A-M10",
+      "target": "Distinguish the start time from an arrival or end time.",
+      "promptEn": "When does today’s Chinese class begin?",
+      "options": {
+        "A": {
+          "zh-Hans": "九点",
+          "zh-Hant": "九點"
+        },
+        "B": {
+          "zh-Hans": "十点半",
+          "zh-Hant": "十點半"
+        },
+        "C": {
+          "zh-Hans": "九点半",
+          "zh-Hant": "九點半"
+        }
+      },
+      "correctAnswer": "C",
+      "evidence": {
+        "materialId": "C1A-M10",
+        "quote": {
+          "zh-Hans": "今天九点半开始",
+          "zh-Hant": "今天九點半開始"
+        }
+      },
+      "explanation": {
+        "en": "The boy says class begins at nine thirty today.",
+        "zh": "男生说明今天九点半开始。"
+      },
+      "distractors": {
+        "A": {
+          "en": "Nine is the suggested time that is corrected.",
+          "zh": "九点是被否定的原先时间。"
+        },
+        "B": {
+          "en": "Ten thirty is the end of class.",
+          "zh": "十点半是下课时间。"
+        }
+      },
+      "reviewStatus": "author_self_checked_pending_teacher_and_user_review"
+    },
+    {
+      "id": "course-zh1-a-q11",
+      "number": 11,
+      "section": "listening",
+      "group": "L3",
+      "theme": "food",
+      "materialId": "C1A-M11",
+      "target": "Distinguish a present meal choice from a later one.",
+      "promptEn": "What does the girl want to eat now?",
+      "options": {
+        "A": {
+          "zh-Hans": "面条",
+          "zh-Hant": "麪條"
+        },
+        "B": {
+          "zh-Hans": "米饭和鸡蛋",
+          "zh-Hant": "米飯和雞蛋"
+        },
+        "C": {
+          "zh-Hans": "米饭和肉",
+          "zh-Hant": "米飯和肉"
+        }
+      },
+      "correctAnswer": "B",
+      "evidence": {
+        "materialId": "C1A-M11",
+        "quote": {
+          "zh-Hans": "现在我想吃米饭和鸡蛋",
+          "zh-Hant": "現在我想喫米飯和雞蛋"
+        }
+      },
+      "explanation": {
+        "en": "She chooses rice and eggs for now.",
+        "zh": "她现在想吃米饭和鸡蛋。"
+      },
+      "distractors": {
+        "A": {
+          "en": "Noodles are her choice for the evening.",
+          "zh": "面条是她晚上想吃的。"
+        },
+        "C": {
+          "en": "She explicitly does not want meat.",
+          "zh": "她说现在不想吃肉。"
+        }
+      },
+      "reviewStatus": "author_self_checked_pending_teacher_and_user_review"
+    },
+    {
+      "id": "course-zh1-a-q12",
+      "number": 12,
+      "section": "listening",
+      "group": "L3",
+      "theme": "food",
+      "materialId": "C1A-M12",
+      "target": "Identify the speaker’s own preference.",
+      "promptEn": "What does the speaker drink every morning?",
+      "options": {
+        "A": {
+          "zh-Hans": "牛奶",
+          "zh-Hant": "牛奶"
+        },
+        "B": {
+          "zh-Hans": "茶",
+          "zh-Hant": "茶"
+        },
+        "C": {
+          "zh-Hans": "咖啡",
+          "zh-Hant": "咖啡"
+        }
+      },
+      "correctAnswer": "A",
+      "evidence": {
+        "materialId": "C1A-M12",
+        "quote": {
+          "zh-Hans": "我每天喝一杯牛奶",
+          "zh-Hant": "我每天喝一杯牛奶"
+        }
+      },
+      "explanation": {
+        "en": "The speaker says she drinks milk every day.",
+        "zh": "说话者每天喝一杯牛奶。"
+      },
+      "distractors": {
+        "B": {
+          "en": "Tea is her mother’s drink, not hers.",
+          "zh": "茶是妈妈喝的，她自己不喝。"
+        },
+        "C": {
+          "en": "Coffee is her father’s drink, not hers.",
+          "zh": "咖啡是爸爸喝的，她自己不喝。"
+        }
+      },
+      "reviewStatus": "author_self_checked_pending_teacher_and_user_review"
+    },
+    {
+      "id": "course-zh1-a-q13",
+      "number": 13,
+      "section": "listening",
+      "group": "L3",
+      "theme": "food",
+      "materialId": "C1A-M13",
+      "target": "Identify a quantity attached to the correct item.",
+      "promptEn": "How many apples does the boy want?",
+      "options": {
+        "A": {
+          "zh-Hans": "两个",
+          "zh-Hant": "兩個"
+        },
+        "B": {
+          "zh-Hans": "六个",
+          "zh-Hant": "六個"
+        },
+        "C": {
+          "zh-Hans": "四个",
+          "zh-Hant": "四個"
+        }
+      },
+      "correctAnswer": "C",
+      "evidence": {
+        "materialId": "C1A-M13",
+        "quote": {
+          "zh-Hans": "我要四个苹果",
+          "zh-Hant": "我要四個蘋果"
+        }
+      },
+      "explanation": {
+        "en": "He requests four apples, repeated by the seller.",
+        "zh": "他要四个苹果，卖家也重复确认。"
+      },
+      "distractors": {
+        "A": {
+          "en": "Two is the number of bananas.",
+          "zh": "两个是香蕉的数量。"
+        },
+        "B": {
+          "en": "Six would combine both fruits, not just apples.",
+          "zh": "六个把两种水果加在一起，不是苹果数量。"
+        }
+      },
+      "reviewStatus": "author_self_checked_pending_teacher_and_user_review"
+    },
+    {
+      "id": "course-zh1-a-q14",
+      "number": 14,
+      "section": "listening",
+      "group": "L3",
+      "theme": "food",
+      "materialId": "C1A-M14",
+      "target": "Separate the stated price from payment and change.",
+      "promptEn": "How much does the lunch cost?",
+      "options": {
+        "A": {
+          "zh-Hans": "二十块",
+          "zh-Hant": "二十塊"
+        },
+        "B": {
+          "zh-Hans": "十二块",
+          "zh-Hant": "十二塊"
+        },
+        "C": {
+          "zh-Hans": "八块",
+          "zh-Hant": "八塊"
+        }
+      },
+      "correctAnswer": "B",
+      "evidence": {
+        "materialId": "C1A-M14",
+        "quote": {
+          "zh-Hans": "十二块",
+          "zh-Hant": "十二塊"
+        }
+      },
+      "explanation": {
+        "en": "The seller states that lunch costs twelve.",
+        "zh": "卖家直接说午饭十二块。"
+      },
+      "distractors": {
+        "A": {
+          "en": "Twenty is the amount handed over.",
+          "zh": "二十块是顾客付出的纸币金额。"
+        },
+        "C": {
+          "en": "Eight is the change returned.",
+          "zh": "八块是找回的零钱。"
+        }
+      },
+      "reviewStatus": "author_self_checked_pending_teacher_and_user_review"
+    },
+    {
+      "id": "course-zh1-a-q15",
+      "number": 15,
+      "section": "listening",
+      "group": "L3",
+      "theme": "clothing",
+      "materialId": "C1A-M15",
+      "target": "Identify a color preference expressed with negation.",
+      "promptEn": "Which color does the boy choose?",
+      "options": {
+        "A": {
+          "zh-Hans": "蓝色",
+          "zh-Hant": "藍色"
+        },
+        "B": {
+          "zh-Hans": "红色",
+          "zh-Hant": "紅色"
+        },
+        "C": {
+          "zh-Hans": "白色",
+          "zh-Hant": "白色"
+        }
+      },
+      "correctAnswer": "A",
+      "evidence": {
+        "materialId": "C1A-M15",
+        "quote": {
+          "zh-Hans": "我喜欢蓝色的，不喜欢红色的",
+          "zh-Hant": "我喜歡藍色的，不喜歡紅色的"
+        }
+      },
+      "explanation": {
+        "en": "He chooses the blue item.",
+        "zh": "他说喜欢蓝色，并决定买蓝色这件。"
+      },
+      "distractors": {
+        "B": {
+          "en": "He explicitly does not like red.",
+          "zh": "他明确说不喜欢红色。"
+        },
+        "C": {
+          "en": "White is not offered or selected in the dialogue.",
+          "zh": "对话没有提供或选择白色。"
+        }
+      },
+      "reviewStatus": "author_self_checked_pending_teacher_and_user_review"
+    },
+    {
+      "id": "course-zh1-a-q16",
+      "number": 16,
+      "section": "listening",
+      "group": "L4",
+      "theme": "schedule",
+      "materialId": "C1A-M16",
+      "target": "Identify the final agreed arrangement.",
+      "promptEn": "When will they meet?",
+      "options": {
+        "A": {
+          "zh-Hans": "星期六上午",
+          "zh-Hant": "星期六上午"
+        },
+        "B": {
+          "zh-Hans": "星期六下午",
+          "zh-Hant": "星期六下午"
+        },
+        "C": {
+          "zh-Hans": "星期天下午",
+          "zh-Hant": "星期天下午"
+        }
+      },
+      "correctAnswer": "C",
+      "evidence": {
+        "materialId": "C1A-M16",
+        "quote": {
+          "zh-Hans": "我们星期天下午见",
+          "zh-Hant": "我們星期天下午見"
+        }
+      },
+      "explanation": {
+        "en": "Both agree on Sunday afternoon.",
+        "zh": "双方最后约定周日下午见。"
+      },
+      "distractors": {
+        "A": {
+          "en": "Saturday is unavailable because she has class.",
+          "zh": "女生周六要上课，没有约在周六上午。"
+        },
+        "B": {
+          "en": "They do not agree to meet on Saturday.",
+          "zh": "他们没有同意周六下午见。"
+        }
+      },
+      "reviewStatus": "author_self_checked_pending_teacher_and_user_review"
+    },
+    {
+      "id": "course-zh1-a-q17",
+      "number": 17,
+      "section": "listening",
+      "group": "L4",
+      "theme": "schedule",
+      "materialId": "C1A-M17",
+      "target": "Identify one time among several daily activities.",
+      "promptEn": "When does the boy leave home?",
+      "options": {
+        "A": {
+          "zh-Hans": "六点半",
+          "zh-Hant": "六點半"
+        },
+        "B": {
+          "zh-Hans": "七点半",
+          "zh-Hant": "七點半"
+        },
+        "C": {
+          "zh-Hans": "七点",
+          "zh-Hant": "七點"
+        }
+      },
+      "correctAnswer": "B",
+      "evidence": {
+        "materialId": "C1A-M17",
+        "quote": {
+          "zh-Hans": "七点半出门",
+          "zh-Hant": "七點半出門"
+        }
+      },
+      "explanation": {
+        "en": "He leaves home at seven thirty.",
+        "zh": "他七点半出门。"
+      },
+      "distractors": {
+        "A": {
+          "en": "Six thirty is his waking time.",
+          "zh": "六点半是起床时间。"
+        },
+        "C": {
+          "en": "Seven is his breakfast time.",
+          "zh": "七点是吃早饭的时间。"
+        }
+      },
+      "reviewStatus": "author_self_checked_pending_teacher_and_user_review"
+    },
+    {
+      "id": "course-zh1-a-q18",
+      "number": 18,
+      "section": "listening",
+      "group": "L4",
+      "theme": "clothing",
+      "materialId": "C1A-M18",
+      "target": "Identify a clothing choice in a familiar weather context.",
+      "promptEn": "What will the girl wear?",
+      "options": {
+        "A": {
+          "zh-Hans": "厚外套",
+          "zh-Hant": "厚外套"
+        },
+        "B": {
+          "zh-Hans": "薄衣服",
+          "zh-Hant": "薄衣服"
+        },
+        "C": {
+          "zh-Hans": "短裤",
+          "zh-Hant": "短褲"
+        }
+      },
+      "correctAnswer": "A",
+      "evidence": {
+        "materialId": "C1A-M18",
+        "quote": {
+          "zh-Hans": "我穿那件厚外套",
+          "zh-Hant": "我穿那件厚外套"
+        }
+      },
+      "explanation": {
+        "en": "She chooses the thick coat for the cold weather.",
+        "zh": "她决定穿厚外套。"
+      },
+      "distractors": {
+        "B": {
+          "en": "She explicitly rejects the thin item.",
+          "zh": "她明确说不穿这件薄的。"
+        },
+        "C": {
+          "en": "Shorts are not mentioned.",
+          "zh": "材料没有提到短裤。"
+        }
+      },
+      "reviewStatus": "author_self_checked_pending_teacher_and_user_review"
+    },
+    {
+      "id": "course-zh1-a-q19",
+      "number": 19,
+      "section": "listening",
+      "group": "L4",
+      "theme": "leisure",
+      "materialId": "C1A-M19",
+      "target": "Identify an accepted alternative to an invitation.",
+      "promptEn": "What do they agree to do?",
+      "options": {
+        "A": {
+          "zh-Hans": "打篮球",
+          "zh-Hant": "打籃球"
+        },
+        "B": {
+          "zh-Hans": "去公园",
+          "zh-Hant": "去公園"
+        },
+        "C": {
+          "zh-Hans": "看电视",
+          "zh-Hant": "看電視"
+        }
+      },
+      "correctAnswer": "B",
+      "evidence": {
+        "materialId": "C1A-M19",
+        "quote": {
+          "zh-Hans": "好，我也想去公园",
+          "zh-Hant": "好，我也想去公園"
+        }
+      },
+      "explanation": {
+        "en": "Both agree to go to the park.",
+        "zh": "两人最后都同意去公园。"
+      },
+      "distractors": {
+        "A": {
+          "en": "Basketball is suggested first, but not chosen.",
+          "zh": "篮球是最初建议，最后没有选择。"
+        },
+        "C": {
+          "en": "Watching television is not mentioned.",
+          "zh": "材料没有提到看电视。"
+        }
+      },
+      "reviewStatus": "author_self_checked_pending_teacher_and_user_review"
+    },
+    {
+      "id": "course-zh1-a-q20",
+      "number": 20,
+      "section": "listening",
+      "group": "L4",
+      "theme": "leisure",
+      "materialId": "C1A-M20",
+      "target": "Match a leisure activity to the stated day.",
+      "promptEn": "What will the girl do on Saturday afternoon?",
+      "options": {
+        "A": {
+          "zh-Hans": "画画",
+          "zh-Hant": "畫畫"
+        },
+        "B": {
+          "zh-Hans": "听音乐",
+          "zh-Hant": "聽音樂"
+        },
+        "C": {
+          "zh-Hans": "唱歌",
+          "zh-Hant": "唱歌"
+        }
+      },
+      "correctAnswer": "A",
+      "evidence": {
+        "materialId": "C1A-M20",
+        "quote": {
+          "zh-Hans": "这周六下午我要在家画画",
+          "zh-Hant": "這週六下午我要在家畫畫"
+        }
+      },
+      "explanation": {
+        "en": "She will draw at home on Saturday afternoon.",
+        "zh": "她周六下午在家画画。"
+      },
+      "distractors": {
+        "B": {
+          "en": "Listening to music is planned for Sunday.",
+          "zh": "听音乐安排在星期天。"
+        },
+        "C": {
+          "en": "Singing is not in her stated plan.",
+          "zh": "她没有说计划唱歌。"
+        }
+      },
+      "reviewStatus": "author_self_checked_pending_teacher_and_user_review"
+    },
+    {
+      "id": "course-zh1-a-q21",
+      "number": 21,
+      "section": "reading",
+      "group": "R1",
+      "theme": "identity",
+      "materialId": "C1A-M21",
+      "target": "Read a country of origin on a personal profile.",
+      "promptEn": "Where is Jin Na from?",
+      "options": {
+        "A": {
+          "zh-Hans": "中国",
+          "zh-Hant": "中國"
+        },
+        "B": {
+          "zh-Hans": "美国",
+          "zh-Hant": "美國"
+        },
+        "C": {
+          "zh-Hans": "韩国",
+          "zh-Hant": "韓國"
+        }
+      },
+      "correctAnswer": "C",
+      "evidence": {
+        "materialId": "C1A-M21",
+        "quote": {
+          "zh-Hans": "来自：韩国",
+          "zh-Hant": "來自：韓國"
+        }
+      },
+      "explanation": {
+        "en": "The origin field gives Korea.",
+        "zh": "来自一栏写的是韩国。"
+      },
+      "distractors": {
+        "A": {
+          "en": "China is not the country listed on the profile.",
+          "zh": "资料卡没有把中国列为来源国家。"
+        },
+        "B": {
+          "en": "The profile does not say she is from the United States.",
+          "zh": "资料卡没有说她来自美国。"
+        }
+      },
+      "reviewStatus": "author_self_checked_pending_teacher_and_user_review"
+    },
+    {
+      "id": "course-zh1-a-q22",
+      "number": 22,
+      "section": "reading",
+      "group": "R1",
+      "theme": "identity",
+      "materialId": "C1A-M22",
+      "target": "Locate information about a particular family member.",
+      "promptEn": "Who studies at university?",
+      "options": {
+        "A": {
+          "zh-Hans": "爸爸",
+          "zh-Hant": "爸爸"
+        },
+        "B": {
+          "zh-Hans": "哥哥",
+          "zh-Hant": "哥哥"
+        },
+        "C": {
+          "zh-Hans": "妈妈",
+          "zh-Hant": "媽媽"
+        }
+      },
+      "correctAnswer": "B",
+      "evidence": {
+        "materialId": "C1A-M22",
+        "quote": {
+          "zh-Hans": "我哥哥在大学读书",
+          "zh-Hant": "我哥哥在大學讀書"
+        }
+      },
+      "explanation": {
+        "en": "The older brother studies at university.",
+        "zh": "原文说哥哥在大学读书。"
+      },
+      "distractors": {
+        "A": {
+          "en": "The father teaches Chinese at school.",
+          "zh": "爸爸在学校教中文。"
+        },
+        "C": {
+          "en": "The mother is a doctor working at a hospital.",
+          "zh": "妈妈是医院的医生。"
+        }
+      },
+      "reviewStatus": "author_self_checked_pending_teacher_and_user_review"
+    },
+    {
+      "id": "course-zh1-a-q23",
+      "number": 23,
+      "section": "reading",
+      "group": "R1",
+      "theme": "identity",
+      "materialId": "C1A-M23",
+      "target": "Find a relative’s age in a short note.",
+      "promptEn": "How old is the younger sister?",
+      "options": {
+        "A": {
+          "zh-Hans": "十二岁",
+          "zh-Hant": "十二歲"
+        },
+        "B": {
+          "zh-Hans": "十六岁",
+          "zh-Hant": "十六歲"
+        },
+        "C": {
+          "zh-Hans": "十四岁",
+          "zh-Hant": "十四歲"
+        }
+      },
+      "correctAnswer": "A",
+      "evidence": {
+        "materialId": "C1A-M23",
+        "quote": {
+          "zh-Hans": "妹妹十二岁",
+          "zh-Hant": "妹妹十二歲"
+        }
+      },
+      "explanation": {
+        "en": "The note explicitly gives the younger sister’s age as twelve.",
+        "zh": "照片说明明确写妹妹十二岁。"
+      },
+      "distractors": {
+        "B": {
+          "en": "Sixteen is the writer’s own age.",
+          "zh": "十六岁是作者自己的年龄。"
+        },
+        "C": {
+          "en": "Fourteen is not given in the note.",
+          "zh": "原文没有出现十四岁。"
+        }
+      },
+      "reviewStatus": "author_self_checked_pending_teacher_and_user_review"
+    },
+    {
+      "id": "course-zh1-a-q24",
+      "number": 24,
+      "section": "reading",
+      "group": "R1",
+      "theme": "identity",
+      "materialId": "C1A-M24",
+      "target": "Identify household members without inferring from stereotypes.",
+      "promptEn": "Who lives with Anna in Beijing?",
+      "options": {
+        "A": {
+          "zh-Hans": "哥哥",
+          "zh-Hant": "哥哥"
+        },
+        "B": {
+          "zh-Hans": "爷爷奶奶",
+          "zh-Hant": "爺爺奶奶"
+        },
+        "C": {
+          "zh-Hans": "爸爸妈妈",
+          "zh-Hant": "爸爸媽媽"
+        }
+      },
+      "correctAnswer": "C",
+      "evidence": {
+        "materialId": "C1A-M24",
+        "quote": {
+          "zh-Hans": "我现在和爸爸妈妈住在北京",
+          "zh-Hant": "我現在和爸爸媽媽住在北京"
+        }
+      },
+      "explanation": {
+        "en": "Anna says she lives with her parents.",
+        "zh": "安娜说自己和爸爸妈妈住在北京。"
+      },
+      "distractors": {
+        "A": {
+          "en": "Her older brother works in Shanghai and lives separately.",
+          "zh": "哥哥在上海工作，不与她同住。"
+        },
+        "B": {
+          "en": "Grandparents are not listed as living with her.",
+          "zh": "原文没有说爷爷奶奶和她住。"
+        }
+      },
+      "reviewStatus": "author_self_checked_pending_teacher_and_user_review"
+    },
+    {
+      "id": "course-zh1-a-q25",
+      "number": 25,
+      "section": "reading",
+      "group": "R1",
+      "theme": "school",
+      "materialId": "C1A-M25",
+      "target": "Distinguish a class number from a floor or room number.",
+      "promptEn": "Which class is Lin Ming joining?",
+      "options": {
+        "A": {
+          "zh-Hans": "一班",
+          "zh-Hant": "一班"
+        },
+        "B": {
+          "zh-Hans": "二班",
+          "zh-Hant": "二班"
+        },
+        "C": {
+          "zh-Hans": "三班",
+          "zh-Hant": "三班"
+        }
+      },
+      "correctAnswer": "B",
+      "evidence": {
+        "materialId": "C1A-M25",
+        "quote": {
+          "zh-Hans": "欢迎来二班",
+          "zh-Hant": "歡迎來二班"
+        }
+      },
+      "explanation": {
+        "en": "The welcome and signature both identify Class Two.",
+        "zh": "欢迎语和署名都说明是二班。"
+      },
+      "distractors": {
+        "A": {
+          "en": "The note does not welcome him to Class One.",
+          "zh": "便条不是欢迎他到一班。"
+        },
+        "C": {
+          "en": "The third floor is a location, not the class number.",
+          "zh": "三楼是楼层，不是三班。"
+        }
+      },
+      "reviewStatus": "author_self_checked_pending_teacher_and_user_review"
+    },
+    {
+      "id": "course-zh1-a-q26",
+      "number": 26,
+      "section": "reading",
+      "group": "R2",
+      "theme": "school",
+      "materialId": "C1A-M26",
+      "target": "Read a simple classroom instruction with negation.",
+      "promptEn": "Which item do students NOT need to bring?",
+      "options": {
+        "A": {
+          "zh-Hans": "纸",
+          "zh-Hant": "紙"
+        },
+        "B": {
+          "zh-Hans": "铅笔",
+          "zh-Hant": "鉛筆"
+        },
+        "C": {
+          "zh-Hans": "彩色笔",
+          "zh-Hant": "彩色筆"
+        }
+      },
+      "correctAnswer": "A",
+      "evidence": {
+        "materialId": "C1A-M26",
+        "quote": {
+          "zh-Hans": "大家不用带纸",
+          "zh-Hant": "大家不用帶紙"
+        }
+      },
+      "explanation": {
+        "en": "The teacher supplies paper and says not to bring it.",
+        "zh": "老师有纸，明确说大家不用带。"
+      },
+      "distractors": {
+        "B": {
+          "en": "Students are explicitly asked to bring pencils.",
+          "zh": "通知要求带铅笔。"
+        },
+        "C": {
+          "en": "Students are explicitly asked to bring colored pens.",
+          "zh": "通知要求带彩色笔。"
+        }
+      },
+      "reviewStatus": "author_self_checked_pending_teacher_and_user_review"
+    },
+    {
+      "id": "course-zh1-a-q27",
+      "number": 27,
+      "section": "reading",
+      "group": "R2",
+      "theme": "school",
+      "materialId": "C1A-M27",
+      "target": "Locate a lesson in a simple timetable.",
+      "promptEn": "Which lesson starts at ten o’clock?",
+      "options": {
+        "A": {
+          "zh-Hans": "中文",
+          "zh-Hant": "中文"
+        },
+        "B": {
+          "zh-Hans": "数学",
+          "zh-Hant": "數學"
+        },
+        "C": {
+          "zh-Hans": "英语",
+          "zh-Hant": "英語"
+        }
+      },
+      "correctAnswer": "C",
+      "evidence": {
+        "materialId": "C1A-M27",
+        "quote": {
+          "zh-Hans": "英语：10:00—10:40",
+          "zh-Hant": "英語：10:00—10:40"
+        }
+      },
+      "explanation": {
+        "en": "English is the ten-o’clock lesson.",
+        "zh": "课表写英语十点开始。"
+      },
+      "distractors": {
+        "A": {
+          "en": "Chinese begins at nine.",
+          "zh": "中文九点开始。"
+        },
+        "B": {
+          "en": "Mathematics begins at eleven.",
+          "zh": "数学十一点开始。"
+        }
+      },
+      "reviewStatus": "author_self_checked_pending_teacher_and_user_review"
+    },
+    {
+      "id": "course-zh1-a-q28",
+      "number": 28,
+      "section": "reading",
+      "group": "R2",
+      "theme": "school",
+      "materialId": "C1A-M28",
+      "target": "Follow a school message about collecting an item.",
+      "promptEn": "Where should Xiao Chen collect the book?",
+      "options": {
+        "A": {
+          "zh-Hans": "小周的教室",
+          "zh-Hant": "小周的教室"
+        },
+        "B": {
+          "zh-Hans": "办公室",
+          "zh-Hant": "辦公室"
+        },
+        "C": {
+          "zh-Hans": "图书馆",
+          "zh-Hant": "圖書館"
+        }
+      },
+      "correctAnswer": "B",
+      "evidence": {
+        "materialId": "C1A-M28",
+        "quote": {
+          "zh-Hans": "请你去办公室拿",
+          "zh-Hant": "請你去辦公室拿"
+        }
+      },
+      "explanation": {
+        "en": "The book is to be collected in the office.",
+        "zh": "便条让小陈去办公室拿书。"
+      },
+      "distractors": {
+        "A": {
+          "en": "The writer explicitly says not to come to their classroom.",
+          "zh": "小周明确说不用来自己教室。"
+        },
+        "C": {
+          "en": "The library is not the collection location.",
+          "zh": "便条没有安排在图书馆取书。"
+        }
+      },
+      "reviewStatus": "author_self_checked_pending_teacher_and_user_review"
+    },
+    {
+      "id": "course-zh1-a-q29",
+      "number": 29,
+      "section": "reading",
+      "group": "R2",
+      "theme": "school",
+      "materialId": "C1A-M29",
+      "target": "Identify the purpose of a short request.",
+      "promptEn": "What does Li Xiaowen ask to borrow?",
+      "options": {
+        "A": {
+          "zh-Hans": "英语书",
+          "zh-Hant": "英語書"
+        },
+        "B": {
+          "zh-Hans": "书包",
+          "zh-Hant": "書包"
+        },
+        "C": {
+          "zh-Hans": "中文书",
+          "zh-Hant": "中文書"
+        }
+      },
+      "correctAnswer": "C",
+      "evidence": {
+        "materialId": "C1A-M29",
+        "quote": {
+          "zh-Hans": "今天能借您的中文书用一下吗",
+          "zh-Hant": "今天能借您的中文書用一下嗎"
+        }
+      },
+      "explanation": {
+        "en": "The writer directly asks to use the teacher’s Chinese book.",
+        "zh": "学生直接请求借老师的中文书。"
+      },
+      "distractors": {
+        "A": {
+          "en": "The English book is already in the bag.",
+          "zh": "英语书已在书包里，不是借用目标。"
+        },
+        "B": {
+          "en": "The writer does not ask for a bag.",
+          "zh": "便条没有提出借书包。"
+        }
+      },
+      "reviewStatus": "author_self_checked_pending_teacher_and_user_review"
+    },
+    {
+      "id": "course-zh1-a-q30",
+      "number": 30,
+      "section": "reading",
+      "group": "R2",
+      "theme": "schedule",
+      "materialId": "C1A-M30",
+      "target": "Read the time of an activity in a weekly plan.",
+      "promptEn": "When does Xiao Lin play basketball?",
+      "options": {
+        "A": {
+          "zh-Hans": "星期一下午",
+          "zh-Hant": "星期一下午"
+        },
+        "B": {
+          "zh-Hans": "星期三下午",
+          "zh-Hant": "星期三下午"
+        },
+        "C": {
+          "zh-Hans": "星期六上午",
+          "zh-Hant": "星期六上午"
+        }
+      },
+      "correctAnswer": "A",
+      "evidence": {
+        "materialId": "C1A-M30",
+        "quote": {
+          "zh-Hans": "星期一下午：在学校打篮球",
+          "zh-Hant": "星期一下午：在學校打籃球"
+        }
+      },
+      "explanation": {
+        "en": "The schedule lists basketball on Monday afternoon.",
+        "zh": "安排表把篮球放在周一下午。"
+      },
+      "distractors": {
+        "B": {
+          "en": "Wednesday afternoon is for reading at the library.",
+          "zh": "周三下午是在图书馆看书。"
+        },
+        "C": {
+          "en": "Saturday morning is for buying fruit.",
+          "zh": "周六上午是和妈妈买水果。"
+        }
+      },
+      "reviewStatus": "author_self_checked_pending_teacher_and_user_review"
+    },
+    {
+      "id": "course-zh1-a-q31",
+      "number": 31,
+      "section": "reading",
+      "group": "R3",
+      "theme": "food",
+      "materialId": "C1A-M31",
+      "target": "Read a price from a functional menu without unnecessary arithmetic.",
+      "promptEn": "How much are the noodles?",
+      "options": {
+        "A": {
+          "zh-Hans": "四元",
+          "zh-Hant": "四元"
+        },
+        "B": {
+          "zh-Hans": "六元",
+          "zh-Hant": "六元"
+        },
+        "C": {
+          "zh-Hans": "五元",
+          "zh-Hant": "五元"
+        }
+      },
+      "correctAnswer": "B",
+      "evidence": {
+        "materialId": "C1A-M31",
+        "quote": {
+          "zh-Hans": "面条：六元",
+          "zh-Hant": "麪條：六元"
+        }
+      },
+      "explanation": {
+        "en": "The menu prices noodles at six yuan.",
+        "zh": "菜单标明面条六元。"
+      },
+      "distractors": {
+        "A": {
+          "en": "Four yuan is the price of rice.",
+          "zh": "四元是米饭价格。"
+        },
+        "C": {
+          "en": "Five yuan is the price of milk.",
+          "zh": "五元是牛奶价格。"
+        }
+      },
+      "reviewStatus": "author_self_checked_pending_teacher_and_user_review"
+    },
+    {
+      "id": "course-zh1-a-q32",
+      "number": 32,
+      "section": "reading",
+      "group": "R3",
+      "theme": "food",
+      "materialId": "C1A-M32",
+      "target": "Distinguish the writer’s meal from another person’s order.",
+      "promptEn": "What does Xiao An want for lunch?",
+      "options": {
+        "A": {
+          "zh-Hans": "米饭和鸡蛋",
+          "zh-Hant": "米飯和雞蛋"
+        },
+        "B": {
+          "zh-Hans": "面条",
+          "zh-Hant": "麪條"
+        },
+        "C": {
+          "zh-Hans": "米饭和肉",
+          "zh-Hant": "米飯和肉"
+        }
+      },
+      "correctAnswer": "A",
+      "evidence": {
+        "materialId": "C1A-M32",
+        "quote": {
+          "zh-Hans": "今天午饭我想吃米饭和鸡蛋",
+          "zh-Hant": "今天午飯我想喫米飯和雞蛋"
+        }
+      },
+      "explanation": {
+        "en": "Xiao An’s message requests rice and eggs.",
+        "zh": "小安在便条中要米饭和鸡蛋。"
+      },
+      "distractors": {
+        "B": {
+          "en": "The younger sister wants noodles.",
+          "zh": "面条是妹妹想吃的。"
+        },
+        "C": {
+          "en": "Xiao An explicitly says not to include meat.",
+          "zh": "小安明确说不要肉。"
+        }
+      },
+      "reviewStatus": "author_self_checked_pending_teacher_and_user_review"
+    },
+    {
+      "id": "course-zh1-a-q33",
+      "number": 33,
+      "section": "reading",
+      "group": "R3",
+      "theme": "food",
+      "materialId": "C1A-M33",
+      "target": "Match a quantity with the requested fruit.",
+      "promptEn": "What should Dad buy TWO of?",
+      "options": {
+        "A": {
+          "zh-Hans": "苹果",
+          "zh-Hant": "蘋果"
+        },
+        "B": {
+          "zh-Hans": "橙子",
+          "zh-Hant": "橙子"
+        },
+        "C": {
+          "zh-Hans": "香蕉",
+          "zh-Hant": "香蕉"
+        }
+      },
+      "correctAnswer": "C",
+      "evidence": {
+        "materialId": "C1A-M33",
+        "quote": {
+          "zh-Hans": "请买两个香蕉",
+          "zh-Hant": "請買兩個香蕉"
+        }
+      },
+      "explanation": {
+        "en": "The shopping note requests two bananas.",
+        "zh": "便条明确要求买两个香蕉。"
+      },
+      "distractors": {
+        "A": {
+          "en": "Apples are already at home and should not be bought today.",
+          "zh": "家里已有苹果，今天不用买。"
+        },
+        "B": {
+          "en": "The note requests four oranges.",
+          "zh": "橙子要买四个。"
+        }
+      },
+      "reviewStatus": "author_self_checked_pending_teacher_and_user_review"
+    },
+    {
+      "id": "course-zh1-a-q34",
+      "number": 34,
+      "section": "reading",
+      "group": "R3",
+      "theme": "food",
+      "materialId": "C1A-M34",
+      "target": "Read a simple drink preference and distinguish ownership.",
+      "promptEn": "What drink does Xiaowen request?",
+      "options": {
+        "A": {
+          "zh-Hans": "冷水",
+          "zh-Hant": "冷水"
+        },
+        "B": {
+          "zh-Hans": "热茶",
+          "zh-Hant": "熱茶"
+        },
+        "C": {
+          "zh-Hans": "咖啡",
+          "zh-Hant": "咖啡"
+        }
+      },
+      "correctAnswer": "B",
+      "evidence": {
+        "materialId": "C1A-M34",
+        "quote": {
+          "zh-Hans": "请给我一杯热茶",
+          "zh-Hant": "請給我一杯熱茶"
+        }
+      },
+      "explanation": {
+        "en": "The request is for a cup of hot tea without sugar.",
+        "zh": "小文要一杯不加糖的热茶。"
+      },
+      "distractors": {
+        "A": {
+          "en": "The writer explicitly does not want cold water.",
+          "zh": "小文明确说不想喝冷水。"
+        },
+        "C": {
+          "en": "The coffee belongs to Xiao Li, not the writer’s request.",
+          "zh": "咖啡是小李的，不是小文要的饮料。"
+        }
+      },
+      "reviewStatus": "author_self_checked_pending_teacher_and_user_review"
+    },
+    {
+      "id": "course-zh1-a-q35",
+      "number": 35,
+      "section": "reading",
+      "group": "R3",
+      "theme": "clothing",
+      "materialId": "C1A-M35",
+      "target": "Combine two explicit details in a clothing request.",
+      "promptEn": "Which shirt does the writer want?",
+      "options": {
+        "A": {
+          "zh-Hans": "白色大号",
+          "zh-Hant": "白色大號"
+        },
+        "B": {
+          "zh-Hans": "蓝色大号",
+          "zh-Hant": "藍色大號"
+        },
+        "C": {
+          "zh-Hans": "蓝色小号",
+          "zh-Hant": "藍色小號"
+        }
+      },
+      "correctAnswer": "C",
+      "evidence": {
+        "materialId": "C1A-M35",
+        "quote": {
+          "zh-Hans": "我喜欢蓝色的，要小号",
+          "zh-Hant": "我喜歡藍色的，要小號"
+        }
+      },
+      "explanation": {
+        "en": "Both the preferred color and size match.",
+        "zh": "蓝色小号同时符合颜色和尺码要求。"
+      },
+      "distractors": {
+        "A": {
+          "en": "The writer rejects the large white shirt.",
+          "zh": "作者不买太大的白色衬衫。"
+        },
+        "B": {
+          "en": "Blue is right, but the writer wants a small size.",
+          "zh": "颜色对，但作者要小号，不是大号。"
+        }
+      },
+      "reviewStatus": "author_self_checked_pending_teacher_and_user_review"
+    },
+    {
+      "id": "course-zh1-a-q36",
+      "number": 36,
+      "section": "reading",
+      "group": "R4",
+      "theme": "schedule",
+      "materialId": "C1A-M36",
+      "target": "Read a final arrangement across a short exchange.",
+      "promptEn": "When do they finally agree to meet?",
+      "options": {
+        "A": {
+          "zh-Hans": "周日上午九点",
+          "zh-Hant": "週日上午九點"
+        },
+        "B": {
+          "zh-Hans": "周六上午九点",
+          "zh-Hant": "週六上午九點"
+        },
+        "C": {
+          "zh-Hans": "周日上午十点",
+          "zh-Hant": "週日上午十點"
+        }
+      },
+      "correctAnswer": "A",
+      "evidence": {
+        "materialId": "C1A-M36",
+        "quote": {
+          "zh-Hans": "周日上午九点可以吗",
+          "zh-Hant": "週日上午九點可以嗎"
+        }
+      },
+      "explanation": {
+        "en": "The second message proposes Sunday at nine and the last accepts it.",
+        "zh": "小林提出周日九点，小白随后同意。"
+      },
+      "distractors": {
+        "B": {
+          "en": "Saturday is unavailable because Xiao Lin has class.",
+          "zh": "小林周六有课，双方没有约在周六九点。"
+        },
+        "C": {
+          "en": "The agreed hour is nine, not ten.",
+          "zh": "约定的是上午九点，不是十点。"
+        }
+      },
+      "reviewStatus": "author_self_checked_pending_teacher_and_user_review"
+    },
+    {
+      "id": "course-zh1-a-q37",
+      "number": 37,
+      "section": "reading",
+      "group": "R4",
+      "theme": "schedule",
+      "materialId": "C1A-M37",
+      "target": "Identify one person’s travel time in a daily sequence.",
+      "promptEn": "When does the writer take the bus?",
+      "options": {
+        "A": {
+          "zh-Hans": "六点半",
+          "zh-Hant": "六點半"
+        },
+        "B": {
+          "zh-Hans": "七点半",
+          "zh-Hant": "七點半"
+        },
+        "C": {
+          "zh-Hans": "七点",
+          "zh-Hant": "七點"
+        }
+      },
+      "correctAnswer": "C",
+      "evidence": {
+        "materialId": "C1A-M37",
+        "quote": {
+          "zh-Hans": "七点坐公共汽车去学校",
+          "zh-Hant": "七點坐公共汽車去學校"
+        }
+      },
+      "explanation": {
+        "en": "The writer takes the bus at seven.",
+        "zh": "作者七点坐公共汽车。"
+      },
+      "distractors": {
+        "A": {
+          "en": "Six thirty is breakfast time.",
+          "zh": "六点半是吃早饭时间。"
+        },
+        "B": {
+          "en": "Seven thirty is Dad’s leaving time.",
+          "zh": "七点半是爸爸出门时间。"
+        }
+      },
+      "reviewStatus": "author_self_checked_pending_teacher_and_user_review"
+    },
+    {
+      "id": "course-zh1-a-q38",
+      "number": 38,
+      "section": "reading",
+      "group": "R4",
+      "theme": "clothing",
+      "materialId": "C1A-M38",
+      "target": "Use a simple instruction and location to select clothing.",
+      "promptEn": "Which item of clothing should Xiaoyu take from home?",
+      "options": {
+        "A": {
+          "zh-Hans": "厚外套",
+          "zh-Hant": "厚外套"
+        },
+        "B": {
+          "zh-Hans": "蓝帽子",
+          "zh-Hant": "藍帽子"
+        },
+        "C": {
+          "zh-Hans": "白帽子",
+          "zh-Hant": "白帽子"
+        }
+      },
+      "correctAnswer": "B",
+      "evidence": {
+        "materialId": "C1A-M38",
+        "quote": {
+          "zh-Hans": "你的蓝帽子在门口，白帽子在学校",
+          "zh-Hant": "你的藍帽子在門口，白帽子在學校"
+        }
+      },
+      "explanation": {
+        "en": "A hat is requested, and the blue one is at home by the door.",
+        "zh": "需要带帽子，蓝帽子在家门口。"
+      },
+      "distractors": {
+        "A": {
+          "en": "The note explicitly says no thick coat is needed.",
+          "zh": "便条明确说不用带厚外套。"
+        },
+        "C": {
+          "en": "The white hat is at school, not at home.",
+          "zh": "白帽子在学校，不在家里。"
+        }
+      },
+      "reviewStatus": "author_self_checked_pending_teacher_and_user_review"
+    },
+    {
+      "id": "course-zh1-a-q39",
+      "number": 39,
+      "section": "reading",
+      "group": "R4",
+      "theme": "leisure",
+      "materialId": "C1A-M39",
+      "target": "Distinguish an accepted invitation from an earlier personal activity.",
+      "promptEn": "What will they do together on Sunday afternoon?",
+      "options": {
+        "A": {
+          "zh-Hans": "看电影",
+          "zh-Hant": "看電影"
+        },
+        "B": {
+          "zh-Hans": "打篮球",
+          "zh-Hant": "打籃球"
+        },
+        "C": {
+          "zh-Hans": "在家看书",
+          "zh-Hant": "在家看書"
+        }
+      },
+      "correctAnswer": "A",
+      "evidence": {
+        "materialId": "C1A-M39",
+        "quote": {
+          "zh-Hans": "周日下午一起去看电影吗",
+          "zh-Hant": "週日下午一起去看電影嗎"
+        }
+      },
+      "explanation": {
+        "en": "The invitation to see a film is accepted for the afternoon.",
+        "zh": "小陈同意了下午看电影的邀请。"
+      },
+      "distractors": {
+        "B": {
+          "en": "Basketball is Xiao Chen’s morning activity.",
+          "zh": "篮球是小陈上午的安排。"
+        },
+        "C": {
+          "en": "Reading at home is not the agreed activity.",
+          "zh": "对话没有约定在家看书。"
+        }
+      },
+      "reviewStatus": "author_self_checked_pending_teacher_and_user_review"
+    },
+    {
+      "id": "course-zh1-a-q40",
+      "number": 40,
+      "section": "reading",
+      "group": "R4",
+      "theme": "leisure",
+      "materialId": "C1A-M40",
+      "target": "Combine preference and schedule in choosing an activity.",
+      "promptEn": "Which activity fits Xiaohong’s preference and free time?",
+      "options": {
+        "A": {
+          "zh-Hans": "星期四唱歌",
+          "zh-Hant": "星期四唱歌"
+        },
+        "B": {
+          "zh-Hans": "星期二画画",
+          "zh-Hant": "星期二畫畫"
+        },
+        "C": {
+          "zh-Hans": "星期二唱歌",
+          "zh-Hant": "星期二唱歌"
+        }
+      },
+      "correctAnswer": "B",
+      "evidence": {
+        "materialId": "C1A-M40",
+        "quote": {
+          "zh-Hans": "画画：星期二下午",
+          "zh-Hant": "畫畫：星期二下午"
+        }
+      },
+      "explanation": {
+        "en": "Drawing matches both her preference and Tuesday availability.",
+        "zh": "周二画画同时符合喜好和空闲时间。"
+      },
+      "distractors": {
+        "A": {
+          "en": "She dislikes singing; her stated free time is Tuesday.",
+          "zh": "她不喜欢唱歌，明确有空的是周二下午。"
+        },
+        "C": {
+          "en": "The school does not list singing on Tuesday.",
+          "zh": "学校没有列出周二唱歌活动。"
+        }
+      },
+      "reviewStatus": "author_self_checked_pending_teacher_and_user_review"
+    }
+  ],
+  "tasks": [
+    {
+      "id": "W1",
+      "section": "writing",
+      "type": "short-message-reply",
+      "title": "Reply to an invitation",
+      "promptEn": "Your classmate sent the message below. Reply in Chinese. Say whether you can come on Saturday, give a time or another day that works for you, and ask one relevant question. You may invent personal details. About 20-40 Chinese characters is a guide, not a minimum.",
+      "stimulus": {
+        "zh-Hans": "小林：你好！星期六来我家吃午饭，好吗？你想吃米饭还是面条？你几点有空？\n小周",
+        "zh-Hant": "小林：你好！星期六來我家喫午飯，好嗎？你想喫米飯還是麪條？你幾點有空？\n小周"
+      },
+      "requirements": [
+        "Respond to the Saturday invitation.",
+        "Give a workable time or suggest another day.",
+        "Ask one question related to the visit."
+      ],
+      "optionalDetail": "You may also answer the meal-choice question; this is not a fourth required scoring point.",
+      "reference": {
+        "zh-Hans": "小周，你好！周六可以。我想吃面条，十一点有空。你家在哪儿？谢谢！",
+        "zh-Hant": "小周，你好！週六可以。我想喫麪條，十一點有空。你家在哪兒？謝謝！"
+      },
+      "alternateReference": {
+        "zh-Hans": "你好！周六我有课，周日可以吗？我十二点有空。你家在哪儿？",
+        "zh-Hant": "你好！週六我有課，週日可以嗎？我十二點有空。你家在哪兒？"
+      },
+      "reviewNotes": [
+        "Accept a polite decline plus an alternative day; acceptance is not required.",
+        "Names and personal details may differ.",
+        "A relevant question about location, arrival or food can meet the question requirement."
+      ],
+      "suggestedHanzi": [
+        20,
+        40
+      ],
+      "enforcedMinimum": null,
+      "sharedTimingGroup": "writing",
+      "rubric": {
+        "maxPoints": 8,
+        "dimensions": [
+          {
+            "id": "completion",
+            "name": "任务完成",
+            "levels": {
+              "0": "无相关可评内容。",
+              "1": "回应部分要求，遗漏关键信息。",
+              "2": "以初阶表达回应主要要求。"
+            }
+          },
+          {
+            "id": "comprehensibility",
+            "name": "可理解性",
+            "levels": {
+              "0": "大部分意思无法恢复。",
+              "1": "部分需借助上下文猜测。",
+              "2": "主要意思能够理解。"
+            }
+          },
+          {
+            "id": "language",
+            "name": "基础语言运用",
+            "levels": {
+              "0": "缺少可用于表达目标意思的中文。",
+              "1": "有限词句传达部分意思，错误有时干扰。",
+              "2": "简单词句基本适合情境，允许初阶错误。"
+            }
+          },
+          {
+            "id": "organization",
+            "name": "组织／相关回应",
+            "levels": {
+              "0": "缺乏可辨关系或相关回应。",
+              "1": "有部分顺序或相关回应。",
+              "2": "简单但连贯，回应相关、易于跟随。"
+            }
+          }
+        ],
+        "missing": "unsubmitted",
+        "technicalFailure": "needs_rerecording",
+        "automaticGrade": false,
+        "reviewerOptions": [
+          "self",
+          "own_teacher"
+        ],
+        "teacherServiceIncluded": false,
+        "notes": "One profile per task. Accent similarity to native speakers and suggested length are not scoring criteria. For S1, a missing individual response is recorded separately; review available responses as a partial task. Mark the whole task unsubmitted only if no response is submitted. A technical failure needs rerecording rather than an automatic zero."
+      }
+    },
+    {
+      "id": "W2",
+      "section": "writing",
+      "type": "profile-or-day-description",
+      "title": "Introduce a student",
+      "promptEn": "Use the fictional profile below to introduce Lin An in Chinese. Include the person’s name and age, school and class starting time, and at least one preference. Write connected simple sentences. About 40-70 Chinese characters is a guide, not a minimum. Do not substitute your own private information.",
+      "stimulus": {
+        "zh-Hans": "姓名：林安\n年龄：十六岁\n学校：明华学校\n上课：上午九点\n喜欢：画画、米饭\n不喜欢：咖啡",
+        "zh-Hant": "姓名：林安\n年齡：十六歲\n學校：明華學校\n上課：上午九點\n喜歡：畫畫、米飯\n不喜歡：咖啡"
+      },
+      "requirements": [
+        "Identify Lin An by name and age.",
+        "Give the school and the class starting time.",
+        "State at least one preference consistently with the card."
+      ],
+      "reference": {
+        "zh-Hans": "这是林安，今年十六岁。林安在明华学校上学，上午九点开始上课。林安喜欢画画，也喜欢吃米饭。林安不喜欢喝咖啡。",
+        "zh-Hant": "這是林安，今年十六歲。林安在明華學校上學，上午九點開始上課。林安喜歡畫畫，也喜歡喫米飯。林安不喜歡喝咖啡。"
+      },
+      "reviewNotes": [
+        "All facts come from the fictional card; gender need not be inferred.",
+        "Any one listed preference meets that requirement.",
+        "A list copied without sentences gives less evidence of organization; do not impose an arbitrary length penalty."
+      ],
+      "suggestedHanzi": [
+        40,
+        70
+      ],
+      "enforcedMinimum": null,
+      "sharedTimingGroup": "writing",
+      "rubric": {
+        "maxPoints": 8,
+        "dimensions": [
+          {
+            "id": "completion",
+            "name": "任务完成",
+            "levels": {
+              "0": "无相关可评内容。",
+              "1": "回应部分要求，遗漏关键信息。",
+              "2": "以初阶表达回应主要要求。"
+            }
+          },
+          {
+            "id": "comprehensibility",
+            "name": "可理解性",
+            "levels": {
+              "0": "大部分意思无法恢复。",
+              "1": "部分需借助上下文猜测。",
+              "2": "主要意思能够理解。"
+            }
+          },
+          {
+            "id": "language",
+            "name": "基础语言运用",
+            "levels": {
+              "0": "缺少可用于表达目标意思的中文。",
+              "1": "有限词句传达部分意思，错误有时干扰。",
+              "2": "简单词句基本适合情境，允许初阶错误。"
+            }
+          },
+          {
+            "id": "organization",
+            "name": "组织／相关回应",
+            "levels": {
+              "0": "缺乏可辨关系或相关回应。",
+              "1": "有部分顺序或相关回应。",
+              "2": "简单但连贯，回应相关、易于跟随。"
+            }
+          }
+        ],
+        "missing": "unsubmitted",
+        "technicalFailure": "needs_rerecording",
+        "automaticGrade": false,
+        "reviewerOptions": [
+          "self",
+          "own_teacher"
+        ],
+        "teacherServiceIncluded": false,
+        "notes": "One profile per task. Accent similarity to native speakers and suggested length are not scoring criteria. For S1, a missing individual response is recorded separately; review available responses as a partial task. Mark the whole task unsubmitted only if no response is submitted. A technical failure needs rerecording rather than an automatic zero."
+      }
+    },
+    {
+      "id": "S1",
+      "section": "speaking",
+      "type": "simulated-guided-exchange",
+      "title": "Meet a classmate",
+      "promptEn": "Respond in Chinese to four recorded prompts. Each prompt plays twice, followed by 10 seconds to prepare and up to 20 seconds to record. Use real or invented information. The four responses form ONE task, reviewed together out of eight. These are fixed prompts, not an adaptive conversation.",
+      "scenarioEn": "A new classmate asks about you and proposes an activity. Listen to the questions rather than reading their transcripts.",
+      "exchanges": [
+        {
+          "id": "S1-1",
+          "speaker": "female",
+          "prompt": {
+            "zh-Hans": "你好！你叫什么名字？今年多大？",
+            "zh-Hant": "你好！你叫什麼名字？今年多大？"
+          },
+          "reference": {
+            "zh-Hans": "你好，我叫李安，今年十六岁。",
+            "zh-Hant": "你好，我叫李安，今年十六歲。"
+          },
+          "checklist": [
+            "Give a name and an age; invented details are acceptable."
+          ]
+        },
+        {
+          "id": "S1-2",
+          "speaker": "female",
+          "prompt": {
+            "zh-Hans": "你喜欢吃什么？喜欢喝什么？",
+            "zh-Hant": "你喜歡喫什麼？喜歡喝什麼？"
+          },
+          "reference": {
+            "zh-Hans": "我喜欢吃面条，喜欢喝牛奶。",
+            "zh-Hant": "我喜歡喫麪條，喜歡喝牛奶。"
+          },
+          "checklist": [
+            "Give a food and a drink preference."
+          ]
+        },
+        {
+          "id": "S1-3",
+          "speaker": "female",
+          "prompt": {
+            "zh-Hans": "你早上几点去学校？几点上课？",
+            "zh-Hant": "你早上幾點去學校？幾點上課？"
+          },
+          "reference": {
+            "zh-Hans": "我七点半去学校，八点上课。",
+            "zh-Hant": "我七點半去學校，八點上課。"
+          },
+          "checklist": [
+            "Respond with a travel time and a class time."
+          ]
+        },
+        {
+          "id": "S1-4",
+          "speaker": "female",
+          "prompt": {
+            "zh-Hans": "星期六一起去公园，好吗？你几点有空？",
+            "zh-Hant": "星期六一起去公園，好嗎？你幾點有空？"
+          },
+          "reference": {
+            "zh-Hans": "好啊！我星期六下午两点有空。",
+            "zh-Hant": "好啊！我星期六下午兩點有空。"
+          },
+          "alternateReference": {
+            "zh-Hans": "对不起，星期六我有课。星期天下午可以吗？",
+            "zh-Hant": "對不起，星期六我有課。星期天下午可以嗎？"
+          },
+          "checklist": [
+            "Accept with a time, or decline and suggest an alternative."
+          ]
+        }
+      ],
+      "playsPerPrompt": 2,
+      "preparationSecondsPerPrompt": 10,
+      "responseSecondsPerPrompt": 20,
+      "rubricScope": "all_four_responses_together",
+      "rubric": {
+        "maxPoints": 8,
+        "dimensions": [
+          {
+            "id": "completion",
+            "name": "任务完成",
+            "levels": {
+              "0": "无相关可评内容。",
+              "1": "回应部分要求，遗漏关键信息。",
+              "2": "以初阶表达回应主要要求。"
+            }
+          },
+          {
+            "id": "comprehensibility",
+            "name": "可理解性",
+            "levels": {
+              "0": "大部分意思无法恢复。",
+              "1": "部分需借助上下文猜测。",
+              "2": "主要意思能够理解。"
+            }
+          },
+          {
+            "id": "language",
+            "name": "基础语言运用",
+            "levels": {
+              "0": "缺少可用于表达目标意思的中文。",
+              "1": "有限词句传达部分意思，错误有时干扰。",
+              "2": "简单词句基本适合情境，允许初阶错误。"
+            }
+          },
+          {
+            "id": "organization",
+            "name": "组织／相关回应",
+            "levels": {
+              "0": "缺乏可辨关系或相关回应。",
+              "1": "有部分顺序或相关回应。",
+              "2": "简单但连贯，回应相关、易于跟随。"
+            }
+          }
+        ],
+        "missing": "unsubmitted",
+        "technicalFailure": "needs_rerecording",
+        "automaticGrade": false,
+        "reviewerOptions": [
+          "self",
+          "own_teacher"
+        ],
+        "teacherServiceIncluded": false,
+        "notes": "One profile per task. Accent similarity to native speakers and suggested length are not scoring criteria. For S1, a missing individual response is recorded separately; review available responses as a partial task. Mark the whole task unsubmitted only if no response is submitted. A technical failure needs rerecording rather than an automatic zero."
+      }
+    },
+    {
+      "id": "S2",
+      "section": "speaking",
+      "type": "short-presentation",
+      "title": "Tell a classmate about a school day",
+      "promptEn": "Introduce the fictional student’s day in Chinese using the card. Include who the student is, when and where the student studies, and one after-school activity. You have 60 seconds to prepare and up to 60 seconds to speak. Simple sentences are enough; no minimum recording length is enforced.",
+      "stimulus": {
+        "zh-Hans": "姓名：王宁\n学校：明华学校\n八点：在学校上课\n十二点：吃午饭\n下午三点：下课\n下课后：去公园走走",
+        "zh-Hant": "姓名：王寧\n學校：明華學校\n八點：在學校上課\n十二點：喫午飯\n下午三點：下課\n下課後：去公園走走"
+      },
+      "requirements": [
+        "Identify Wang Ning.",
+        "Give the school and at least one class time from the card.",
+        "Describe the after-school activity."
+      ],
+      "reference": {
+        "zh-Hans": "这是王宁。王宁在明华学校上学，早上八点开始上课。十二点吃午饭，下午三点下课。下课以后，王宁去公园走走。",
+        "zh-Hant": "這是王寧。王寧在明華學校上學，早上八點開始上課。十二點喫午飯，下午三點下課。下課以後，王寧去公園走走。"
+      },
+      "reviewNotes": [
+        "Not all times must be recited to meet the task.",
+        "Short comprehensible sentences are sufficient; a native-like accent or a full sixty-second answer is not required."
+      ],
+      "preparationSeconds": 60,
+      "responseSeconds": 60,
+      "rubric": {
+        "maxPoints": 8,
+        "dimensions": [
+          {
+            "id": "completion",
+            "name": "任务完成",
+            "levels": {
+              "0": "无相关可评内容。",
+              "1": "回应部分要求，遗漏关键信息。",
+              "2": "以初阶表达回应主要要求。"
+            }
+          },
+          {
+            "id": "comprehensibility",
+            "name": "可理解性",
+            "levels": {
+              "0": "大部分意思无法恢复。",
+              "1": "部分需借助上下文猜测。",
+              "2": "主要意思能够理解。"
+            }
+          },
+          {
+            "id": "language",
+            "name": "基础语言运用",
+            "levels": {
+              "0": "缺少可用于表达目标意思的中文。",
+              "1": "有限词句传达部分意思，错误有时干扰。",
+              "2": "简单词句基本适合情境，允许初阶错误。"
+            }
+          },
+          {
+            "id": "organization",
+            "name": "组织／相关回应",
+            "levels": {
+              "0": "缺乏可辨关系或相关回应。",
+              "1": "有部分顺序或相关回应。",
+              "2": "简单但连贯，回应相关、易于跟随。"
+            }
+          }
+        ],
+        "missing": "unsubmitted",
+        "technicalFailure": "needs_rerecording",
+        "automaticGrade": false,
+        "reviewerOptions": [
+          "self",
+          "own_teacher"
+        ],
+        "teacherServiceIncluded": false,
+        "notes": "One profile per task. Accent similarity to native speakers and suggested length are not scoring criteria. For S1, a missing individual response is recorded separately; review available responses as a partial task. Mark the whole task unsubmitted only if no response is submitted. A technical failure needs rerecording rather than an automatic zero."
+      }
+    }
+  ],
+  "instructions": {
+    "en": "Choose one of three answers for each listening or reading question. Listening sources play twice in the timed track. Writing tasks share 15 minutes. Oral responses are recorded separately; they need self-review or review by your own teacher. No automatic writing/speaking grade or teacher-marking service is included. Use invented personal details if preferred.",
+    "zh": "听读每题三选一。计时听力每段两遍。写作两题共用十五分钟。口语分别录音，口写用量表自评或交由自己的教师评阅，不自动批改，不包含本站人工代评。个人资料可以虚构。"
+  },
+  "vocabularySupport": [
+    {
+      "term": {
+        "zh-Hans": "铅笔",
+        "zh-Hant": "鉛筆"
+      },
+      "pinyin": "qiānbǐ",
+      "meaningEn": "pencil"
+    },
+    {
+      "term": {
+        "zh-Hans": "钢笔",
+        "zh-Hant": "鋼筆"
+      },
+      "pinyin": "gāngbǐ",
+      "meaningEn": "pen"
+    },
+    {
+      "term": {
+        "zh-Hans": "教室",
+        "zh-Hant": "教室"
+      },
+      "pinyin": "jiàoshì",
+      "meaningEn": "classroom"
+    },
+    {
+      "term": {
+        "zh-Hans": "图书馆",
+        "zh-Hant": "圖書館"
+      },
+      "pinyin": "túshūguǎn",
+      "meaningEn": "library"
+    },
+    {
+      "term": {
+        "zh-Hans": "办公室",
+        "zh-Hant": "辦公室"
+      },
+      "pinyin": "bàngōngshì",
+      "meaningEn": "office"
+    },
+    {
+      "term": {
+        "zh-Hans": "食堂",
+        "zh-Hant": "食堂"
+      },
+      "pinyin": "shítáng",
+      "meaningEn": "school canteen"
+    },
+    {
+      "term": {
+        "zh-Hans": "衬衫",
+        "zh-Hant": "襯衫"
+      },
+      "pinyin": "chènshān",
+      "meaningEn": "shirt"
+    },
+    {
+      "term": {
+        "zh-Hans": "小号",
+        "zh-Hant": "小號"
+      },
+      "pinyin": "xiǎohào",
+      "meaningEn": "small size"
+    },
+    {
+      "term": {
+        "zh-Hans": "外套",
+        "zh-Hant": "外套"
+      },
+      "pinyin": "wàitào",
+      "meaningEn": "coat"
+    },
+    {
+      "term": {
+        "zh-Hans": "厚",
+        "zh-Hant": "厚"
+      },
+      "pinyin": "hòu",
+      "meaningEn": "thick"
+    },
+    {
+      "term": {
+        "zh-Hans": "薄",
+        "zh-Hant": "薄"
+      },
+      "pinyin": "báo",
+      "meaningEn": "thin"
+    },
+    {
+      "term": {
+        "zh-Hans": "帽子",
+        "zh-Hant": "帽子"
+      },
+      "pinyin": "màozi",
+      "meaningEn": "hat"
+    },
+    {
+      "term": {
+        "zh-Hans": "橙子",
+        "zh-Hant": "橙子"
+      },
+      "pinyin": "chéngzi",
+      "meaningEn": "orange"
+    },
+    {
+      "term": {
+        "zh-Hans": "公共汽车",
+        "zh-Hant": "公共汽車"
+      },
+      "pinyin": "gōnggòng qìchē",
+      "meaningEn": "bus"
+    }
+  ],
+  "supportPolicy": "Optional vocabulary support is for preparation/practice. Do not include it in the timed learner paper or compare assisted and unassisted attempts as identical.",
+  "nextAcceptance": [
+    "Audio technical validation and actual pacing",
+    "Human listening acceptance",
+    "Independent teacher review of elementary load and item ambiguity",
+    "Learner pilot; observed completion times",
+    "Separate runtime integration and release validation"
+  ]
+}

@@ -15,11 +15,11 @@ test("P0-2 exposes one frozen information architecture on desktop and mobile", a
   assert.deepEqual(learnQuickLinks.map(item => item.href), ["/today", "/planner"]);
   assert.deepEqual(siteNavigation[0].items, [...learnNavigationSections.flatMap(section => section.items), ...learnQuickLinks]);
   assert.deepEqual(siteNavigation[1].items?.map((item) => item.label), ["Skill Practice", "Spaced Review", "Mistakes"]);
-  assert.deepEqual(siteNavigation[2].items?.map((item) => item.label), ["HSK Practice Tests", "HSK 1 Mock Exams", "HSK 2 Mock Exams", "HSK 3 Mock Exams", "HSK 4 Mock Exams", "HSK 5 Mock Exams", "HSK 6 Mock Exams", "AP Chinese Practice Tests", "Find My HSK Level", "HSK 3.0 Exam Guide"]);
+  assert.deepEqual(siteNavigation[2].items?.map((item) => item.label), ["HSK Practice Tests", "HSK 1 Mock Exams", "HSK 2 Mock Exams", "HSK 3 Mock Exams", "HSK 4 Mock Exams", "HSK 5 Mock Exams", "HSK 6 Mock Exams", "AP Chinese Practice Tests", "Chinese 1 Course Tests", "Find My HSK Level", "HSK 3.0 Exam Guide"]);
   const hrefs = flattenNavigation().map((item) => item.href);
   for (const href of [
     "/today", "/planner", "/levels", "/vocabulary/1", "/vocabulary/1?mode=flashcards#vocabulary-activities", "/topics", "/grammar", "/reading", "/listen", "/tools/chinese-tone-trainer",
-    "/practice", "/review", "/mistakes", "/hsk-test-prep", "/ap-chinese-practice-test", "/hsk-placement-test", "/hsk-3-0",
+    "/practice", "/review", "/mistakes", "/hsk-test-prep", "/ap-chinese-practice-test", "/chinese-course-tests", "/hsk-placement-test", "/hsk-3-0",
     "/dictionary", "/blog", "/pricing", "/store", "/account", "/tools/chinese-name-generator", "/tools/hsk-vocabulary-comparison",
   ]) assert.ok(hrefs.includes(href), `existing entry remains reachable: ${href}`);
   for (const href of ["/blog/chinese-pinyin-guide", "/blog/chinese-tones-guide", "/tools/chinese-character-practice-sheet-generator", "/topics/daily-life", "/topics/food-drink", "/topics/travel-transport", "/chinese-for-travel"]) assert.ok(hrefs.includes(href));

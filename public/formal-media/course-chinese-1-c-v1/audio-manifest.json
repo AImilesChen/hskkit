@@ -1,0 +1,1297 @@
+{
+  "paperId": "course-chinese-1-c-v1",
+  "provider": "Edge TTS used at authoring time; playback uses local MP3 files, no runtime TTS service",
+  "rate": "-8%",
+  "voices": {
+    "female": "zh-CN-XiaoxiaoNeural",
+    "male": "zh-CN-YunxiNeural"
+  },
+  "humanListeningAcceptance": false,
+  "units": [
+    {
+      "id": "C1C-M01",
+      "kind": "listening-source",
+      "sourcePlays": 1,
+      "script": [
+        {
+          "speaker": "male",
+          "text": {
+            "zh-Hans": "姐姐的中文很好。每天晚饭后，她陪我练中文。那时妈妈在厨房洗碗，弟弟在客厅看电视，不和我们一起练。",
+            "zh-Hant": "姐姐的中文很好。每天晚飯後，她陪我練中文。那時媽媽在廚房洗碗，弟弟在客廳看電視，不和我們一起練。"
+          }
+        }
+      ],
+      "sourceDurationSeconds": 11.232,
+      "src": "assets/audio/c1c-m01.mp3",
+      "durationSeconds": 11.784,
+      "pcmSeconds": 11.732,
+      "bytes": 94508,
+      "sha256": "5c92f11bc55b1752ae8b3f3ef73602c186b96272f6ce7a811b9d16feb7cd6f49"
+    },
+    {
+      "id": "C1C-M02",
+      "kind": "listening-source",
+      "sourcePlays": 1,
+      "script": [
+        {
+          "speaker": "female",
+          "text": {
+            "zh-Hans": "奶奶一个人住在南京。明天我和爸爸坐车去看她，妈妈要工作，不能一起去。我们星期天晚上回来。",
+            "zh-Hant": "奶奶一個人住在南京。明天我和爸爸坐車去看她，媽媽要工作，不能一起去。我們星期天晚上回來。"
+          }
+        }
+      ],
+      "sourceDurationSeconds": 10.872,
+      "src": "assets/audio/c1c-m02.mp3",
+      "durationSeconds": 11.424,
+      "pcmSeconds": 11.372,
+      "bytes": 91628,
+      "sha256": "d8d01a526e2aca6556425c44ddf70941894238376054286bf44ca77e1e2e1b50"
+    },
+    {
+      "id": "C1C-M03",
+      "kind": "listening-source",
+      "sourcePlays": 1,
+      "script": [
+        {
+          "speaker": "male",
+          "text": {
+            "zh-Hans": "今天是妈妈的生日。我和爸爸买了一个蛋糕，姐姐准备晚饭。妈妈下班回家以后，我们一起给她唱生日歌。",
+            "zh-Hant": "今天是媽媽的生日。我和爸爸買了一個蛋糕，姐姐準備晚飯。媽媽下班回家以後，我們一起給她唱生日歌。"
+          }
+        }
+      ],
+      "sourceDurationSeconds": 10.44,
+      "src": "assets/audio/c1c-m03.mp3",
+      "durationSeconds": 10.992,
+      "pcmSeconds": 10.94,
+      "bytes": 88172,
+      "sha256": "6af77eeddb61f314aa015dca32b60c407d5d35ff54b1689d74cbdb14d6789a00"
+    },
+    {
+      "id": "C1C-M04",
+      "kind": "listening-source",
+      "sourcePlays": 1,
+      "script": [
+        {
+          "speaker": "female",
+          "text": {
+            "zh-Hans": "我现在和爸爸妈妈住在天津。哥哥在上海工作，爷爷奶奶住在北京。我们放假的时候常常去北京看他们。",
+            "zh-Hant": "我現在和爸爸媽媽住在天津。哥哥在上海工作，爺爺奶奶住在北京。我們放假的時候常常去北京看他們。"
+          }
+        }
+      ],
+      "sourceDurationSeconds": 11.136,
+      "src": "assets/audio/c1c-m04.mp3",
+      "durationSeconds": 11.688,
+      "pcmSeconds": 11.636,
+      "bytes": 93740,
+      "sha256": "a686ecdc3950589a84dbbf3e2fef25bb2c48f0a61b18039105de05f49fed5604"
+    },
+    {
+      "id": "C1C-M05",
+      "kind": "listening-source",
+      "sourcePlays": 1,
+      "script": [
+        {
+          "speaker": "male",
+          "text": {
+            "zh-Hans": "星期一上午第一节是数学课，第二节才是中文课。下午有体育课。今天我先把数学书拿出来，中文书还放在书包里。",
+            "zh-Hant": "星期一上午第一節是數學課，第二節纔是中文課。下午有體育課。今天我先把數學書拿出來，中文書還放在書包裏。"
+          }
+        }
+      ],
+      "sourceDurationSeconds": 11.52,
+      "src": "assets/audio/c1c-m05.mp3",
+      "durationSeconds": 12.072,
+      "pcmSeconds": 12.02,
+      "bytes": 96812,
+      "sha256": "5eab491c7d884f8112649c6c6ed980356a5ced98753f4adea24f6f542987067f"
+    },
+    {
+      "id": "C1C-M06",
+      "kind": "listening-source",
+      "sourcePlays": 1,
+      "script": [
+        {
+          "speaker": "female",
+          "text": {
+            "zh-Hans": "老师，我的橡皮找不到了。",
+            "zh-Hant": "老師，我的橡皮找不到了。"
+          }
+        },
+        {
+          "speaker": "male",
+          "text": {
+            "zh-Hans": "黑板旁边的红盒子里有橡皮，你拿一块吧。",
+            "zh-Hant": "黑板旁邊的紅盒子裏有橡皮，你拿一塊吧。"
+          }
+        },
+        {
+          "speaker": "female",
+          "text": {
+            "zh-Hans": "谢谢，我用完以后放回盒子。",
+            "zh-Hant": "謝謝，我用完以後放回盒子。"
+          }
+        }
+      ],
+      "sourceDurationSeconds": 11.596,
+      "src": "assets/audio/c1c-m06.mp3",
+      "durationSeconds": 12.144,
+      "pcmSeconds": 12.096,
+      "bytes": 97388,
+      "sha256": "39670ba31bcce7fc521dcab8938b73f4b6df8547bef2984178fef5e93fca5c54"
+    },
+    {
+      "id": "C1C-M07",
+      "kind": "listening-source",
+      "sourcePlays": 1,
+      "script": [
+        {
+          "speaker": "male",
+          "text": {
+            "zh-Hans": "老师，今天的答案写在书上吗？",
+            "zh-Hant": "老師，今天的答案寫在書上嗎？"
+          }
+        },
+        {
+          "speaker": "female",
+          "text": {
+            "zh-Hans": "不要写在书上，写在本子上。写完以后把本子交给我，书先放在桌子上。",
+            "zh-Hant": "不要寫在書上，寫在本子上。寫完以後把本子交給我，書先放在桌子上。"
+          }
+        }
+      ],
+      "sourceDurationSeconds": 11.894,
+      "src": "assets/audio/c1c-m07.mp3",
+      "durationSeconds": 12.456,
+      "pcmSeconds": 12.394,
+      "bytes": 99884,
+      "sha256": "3114485f1c3fa64f8c80dd77e1c80be6d242771861800a0c683761bba2055b73"
+    },
+    {
+      "id": "C1C-M08",
+      "kind": "listening-source",
+      "sourcePlays": 1,
+      "script": [
+        {
+          "speaker": "female",
+          "text": {
+            "zh-Hans": "老师，这本书是谁的？不是我的，我的在书包里。",
+            "zh-Hant": "老師，這本書是誰的？不是我的，我的在書包裏。"
+          }
+        },
+        {
+          "speaker": "male",
+          "text": {
+            "zh-Hans": "我看看，上面写着小陈的名字。请你下课后把书给小陈。",
+            "zh-Hant": "我看看，上面寫着小陳的名字。請你下課後把書給小陳。"
+          }
+        }
+      ],
+      "sourceDurationSeconds": 12.734,
+      "src": "assets/audio/c1c-m08.mp3",
+      "durationSeconds": 13.296,
+      "pcmSeconds": 13.234,
+      "bytes": 106604,
+      "sha256": "eaaca7c8266ba317df3478056a6304a215c879a7250280b52f0bfe7e96015c25"
+    },
+    {
+      "id": "C1C-M09",
+      "kind": "listening-source",
+      "sourcePlays": 1,
+      "script": [
+        {
+          "speaker": "male",
+          "text": {
+            "zh-Hans": "明天体育课，每人带一瓶水和一条毛巾。不用自己带篮球，学校有。请大家穿运动鞋，准时到操场。",
+            "zh-Hant": "明天體育課，每人帶一瓶水和一條毛巾。不用自己帶籃球，學校有。請大家穿運動鞋，準時到操場。"
+          }
+        }
+      ],
+      "sourceDurationSeconds": 11.016,
+      "src": "assets/audio/c1c-m09.mp3",
+      "durationSeconds": 11.568,
+      "pcmSeconds": 11.516,
+      "bytes": 92780,
+      "sha256": "0f38b693f67c051ebdbe1ec912051b3247e247260295834f232a6da3e84c3e49"
+    },
+    {
+      "id": "C1C-M10",
+      "kind": "listening-source",
+      "sourcePlays": 1,
+      "script": [
+        {
+          "speaker": "female",
+          "text": {
+            "zh-Hans": "明天中文课几点下课？",
+            "zh-Hant": "明天中文課幾點下課？"
+          }
+        },
+        {
+          "speaker": "male",
+          "text": {
+            "zh-Hans": "八点开始，八点四十结束。休息以后，九点上英语课。",
+            "zh-Hant": "八點開始，八點四十結束。休息以後，九點上英語課。"
+          }
+        },
+        {
+          "speaker": "female",
+          "text": {
+            "zh-Hans": "好，我八点四十来找你。",
+            "zh-Hant": "好，我八點四十來找你。"
+          }
+        }
+      ],
+      "sourceDurationSeconds": 12.82,
+      "src": "assets/audio/c1c-m10.mp3",
+      "durationSeconds": 13.368,
+      "pcmSeconds": 13.32,
+      "bytes": 107180,
+      "sha256": "da27fca9fb198204d928438593514b6e8eacbc8201a03864be49a9abaf2feea0"
+    },
+    {
+      "id": "C1C-M11",
+      "kind": "listening-source",
+      "sourcePlays": 1,
+      "script": [
+        {
+          "speaker": "male",
+          "text": {
+            "zh-Hans": "这碗汤已经凉了，能换一碗热的吗？",
+            "zh-Hant": "這碗湯已經涼了，能換一碗熱的嗎？"
+          }
+        },
+        {
+          "speaker": "female",
+          "text": {
+            "zh-Hans": "可以，我给您换热汤。",
+            "zh-Hant": "可以，我給您換熱湯。"
+          }
+        },
+        {
+          "speaker": "male",
+          "text": {
+            "zh-Hans": "谢谢，天气有点儿冷，我想喝热的。",
+            "zh-Hant": "謝謝，天氣有點兒冷，我想喝熱的。"
+          }
+        }
+      ],
+      "sourceDurationSeconds": 11.548,
+      "src": "assets/audio/c1c-m11.mp3",
+      "durationSeconds": 12.096,
+      "pcmSeconds": 12.048,
+      "bytes": 97004,
+      "sha256": "99168043fe57dc73ec7a34d2094b45b9fb31eb2ab2901e034566fee52c221601"
+    },
+    {
+      "id": "C1C-M12",
+      "kind": "listening-source",
+      "sourcePlays": 1,
+      "script": [
+        {
+          "speaker": "female",
+          "text": {
+            "zh-Hans": "这份午饭在这儿吃吗？",
+            "zh-Hant": "這份午飯在這兒喫嗎？"
+          }
+        },
+        {
+          "speaker": "male",
+          "text": {
+            "zh-Hans": "不，我要带回家吃。家里还有人在等我。请帮我装好，筷子我家里有，不用给了。",
+            "zh-Hant": "不，我要帶回家喫。家裏還有人在等我。請幫我裝好，筷子我家裏有，不用給了。"
+          }
+        }
+      ],
+      "sourceDurationSeconds": 11.486,
+      "src": "assets/audio/c1c-m12.mp3",
+      "durationSeconds": 12.048,
+      "pcmSeconds": 11.986,
+      "bytes": 96620,
+      "sha256": "46e637f136919e8d0ba78f70cd016e827de305b4af3e7fb91db79ddacbdb403d"
+    },
+    {
+      "id": "C1C-M13",
+      "kind": "listening-source",
+      "sourcePlays": 1,
+      "script": [
+        {
+          "speaker": "female",
+          "text": {
+            "zh-Hans": "妈妈喜欢吃西瓜，爸爸喜欢苹果。我最喜欢橙子。今天我给他们买西瓜和苹果，也给自己买了几个橙子。",
+            "zh-Hant": "媽媽喜歡喫西瓜，爸爸喜歡蘋果。我最喜歡橙子。今天我給他們買西瓜和蘋果，也給自己買了幾個橙子。"
+          }
+        }
+      ],
+      "sourceDurationSeconds": 11.04,
+      "src": "assets/audio/c1c-m13.mp3",
+      "durationSeconds": 11.592,
+      "pcmSeconds": 11.54,
+      "bytes": 92972,
+      "sha256": "44916b90da0dbd88df20a1224aa1104ab85a225d00592c67a802a653db06863c"
+    },
+    {
+      "id": "C1C-M14",
+      "kind": "listening-source",
+      "sourcePlays": 1,
+      "script": [
+        {
+          "speaker": "male",
+          "text": {
+            "zh-Hans": "面条八块，加一个鸡蛋一共多少钱？",
+            "zh-Hant": "麪條八塊，加一個雞蛋一共多少錢？"
+          }
+        },
+        {
+          "speaker": "female",
+          "text": {
+            "zh-Hans": "一共十块。",
+            "zh-Hant": "一共十塊。"
+          }
+        },
+        {
+          "speaker": "male",
+          "text": {
+            "zh-Hans": "好，我给你十块。",
+            "zh-Hant": "好，我給你十塊。"
+          }
+        },
+        {
+          "speaker": "female",
+          "text": {
+            "zh-Hans": "谢谢，请在旁边等一下。",
+            "zh-Hant": "謝謝，請在旁邊等一下。"
+          }
+        }
+      ],
+      "sourceDurationSeconds": 12.81,
+      "src": "assets/audio/c1c-m14.mp3",
+      "durationSeconds": 13.368,
+      "pcmSeconds": 13.31,
+      "bytes": 107180,
+      "sha256": "326767ff280dd88f5b87b4cd53707df1d06acbe18a3502666b5c2673f26ec51c"
+    },
+    {
+      "id": "C1C-M15",
+      "kind": "listening-source",
+      "sourcePlays": 1,
+      "script": [
+        {
+          "speaker": "female",
+          "text": {
+            "zh-Hans": "这件小号上衣有点儿小。能试试中号吗？",
+            "zh-Hant": "這件小號上衣有點兒小。能試試中號嗎？"
+          }
+        },
+        {
+          "speaker": "male",
+          "text": {
+            "zh-Hans": "可以，这里有中号和大号。",
+            "zh-Hant": "可以，這裏有中號和大號。"
+          }
+        },
+        {
+          "speaker": "female",
+          "text": {
+            "zh-Hans": "中号正好，我就要中号的。",
+            "zh-Hant": "中號正好，我就要中號的。"
+          }
+        }
+      ],
+      "sourceDurationSeconds": 11.884,
+      "src": "assets/audio/c1c-m15.mp3",
+      "durationSeconds": 12.432,
+      "pcmSeconds": 12.384,
+      "bytes": 99692,
+      "sha256": "9890fd1880075f261b6092614f1170cfb1f40a6d50c6102cd68659bff293f136"
+    },
+    {
+      "id": "C1C-M16",
+      "kind": "listening-source",
+      "sourcePlays": 1,
+      "script": [
+        {
+          "speaker": "male",
+          "text": {
+            "zh-Hans": "我们下午三点见，好吗？",
+            "zh-Hant": "我們下午三點見，好嗎？"
+          }
+        },
+        {
+          "speaker": "female",
+          "text": {
+            "zh-Hans": "我两点半就到了，可以早一点见吗？",
+            "zh-Hant": "我兩點半就到了，可以早一點見嗎？"
+          }
+        },
+        {
+          "speaker": "male",
+          "text": {
+            "zh-Hans": "可以，那我们两点半见，我也早点出门。",
+            "zh-Hant": "可以，那我們兩點半見，我也早點出門。"
+          }
+        }
+      ],
+      "sourceDurationSeconds": 12.316,
+      "src": "assets/audio/c1c-m16.mp3",
+      "durationSeconds": 12.864,
+      "pcmSeconds": 12.816,
+      "bytes": 103148,
+      "sha256": "e0114b8f9d1dc18ca38c9373226d671bff3ec789d102ba87739b4c09824d884a"
+    },
+    {
+      "id": "C1C-M17",
+      "kind": "listening-source",
+      "sourcePlays": 1,
+      "script": [
+        {
+          "speaker": "female",
+          "text": {
+            "zh-Hans": "这班车九点开。我们八点半从家里出发，八点四十到车站。到了以后先买票，再一起等车。",
+            "zh-Hant": "這班車九點開。我們八點半從家裏出發，八點四十到車站。到了以後先買票，再一起等車。"
+          }
+        }
+      ],
+      "sourceDurationSeconds": 9.912,
+      "src": "assets/audio/c1c-m17.mp3",
+      "durationSeconds": 10.464,
+      "pcmSeconds": 10.412,
+      "bytes": 83948,
+      "sha256": "c665655a80210ed505fafac904307fc8fc2338679ee571d36f0e4773aa83073a"
+    },
+    {
+      "id": "C1C-M18",
+      "kind": "listening-source",
+      "sourcePlays": 1,
+      "script": [
+        {
+          "speaker": "male",
+          "text": {
+            "zh-Hans": "明天学校活动，我们穿什么衣服？",
+            "zh-Hant": "明天學校活動，我們穿什麼衣服？"
+          }
+        },
+        {
+          "speaker": "female",
+          "text": {
+            "zh-Hans": "白色上衣、黑色裤子。鞋子没有要求。",
+            "zh-Hant": "白色上衣、黑色褲子。鞋子沒有要求。"
+          }
+        },
+        {
+          "speaker": "male",
+          "text": {
+            "zh-Hans": "好，我穿黑裤子和蓝色运动鞋。",
+            "zh-Hant": "好，我穿黑褲子和藍色運動鞋。"
+          }
+        }
+      ],
+      "sourceDurationSeconds": 13.684,
+      "src": "assets/audio/c1c-m18.mp3",
+      "durationSeconds": 14.232,
+      "pcmSeconds": 14.184,
+      "bytes": 114092,
+      "sha256": "05b9f2636288b3e4bea398d26ba1971a4a26c2a46cb21d4808d633c30c0cfe1c"
+    },
+    {
+      "id": "C1C-M19",
+      "kind": "listening-source",
+      "sourcePlays": 1,
+      "script": [
+        {
+          "speaker": "male",
+          "text": {
+            "zh-Hans": "姐姐很会唱歌，弟弟喜欢画画。我不会唱歌，可是会弹钢琴。周六下午，我们想一起给爸爸妈妈表演。",
+            "zh-Hant": "姐姐很會唱歌，弟弟喜歡畫畫。我不會唱歌，可是會彈鋼琴。週六下午，我們想一起給爸爸媽媽表演。"
+          }
+        }
+      ],
+      "sourceDurationSeconds": 10.416,
+      "src": "assets/audio/c1c-m19.mp3",
+      "durationSeconds": 10.968,
+      "pcmSeconds": 10.916,
+      "bytes": 87980,
+      "sha256": "c8e51a03d78cc37c336cadd9630c67956c459b294c01b8b065efafdb26548baf"
+    },
+    {
+      "id": "C1C-M20",
+      "kind": "listening-source",
+      "sourcePlays": 1,
+      "script": [
+        {
+          "speaker": "female",
+          "text": {
+            "zh-Hans": "今天放学后一起去游泳吗？",
+            "zh-Hant": "今天放學後一起去游泳嗎？"
+          }
+        },
+        {
+          "speaker": "male",
+          "text": {
+            "zh-Hans": "今天我不去游泳，我想在家看书。明天再去游泳。",
+            "zh-Hant": "今天我不去游泳，我想在家看書。明天再去游泳。"
+          }
+        },
+        {
+          "speaker": "female",
+          "text": {
+            "zh-Hans": "好，那我们明天下午见。",
+            "zh-Hant": "好，那我們明天下午見。"
+          }
+        }
+      ],
+      "sourceDurationSeconds": 12.412,
+      "src": "assets/audio/c1c-m20.mp3",
+      "durationSeconds": 12.96,
+      "pcmSeconds": 12.912,
+      "bytes": 103916,
+      "sha256": "0452e3503a670045ea70282b13b71d46474a0d78202e889e0a79a01f7726482c"
+    },
+    {
+      "id": "S1-1",
+      "kind": "oral-prompt",
+      "sourcePlays": 2,
+      "singlePlayPcmSeconds": 4.608,
+      "repeatGapSeconds": 1.5,
+      "singlePlayPcmSha256": "5cd925dbc6c78599e7837aedc6f8a7a66f560f0cc1f7349874034f7a18a0f400",
+      "script": {
+        "zh-Hans": "你在哪个学校上学？你是哪个班的学生？",
+        "zh-Hant": "你在哪個學校上學？你是哪個班的學生？"
+      },
+      "src": "assets/audio/s1-1.mp3",
+      "durationSeconds": 10.776,
+      "pcmSeconds": 10.716,
+      "bytes": 86444,
+      "sha256": "9fd61fe4e9850c97ded1f52fdfbc54807a394aa483ab78ae5132ca9428aaef1d"
+    },
+    {
+      "id": "S1-2",
+      "kind": "oral-prompt",
+      "sourcePlays": 2,
+      "singlePlayPcmSeconds": 4.296,
+      "repeatGapSeconds": 1.5,
+      "singlePlayPcmSha256": "82cb34510b161e29e20d1dd03aad5a23c86c8d38d26d9380af285f8b10cf5db3",
+      "script": {
+        "zh-Hans": "你喜欢什么颜色？喜欢穿什么衣服？",
+        "zh-Hant": "你喜歡什麼顏色？喜歡穿什麼衣服？"
+      },
+      "src": "assets/audio/s1-2.mp3",
+      "durationSeconds": 10.152,
+      "pcmSeconds": 10.092,
+      "bytes": 81452,
+      "sha256": "98cdaf88c55d555036ca1e698977e19ccb374c6426839c0d6bfb9ee613c1c34f"
+    },
+    {
+      "id": "S1-3",
+      "kind": "oral-prompt",
+      "sourcePlays": 2,
+      "singlePlayPcmSeconds": 4.296,
+      "repeatGapSeconds": 1.5,
+      "singlePlayPcmSha256": "400b341e372bff8697010b34607420c1224af54fb7866058ee408dc80c50f43c",
+      "script": {
+        "zh-Hans": "周末你几点吃午饭？吃完饭做什么？",
+        "zh-Hant": "週末你幾點喫午飯？喫完飯做什麼？"
+      },
+      "src": "assets/audio/s1-3.mp3",
+      "durationSeconds": 10.152,
+      "pcmSeconds": 10.092,
+      "bytes": 81452,
+      "sha256": "e235585dda1987a809ae66b8412950910fe2691d4c5cb6e6656161042523675f"
+    },
+    {
+      "id": "S1-4",
+      "kind": "oral-prompt",
+      "sourcePlays": 2,
+      "singlePlayPcmSeconds": 4.728,
+      "repeatGapSeconds": 1.5,
+      "singlePlayPcmSha256": "2fb3efa8711e3fa386c8c5c7f32865ed1689eaaa01d3ec2ecc8124378c3749f5",
+      "script": {
+        "zh-Hans": "星期六一起唱歌，好吗？我们在哪儿见面？",
+        "zh-Hant": "星期六一起唱歌，好嗎？我們在哪兒見面？"
+      },
+      "src": "assets/audio/s1-4.mp3",
+      "durationSeconds": 11.016,
+      "pcmSeconds": 10.956,
+      "bytes": 88364,
+      "sha256": "67b10debe28384b2b027d051cd0ffc5d753432d3624c110ceea5a700022dae7d"
+    }
+  ],
+  "groups": [
+    {
+      "id": "L1",
+      "sourcePlays": 2,
+      "src": "assets/audio/listening-group-1.mp3",
+      "durationSeconds": 225.072,
+      "pcmSeconds": 225.0,
+      "bytes": 1800812,
+      "sha256": "846efb63235c7f99c546fab5043c6f23072e31b713a721b88b37e8f673122c02"
+    },
+    {
+      "id": "L2",
+      "sourcePlays": 2,
+      "src": "assets/audio/listening-group-2.mp3",
+      "durationSeconds": 225.048,
+      "pcmSeconds": 225.0,
+      "bytes": 1800620,
+      "sha256": "c90be24ab92ddf3ac524a516b7ee05b3f40d7d8fc2acf2f5b0f4ddc41e79c929"
+    },
+    {
+      "id": "L3",
+      "sourcePlays": 2,
+      "src": "assets/audio/listening-group-3.mp3",
+      "durationSeconds": 225.048,
+      "pcmSeconds": 225.0,
+      "bytes": 1800620,
+      "sha256": "df2b9fd8907b68cf6f98a3f540fc44432a97e60090bbce08fd7d2d1f6d45187f"
+    },
+    {
+      "id": "L4",
+      "sourcePlays": 2,
+      "src": "assets/audio/listening-group-4.mp3",
+      "durationSeconds": 225.048,
+      "pcmSeconds": 225.0,
+      "bytes": 1800620,
+      "sha256": "d5aca2fedab47f7f9a711e983a41aa032ef399d1dfb79d822d97e3378c53dc4b"
+    }
+  ],
+  "timedTrack": {
+    "src": "assets/audio/listening-full.mp3",
+    "durationSeconds": 900.072,
+    "pcmSeconds": 900.0,
+    "bytes": 7200812,
+    "sha256": "f7c66185fb741e0bb6f3d7667e4930b685d90fdb63c3293c4f4762d65e088b6b"
+  },
+  "timeline": [
+    {
+      "id": "C1C-M01",
+      "questionNumber": 1,
+      "labelStartSeconds": 7.984,
+      "firstPlayStartSeconds": 10.02,
+      "secondPlayStartSeconds": 22.752,
+      "speechEndSeconds": 33.984,
+      "answerWindowSeconds": 17.403,
+      "slotEndSeconds": 51.387,
+      "sourcePlays": 2
+    },
+    {
+      "id": "C1C-M02",
+      "questionNumber": 2,
+      "labelStartSeconds": 51.387,
+      "firstPlayStartSeconds": 53.399,
+      "secondPlayStartSeconds": 65.771,
+      "speechEndSeconds": 76.643,
+      "answerWindowSeconds": 18.147,
+      "slotEndSeconds": 94.79,
+      "sourcePlays": 2
+    },
+    {
+      "id": "C1C-M03",
+      "questionNumber": 3,
+      "labelStartSeconds": 94.79,
+      "firstPlayStartSeconds": 96.922,
+      "secondPlayStartSeconds": 108.862,
+      "speechEndSeconds": 119.302,
+      "answerWindowSeconds": 18.891,
+      "slotEndSeconds": 138.194,
+      "sourcePlays": 2
+    },
+    {
+      "id": "C1C-M04",
+      "questionNumber": 4,
+      "labelStartSeconds": 138.194,
+      "firstPlayStartSeconds": 140.326,
+      "secondPlayStartSeconds": 152.962,
+      "speechEndSeconds": 164.098,
+      "answerWindowSeconds": 17.499,
+      "slotEndSeconds": 181.597,
+      "sourcePlays": 2
+    },
+    {
+      "id": "C1C-M05",
+      "questionNumber": 5,
+      "labelStartSeconds": 181.597,
+      "firstPlayStartSeconds": 183.657,
+      "secondPlayStartSeconds": 196.677,
+      "speechEndSeconds": 208.197,
+      "answerWindowSeconds": 16.803,
+      "slotEndSeconds": 225.0,
+      "sourcePlays": 2
+    },
+    {
+      "id": "C1C-M06",
+      "questionNumber": 6,
+      "labelStartSeconds": 232.96,
+      "firstPlayStartSeconds": 235.068,
+      "secondPlayStartSeconds": 248.164,
+      "speechEndSeconds": 259.76,
+      "answerWindowSeconds": 16.608,
+      "slotEndSeconds": 276.368,
+      "sourcePlays": 2
+    },
+    {
+      "id": "C1C-M07",
+      "questionNumber": 7,
+      "labelStartSeconds": 276.368,
+      "firstPlayStartSeconds": 278.476,
+      "secondPlayStartSeconds": 291.87,
+      "speechEndSeconds": 303.764,
+      "answerWindowSeconds": 16.012,
+      "slotEndSeconds": 319.776,
+      "sourcePlays": 2
+    },
+    {
+      "id": "C1C-M08",
+      "questionNumber": 8,
+      "labelStartSeconds": 319.776,
+      "firstPlayStartSeconds": 321.86,
+      "secondPlayStartSeconds": 336.094,
+      "speechEndSeconds": 348.828,
+      "answerWindowSeconds": 14.356,
+      "slotEndSeconds": 363.184,
+      "sourcePlays": 2
+    },
+    {
+      "id": "C1C-M09",
+      "questionNumber": 9,
+      "labelStartSeconds": 363.184,
+      "firstPlayStartSeconds": 365.268,
+      "secondPlayStartSeconds": 377.784,
+      "speechEndSeconds": 388.8,
+      "answerWindowSeconds": 17.792,
+      "slotEndSeconds": 406.592,
+      "sourcePlays": 2
+    },
+    {
+      "id": "C1C-M10",
+      "questionNumber": 10,
+      "labelStartSeconds": 406.592,
+      "firstPlayStartSeconds": 408.748,
+      "secondPlayStartSeconds": 423.068,
+      "speechEndSeconds": 435.888,
+      "answerWindowSeconds": 14.112,
+      "slotEndSeconds": 450.0,
+      "sourcePlays": 2
+    },
+    {
+      "id": "C1C-M11",
+      "questionNumber": 11,
+      "labelStartSeconds": 458.08,
+      "firstPlayStartSeconds": 460.356,
+      "secondPlayStartSeconds": 473.404,
+      "speechEndSeconds": 484.952,
+      "answerWindowSeconds": 16.512,
+      "slotEndSeconds": 501.464,
+      "sourcePlays": 2
+    },
+    {
+      "id": "C1C-M12",
+      "questionNumber": 12,
+      "labelStartSeconds": 501.464,
+      "firstPlayStartSeconds": 503.74,
+      "secondPlayStartSeconds": 516.726,
+      "speechEndSeconds": 528.212,
+      "answerWindowSeconds": 16.636,
+      "slotEndSeconds": 544.848,
+      "sourcePlays": 2
+    },
+    {
+      "id": "C1C-M13",
+      "questionNumber": 13,
+      "labelStartSeconds": 544.848,
+      "firstPlayStartSeconds": 547.172,
+      "secondPlayStartSeconds": 559.712,
+      "speechEndSeconds": 570.752,
+      "answerWindowSeconds": 17.48,
+      "slotEndSeconds": 588.232,
+      "sourcePlays": 2
+    },
+    {
+      "id": "C1C-M14",
+      "questionNumber": 14,
+      "labelStartSeconds": 588.232,
+      "firstPlayStartSeconds": 590.58,
+      "secondPlayStartSeconds": 604.89,
+      "speechEndSeconds": 617.7,
+      "answerWindowSeconds": 13.916,
+      "slotEndSeconds": 631.616,
+      "sourcePlays": 2
+    },
+    {
+      "id": "C1C-M15",
+      "questionNumber": 15,
+      "labelStartSeconds": 631.616,
+      "firstPlayStartSeconds": 633.892,
+      "secondPlayStartSeconds": 647.276,
+      "speechEndSeconds": 659.16,
+      "answerWindowSeconds": 15.84,
+      "slotEndSeconds": 675.0,
+      "sourcePlays": 2
+    },
+    {
+      "id": "C1C-M16",
+      "questionNumber": 16,
+      "labelStartSeconds": 683.08,
+      "firstPlayStartSeconds": 685.428,
+      "secondPlayStartSeconds": 699.244,
+      "speechEndSeconds": 711.56,
+      "answerWindowSeconds": 14.904,
+      "slotEndSeconds": 726.464,
+      "sourcePlays": 2
+    },
+    {
+      "id": "C1C-M17",
+      "questionNumber": 17,
+      "labelStartSeconds": 726.464,
+      "firstPlayStartSeconds": 728.812,
+      "secondPlayStartSeconds": 740.224,
+      "speechEndSeconds": 750.136,
+      "answerWindowSeconds": 19.712,
+      "slotEndSeconds": 769.848,
+      "sourcePlays": 2
+    },
+    {
+      "id": "C1C-M18",
+      "questionNumber": 18,
+      "labelStartSeconds": 769.848,
+      "firstPlayStartSeconds": 772.148,
+      "secondPlayStartSeconds": 787.332,
+      "speechEndSeconds": 801.016,
+      "answerWindowSeconds": 12.216,
+      "slotEndSeconds": 813.232,
+      "sourcePlays": 2
+    },
+    {
+      "id": "C1C-M19",
+      "questionNumber": 19,
+      "labelStartSeconds": 813.232,
+      "firstPlayStartSeconds": 815.556,
+      "secondPlayStartSeconds": 827.472,
+      "speechEndSeconds": 837.888,
+      "answerWindowSeconds": 18.728,
+      "slotEndSeconds": 856.616,
+      "sourcePlays": 2
+    },
+    {
+      "id": "C1C-M20",
+      "questionNumber": 20,
+      "labelStartSeconds": 856.616,
+      "firstPlayStartSeconds": 858.844,
+      "secondPlayStartSeconds": 872.756,
+      "speechEndSeconds": 885.168,
+      "answerWindowSeconds": 14.832,
+      "slotEndSeconds": 900.0,
+      "sourcePlays": 2
+    }
+  ],
+  "cache": [
+    {
+      "key": "2fb4eae8b885ef642b255bc6",
+      "speaker": "female",
+      "text": "中文一，C卷，听力第1组。每段听两遍，请选择一个答案。",
+      "sha256": "0ab6830cd375eb4abbea591894a35a621b9c99ed85de2df6195f4ae105b71cf6"
+    },
+    {
+      "key": "63c0a1e13e1cb1482d10c3d9",
+      "speaker": "female",
+      "text": "中文一，C卷，听力第2组。每段听两遍，请选择一个答案。",
+      "sha256": "edcd261848b0ca603a2ea20849e4afdcb01afee2a03e0b6ec85137fe25eaf5d9"
+    },
+    {
+      "key": "b5324dcf2c17e37d6d625ea2",
+      "speaker": "female",
+      "text": "中文一，C卷，听力第3组。每段听两遍，请选择一个答案。",
+      "sha256": "a5006d6674f6c298c775da0b0a614d18ece9f59653ad1c8495107638e2d9a586"
+    },
+    {
+      "key": "e81689c0dc0d9774cb645610",
+      "speaker": "female",
+      "text": "中文一，C卷，听力第4组。每段听两遍，请选择一个答案。",
+      "sha256": "af2c23f9857e584bbb8f2b6fda85b9054061ab2d744ec9b527f7984da76ef0a4"
+    },
+    {
+      "key": "d7e61d66227feda91a33d470",
+      "speaker": "male",
+      "text": "姐姐的中文很好。每天晚饭后，她陪我练中文。那时妈妈在厨房洗碗，弟弟在客厅看电视，不和我们一起练。",
+      "sha256": "c2e9b0fb4570184a9ea954fc2fbc1035af535ea92a883dda6dcd552552dcf8d7"
+    },
+    {
+      "key": "34e89f8d03ace2b111d8dc37",
+      "speaker": "female",
+      "text": "第1题。",
+      "sha256": "3895df58b8b6ce61365216490dcb339db3aa7ef168eef8d2098c469073a4cdc2"
+    },
+    {
+      "key": "cb1d7ca8d8e85c66d02edacd",
+      "speaker": "female",
+      "text": "奶奶一个人住在南京。明天我和爸爸坐车去看她，妈妈要工作，不能一起去。我们星期天晚上回来。",
+      "sha256": "f066b09e3f62b63b0e46d7a96ba3f3f260477865d18f9dce033ad6f92fa45531"
+    },
+    {
+      "key": "1741fb60958696627ba5f0ed",
+      "speaker": "female",
+      "text": "第2题。",
+      "sha256": "39f2c75a46983608745be0da5fe2130f1e77b5cd88f7b9b3928a0a06485a2744"
+    },
+    {
+      "key": "e2548bf6b27d065a677373cf",
+      "speaker": "male",
+      "text": "今天是妈妈的生日。我和爸爸买了一个蛋糕，姐姐准备晚饭。妈妈下班回家以后，我们一起给她唱生日歌。",
+      "sha256": "433f9bf3a017ff2fbed79a6eb101fd0241b071ac995326bcd62477e86e61ccd0"
+    },
+    {
+      "key": "97e9c8d06f3e0171388ee24b",
+      "speaker": "female",
+      "text": "第3题。",
+      "sha256": "74d7fdba0fd9fae146470574deadbd8616eca796fece18aaf8190b3792f4225e"
+    },
+    {
+      "key": "98a77148e7648659525d68b4",
+      "speaker": "female",
+      "text": "我现在和爸爸妈妈住在天津。哥哥在上海工作，爷爷奶奶住在北京。我们放假的时候常常去北京看他们。",
+      "sha256": "43dc72e6ec3950f54540b39c8846cc05d501d86cf6826a8c2465fa050a747fe5"
+    },
+    {
+      "key": "b25d3caab3d72c3d0347de4b",
+      "speaker": "female",
+      "text": "第4题。",
+      "sha256": "cc38e6d168e0664b2b8f98558b26288abcea294390f4e9aa13d8f457ef5a7046"
+    },
+    {
+      "key": "d9ca38804ab000cec532cadc",
+      "speaker": "male",
+      "text": "星期一上午第一节是数学课，第二节才是中文课。下午有体育课。今天我先把数学书拿出来，中文书还放在书包里。",
+      "sha256": "f9f6d4ac56a2aedd329188a07db4d02cc9289ef6a9946eeb6e745be2d46ebafe"
+    },
+    {
+      "key": "c5b1d9675aba74bbd668ea00",
+      "speaker": "female",
+      "text": "第5题。",
+      "sha256": "057a4202f7d25216a190a84d6056c30f42be93ac60cdc21879a97aaaf19252d9"
+    },
+    {
+      "key": "691b9e8ae7c8b1be93206125",
+      "speaker": "female",
+      "text": "老师，我的橡皮找不到了。",
+      "sha256": "0f63351bc2b7949d70470f0fffec821ea895169ed88baa8a6d60d3f12b701679"
+    },
+    {
+      "key": "be5322404921018d1664f522",
+      "speaker": "male",
+      "text": "黑板旁边的红盒子里有橡皮，你拿一块吧。",
+      "sha256": "16b071281bca98365c72e685cd3523ed38831c3ec64d9be009fa289385f9b01a"
+    },
+    {
+      "key": "a14d88f747a8dbb6e9d425f6",
+      "speaker": "female",
+      "text": "谢谢，我用完以后放回盒子。",
+      "sha256": "62edaf923d257a34abe74a9305cb6fcda0a93c6c87a3ae2acdc8a5561908821b"
+    },
+    {
+      "key": "5e6c5b336701fe2c48b7fa2f",
+      "speaker": "female",
+      "text": "第6题。",
+      "sha256": "fcc5b0fabad8f1fa79148054a17b60ac8d2cb351d57ed0d5eb073df550e3ee93"
+    },
+    {
+      "key": "a69c18b2d45f36045733f753",
+      "speaker": "male",
+      "text": "老师，今天的答案写在书上吗？",
+      "sha256": "d3230972456152213eae2ec90c49bd5e85eb2338f58c4803f3607860a9f6841a"
+    },
+    {
+      "key": "8e44cf44bc0651a8155e92ee",
+      "speaker": "female",
+      "text": "不要写在书上，写在本子上。写完以后把本子交给我，书先放在桌子上。",
+      "sha256": "dbde56347e2685b38557208dfb4d8435f450d59c75605658fbecb5df2dcad3a2"
+    },
+    {
+      "key": "79e0bdfd02236c1d4253adc0",
+      "speaker": "female",
+      "text": "第7题。",
+      "sha256": "5151859d99f51fb43c1c4ba74a72c7d8898fd12ebdb151ca350243f27169a52c"
+    },
+    {
+      "key": "fb7f28d69734c8ebbbf5a70f",
+      "speaker": "female",
+      "text": "老师，这本书是谁的？不是我的，我的在书包里。",
+      "sha256": "8a1666b85ce5e14c87952bf5ea6bb9a18fc213fc67d86142ec04030e739554a2"
+    },
+    {
+      "key": "2a6ebbc483a8f9b330a27ff8",
+      "speaker": "male",
+      "text": "我看看，上面写着小陈的名字。请你下课后把书给小陈。",
+      "sha256": "f04e2f75c799b3d22ee3a8e32f2d880bbac4d216da1439ddcaa784765ee984f3"
+    },
+    {
+      "key": "b431efe26b8c6cc712ef43b8",
+      "speaker": "female",
+      "text": "第8题。",
+      "sha256": "65ff1f952179bc643f6b488a3150eee5a21667f5901053151fd7aeb53f0c7786"
+    },
+    {
+      "key": "9b2a30faedadb4fd1a96f40a",
+      "speaker": "male",
+      "text": "明天体育课，每人带一瓶水和一条毛巾。不用自己带篮球，学校有。请大家穿运动鞋，准时到操场。",
+      "sha256": "8639f40be71f84ff8b7f7647ed5b72b49694daee773add694b0efa9a0c8ea34d"
+    },
+    {
+      "key": "76f9b7034e5801a6360f40bd",
+      "speaker": "female",
+      "text": "第9题。",
+      "sha256": "439f37e4f9738e7ac1dc180f588ae4ed900731c0623d4038b9f3533da20c0ada"
+    },
+    {
+      "key": "752d69bc67e64c2df49c4e5e",
+      "speaker": "female",
+      "text": "明天中文课几点下课？",
+      "sha256": "5e1d07e98d262cfdc5c0b1f4f8cef2dc45fb186e6e7a318687e288d297e81554"
+    },
+    {
+      "key": "03b435e4e6a91bef3ced2f0d",
+      "speaker": "male",
+      "text": "八点开始，八点四十结束。休息以后，九点上英语课。",
+      "sha256": "91b9183fa0e65a1d15a21fa5c957e281fa1b63cb6907634b1b190cefd6c28f97"
+    },
+    {
+      "key": "782c251488ae1c05c6efcb17",
+      "speaker": "female",
+      "text": "好，我八点四十来找你。",
+      "sha256": "aa6b7340146f6f987fba407537ad495c4cd86de1ef27dfb0db642f4e818f20e8"
+    },
+    {
+      "key": "86d64da7bc27367110de5cb7",
+      "speaker": "female",
+      "text": "第10题。",
+      "sha256": "a443b83201af7bae91780e167c2fcd53ef523b448bf77dd4ad6b238de2e582d2"
+    },
+    {
+      "key": "1d4345766521131c98f64878",
+      "speaker": "male",
+      "text": "这碗汤已经凉了，能换一碗热的吗？",
+      "sha256": "b2601c6e7c3dc71b35dd878d3b332982c42dfeba2e6354cc489ca501c2a84f0e"
+    },
+    {
+      "key": "8f063f9d6a748731a7d8f353",
+      "speaker": "female",
+      "text": "可以，我给您换热汤。",
+      "sha256": "97712f23575ae007f1b4119a1b45c5c795ffb7df30629c0a19f0d706d26a8dfd"
+    },
+    {
+      "key": "093cf677a2e06c89f470e170",
+      "speaker": "male",
+      "text": "谢谢，天气有点儿冷，我想喝热的。",
+      "sha256": "e86c0544ebe13f977ee8f3874cf8c1a06ca6a4b4cb5d19af72f95e4b5ad0f47b"
+    },
+    {
+      "key": "63d3dd3f27ad85dca9aa0606",
+      "speaker": "female",
+      "text": "第11题。",
+      "sha256": "09609165ce7b5b5bbc80de6236e7726415e2ab45d65241e1ca3c75ec4a697f32"
+    },
+    {
+      "key": "5a60ba3c3bfc037ccb7cf7ef",
+      "speaker": "female",
+      "text": "这份午饭在这儿吃吗？",
+      "sha256": "f7aecbe8731167914781120f2a2490fc7c75b74122834083e8803db995c7a205"
+    },
+    {
+      "key": "0f5492c576d9763a39bfc0e9",
+      "speaker": "male",
+      "text": "不，我要带回家吃。家里还有人在等我。请帮我装好，筷子我家里有，不用给了。",
+      "sha256": "01f611589c00a8d42734b5d807351482a6cc1f58164245c6aabaf16f4eb95246"
+    },
+    {
+      "key": "2dbff9b332f7edc61b4c3c18",
+      "speaker": "female",
+      "text": "第12题。",
+      "sha256": "f25ea7d43ed9f81b7dd1af25fa0339498c7d458e79931122755e838f8d314a83"
+    },
+    {
+      "key": "eb5c8ca888ee01fda3bd37f8",
+      "speaker": "female",
+      "text": "妈妈喜欢吃西瓜，爸爸喜欢苹果。我最喜欢橙子。今天我给他们买西瓜和苹果，也给自己买了几个橙子。",
+      "sha256": "841924a7ee384f2d057f8aeeb365a1cf4ccae8b437a793a5810741782b8dded0"
+    },
+    {
+      "key": "ec1acc6c51d958bc6eb290a5",
+      "speaker": "female",
+      "text": "第13题。",
+      "sha256": "e6515323a9eef38c0320124c2e99d81f002d229d597de7f44a76008521622c43"
+    },
+    {
+      "key": "3765789f563e054b5a55e897",
+      "speaker": "male",
+      "text": "面条八块，加一个鸡蛋一共多少钱？",
+      "sha256": "0d1616a77c2a85c4fc15441cea254ac3e500ea048430e63b5733bf8ab0f03cf6"
+    },
+    {
+      "key": "ab3d5f89d4e69008a7c149d8",
+      "speaker": "female",
+      "text": "一共十块。",
+      "sha256": "89693b60331188272281f332b11c302c1f5bf92a1dc90a99e1d35e77ebbe5b1d"
+    },
+    {
+      "key": "e9062bffbcb5a4bbdbef3dcc",
+      "speaker": "male",
+      "text": "好，我给你十块。",
+      "sha256": "80e8be1c1ab51483575d0003f7bb215762af63b59572f088f145c982547d606c"
+    },
+    {
+      "key": "f15a422dc3d853029630f804",
+      "speaker": "female",
+      "text": "谢谢，请在旁边等一下。",
+      "sha256": "9a31a8f47d667fe8158caf6a44c4c1ce8e10f1a62f0ec1ab004af4dea52a6983"
+    },
+    {
+      "key": "6a9458d981e42c448c56e5d7",
+      "speaker": "female",
+      "text": "第14题。",
+      "sha256": "3c248ca1222db546caafa3ccef0afeb1d63689c8e501a91b906f7c38012bc8f4"
+    },
+    {
+      "key": "8f40d400fe094147ae1da6cb",
+      "speaker": "female",
+      "text": "这件小号上衣有点儿小。能试试中号吗？",
+      "sha256": "131b5a75d8e9c31d4443b982c4313f96aaf8bffd6fb7d19313dcf8fd6c9831be"
+    },
+    {
+      "key": "fc071e8f7fd31df030e52072",
+      "speaker": "male",
+      "text": "可以，这里有中号和大号。",
+      "sha256": "ba98b1248df350a439e3bca61630136876c3770b7ceed7562c917ad2c67c6e5c"
+    },
+    {
+      "key": "440ad801a18c08c033a50e73",
+      "speaker": "female",
+      "text": "中号正好，我就要中号的。",
+      "sha256": "6e79673949b82488a0f2666e65f43d4416cb0ac4f7bb1f16ada9af790504940d"
+    },
+    {
+      "key": "9d1b8c046279c5b498214791",
+      "speaker": "female",
+      "text": "第15题。",
+      "sha256": "774136cf8893575562e62fc53ca824d970e119df2986004fbc9a795341529ed7"
+    },
+    {
+      "key": "da3e6b1ca84d560c8c643c9a",
+      "speaker": "male",
+      "text": "我们下午三点见，好吗？",
+      "sha256": "00f876f67142d98ef878c5c5299514f89dce15b5894d4d7c478dfc80604a20aa"
+    },
+    {
+      "key": "61644d2aa36b28f9c5564d96",
+      "speaker": "female",
+      "text": "我两点半就到了，可以早一点见吗？",
+      "sha256": "1e3ac337f72adcfcd6e8431910eadb78b1878d379bb5903fe0104da21653ebb8"
+    },
+    {
+      "key": "ad96bff633d5bee65206b88e",
+      "speaker": "male",
+      "text": "可以，那我们两点半见，我也早点出门。",
+      "sha256": "47aac3fad37fbd3da832e6510ce4746ebee934c2e8e1b35b88c84782342b829f"
+    },
+    {
+      "key": "0cffbf1010d1e54023057ea9",
+      "speaker": "female",
+      "text": "第16题。",
+      "sha256": "6cbe22b4463ef0127dbcb5957919648ee9b071c97d70d0b85edf327b6a0071df"
+    },
+    {
+      "key": "10748e13eae548d0fa55f364",
+      "speaker": "female",
+      "text": "这班车九点开。我们八点半从家里出发，八点四十到车站。到了以后先买票，再一起等车。",
+      "sha256": "07b150e30e598afc6badf186d46d576a2e7381aa7bcdc4922cc9e0fac05c4dad"
+    },
+    {
+      "key": "61f4d2e4e5f3e0536be36453",
+      "speaker": "female",
+      "text": "第17题。",
+      "sha256": "7b303e3cdea4e6b338b981ca7d27218c5da50fd4e2ca1cb297c3ba0853fbff6b"
+    },
+    {
+      "key": "c6144255b5503089e10bb3d8",
+      "speaker": "male",
+      "text": "明天学校活动，我们穿什么衣服？",
+      "sha256": "77613c98b8b0b936f8714bbd4f02b759ea4088427937019cbb800e3190a32afe"
+    },
+    {
+      "key": "c82b218c1abca3110a596984",
+      "speaker": "female",
+      "text": "白色上衣、黑色裤子。鞋子没有要求。",
+      "sha256": "cafe25fc29397adccda85adbe475073a38d968f84cb3979555afa5a476909fbd"
+    },
+    {
+      "key": "ee920122b04dca0a1c5825b9",
+      "speaker": "male",
+      "text": "好，我穿黑裤子和蓝色运动鞋。",
+      "sha256": "2195866c524c5fb1532b144a11b2b45bc4b49d635d03f7ec5376821ea65b344c"
+    },
+    {
+      "key": "2e9092b1191d42999a9f695d",
+      "speaker": "female",
+      "text": "第18题。",
+      "sha256": "b0832c56a97774c35b538f689f08bf8314e263e14ab809871867bcdede27a70b"
+    },
+    {
+      "key": "161fdc5abef3c12a1dfc97e1",
+      "speaker": "male",
+      "text": "姐姐很会唱歌，弟弟喜欢画画。我不会唱歌，可是会弹钢琴。周六下午，我们想一起给爸爸妈妈表演。",
+      "sha256": "7603c04c6a76c5ecf53a49bee10ffbf0d1965da1cb2fbb73ccebd6defff7bfbd"
+    },
+    {
+      "key": "ee9540a1a810afba0a3a7056",
+      "speaker": "female",
+      "text": "第19题。",
+      "sha256": "91a1a230e642a4906da5e058c485a56cf6a1c77b67c899338da1843b7db5066e"
+    },
+    {
+      "key": "ad9f52fecc66d91d19bd49ff",
+      "speaker": "female",
+      "text": "今天放学后一起去游泳吗？",
+      "sha256": "b6d1a79cfbe5eacb8b365acc2b6ef004646e3fdff4ee862c15835ceb37d8cc62"
+    },
+    {
+      "key": "9c6bbfaac03a6051e26ae40f",
+      "speaker": "male",
+      "text": "今天我不去游泳，我想在家看书。明天再去游泳。",
+      "sha256": "ca9aa3a7854cb651627697dfb3bdfec56c0a64c4ae6b438dcd3fabe4988f5e98"
+    },
+    {
+      "key": "7c48946294cb8a996383b84a",
+      "speaker": "female",
+      "text": "好，那我们明天下午见。",
+      "sha256": "95843f95e0a5efb39593a12f13f8947ab6dcfa914e8e0270b67a66f1fde5f4c6"
+    },
+    {
+      "key": "689adfbaa5b63ac16b96aac6",
+      "speaker": "female",
+      "text": "第20题。",
+      "sha256": "f2a7aa65a74fad7dc9d19d81d6990ac99260287106ff304656efb599e75400e1"
+    },
+    {
+      "key": "b3a4528b2d4012d716d50b02",
+      "speaker": "female",
+      "text": "你在哪个学校上学？你是哪个班的学生？",
+      "sha256": "cdc8f7186ae236eeb80d29c78f61d49bdbe693ba52c42a177b2765ce1cb7bc8d"
+    },
+    {
+      "key": "f9a6df4e96e9f82e8467d933",
+      "speaker": "female",
+      "text": "你喜欢什么颜色？喜欢穿什么衣服？",
+      "sha256": "c9c6358a0b586be6c16e8754e405404bf69f3bcf88f4306cd9cd9ca13fba60d3"
+    },
+    {
+      "key": "a77fc71784c9848bc0d6da9d",
+      "speaker": "female",
+      "text": "周末你几点吃午饭？吃完饭做什么？",
+      "sha256": "aff4adf6213bbed79f27249e32aa4999a3f44250de779d5fe9f75d5dae679a7e"
+    },
+    {
+      "key": "e1efb80a72fdc00c28ff83f4",
+      "speaker": "female",
+      "text": "星期六一起唱歌，好吗？我们在哪儿见面？",
+      "sha256": "1b7e401b1019ddb42fd6d31f577a780b3e63fe75924ae53a108e36127f31a317"
+    }
+  ]
+}
