@@ -7,10 +7,13 @@ import { FREE_PLAN_BENEFITS, PLAN_COMPARISON, AI_CREDIT_COSTS } from "@/lib/comm
 import { FREE_CAPABILITIES, PRO_CAPABILITIES } from "@/lib/commercial/capabilities";
 import { PUBLIC_ACCOUNT_SCOPE, PUBLIC_FORMAL_CONTENT_SCOPE } from "@/lib/public-copy";
 import "./pricing.css";
+import "../components/mock-offer.css";
+import { MockExamShowcase } from "./mock-exam-showcase";
+import { FREE_MOCK_COUNT, TOTAL_MOCK_COUNT, MOCK_LEVEL_RANGE } from "@/lib/formal-exams/offer";
 
 export const metadata: Metadata = {
-  title: "Pricing | HSKKit",
-  description: "Start with 10 new items a day and unlimited standard review. Compare HSKKit Free and Pro, with monthly or yearly billing.",
+  title: "HSKKit Pricing | Free & Pro Learning and HSK 1–6 Mock Exams",
+  description: `Compare HSKKit Free and Pro. Start with ${FREE_MOCK_COUNT} free HSK mock papers or unlock all ${TOTAL_MOCK_COUNT} across ${MOCK_LEVEL_RANGE}, plus unlimited new learning and monthly AI credits.`,
   alternates: { canonical: "/pricing" },
 };
 
@@ -18,28 +21,30 @@ export default function PricingPage() {
   return <><SiteHeader/><main className="pricing-page">
     <header className="pricing-hero">
       <p className="pricing-eyebrow">Your next step in Chinese</p>
-      <h1>Build a study routine<br/><span>that lasts.</span></h1>
-      <p className="pricing-intro">Start free. Choose Pro for focused review, AI explanations and more room to learn.</p>
-      <div className="pricing-hero-actions"><Link className="pricing-button pricing-button-primary" href="/today">Start learning free <span aria-hidden="true">→</span></Link><Link className="pricing-compare-link" href="#plans">Compare plans ↓</Link></div>
+      <h1>Learn daily.<br/><span>Practise for your HSK.</span></h1>
+      <p className="pricing-intro">Start with {FREE_MOCK_COUNT} free HSK mock papers. Pro unlocks all {TOTAL_MOCK_COUNT} across {MOCK_LEVEL_RANGE}, plus more room for daily learning and AI support.</p>
+      <div className="pricing-hero-actions"><Link className="pricing-button pricing-button-primary" href="#mock-papers">Explore free papers <span aria-hidden="true">→</span></Link><Link className="pricing-compare-link" href="#plans">Compare plans ↓</Link></div>
       <aside className="pricing-trial" aria-label="Trial offer"><span aria-hidden="true">✦</span><WelcomeTrialAction /></aside>
     </header>
 
     <section id="plans" className="pricing-plans" aria-label="Free and Pro plans">
       <article className="pricing-plan pricing-free" aria-labelledby="free-plan-title">
         <div className="pricing-plan-heading"><h2 id="free-plan-title">Free</h2><span className="pricing-tag">A lasting start</span></div>
-        <p className="pricing-plan-description">Build a daily habit and keep reviewing what you learn.</p>
+        <p className="pricing-plan-description">Build your foundation. Try Paper A at each level.</p>
         <div className="pricing-price"><p><strong>US$0</strong><span> / forever</span></p><p className="pricing-price-detail">No card required. No expiry.</p></div>
-        <ul className="pricing-benefits">{FREE_PLAN_BENEFITS.map(item => <li key={item}><span aria-hidden="true">✓</span><div>{item}</div></li>)}</ul>
+        <ul className="pricing-benefits">{FREE_PLAN_BENEFITS.map((item, index) => <li key={item}><span aria-hidden="true">✓</span><div>{index === 0 ? <><strong>{FREE_MOCK_COUNT} free HSK mock papers</strong><p>Paper A at every level from {MOCK_LEVEL_RANGE}.</p></> : item}</div></li>)}</ul>
         <div className="pricing-free-note"><strong>Your reviews keep going.</strong><p>Learn {FREE_CAPABILITIES.dailyNewItems} new items each day, then revisit learned items without a daily review cap.</p></div>
         <div className="pricing-checkout"><FreePlanAction/><p>Guest study is welcome. Sign in when you want to save and sync.</p></div>
       </article>
       <article className="pricing-plan pricing-pro" aria-labelledby="pro-plan-title">
-        <div className="pricing-plan-heading"><h2 id="pro-plan-title">Pro</h2><span className="pricing-tag">More room to learn</span></div>
-        <p className="pricing-plan-description">Move at your pace, work on weak spots and get help when you need it.</p>
+        <div className="pricing-plan-heading"><h2 id="pro-plan-title">Pro</h2><span className="pricing-tag">More complete practice</span></div>
+        <p className="pricing-plan-description">Prepare with more complete papers, then keep your learning going.</p>
         <ProPlanChoice/>
       </article>
     </section>
     <p className="pricing-fair-use">Standard review has no daily rating cap on either plan. Anti-abuse safeguards still apply. Store products are purchased separately.</p>
+
+    <MockExamShowcase/>
 
     <section id="compare" className="pricing-section" aria-labelledby="compare-title">
       <div className="pricing-section-heading"><p className="pricing-eyebrow">The details, side by side</p><h2 id="compare-title">Choose the room you need.</h2><p>Monthly and yearly billing include the same Pro entitlement.</p></div>
@@ -57,6 +62,8 @@ export default function PricingPage() {
 
     <section className="pricing-section pricing-faq" aria-labelledby="faq-title">
       <div className="pricing-section-heading"><p className="pricing-eyebrow">Before you choose</p><h2 id="faq-title">A few useful answers.</h2></div>
+      <details><summary>Which mock papers are included?</summary><div><p>Free includes Paper A at every level from {MOCK_LEVEL_RANGE}: {FREE_MOCK_COUNT} complete papers. Pro includes Papers A, B and C: {TOTAL_MOCK_COUNT} in total. Each level has its own question count and timed sections.</p><p>Retaking a paper uses the same questions. Choose B or C for a different set at that level.</p></div></details>
+      <details><summary>Are mock-exam writing tasks automatically marked?</summary><div><p>No. Writing tasks, where included, provide reference responses and self-review guidance. Objective answers receive raw practice marks; writing is reviewed separately. These are independent HSKKit papers, not official examinations or pass predictions.</p><p>AI credits cover supported practice and review explanations, saved plan suggestions and uploaded mistake analysis. They do not add automatic assessment to mock-exam writing.</p></div></details>
       <details><summary>How does the free trial work?</summary><div><p>Your 7-day Pro trial starts automatically after sign-up with an eligible verified Google account and includes 20 AI credits. No card is required and there is no automatic charge. It returns to Free automatically.</p><p>If you buy during the trial, your paid subscription starts immediately. Trial and reward credits follow their existing eligibility and expiry rules.</p></div></details>
       <details><summary>What can I do with the AI credits?</summary><div><p>Paid Pro includes {PRO_CAPABILITIES.aiMonthlyCredits} AI credits each month, including on annual billing. Successful exercise explanations use {AI_CREDIT_COSTS.explanation} credit; saved study-plan suggestions and uploaded mistake analyses use {AI_CREDIT_COSTS.studyPlan} credits each. Failed AI responses do not consume credits.</p><p>AI explanations appear after supported practice or review feedback. Uploaded mistake analysis is available from <Link href="/review">Review</Link>. Pro does not include an open-ended chatbot, AI speaking assessment or AI handwriting assessment.</p><p>Usage limits: {PRO_CAPABILITIES.aiRequestsPerHour} AI requests per hour and {PRO_CAPABILITIES.aiConcurrency} concurrent AI request. Free has no recurring monthly AI allowance; eligible trial or reward credits can still be used under their own rules.</p></div></details>
       <details><summary>How are standard review and Focused Review different?</summary><div><p>Standard review lets both plans revisit learned items without a daily rating limit. Pro Focused Review prioritizes unresolved mistakes and due weak memories, and explains why an item was selected.</p><p>History limits apply to past activity records. Learned items keep their review schedule even when their original activity falls outside that history window.</p></div></details>

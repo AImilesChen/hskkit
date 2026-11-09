@@ -1,5 +1,7 @@
 "use client";
 import Link from "next/link";
+import { FormalPaperAccess, FormalNextPaper } from "@/app/components/formal-paper-access";
+import "@/app/components/mock-offer.css";
 import { useEffect, useRef, useState } from "react";
 import type { ExamOption, FormalView, Form, RubyToken, StudentItem, StudentPart } from "@/lib/formal-exams/hsk2/types";
 import { examPhase } from "@/lib/formal-exams/hsk2/domain";
@@ -9,7 +11,7 @@ function Ruby({ tokens, text }: { tokens?: RubyToken[]; text?: string }) {
   return <span lang="zh-Hans" className="formal-ruby">{tokens?.length ? tokens.map((t, i) => t.pinyin ? <ruby key={i}>{t.text}<rt>{t.pinyin}</rt></ruby> : <span key={i}>{t.text}</span>) : text}</span>;
 }
 const messages: Record<string, string> = {
-  SIGN_IN_REQUIRED: "Sign in to open this Pro paper.", PRO_REQUIRED: "Paper B and Paper C are included with Pro.",
+  SIGN_IN_REQUIRED: "Sign in to check your Pro access.", PRO_REQUIRED: "Paper B and Paper C are included with Pro.",
   ACCOUNT_UNAVAILABLE: "This account cannot access the exam right now.", EXAM_NOT_FOUND: "This attempt is not available in this browser or account.",
   REVISION_CONFLICT: "This attempt changed in another tab. Reload the saved attempt, then try again.",
   SECTION_LOCKED: "That section is closed. Reload to continue with the current section.",
@@ -130,11 +132,11 @@ export function FormalRunner({ form }: { form: Form }) {
     {error && <div className="formal-error" role="alert"><p>{messages[error] ?? "We couldn’t save or load this step. Your previously saved answers are safe. Try again."}</p>
       {retry && <button disabled={busy} onClick={() => void action(retry)}>Retry {retry.action === "answer" ? "saving answer" : "request"}</button>}
       {session && <button disabled={busy} onClick={() => void restore(session.id)}>Reload saved attempt</button>}
-      {["SIGN_IN_REQUIRED", "PRO_REQUIRED"].includes(error) && <div className="formal-actions"><Link href={googleSignInHref(path)}>Sign in</Link><Link href="/pricing">See Pro plans →</Link><Link href="/hsk-test-prep/hsk-2/mock/a">Try free Paper A</Link></div>}
+      {["SIGN_IN_REQUIRED", "PRO_REQUIRED"].includes(error) && <div className="formal-actions"><Link href={googleSignInHref(path)}>Sign in</Link><Link href="/pricing#plans">View Pro plans →</Link><Link href="/hsk-test-prep/hsk-2/mock/a">Try free Paper A</Link></div>}
     </div>}
     {loading ? <p role="status">Loading your saved attempt…</p> : !session ? <section className="formal-preparation">
       <div><h2>Get ready for your complete paper.</h2><p>60 questions · Listening 25, reading 25, writing 10 · 55 timed minutes.</p><ol><li>Find a quiet place and check your device volume.</li><li>The recording reads each question twice. Listening lasts 17 minutes.</li><li>You then have 3 minutes to check listening answers, 25 minutes for reading and 10 minutes for writing.</li><li>Choices save as you select them. For writing blanks, type one character and select Save answer. The timer keeps running if you leave.</li></ol><p>Allow up to 5 minutes to get ready before you start. This is independent practice, scored out of 60.</p></div>
-      <div className="formal-ready-card"><p className="formal-badge">{form === "a" ? "Free · no account needed" : "Pro access required"}</p><h3>Ready when you are.</h3><p>Test your sound with the unscored example.</p><audio controls preload="none" src={`/api/v1/formal-exams/hsk2/media/${form}/hsk2-${form}-v1-L1-example.mp3`} aria-label="Sound check" /><button className="test-primary-link" type="button" disabled={busy || !startKey} onClick={() => void action({ action: "start", form, key: startKey })}>{busy ? "Opening paper…" : `Start Paper ${form.toUpperCase()} →`}</button>
+      <div className="formal-ready-card"><p className="formal-badge">{form === "a" ? "Free · no account needed" : "Pro access required"}</p><h3>Ready when you are.</h3><p>Test your sound with the unscored example.</p><audio controls preload="none" src={`/api/v1/formal-exams/hsk2/media/${form}/hsk2-${form}-v1-L1-example.mp3`} aria-label="Sound check" /><FormalPaperAccess level={2} form={form} busy={busy || !startKey} onStart={() => void action({ action: "start", form, key: startKey })}/>
       {error === "EXAM_NOT_FOUND" && <p>You can start a fresh attempt above.</p>}</div>
     </section> : <>
       {result ? <section className="formal-result"><div><p className="test-eyebrow">Your result</p><h2>{result.correct}<span> / 60</span></h2><p>Raw marks · Independent practice</p></div><div className="formal-score-grid"><p><strong>{result.listening} / 25</strong><span>Listening</span></p><p><strong>{result.reading} / 25</strong><span>Reading</span></p><p><strong>{result.writing} / 10</strong><span>Writing</span></p><p><strong>{answered} / 60</strong><span>Answered</span></p></div><p>Review every answer below. This result is not an official scaled score or a pass prediction.</p></section> : <section className="formal-session-bar" aria-label="Exam progress"><div><strong>{phase === "listening" ? "Listening" : phase === "transfer" ? "Check listening answers" : phase === "reading" ? "Reading" : phase === "writing" ? "Writing" : "Time is up"}</strong><span>{answered} / 60 answers saved</span></div><div className="formal-time"><strong>{formatTime(remaining)}</strong><span>remaining</span></div><button type="button" disabled={busy} onClick={() => setConfirmSubmit(true)}>Submit paper</button></section>}
@@ -151,6 +153,7 @@ export function FormalRunner({ form }: { form: Form }) {
         {!result && !editable(part.section) ? <p className="formal-phase-note">This section is closed.</p> : part.questions.map(q => question(q, part))}
         <div className="formal-actions"><button disabled={partIndex === 0} onClick={() => setPartIndex(i => i - 1)}>← Previous part</button><button disabled={partIndex === 10 || (!result && !editable(paper!.parts[partIndex + 1]?.section ?? ""))} onClick={() => { setPartIndex(i => i + 1); document.getElementById("formal-part-title")?.scrollIntoView({ block: "start" }); }}>Next part →</button></div>
       </section>}</div>
+      {result && <FormalNextPaper level={2} form={form}/>}
       <div className="formal-end-actions">{result ? <><button onClick={() => setConfirmRetake(true)}>Take this paper again</button><Link href="/hsk-test-prep/hsk-2/mock">Choose another paper →</Link></> : <p aria-live="polite">{busy ? "Saving…" : "Answers saved on the server. Leaving does not pause the timer."}</p>}</div>
       {confirmRetake && <section className="formal-confirm"><h2>Start a new attempt?</h2><p>Your completed result stays in recent attempts.</p><button onClick={() => { setSession(undefined); setStartKey(crypto.randomUUID()); setConfirmRetake(false); setPartIndex(0); autoSubmitted.current = false; try { localStorage.removeItem(storageKey); } catch {} history.replaceState(null, "", path); }}>Prepare a new attempt</button><button onClick={() => setConfirmRetake(false)}>Cancel</button></section>}
     </>}

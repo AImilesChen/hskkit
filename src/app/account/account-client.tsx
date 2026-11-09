@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { freeStudyDescription, historyDescription } from "@/lib/commercial/plan-presentation";
+import { FREE_MOCK_COUNT, TOTAL_MOCK_COUNT, EXTRA_MOCK_COUNT, MOCK_HUB_HREF, MOCK_LEVEL_RANGE } from "@/lib/formal-exams/offer";
 import { FREE_CAPABILITIES } from "@/lib/commercial/capabilities";
 import GoogleSignInLink from "../login/google-sign-in-link";
 import { googleSignInHref } from "@/lib/account/sign-in";
@@ -300,6 +301,7 @@ export default function AccountClient() {
             <p>{tier === "Free" ? `${freeStudyDescription()} ${historyDescription(FREE_CAPABILITIES)}.`
               : referrals?.access?.source === "trial" ? `Your trial ends ${formatDate(referrals.access.endsAt)}. No card stored and no automatic charge.`
               : "Unlimited regular study and review, Focused Review and expanded history."}</p>
+            <div className="account-exam-benefit"><strong>{tier === "Free" ? `${FREE_MOCK_COUNT} free HSK mock papers` : `All ${TOTAL_MOCK_COUNT} HSK mock papers included`}</strong><p>{tier === "Free" ? `Paper A at every level from ${MOCK_LEVEL_RANGE}. Pro adds ${EXTRA_MOCK_COUNT} B/C papers.` : `Papers A, B and C across ${MOCK_LEVEL_RANGE}, with timed sections and answer review.`}</p><Link href={MOCK_HUB_HREF}>{tier === "Free" ? "Explore free mock papers →" : "Explore included mock papers →"}</Link></div>
             {tier === "Pro" && referrals?.access?.source !== "trial" && subscription?.subscription?.currentPeriodEnd && <p className="account-plan-period">{subscription.subscription.cancelAtPeriodEnd ? "Access until" : "Current period ends"} {formatDate(subscription.subscription.currentPeriodEnd)}</p>}
             {tier === "Free" && <Link className="btn" href="/pricing">Compare Pro</Link>}
             {subscription?.subscription ? <details className="account-billing-details" id="billing" open={billingOpen} onToggle={(event) => setBillingOpen(event.currentTarget.open)}>

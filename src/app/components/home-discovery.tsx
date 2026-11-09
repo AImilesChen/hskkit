@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { FREE_MOCK_COUNT, TOTAL_MOCK_COUNT, EXTRA_MOCK_COUNT, MOCK_LEVEL_RANGE, MOCK_HUB_HREF } from '@/lib/formal-exams/offer';
 import HomeIcon, {type HomeIconName} from './home-icon';
 import {homeTools,featuredGuideSlugs} from '@/lib/home/discovery';
 import {convertNumber} from '@/lib/numbers/conversion';
@@ -35,3 +36,5 @@ export function HomeGuides(){return <section className="home-section home-guides
     const post=blog.articles.find(p=>p.slug===slug);if(!post)return null;
     return <article key={slug} className="home-guide-card"><img src={`/home-guides/${slug}.webp`} alt={post.imageAlt} width="768" height="512" loading="lazy" decoding="async"/><div><span>{post.category}</span><h3>{post.title}</h3><p>{post.excerpt}</p><Link prefetch={false} href={`/blog/${slug}`} className="home-discovery-link">Read the guide<HomeIcon name="arrow" className="h-4 w-4"/></Link></div></article>;
   })}</div></section>;}
+
+export function HomeMockExams(){return <section className="home-section home-mock-exams" aria-labelledby="home-mock-title"><div className="home-section-copy"><p className="home-eyebrow">Complete practice · {MOCK_LEVEL_RANGE}</p><h2 id="home-mock-title">Your next HSK. One paper at a time.</h2><p>Start with {FREE_MOCK_COUNT} free A papers. Pro includes all {TOTAL_MOCK_COUNT}, with {EXTRA_MOCK_COUNT} additional B/C papers.</p><Link href={MOCK_HUB_HREF} className="home-discovery-link">Choose your HSK level <HomeIcon name="arrow" className="h-4 w-4"/></Link></div><div className="home-mock-papers" aria-label="Each level has three papers">{['A','B','C'].map((form,i)=><div className="home-mock-paper" data-form={form} key={form}><span className="home-mock-tag">{i===0?'FREE':'PRO'}</span><strong>{form}</strong><span>Paper {form}</span><small>{i===0?'Your first complete run':'A different question set'}</small></div>)}</div></section>;}

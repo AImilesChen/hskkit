@@ -2,9 +2,9 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { TOTAL_MOCK_COUNT, MOCK_HUB_HREF } from "@/lib/formal-exams/offer";
 import { googleSignInHref } from "@/lib/account/sign-in";
 import { SUBSCRIPTION_PLANS, type SubscriptionPlanId } from "@/lib/commercial/subscription";
-import { PRO_CAPABILITIES } from "@/lib/commercial/capabilities";
 import { PRO_PLAN_BENEFITS as PRO_FEATURES, annualPriceSummary, checkoutAction, pricingReturnTo, selectedPricingPlan, type PricingState } from "@/lib/commercial/plan-presentation";
 
 const freeAccess: PricingState["access"] = { tier: "free", source: "free", endsAt: null };
@@ -50,9 +50,9 @@ export function WelcomeTrialAction() {
   const state = usePricingState();
   if (!state) return <p role="status">Checking trial availability…</p>;
   if (!state.statusAvailable) return <p>Account status unavailable. <button type="button" className="pricing-text-button" onClick={() => location.reload()}>Retry</button></p>;
-  if (!state.authenticated) return <p>New accounts get a 7-day Pro trial and 20 AI credits. No card required. <Link href={googleSignInHref("/account")}>Start free trial →</Link></p>;
-  if (state.access.source === "trial") return <p>Your free Pro trial is active{state.access.endsAt ? ` until ${accessEnd(state.access.endsAt)}` : ""}. <Link href="/account">View trial details →</Link></p>;
-  if (state.access.source === "paid") return <p>Pro is active on your account. <Link href="/account">Manage subscription →</Link></p>;
+  if (!state.authenticated) return <p>Eligible new accounts receive 7 days of Pro access and 20 AI credits. No card required. Access returns to Free automatically. <Link href={googleSignInHref("/account")}>Start free trial →</Link></p>;
+  if (state.access.source === "trial") return <p>Your free Pro trial includes all {TOTAL_MOCK_COUNT} mock papers{state.access.endsAt ? ` until ${accessEnd(state.access.endsAt)}` : ""}. <Link href="/account">View trial details →</Link></p>;
+  if (state.access.source === "paid") return <p>Pro is active. All {TOTAL_MOCK_COUNT} mock papers are included. <Link href="/account">Manage subscription →</Link></p>;
   if (state.access.source === "promo") return <p>Your promotional Pro access is active. <Link href="/account">View access details →</Link></p>;
   return <p>Continue Free, or choose Pro when you need more. Your saved progress stays with your account.</p>;
 }
@@ -108,7 +108,7 @@ export function ProPlanChoice() {
       <button type="button" aria-pressed={planId === "pro_yearly"} onClick={() => setPlanId("pro_yearly")}>Yearly <span>Save {annualPriceSummary().savingsPercent}%</span></button>
     </div></fieldset>
     <ul className="pricing-benefits">{PRO_FEATURES.map(item => <li key={item.title}><span aria-hidden="true">✓</span><div><strong>{item.title}</strong><p>{item.detail}</p></div></li>)}</ul>
-    <div className="pricing-ai-allowance"><strong>{PRO_CAPABILITIES.aiMonthlyCredits} AI credits every month</strong><span>For supported explanations, plan suggestions and uploaded mistake analysis.</span></div>
+    <p className="pricing-pro-exam-link"><Link href={MOCK_HUB_HREF}>Explore included HSK mock papers →</Link></p>
     <SubscriptionCheckout key={planId} planId={planId} label={`Choose ${SUBSCRIPTION_PLANS[planId].name}`} onBusyChange={setBusy}/>
   </>;
 }

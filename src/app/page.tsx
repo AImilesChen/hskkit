@@ -6,7 +6,8 @@ import HomeNextStep from "./components/home-next-step";
 import HomeQuickFlashcards from "./components/home-quick-flashcards";
 import HomeIcon from "./components/home-icon";
 import "./homepage.css";
-import {HomeTools,HomeSkills,HomeGuides} from "./components/home-discovery";
+import {HomeTools,HomeSkills,HomeGuides,HomeMockExams} from "./components/home-discovery";
+import {FREE_MOCK_COUNT,TOTAL_MOCK_COUNT,EXTRA_MOCK_COUNT,MOCK_LEVEL_RANGE} from "@/lib/formal-exams/offer";
 import {cumulativeWordCounts} from "@/lib/home/discovery";
 import { matchedWordExample } from "@/lib/learning/word-example-editorial";
 import {
@@ -37,7 +38,7 @@ const faqItems = [
   },
   {
     question: "What is included in Free and Pro?",
-    answer: "Free includes the published catalog, core practice, 10 new items and 20 successful SRS ratings daily. Pro adds unlimited learning and review subject to safeguards, Focused Review, AI credits, longer history and three-device sync. The 7-day Pro trial requires no card and returns to Free automatically.",
+    answer: `Free includes ${FREE_MOCK_COUNT} complete mock papers across ${MOCK_LEVEL_RANGE}, 10 new learning items daily and unlimited standard review. Pro includes all ${TOTAL_MOCK_COUNT} mock papers — ${EXTRA_MOCK_COUNT} additional B/C papers — plus unlimited new learning, monthly AI credits, Focused Review, longer history and three-device sync. Eligible new accounts receive a 7-day Pro trial and 20 AI credits, with no card required or automatic charge.`,
     href: "/pricing",
     linkLabel: "Compare current plans",
   },
@@ -133,6 +134,8 @@ export default function HomePage() {
         <span className="home-level-index">0{entry.level}</span><h3>Level {entry.level}</h3><div className="home-level-counts"><strong>{entry.wordCount.toLocaleString("en-US")} <span>at this level</span></strong><span>{cumulativeCounts.get(entry.level)?.toLocaleString("en-US")} through this level</span></div><HomeIcon name="arrow" className="h-4 w-4" />
       </Link>)}{advancedLevel ? <Link href="/vocabulary/7" className="home-level-row home-level-row-advanced"><span className="home-level-index">07–09</span><h3>Levels 7–9</h3><div className="home-level-counts"><strong>{advancedLevel.wordCount.toLocaleString("en-US")} <span>at this band</span></strong><span>{cumulativeCounts.get(advancedLevel.level)?.toLocaleString("en-US")} through this band · Unified advanced band</span></div><HomeIcon name="arrow" className="h-4 w-4" /></Link> : null}</div>
     <nav className="home-learning-rhythm" aria-label="A regular learning rhythm"><Link href="/vocabulary/1">Learn focused vocabulary</Link><span aria-hidden="true">→</span><Link href="/listen">Practise listening</Link><span aria-hidden="true">→</span><Link href="/review">Complete today’s review</Link></nav></section>
+
+    <HomeMockExams/>
 
     <HomeSkills/>
 
