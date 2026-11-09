@@ -2,8 +2,18 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync, existsSync } from "node:fs";
 import { createHash } from "node:crypto";
+import { parseCourseRange, courseRangeStream } from "../src/lib/course-exams/byte-range.ts";
 const read=(p:string)=>readFileSync(p,"utf8");
 const manifest=JSON.parse(read("src/lib/course-exams/manifest.json"));
+test("Course byte ranges handle asset-binding 200 responses without buffering the full file",async()=>{
+ assert.deepEqual(parseCourseRange('bytes=3-7',12),{start:3,end:7});
+ assert.deepEqual(parseCourseRange('bytes=-3',12),{start:9,end:11});
+ assert.deepEqual(parseCourseRange('bytes=10-',12),{start:10,end:11});
+ for(const range of ['bytes=12-','bytes=7-2','bytes=-0','bytes=1-2,4-5','invalid'])assert.equal(parseCourseRange(range,12),false);
+ let cancelled=false,index=0;const source=new ReadableStream<Uint8Array>({pull(c){c.enqueue(new Uint8Array([index++,index++,index++,index++]));},cancel(){cancelled=true;}});
+ const bytes=new Uint8Array(await new Response(courseRangeStream(source,3,7)).arrayBuffer());
+ assert.deepEqual([...bytes],[3,4,5,6,7]);assert.equal(cancelled,true);
+});
 test("Chinese 1 publication preserves three distinct 40-question banks and protected artifacts",()=>{
  assert.deepEqual(Object.keys(manifest.papers),["a","b","c"]);const seen=new Set();
  for(const form of ["a","b","c"]){const p=manifest.papers[form],root=`public/formal-media/${p.id}/`;

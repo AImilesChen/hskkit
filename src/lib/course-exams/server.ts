@@ -3,6 +3,7 @@ import { formalIdentity, requirePaperAccess } from "@/lib/formal-exams/server";
 import { d1UnavailableResponse } from "@/lib/d1/user-protection";
 import { googleSignInHref } from "@/lib/account/sign-in";
 import { courseAsset, coursePaperHref, isCourseForm, type CourseForm } from "./catalog";
+import { parseCourseRange, courseRangeStream } from "./byte-range";
 
 const privateHeaders = { "cache-control": "private, no-store", "x-robots-tag": "noindex, nofollow", "x-content-type-options": "nosniff" };
 export async function serveCourseAsset(req: Request, form: unknown, path: string) {
@@ -12,6 +13,8 @@ export async function serveCourseAsset(req: Request, form: unknown, path: string
     // Every paid file, including HTML, JSON, PDFs, range and HEAD requests, is checked.
     // Nothing from a paid paper is imported into a public page or client bundle.
     if (form !== "a") await requirePaperAccess(form, await formalIdentity());
+    const requestedRange = parseCourseRange(req.headers.get("range"), entry.file.bytes);
+    if (requestedRange === false) return new Response(null, { status: 416, headers: { ...privateHeaders, "content-range": `bytes */${entry.file.bytes}` } });
     // Store HTML under a non-HTML extension to bypass static canonical redirects.
     const assetPath = `/formal-media/${entry.paper.id}/${entry.file.storagePath}`;
     let response: Response;
@@ -19,21 +22,28 @@ export async function serveCourseAsset(req: Request, form: unknown, path: string
       const { readFile } = await import("node:fs/promises");
       const { join } = await import("node:path");
       const bytes = await readFile(join(process.cwd(), "public", assetPath));
-      const range = req.headers.get("range"), match = range?.match(/^bytes=(\d+)-(\d*)$/);
-      const start = match ? Number(match[1]) : 0;
-      const end = match?.[2] ? Math.min(Number(match[2]), bytes.length - 1) : bytes.length - 1;
-      if (range && (!match || start > end || start >= bytes.length)) return new Response(null, { status: 416, headers: { ...privateHeaders, "content-range": `bytes */${bytes.length}` } });
-      response = new Response(req.method === "HEAD" ? null : new Uint8Array(bytes.subarray(start, end + 1)), { status: match ? 206 : 200, headers: { "content-type": entry.file.contentType, "content-length": String(end - start + 1), "accept-ranges": "bytes", ...(match ? { "content-range": `bytes ${start}-${end}/${bytes.length}` } : {}) } });
+      const start = requestedRange ? requestedRange.start : 0;
+      const end = requestedRange ? requestedRange.end : bytes.length - 1;
+      response = new Response(req.method === "HEAD" ? null : new Uint8Array(bytes.subarray(start, end + 1)), { status: requestedRange ? 206 : 200, headers: { "content-type": entry.file.contentType, "content-length": String(end - start + 1), "accept-ranges": "bytes", ...(requestedRange ? { "content-range": `bytes ${start}-${end}/${bytes.length}` } : {}) } });
     } else {
       const env = (await getCloudflareContext({ async: true })).env as CloudflareEnv & { ASSETS: { fetch(request: Request): Promise<Response> } };
-      const headers = new Headers();
+      const headers = new Headers({ "accept-encoding": "identity" });
       if (req.headers.has("range")) headers.set("range", req.headers.get("range")!);
       response = await env.ASSETS.fetch(new Request(new URL(assetPath, req.url), { method: req.method, headers }));
       response = new Response(req.method === "HEAD" ? null : response.body, response);
+      if (requestedRange && response.status === 200) {
+        const { start, end } = requestedRange;
+        const rangeHeaders = new Headers(response.headers);
+        rangeHeaders.set("content-range", `bytes ${start}-${end}/${entry.file.bytes}`);
+        rangeHeaders.set("content-length", String(end - start + 1));
+        const body = req.method === "HEAD" || !response.body ? null : courseRangeStream(response.body, start, end);
+        response = new Response(body, { status: 206, headers: rangeHeaders });
+      }
     }
     // Avoid a query-dependent shared cache for any paper document or file.
     for (const [key, value] of Object.entries(privateHeaders)) response.headers.set(key, value);
     response.headers.set("content-type", entry.file.contentType);
+    response.headers.set("accept-ranges", "bytes");
     if (path.endsWith(".html")) {
       response.headers.set("content-security-policy", "frame-ancestors 'self'; base-uri 'self'");
       response.headers.set("permissions-policy", "microphone=(self)");
