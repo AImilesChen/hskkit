@@ -1,0 +1,27 @@
+name: Read-only HSKKit cost and cache inventory
+on:
+  push:
+    branches: [maintenance/cost-audit-20261109]
+    paths: [scripts/audit-cf-costs.py, .github/workflows/audit-cf-costs.yml]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  inventory:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: scripts/audit-cf-costs.py
+          sparse-checkout-cone-mode: false
+      - name: Read aggregate metrics and object metadata
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+        run: python3 scripts/audit-cf-costs.py "$RUNNER_TEMP/cost-cache-audit.json"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: cost-cache-audit-${{ github.run_id }}
+          path: ${{ runner.temp }}/cost-cache-audit.json
+          retention-days: 7
+          if-no-files-found: error
