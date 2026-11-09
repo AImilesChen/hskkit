@@ -1,0 +1,56 @@
+.pricing-mock-showcase{scroll-margin-top:100px}
+.mock-demo-label{display:flex;align-items:center;gap:10px;margin:28px 0 18px;color:#506079;font-size:15px;font-weight:600}
+.mock-demo-dot{width:8px;height:8px;flex-shrink:0;background:#76509c;border-radius:50%;box-shadow:0 0 0 5px #eee7f7}
+.mock-demo-label p span{font-weight:400}
+.mock-demo-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px}
+.mock-demo-card{--demo-accent:#70459d;--demo-line:#ddd0ee;--demo-wash:#f6f1fb;--demo-solid:#eee3f8;min-width:0;padding:24px 22px;border:1px solid var(--demo-line);border-top:3px solid var(--demo-accent);border-radius:18px;background:linear-gradient(160deg,var(--demo-wash),#fff 68%);display:flex;flex-direction:column}
+.mock-demo-card[data-tone=green]{--demo-accent:#236f58;--demo-line:#c7e0d6;--demo-wash:#eef8f3;--demo-solid:#def0e6}
+.mock-demo-card[data-tone=amber]{--demo-accent:#9b5d24;--demo-line:#ebd6bd;--demo-wash:#fff7ec;--demo-solid:#f9e8d2}
+.mock-demo-heading{display:flex;align-items:flex-start;gap:12px;margin-bottom:24px}
+.mock-demo-step{display:grid;place-items:center;flex-shrink:0;width:34px;height:34px;border-radius:10px;background:var(--demo-solid);color:var(--demo-accent);font-weight:750;font-size:14px}
+.mock-demo-heading h3{font-size:23px;font-weight:750;line-height:1.25;letter-spacing:-.025em;margin:2px 0 10px}
+.mock-demo-heading p{font-size:16px;line-height:1.6;color:#526079}
+.mock-question-preview,.mock-answer-preview{background:#fff;border:1px solid var(--demo-line);border-radius:13px;padding:18px}
+.mock-question-meta{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;font-size:13px;color:#526079;margin-bottom:20px}
+.mock-section-time{display:inline-flex;align-items:center;gap:5px;color:#70459d;background:#f2ebf9;border-radius:7px;padding:4px 6px;white-space:nowrap}
+.mock-section-time svg{width:17px;height:17px}
+.pricing-page .mock-preview-context{font-size:22px;line-height:1.8;color:#243550;margin-bottom:10px}
+.pricing-page .mock-preview-prompt{font-size:22px;font-weight:650;line-height:1.7;margin-bottom:18px}
+.mock-preview-options{display:grid;gap:9px}
+.mock-preview-options button{display:flex;align-items:center;gap:10px;min-height:50px;width:100%;padding:10px 12px;background:#fff;border:1px solid #d9dce6;border-radius:9px;color:#263653;cursor:pointer;text-align:left;line-height:1.4}
+.mock-preview-options button:hover{background:#f9f5fd;border-color:#bba4d6}
+.mock-preview-options button[aria-pressed=true]{background:#eee4f8;border-color:#8a60b2;box-shadow:inset 0 0 0 1px #8a60b2}
+.mock-option-letter{font-size:13px;font-weight:750;color:#64718a}
+.mock-preview-options button>span[lang]{font-size:21px}
+.mock-option-check{margin-left:auto;color:#70459d;font-size:18px;font-weight:750;min-width:18px}
+.mock-answer-label{display:flex;align-items:center;gap:9px;font-size:14px;font-weight:650;color:#236f58}
+.mock-answer-tick{width:29px;height:29px;display:grid;place-items:center;background:#e1f1e8;border-radius:50%;font-size:18px;flex-shrink:0}
+.pricing-page .mock-answer-hanzi{font-size:34px;font-weight:650;line-height:1.5;color:#1b614c;margin:16px 0}
+.pricing-page .mock-answer-explanation{font-size:16px;line-height:1.8;color:#42556c}
+.pricing-page .mock-choice-feedback{font-size:15px;line-height:1.6;padding:14px 0 0;margin:20px 0 0;border-top:1px solid #dde9e3;color:#526079;min-height:66px}
+.mock-choice-feedback[data-state=correct]{color:#1d6b50;font-weight:650}
+.mock-choice-feedback[data-state=different]{color:#89501c;font-weight:600}
+.mock-paper-preview{display:grid;gap:10px}
+.mock-paper-collection-label{font-size:14px;color:#6c5d4b;margin-bottom:2px!important}
+.pricing-page .mock-preview-paper{display:flex;align-items:center;gap:12px;text-decoration:none;background:#fff;border:1px solid #e8d9c8;border-radius:12px;padding:15px 12px;color:#23364e;min-height:88px}
+.mock-preview-paper:hover{border-color:#bc8d5b;box-shadow:0 3px 10px #7a582b0b}
+.mock-paper-cover{display:grid;place-items:center;flex-shrink:0;width:38px;height:50px;border:1px solid #d7c6e7;border-radius:4px 10px 4px 4px;background:#f6f0fb;font-family:Georgia,serif;font-size:29px;color:#78509c;box-shadow:3px 3px 0 #eee5f5}
+.mock-preview-paper[data-form=a] .mock-paper-cover{background:#f0f8f3;border-color:#bfd9ca;color:#257658;box-shadow:3px 3px 0 #e2f0e7}
+.mock-paper-copy{display:grid;gap:4px;min-width:0;flex:1}
+.mock-paper-copy strong{font-size:17px;font-weight:700}
+.mock-paper-copy>span{font-size:14px;line-height:1.45;color:#526079}
+.mock-paper-access{font-size:12px;font-weight:750;background:#eee5f7;color:#70459d;padding:3px 7px;border-radius:20px;flex-shrink:0}
+.mock-preview-paper[data-form=a] .mock-paper-access{background:#e1f2e8;color:#22684e}
+.mock-paper-arrow{color:#8e6943;font-size:18px}
+.pricing-page .mock-demo-card-note{font-size:15px;line-height:1.65;color:#526079;margin-top:auto;padding-top:20px}
+.mock-demo-full-sample{display:flex;align-items:center;justify-content:space-between;gap:24px;margin:22px 0}
+.mock-demo-full-sample p{font-size:15px;color:#526079}
+.mock-demo-full-sample a{font-size:16px;font-weight:700;min-height:44px;display:inline-flex;align-items:center;gap:14px;flex-shrink:0;text-underline-offset:4px}
+.pricing-page .mock-demo-boundary{margin:0 0 36px;padding:18px 20px;background:#f0f3f7;border-radius:12px;color:#526079;font-size:15px;line-height:1.75}
+.pricing-mock-showcase .pricing-section-heading h3{font-size:25px;font-weight:750;margin-bottom:10px}
+.pricing-mock-footer{display:flex;gap:24px;align-items:center;margin-top:24px}
+.pricing-mock-footer p{font-size:15px;color:#526079}
+@media(max-width:1100px) and (min-width:901px){.mock-demo-card{padding:22px 16px}.mock-paper-arrow{display:none}.mock-preview-paper{gap:9px!important}.mock-paper-copy>span{font-size:13px}.mock-demo-heading h3{font-size:22px}}
+@media(max-width:900px){.mock-demo-grid{grid-template-columns:1fr}.mock-demo-card{padding:26px}.mock-demo-heading{margin-bottom:22px}.mock-demo-heading h3{font-size:25px}.mock-demo-full-sample{align-items:flex-start;flex-direction:column;gap:8px}.pricing-mock-footer{align-items:flex-start;flex-direction:column;gap:12px}}
+@media(min-width:601px) and (max-width:900px){.mock-demo-card{display:grid;grid-template-columns:minmax(0,.85fr) minmax(0,1.15fr);gap:0 28px}.mock-demo-heading{grid-column:1}.mock-question-preview,.mock-answer-preview,.mock-paper-preview{grid-column:2;grid-row:1/3}.mock-demo-card-note{grid-column:1;align-self:end}.mock-question-meta{margin-bottom:14px}}
+@media(max-width:480px){.mock-demo-card{padding:22px 18px}.mock-demo-heading{gap:10px}.mock-demo-heading h3{font-size:23px}.mock-demo-label{font-size:14px;align-items:flex-start}.mock-demo-label p span{display:block}.mock-demo-dot{margin-top:8px}.mock-question-preview,.mock-answer-preview{padding:16px}.mock-paper-copy>span{font-size:14px}.mock-demo-full-sample a{width:100%;justify-content:center;background:#fff;border:1px solid #d6c7e8;border-radius:10px;padding:10px 14px}.mock-demo-full-sample p{font-size:15px}.mock-demo-boundary{padding:16px!important}}
