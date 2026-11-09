@@ -49,6 +49,8 @@ jobs:
           node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --test --test-name-pattern='P0-2 (exposes|grouped|shared|every)' tests/p0-2-discoverable-navigation.test.mts
       - name: Verify HSK 1–6 formal exam contracts
         run: node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --test tests/formal-exams.test.mts tests/hsk2-formal-exams.test.mts tests/hsk3-formal-exams.test.mts tests/hsk4-formal-exams.test.mts tests/hsk5-formal-exams.test.mts tests/hsk6-formal-exams.test.mts
+      - name: Verify AP Chinese publication and protected delivery
+        run: node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --test tests/ap-exams.test.mts
       - name: Ensure dedicated private page-cache bucket
         run: node scripts/storage-release.mjs ensure-bucket
       - name: Check whether assessment delivery changed

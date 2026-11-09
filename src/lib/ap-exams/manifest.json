@@ -1,0 +1,734 @@
+{
+  "version": "ap2027-v1",
+  "papers": {
+    "a": {
+      "id": "ap-chinese-2027-a-v1",
+      "sourceSha256": "71d2e407747f8a7a11856078efb8bcbbc333da678a0bd1d114f2dc0e8513c2e4",
+      "counts": {
+        "listening": 25,
+        "reading": 30,
+        "freeResponse": 4,
+        "qaExchanges": 4
+      },
+      "files": [
+        {
+          "path": "index.html",
+          "storagePath": "index.apdoc",
+          "contentType": "text/html; charset=utf-8",
+          "bytes": 152024,
+          "sha256": "1905d69d41f7db913aba62771c2156e47e28b6623bb3edb580f145be8a9b11f6"
+        },
+        {
+          "path": "paper.css",
+          "storagePath": "paper.css",
+          "contentType": "text/css; charset=utf-8",
+          "bytes": 13475,
+          "sha256": "446f07223456f3c1d7f3ea7fc9349672e79763689c166f2bc0cf16d44feb382c"
+        },
+        {
+          "path": "paper.js",
+          "storagePath": "paper.js",
+          "contentType": "text/javascript; charset=utf-8",
+          "bytes": 33799,
+          "sha256": "0dd8e7bb699c61bc3eb0e06a5de521c6d67bc42bdd84b10b723b4d040de8d36d"
+        },
+        {
+          "path": "student.html",
+          "storagePath": "student.apdoc",
+          "contentType": "text/html; charset=utf-8",
+          "bytes": 54582,
+          "sha256": "488bfdd0fca9d9d4c0e5d98e1b87003091900e8d5f81deb8cfce3a2a2873b96a"
+        },
+        {
+          "path": "teacher.html",
+          "storagePath": "teacher.apdoc",
+          "contentType": "text/html; charset=utf-8",
+          "bytes": 109864,
+          "sha256": "32dde37122e65f8c1ae0101280dd003ef6eb9cd641f900a19661253d433e165d"
+        },
+        {
+          "path": "listening.html",
+          "storagePath": "listening.apdoc",
+          "contentType": "text/html; charset=utf-8",
+          "bytes": 9812,
+          "sha256": "777ed674e7cd8434a685251474ed2924614fc68211ced946c93f8e292070d263"
+        },
+        {
+          "path": "student.pdf",
+          "storagePath": "student.pdf",
+          "contentType": "application/pdf",
+          "bytes": 358611,
+          "sha256": "b04ce913a30899195a8c52e8ed80f9c35d6046c4954c3db5b2afb13258eb22d0"
+        },
+        {
+          "path": "student-traditional.pdf",
+          "storagePath": "student-traditional.pdf",
+          "contentType": "application/pdf",
+          "bytes": 385716,
+          "sha256": "0deadfc64398fcd0be79fa28436560e245251a2b259b9da4d6fec86dd00f5df9"
+        },
+        {
+          "path": "teacher.pdf",
+          "storagePath": "teacher.pdf",
+          "contentType": "application/pdf",
+          "bytes": 450805,
+          "sha256": "ab01f90093c09a9550368f14bf6431065d3e6d2495d94571d693850885636de0"
+        },
+        {
+          "path": "answer-key.md",
+          "storagePath": "answer-key.md",
+          "contentType": "text/plain; charset=utf-8",
+          "bytes": 52418,
+          "sha256": "d29b103a9979808dbcbd4c8462c3ce4f41d030362bd96183bcabbdbfa45c8320"
+        },
+        {
+          "path": "paper-data.json",
+          "storagePath": "paper-data.json",
+          "contentType": "application/json",
+          "bytes": 163426,
+          "sha256": "71d2e407747f8a7a11856078efb8bcbbc333da678a0bd1d114f2dc0e8513c2e4"
+        },
+        {
+          "path": "audio-manifest.json",
+          "storagePath": "audio-manifest.json",
+          "contentType": "application/json",
+          "bytes": 30301,
+          "sha256": "bce4ca147980cd920450770e131b6a5c54ecb04ae90ed0fbaa97fd599456c8d1"
+        },
+        {
+          "path": "README.txt",
+          "storagePath": "README.txt",
+          "contentType": "text/plain; charset=utf-8",
+          "bytes": 845,
+          "sha256": "9defadd52982b5586037a0dfd9cc08bfbba7b27bfebd41a153074802775b20b9"
+        },
+        {
+          "path": "assets/audio/l1.mp3",
+          "storagePath": "assets/audio/l1.mp3",
+          "contentType": "audio/mpeg",
+          "bytes": 545516,
+          "sha256": "c449a0c1a69ef66ac4c42b3078a3aeec5d92b386a163936abfddab33e48986b9"
+        },
+        {
+          "path": "assets/audio/l2.mp3",
+          "storagePath": "assets/audio/l2.mp3",
+          "contentType": "audio/mpeg",
+          "bytes": 604268,
+          "sha256": "80dfe79a4433e766b92b49f7b79864d9ffcefebfe174a508b16dd298fe1ea5ce"
+        },
+        {
+          "path": "assets/audio/l3.mp3",
+          "storagePath": "assets/audio/l3.mp3",
+          "contentType": "audio/mpeg",
+          "bytes": 867884,
+          "sha256": "750f47bb9ceb6c46b72e3b886323ff0776a3ba82571573064cdd59e057158924"
+        },
+        {
+          "path": "assets/audio/l4.mp3",
+          "storagePath": "assets/audio/l4.mp3",
+          "contentType": "audio/mpeg",
+          "bytes": 636908,
+          "sha256": "804bd63a4b3727e2c77a0c4108ed326da18d36b032674ff353db3f0a01391cf5"
+        },
+        {
+          "path": "assets/audio/l5.mp3",
+          "storagePath": "assets/audio/l5.mp3",
+          "contentType": "audio/mpeg",
+          "bytes": 635372,
+          "sha256": "3f3515260a972484d44dd08b3f8701ae1c09f01cb3d179901f8c975df8ef12d6"
+        },
+        {
+          "path": "assets/audio/listening-full.mp3",
+          "storagePath": "assets/audio/listening-full.mp3",
+          "contentType": "audio/mpeg",
+          "bytes": 12000620,
+          "sha256": "503b5a347e2402d647d46e189fe723784aa5e604a271c1fc9460cd020e705329"
+        },
+        {
+          "path": "assets/audio/s1-prompt.mp3",
+          "storagePath": "assets/audio/s1-prompt.mp3",
+          "contentType": "audio/mpeg",
+          "bytes": 166124,
+          "sha256": "ffa11df3bc69e96ce686f38277a367b9c0ab63beb2a673819966218642637302"
+        },
+        {
+          "path": "assets/audio/s2-1.mp3",
+          "storagePath": "assets/audio/s2-1.mp3",
+          "contentType": "audio/mpeg",
+          "bytes": 142892,
+          "sha256": "eb50a92d1f95c0b40cce055c4ada513d80aff7e6e850410e11f62e8dd124e03b"
+        },
+        {
+          "path": "assets/audio/s2-2.mp3",
+          "storagePath": "assets/audio/s2-2.mp3",
+          "contentType": "audio/mpeg",
+          "bytes": 135212,
+          "sha256": "cb2d1ef19a7cf67b75b46e3ade9b6f84e410a636763d6fcfc0eec5e35175a986"
+        },
+        {
+          "path": "assets/audio/s2-3.mp3",
+          "storagePath": "assets/audio/s2-3.mp3",
+          "contentType": "audio/mpeg",
+          "bytes": 153644,
+          "sha256": "8a0dc4d7af5e2148ed39734ae134f4228c6c6dc88b5bb4d6eac464cc4df3fd12"
+        },
+        {
+          "path": "assets/audio/s2-4.mp3",
+          "storagePath": "assets/audio/s2-4.mp3",
+          "contentType": "audio/mpeg",
+          "bytes": 139436,
+          "sha256": "6bb05d5ee03304baf0a495663d36034897a693c10431cdf1ab3243f9c521f3d2"
+        },
+        {
+          "path": "assets/images/story-1.png",
+          "storagePath": "assets/images/story-1.png",
+          "contentType": "image/png",
+          "bytes": 17571,
+          "sha256": "da35c6f22894a833e7381abd15a34c523749fe2f00cefc9041606c390441554e"
+        },
+        {
+          "path": "assets/images/story-1.svg",
+          "storagePath": "assets/images/story-1.svg",
+          "contentType": "image/svg+xml",
+          "bytes": 3276,
+          "sha256": "8c1ccdb9a7b4e8046970db1e03af6016dce805af720f7028f8aee56643a7b6e6"
+        },
+        {
+          "path": "assets/images/story-2.png",
+          "storagePath": "assets/images/story-2.png",
+          "contentType": "image/png",
+          "bytes": 19555,
+          "sha256": "2189525f4317cd88005ae66a2bb81251f5f6a140ed4de802f09d2301d0e0bd38"
+        },
+        {
+          "path": "assets/images/story-2.svg",
+          "storagePath": "assets/images/story-2.svg",
+          "contentType": "image/svg+xml",
+          "bytes": 3961,
+          "sha256": "485a0d5380111db6367e6d1f3e1d0500f6d3854e23ec42c05e3fb39034760489"
+        },
+        {
+          "path": "assets/images/story-3.png",
+          "storagePath": "assets/images/story-3.png",
+          "contentType": "image/png",
+          "bytes": 15706,
+          "sha256": "fde2d537165e2dd4e269fb39c584fedc339b9510931230753355ae608bf0a3db"
+        },
+        {
+          "path": "assets/images/story-3.svg",
+          "storagePath": "assets/images/story-3.svg",
+          "contentType": "image/svg+xml",
+          "bytes": 3499,
+          "sha256": "0a7b28fccb59a00fc5b8e41976f1186d80a6183daf3d0ac7de4367b0cf0fe1fd"
+        },
+        {
+          "path": "assets/images/story-4.png",
+          "storagePath": "assets/images/story-4.png",
+          "contentType": "image/png",
+          "bytes": 18449,
+          "sha256": "388240fdc396109599c701112105e1b6f7cc4845f9197040148bf0076cc04f8c"
+        },
+        {
+          "path": "assets/images/story-4.svg",
+          "storagePath": "assets/images/story-4.svg",
+          "contentType": "image/svg+xml",
+          "bytes": 5544,
+          "sha256": "0f579914e4c5a1cc5ef6269ad9aa733187461c92fb0db2ca14c083af6ab0228c"
+        },
+        {
+          "path": "AP-Chinese-2027-Paper-A.zip",
+          "storagePath": "AP-Chinese-2027-Paper-A.zip",
+          "contentType": "application/zip",
+          "bytes": 8107218,
+          "sha256": "e110e623b6364875e02c64ec54000d8af366860f269f4c810ca3921a3aa0d685"
+        }
+      ]
+    },
+    "b": {
+      "id": "ap-chinese-2027-b-v1",
+      "sourceSha256": "1b9764ccf6562b3f4db1bde3c54c394c93f0f5b927296e46f0a22b130b2b1412",
+      "counts": {
+        "listening": 25,
+        "reading": 30,
+        "freeResponse": 4,
+        "qaExchanges": 4
+      },
+      "files": [
+        {
+          "path": "index.html",
+          "storagePath": "index.apdoc",
+          "contentType": "text/html; charset=utf-8",
+          "bytes": 150889,
+          "sha256": "f228e3d1f9d6bb7d6ed011f8daa30aa3d3056149ae82fcc99a6ab24f65e267b6"
+        },
+        {
+          "path": "paper.css",
+          "storagePath": "paper.css",
+          "contentType": "text/css; charset=utf-8",
+          "bytes": 13479,
+          "sha256": "b3c165bb94ef72d2b525fa3b1586dd5c88cdc9defdd0a36e5bb61120fe099b2a"
+        },
+        {
+          "path": "paper.js",
+          "storagePath": "paper.js",
+          "contentType": "text/javascript; charset=utf-8",
+          "bytes": 33799,
+          "sha256": "8d252b5c4736ad635ef60570ad6a5a354a3029d19470ae4e82b41dfe4541eb7f"
+        },
+        {
+          "path": "student.html",
+          "storagePath": "student.apdoc",
+          "contentType": "text/html; charset=utf-8",
+          "bytes": 56528,
+          "sha256": "b5c7f19cf34401796d1a1e70fff747ef67506ec30d2be6cb80978c122b6724fa"
+        },
+        {
+          "path": "teacher.html",
+          "storagePath": "teacher.apdoc",
+          "contentType": "text/html; charset=utf-8",
+          "bytes": 111285,
+          "sha256": "a4e6efe5e0f549ed7fad625302c81e69a8a8840c0bdd0a2205de741619326315"
+        },
+        {
+          "path": "listening.html",
+          "storagePath": "listening.apdoc",
+          "contentType": "text/html; charset=utf-8",
+          "bytes": 10127,
+          "sha256": "2f3608841319207f8e27c47ab767300e5ed036ae7add763cdbddb60f776a35fb"
+        },
+        {
+          "path": "student.pdf",
+          "storagePath": "student.pdf",
+          "contentType": "application/pdf",
+          "bytes": 376378,
+          "sha256": "170e6949f48faead2c8aa43dea9ca7b95d64a2bc368c0bd699221aa5ca5d8094"
+        },
+        {
+          "path": "student-traditional.pdf",
+          "storagePath": "student-traditional.pdf",
+          "contentType": "application/pdf",
+          "bytes": 397313,
+          "sha256": "b0f7097885e1a4d3c5f9d9a1c0697e95dc524f762f9aae26a298e3bb7217ae9c"
+        },
+        {
+          "path": "teacher.pdf",
+          "storagePath": "teacher.pdf",
+          "contentType": "application/pdf",
+          "bytes": 468977,
+          "sha256": "e677ccf86429b40fd71910e29df433c8f791be423c3d104e2be328b8b19ea77e"
+        },
+        {
+          "path": "answer-key.md",
+          "storagePath": "answer-key.md",
+          "contentType": "text/plain; charset=utf-8",
+          "bytes": 51201,
+          "sha256": "4e29695d6df20769fb1906e7dcac1a4ffbfde43f0b0a9beec3f0ef6c1ef7f7db"
+        },
+        {
+          "path": "paper-data.json",
+          "storagePath": "paper-data.json",
+          "contentType": "application/json",
+          "bytes": 160994,
+          "sha256": "1b9764ccf6562b3f4db1bde3c54c394c93f0f5b927296e46f0a22b130b2b1412"
+        },
+        {
+          "path": "audio-manifest.json",
+          "storagePath": "audio-manifest.json",
+          "contentType": "application/json",
+          "bytes": 30959,
+          "sha256": "c1f1fb24c3e8ebdfdb4bfaeca21562ad1de96932a34d15aefb9a37a626c90b3f"
+        },
+        {
+          "path": "README.txt",
+          "storagePath": "README.txt",
+          "contentType": "text/plain; charset=utf-8",
+          "bytes": 845,
+          "sha256": "4de56e4b8a745863f6d97d7a139306c5791d4b262483edd0afcecc3d4e3dec56"
+        },
+        {
+          "path": "assets/audio/l1.mp3",
+          "storagePath": "assets/audio/l1.mp3",
+          "contentType": "audio/mpeg",
+          "bytes": 622892,
+          "sha256": "1aa6065185e06aeb3fef0ba6d269cfa635349763cc337d6c470f56a1757622c3"
+        },
+        {
+          "path": "assets/audio/l2.mp3",
+          "storagePath": "assets/audio/l2.mp3",
+          "contentType": "audio/mpeg",
+          "bytes": 680684,
+          "sha256": "e77ac7a0a3fa193c32f83f695c13e4319169b6f5b5e2f125670e051a18bfc057"
+        },
+        {
+          "path": "assets/audio/l3.mp3",
+          "storagePath": "assets/audio/l3.mp3",
+          "contentType": "audio/mpeg",
+          "bytes": 819116,
+          "sha256": "ae3f9cb78e69534417d69f531f8d0ab41968e44f35b3147f136e5f160139403c"
+        },
+        {
+          "path": "assets/audio/l4.mp3",
+          "storagePath": "assets/audio/l4.mp3",
+          "contentType": "audio/mpeg",
+          "bytes": 708908,
+          "sha256": "1936cff0459fb6ebe8386ec51a78def7a1f07f816ed3a8a0a1b685fac13da888"
+        },
+        {
+          "path": "assets/audio/l5.mp3",
+          "storagePath": "assets/audio/l5.mp3",
+          "contentType": "audio/mpeg",
+          "bytes": 711596,
+          "sha256": "4b0f38e2f034b1d8c89963f7bcb9775ca2bad8284fe6848948f11017e2391497"
+        },
+        {
+          "path": "assets/audio/listening-full.mp3",
+          "storagePath": "assets/audio/listening-full.mp3",
+          "contentType": "audio/mpeg",
+          "bytes": 12000620,
+          "sha256": "4f4c4374c2c144d3b4fdb56fded4276f2515d7412c021d173bd1f7502b3bfdba"
+        },
+        {
+          "path": "assets/audio/s1-prompt.mp3",
+          "storagePath": "assets/audio/s1-prompt.mp3",
+          "contentType": "audio/mpeg",
+          "bytes": 175724,
+          "sha256": "bdc1ab8717b14572501d950eec479f55a100c27dbc16480181cc82210a52b0f6"
+        },
+        {
+          "path": "assets/audio/s2-1.mp3",
+          "storagePath": "assets/audio/s2-1.mp3",
+          "contentType": "audio/mpeg",
+          "bytes": 142124,
+          "sha256": "221954b97b056a10f18bf1217c277695c3d4290edd026d022983a5cb5fa3ead7"
+        },
+        {
+          "path": "assets/audio/s2-2.mp3",
+          "storagePath": "assets/audio/s2-2.mp3",
+          "contentType": "audio/mpeg",
+          "bytes": 140972,
+          "sha256": "4138064107aa22c2dad155e916c159410171555c81fff9b7d046dc2b6b9ffb20"
+        },
+        {
+          "path": "assets/audio/s2-3.mp3",
+          "storagePath": "assets/audio/s2-3.mp3",
+          "contentType": "audio/mpeg",
+          "bytes": 149420,
+          "sha256": "5b5464d66d00731544e1e8a9d79bfbe3854bb019079f866e78df629d07ff477a"
+        },
+        {
+          "path": "assets/audio/s2-4.mp3",
+          "storagePath": "assets/audio/s2-4.mp3",
+          "contentType": "audio/mpeg",
+          "bytes": 142124,
+          "sha256": "10ada2a259d34c2f12a073d9f18cd769b0c91e2b233f2cde70ca0a1c112ad1e5"
+        },
+        {
+          "path": "assets/images/story-1.png",
+          "storagePath": "assets/images/story-1.png",
+          "contentType": "image/png",
+          "bytes": 21900,
+          "sha256": "7afe6ab34505c1c1ca10fc2b615b973c6262c5d208ef75673f6cb90b87500abe"
+        },
+        {
+          "path": "assets/images/story-1.svg",
+          "storagePath": "assets/images/story-1.svg",
+          "contentType": "image/svg+xml",
+          "bytes": 4178,
+          "sha256": "f7828298018e114ef71d17efa075000888faf932ed262de8f5a680587b111bb1"
+        },
+        {
+          "path": "assets/images/story-2.png",
+          "storagePath": "assets/images/story-2.png",
+          "contentType": "image/png",
+          "bytes": 30184,
+          "sha256": "289ce4f3eaf331e442c92e536eaa4f27b30e10e7d8d5b8f88c25f27c8b402d23"
+        },
+        {
+          "path": "assets/images/story-2.svg",
+          "storagePath": "assets/images/story-2.svg",
+          "contentType": "image/svg+xml",
+          "bytes": 4388,
+          "sha256": "301b5c884806deba257bf1c3f9f31b6345adacfdb164047a1137f585f37ba639"
+        },
+        {
+          "path": "assets/images/story-3.png",
+          "storagePath": "assets/images/story-3.png",
+          "contentType": "image/png",
+          "bytes": 25379,
+          "sha256": "7537f35d6ff8f18d108137a75ee822b2e280a6ef2844f303b7212a3757b60d32"
+        },
+        {
+          "path": "assets/images/story-3.svg",
+          "storagePath": "assets/images/story-3.svg",
+          "contentType": "image/svg+xml",
+          "bytes": 4627,
+          "sha256": "ec643e93f6633c974265583285b998d2176cccd7a5b6c0275cb43658cfdfe5d7"
+        },
+        {
+          "path": "assets/images/story-4.png",
+          "storagePath": "assets/images/story-4.png",
+          "contentType": "image/png",
+          "bytes": 23876,
+          "sha256": "0dfd6cd02c8491254ff7499d24e5e17fa58c204b1f291480aabc613beb715797"
+        },
+        {
+          "path": "assets/images/story-4.svg",
+          "storagePath": "assets/images/story-4.svg",
+          "contentType": "image/svg+xml",
+          "bytes": 3819,
+          "sha256": "fd573e766e9e12a65751f9d21fd14bd0ff9b8cda0ae592892a4b1e99ee59753a"
+        },
+        {
+          "path": "AP-Chinese-2027-Paper-B.zip",
+          "storagePath": "AP-Chinese-2027-Paper-B.zip",
+          "contentType": "application/zip",
+          "bytes": 8702777,
+          "sha256": "8f5bb4ea71198be3659c0f9ed583ac7f31f49ff70543a27ab809c7ce9f84812c"
+        }
+      ]
+    },
+    "c": {
+      "id": "ap-chinese-2027-c-v1",
+      "sourceSha256": "44c9c82e40b14944f7947c615855c69851c6787f3ae5ade1da41c38355352aba",
+      "counts": {
+        "listening": 25,
+        "reading": 30,
+        "freeResponse": 4,
+        "qaExchanges": 4
+      },
+      "files": [
+        {
+          "path": "index.html",
+          "storagePath": "index.apdoc",
+          "contentType": "text/html; charset=utf-8",
+          "bytes": 146600,
+          "sha256": "df827588886214c1ae9ea144a1196b67872bf542f7a2523fee9a1989fe1692dc"
+        },
+        {
+          "path": "paper.css",
+          "storagePath": "paper.css",
+          "contentType": "text/css; charset=utf-8",
+          "bytes": 13479,
+          "sha256": "b3c165bb94ef72d2b525fa3b1586dd5c88cdc9defdd0a36e5bb61120fe099b2a"
+        },
+        {
+          "path": "paper.js",
+          "storagePath": "paper.js",
+          "contentType": "text/javascript; charset=utf-8",
+          "bytes": 33799,
+          "sha256": "f078db4d4fab80f13ee2fa92f95482d32a5272792201b0c3671772304d4a51e3"
+        },
+        {
+          "path": "student.html",
+          "storagePath": "student.apdoc",
+          "contentType": "text/html; charset=utf-8",
+          "bytes": 55657,
+          "sha256": "d1a2b210a5c75d85e09781ea3f254aece12f1cab59946dba7f266151010d4600"
+        },
+        {
+          "path": "teacher.html",
+          "storagePath": "teacher.apdoc",
+          "contentType": "text/html; charset=utf-8",
+          "bytes": 106996,
+          "sha256": "9b12de80bb7dfc083c866861928de3adb3b89119aa8fd975b6f0325098e07693"
+        },
+        {
+          "path": "listening.html",
+          "storagePath": "listening.apdoc",
+          "contentType": "text/html; charset=utf-8",
+          "bytes": 9902,
+          "sha256": "b262ceccabdd14ed3b8f51679038fc917cfc7fdd87a8b81487a638a7850e754f"
+        },
+        {
+          "path": "student.pdf",
+          "storagePath": "student.pdf",
+          "contentType": "application/pdf",
+          "bytes": 329656,
+          "sha256": "e821e4c368642dfbe4bd10dfb5358232d9ff0489c6347eb8a6ebd9bc2cc3a84a"
+        },
+        {
+          "path": "student-traditional.pdf",
+          "storagePath": "student-traditional.pdf",
+          "contentType": "application/pdf",
+          "bytes": 353534,
+          "sha256": "17a19eb257507bda8f09f59b5d35b53b72c73623f033738d46e09bf5fbfbc09b"
+        },
+        {
+          "path": "teacher.pdf",
+          "storagePath": "teacher.pdf",
+          "contentType": "application/pdf",
+          "bytes": 412272,
+          "sha256": "bdbb550ae7f4f7bcea37dc7305dd728b3e6fcfbedbf7a501196023c1964f1cf6"
+        },
+        {
+          "path": "answer-key.md",
+          "storagePath": "answer-key.md",
+          "contentType": "text/plain; charset=utf-8",
+          "bytes": 47239,
+          "sha256": "9bcdae2c5ecf0e2ae85e337c6cf7ee23f417d691a1e6bc0c8a63d66d7bbef22a"
+        },
+        {
+          "path": "paper-data.json",
+          "storagePath": "paper-data.json",
+          "contentType": "application/json",
+          "bytes": 157233,
+          "sha256": "44c9c82e40b14944f7947c615855c69851c6787f3ae5ade1da41c38355352aba"
+        },
+        {
+          "path": "audio-manifest.json",
+          "storagePath": "audio-manifest.json",
+          "contentType": "application/json",
+          "bytes": 30331,
+          "sha256": "c7d5c58d3c7a6e8a763979fdeee2153f557e949430fdbec280371fa28b80951f"
+        },
+        {
+          "path": "README.txt",
+          "storagePath": "README.txt",
+          "contentType": "text/plain; charset=utf-8",
+          "bytes": 845,
+          "sha256": "6825ddd9597491479717cd1c618bf05ff016970e48a19f669e381a2ba5ab4687"
+        },
+        {
+          "path": "assets/audio/l1.mp3",
+          "storagePath": "assets/audio/l1.mp3",
+          "contentType": "audio/mpeg",
+          "bytes": 637868,
+          "sha256": "b7a0d816c473bea0fdf7a857b850fcf50baa588705a722519140fa7934373b9c"
+        },
+        {
+          "path": "assets/audio/l2.mp3",
+          "storagePath": "assets/audio/l2.mp3",
+          "contentType": "audio/mpeg",
+          "bytes": 637676,
+          "sha256": "8974016a3f176ecced115a558ed93ea0c1b61db810944c2d89ddc2c26b568839"
+        },
+        {
+          "path": "assets/audio/l3.mp3",
+          "storagePath": "assets/audio/l3.mp3",
+          "contentType": "audio/mpeg",
+          "bytes": 692012,
+          "sha256": "68a4ef5a675d6604bbfb5d28279768f4ccde31ed84d28d28864194dd29e8da8f"
+        },
+        {
+          "path": "assets/audio/l4.mp3",
+          "storagePath": "assets/audio/l4.mp3",
+          "contentType": "audio/mpeg",
+          "bytes": 702572,
+          "sha256": "2bb502c33d0bb770b79dc78acfb222058f2b68c88a00a4b62741d68899be5247"
+        },
+        {
+          "path": "assets/audio/l5.mp3",
+          "storagePath": "assets/audio/l5.mp3",
+          "contentType": "audio/mpeg",
+          "bytes": 688172,
+          "sha256": "f6ebe69f423d0942e736ff87bd5a9d2448f65fbf080ce3dac423c8b6d8622122"
+        },
+        {
+          "path": "assets/audio/listening-full.mp3",
+          "storagePath": "assets/audio/listening-full.mp3",
+          "contentType": "audio/mpeg",
+          "bytes": 12000620,
+          "sha256": "6c6a59748ebaa4db96c1bdc19b11d7f7d6a18fcfabdcb17f5115fcfbb5c50944"
+        },
+        {
+          "path": "assets/audio/s1-prompt.mp3",
+          "storagePath": "assets/audio/s1-prompt.mp3",
+          "contentType": "audio/mpeg",
+          "bytes": 178412,
+          "sha256": "123ffa1364424262847e2159923d3d3aa9ff4c89232e6540c0c44d161bf8dc2d"
+        },
+        {
+          "path": "assets/audio/s2-1.mp3",
+          "storagePath": "assets/audio/s2-1.mp3",
+          "contentType": "audio/mpeg",
+          "bytes": 133676,
+          "sha256": "6fd6f2cd506b7ccb0ad7fbb11aaa0cd721413008415b2a51b7d14c310be6449f"
+        },
+        {
+          "path": "assets/audio/s2-2.mp3",
+          "storagePath": "assets/audio/s2-2.mp3",
+          "contentType": "audio/mpeg",
+          "bytes": 148652,
+          "sha256": "b5abba75b77a6fd3f5a4cc925536990444c93394943d2318c9187caa85d49a05"
+        },
+        {
+          "path": "assets/audio/s2-3.mp3",
+          "storagePath": "assets/audio/s2-3.mp3",
+          "contentType": "audio/mpeg",
+          "bytes": 156716,
+          "sha256": "e594b66f840423a0772960b4e251c36a305cf99aa12977166d2590e143c083e6"
+        },
+        {
+          "path": "assets/audio/s2-4.mp3",
+          "storagePath": "assets/audio/s2-4.mp3",
+          "contentType": "audio/mpeg",
+          "bytes": 151340,
+          "sha256": "d8185ffd35f866e4cc3516fa7b6dbec518b11ad96f27922c0338fe18507d443c"
+        },
+        {
+          "path": "assets/images/story-1.png",
+          "storagePath": "assets/images/story-1.png",
+          "contentType": "image/png",
+          "bytes": 10328,
+          "sha256": "4231911369ffbd031cbc0605146a54fd0f25b3ee11b5a709457e9344b1035e7d"
+        },
+        {
+          "path": "assets/images/story-1.svg",
+          "storagePath": "assets/images/story-1.svg",
+          "contentType": "image/svg+xml",
+          "bytes": 2272,
+          "sha256": "d6927ef0ec0d10fdccf2955a89910e4fc83e2262e8eb48f2fb7cccaebb5c66dc"
+        },
+        {
+          "path": "assets/images/story-2.png",
+          "storagePath": "assets/images/story-2.png",
+          "contentType": "image/png",
+          "bytes": 10624,
+          "sha256": "5bd0585f2e1a2aa05afa5db8111bb284522a0fff2eff30f71c19ef110149cb35"
+        },
+        {
+          "path": "assets/images/story-2.svg",
+          "storagePath": "assets/images/story-2.svg",
+          "contentType": "image/svg+xml",
+          "bytes": 2149,
+          "sha256": "e2459049e4d5cdee96ae2434f60352fa34f3e0a51d91fb655c4a746fc41b56ad"
+        },
+        {
+          "path": "assets/images/story-3.png",
+          "storagePath": "assets/images/story-3.png",
+          "contentType": "image/png",
+          "bytes": 17064,
+          "sha256": "b5e0f340690ba91dd8c113da16be9b8d194dfa05e4821cfe65ade4f2895b1d88"
+        },
+        {
+          "path": "assets/images/story-3.svg",
+          "storagePath": "assets/images/story-3.svg",
+          "contentType": "image/svg+xml",
+          "bytes": 2608,
+          "sha256": "2983acc9492a70831a8bc777b8ea5d1ba5e389565e3bb5fb00565c7dcca751ec"
+        },
+        {
+          "path": "assets/images/story-4.png",
+          "storagePath": "assets/images/story-4.png",
+          "contentType": "image/png",
+          "bytes": 19594,
+          "sha256": "9ea54a992e21968fd8c7f42a7fbb65fc7973802cf996919b70d6c9cc9920ad97"
+        },
+        {
+          "path": "assets/images/story-4.svg",
+          "storagePath": "assets/images/story-4.svg",
+          "contentType": "image/svg+xml",
+          "bytes": 3366,
+          "sha256": "d6a7a1024ee68f26986609f66eeb85f03cc9290d75a3111df5a40be2abdaffde"
+        },
+        {
+          "path": "AP-Chinese-2027-Paper-C.zip",
+          "storagePath": "AP-Chinese-2027-Paper-C.zip",
+          "contentType": "application/zip",
+          "bytes": 8189338,
+          "sha256": "b45f238ef724ca2cc0403b9eaf712cbe1e62f01a549a1ff639636da4383bab13"
+        }
+      ]
+    }
+  }
+}

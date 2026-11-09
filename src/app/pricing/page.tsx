@@ -45,6 +45,7 @@ export default function PricingPage() {
     <p className="pricing-fair-use">Standard review has no daily rating cap on either plan. Anti-abuse safeguards still apply. Store products are purchased separately.</p>
 
     <MockExamShowcase/>
+    <section className="pricing-section" aria-labelledby="ap-pricing-title"><div className="pricing-section-heading"><p className="pricing-eyebrow">Also included · AP Chinese</p><h2 id="ap-pricing-title">Three complete papers for four-skill practice.</h2><p>AP Chinese 2027-format Paper A is free. Pro adds B and C: fresh listening and reading, original four-picture stories, emails and music-research speaking tasks. Speaking and writing include references for manual review, without an official score prediction.</p></div><Link className="pricing-button pricing-button-secondary" href="/ap-chinese-practice-test">Explore AP Chinese papers →</Link></section>
 
     <section id="compare" className="pricing-section" aria-labelledby="compare-title">
       <div className="pricing-section-heading"><p className="pricing-eyebrow">The details, side by side</p><h2 id="compare-title">Choose the room you need.</h2><p>Monthly and yearly billing include the same Pro entitlement.</p></div>
