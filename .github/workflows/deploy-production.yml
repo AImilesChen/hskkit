@@ -53,6 +53,8 @@ jobs:
         run: node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --test tests/ap-exams.test.mts
       - name: Verify Chinese 1 course publication and protected delivery
         run: node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --test tests/course-exams.test.mts
+      - name: Verify stateless account fast path keeps authenticated paths unchanged
+        run: node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --test tests/anonymous-account-fast-path.test.mts
       - name: Ensure dedicated private page-cache bucket
         run: node scripts/storage-release.mjs ensure-bucket
       - name: Check whether assessment delivery changed
@@ -87,6 +89,8 @@ jobs:
         run: |
           npx opennextjs-cloudflare build --dangerouslyUseUnsupportedNextVersion
           node scripts/patch-open-next-email.mjs
+      - name: Verify cached public pages bypass Next and paid files remain guarded
+        run: node scripts/check-public-cache-hit.cjs
       - name: Upload and deploy Worker version
         run: |
           npx wrangler versions upload | tee "$RUNNER_TEMP/worker-upload.log"
@@ -110,6 +114,15 @@ jobs:
         run: node scripts/storage-release.mjs verify-disabled "$RUNNER_TEMP/storage-after-deploy.json"
       - name: Verify comparison delivery and existing tools
         run: python3 scripts/check-comparison-release.py
+      - name: Read-only CPU and cache report after healthy deployment
+        run: python3 scripts/audit-cf-costs.py "$RUNNER_TEMP/cost-cache-audit.json"
+      - name: Retain bounded CPU and cache report
+        uses: actions/upload-artifact@v4
+        with:
+          name: cost-cache-audit-${{ github.run_id }}
+          path: ${{ runner.temp }}/cost-cache-audit.json
+          retention-days: 7
+          if-no-files-found: error
       - name: Retain storage deployment verification
         uses: actions/upload-artifact@v4
         with:
