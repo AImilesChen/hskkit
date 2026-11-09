@@ -22,7 +22,10 @@ def request(path,params=None,payload=None):
   time.sleep(min(2**attempt,8))
 def cf(path,params=None):return request('accounts/'+ACCOUNT+'/'+path,params)
 def build():
- with urllib.request.urlopen('https://hskkit.com/BUILD_ID',timeout=30) as r:s=r.read(100).decode('ascii').strip()
+ req=urllib.request.Request('https://hskkit.com/BUILD_ID',headers={'User-Agent':'HSKKit-R2-readonly-audit/1.0'})
+ try:
+  with urllib.request.urlopen(req,timeout=30) as r:s=r.read(100).decode('ascii').strip()
+ except (urllib.error.URLError,TimeoutError):return None
  if not re.fullmatch(r'[A-Za-z0-9_-]{10,64}',s):raise RuntimeError('INVALID_PUBLIC_BUILD')
  return s
 def inventory(bucket):
@@ -67,7 +70,9 @@ def main():
  now=datetime.now(timezone.utc);iso=lambda t:t.strftime('%Y-%m-%dT%H:%M:%SZ');report={'startedAt':iso(now),'mode':'read-only','objectBodiesRead':0,'deletions':0,'newSchedules':0}
  report['activeBuildBefore']=build();report['cpu24h']=cpu(iso(now-timedelta(days=1)),iso(now));report['cpuCycle']=cpu('2026-10-18T00:00:00Z',iso(now))
  report['workerReferences']=[];report['referenceErrors']=[]
- for worker in cf('workers/scripts')['result']:
+ try:workers=cf('workers/scripts')['result']
+ except RuntimeError as e:workers=[];report['referenceErrors'].append({'worker':'account-list','error':str(e)})
+ for worker in workers:
   name=worker['id']
   try:
    settings=cf('workers/scripts/'+urllib.parse.quote(name,safe='')+'/settings')['result']
@@ -79,7 +84,7 @@ def main():
   try:report['buckets'][bucket]=inventory(bucket)
   except RuntimeError as e:report['buckets'][bucket]={'complete':False,'error':str(e)}
  report['deployments']=cf('workers/scripts/hskkit/deployments')['result']
- report['activeBuildAfter']=build();report['productionStable']=report['activeBuildBefore']==report['activeBuildAfter'];report['completedAt']=iso(datetime.now(timezone.utc))
+ report['activeBuildAfter']=build();report['productionStable']=bool(report['activeBuildBefore']) and report['activeBuildBefore']==report['activeBuildAfter'];report['completedAt']=iso(datetime.now(timezone.utc))
  Path(sys.argv[1]).write_text(json.dumps(report,indent=2)+'\n')
  print(json.dumps({'productionStable':report['productionStable'],'cpu24hAvailable':report['cpu24h']['available'],'cpuCycleAvailable':report['cpuCycle']['available'],'buckets':{b:{k:v.get(k) for k in ['complete','totalObjects','totalBytes','error']} for b,v in report['buckets'].items()},'referenceErrors':len(report['referenceErrors'])}))
 if __name__=='__main__':main()
