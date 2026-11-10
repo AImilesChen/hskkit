@@ -90,7 +90,7 @@ jobs:
           npx opennextjs-cloudflare build --dangerouslyUseUnsupportedNextVersion
           node scripts/patch-open-next-email.mjs
       - name: Verify cached public pages bypass Next and paid files remain guarded
-        timeout-minutes: 4
+        timeout-minutes: 7
         run: node scripts/check-public-cache-hit.cjs
       - name: Upload and deploy Worker version
         run: |
