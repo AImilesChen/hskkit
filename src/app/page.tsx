@@ -5,6 +5,7 @@ import SiteHeader from "./site-header";
 import HomeNextStep from "./components/home-next-step";
 import HomeQuickFlashcards from "./components/home-quick-flashcards";
 import HomeIcon from "./components/home-icon";
+import HomeLearningScene from "./components/home-learning-scene";
 import "./homepage.css";
 import {HomeTools,HomeSkills,HomeGuides,HomeMockExams} from "./components/home-discovery";
 import {FREE_MOCK_COUNT,TOTAL_MOCK_COUNT,EXTRA_MOCK_COUNT,MOCK_LEVEL_RANGE} from "@/lib/formal-exams/offer";
@@ -74,7 +75,6 @@ export default function HomePage() {
   const cumulativeCounts = cumulativeWordCounts(levels);
   const advancedLevel = levels.find((entry) => entry.level === 7);
   const levelOnePreviewWords = getHsk3LevelPreview(1, 120);
-  const previewWord = levelOnePreviewWords[0];
   const demoCards = levelOnePreviewWords.slice(0, 5).map((word) => ({ id: word.id, hanzi: word.hanzi, pinyin: word.pinyin, meaning: word.meaning, partOfSpeech: word.partOfSpeech, audioSrc: formalWordAudioUrlByContentId.get(word.id), example: matchedWordExample(1, word.hanzi, word.pinyin, word.id) }));
   const foundationCount = foundationLevels.reduce((total, entry) => total + entry.wordCount, 0);
   const publishedWordCount = foundationCount + (advancedLevel?.wordCount ?? 0);
@@ -108,27 +108,7 @@ export default function HomePage() {
         <HomeNextStep />
       </div>
 
-      <div className="home-product-shell home-study-scene" role="group" aria-labelledby="home-product-preview-title">
-        <div className="home-product-heading">
-          <div><p className="home-product-kicker">A word worth remembering</p><h2 id="home-product-preview-title">Learn it. Use it. Remember it.</h2></div>
-          <span>HSK 1 · Example</span>
-        </div>
-        {previewWord ? <div className="home-study-stage">
-          <div className="home-study-meta"><span>Example flashcard</span><span>Vocabulary · HSK 1</span></div>
-          <div className="home-study-progress" aria-hidden="true"><span /></div>
-          <div className="home-study-card">
-            <span className="home-study-badge">One word at a time</span>
-            <div className="home-product-word"><div><p lang="zh-Hans">{previewWord.hanzi}</p><span>{previewWord.pinyin}</span></div><span className="home-study-check" aria-hidden="true">✓</span></div>
-            <p className="home-product-meaning">{previewWord.meaning}</p>
-            <p className="home-study-example">A small step today. A stronger vocabulary tomorrow.</p>
-          </div>
-          <ol className="home-study-flow" aria-label="Preview learning flow">
-            <li className="is-complete"><span>1</span><div><strong>Learn</strong><small>Word and meaning</small></div></li>
-            <li className="is-active"><span>2</span><div><strong>Listen</strong><small>Audio where available</small></div></li>
-            <li><span>3</span><div><strong>Review</strong><small>Remember for longer</small></div></li>
-          </ol>
-        </div> : null}
-      </div>
+      <HomeLearningScene />
     </section>
 
     <HomeQuickFlashcards cards={demoCards} />

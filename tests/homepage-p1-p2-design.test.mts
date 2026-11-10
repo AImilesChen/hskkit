@@ -6,6 +6,7 @@ import sharp from "sharp";
 
 const read = (path: string) => fs.readFileSync(new URL(path, import.meta.url), "utf8");
 const home = read("../src/app/page.tsx");
+const learningScene = read("../src/app/components/home-learning-scene.tsx");
 const nextStep = read("../src/app/components/home-next-step.tsx");
 const footer = read("../src/app/site-footer.tsx");
 const styles = read("../src/app/homepage.css");
@@ -23,7 +24,7 @@ function expectInOrder(source: string, markers: string[]) {
   }
 }
 
-test("homepage leads with a concise result and a compact real-word illustration", () => {
+test("homepage leads with a concise result and a learning-tools scene distinct from the flashcard demo", () => {
   assert.match(home, /Build your HSK vocabulary\. Remember what you learn\./);
   assert.match(home, /Free HSK learning platform/);
   assert.match(home, /home-title-primary/);
@@ -34,14 +35,16 @@ test("homepage leads with a concise result and a compact real-word illustration"
   assert.match(styles, /\.home-title-secondary\s*\{[^}]*color:\s*var\(--home-ink\)/s);
   assert.match(home, /\{publishedWordCount\.toLocaleString\("en-US"\)\} HSK words\. Build vocabulary, train your ear and practise writing/);
   assert.match(home, /Not every published word has audio/);
-  assert.match(home, /A word worth remembering/);
+  assert.match(home, /<HomeLearningScene\s*\/>/);
+  assert.match(learningScene, /See it\. Hear it\. Write it\./);
+  assert.match(learningScene, /Stroke order/);
+  assert.match(learningScene, /Build vocabulary/);
   assert.doesNotMatch(home, /Live study preview|HSK 1 · Today|About 4 min/);
-  assert.match(home, /Learn it. Use it. Remember it./);
   assert.match(home, /Learn focused vocabulary/);
   assert.match(home, /Practise listening/);
   assert.match(home, /Complete today’s review/);
   assert.match(home, /getHsk3LevelPreview\(1, 120\)/);
-  assert.match(home, /One word at a time/);
+  assert.doesNotMatch(home, /home-study-card|home-product-word/);
   assert.doesNotMatch(home, /<audio/);
   assert.doesNotMatch(home, /home-product-route|home-product-options|Which meaning matches this word\?|home-word-card/);
   assert.doesNotMatch(styles, /\.home-word-card\s*\{[^}]*position:\s*absolute/s);
