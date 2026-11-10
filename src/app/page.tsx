@@ -114,11 +114,19 @@ export default function HomePage() {
           <span>HSK 1 · Example</span>
         </div>
         {previewWord ? <div className="home-study-stage">
+          <div className="home-study-meta"><span>Example flashcard</span><span>Vocabulary · HSK 1</span></div>
+          <div className="home-study-progress" aria-hidden="true"><span /></div>
           <div className="home-study-card">
             <span className="home-study-badge">One word at a time</span>
             <div className="home-product-word"><div><p lang="zh-Hans">{previewWord.hanzi}</p><span>{previewWord.pinyin}</span></div><span className="home-study-check" aria-hidden="true">✓</span></div>
             <p className="home-product-meaning">{previewWord.meaning}</p>
+            <p className="home-study-example">A small step today. A stronger vocabulary tomorrow.</p>
           </div>
+          <ol className="home-study-flow" aria-label="Preview learning flow">
+            <li className="is-complete"><span>1</span><div><strong>Learn</strong><small>Word and meaning</small></div></li>
+            <li className="is-active"><span>2</span><div><strong>Listen</strong><small>Audio where available</small></div></li>
+            <li><span>3</span><div><strong>Review</strong><small>Remember for longer</small></div></li>
+          </ol>
         </div> : null}
       </div>
     </section>
