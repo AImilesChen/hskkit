@@ -30,8 +30,8 @@ test("Chinese 1 all paid files use existing server-side entitlement checks",()=>
  const server=read('src/lib/course-exams/server.ts');assert.ok(server.indexOf('requirePaperAccess(form, await formalIdentity())')<server.indexOf('const bytes = await readFile'));assert.ok(server.indexOf('requirePaperAccess(form, await formalIdentity())')<server.indexOf('env.ASSETS.fetch'));assert.ok(server.includes('"private, no-store"'));assert.ok(server.includes('form !== "a"'));
  const api=read('src/app/api/v1/course-tests/chinese-1/[form]/file/[...asset]/route.ts');assert.ok(api.includes('export const HEAD = GET'));assert.ok(read('src/lib/course-exams/catalog.ts').includes('p === ".."'));assert.ok(read('src/middleware.ts').includes('path.startsWith("/formal-media/")'));assert.ok(read('wrangler.jsonc').includes('"/formal-media/*"'));
 });
-test("Course entry and commercial copy describe published Chinese 1 and 2 content",()=>{
+test("Course entry and commercial copy describe published Chinese 1–3 content",()=>{
  for(const file of ['src/app/site-navigation.ts','src/app/hsk-test-prep/page.tsx','src/app/pricing/page.tsx','src/app/sitemap.ts'])assert.ok(read(file).includes('/chinese-course-tests'),file);
  const hub=read('src/app/chinese-course-tests/page.tsx');assert.ok(hub.includes('manual review'));assert.ok(hub.includes('this browser'));assert.ok(hub.includes('Schools')||hub.includes('varies by school'));assert.ok(hub.includes('coursePaperHref(form, 2)'));
- const plans=read('src/lib/commercial/plan-presentation.ts');assert.ok(plans.includes('Complete Chinese 1 and Chinese 2 course-review A papers'));assert.ok(plans.includes('Six Chinese 1–2 course-review papers'));
+ const plans=read('src/lib/commercial/plan-presentation.ts');assert.ok(plans.includes('Complete Chinese 1–3 course-review A papers'));assert.ok(plans.includes('Nine Chinese 1–3 course-review papers'));
 });

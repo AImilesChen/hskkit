@@ -2,3 +2,5 @@
 .course-page .ap-skill-grid li:nth-child(1){border-top:3px solid #7852aa}.course-page .ap-skill-grid li:nth-child(2){border-top:3px solid #23836e}.course-page .ap-skill-grid li:nth-child(3){border-top:3px solid #b56b28}.course-page .ap-skill-grid li:nth-child(4){border-top:3px solid #b34c79}
 
 .course-level-links{display:flex;flex-wrap:wrap;gap:12px;margin:0 0 40px}.course-level-links a{border:1px solid #d8c9ef;border-radius:12px;padding:12px 18px;background:#fff;color:#62418e;min-height:44px}.course-two-card{border-top:3px solid #23836e}.course-page #chinese-2{scroll-margin-top:100px;margin-top:56px}.course-page #papers{scroll-margin-top:100px}
+
+.course-three-card{border-top:3px solid #b56b28}.course-page #chinese-3{scroll-margin-top:100px;margin-top:56px}

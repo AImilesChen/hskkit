@@ -1,0 +1,1129 @@
+{
+  "paperId": "course-chinese-3-a-v1",
+  "provider": "Edge TTS at authoring time; no runtime TTS or Cloudflare generation",
+  "rate": "-8%",
+  "voices": {
+    "female": "zh-CN-XiaoxiaoNeural",
+    "male": "zh-CN-YunxiNeural"
+  },
+  "humanListeningAcceptance": false,
+  "units": [
+    {
+      "id": "C3A-L1a",
+      "kind": "listening-source",
+      "questionNumbers": [
+        1
+      ],
+      "sourcePlays": 1,
+      "script": [
+        {
+          "speaker": "female",
+          "text": {
+            "zh-Hans": "那是上学期刚开学的时候。我第一次去学校的志愿活动，负责带新同学找教室。出发前我把路线走了两遍，没想到活动结束后，我自己也认识了几个朋友。我本来以为自己还不熟悉校园，不能帮上忙。",
+            "zh-Hant": "那是上學期剛開學的時候。我第一次去學校的志願活動，負責帶新同學找教室。出發前我把路線走了兩遍，沒想到活動結束後，我自己也認識了幾個朋友。我本來以爲自己還不熟悉校園，不能幫上忙。"
+          }
+        }
+      ],
+      "sourceDurationSeconds": 20.352,
+      "targetSeconds": [
+        18,
+        25
+      ],
+      "withinTarget": true,
+      "src": "assets/audio/c3a-l1a.mp3",
+      "durationSeconds": 20.904,
+      "pcmSeconds": 20.852,
+      "bytes": 167468,
+      "sha256": "6e35679a31eca2f533afab68f310c9cd42b6b0eb9343f1958374c5e25e7741d4"
+    },
+    {
+      "id": "C3A-L1b",
+      "kind": "listening-source",
+      "questionNumbers": [
+        2,
+        3
+      ],
+      "sourcePlays": 1,
+      "script": [
+        {
+          "speaker": "male",
+          "text": {
+            "zh-Hans": "第一次介绍社团时，我准备了一大段话，以为新同学会站着听完。可是他们经过桌子时，只问能不能亲手试一试，很少有人看我的介绍板。",
+            "zh-Hant": "第一次介紹社團時，我準備了一大段話，以爲新同學會站着聽完。可是他們經過桌子時，只問能不能親手試一試，很少有人看我的介紹板。"
+          }
+        },
+        {
+          "speaker": "female",
+          "text": {
+            "zh-Hans": "后来你怎么改的？",
+            "zh-Hant": "後來你怎麼改的？"
+          }
+        },
+        {
+          "speaker": "male",
+          "text": {
+            "zh-Hans": "第二次我先拿出材料，让大家做一个小东西，再回答他们的问题。虽然我说的话少了，留下来参加的人却多了。我才发现，他们想先知道自己能做什么。有几个原来走开的同学，也回来问下次什么时候还能参加。",
+            "zh-Hant": "第二次我先拿出材料，讓大家做一個小東西，再回答他們的問題。雖然我說的話少了，留下來參加的人卻多了。我才發現，他們想先知道自己能做什麼。有幾個原來走開的同學，也回來問下次什麼時候還能參加。"
+          }
+        }
+      ],
+      "sourceDurationSeconds": 36.1,
+      "targetSeconds": [
+        35,
+        48
+      ],
+      "withinTarget": true,
+      "src": "assets/audio/c3a-l1b.mp3",
+      "durationSeconds": 36.648,
+      "pcmSeconds": 36.6,
+      "bytes": 293420,
+      "sha256": "e29f93bb08d81fd07cb80f7fe6556d11a792232a1734e881bfdb24fc478b8185"
+    },
+    {
+      "id": "C3A-L1c",
+      "kind": "listening-source",
+      "questionNumbers": [
+        4,
+        5
+      ],
+      "sourcePlays": 1,
+      "script": [
+        {
+          "speaker": "female",
+          "text": {
+            "zh-Hans": "我们的小组消息太多了。我想认真参加，可是晚上九点以后不想再看群消息，还要留时间读书。",
+            "zh-Hant": "我們的小組消息太多了。我想認真參加，可是晚上九點以後不想再看羣消息，還要留時間讀書。"
+          }
+        },
+        {
+          "speaker": "male",
+          "text": {
+            "zh-Hans": "我也常常一边做作业一边等回复。我们可以每天八点统一发一次分工，临时想到的小问题先记下来，第二天再讨论。",
+            "zh-Hant": "我也常常一邊做作業一邊等回覆。我們可以每天八點統一發一次分工，臨時想到的小問題先記下來，第二天再討論。"
+          }
+        },
+        {
+          "speaker": "female",
+          "text": {
+            "zh-Hans": "这样我九点就能放心把手机放下了。急事还是可以打电话。",
+            "zh-Hant": "這樣我九點就能放心把手機放下了。急事還是可以打電話。"
+          }
+        },
+        {
+          "speaker": "male",
+          "text": {
+            "zh-Hans": "好，我把这个办法告诉大家。要更改的地方，可以在那条消息下面写，不用每次都另发。不是让谁退出小组。",
+            "zh-Hant": "好，我把這個辦法告訴大家。要更改的地方，可以在那條消息下面寫，不用每次都另發。不是讓誰退出小組。"
+          }
+        }
+      ],
+      "sourceDurationSeconds": 38.25,
+      "targetSeconds": [
+        35,
+        48
+      ],
+      "withinTarget": true,
+      "src": "assets/audio/c3a-l1c.mp3",
+      "durationSeconds": 38.808,
+      "pcmSeconds": 38.75,
+      "bytes": 310700,
+      "sha256": "78c2d7168a21898eb2d9592699af8d54fa2a4d4b927fa96cdcecbdaecebc939a"
+    },
+    {
+      "id": "C3A-L2a",
+      "kind": "listening-source",
+      "questionNumbers": [
+        6
+      ],
+      "sourcePlays": 1,
+      "script": [
+        {
+          "speaker": "male",
+          "text": {
+            "zh-Hans": "我想下学期参加学校的讲故事活动。现在我说话容易忘记顺序，所以这个月先每周借一本短故事，读完以后用自己的话讲给弟弟听。这样不用一次讲得很长，也能练习把经过连起来。报名的事，等我练习一段时间再决定。",
+            "zh-Hant": "我想下學期參加學校的講故事活動。現在我說話容易忘記順序，所以這個月先每週借一本短故事，讀完以後用自己的話講給弟弟聽。這樣不用一次講得很長，也能練習把經過連起來。報名的事，等我練習一段時間再決定。"
+          }
+        }
+      ],
+      "sourceDurationSeconds": 20.712,
+      "targetSeconds": [
+        18,
+        25
+      ],
+      "withinTarget": true,
+      "src": "assets/audio/c3a-l2a.mp3",
+      "durationSeconds": 21.264,
+      "pcmSeconds": 21.212,
+      "bytes": 170348,
+      "sha256": "874e3d2b3eea8dedf86a1d796b1a7bac14f171688548acec5b9bb9c6c15dbffe"
+    },
+    {
+      "id": "C3A-L2b",
+      "kind": "listening-source",
+      "questionNumbers": [
+        7,
+        8
+      ],
+      "sourcePlays": 1,
+      "script": [
+        {
+          "speaker": "female",
+          "text": {
+            "zh-Hans": "学校有两个体验活动。甲是周六上午的校园广播课，参加的人星期五前要交一段自己写的介绍。乙是周日下午的摄影课，要自己带相机。",
+            "zh-Hant": "學校有兩個體驗活動。甲是週六上午的校園廣播課，參加的人星期五前要交一段自己寫的介紹。乙是週日下午的攝影課，要自己帶相機。"
+          }
+        },
+        {
+          "speaker": "male",
+          "text": {
+            "zh-Hans": "我只在周六上午有空，也想练习把事情说清楚。相机我没有，不过我已经写过一篇社团介绍，还可以请老师帮我修改。",
+            "zh-Hant": "我只在週六上午有空，也想練習把事情說清楚。相機我沒有，不過我已經寫過一篇社團介紹，還可以請老師幫我修改。"
+          }
+        },
+        {
+          "speaker": "female",
+          "text": {
+            "zh-Hans": "那你先把介绍改好，看看报名说明，再确认甲活动还有没有位置。符合时间不代表已经报上名了。",
+            "zh-Hant": "那你先把介紹改好，看看報名說明，再確認甲活動還有沒有位置。符合時間不代表已經報上名了。"
+          }
+        }
+      ],
+      "sourceDurationSeconds": 36.388,
+      "targetSeconds": [
+        35,
+        48
+      ],
+      "withinTarget": true,
+      "src": "assets/audio/c3a-l2b.mp3",
+      "durationSeconds": 36.936,
+      "pcmSeconds": 36.888,
+      "bytes": 295724,
+      "sha256": "27d7a0246f5492e3fbb6756f935177c7e62169c2cc309723234da02934952b2a"
+    },
+    {
+      "id": "C3A-L2c",
+      "kind": "listening-source",
+      "questionNumbers": [
+        9,
+        10
+      ],
+      "sourcePlays": 1,
+      "script": [
+        {
+          "speaker": "female",
+          "text": {
+            "zh-Hans": "苏安负责找资料，陈林负责录音，我来把两部分放在一起。原来想星期三晚上全部做完，可陈林那天有球赛。",
+            "zh-Hant": "蘇安負責找資料，陳林負責錄音，我來把兩部分放在一起。原來想星期三晚上全部做完，可陳林那天有球賽。"
+          }
+        },
+        {
+          "speaker": "male",
+          "text": {
+            "zh-Hans": "录音最好用完整的资料，不能先随便录一段。苏安星期二放学后能发来资料吗？",
+            "zh-Hant": "錄音最好用完整的資料，不能先隨便錄一段。蘇安星期二放學後能發來資料嗎？"
+          }
+        },
+        {
+          "speaker": "female",
+          "text": {
+            "zh-Hans": "可以。陈林说星期四晚上能录好，我星期五午休时整理。",
+            "zh-Hant": "可以。陳林說星期四晚上能錄好，我星期五午休時整理。"
+          }
+        },
+        {
+          "speaker": "male",
+          "text": {
+            "zh-Hans": "那就按这个顺序来。我们星期五下午交，只要每个人在前一步之后完成自己的部分，就来得及。",
+            "zh-Hant": "那就按這個順序來。我們星期五下午交，只要每個人在前一步之後完成自己的部分，就來得及。"
+          }
+        }
+      ],
+      "sourceDurationSeconds": 35.922,
+      "targetSeconds": [
+        35,
+        48
+      ],
+      "withinTarget": true,
+      "src": "assets/audio/c3a-l2c.mp3",
+      "durationSeconds": 36.48,
+      "pcmSeconds": 36.422,
+      "bytes": 292076,
+      "sha256": "ecca5144e7780e606e8b6cd2b876267df529903c345fe5e3779959975661e8ed"
+    },
+    {
+      "id": "C3A-L3a",
+      "kind": "listening-source",
+      "questionNumbers": [
+        11
+      ],
+      "sourcePlays": 1,
+      "script": [
+        {
+          "speaker": "female",
+          "text": {
+            "zh-Hans": "本周的校园节目不教大家怎样比赛，也不公布社团名单。我们采访了两位同学，请他们说说一次失败以后怎样改变做法。每一段都保留了最初的困难和后来的选择。听完他们的经历，你也可以想想自己学会了什么。",
+            "zh-Hant": "本週的校園節目不教大家怎樣比賽，也不公佈社團名單。我們採訪了兩位同學，請他們說說一次失敗以後怎樣改變做法。每一段都保留了最初的困難和後來的選擇。聽完他們的經歷，你也可以想想自己學會了什麼。"
+          }
+        }
+      ],
+      "sourceDurationSeconds": 21.456,
+      "targetSeconds": [
+        18,
+        25
+      ],
+      "withinTarget": true,
+      "src": "assets/audio/c3a-l3a.mp3",
+      "durationSeconds": 22.008,
+      "pcmSeconds": 21.956,
+      "bytes": 176300,
+      "sha256": "c0bc5b44c61f27d11ae831346caecb7730df82899e9df9e776902227fe6a2fc6"
+    },
+    {
+      "id": "C3A-L3b",
+      "kind": "listening-source",
+      "questionNumbers": [
+        12,
+        13
+      ],
+      "sourcePlays": 1,
+      "script": [
+        {
+          "speaker": "male",
+          "text": {
+            "zh-Hans": "故事里的小雨一直想买一本漂亮的新本子，觉得旧本子没有用了。整理时，她发现旧本子上有爷爷教她画的第一棵树，还有自己写错以后改过的字。她决定买一本新本子上课，把旧本子留下来画画。",
+            "zh-Hant": "故事裏的小雨一直想買一本漂亮的新本子，覺得舊本子沒有用了。整理時，她發現舊本子上有爺爺教她畫的第一棵樹，還有自己寫錯以後改過的字。她決定買一本新本子上課，把舊本子留下來畫畫。"
+          }
+        },
+        {
+          "speaker": "female",
+          "text": {
+            "zh-Hans": "她最后认为所有旧东西都不能扔吗？",
+            "zh-Hant": "她最後認爲所有舊東西都不能扔嗎？"
+          }
+        },
+        {
+          "speaker": "male",
+          "text": {
+            "zh-Hans": "没有。结尾只写，她不再只看封面新不新，而会先看看里面记着什么。她还把已经用不上的空盒子送给了需要的同学。",
+            "zh-Hant": "沒有。結尾只寫，她不再只看封面新不新，而會先看看裏面記着什麼。她還把已經用不上的空盒子送給了需要的同學。"
+          }
+        }
+      ],
+      "sourceDurationSeconds": 35.668,
+      "targetSeconds": [
+        35,
+        48
+      ],
+      "withinTarget": true,
+      "src": "assets/audio/c3a-l3b.mp3",
+      "durationSeconds": 36.216,
+      "pcmSeconds": 36.168,
+      "bytes": 289964,
+      "sha256": "3ef81caf793a8e9d5f62eee97d5ebb1c05a6e71c04554b6db61c8ca1654ca99d"
+    },
+    {
+      "id": "C3A-L3c",
+      "kind": "listening-source",
+      "questionNumbers": [
+        14,
+        15
+      ],
+      "sourcePlays": 1,
+      "script": [
+        {
+          "speaker": "female",
+          "text": {
+            "zh-Hans": "周六学校有重复使用活动。上午十点到十二点修补布袋，来之前要把要修的袋子洗干净，工具可以向老师借。下午两点到四点整理旧书，两项都不用交钱。",
+            "zh-Hant": "週六學校有重複使用活動。上午十點到十二點修補布袋，來之前要把要修的袋子洗乾淨，工具可以向老師借。下午兩點到四點整理舊書，兩項都不用交錢。"
+          }
+        },
+        {
+          "speaker": "male",
+          "text": {
+            "zh-Hans": "我只有上午有空，家里正好有一个提手破了的布袋。我想学着把它修好，以后继续用。",
+            "zh-Hant": "我只有上午有空，家裏正好有一個提手破了的布袋。我想學着把它修好，以後繼續用。"
+          }
+        },
+        {
+          "speaker": "female",
+          "text": {
+            "zh-Hans": "那就提前准备好袋子。老师会带着大家做，具体从哪一步开始，可以先问现场的老师。别把下午整理旧书的时间记成上午。",
+            "zh-Hant": "那就提前準備好袋子。老師會帶着大家做，具體從哪一步開始，可以先問現場的老師。別把下午整理舊書的時間記成上午。"
+          }
+        }
+      ],
+      "sourceDurationSeconds": 38.092,
+      "targetSeconds": [
+        35,
+        48
+      ],
+      "withinTarget": true,
+      "src": "assets/audio/c3a-l3c.mp3",
+      "durationSeconds": 38.64,
+      "pcmSeconds": 38.592,
+      "bytes": 309356,
+      "sha256": "1f9124ec952076c5472ad37978e5bd09c5efd1b13cbcccbcbb4dbd41054d00a7"
+    },
+    {
+      "id": "C3A-L4a",
+      "kind": "listening-source",
+      "questionNumbers": [
+        16
+      ],
+      "sourcePlays": 1,
+      "script": [
+        {
+          "speaker": "male",
+          "text": {
+            "zh-Hans": "原定周五下午收集可重复使用的纸盒，现在改到周六上午九点。因为周五要先检查教室，不能提前堆放东西。收集地点还是教学楼门口，只改日期和时间。如果已经和同学约好，请记得把新时间告诉对方。",
+            "zh-Hant": "原定週五下午收集可重複使用的紙盒，現在改到週六上午九點。因爲週五要先檢查教室，不能提前堆放東西。收集地點還是教學樓門口，只改日期和時間。如果已經和同學約好，請記得把新時間告訴對方。"
+          }
+        }
+      ],
+      "sourceDurationSeconds": 19.728,
+      "targetSeconds": [
+        18,
+        25
+      ],
+      "withinTarget": true,
+      "src": "assets/audio/c3a-l4a.mp3",
+      "durationSeconds": 20.28,
+      "pcmSeconds": 20.228,
+      "bytes": 162476,
+      "sha256": "2457b3c7e5adb4de8541627bec59c68d4563cb97f43d3266aa39a914fd7b0518"
+    },
+    {
+      "id": "C3A-L4b",
+      "kind": "listening-source",
+      "questionNumbers": [
+        17,
+        18
+      ],
+      "sourcePlays": 1,
+      "script": [
+        {
+          "speaker": "female",
+          "text": {
+            "zh-Hans": "小宁以前写完作业就一直看手机，第二天常觉得准备东西很匆忙。这个月她试着睡前半小时不用手机，先把书包放好，再读一小段书。她不是每天都做得到，不过大多数晚上能按计划结束。",
+            "zh-Hant": "小寧以前寫完作業就一直看手機，第二天常覺得準備東西很匆忙。這個月她試着睡前半小時不用手機，先把書包放好，再讀一小段書。她不是每天都做得到，不過大多數晚上能按計劃結束。"
+          }
+        },
+        {
+          "speaker": "male",
+          "text": {
+            "zh-Hans": "她觉得有什么不同？",
+            "zh-Hant": "她覺得有什麼不同？"
+          }
+        },
+        {
+          "speaker": "female",
+          "text": {
+            "zh-Hans": "两周后她说，早上少了到处找东西的着急，出门也从容一些。她觉得这个安排比较容易重复做。她没有说这办法适合所有人，只打算再试一段时间。",
+            "zh-Hant": "兩週後她說，早上少了到處找東西的着急，出門也從容一些。她覺得這個安排比較容易重複做。她沒有說這辦法適合所有人，只打算再試一段時間。"
+          }
+        }
+      ],
+      "sourceDurationSeconds": 38.14,
+      "targetSeconds": [
+        35,
+        48
+      ],
+      "withinTarget": true,
+      "src": "assets/audio/c3a-l4b.mp3",
+      "durationSeconds": 38.688,
+      "pcmSeconds": 38.64,
+      "bytes": 309740,
+      "sha256": "52e0902e5d5a806bef166d07f05f3919045b4d4359423aed8fbe6dbefc63d768"
+    },
+    {
+      "id": "C3A-L4c",
+      "kind": "listening-source",
+      "questionNumbers": [
+        19,
+        20
+      ],
+      "sourcePlays": 1,
+      "script": [
+        {
+          "speaker": "male",
+          "text": {
+            "zh-Hans": "去年我为了参加长跑活动，放学后常和朋友一起在操场走一会儿。那次没有得到奖，可我记得最清楚的是大家边走边聊天，心情比一个人闷着好。",
+            "zh-Hant": "去年我爲了參加長跑活動，放學後常和朋友一起在操場走一會兒。那次沒有得到獎，可我記得最清楚的是大家邊走邊聊天，心情比一個人悶着好。"
+          }
+        },
+        {
+          "speaker": "female",
+          "text": {
+            "zh-Hans": "我最近也想活动一下，可每天只能空出十分钟，没时间准备比赛。",
+            "zh-Hant": "我最近也想活動一下，可每天只能空出十分鐘，沒時間準備比賽。"
+          }
+        },
+        {
+          "speaker": "male",
+          "text": {
+            "zh-Hans": "那先约朋友走十分钟吧，不必把目标定成比赛。如果那天太忙，也可以改到第二天，不必一次做得很久。我原来只想着名次，后来才发现，愿意一起坚持的人也很重要。",
+            "zh-Hant": "那先約朋友走十分鐘吧，不必把目標定成比賽。如果那天太忙，也可以改到第二天，不必一次做得很久。我原來只想着名次，後來才發現，願意一起堅持的人也很重要。"
+          }
+        }
+      ],
+      "sourceDurationSeconds": 36.676,
+      "targetSeconds": [
+        35,
+        48
+      ],
+      "withinTarget": true,
+      "src": "assets/audio/c3a-l4c.mp3",
+      "durationSeconds": 37.224,
+      "pcmSeconds": 37.176,
+      "bytes": 298028,
+      "sha256": "5545ce6344713bbd294ac4a6d59d59d4ed7784739765706074dd2e6fe444ada3"
+    },
+    {
+      "id": "S1-1",
+      "kind": "oral-prompt",
+      "sourcePlays": 2,
+      "singlePlayPcmSeconds": 6.792,
+      "repeatGapSeconds": 1.5,
+      "singlePlayPcmSha256": "af528e73df49fe4b9b73fbfe5df2c16742e05b75f9503ebae2df0fcd46cc04c2",
+      "script": {
+        "zh-Hans": "我们要介绍学校的一项活动。你希望别人先了解什么？为什么？",
+        "zh-Hant": "我們要介紹學校的一項活動。你希望別人先了解什麼？爲什麼？"
+      },
+      "src": "assets/audio/s1-1.mp3",
+      "durationSeconds": 15.144,
+      "pcmSeconds": 15.084,
+      "bytes": 121388,
+      "sha256": "f878754f18346394ede421a30d4ce3049633bc0dd777eb1b9c84de998b89a332"
+    },
+    {
+      "id": "S1-2",
+      "kind": "oral-prompt",
+      "sourcePlays": 2,
+      "singlePlayPcmSeconds": 6.12,
+      "repeatGapSeconds": 1.5,
+      "singlePlayPcmSha256": "1e7ecd8e28e3fb078adc9bfe03788c8baf1ad8535084244cbe2745e27a3a4675",
+      "script": {
+        "zh-Hans": "说说你以前参加活动的一次经历。它怎样影响了你的想法？",
+        "zh-Hant": "說說你以前參加活動的一次經歷。它怎樣影響了你的想法？"
+      },
+      "src": "assets/audio/s1-2.mp3",
+      "durationSeconds": 13.8,
+      "pcmSeconds": 13.74,
+      "bytes": 110636,
+      "sha256": "ad324563e6ea1d521cbbae7ec3d4bf51836bcabe66f12337e996ed1630729de3"
+    },
+    {
+      "id": "S1-3",
+      "kind": "oral-prompt",
+      "sourcePlays": 2,
+      "singlePlayPcmSeconds": 6.768,
+      "repeatGapSeconds": 1.5,
+      "singlePlayPcmSha256": "88fa030a477f9300cb9969be8873edbe6de0deef12d5f75fb8232b379bcbfdeb",
+      "script": {
+        "zh-Hans": "现在活动室不能用，我们只有教室门口的一张桌子。可以怎样改？",
+        "zh-Hant": "現在活動室不能用，我們只有教室門口的一張桌子。可以怎樣改？"
+      },
+      "src": "assets/audio/s1-3.mp3",
+      "durationSeconds": 15.096,
+      "pcmSeconds": 15.036,
+      "bytes": 121004,
+      "sha256": "47a7718184efb156fd7c6e7570cb96bf5fd796838137ecad2b7d2b493b42cba9"
+    },
+    {
+      "id": "S1-4",
+      "kind": "oral-prompt",
+      "sourcePlays": 2,
+      "singlePlayPcmSeconds": 6.456,
+      "repeatGapSeconds": 1.5,
+      "singlePlayPcmSha256": "5788e46c5212600b05e39ed091c63d242b36993e8610ffd9e9c508a385e6e298",
+      "script": {
+        "zh-Hans": "最后你建议用什么办法？你先负责哪一部分，还要确认什么？",
+        "zh-Hant": "最後你建議用什麼辦法？你先負責哪一部分，還要確認什麼？"
+      },
+      "src": "assets/audio/s1-4.mp3",
+      "durationSeconds": 14.472,
+      "pcmSeconds": 14.412,
+      "bytes": 116012,
+      "sha256": "ef02367a91dd00632d7b790deca2d42dd7eacd391e69324ed780664496d481f2"
+    }
+  ],
+  "groups": [
+    {
+      "id": "L1",
+      "sourcePlays": 2,
+      "questionNumbers": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "src": "assets/audio/listening-group-1.mp3",
+      "durationSeconds": 375.048,
+      "pcmSeconds": 375.0,
+      "bytes": 3000620,
+      "sha256": "0867b808debb90cd413e41008fb59561773b0484c65bb62073558efeafcb52d8"
+    },
+    {
+      "id": "L2",
+      "sourcePlays": 2,
+      "questionNumbers": [
+        6,
+        7,
+        8,
+        9,
+        10
+      ],
+      "src": "assets/audio/listening-group-2.mp3",
+      "durationSeconds": 375.048,
+      "pcmSeconds": 375.0,
+      "bytes": 3000620,
+      "sha256": "85d60d5bcc6b3a5006348bcd64d19fc15ad53302960094eedabf1e512b3e7091"
+    },
+    {
+      "id": "L3",
+      "sourcePlays": 2,
+      "questionNumbers": [
+        11,
+        12,
+        13,
+        14,
+        15
+      ],
+      "src": "assets/audio/listening-group-3.mp3",
+      "durationSeconds": 375.048,
+      "pcmSeconds": 375.0,
+      "bytes": 3000620,
+      "sha256": "359b54d02463ed259690572dae2b6512dfe8a772360481ae159eed53ed1c7146"
+    },
+    {
+      "id": "L4",
+      "sourcePlays": 2,
+      "questionNumbers": [
+        16,
+        17,
+        18,
+        19,
+        20
+      ],
+      "src": "assets/audio/listening-group-4.mp3",
+      "durationSeconds": 375.048,
+      "pcmSeconds": 375.0,
+      "bytes": 3000620,
+      "sha256": "fe825629a98d7c4cce2f1803e2fdba9712ef2e5623b08e901420c71b5c86f97a"
+    }
+  ],
+  "timedTrack": {
+    "src": "assets/audio/listening-full.mp3",
+    "durationSeconds": 1500.048,
+    "pcmSeconds": 1500.0,
+    "bytes": 12000620,
+    "sha256": "bd096c5f2f69fcf4015926d985ce59cc94deeedc3e1eb343120f873588750956"
+  },
+  "timeline": [
+    {
+      "id": "C3A-L1a",
+      "questionNumbers": [
+        1
+      ],
+      "shared": false,
+      "previewStartSeconds": 0.0,
+      "previewSeconds": 6,
+      "labelStartSeconds": 6.0,
+      "labelBudgetSeconds": 3,
+      "firstPlayStartSeconds": 9.0,
+      "secondPlayStartSeconds": 30.852,
+      "speechEndSeconds": 51.204,
+      "answerWindowSeconds": 22.296,
+      "transitionSeconds": 1.5,
+      "slotEndSeconds": 75.0,
+      "sourcePlays": 2
+    },
+    {
+      "id": "C3A-L1b",
+      "questionNumbers": [
+        2,
+        3
+      ],
+      "shared": true,
+      "previewStartSeconds": 75.0,
+      "previewSeconds": 15,
+      "labelStartSeconds": 90.0,
+      "labelBudgetSeconds": 6,
+      "firstPlayStartSeconds": 96.0,
+      "secondPlayStartSeconds": 133.6,
+      "speechEndSeconds": 169.7,
+      "answerWindowSeconds": 52.8,
+      "transitionSeconds": 2.5,
+      "slotEndSeconds": 225.0,
+      "sourcePlays": 2
+    },
+    {
+      "id": "C3A-L1c",
+      "questionNumbers": [
+        4,
+        5
+      ],
+      "shared": true,
+      "previewStartSeconds": 225.0,
+      "previewSeconds": 15,
+      "labelStartSeconds": 240.0,
+      "labelBudgetSeconds": 6,
+      "firstPlayStartSeconds": 246.0,
+      "secondPlayStartSeconds": 285.75,
+      "speechEndSeconds": 324.0,
+      "answerWindowSeconds": 48.5,
+      "transitionSeconds": 2.5,
+      "slotEndSeconds": 375.0,
+      "sourcePlays": 2
+    },
+    {
+      "id": "C3A-L2a",
+      "questionNumbers": [
+        6
+      ],
+      "shared": false,
+      "previewStartSeconds": 375.0,
+      "previewSeconds": 6,
+      "labelStartSeconds": 381.0,
+      "labelBudgetSeconds": 3,
+      "firstPlayStartSeconds": 384.0,
+      "secondPlayStartSeconds": 406.212,
+      "speechEndSeconds": 426.924,
+      "answerWindowSeconds": 21.576,
+      "transitionSeconds": 1.5,
+      "slotEndSeconds": 450.0,
+      "sourcePlays": 2
+    },
+    {
+      "id": "C3A-L2b",
+      "questionNumbers": [
+        7,
+        8
+      ],
+      "shared": true,
+      "previewStartSeconds": 450.0,
+      "previewSeconds": 15,
+      "labelStartSeconds": 465.0,
+      "labelBudgetSeconds": 6,
+      "firstPlayStartSeconds": 471.0,
+      "secondPlayStartSeconds": 508.888,
+      "speechEndSeconds": 545.276,
+      "answerWindowSeconds": 52.224,
+      "transitionSeconds": 2.5,
+      "slotEndSeconds": 600.0,
+      "sourcePlays": 2
+    },
+    {
+      "id": "C3A-L2c",
+      "questionNumbers": [
+        9,
+        10
+      ],
+      "shared": true,
+      "previewStartSeconds": 600.0,
+      "previewSeconds": 15,
+      "labelStartSeconds": 615.0,
+      "labelBudgetSeconds": 6,
+      "firstPlayStartSeconds": 621.0,
+      "secondPlayStartSeconds": 658.422,
+      "speechEndSeconds": 694.344,
+      "answerWindowSeconds": 53.156,
+      "transitionSeconds": 2.5,
+      "slotEndSeconds": 750.0,
+      "sourcePlays": 2
+    },
+    {
+      "id": "C3A-L3a",
+      "questionNumbers": [
+        11
+      ],
+      "shared": false,
+      "previewStartSeconds": 750.0,
+      "previewSeconds": 6,
+      "labelStartSeconds": 756.0,
+      "labelBudgetSeconds": 3,
+      "firstPlayStartSeconds": 759.0,
+      "secondPlayStartSeconds": 781.956,
+      "speechEndSeconds": 803.412,
+      "answerWindowSeconds": 20.088,
+      "transitionSeconds": 1.5,
+      "slotEndSeconds": 825.0,
+      "sourcePlays": 2
+    },
+    {
+      "id": "C3A-L3b",
+      "questionNumbers": [
+        12,
+        13
+      ],
+      "shared": true,
+      "previewStartSeconds": 825.0,
+      "previewSeconds": 15,
+      "labelStartSeconds": 840.0,
+      "labelBudgetSeconds": 6,
+      "firstPlayStartSeconds": 846.0,
+      "secondPlayStartSeconds": 883.168,
+      "speechEndSeconds": 918.836,
+      "answerWindowSeconds": 53.664,
+      "transitionSeconds": 2.5,
+      "slotEndSeconds": 975.0,
+      "sourcePlays": 2
+    },
+    {
+      "id": "C3A-L3c",
+      "questionNumbers": [
+        14,
+        15
+      ],
+      "shared": true,
+      "previewStartSeconds": 975.0,
+      "previewSeconds": 15,
+      "labelStartSeconds": 990.0,
+      "labelBudgetSeconds": 6,
+      "firstPlayStartSeconds": 996.0,
+      "secondPlayStartSeconds": 1035.592,
+      "speechEndSeconds": 1073.684,
+      "answerWindowSeconds": 48.816,
+      "transitionSeconds": 2.5,
+      "slotEndSeconds": 1125.0,
+      "sourcePlays": 2
+    },
+    {
+      "id": "C3A-L4a",
+      "questionNumbers": [
+        16
+      ],
+      "shared": false,
+      "previewStartSeconds": 1125.0,
+      "previewSeconds": 6,
+      "labelStartSeconds": 1131.0,
+      "labelBudgetSeconds": 3,
+      "firstPlayStartSeconds": 1134.0,
+      "secondPlayStartSeconds": 1155.228,
+      "speechEndSeconds": 1174.956,
+      "answerWindowSeconds": 23.544,
+      "transitionSeconds": 1.5,
+      "slotEndSeconds": 1200.0,
+      "sourcePlays": 2
+    },
+    {
+      "id": "C3A-L4b",
+      "questionNumbers": [
+        17,
+        18
+      ],
+      "shared": true,
+      "previewStartSeconds": 1200.0,
+      "previewSeconds": 15,
+      "labelStartSeconds": 1215.0,
+      "labelBudgetSeconds": 6,
+      "firstPlayStartSeconds": 1221.0,
+      "secondPlayStartSeconds": 1260.64,
+      "speechEndSeconds": 1298.78,
+      "answerWindowSeconds": 48.72,
+      "transitionSeconds": 2.5,
+      "slotEndSeconds": 1350.0,
+      "sourcePlays": 2
+    },
+    {
+      "id": "C3A-L4c",
+      "questionNumbers": [
+        19,
+        20
+      ],
+      "shared": true,
+      "previewStartSeconds": 1350.0,
+      "previewSeconds": 15,
+      "labelStartSeconds": 1365.0,
+      "labelBudgetSeconds": 6,
+      "firstPlayStartSeconds": 1371.0,
+      "secondPlayStartSeconds": 1409.176,
+      "speechEndSeconds": 1445.852,
+      "answerWindowSeconds": 51.648,
+      "transitionSeconds": 2.5,
+      "slotEndSeconds": 1500.0,
+      "sourcePlays": 2
+    }
+  ],
+  "speakingPlannedMaximumSeconds": 456.272,
+  "speakingReserveSeconds": 143.728,
+  "cache": [
+    {
+      "key": "c2512a52f52c360fd160d664",
+      "speaker": "female",
+      "text": "那是上学期刚开学的时候。我第一次去学校的志愿活动，负责带新同学找教室。出发前我把路线走了两遍，没想到活动结束后，我自己也认识了几个朋友。我本来以为自己还不熟悉校园，不能帮上忙。",
+      "sha256": "447d3c2584eea5d7f9d7b8b838a7189e98ae8cdbceeb0f1c6032c7592b94bf7d"
+    },
+    {
+      "key": "34e89f8d03ace2b111d8dc37",
+      "speaker": "female",
+      "text": "第1题。",
+      "sha256": "3895df58b8b6ce61365216490dcb339db3aa7ef168eef8d2098c469073a4cdc2"
+    },
+    {
+      "key": "230f6c4b6f0a9ca43b69a34b",
+      "speaker": "male",
+      "text": "第一次介绍社团时，我准备了一大段话，以为新同学会站着听完。可是他们经过桌子时，只问能不能亲手试一试，很少有人看我的介绍板。",
+      "sha256": "0d6b627500f110fa92dda3dd7957d24080c3ed4d3bc47c81d7e7eecabb3398bc"
+    },
+    {
+      "key": "6965eb61c9b26dae459b5310",
+      "speaker": "female",
+      "text": "后来你怎么改的？",
+      "sha256": "62cda56aa210ce747cee67ce1e45df305088e97f2ce4d1ac08e9735587165281"
+    },
+    {
+      "key": "7810aa97cfca169d0dfecb72",
+      "speaker": "male",
+      "text": "第二次我先拿出材料，让大家做一个小东西，再回答他们的问题。虽然我说的话少了，留下来参加的人却多了。我才发现，他们想先知道自己能做什么。有几个原来走开的同学，也回来问下次什么时候还能参加。",
+      "sha256": "e554f3e267655be19637615289aa405a709c653843a60910130312a89f185271"
+    },
+    {
+      "key": "59a37835b5cee9f38c336089",
+      "speaker": "female",
+      "text": "第2题到第3题。",
+      "sha256": "c5aa462a627f4025322935611b7bae282a9707cc5d99053588618b9151947c3f"
+    },
+    {
+      "key": "4ce3118557a5975f81bc363c",
+      "speaker": "female",
+      "text": "我们的小组消息太多了。我想认真参加，可是晚上九点以后不想再看群消息，还要留时间读书。",
+      "sha256": "b442a088936c9e669adeff030bf3f6b082d1b3ae037854e75755763473faf244"
+    },
+    {
+      "key": "bfbe772ba8dba49201d34610",
+      "speaker": "male",
+      "text": "我也常常一边做作业一边等回复。我们可以每天八点统一发一次分工，临时想到的小问题先记下来，第二天再讨论。",
+      "sha256": "16ccd383a774611f98e5d599c2b9792c9bdf17ac6d23984f2bfe754c15848a47"
+    },
+    {
+      "key": "4a27d333861ba6617f362551",
+      "speaker": "female",
+      "text": "这样我九点就能放心把手机放下了。急事还是可以打电话。",
+      "sha256": "b0c0209e5dd9511283b7d885e05c47b3b05e8130e76282ecae79b465a3c58c8d"
+    },
+    {
+      "key": "1f44a4211010bb286cbc74ae",
+      "speaker": "male",
+      "text": "好，我把这个办法告诉大家。要更改的地方，可以在那条消息下面写，不用每次都另发。不是让谁退出小组。",
+      "sha256": "b6c4410e26490db4230cba6672f0397b79ce2b1854f106af791bdf8b1a7872d8"
+    },
+    {
+      "key": "57776ef6b9167b48c9682e35",
+      "speaker": "female",
+      "text": "第4题到第5题。",
+      "sha256": "b1b9e81f6b43570946d2619a949b1119cb49d29689c181f957021a7da823ba1a"
+    },
+    {
+      "key": "78f689ec773b38f0e1f215d1",
+      "speaker": "male",
+      "text": "我想下学期参加学校的讲故事活动。现在我说话容易忘记顺序，所以这个月先每周借一本短故事，读完以后用自己的话讲给弟弟听。这样不用一次讲得很长，也能练习把经过连起来。报名的事，等我练习一段时间再决定。",
+      "sha256": "73be745408953dda51010e1944fae0cb281228d0ba07762fcd8b48603ea311a6"
+    },
+    {
+      "key": "5e6c5b336701fe2c48b7fa2f",
+      "speaker": "female",
+      "text": "第6题。",
+      "sha256": "fcc5b0fabad8f1fa79148054a17b60ac8d2cb351d57ed0d5eb073df550e3ee93"
+    },
+    {
+      "key": "03c6991dd15f03596df7ca63",
+      "speaker": "female",
+      "text": "学校有两个体验活动。甲是周六上午的校园广播课，参加的人星期五前要交一段自己写的介绍。乙是周日下午的摄影课，要自己带相机。",
+      "sha256": "0a2c8cb2f9bf80441ee50eba7892a53e97e416f9946e5021aed566c12a1a7190"
+    },
+    {
+      "key": "cfe4c14fd87465c3519831e6",
+      "speaker": "male",
+      "text": "我只在周六上午有空，也想练习把事情说清楚。相机我没有，不过我已经写过一篇社团介绍，还可以请老师帮我修改。",
+      "sha256": "fee74414f56172ad544c9b66b5f01cc365d09c999ec9dc3583e1be58cc08a43c"
+    },
+    {
+      "key": "fd8a1eea48a9d861400301a0",
+      "speaker": "female",
+      "text": "那你先把介绍改好，看看报名说明，再确认甲活动还有没有位置。符合时间不代表已经报上名了。",
+      "sha256": "2fb5b863f541a7aa8f2bd028a9e3e4836022de2658d7a72e6f1cca96373ab712"
+    },
+    {
+      "key": "64c66b2840929c1c7f0a128c",
+      "speaker": "female",
+      "text": "第7题到第8题。",
+      "sha256": "e68967a3ec70be7f22d0b224f111132969b5f86b19e9c18b08ec31874f504e59"
+    },
+    {
+      "key": "bdfebc6a40594cd6dbabfd1f",
+      "speaker": "female",
+      "text": "苏安负责找资料，陈林负责录音，我来把两部分放在一起。原来想星期三晚上全部做完，可陈林那天有球赛。",
+      "sha256": "99cfe66ed92f97c3b4df35144acfd0f0c58dc1f91c31ee862f775c8d6e0c1556"
+    },
+    {
+      "key": "7d45bbf82912a1bed6b0fb4f",
+      "speaker": "male",
+      "text": "录音最好用完整的资料，不能先随便录一段。苏安星期二放学后能发来资料吗？",
+      "sha256": "3c3fd78df88d74bf636c48decbe939f5209027f7569696e2204322c91f52ccae"
+    },
+    {
+      "key": "6353331a5d74c961aac00758",
+      "speaker": "female",
+      "text": "可以。陈林说星期四晚上能录好，我星期五午休时整理。",
+      "sha256": "81db7d8347b20ab20f6895f230e527b540c83d6232a03645aabdad670106fb54"
+    },
+    {
+      "key": "944021570fc9e0b1a40d82e8",
+      "speaker": "male",
+      "text": "那就按这个顺序来。我们星期五下午交，只要每个人在前一步之后完成自己的部分，就来得及。",
+      "sha256": "546d2d61ff3f5c991c2065da06a621fff2738332e9ad59f2a55288b7125bd923"
+    },
+    {
+      "key": "cb299aa387ffea4c204f4fd8",
+      "speaker": "female",
+      "text": "第9题到第10题。",
+      "sha256": "156a13ef215d9abd3619c718ca13cadb0ae55714d67e1a7c354a48af38c18c14"
+    },
+    {
+      "key": "d8692a045ba8e98b2b66d959",
+      "speaker": "female",
+      "text": "本周的校园节目不教大家怎样比赛，也不公布社团名单。我们采访了两位同学，请他们说说一次失败以后怎样改变做法。每一段都保留了最初的困难和后来的选择。听完他们的经历，你也可以想想自己学会了什么。",
+      "sha256": "a26ec1d78f2927047578017d9bf7f59bdffc9c959fb256cd43e3e909822ae67e"
+    },
+    {
+      "key": "63d3dd3f27ad85dca9aa0606",
+      "speaker": "female",
+      "text": "第11题。",
+      "sha256": "09609165ce7b5b5bbc80de6236e7726415e2ab45d65241e1ca3c75ec4a697f32"
+    },
+    {
+      "key": "05f8c5a3a1c3cc08a92885ee",
+      "speaker": "male",
+      "text": "故事里的小雨一直想买一本漂亮的新本子，觉得旧本子没有用了。整理时，她发现旧本子上有爷爷教她画的第一棵树，还有自己写错以后改过的字。她决定买一本新本子上课，把旧本子留下来画画。",
+      "sha256": "f63e8248b85273c6d1e0b2ddb5d4a19c78dc1c0849de1802d8e579eb8ff34a8c"
+    },
+    {
+      "key": "5d8fb9d7204385301e7d03ce",
+      "speaker": "female",
+      "text": "她最后认为所有旧东西都不能扔吗？",
+      "sha256": "17f111f91cc3947c30a7f15892e59aa36ede8e4ba690f383908ca2309892fa78"
+    },
+    {
+      "key": "754e68aaad64bcbe1607f9c8",
+      "speaker": "male",
+      "text": "没有。结尾只写，她不再只看封面新不新，而会先看看里面记着什么。她还把已经用不上的空盒子送给了需要的同学。",
+      "sha256": "8e2c0ff1c8764b150c7be60a9f34280d9043fb43636cd3ac88d5c450d29e0a09"
+    },
+    {
+      "key": "897d5f3dc3700eb43e7cbb5e",
+      "speaker": "female",
+      "text": "第12题到第13题。",
+      "sha256": "c0764bbeffc04d14e861e97e76647ca832c7374a425f990051edfc4be7105283"
+    },
+    {
+      "key": "bfd48afef429263aff40180b",
+      "speaker": "female",
+      "text": "周六学校有重复使用活动。上午十点到十二点修补布袋，来之前要把要修的袋子洗干净，工具可以向老师借。下午两点到四点整理旧书，两项都不用交钱。",
+      "sha256": "cc3a5ebad9cf9a60fe825d37bacb3402f29c12846479a052be39cda6a8315a32"
+    },
+    {
+      "key": "490940716fe8d0338fdfba70",
+      "speaker": "male",
+      "text": "我只有上午有空，家里正好有一个提手破了的布袋。我想学着把它修好，以后继续用。",
+      "sha256": "d986a64a3bf9ecce8a4bda25e3a4ec068527f813de7b6cbb6c1eb19e41a66c06"
+    },
+    {
+      "key": "6ea4ec78207ba0c6b31a21cb",
+      "speaker": "female",
+      "text": "那就提前准备好袋子。老师会带着大家做，具体从哪一步开始，可以先问现场的老师。别把下午整理旧书的时间记成上午。",
+      "sha256": "177bed4c24286b2eeef09ff66034e9207356779e4e29e8fc6f201a4d2edc6a58"
+    },
+    {
+      "key": "d2b1b6c44f506d7526503dfd",
+      "speaker": "female",
+      "text": "第14题到第15题。",
+      "sha256": "0906d17c5251bf2008c56b4ace9b116fde0acd70c415b18aa7d1607319a3b61d"
+    },
+    {
+      "key": "b577811cda24465fe96b0d12",
+      "speaker": "male",
+      "text": "原定周五下午收集可重复使用的纸盒，现在改到周六上午九点。因为周五要先检查教室，不能提前堆放东西。收集地点还是教学楼门口，只改日期和时间。如果已经和同学约好，请记得把新时间告诉对方。",
+      "sha256": "9af215c7e2aeb8075d209dafa2c5186fad5431839f5ba3395df9f3f36b485a1f"
+    },
+    {
+      "key": "0cffbf1010d1e54023057ea9",
+      "speaker": "female",
+      "text": "第16题。",
+      "sha256": "6cbe22b4463ef0127dbcb5957919648ee9b071c97d70d0b85edf327b6a0071df"
+    },
+    {
+      "key": "aa6d6570d8cc11a105ff5569",
+      "speaker": "female",
+      "text": "小宁以前写完作业就一直看手机，第二天常觉得准备东西很匆忙。这个月她试着睡前半小时不用手机，先把书包放好，再读一小段书。她不是每天都做得到，不过大多数晚上能按计划结束。",
+      "sha256": "89eb11bb0037305cb17ed72f53ac264ba26262cd554e8a4bb59da323f6fb2130"
+    },
+    {
+      "key": "b370c47fc5ca49c89092a3a9",
+      "speaker": "male",
+      "text": "她觉得有什么不同？",
+      "sha256": "9332138ae4d25a57aefb4443a113f22453bf8b7f94b969b069ef04191d26912c"
+    },
+    {
+      "key": "ac3fae563d405b2ef1189afa",
+      "speaker": "female",
+      "text": "两周后她说，早上少了到处找东西的着急，出门也从容一些。她觉得这个安排比较容易重复做。她没有说这办法适合所有人，只打算再试一段时间。",
+      "sha256": "9772754dc1e0b222c10c761e2bc4b1e502670940a14781afc4c4aabd85a2f21f"
+    },
+    {
+      "key": "39783cd7fc1f12c860740889",
+      "speaker": "female",
+      "text": "第17题到第18题。",
+      "sha256": "01a9a45721addca80a07e682ec5e8610bb430ec1cbeedbbb220e9a65db18feb4"
+    },
+    {
+      "key": "d238e67cd046fc9800360a15",
+      "speaker": "male",
+      "text": "去年我为了参加长跑活动，放学后常和朋友一起在操场走一会儿。那次没有得到奖，可我记得最清楚的是大家边走边聊天，心情比一个人闷着好。",
+      "sha256": "14aa7b8179846a0103eff0b7ddd3071b05bee3013e08bf496a57cf870473e0ce"
+    },
+    {
+      "key": "3b291fdc9f371d022c48b078",
+      "speaker": "female",
+      "text": "我最近也想活动一下，可每天只能空出十分钟，没时间准备比赛。",
+      "sha256": "1193a1f1bddbd1e42143caca921f54fc504c7b897c0a8dc58a93dc35bd6caa54"
+    },
+    {
+      "key": "d7d3001a7d16f54a9b518117",
+      "speaker": "male",
+      "text": "那先约朋友走十分钟吧，不必把目标定成比赛。如果那天太忙，也可以改到第二天，不必一次做得很久。我原来只想着名次，后来才发现，愿意一起坚持的人也很重要。",
+      "sha256": "f17e74287b8293c894341006a61d4e5cd9c48645a8a60691d68ab7945017d69c"
+    },
+    {
+      "key": "f95c9b6602b74fc57bb96e4c",
+      "speaker": "female",
+      "text": "第19题到第20题。",
+      "sha256": "7520f48462fd711504e5121ae27158508115a47849655c6a122f6d8b979678bf"
+    },
+    {
+      "key": "729363b83858f6a0c82342b9",
+      "speaker": "female",
+      "text": "我们要介绍学校的一项活动。你希望别人先了解什么？为什么？",
+      "sha256": "8f099620c28c5e9a566f290c57773faa43c83bb5dca9fbd1951255e52890f07e"
+    },
+    {
+      "key": "e891d5ad6483c0cd32aa4df5",
+      "speaker": "female",
+      "text": "说说你以前参加活动的一次经历。它怎样影响了你的想法？",
+      "sha256": "5c0584a666a52d6e91cf7450ca67c7edc47023b3fdf8a8e573efa81d73a23e1c"
+    },
+    {
+      "key": "ad22ff90c89a4ee056a9997c",
+      "speaker": "female",
+      "text": "现在活动室不能用，我们只有教室门口的一张桌子。可以怎样改？",
+      "sha256": "c35cec6f9a56714d721d71f8616d820c97265936dc8db0db82221f377e1cb9f9"
+    },
+    {
+      "key": "205f85593113e2c802640a28",
+      "speaker": "female",
+      "text": "最后你建议用什么办法？你先负责哪一部分，还要确认什么？",
+      "sha256": "68852f38bda812e64a12fd9fa8ea1029cd642f4d4a8517ece96406c086e35a0d"
+    }
+  ]
+}

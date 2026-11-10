@@ -41,9 +41,9 @@ test('Chinese 2 routes use server authorization for every file including HEAD an
  const catalog=read('src/lib/course-exams/catalog.ts');assert.ok(catalog.includes('level === 2 ? chinese2Manifest : manifest'));assert.ok(catalog.includes('p === ".."'));
 });
 
-test('Chinese 2 entry and plan copy expose six course papers without enabling Chinese 3 or 4',()=>{
+test('Chinese 2 entry remains available alongside Chinese 3 without enabling Chinese 4',()=>{
  const hub=read('src/app/chinese-course-tests/page.tsx');assert.ok(hub.includes('id="chinese-2"'));assert.ok(hub.includes('coursePaperHref(form, 2)'));
- assert.ok(!hub.includes('/chinese-3/'));assert.ok(!hub.includes('/chinese-4/'));
- const plans=read('src/lib/commercial/plan-presentation.ts');assert.ok(plans.includes('Six Chinese 1–2 course-review papers'));assert.ok(plans.includes('Both A papers are free; Pro adds four B/C papers'));
+ assert.ok(hub.includes('coursePaperHref(form, 3)'));assert.ok(!hub.includes('/chinese-4/'));
+ const plans=read('src/lib/commercial/plan-presentation.ts');assert.ok(plans.includes('Nine Chinese 1–3 course-review papers'));assert.ok(plans.includes('All three A papers are free; Pro adds six B/C papers'));
  assert.ok(read('src/app/chinese-course-tests/chinese-2/[form]/page.tsx').includes('level={2}'));assert.ok(read('src/app/chinese-course-tests/paper-access.tsx').includes('coursePaperHref(form, level)'));
 });

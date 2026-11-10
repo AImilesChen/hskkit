@@ -22,7 +22,7 @@ export const AI_CREDIT_COSTS = Object.freeze({ explanation: aiCreditCost("explan
 export const FREE_PLAN_BENEFITS = [
   `${FREE_MOCK_COUNT} free HSK mock papers · Paper A at every level from ${MOCK_LEVEL_RANGE}`,
   "Complete AP Chinese 2027 Paper A",
-  "Complete Chinese 1 and Chinese 2 course-review A papers",
+  "Complete Chinese 1–3 course-review A papers",
   `${FREE_CAPABILITIES.dailyNewItems} new items daily`,
   "Unlimited standard review of learned items",
   "Published HSK vocabulary, Placement and Today",
@@ -34,7 +34,7 @@ export const FREE_PLAN_BENEFITS = [
 export const PRO_PLAN_BENEFITS = [
   { title: `All ${TOTAL_MOCK_COUNT} HSK mock papers`, detail: `Papers A, B and C across ${MOCK_LEVEL_RANGE}. Includes ${EXTRA_MOCK_COUNT} additional papers beyond Free, with timed sections and answer explanations.` },
   { title: "Three complete AP Chinese papers", detail: "2027-format A, B and C. Speaking, writing, listening and reading; A is free, Pro adds two fresh papers. Speaking and writing need manual review." },
-  { title: "Six Chinese 1–2 course-review papers", detail: "Each course has A, B and C for listening, reading, writing and speaking. Both A papers are free; Pro adds four B/C papers. Writing and speaking use manual review." },
+  { title: "Nine Chinese 1–3 course-review papers", detail: "Each course has A, B and C for listening, reading, writing and speaking. All three A papers are free; Pro adds six B/C papers. Writing and speaking use manual review." },
   { title: "Learn at your own pace", detail: "Unlimited daily new learning items" },
   { title: `${PRO_CAPABILITIES.aiMonthlyCredits} AI credits each month`, detail: "For supported practice explanations, saved plan suggestions and uploaded mistake analysis" },
   { title: "Focus on your weak spots", detail: "Focused Review prioritizes unresolved mistakes and due weak memories" },
@@ -45,7 +45,7 @@ export const PLAN_COMPARISON = [
   ["HSK levels covered", MOCK_LEVEL_RANGE, MOCK_LEVEL_RANGE],
   ["Complete mock papers", `${FREE_MOCK_COUNT} · Paper A at each level`, `${TOTAL_MOCK_COUNT} · Papers A, B and C`],
   ["AP Chinese 2027 practice", "Complete Paper A", "Papers A, B and C"],
-  ["Chinese 1–2 course review", "2 complete A papers", "6 papers · A, B and C per course"],
+  ["Chinese 1–3 course review", "3 complete A papers", "9 papers · A, B and C per course"],
   ["Additional B/C papers", "Not included", `${EXTRA_MOCK_COUNT} papers`],
   ["Timed sections and answer review", "Included in accessible papers", "Included in all papers"],
   ["New learning items", `${FREE_CAPABILITIES.dailyNewItems} per day`, "Unlimited"],
