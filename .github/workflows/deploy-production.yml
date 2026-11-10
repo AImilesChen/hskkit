@@ -51,8 +51,8 @@ jobs:
         run: node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --test tests/formal-exams.test.mts tests/hsk2-formal-exams.test.mts tests/hsk3-formal-exams.test.mts tests/hsk4-formal-exams.test.mts tests/hsk5-formal-exams.test.mts tests/hsk6-formal-exams.test.mts
       - name: Verify AP Chinese publication and protected delivery
         run: node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --test tests/ap-exams.test.mts
-      - name: Verify Chinese 1 course publication and protected delivery
-        run: node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --test tests/course-exams.test.mts
+      - name: Verify Chinese 1–2 course publication and protected delivery
+        run: node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --test tests/course-exams.test.mts tests/chinese2-course-exams.test.mts tests/chinese2-timing.test.mts
       - name: Verify stateless account fast path keeps authenticated paths unchanged
         run: node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --test tests/anonymous-account-fast-path.test.mts
       - name: Ensure dedicated private page-cache bucket

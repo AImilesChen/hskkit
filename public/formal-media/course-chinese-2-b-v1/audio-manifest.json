@@ -1,0 +1,1444 @@
+{
+  "paperId": "course-chinese-2-b-v1",
+  "provider": "Edge TTS at authoring time; local MP3 playback, no runtime TTS",
+  "rate": "-8%",
+  "voices": {
+    "female": "zh-CN-XiaoxiaoNeural",
+    "male": "zh-CN-YunxiNeural"
+  },
+  "humanListeningAcceptance": false,
+  "units": [
+    {
+      "id": "C2B-M01",
+      "kind": "listening-source",
+      "sourcePlays": 1,
+      "script": [
+        {
+          "speaker": "female",
+          "text": {
+            "zh-Hans": "小何来帮我们照顾猫以前，家里要准备什么？",
+            "zh-Hant": "小何來幫我們照顧貓以前，家裏要準備什麼？"
+          }
+        },
+        {
+          "speaker": "male",
+          "text": {
+            "zh-Hans": "你把猫粮放在桌上，我去把备用钥匙交给小何，猫的水我已经换好了。",
+            "zh-Hant": "你把貓糧放在桌上，我去把備用鑰匙交給小何，貓的水我已經換好了。"
+          }
+        },
+        {
+          "speaker": "female",
+          "text": {
+            "zh-Hans": "好，我现在准备猫粮。",
+            "zh-Hant": "好，我現在準備貓糧。"
+          }
+        }
+      ],
+      "sourceDurationSeconds": 15.196,
+      "src": "assets/audio/c2b-m01.mp3",
+      "durationSeconds": 15.744,
+      "pcmSeconds": 15.696,
+      "bytes": 126188,
+      "sha256": "594f3974f30f68c9436bc2c63f610103878c140847ff76c6168e17fcb690ff7d"
+    },
+    {
+      "id": "C2B-M02",
+      "kind": "listening-source",
+      "sourcePlays": 1,
+      "script": [
+        {
+          "speaker": "male",
+          "text": {
+            "zh-Hans": "今天下午的宠物照顾活动几点开始？",
+            "zh-Hant": "今天下午的寵物照顧活動幾點開始？"
+          }
+        },
+        {
+          "speaker": "female",
+          "text": {
+            "zh-Hans": "四点。三点半大家可以先看照片，四点老师教我们怎么给小狗梳毛，五点再提问题。",
+            "zh-Hant": "四點。三點半大家可以先看照片，四點老師教我們怎麼給小狗梳毛，五點再提問題。"
+          }
+        },
+        {
+          "speaker": "male",
+          "text": {
+            "zh-Hans": "我四点前到。",
+            "zh-Hant": "我四點前到。"
+          }
+        }
+      ],
+      "sourceDurationSeconds": 16.276,
+      "src": "assets/audio/c2b-m02.mp3",
+      "durationSeconds": 16.824,
+      "pcmSeconds": 16.776,
+      "bytes": 134828,
+      "sha256": "692763139ca93334ab4e4734a664a40b7dbbd4e8f5594a0c8cdf48ba54fa325f"
+    },
+    {
+      "id": "C2B-M03",
+      "kind": "listening-source",
+      "sourcePlays": 1,
+      "script": [
+        {
+          "speaker": "female",
+          "text": {
+            "zh-Hans": "放学以后，我每次带小狗出去二十分钟。哥哥今天问我要不要走四十分钟，可是小狗走久了会累，我还是按平时的时间走。",
+            "zh-Hant": "放學以後，我每次帶小狗出去二十分鐘。哥哥今天問我要不要走四十分鐘，可是小狗走久了會累，我還是按平時的時間走。"
+          }
+        }
+      ],
+      "sourceDurationSeconds": 12.072,
+      "src": "assets/audio/c2b-m03.mp3",
+      "durationSeconds": 12.624,
+      "pcmSeconds": 12.572,
+      "bytes": 101228,
+      "sha256": "ea98d1835cf62b096be63faed43620b2c55fbcfec3bf93399754236520b15b89"
+    },
+    {
+      "id": "C2B-M04",
+      "kind": "listening-source",
+      "sourcePlays": 1,
+      "script": [
+        {
+          "speaker": "male",
+          "text": {
+            "zh-Hans": "你想学打球还是游泳？",
+            "zh-Hant": "你想學打球還是游泳？"
+          }
+        },
+        {
+          "speaker": "female",
+          "text": {
+            "zh-Hans": "我想游泳，可是只有周三晚上有空。",
+            "zh-Hant": "我想游泳，可是隻有周三晚上有空。"
+          }
+        },
+        {
+          "speaker": "male",
+          "text": {
+            "zh-Hans": "游泳课周二晚上开，周三有篮球课。",
+            "zh-Hant": "游泳課週二晚上開，週三有籃球課。"
+          }
+        },
+        {
+          "speaker": "female",
+          "text": {
+            "zh-Hans": "那先试试篮球课吧。",
+            "zh-Hant": "那先試試籃球課吧。"
+          }
+        }
+      ],
+      "sourceDurationSeconds": 15.282,
+      "src": "assets/audio/c2b-m04.mp3",
+      "durationSeconds": 15.84,
+      "pcmSeconds": 15.782,
+      "bytes": 126956,
+      "sha256": "9d997d2a09ef48b80a87e050b332150f3b5c8c0997467ba9754c30e2143f2baf"
+    },
+    {
+      "id": "C2B-M05",
+      "kind": "listening-source",
+      "sourcePlays": 1,
+      "script": [
+        {
+          "speaker": "female",
+          "text": {
+            "zh-Hans": "上次打球，小丁忘了带水，打完以后一直说口渴。今天他还没出门，就先往书包里放了一大瓶水，旁边的球鞋倒是差点儿忘了。",
+            "zh-Hant": "上次打球，小丁忘了帶水，打完以後一直說口渴。今天他還沒出門，就先往書包裏放了一大瓶水，旁邊的球鞋倒是差點兒忘了。"
+          }
+        }
+      ],
+      "sourceDurationSeconds": 13.152,
+      "src": "assets/audio/c2b-m05.mp3",
+      "durationSeconds": 13.704,
+      "pcmSeconds": 13.652,
+      "bytes": 109868,
+      "sha256": "61520ae639724b215477d4103122e53fac4567efa8ca183a03b4ac73d75875f9"
+    },
+    {
+      "id": "C2B-M06",
+      "kind": "listening-source",
+      "sourcePlays": 1,
+      "script": [
+        {
+          "speaker": "male",
+          "text": {
+            "zh-Hans": "你到了运动中心就在游泳馆等我吧。",
+            "zh-Hant": "你到了運動中心就在游泳館等我吧。"
+          }
+        },
+        {
+          "speaker": "female",
+          "text": {
+            "zh-Hans": "我不游泳，今天要上篮球课。我们在篮球馆门口见，别走到游泳馆去。",
+            "zh-Hant": "我不游泳，今天要上籃球課。我們在籃球館門口見，別走到游泳館去。"
+          }
+        },
+        {
+          "speaker": "male",
+          "text": {
+            "zh-Hans": "好，我去篮球馆。",
+            "zh-Hant": "好，我去籃球館。"
+          }
+        }
+      ],
+      "sourceDurationSeconds": 14.716,
+      "src": "assets/audio/c2b-m06.mp3",
+      "durationSeconds": 15.264,
+      "pcmSeconds": 15.216,
+      "bytes": 122348,
+      "sha256": "6651a8664ea03bea56c758d468ee2fe6c9e505229d2c45db1a01cab64387c360"
+    },
+    {
+      "id": "C2B-M07",
+      "kind": "listening-source",
+      "sourcePlays": 1,
+      "script": [
+        {
+          "speaker": "female",
+          "text": {
+            "zh-Hans": "公交车还要等半个小时，你想怎么去运动中心？",
+            "zh-Hant": "公交車還要等半個小時，你想怎麼去運動中心？"
+          }
+        },
+        {
+          "speaker": "male",
+          "text": {
+            "zh-Hans": "我们的自行车都在这儿，骑车只要十分钟。",
+            "zh-Hant": "我們的自行車都在這兒，騎車只要十分鐘。"
+          }
+        },
+        {
+          "speaker": "female",
+          "text": {
+            "zh-Hans": "好，把球放进车篮，我们骑车去。",
+            "zh-Hant": "好，把球放進車籃，我們騎車去。"
+          }
+        }
+      ],
+      "sourceDurationSeconds": 13.732,
+      "src": "assets/audio/c2b-m07.mp3",
+      "durationSeconds": 14.28,
+      "pcmSeconds": 14.232,
+      "bytes": 114476,
+      "sha256": "3d7ee49dc1e40f8b85580932a3d411ae197fa8341d0b7e60b222d5a48462881b"
+    },
+    {
+      "id": "C2B-M08",
+      "kind": "listening-source",
+      "sourcePlays": 1,
+      "script": [
+        {
+          "speaker": "male",
+          "text": {
+            "zh-Hans": "从西门进去以后，怎么到篮球馆？",
+            "zh-Hant": "從西門進去以後，怎麼到籃球館？"
+          }
+        },
+        {
+          "speaker": "female",
+          "text": {
+            "zh-Hans": "先穿过小广场，看到食堂再向左。篮球馆在食堂后面，不在停车场旁边。",
+            "zh-Hant": "先穿過小廣場，看到食堂再向左。籃球館在食堂後面，不在停車場旁邊。"
+          }
+        },
+        {
+          "speaker": "male",
+          "text": {
+            "zh-Hans": "好，先过广场。",
+            "zh-Hant": "好，先過廣場。"
+          }
+        }
+      ],
+      "sourceDurationSeconds": 15.532,
+      "src": "assets/audio/c2b-m08.mp3",
+      "durationSeconds": 16.08,
+      "pcmSeconds": 16.032,
+      "bytes": 128876,
+      "sha256": "74a633eff18f6f4f4d22e923f0a6bbd63def2ff6e0e4d173ecf71ddef372c670"
+    },
+    {
+      "id": "C2B-M09",
+      "kind": "listening-source",
+      "sourcePlays": 1,
+      "script": [
+        {
+          "speaker": "female",
+          "text": {
+            "zh-Hans": "六路车两点前到运动中心，不用换车。十路车也能两点前到，可是中间要换一次。",
+            "zh-Hant": "六路車兩點前到運動中心，不用換車。十路車也能兩點前到，可是中間要換一次。"
+          }
+        },
+        {
+          "speaker": "male",
+          "text": {
+            "zh-Hans": "我带着两个球和一个大包，不想换车，坐六路吧。",
+            "zh-Hant": "我帶着兩個球和一個大包，不想換車，坐六路吧。"
+          }
+        }
+      ],
+      "sourceDurationSeconds": 14.486,
+      "src": "assets/audio/c2b-m09.mp3",
+      "durationSeconds": 15.048,
+      "pcmSeconds": 14.986,
+      "bytes": 120620,
+      "sha256": "3f2375e57272ffc349db9bc6c715c10121d38cb89d820a5ba70e7ee5e4cffb70"
+    },
+    {
+      "id": "C2B-M10",
+      "kind": "listening-source",
+      "sourcePlays": 1,
+      "script": [
+        {
+          "speaker": "male",
+          "text": {
+            "zh-Hans": "星期六下午三点太热，室外练球还照原计划吗？",
+            "zh-Hant": "星期六下午三點太熱，室外練球還照原計劃嗎？"
+          }
+        },
+        {
+          "speaker": "female",
+          "text": {
+            "zh-Hans": "老师说改到早上八点，地点不变，还是学校球场。",
+            "zh-Hant": "老師說改到早上八點，地點不變，還是學校球場。"
+          }
+        },
+        {
+          "speaker": "male",
+          "text": {
+            "zh-Hans": "好，我把原来下午的提醒改掉。",
+            "zh-Hant": "好，我把原來下午的提醒改掉。"
+          }
+        }
+      ],
+      "sourceDurationSeconds": 16.108,
+      "src": "assets/audio/c2b-m10.mp3",
+      "durationSeconds": 16.656,
+      "pcmSeconds": 16.608,
+      "bytes": 133484,
+      "sha256": "755ddeddab775fd0131550a65932f766f66683c3f468163abbe7f5c5868cfc5b"
+    },
+    {
+      "id": "C2B-M11",
+      "kind": "listening-source",
+      "sourcePlays": 1,
+      "script": [
+        {
+          "speaker": "female",
+          "text": {
+            "zh-Hans": "野餐要带几盒果汁？",
+            "zh-Hant": "野餐要帶幾盒果汁？"
+          }
+        },
+        {
+          "speaker": "male",
+          "text": {
+            "zh-Hans": "原来六个人，现在只有四个人去，一人一盒就够。",
+            "zh-Hant": "原來六個人，現在只有四個人去，一人一盒就夠。"
+          }
+        },
+        {
+          "speaker": "female",
+          "text": {
+            "zh-Hans": "那我带四盒，面包另外买两袋。",
+            "zh-Hant": "那我帶四盒，麪包另外買兩袋。"
+          }
+        },
+        {
+          "speaker": "male",
+          "text": {
+            "zh-Hans": "好，别按原来的人数买。",
+            "zh-Hant": "好，別按原來的人數買。"
+          }
+        }
+      ],
+      "sourceDurationSeconds": 15.834,
+      "src": "assets/audio/c2b-m11.mp3",
+      "durationSeconds": 16.392,
+      "pcmSeconds": 16.334,
+      "bytes": 131372,
+      "sha256": "809b4cc8b1c57d8a60e9e1c299aca975e4fc46d2a2cfa20f898d2395df263646"
+    },
+    {
+      "id": "C2B-M12",
+      "kind": "listening-source",
+      "sourcePlays": 1,
+      "script": [
+        {
+          "speaker": "male",
+          "text": {
+            "zh-Hans": "你想买哪张野餐垫？小号轻一些。",
+            "zh-Hant": "你想買哪張野餐墊？小號輕一些。"
+          }
+        },
+        {
+          "speaker": "female",
+          "text": {
+            "zh-Hans": "我们四个人，小号只能坐两个人。我买能坐四个人的大号，蓝色和绿色都可以。",
+            "zh-Hant": "我們四個人，小號只能坐兩個人。我買能坐四個人的大號，藍色和綠色都可以。"
+          }
+        },
+        {
+          "speaker": "male",
+          "text": {
+            "zh-Hans": "那拿这张绿色大号吧。",
+            "zh-Hant": "那拿這張綠色大號吧。"
+          }
+        }
+      ],
+      "sourceDurationSeconds": 15.916,
+      "src": "assets/audio/c2b-m12.mp3",
+      "durationSeconds": 16.464,
+      "pcmSeconds": 16.416,
+      "bytes": 131948,
+      "sha256": "16b5f404de6a3c84a9a235ef69748c92ac27e3acf2142094f391d49aaebe6460"
+    },
+    {
+      "id": "C2B-M13",
+      "kind": "listening-source",
+      "sourcePlays": 1,
+      "script": [
+        {
+          "speaker": "female",
+          "text": {
+            "zh-Hans": "这袋面包原来六块，今天学生买只要四块。纸袋要另外一块。",
+            "zh-Hant": "這袋麪包原來六塊，今天學生買只要四塊。紙袋要另外一塊。"
+          }
+        },
+        {
+          "speaker": "male",
+          "text": {
+            "zh-Hans": "我是学生，自己带了袋子，只买面包。",
+            "zh-Hant": "我是學生，自己帶了袋子，只買麪包。"
+          }
+        },
+        {
+          "speaker": "female",
+          "text": {
+            "zh-Hans": "那收你四块。",
+            "zh-Hant": "那收你四塊。"
+          }
+        }
+      ],
+      "sourceDurationSeconds": 13.876,
+      "src": "assets/audio/c2b-m13.mp3",
+      "durationSeconds": 14.424,
+      "pcmSeconds": 14.376,
+      "bytes": 115628,
+      "sha256": "c9e757e3a2919b5dcc364a0a5fc826775806dca5a89bff673eb3fae9b27b68db"
+    },
+    {
+      "id": "C2B-M14",
+      "kind": "listening-source",
+      "sourcePlays": 1,
+      "script": [
+        {
+          "speaker": "male",
+          "text": {
+            "zh-Hans": "野餐包要轻一点儿，还要能挡雨。甲包轻，可是怕水；乙包很重；丙包又轻又能挡雨。",
+            "zh-Hant": "野餐包要輕一點兒，還要能擋雨。甲包輕，可是怕水；乙包很重；丙包又輕又能擋雨。"
+          }
+        },
+        {
+          "speaker": "female",
+          "text": {
+            "zh-Hans": "我们要走很久，天气也可能下雨，就选丙包。",
+            "zh-Hant": "我們要走很久，天氣也可能下雨，就選丙包。"
+          }
+        }
+      ],
+      "sourceDurationSeconds": 14.798,
+      "src": "assets/audio/c2b-m14.mp3",
+      "durationSeconds": 15.36,
+      "pcmSeconds": 15.298,
+      "bytes": 123116,
+      "sha256": "fb4a3ee214fdf8751c2422011d81424bd4d308e274a3868c18ab383eb432233a"
+    },
+    {
+      "id": "C2B-M15",
+      "kind": "listening-source",
+      "sourcePlays": 1,
+      "script": [
+        {
+          "speaker": "female",
+          "text": {
+            "zh-Hans": "小何六点来照顾猫，钥匙还在你那儿吗？",
+            "zh-Hant": "小何六點來照顧貓，鑰匙還在你那兒嗎？"
+          }
+        },
+        {
+          "speaker": "male",
+          "text": {
+            "zh-Hans": "在，但我放学后要去打球，七点才到家。",
+            "zh-Hant": "在，但我放學後要去打球，七點纔到家。"
+          }
+        },
+        {
+          "speaker": "female",
+          "text": {
+            "zh-Hans": "那你先把钥匙给楼下王阿姨，小何来了找她拿。",
+            "zh-Hant": "那你先把鑰匙給樓下王阿姨，小何來了找她拿。"
+          }
+        }
+      ],
+      "sourceDurationSeconds": 14.524,
+      "src": "assets/audio/c2b-m15.mp3",
+      "durationSeconds": 15.072,
+      "pcmSeconds": 15.024,
+      "bytes": 120812,
+      "sha256": "3ce66a9829cf3beef75ea57c55b9e420b2a1411c49bb95b11500163e18a1091c"
+    },
+    {
+      "id": "C2B-M16",
+      "kind": "listening-source",
+      "sourcePlays": 1,
+      "script": [
+        {
+          "speaker": "male",
+          "text": {
+            "zh-Hans": "早上还比较凉快，只有二十四度。下午会升到三十五度，也没有风。傍晚才慢慢凉下来。今天想去买球鞋的话，最好别在下午最热的时候出门。",
+            "zh-Hant": "早上還比較涼快，只有二十四度。下午會升到三十五度，也沒有風。傍晚才慢慢涼下來。今天想去買球鞋的話，最好別在下午最熱的時候出門。"
+          }
+        }
+      ],
+      "sourceDurationSeconds": 13.8,
+      "src": "assets/audio/c2b-m16.mp3",
+      "durationSeconds": 14.352,
+      "pcmSeconds": 14.3,
+      "bytes": 115052,
+      "sha256": "9445401064e3b8a6817a3a6b12a2372693c5cd842a811dacbcb0801184a29368"
+    },
+    {
+      "id": "C2B-M17",
+      "kind": "listening-source",
+      "sourcePlays": 1,
+      "script": [
+        {
+          "speaker": "female",
+          "text": {
+            "zh-Hans": "今天的球赛为什么改到晚上七点？场地没空吗？",
+            "zh-Hant": "今天的球賽爲什麼改到晚上七點？場地沒空嗎？"
+          }
+        },
+        {
+          "speaker": "male",
+          "text": {
+            "zh-Hans": "场地一直能用，是下午太阳太强，大家怕热。晚上凉快一点儿，打起来更舒服。",
+            "zh-Hant": "場地一直能用，是下午太陽太強，大家怕熱。晚上涼快一點兒，打起來更舒服。"
+          }
+        },
+        {
+          "speaker": "female",
+          "text": {
+            "zh-Hans": "明白了。",
+            "zh-Hant": "明白了。"
+          }
+        }
+      ],
+      "sourceDurationSeconds": 16.444,
+      "src": "assets/audio/c2b-m17.mp3",
+      "durationSeconds": 16.992,
+      "pcmSeconds": 16.944,
+      "bytes": 136172,
+      "sha256": "6e21162c508979f0aa895f2f699287d5f0d8361f734226f11ae8a98e5d1c2b3f"
+    },
+    {
+      "id": "C2B-M18",
+      "kind": "listening-source",
+      "sourcePlays": 1,
+      "script": [
+        {
+          "speaker": "male",
+          "text": {
+            "zh-Hans": "我今天想运动，但老师说每次别超过一个小时，也先别跑步。",
+            "zh-Hant": "我今天想運動，但老師說每次別超過一個小時，也先別跑步。"
+          }
+        },
+        {
+          "speaker": "female",
+          "text": {
+            "zh-Hans": "那可以选五十分钟的投篮课。跑步课只有半小时，游泳课却要九十分钟。",
+            "zh-Hant": "那可以選五十分鐘的投籃課。跑步課只有半小時，游泳課卻要九十分鐘。"
+          }
+        },
+        {
+          "speaker": "male",
+          "text": {
+            "zh-Hans": "好，我去投篮。",
+            "zh-Hant": "好，我去投籃。"
+          }
+        }
+      ],
+      "sourceDurationSeconds": 17.188,
+      "src": "assets/audio/c2b-m18.mp3",
+      "durationSeconds": 17.736,
+      "pcmSeconds": 17.688,
+      "bytes": 142124,
+      "sha256": "fd3e397e7737c34a964e61585f19feabca2a10778f57a163c81be6f7871c473b"
+    },
+    {
+      "id": "C2B-M19",
+      "kind": "listening-source",
+      "sourcePlays": 1,
+      "script": [
+        {
+          "speaker": "female",
+          "text": {
+            "zh-Hans": "端午那天，我们先在河边看龙舟，回来以后听老师讲活动的故事。听完故事，大家才到教室学做香包。我做的香包送给了弟弟，他特别喜欢。",
+            "zh-Hant": "端午那天，我們先在河邊看龍舟，回來以後聽老師講活動的故事。聽完故事，大家纔到教室學做香包。我做的香包送給了弟弟，他特別喜歡。"
+          }
+        }
+      ],
+      "sourceDurationSeconds": 14.52,
+      "src": "assets/audio/c2b-m19.mp3",
+      "durationSeconds": 15.072,
+      "pcmSeconds": 15.02,
+      "bytes": 120812,
+      "sha256": "77b266e37d81cd7ceef8c168227ad563bdcae5997dd17ef3cf59caa58d6b0971"
+    },
+    {
+      "id": "C2B-M20",
+      "kind": "listening-source",
+      "sourcePlays": 1,
+      "script": [
+        {
+          "speaker": "male",
+          "text": {
+            "zh-Hans": "端午活动刚开始，小方说自己手笨，做不好香包。老师陪着她做了一次。后来老师还没走过来，她已经自己做好第二个，又开始教旁边的小朋友了。",
+            "zh-Hant": "端午活動剛開始，小方說自己手笨，做不好香包。老師陪着她做了一次。後來老師還沒走過來，她已經自己做好第二個，又開始教旁邊的小朋友了。"
+          }
+        }
+      ],
+      "sourceDurationSeconds": 14.112,
+      "src": "assets/audio/c2b-m20.mp3",
+      "durationSeconds": 14.664,
+      "pcmSeconds": 14.612,
+      "bytes": 117548,
+      "sha256": "b017a30b0f0bc4227cad2dfc9ff05f8698572f7df99a16dbfc2bc23eec1678b8"
+    },
+    {
+      "id": "S1-1",
+      "kind": "oral-prompt",
+      "sourcePlays": 2,
+      "singlePlayPcmSeconds": 8.664,
+      "repeatGapSeconds": 1.5,
+      "singlePlayPcmSha256": "3972205d5d4600e2d66cdbdc4118691aa8048c40b04faf4fe16e1f748ba5a6cb",
+      "script": {
+        "zh-Hans": "明天去运动中心，你还需要借什么东西吗？球、球拍，或者别的东西都可以说。",
+        "zh-Hant": "明天去運動中心，你還需要借什麼東西嗎？球、球拍，或者別的東西都可以說。"
+      },
+      "src": "assets/audio/s1-1.mp3",
+      "durationSeconds": 18.888,
+      "pcmSeconds": 18.828,
+      "bytes": 151340,
+      "sha256": "f3cfec7b107e157ec8d1cf9ec95c0e25e8fbd614a739d8995631bebdb61dcdc6"
+    },
+    {
+      "id": "S1-2",
+      "kind": "oral-prompt",
+      "sourcePlays": 2,
+      "singlePlayPcmSeconds": 5.76,
+      "repeatGapSeconds": 1.5,
+      "singlePlayPcmSha256": "f5d1d5b514eb14d66d21c2149f1ef7b9bc7e627b474425eddcf044aa09c843fc",
+      "script": {
+        "zh-Hans": "你想参加羽毛球还是游泳？也可以提出另一个运动。",
+        "zh-Hant": "你想參加羽毛球還是游泳？也可以提出另一個運動。"
+      },
+      "src": "assets/audio/s1-2.mp3",
+      "durationSeconds": 13.08,
+      "pcmSeconds": 13.02,
+      "bytes": 104876,
+      "sha256": "cbe94d9091b1ea2fde001f56488ca3a46243bb6f585c70394576595d247ce04b"
+    },
+    {
+      "id": "S1-3",
+      "kind": "oral-prompt",
+      "sourcePlays": 2,
+      "singlePlayPcmSeconds": 4.704,
+      "repeatGapSeconds": 1.5,
+      "singlePlayPcmSha256": "02243a4ce9ea877ea9e1bc6cf13c19d225aa14e91c5cd5e60c6b6cb9b5a041a9",
+      "script": {
+        "zh-Hans": "为什么这个运动适合你？告诉我一个理由就可以。",
+        "zh-Hant": "爲什麼這個運動適合你？告訴我一個理由就可以。"
+      },
+      "src": "assets/audio/s1-3.mp3",
+      "durationSeconds": 10.968,
+      "pcmSeconds": 10.908,
+      "bytes": 87980,
+      "sha256": "8dea01c1e76b254e96b201730ae16d737e2774a56af498c772847a6e65f9a6de"
+    },
+    {
+      "id": "S1-4",
+      "kind": "oral-prompt",
+      "sourcePlays": 2,
+      "singlePlayPcmSeconds": 8.76,
+      "repeatGapSeconds": 1.5,
+      "singlePlayPcmSha256": "859b83850c0603840258f8b9b3f6e7e90e049660c76ba480ab50819ad69ef5ed",
+      "script": {
+        "zh-Hans": "南门明天不开，我们改在东门见，你觉得怎么样？如果不方便，你有什么办法？",
+        "zh-Hant": "南門明天不開，我們改在東門見，你覺得怎麼樣？如果不方便，你有什麼辦法？"
+      },
+      "src": "assets/audio/s1-4.mp3",
+      "durationSeconds": 19.08,
+      "pcmSeconds": 19.02,
+      "bytes": 152876,
+      "sha256": "9cc9128a789e07c27183eb8584adb8ceebc882e3f5d3fbf65560ff1b1f39f146"
+    }
+  ],
+  "groups": [
+    {
+      "id": "L1",
+      "sourcePlays": 2,
+      "src": "assets/audio/listening-group-1.mp3",
+      "durationSeconds": 300.048,
+      "pcmSeconds": 300.0,
+      "bytes": 2400620,
+      "sha256": "e0d1b747889a9d18547103e2434bad81861519bcd277e77a1795582aad673799"
+    },
+    {
+      "id": "L2",
+      "sourcePlays": 2,
+      "src": "assets/audio/listening-group-2.mp3",
+      "durationSeconds": 300.048,
+      "pcmSeconds": 300.0,
+      "bytes": 2400620,
+      "sha256": "319c175f4f313f17a383949598d44f2de4196d6684798c76407cf3f56f35cb88"
+    },
+    {
+      "id": "L3",
+      "sourcePlays": 2,
+      "src": "assets/audio/listening-group-3.mp3",
+      "durationSeconds": 300.048,
+      "pcmSeconds": 300.0,
+      "bytes": 2400620,
+      "sha256": "5e12f4b5abb40da561709c6ae448db5dd99764a4233de1d82a8526724eb208b4"
+    },
+    {
+      "id": "L4",
+      "sourcePlays": 2,
+      "src": "assets/audio/listening-group-4.mp3",
+      "durationSeconds": 300.048,
+      "pcmSeconds": 300.0,
+      "bytes": 2400620,
+      "sha256": "e11bd4ac44395fae320c348df6bb79a7832ca72e2c136da18164034890967f97"
+    }
+  ],
+  "timedTrack": {
+    "src": "assets/audio/listening-full.mp3",
+    "durationSeconds": 1200.048,
+    "pcmSeconds": 1200.0,
+    "bytes": 9600620,
+    "sha256": "5c351a2e1012fcfa39902319b5cc5843449b7c095b7e5cc40c584828866425de"
+  },
+  "timeline": [
+    {
+      "id": "C2B-M01",
+      "questionNumber": 1,
+      "previewStartSeconds": 0.0,
+      "labelStartSeconds": 5.0,
+      "firstPlayStartSeconds": 8.0,
+      "secondPlayStartSeconds": 24.696,
+      "speechEndSeconds": 39.892,
+      "answerWindowSeconds": 18.608,
+      "transitionSeconds": 1.5,
+      "slotEndSeconds": 60.0,
+      "sourcePlays": 2
+    },
+    {
+      "id": "C2B-M02",
+      "questionNumber": 2,
+      "previewStartSeconds": 60.0,
+      "labelStartSeconds": 65.0,
+      "firstPlayStartSeconds": 68.0,
+      "secondPlayStartSeconds": 85.776,
+      "speechEndSeconds": 102.052,
+      "answerWindowSeconds": 16.448,
+      "transitionSeconds": 1.5,
+      "slotEndSeconds": 120.0,
+      "sourcePlays": 2
+    },
+    {
+      "id": "C2B-M03",
+      "questionNumber": 3,
+      "previewStartSeconds": 120.0,
+      "labelStartSeconds": 125.0,
+      "firstPlayStartSeconds": 128.0,
+      "secondPlayStartSeconds": 141.572,
+      "speechEndSeconds": 153.644,
+      "answerWindowSeconds": 24.856,
+      "transitionSeconds": 1.5,
+      "slotEndSeconds": 180.0,
+      "sourcePlays": 2
+    },
+    {
+      "id": "C2B-M04",
+      "questionNumber": 4,
+      "previewStartSeconds": 180.0,
+      "labelStartSeconds": 185.0,
+      "firstPlayStartSeconds": 188.0,
+      "secondPlayStartSeconds": 204.782,
+      "speechEndSeconds": 220.064,
+      "answerWindowSeconds": 18.436,
+      "transitionSeconds": 1.5,
+      "slotEndSeconds": 240.0,
+      "sourcePlays": 2
+    },
+    {
+      "id": "C2B-M05",
+      "questionNumber": 5,
+      "previewStartSeconds": 240.0,
+      "labelStartSeconds": 245.0,
+      "firstPlayStartSeconds": 248.0,
+      "secondPlayStartSeconds": 262.652,
+      "speechEndSeconds": 275.804,
+      "answerWindowSeconds": 22.696,
+      "transitionSeconds": 1.5,
+      "slotEndSeconds": 300.0,
+      "sourcePlays": 2
+    },
+    {
+      "id": "C2B-M06",
+      "questionNumber": 6,
+      "previewStartSeconds": 300.0,
+      "labelStartSeconds": 305.0,
+      "firstPlayStartSeconds": 308.0,
+      "secondPlayStartSeconds": 324.216,
+      "speechEndSeconds": 338.932,
+      "answerWindowSeconds": 19.568,
+      "transitionSeconds": 1.5,
+      "slotEndSeconds": 360.0,
+      "sourcePlays": 2
+    },
+    {
+      "id": "C2B-M07",
+      "questionNumber": 7,
+      "previewStartSeconds": 360.0,
+      "labelStartSeconds": 365.0,
+      "firstPlayStartSeconds": 368.0,
+      "secondPlayStartSeconds": 383.232,
+      "speechEndSeconds": 396.964,
+      "answerWindowSeconds": 21.536,
+      "transitionSeconds": 1.5,
+      "slotEndSeconds": 420.0,
+      "sourcePlays": 2
+    },
+    {
+      "id": "C2B-M08",
+      "questionNumber": 8,
+      "previewStartSeconds": 420.0,
+      "labelStartSeconds": 425.0,
+      "firstPlayStartSeconds": 428.0,
+      "secondPlayStartSeconds": 445.032,
+      "speechEndSeconds": 460.564,
+      "answerWindowSeconds": 17.936,
+      "transitionSeconds": 1.5,
+      "slotEndSeconds": 480.0,
+      "sourcePlays": 2
+    },
+    {
+      "id": "C2B-M09",
+      "questionNumber": 9,
+      "previewStartSeconds": 480.0,
+      "labelStartSeconds": 485.0,
+      "firstPlayStartSeconds": 488.0,
+      "secondPlayStartSeconds": 503.986,
+      "speechEndSeconds": 518.472,
+      "answerWindowSeconds": 20.028,
+      "transitionSeconds": 1.5,
+      "slotEndSeconds": 540.0,
+      "sourcePlays": 2
+    },
+    {
+      "id": "C2B-M10",
+      "questionNumber": 10,
+      "previewStartSeconds": 540.0,
+      "labelStartSeconds": 545.0,
+      "firstPlayStartSeconds": 548.0,
+      "secondPlayStartSeconds": 565.608,
+      "speechEndSeconds": 581.716,
+      "answerWindowSeconds": 16.784,
+      "transitionSeconds": 1.5,
+      "slotEndSeconds": 600.0,
+      "sourcePlays": 2
+    },
+    {
+      "id": "C2B-M11",
+      "questionNumber": 11,
+      "previewStartSeconds": 600.0,
+      "labelStartSeconds": 605.0,
+      "firstPlayStartSeconds": 608.0,
+      "secondPlayStartSeconds": 625.334,
+      "speechEndSeconds": 641.168,
+      "answerWindowSeconds": 17.332,
+      "transitionSeconds": 1.5,
+      "slotEndSeconds": 660.0,
+      "sourcePlays": 2
+    },
+    {
+      "id": "C2B-M12",
+      "questionNumber": 12,
+      "previewStartSeconds": 660.0,
+      "labelStartSeconds": 665.0,
+      "firstPlayStartSeconds": 668.0,
+      "secondPlayStartSeconds": 685.416,
+      "speechEndSeconds": 701.332,
+      "answerWindowSeconds": 17.168,
+      "transitionSeconds": 1.5,
+      "slotEndSeconds": 720.0,
+      "sourcePlays": 2
+    },
+    {
+      "id": "C2B-M13",
+      "questionNumber": 13,
+      "previewStartSeconds": 720.0,
+      "labelStartSeconds": 725.0,
+      "firstPlayStartSeconds": 728.0,
+      "secondPlayStartSeconds": 743.376,
+      "speechEndSeconds": 757.252,
+      "answerWindowSeconds": 21.248,
+      "transitionSeconds": 1.5,
+      "slotEndSeconds": 780.0,
+      "sourcePlays": 2
+    },
+    {
+      "id": "C2B-M14",
+      "questionNumber": 14,
+      "previewStartSeconds": 780.0,
+      "labelStartSeconds": 785.0,
+      "firstPlayStartSeconds": 788.0,
+      "secondPlayStartSeconds": 804.298,
+      "speechEndSeconds": 819.096,
+      "answerWindowSeconds": 19.404,
+      "transitionSeconds": 1.5,
+      "slotEndSeconds": 840.0,
+      "sourcePlays": 2
+    },
+    {
+      "id": "C2B-M15",
+      "questionNumber": 15,
+      "previewStartSeconds": 840.0,
+      "labelStartSeconds": 845.0,
+      "firstPlayStartSeconds": 848.0,
+      "secondPlayStartSeconds": 864.024,
+      "speechEndSeconds": 878.548,
+      "answerWindowSeconds": 19.952,
+      "transitionSeconds": 1.5,
+      "slotEndSeconds": 900.0,
+      "sourcePlays": 2
+    },
+    {
+      "id": "C2B-M16",
+      "questionNumber": 16,
+      "previewStartSeconds": 900.0,
+      "labelStartSeconds": 905.0,
+      "firstPlayStartSeconds": 908.0,
+      "secondPlayStartSeconds": 923.3,
+      "speechEndSeconds": 937.1,
+      "answerWindowSeconds": 21.4,
+      "transitionSeconds": 1.5,
+      "slotEndSeconds": 960.0,
+      "sourcePlays": 2
+    },
+    {
+      "id": "C2B-M17",
+      "questionNumber": 17,
+      "previewStartSeconds": 960.0,
+      "labelStartSeconds": 965.0,
+      "firstPlayStartSeconds": 968.0,
+      "secondPlayStartSeconds": 985.944,
+      "speechEndSeconds": 1002.388,
+      "answerWindowSeconds": 16.112,
+      "transitionSeconds": 1.5,
+      "slotEndSeconds": 1020.0,
+      "sourcePlays": 2
+    },
+    {
+      "id": "C2B-M18",
+      "questionNumber": 18,
+      "previewStartSeconds": 1020.0,
+      "labelStartSeconds": 1025.0,
+      "firstPlayStartSeconds": 1028.0,
+      "secondPlayStartSeconds": 1046.688,
+      "speechEndSeconds": 1063.876,
+      "answerWindowSeconds": 14.624,
+      "transitionSeconds": 1.5,
+      "slotEndSeconds": 1080.0,
+      "sourcePlays": 2
+    },
+    {
+      "id": "C2B-M19",
+      "questionNumber": 19,
+      "previewStartSeconds": 1080.0,
+      "labelStartSeconds": 1085.0,
+      "firstPlayStartSeconds": 1088.0,
+      "secondPlayStartSeconds": 1104.02,
+      "speechEndSeconds": 1118.54,
+      "answerWindowSeconds": 19.96,
+      "transitionSeconds": 1.5,
+      "slotEndSeconds": 1140.0,
+      "sourcePlays": 2
+    },
+    {
+      "id": "C2B-M20",
+      "questionNumber": 20,
+      "previewStartSeconds": 1140.0,
+      "labelStartSeconds": 1145.0,
+      "firstPlayStartSeconds": 1148.0,
+      "secondPlayStartSeconds": 1163.612,
+      "speechEndSeconds": 1177.724,
+      "answerWindowSeconds": 20.776,
+      "transitionSeconds": 1.5,
+      "slotEndSeconds": 1200.0,
+      "sourcePlays": 2
+    }
+  ],
+  "speakingPlannedMaximumSeconds": 415.776,
+  "cache": [
+    {
+      "key": "211c8236d11e94770d282ebe",
+      "speaker": "female",
+      "text": "小何来帮我们照顾猫以前，家里要准备什么？",
+      "sha256": "743dfb5530747f2e0577d79868fd74dd4b88e630502b23855924bd6e91d65ce7"
+    },
+    {
+      "key": "9cde21af76447d6677b56f27",
+      "speaker": "male",
+      "text": "你把猫粮放在桌上，我去把备用钥匙交给小何，猫的水我已经换好了。",
+      "sha256": "5c0a24c619c479a596da37c98755f5f5b808e658c10b9682a73d167493e6e476"
+    },
+    {
+      "key": "41f07ab7bd62ce092dde8ff5",
+      "speaker": "female",
+      "text": "好，我现在准备猫粮。",
+      "sha256": "884824e1d973d8a04c947d01e3c08ab6017c37bd21d76e03f2f3b72da5a00d95"
+    },
+    {
+      "key": "34e89f8d03ace2b111d8dc37",
+      "speaker": "female",
+      "text": "第1题。",
+      "sha256": "3895df58b8b6ce61365216490dcb339db3aa7ef168eef8d2098c469073a4cdc2"
+    },
+    {
+      "key": "bddb8bd391270c0eb4adf0be",
+      "speaker": "male",
+      "text": "今天下午的宠物照顾活动几点开始？",
+      "sha256": "a733c36548e819073a98275ac7c21503b312a3603426f011cff61f138b00c0f5"
+    },
+    {
+      "key": "e07457b5c1d94b1e8c8f627e",
+      "speaker": "female",
+      "text": "四点。三点半大家可以先看照片，四点老师教我们怎么给小狗梳毛，五点再提问题。",
+      "sha256": "68a20c04ce32e046f558fab4eea6185be235e041382c9547f66d25b89b43530b"
+    },
+    {
+      "key": "c83a55bd1a6916f7476c881e",
+      "speaker": "male",
+      "text": "我四点前到。",
+      "sha256": "3cba6f1558c489e3ad327a990bea7a83768daf7443225d7a3593843dddc5378f"
+    },
+    {
+      "key": "1741fb60958696627ba5f0ed",
+      "speaker": "female",
+      "text": "第2题。",
+      "sha256": "39f2c75a46983608745be0da5fe2130f1e77b5cd88f7b9b3928a0a06485a2744"
+    },
+    {
+      "key": "0315f6641e3cb25031dd784e",
+      "speaker": "female",
+      "text": "放学以后，我每次带小狗出去二十分钟。哥哥今天问我要不要走四十分钟，可是小狗走久了会累，我还是按平时的时间走。",
+      "sha256": "f0f4ecc27e5801db48a282aea57274fae879bdac28b8d5f6a495527e0f04d229"
+    },
+    {
+      "key": "97e9c8d06f3e0171388ee24b",
+      "speaker": "female",
+      "text": "第3题。",
+      "sha256": "74d7fdba0fd9fae146470574deadbd8616eca796fece18aaf8190b3792f4225e"
+    },
+    {
+      "key": "bb7a2d0e3455282c5628c6e1",
+      "speaker": "male",
+      "text": "你想学打球还是游泳？",
+      "sha256": "29e30c42dff580686966d2c442de14b5068f15a7a2c7b9bcc422868b30e00885"
+    },
+    {
+      "key": "b922073fd8885b1215eedcd8",
+      "speaker": "female",
+      "text": "我想游泳，可是只有周三晚上有空。",
+      "sha256": "3daf499d5af8559242addb36b06d23fba1b67bff99916aa410c95b55c1bd1b3a"
+    },
+    {
+      "key": "1832f4bada4aa1e553f561d5",
+      "speaker": "male",
+      "text": "游泳课周二晚上开，周三有篮球课。",
+      "sha256": "9194cc7762c037331d93a8d2acc7186c9abbad177e5e53c00abea120718f32a4"
+    },
+    {
+      "key": "981b3dad50f8b6eee5c478a1",
+      "speaker": "female",
+      "text": "那先试试篮球课吧。",
+      "sha256": "8be099083b8b24df7aca09461ab2c26e06efa9629b80e6b8af8fee745543d2cf"
+    },
+    {
+      "key": "b25d3caab3d72c3d0347de4b",
+      "speaker": "female",
+      "text": "第4题。",
+      "sha256": "cc38e6d168e0664b2b8f98558b26288abcea294390f4e9aa13d8f457ef5a7046"
+    },
+    {
+      "key": "08517117d0ee52abf4e6326c",
+      "speaker": "female",
+      "text": "上次打球，小丁忘了带水，打完以后一直说口渴。今天他还没出门，就先往书包里放了一大瓶水，旁边的球鞋倒是差点儿忘了。",
+      "sha256": "3884ddc5072417809089d83e9e27be89e3c726988cfbb1886e2f2dcc48186eeb"
+    },
+    {
+      "key": "c5b1d9675aba74bbd668ea00",
+      "speaker": "female",
+      "text": "第5题。",
+      "sha256": "057a4202f7d25216a190a84d6056c30f42be93ac60cdc21879a97aaaf19252d9"
+    },
+    {
+      "key": "2d947c43ca4e2641d9aa876d",
+      "speaker": "male",
+      "text": "你到了运动中心就在游泳馆等我吧。",
+      "sha256": "b435bc1b1aeb1fe73ff6a0a92715708c61825b4b2c341f55e0b14b8d4f5a9f51"
+    },
+    {
+      "key": "adb117d8d2b756941f0b2e54",
+      "speaker": "female",
+      "text": "我不游泳，今天要上篮球课。我们在篮球馆门口见，别走到游泳馆去。",
+      "sha256": "24a0eb6eac2a30f902f1f2ef89208cede61b41e0a584497fbbeab59fae05af8e"
+    },
+    {
+      "key": "9057c450d8fe592085b5d57b",
+      "speaker": "male",
+      "text": "好，我去篮球馆。",
+      "sha256": "f66472b7284cc41408d2d7dab2786c1b52f966164c5902827206747cd67de03a"
+    },
+    {
+      "key": "5e6c5b336701fe2c48b7fa2f",
+      "speaker": "female",
+      "text": "第6题。",
+      "sha256": "fcc5b0fabad8f1fa79148054a17b60ac8d2cb351d57ed0d5eb073df550e3ee93"
+    },
+    {
+      "key": "ec114f1480d71e26223bc8ef",
+      "speaker": "female",
+      "text": "公交车还要等半个小时，你想怎么去运动中心？",
+      "sha256": "19b6c68f959013183bc08e1fa1c0f66bc3e22c82524ca3d06398b95e6f39b18d"
+    },
+    {
+      "key": "1c4fa8506402773ba46e0147",
+      "speaker": "male",
+      "text": "我们的自行车都在这儿，骑车只要十分钟。",
+      "sha256": "71207e29ced1a3df7d8e1340346529412385f8d1b05a08c1eeb64626559607a2"
+    },
+    {
+      "key": "045b407c4ffe6ab39e1e6f95",
+      "speaker": "female",
+      "text": "好，把球放进车篮，我们骑车去。",
+      "sha256": "f5ac78ed8cc50120fd9ecbd53384fc365d6dfc580c4d0b4d62c060070a6b98c1"
+    },
+    {
+      "key": "79e0bdfd02236c1d4253adc0",
+      "speaker": "female",
+      "text": "第7题。",
+      "sha256": "5151859d99f51fb43c1c4ba74a72c7d8898fd12ebdb151ca350243f27169a52c"
+    },
+    {
+      "key": "c3626edaece6eb5ffa68a9c9",
+      "speaker": "male",
+      "text": "从西门进去以后，怎么到篮球馆？",
+      "sha256": "f5d8011c98a8802c34d3a45f223271520791c760b64fcb6db1782f29d494c7ca"
+    },
+    {
+      "key": "3c202a0b337523b51a8962b4",
+      "speaker": "female",
+      "text": "先穿过小广场，看到食堂再向左。篮球馆在食堂后面，不在停车场旁边。",
+      "sha256": "653ef837267b726edaf33e9862fb5d1e1465e1005d45ecb7a1922fc190341dc2"
+    },
+    {
+      "key": "75b521c6feecd0ade80cdd63",
+      "speaker": "male",
+      "text": "好，先过广场。",
+      "sha256": "85fa13a05f0c450c8fce6c21b0f030ae4e0cbbba965fad36ef07aea57d95449c"
+    },
+    {
+      "key": "b431efe26b8c6cc712ef43b8",
+      "speaker": "female",
+      "text": "第8题。",
+      "sha256": "65ff1f952179bc643f6b488a3150eee5a21667f5901053151fd7aeb53f0c7786"
+    },
+    {
+      "key": "7957146ab5edc915c296a9b5",
+      "speaker": "female",
+      "text": "六路车两点前到运动中心，不用换车。十路车也能两点前到，可是中间要换一次。",
+      "sha256": "dc9aed748663ef40cf82f7b95783031e20286871861db22392dbbfdde1d2c179"
+    },
+    {
+      "key": "8a1504e01c149932e08546e9",
+      "speaker": "male",
+      "text": "我带着两个球和一个大包，不想换车，坐六路吧。",
+      "sha256": "099b279902306c68b079891f8d001f221bfa6d36c77b597404999145a4e66844"
+    },
+    {
+      "key": "76f9b7034e5801a6360f40bd",
+      "speaker": "female",
+      "text": "第9题。",
+      "sha256": "439f37e4f9738e7ac1dc180f588ae4ed900731c0623d4038b9f3533da20c0ada"
+    },
+    {
+      "key": "25918b8354f9fe7257c8064c",
+      "speaker": "male",
+      "text": "星期六下午三点太热，室外练球还照原计划吗？",
+      "sha256": "05c2109803c7b92904d19fe6b8a78a4c8061c055228c0776b61af50ac0990a65"
+    },
+    {
+      "key": "0ed2875fca5364564e58cc2d",
+      "speaker": "female",
+      "text": "老师说改到早上八点，地点不变，还是学校球场。",
+      "sha256": "67d91749bb65ec8e6012f1a8d78a5b4219ace02387b123b84ff73cdfcb655b95"
+    },
+    {
+      "key": "98450733aa9eb7ce1acda3d8",
+      "speaker": "male",
+      "text": "好，我把原来下午的提醒改掉。",
+      "sha256": "9e28d63fa7e48e533eba73518aa3a14dd1e3ffa5d0c41b43b62427ab849b77b7"
+    },
+    {
+      "key": "86d64da7bc27367110de5cb7",
+      "speaker": "female",
+      "text": "第10题。",
+      "sha256": "a443b83201af7bae91780e167c2fcd53ef523b448bf77dd4ad6b238de2e582d2"
+    },
+    {
+      "key": "ee25892af09dc723c01b3dd7",
+      "speaker": "female",
+      "text": "野餐要带几盒果汁？",
+      "sha256": "c4f66b296ed0dbcc6a5cab59182cf8bf484db87ecf42838610954b8c90c97afe"
+    },
+    {
+      "key": "5bd050df0cb1dc34dbbbc8f0",
+      "speaker": "male",
+      "text": "原来六个人，现在只有四个人去，一人一盒就够。",
+      "sha256": "0b34d20b084b5b65a4f95df4c3e420bddbea8f136966c7353519d88a441685d1"
+    },
+    {
+      "key": "c22462b05ec681303d6e420b",
+      "speaker": "female",
+      "text": "那我带四盒，面包另外买两袋。",
+      "sha256": "68b30aaeea0f049d4bb714d396fbee344a74282b5c294c9901214644c8097286"
+    },
+    {
+      "key": "cb4453d7b0d2e38d43dd9a10",
+      "speaker": "male",
+      "text": "好，别按原来的人数买。",
+      "sha256": "6e342605b353baee208bcd4a6931ab0c36f6ea8f7697d5c75a526e93fc4dc3df"
+    },
+    {
+      "key": "63d3dd3f27ad85dca9aa0606",
+      "speaker": "female",
+      "text": "第11题。",
+      "sha256": "09609165ce7b5b5bbc80de6236e7726415e2ab45d65241e1ca3c75ec4a697f32"
+    },
+    {
+      "key": "5760a985d15fe467d89cbd07",
+      "speaker": "male",
+      "text": "你想买哪张野餐垫？小号轻一些。",
+      "sha256": "ded4c62f75647a957dceb53cdd29ef7d9e758a78dbfbab0294eab172e310520c"
+    },
+    {
+      "key": "47176595a1f26c1369d2a37e",
+      "speaker": "female",
+      "text": "我们四个人，小号只能坐两个人。我买能坐四个人的大号，蓝色和绿色都可以。",
+      "sha256": "9a29fc5173db9529366e84e4f692f073831df67db3a66a0b7fb4b249e95d83eb"
+    },
+    {
+      "key": "e8a1c8d9881731e9c24fa7d3",
+      "speaker": "male",
+      "text": "那拿这张绿色大号吧。",
+      "sha256": "3d4cda1868fa0514d5806220b859734c51b19e299ee24e8a952e51d65aaa6a65"
+    },
+    {
+      "key": "2dbff9b332f7edc61b4c3c18",
+      "speaker": "female",
+      "text": "第12题。",
+      "sha256": "f25ea7d43ed9f81b7dd1af25fa0339498c7d458e79931122755e838f8d314a83"
+    },
+    {
+      "key": "6b2abe5f85871a28436446ba",
+      "speaker": "female",
+      "text": "这袋面包原来六块，今天学生买只要四块。纸袋要另外一块。",
+      "sha256": "5e423effccf3e3137abb442cafbd0fd0810ccaeb7c86cf9e5246e275eb821106"
+    },
+    {
+      "key": "1abaec8b7bb99af379d5448b",
+      "speaker": "male",
+      "text": "我是学生，自己带了袋子，只买面包。",
+      "sha256": "548b2286a4fbbf8cce0c3b582f6c47d28123cb1b476a67387529464d64383da1"
+    },
+    {
+      "key": "95907f821dc70a79eac7e099",
+      "speaker": "female",
+      "text": "那收你四块。",
+      "sha256": "9ff8e0a01720e1d8bd451ec0299c5b041c38a6f1f09f479b87e61b47f30c5f3a"
+    },
+    {
+      "key": "ec1acc6c51d958bc6eb290a5",
+      "speaker": "female",
+      "text": "第13题。",
+      "sha256": "e6515323a9eef38c0320124c2e99d81f002d229d597de7f44a76008521622c43"
+    },
+    {
+      "key": "76141f8a39c2be404b5b860b",
+      "speaker": "male",
+      "text": "野餐包要轻一点儿，还要能挡雨。甲包轻，可是怕水；乙包很重；丙包又轻又能挡雨。",
+      "sha256": "d4aef418de2bad55cf150c3253d4f6f33a21ee994add93b5230bba5dc44a3966"
+    },
+    {
+      "key": "9692c12a6e7ac3dd49b225e9",
+      "speaker": "female",
+      "text": "我们要走很久，天气也可能下雨，就选丙包。",
+      "sha256": "d55c3230b898841e5f6ea29e8fab783fcdb01edd0e08cfacf7d91e0428553bd4"
+    },
+    {
+      "key": "6a9458d981e42c448c56e5d7",
+      "speaker": "female",
+      "text": "第14题。",
+      "sha256": "3c248ca1222db546caafa3ccef0afeb1d63689c8e501a91b906f7c38012bc8f4"
+    },
+    {
+      "key": "70ecdec22f4ae16074aad817",
+      "speaker": "female",
+      "text": "小何六点来照顾猫，钥匙还在你那儿吗？",
+      "sha256": "ecad31535986642dfe2c651401d2435428e3616dc86edc18b87b38027e03af38"
+    },
+    {
+      "key": "cf975c32812746220c5bc48c",
+      "speaker": "male",
+      "text": "在，但我放学后要去打球，七点才到家。",
+      "sha256": "f09e03161390ec42a6d723d16044a104100f8c766b932cc08d1981b7f8e5ebda"
+    },
+    {
+      "key": "4e77e331a5d99559d85cd0e3",
+      "speaker": "female",
+      "text": "那你先把钥匙给楼下王阿姨，小何来了找她拿。",
+      "sha256": "1c50b1d54e51f6bb9fae9f90618ff370f6a154ac7b4c5053a5a4c728fd840bfc"
+    },
+    {
+      "key": "9d1b8c046279c5b498214791",
+      "speaker": "female",
+      "text": "第15题。",
+      "sha256": "774136cf8893575562e62fc53ca824d970e119df2986004fbc9a795341529ed7"
+    },
+    {
+      "key": "7d3f9649dd715d40db259d99",
+      "speaker": "male",
+      "text": "早上还比较凉快，只有二十四度。下午会升到三十五度，也没有风。傍晚才慢慢凉下来。今天想去买球鞋的话，最好别在下午最热的时候出门。",
+      "sha256": "f68047966fa96030b42acc78cac53ffa7c2375819eae39171a3c59fb4da0cf7a"
+    },
+    {
+      "key": "0cffbf1010d1e54023057ea9",
+      "speaker": "female",
+      "text": "第16题。",
+      "sha256": "6cbe22b4463ef0127dbcb5957919648ee9b071c97d70d0b85edf327b6a0071df"
+    },
+    {
+      "key": "018715c4a5cb34fbdd4a7a21",
+      "speaker": "female",
+      "text": "今天的球赛为什么改到晚上七点？场地没空吗？",
+      "sha256": "d4bb8013d50437ea6027b78a38551a3b9366195d9eb3cff755410a1d3f75e823"
+    },
+    {
+      "key": "7a71f122447159098e39208f",
+      "speaker": "male",
+      "text": "场地一直能用，是下午太阳太强，大家怕热。晚上凉快一点儿，打起来更舒服。",
+      "sha256": "f0ba2c4438a4b8b64b4010d5c2188a02cedff02061bb28e9182aafd94e968b90"
+    },
+    {
+      "key": "ad7f6865e4c3a831208309e1",
+      "speaker": "female",
+      "text": "明白了。",
+      "sha256": "17602b5b58dcf39c9d3e95bb2633087e19dbb273da9c802f7d236a2545252b21"
+    },
+    {
+      "key": "61f4d2e4e5f3e0536be36453",
+      "speaker": "female",
+      "text": "第17题。",
+      "sha256": "7b303e3cdea4e6b338b981ca7d27218c5da50fd4e2ca1cb297c3ba0853fbff6b"
+    },
+    {
+      "key": "1c2c978b8f99b5377cb7cee4",
+      "speaker": "male",
+      "text": "我今天想运动，但老师说每次别超过一个小时，也先别跑步。",
+      "sha256": "e4a17ea504e6b72836368398015b86cc05428d3e563c3bc4472a07b8b6364f6e"
+    },
+    {
+      "key": "30060d64301d795baeef633e",
+      "speaker": "female",
+      "text": "那可以选五十分钟的投篮课。跑步课只有半小时，游泳课却要九十分钟。",
+      "sha256": "102b4cc948eb7c3b2c236af9cd2c7e23739e122474aafbfca6fb5193036a3e60"
+    },
+    {
+      "key": "ae69416cb9c8dc3e7b1a1b8a",
+      "speaker": "male",
+      "text": "好，我去投篮。",
+      "sha256": "6e0ef5554dcbcfe4c078de586a03e59553ad1ea269ec6560ea50b8c2efd4bb04"
+    },
+    {
+      "key": "2e9092b1191d42999a9f695d",
+      "speaker": "female",
+      "text": "第18题。",
+      "sha256": "b0832c56a97774c35b538f689f08bf8314e263e14ab809871867bcdede27a70b"
+    },
+    {
+      "key": "84edffe2951883db3196a67e",
+      "speaker": "female",
+      "text": "端午那天，我们先在河边看龙舟，回来以后听老师讲活动的故事。听完故事，大家才到教室学做香包。我做的香包送给了弟弟，他特别喜欢。",
+      "sha256": "77028711fa02a22c62930cb478f34d2f8491f348c7bc19f847fdbdaf793a7c4b"
+    },
+    {
+      "key": "ee9540a1a810afba0a3a7056",
+      "speaker": "female",
+      "text": "第19题。",
+      "sha256": "91a1a230e642a4906da5e058c485a56cf6a1c77b67c899338da1843b7db5066e"
+    },
+    {
+      "key": "e8df6b634115c14b827d76af",
+      "speaker": "male",
+      "text": "端午活动刚开始，小方说自己手笨，做不好香包。老师陪着她做了一次。后来老师还没走过来，她已经自己做好第二个，又开始教旁边的小朋友了。",
+      "sha256": "b63fea9e2a79ae3654bbd81538a7d7a5e3ad6ded2c4688a22c07d74f97020d35"
+    },
+    {
+      "key": "689adfbaa5b63ac16b96aac6",
+      "speaker": "female",
+      "text": "第20题。",
+      "sha256": "f2a7aa65a74fad7dc9d19d81d6990ac99260287106ff304656efb599e75400e1"
+    },
+    {
+      "key": "a4a177a840cb9ed5d222f949",
+      "speaker": "male",
+      "text": "明天去运动中心，你还需要借什么东西吗？球、球拍，或者别的东西都可以说。",
+      "sha256": "05e0faf99a89b155efc0258e4cddf0ffb88b6058428be4393caef2a5abc89bc7"
+    },
+    {
+      "key": "8188b633244f4aea3f175d0e",
+      "speaker": "male",
+      "text": "你想参加羽毛球还是游泳？也可以提出另一个运动。",
+      "sha256": "6dfbaeeca62a3d9803f34988f3505c4161bcecf2009f6c887a8745afef5e3bba"
+    },
+    {
+      "key": "f0d792bc5ec7b72cfa33c73f",
+      "speaker": "male",
+      "text": "为什么这个运动适合你？告诉我一个理由就可以。",
+      "sha256": "b2e5b934f10d0f51d7b8567f950f74379918603212bbe8f29540eaef0e38d2b9"
+    },
+    {
+      "key": "e68eb3af1e5c0ee191a35b61",
+      "speaker": "male",
+      "text": "南门明天不开，我们改在东门见，你觉得怎么样？如果不方便，你有什么办法？",
+      "sha256": "c6f7ce89df35534a454ad0c3aee7ae44d2cfa1a250cf1a5e5a63eb533c82cc6e"
+    }
+  ]
+}
