@@ -1,0 +1,51 @@
+{
+  "scope": "Tone trainer workbench, four-tone diagrams, existing-audio comparisons, result guidance and teaching content",
+  "status": "implemented-and-locally-verified",
+  "production": "not deployed",
+  "parent": "6e25e551888ba7663f2b6119f8453758f1776008",
+  "preview": "http://127.0.0.1:3182/tools/chinese-tone-trainer",
+  "checks": {
+    "productionBuild": "passed; includes TypeScript validation",
+    "targetedESLint": "passed",
+    "scopedTestsPassed": 34,
+    "localHttpChecksPassed": 21,
+    "reusedAudioAssetsChecked": 10,
+    "browser": "ChatGPT in-app browser",
+    "singleRound": "Completed 10 questions through UI; 3/10 first pass, exact confusion counts 4->1 three times and 3->1 twice; retry contains seven missed words",
+    "doubleRound": "Completed 10 questions through UI; 1/10 words, 2/10 first syllables, 2/10 second syllables; word and syllable totals remain distinct",
+    "refreshResume": "Reload after first checked answer; continued at second question with progress retained",
+    "audioGating": "Choices locked before completed playback; only real completion unlocks them",
+    "comparisonPlayback": "A paused at 1.023 seconds when B played; paused control changed to Resume, B completed at 1.176 seconds",
+    "guided": "Four real examples, semantic SVG labels and context-dependent dashed third-tone rise",
+    "responsive": [
+      { "viewport": 390, "clientWidth": 375, "scrollWidth": 375, "overflow": false },
+      { "viewport": 320, "clientWidth": 305, "scrollWidth": 305, "overflow": false }
+    ],
+    "faq": "Third-tone question expanded and displayed full explanation",
+    "seo": "Teaching content present in server HTML, canonical unchanged, index/follow and free WebApplication schema retained",
+    "relatedGuides": "Public Chinese tones and pinyin guides verified by web reader; local listen route returns 200"
+  },
+  "preserved": [
+    "96-item bank, audio files, tone domain and scoring rules",
+    "Guest/account storage keys, account isolation, merge and sync API",
+    "10/20 rounds, first-pass results, separate retry records and completion gating",
+    "Existing route, canonical, sitemap entry and public/free access"
+  ],
+  "sharedAudioFix": "One onPause handler reflects externally paused audio in the control UI; it does not call onComplete or onFailure",
+  "knownBaselineIssues": [
+    "Tests menu test expects only HSK1 but production already includes HSK2-6, AP and Chinese1-4; same failure reproduced on untouched parent source",
+    "Old topics audio test expects non-pausable default control, superseded by earlier number-audio changes; same failure reproduced on untouched parent source",
+    "Local favicon collision exists on parent source; no favicon changes included",
+    "Local D1 blog tables not seeded in this isolated source; related public guide pages verified separately"
+  ],
+  "limits": [
+    "No microphone scoring, new recordings, new AI service, scheduled task or Cloudflare configuration change",
+    "A/B examples cover three available same-syllable contrasts, not every tone pair",
+    "No production deployment or search ranking claim"
+  ],
+  "screenshots": [
+    "tmp/tone-workbench-20261111/desktop-workbench.jpg",
+    "tmp/tone-workbench-20261111/four-tones-desktop.jpg",
+    "tmp/tone-workbench-20261111/four-tones-mobile.jpg"
+  ]
+}

@@ -190,6 +190,7 @@ export function AudioPlaybackControl({
     }}
     onCanPlay={() => { if (!preparingPlaybackRef.current) setState((current) => current === "playing" || current === "paused" ? current : "ready"); }}
     onTimeUpdate={(event) => setCurrentTime(event.currentTarget.currentTime)}
+    onPause={() => setState((current) => current === "playing" ? "paused" : current)}
     onEnded={(event) => { setCurrentTime(event.currentTarget.duration); setState("ready"); onComplete?.(); }}
     onError={() => { setState("error"); onFailure?.(); }}
   /> : null;
