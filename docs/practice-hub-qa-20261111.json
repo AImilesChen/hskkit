@@ -1,0 +1,47 @@
+{
+  "scope": "Practice hub layout, examples, learning guidance and indexability",
+  "status": "implemented-and-locally-verified",
+  "production": "not deployed",
+  "parent": "7c6b1dbd2bba5b53d570e0b71af78e1e8f5aecc6",
+  "preview": "http://127.0.0.1:3181/practice",
+  "changes": [
+    "Compact shared-width layout; four skill colors and server-selected published examples",
+    "Four skill guides, real listening clip, comparison cards, six FAQs and existing resource links",
+    "Static server-rendered hub with index/follow, canonical and sitemap; session routes retain noindex"
+  ],
+  "checks": {
+    "productionBuild": "passed; includes TypeScript validation",
+    "targetedESLint": "passed",
+    "relatedTests": 44,
+    "httpChecks": 44,
+    "browser": "ChatGPT in-app browser",
+    "levelSwitching": "All seven choices update all four routes and real preview IDs",
+    "desktop": {
+      "viewport": 1280,
+      "documentWidth": 1265,
+      "overflow": false
+    },
+    "mobile": {
+      "viewport": 320,
+      "documentWidth": 305,
+      "overflow": false,
+      "levelButtonHeight": 48
+    },
+    "listening": {
+      "nativeControlsPlayed": true,
+      "ended": true,
+      "durationSeconds": 1.104,
+      "mediaError": null
+    },
+    "session": "Created guest session, submitted correct answer, saw explanation; reload restored next unanswered question and Back retained prior feedback",
+    "faq": "Expanded and collapsed correctly"
+  },
+  "limits": [
+    "No production deployment, GSC submission or ranking claim",
+    "Pre-existing duplicate public/app favicon produces a local Next dev favicon 500; no new component exception was observed",
+    "Full-page screenshot capture was unavailable; viewport screenshots were inspected for desktop, guidance and mobile"
+  ],
+  "trackingChanges": false,
+  "engineChanges": false,
+  "cloudflareSettingsChanges": false
+}

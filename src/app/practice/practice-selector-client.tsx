@@ -2,6 +2,8 @@
 
 import Link from "next/link";
 import { useState } from "react";
+import type { PracticeHubExamples } from "@/lib/practice/hub-examples";
+import styles from "./practice-hub.module.css";
 
 const LEVELS = [
   { value: 1, label: "HSK 1", display: "1", detail: "Foundation" },
@@ -14,93 +16,57 @@ const LEVELS = [
 ] as const;
 
 const SKILLS = [
-  {
-    slug: "vocabulary",
-    label: "Vocabulary",
-    detail: "Meaning and word recognition",
-    support: "Immediate feedback",
-  },
-  {
-    slug: "grammar",
-    label: "Grammar",
-    detail: "Sentence patterns and expressions",
-    support: "Answer explanations",
-  },
-  {
-    slug: "reading",
-    label: "Reading",
-    detail: "Passage comprehension",
-    support: "Context-based practice",
-  },
-  {
-    slug: "listening",
-    label: "Listening",
-    detail: "Audio comprehension",
-    support: "Approved audio",
-  },
+  { slug: "vocabulary", label: "Vocabulary", mark: "字", detail: "Meaning and word recognition", support: "Connect a Chinese word with its meaning.", color: "teal" },
+  { slug: "grammar", label: "Grammar", mark: "句", detail: "Natural Chinese word order", support: "Find the words and patterns that fit.", color: "violet" },
+  { slug: "reading", label: "Reading", mark: "文", detail: "Passage comprehension", support: "Find the detail that supports your answer.", color: "amber" },
+  { slug: "listening", label: "Listening", mark: "听", detail: "Audio comprehension", support: "Connect what you hear with the right meaning.", color: "rose" },
 ] as const;
 
-export default function PracticeSelectorClient() {
+export default function PracticeSelectorClient({ examples }: { examples: PracticeHubExamples }) {
   const [selectedLevel, setSelectedLevel] = useState<number>(1);
   const level = LEVELS.find((item) => item.value === selectedLevel)!;
 
-  return <main className="mx-auto min-h-[calc(100vh-72px)] max-w-6xl px-[16px] py-[24px] sm:px-[32px] sm:py-[40px]">
-    <header className="max-w-3xl">
-      <p className="text-xs font-extrabold uppercase tracking-[0.18em] text-blue-700">HSK 3.0 practice</p>
-      <h1 className="mt-[8px] text-4xl font-black tracking-tight text-slate-950 sm:text-5xl">Choose your HSK practice</h1>
-      <p className="mt-[12px] text-base leading-7 text-slate-600 sm:text-lg sm:leading-8">Choose your HSK level, then open the skill you want to practise. Every session has eight published questions with immediate feedback. Vocabulary questions use the current 2025 exam word lists; the other skills use HSKKit-authored practice material.</p>
-    </header>
-
-    <section aria-labelledby="choose-level" className="mt-[24px] rounded-3xl border border-slate-200 bg-white p-[16px] shadow-sm sm:p-[24px]">
-      <div className="flex flex-col gap-[8px] sm:flex-row sm:items-end sm:justify-between">
-        <div>
-          <p className="text-sm font-bold text-blue-700">Step 1</p>
-          <h2 className="mt-[4px] text-2xl font-black text-slate-950" id="choose-level">Choose a level</h2>
-        </div>
-        <p className="text-sm text-slate-500">HSK 7–9 uses one unified advanced band.</p>
+  return <section className={styles.workspace} id="choose-practice" aria-label="Choose HSK practice">
+    <div className={styles.levelPanel}>
+      <div className={styles.panelHeading}>
+        <div><p className={styles.eyebrow}>01 · FIND YOUR LEVEL</p><h2 id="choose-level">Choose your HSK level</h2></div>
+        <Link href="/hsk-placement-test" className={styles.textLink}>Not sure? Find a starting level <span aria-hidden="true">↗</span></Link>
       </div>
-
-      <div className="mt-[16px] grid grid-cols-4 gap-[8px] lg:grid-cols-7">{LEVELS.map((item) => <button
+      <div className={`${styles.levels} grid grid-cols-2 gap-2 sm:grid-cols-4 lg:grid-cols-7`} aria-labelledby="choose-level">{LEVELS.map((item) => <button
         aria-label={`${item.label} — ${item.detail}`}
         aria-pressed={selectedLevel === item.value}
-        className={`min-h-12 rounded-xl border px-[8px] py-[8px] text-xs font-bold transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-700 motion-reduce:transition-none sm:text-sm ${selectedLevel === item.value ? "border-blue-700 bg-blue-700 text-white shadow-sm" : "border-slate-200 bg-white text-slate-700 hover:border-blue-400 hover:bg-blue-50"}`}
+        className={`${styles.levelButton} min-h-12 ${selectedLevel === item.value ? styles.levelSelected : ""}`}
         key={item.value}
         onClick={() => setSelectedLevel(item.value)}
         type="button"
       >
-        <span aria-hidden="true" className="mr-[2px] inline-block w-[12px]">{selectedLevel === item.value ? "✓" : ""}</span>
-        {item.label}
+        <span>{item.label}</span><span aria-hidden="true" className={styles.levelCheck}>{selectedLevel === item.value ? "✓" : ""}</span>
       </button>)}</div>
-
-      <p aria-live="polite" className="mt-[12px] flex min-h-[24px] items-center gap-[8px] text-sm font-semibold text-blue-900">
-        <span aria-hidden="true" className="grid h-[20px] w-[20px] place-items-center rounded-full bg-blue-100 text-xs text-blue-700">✓</span>
-        HSK {level.display} selected · Choose a skill to begin
-      </p>
-    </section>
-
-    <section aria-labelledby="choose-skill" className="mt-[24px]">
-      <div>
-        <p className="text-sm font-bold text-blue-700">Step 2</p>
-        <h2 className="mt-[4px] text-3xl font-black text-slate-950" id="choose-skill">Practice HSK {level.display}</h2>
-        <p className="mt-[8px] text-slate-600">Choose a skill. The whole card opens its practice overview.</p>
+      <div className={styles.levelStatus}>
+        <p aria-live="polite"><span aria-hidden="true">✓</span> HSK {level.display} selected · Choose a skill below</p>
+        <p>HSK 7–9 shares one advanced band.</p>
       </div>
+    </div>
 
-      <div className="mt-[16px] grid gap-[12px] sm:grid-cols-2 sm:gap-[16px]">{SKILLS.map((item) => <Link
-        aria-label={`View HSK ${level.display} ${item.label} practice`}
-        className="group flex min-h-[156px] flex-col rounded-2xl border border-slate-200 bg-white p-[16px] shadow-sm transition hover:-translate-y-0.5 hover:border-blue-400 hover:shadow-md focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-blue-700 active:translate-y-0 active:bg-blue-50 motion-reduce:transform-none motion-reduce:transition-none sm:p-[20px]"
-        href={`/practice/${selectedLevel}/${item.slug}`}
-        key={item.slug}
-      >
-        <div className="flex items-center justify-between gap-[16px]">
-          <h3 className="text-xl font-black text-slate-950">{item.label}</h3>
-          <span className="rounded-full bg-slate-100 px-[10px] py-[4px] text-xs font-bold text-slate-600">8 questions</span>
-        </div>
-        <p className="mt-[12px] text-base font-semibold text-slate-700">{item.detail}</p>
-        <p className="mt-[4px] text-sm text-slate-500">{item.support}</p>
-        <span className="mt-auto pt-[20px] text-sm font-extrabold text-blue-700 group-hover:text-blue-800">
-          View HSK {level.display} {item.label} <span aria-hidden="true">→</span>
-        </span>
-      </Link>)}</div>
-    </section>
-  </main>;
+    <div className={styles.skillsHeading}>
+      <div><p className={styles.eyebrow}>02 · CHOOSE YOUR FOCUS</p><h2 id="choose-skill">What would you like to practise?</h2></div>
+      <p>HSK {level.display} · 8 questions per session</p>
+    </div>
+    <div className={styles.skills} aria-labelledby="choose-skill">{SKILLS.map((item) => <Link
+      aria-label={`View HSK ${level.display} ${item.label} practice`}
+      className={`${styles.skillCard} ${styles[item.color]}`}
+      href={`/practice/${selectedLevel}/${item.slug}`}
+      key={item.slug}
+    >
+      <div className={styles.skillHeading}><span className={styles.skillMark} lang="zh-Hans" aria-hidden="true">{item.mark}</span><div><h3>{item.label}</h3><p>{item.detail}</p></div><span className={styles.cardArrow} aria-hidden="true">↗</span></div>
+      <p className={styles.skillSupport}>{item.support}</p>
+      <div className={styles.preview} data-preview-id={examples[selectedLevel][item.slug].id}>
+        <span className={styles.previewLabel}>FROM THE HSK {level.display} SET</span>
+        <p lang="zh-Hans" className={styles.previewChinese}>{examples[selectedLevel][item.slug].excerpt}</p>
+        <p className={styles.previewPrompt}>{examples[selectedLevel][item.slug].prompt}</p>
+      </div>
+      <span className={styles.skillCta}>View HSK {level.display} {item.label} <span aria-hidden="true">→</span></span>
+    </Link>)}</div>
+    <p className={styles.overviewNote}>Each card opens its practice overview. Start the session when you are ready.</p>
+  </section>;
 }
