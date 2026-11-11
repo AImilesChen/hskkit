@@ -82,7 +82,7 @@ export const siteNavigation: NavigationEntry[] = [
       { href: "/hsk-test-prep/hsk-5/mock", label: "HSK 5 Mock Exams", description: "Single-reading listening, paragraph ordering and two writing tasks. Free A and Pro B/C." },
       { href: "/hsk-test-prep/hsk-6/mock", label: "HSK 6 Mock Exams", description: "Single-reading listening, sentence insertion and two writing tasks. Free A and Pro B/C." },
       { href: "/ap-chinese-practice-test", label: "AP Chinese Practice Tests", description: "2027-format complete Paper A free; Papers B and C with Pro." },
-      { href: "/chinese-course-tests", label: "Chinese 1–3 Course Tests", description: "Nine four-skill papers across Chinese 1, 2 and 3. Free A at each course; B/C with Pro." },
+      { href: "/chinese-course-tests", label: "Chinese 1–4 Course Tests", description: "Twelve four-skill papers across Chinese 1, 2, 3 and 4. Free A at each course; B/C with Pro." },
       { href: "/hsk-placement-test", label: "Find My HSK Level", description: "Not sure of your level? Get an adaptive starting suggestion.", match: "/placement" },
       { href: "/hsk-3-0", label: "HSK 3.0 Exam Guide", description: "Check exam dates, the official syllabus and word counts by level." },
     ],

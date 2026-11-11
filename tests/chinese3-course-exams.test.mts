@@ -45,10 +45,10 @@ test('Chinese 3 GET HEAD and range requests reuse existing paid authorization',(
  assert.ok(read('src/middleware.ts').includes('path.startsWith("/formal-media/")'));assert.ok(read('wrangler.jsonc').includes('"/formal-media/*"'));
 });
 
-test('Course hub and plans expose nine papers with three free As and six Pro B/Cs',()=>{
+test('Course hub and plans expose twelve papers with four free As and eight Pro B/Cs',()=>{
  const hub=read('src/app/chinese-course-tests/page.tsx');assert.ok(hub.includes('coursePaperHref(form, 3)'));assert.ok(hub.includes('id="chinese-3"'));assert.ok(hub.includes('90 minutes:'));
- assert.ok(hub.includes('nine papers in total'));assert.ok(!hub.includes('/chinese-4/'));
- const plan=read('src/lib/commercial/plan-presentation.ts');assert.ok(plan.includes('Nine Chinese 1–3 course-review papers'));assert.ok(plan.includes('All three A papers are free; Pro adds six B/C papers'));
- for(const f of ['src/app/site-navigation.ts','src/app/hsk-test-prep/page.tsx','src/app/pricing/page.tsx'])assert.ok(read(f).includes('Chinese 1–3'),f);
+ assert.ok(hub.includes('twelve papers in total'));assert.ok(hub.includes('coursePaperHref(form, 4)'));
+ const plan=read('src/lib/commercial/plan-presentation.ts');assert.ok(plan.includes('Twelve Chinese 1–4 course-review papers'));assert.ok(plan.includes('All four A papers are free; Pro adds eight B/C papers'));
+ for(const f of ['src/app/site-navigation.ts','src/app/hsk-test-prep/page.tsx','src/app/pricing/page.tsx'])assert.ok(read(f).includes('Chinese 1–4'),f);
  assert.ok(read('src/app/chinese-course-tests/chinese-3/[form]/page.tsx').includes('level={3}'));
 });

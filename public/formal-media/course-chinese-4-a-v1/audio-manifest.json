@@ -1,0 +1,1051 @@
+{
+  "paperId": "course-chinese-4-a-v1",
+  "provider": "Edge TTS at authoring time; no runtime TTS or Cloudflare generation",
+  "rate": "-8%",
+  "voices": {
+    "female": "zh-CN-XiaoxiaoNeural",
+    "male": "zh-CN-YunxiNeural"
+  },
+  "humanListeningAcceptance": false,
+  "units": [
+    {
+      "id": "C4A-L1a",
+      "kind": "listening-source",
+      "questionNumbers": [
+        1
+      ],
+      "sourcePlays": 1,
+      "script": [
+        {
+          "speaker": "female",
+          "text": {
+            "zh-Hans": "社区故事展原来只用中文写标题。今年有同学建议全部换成英文，让更多邻居看懂。我认为可以保留中文，再加一句英文说明。这样不认识汉字的人也能了解内容，熟悉中文的老人仍然能看到原来的名字。两种文字不是只能选一种。我们还会请讲故事的人检查说明，免得意思变了。",
+            "zh-Hant": "社區故事展原來只用中文寫標題。今年有同學建議全部換成英文，讓更多鄰居看懂。我認爲可以保留中文，再加一句英文說明。這樣不認識漢字的人也能瞭解內容，熟悉中文的老人仍然能看到原來的名字。兩種文字不是隻能選一種。我們還會請講故事的人檢查說明，免得意思變了。"
+          }
+        }
+      ],
+      "sourceDurationSeconds": 29.256,
+      "targetSeconds": [
+        24,
+        32
+      ],
+      "withinTarget": true,
+      "src": "assets/audio/c4a-l1a.mp3",
+      "durationSeconds": 29.808,
+      "pcmSeconds": 29.756,
+      "bytes": 238700,
+      "sha256": "fb3034eea6da43efd2a04a38e03d66b0e7882a89a3b3a45ad74d92a0404d832b"
+    },
+    {
+      "id": "C4A-L1b",
+      "kind": "listening-source",
+      "questionNumbers": [
+        2,
+        3
+      ],
+      "sourcePlays": 1,
+      "script": [
+        {
+          "speaker": "male",
+          "text": {
+            "zh-Hans": "我以前介绍家里的故事，总是先说我们家的人每年都这样做。后来妹妹提醒我，她在外地读书以后就换了做法，不能把我的经验说成全家的规定。",
+            "zh-Hant": "我以前介紹家裏的故事，總是先說我們家的人每年都這樣做。後來妹妹提醒我，她在外地讀書以後就換了做法，不能把我的經驗說成全家的規定。"
+          }
+        },
+        {
+          "speaker": "female",
+          "text": {
+            "zh-Hans": "那你在故事展里怎么介绍呢？",
+            "zh-Hant": "那你在故事展裏怎麼介紹呢？"
+          }
+        },
+        {
+          "speaker": "male",
+          "text": {
+            "zh-Hans": "我先说明这是我小时候和爷爷一起准备晚饭的经历，再请妹妹补充她现在的办法。原来的菜名仍然保留，做菜步骤却可以不同。我们想让观众听出两个人的生活背景，而不是判断谁的做法才算正确。妹妹也同意把两段录音放在一起。展签会写清楚是谁在讲，也请观众先听完，再提出自己的问题。",
+            "zh-Hant": "我先說明這是我小時候和爺爺一起準備晚飯的經歷，再請妹妹補充她現在的辦法。原來的菜名仍然保留，做菜步驟卻可以不同。我們想讓觀衆聽出兩個人的生活背景，而不是判斷誰的做法纔算正確。妹妹也同意把兩段錄音放在一起。展籤會寫清楚是誰在講，也請觀衆先聽完，再提出自己的問題。"
+          }
+        }
+      ],
+      "sourceDurationSeconds": 47.764,
+      "targetSeconds": [
+        45,
+        60
+      ],
+      "withinTarget": true,
+      "src": "assets/audio/c4a-l1b.mp3",
+      "durationSeconds": 48.312,
+      "pcmSeconds": 48.264,
+      "bytes": 386732,
+      "sha256": "a68047765cb37ee3680af77d39dbf83f3a89404226dfac7b3e52bc82c39683bb"
+    },
+    {
+      "id": "C4A-L1c",
+      "kind": "listening-source",
+      "questionNumbers": [
+        4,
+        5
+      ],
+      "sourcePlays": 1,
+      "script": [
+        {
+          "speaker": "female",
+          "text": {
+            "zh-Hans": "留言甲。我邀请伙伴来故事展时说，周五先随便聊聊，不用准备正式发言。我想让第一次见面的同学轻松一些。标题翻译等大家熟悉后再一起商量，不需要他们先交成品。",
+            "zh-Hant": "留言甲。我邀請夥伴來故事展時說，週五先隨便聊聊，不用準備正式發言。我想讓第一次見面的同學輕鬆一些。標題翻譯等大家熟悉後再一起商量，不需要他們先交成品。"
+          }
+        },
+        {
+          "speaker": "male",
+          "text": {
+            "zh-Hans": "留言乙。我以为随便聊聊就是可以不参加，所以答应那天替朋友值班。我并不是不愿意合作。我现在才知道，那次见面是让双方认识、分配后面的工作。我可以换班，但想先确认见面的目的和结束时间，再答复。我希望以后邀请时把参加要求写清楚，不只是说气氛轻松，以免其他人也理解错。",
+            "zh-Hant": "留言乙。我以爲隨便聊聊就是可以不參加，所以答應那天替朋友值班。我並不是不願意合作。我現在才知道，那次見面是讓雙方認識、分配後面的工作。我可以換班，但想先確認見面的目的和結束時間，再答覆。我希望以後邀請時把參加要求寫清楚，不只是說氣氛輕鬆，以免其他人也理解錯。"
+          }
+        }
+      ],
+      "sourceDurationSeconds": 46.454,
+      "targetSeconds": [
+        45,
+        60
+      ],
+      "withinTarget": true,
+      "src": "assets/audio/c4a-l1c.mp3",
+      "durationSeconds": 47.016,
+      "pcmSeconds": 46.954,
+      "bytes": 376364,
+      "sha256": "9e80fb1b39356d1363027e30207b474fb6a49388c76b47cdaf9183d7ba218365"
+    },
+    {
+      "id": "C4A-L2a",
+      "kind": "listening-source",
+      "questionNumbers": [
+        6
+      ],
+      "sourcePlays": 1,
+      "script": [
+        {
+          "speaker": "male",
+          "text": {
+            "zh-Hans": "这次线上交流已经确定在周四放学后进行，参加者要先看完对方发来的三张展览照片。老师会把不认识的词放在照片旁边。大家不用写完整报告，但每个人都要准备一个与照片有关的问题。交流时可以请对方解释，不必假装已经了解所有背景。设备测试另安排在周三午休。",
+            "zh-Hant": "這次線上交流已經確定在週四放學後進行，參加者要先看完對方發來的三張展覽照片。老師會把不認識的詞放在照片旁邊。大家不用寫完整報告，但每個人都要準備一個與照片有關的問題。交流時可以請對方解釋，不必假裝已經瞭解所有背景。設備測試另安排在週三午休。"
+          }
+        }
+      ],
+      "sourceDurationSeconds": 26.712,
+      "targetSeconds": [
+        24,
+        32
+      ],
+      "withinTarget": true,
+      "src": "assets/audio/c4a-l2a.mp3",
+      "durationSeconds": 27.264,
+      "pcmSeconds": 27.212,
+      "bytes": 218348,
+      "sha256": "bd76f8cc6f6701598a739054cb9f1156c7f3cd43de7af56c0a574b1c24a689d9"
+    },
+    {
+      "id": "C4A-L2b",
+      "kind": "listening-source",
+      "questionNumbers": [
+        7,
+        8
+      ],
+      "sourcePlays": 1,
+      "script": [
+        {
+          "speaker": "female",
+          "text": {
+            "zh-Hans": "反馈甲。我用翻译工具给展品写英文简介，第一稿出来得很快。但是人物称呼有时不对。我希望先看到中文原稿和英文并排的结果，这样能请讲故事的人一起检查，再决定是否使用。",
+            "zh-Hant": "反饋甲。我用翻譯工具給展品寫英文簡介，第一稿出來得很快。但是人物稱呼有時不對。我希望先看到中文原稿和英文並排的結果，這樣能請講故事的人一起檢查，再決定是否使用。"
+          }
+        },
+        {
+          "speaker": "male",
+          "text": {
+            "zh-Hans": "反馈乙。我负责接待，不会把工具的结果直接印出来。工具省下了查普通词的时间，可是有些地方的名字译得不一致。我也想保留两种文字，还要给改过的地方作标记。现在有人建议把所有译文自动发布，我觉得还需要人工确认。确认过的内容才能给访客看，修改以后也要留下日期，避免误用旧稿。",
+            "zh-Hant": "反饋乙。我負責接待，不會把工具的結果直接印出來。工具省下了查普通詞的時間，可是有些地方的名字譯得不一致。我也想保留兩種文字，還要給改過的地方作標記。現在有人建議把所有譯文自動發佈，我覺得還需要人工確認。確認過的內容才能給訪客看，修改以後也要留下日期，避免誤用舊稿。"
+          }
+        }
+      ],
+      "sourceDurationSeconds": 48.974,
+      "targetSeconds": [
+        45,
+        60
+      ],
+      "withinTarget": true,
+      "src": "assets/audio/c4a-l2b.mp3",
+      "durationSeconds": 49.536,
+      "pcmSeconds": 49.474,
+      "bytes": 396524,
+      "sha256": "9bcc2e616dfd24019262741fe0b79e1882d6264180a30da6eaba734774422b86"
+    },
+    {
+      "id": "C4A-L2c",
+      "kind": "listening-source",
+      "questionNumbers": [
+        9,
+        10
+      ],
+      "sourcePlays": 1,
+      "script": [
+        {
+          "speaker": "female",
+          "text": {
+            "zh-Hans": "图书馆下周开始试行新规则。靠窗的区域保持安静，讨论小组可以预约门口的房间，每次三十分钟。有人担心临时来的人没有位置，所以我们先把周三中午留作不用预约的时段。",
+            "zh-Hant": "圖書館下週開始試行新規則。靠窗的區域保持安靜，討論小組可以預約門口的房間，每次三十分鐘。有人擔心臨時來的人沒有位置，所以我們先把週三中午留作不用預約的時段。"
+          }
+        },
+        {
+          "speaker": "male",
+          "text": {
+            "zh-Hans": "那我接受先试两周。不过不用预约也不该表示可以一直占着房间。我们要写清楚，每组仍然最多用三十分钟，两周后再看等候记录。",
+            "zh-Hant": "那我接受先試兩週。不過不用預約也不該表示可以一直佔着房間。我們要寫清楚，每組仍然最多用三十分鐘，兩週後再看等候記錄。"
+          }
+        },
+        {
+          "speaker": "female",
+          "text": {
+            "zh-Hans": "同意。这样能听到临时使用者的意见，也不取消原来需要安静的人可以使用的区域。通知里会分别写出两种空间的用途，让第一次来的同学也容易理解。",
+            "zh-Hant": "同意。這樣能聽到臨時使用者的意見，也不取消原來需要安靜的人可以使用的區域。通知裏會分別寫出兩種空間的用途，讓第一次來的同學也容易理解。"
+          }
+        }
+      ],
+      "sourceDurationSeconds": 48.34,
+      "targetSeconds": [
+        45,
+        60
+      ],
+      "withinTarget": true,
+      "src": "assets/audio/c4a-l2c.mp3",
+      "durationSeconds": 48.888,
+      "pcmSeconds": 48.84,
+      "bytes": 391340,
+      "sha256": "4b4a1910dde1bf1b4a42f8e53e3b4f6f1b3847a4834032251aeaec381366e3af"
+    },
+    {
+      "id": "C4A-L3a",
+      "kind": "listening-source",
+      "questionNumbers": [
+        11
+      ],
+      "sourcePlays": 1,
+      "script": [
+        {
+          "speaker": "female",
+          "text": {
+            "zh-Hans": "这部校园短片不是教大家怎样整理旧照片。导演拍的是两位同学看同一张照片时不同的反应。画面里没有解释谁记错了，而是让两个人分别讲述当时的感受。放映后，观众可以说自己注意到的细节，再看看这些细节怎样影响理解。我们希望大家学会听见不同的声音，不是背出标准感想。",
+            "zh-Hant": "這部校園短片不是教大家怎樣整理舊照片。導演拍的是兩位同學看同一張照片時不同的反應。畫面裏沒有解釋誰記錯了，而是讓兩個人分別講述當時的感受。放映後，觀衆可以說自己注意到的細節，再看看這些細節怎樣影響理解。我們希望大家學會聽見不同的聲音，不是背出標準感想。"
+          }
+        }
+      ],
+      "sourceDurationSeconds": 30.144,
+      "targetSeconds": [
+        24,
+        32
+      ],
+      "withinTarget": true,
+      "src": "assets/audio/c4a-l3a.mp3",
+      "durationSeconds": 30.696,
+      "pcmSeconds": 30.644,
+      "bytes": 245804,
+      "sha256": "ae0a62c675350ca0cc481c9c3fb7b62495d0a34ec092964c6df6de1b912d6352"
+    },
+    {
+      "id": "C4A-L3b",
+      "kind": "listening-source",
+      "questionNumbers": [
+        12,
+        13
+      ],
+      "sourcePlays": 1,
+      "script": [
+        {
+          "speaker": "male",
+          "text": {
+            "zh-Hans": "短片里，小河站在门外很久才进去。我们剪第一版时，有人觉得这段停顿没用，应该删掉。我却想留下，因为前面他刚说过，怕进去以后不知道怎样开口。",
+            "zh-Hant": "短片裏，小河站在門外很久才進去。我們剪第一版時，有人覺得這段停頓沒用，應該刪掉。我卻想留下，因爲前面他剛說過，怕進去以後不知道怎樣開口。"
+          }
+        },
+        {
+          "speaker": "female",
+          "text": {
+            "zh-Hans": "留下以后，观众明白你的意思了吗？",
+            "zh-Hant": "留下以後，觀衆明白你的意思了嗎？"
+          }
+        },
+        {
+          "speaker": "male",
+          "text": {
+            "zh-Hans": "有的人说看出了他的紧张，也有人觉得他只是等朋友。我们后来加了他伸手又收回的一个动作，没有加旁白直接解释。我愿意让观众有不同理解，但希望大家的解释能联系画面，而不是说任何猜想都一样有道理。下一次放映时，我们会先让观众说出具体细节，再解释他们的判断。",
+            "zh-Hant": "有的人說看出了他的緊張，也有人覺得他只是等朋友。我們後來加了他伸手又收回的一個動作，沒有加旁白直接解釋。我願意讓觀衆有不同理解，但希望大家的解釋能聯繫畫面，而不是說任何猜想都一樣有道理。下一次放映時，我們會先讓觀衆說出具體細節，再解釋他們的判斷。"
+          }
+        }
+      ],
+      "sourceDurationSeconds": 46.636,
+      "targetSeconds": [
+        45,
+        60
+      ],
+      "withinTarget": true,
+      "src": "assets/audio/c4a-l3b.mp3",
+      "durationSeconds": 47.184,
+      "pcmSeconds": 47.136,
+      "bytes": 377708,
+      "sha256": "ae64f41d8d4665cd7db4e33c3d1d73885f36f96eb39aa6c9437183e4e3d917a6"
+    },
+    {
+      "id": "C4A-L3c",
+      "kind": "listening-source",
+      "questionNumbers": [
+        14,
+        15
+      ],
+      "sourcePlays": 1,
+      "script": [
+        {
+          "speaker": "female",
+          "text": {
+            "zh-Hans": "方案甲。我们提议在校园活动中借用可重复使用的杯子。现有一百个杯子，清洗室周五下午能用，两位同学愿意在结束后负责清洗。先在这一次活动试用，记录归还情况，再决定要不要扩大。",
+            "zh-Hant": "方案甲。我們提議在校園活動中借用可重複使用的杯子。現有一百個杯子，清洗室週五下午能用，兩位同學願意在結束後負責清洗。先在這一次活動試用，記錄歸還情況，再決定要不要擴大。"
+          }
+        },
+        {
+          "speaker": "male",
+          "text": {
+            "zh-Hans": "方案乙。我们希望每个活动都立即使用这套杯子。可是周末清洗室不开，储存架也只够放这一百个。我们还没有找到周末能负责清洗的人。若能先解决清洗和存放，再推广比较稳妥，不应该只看杯子数量就决定。我们会先问清负责人的时间，再把完整的借还安排告诉其他活动组。",
+            "zh-Hant": "方案乙。我們希望每個活動都立即使用這套杯子。可是週末清洗室不開，儲存架也只夠放這一百個。我們還沒有找到週末能負責清洗的人。若能先解決清洗和存放，再推廣比較穩妥，不應該只看杯子數量就決定。我們會先問清負責人的時間，再把完整的借還安排告訴其他活動組。"
+          }
+        }
+      ],
+      "sourceDurationSeconds": 47.534,
+      "targetSeconds": [
+        45,
+        60
+      ],
+      "withinTarget": true,
+      "src": "assets/audio/c4a-l3c.mp3",
+      "durationSeconds": 48.096,
+      "pcmSeconds": 48.034,
+      "bytes": 385004,
+      "sha256": "7acab09856fc960ea099db14e1e71fd57b81fd2feb81183d3354bb5b41669e05"
+    },
+    {
+      "id": "C4A-L4a",
+      "kind": "listening-source",
+      "questionNumbers": [
+        16
+      ],
+      "sourcePlays": 1,
+      "script": [
+        {
+          "speaker": "male",
+          "text": {
+            "zh-Hans": "关于周五活动的杯子归还，我们修改一项安排。原来所有人都要到食堂后门排队，现在每个班先收齐，再由两名代表送过去。杯子仍然只在周五下午清洗，不能留到周末。破损的杯子要单独放进有标记的盒子，不算作没有归还。试用记录会分别写清归还数量和破损数量，避免把两种情况混在一起。",
+            "zh-Hant": "關於週五活動的杯子歸還，我們修改一項安排。原來所有人都要到食堂後門排隊，現在每個班先收齊，再由兩名代表送過去。杯子仍然只在週五下午清洗，不能留到週末。破損的杯子要單獨放進有標記的盒子，不算作沒有歸還。試用記錄會分別寫清歸還數量和破損數量，避免把兩種情況混在一起。"
+          }
+        }
+      ],
+      "sourceDurationSeconds": 29.04,
+      "targetSeconds": [
+        24,
+        32
+      ],
+      "withinTarget": true,
+      "src": "assets/audio/c4a-l4a.mp3",
+      "durationSeconds": 29.592,
+      "pcmSeconds": 29.54,
+      "bytes": 236972,
+      "sha256": "bdedbaaa10131c2e6b76c1e58f66f944c4fdc24368afbe77c0c4fa755b19d59e"
+    },
+    {
+      "id": "C4A-L4b",
+      "kind": "listening-source",
+      "questionNumbers": [
+        17,
+        18
+      ],
+      "sourcePlays": 1,
+      "script": [
+        {
+          "speaker": "female",
+          "text": {
+            "zh-Hans": "访谈甲。我试用导览工具后，找教室快了一些。因为主要路线的牌子都能识别，我不用每次问路。但是地下活动室的牌子太暗，工具两次都读错了。我建议先改善那里的标记，再请新同学试。",
+            "zh-Hant": "訪談甲。我試用導覽工具後，找教室快了一些。因爲主要路線的牌子都能識別，我不用每次問路。但是地下活動室的牌子太暗，工具兩次都讀錯了。我建議先改善那裏的標記，再請新同學試。"
+          }
+        },
+        {
+          "speaker": "male",
+          "text": {
+            "zh-Hans": "访谈乙。我带三位新同学试用，只有熟悉手机操作的一位一直顺利。另两位需要我先教他们怎么拍标记。教过以后，他们也能找到目的地。我赞成继续用，不过三个人的经历不能说明所有新生都不用帮助，更不能说工具已经在任何地方都准确。下一轮还需要让更多不同经验的同学试一试。",
+            "zh-Hant": "訪談乙。我帶三位新同學試用，只有熟悉手機操作的一位一直順利。另兩位需要我先教他們怎麼拍標記。教過以後，他們也能找到目的地。我贊成繼續用，不過三個人的經歷不能說明所有新生都不用幫助，更不能說工具已經在任何地方都準確。下一輪還需要讓更多不同經驗的同學試一試。"
+          }
+        }
+      ],
+      "sourceDurationSeconds": 48.71,
+      "targetSeconds": [
+        45,
+        60
+      ],
+      "withinTarget": true,
+      "src": "assets/audio/c4a-l4b.mp3",
+      "durationSeconds": 49.272,
+      "pcmSeconds": 49.21,
+      "bytes": 394412,
+      "sha256": "8989b429fe529f1917871f2320b39046b3236813413a05f5ccc5cb08196c1325"
+    },
+    {
+      "id": "C4A-L4c",
+      "kind": "listening-source",
+      "questionNumbers": [
+        19,
+        20
+      ],
+      "sourcePlays": 1,
+      "script": [
+        {
+          "speaker": "female",
+          "text": {
+            "zh-Hans": "刚开始，社区展览要求每个家庭用同一张表介绍习惯。有位老人说表格能比较，可是写不出她为什么保留那个名字；一位年轻人也说自己的做法变过，不适合只勾选有或没有。",
+            "zh-Hant": "剛開始，社區展覽要求每個家庭用同一張表介紹習慣。有位老人說表格能比較，可是寫不出她爲什麼保留那個名字；一位年輕人也說自己的做法變過，不適合只勾選有或沒有。"
+          }
+        },
+        {
+          "speaker": "male",
+          "text": {
+            "zh-Hans": "所以后来你们怎样处理？",
+            "zh-Hant": "所以後來你們怎樣處理？"
+          }
+        },
+        {
+          "speaker": "female",
+          "text": {
+            "zh-Hans": "我们保留简短表格，让想讲经历的人加一段录音。工作人员帮忙整理，但请本人检查。这样没有取消共同的结构，也没有把个体故事压成一个选项。我原来觉得传统只要原样留下就好，现在更在意谁在讲、为什么改变，以及改变后哪些意义还在。",
+            "zh-Hant": "我們保留簡短表格，讓想講經歷的人加一段錄音。工作人員幫忙整理，但請本人檢查。這樣沒有取消共同的結構，也沒有把個體故事壓成一個選項。我原來覺得傳統只要原樣留下就好，現在更在意誰在講、爲什麼改變，以及改變後哪些意義還在。"
+          }
+        }
+      ],
+      "sourceDurationSeconds": 46.588,
+      "targetSeconds": [
+        45,
+        60
+      ],
+      "withinTarget": true,
+      "src": "assets/audio/c4a-l4c.mp3",
+      "durationSeconds": 47.136,
+      "pcmSeconds": 47.088,
+      "bytes": 377324,
+      "sha256": "3b15d53198ad68657d67a146504d02fb30a6cda62f438575804c6a35b79d07b6"
+    },
+    {
+      "id": "S1-1",
+      "kind": "oral-prompt",
+      "sourcePlays": 2,
+      "singlePlayPcmSeconds": 8.136,
+      "repeatGapSeconds": 1.5,
+      "singlePlayPcmSha256": "6ad07a881893491e8bdf3f9dd1bad5f76331f9f4885f1f9e393356313f6dabf1",
+      "script": {
+        "zh-Hans": "活动要让不同语言的同学都能参加。你最想先照顾谁的需要？为什么？",
+        "zh-Hant": "活動要讓不同語言的同學都能參加。你最想先照顧誰的需要？爲什麼？"
+      },
+      "src": "assets/audio/s1-1.mp3",
+      "durationSeconds": 17.832,
+      "pcmSeconds": 17.772,
+      "bytes": 142892,
+      "sha256": "c92e8c5b23e3c534f0fd479a9efdf67b2e2b8ef188c506ef035414843b118b05"
+    },
+    {
+      "id": "S1-2",
+      "kind": "oral-prompt",
+      "sourcePlays": 2,
+      "singlePlayPcmSeconds": 7.776,
+      "repeatGapSeconds": 1.5,
+      "singlePlayPcmSha256": "20e365cd0eabc1e9f042b0b56e5550c068f2fbb5ee427c05c2b5c77b1f060993",
+      "script": {
+        "zh-Hans": "有人提议只讲一种语言，有人希望两种语言并用。你怎样比较这两个办法？",
+        "zh-Hant": "有人提議只講一種語言，有人希望兩種語言並用。你怎樣比較這兩個辦法？"
+      },
+      "src": "assets/audio/s1-2.mp3",
+      "durationSeconds": 17.112,
+      "pcmSeconds": 17.052,
+      "bytes": 137132,
+      "sha256": "fc213d3a813285264f884889b8ad59d90ff9522fcab752838039452da8f50e19"
+    },
+    {
+      "id": "S1-3",
+      "kind": "oral-prompt",
+      "sourcePlays": 2,
+      "singlePlayPcmSeconds": 8.4,
+      "repeatGapSeconds": 1.5,
+      "singlePlayPcmSha256": "e485e16e8bf3ac2f4529a17558df9afafafbd16f512e7f695b1c03db3084afcc",
+      "script": {
+        "zh-Hans": "现在有人担心翻译会改变故事意思，而且时间只有十分钟。你会怎样调整？",
+        "zh-Hant": "現在有人擔心翻譯會改變故事意思，而且時間只有十分鐘。你會怎樣調整？"
+      },
+      "src": "assets/audio/s1-3.mp3",
+      "durationSeconds": 18.36,
+      "pcmSeconds": 18.3,
+      "bytes": 147116,
+      "sha256": "e14ef3473bb7101c0b0ef582e93a7df0e1c5cb4ca492bdd2abe0ca1a6f8678eb"
+    },
+    {
+      "id": "S1-4",
+      "kind": "oral-prompt",
+      "sourcePlays": 2,
+      "singlePlayPcmSeconds": 7.176,
+      "repeatGapSeconds": 1.5,
+      "singlePlayPcmSha256": "686af45303887026d1c98be477235f27d1c0b0ddf92740b9d2cedbaed00b5f66",
+      "script": {
+        "zh-Hans": "如果讲述者仍不同意翻译，你能接受什么妥协？下一步要先确认什么？",
+        "zh-Hant": "如果講述者仍不同意翻譯，你能接受什麼妥協？下一步要先確認什麼？"
+      },
+      "src": "assets/audio/s1-4.mp3",
+      "durationSeconds": 15.912,
+      "pcmSeconds": 15.852,
+      "bytes": 127532,
+      "sha256": "f066b901cb4f77a8280e20c0320a0c77da8fac9854320a1d836cce6bb5de7e0d"
+    }
+  ],
+  "groups": [
+    {
+      "id": "L1",
+      "sourcePlays": 2,
+      "questionNumbers": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "src": "assets/audio/listening-group-1.mp3",
+      "durationSeconds": 450.048,
+      "pcmSeconds": 450.0,
+      "bytes": 3600620,
+      "sha256": "d2e42a98cbc23e0fdc4c6f2908480e92970e22864b9a6a82e136b96d1c1011dc"
+    },
+    {
+      "id": "L2",
+      "sourcePlays": 2,
+      "questionNumbers": [
+        6,
+        7,
+        8,
+        9,
+        10
+      ],
+      "src": "assets/audio/listening-group-2.mp3",
+      "durationSeconds": 450.048,
+      "pcmSeconds": 450.0,
+      "bytes": 3600620,
+      "sha256": "ae7818cc6666b9b49acae5a65f72bc081b85148ad940696a356d72e7fd7e18ea"
+    },
+    {
+      "id": "L3",
+      "sourcePlays": 2,
+      "questionNumbers": [
+        11,
+        12,
+        13,
+        14,
+        15
+      ],
+      "src": "assets/audio/listening-group-3.mp3",
+      "durationSeconds": 450.048,
+      "pcmSeconds": 450.0,
+      "bytes": 3600620,
+      "sha256": "0a3d452388141386d6ff9b144a148d520713c45e6f878cc6a8fe2fa447965b7f"
+    },
+    {
+      "id": "L4",
+      "sourcePlays": 2,
+      "questionNumbers": [
+        16,
+        17,
+        18,
+        19,
+        20
+      ],
+      "src": "assets/audio/listening-group-4.mp3",
+      "durationSeconds": 450.048,
+      "pcmSeconds": 450.0,
+      "bytes": 3600620,
+      "sha256": "cd06937aeaebeb19261959abe0629e9d506eccd9abd61d13337df0ee7b0d8fb4"
+    }
+  ],
+  "timedTrack": {
+    "src": "assets/audio/listening-full.mp3",
+    "durationSeconds": 1800.048,
+    "pcmSeconds": 1800.0,
+    "bytes": 14400620,
+    "sha256": "7ee752a4320cf238b44250a299ec73ef8a8f6ecc4aa46111e466e448be97f076"
+  },
+  "timeline": [
+    {
+      "id": "C4A-L1a",
+      "questionNumbers": [
+        1
+      ],
+      "shared": false,
+      "previewStartSeconds": 0.0,
+      "previewSeconds": 8,
+      "labelStartSeconds": 8.0,
+      "labelBudgetSeconds": 3,
+      "firstPlayStartSeconds": 11.0,
+      "secondPlayStartSeconds": 42.256,
+      "speechEndSeconds": 71.512,
+      "answerWindowSeconds": 16.488,
+      "transitionSeconds": 2,
+      "slotEndSeconds": 90.0,
+      "sourcePlays": 2
+    },
+    {
+      "id": "C4A-L1b",
+      "questionNumbers": [
+        2,
+        3
+      ],
+      "shared": true,
+      "previewStartSeconds": 90.0,
+      "previewSeconds": 18,
+      "labelStartSeconds": 108.0,
+      "labelBudgetSeconds": 6,
+      "firstPlayStartSeconds": 114.0,
+      "secondPlayStartSeconds": 163.764,
+      "speechEndSeconds": 211.528,
+      "answerWindowSeconds": 53.472,
+      "transitionSeconds": 5,
+      "slotEndSeconds": 270.0,
+      "sourcePlays": 2
+    },
+    {
+      "id": "C4A-L1c",
+      "questionNumbers": [
+        4,
+        5
+      ],
+      "shared": true,
+      "previewStartSeconds": 270.0,
+      "previewSeconds": 18,
+      "labelStartSeconds": 288.0,
+      "labelBudgetSeconds": 6,
+      "firstPlayStartSeconds": 294.0,
+      "secondPlayStartSeconds": 342.454,
+      "speechEndSeconds": 388.908,
+      "answerWindowSeconds": 56.092,
+      "transitionSeconds": 5,
+      "slotEndSeconds": 450.0,
+      "sourcePlays": 2
+    },
+    {
+      "id": "C4A-L2a",
+      "questionNumbers": [
+        6
+      ],
+      "shared": false,
+      "previewStartSeconds": 450.0,
+      "previewSeconds": 8,
+      "labelStartSeconds": 458.0,
+      "labelBudgetSeconds": 3,
+      "firstPlayStartSeconds": 461.0,
+      "secondPlayStartSeconds": 489.712,
+      "speechEndSeconds": 516.424,
+      "answerWindowSeconds": 21.576,
+      "transitionSeconds": 2,
+      "slotEndSeconds": 540.0,
+      "sourcePlays": 2
+    },
+    {
+      "id": "C4A-L2b",
+      "questionNumbers": [
+        7,
+        8
+      ],
+      "shared": true,
+      "previewStartSeconds": 540.0,
+      "previewSeconds": 18,
+      "labelStartSeconds": 558.0,
+      "labelBudgetSeconds": 6,
+      "firstPlayStartSeconds": 564.0,
+      "secondPlayStartSeconds": 614.974,
+      "speechEndSeconds": 663.948,
+      "answerWindowSeconds": 51.052,
+      "transitionSeconds": 5,
+      "slotEndSeconds": 720.0,
+      "sourcePlays": 2
+    },
+    {
+      "id": "C4A-L2c",
+      "questionNumbers": [
+        9,
+        10
+      ],
+      "shared": true,
+      "previewStartSeconds": 720.0,
+      "previewSeconds": 18,
+      "labelStartSeconds": 738.0,
+      "labelBudgetSeconds": 6,
+      "firstPlayStartSeconds": 744.0,
+      "secondPlayStartSeconds": 794.34,
+      "speechEndSeconds": 842.68,
+      "answerWindowSeconds": 52.32,
+      "transitionSeconds": 5,
+      "slotEndSeconds": 900.0,
+      "sourcePlays": 2
+    },
+    {
+      "id": "C4A-L3a",
+      "questionNumbers": [
+        11
+      ],
+      "shared": false,
+      "previewStartSeconds": 900.0,
+      "previewSeconds": 8,
+      "labelStartSeconds": 908.0,
+      "labelBudgetSeconds": 3,
+      "firstPlayStartSeconds": 911.0,
+      "secondPlayStartSeconds": 943.144,
+      "speechEndSeconds": 973.288,
+      "answerWindowSeconds": 14.712,
+      "transitionSeconds": 2,
+      "slotEndSeconds": 990.0,
+      "sourcePlays": 2
+    },
+    {
+      "id": "C4A-L3b",
+      "questionNumbers": [
+        12,
+        13
+      ],
+      "shared": true,
+      "previewStartSeconds": 990.0,
+      "previewSeconds": 18,
+      "labelStartSeconds": 1008.0,
+      "labelBudgetSeconds": 6,
+      "firstPlayStartSeconds": 1014.0,
+      "secondPlayStartSeconds": 1062.636,
+      "speechEndSeconds": 1109.272,
+      "answerWindowSeconds": 55.728,
+      "transitionSeconds": 5,
+      "slotEndSeconds": 1170.0,
+      "sourcePlays": 2
+    },
+    {
+      "id": "C4A-L3c",
+      "questionNumbers": [
+        14,
+        15
+      ],
+      "shared": true,
+      "previewStartSeconds": 1170.0,
+      "previewSeconds": 18,
+      "labelStartSeconds": 1188.0,
+      "labelBudgetSeconds": 6,
+      "firstPlayStartSeconds": 1194.0,
+      "secondPlayStartSeconds": 1243.534,
+      "speechEndSeconds": 1291.068,
+      "answerWindowSeconds": 53.932,
+      "transitionSeconds": 5,
+      "slotEndSeconds": 1350.0,
+      "sourcePlays": 2
+    },
+    {
+      "id": "C4A-L4a",
+      "questionNumbers": [
+        16
+      ],
+      "shared": false,
+      "previewStartSeconds": 1350.0,
+      "previewSeconds": 8,
+      "labelStartSeconds": 1358.0,
+      "labelBudgetSeconds": 3,
+      "firstPlayStartSeconds": 1361.0,
+      "secondPlayStartSeconds": 1392.04,
+      "speechEndSeconds": 1421.08,
+      "answerWindowSeconds": 16.92,
+      "transitionSeconds": 2,
+      "slotEndSeconds": 1440.0,
+      "sourcePlays": 2
+    },
+    {
+      "id": "C4A-L4b",
+      "questionNumbers": [
+        17,
+        18
+      ],
+      "shared": true,
+      "previewStartSeconds": 1440.0,
+      "previewSeconds": 18,
+      "labelStartSeconds": 1458.0,
+      "labelBudgetSeconds": 6,
+      "firstPlayStartSeconds": 1464.0,
+      "secondPlayStartSeconds": 1514.71,
+      "speechEndSeconds": 1563.42,
+      "answerWindowSeconds": 51.58,
+      "transitionSeconds": 5,
+      "slotEndSeconds": 1620.0,
+      "sourcePlays": 2
+    },
+    {
+      "id": "C4A-L4c",
+      "questionNumbers": [
+        19,
+        20
+      ],
+      "shared": true,
+      "previewStartSeconds": 1620.0,
+      "previewSeconds": 18,
+      "labelStartSeconds": 1638.0,
+      "labelBudgetSeconds": 6,
+      "firstPlayStartSeconds": 1644.0,
+      "secondPlayStartSeconds": 1692.588,
+      "speechEndSeconds": 1739.176,
+      "answerWindowSeconds": 55.824,
+      "transitionSeconds": 5,
+      "slotEndSeconds": 1800.0,
+      "sourcePlays": 2
+    }
+  ],
+  "speakingPlannedMaximumSeconds": 466.976,
+  "speakingReserveSeconds": 133.024,
+  "cache": [
+    {
+      "key": "401171ab338f58ff026edda2",
+      "speaker": "female",
+      "text": "社区故事展原来只用中文写标题。今年有同学建议全部换成英文，让更多邻居看懂。我认为可以保留中文，再加一句英文说明。这样不认识汉字的人也能了解内容，熟悉中文的老人仍然能看到原来的名字。两种文字不是只能选一种。我们还会请讲故事的人检查说明，免得意思变了。",
+      "sha256": "c6e7c74d4defaeebda89ff8ce5fa6b60c3af1b15e1148351f5bd103d2d16b98b"
+    },
+    {
+      "key": "34e89f8d03ace2b111d8dc37",
+      "speaker": "female",
+      "text": "第1题。",
+      "sha256": "3895df58b8b6ce61365216490dcb339db3aa7ef168eef8d2098c469073a4cdc2"
+    },
+    {
+      "key": "e9372846a4e2b960a0a1a1a4",
+      "speaker": "male",
+      "text": "我以前介绍家里的故事，总是先说我们家的人每年都这样做。后来妹妹提醒我，她在外地读书以后就换了做法，不能把我的经验说成全家的规定。",
+      "sha256": "5d69a437c01273137b39ca0085931972e0ee13dbfdf28f06a1e8f8a6eb7adfbb"
+    },
+    {
+      "key": "4fdc2b9d16c25e8f73b3c1e1",
+      "speaker": "female",
+      "text": "那你在故事展里怎么介绍呢？",
+      "sha256": "faa5d045308948dddbace54d3dd3f39ad5e1da49bb671e4edb532834be8e1b84"
+    },
+    {
+      "key": "bba0576d5308dd1ce71f36bb",
+      "speaker": "male",
+      "text": "我先说明这是我小时候和爷爷一起准备晚饭的经历，再请妹妹补充她现在的办法。原来的菜名仍然保留，做菜步骤却可以不同。我们想让观众听出两个人的生活背景，而不是判断谁的做法才算正确。妹妹也同意把两段录音放在一起。展签会写清楚是谁在讲，也请观众先听完，再提出自己的问题。",
+      "sha256": "5a4afbd440ea47ef1d6b5c0fcd0e72e4c3455fe8db2b83188cf9bc68cd5a00aa"
+    },
+    {
+      "key": "59a37835b5cee9f38c336089",
+      "speaker": "female",
+      "text": "第2题到第3题。",
+      "sha256": "c5aa462a627f4025322935611b7bae282a9707cc5d99053588618b9151947c3f"
+    },
+    {
+      "key": "148b4a1f2e86a8517325f4aa",
+      "speaker": "female",
+      "text": "留言甲。我邀请伙伴来故事展时说，周五先随便聊聊，不用准备正式发言。我想让第一次见面的同学轻松一些。标题翻译等大家熟悉后再一起商量，不需要他们先交成品。",
+      "sha256": "c43ad4c4044064853b58f1885afb65a34f3b87afad04b7e1bd18e118bf8d033f"
+    },
+    {
+      "key": "bdbb94352b514c4e26865ddf",
+      "speaker": "male",
+      "text": "留言乙。我以为随便聊聊就是可以不参加，所以答应那天替朋友值班。我并不是不愿意合作。我现在才知道，那次见面是让双方认识、分配后面的工作。我可以换班，但想先确认见面的目的和结束时间，再答复。我希望以后邀请时把参加要求写清楚，不只是说气氛轻松，以免其他人也理解错。",
+      "sha256": "c957dc5b60086268f6e3d62e845861c3de101796c048aea4d76c5ebb298f9d5a"
+    },
+    {
+      "key": "57776ef6b9167b48c9682e35",
+      "speaker": "female",
+      "text": "第4题到第5题。",
+      "sha256": "b1b9e81f6b43570946d2619a949b1119cb49d29689c181f957021a7da823ba1a"
+    },
+    {
+      "key": "f8caba734224e02881dd5552",
+      "speaker": "male",
+      "text": "这次线上交流已经确定在周四放学后进行，参加者要先看完对方发来的三张展览照片。老师会把不认识的词放在照片旁边。大家不用写完整报告，但每个人都要准备一个与照片有关的问题。交流时可以请对方解释，不必假装已经了解所有背景。设备测试另安排在周三午休。",
+      "sha256": "2e4482aee1d1b098f55176b49fed0b9b50e4cb72a15e9bc38296ab324802805a"
+    },
+    {
+      "key": "5e6c5b336701fe2c48b7fa2f",
+      "speaker": "female",
+      "text": "第6题。",
+      "sha256": "fcc5b0fabad8f1fa79148054a17b60ac8d2cb351d57ed0d5eb073df550e3ee93"
+    },
+    {
+      "key": "3bd713ba836f014a86d67550",
+      "speaker": "female",
+      "text": "反馈甲。我用翻译工具给展品写英文简介，第一稿出来得很快。但是人物称呼有时不对。我希望先看到中文原稿和英文并排的结果，这样能请讲故事的人一起检查，再决定是否使用。",
+      "sha256": "0c9ec7bd09b095e398f7e68c6480fcee5049d9ae014344cdc5b502a3558e90a0"
+    },
+    {
+      "key": "6b42380fb0b10f7e74d4e30b",
+      "speaker": "male",
+      "text": "反馈乙。我负责接待，不会把工具的结果直接印出来。工具省下了查普通词的时间，可是有些地方的名字译得不一致。我也想保留两种文字，还要给改过的地方作标记。现在有人建议把所有译文自动发布，我觉得还需要人工确认。确认过的内容才能给访客看，修改以后也要留下日期，避免误用旧稿。",
+      "sha256": "78eac95ae89446015fb3b6f2a3d11a5fb3205c104644083b5b7aedf4807ea449"
+    },
+    {
+      "key": "64c66b2840929c1c7f0a128c",
+      "speaker": "female",
+      "text": "第7题到第8题。",
+      "sha256": "e68967a3ec70be7f22d0b224f111132969b5f86b19e9c18b08ec31874f504e59"
+    },
+    {
+      "key": "bf0a0fe1440c25137bfd43d3",
+      "speaker": "female",
+      "text": "图书馆下周开始试行新规则。靠窗的区域保持安静，讨论小组可以预约门口的房间，每次三十分钟。有人担心临时来的人没有位置，所以我们先把周三中午留作不用预约的时段。",
+      "sha256": "553dc09c2a7e40c507ad23bbd278cc0ec86064e1344585b8a1a72c81524db70e"
+    },
+    {
+      "key": "a0ca281ae2446522a356db4d",
+      "speaker": "male",
+      "text": "那我接受先试两周。不过不用预约也不该表示可以一直占着房间。我们要写清楚，每组仍然最多用三十分钟，两周后再看等候记录。",
+      "sha256": "3e1b1626cf997792916f9a1e679f0ad7fe232cc940cabaf89499dd3b5f098277"
+    },
+    {
+      "key": "4c84e3cdd41cc5d5a7e16fba",
+      "speaker": "female",
+      "text": "同意。这样能听到临时使用者的意见，也不取消原来需要安静的人可以使用的区域。通知里会分别写出两种空间的用途，让第一次来的同学也容易理解。",
+      "sha256": "e39584a1828bc705cef1a112bb4eea301de205b112a48ba56378667c62f75d7e"
+    },
+    {
+      "key": "cb299aa387ffea4c204f4fd8",
+      "speaker": "female",
+      "text": "第9题到第10题。",
+      "sha256": "156a13ef215d9abd3619c718ca13cadb0ae55714d67e1a7c354a48af38c18c14"
+    },
+    {
+      "key": "2daa14b2cd53eddd27da7c68",
+      "speaker": "female",
+      "text": "这部校园短片不是教大家怎样整理旧照片。导演拍的是两位同学看同一张照片时不同的反应。画面里没有解释谁记错了，而是让两个人分别讲述当时的感受。放映后，观众可以说自己注意到的细节，再看看这些细节怎样影响理解。我们希望大家学会听见不同的声音，不是背出标准感想。",
+      "sha256": "d7436df65557d2cd3855a79c98de3c2aa965f2c732224046a5f9305d46623a55"
+    },
+    {
+      "key": "63d3dd3f27ad85dca9aa0606",
+      "speaker": "female",
+      "text": "第11题。",
+      "sha256": "09609165ce7b5b5bbc80de6236e7726415e2ab45d65241e1ca3c75ec4a697f32"
+    },
+    {
+      "key": "50e6a76bb884ec42e101e4cb",
+      "speaker": "male",
+      "text": "短片里，小河站在门外很久才进去。我们剪第一版时，有人觉得这段停顿没用，应该删掉。我却想留下，因为前面他刚说过，怕进去以后不知道怎样开口。",
+      "sha256": "f04ee01067471dea8093c4e13af22d807cfaef549780277e6ab7cc9da47ce123"
+    },
+    {
+      "key": "0e1dd3a23699cc570f750625",
+      "speaker": "female",
+      "text": "留下以后，观众明白你的意思了吗？",
+      "sha256": "aa39eff684be7d49788fc93af606abc45238cdc5b3b0e391765203a45b8b0e3c"
+    },
+    {
+      "key": "e0616371a0236dbc160201cb",
+      "speaker": "male",
+      "text": "有的人说看出了他的紧张，也有人觉得他只是等朋友。我们后来加了他伸手又收回的一个动作，没有加旁白直接解释。我愿意让观众有不同理解，但希望大家的解释能联系画面，而不是说任何猜想都一样有道理。下一次放映时，我们会先让观众说出具体细节，再解释他们的判断。",
+      "sha256": "1aa55a5806a37f2ffa25a8e265172041380a7a08f1bfbf811ad31a58bbf04fc5"
+    },
+    {
+      "key": "897d5f3dc3700eb43e7cbb5e",
+      "speaker": "female",
+      "text": "第12题到第13题。",
+      "sha256": "c0764bbeffc04d14e861e97e76647ca832c7374a425f990051edfc4be7105283"
+    },
+    {
+      "key": "ae425ea8504375cd3aca1dd1",
+      "speaker": "female",
+      "text": "方案甲。我们提议在校园活动中借用可重复使用的杯子。现有一百个杯子，清洗室周五下午能用，两位同学愿意在结束后负责清洗。先在这一次活动试用，记录归还情况，再决定要不要扩大。",
+      "sha256": "110ac3419f8007202493bd87685f0562fdeab5f7dabe0cd7b750d2aadfa84bca"
+    },
+    {
+      "key": "2882b3487f8700655e2ba55b",
+      "speaker": "male",
+      "text": "方案乙。我们希望每个活动都立即使用这套杯子。可是周末清洗室不开，储存架也只够放这一百个。我们还没有找到周末能负责清洗的人。若能先解决清洗和存放，再推广比较稳妥，不应该只看杯子数量就决定。我们会先问清负责人的时间，再把完整的借还安排告诉其他活动组。",
+      "sha256": "55360df1fa41d85318f1175b014f907860eb43cdd8d6d6e273cfc2f1786a5d5e"
+    },
+    {
+      "key": "d2b1b6c44f506d7526503dfd",
+      "speaker": "female",
+      "text": "第14题到第15题。",
+      "sha256": "0906d17c5251bf2008c56b4ace9b116fde0acd70c415b18aa7d1607319a3b61d"
+    },
+    {
+      "key": "a3cc0ff4118bef1e235f6c69",
+      "speaker": "male",
+      "text": "关于周五活动的杯子归还，我们修改一项安排。原来所有人都要到食堂后门排队，现在每个班先收齐，再由两名代表送过去。杯子仍然只在周五下午清洗，不能留到周末。破损的杯子要单独放进有标记的盒子，不算作没有归还。试用记录会分别写清归还数量和破损数量，避免把两种情况混在一起。",
+      "sha256": "47accf3e655afb85d207c44b223f0f70c97d6dce808a9c15d7e6d60bb72930c4"
+    },
+    {
+      "key": "0cffbf1010d1e54023057ea9",
+      "speaker": "female",
+      "text": "第16题。",
+      "sha256": "6cbe22b4463ef0127dbcb5957919648ee9b071c97d70d0b85edf327b6a0071df"
+    },
+    {
+      "key": "a5dfea655e874cfad76bce22",
+      "speaker": "female",
+      "text": "访谈甲。我试用导览工具后，找教室快了一些。因为主要路线的牌子都能识别，我不用每次问路。但是地下活动室的牌子太暗，工具两次都读错了。我建议先改善那里的标记，再请新同学试。",
+      "sha256": "64b4a01119bd45a5257ada46b00fe08792f5dce9bcbc9656c357551a27f6e358"
+    },
+    {
+      "key": "2c295ce2bc2e4ec32f6c5dda",
+      "speaker": "male",
+      "text": "访谈乙。我带三位新同学试用，只有熟悉手机操作的一位一直顺利。另两位需要我先教他们怎么拍标记。教过以后，他们也能找到目的地。我赞成继续用，不过三个人的经历不能说明所有新生都不用帮助，更不能说工具已经在任何地方都准确。下一轮还需要让更多不同经验的同学试一试。",
+      "sha256": "ace59e7c508b67442162a7d1b750a7ca3a3610334f4c702a5ac0b4461d2fecda"
+    },
+    {
+      "key": "39783cd7fc1f12c860740889",
+      "speaker": "female",
+      "text": "第17题到第18题。",
+      "sha256": "01a9a45721addca80a07e682ec5e8610bb430ec1cbeedbbb220e9a65db18feb4"
+    },
+    {
+      "key": "354c0172a6394659f6a60563",
+      "speaker": "female",
+      "text": "刚开始，社区展览要求每个家庭用同一张表介绍习惯。有位老人说表格能比较，可是写不出她为什么保留那个名字；一位年轻人也说自己的做法变过，不适合只勾选有或没有。",
+      "sha256": "9f9711b3710296307372ec70c468727dff18972d604e0c15096a7f616578ee79"
+    },
+    {
+      "key": "546521e6f0d7ba287e9ea4bd",
+      "speaker": "male",
+      "text": "所以后来你们怎样处理？",
+      "sha256": "87c0877bc15752442ebd3d4ef503b848ab3f18ff2fff0ceb36288e2b52ccaae1"
+    },
+    {
+      "key": "1c63a4fec84c860de5d49257",
+      "speaker": "female",
+      "text": "我们保留简短表格，让想讲经历的人加一段录音。工作人员帮忙整理，但请本人检查。这样没有取消共同的结构，也没有把个体故事压成一个选项。我原来觉得传统只要原样留下就好，现在更在意谁在讲、为什么改变，以及改变后哪些意义还在。",
+      "sha256": "9eda9beb8b05b7b93e83b828884f6703959c8debba3769387762e20bc31d738b"
+    },
+    {
+      "key": "f95c9b6602b74fc57bb96e4c",
+      "speaker": "female",
+      "text": "第19题到第20题。",
+      "sha256": "7520f48462fd711504e5121ae27158508115a47849655c6a122f6d8b979678bf"
+    },
+    {
+      "key": "8adab662e144f6e0595bd1cd",
+      "speaker": "female",
+      "text": "活动要让不同语言的同学都能参加。你最想先照顾谁的需要？为什么？",
+      "sha256": "165b84ff4e7222a639fa656245cf560400d1d2a6799cd2b88377e73269c39dd3"
+    },
+    {
+      "key": "add8e6b091e16caf5523c434",
+      "speaker": "female",
+      "text": "有人提议只讲一种语言，有人希望两种语言并用。你怎样比较这两个办法？",
+      "sha256": "8894e5353af372c67615aa7e0ab3c89ef975c3019bfa3ed93cf5c6e4b2ee26b9"
+    },
+    {
+      "key": "4aaed70a415df10f86a6a4dc",
+      "speaker": "female",
+      "text": "现在有人担心翻译会改变故事意思，而且时间只有十分钟。你会怎样调整？",
+      "sha256": "dff377c784a322c14834aaea5dd96e013b6faaf68bfd83217110eab8a9cc78e4"
+    },
+    {
+      "key": "4fd123ddcd57af486494601b",
+      "speaker": "female",
+      "text": "如果讲述者仍不同意翻译，你能接受什么妥协？下一步要先确认什么？",
+      "sha256": "0c7398a56c66750435ed3efbd0e88be945ddfe57740efe74eb9abe9bcec6f05f"
+    }
+  ]
+}
