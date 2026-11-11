@@ -78,12 +78,12 @@ test("review API exposes practice context for real mistake retry and transparent
 
 test("review is a single-card session with setup, progress, retry, summary, and undo", async () => {
   const client = await source("src/app/components/learning-dashboard.tsx");
-  const surface = client + await source("src/lib/learning/review-session.ts") + await source("src/app/api/v1/learning/route.ts");
+  const surface = client + await source("src/app/components/review-workbench.tsx") + await source("src/lib/learning/review-session.ts") + await source("src/app/api/v1/learning/route.ts");
   for (const token of [
-    "Review setup", "[5, 10, 20]", "Start review", "Review progress",
-    "Why this is here", "Choose an answer", "Check answer", "Your answer this time",
+    "Build your own session", "[5,10,20]", "-card review", "Review progress",
+    "reviewReason", "Choose an answer", "Check answer", "Your answer this time",
     "Answer from your earlier practice", "Forgot", "Difficult", "Remembered", "Easy",
-    "Undo last rating", "Session complete", "Back to Today", "Continue practice",
+    "Undo last rating", "ROUND SAVED", "Back to Today", "Continue practice",
   ]) assert.match(surface, new RegExp(token));
   assert.match(client, /activeCard/);
   assert.doesNotMatch(client, /due\.map\(\(card\)/);
@@ -92,7 +92,9 @@ test("review is a single-card session with setup, progress, retry, summary, and 
 
 test("review layout stays task-first, responsive, and avoids dashboard-card sprawl", async () => {
   const client = await source("src/app/components/learning-dashboard.tsx");
-  assert.match(client, /max-w-\[880px\]/);
+  const css = await source("src/app/review/review-workbench.css");
+  assert.match(css, /max-width:1180px/);
+  assert.match(css, /@media\(max-width:767px\)/);
   assert.match(client, /min-h-\[48px\]/);
   assert.match(client, /aria-live="polite"/);
   assert.match(client, /focus-visible:ring/);
@@ -145,8 +147,9 @@ test("review entry links preserve Today and selected-mistake context", async () 
 test("mistake retry and self-recall use distinct truthful interactions", async () => {
   const client = await source("src/app/components/learning-dashboard.tsx");
   const route = await source("src/app/api/v1/learning/route.ts");
-  for (const token of ["Mistake retry", "Memory review", "Your answer this time", "Think of the answer before revealing it", "Earlier attempt", "Why the answer fits"]) {
-    assert.match(client, new RegExp(token));
+  const surface = client + await source("src/lib/learning/review-workbench.ts");
+  for (const token of ["Mistake correction", "Memory recall", "Your answer this time", "Recall the answer before revealing it", "Earlier attempt", "Why the answer fits"]) {
+    assert.match(surface, new RegExp(token));
   }
   assert.doesNotMatch(route, /say the answer once before continuing/);
   assert.doesNotMatch(client, /Your current answer/);
@@ -201,7 +204,7 @@ test("mistake retries are system-checked and only a correct retry can resolve th
 
 test("review UI separates mistake submission from no-input self-recall memory review", async () => {
   const client = await source("src/app/components/learning-dashboard.tsx");
-  for (const token of ["Check answer", "Type your answer", "Think of the answer before revealing", "There is no answer field", "older saved item"]) assert.match(client, new RegExp(token));
+  for (const token of ["Check answer", "Type your answer", "Recall the answer before revealing", "Use it as a memory prompt", "older saved item"]) assert.match(client, new RegExp(token));
   assert.match(client, /reviewDraft\.trim\(\)/);
   assert.match(client, /setAudioError\(""\)/);
 });
