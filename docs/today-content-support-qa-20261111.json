@@ -1,0 +1,54 @@
+{
+  "scope": "Today task content, live summary, recap and consolidation",
+  "environment": "local",
+  "preview": "http://127.0.0.1:3183/today",
+  "parent": "735b7a3785596cc146240150d6d5316f5c39c233",
+  "production": "not deployed; deployment not requested in this turn",
+  "implementation": [
+    "Task-specific listening, practice, review and vocabulary previews with method, actual stage totals, selected-task time and exact pending-prerequisite count",
+    "Practice question counts generated from the published question set and session-size limit at build time; matched by content ID and version; unknown versions fall back to task count",
+    "Current listening and practice panels continue through existing Today-bound routes and server verification",
+    "Live and completed summary panels distinguish task counts, words, review cards, listening checks, practice tasks and recorded practice answers",
+    "Full-width completed-word recap with retry hints derived from saved memory-check attempts",
+    "Recap details are not rendered during memory, listening, practice or review checks",
+    "Two optional consolidation links selected from actual mistakes, learned words and planned listening; clearly separate from the Today checklist",
+    "Concise visible help for saving, changing workload and restoring moved tasks",
+    "Completed word records open from the recap and can return to the summary",
+    "Corrected vocabulary/example typography so the example is not larger than the target word"
+  ],
+  "verification": {
+    "production_build": {"result":"passed including TypeScript","evidence":"../enrichment-build.log","today_route":"statically prerendered"},
+    "scoped_eslint": {"result":"passed with zero warnings","evidence":"../enrichment-eslint.log"},
+    "related_tests": {"result":"126 passed","evidence":"../enrichment-tests.log","historical_exclusions":"Same five unrelated content-test exclusions already reproduced on untouched parent source in previous QA; no new exclusions."},
+    "preservation": "13 frozen files unchanged; original learning actions and state hooks unchanged. One optional static practice-summary prop was added to the dashboard. Review and Mistakes renderers unchanged.",
+    "browser": [
+      "Pending listening shows actual 3 word checks, 3 sentence checks, 6 planned stage minutes and selected task time of 1 minute",
+      "Pending practice shows actual 8 questions and 5 minutes for the bound published version",
+      "Unlock prerequisite counts follow actual pending tasks and omit completed, moved and deferred work",
+      "Live summary shows current 2/13 completion without pretending the session is finished",
+      "Memory-check view hides every recap definition and record button",
+      "Correct word memory check advances from 2/13 to 3/13 and unlocks current listening",
+      "Current listening opens the existing bound exercise; real playback verifies, correct answer saves, and return to Today shows 4/13",
+      "Finished layout fixture displays 12 completed and 1 moved separately, 3 recap cards and 2 consolidation links",
+      "Recap record opens and returns through Back to session summary",
+      "Bottom Adjust plan opens settings; Cancel preserves the saved plan and progress",
+      "Local fixture restored to the pre-fixture 3/13 state after visual checks",
+      "Fresh preview reload after build works; an initially truncated development layout chunk was checked as valid on disk and HTTP, then resolved by reload"
+    ],
+    "viewport": [
+      {"width":1280,"client_width":1265,"scroll_width":1265},
+      {"width":390,"client_width":375,"scroll_width":375},
+      {"width":320,"client_width":305,"scroll_width":305,"finished_and_pending_states_checked":true}
+    ],
+    "personal_page_robots": "noindex, nofollow retained"
+  },
+  "screenshots": {
+    "listening":"../enrichment-listening-desktop.jpg",
+    "bottom_completed_fixture":"../enrichment-bottom-desktop.jpg",
+    "mobile_practice":"../enrichment-practice-mobile.jpg"
+  },
+  "fixture_note": "Completed-state screenshots use explicitly isolated local guest fixture data, not production learning results. No account data, remote database writes or production answers were used.",
+  "unchanged": ["Homepage and animation","Tone trainer","Pricing and entitlements","Scheduling and scoring","Offline/account sync","Playback verification","Question banks","Cloudflare configuration and jobs","R2 objects"],
+  "runtime_note": "No extra API requests or polling added. Question summaries are static page props; full question banks remain server-side for this addition.",
+  "remaining": ["Separate future work: downstream practice/review/listening screen layout","Separate future work: quick time presets and zero-new-word preference","Deployment awaits a subsequent user release instruction"]
+}

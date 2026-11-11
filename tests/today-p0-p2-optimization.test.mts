@@ -293,20 +293,20 @@ test("Today Learn opens the exact planned word and removes the technical content
   assert.notEqual(replanned.session.notice?.code, "CONTENT_UPDATED");
 });
 
-test("Today has one dominant start action, explicit plan save feedback, progress, remaining time and plan-gap reason", async () => {
-  const dashboard = await source("src/app/components/learning-dashboard.tsx");
+test("Today has one learning workspace, explicit plan save feedback, progress and contextual plan information", async () => {
+  const dashboard = (await Promise.all([source("src/app/components/learning-dashboard.tsx"),source("src/app/components/today-workspace.tsx")])).join("\n");
   for (const token of [
     "Continue Today Session",
-    "Current stage",
-    "of {journeyProgress.totalPhases}",
-    "Tasks completed",
+    "today-primary-action",
+    "Your learning route",
+    "tasks completed",
     "min left",
-    "Why this plan",
+    "How this plan works",
     "Save changes",
     "Plan updated",
     "Plan change is pending. Use Retry sync",
     "Recommended time",
-    "Why today arranged this",
+    "included in this plan",
   ]) assert.match(dashboard, new RegExp(token.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")));
   assert.doesNotMatch(dashboard, /onChange=\{\(event\) => void configureToday/);
   assert.doesNotMatch(dashboard, /Open word list/);
@@ -428,7 +428,7 @@ test("Today subpages preserve Today Session context and finish through the saved
   assert.match(learningRoute, /assertDailyAudioBinding\(state, dailySessionId, dailyItemId, exercise, activeToday\.session\.id\)/);
   assert.match(learningRoute, /TODAY_LEARN_CHECK_REQUIRED/);
   assert.match(dashboard, /Start memory check/);
-  assert.match(dashboard, /Initial learning complete · memory check passed/);
+  assert.match(dashboard, /Memory check passed · learning saved/);
   assert.match(practiceRoute, /assertCurrentDailyPracticeBinding/);
   assert.match(practiceRoute, /PRACTICE_DAILY_SESSION_STALE/);
   assert.match(audio, /tzOffset: new Date\(\)\.getTimezoneOffset\(\)/);
@@ -439,20 +439,20 @@ test("Today subpages preserve Today Session context and finish through the saved
   }
 });
 
-test("completed Today renders truthful statistics, recovery, personalization and three next-step entries", async () => {
-  const dashboard = await source("src/app/components/learning-dashboard.tsx");
+test("completed Today renders truthful statistics, recovery, personalization and relevant next-step entries", async () => {
+  const dashboard = (await Promise.all([source("src/app/components/learning-dashboard.tsx"),source("src/app/components/today-learning-content.tsx")])).join("\n");
   for (const token of [
-    "Daily Summary",
-    "Stage progress",
-    "Completed tasks",
-    "Skipped tasks",
+    "Daily session complete",
+    "stages complete",
+    "tasks completed",
+    "moved to tomorrow",
     "open mistakes",
-    "review questions completed",
-    "new words learned",
-    "listening checks completed",
-    "practice questions completed",
-    "Recommended focus",
-    "Monthly learning score",
+    "completionSummary.reviewsCompleted",
+    "completedNewWordsToday",
+    "Listening checks",
+    "practice answers recorded",
+    "What to revisit next",
+    "Learning Points",
     "Explore HSK {data.session.startLevel ?? 1} words",
     "Review {open.length} open mistake",
     "Done for today",
@@ -487,23 +487,23 @@ test("Today journey makes current, completed, locked and skipped states unmistak
   ]);
   for (const token of [
     "HomeIcon",
-    "TodayHeroArtwork",
+    "TodayWorkspace",
     "TodayJourneyIcon",
-    "Today’s plan",
+    "TODAY’S PLAN",
     "Balanced",
     "Adjust",
     "Locked",
     "Complete the previous step to unlock",
     "Step complete",
     "Moved to tomorrow",
-    "today-mobile-action",
+    "tw-overview",
     "Learning Points",
     "Conversion is not open yet",
     "subscription AI credits stay separate",
-    "Correct open mistakes",
+    "unresolved mistakes",
   ]) assert.match(dashboard, new RegExp(token.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")));
   assert.match(dashboard, /primaryTodayAction\(item,/);
-  assert.match(dashboard, /min-h-\[72px\][\s\S]{0,500}Today’s plan/);
+  assert.match(dashboard, /aria-label="Today’s plan and progress"/);
   assert.match(todayPlan, /Today’s session wrapped up!/);
   assert.match(dashboard, /event\.key === "Escape"/);
   assert.match(dashboard, /querySelectorAll<HTMLElement>/);
@@ -536,7 +536,7 @@ test("every Today-bound completion route returns a celebration signal without ch
   assert.match(dashboard, /sessionStorage\.removeItem\(completionProofKey\)/);
   assert.match(dashboard, /cleanUrl\.searchParams\.delete\("completedSession"\)/);
   assert.match(dashboard, /cleanUrl\.searchParams\.delete\("completedItem"\)/);
-  assert.match(dashboard, /calc\(76px \+ env\(safe-area-inset-bottom\)\)/);
+  assert.match(await source("src/app/today/today-workbench.css"), /body:has\(\.today-workspace\) \.feedback-trigger/);
   assert.match(dashboard, /sessionStorage\.setItem\(celebrationKey/);
   assert.match(dashboard, /prefers-reduced-motion/);
 });

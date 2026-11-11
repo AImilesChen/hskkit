@@ -1,0 +1,50 @@
+{
+  "scope": "Today step 1: current-task workbench, task icons and colors, presentation groups and mobile action",
+  "parent": "735b7a3785596cc146240150d6d5316f5c39c233",
+  "status": "implemented-and-locally-verified",
+  "production": "not deployed",
+  "preview": "http://127.0.0.1:3183/today",
+  "checks": {
+    "productionBuild": "passed including TypeScript validation",
+    "scopedESLint": "passed",
+    "relatedTestsPassed": 121,
+    "frozenSourceFilesVerified": 13,
+    "originalLearningActionsAndStateHooks": "unchanged except presentation imports",
+    "reviewAndMistakesRenderers": "unchanged",
+    "pageIndexability": "existing noindex, nofollow retained",
+    "browser": "ChatGPT in-app browser",
+    "desktop": { "viewport": 1280, "clientWidth": 1265, "scrollWidth": 1265, "primaryActionBottom": 463.86 },
+    "mobile390": { "viewport": 390, "clientWidth": 375, "scrollWidth": 375, "primaryActionBottom": 455.36 },
+    "mobile320": { "viewport": 320, "clientWidth": 305, "scrollWidth": 305, "navigationOverflow": false, "primaryActionBottom": 511.16 },
+    "memoryCheck": "Wrong answer did not complete the word; restudied and answered correctly, progressed from 0/10 to 1/10 and advanced to the next word",
+    "resume": "Reload retained saved progress and next word",
+    "reviewEntry": "Start review opened the exact saved Today card, 1 of 1; returned without submitting a review grade",
+    "moveAndRestore": "Moving the current review left completed count at zero, recorded one moved step and exposed a Restore moved review button; restore returned it to the current task",
+    "planSettings": "Changed draft budget from 20 to 5, cancelled and confirmed saved plan remained 20 minutes",
+    "finishedLayout": "Local fixture with 12 completed and one moved step showed those separately; pending groups collapsed, completed summary available",
+    "mobileAction": "Bottom continue bar appeared only after the main action left view; href matched the main action",
+    "feedback": "Compact mobile header feedback opened and closed normally; no message submitted",
+    "browserErrors": []
+  },
+  "presentationRules": [
+    "Review violet, vocabulary blue, listening teal, practice orange, summary warm yellow; each has its existing icon and text label",
+    "Groups retain the server order, original item indices and identifiers, including continuing work before new words",
+    "Completed counts exclude moved/skipped steps; visible stage totals use the actual displayed groups",
+    "Current learning and verified meaning-check handlers reused; future work can be previewed without unlocking it"
+  ],
+  "baselineTestExceptions": [
+    "formal listening snapshots retain private playback text without exposing it in public question payloads",
+    "a 20 minute plan contains three distinct words and only their available listening",
+    "Today renders the saved Learn word inline and completes it before unlocking listening",
+    "Today selects a source-locked word from the active versioned HSK 3.0 release",
+    "unified advanced-band content without contextual audio keeps available Today work"
+  ],
+  "baselineTestNotes": "All five failures were reproduced on untouched production-parent source, then excluded from the bounded UI regression run; no new content or bank edits were made.",
+  "fixtures": "All browser writes used the isolated local D1 guest record. Visual mixed/finished fixtures are local test data, not production progress. The preview is restored to the pending mixed plan.",
+  "preserved": ["Question banks", "Server scheduling", "SRS grading", "Playback verification", "Guest/account isolation", "Subscription entitlements", "Home animation", "Cloudflare settings"],
+  "nextSteps": [
+    "Step 2: compact Today-context learning header and clearer stage-to-stage continuation",
+    "Step 3: quick time presets, zero-new-word option, accurate recommendation reasons and refined final results"
+  ],
+  "screenshots": ["tmp/today-workbench-20261111/desktop.jpg", "tmp/today-workbench-20261111/mobile-390.jpg", "tmp/today-workbench-20261111/mobile-320.jpg"]
+}

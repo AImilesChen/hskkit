@@ -1,0 +1,48 @@
+{
+  "scope": "Today page layout and contextual copy",
+  "environment": "local",
+  "preview": "http://127.0.0.1:3183/today",
+  "parent": "735b7a3785596cc146240150d6d5316f5c39c233",
+  "production": "not deployed; not requested in this turn",
+  "implementation": [
+    "Full-width plan and progress overview with actual planned minutes and separate moved counts",
+    "Compact route at left; one selected task, saved record or locked preview at right",
+    "Preserves consecutive server task order, original item identities and completion authority",
+    "Visible contextual review and mistake information; zero-mistake notes omitted",
+    "Current Learn body uses existing memory-check and restudy handlers",
+    "Selection returns to the new current task when the server advances the active item",
+    "Completed and moved records remain accessible with original review/restore operations",
+    "Mobile route disclosure, content focus after selection, and no horizontal page overflow",
+    "Session reward information kept in completion summary instead of study sidebar",
+    "Review return celebration continues into the inline active word"
+  ],
+  "checks": {
+    "next_production_build": {"result":"passed","evidence":"../revision-build.log"},
+    "scoped_eslint": {"result":"passed with zero warnings","evidence":"../revision-eslint.log"},
+    "related_tests": {"result":"122 passed","evidence":"../revision-tests.log","note":"Same five unrelated historical content-test exclusions as the preceding step, reproduced on untouched parent source in the preceding QA; no new exclusion added."},
+    "preservation": {"result":"13 frozen files, original state/action prefix and Review/Mistakes renderers unchanged","evidence":"../artifact-checks.json"},
+    "personal_page_robots": "noindex, nofollow retained",
+    "browser": [
+      "Move review to tomorrow leaves completion count unchanged and advances the active pane",
+      "Moved review record restores through its original handler and becomes active again",
+      "Bound one-card local review opens, saves a self-recall rating, returns and continues into inline Learn",
+      "Wrong Learn answer does not increase completed count; restudy remains available",
+      "Correct Learn answer increases completed count and advances to the next word",
+      "Reload retains completed progress and the next current word",
+      "Future task preview does not expose or unlock its question",
+      "Completed Learn record opens; return action preserves current work",
+      "Mobile route selection closes the route and focuses the learning pane",
+      "Plan draft changed from 20 to 5 minutes then cancelled; saved plan and 2/13 completion unchanged",
+      "Completion layout fixture shows 12 completed and 1 moved separately; original local progress restored afterwards"
+    ],
+    "viewport": [
+      {"width":1280,"client_width":1265,"scroll_width":1265,"columns":"352.25px 815.75px","visible_task_articles":1},
+      {"width":390,"client_width":375,"scroll_width":375,"mobile_route_initially_hidden":true},
+      {"width":320,"client_width":305,"scroll_width":305,"four_learning_nav_links_visible":true}
+    ]
+  },
+  "screenshots": ["../revision-desktop.jpg","../revision-mobile-390.jpg","../revision-mobile-320.jpg"],
+  "test_data": "Existing isolated local guest fixture only. Summary statuses were a visual fixture, not an end-to-end completion of every audio/practice task. No production answers, account data or remote database writes.",
+  "unchanged": ["Homepage and animation","Tone trainer","Pricing and entitlements","Task scheduling and scoring","Account sync and offline queue","Audio verification","Cloudflare configuration and scheduled jobs","R2 content"],
+  "remaining": ["Separate future work: compact context in the downstream review/listening/practice pages","Separate future work: quick time presets and zero-new-word option","Deployment requires the user's subsequent release instruction"]
+}

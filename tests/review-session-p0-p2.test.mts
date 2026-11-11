@@ -101,7 +101,7 @@ test("review layout stays task-first, responsive, and avoids dashboard-card spra
 
 test("Today presents one truthful review entry with due count, time, level, and skill mix", async () => {
   const client = await source("src/app/components/learning-dashboard.tsx");
-  for (const token of ["dueForToday", "total due", "selectedReviewCards", "firstReviewIndex", "orderedTodayItems"]) {
+  for (const token of ["dueForToday", "total due", "selectedReviewCards", "firstReviewIndex", "currentTodayItems"]) {
     assert.match(client, new RegExp(token));
   }
   assert.match(client, /if \(item\.kind === "review" && index !== firstReviewIndex\) return null/);
