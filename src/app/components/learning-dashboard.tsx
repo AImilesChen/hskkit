@@ -417,7 +417,7 @@ export default function LearningDashboard({ mode, practiceInfo = [] }: { mode: "
     if (response && response.status >= 400 && response.status < 500) {
       const rejected = await response.json();
       delete operationKeys.current[operation];
-      setError(rejected.error === "TODAY_LEARN_CHECK_REQUIRED" ? "This word was not marked complete because its memory check was missing or incorrect. Reload Today and try again." : "Your progress could not be confirmed. Reload the server copy, then retry.");
+      setError(rejected.error === "TODAY_LEARN_CHECK_REQUIRED" ? "This word was not marked complete because its memory check was missing or incorrect. Reload Today and try again." : rejected.error === "TODAY_LEARN_WORD_MISMATCH" ? "This word could not be matched to your saved task. Reload Today and try again." : "Your progress could not be confirmed. Reload the server copy, then retry.");
       return false;
     }
     if (["complete_item", "skip_item", "restore_item", "configure_today"].includes(action) && data) {

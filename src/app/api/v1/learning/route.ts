@@ -758,15 +758,17 @@ async function postLearning(req: NextRequest) {
         assertCurrentDailySession(activeToday.session, sessionId);
         state = activeToday.state;
         const currentItem = state.dailySessions.find((session) => session.id === sessionId)?.items.find((item) => item.id === itemId);
-        let completedLearnContext: Awaited<ReturnType<typeof getDictionaryLearningContext>> = null;
+        let completedLearnWord: Awaited<ReturnType<typeof getDictionaryWordsByIds>>[number] | undefined;
         let completedLearnCheck: NonNullable<LearningState["dailySessions"][number]["items"][number]["learnCheck"]> | undefined;
         if (action === "complete_item" && currentItem?.kind === "learn") {
           const assetId = short(payload.assetId, 120);
           const displayedWord = assetId ? await resolveTodayDictionaryItem(assetId) : undefined;
           if (!displayedWord) throw new Error("TODAY_LEARN_WORD_MISMATCH");
           assertTodayLearnItemMatches(state, { sessionId, itemId, contentId: displayedWord.contentId, contentVersion: displayedWord.contentVersion });
-          completedLearnContext = await getDictionaryLearningContext(displayedWord.assetId);
-          if (!completedLearnContext) throw new Error("TODAY_LEARN_WORD_MISMATCH");
+          // Saved Today tasks can still refer to retired words. Completion only
+          // needs that exact word, not a practice context from the live catalog.
+          [completedLearnWord] = await getDictionaryWordsByIds([displayedWord.assetId]);
+          if (!completedLearnWord) throw new Error("TODAY_LEARN_WORD_MISMATCH");
           const meaningCheck = todayMeaningCheck(displayedWord);
           const answer = short(payload.answer, 1);
           if (!meaningCheck || answer !== meaningCheck.correctAnswer) throw new Error("TODAY_LEARN_CHECK_REQUIRED");
@@ -782,8 +784,8 @@ async function postLearning(req: NextRequest) {
           observedAt: completedAt,
           learnCheck: completedLearnCheck,
         }).state;
-        if (action === "complete_item" && currentItem?.kind === "learn" && currentItem.status === "pending" && completedLearnContext) {
-          state = addWordToReview(state, { word: completedLearnContext.current, observedAt: completedAt, dueAt: new Date(Date.parse(completedAt) + 86_400_000).toISOString() });
+        if (action === "complete_item" && currentItem?.kind === "learn" && currentItem.status === "pending" && completedLearnWord) {
+          state = addWordToReview(state, { word: completedLearnWord, observedAt: completedAt, dueAt: new Date(Date.parse(completedAt) + 86_400_000).toISOString() });
         }
         if (action === "complete_item" && currentItem?.kind === "learn" && currentItem.status === "pending" && !currentItem.isContinuing && capabilities.dailyNewItems !== null) {
           usageCharge = { metric: "daily_new_items", periodKey, idempotencyKey: key, units: 1, limit: capabilities.dailyNewItems };
