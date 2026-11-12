@@ -8,7 +8,7 @@ const CONSENT_KEY = "hskkit-google-analytics-consent";
 type Choice = "accepted" | "rejected";
 
 type AnalyticsWindow = Window & {
-  dataLayer?: unknown[][];
+  dataLayer?: unknown[];
   gtag?: (...args: unknown[]) => void;
 };
 
@@ -17,8 +17,10 @@ function enableGoogleAnalytics() {
 
   const analyticsWindow = window as AnalyticsWindow;
   analyticsWindow.dataLayer = analyticsWindow.dataLayer || [];
-  analyticsWindow.gtag = (...args: unknown[]) => {
-    analyticsWindow.dataLayer?.push(args);
+  analyticsWindow.gtag = function () {
+    // Google tag dispatches IArguments commands differently from plain arrays.
+    // eslint-disable-next-line prefer-rest-params
+    analyticsWindow.dataLayer?.push(arguments);
   };
   analyticsWindow.gtag("js", new Date());
   analyticsWindow.gtag("config", MEASUREMENT_ID);
