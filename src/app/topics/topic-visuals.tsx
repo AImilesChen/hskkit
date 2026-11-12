@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import { topicIconFor, topicVisualFor } from "@/lib/topics/visuals";
+import { topicCoverFor } from "@/lib/topics/covers";
 
 type IconProps = { name: string; className?: string; title?: string };
 
@@ -58,15 +59,17 @@ export function CategoryVisual({ categorySlug }: { categorySlug: string; title: 
 
 export function TopicScene({ topicSlug, categorySlug }: { topicSlug: string; categorySlug: string; title: string }) {
   const visual = topicVisualFor(categorySlug);
+  const cover = topicCoverFor(topicSlug);
   return <div className="topics-scene" aria-hidden="true">
-    <img src={`/illustrations/${sceneImage(categorySlug)}.webp`} alt="" width="768" height="512" loading="lazy" decoding="async" />
+    <img src={cover ?? `/illustrations/${sceneImage(categorySlug)}.webp`} alt="" width="960" height="640" loading="lazy" decoding="async" />
     <span className={`topics-scene-icon ${visual.iconText}`}><TopicIcon name={topicIconFor(topicSlug)} className="size-6" /></span>
     <span className="topics-scene-label">{visual.label}</span>
   </div>;
 }
 
-export function TopicHeroScene({ categorySlug }: { visualKey: string; categorySlug: string; title: string; titleZh: string }) {
+export function TopicHeroScene({ visualKey, categorySlug }: { visualKey: string; categorySlug: string; title: string; titleZh: string }) {
+  const cover = topicCoverFor(visualKey);
   return <div className="topics-hero-art" aria-hidden="true">
-    <img src={`/illustrations/${sceneImage(categorySlug)}.webp`} alt="" width="768" height="512" decoding="async" />
+    <img src={cover ?? `/illustrations/${sceneImage(categorySlug)}.webp`} alt="" width="960" height="640" decoding="async" />
   </div>;
 }
