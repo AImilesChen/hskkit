@@ -1,0 +1,43 @@
+name: Diagnose login Worker locally
+on:
+  push:
+    branches:
+      - diagnose/auth-runtime-20261112
+permissions:
+  contents: read
+jobs:
+  diagnose:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      WRANGLER_SEND_METRICS: "false"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          cache: npm
+      - run: npm ci
+      - name: Build local Worker without production credentials
+        env:
+          NODE_OPTIONS: --max-old-space-size=6144
+        run: |
+          npx opennextjs-cloudflare build --dangerouslyUseUnsupportedNextVersion
+          node scripts/patch-open-next-email.mjs
+      - name: Run unchanged local runtime verification
+        timeout-minutes: 7
+        run: node scripts/check-public-cache-hit.cjs
+      - name: Retain local runtime diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: auth-local-runtime-diagnostics
+          path: |
+            .open-next/server-functions/default/handler.mjs
+            .open-next/worker.cache-probe.js
+            .open-next/.cache-check-*/bundle/worker.cache-probe.js
+            .open-next/.cache-check-*/logs/
+            .next/server/app/api/v1/account/route.js
+          include-hidden-files: true
+          retention-days: 1
+          if-no-files-found: warn
