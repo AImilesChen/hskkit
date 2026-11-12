@@ -1,4 +1,7 @@
 import { getCloudflareContext } from "@opennextjs/cloudflare";
+import { accountFromRow as account, type Account, type AccountRow } from "./authentication";
+export { authenticateAccount, authenticateSession } from "./authentication";
+export type { Account } from "./authentication";
 import type { LearningState } from "../learning/domain";
 import { loadState } from "../learning/storage";
 import { deletePlacementOwner, loadPlacementState, mergePlacementOwners, placementDbMode, restorePlacementOwnerAfterFailedDeletion } from "../placement/storage";
@@ -18,25 +21,6 @@ import {
   type DataRequestType,
 } from "./domain";
 
-export interface Account {
-  userId: string;
-  displayName: string;
-  timezone: string;
-  status: "active" | "deleted";
-  createdAt: string;
-  updatedAt: string;
-  deletedAt?: string;
-}
-
-type AccountRow = {
-  user_id: string;
-  display_name: string;
-  timezone: string;
-  status: "active" | "deleted";
-  created_at: string;
-  updated_at: string;
-  deleted_at: string | null;
-};
 type RequestRow = {
   id: string;
   type: DataRequestType;
@@ -52,9 +36,7 @@ type AiMergeSnapshot = { operationCount: number; operationMax: string; bucketCou
 
 const db = () => getCloudflareContext().env.LEARNING_DB;
 const now = () => new Date().toISOString();
-const SESSION_TOUCH_INTERVAL_MS = 15 * 60_000;
 const DEVICE_TOUCH_INTERVAL_MS = 15 * 60_000;
-const sessionTouchThreshold = (timestamp: string) => new Date(Date.parse(timestamp) - SESSION_TOUCH_INTERVAL_MS).toISOString();
 const deviceTouchThreshold = (timestamp: string) => new Date(Date.parse(timestamp) - DEVICE_TOUCH_INTERVAL_MS).toISOString();
 
 async function stableSyncConflictId(userId: string, deviceId: string, clientRevision: number, serverRevision: number) {
@@ -74,17 +56,6 @@ function secret() { const bytes = crypto.getRandomValues(new Uint8Array(32)); re
 async function hash(value: string) {
   const digest = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(value));
   return b64url(new Uint8Array(digest));
-}
-function account(row: AccountRow): Account {
-  return {
-    userId: row.user_id,
-    displayName: row.display_name,
-    timezone: row.timezone,
-    status: row.status,
-    createdAt: row.created_at,
-    updatedAt: row.updated_at,
-    deletedAt: row.deleted_at ?? undefined,
-  };
 }
 function request(row: RequestRow): AccountDataRequest {
   return {
@@ -119,26 +90,6 @@ export async function createAccount(displayName: string, timezone: string) {
     db().prepare("INSERT INTO account_audit(id,user_id,action,resource_type,resource_id,result,idempotency_key,created_at) VALUES(?,?,'account_created','account',?,'success',?,?)").bind(crypto.randomUUID(), userId, userId, `create:${userId}`, timestamp),
   ]);
   return { account: { userId, displayName: displayName.trim(), timezone, status: "active", createdAt: timestamp, updatedAt: timestamp } satisfies Account, syncKey };
-}
-
-export async function authenticateAccount(syncKey: string | undefined, touchSession = false) {
-  if (!syncKey || syncKey.length < 20 || syncKey.length > 100) return undefined;
-  const tokenHash = await hash(syncKey);
-  const row = await db().prepare("SELECT a.* FROM account_tokens t JOIN accounts a ON a.user_id=t.user_id WHERE t.token_hash=? AND t.revoked_at IS NULL AND a.status='active'").bind(tokenHash).first<AccountRow>();
-  if (!row) return undefined;
-  const timestamp = now();
-  if (touchSession) await db().prepare("UPDATE account_tokens SET last_used_at=? WHERE token_hash=? AND (last_used_at IS NULL OR last_used_at < ?)").bind(timestamp, tokenHash, sessionTouchThreshold(timestamp)).run().catch(() => undefined);
-  return account(row);
-}
-
-export async function authenticateSession(sessionToken: string | undefined, touchSession = false) {
-  if (!sessionToken || sessionToken.length < 20 || sessionToken.length > 100) return undefined;
-  const tokenHash = await hash(sessionToken);
-  const timestamp = now();
-  const row = await db().prepare("SELECT a.* FROM account_sessions s JOIN accounts a ON a.user_id=s.user_id WHERE s.token_hash=? AND s.revoked_at IS NULL AND s.expires_at>? AND a.status='active'").bind(tokenHash, timestamp).first<AccountRow>();
-  if (!row) return undefined;
-  if (touchSession) await db().prepare("UPDATE account_sessions SET last_used_at=? WHERE token_hash=? AND (last_used_at IS NULL OR last_used_at < ?)").bind(timestamp, tokenHash, sessionTouchThreshold(timestamp)).run().catch(() => undefined);
-  return account(row);
 }
 
 export async function createAccountSession(userId: string) {

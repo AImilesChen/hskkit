@@ -89,18 +89,18 @@ test("Account auxiliary resources load in bounded batches", async () => {
 
 test("only the primary account status request touches session recency", () => {
   const identity = read("../src/lib/account/identity.ts");
-  const storage = read("../src/lib/account/storage.ts");
+  const storage = read("../src/lib/account/authentication.ts");
   const route = read("../src/app/api/v1/account/route.ts");
   const accountClient = read("../src/app/account/account-client.tsx");
   const header = read("../src/app/site-header.tsx");
 
   assert.match(identity, /requestIdentity\(options:[\s\S]*touchSession/);
-  assert.match(identity, /authenticateSession\(sessionToken, options\.touchSession/);
+  assert.match(identity, /authenticateSession\(sessionToken, touchSession\)/);
   assert.match(storage, /authenticateSession\(sessionToken: string \| undefined, touchSession = false\)/);
   assert.match(storage, /if \(touchSession\)[\s\S]*UPDATE account_sessions SET last_used_at/);
   assert.match(route, /requestIdentity\(\{ touchSession: true \}\)/);
   assert.match(accountClient, /loadAccountSnapshot/);
-  assert.match(accountClient, /settleInBatches/);
+  assert.match(accountClient, /\/api\/v1\/account\/overview\?deviceId=/);
   assert.match(header, /loadAccountSessionSnapshot/);
   assert.match(read("../src/app/api/v1/account/session/route.ts"), /!jar\.has\(SESSION_COOKIE\)[\s\S]*!jar\.has\(ACCOUNT_COOKIE\)/);
   assert.doesNotMatch(header, /fetch\("\/api\/v1\/account"/);

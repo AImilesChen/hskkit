@@ -1,6 +1,6 @@
 import { cookies } from "next/headers";
 import { cache } from "react";
-import { authenticateAccount, authenticateSession, type Account } from "./storage";
+import { authenticateAccount, authenticateSession, type Account } from "./authentication";
 import { withUserD1ReadProtection } from "@/lib/d1/user-protection";
 
 export const ACCOUNT_COOKIE = "hskkit_account";

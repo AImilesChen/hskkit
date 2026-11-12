@@ -104,7 +104,7 @@ test("catalog GET responses use the Cloudflare edge cache while flashcards stay 
 });
 
 test("session activity writes are throttled without changing authentication", () => {
-  const source = read("src/lib/account/storage.ts");
+  const source = read("src/lib/account/authentication.ts");
   assert.match(source, /SESSION_TOUCH_INTERVAL_MS = 15 \* 60_000/);
   assert.match(source, /UPDATE account_sessions SET last_used_at=\? WHERE token_hash=\? AND \(last_used_at IS NULL OR last_used_at < \?\)/);
   assert.match(source, /UPDATE account_tokens SET last_used_at=\? WHERE token_hash=\? AND \(last_used_at IS NULL OR last_used_at < \?\)/);

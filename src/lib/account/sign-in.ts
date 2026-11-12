@@ -1,4 +1,4 @@
-import { safeReturnTo } from './domain.ts';
+import { safeReturnTo } from './return-to.ts';
 
 export const SIGN_IN_NOTICE_PARAM = 'hskkit_signed_in';
 export const GOOGLE_START_PATH = '/api/v1/auth/google/start';

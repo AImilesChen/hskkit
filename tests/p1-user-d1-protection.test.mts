@@ -13,10 +13,11 @@ const read = (path: string) => readFileSync(new URL(`../${path}`, import.meta.ur
 test("session authentication is request-cached and last-used writes stay throttled", () => {
   const identity = read("src/lib/account/identity.ts");
   const storage = read("src/lib/account/storage.ts");
+  const authentication = read("src/lib/account/authentication.ts");
   assert.match(identity, /import \{ cache \} from "react"/);
   assert.match(identity, /cache\(async function resolveRequestIdentity/);
-  assert.match(storage, /last_used_at\s*<\s*\?/);
-  assert.match(storage, /SESSION_TOUCH_INTERVAL_MS/);
+  assert.match(authentication, /last_used_at\s*<\s*\?/);
+  assert.match(authentication, /SESSION_TOUCH_INTERVAL_MS/);
   assert.match(storage, /last_seen_at\s*<=\s*\?/);
   assert.match(storage, /DEVICE_TOUCH_INTERVAL_MS/);
   const engagement = read("src/app/components/learning-engagement-tracker.tsx");
