@@ -250,20 +250,89 @@ function response(data: ReturnType<typeof view>, fresh: boolean, id: string, rev
   if (fresh) res.cookies.set(COOKIE, id, { httpOnly: true, sameSite: "lax", secure: true, maxAge: 31_536_000, path: "/" });
   return res;
 }
+// Opt-in timing probe: normal GET and POST responses keep their existing path.
+function learningReadTrace() {
+  const started = performance.now();
+  const stages: Array<{ stage: string; startedMs: number; durationMs?: number }> = [];
+  const elapsed = () => Math.round((performance.now() - started) * 100) / 100;
+  function begin(stage: string) {
+    const item = { stage, startedMs: elapsed() } as typeof stages[number];
+    stages.push(item);
+    return () => { item.durationMs = Math.round((elapsed() - item.startedMs) * 100) / 100; };
+  }
+  return {
+    async run<T>(stage: string, operation: () => Promise<T>): Promise<T> {
+      const end = begin(stage);
+      try { return await operation(); } finally { end(); }
+    },
+    sync<T>(stage: string, operation: () => T): T {
+      const end = begin(stage);
+      try { return operation(); } finally { end(); }
+    },
+    snapshot() { return { elapsedMs: elapsed(), stages: stages.map((item) => ({ ...item })), activeStage: stages.findLast((item) => item.durationMs === undefined)?.stage ?? null }; },
+  };
+}
+async function getLearningTimed(req: NextRequest, trace: ReturnType<typeof learningReadTrace>) {
+  const identity = await trace.run("account_verification", () => owner());
+  const access = await trace.run("access_policy", () => requireLearningAccess(identity, "learning:read"));
+  if (!access.allowed) return errorResponse(access.code, 403);
+  const tz = offset(req.nextUrl.searchParams.get("tzOffset") ? Number(req.nextUrl.searchParams.get("tzOffset")) : 0);
+  const periodKey = learningLocalDay(new Date().toISOString(), tz, identity.account?.timezone);
+  const [loaded, capabilities, usage] = await Promise.all([
+    trace.run("learning_state", () => loadState(identity.id)),
+    trace.run("entitlements", () => resolveCapabilities(identity.id)),
+    trace.run("usage_counters", () => usageSnapshot(identity.id, periodKey)),
+  ]);
+  const data = trace.sync("data_assembly", () => view(loaded.state, identity.id, tz, capabilities, identity.account?.timezone));
+  const words = await trace.run("saved_words", () => getDictionaryWordsByIds(data.state.savedWordIds ?? []));
+  return trace.sync("response_assembly", () => response(data, identity.fresh, identity.id, loaded.revision, Boolean(identity.account), capabilities, usage, undefined, words));
+}
+async function learningTimingResponse(req: NextRequest) {
+  const started = performance.now();
+  const attempts: ReturnType<typeof learningReadTrace>[] = [];
+  let status = 500;
+  let errorCode: string | undefined;
+  try {
+    const result = await withUserD1ReadProtection(() => {
+      const trace = learningReadTrace();
+      attempts.push(trace);
+      return getLearningTimed(req, trace);
+    });
+    status = result.status;
+  } catch (error) {
+    const unavailable = d1UnavailableResponse(error);
+    if (!unavailable) throw error;
+    status = unavailable.status;
+    errorCode = "D1_TEMPORARILY_UNAVAILABLE";
+  }
+  // Only stage names and durations are returned. No account IDs, cookies, state or answers.
+  return NextResponse.json({
+    diagnostic: "learning-read-timing-v1",
+    measuredAt: new Date().toISOString(),
+    status,
+    ...(errorCode ? { error: errorCode } : {}),
+    totalMs: Math.round((performance.now() - started) * 100) / 100,
+    attempts: attempts.map((trace) => trace.snapshot()),
+  }, { status, headers: PRIVATE_RESPONSE_HEADERS });
+}
 async function getLearning(req: NextRequest) {
   const identity = await owner();
   const access = await requireLearningAccess(identity, "learning:read");
   if (!access.allowed) return errorResponse(access.code, 403);
-  const loaded = await loadState(identity.id);
   const tz = offset(req.nextUrl.searchParams.get("tzOffset") ? Number(req.nextUrl.searchParams.get("tzOffset")) : 0);
-  const capabilities = await resolveCapabilities(identity.id);
   const periodKey = learningLocalDay(new Date().toISOString(), tz, identity.account?.timezone);
-  const usage = await usageSnapshot(identity.id, periodKey);
+  // These reads depend only on the verified identity and local day, not on each other.
+  const [loaded, capabilities, usage] = await Promise.all([
+    loadState(identity.id),
+    resolveCapabilities(identity.id),
+    usageSnapshot(identity.id, periodKey),
+  ]);
   const data = view(loaded.state, identity.id, tz, capabilities, identity.account?.timezone);
   const words = await getDictionaryWordsByIds(data.state.savedWordIds ?? []);
   return response(data, identity.fresh, identity.id, loaded.revision, Boolean(identity.account), capabilities, usage, undefined, words);
 }
 export async function GET(req: NextRequest) {
+  if (req.nextUrl.searchParams.get("diagnostic") === "timing") return learningTimingResponse(req);
   try { return await withUserD1ReadProtection(() => getLearning(req)); }
   catch (error) { const unavailable = d1UnavailableResponse(error); if (unavailable) return unavailable; throw error; }
 }
