@@ -208,6 +208,7 @@
 /* Keep the interactive preview on the same page edges as discovery sections. */
 .home-main #quick-flashcards-demo.home-demo { margin-left:0; margin-right:0; }
 .home-tool-example .home-tone-example>span { display:flex; flex-direction:column; align-items:center; gap:8px; }
+.home-tool-example .home-worksheet-example>span { display:grid; }
 .home-tone-example small { white-space:nowrap; }
 @media(max-width:767px) {
  .home-tool-top { min-height:70px; }
