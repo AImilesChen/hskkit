@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { shouldBlockCrawler } from "./lib/traffic/bot-guard";
+import { legacyWordRedirect } from "./lib/content/legacy-word-redirect";
 
 const consolidatedRoutes: Record<string, string> = {
   "/hsk-levels": "/levels",
@@ -28,7 +29,7 @@ export function middleware(request: NextRequest) {
       },
     });
   }
-  const consolidated = consolidatedRoutes[path];
+  const consolidated = consolidatedRoutes[path] ?? legacyWordRedirect(path);
   if (consolidated) {
     const target = request.nextUrl.clone();
     target.pathname = consolidated;
@@ -50,3 +51,4 @@ export function middleware(request: NextRequest) {
 export const config = {
   matcher: ["/((?!_next/static|_next/image|favicon.ico).*)"],
 };
+

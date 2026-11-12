@@ -11,6 +11,9 @@ import {
 } from "@/lib/topics/catalog";
 import blogManifest from "../../content/blog/manifest.json";
 import { TEST_LEVELS, testLevelHref } from "@/lib/tests/test-levels";
+import seoWords from "../lib/content/seo-word-sitemap.json";
+
+export const dynamic = "force-static";
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const baseUrl = "https://hskkit.com";
@@ -57,7 +60,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
     ...existingPublicRoutes,
     ...TEST_LEVELS.map(testLevelHref),
     ...sitemapContentRoutes().filter((route) => !route.startsWith("/vocabulary/")),
-    ...getHsk3LevelStatuses().filter((entry) => entry.availability === "ready").map((entry) => `/vocabulary/${entry.level}`),
+    ...getHsk3LevelStatuses().filter((entry) => entry.availability === "ready" && entry.level <= 7).map((entry) => `/vocabulary/${entry.level}`),
+    ...seoWords.paths,
     ...publishedGrammarLessons.map((lesson) => `/grammar/${lesson.slug}`),
     ...publishedReadingLessons.map((lesson) => `/reading/${lesson.slug}`),
     ...READING_ARTICLES.map((article) => `/reading/article/${article.slug}`),

@@ -17,7 +17,11 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const { slug } = await params;
   const result = await getPublishedWordBySlug(decodeURIComponent(slug));
   return result.status === "published"
-    ? { title: `Practise ${result.item.hanzi} | HSKKit`, description: `Practise the meaning, pinyin and available synthesized pronunciation for ${result.item.hanzi}.` }
+    ? {
+      title: `Practise ${result.item.hanzi} | HSKKit`,
+      description: `Practise the meaning, pinyin and available synthesized pronunciation for ${result.item.hanzi}.`,
+      alternates: { canonical: `/word/${encodeURIComponent(result.item.slug)}/practice` },
+    }
     : { title: "Word practice | HSKKit" };
 }
 
