@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { bindTodayReviewRound, completedTodayReviewCards, type TodayReviewRound } from "../../lib/learning/review-session";
 import { useEffect, useRef, useState } from "react";
 import type { ReactNode } from "react";
 import AiAssist from "./ai-assist";
@@ -81,6 +82,7 @@ export default function LearningDashboard({ mode, practiceInfo = [] }: { mode: "
   const [selectedReviewScope, setSelectedReviewScope] = useState<ReviewLevelScope>("current");
   const [difficultOnly, setDifficultOnly] = useState(false);
   const [reviewIds, setReviewIds] = useState<string[] | null>(null);
+  const [todayReviewRound, setTodayReviewRound] = useState<TodayReviewRound | null>(null);
   const [entryIntent, setEntryIntent] = useState<ReviewEntryIntent>({ kind: "setup" });
   const [entryTodaySessionId, setEntryTodaySessionId] = useState("");
   const [entryTodayItemId, setEntryTodayItemId] = useState("");
@@ -311,15 +313,22 @@ export default function LearningDashboard({ mode, practiceInfo = [] }: { mode: "
       : data.capabilities.focusedReview
         ? data.focusedReview
         : data.cards.filter((card) => card.dueAt <= new Date().toISOString());
-    setReviewIds(entryIntent.kind === "today" ? (data.session.reviewCardIds ?? []) : buildIntentReviewQueue(reviewCards, entryIntent, reviewMinutes).map((card) => card.id));
+    if (entryIntent.kind === "today") {
+      if (data.session.id !== entryTodaySessionId) { setReviewIds([]); return; }
+      const storageKey = `today-review-round:${data.queueBinding}:${entryTodaySessionId}:${entryTodayItemId}`;
+      let saved: unknown;
+      try { saved = JSON.parse(sessionStorage.getItem(storageKey) ?? "null"); } catch { /* Storage is optional. */ }
+      const round = bindTodayReviewRound(data.session, entryIntent.cardIds, entryTodayItemId, saved);
+      setTodayReviewRound(round);
+      setReviewIds(round.cardIds);
+      try { sessionStorage.setItem(storageKey, JSON.stringify(round)); } catch { /* Server progress remains authoritative. */ }
+    } else setReviewIds(buildIntentReviewQueue(reviewCards, entryIntent, reviewMinutes).map((card) => card.id));
     setReviewedCount(0);
-  }, [data, entryIntent, entryResolved, mode, reviewIds, reviewMinutes]);
+  }, [data, entryIntent, entryResolved, mode, reviewIds, reviewMinutes, entryTodaySessionId, entryTodayItemId]);
 
   const currentReviewCardId = mode === "review" && data && reviewIds
     ? entryIntent.kind === "today"
-      ? activeTodayReviewCardId(reviewIds, new Set(data.session.items
-        .filter((item) => (data.session.reviewItemIds ?? []).includes(item.id) && item.kind === "review" && item.status === "completed")
-        .map((item) => item.reviewCardId).filter((id): id is string => Boolean(id))))
+      ? activeTodayReviewCardId(reviewIds, completedTodayReviewCards(data.session, todayReviewRound))
       : activeReviewCardId(reviewIds, reviewedCount)
     : null;
   const currentReviewCardRevision = data?.cards.find((card) => card.id === currentReviewCardId)?.revision;
@@ -781,8 +790,7 @@ export default function LearningDashboard({ mode, practiceInfo = [] }: { mode: "
   const recommendedCount = Math.min(recommendReviewCount(selectableDue), roundPreview.total);
   const reviewedSessionCards = (reviewIds ?? []).map((id) => data.cards.find((card) => card.id === id)).filter((card): card is Card => Boolean(card));
   const nextReviewAt = reviewedSessionCards.map((card) => card.dueAt).filter((dueAt) => new Date(dueAt).getTime() > Date.now()).sort()[0];
-  const todayReviewItemIds = new Set(data.session.reviewItemIds ?? []);
-  const todayCompletedReviewIds = new Set(data.session.items.filter((item) => todayReviewItemIds.has(item.id) && item.kind === "review" && item.status === "completed").map((item) => item.reviewCardId).filter((id): id is string => Boolean(id)));
+  const todayCompletedReviewIds = completedTodayReviewCards(data.session, todayReviewRound);
   const sessionTotal = reviewIds?.length ?? 0;
   const todayReviewedCount = entryIntent.kind === "today" ? (reviewIds ?? []).filter((id) => todayCompletedReviewIds.has(id)).length : reviewedCount;
   const displayReviewedCount = entryIntent.kind === "today" ? todayReviewedCount : reviewedCount;
@@ -794,7 +802,7 @@ export default function LearningDashboard({ mode, practiceInfo = [] }: { mode: "
   const directEntryPreparing = !entryResolved || (entryIntent.kind !== "setup" && reviewIds === null);
   const directEntryEmpty = entryIntent.kind !== "setup" && reviewIds !== null && reviewIds.length === 0;
   const sessionComplete = Boolean(reviewIds?.length && displayReviewedCount >= sessionTotal);
-  const missingReviewCard = Boolean(reviewIds?.length && activeReviewId && !activeCard);
+  const missingReviewCard = Boolean(reviewIds?.length && activeReviewId && (!activeCard || entryIntent.kind === "today" && !todayReviewRound?.itemIds[reviewIds.indexOf(activeReviewId)]));
   const selectedText = activeCard?.choices.find((choice) => choice.key === selectedAnswer)?.text ?? reviewDraft;
   const currentAnswerCorrect = retryFeedback?.correct ?? false;
   const isMistakeRetry = Boolean(activeCard?.isMistake && !activeCard.legacyReview && activeCard.answerMode !== "self_recall");

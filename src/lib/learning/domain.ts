@@ -809,7 +809,7 @@ export function buildDailySession(state: LearningState, input: { ownerId: string
       if (focus === "listening_focus") return Number(b.dimension !== "reading") - Number(a.dimension !== "reading") || a.dueAt.localeCompare(b.dueAt);
       return a.dueAt.localeCompare(b.dueAt);
     }), todayLevel);
-  const due: DailyItem[] = dueCards
+  let due: DailyItem[] = dueCards
     .map((card) => ({ id: reviewItemId(card), kind: "review", contentId: card.contentId, contentVersion: card.contentVersion, reviewCardId: card.id, dimension: card.dimension, status: "pending" }));
   const contentItems = content?.status === "ready" ? content.items : [];
   const planFingerprint = content?.status === "ready"
@@ -853,6 +853,20 @@ export function buildDailySession(state: LearningState, input: { ownerId: string
   ];
 
   const budgetMinutes = isTodayBudgetMinutes(input.budgetMinutes) ? input.budgetMinutes : isTodayBudgetMinutes(prior?.budgetMinutes) ? prior.budgetMinutes : 30;
+  // Word-plan refreshes must not replace the review round after a saved grade.
+  const priorReviewItems = (prior?.reviewItemIds ?? []).map((itemId) => prior?.items.find((item) => item.id === itemId));
+  const keepReviewRound = prior && prior.ruleVersion === input.ruleVersion
+    && prior.startLevel === todayLevel
+    && (prior.budgetMinutes ?? 30) === budgetMinutes
+    && (prior.newWordCount ?? 1) === newWordCount
+    && (prior.listeningEnabled ?? true) === listeningEnabled
+    && (prior.focus ?? "balanced") === focus
+    && Boolean(prior.reviewCardIds?.length)
+    && priorReviewItems.length === prior.reviewCardIds?.length
+    && priorReviewItems.every((item, index) => item?.kind === "review" && typeof item.reviewCardId === "string" && item.reviewCardId === prior.reviewCardIds?.[index]
+      && (item.status !== "pending" || state.cards.some((card) => card.id === item.reviewCardId)
+        && (!input.availableReviewCardIds || input.availableReviewCardIds.has(item.reviewCardId))));
+  if (keepReviewRound) due = priorReviewItems.map((item) => ({ ...item!, estimatedMinutes: item!.estimatedMinutes ?? estimateDailyItem(item!) }));
   const carriedDictionaryItems = (prior?.items ?? []).filter((item) => item.id.startsWith("dictionary:") && item.status !== "completed");
   const coreTasks = core.filter((item) => item.kind !== "summary");
   const dueMistakes = due.filter((item) => Boolean(item.reviewCardId && openMistakeCardIds.has(item.reviewCardId)));

@@ -85,6 +85,31 @@ export function activeTodayReviewCardId(reviewIds: readonly string[] | null, com
   return reviewIds.find((id) => !completedReviewIds.has(id));
 }
 
+type TodayReviewItem = { id: string; kind: string; reviewCardId?: string; status: string };
+export type TodayReviewRound = { sessionId: string; cardIds: string[]; itemIds: string[] };
+
+export function bindTodayReviewRound(session: { id: string; items: TodayReviewItem[]; reviewCardIds?: string[]; reviewItemIds?: string[] }, requestedCards?: string[], firstItemId?: string, saved?: unknown): TodayReviewRound {
+  const cardIds = [...new Set(requestedCards?.length ? requestedCards : session.reviewCardIds ?? [])];
+  const candidate = saved as TodayReviewRound | undefined;
+  if (candidate?.sessionId === session.id && Array.isArray(candidate.cardIds) && Array.isArray(candidate.itemIds)
+    && candidate.cardIds.length === cardIds.length && candidate.itemIds.length === cardIds.length
+    && cardIds.every((cardId, index) => candidate.cardIds[index] === cardId && session.items.some((item) => item.id === candidate.itemIds[index] && item.kind === "review" && item.reviewCardId === cardId))) {
+    return { sessionId: session.id, cardIds, itemIds: [...candidate.itemIds] };
+  }
+  const bindings = cardIds.map((cardId, index) => {
+    const matching = session.items.filter((item) => item.kind === "review" && item.reviewCardId === cardId);
+    const first = index === 0 ? matching.find((item) => item.id === firstItemId) : undefined;
+    const current = matching.find((item) => session.reviewItemIds?.includes(item.id));
+    return { cardId, item: first ?? current ?? matching.at(-1) };
+  });
+  return { sessionId: session.id, cardIds, itemIds: bindings.map((binding) => binding.item?.id ?? "") };
+}
+
+export function completedTodayReviewCards(session: { id: string; items: TodayReviewItem[] }, round: TodayReviewRound | null): Set<string> {
+  if (!round || round.sessionId !== session.id) return new Set();
+  return new Set(round.cardIds.filter((cardId, index) => session.items.some((item) => item.id === round.itemIds[index] && item.kind === "review" && item.reviewCardId === cardId && item.status === "completed")));
+}
+
 export function reviewLevelControl<T extends ReviewQueueCard>(cards: T[], currentLevel: number, preserveOrder = false): ReviewLevelControl {
   const normalizedCurrentLevel = Number.isInteger(currentLevel) && currentLevel >= 1 && currentLevel <= 9 ? currentLevel : 1;
   const ordered = preserveOrder
