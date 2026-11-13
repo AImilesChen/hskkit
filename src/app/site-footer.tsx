@@ -244,8 +244,15 @@ export default function SiteFooter() {
  {/* eslint-disable-next-line @next/next/no-img-element */}
  <img src="https://www.tinyshelf.co/badge/tinyshelf-badge-dark-f4d1216a.svg" alt="Featured on TinyShelf" width={216} height={64} loading="lazy" style={{ display: "block", maxWidth: "100%", height: "auto" }} />
  </a>
+ <a href="https://findly.tools/hskkit?utm_source=hskkit" target="_blank" rel="noopener noreferrer">
+ {/* eslint-disable-next-line @next/next/no-img-element */}
+ <img src="https://findly.tools/badges/findly-tools-badge-light.svg" alt="Featured on Findly.tools" width={175} height={55} loading="lazy" style={{ display: "block", maxWidth: "100%", height: "auto" }} />
+ </a>
  <a href="https://aitop10.tools/" target="_blank" rel="noopener noreferrer">AiTop10 Tools</a>
- <a href="https://saastool.site" target="_blank" rel="noopener noreferrer">SaaSTool</a>
+ <a href="https://saastool.site/item/hskkit?utm_source=hskkit.com" target="_blank" rel="noopener">
+ {/* eslint-disable-next-line @next/next/no-img-element */}
+ <img src="https://saastool.site/badges/saastool-light.svg" alt="Featured on SaaSTool.site" width={210} height={54} loading="lazy" style={{ display: "block", maxWidth: "100%", height: "auto" }} />
+ </a>
  </nav>
  <div className="resource-footer-bottom"><nav aria-label="Legal links">{legalLinks.map(item => <Link prefetch={false} key={item.href} href={item.href}>{item.label}</Link>)}</nav><p>© 2026 HSKKit</p><p>{disclaimer}</p></div>
  </div></footer>;
