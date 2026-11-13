@@ -65,15 +65,24 @@ async function consumers(){
 async function quickHealth(){
  const r=await readPublic('/word/hsk2025.word.l1.0007.v1');assert.equal(r.status,200);assert.equal(r.cache,'HIT');assert.ok(r.bytes.toString().includes('dictionary-word-hanzi'));return {status:r.status,cache:r.cache};
 }
+function validatePrivateResponse(url,r){
+ if(url==='/api/v1/commercial/exports'){
+  // This existing unauthenticated error response has no Cache-Control header.
+  // Preserve its contract; do not change application behavior during cleanup.
+  assert.equal(r.status,401);assert.equal(JSON.parse(r.bytes).error,'ACCOUNT_REQUIRED');
+  assert.ok(!/\b(public|s-maxage)\b/i.test(r.control||''),'Unauthenticated export response became public');
+  assert.notEqual(r.cache,'HIT','Unauthenticated export response was cached');
+ }else assert.ok(r.control?.includes('no-store'),'Private API caching: '+url);
+}
 async function pages(){
  const routes=[['/',200],['/dictionary',200],['/word/hsk2025.word.l1.0007.v1',200],['/word/hsk2025.word.l1.0007.v1/practice',200],['/word/hsk2025.word.l6.4559.v1',200],['/word/hsk3.word.l7.1831.v1',404],['/api/v1/account',200],['/api/v1/account/learning-rewards',401],['/api/v1/commercial/exports',401]];
  const rows=[];let wordHtml='';
  for(const [url,status] of routes){const r=await readPublic(url);assert.equal(r.status,status,'Page health: '+url);
-  if(url.startsWith('/api/'))assert.ok(r.control?.includes('no-store'),'Private API caching');
+  if(url.startsWith('/api/'))validatePrivateResponse(url,r);
   if(url==='/api/v1/account')assert.equal(JSON.parse(r.bytes).account,null);
   if(url==='/word/hsk2025.word.l1.0007.v1')wordHtml=r.bytes.toString();
   if(url.startsWith('/word/hsk2025.'))assert.equal(r.cache,'HIT','Current word cache must stay hot');
-  rows.push({url,status:r.status,cache:r.cache});
+  rows.push({url,status:r.status,cache:r.cache,control:r.control});
  }
  const refs=[...new Set([...wordHtml.matchAll(/(?:href|src)="(\/_next\/static\/[^"<>]+)"/g)].map(x=>x[1]))];
  const styles=refs.filter(x=>/\.css(?:\?|$)/.test(x));assert.ok(styles.length>0,'No current stylesheet');
@@ -95,7 +104,7 @@ async function checkCanaries(client,expected){
  for(const o of expected){const r=await client.send(new GetObjectCommand({Bucket:BUCKET,Key:o.key}),{abortSignal:AbortSignal.timeout(30000)});assert.equal(sha(Buffer.from(await r.Body.transformToByteArray())),o.sha256,'Protected cache changed');}
 }
 function inventory(items){return {objects:items.length,bytes:items.reduce((n,o)=>n+o.Size,0)};}
-module.exports={validateObject,deleteBatch,M};
+module.exports={validateObject,deleteBatch,validatePrivateResponse,M};
 if(require.main===module)(async()=>{
  assert.equal(process.env.CACHE_CLEANUP_APPROVED,'reviewed-9-directories-20261113','Reviewed-scope approval missing');
  assert.ok(process.env.RUNNER_TEMP,'Missing report directory');
@@ -119,7 +128,8 @@ if(require.main===module)(async()=>{
   }
   report.identityAfter=await guard();report.consumersAfter=await consumers();
   await checkCanaries(client,report.protectedCanaries);report.protectedCanariesUnchanged=true;
-  report.pagesAfter=await pages();assert.deepEqual(report.pagesAfter.assets,report.pagesBefore.assets,'Current CSS/JS/font assets changed');report.staticAssetsUnchanged=true;
+  report.pagesAfter=await pages();assert.deepEqual(report.pagesAfter.assets,report.pagesBefore.assets,'Current CSS/JS/font assets changed');
+  assert.deepEqual(report.pagesAfter.rows.filter(r=>r.url.startsWith('/api/')),report.pagesBefore.rows.filter(r=>r.url.startsWith('/api/')),'Existing API response contract changed');report.staticAssetsUnchanged=true;
   const after=await list(client);report.after=inventory(after);
   for(const c of APPROVED.values())assert.equal(after.filter(o=>o.Key.startsWith('system/opennext-cache/'+c.build+'/')).length,0,'Candidate prefix not empty');
   assert.equal(report.deletedObjects,26364);assert.equal(report.deletedBytes,4799075118);

@@ -40,3 +40,11 @@ test('installed SDK serializes the exact reviewed XML delete request and reads c
  t.after(async()=>{client.destroy();await new Promise(resolve=>server.close(resolve));});
  assert.equal(await deleteBatch(client,[object(1)],async()=>{}),1);assert.equal(method,'POST');assert.ok(url.startsWith('/hskkit-page-cache/'));assert.ok(url.includes('delete'));assert.ok(body.includes(`<Key>${key(1)}</Key>`));assert.equal((body.match(/<Key>/g)||[]).length,1);
 });
+test('existing anonymous export error is preserved without weakening account no-store checks',()=>{
+ const {validatePrivateResponse}=require('../scripts/clean-reviewed-cache.cjs');
+ const r={status:401,bytes:Buffer.from('{"error":"ACCOUNT_REQUIRED"}'),control:null,cache:null};
+ assert.doesNotThrow(()=>validatePrivateResponse('/api/v1/commercial/exports',r));
+ assert.throws(()=>validatePrivateResponse('/api/v1/account',r),/Private API caching/);
+ assert.throws(()=>validatePrivateResponse('/api/v1/commercial/exports',{...r,control:'public, s-maxage=100'}),/became public/);
+ assert.throws(()=>validatePrivateResponse('/api/v1/commercial/exports',{...r,cache:'HIT'}),/was cached/);
+});
