@@ -229,6 +229,24 @@ export default function SiteFooter() {
  <div className="resource-footer-desktop"><h2>{group.title}</h2><FooterLinks links={group.links}/></div>
  <details className="resource-footer-mobile"><summary>{group.title}<span aria-hidden="true">+</span></summary><FooterLinks links={group.links}/></details>
  </nav>)}</div></div>
+
+ <nav aria-label="Directory listings" style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: "16px", paddingTop: "24px" }}>
+ <a href="https://firstlook.tools" target="_blank" rel="noopener noreferrer">
+ {/* Directory verifiers require the original image URL without an image proxy. */}
+ {/* eslint-disable-next-line @next/next/no-img-element */}
+ <img src="https://firstlook.tools/badge/badge_light.svg" alt="Featured on First Look" width={200} height={54} loading="lazy" style={{ display: "block", maxWidth: "100%", height: "auto" }} />
+ </a>
+ <a href="https://launchpadly.co/startup/hskkit?ref=badge" target="_blank" rel="noopener noreferrer" data-launchpadly-badge="hskkit" data-launchpadly-badge-variant="listed-on">
+ {/* eslint-disable-next-line @next/next/no-img-element */}
+ <img src="https://launchpadly.co/embed/badges/startup/hskkit.svg?variant=listed-on" alt="Launchpadly Startup Directory" width={260} height={48} loading="lazy" style={{ display: "block", maxWidth: "100%", height: "auto", border: 0 }} />
+ </a>
+ <a href="https://www.tinyshelf.co/?ref=hskkit.com" title="Featured on TinyShelf">
+ {/* eslint-disable-next-line @next/next/no-img-element */}
+ <img src="https://www.tinyshelf.co/badge/tinyshelf-badge-dark-f4d1216a.svg" alt="Featured on TinyShelf" width={216} height={64} loading="lazy" style={{ display: "block", maxWidth: "100%", height: "auto" }} />
+ </a>
+ <a href="https://aitop10.tools/" target="_blank" rel="noopener noreferrer">AiTop10 Tools</a>
+ <a href="https://saastool.site" target="_blank" rel="noopener noreferrer">SaaSTool</a>
+ </nav>
  <div className="resource-footer-bottom"><nav aria-label="Legal links">{legalLinks.map(item => <Link prefetch={false} key={item.href} href={item.href}>{item.label}</Link>)}</nav><p>© 2026 HSKKit</p><p>{disclaimer}</p></div>
  </div></footer>;
 }
