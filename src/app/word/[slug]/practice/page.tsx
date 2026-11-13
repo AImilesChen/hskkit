@@ -1,3 +1,4 @@
+import { wordPrebuildParams } from "../../../../lib/dictionary/word-prebuild";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -10,7 +11,7 @@ import { WordPracticeClient } from "./word-practice-client";
 export const revalidate = 86_400;
 
 export function generateStaticParams() {
-  return [];
+  return wordPrebuildParams();
 }
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {

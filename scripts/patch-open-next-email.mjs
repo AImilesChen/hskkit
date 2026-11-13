@@ -30,3 +30,17 @@ if (handler.includes(middlewareManifestLookup)) {
 } else if (!handler.includes(middlewareManifestDisabled)) {
   throw new Error("Unexpected OpenNext server output: middleware manifest lookup not found.");
 }
+
+// Reuse the generated NotFound component and current JS/CSS references verbatim.
+// Keep this outside the full Next handler so invalid document requests stay cheap.
+const wordMarker = "/* hskkit-word-not-found-runtime */";
+const wordSource = await readFile(workerPath, "utf8");
+const notFoundHtml = await readFile(new URL("../.next/server/app/_not-found.html", import.meta.url), "utf8");
+if (!notFoundHtml.includes("Study item not found")) throw new Error("Missing built 404 template");
+await writeFile(new URL("../.open-next/word-not-found-html.mjs", import.meta.url), `export default ${JSON.stringify(notFoundHtml)};\n`);
+if (!wordSource.includes(wordMarker)) {
+  const anchor = 'const { handler } = await import("./server-functions/default/handler.mjs");';
+  if (!wordSource.includes(anchor)) throw new Error("Unexpected Worker template: Next import missing");
+  const prelude = `${wordMarker}\nimport { missingWordResponse } from "../src/lib/runtime/word-not-found.ts";\nimport wordNotFoundHtml from "./word-not-found-html.mjs";\n`;
+  await writeFile(workerPath, prelude + wordSource.replace(anchor, `const missingWord = missingWordResponse(request, wordNotFoundHtml);\n            if (missingWord) return missingWord;\n            ${anchor}`));
+}

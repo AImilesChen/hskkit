@@ -8,7 +8,7 @@ import { DictionaryWordActions } from "../../components/dictionary-word-actions"
 import TodayWordCompletion from "../../components/today-word-completion";
 import { WordScriptToggle } from "../../components/word-script-toggle";
 import { StudyPage } from "../../components/study-shell";
-import { listPublishedWords } from "@/lib/dictionary/catalog";
+import { wordPrebuildParams } from "@/lib/dictionary/word-prebuild";
 import { wordDetailContent, type DetailWord } from "@/lib/dictionary/word-detail-content";
 import { getDictionaryLearningContext } from "@/lib/dictionary/p2-server";
 import { getPublishedWordBySlug, splitDictionaryMeanings } from "@/lib/dictionary/runtime-word";
@@ -45,7 +45,7 @@ function WordExample({ example, target }: { example: { hanzi: string; pinyin: st
 export const revalidate = 86_400;
 
 export function generateStaticParams() {
-  return listPublishedWords().map((word) => ({ slug: word.slug }));
+  return wordPrebuildParams();
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
