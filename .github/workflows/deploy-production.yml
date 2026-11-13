@@ -96,11 +96,12 @@ jobs:
       - name: Verify cached public pages bypass Next and paid files remain guarded
         timeout-minutes: 7
         run: |
-          node --test tests/cache-gate-runner.test.cjs
+          node --test tests/cache-gate-runner.test.cjs tests/word-cache-upload.test.cjs
           node scripts/run-cache-gate.cjs
       - name: Upload and deploy Worker version
         run: |
-          npx wrangler versions upload | tee "$RUNNER_TEMP/worker-upload.log"
+          npx opennextjs-cloudflare upload --cacheChunkSize 10 | tee "$RUNNER_TEMP/worker-upload.log"
+          node scripts/verify-word-cache-upload.cjs
           version_id=$(grep -Eo 'Worker Version ID: [0-9a-f-]{36}' "$RUNNER_TEMP/worker-upload.log" | tail -1 | awk '{print $4}')
           if [ -z "$version_id" ]; then
             echo "Wrangler did not return a Worker version ID" >&2
@@ -127,7 +128,9 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: cost-cache-audit-${{ github.run_id }}
-          path: ${{ runner.temp }}/cost-cache-audit.json
+          path: |
+            ${{ runner.temp }}/cost-cache-audit.json
+            ${{ runner.temp }}/word-cache-upload.json
           retention-days: 7
           if-no-files-found: error
       - name: Retain storage deployment verification
