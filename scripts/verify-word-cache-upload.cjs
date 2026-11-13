@@ -7,7 +7,7 @@ const { spawnSync } = require('node:child_process');
 const routes = ['/word/hsk2025.word.l1.0007.v1', '/word/hsk2025.word.l1.0007.v1/practice', '/word/hsk2025.word.l6.4559.v1'];
 function cacheObjectKey(build, route) {
   assert.match(build, /^[A-Za-z0-9_-]{10,64}$/);
-  assert.match(route, /^\/word\/hsk2025\.word\.l[1-7]\.\d{4,5}\.v\d+(?:\/practice)?$/);
+  assert.match(route, /^\/word\/(?:[a-z]+(?:-[a-z]+)*|(?:hsk3|hsk2025)\.word\.l[1-7]\.\d{4,5}\.v\d+)(?:\/practice)?$/);
   return `system/opennext-cache/${build}/${crypto.createHash('sha256').update(route).digest('hex')}.cache`;
 }
 function verifyBytes(local, remote) {

@@ -96,12 +96,13 @@ jobs:
       - name: Verify cached public pages bypass Next and paid files remain guarded
         timeout-minutes: 7
         run: |
-          node --test tests/cache-gate-runner.test.cjs tests/word-cache-upload.test.cjs
+          node --test tests/cache-gate-runner.test.cjs tests/word-cache-upload.test.cjs tests/publish-word-cache.test.cjs
           node scripts/run-cache-gate.cjs
       - name: Upload and deploy Worker version
         run: |
-          npx opennextjs-cloudflare upload --cacheChunkSize 10 | tee "$RUNNER_TEMP/worker-upload.log"
+          node scripts/publish-word-cache.cjs
           node scripts/verify-word-cache-upload.cjs
+          npx wrangler versions upload | tee "$RUNNER_TEMP/worker-upload.log"
           version_id=$(grep -Eo 'Worker Version ID: [0-9a-f-]{36}' "$RUNNER_TEMP/worker-upload.log" | tail -1 | awk '{print $4}')
           if [ -z "$version_id" ]; then
             echo "Wrangler did not return a Worker version ID" >&2
