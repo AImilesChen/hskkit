@@ -1,5 +1,5 @@
 import runtimeIndex from "../content/runtime-content-index.json" with { type: "json" };
-import { publicAudioAsset, publishedContentAudioAsset, type PublicAudioAsset } from "../audio/assets.ts";
+import { publicAudioAsset, publishedContentAudioAsset, type PublicAudioAsset } from "../audio/word-assets.ts";
 import { P1_CHARACTER_RECORDS } from "./p1-character-data.ts";
 import { matchedWordExample } from "../learning/word-example-editorial.ts";
 

@@ -1,5 +1,5 @@
 import runtimeIndex from "../content/runtime-content-index.json" with { type: "json" };
-import { publishedContentAudioAsset } from "../audio/assets.ts";
+import { publishedContentAudioAsset } from "../audio/word-assets.ts";
 import type { CatalogSearchRow } from "../content/catalog-search.ts";
 import { findNextPublicCatalogWordsForToday, findPublicCatalogWordById } from "../content/public-catalog-index.ts";
 import { getHsk3LevelStatus } from "../content/level-status.ts";

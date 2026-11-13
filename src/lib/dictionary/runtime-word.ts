@@ -1,5 +1,5 @@
 import { cache } from "react";
-import { publicAudioAsset, publishedContentAudioAsset } from "../audio/assets.ts";
+import { publicAudioAsset, publishedContentAudioAsset } from "../audio/word-assets.ts";
 import { isCatalogWordAssetId } from "../content/catalog-search.ts";
 import { findPublicCatalogWordById } from "../content/public-catalog-index.ts";
 import { getWordBySlug, type LookupResult, type StudyWord } from "./catalog.ts";

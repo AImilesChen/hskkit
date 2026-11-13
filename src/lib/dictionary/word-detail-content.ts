@@ -2,8 +2,11 @@ import type { StudyWord } from "./catalog.ts";
 import { relatedWordsForWord } from "./catalog.ts";
 import { findPublicCatalogWordById, findPublicCatalogWordsContainingCharacter, publicCatalogReleaseId } from "../content/public-catalog-index.ts";
 import { getIndexedCharacter } from "./character-index.ts";
-import { GRAMMAR_CURRICULUM, READING_LESSONS } from "../learning/step7-content.ts";
+import recommendations from "./word-detail-recommendations.json" with { type: "json" };
 import { WORD_DETAIL_EDITORIAL } from "./word-detail-editorial.ts";
+
+const GRAMMAR_CURRICULUM = recommendations.grammar;
+const READING_LESSONS = recommendations.readings;
 
 export type DetailWord = { id: string; hanzi: string; pinyin: string; meaning: string; level: number };
 const levelNumber = (band: string) => band === "7-9" ? 7 : Number(band);

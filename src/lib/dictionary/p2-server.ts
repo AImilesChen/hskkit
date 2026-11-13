@@ -2,7 +2,7 @@ import "server-only";
 import { cache } from "react";
 import type { CatalogSearchRow } from "../content/catalog-search.ts";
 import { findPublicCatalogWordLearningContext, findPublicCatalogWordsByIds } from "../content/public-catalog-index.ts";
-import { publicAudioAsset, publishedContentAudioAsset } from "../audio/assets.ts";
+import { publicAudioAsset, publishedContentAudioAsset } from "../audio/word-assets.ts";
 import type { DictionaryPracticeWord } from "./p2-learning.ts";
 
 export function catalogRowToPracticeWord(row: CatalogSearchRow): DictionaryPracticeWord {
