@@ -1,0 +1,59 @@
+{
+  "bucket": "hskkit-page-cache",
+  "expectedBuild": "L1lm4sqi_HgKDrbDiA96o",
+  "expectedVersion": "6f680ffb-af71-4505-9f73-8900236637f3",
+  "expectedDeployment": "7a164e8a-66bc-474e-bdb6-aa3cbf05dc34",
+  "sourceCommit": "79a3ca66c28ff65c177198a8fa453623c66743e0",
+  "protectedBuilds": [
+    "L1lm4sqi_HgKDrbDiA96o",
+    "fDk21qP8-_O21XHvLyukp",
+    "RK8-KqiLiYzhYN-qYtXd5"
+  ],
+  "candidates": [
+    {
+      "build": "Fhchz9K3Fi2AITrYKi8uu",
+      "objects": 4682,
+      "bytes": 858691079
+    },
+    {
+      "build": "NjlPW_FOAIUKdetVZl7be",
+      "objects": 380,
+      "bytes": 70504566
+    },
+    {
+      "build": "OCppSC3Lire0DRJulX7cO",
+      "objects": 11430,
+      "bytes": 2039066640
+    },
+    {
+      "build": "XUp6kEpxmNN8QYAqo4ppI",
+      "objects": 487,
+      "bytes": 83805696
+    },
+    {
+      "build": "_1Uo2XdYakH__DqkGrYbI",
+      "objects": 1969,
+      "bytes": 350137649
+    },
+    {
+      "build": "fHiEH-DaRG-HwOg9x1z5S",
+      "objects": 3180,
+      "bytes": 596641920
+    },
+    {
+      "build": "jz2IDa5VmfvC7lJRrd8kg",
+      "objects": 3532,
+      "bytes": 666349042
+    },
+    {
+      "build": "x5_2fwLgkkYKzLbpwRWpk",
+      "objects": 557,
+      "bytes": 107982018
+    },
+    {
+      "build": "ylFdbPMj3gqwecPDQ3u49",
+      "objects": 147,
+      "bytes": 25896508
+    }
+  ]
+}
