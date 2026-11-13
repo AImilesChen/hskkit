@@ -1,0 +1,24 @@
+name: Inspect remaining cache without deletion
+on:
+  push:
+    branches: [audit/remaining-page-cache-20261113]
+permissions:
+  contents: read
+jobs:
+  inspect:
+    runs-on: ubuntu-latest
+    timeout-minutes: 7
+    env:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout-cone-mode: false
+          sparse-checkout: /scripts/inspect-remaining-cache.py
+      - name: Inspect all remaining builds and object ages with no writes
+        run: python3 scripts/inspect-remaining-cache.py "$RUNNER_TEMP/remaining-cache-audit.json"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: remaining-cache-audit-${{ github.run_id }}
+          path: ${{ runner.temp }}/remaining-cache-audit.json
+          retention-days: 7
