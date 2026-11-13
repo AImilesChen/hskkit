@@ -1,0 +1,45 @@
+name: Clean verified unused page-cache versions
+on:
+  push:
+    branches: [ops/clean-unused-page-cache-20261113]
+permissions:
+  contents: read
+concurrency:
+  group: hskkit-production-deploy
+  cancel-in-progress: false
+jobs:
+  cleanup:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      CLOUDFLARE_ACCOUNT_ID: 77bc392d46985cd3425691358f5e8a77
+      CACHE_CLEANUP_APPROVED: verified-unused-17-directories-20261113
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout-cone-mode: false
+          sparse-checkout: |
+            /scripts/clean-unused-cache.cjs
+            /scripts/unused-cache-cleanup.json
+            /scripts/word-cache-r2.cjs
+            /tests/clean-unused-cache.test.cjs
+            /package.json
+            /package-lock.json
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          cache: npm
+      - run: npm ci
+      - name: Verify reference-based scope and production protection
+        run: node --test tests/clean-unused-cache.test.cjs
+      - name: Clean only unused prefixes while holding the production deploy mutex
+        run: node scripts/clean-unused-cache.cjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: unused-cache-cleanup-${{ github.run_id }}
+          path: |
+            ${{ runner.temp }}/cache-cleanup-report.json
+            ${{ runner.temp }}/cache-cleanup-object-manifest.json
+          retention-days: 7
