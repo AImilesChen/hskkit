@@ -1,0 +1,25 @@
+name: Read-only cache reference safety audit
+on:
+  push:
+    branches: [audit/cache-reference-safety-20261113]
+permissions:
+  contents: read
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    env:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout-cone-mode: false
+          sparse-checkout: /scripts/audit-cache-references.py
+      - name: Read production, rollback and version-preview cache references
+        run: python3 scripts/audit-cache-references.py "$RUNNER_TEMP/cache-reference-safety.json"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: cache-reference-safety-${{ github.run_id }}
+          path: ${{ runner.temp }}/cache-reference-safety.json
+          retention-days: 7
