@@ -1,0 +1,42 @@
+name: Diagnose R2 binding transport
+on:
+  push:
+    branches: [diagnostic/cache-binding-20261113]
+permissions:
+  contents: read
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    env:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      CLOUDFLARE_ACCOUNT_ID: 77bc392d46985cd3425691358f5e8a77
+      WRANGLER_SEND_METRICS: "false"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          cache: npm
+      - run: npm ci
+      - name: Check authenticated R2 binding write and read
+        timeout-minutes: 2
+        run: |
+          node <<'NODE'
+          const fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict');
+          const {getPlatformProxy}=require('wrangler');
+          const timer=setTimeout(()=>{console.error('R2 binding preflight timed out');process.exit(1);},90000);
+          (async()=>{
+            const config=path.join(process.env.RUNNER_TEMP,'cache-binding.json');
+            fs.writeFileSync(config,JSON.stringify({name:'hskkit-cache-binding',account_id:process.env.CLOUDFLARE_ACCOUNT_ID,compatibility_date:'2026-05-24',r2_buckets:[{binding:'CACHE',bucket_name:'hskkit-page-cache',remote:true}]}));
+            const proxy=await getPlatformProxy({configPath:config,envFiles:[],persist:false,remoteBindings:true});
+            try {
+              const key='system/opennext-cache/preflight-'+process.env.GITHUB_RUN_ID+'/transport.cache';
+              const bytes=Buffer.from('HSKKit cache binding transport preflight');
+              await proxy.env.CACHE.put(key,bytes);
+              const saved=await proxy.env.CACHE.get(key);assert.ok(saved);
+              assert.deepEqual(Buffer.from(await saved.arrayBuffer()),bytes);
+              console.log('Authenticated remote R2 binding write/read succeeded');
+            } finally {await proxy.dispose();}
+          })().then(()=>clearTimeout(timer)).catch(e=>{console.error(e.message);process.exit(1);});
+          NODE
