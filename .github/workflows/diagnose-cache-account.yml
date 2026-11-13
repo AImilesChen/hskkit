@@ -1,0 +1,26 @@
+name: Diagnose local cache account gate
+on:
+  push:
+    branches: [diagnostic/cache-account-20261113]
+permissions:
+  contents: read
+jobs:
+  diagnose:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      WRANGLER_SEND_METRICS: "false"
+      NODE_OPTIONS: --max-old-space-size=6144
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          cache: npm
+      - run: npm ci
+      - name: Build exact application with production adapter
+        run: |
+          npx opennextjs-cloudflare build --dangerouslyUseUnsupportedNextVersion
+          node scripts/patch-open-next-email.mjs
+      - name: Compare original sequence and fresh cookie-first worker
+        run: node scripts/diagnose-cache-worker.cjs
