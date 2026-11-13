@@ -1,0 +1,25 @@
+name: Read-only candidate object verification
+on:
+  push:
+    branches: [audit/cache-object-safety-20261113]
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    env:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout-cone-mode: false
+          sparse-checkout: /scripts/verify-cache-candidate-objects.py
+      - name: Verify every candidate object and all live bucket consumers without deletion
+        run: python3 scripts/verify-cache-candidate-objects.py "$RUNNER_TEMP/cache-candidate-objects.json"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: cache-candidate-objects-${{ github.run_id }}
+          path: ${{ runner.temp }}/cache-candidate-objects.json
+          retention-days: 7
