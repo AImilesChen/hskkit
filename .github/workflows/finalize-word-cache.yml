@@ -5,23 +5,28 @@ on:
 permissions:
   contents: read
 jobs:
-  finalize:
+  verify:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     env:
       CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
       CLOUDFLARE_ACCOUNT_ID: 77bc392d46985cd3425691358f5e8a77
-      WRANGLER_SEND_METRICS: "false"
     steps:
       - uses: actions/checkout@v4
+        with:
+          sparse-checkout-cone-mode: false
+          sparse-checkout: |
+            /scripts/storage-release.mjs
+            /scripts/storage-build-check.mjs
+            /scripts/check-comparison-release.py
+            /scripts/audit-cf-costs.py
+            /src/lib/vocabulary-comparison/manifest.json
       - uses: actions/setup-node@v4
         with:
           node-version: "24"
-          cache: npm
-      - run: npm ci
-      - name: Retry activation of the already uploaded export-only maintenance version
-        run: npx wrangler versions deploy 7b2f047a-c7cf-4b3c-8f06-af70084b988e@100% --config wrangler.commercial-worker.jsonc --yes
-      - name: Verify storage bindings and unchanged schedule
+      - name: Record independent auxiliary activation failure
+        run: echo "Main site version 6f680ffb-af71-4505-9f73-8900236637f3 is active. Auxiliary activation failed twice with Cloudflare 10013; original auxiliary service remains active. No further deployment attempted."
+      - name: Verify original auxiliary service has expected bindings and unchanged schedule
         run: node scripts/storage-release.mjs verify-disabled "$RUNNER_TEMP/storage-after-deploy.json"
       - name: Verify already deployed build, public pages and protected tools
         run: |
