@@ -61,6 +61,8 @@ jobs:
         run: node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --test tests/word-cache-release.test.mts tests/word-detail-lightweight-data.test.mts tests/dictionary-p2-learning-loop.test.mts
       - name: Ensure dedicated private page-cache bucket
         run: node scripts/storage-release.mjs ensure-bucket
+      - name: Verify scoped remote cache write and read before building
+        run: node scripts/word-cache-r2.cjs
       - name: Check whether assessment delivery changed
         id: assessment
         run: |
