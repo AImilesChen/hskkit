@@ -43,7 +43,7 @@ export default function DictionaryPage() {
   };
   const schema = { "@context": "https://schema.org", "@type": "CollectionPage", name: "HSKKit Chinese Dictionary", url: "https://hskkit.com/dictionary", description: "A Chinese learning dictionary with word, character, radical, stroke and pinyin browsing." };
   return <StudyPage>
-    <main className="mx-auto w-full max-w-[1160px] flex-1 px-4 py-5 sm:px-6 md:py-8 lg:px-10">
+    <main className="mx-auto w-full max-w-[1268px] flex-1 px-4 py-5 sm:px-[32px] md:py-8">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }} />
       <header className="mb-4 border-b border-slate-200 pb-4">
         <p className="text-xs font-bold uppercase tracking-[.16em] text-blue-700">Pinyin · HSK levels · Character lookup</p>
