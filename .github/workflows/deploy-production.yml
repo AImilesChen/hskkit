@@ -126,6 +126,10 @@ jobs:
         run: node scripts/storage-release.mjs verify-disabled "$RUNNER_TEMP/storage-after-deploy.json"
       - name: Verify comparison delivery and existing tools
         run: python3 scripts/check-comparison-release.py
+      - name: Register verified page-cache release for protected automatic retention
+        env:
+          CACHE_MAINTENANCE_MODE: register
+        run: node ops/cache-maintenance/cache-maintenance.cjs
       - name: Read-only CPU and cache report after healthy deployment
         run: python3 scripts/audit-cf-costs.py "$RUNNER_TEMP/cost-cache-audit.json"
       - name: Retain bounded CPU and cache report
