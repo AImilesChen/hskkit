@@ -16,7 +16,8 @@ async function checkedFetch(worker,url,init){
  // RPC fetch proxy can stall when a lazily loaded Next response is streamed.
  const requested=new URL(url),target=new URL(requested.pathname+requested.search,await worker.url);
  const headers=new Headers(init?.headers);headers.set('host',requested.host);
- const result=await bounded(url,fetch(target,{...init,headers,redirect:'manual'}));
+ const result=await bounded(url,fetch(target,{...init,headers,redirect:'follow'}));
+ assert.equal(new URL(result.url).origin,target.origin,'Local verification left its isolated HTTP listener');
  progress('received '+result.status+' '+url);return result;
 }
 async function discard(response){if(response.body)await bounded('drain response body',response.arrayBuffer(),10000);}
