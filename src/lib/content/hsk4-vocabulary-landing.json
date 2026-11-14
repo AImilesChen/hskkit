@@ -1,0 +1,786 @@
+{
+  "releaseId": "hsk3-hsk123456789-2025-v11",
+  "wordCount": 1000,
+  "firstPage": [
+    {
+      "id": "hsk2025.word.l4.1001.v1",
+      "levelBand": "4",
+      "payload": {
+        "hanzi": "啊",
+        "traditional": "啊",
+        "pinyin": "ā",
+        "meaning": "interjection of surprise",
+        "partOfSpeech": "Intj"
+      }
+    },
+    {
+      "id": "hsk2025.word.l4.1002.v1",
+      "levelBand": "4",
+      "payload": {
+        "hanzi": "爱情",
+        "traditional": "愛情",
+        "pinyin": "àiqíng",
+        "meaning": "romance",
+        "partOfSpeech": "N"
+      }
+    },
+    {
+      "id": "hsk2025.word.l4.1003.v1",
+      "levelBand": "4",
+      "payload": {
+        "hanzi": "爱心",
+        "traditional": "愛心",
+        "pinyin": "àixīn",
+        "meaning": "compassion",
+        "partOfSpeech": "N"
+      }
+    },
+    {
+      "id": "hsk2025.word.l4.1004.v1",
+      "levelBand": "4",
+      "payload": {
+        "hanzi": "安检",
+        "traditional": "安檢",
+        "pinyin": "ānjiǎn",
+        "meaning": "to carry out a security check",
+        "partOfSpeech": "V"
+      }
+    },
+    {
+      "id": "hsk2025.word.l4.1005.v1",
+      "levelBand": "4",
+      "payload": {
+        "hanzi": "安排",
+        "traditional": "安排",
+        "pinyin": "ānpái",
+        "meaning": "to arrange",
+        "partOfSpeech": "V"
+      }
+    },
+    {
+      "id": "hsk2025.word.l4.1006.v1",
+      "levelBand": "4",
+      "payload": {
+        "hanzi": "按",
+        "traditional": "按",
+        "pinyin": "àn",
+        "meaning": "to press",
+        "partOfSpeech": "V/Prep"
+      }
+    },
+    {
+      "id": "hsk2025.word.l4.1007.v1",
+      "levelBand": "4",
+      "payload": {
+        "hanzi": "按时",
+        "traditional": "按時",
+        "pinyin": "ànshí",
+        "meaning": "on time",
+        "partOfSpeech": "Adv"
+      }
+    },
+    {
+      "id": "hsk2025.word.l4.1008.v1",
+      "levelBand": "4",
+      "payload": {
+        "hanzi": "按照",
+        "traditional": "按照",
+        "pinyin": "ànzhào",
+        "meaning": "according to",
+        "partOfSpeech": "Prep"
+      }
+    },
+    {
+      "id": "hsk2025.word.l4.1009.v1",
+      "levelBand": "4",
+      "payload": {
+        "hanzi": "白酒",
+        "traditional": "白酒",
+        "pinyin": "báijiǔ",
+        "meaning": "baijiu, a spirit usually distilled from sorghum",
+        "partOfSpeech": "N"
+      }
+    },
+    {
+      "id": "hsk2025.word.l4.1010.v1",
+      "levelBand": "4",
+      "payload": {
+        "hanzi": "办公",
+        "traditional": "辦公",
+        "pinyin": "bàngōng",
+        "meaning": "to work in an office",
+        "partOfSpeech": "V"
+      }
+    },
+    {
+      "id": "hsk2025.word.l4.1011.v1",
+      "levelBand": "4",
+      "payload": {
+        "hanzi": "办理",
+        "traditional": "辦理",
+        "pinyin": "bànlǐ",
+        "meaning": "to handle",
+        "partOfSpeech": "V"
+      }
+    },
+    {
+      "id": "hsk2025.word.l4.1012.v1",
+      "levelBand": "4",
+      "payload": {
+        "hanzi": "办事",
+        "traditional": "辦事",
+        "pinyin": "bànshì",
+        "meaning": "to handle (affairs)",
+        "partOfSpeech": "V"
+      }
+    },
+    {
+      "id": "hsk2025.word.l4.1013.v1",
+      "levelBand": "4",
+      "payload": {
+        "hanzi": "棒",
+        "traditional": "棒",
+        "pinyin": "bàng",
+        "meaning": "excellent; great; a stick",
+        "partOfSpeech": "N/Adj"
+      }
+    },
+    {
+      "id": "hsk2025.word.l4.1014.v1",
+      "levelBand": "4",
+      "payload": {
+        "hanzi": "保护",
+        "traditional": "保護",
+        "pinyin": "bǎohù",
+        "meaning": "to protect",
+        "partOfSpeech": "V"
+      }
+    },
+    {
+      "id": "hsk2025.word.l4.1015.v1",
+      "levelBand": "4",
+      "payload": {
+        "hanzi": "保证",
+        "traditional": "保證",
+        "pinyin": "bǎozhèng",
+        "meaning": "to guarantee; a guarantee",
+        "partOfSpeech": "N/V"
+      }
+    },
+    {
+      "id": "hsk2025.word.l4.1016.v1",
+      "levelBand": "4",
+      "payload": {
+        "hanzi": "抱",
+        "traditional": "抱",
+        "pinyin": "bào",
+        "meaning": "to hold",
+        "partOfSpeech": "V"
+      }
+    },
+    {
+      "id": "hsk2025.word.l4.1017.v1",
+      "levelBand": "4",
+      "payload": {
+        "hanzi": "报考",
+        "traditional": "報考",
+        "pinyin": "bàokǎo",
+        "meaning": "to enter oneself for an examination",
+        "partOfSpeech": "V"
+      }
+    },
+    {
+      "id": "hsk2025.word.l4.1018.v1",
+      "levelBand": "4",
+      "payload": {
+        "hanzi": "报名",
+        "traditional": "報名",
+        "pinyin": "bàomíng",
+        "meaning": "to sign up",
+        "partOfSpeech": "V"
+      }
+    },
+    {
+      "id": "hsk2025.word.l4.1019.v1",
+      "levelBand": "4",
+      "payload": {
+        "hanzi": "抱歉",
+        "traditional": "抱歉",
+        "pinyin": "bàoqiàn",
+        "meaning": "to be sorry",
+        "partOfSpeech": "Adj"
+      }
+    },
+    {
+      "id": "hsk2025.word.l4.1020.v1",
+      "levelBand": "4",
+      "payload": {
+        "hanzi": "背",
+        "traditional": "背",
+        "pinyin": "bēi",
+        "meaning": "to carry on one's back",
+        "partOfSpeech": "V"
+      }
+    },
+    {
+      "id": "hsk2025.word.l4.1021.v1",
+      "levelBand": "4",
+      "payload": {
+        "hanzi": "背包",
+        "traditional": "背包",
+        "pinyin": "bēibāo",
+        "meaning": "knapsack",
+        "partOfSpeech": "N"
+      }
+    },
+    {
+      "id": "hsk2025.word.l4.1022.v1",
+      "levelBand": "4",
+      "payload": {
+        "hanzi": "北部",
+        "traditional": "北部",
+        "pinyin": "běibù",
+        "meaning": "northern part",
+        "partOfSpeech": "N"
+      }
+    },
+    {
+      "id": "hsk2025.word.l4.1023.v1",
+      "levelBand": "4",
+      "payload": {
+        "hanzi": "倍",
+        "traditional": "倍",
+        "pinyin": "bèi",
+        "meaning": "(two, three etc) -fold",
+        "partOfSpeech": "M"
+      }
+    },
+    {
+      "id": "hsk2025.word.l4.1024.v1",
+      "levelBand": "4",
+      "payload": {
+        "hanzi": "本科",
+        "traditional": "本科",
+        "pinyin": "běnkē",
+        "meaning": "undergraduate degree program",
+        "partOfSpeech": "N"
+      }
+    },
+    {
+      "id": "hsk2025.word.l4.1025.v1",
+      "levelBand": "4",
+      "payload": {
+        "hanzi": "本来",
+        "traditional": "本來",
+        "pinyin": "běnlái",
+        "meaning": "original; originally",
+        "partOfSpeech": "Adj/Adv"
+      }
+    },
+    {
+      "id": "hsk2025.word.l4.1026.v1",
+      "levelBand": "4",
+      "payload": {
+        "hanzi": "笨",
+        "traditional": "笨",
+        "pinyin": "bèn",
+        "meaning": "stupid",
+        "partOfSpeech": "Adj"
+      }
+    },
+    {
+      "id": "hsk2025.word.l4.1027.v1",
+      "levelBand": "4",
+      "payload": {
+        "hanzi": "鼻子",
+        "traditional": "鼻子",
+        "pinyin": "bízi",
+        "meaning": "nose",
+        "partOfSpeech": "N"
+      }
+    },
+    {
+      "id": "hsk2025.word.l4.1028.v1",
+      "levelBand": "4",
+      "payload": {
+        "hanzi": "笔试",
+        "traditional": "筆試",
+        "pinyin": "bǐshì",
+        "meaning": "to take a written examination",
+        "partOfSpeech": "V"
+      }
+    },
+    {
+      "id": "hsk2025.word.l4.1029.v1",
+      "levelBand": "4",
+      "payload": {
+        "hanzi": "毕业",
+        "traditional": "畢業",
+        "pinyin": "bìyè",
+        "meaning": "to graduate",
+        "partOfSpeech": "V"
+      }
+    },
+    {
+      "id": "hsk2025.word.l4.1030.v1",
+      "levelBand": "4",
+      "payload": {
+        "hanzi": "毕业生",
+        "traditional": "畢業生",
+        "pinyin": "bìyèshēng",
+        "meaning": "graduate",
+        "partOfSpeech": "N"
+      }
+    },
+    {
+      "id": "hsk2025.word.l4.1031.v1",
+      "levelBand": "4",
+      "payload": {
+        "hanzi": "便于",
+        "traditional": "便於",
+        "pinyin": "biànyú",
+        "meaning": "convenient for; easy to",
+        "partOfSpeech": "V"
+      }
+    },
+    {
+      "id": "hsk2025.word.l4.1032.v1",
+      "levelBand": "4",
+      "payload": {
+        "hanzi": "标准",
+        "traditional": "標準",
+        "pinyin": "biāozhǔn",
+        "meaning": "standard",
+        "partOfSpeech": "N/Adj"
+      }
+    },
+    {
+      "id": "hsk2025.word.l4.1033.v1",
+      "levelBand": "4",
+      "payload": {
+        "hanzi": "表",
+        "traditional": "表",
+        "pinyin": "biǎo",
+        "meaning": "watch; clock; table or chart",
+        "partOfSpeech": "N/V"
+      }
+    },
+    {
+      "id": "hsk2025.word.l4.1034.v1",
+      "levelBand": "4",
+      "payload": {
+        "hanzi": "表格",
+        "traditional": "表格",
+        "pinyin": "biǎogé",
+        "meaning": "form",
+        "partOfSpeech": "N"
+      }
+    },
+    {
+      "id": "hsk2025.word.l4.1035.v1",
+      "levelBand": "4",
+      "payload": {
+        "hanzi": "表示",
+        "traditional": "表示",
+        "pinyin": "biǎoshì",
+        "meaning": "to express; to show",
+        "partOfSpeech": "V"
+      }
+    },
+    {
+      "id": "hsk2025.word.l4.1036.v1",
+      "levelBand": "4",
+      "payload": {
+        "hanzi": "表现",
+        "traditional": "表現",
+        "pinyin": "biǎoxiàn",
+        "meaning": "to show",
+        "partOfSpeech": "V"
+      }
+    },
+    {
+      "id": "hsk2025.word.l4.1037.v1",
+      "levelBand": "4",
+      "payload": {
+        "hanzi": "表扬",
+        "traditional": "表揚",
+        "pinyin": "biǎoyáng",
+        "meaning": "to praise",
+        "partOfSpeech": "V"
+      }
+    },
+    {
+      "id": "hsk2025.word.l4.1038.v1",
+      "levelBand": "4",
+      "payload": {
+        "hanzi": "饼干",
+        "traditional": "餅乾",
+        "pinyin": "bǐnggān",
+        "meaning": "biscuit",
+        "partOfSpeech": "N"
+      }
+    },
+    {
+      "id": "hsk2025.word.l4.1039.v1",
+      "levelBand": "4",
+      "payload": {
+        "hanzi": "并",
+        "traditional": "並",
+        "pinyin": "bìng",
+        "meaning": "also; moreover; and",
+        "partOfSpeech": "V/Adv/Conj"
+      }
+    },
+    {
+      "id": "hsk2025.word.l4.1040.v1",
+      "levelBand": "4",
+      "payload": {
+        "hanzi": "并且",
+        "traditional": "並且",
+        "pinyin": "bìngqiě",
+        "meaning": "and",
+        "partOfSpeech": "Conj"
+      }
+    },
+    {
+      "id": "hsk2025.word.l4.1041.v1",
+      "levelBand": "4",
+      "payload": {
+        "hanzi": "播放",
+        "traditional": "播放",
+        "pinyin": "bōfàng",
+        "meaning": "to broadcast",
+        "partOfSpeech": "V"
+      }
+    },
+    {
+      "id": "hsk2025.word.l4.1042.v1",
+      "levelBand": "4",
+      "payload": {
+        "hanzi": "博士",
+        "traditional": "博士",
+        "pinyin": "bóshì",
+        "meaning": "doctor (as an academic degree)",
+        "partOfSpeech": "N"
+      }
+    },
+    {
+      "id": "hsk2025.word.l4.1043.v1",
+      "levelBand": "4",
+      "payload": {
+        "hanzi": "不必",
+        "traditional": "不必",
+        "pinyin": "búbì",
+        "meaning": "need not; do not have to",
+        "partOfSpeech": "Adv"
+      }
+    },
+    {
+      "id": "hsk2025.word.l4.1044.v1",
+      "levelBand": "4",
+      "payload": {
+        "hanzi": "不便",
+        "traditional": "不便",
+        "pinyin": "búbiàn",
+        "meaning": "inconvenient; unsuitable",
+        "partOfSpeech": "V/Adj"
+      }
+    },
+    {
+      "id": "hsk2025.word.l4.1045.v1",
+      "levelBand": "4",
+      "payload": {
+        "hanzi": "不断",
+        "traditional": "不斷",
+        "pinyin": "búduàn",
+        "meaning": "continuously; without stopping",
+        "partOfSpeech": "V/Adv"
+      }
+    },
+    {
+      "id": "hsk2025.word.l4.1046.v1",
+      "levelBand": "4",
+      "payload": {
+        "hanzi": "不够",
+        "traditional": "不夠",
+        "pinyin": "búgòu",
+        "meaning": "not enough; insufficient",
+        "partOfSpeech": "V/Adv"
+      }
+    },
+    {
+      "id": "hsk2025.word.l4.1047.v1",
+      "levelBand": "4",
+      "payload": {
+        "hanzi": "不过",
+        "traditional": "不過",
+        "pinyin": "búguò",
+        "meaning": "however; but",
+        "partOfSpeech": "Adv/Conj"
+      }
+    },
+    {
+      "id": "hsk2025.word.l4.1048.v1",
+      "levelBand": "4",
+      "payload": {
+        "hanzi": "不论",
+        "traditional": "不論",
+        "pinyin": "búlùn",
+        "meaning": "regardless of; no matter",
+        "partOfSpeech": "Conj"
+      }
+    },
+    {
+      "id": "hsk2025.word.l4.1049.v1",
+      "levelBand": "4",
+      "payload": {
+        "hanzi": "步",
+        "traditional": "步",
+        "pinyin": "bù",
+        "meaning": "a step",
+        "partOfSpeech": "N"
+      }
+    },
+    {
+      "id": "hsk2025.word.l4.1050.v1",
+      "levelBand": "4",
+      "payload": {
+        "hanzi": "部",
+        "traditional": "部",
+        "pinyin": "bù",
+        "meaning": "department; part; classifier for books, films and vehicles",
+        "partOfSpeech": "N/M"
+      }
+    }
+  ],
+  "topics": [
+    {
+      "id": "plans",
+      "words": [
+        {
+          "id": "hsk2025.word.l4.1005.v1",
+          "levelBand": "4",
+          "payload": {
+            "hanzi": "安排",
+            "traditional": "安排",
+            "pinyin": "ānpái",
+            "meaning": "to arrange",
+            "partOfSpeech": "V"
+          }
+        },
+        {
+          "id": "hsk2025.word.l4.1329.v1",
+          "levelBand": "4",
+          "payload": {
+            "hanzi": "计划",
+            "traditional": "計劃",
+            "pinyin": "jìhuà",
+            "meaning": "plan",
+            "partOfSpeech": "N/V"
+          }
+        },
+        {
+          "id": "hsk2025.word.l4.1644.v1",
+          "levelBand": "4",
+          "payload": {
+            "hanzi": "申请",
+            "traditional": "申請",
+            "pinyin": "shēnqǐng",
+            "meaning": "to apply for sth",
+            "partOfSpeech": "V"
+          }
+        }
+      ]
+    },
+    {
+      "id": "discussion",
+      "words": [
+        {
+          "id": "hsk2025.word.l4.1723.v1",
+          "levelBand": "4",
+          "payload": {
+            "hanzi": "讨论",
+            "traditional": "討論",
+            "pinyin": "tǎolùn",
+            "meaning": "to discuss",
+            "partOfSpeech": "V"
+          }
+        },
+        {
+          "id": "hsk2025.word.l4.1868.v1",
+          "levelBand": "4",
+          "payload": {
+            "hanzi": "意见",
+            "traditional": "意見",
+            "pinyin": "yìjiàn",
+            "meaning": "opinion; suggestion",
+            "partOfSpeech": "N"
+          }
+        },
+        {
+          "id": "hsk2025.word.l4.1386.v1",
+          "levelBand": "4",
+          "payload": {
+            "hanzi": "解释",
+            "traditional": "解釋",
+            "pinyin": "jiěshì",
+            "meaning": "to explain; to interpret",
+            "partOfSpeech": "V"
+          }
+        }
+      ]
+    },
+    {
+      "id": "work",
+      "words": [
+        {
+          "id": "hsk2025.word.l4.1215.v1",
+          "levelBand": "4",
+          "payload": {
+            "hanzi": "负责",
+            "traditional": "負責",
+            "pinyin": "fùzé",
+            "meaning": "to be responsible for",
+            "partOfSpeech": "V/Adj"
+          }
+        },
+        {
+          "id": "hsk2025.word.l4.1614.v1",
+          "levelBand": "4",
+          "payload": {
+            "hanzi": "任务",
+            "traditional": "任務",
+            "pinyin": "rènwu",
+            "meaning": "mission",
+            "partOfSpeech": "N"
+          }
+        },
+        {
+          "id": "hsk2025.word.l4.1470.v1",
+          "levelBand": "4",
+          "payload": {
+            "hanzi": "联系",
+            "traditional": "聯繫",
+            "pinyin": "liánxì",
+            "meaning": "to contact; connection",
+            "partOfSpeech": "V"
+          }
+        }
+      ]
+    },
+    {
+      "id": "travel",
+      "words": [
+        {
+          "id": "hsk2025.word.l4.1088.v1",
+          "levelBand": "4",
+          "payload": {
+            "hanzi": "出差",
+            "traditional": "出差",
+            "pinyin": "chūchāi",
+            "meaning": "to go on an official or business trip",
+            "partOfSpeech": "V"
+          }
+        },
+        {
+          "id": "hsk2025.word.l4.1289.v1",
+          "levelBand": "4",
+          "payload": {
+            "hanzi": "航班",
+            "traditional": "航班",
+            "pinyin": "hángbān",
+            "meaning": "(scheduled) flight",
+            "partOfSpeech": "N"
+          }
+        },
+        {
+          "id": "hsk2025.word.l4.1490.v1",
+          "levelBand": "4",
+          "payload": {
+            "hanzi": "旅行",
+            "traditional": "旅行",
+            "pinyin": "lǚxíng",
+            "meaning": "to travel",
+            "partOfSpeech": "V"
+          }
+        }
+      ]
+    },
+    {
+      "id": "environment",
+      "words": [
+        {
+          "id": "hsk2025.word.l4.1014.v1",
+          "levelBand": "4",
+          "payload": {
+            "hanzi": "保护",
+            "traditional": "保護",
+            "pinyin": "bǎohù",
+            "meaning": "to protect",
+            "partOfSpeech": "V"
+          }
+        },
+        {
+          "id": "hsk2025.word.l4.1448.v1",
+          "levelBand": "4",
+          "payload": {
+            "hanzi": "垃圾",
+            "traditional": "垃圾",
+            "pinyin": "lājī",
+            "meaning": "trash",
+            "partOfSpeech": "N"
+          }
+        },
+        {
+          "id": "hsk2025.word.l4.1780.v1",
+          "levelBand": "4",
+          "payload": {
+            "hanzi": "污染",
+            "traditional": "污染",
+            "pinyin": "wūrǎn",
+            "meaning": "to pollute; pollution",
+            "partOfSpeech": "V"
+          }
+        }
+      ]
+    },
+    {
+      "id": "experience",
+      "words": [
+        {
+          "id": "hsk2025.word.l4.1399.v1",
+          "levelBand": "4",
+          "payload": {
+            "hanzi": "经验",
+            "traditional": "經驗",
+            "pinyin": "jīngyàn",
+            "meaning": "experience",
+            "partOfSpeech": "N"
+          }
+        },
+        {
+          "id": "hsk2025.word.l4.1979.v1",
+          "levelBand": "4",
+          "payload": {
+            "hanzi": "仔细",
+            "traditional": "仔細",
+            "pinyin": "zǐxì",
+            "meaning": "careful",
+            "partOfSpeech": "Adj"
+          }
+        },
+        {
+          "id": "hsk2025.word.l4.1985.v1",
+          "levelBand": "4",
+          "payload": {
+            "hanzi": "总结",
+            "traditional": "總結",
+            "pinyin": "zǒngjié",
+            "meaning": "to sum up",
+            "partOfSpeech": "N/V"
+          }
+        }
+      ]
+    }
+  ]
+}
