@@ -1,0 +1,39 @@
+name: HSKKit safe R2 page-cache maintenance
+on:
+  push:
+    branches: [main]
+    paths: ['.github/workflows/cache-maintenance.yml', 'ops/cache-maintenance/**']
+  workflow_dispatch:
+  schedule:
+    - cron: '23 */6 * * *'
+permissions:
+  contents: read
+concurrency:
+  group: hskkit-production-deploy
+  cancel-in-progress: false
+jobs:
+  cache-maintenance:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      CACHE_MAINTENANCE_MODE: dry-run
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Install isolated locked maintenance dependencies
+        run: npm ci --prefix ops/cache-maintenance --ignore-scripts --no-audit --no-fund
+      - name: Verify deletion safeguards
+        run: node --test ops/cache-maintenance/cache-maintenance.test.cjs
+      - name: Audit or clean only verified retired page-cache versions
+        run: node ops/cache-maintenance/cache-maintenance.cjs
+      - name: Retain cleanup and unchanged-assets evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cache-maintenance-${{ github.run_id }}
+          path: ${{ runner.temp }}/cache-maintenance-report.json
+          retention-days: 14
+          if-no-files-found: warn
