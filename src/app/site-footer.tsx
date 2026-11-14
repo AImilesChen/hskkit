@@ -230,7 +230,7 @@ export default function SiteFooter() {
  <details className="resource-footer-mobile"><summary>{group.title}<span aria-hidden="true">+</span></summary><FooterLinks links={group.links}/></details>
  </nav>)}</div></div>
 
- <nav aria-label="Directory listings" style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: "16px", paddingTop: "24px" }}>
+ <nav aria-label="Directory listings" className="resource-footer-badges" tabIndex={0}>
  <a href="https://firstlook.tools" target="_blank" rel="noopener noreferrer">
  {/* Directory verifiers require the original image URL without an image proxy. */}
  {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -257,3 +257,4 @@ export default function SiteFooter() {
  <div className="resource-footer-bottom"><nav aria-label="Legal links">{legalLinks.map(item => <Link prefetch={false} key={item.href} href={item.href}>{item.label}</Link>)}</nav><p>© 2026 HSKKit</p><p>{disclaimer}</p></div>
  </div></footer>;
 }
+

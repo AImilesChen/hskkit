@@ -15,9 +15,13 @@
 .resource-footer a:hover{color:#1d4ed8;text-decoration:underline;text-underline-offset:4px}
 .resource-footer a:focus-visible,.resource-footer summary:focus-visible{outline:2px solid #2563eb;outline-offset:4px;border-radius:2px}
 .resource-footer-mobile{display:none}
+.resource-footer-badges{display:flex;flex-wrap:nowrap;align-items:center;gap:16px;max-width:100%;min-width:0;overflow-x:auto;padding:24px 4px 8px;overscroll-behavior-x:contain}
+.resource-footer-badges>a{flex:0 0 auto;white-space:nowrap}
+.resource-footer-badges:focus-visible{outline:2px solid #2563eb;outline-offset:2px;border-radius:2px}
 .resource-footer-bottom{border-top:1px solid #e2e8f0;padding-top:20px;color:#64748b;font-size:12px}
 .resource-footer-bottom nav{display:flex;flex-wrap:wrap;gap:4px 24px}
 .resource-footer-bottom nav a{display:inline-flex;align-items:center;min-height:44px;font-size:13px;text-decoration:none}
 .resource-footer-bottom p{margin:10px 0 0;max-width:850px}
 @media(max-width:1100px){.resource-footer-main{grid-template-columns:210px minmax(0,1fr);gap:36px}.resource-footer-groups{grid-template-columns:repeat(2,minmax(0,1fr));gap:32px}.resource-footer-group a{min-height:32px}}
 @media(max-width:640px){.resource-footer{padding-top:32px}.resource-footer-inner{padding:0 20px}.resource-footer-main{display:block;padding-bottom:24px}.resource-footer-brand{margin-bottom:24px}.resource-footer-brand p{max-width:360px;margin-top:12px}.resource-footer-groups{display:block}.resource-footer-group{border-top:1px solid #e2e8f0}.resource-footer-desktop{display:none}.resource-footer-mobile{display:block}.resource-footer-mobile summary{display:flex;justify-content:space-between;align-items:center;list-style:none;cursor:pointer;min-height:52px;font-weight:600;color:#334155}.resource-footer-mobile summary::-webkit-details-marker{display:none}.resource-footer-mobile summary span{font-size:20px;font-weight:400;color:#64748b}.resource-footer-mobile[open] summary span{transform:rotate(45deg)}.resource-footer-mobile ul{padding:0 0 16px;gap:0}.resource-footer-mobile a{display:flex;align-items:center;min-height:44px}.resource-footer-bottom nav{gap:0 20px}}
+
