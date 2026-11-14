@@ -7,7 +7,9 @@ import { getHsk3LevelStatus } from "@/lib/content/level-status";
 import { VocabularyCatalog } from "./vocabulary-catalog";
 import { VocabularyLevelNavigation } from "./vocabulary-level-navigation";
 import { Hsk1VocabularyIntro, Hsk1VocabularyGuide } from "./hsk1-vocabulary-guide";
+import { Hsk2VocabularyIntro, Hsk2VocabularyGuide } from "./hsk2-vocabulary-guide";
 import { getHsk1VocabularyInitialPage } from "@/lib/content/hsk1-vocabulary-landing";
+import { getHsk2VocabularyInitialPage } from "@/lib/content/hsk2-vocabulary-landing";
 import styles from "./hsk1-vocabulary.module.css";
 
 interface Props {
@@ -49,6 +51,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     openGraph: { title: `HSK 1 Vocabulary: ${status.wordCount} Words with Pinyin`, description: "Explore beginner Chinese vocabulary, topic examples and a practical study guide.", url: "/vocabulary/1", type: "website" },
     twitter: { card: "summary_large_image", title: `HSK 1 Vocabulary: ${status.wordCount} Words with Pinyin`, description: "Browse the word list, read the study guide and practise with quick flashcards." },
   };
+  if (level === 2) return {
+    title: `HSK 2 Vocabulary List: ${status.wordCount} Words with Pinyin — HSKKit`,
+    description: `Explore ${status.wordCount} HSK 2 entries with pinyin, English meanings and available audio. Build on HSK 1 with topic words, comparison examples and free flashcards.`,
+    alternates: { canonical: "/vocabulary/2" },
+    openGraph: { title: `HSK 2 Vocabulary: ${status.wordCount} Words with Pinyin`, description: "Connect HSK 2 words with transport, ordering, interests and everyday comparisons.", url: "/vocabulary/2", type: "website" },
+    twitter: { card: "summary_large_image", title: `HSK 2 Vocabulary: ${status.wordCount} Words with Pinyin`, description: "Explore level-specific topic words, worked examples and quick flashcards." },
+  };
   return {
     title: `HSK 3.0 ${label} vocabulary — HSKKit`,
     description: `Browse all ${status.wordCount} published ${label} vocabulary entries with Chinese, pinyin, English meanings, and parts of speech.`,
@@ -65,29 +74,30 @@ export default async function VocabularyPage({ params }: Props) {
   if (status.availability !== "ready") notFound();
 
   const levelLabel = level === 7 ? "HSK 7–9" : `HSK ${level}`;
-  const initialData = level === 1 ? getHsk1VocabularyInitialPage() : undefined;
+  const hasGuide = level === 1 || level === 2;
+  const initialData = level === 1 ? getHsk1VocabularyInitialPage() : level === 2 ? getHsk2VocabularyInitialPage() : undefined;
   const schema = initialData ? {
     "@context": "https://schema.org",
     "@graph": [
-      { "@type": "CollectionPage", "@id": "https://hskkit.com/vocabulary/1#page", name: "HSK 1 Vocabulary", url: "https://hskkit.com/vocabulary/1", description: `${status.wordCount} published HSK 1 words with pinyin, English meanings and a study guide.`, inLanguage: "en", mainEntity: { "@id": "https://hskkit.com/vocabulary/1#word-list" } },
-      { "@type": "BreadcrumbList", itemListElement: [{ "@type": "ListItem", position: 1, name: "Learn", item: "https://hskkit.com/" }, { "@type": "ListItem", position: 2, name: "HSK levels", item: "https://hskkit.com/levels" }, { "@type": "ListItem", position: 3, name: "HSK 1 Vocabulary", item: "https://hskkit.com/vocabulary/1" }] },
-      { "@type": "ItemList", "@id": "https://hskkit.com/vocabulary/1#word-list", name: "HSK 1 vocabulary: first 50 words", numberOfItems: initialData.contentAssets.length, itemListElement: initialData.contentAssets.map((word, index) => ({ "@type": "ListItem", position: index + 1, name: word.payload.hanzi, url: `https://hskkit.com/word/${word.id}` })) },
+      { "@type": "CollectionPage", "@id": `https://hskkit.com/vocabulary/${level}#page`, name: `${levelLabel} Vocabulary`, url: `https://hskkit.com/vocabulary/${level}`, description: `${status.wordCount} published ${levelLabel} words with pinyin, English meanings and a study guide.`, inLanguage: "en", mainEntity: { "@id": `https://hskkit.com/vocabulary/${level}#word-list` } },
+      { "@type": "BreadcrumbList", itemListElement: [{ "@type": "ListItem", position: 1, name: "Learn", item: "https://hskkit.com/" }, { "@type": "ListItem", position: 2, name: "HSK levels", item: "https://hskkit.com/levels" }, { "@type": "ListItem", position: 3, name: `${levelLabel} Vocabulary`, item: `https://hskkit.com/vocabulary/${level}` }] },
+      { "@type": "ItemList", "@id": `https://hskkit.com/vocabulary/${level}#word-list`, name: `${levelLabel} vocabulary: first 50 words`, numberOfItems: initialData.contentAssets.length, itemListElement: initialData.contentAssets.map((word, index) => ({ "@type": "ListItem", position: index + 1, name: word.payload.hanzi, url: `https://hskkit.com/word/${word.id}` })) },
     ],
   } : null;
   return (
     <StudyPage>
-      <main className={`vocabulary-page mx-auto w-full max-w-[1200px] flex-1 px-5 py-[24px] sm:px-8 md:py-[32px] ${level === 1 ? styles.page : ""}`}>
+      <main className={`vocabulary-page mx-auto w-full max-w-[1200px] flex-1 px-5 py-[24px] sm:px-8 md:py-[32px] ${hasGuide ? styles.page : ""}`}>
         {schema && <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schema).replace(/</g, "\\u003c") }} />}
         <nav className="flex flex-wrap items-center gap-2 text-sm text-slate-500" aria-label="Breadcrumb">
           <Link href="/" className="inline-flex min-h-11 items-center hover:text-blue-700">Learn</Link>
           <span aria-hidden="true">/</span>
-          <Link href={level === 1 ? "/levels" : "/vocabulary/1"} className="inline-flex min-h-11 items-center hover:text-blue-700">{level === 1 ? "HSK levels" : "Vocabulary"}</Link>
+          <Link href={hasGuide ? "/levels" : "/vocabulary/1"} className="inline-flex min-h-11 items-center hover:text-blue-700">{hasGuide ? "HSK levels" : "Vocabulary"}</Link>
           <span aria-hidden="true">/</span>
           <span className="font-medium text-slate-700">{levelLabel}</span>
         </nav>
 
         <header className="mt-[12px] border-b border-slate-200 pb-[24px]">
-          {level === 1 ? <Hsk1VocabularyIntro wordCount={status.wordCount} /> : <>
+          {level === 1 ? <Hsk1VocabularyIntro wordCount={status.wordCount} /> : level === 2 ? <Hsk2VocabularyIntro wordCount={status.wordCount} /> : <>
           <div className="max-w-3xl">
             <p className="text-xs font-semibold uppercase tracking-[.14em] text-blue-700">HSK 3.0 · 2025 exam syllabus</p>
             <h1 className="mt-[8px] text-4xl font-bold tracking-[-.035em] text-slate-950">{levelLabel} Vocabulary</h1>
@@ -118,8 +128,8 @@ export default async function VocabularyPage({ params }: Props) {
           <Suspense fallback={<div className="mt-[12px] h-14" aria-hidden="true" />}>
             <VocabularyLevelNavigation level={level} options={levelOptions} />
           </Suspense>
-          {level === 1 && <nav aria-label="On this HSK 1 page" className={styles.jumpNav}>
-            <a href="#vocabulary-activities">Word list</a><a href="#hsk1-topics">Topic words</a><a href="#hsk1-study-guide">Study guide</a><a href="#hsk1-sources">Syllabus & sources</a><a href="#hsk1-faq">Common questions</a>
+          {hasGuide && <nav aria-label={`On this ${levelLabel} page`} className={styles.jumpNav}>
+            <a href="#vocabulary-activities">Word list</a><a href={`#hsk${level}-topics`}>Topic words</a><a href={`#hsk${level}-study-guide`}>Study guide</a><a href={`#hsk${level}-sources`}>Syllabus & sources</a><a href={`#hsk${level}-faq`}>Common questions</a>
           </nav>}
 
           {requestedLevel >= 8 && <p className="mt-4 rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm leading-6 text-amber-950">HSK 3.0 publishes Levels 7–9 as one unified HSK 7–9 advanced ability band, not a separate Level {requestedLevel} official word list. This page therefore uses the shared HSK 7–9 catalog.</p>}
@@ -131,7 +141,7 @@ export default async function VocabularyPage({ params }: Props) {
           </Suspense>
         </div>
 
-        {level === 1 ? <Hsk1VocabularyGuide wordCount={status.wordCount} /> : <div className="mt-[40px] flex flex-wrap gap-3 border-t border-slate-200 pt-[24px]">
+        {level === 1 ? <Hsk1VocabularyGuide wordCount={status.wordCount} /> : level === 2 ? <Hsk2VocabularyGuide wordCount={status.wordCount} foundationCount={getHsk3LevelStatus(1).wordCount} /> : <div className="mt-[40px] flex flex-wrap gap-3 border-t border-slate-200 pt-[24px]">
           <Link href={`/dictionary?level=${requestedLevel}`} className="inline-flex min-h-11 items-center rounded-lg border border-blue-600 bg-white px-5 py-3 font-semibold text-blue-700 hover:bg-blue-50">Browse this level in Dictionary</Link>
           <Link href="/levels" className="inline-flex min-h-11 items-center rounded-lg border border-slate-300 bg-white px-5 py-3 font-semibold text-slate-700 hover:border-blue-600 hover:text-blue-700">View all HSK levels</Link>
           <Link href="/placement" className="inline-flex min-h-11 items-center rounded-lg bg-blue-600 px-5 py-3 font-semibold text-white hover:bg-blue-700">Find my starting level</Link>

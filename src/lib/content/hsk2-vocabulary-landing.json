@@ -1,0 +1,786 @@
+{
+  "releaseId": "hsk3-hsk123456789-2025-v11",
+  "wordCount": 200,
+  "firstPage": [
+    {
+      "id": "hsk2025.word.l2.0301.v1",
+      "levelBand": "2",
+      "payload": {
+        "hanzi": "啊",
+        "traditional": "啊",
+        "pinyin": "a",
+        "meaning": "sentence-final particle expressing affirmation or emphasis",
+        "partOfSpeech": "Aux"
+      }
+    },
+    {
+      "id": "hsk2025.word.l2.0302.v1",
+      "levelBand": "2",
+      "payload": {
+        "hanzi": "爱好",
+        "traditional": "愛好",
+        "pinyin": "àihào",
+        "meaning": "hobby; interest; to like",
+        "partOfSpeech": "N/V"
+      }
+    },
+    {
+      "id": "hsk2025.word.l2.0303.v1",
+      "levelBand": "2",
+      "payload": {
+        "hanzi": "白色",
+        "traditional": "白色",
+        "pinyin": "báisè",
+        "meaning": "white (color)",
+        "partOfSpeech": "N"
+      }
+    },
+    {
+      "id": "hsk2025.word.l2.0304.v1",
+      "levelBand": "2",
+      "payload": {
+        "hanzi": "班",
+        "traditional": "班",
+        "pinyin": "bān",
+        "meaning": "class; group; shift",
+        "partOfSpeech": "N/M"
+      }
+    },
+    {
+      "id": "hsk2025.word.l2.0305.v1",
+      "levelBand": "2",
+      "payload": {
+        "hanzi": "帮",
+        "traditional": "幫",
+        "pinyin": "bāng",
+        "meaning": "to help",
+        "partOfSpeech": "V"
+      }
+    },
+    {
+      "id": "hsk2025.word.l2.0306.v1",
+      "levelBand": "2",
+      "payload": {
+        "hanzi": "帮忙",
+        "traditional": "幫忙",
+        "pinyin": "bāngmáng",
+        "meaning": "to help",
+        "partOfSpeech": "V"
+      }
+    },
+    {
+      "id": "hsk2025.word.l2.0307.v1",
+      "levelBand": "2",
+      "payload": {
+        "hanzi": "包",
+        "traditional": "包",
+        "pinyin": "bāo",
+        "meaning": "to cover",
+        "partOfSpeech": "N/V/M"
+      }
+    },
+    {
+      "id": "hsk2025.word.l2.0308.v1",
+      "levelBand": "2",
+      "payload": {
+        "hanzi": "本子",
+        "traditional": "本子",
+        "pinyin": "běnzi",
+        "meaning": "notebook; exercise book",
+        "partOfSpeech": "N"
+      }
+    },
+    {
+      "id": "hsk2025.word.l2.0309.v1",
+      "levelBand": "2",
+      "payload": {
+        "hanzi": "比",
+        "traditional": "比",
+        "pinyin": "bǐ",
+        "meaning": "to compare; than (in comparisons)",
+        "partOfSpeech": "V/Prep"
+      }
+    },
+    {
+      "id": "hsk2025.word.l2.0310.v1",
+      "levelBand": "2",
+      "payload": {
+        "hanzi": "笔",
+        "traditional": "筆",
+        "pinyin": "bǐ",
+        "meaning": "pen; writing instrument",
+        "partOfSpeech": "N/M"
+      }
+    },
+    {
+      "id": "hsk2025.word.l2.0311.v1",
+      "levelBand": "2",
+      "payload": {
+        "hanzi": "别",
+        "traditional": "别",
+        "pinyin": "bié",
+        "meaning": "don't; do not",
+        "partOfSpeech": "Adv"
+      }
+    },
+    {
+      "id": "hsk2025.word.l2.0312.v1",
+      "levelBand": "2",
+      "payload": {
+        "hanzi": "不错",
+        "traditional": "不錯",
+        "pinyin": "búcuò",
+        "meaning": "not bad; quite good",
+        "partOfSpeech": "Adj"
+      }
+    },
+    {
+      "id": "hsk2025.word.l2.0313.v1",
+      "levelBand": "2",
+      "payload": {
+        "hanzi": "不好意思",
+        "traditional": "不好意思",
+        "pinyin": "bù hǎoyìsi",
+        "meaning": "embarrassed; sorry; excuse me",
+        "partOfSpeech": "Phrase"
+      }
+    },
+    {
+      "id": "hsk2025.word.l2.0314.v1",
+      "levelBand": "2",
+      "payload": {
+        "hanzi": "长",
+        "traditional": "長",
+        "pinyin": "cháng",
+        "meaning": "long",
+        "partOfSpeech": "Adj"
+      }
+    },
+    {
+      "id": "hsk2025.word.l2.0315.v1",
+      "levelBand": "2",
+      "payload": {
+        "hanzi": "车站",
+        "traditional": "車站",
+        "pinyin": "chēzhàn",
+        "meaning": "station; bus or train stop",
+        "partOfSpeech": "N"
+      }
+    },
+    {
+      "id": "hsk2025.word.l2.0316.v1",
+      "levelBand": "2",
+      "payload": {
+        "hanzi": "出",
+        "traditional": "出",
+        "pinyin": "chū",
+        "meaning": "to go out",
+        "partOfSpeech": "V"
+      }
+    },
+    {
+      "id": "hsk2025.word.l2.0317.v1",
+      "levelBand": "2",
+      "payload": {
+        "hanzi": "出国",
+        "traditional": "出國",
+        "pinyin": "chūguó",
+        "meaning": "to go abroad",
+        "partOfSpeech": "V"
+      }
+    },
+    {
+      "id": "hsk2025.word.l2.0318.v1",
+      "levelBand": "2",
+      "payload": {
+        "hanzi": "出来",
+        "traditional": "出來",
+        "pinyin": "chūlái",
+        "meaning": "to come out",
+        "partOfSpeech": "V"
+      }
+    },
+    {
+      "id": "hsk2025.word.l2.0319.v1",
+      "levelBand": "2",
+      "payload": {
+        "hanzi": "出门",
+        "traditional": "出門",
+        "pinyin": "chūmén",
+        "meaning": "to go out",
+        "partOfSpeech": "V"
+      }
+    },
+    {
+      "id": "hsk2025.word.l2.0320.v1",
+      "levelBand": "2",
+      "payload": {
+        "hanzi": "出去",
+        "traditional": "出去",
+        "pinyin": "chūqù",
+        "meaning": "to go out",
+        "partOfSpeech": "V"
+      }
+    },
+    {
+      "id": "hsk2025.word.l2.0321.v1",
+      "levelBand": "2",
+      "payload": {
+        "hanzi": "床",
+        "traditional": "床",
+        "pinyin": "chuáng",
+        "meaning": "bed",
+        "partOfSpeech": "N"
+      }
+    },
+    {
+      "id": "hsk2025.word.l2.0322.v1",
+      "levelBand": "2",
+      "payload": {
+        "hanzi": "词",
+        "traditional": "詞",
+        "pinyin": "cí",
+        "meaning": "word",
+        "partOfSpeech": "N"
+      }
+    },
+    {
+      "id": "hsk2025.word.l2.0323.v1",
+      "levelBand": "2",
+      "payload": {
+        "hanzi": "次",
+        "traditional": "次",
+        "pinyin": "cì",
+        "meaning": "time; occasion (classifier)",
+        "partOfSpeech": "Adj/M"
+      }
+    },
+    {
+      "id": "hsk2025.word.l2.0324.v1",
+      "levelBand": "2",
+      "payload": {
+        "hanzi": "从",
+        "traditional": "從",
+        "pinyin": "cóng",
+        "meaning": "from",
+        "partOfSpeech": "Adv/Prep"
+      }
+    },
+    {
+      "id": "hsk2025.word.l2.0325.v1",
+      "levelBand": "2",
+      "payload": {
+        "hanzi": "从小",
+        "traditional": "從小",
+        "pinyin": "cóngxiǎo",
+        "meaning": "from childhood",
+        "partOfSpeech": "Adv"
+      }
+    },
+    {
+      "id": "hsk2025.word.l2.0326.v1",
+      "levelBand": "2",
+      "payload": {
+        "hanzi": "错",
+        "traditional": "錯",
+        "pinyin": "cuò",
+        "meaning": "mistake",
+        "partOfSpeech": "Adj"
+      }
+    },
+    {
+      "id": "hsk2025.word.l2.0327.v1",
+      "levelBand": "2",
+      "payload": {
+        "hanzi": "打",
+        "traditional": "打",
+        "pinyin": "dǎ",
+        "meaning": "to make; to play; to call (in common verb phrases)",
+        "partOfSpeech": "V"
+      }
+    },
+    {
+      "id": "hsk2025.word.l2.0328.v1",
+      "levelBand": "2",
+      "payload": {
+        "hanzi": "打车",
+        "traditional": "打車",
+        "pinyin": "dǎchē",
+        "meaning": "to take a taxi (in town)",
+        "partOfSpeech": "V"
+      }
+    },
+    {
+      "id": "hsk2025.word.l2.0329.v1",
+      "levelBand": "2",
+      "payload": {
+        "hanzi": "打开",
+        "traditional": "打開",
+        "pinyin": "dǎkāi",
+        "meaning": "to open",
+        "partOfSpeech": "V"
+      }
+    },
+    {
+      "id": "hsk2025.word.l2.0330.v1",
+      "levelBand": "2",
+      "payload": {
+        "hanzi": "但",
+        "traditional": "但",
+        "pinyin": "dàn",
+        "meaning": "but",
+        "partOfSpeech": "Adv/Conj"
+      }
+    },
+    {
+      "id": "hsk2025.word.l2.0331.v1",
+      "levelBand": "2",
+      "payload": {
+        "hanzi": "但是",
+        "traditional": "但是",
+        "pinyin": "dànshì",
+        "meaning": "but",
+        "partOfSpeech": "Conj"
+      }
+    },
+    {
+      "id": "hsk2025.word.l2.0332.v1",
+      "levelBand": "2",
+      "payload": {
+        "hanzi": "得",
+        "traditional": "得",
+        "pinyin": "de",
+        "meaning": "structural particle linking a verb to its result or manner",
+        "partOfSpeech": "Aux"
+      }
+    },
+    {
+      "id": "hsk2025.word.l2.0333.v1",
+      "levelBand": "2",
+      "payload": {
+        "hanzi": "地",
+        "traditional": "地",
+        "pinyin": "de",
+        "meaning": "structural particle before a verb, marking manner",
+        "partOfSpeech": "Aux"
+      }
+    },
+    {
+      "id": "hsk2025.word.l2.0334.v1",
+      "levelBand": "2",
+      "payload": {
+        "hanzi": "等",
+        "traditional": "等",
+        "pinyin": "děng",
+        "meaning": "to wait for",
+        "partOfSpeech": "V/Prep"
+      }
+    },
+    {
+      "id": "hsk2025.word.l2.0335.v1",
+      "levelBand": "2",
+      "payload": {
+        "hanzi": "地铁",
+        "traditional": "地鐵",
+        "pinyin": "dìtiě",
+        "meaning": "underground railway",
+        "partOfSpeech": "N"
+      }
+    },
+    {
+      "id": "hsk2025.word.l2.0336.v1",
+      "levelBand": "2",
+      "payload": {
+        "hanzi": "点",
+        "traditional": "點",
+        "pinyin": "diǎn",
+        "meaning": "to order (food); to point to",
+        "partOfSpeech": "N/V/M"
+      }
+    },
+    {
+      "id": "hsk2025.word.l2.0337.v1",
+      "levelBand": "2",
+      "payload": {
+        "hanzi": "懂",
+        "traditional": "懂",
+        "pinyin": "dǒng",
+        "meaning": "to understand",
+        "partOfSpeech": "V"
+      }
+    },
+    {
+      "id": "hsk2025.word.l2.0338.v1",
+      "levelBand": "2",
+      "payload": {
+        "hanzi": "动",
+        "traditional": "動",
+        "pinyin": "dòng",
+        "meaning": "(of sth) to move",
+        "partOfSpeech": "V"
+      }
+    },
+    {
+      "id": "hsk2025.word.l2.0339.v1",
+      "levelBand": "2",
+      "payload": {
+        "hanzi": "饭馆",
+        "traditional": "飯館",
+        "pinyin": "fànguǎn",
+        "meaning": "restaurant",
+        "partOfSpeech": "N"
+      }
+    },
+    {
+      "id": "hsk2025.word.l2.0340.v1",
+      "levelBand": "2",
+      "payload": {
+        "hanzi": "飞",
+        "traditional": "飛",
+        "pinyin": "fēi",
+        "meaning": "to fly",
+        "partOfSpeech": "V"
+      }
+    },
+    {
+      "id": "hsk2025.word.l2.0341.v1",
+      "levelBand": "2",
+      "payload": {
+        "hanzi": "高",
+        "traditional": "高",
+        "pinyin": "gāo",
+        "meaning": "high",
+        "partOfSpeech": "N/Adj"
+      }
+    },
+    {
+      "id": "hsk2025.word.l2.0342.v1",
+      "levelBand": "2",
+      "payload": {
+        "hanzi": "高中",
+        "traditional": "高中",
+        "pinyin": "gāozhōng",
+        "meaning": "senior high school",
+        "partOfSpeech": "N"
+      }
+    },
+    {
+      "id": "hsk2025.word.l2.0343.v1",
+      "levelBand": "2",
+      "payload": {
+        "hanzi": "告诉",
+        "traditional": "告訴",
+        "pinyin": "gàosu",
+        "meaning": "to tell",
+        "partOfSpeech": "V"
+      }
+    },
+    {
+      "id": "hsk2025.word.l2.0344.v1",
+      "levelBand": "2",
+      "payload": {
+        "hanzi": "个子",
+        "traditional": "個子",
+        "pinyin": "gèzi",
+        "meaning": "stature",
+        "partOfSpeech": "N"
+      }
+    },
+    {
+      "id": "hsk2025.word.l2.0345.v1",
+      "levelBand": "2",
+      "payload": {
+        "hanzi": "跟",
+        "traditional": "跟",
+        "pinyin": "gēn",
+        "meaning": "with; to follow",
+        "partOfSpeech": "N/V/Prep/Conj"
+      }
+    },
+    {
+      "id": "hsk2025.word.l2.0346.v1",
+      "levelBand": "2",
+      "payload": {
+        "hanzi": "公交车",
+        "traditional": "公交車",
+        "pinyin": "gōngjiāochē",
+        "meaning": "public bus",
+        "partOfSpeech": "N"
+      }
+    },
+    {
+      "id": "hsk2025.word.l2.0347.v1",
+      "levelBand": "2",
+      "payload": {
+        "hanzi": "过",
+        "traditional": "過",
+        "pinyin": "guò",
+        "meaning": "to pass; to cross",
+        "partOfSpeech": "V"
+      }
+    },
+    {
+      "id": "hsk2025.word.l2.0348.v1",
+      "levelBand": "2",
+      "payload": {
+        "hanzi": "过来",
+        "traditional": "過來",
+        "pinyin": "guòlái",
+        "meaning": "to come over; to come here",
+        "partOfSpeech": "V"
+      }
+    },
+    {
+      "id": "hsk2025.word.l2.0349.v1",
+      "levelBand": "2",
+      "payload": {
+        "hanzi": "过年",
+        "traditional": "過年",
+        "pinyin": "guònián",
+        "meaning": "to celebrate the Chinese New Year",
+        "partOfSpeech": "V"
+      }
+    },
+    {
+      "id": "hsk2025.word.l2.0350.v1",
+      "levelBand": "2",
+      "payload": {
+        "hanzi": "过去",
+        "traditional": "過去",
+        "pinyin": "guòqù",
+        "meaning": "the past; formerly",
+        "partOfSpeech": "V"
+      }
+    }
+  ],
+  "topics": [
+    {
+      "id": "transport",
+      "words": [
+        {
+          "id": "hsk2025.word.l2.0315.v1",
+          "levelBand": "2",
+          "payload": {
+            "hanzi": "车站",
+            "traditional": "車站",
+            "pinyin": "chēzhàn",
+            "meaning": "station; bus or train stop",
+            "partOfSpeech": "N"
+          }
+        },
+        {
+          "id": "hsk2025.word.l2.0335.v1",
+          "levelBand": "2",
+          "payload": {
+            "hanzi": "地铁",
+            "traditional": "地鐵",
+            "pinyin": "dìtiě",
+            "meaning": "underground railway",
+            "partOfSpeech": "N"
+          }
+        },
+        {
+          "id": "hsk2025.word.l2.0346.v1",
+          "levelBand": "2",
+          "payload": {
+            "hanzi": "公交车",
+            "traditional": "公交車",
+            "pinyin": "gōngjiāochē",
+            "meaning": "public bus",
+            "partOfSpeech": "N"
+          }
+        }
+      ]
+    },
+    {
+      "id": "ordering",
+      "words": [
+        {
+          "id": "hsk2025.word.l2.0339.v1",
+          "levelBand": "2",
+          "payload": {
+            "hanzi": "饭馆",
+            "traditional": "飯館",
+            "pinyin": "fànguǎn",
+            "meaning": "restaurant",
+            "partOfSpeech": "N"
+          }
+        },
+        {
+          "id": "hsk2025.word.l2.0336.v1",
+          "levelBand": "2",
+          "payload": {
+            "hanzi": "点",
+            "traditional": "點",
+            "pinyin": "diǎn",
+            "meaning": "to order (food); to point to",
+            "partOfSpeech": "N/V/M"
+          }
+        },
+        {
+          "id": "hsk2025.word.l2.0377.v1",
+          "levelBand": "2",
+          "payload": {
+            "hanzi": "咖啡",
+            "traditional": "咖啡",
+            "pinyin": "kāfēi",
+            "meaning": "(loanword) coffee",
+            "partOfSpeech": "N"
+          }
+        }
+      ]
+    },
+    {
+      "id": "learning",
+      "words": [
+        {
+          "id": "hsk2025.word.l2.0368.v1",
+          "levelBand": "2",
+          "payload": {
+            "hanzi": "教室",
+            "traditional": "教室",
+            "pinyin": "jiàoshì",
+            "meaning": "classroom",
+            "partOfSpeech": "N"
+          }
+        },
+        {
+          "id": "hsk2025.word.l2.0381.v1",
+          "levelBand": "2",
+          "payload": {
+            "hanzi": "考试",
+            "traditional": "考試",
+            "pinyin": "kǎoshì",
+            "meaning": "exam; to take an exam",
+            "partOfSpeech": "N/V"
+          }
+        },
+        {
+          "id": "hsk2025.word.l2.0365.v1",
+          "levelBand": "2",
+          "payload": {
+            "hanzi": "记得",
+            "traditional": "記得",
+            "pinyin": "jìde",
+            "meaning": "to remember",
+            "partOfSpeech": "V"
+          }
+        }
+      ]
+    },
+    {
+      "id": "interests",
+      "words": [
+        {
+          "id": "hsk2025.word.l2.0302.v1",
+          "levelBand": "2",
+          "payload": {
+            "hanzi": "爱好",
+            "traditional": "愛好",
+            "pinyin": "àihào",
+            "meaning": "hobby; interest; to like",
+            "partOfSpeech": "N/V"
+          }
+        },
+        {
+          "id": "hsk2025.word.l2.0387.v1",
+          "levelBand": "2",
+          "payload": {
+            "hanzi": "篮球",
+            "traditional": "籃球",
+            "pinyin": "lánqiú",
+            "meaning": "basketball",
+            "partOfSpeech": "N"
+          }
+        },
+        {
+          "id": "hsk2025.word.l2.0478.v1",
+          "levelBand": "2",
+          "payload": {
+            "hanzi": "游泳",
+            "traditional": "游泳",
+            "pinyin": "yóuyǒng",
+            "meaning": "to swim; swimming",
+            "partOfSpeech": "V"
+          }
+        }
+      ]
+    },
+    {
+      "id": "directions",
+      "words": [
+        {
+          "id": "hsk2025.word.l2.0419.v1",
+          "levelBand": "2",
+          "payload": {
+            "hanzi": "前面",
+            "traditional": "前面",
+            "pinyin": "qiánmiàn",
+            "meaning": "ahead",
+            "partOfSpeech": "N"
+          }
+        },
+        {
+          "id": "hsk2025.word.l2.0390.v1",
+          "levelBand": "2",
+          "payload": {
+            "hanzi": "里面",
+            "traditional": "裡面",
+            "pinyin": "lǐmiàn",
+            "meaning": "inside",
+            "partOfSpeech": "N"
+          }
+        },
+        {
+          "id": "hsk2025.word.l2.0482.v1",
+          "levelBand": "2",
+          "payload": {
+            "hanzi": "右边",
+            "traditional": "右邊",
+            "pinyin": "yòubian",
+            "meaning": "right side",
+            "partOfSpeech": "N"
+          }
+        }
+      ]
+    },
+    {
+      "id": "comparisons",
+      "words": [
+        {
+          "id": "hsk2025.word.l2.0309.v1",
+          "levelBand": "2",
+          "payload": {
+            "hanzi": "比",
+            "traditional": "比",
+            "pinyin": "bǐ",
+            "meaning": "to compare; than (in comparisons)",
+            "partOfSpeech": "V/Prep"
+          }
+        },
+        {
+          "id": "hsk2025.word.l2.0371.v1",
+          "levelBand": "2",
+          "payload": {
+            "hanzi": "近",
+            "traditional": "近",
+            "pinyin": "jìn",
+            "meaning": "near",
+            "partOfSpeech": "Adj"
+          }
+        },
+        {
+          "id": "hsk2025.word.l2.0484.v1",
+          "levelBand": "2",
+          "payload": {
+            "hanzi": "远",
+            "traditional": "遠",
+            "pinyin": "yuǎn",
+            "meaning": "far",
+            "partOfSpeech": "Adj"
+          }
+        }
+      ]
+    }
+  ]
+}
