@@ -56,10 +56,10 @@ test('valid, curated, encoded, Flight, action, preview and private requests reta
   assert.equal(missingWordResponse(new Request(url, { method: 'POST', body: '{}' }), 'x'), undefined);
 });
 
-test('bounded prebuild covers foundation and valid priority words without changing renderers', async () => {
+test('public word prebuild covers the full active catalog and retained priority words', async () => {
   const params = wordPrebuildParams(); const ids = new Set(params.map(p => p.slug));
-  assert.equal(ids.size, params.length); assert.ok(ids.size <= 1269);
-  for (const row of catalog.words.filter(r => ['1', '2', '3'].includes(r[3]))) assert.ok(ids.has(row[0]));
+  assert.equal(ids.size, params.length); assert.ok(ids.size <= 15000);
+  for (const row of catalog.words) assert.ok(ids.has(row[0]), row[0]);
   for (const { slug } of params) assert.equal((await getPublishedWordBySlug(slug)).status, 'published', slug);
   const patch = await readFile(new URL('../scripts/patch-open-next-email.mjs', import.meta.url), 'utf8');
   assert.ok(patch.includes('.next/server/app/_not-found.html'));

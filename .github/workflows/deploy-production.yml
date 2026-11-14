@@ -16,7 +16,7 @@ concurrency:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 60
     env:
       CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
       CLOUDFLARE_ACCOUNT_ID: 77bc392d46985cd3425691358f5e8a77
@@ -57,12 +57,10 @@ jobs:
         run: node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --test tests/anonymous-account-fast-path.test.mts
       - name: Verify lightweight authentication, session security and OAuth behavior
         run: node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --test tests/account-authentication.test.mts tests/google-sign-in-flow.test.mts tests/account-sync.test.mts tests/account-loading-resilience.test.mts tests/d1-overload-hardening.test.mts tests/p1-user-d1-protection.test.mts tests/p0-3-unified-account-contract.test.mts
-      - name: Verify bounded word prebuild and retained word routing
-        run: node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --test tests/word-cache-release.test.mts tests/word-detail-lightweight-data.test.mts tests/dictionary-p2-learning-loop.test.mts tests/hsk1-vocabulary-landing.test.mts tests/hsk2-vocabulary-landing.test.mts tests/hsk3-vocabulary-landing.test.mts tests/hsk4-vocabulary-landing.test.mts tests/hsk5-vocabulary-landing.test.mts
+      - name: Verify complete public word assets and retained word routing
+        run: node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --test tests/public-word-assets.test.mts tests/prepare-public-word-assets.test.cjs tests/word-cache-release.test.mts tests/word-detail-lightweight-data.test.mts tests/dictionary-p2-learning-loop.test.mts tests/hsk1-vocabulary-landing.test.mts tests/hsk2-vocabulary-landing.test.mts tests/hsk3-vocabulary-landing.test.mts tests/hsk4-vocabulary-landing.test.mts tests/hsk5-vocabulary-landing.test.mts
       - name: Ensure dedicated private page-cache bucket
         run: node scripts/storage-release.mjs ensure-bucket
-      - name: Verify scoped remote cache write and read before building
-        run: node scripts/word-cache-r2.cjs
       - name: Check whether assessment delivery changed
         id: assessment
         run: |
@@ -95,6 +93,10 @@ jobs:
         run: |
           npx opennextjs-cloudflare build --dangerouslyUseUnsupportedNextVersion
           node scripts/patch-open-next-email.mjs
+          node scripts/prepare-public-word-assets.cjs
+      - name: Preserve current production layout and learning code for this CPU-only release
+        if: contains(github.event.head_commit.message, '[preserve-ui-word-assets]')
+        run: node scripts/check-public-word-preservation.cjs
       - name: Verify cached public pages bypass Next and paid files remain guarded
         timeout-minutes: 7
         run: |
@@ -106,10 +108,10 @@ jobs:
           node scripts/check-hsk4-vocabulary-landing.cjs
           node scripts/check-hsk5-vocabulary-landing.cjs
           node scripts/run-cache-gate.cjs
+          node scripts/prepare-public-word-assets.cjs --verify
       - name: Upload and deploy Worker version
         run: |
-          node scripts/publish-word-cache.cjs
-          node scripts/verify-word-cache-upload.cjs
+          node scripts/prepare-public-word-assets.cjs --verify
           npx wrangler versions upload | tee "$RUNNER_TEMP/worker-upload.log"
           version_id=$(grep -Eo 'Worker Version ID: [0-9a-f-]{36}' "$RUNNER_TEMP/worker-upload.log" | tail -1 | awk '{print $4}')
           if [ -z "$version_id" ]; then
@@ -143,7 +145,8 @@ jobs:
           name: cost-cache-audit-${{ github.run_id }}
           path: |
             ${{ runner.temp }}/cost-cache-audit.json
-            ${{ runner.temp }}/word-cache-upload.json
+            .open-next/public-word-assets.json
+            .open-next/public-word-ui-preservation.json
           retention-days: 7
           if-no-files-found: error
       - name: Retain storage deployment verification

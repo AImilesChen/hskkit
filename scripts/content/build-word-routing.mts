@@ -38,9 +38,31 @@ for (const [key, numbers] of [...grouped].sort(([a], [b]) => a.localeCompare(b))
   ranges[key] = output;
 }
 const foundation = catalog.words.filter(row => ['1', '2', '3'].includes(row[3])).map(row => row[0]);
-const selected = [...new Set([...listPublishedWords().map(word => word.slug), ...foundation,
+// Every active public word is generated in CI, including the long-tail HSK 4–9
+// requests that dominated production CPU. Retained learning IDs stay readable.
+const selected = [...new Set([...listPublishedWords().map(word => word.slug), ...catalog.words.map(row => row[0]),
   ...priority.slice(0, 256).filter(id => valid.has(id))])];
-if (foundation.length !== 1000 || selected.length > 1269) throw new Error('Word prebuild batch exceeded its reviewed budget');
+if (foundation.length !== 1000 || selected.length > 15000) throw new Error('Public word asset generation exceeded its release budget');
+const assetGroups = new Map<string, number[]>();
+const aliases: string[] = [];
+for (const slug of selected) {
+  const match = /^(.*)\.(\d+)(\.v\d+)$/.exec(slug);
+  if (!match) { aliases.push(slug); continue; }
+  const key = `${match[1]}${match[3]}:${match[2].length}`;
+  const values = assetGroups.get(key) ?? [];
+  values.push(Number(match[2])); assetGroups.set(key, values);
+}
+const assetRanges: Record<string, number[][]> = {};
+for (const [key, values] of [...assetGroups].sort(([a], [b]) => a.localeCompare(b))) {
+  const intervals: number[][] = [];
+  for (const n of [...new Set(values)].sort((a, b) => a - b)) {
+    const last = intervals.at(-1);
+    if (last && last[1] + 1 === n) last[1] = n;
+    else intervals.push([n, n]);
+  }
+  assetRanges[key] = intervals;
+}
 await writeFile(new URL('../../src/lib/runtime/word-route-validity.json', import.meta.url), JSON.stringify(ranges) + '\n');
 await writeFile(new URL('../../src/lib/dictionary/word-prebuild-slugs.json', import.meta.url), JSON.stringify(selected) + '\n');
+await writeFile(new URL('../../src/lib/runtime/public-word-asset-policy.json', import.meta.url), JSON.stringify({ aliases, ranges: assetRanges }) + '\n');
 console.log(`Word routing: ${valid.size} valid IDs in ${Object.keys(ranges).length} groups; ${selected.length} prebuilt detail/practice pairs`);

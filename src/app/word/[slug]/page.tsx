@@ -42,7 +42,8 @@ function WordExample({ example, target }: { example: { hanzi: string; pinyin: st
   return <div className="dictionary-example"><p className="dictionary-example-hanzi" lang="zh-Hans">{parts.map((part, index) => <span key={index}>{index > 0 && <strong className="dictionary-example-target">{target}</strong>}{part}</span>)}</p><p className="dictionary-example-pinyin"><DictionaryPinyin text={example.pinyin} /></p><p className="dictionary-example-meaning">{example.meaning}</p></div>;
 }
 
-export const revalidate = 86_400;
+// Published vocabulary is versioned source data; refresh it on deployment.
+export const revalidate = false;
 
 export function generateStaticParams() {
   return wordPrebuildParams();

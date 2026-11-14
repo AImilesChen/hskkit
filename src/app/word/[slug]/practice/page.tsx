@@ -8,7 +8,8 @@ import { buildDictionaryPractice } from "../../../../lib/dictionary/p2-learning"
 import { StudyPage } from "../../../components/study-shell";
 import { WordPracticeClient } from "./word-practice-client";
 
-export const revalidate = 86_400;
+// Exercises use versioned public content; progress is saved by the existing API.
+export const revalidate = false;
 
 export function generateStaticParams() {
   return wordPrebuildParams();

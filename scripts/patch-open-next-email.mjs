@@ -27,7 +27,8 @@ if (!costSource.includes(costMarker)) {
 const handler = await readFile(handlerPath, "utf8");
 if (handler.includes(middlewareManifestLookup)) {
   await writeFile(handlerPath, handler.replaceAll(middlewareManifestLookup, middlewareManifestDisabled));
-} else if (!handler.includes(middlewareManifestDisabled)) {
+} else if (!handler.includes(middlewareManifestDisabled)
+  && !/getMiddlewareManifest\(\)\s*\{\s*return null;?\s*\}/.test(handler)) {
   throw new Error("Unexpected OpenNext server output: middleware manifest lookup not found.");
 }
 
