@@ -6,6 +6,7 @@ process.chdir(S);process.env.WRANGLER_SEND_METRICS='false';process.env.WRANGLER_
 // discovery or local binding startup inside the production job environment.
 for(const key of ['CLOUDFLARE_API_TOKEN','CLOUDFLARE_API_KEY','CF_API_TOKEN','CF_API_KEY','CLOUDFLARE_ACCOUNT_ID'])delete process.env[key];
 const {unstable_startWorker}=require('wrangler');
+const {fetchLocalWorker}=require('./local-worker-http.cjs');
 const common={compatibilityDate:'2026-05-24',compatibilityFlags:['nodejs_compat','global_fetch_strictly_public'],sendMetrics:false,envFiles:[],dev:{remote:false,persist:path.join(T,'state'),server:{port:0},inspector:false,watch:false,liveReload:false,logLevel:'error'}};
 const checkStarted=Date.now();
 const progress=message=>console.log(`cache-check (${Math.round((Date.now()-checkStarted)/1000)}s): ${message}`);
@@ -16,7 +17,7 @@ async function checkedFetch(worker,url,init){
  // RPC fetch proxy can stall when a lazily loaded Next response is streamed.
  const requested=new URL(url),target=new URL(requested.pathname+requested.search,await worker.url);
  const headers=new Headers(init?.headers);headers.set('host',requested.host);
- const result=await bounded(url,fetch(target,{...init,headers,redirect:'follow'}));
+ const result=await bounded(url,fetchLocalWorker(target,{...init,headers}));
  assert.equal(new URL(result.url).origin,target.origin,'Local verification left its isolated HTTP listener');
  progress('received '+result.status+' '+url);return result;
 }

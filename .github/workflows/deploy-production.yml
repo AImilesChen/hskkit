@@ -98,7 +98,7 @@ jobs:
       - name: Verify cached public pages bypass Next and paid files remain guarded
         timeout-minutes: 7
         run: |
-          node --test tests/cache-gate-runner.test.cjs tests/word-cache-upload.test.cjs tests/publish-word-cache.test.cjs
+          node --test tests/cache-gate-runner.test.cjs tests/local-worker-http.test.cjs tests/word-cache-upload.test.cjs tests/publish-word-cache.test.cjs
           node scripts/check-dictionary-landing.cjs
           node scripts/check-hsk1-vocabulary-landing.cjs
           node scripts/check-hsk2-vocabulary-landing.cjs
