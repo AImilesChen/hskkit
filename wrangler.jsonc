@@ -2,6 +2,7 @@
 	"$schema": "node_modules/wrangler/config-schema.json",
 	"main": ".open-next/worker.js",
 	"name": "hskkit",
+	"minify": true,
 	"workers_dev": false,
 	"compatibility_date": "2026-05-24",
 	"compatibility_flags": [
@@ -72,5 +73,6 @@
 		}]
 	}
 }
+
 
 
