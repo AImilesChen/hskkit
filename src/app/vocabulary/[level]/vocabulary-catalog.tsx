@@ -219,7 +219,7 @@ export function VocabularyCatalog({ level, levelLabel, publishedCount }: { level
         <ul className={`mt-2 overflow-hidden rounded-2xl border border-slate-200 bg-white transition ${loading ? "opacity-55" : ""}`} aria-label={`${levelLabel} vocabulary results`}>
           {data.contentAssets.map((word) => <li key={word.id} className="grid gap-3 border-b border-slate-200 px-[16px] py-[14px] last:border-b-0 sm:px-[20px] lg:grid-cols-[minmax(9rem,.75fr)_minmax(9rem,.7fr)_minmax(0,2fr)_7rem_9rem] lg:items-center lg:gap-4">
             <div className="flex items-start justify-between gap-3 lg:block">
-              <div className="flex flex-wrap items-baseline gap-2"><span className="text-2xl font-bold text-slate-950">{word.payload.hanzi}</span>{word.payload.traditional && word.payload.traditional !== word.payload.hanzi && <span className="text-sm text-slate-500">{word.payload.traditional}</span>}</div>
+              <Link prefetch={false} href={`/word/${encodeURIComponent(word.id)}`} aria-label={`View details for ${word.payload.hanzi}`} className="flex flex-wrap items-baseline gap-2 rounded-sm no-underline hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-blue-600"><span className="text-2xl font-bold text-slate-950">{word.payload.hanzi}</span>{word.payload.traditional && word.payload.traditional !== word.payload.hanzi && <span className="text-sm text-slate-500">{word.payload.traditional}</span>}</Link>
               <div className="lg:hidden">
                 {word.formalAudioUrl
                   ? <AudioButton text={word.payload.hanzi} src={word.formalAudioUrl} label={`Play pronunciation for ${word.payload.hanzi}`} variant="icon" />
