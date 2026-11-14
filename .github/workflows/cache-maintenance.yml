@@ -5,19 +5,32 @@ on:
     paths: ['.github/workflows/cache-maintenance.yml', 'ops/cache-maintenance/**']
   workflow_dispatch:
   schedule:
-    - cron: '23 */6 * * *'
+    - cron: '23 0 * * *'
 permissions:
   contents: read
 concurrency:
   group: hskkit-production-deploy
   cancel-in-progress: false
 jobs:
+  interval:
+    runs-on: ubuntu-latest
+    outputs:
+      due: ${{ steps.slot.outputs.due }}
+    steps:
+      - id: slot
+        name: Select the UTC 48-hour maintenance slot
+        env:
+          EVENT: ${{ github.event_name }}
+        run: |
+          node -e "const fs=require('fs'); const due=process.env.EVENT!=='schedule'||Math.floor(Date.now()/86400000)%2===0; fs.appendFileSync(process.env.GITHUB_OUTPUT,'due='+due+String.fromCharCode(10))"
   cache-maintenance:
+    needs: interval
+    if: needs.interval.outputs.due == 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 20
     env:
       CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-      CACHE_MAINTENANCE_MODE: apply
+      CACHE_MAINTENANCE_MODE: ${{ github.event_name == 'push' && 'dry-run' || 'apply' }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
