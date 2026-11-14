@@ -99,7 +99,7 @@ test("character structure is a validated count-preserving browse filter", () => 
 test("radical and stroke directories are first-class routes with count-preserving links", () => {
   const radicalPage = read("src/app/dictionary/radicals/page.tsx");
   const strokePage = read("src/app/dictionary/strokes/page.tsx");
-  const dictionaryPage = read("src/app/dictionary/page.tsx");
+  const dictionaryPage = read("src/app/dictionary/page.tsx") + read("src/app/dictionary/dictionary-guide.tsx");
   assert.match(radicalPage, /214 Kangxi radicals/);
   assert.match(radicalPage, /radicalDirectory/);
   assert.match(radicalPage, /characterCount/);

@@ -99,6 +99,7 @@ jobs:
         timeout-minutes: 7
         run: |
           node --test tests/cache-gate-runner.test.cjs tests/word-cache-upload.test.cjs tests/publish-word-cache.test.cjs
+          node scripts/check-dictionary-landing.cjs
           node scripts/run-cache-gate.cjs
       - name: Upload and deploy Worker version
         run: |

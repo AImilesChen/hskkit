@@ -28,7 +28,7 @@ test("dictionary query intent recognizes Hanzi, pinyin and English without a fie
 test("dictionary landing is browseable on first load and exposes HSK 1–6 plus the unified 7–9 band directly", () => {
   const page = read("src/app/dictionary/page.tsx");
   const client = read("src/app/components/dictionary-search.tsx");
-  assert.match(page, /Find a Chinese word you can use/);
+  assert.match(page, /Chinese-English Dictionary/);
   assert.match(client, /\{ value: "7", label: "HSK 7–9" \}/);
   assert.doesNotMatch(client, /label: "HSK [89]"/);
   assert.match(client, /Beginner words to explore/);
