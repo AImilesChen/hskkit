@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { FormEvent, useEffect, useMemo, useRef, useState } from "react";
+import { FormEvent, Suspense, useEffect, useMemo, useRef, useState } from "react";
 import { AudioButton } from "../../components/audio-button";
 import { QuickFlashcards } from "./quick-flashcards";
 
@@ -29,7 +29,7 @@ type CatalogWord = {
     partOfSpeech: string;
   };
 };
-type CatalogResponse = {
+export type CatalogResponse = {
   contentAssets: CatalogWord[];
   pagination: {
     page: number;
@@ -71,12 +71,16 @@ function visiblePages(current: number, total: number): PageItem[] {
   return result;
 }
 
-export function VocabularyCatalog({ level, levelLabel, publishedCount }: { level: number; levelLabel: string; publishedCount: number }) {
-  const router = useRouter();
+function VocabularyModeSync({ onModeChange }: { onModeChange: (mode: "browse" | "flashcards") => void }) {
   const searchParams = useSearchParams();
-  const initialMode = searchParams.get("mode") === "flashcards" ? "flashcards" : "browse";
-  const [mode, setMode] = useState<"browse" | "flashcards">(initialMode);
-  useEffect(() => setMode(initialMode), [initialMode]);
+  const mode = searchParams.get("mode") === "flashcards" ? "flashcards" : "browse";
+  useEffect(() => onModeChange(mode), [mode, onModeChange]);
+  return null;
+}
+
+export function VocabularyCatalog({ level, levelLabel, publishedCount, initialData }: { level: number; levelLabel: string; publishedCount: number; initialData?: CatalogResponse }) {
+  const router = useRouter();
+  const [mode, setMode] = useState<"browse" | "flashcards">("browse");
 
   function changeMode(nextMode: "browse" | "flashcards") {
     setMode(nextMode);
@@ -87,13 +91,19 @@ export function VocabularyCatalog({ level, levelLabel, publishedCount }: { level
   const [audio, setAudio] = useState<AudioFilter>("all");
   const [sort, setSort] = useState<SortOrder>("catalog");
   const [request, setRequest] = useState<CatalogRequest>({ query: "", partOfSpeech: "", audio: "all", sort: "catalog", page: 1 });
-  const [data, setData] = useState<CatalogResponse | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [data, setData] = useState<CatalogResponse | null>(initialData ?? null);
+  const [loading, setLoading] = useState(!initialData);
   const [error, setError] = useState("");
   const [retryToken, setRetryToken] = useState(0);
   const resultsRef = useRef<HTMLElement | null>(null);
 
   useEffect(() => {
+    if (initialData && request.page === 1 && !request.query && !request.partOfSpeech && request.audio === "all" && request.sort === "catalog" && retryToken === 0) {
+      setData(initialData);
+      setLoading(false);
+      setError("");
+      return;
+    }
     const controller = new AbortController();
     const params = new URLSearchParams({ level: String(level), page: String(request.page), pageSize: "50" });
     if (request.query.trim()) params.set("q", request.query.trim());
@@ -117,7 +127,7 @@ export function VocabularyCatalog({ level, levelLabel, publishedCount }: { level
         if (!controller.signal.aborted) setLoading(false);
       });
     return () => controller.abort();
-  }, [level, request, retryToken]);
+  }, [level, request, retryToken, initialData]);
 
   const pages = useMemo(() => visiblePages(data?.pagination.page ?? 1, data?.pagination.totalPages ?? 0), [data]);
   const hasDraftFilters = Boolean(query.trim() || partOfSpeech || audio !== "all" || sort !== "catalog");
@@ -149,6 +159,7 @@ export function VocabularyCatalog({ level, levelLabel, publishedCount }: { level
   const resultTotal = data?.pagination.total ?? publishedCount;
 
   return <section ref={resultsRef} className="scroll-mt-24" aria-label={`${levelLabel} vocabulary activities`}>
+    <Suspense fallback={null}><VocabularyModeSync onModeChange={setMode} /></Suspense>
     <div className="mb-[20px] flex flex-col gap-3 border-b border-slate-200 pb-[16px] sm:flex-row sm:items-end sm:justify-between">
       <div>
         <p className="text-xs font-bold uppercase tracking-[.14em] text-slate-500">Vocabulary workspace</p>

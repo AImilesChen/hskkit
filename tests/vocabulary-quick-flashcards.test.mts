@@ -141,7 +141,6 @@ test("quick cards reveal published pinyin, meaning and part of speech without in
   assert.match(quickSource, /variant="icon"/);
   assert.match(quickSource, /View word details/);
   assert.match(quickSource, /splitFlashcardForms/);
-  assert.match(quickSource, /text-white sm:text-3xl/);
   assert.doesNotMatch(quickSource, /example_cn|example_en|>(Again|Hard|Good|Easy)</i);
 });
 

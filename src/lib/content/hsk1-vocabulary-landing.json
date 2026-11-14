@@ -1,0 +1,786 @@
+{
+  "releaseId": "hsk3-hsk123456789-2025-v11",
+  "wordCount": 300,
+  "firstPage": [
+    {
+      "id": "hsk2025.word.l1.0001.v1",
+      "levelBand": "1",
+      "payload": {
+        "hanzi": "爱",
+        "traditional": "愛",
+        "pinyin": "ài",
+        "meaning": "to love; to like",
+        "partOfSpeech": "V"
+      }
+    },
+    {
+      "id": "hsk2025.word.l1.0002.v1",
+      "levelBand": "1",
+      "payload": {
+        "hanzi": "八",
+        "traditional": "八",
+        "pinyin": "bā",
+        "meaning": "eight",
+        "partOfSpeech": "Num"
+      }
+    },
+    {
+      "id": "hsk2025.word.l1.0003.v1",
+      "levelBand": "1",
+      "payload": {
+        "hanzi": "爸爸",
+        "traditional": "爸爸",
+        "pinyin": "bàba",
+        "meaning": "father; dad",
+        "partOfSpeech": "N"
+      }
+    },
+    {
+      "id": "hsk2025.word.l1.0004.v1",
+      "levelBand": "1",
+      "payload": {
+        "hanzi": "吧",
+        "traditional": "吧",
+        "pinyin": "ba",
+        "meaning": "particle for suggestion or request",
+        "partOfSpeech": "Aux"
+      }
+    },
+    {
+      "id": "hsk2025.word.l1.0005.v1",
+      "levelBand": "1",
+      "payload": {
+        "hanzi": "白天",
+        "traditional": "白天",
+        "pinyin": "báitiān",
+        "meaning": "daytime; during the day; day",
+        "partOfSpeech": "N"
+      }
+    },
+    {
+      "id": "hsk2025.word.l1.0006.v1",
+      "levelBand": "1",
+      "payload": {
+        "hanzi": "百",
+        "traditional": "百",
+        "pinyin": "bǎi",
+        "meaning": "one hundred",
+        "partOfSpeech": "Num"
+      }
+    },
+    {
+      "id": "hsk2025.word.l1.0007.v1",
+      "levelBand": "1",
+      "payload": {
+        "hanzi": "半",
+        "traditional": "半",
+        "pinyin": "bàn",
+        "meaning": "half",
+        "partOfSpeech": "Adv/Num"
+      }
+    },
+    {
+      "id": "hsk2025.word.l1.0008.v1",
+      "levelBand": "1",
+      "payload": {
+        "hanzi": "包子",
+        "traditional": "包子",
+        "pinyin": "bāozi",
+        "meaning": "baozi; bao (steamed stuffed bun)",
+        "partOfSpeech": "N"
+      }
+    },
+    {
+      "id": "hsk2025.word.l1.0009.v1",
+      "levelBand": "1",
+      "payload": {
+        "hanzi": "杯子",
+        "traditional": "杯子",
+        "pinyin": "bēizi",
+        "meaning": "cup; glass",
+        "partOfSpeech": "N"
+      }
+    },
+    {
+      "id": "hsk2025.word.l1.0010.v1",
+      "levelBand": "1",
+      "payload": {
+        "hanzi": "本",
+        "traditional": "本",
+        "pinyin": "běn",
+        "meaning": "classifier for books and similar items",
+        "partOfSpeech": "M"
+      }
+    },
+    {
+      "id": "hsk2025.word.l1.0011.v1",
+      "levelBand": "1",
+      "payload": {
+        "hanzi": "边",
+        "traditional": "邊",
+        "pinyin": "biān",
+        "meaning": "side; edge; margin",
+        "partOfSpeech": "N/Suffix"
+      }
+    },
+    {
+      "id": "hsk2025.word.l1.0012.v1",
+      "levelBand": "1",
+      "payload": {
+        "hanzi": "病",
+        "traditional": "病",
+        "pinyin": "bìng",
+        "meaning": "illness; disease; to fall ill",
+        "partOfSpeech": "N/V"
+      }
+    },
+    {
+      "id": "hsk2025.word.l1.0013.v1",
+      "levelBand": "1",
+      "payload": {
+        "hanzi": "不",
+        "traditional": "不",
+        "pinyin": "bù",
+        "meaning": "not",
+        "partOfSpeech": "Adv"
+      }
+    },
+    {
+      "id": "hsk2025.word.l1.0014.v1",
+      "levelBand": "1",
+      "payload": {
+        "hanzi": "不客气",
+        "traditional": "不客氣",
+        "pinyin": "bú kèqi",
+        "meaning": "you're welcome; don't mention it",
+        "partOfSpeech": "Phrase"
+      }
+    },
+    {
+      "id": "hsk2025.word.l1.0015.v1",
+      "levelBand": "1",
+      "payload": {
+        "hanzi": "不要",
+        "traditional": "不要",
+        "pinyin": "búyào",
+        "meaning": "don't; do not",
+        "partOfSpeech": "Adv"
+      }
+    },
+    {
+      "id": "hsk2025.word.l1.0016.v1",
+      "levelBand": "1",
+      "payload": {
+        "hanzi": "菜",
+        "traditional": "菜",
+        "pinyin": "cài",
+        "meaning": "vegetable; dish (of food)",
+        "partOfSpeech": "N"
+      }
+    },
+    {
+      "id": "hsk2025.word.l1.0017.v1",
+      "levelBand": "1",
+      "payload": {
+        "hanzi": "茶",
+        "traditional": "茶",
+        "pinyin": "chá",
+        "meaning": "tea; tea plant",
+        "partOfSpeech": "N"
+      }
+    },
+    {
+      "id": "hsk2025.word.l1.0018.v1",
+      "levelBand": "1",
+      "payload": {
+        "hanzi": "唱",
+        "traditional": "唱",
+        "pinyin": "chàng",
+        "meaning": "to sing",
+        "partOfSpeech": "V"
+      }
+    },
+    {
+      "id": "hsk2025.word.l1.0019.v1",
+      "levelBand": "1",
+      "payload": {
+        "hanzi": "超市",
+        "traditional": "超市",
+        "pinyin": "chāoshì",
+        "meaning": "supermarket",
+        "partOfSpeech": "N"
+      }
+    },
+    {
+      "id": "hsk2025.word.l1.0020.v1",
+      "levelBand": "1",
+      "payload": {
+        "hanzi": "车",
+        "traditional": "車",
+        "pinyin": "chē",
+        "meaning": "car; vehicle",
+        "partOfSpeech": "N"
+      }
+    },
+    {
+      "id": "hsk2025.word.l1.0021.v1",
+      "levelBand": "1",
+      "payload": {
+        "hanzi": "吃",
+        "traditional": "吃",
+        "pinyin": "chī",
+        "meaning": "to eat",
+        "partOfSpeech": "V"
+      }
+    },
+    {
+      "id": "hsk2025.word.l1.0022.v1",
+      "levelBand": "1",
+      "payload": {
+        "hanzi": "出租车",
+        "traditional": "出租車",
+        "pinyin": "chūzūchē",
+        "meaning": "taxi",
+        "partOfSpeech": "N"
+      }
+    },
+    {
+      "id": "hsk2025.word.l1.0023.v1",
+      "levelBand": "1",
+      "payload": {
+        "hanzi": "穿",
+        "traditional": "穿",
+        "pinyin": "chuān",
+        "meaning": "to wear (clothes)",
+        "partOfSpeech": "V"
+      }
+    },
+    {
+      "id": "hsk2025.word.l1.0024.v1",
+      "levelBand": "1",
+      "payload": {
+        "hanzi": "打电话",
+        "traditional": "打電話",
+        "pinyin": "dǎ diànhuà",
+        "meaning": "to make a telephone call",
+        "partOfSpeech": "Phrase"
+      }
+    },
+    {
+      "id": "hsk2025.word.l1.0025.v1",
+      "levelBand": "1",
+      "payload": {
+        "hanzi": "大",
+        "traditional": "大",
+        "pinyin": "dà",
+        "meaning": "big; large",
+        "partOfSpeech": "Adj"
+      }
+    },
+    {
+      "id": "hsk2025.word.l1.0026.v1",
+      "levelBand": "1",
+      "payload": {
+        "hanzi": "大家",
+        "traditional": "大家",
+        "pinyin": "dàjiā",
+        "meaning": "everyone",
+        "partOfSpeech": "Pron"
+      }
+    },
+    {
+      "id": "hsk2025.word.l1.0027.v1",
+      "levelBand": "1",
+      "payload": {
+        "hanzi": "大学",
+        "traditional": "大學",
+        "pinyin": "dàxué",
+        "meaning": "university; college",
+        "partOfSpeech": "N"
+      }
+    },
+    {
+      "id": "hsk2025.word.l1.0028.v1",
+      "levelBand": "1",
+      "payload": {
+        "hanzi": "大学生",
+        "traditional": "大學生",
+        "pinyin": "dàxuéshēng",
+        "meaning": "university student; college student",
+        "partOfSpeech": "N"
+      }
+    },
+    {
+      "id": "hsk2025.word.l1.0029.v1",
+      "levelBand": "1",
+      "payload": {
+        "hanzi": "到",
+        "traditional": "到",
+        "pinyin": "dào",
+        "meaning": "to arrive; to reach",
+        "partOfSpeech": "V"
+      }
+    },
+    {
+      "id": "hsk2025.word.l1.0030.v1",
+      "levelBand": "1",
+      "payload": {
+        "hanzi": "的",
+        "traditional": "的",
+        "pinyin": "de",
+        "meaning": "possessive or descriptive particle",
+        "partOfSpeech": "Aux"
+      }
+    },
+    {
+      "id": "hsk2025.word.l1.0031.v1",
+      "levelBand": "1",
+      "payload": {
+        "hanzi": "第",
+        "traditional": "第",
+        "pinyin": "dì",
+        "meaning": "ordinal prefix, as in 第一 (first)",
+        "partOfSpeech": "Prefix"
+      }
+    },
+    {
+      "id": "hsk2025.word.l1.0032.v1",
+      "levelBand": "1",
+      "payload": {
+        "hanzi": "弟弟",
+        "traditional": "弟弟",
+        "pinyin": "dìdi",
+        "meaning": "younger brother",
+        "partOfSpeech": "N"
+      }
+    },
+    {
+      "id": "hsk2025.word.l1.0033.v1",
+      "levelBand": "1",
+      "payload": {
+        "hanzi": "点",
+        "traditional": "點",
+        "pinyin": "diǎn",
+        "meaning": "o'clock; point",
+        "partOfSpeech": "N/M"
+      }
+    },
+    {
+      "id": "hsk2025.word.l1.0034.v1",
+      "levelBand": "1",
+      "payload": {
+        "hanzi": "店",
+        "traditional": "店",
+        "pinyin": "diàn",
+        "meaning": "shop; store",
+        "partOfSpeech": "N"
+      }
+    },
+    {
+      "id": "hsk2025.word.l1.0035.v1",
+      "levelBand": "1",
+      "payload": {
+        "hanzi": "电话",
+        "traditional": "電話",
+        "pinyin": "diànhuà",
+        "meaning": "telephone; phone call; phone number",
+        "partOfSpeech": "N"
+      }
+    },
+    {
+      "id": "hsk2025.word.l1.0036.v1",
+      "levelBand": "1",
+      "payload": {
+        "hanzi": "电脑",
+        "traditional": "電腦",
+        "pinyin": "diànnǎo",
+        "meaning": "computer",
+        "partOfSpeech": "N"
+      }
+    },
+    {
+      "id": "hsk2025.word.l1.0037.v1",
+      "levelBand": "1",
+      "payload": {
+        "hanzi": "电视",
+        "traditional": "電視",
+        "pinyin": "diànshì",
+        "meaning": "television; TV",
+        "partOfSpeech": "N"
+      }
+    },
+    {
+      "id": "hsk2025.word.l1.0038.v1",
+      "levelBand": "1",
+      "payload": {
+        "hanzi": "电影",
+        "traditional": "電影",
+        "pinyin": "diànyǐng",
+        "meaning": "movie; film",
+        "partOfSpeech": "N"
+      }
+    },
+    {
+      "id": "hsk2025.word.l1.0039.v1",
+      "levelBand": "1",
+      "payload": {
+        "hanzi": "电影院",
+        "traditional": "電影院",
+        "pinyin": "diànyǐngyuàn",
+        "meaning": "cinema; movie theater",
+        "partOfSpeech": "N"
+      }
+    },
+    {
+      "id": "hsk2025.word.l1.0040.v1",
+      "levelBand": "1",
+      "payload": {
+        "hanzi": "东西",
+        "traditional": "東西",
+        "pinyin": "dōngxi",
+        "meaning": "thing; stuff",
+        "partOfSpeech": "N"
+      }
+    },
+    {
+      "id": "hsk2025.word.l1.0041.v1",
+      "levelBand": "1",
+      "payload": {
+        "hanzi": "都",
+        "traditional": "都",
+        "pinyin": "dōu",
+        "meaning": "all; both",
+        "partOfSpeech": "Adv"
+      }
+    },
+    {
+      "id": "hsk2025.word.l1.0042.v1",
+      "levelBand": "1",
+      "payload": {
+        "hanzi": "读",
+        "traditional": "讀",
+        "pinyin": "dú",
+        "meaning": "to read",
+        "partOfSpeech": "V"
+      }
+    },
+    {
+      "id": "hsk2025.word.l1.0043.v1",
+      "levelBand": "1",
+      "payload": {
+        "hanzi": "读书",
+        "traditional": "讀書",
+        "pinyin": "dúshū",
+        "meaning": "to read; to study",
+        "partOfSpeech": "V"
+      }
+    },
+    {
+      "id": "hsk2025.word.l1.0044.v1",
+      "levelBand": "1",
+      "payload": {
+        "hanzi": "对",
+        "traditional": "對",
+        "pinyin": "duì",
+        "meaning": "correct; toward; to",
+        "partOfSpeech": "V/Adj/M/Prep"
+      }
+    },
+    {
+      "id": "hsk2025.word.l1.0045.v1",
+      "levelBand": "1",
+      "payload": {
+        "hanzi": "对不起",
+        "traditional": "對不起",
+        "pinyin": "duìbuqǐ",
+        "meaning": "sorry; excuse me",
+        "partOfSpeech": "V"
+      }
+    },
+    {
+      "id": "hsk2025.word.l1.0046.v1",
+      "levelBand": "1",
+      "payload": {
+        "hanzi": "多",
+        "traditional": "多",
+        "pinyin": "duō",
+        "meaning": "many; much",
+        "partOfSpeech": "V/Adj/Adv/Pron/Num"
+      }
+    },
+    {
+      "id": "hsk2025.word.l1.0047.v1",
+      "levelBand": "1",
+      "payload": {
+        "hanzi": "多少",
+        "traditional": "多少",
+        "pinyin": "duōshao",
+        "meaning": "how many; how much",
+        "partOfSpeech": "Pron"
+      }
+    },
+    {
+      "id": "hsk2025.word.l1.0048.v1",
+      "levelBand": "1",
+      "payload": {
+        "hanzi": "儿子",
+        "traditional": "兒子",
+        "pinyin": "érzi",
+        "meaning": "son",
+        "partOfSpeech": "N"
+      }
+    },
+    {
+      "id": "hsk2025.word.l1.0049.v1",
+      "levelBand": "1",
+      "payload": {
+        "hanzi": "二",
+        "traditional": "二",
+        "pinyin": "èr",
+        "meaning": "two",
+        "partOfSpeech": "Num"
+      }
+    },
+    {
+      "id": "hsk2025.word.l1.0050.v1",
+      "levelBand": "1",
+      "payload": {
+        "hanzi": "饭",
+        "traditional": "飯",
+        "pinyin": "fàn",
+        "meaning": "cooked rice; meal",
+        "partOfSpeech": "N"
+      }
+    }
+  ],
+  "topics": [
+    {
+      "id": "family",
+      "words": [
+        {
+          "id": "hsk2025.word.l1.0003.v1",
+          "levelBand": "1",
+          "payload": {
+            "hanzi": "爸爸",
+            "traditional": "爸爸",
+            "pinyin": "bàba",
+            "meaning": "father; dad",
+            "partOfSpeech": "N"
+          }
+        },
+        {
+          "id": "hsk2025.word.l1.0114.v1",
+          "levelBand": "1",
+          "payload": {
+            "hanzi": "妈妈",
+            "traditional": "媽媽",
+            "pinyin": "māma",
+            "meaning": "mother; mom",
+            "partOfSpeech": "N"
+          }
+        },
+        {
+          "id": "hsk2025.word.l1.0032.v1",
+          "levelBand": "1",
+          "payload": {
+            "hanzi": "弟弟",
+            "traditional": "弟弟",
+            "pinyin": "dìdi",
+            "meaning": "younger brother",
+            "partOfSpeech": "N"
+          }
+        }
+      ]
+    },
+    {
+      "id": "numbers",
+      "words": [
+        {
+          "id": "hsk2025.word.l1.0002.v1",
+          "levelBand": "1",
+          "payload": {
+            "hanzi": "八",
+            "traditional": "八",
+            "pinyin": "bā",
+            "meaning": "eight",
+            "partOfSpeech": "Num"
+          }
+        },
+        {
+          "id": "hsk2025.word.l1.0006.v1",
+          "levelBand": "1",
+          "payload": {
+            "hanzi": "百",
+            "traditional": "百",
+            "pinyin": "bǎi",
+            "meaning": "one hundred",
+            "partOfSpeech": "Num"
+          }
+        },
+        {
+          "id": "hsk2025.word.l1.0007.v1",
+          "levelBand": "1",
+          "payload": {
+            "hanzi": "半",
+            "traditional": "半",
+            "pinyin": "bàn",
+            "meaning": "half",
+            "partOfSpeech": "Adv/Num"
+          }
+        }
+      ]
+    },
+    {
+      "id": "time",
+      "words": [
+        {
+          "id": "hsk2025.word.l1.0005.v1",
+          "levelBand": "1",
+          "payload": {
+            "hanzi": "白天",
+            "traditional": "白天",
+            "pinyin": "báitiān",
+            "meaning": "daytime; during the day; day",
+            "partOfSpeech": "N"
+          }
+        },
+        {
+          "id": "hsk2025.word.l1.0094.v1",
+          "levelBand": "1",
+          "payload": {
+            "hanzi": "今天",
+            "traditional": "今天",
+            "pinyin": "jīntiān",
+            "meaning": "today",
+            "partOfSpeech": "N"
+          }
+        },
+        {
+          "id": "hsk2025.word.l1.0033.v1",
+          "levelBand": "1",
+          "payload": {
+            "hanzi": "点",
+            "traditional": "點",
+            "pinyin": "diǎn",
+            "meaning": "o'clock; point",
+            "partOfSpeech": "N/M"
+          }
+        }
+      ]
+    },
+    {
+      "id": "food",
+      "words": [
+        {
+          "id": "hsk2025.word.l1.0017.v1",
+          "levelBand": "1",
+          "payload": {
+            "hanzi": "茶",
+            "traditional": "茶",
+            "pinyin": "chá",
+            "meaning": "tea; tea plant",
+            "partOfSpeech": "N"
+          }
+        },
+        {
+          "id": "hsk2025.word.l1.0050.v1",
+          "levelBand": "1",
+          "payload": {
+            "hanzi": "饭",
+            "traditional": "飯",
+            "pinyin": "fàn",
+            "meaning": "cooked rice; meal",
+            "partOfSpeech": "N"
+          }
+        },
+        {
+          "id": "hsk2025.word.l1.0008.v1",
+          "levelBand": "1",
+          "payload": {
+            "hanzi": "包子",
+            "traditional": "包子",
+            "pinyin": "bāozi",
+            "meaning": "baozi; bao (steamed stuffed bun)",
+            "partOfSpeech": "N"
+          }
+        }
+      ]
+    },
+    {
+      "id": "study",
+      "words": [
+        {
+          "id": "hsk2025.word.l1.0042.v1",
+          "levelBand": "1",
+          "payload": {
+            "hanzi": "读",
+            "traditional": "讀",
+            "pinyin": "dú",
+            "meaning": "to read",
+            "partOfSpeech": "V"
+          }
+        },
+        {
+          "id": "hsk2025.word.l1.0190.v1",
+          "levelBand": "1",
+          "payload": {
+            "hanzi": "书",
+            "traditional": "書",
+            "pinyin": "shū",
+            "meaning": "book",
+            "partOfSpeech": "N"
+          }
+        },
+        {
+          "id": "hsk2025.word.l1.0249.v1",
+          "levelBand": "1",
+          "payload": {
+            "hanzi": "学习",
+            "traditional": "學習",
+            "pinyin": "xuéxí",
+            "meaning": "to learn; to study",
+            "partOfSpeech": "V"
+          }
+        }
+      ]
+    },
+    {
+      "id": "places",
+      "words": [
+        {
+          "id": "hsk2025.word.l1.0020.v1",
+          "levelBand": "1",
+          "payload": {
+            "hanzi": "车",
+            "traditional": "車",
+            "pinyin": "chē",
+            "meaning": "car; vehicle",
+            "partOfSpeech": "N"
+          }
+        },
+        {
+          "id": "hsk2025.word.l1.0022.v1",
+          "levelBand": "1",
+          "payload": {
+            "hanzi": "出租车",
+            "traditional": "出租車",
+            "pinyin": "chūzūchē",
+            "meaning": "taxi",
+            "partOfSpeech": "N"
+          }
+        },
+        {
+          "id": "hsk2025.word.l1.0019.v1",
+          "levelBand": "1",
+          "payload": {
+            "hanzi": "超市",
+            "traditional": "超市",
+            "pinyin": "chāoshì",
+            "meaning": "supermarket",
+            "partOfSpeech": "N"
+          }
+        }
+      ]
+    }
+  ]
+}
