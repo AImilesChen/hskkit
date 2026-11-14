@@ -10,8 +10,16 @@ const common={compatibilityDate:'2026-05-24',compatibilityFlags:['nodejs_compat'
 const checkStarted=Date.now();
 const progress=message=>console.log(`cache-check (${Math.round((Date.now()-checkStarted)/1000)}s): ${message}`);
 async function bounded(label,promise,ms=30000){let timer;try{return await Promise.race([promise,new Promise((_,reject)=>{timer=setTimeout(()=>reject(Error(`Local verification timed out: ${label}`)),ms);})]);}finally{clearTimeout(timer);}}
-async function checkedFetch(worker,url,init){progress('request '+url);const result=await bounded(url,worker.fetch(url,init));progress('received '+result.status+' '+url);return result;}
-async function discard(response){if(response.body)await bounded('discard response body',response.body.cancel(),10000);}
+async function checkedFetch(worker,url,init){
+ progress('request '+url);
+ // Use workerd's HTTP listener, as for the cache writer below. The unstable
+ // RPC fetch proxy can stall when a lazily loaded Next response is streamed.
+ const requested=new URL(url),target=new URL(requested.pathname+requested.search,await worker.url);
+ const headers=new Headers(init?.headers);headers.set('host',requested.host);
+ const result=await bounded(url,fetch(target,{...init,headers,redirect:'manual'}));
+ progress('received '+result.status+' '+url);return result;
+}
+async function discard(response){if(response.body)await bounded('drain response body',response.arrayBuffer(),10000);}
 (async()=>{
  // Bundling, hashing the growing media inventory and starting local workerd have
  // their own cost. Keep individual requests bounded instead of conflating setup
