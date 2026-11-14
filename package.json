@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "prebuild": "npm run practice:quality && npm run content:validate && python scripts/content/build-public-catalog-index.py && python scripts/build-hsk789-examples.py && python scripts/content/build-runtime-content-index.py && python scripts/content/build-character-index.py && python scripts/content/build-seo-index.py && python scripts/content/build-hsk-vocabulary-comparison.py && node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/content/build-word-detail-recommendations.mts && node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/content/build-word-routing.mts && python scripts/content/build-hsk1-vocabulary-landing.py && python scripts/content/build-hsk2-vocabulary-landing.py",
+    "prebuild": "npm run practice:quality && npm run content:validate && python scripts/content/build-public-catalog-index.py && python scripts/build-hsk789-examples.py && python scripts/content/build-runtime-content-index.py && python scripts/content/build-character-index.py && python scripts/content/build-seo-index.py && python scripts/content/build-hsk-vocabulary-comparison.py && node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/content/build-word-detail-recommendations.mts && node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/content/build-word-routing.mts && python scripts/content/build-hsk1-vocabulary-landing.py && python scripts/content/build-hsk2-vocabulary-landing.py && python scripts/content/build-hsk3-vocabulary-landing.py",
     "build": "next build",
     "dev": "next dev",
     "start": "next start",
