@@ -58,7 +58,7 @@ jobs:
       - name: Verify lightweight authentication, session security and OAuth behavior
         run: node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --test tests/account-authentication.test.mts tests/google-sign-in-flow.test.mts tests/account-sync.test.mts tests/account-loading-resilience.test.mts tests/d1-overload-hardening.test.mts tests/p1-user-d1-protection.test.mts tests/p0-3-unified-account-contract.test.mts
       - name: Verify bounded word prebuild and retained word routing
-        run: node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --test tests/word-cache-release.test.mts tests/word-detail-lightweight-data.test.mts tests/dictionary-p2-learning-loop.test.mts tests/hsk1-vocabulary-landing.test.mts tests/hsk2-vocabulary-landing.test.mts tests/hsk3-vocabulary-landing.test.mts tests/hsk4-vocabulary-landing.test.mts
+        run: node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --test tests/word-cache-release.test.mts tests/word-detail-lightweight-data.test.mts tests/dictionary-p2-learning-loop.test.mts tests/hsk1-vocabulary-landing.test.mts tests/hsk2-vocabulary-landing.test.mts tests/hsk3-vocabulary-landing.test.mts tests/hsk4-vocabulary-landing.test.mts tests/hsk5-vocabulary-landing.test.mts
       - name: Ensure dedicated private page-cache bucket
         run: node scripts/storage-release.mjs ensure-bucket
       - name: Verify scoped remote cache write and read before building
@@ -104,6 +104,7 @@ jobs:
           node scripts/check-hsk2-vocabulary-landing.cjs
           node scripts/check-hsk3-vocabulary-landing.cjs
           node scripts/check-hsk4-vocabulary-landing.cjs
+          node scripts/check-hsk5-vocabulary-landing.cjs
           node scripts/run-cache-gate.cjs
       - name: Upload and deploy Worker version
         run: |
