@@ -3,7 +3,21 @@ on:
   push:
     branches: [main]
     paths: ['.github/workflows/cache-maintenance.yml', 'ops/cache-maintenance/**']
+  workflow_run:
+    workflows: ['Deploy HSKKit production Worker']
+    branches: ['fix/review-playback-current-prod-20261004']
+    types: [completed]
   workflow_dispatch:
+    inputs:
+      mode:
+        description: 'Read-only audit or protected retired-cache cleanup'
+        type: choice
+        options: [dry-run, apply]
+        default: dry-run
+      expected_source:
+        description: 'Optional expected live production commit SHA'
+        type: string
+        default: ''
   schedule:
     - cron: '23 0 * * *'
 permissions:
@@ -16,13 +30,21 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       due: ${{ steps.slot.outputs.due }}
+      mode: ${{ steps.slot.outputs.mode }}
+      expected_source: ${{ steps.slot.outputs.expected_source }}
     steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Verify release-trigger and 48-hour fallback rules
+        run: node --test ops/cache-maintenance/trigger.test.cjs
       - id: slot
-        name: Select the UTC 48-hour maintenance slot
-        env:
-          EVENT: ${{ github.event_name }}
-        run: |
-          node -e "const fs=require('fs'); const due=process.env.EVENT!=='schedule'||Math.floor(Date.now()/86400000)%2===0; fs.appendFileSync(process.env.GITHUB_OUTPUT,'due='+due+String.fromCharCode(10))"
+        name: Select successful production releases or the UTC 48-hour slot
+        run: node ops/cache-maintenance/trigger.cjs
   cache-maintenance:
     needs: interval
     if: needs.interval.outputs.due == 'true'
@@ -30,16 +52,21 @@ jobs:
     timeout-minutes: 20
     env:
       CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-      CACHE_MAINTENANCE_MODE: ${{ github.event_name == 'push' && 'dry-run' || 'apply' }}
+      CACHE_MAINTENANCE_MODE: ${{ needs.interval.outputs.mode }}
+      CACHE_MAINTENANCE_EXPECTED_SOURCE: ${{ needs.interval.outputs.expected_source }}
     steps:
       - uses: actions/checkout@v4
+        with:
+          # workflow_run executes only the trusted default-branch maintenance code.
+          ref: ${{ github.sha }}
+          persist-credentials: false
       - uses: actions/setup-node@v4
         with:
           node-version: '24'
       - name: Install isolated locked maintenance dependencies
         run: npm ci --prefix ops/cache-maintenance --ignore-scripts --no-audit --no-fund
       - name: Verify deletion safeguards
-        run: node --test ops/cache-maintenance/cache-maintenance.test.cjs
+        run: node --test ops/cache-maintenance/cache-maintenance.test.cjs ops/cache-maintenance/trigger.test.cjs
       - name: Audit or clean only verified retired page-cache versions
         run: node ops/cache-maintenance/cache-maintenance.cjs
       - name: Retain cleanup and unchanged-assets evidence
