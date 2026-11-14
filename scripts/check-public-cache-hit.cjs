@@ -6,8 +6,7 @@ process.chdir(S);process.env.WRANGLER_SEND_METRICS='false';process.env.WRANGLER_
 // discovery or local binding startup inside the production job environment.
 for(const key of ['CLOUDFLARE_API_TOKEN','CLOUDFLARE_API_KEY','CF_API_TOKEN','CF_API_KEY','CLOUDFLARE_ACCOUNT_ID'])delete process.env[key];
 const {unstable_startWorker}=require('wrangler');
-const {fetchLocalWorker}=require('./local-worker-http.cjs');
-const common={compatibilityDate:'2026-05-24',compatibilityFlags:['nodejs_compat','global_fetch_strictly_public'],sendMetrics:false,envFiles:[],dev:{remote:false,persist:path.join(T,'state'),server:{port:0},inspector:false,watch:false,liveReload:false,logLevel:'error'}};
+const common={compatibilityDate:'2026-05-24',compatibilityFlags:['nodejs_compat','global_fetch_strictly_public'],sendMetrics:false,envFiles:[],dev:{remote:false,persist:path.join(T,'state'),server:{port:0},inspector:{hostname:'127.0.0.1',port:0},watch:false,liveReload:false,logLevel:'info'}};
 const checkStarted=Date.now();
 const progress=message=>console.log(`cache-check (${Math.round((Date.now()-checkStarted)/1000)}s): ${message}`);
 async function bounded(label,promise,ms=30000){let timer;try{return await Promise.race([promise,new Promise((_,reject)=>{timer=setTimeout(()=>reject(Error(`Local verification timed out: ${label}`)),ms);})]);}finally{clearTimeout(timer);}}
@@ -17,7 +16,7 @@ async function checkedFetch(worker,url,init){
  // RPC fetch proxy can stall when a lazily loaded Next response is streamed.
  const requested=new URL(url),target=new URL(requested.pathname+requested.search,await worker.url);
  const headers=new Headers(init?.headers);headers.set('host',requested.host);
- const result=await bounded(url,fetchLocalWorker(target,{...init,headers}));
+ const result=await bounded(url,fetch(target,{...init,headers,redirect:'follow'}));
  assert.equal(new URL(result.url).origin,target.origin,'Local verification left its isolated HTTP listener');
  progress('received '+result.status+' '+url);return result;
 }
@@ -30,7 +29,10 @@ async function discard(response){if(response.body)await bounded('drain response 
  progress('bundling local probe');
  const src=fs.readFileSync(path.join(root,'worker.js'),'utf8');assert.ok(src.includes('return reqOrResp;')&&src.includes('return handler(reqOrResp, env, ctx, request.signal);'));
  assert.ok(src.includes('if (anonymousResponse) return anonymousResponse;'));
- const probe=path.join(root,'worker.cache-probe.js');fs.writeFileSync(probe,src.replace('return reqOrResp;','reqOrResp.headers.set("x-local-next-dispatched","0"); return reqOrResp;').replace('if (anonymousResponse) return anonymousResponse;','if (anonymousResponse) { anonymousResponse.headers.set("x-local-next-dispatched","0"); return anonymousResponse; }').replace('if (missingWord) return missingWord;', 'if (missingWord) { missingWord.headers.set("x-local-next-dispatched","0"); return missingWord; }').replace('return handler(reqOrResp, env, ctx, request.signal);','const result=await handler(reqOrResp, env, ctx, request.signal); result.headers.set("x-local-next-dispatched","1"); return result;'));
+ const importAnchor='const { handler } = await import("./server-functions/default/handler.mjs");';
+ assert.ok(src.includes(importAnchor));
+ const observedSource=src.replace(importAnchor,'console.error("local-probe: Next import starting"); '+importAnchor+' console.error("local-probe: Next import ready");');
+ const probe=path.join(root,'worker.cache-probe.js');fs.writeFileSync(probe,observedSource.replace('return reqOrResp;','reqOrResp.headers.set("x-local-next-dispatched","0"); return reqOrResp;').replace('if (anonymousResponse) return anonymousResponse;','if (anonymousResponse) { anonymousResponse.headers.set("x-local-next-dispatched","0"); return anonymousResponse; }').replace('if (missingWord) return missingWord;', 'if (missingWord) { missingWord.headers.set("x-local-next-dispatched","0"); return missingWord; }').replace('return handler(reqOrResp, env, ctx, request.signal);','console.error("local-probe: Next handler starting"); const result=await handler(reqOrResp, env, ctx, request.signal); console.error("local-probe: Next handler ready"); result.headers.set("x-local-next-dispatched","1"); return result;'));
  const localConfig=path.join(T,'wrangler.json');fs.writeFileSync(localConfig,JSON.stringify({name:'hskkit-local-cache-check',main:probe,compatibility_date:'2026-05-24',compatibility_flags:common.compatibilityFlags,assets:{directory:path.join(root,'assets'),binding:'ASSETS',run_worker_first:['/formal-media/*']},vars:{NEXT_INC_CACHE_R2_PREFIX:'system/opennext-cache'},r2_buckets:[{binding:'NEXT_INC_CACHE_R2_BUCKET',bucket_name:'hskkit-page-cache'}]}));
  const out=spawnSync(process.execPath,[path.join(S,'node_modules/wrangler/bin/wrangler.js'),'deploy',probe,'--config',localConfig,'--dry-run','--outdir',path.join(T,'bundle')],{cwd:S,encoding:'utf8',env:process.env,timeout:120000});assert.equal(out.status,0,((out.stdout||'')+(out.stderr||'')).slice(-4000));
  progress('seeding isolated local R2');
