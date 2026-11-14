@@ -17,7 +17,7 @@ jobs:
     timeout-minutes: 20
     env:
       CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-      CACHE_MAINTENANCE_MODE: dry-run
+      CACHE_MAINTENANCE_MODE: apply
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
