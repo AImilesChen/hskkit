@@ -17,6 +17,10 @@ async function checkedFetch(worker,url,init){
  // RPC fetch proxy can stall when a lazily loaded Next response is streamed.
  const requested=new URL(url),target=new URL(requested.pathname+requested.search,await worker.url);
  const headers=new Headers(init?.headers);headers.set('host',requested.host);
+ // Keep the transport independent between local assertions. Early anonymous
+ // POST rejections do not consume a request body; reusing that emulator socket
+ // can otherwise stall the following cookie-bearing GET before dispatch.
+ headers.set('connection','close');
  const result=await bounded(url,fetch(target,{...init,headers,redirect:'follow'}));
  assert.equal(new URL(result.url).origin,target.origin,'Local verification left its isolated HTTP listener');
  progress('received '+result.status+' '+url);return result;
@@ -34,7 +38,9 @@ async function discard(response){if(response.body)await bounded('drain response 
  assert.ok(src.includes(importAnchor));
  const contextAnchor='return runWithCloudflareRequestContext(request, env, ctx, async () => {';
  assert.ok(src.includes(contextAnchor));
- const observedSource=src.replace(importAnchor,'console.error("local-probe: Next import starting"); '+importAnchor+' console.error("local-probe: Next import ready");').replace(contextAnchor,
+ const requestAnchor='async fetch(request, env, ctx) {';
+ assert.ok(src.includes(requestAnchor));
+ const observedSource=src.replace(requestAnchor,requestAnchor+' console.error("local-probe: request received",new URL(request.url).pathname,Boolean(request.headers.get("cookie")));').replace(importAnchor,'console.error("local-probe: Next import starting"); '+importAnchor+' console.error("local-probe: Next import ready");').replace(contextAnchor,
   'if (new URL(request.url).pathname.startsWith("/word/")) { const deny = () => { throw Error("Public word request touched R2"); }; env = { ...env, NEXT_INC_CACHE_R2_BUCKET: { get: deny, put: deny, head: deny, delete: deny, list: deny } }; } '+contextAnchor);
  const probe=path.join(root,'worker.cache-probe.js');fs.writeFileSync(probe,observedSource.replace('return reqOrResp;','reqOrResp.headers.set("x-local-next-dispatched","0"); return reqOrResp;').replace('if (anonymousResponse) return anonymousResponse;','if (anonymousResponse) { anonymousResponse.headers.set("x-local-next-dispatched","0"); return anonymousResponse; }').replace('if (missingWord) return missingWord;', 'if (missingWord) { missingWord.headers.set("x-local-next-dispatched","0"); return missingWord; }').replace('return handler(reqOrResp, env, ctx, request.signal);','console.error("local-probe: Next handler starting"); const result=await handler(reqOrResp, env, ctx, request.signal); console.error("local-probe: Next handler ready"); result.headers.set("x-local-next-dispatched","1"); return result;'));
  // Full coverage, byte integrity and the asset limit are checked separately by
