@@ -96,7 +96,9 @@ jobs:
           node scripts/prepare-public-word-assets.cjs
       - name: Preserve current production layout and learning code for this CPU-only release
         if: contains(github.event.head_commit.message, '[preserve-ui-word-assets]')
-        run: node scripts/check-public-word-preservation.cjs
+        run: |
+          git fetch --no-tags --depth=1 origin a20bd0266d1f5ea5d095664cdc5ed07bc2ad3714
+          node scripts/check-public-word-preservation.cjs
       - name: Verify cached public pages bypass Next and paid files remain guarded
         timeout-minutes: 7
         run: |
@@ -158,4 +160,15 @@ jobs:
             storage-comparison-live.json
           retention-days: 7
           if-no-files-found: error
+      - name: Retain bounded CSS diagnostics if release verification fails
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: public-word-release-diagnostics-${{ github.run_id }}
+          path: |
+            .next/static/css
+            .open-next/public-word-assets.json
+            .open-next/public-word-ui-preservation.json
+          retention-days: 3
+          if-no-files-found: ignore
 
