@@ -58,7 +58,7 @@ jobs:
       - name: Verify lightweight authentication, session security and OAuth behavior
         run: node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --test tests/account-authentication.test.mts tests/google-sign-in-flow.test.mts tests/account-sync.test.mts tests/account-loading-resilience.test.mts tests/d1-overload-hardening.test.mts tests/p1-user-d1-protection.test.mts tests/p0-3-unified-account-contract.test.mts
       - name: Verify complete public word assets and retained word routing
-        run: node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --test tests/public-word-assets.test.mts tests/prepare-public-word-assets.test.cjs tests/word-cache-release.test.mts tests/word-detail-lightweight-data.test.mts tests/dictionary-p2-learning-loop.test.mts tests/hsk1-vocabulary-landing.test.mts tests/hsk2-vocabulary-landing.test.mts tests/hsk3-vocabulary-landing.test.mts tests/hsk4-vocabulary-landing.test.mts tests/hsk5-vocabulary-landing.test.mts
+        run: node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --test tests/compact-public-word-manifest.test.cjs tests/public-word-assets.test.mts tests/prepare-public-word-assets.test.cjs tests/word-cache-release.test.mts tests/word-detail-lightweight-data.test.mts tests/dictionary-p2-learning-loop.test.mts tests/hsk1-vocabulary-landing.test.mts tests/hsk2-vocabulary-landing.test.mts tests/hsk3-vocabulary-landing.test.mts tests/hsk4-vocabulary-landing.test.mts tests/hsk5-vocabulary-landing.test.mts
       - name: Ensure dedicated private page-cache bucket
         run: node scripts/storage-release.mjs ensure-bucket
       - name: Check whether assessment delivery changed
@@ -149,6 +149,8 @@ jobs:
             ${{ runner.temp }}/cost-cache-audit.json
             .open-next/public-word-assets.json
             .open-next/public-word-ui-preservation.json
+            .open-next/public-word-manifest-compact.json
+            .open-next/worker-size-check.json
           retention-days: 7
           if-no-files-found: error
       - name: Retain storage deployment verification

@@ -22,8 +22,11 @@ export function publicWordAssetKey(key: string, cacheType = 'cache'): boolean {
 export function publicWordCache(assets: IncrementalCache, fallback: IncrementalCache): IncrementalCache {
   return {
     name: 'hskkit-public-word-assets',
-    get(key, cacheType) {
-      return publicWordAssetKey(key, cacheType) ? assets.get(key, cacheType) : fallback.get(key, cacheType);
+    async get(key, cacheType) {
+      if (!publicWordAssetKey(key, cacheType)) return fallback.get(key, cacheType);
+      const hit = await assets.get(key, cacheType);
+      if (hit?.value) hit.value.revalidate = false;
+      return hit;
     },
     async set(key, value, cacheType) {
       // These immutable entries must have shipped with the build. Never grow

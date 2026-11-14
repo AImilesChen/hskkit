@@ -5,7 +5,7 @@ import { withRegionalCache } from "@opennextjs/cloudflare/overrides/incremental-
 import staticAssetsIncrementalCache from "@opennextjs/cloudflare/overrides/incremental-cache/static-assets-incremental-cache";
 import { publicWordCache } from "./src/lib/runtime/public-word-cache";
 
-export default defineCloudflareConfig({
+const config = defineCloudflareConfig({
 	// Return cached public SSG/ISR responses before importing the full Next server.
 	// Dynamic account/API routes and the media middleware retain their own checks.
 	enableCacheInterception: true,
@@ -16,3 +16,5 @@ export default defineCloudflareConfig({
 		shouldLazilyUpdateOnCacheHit: false,
 	})),
 });
+config.buildCommand = "npm run build && node scripts/compact-public-word-manifest.cjs";
+export default config;

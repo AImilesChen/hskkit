@@ -44,3 +44,10 @@ test('public word reads never touch R2 and writes cannot create duplicate R2 cac
   await cache.get('/word/xue-xi', 'fetch');
   assert.equal(calls.at(-1), 'r2.get');
 });
+test('immutable asset hits carry their revalidation policy without expanded route records', async () => {
+  const assets = { name: 'assets', async get() { return { value: { type: 'app', html: 'same HTML', rsc: 'same Flight' }, lastModified: 123 }; } } as IncrementalCache;
+  const unused = { name: 'unused', async get() { throw Error('R2 must not be used'); } } as IncrementalCache;
+  const hit = await publicWordCache(assets, unused).get('/word/xue-xi');
+  assert.equal(hit?.value?.revalidate, false);
+  assert.equal(hit?.value?.type === 'app' && hit.value.html, 'same HTML');
+});

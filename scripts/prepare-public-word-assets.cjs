@@ -26,7 +26,10 @@ function prepare(root, { verify = false } = {}) {
   const slugs = JSON.parse(fs.readFileSync(path.join(root, 'src/lib/dictionary/word-prebuild-slugs.json'), 'utf8'));
   assert.ok(slugs.length > 0 && slugs.length <= 15000);
   assert.equal(new Set(slugs).size, slugs.length, 'Duplicate public word');
-  const manifest = JSON.parse(fs.readFileSync(path.join(root, '.next/prerender-manifest.json'), 'utf8'));
+  const proof = path.join(root, '.next/cache/public-word-prerender.json');
+  const snapshot = fs.existsSync(proof) ? JSON.parse(fs.readFileSync(proof, 'utf8')) : null;
+  if (snapshot) assert.equal(snapshot.build, build, 'Stale full word-route proof');
+  const manifest = snapshot?.manifest ?? JSON.parse(fs.readFileSync(path.join(root, '.next/prerender-manifest.json'), 'utf8'));
   const assets = path.join(root, '.open-next/assets');
   const cache = path.join(root, '.open-next/cache', build);
   let totalBytes = 0;

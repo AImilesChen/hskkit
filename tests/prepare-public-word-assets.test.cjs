@@ -44,3 +44,14 @@ test('an old-build or non-word cache accidentally bundled in assets stops public
   fs.mkdirSync(path.dirname(unexpected), { recursive: true }); fs.writeFileSync(unexpected, '{}');
   assert.throws(() => prepare(root), /Unexpected or obsolete/);
 });
+test('compacted runtime uses the full matching build proof and rejects stale proof', t => {
+  const { root, build } = fixture(t);
+  const manifest = JSON.parse(fs.readFileSync(path.join(root, '.next/prerender-manifest.json')));
+  const proof = path.join(root, '.next/cache/public-word-prerender.json');
+  fs.mkdirSync(path.dirname(proof), { recursive: true });
+  fs.writeFileSync(proof, JSON.stringify({ build, manifest }));
+  fs.writeFileSync(path.join(root, '.next/prerender-manifest.json'), '{"routes":{}}');
+  assert.equal(prepare(root).wordAssets, 2);
+  fs.writeFileSync(proof, JSON.stringify({ build: 'old-build', manifest }));
+  assert.throws(() => prepare(root), /Stale full word-route proof/);
+});

@@ -51,6 +51,12 @@ async function discard(response){if(response.body)await bounded('drain response 
  for(const relative of ['formal-media/course-chinese-1-b-v1/index.coursedoc','formal-media/course-chinese-2-b-v1/index.coursedoc','formal-media/course-chinese-2-c-v1/paper-data.json']){const file=path.join(probeAssets,relative);fs.mkdirSync(path.dirname(file),{recursive:true});fs.writeFileSync(file,'LOCAL PRIVATE GUARD FIXTURE');}
  const localConfig=path.join(T,'wrangler.json');fs.writeFileSync(localConfig,JSON.stringify({name:'hskkit-local-cache-check',main:probe,minify:true,compatibility_date:'2026-05-24',compatibility_flags:common.compatibilityFlags,assets:{directory:probeAssets,binding:'ASSETS',run_worker_first:['/formal-media/*']},vars:{NEXT_INC_CACHE_R2_PREFIX:'system/opennext-cache'},r2_buckets:[{binding:'NEXT_INC_CACHE_R2_BUCKET',bucket_name:'hskkit-page-cache'}]}));
  const out=spawnSync(process.execPath,[path.join(S,'node_modules/wrangler/bin/wrangler.js'),'deploy',probe,'--config',localConfig,'--dry-run','--outdir',path.join(T,'bundle')],{cwd:S,encoding:'utf8',env:process.env,timeout:120000});assert.equal(out.status,0,((out.stdout||'')+(out.stderr||'')).slice(-4000));
+ const measured=/Total Upload:\s*([\d.]+)\s*KiB/.exec(out.stdout||'');
+ assert.ok(measured,'Wrangler did not report uncompressed bundle size');
+ const uncompressedBytes=Math.ceil(Number(measured[1])*1024);
+ assert.ok(uncompressedBytes<63*1024*1024,`Worker bundle must fit before any asset upload: ${uncompressedBytes} bytes`);
+ fs.writeFileSync(path.join(root,'worker-size-check.json'),JSON.stringify({uncompressedBytes,maxBytes:63*1024*1024,passed:true}));
+ progress('uncompressed Worker bundle '+uncompressedBytes+' bytes fits release budget');
  progress('seeding isolated local R2');
  const cacheRoot=path.join(root,'cache'),build=fs.readdirSync(cacheRoot).find(f=>!f.startsWith('__'));
  const files=['dictionary.cache','levels.cache','hsk-test-prep.cache','pricing.cache','chinese-course-tests.cache'];
@@ -73,6 +79,10 @@ async function discard(response){if(response.body)await bounded('drain response 
     checks.push({route,status:200,nextServerDispatch:0,flight,wordR2Access:'blocked',exactBuiltBytes:true});
    }
   }
+  const preview=await checkedFetch(worker,'http://localhost/word/hsk2025.word.l1.0102.v1',{headers:{cookie:'__prerender_bypass=fixture'}});
+  assert.equal(preview.status,200,'Word full-server fallback remains readable');
+  assert.equal(preview.headers.get('x-local-next-dispatched'),'1');
+  assert.equal(await preview.text(),JSON.parse(fs.readFileSync(path.join(cacheRoot,build,'word/hsk2025.word.l1.0102.v1.cache'),'utf8')).html,'Word full-server fallback preserves exact HTML');
   for(const route of ['/formal-media/course-chinese-1-b-v1/index.coursedoc','/%66ormal-media/course-chinese-1-b-v1/index.coursedoc','/api/v1/course-tests/chinese-1/b/file/paper-data.json','/api/v1/course-tests/chinese-1/c/file/teacher.pdf','/formal-media/course-chinese-2-b-v1/index.coursedoc','/%66ormal-media/course-chinese-2-c-v1/paper-data.json','/api/v1/course-tests/chinese-2/b/file/paper-data.json','/api/v1/course-tests/chinese-2/c/file/teacher.pdf']){progress('guard '+route);const expected=route.startsWith('/api/')?401:404,r=await checkedFetch(worker,'http://localhost'+route);assert.equal(r.status,expected,route);await discard(r);checks.push({route,status:expected});}
   for(const query of ['?x=1','?_rsc=fixture']){const r=await checkedFetch(worker,'http://localhost/chinese-course-tests'+query);assert.equal(r.status,200);await discard(r);}
   progress('RSC response');const flight=await checkedFetch(worker,'http://localhost/chinese-course-tests?_rsc=fixture',{headers:{rsc:'1','next-router-prefetch':'1'}});assert.equal(flight.status,200);assert.ok(flight.headers.get('content-type')?.includes('text/x-component'));await discard(flight);
