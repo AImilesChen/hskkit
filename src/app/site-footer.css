@@ -15,8 +15,10 @@
 .resource-footer a:hover{color:#1d4ed8;text-decoration:underline;text-underline-offset:4px}
 .resource-footer a:focus-visible,.resource-footer summary:focus-visible{outline:2px solid #2563eb;outline-offset:4px;border-radius:2px}
 .resource-footer-mobile{display:none}
-.resource-footer-badges{display:flex;flex-wrap:nowrap;align-items:center;gap:16px;max-width:100%;min-width:0;overflow-x:auto;padding:24px 4px 8px;overscroll-behavior-x:contain}
-.resource-footer-badges>a{flex:0 0 auto;white-space:nowrap}
+.resource-footer-badges{display:flex;flex-wrap:nowrap;align-items:center;gap:12px;max-width:100%;min-width:0;overflow-x:auto;padding:20px 4px 8px;overscroll-behavior-x:contain;scrollbar-width:none}
+.resource-footer-badges::-webkit-scrollbar{display:none}
+.resource-footer-badges>a{display:flex;flex:0 0 auto;align-items:center;min-height:44px;white-space:nowrap;font-size:12px}
+.resource-footer-badges img{width:auto;max-height:36px}
 .resource-footer-badges:focus-visible{outline:2px solid #2563eb;outline-offset:2px;border-radius:2px}
 .resource-footer-bottom{border-top:1px solid #e2e8f0;padding-top:20px;color:#64748b;font-size:12px}
 .resource-footer-bottom nav{display:flex;flex-wrap:wrap;gap:4px 24px}
