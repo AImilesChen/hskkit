@@ -21,8 +21,7 @@ async function checkedFetch(worker,url,init){
  // POST rejections do not consume a request body; reusing that emulator socket
  // can otherwise stall the following cookie-bearing GET before dispatch.
  headers.set('connection','close');
- const result=await bounded(url,fetch(target,{...init,headers,redirect:'follow'}));
- assert.equal(new URL(result.url).origin,target.origin,'Local verification left its isolated HTTP listener');
+ const result=await bounded(url,require('./local-worker-http.cjs')(target,{...init,headers}));
  progress('received '+result.status+' '+url);return result;
 }
 async function discard(response){if(response.body)await bounded('drain response body',response.arrayBuffer(),10000);}
