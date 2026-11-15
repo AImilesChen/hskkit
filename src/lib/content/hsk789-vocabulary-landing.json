@@ -1,0 +1,786 @@
+{
+  "releaseId": "hsk3-hsk123456789-2025-v11",
+  "wordCount": 5600,
+  "firstPage": [
+    {
+      "id": "hsk2025.word.l7.05401.v1",
+      "levelBand": "7-9",
+      "payload": {
+        "hanzi": "挨",
+        "traditional": "挨",
+        "pinyin": "āi",
+        "meaning": "in order; in sequence; close to; adjacent to",
+        "partOfSpeech": "V/Prep"
+      }
+    },
+    {
+      "id": "hsk2025.word.l7.05402.v1",
+      "levelBand": "7-9",
+      "payload": {
+        "hanzi": "挨家挨户",
+        "traditional": "挨家挨戶",
+        "pinyin": "āijiā-āihù",
+        "meaning": "to go from house to house",
+        "partOfSpeech": "Phrase"
+      }
+    },
+    {
+      "id": "hsk2025.word.l7.05403.v1",
+      "levelBand": "7-9",
+      "payload": {
+        "hanzi": "哀求",
+        "traditional": "哀求",
+        "pinyin": "āiqiú",
+        "meaning": "to entreat; to implore; to plead",
+        "partOfSpeech": "V"
+      }
+    },
+    {
+      "id": "hsk2025.word.l7.05404.v1",
+      "levelBand": "7-9",
+      "payload": {
+        "hanzi": "挨",
+        "traditional": "挨",
+        "pinyin": "ái",
+        "meaning": "to suffer; to endure; to pull through (hard times); to delay; to stall; to play for time; to dawdle",
+        "partOfSpeech": "V"
+      }
+    },
+    {
+      "id": "hsk2025.word.l7.05405.v1",
+      "levelBand": "7-9",
+      "payload": {
+        "hanzi": "癌",
+        "traditional": "癌",
+        "pinyin": "ái",
+        "meaning": "cancer; (esp.) carcinoma",
+        "partOfSpeech": "N"
+      }
+    },
+    {
+      "id": "hsk2025.word.l7.05406.v1",
+      "levelBand": "7-9",
+      "payload": {
+        "hanzi": "癌症",
+        "traditional": "癌症",
+        "pinyin": "áizhèng",
+        "meaning": "cancer",
+        "partOfSpeech": "N"
+      }
+    },
+    {
+      "id": "hsk2025.word.l7.05407.v1",
+      "levelBand": "7-9",
+      "payload": {
+        "hanzi": "爱不释手",
+        "traditional": "愛不釋手",
+        "pinyin": "àibúshìshǒu",
+        "meaning": "(idiom) to like sth so much that one is reluctant to put it down; to find sth utterly irresistible",
+        "partOfSpeech": "Phrase"
+      }
+    },
+    {
+      "id": "hsk2025.word.l7.05408.v1",
+      "levelBand": "7-9",
+      "payload": {
+        "hanzi": "爱戴",
+        "traditional": "愛戴",
+        "pinyin": "àidài",
+        "meaning": "to love and respect",
+        "partOfSpeech": "V"
+      }
+    },
+    {
+      "id": "hsk2025.word.l7.05409.v1",
+      "levelBand": "7-9",
+      "payload": {
+        "hanzi": "暧昧",
+        "traditional": "曖昧",
+        "pinyin": "àimèi",
+        "meaning": "vague",
+        "partOfSpeech": "Adj"
+      }
+    },
+    {
+      "id": "hsk2025.word.l7.05410.v1",
+      "levelBand": "7-9",
+      "payload": {
+        "hanzi": "爱慕",
+        "traditional": "愛慕",
+        "pinyin": "àimù",
+        "meaning": "to adore",
+        "partOfSpeech": "V"
+      }
+    },
+    {
+      "id": "hsk2025.word.l7.05411.v1",
+      "levelBand": "7-9",
+      "payload": {
+        "hanzi": "碍事",
+        "traditional": "礙事",
+        "pinyin": "àishì",
+        "meaning": "to be in the way; to be a hindrance; (usu. in the negative) to be of consequence; to matter",
+        "partOfSpeech": "V/Adj"
+      }
+    },
+    {
+      "id": "hsk2025.word.l7.05412.v1",
+      "levelBand": "7-9",
+      "payload": {
+        "hanzi": "爱惜",
+        "traditional": "愛惜",
+        "pinyin": "àixī",
+        "meaning": "to cherish; to treasure; to use sparingly",
+        "partOfSpeech": "V"
+      }
+    },
+    {
+      "id": "hsk2025.word.l7.05413.v1",
+      "levelBand": "7-9",
+      "payload": {
+        "hanzi": "艾滋病",
+        "traditional": "艾滋病",
+        "pinyin": "àizībìng",
+        "meaning": "(loanword) AIDS",
+        "partOfSpeech": "N"
+      }
+    },
+    {
+      "id": "hsk2025.word.l7.05414.v1",
+      "levelBand": "7-9",
+      "payload": {
+        "hanzi": "安定",
+        "traditional": "安定",
+        "pinyin": "āndìng",
+        "meaning": "stable; calm; settled; to stabilize; Valium; diazepam",
+        "partOfSpeech": "V/Adj"
+      }
+    },
+    {
+      "id": "hsk2025.word.l7.05415.v1",
+      "levelBand": "7-9",
+      "payload": {
+        "hanzi": "安抚",
+        "traditional": "安撫",
+        "pinyin": "ānfǔ",
+        "meaning": "to placate; to pacify; to appease",
+        "partOfSpeech": "V"
+      }
+    },
+    {
+      "id": "hsk2025.word.l7.05416.v1",
+      "levelBand": "7-9",
+      "payload": {
+        "hanzi": "安眠药",
+        "traditional": "安眠藥",
+        "pinyin": "ānmiányào",
+        "meaning": "sleeping pill",
+        "partOfSpeech": "N"
+      }
+    },
+    {
+      "id": "hsk2025.word.l7.05417.v1",
+      "levelBand": "7-9",
+      "payload": {
+        "hanzi": "安宁",
+        "traditional": "安寧",
+        "pinyin": "ānníng",
+        "meaning": "peaceful; tranquil; calm",
+        "partOfSpeech": "Adj"
+      }
+    },
+    {
+      "id": "hsk2025.word.l7.05418.v1",
+      "levelBand": "7-9",
+      "payload": {
+        "hanzi": "安稳",
+        "traditional": "安穩",
+        "pinyin": "ānwěn",
+        "meaning": "steady; stable; sedate; calm; (of sleep) sound; (of a transition) smooth",
+        "partOfSpeech": "Adj"
+      }
+    },
+    {
+      "id": "hsk2025.word.l7.05419.v1",
+      "levelBand": "7-9",
+      "payload": {
+        "hanzi": "安详",
+        "traditional": "安詳",
+        "pinyin": "ānxiáng",
+        "meaning": "serene",
+        "partOfSpeech": "Adj"
+      }
+    },
+    {
+      "id": "hsk2025.word.l7.05420.v1",
+      "levelBand": "7-9",
+      "payload": {
+        "hanzi": "安心",
+        "traditional": "安心",
+        "pinyin": "ānxīn",
+        "meaning": "at ease; to feel relieved; to set one's mind at rest",
+        "partOfSpeech": "Adj"
+      }
+    },
+    {
+      "id": "hsk2025.word.l7.05421.v1",
+      "levelBand": "7-9",
+      "payload": {
+        "hanzi": "安逸",
+        "traditional": "安逸",
+        "pinyin": "ānyì",
+        "meaning": "easy and comfortable; easy",
+        "partOfSpeech": "Adj"
+      }
+    },
+    {
+      "id": "hsk2025.word.l7.05422.v1",
+      "levelBand": "7-9",
+      "payload": {
+        "hanzi": "安置",
+        "traditional": "安置",
+        "pinyin": "ānzhì",
+        "meaning": "to find a place for; to help settle down; to arrange for",
+        "partOfSpeech": "V"
+      }
+    },
+    {
+      "id": "hsk2025.word.l7.05423.v1",
+      "levelBand": "7-9",
+      "payload": {
+        "hanzi": "暗地里",
+        "traditional": "暗地裡",
+        "pinyin": "àndìlǐ",
+        "meaning": "secretly; inwardly; on the sly",
+        "partOfSpeech": "N"
+      }
+    },
+    {
+      "id": "hsk2025.word.l7.05424.v1",
+      "levelBand": "7-9",
+      "payload": {
+        "hanzi": "案件",
+        "traditional": "案件",
+        "pinyin": "ànjiàn",
+        "meaning": "case; instance",
+        "partOfSpeech": "N"
+      }
+    },
+    {
+      "id": "hsk2025.word.l7.05425.v1",
+      "levelBand": "7-9",
+      "payload": {
+        "hanzi": "按理",
+        "traditional": "按理",
+        "pinyin": "ànlǐ",
+        "meaning": "according to reason",
+        "partOfSpeech": "Adv"
+      }
+    },
+    {
+      "id": "hsk2025.word.l7.05426.v1",
+      "levelBand": "7-9",
+      "payload": {
+        "hanzi": "按钮",
+        "traditional": "按鈕",
+        "pinyin": "ànniǔ",
+        "meaning": "button; push button",
+        "partOfSpeech": "N"
+      }
+    },
+    {
+      "id": "hsk2025.word.l7.05427.v1",
+      "levelBand": "7-9",
+      "payload": {
+        "hanzi": "按说",
+        "traditional": "按說",
+        "pinyin": "ànshuō",
+        "meaning": "in the ordinary course of events; ordinarily; normally",
+        "partOfSpeech": "Adv"
+      }
+    },
+    {
+      "id": "hsk2025.word.l7.05428.v1",
+      "levelBand": "7-9",
+      "payload": {
+        "hanzi": "暗中",
+        "traditional": "暗中",
+        "pinyin": "ànzhōng",
+        "meaning": "in the dark; in secret; on the sly",
+        "partOfSpeech": "N"
+      }
+    },
+    {
+      "id": "hsk2025.word.l7.05429.v1",
+      "levelBand": "7-9",
+      "payload": {
+        "hanzi": "凹",
+        "traditional": "凹",
+        "pinyin": "āo",
+        "meaning": "concave; depressed; sunken; indented; female (connector etc)",
+        "partOfSpeech": "Adj"
+      }
+    },
+    {
+      "id": "hsk2025.word.l7.05430.v1",
+      "levelBand": "7-9",
+      "payload": {
+        "hanzi": "熬",
+        "traditional": "熬",
+        "pinyin": "áo",
+        "meaning": "to cook on a slow fire; to extract by heating; to decoct; to endure",
+        "partOfSpeech": "V"
+      }
+    },
+    {
+      "id": "hsk2025.word.l7.05431.v1",
+      "levelBand": "7-9",
+      "payload": {
+        "hanzi": "傲",
+        "traditional": "傲",
+        "pinyin": "ào",
+        "meaning": "proud; arrogant; to despise",
+        "partOfSpeech": "Adj"
+      }
+    },
+    {
+      "id": "hsk2025.word.l7.05432.v1",
+      "levelBand": "7-9",
+      "payload": {
+        "hanzi": "傲慢",
+        "traditional": "傲慢",
+        "pinyin": "àomàn",
+        "meaning": "arrogant; haughty",
+        "partOfSpeech": "Adj"
+      }
+    },
+    {
+      "id": "hsk2025.word.l7.05433.v1",
+      "levelBand": "7-9",
+      "payload": {
+        "hanzi": "奥秘",
+        "traditional": "奧祕",
+        "pinyin": "àomì",
+        "meaning": "secret; mystery",
+        "partOfSpeech": "N"
+      }
+    },
+    {
+      "id": "hsk2025.word.l7.05434.v1",
+      "levelBand": "7-9",
+      "payload": {
+        "hanzi": "扒",
+        "traditional": "扒",
+        "pinyin": "bā",
+        "meaning": "to peel; to skin; to tear",
+        "partOfSpeech": "V"
+      }
+    },
+    {
+      "id": "hsk2025.word.l7.05435.v1",
+      "levelBand": "7-9",
+      "payload": {
+        "hanzi": "疤",
+        "traditional": "疤",
+        "pinyin": "bā",
+        "meaning": "scar",
+        "partOfSpeech": "N"
+      }
+    },
+    {
+      "id": "hsk2025.word.l7.05436.v1",
+      "levelBand": "7-9",
+      "payload": {
+        "hanzi": "巴不得",
+        "traditional": "巴不得",
+        "pinyin": "bābudé",
+        "meaning": "to be eager to; to wish for",
+        "partOfSpeech": "V"
+      }
+    },
+    {
+      "id": "hsk2025.word.l7.05437.v1",
+      "levelBand": "7-9",
+      "payload": {
+        "hanzi": "八成",
+        "traditional": "八成",
+        "pinyin": "bāchéng",
+        "meaning": "eighty percent",
+        "partOfSpeech": "Adv/Num/M"
+      }
+    },
+    {
+      "id": "hsk2025.word.l7.05438.v1",
+      "levelBand": "7-9",
+      "payload": {
+        "hanzi": "八卦",
+        "traditional": "八卦",
+        "pinyin": "bāguà",
+        "meaning": "the Eight Trigrams; gossip",
+        "partOfSpeech": "N/Adj"
+      }
+    },
+    {
+      "id": "hsk2025.word.l7.05439.v1",
+      "levelBand": "7-9",
+      "payload": {
+        "hanzi": "巴结",
+        "traditional": "巴結",
+        "pinyin": "bājie",
+        "meaning": "to fawn on",
+        "partOfSpeech": "V"
+      }
+    },
+    {
+      "id": "hsk2025.word.l7.05440.v1",
+      "levelBand": "7-9",
+      "payload": {
+        "hanzi": "芭蕾",
+        "traditional": "芭蕾",
+        "pinyin": "bālěi",
+        "meaning": "ballet (loanword)",
+        "partOfSpeech": "N"
+      }
+    },
+    {
+      "id": "hsk2025.word.l7.05441.v1",
+      "levelBand": "7-9",
+      "payload": {
+        "hanzi": "巴掌",
+        "traditional": "巴掌",
+        "pinyin": "bāzhang",
+        "meaning": "palm of the hand",
+        "partOfSpeech": "N"
+      }
+    },
+    {
+      "id": "hsk2025.word.l7.05442.v1",
+      "levelBand": "7-9",
+      "payload": {
+        "hanzi": "拔",
+        "traditional": "拔",
+        "pinyin": "bá",
+        "meaning": "to pull up; to pull out; to draw out by suction",
+        "partOfSpeech": "V"
+      }
+    },
+    {
+      "id": "hsk2025.word.l7.05443.v1",
+      "levelBand": "7-9",
+      "payload": {
+        "hanzi": "把柄",
+        "traditional": "把柄",
+        "pinyin": "bǎbǐng",
+        "meaning": "handle; (fig.) information that can be used against sb",
+        "partOfSpeech": "N"
+      }
+    },
+    {
+      "id": "hsk2025.word.l7.05444.v1",
+      "levelBand": "7-9",
+      "payload": {
+        "hanzi": "把关",
+        "traditional": "把關",
+        "pinyin": "bǎguān",
+        "meaning": "to guard a pass; to check on sth",
+        "partOfSpeech": "V"
+      }
+    },
+    {
+      "id": "hsk2025.word.l7.05445.v1",
+      "levelBand": "7-9",
+      "payload": {
+        "hanzi": "把手",
+        "traditional": "把手",
+        "pinyin": "bǎshou",
+        "meaning": "handle; grip; knob",
+        "partOfSpeech": "N"
+      }
+    },
+    {
+      "id": "hsk2025.word.l7.05446.v1",
+      "levelBand": "7-9",
+      "payload": {
+        "hanzi": "靶子",
+        "traditional": "靶子",
+        "pinyin": "bǎzi",
+        "meaning": "target",
+        "partOfSpeech": "N"
+      }
+    },
+    {
+      "id": "hsk2025.word.l7.05447.v1",
+      "levelBand": "7-9",
+      "payload": {
+        "hanzi": "坝",
+        "traditional": "壩",
+        "pinyin": "bà",
+        "meaning": "dam; dike; embankment",
+        "partOfSpeech": "N"
+      }
+    },
+    {
+      "id": "hsk2025.word.l7.05448.v1",
+      "levelBand": "7-9",
+      "payload": {
+        "hanzi": "霸道",
+        "traditional": "霸道",
+        "pinyin": "bàdào",
+        "meaning": "overbearing; domineering",
+        "partOfSpeech": "Adj"
+      }
+    },
+    {
+      "id": "hsk2025.word.l7.05449.v1",
+      "levelBand": "7-9",
+      "payload": {
+        "hanzi": "罢工",
+        "traditional": "罷工",
+        "pinyin": "bàgōng",
+        "meaning": "a strike; to go on strike",
+        "partOfSpeech": "V"
+      }
+    },
+    {
+      "id": "hsk2025.word.l7.05450.v1",
+      "levelBand": "7-9",
+      "payload": {
+        "hanzi": "罢了",
+        "traditional": "罷了",
+        "pinyin": "bàle",
+        "meaning": "a modal particle indicating (that's all, only, nothing much)",
+        "partOfSpeech": "Aux"
+      }
+    }
+  ],
+  "topics": [
+    {
+      "id": "arguments",
+      "words": [
+        {
+          "id": "hsk2025.word.l7.09530.v1",
+          "levelBand": "7-9",
+          "payload": {
+            "hanzi": "推理",
+            "traditional": "推理",
+            "pinyin": "tuīlǐ",
+            "meaning": "reasoning; inference; to infer",
+            "partOfSpeech": "V"
+          }
+        },
+        {
+          "id": "hsk2025.word.l7.08107.v1",
+          "levelBand": "7-9",
+          "payload": {
+            "hanzi": "论证",
+            "traditional": "論證",
+            "pinyin": "lùnzhèng",
+            "meaning": "to prove a point; to expound on; to demonstrate or prove (through argument)",
+            "partOfSpeech": "N/V"
+          }
+        },
+        {
+          "id": "hsk2025.word.l7.05836.v1",
+          "levelBand": "7-9",
+          "payload": {
+            "hanzi": "阐述",
+            "traditional": "闡述",
+            "pinyin": "chǎnshù",
+            "meaning": "to expound (a position); to elaborate (on a topic); to treat (a subject)",
+            "partOfSpeech": "V"
+          }
+        }
+      ]
+    },
+    {
+      "id": "decisions",
+      "words": [
+        {
+          "id": "hsk2025.word.l7.08762.v1",
+          "levelBand": "7-9",
+          "payload": {
+            "hanzi": "权衡",
+            "traditional": "權衡",
+            "pinyin": "quánhéng",
+            "meaning": "to consider; to weigh (a matter); to balance (pros and cons)",
+            "partOfSpeech": "V"
+          }
+        },
+        {
+          "id": "hsk2025.word.l7.06814.v1",
+          "levelBand": "7-9",
+          "payload": {
+            "hanzi": "共识",
+            "traditional": "共識",
+            "pinyin": "gòngshí",
+            "meaning": "common understanding; consensus",
+            "partOfSpeech": "N"
+          }
+        },
+        {
+          "id": "hsk2025.word.l7.08117.v1",
+          "levelBand": "7-9",
+          "payload": {
+            "hanzi": "落实",
+            "traditional": "落實",
+            "pinyin": "luòshí",
+            "meaning": "practical; workable; to implement",
+            "partOfSpeech": "V"
+          }
+        }
+      ]
+    },
+    {
+      "id": "nature",
+      "words": [
+        {
+          "id": "hsk2025.word.l7.09761.v1",
+          "levelBand": "7-9",
+          "payload": {
+            "hanzi": "物种",
+            "traditional": "物種",
+            "pinyin": "wùzhǒng",
+            "meaning": "species",
+            "partOfSpeech": "N"
+          }
+        },
+        {
+          "id": "hsk2025.word.l7.06471.v1",
+          "levelBand": "7-9",
+          "payload": {
+            "hanzi": "繁衍",
+            "traditional": "繁衍",
+            "pinyin": "fányǎn",
+            "meaning": "to multiply",
+            "partOfSpeech": "V"
+          }
+        },
+        {
+          "id": "hsk2025.word.l7.08226.v1",
+          "levelBand": "7-9",
+          "payload": {
+            "hanzi": "灭绝",
+            "traditional": "滅絕",
+            "pinyin": "mièjué",
+            "meaning": "to become extinct; to die out; to lose (sth abstract) completely; to exterminate",
+            "partOfSpeech": "V"
+          }
+        }
+      ]
+    },
+    {
+      "id": "genres",
+      "words": [
+        {
+          "id": "hsk2025.word.l7.09395.v1",
+          "levelBand": "7-9",
+          "payload": {
+            "hanzi": "体裁",
+            "traditional": "體裁",
+            "pinyin": "tǐcái",
+            "meaning": "genre",
+            "partOfSpeech": "N"
+          }
+        },
+        {
+          "id": "hsk2025.word.l7.10432.v1",
+          "levelBand": "7-9",
+          "payload": {
+            "hanzi": "寓言",
+            "traditional": "寓言",
+            "pinyin": "yùyán",
+            "meaning": "fable; allegory; parable",
+            "partOfSpeech": "N"
+          }
+        },
+        {
+          "id": "hsk2025.word.l7.10851.v1",
+          "levelBand": "7-9",
+          "payload": {
+            "hanzi": "传记",
+            "traditional": "傳記",
+            "pinyin": "zhuànjì",
+            "meaning": "biography",
+            "partOfSpeech": "N"
+          }
+        }
+      ]
+    },
+    {
+      "id": "idioms",
+      "words": [
+        {
+          "id": "hsk2025.word.l7.07654.v1",
+          "levelBand": "7-9",
+          "payload": {
+            "hanzi": "举一反三",
+            "traditional": "舉一反三",
+            "pinyin": "jǔyī-fǎnsān",
+            "meaning": "to raise one and infer three; to deduce many things from one case (idiom)",
+            "partOfSpeech": "Phrase"
+          }
+        },
+        {
+          "id": "hsk2025.word.l7.10101.v1",
+          "levelBand": "7-9",
+          "payload": {
+            "hanzi": "循序渐进",
+            "traditional": "循序漸進",
+            "pinyin": "xúnxù-jiànjìn",
+            "meaning": "in sequence, step by step (idiom); to make steady progress incrementally",
+            "partOfSpeech": "Phrase"
+          }
+        },
+        {
+          "id": "hsk2025.word.l7.10306.v1",
+          "levelBand": "7-9",
+          "payload": {
+            "hanzi": "因地制宜",
+            "traditional": "因地制宜",
+            "pinyin": "yīndì-zhìyí",
+            "meaning": "(idiom) to use methods in line with local circumstances",
+            "partOfSpeech": "Phrase"
+          }
+        }
+      ]
+    },
+    {
+      "id": "negotiation",
+      "words": [
+        {
+          "id": "hsk2025.word.l7.06102.v1",
+          "levelBand": "7-9",
+          "payload": {
+            "hanzi": "磋商",
+            "traditional": "磋商",
+            "pinyin": "cuōshāng",
+            "meaning": "to consult; to discuss seriously; to negotiate",
+            "partOfSpeech": "V"
+          }
+        },
+        {
+          "id": "hsk2025.word.l7.10621.v1",
+          "levelBand": "7-9",
+          "payload": {
+            "hanzi": "斟酌",
+            "traditional": "斟酌",
+            "pinyin": "zhēnzhuó",
+            "meaning": "to consider",
+            "partOfSpeech": "V"
+          }
+        },
+        {
+          "id": "hsk2025.word.l7.09919.v1",
+          "levelBand": "7-9",
+          "payload": {
+            "hanzi": "协定",
+            "traditional": "協定",
+            "pinyin": "xiédìng",
+            "meaning": "agreement; accord; to reach an agreement",
+            "partOfSpeech": "N/V"
+          }
+        }
+      ]
+    }
+  ]
+}

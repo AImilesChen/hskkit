@@ -18,6 +18,8 @@ import { Hsk5VocabularyIntro, Hsk5VocabularyGuide } from "./hsk5-vocabulary-guid
 import { getHsk5VocabularyInitialPage } from "@/lib/content/hsk5-vocabulary-landing";
 import { Hsk6VocabularyIntro, Hsk6VocabularyGuide } from "./hsk6-vocabulary-guide";
 import { getHsk6VocabularyInitialPage } from "@/lib/content/hsk6-vocabulary-landing";
+import { Hsk789VocabularyIntro, Hsk789VocabularyGuide } from "./hsk789-vocabulary-guide";
+import { getHsk789VocabularyInitialPage } from "@/lib/content/hsk789-vocabulary-landing";
 import styles from "./hsk1-vocabulary.module.css";
 
 interface Props {
@@ -94,6 +96,14 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     openGraph: { title: `HSK 6 Vocabulary: ${status.wordCount.toLocaleString("en-US")} Words with Pinyin`, description: "Connect HSK 6 vocabulary with viewpoints, narrative and written or spoken expression, using a practical study guide.", url: "/vocabulary/6", type: "website" },
     twitter: { card: "summary_large_image", title: `HSK 6 Vocabulary: ${status.wordCount.toLocaleString("en-US")} Words with Pinyin`, description: "Browse the word list, explore topic groups and practise recall with quick flashcards." },
   };
+  if (level === 7) return {
+    title: `HSK 7–9 Vocabulary List: ${status.wordCount.toLocaleString("en-US")} Words with Pinyin — HSKKit`,
+    description: `Explore ${status.wordCount.toLocaleString("en-US")} HSK 7–9 entries with pinyin and meanings. Study argument, negotiation and idioms with topic words, a practical guide and free flashcards.`,
+    alternates: { canonical: "/vocabulary/7" },
+    robots: requestedLevel >= 8 ? { index: false, follow: true } : undefined,
+    openGraph: { title: `HSK 7–9 Vocabulary: ${status.wordCount.toLocaleString("en-US")} Words with Pinyin`, description: "Explore the combined HSK 7–9 vocabulary band, with topic groups, a study guide and a worked sentence.", url: "/vocabulary/7", type: "website" },
+    twitter: { card: "summary_large_image", title: `HSK 7–9 Vocabulary: ${status.wordCount.toLocaleString("en-US")} Words with Pinyin`, description: "Read the advanced-band word list, compare expressions in context and practise with quick flashcards." },
+  };
   return {
     title: `HSK 3.0 ${label} vocabulary — HSKKit`,
     description: `Browse all ${status.wordCount} published ${label} vocabulary entries with Chinese, pinyin, English meanings, and parts of speech.`,
@@ -110,8 +120,8 @@ export default async function VocabularyPage({ params }: Props) {
   if (status.availability !== "ready") notFound();
 
   const levelLabel = level === 7 ? "HSK 7–9" : `HSK ${level}`;
-  const hasGuide = level === 1 || level === 2 || level === 3 || level === 4 || level === 5 || level === 6;
-  const initialData = level === 1 ? getHsk1VocabularyInitialPage() : level === 2 ? getHsk2VocabularyInitialPage() : level === 3 ? getHsk3VocabularyInitialPage() : level === 4 ? getHsk4VocabularyInitialPage() : level === 5 ? getHsk5VocabularyInitialPage() : level === 6 ? getHsk6VocabularyInitialPage() : undefined;
+  const hasGuide = level === 1 || level === 2 || level === 3 || level === 4 || level === 5 || level === 6 || level === 7;
+  const initialData = level === 1 ? getHsk1VocabularyInitialPage() : level === 2 ? getHsk2VocabularyInitialPage() : level === 3 ? getHsk3VocabularyInitialPage() : level === 4 ? getHsk4VocabularyInitialPage() : level === 5 ? getHsk5VocabularyInitialPage() : level === 6 ? getHsk6VocabularyInitialPage() : level === 7 ? getHsk789VocabularyInitialPage() : undefined;
   const schema = initialData ? {
     "@context": "https://schema.org",
     "@graph": [
@@ -133,7 +143,7 @@ export default async function VocabularyPage({ params }: Props) {
         </nav>
 
         <header className="mt-[12px] border-b border-slate-200 pb-[24px]">
-          {level === 1 ? <Hsk1VocabularyIntro wordCount={status.wordCount} /> : level === 2 ? <Hsk2VocabularyIntro wordCount={status.wordCount} /> : level === 3 ? <Hsk3VocabularyIntro wordCount={status.wordCount} /> : level === 4 ? <Hsk4VocabularyIntro wordCount={status.wordCount} /> : level === 5 ? <Hsk5VocabularyIntro wordCount={status.wordCount} /> : level === 6 ? <Hsk6VocabularyIntro wordCount={status.wordCount} /> : <>
+          {level === 1 ? <Hsk1VocabularyIntro wordCount={status.wordCount} /> : level === 2 ? <Hsk2VocabularyIntro wordCount={status.wordCount} /> : level === 3 ? <Hsk3VocabularyIntro wordCount={status.wordCount} /> : level === 4 ? <Hsk4VocabularyIntro wordCount={status.wordCount} /> : level === 5 ? <Hsk5VocabularyIntro wordCount={status.wordCount} /> : level === 6 ? <Hsk6VocabularyIntro wordCount={status.wordCount} /> : level === 7 ? <Hsk789VocabularyIntro wordCount={status.wordCount} /> : <>
           <div className="max-w-3xl">
             <p className="text-xs font-semibold uppercase tracking-[.14em] text-blue-700">HSK 3.0 · 2025 exam syllabus</p>
             <h1 className="mt-[8px] text-4xl font-bold tracking-[-.035em] text-slate-950">{levelLabel} Vocabulary</h1>
@@ -177,7 +187,7 @@ export default async function VocabularyPage({ params }: Props) {
           </Suspense>
         </div>
 
-        {level === 1 ? <Hsk1VocabularyGuide wordCount={status.wordCount} /> : level === 2 ? <Hsk2VocabularyGuide wordCount={status.wordCount} foundationCount={getHsk3LevelStatus(1).wordCount} /> : level === 3 ? <Hsk3VocabularyGuide wordCount={status.wordCount} foundationCount={getHsk3LevelStatus(1).wordCount + getHsk3LevelStatus(2).wordCount} /> : level === 4 ? <Hsk4VocabularyGuide wordCount={status.wordCount} foundationCount={[1, 2, 3].reduce((sum, previous) => sum + getHsk3LevelStatus(previous).wordCount, 0)} /> : level === 5 ? <Hsk5VocabularyGuide wordCount={status.wordCount} foundationCount={[1, 2, 3, 4].reduce((sum, previous) => sum + getHsk3LevelStatus(previous).wordCount, 0)} /> : level === 6 ? <Hsk6VocabularyGuide wordCount={status.wordCount} foundationCount={[1, 2, 3, 4, 5].reduce((sum, previous) => sum + getHsk3LevelStatus(previous).wordCount, 0)} /> : <div className="mt-[40px] flex flex-wrap gap-3 border-t border-slate-200 pt-[24px]">
+        {level === 1 ? <Hsk1VocabularyGuide wordCount={status.wordCount} /> : level === 2 ? <Hsk2VocabularyGuide wordCount={status.wordCount} foundationCount={getHsk3LevelStatus(1).wordCount} /> : level === 3 ? <Hsk3VocabularyGuide wordCount={status.wordCount} foundationCount={getHsk3LevelStatus(1).wordCount + getHsk3LevelStatus(2).wordCount} /> : level === 4 ? <Hsk4VocabularyGuide wordCount={status.wordCount} foundationCount={[1, 2, 3].reduce((sum, previous) => sum + getHsk3LevelStatus(previous).wordCount, 0)} /> : level === 5 ? <Hsk5VocabularyGuide wordCount={status.wordCount} foundationCount={[1, 2, 3, 4].reduce((sum, previous) => sum + getHsk3LevelStatus(previous).wordCount, 0)} /> : level === 6 ? <Hsk6VocabularyGuide wordCount={status.wordCount} foundationCount={[1, 2, 3, 4, 5].reduce((sum, previous) => sum + getHsk3LevelStatus(previous).wordCount, 0)} /> : level === 7 ? <Hsk789VocabularyGuide wordCount={status.wordCount} foundationCount={[1, 2, 3, 4, 5, 6].reduce((sum, previous) => sum + getHsk3LevelStatus(previous).wordCount, 0)} /> : <div className="mt-[40px] flex flex-wrap gap-3 border-t border-slate-200 pt-[24px]">
           <Link href={`/dictionary?level=${requestedLevel}`} className="inline-flex min-h-11 items-center rounded-lg border border-blue-600 bg-white px-5 py-3 font-semibold text-blue-700 hover:bg-blue-50">Browse this level in Dictionary</Link>
           <Link href="/levels" className="inline-flex min-h-11 items-center rounded-lg border border-slate-300 bg-white px-5 py-3 font-semibold text-slate-700 hover:border-blue-600 hover:text-blue-700">View all HSK levels</Link>
           <Link href="/placement" className="inline-flex min-h-11 items-center rounded-lg bg-blue-600 px-5 py-3 font-semibold text-white hover:bg-blue-700">Find my starting level</Link>
