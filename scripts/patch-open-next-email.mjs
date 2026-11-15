@@ -45,3 +45,15 @@ if (!wordSource.includes(wordMarker)) {
   const prelude = `${wordMarker}\nimport { missingWordResponse } from "../src/lib/runtime/word-not-found.ts";\nimport wordNotFoundHtml from "./word-not-found-html.mjs";\n`;
   await writeFile(workerPath, prelude + wordSource.replace(anchor, `const missingWord = missingWordResponse(request, wordNotFoundHtml);\n            if (missingWord) return missingWord;\n            ${anchor}`));
 }
+
+// Run after the existing middleware and before importing the full Next handler.
+// Cookie-bearing requests, special query forms and failures keep that handler.
+const googleStartMarker = "/* hskkit-stateless-google-start-runtime */";
+const googleStartSource = await readFile(workerPath, "utf8");
+if (!googleStartSource.includes(googleStartMarker)) {
+  const anchor = 'const { handler } = await import("./server-functions/default/handler.mjs");';
+  if (!googleStartSource.includes(anchor)) throw new Error("Unexpected Worker template: Google start insertion point missing");
+  const prelude = `${googleStartMarker}\nimport { anonymousGoogleStartResponse } from "../src/lib/runtime/google-start.ts";\n`;
+  const shortcut = `if (url.pathname === "/api/v1/auth/google/start") {\n                const googleStart = await anonymousGoogleStartResponse(request, env);\n                if (googleStart) return googleStart;\n            }\n            `;
+  await writeFile(workerPath, prelude + googleStartSource.replace(anchor, shortcut + anchor));
+}

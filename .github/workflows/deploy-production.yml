@@ -56,7 +56,12 @@ jobs:
       - name: Verify stateless account fast path keeps authenticated paths unchanged
         run: node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --test tests/anonymous-account-fast-path.test.mts
       - name: Verify lightweight authentication, session security and OAuth behavior
-        run: node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --test tests/account-authentication.test.mts tests/google-sign-in-flow.test.mts tests/account-sync.test.mts tests/account-loading-resilience.test.mts tests/d1-overload-hardening.test.mts tests/p1-user-d1-protection.test.mts tests/p0-3-unified-account-contract.test.mts
+        run: node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --test tests/account-authentication.test.mts tests/google-sign-in-flow.test.mts tests/google-start-fast-path.test.mts tests/account-sync.test.mts tests/account-loading-resilience.test.mts tests/d1-overload-hardening.test.mts tests/p1-user-d1-protection.test.mts tests/p0-3-unified-account-contract.test.mts
+      - name: Preserve current pages and login callbacks for the login-only release
+        if: contains(github.event.head_commit.message, '[login-fast-path]')
+        run: |
+          git diff --exit-code HEAD^ HEAD -- src/app src/middleware.ts public content next.config.ts open-next.config.ts package.json package-lock.json wrangler.jsonc wrangler.commercial-worker.jsonc
+          node node_modules/typescript/bin/tsc --noEmit --incremental false
       - name: Verify complete public word assets and retained word routing
         run: node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --test tests/compact-public-word-manifest.test.cjs tests/public-word-assets.test.mts tests/prepare-public-word-assets.test.cjs tests/word-cache-release.test.mts tests/word-detail-lightweight-data.test.mts tests/dictionary-p2-learning-loop.test.mts tests/hsk1-vocabulary-landing.test.mts tests/hsk2-vocabulary-landing.test.mts tests/hsk3-vocabulary-landing.test.mts tests/hsk4-vocabulary-landing.test.mts tests/hsk5-vocabulary-landing.test.mts tests/hsk6-vocabulary-landing.test.mts tests/hsk789-vocabulary-landing.test.mts
       - name: Ensure dedicated private page-cache bucket
