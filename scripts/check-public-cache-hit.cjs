@@ -11,17 +11,21 @@ const checkStarted=Date.now();
 const wordRoutes=['/word/hsk2025.word.l1.0102.v1','/word/hsk2025.word.l1.0102.v1/practice','/word/hsk2025.word.l4.1763.v1','/word/hsk2025.word.l6.3727.v1','/word/hsk2025.word.l7.09094.v1/practice','/word/xue-xi'];
 const progress=message=>console.log(`cache-check (${Math.round((Date.now()-checkStarted)/1000)}s): ${message}`);
 async function bounded(label,promise,ms=30000){let timer;try{return await Promise.race([promise,new Promise((_,reject)=>{timer=setTimeout(()=>reject(Error(`Local verification timed out: ${label}`)),ms);})]);}finally{clearTimeout(timer);}}
+const workerAddresses=new WeakMap();
 async function checkedFetch(worker,url,init){
  progress('request '+url);
  // Use workerd's HTTP listener, as for the cache writer below. The unstable
  // RPC fetch proxy can stall when a lazily loaded Next response is streamed.
- const requested=new URL(url),target=new URL(requested.pathname+requested.search,await worker.url);
+ const requested=new URL(url);
+ if (!workerAddresses.has(worker)) workerAddresses.set(worker,worker.url);
+ const target=new URL(requested.pathname+requested.search,await workerAddresses.get(worker));
  const headers=new Headers(init?.headers);headers.set('host',requested.host);
  // Keep the transport independent between local assertions. Early anonymous
  // POST rejections do not consume a request body; reusing that emulator socket
  // can otherwise stall the following cookie-bearing GET before dispatch.
  headers.set('connection','close');
- const result=await bounded(url,require('./local-worker-http.cjs')(target,{...init,headers}));
+ const result=await bounded(url,fetch(target,{...init,headers,redirect:'follow'}));
+ assert.equal(new URL(result.url).origin,target.origin,'Local verification left its isolated HTTP listener');
  progress('received '+result.status+' '+url);return result;
 }
 async function discard(response){if(response.body)await bounded('drain response body',response.arrayBuffer(),10000);}
@@ -94,8 +98,10 @@ async function discard(response){if(response.body)await bounded('drain response 
    checks.push({route,status:404,nextServerDispatch:0});
   }
   progress('stateless account');const anon=await checkedFetch(worker,'http://localhost/api/v1/account');assert.equal(anon.headers.get('x-local-next-dispatched'),'0');assert.equal(anon.headers.get('cache-control'),'private, no-store');assert.equal((await anon.json()).account,null);
-  const reward=await checkedFetch(worker,'http://localhost/api/v1/account/learning-rewards',{method:'POST',body:'invalid-json'});assert.equal(reward.status,401);assert.equal(reward.headers.get('x-local-next-dispatched'),'0');await discard(reward);
+  // These are independent assertions. Run the cookie-bearing request before
+  // the early body-rejecting POST, which can leave the local emulator draining.
   const cookie=await checkedFetch(worker,'http://localhost/api/v1/account',{headers:{cookie:'consent=fixture'}});assert.equal(cookie.status,200);assert.equal(cookie.headers.get('x-local-next-dispatched'),'1');await discard(cookie);
+  const reward=await checkedFetch(worker,'http://localhost/api/v1/account/learning-rewards',{method:'POST',body:'invalid-json'});assert.equal(reward.status,401);assert.equal(reward.headers.get('x-local-next-dispatched'),'0');await discard(reward);
  }finally{await worker.dispose();}
  console.log(JSON.stringify({environment:'local workerd',checks,queryChecks:2,flightResponse:true,statelessAccountChecks:3,productionProbeHeaders:false}));
 })().catch(error=>{console.error(error);process.exitCode=1});
