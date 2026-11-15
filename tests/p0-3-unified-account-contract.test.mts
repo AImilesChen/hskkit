@@ -16,7 +16,7 @@ test("P0-3 publishes a real Google OAuth login, callback, failure retry and logo
   const start = read("../src/app/api/v1/auth/google/start/route.ts");
   const callback = read("../src/app/api/v1/auth/google/callback/route.ts");
   const logout = read("../src/app/api/v1/auth/logout/route.ts");
-  const oauth = read("../src/lib/account/oauth.ts");
+  const oauth = read("../src/lib/account/oauth.ts") + "\n" + read("../src/lib/account/oauth-parameters.ts");
   assert.match(login, /Continue with Google/);
   assert.match(login, /Try Google sign-in again/);
   assert.match(start, /pkceChallenge/);
@@ -118,3 +118,5 @@ test("P0-3 migration adds Google identities and revocable private sessions", () 
   assert.match(migration, /CREATE TABLE IF NOT EXISTS account_sessions/);
   assert.match(migration, /revoked_at TEXT/);
 });
+
+
