@@ -1,0 +1,786 @@
+{
+  "releaseId": "hsk3-hsk123456789-2025-v11",
+  "wordCount": 1800,
+  "firstPage": [
+    {
+      "id": "hsk2025.word.l6.3601.v1",
+      "levelBand": "6",
+      "payload": {
+        "hanzi": "岸",
+        "traditional": "岸",
+        "pinyin": "àn",
+        "meaning": "bank",
+        "partOfSpeech": "N"
+      }
+    },
+    {
+      "id": "hsk2025.word.l6.3602.v1",
+      "levelBand": "6",
+      "payload": {
+        "hanzi": "案例",
+        "traditional": "案例",
+        "pinyin": "ànlì",
+        "meaning": "case; example",
+        "partOfSpeech": "N"
+      }
+    },
+    {
+      "id": "hsk2025.word.l6.3603.v1",
+      "levelBand": "6",
+      "payload": {
+        "hanzi": "按摩",
+        "traditional": "按摩",
+        "pinyin": "ànmó",
+        "meaning": "massage",
+        "partOfSpeech": "V"
+      }
+    },
+    {
+      "id": "hsk2025.word.l6.3604.v1",
+      "levelBand": "6",
+      "payload": {
+        "hanzi": "暗示",
+        "traditional": "暗示",
+        "pinyin": "ànshì",
+        "meaning": "to hint",
+        "partOfSpeech": "V"
+      }
+    },
+    {
+      "id": "hsk2025.word.l6.3605.v1",
+      "levelBand": "6",
+      "payload": {
+        "hanzi": "昂贵",
+        "traditional": "昂貴",
+        "pinyin": "ángguì",
+        "meaning": "expensive",
+        "partOfSpeech": "Adj"
+      }
+    },
+    {
+      "id": "hsk2025.word.l6.3606.v1",
+      "levelBand": "6",
+      "payload": {
+        "hanzi": "白白",
+        "traditional": "白白",
+        "pinyin": "báibái",
+        "meaning": "in vain",
+        "partOfSpeech": "Adv"
+      }
+    },
+    {
+      "id": "hsk2025.word.l6.3607.v1",
+      "levelBand": "6",
+      "payload": {
+        "hanzi": "白领",
+        "traditional": "白領",
+        "pinyin": "báilǐng",
+        "meaning": "white-collar",
+        "partOfSpeech": "N"
+      }
+    },
+    {
+      "id": "hsk2025.word.l6.3608.v1",
+      "levelBand": "6",
+      "payload": {
+        "hanzi": "摆",
+        "traditional": "擺",
+        "pinyin": "bǎi",
+        "meaning": "to arrange",
+        "partOfSpeech": "V"
+      }
+    },
+    {
+      "id": "hsk2025.word.l6.3609.v1",
+      "levelBand": "6",
+      "payload": {
+        "hanzi": "摆放",
+        "traditional": "擺放",
+        "pinyin": "bǎifàng",
+        "meaning": "to set up",
+        "partOfSpeech": "V"
+      }
+    },
+    {
+      "id": "hsk2025.word.l6.3610.v1",
+      "levelBand": "6",
+      "payload": {
+        "hanzi": "百分点",
+        "traditional": "百分點",
+        "pinyin": "bǎifēndiǎn",
+        "meaning": "percentage point",
+        "partOfSpeech": "N"
+      }
+    },
+    {
+      "id": "hsk2025.word.l6.3611.v1",
+      "levelBand": "6",
+      "payload": {
+        "hanzi": "百货",
+        "traditional": "百貨",
+        "pinyin": "bǎihuò",
+        "meaning": "general merchandise",
+        "partOfSpeech": "N"
+      }
+    },
+    {
+      "id": "hsk2025.word.l6.3612.v1",
+      "levelBand": "6",
+      "payload": {
+        "hanzi": "摆脱",
+        "traditional": "擺脫",
+        "pinyin": "bǎituō",
+        "meaning": "to break away from",
+        "partOfSpeech": "V"
+      }
+    },
+    {
+      "id": "hsk2025.word.l6.3613.v1",
+      "levelBand": "6",
+      "payload": {
+        "hanzi": "败",
+        "traditional": "敗",
+        "pinyin": "bài",
+        "meaning": "to defeat",
+        "partOfSpeech": "V"
+      }
+    },
+    {
+      "id": "hsk2025.word.l6.3614.v1",
+      "levelBand": "6",
+      "payload": {
+        "hanzi": "拜访",
+        "traditional": "拜訪",
+        "pinyin": "bàifǎng",
+        "meaning": "to pay a visit",
+        "partOfSpeech": "V"
+      }
+    },
+    {
+      "id": "hsk2025.word.l6.3615.v1",
+      "levelBand": "6",
+      "payload": {
+        "hanzi": "拜年",
+        "traditional": "拜年",
+        "pinyin": "bàinián",
+        "meaning": "to pay a New Year call",
+        "partOfSpeech": "V"
+      }
+    },
+    {
+      "id": "hsk2025.word.l6.3616.v1",
+      "levelBand": "6",
+      "payload": {
+        "hanzi": "版",
+        "traditional": "版",
+        "pinyin": "bǎn",
+        "meaning": "a register",
+        "partOfSpeech": "N/M"
+      }
+    },
+    {
+      "id": "hsk2025.word.l6.3617.v1",
+      "levelBand": "6",
+      "payload": {
+        "hanzi": "版本",
+        "traditional": "版本",
+        "pinyin": "bǎnběn",
+        "meaning": "version",
+        "partOfSpeech": "N"
+      }
+    },
+    {
+      "id": "hsk2025.word.l6.3618.v1",
+      "levelBand": "6",
+      "payload": {
+        "hanzi": "伴随",
+        "traditional": "伴隨",
+        "pinyin": "bànsuí",
+        "meaning": "to accompany",
+        "partOfSpeech": "V"
+      }
+    },
+    {
+      "id": "hsk2025.word.l6.3619.v1",
+      "levelBand": "6",
+      "payload": {
+        "hanzi": "扮演",
+        "traditional": "扮演",
+        "pinyin": "bànyǎn",
+        "meaning": "to play the role of",
+        "partOfSpeech": "V"
+      }
+    },
+    {
+      "id": "hsk2025.word.l6.3620.v1",
+      "levelBand": "6",
+      "payload": {
+        "hanzi": "榜样",
+        "traditional": "榜樣",
+        "pinyin": "bǎngyàng",
+        "meaning": "model",
+        "partOfSpeech": "N"
+      }
+    },
+    {
+      "id": "hsk2025.word.l6.3621.v1",
+      "levelBand": "6",
+      "payload": {
+        "hanzi": "棒球",
+        "traditional": "棒球",
+        "pinyin": "bàngqiú",
+        "meaning": "baseball",
+        "partOfSpeech": "N"
+      }
+    },
+    {
+      "id": "hsk2025.word.l6.3622.v1",
+      "levelBand": "6",
+      "payload": {
+        "hanzi": "保管",
+        "traditional": "保管",
+        "pinyin": "bǎoguǎn",
+        "meaning": "to hold in safekeeping",
+        "partOfSpeech": "V"
+      }
+    },
+    {
+      "id": "hsk2025.word.l6.3623.v1",
+      "levelBand": "6",
+      "payload": {
+        "hanzi": "保健",
+        "traditional": "保健",
+        "pinyin": "bǎojiàn",
+        "meaning": "health protection",
+        "partOfSpeech": "V"
+      }
+    },
+    {
+      "id": "hsk2025.word.l6.3624.v1",
+      "levelBand": "6",
+      "payload": {
+        "hanzi": "保暖",
+        "traditional": "保暖",
+        "pinyin": "bǎonuǎn",
+        "meaning": "to keep warm",
+        "partOfSpeech": "V"
+      }
+    },
+    {
+      "id": "hsk2025.word.l6.3625.v1",
+      "levelBand": "6",
+      "payload": {
+        "hanzi": "保修",
+        "traditional": "保修",
+        "pinyin": "bǎoxiū",
+        "meaning": "to promise to keep sth in good repair",
+        "partOfSpeech": "V"
+      }
+    },
+    {
+      "id": "hsk2025.word.l6.3626.v1",
+      "levelBand": "6",
+      "payload": {
+        "hanzi": "保障",
+        "traditional": "保障",
+        "pinyin": "bǎozhàng",
+        "meaning": "to ensure",
+        "partOfSpeech": "N/V"
+      }
+    },
+    {
+      "id": "hsk2025.word.l6.3627.v1",
+      "levelBand": "6",
+      "payload": {
+        "hanzi": "爆",
+        "traditional": "爆",
+        "pinyin": "bào",
+        "meaning": "to explode",
+        "partOfSpeech": "V"
+      }
+    },
+    {
+      "id": "hsk2025.word.l6.3628.v1",
+      "levelBand": "6",
+      "payload": {
+        "hanzi": "爆发",
+        "traditional": "爆發",
+        "pinyin": "bàofā",
+        "meaning": "to break out",
+        "partOfSpeech": "V"
+      }
+    },
+    {
+      "id": "hsk2025.word.l6.3629.v1",
+      "levelBand": "6",
+      "payload": {
+        "hanzi": "报刊",
+        "traditional": "報刊",
+        "pinyin": "bàokān",
+        "meaning": "newspapers and periodicals",
+        "partOfSpeech": "N"
+      }
+    },
+    {
+      "id": "hsk2025.word.l6.3630.v1",
+      "levelBand": "6",
+      "payload": {
+        "hanzi": "暴力",
+        "traditional": "暴力",
+        "pinyin": "bàolì",
+        "meaning": "violence",
+        "partOfSpeech": "N"
+      }
+    },
+    {
+      "id": "hsk2025.word.l6.3631.v1",
+      "levelBand": "6",
+      "payload": {
+        "hanzi": "暴露",
+        "traditional": "暴露",
+        "pinyin": "bàolù",
+        "meaning": "to expose",
+        "partOfSpeech": "V"
+      }
+    },
+    {
+      "id": "hsk2025.word.l6.3632.v1",
+      "levelBand": "6",
+      "payload": {
+        "hanzi": "报社",
+        "traditional": "報社",
+        "pinyin": "bàoshè",
+        "meaning": "newspaper (i.e. a company)",
+        "partOfSpeech": "N"
+      }
+    },
+    {
+      "id": "hsk2025.word.l6.3633.v1",
+      "levelBand": "6",
+      "payload": {
+        "hanzi": "爆炸",
+        "traditional": "爆炸",
+        "pinyin": "bàozhà",
+        "meaning": "explosion",
+        "partOfSpeech": "V"
+      }
+    },
+    {
+      "id": "hsk2025.word.l6.3634.v1",
+      "levelBand": "6",
+      "payload": {
+        "hanzi": "悲观",
+        "traditional": "悲觀",
+        "pinyin": "bēiguān",
+        "meaning": "pessimistic",
+        "partOfSpeech": "Adj"
+      }
+    },
+    {
+      "id": "hsk2025.word.l6.3635.v1",
+      "levelBand": "6",
+      "payload": {
+        "hanzi": "悲剧",
+        "traditional": "悲劇",
+        "pinyin": "bēijù",
+        "meaning": "tragedy",
+        "partOfSpeech": "N"
+      }
+    },
+    {
+      "id": "hsk2025.word.l6.3636.v1",
+      "levelBand": "6",
+      "payload": {
+        "hanzi": "悲伤",
+        "traditional": "悲傷",
+        "pinyin": "bēishāng",
+        "meaning": "sad",
+        "partOfSpeech": "Adj"
+      }
+    },
+    {
+      "id": "hsk2025.word.l6.3637.v1",
+      "levelBand": "6",
+      "payload": {
+        "hanzi": "北极",
+        "traditional": "北極",
+        "pinyin": "běijí",
+        "meaning": "the North Pole",
+        "partOfSpeech": "N"
+      }
+    },
+    {
+      "id": "hsk2025.word.l6.3638.v1",
+      "levelBand": "6",
+      "payload": {
+        "hanzi": "北美洲",
+        "traditional": "北美洲",
+        "pinyin": "Běiměizhōu",
+        "meaning": "North America",
+        "partOfSpeech": "N"
+      }
+    },
+    {
+      "id": "hsk2025.word.l6.3639.v1",
+      "levelBand": "6",
+      "payload": {
+        "hanzi": "被动",
+        "traditional": "被動",
+        "pinyin": "bèidòng",
+        "meaning": "passive",
+        "partOfSpeech": "Adj"
+      }
+    },
+    {
+      "id": "hsk2025.word.l6.3640.v1",
+      "levelBand": "6",
+      "payload": {
+        "hanzi": "被迫",
+        "traditional": "被迫",
+        "pinyin": "bèipò",
+        "meaning": "to be compelled",
+        "partOfSpeech": "V"
+      }
+    },
+    {
+      "id": "hsk2025.word.l6.3641.v1",
+      "levelBand": "6",
+      "payload": {
+        "hanzi": "背心",
+        "traditional": "背心",
+        "pinyin": "bèixīn",
+        "meaning": "sleeveless garment (vest, waistcoat, singlet, tank top etc)",
+        "partOfSpeech": "N"
+      }
+    },
+    {
+      "id": "hsk2025.word.l6.3642.v1",
+      "levelBand": "6",
+      "payload": {
+        "hanzi": "备用",
+        "traditional": "備用",
+        "pinyin": "bèiyòng",
+        "meaning": "reserve",
+        "partOfSpeech": "V"
+      }
+    },
+    {
+      "id": "hsk2025.word.l6.3643.v1",
+      "levelBand": "6",
+      "payload": {
+        "hanzi": "倍增",
+        "traditional": "倍增",
+        "pinyin": "bèizēng",
+        "meaning": "to double",
+        "partOfSpeech": "V"
+      }
+    },
+    {
+      "id": "hsk2025.word.l6.3644.v1",
+      "levelBand": "6",
+      "payload": {
+        "hanzi": "奔跑",
+        "traditional": "奔跑",
+        "pinyin": "bēnpǎo",
+        "meaning": "to run",
+        "partOfSpeech": "V"
+      }
+    },
+    {
+      "id": "hsk2025.word.l6.3645.v1",
+      "levelBand": "6",
+      "payload": {
+        "hanzi": "本能",
+        "traditional": "本能",
+        "pinyin": "běnnéng",
+        "meaning": "instinct",
+        "partOfSpeech": "N/Adv"
+      }
+    },
+    {
+      "id": "hsk2025.word.l6.3646.v1",
+      "levelBand": "6",
+      "payload": {
+        "hanzi": "本身",
+        "traditional": "本身",
+        "pinyin": "běnshēn",
+        "meaning": "itself",
+        "partOfSpeech": "Pron"
+      }
+    },
+    {
+      "id": "hsk2025.word.l6.3647.v1",
+      "levelBand": "6",
+      "payload": {
+        "hanzi": "本土",
+        "traditional": "本土",
+        "pinyin": "běntǔ",
+        "meaning": "one's native country",
+        "partOfSpeech": "N"
+      }
+    },
+    {
+      "id": "hsk2025.word.l6.3648.v1",
+      "levelBand": "6",
+      "payload": {
+        "hanzi": "逼",
+        "traditional": "逼",
+        "pinyin": "bī",
+        "meaning": "to force (sb to do sth)",
+        "partOfSpeech": "V"
+      }
+    },
+    {
+      "id": "hsk2025.word.l6.3649.v1",
+      "levelBand": "6",
+      "payload": {
+        "hanzi": "比方",
+        "traditional": "比方",
+        "pinyin": "bǐfang",
+        "meaning": "analogy",
+        "partOfSpeech": "V"
+      }
+    },
+    {
+      "id": "hsk2025.word.l6.3650.v1",
+      "levelBand": "6",
+      "payload": {
+        "hanzi": "比重",
+        "traditional": "比重",
+        "pinyin": "bǐzhòng",
+        "meaning": "proportion",
+        "partOfSpeech": "N"
+      }
+    }
+  ],
+  "topics": [
+    {
+      "id": "viewpoints",
+      "words": [
+        {
+          "id": "hsk2025.word.l6.4437.v1",
+          "levelBand": "6",
+          "payload": {
+            "hanzi": "立场",
+            "traditional": "立場",
+            "pinyin": "lìchǎng",
+            "meaning": "position",
+            "partOfSpeech": "N"
+          }
+        },
+        {
+          "id": "hsk2025.word.l6.5287.v1",
+          "levelBand": "6",
+          "payload": {
+            "hanzi": "争议",
+            "traditional": "爭議",
+            "pinyin": "zhēngyì",
+            "meaning": "controversy",
+            "partOfSpeech": "V"
+          }
+        },
+        {
+          "id": "hsk2025.word.l6.5351.v1",
+          "levelBand": "6",
+          "payload": {
+            "hanzi": "主张",
+            "traditional": "主張",
+            "pinyin": "zhǔzhāng",
+            "meaning": "to advocate",
+            "partOfSpeech": "N/V"
+          }
+        }
+      ]
+    },
+    {
+      "id": "finance",
+      "words": [
+        {
+          "id": "hsk2025.word.l6.4921.v1",
+          "levelBand": "6",
+          "payload": {
+            "hanzi": "投资",
+            "traditional": "投資",
+            "pinyin": "tóuzī",
+            "meaning": "investment",
+            "partOfSpeech": "N/V"
+          }
+        },
+        {
+          "id": "hsk2025.word.l6.5375.v1",
+          "levelBand": "6",
+          "payload": {
+            "hanzi": "资本",
+            "traditional": "資本",
+            "pinyin": "zīběn",
+            "meaning": "capital (economics)",
+            "partOfSpeech": "N"
+          }
+        },
+        {
+          "id": "hsk2025.word.l6.5376.v1",
+          "levelBand": "6",
+          "payload": {
+            "hanzi": "资产",
+            "traditional": "資產",
+            "pinyin": "zīchǎn",
+            "meaning": "property",
+            "partOfSpeech": "N"
+          }
+        }
+      ]
+    },
+    {
+      "id": "policy",
+      "words": [
+        {
+          "id": "hsk2025.word.l6.5288.v1",
+          "levelBand": "6",
+          "payload": {
+            "hanzi": "政策",
+            "traditional": "政策",
+            "pinyin": "zhèngcè",
+            "meaning": "policy",
+            "partOfSpeech": "N"
+          }
+        },
+        {
+          "id": "hsk2025.word.l6.4214.v1",
+          "levelBand": "6",
+          "payload": {
+            "hanzi": "机制",
+            "traditional": "機制",
+            "pinyin": "jīzhì",
+            "meaning": "mechanism",
+            "partOfSpeech": "N"
+          }
+        },
+        {
+          "id": "hsk2025.word.l6.4244.v1",
+          "levelBand": "6",
+          "payload": {
+            "hanzi": "监督",
+            "traditional": "監督",
+            "pinyin": "jiāndū",
+            "meaning": "to supervise",
+            "partOfSpeech": "V"
+          }
+        }
+      ]
+    },
+    {
+      "id": "register",
+      "words": [
+        {
+          "id": "hsk2025.word.l6.4821.v1",
+          "levelBand": "6",
+          "payload": {
+            "hanzi": "书面",
+            "traditional": "書面",
+            "pinyin": "shūmiàn",
+            "meaning": "in writing",
+            "partOfSpeech": "Adj"
+          }
+        },
+        {
+          "id": "hsk2025.word.l6.4396.v1",
+          "levelBand": "6",
+          "payload": {
+            "hanzi": "口头",
+            "traditional": "口頭",
+            "pinyin": "kǒutóu",
+            "meaning": "oral",
+            "partOfSpeech": "N/Adj"
+          }
+        },
+        {
+          "id": "hsk2025.word.l6.3767.v1",
+          "levelBand": "6",
+          "payload": {
+            "hanzi": "成语",
+            "traditional": "成語",
+            "pinyin": "chéngyǔ",
+            "meaning": "Chinese set expression, typically of 4 characters, often alluding to a story or historical quotation",
+            "partOfSpeech": "N"
+          }
+        }
+      ]
+    },
+    {
+      "id": "narrative",
+      "words": [
+        {
+          "id": "hsk2025.word.l6.5085.v1",
+          "levelBand": "6",
+          "payload": {
+            "hanzi": "叙述",
+            "traditional": "敘述",
+            "pinyin": "xùshù",
+            "meaning": "to relate (a story or information)",
+            "partOfSpeech": "V"
+          }
+        },
+        {
+          "id": "hsk2025.word.l6.4515.v1",
+          "levelBand": "6",
+          "payload": {
+            "hanzi": "描写",
+            "traditional": "描寫",
+            "pinyin": "miáoxiě",
+            "meaning": "to describe",
+            "partOfSpeech": "V"
+          }
+        },
+        {
+          "id": "hsk2025.word.l6.4514.v1",
+          "levelBand": "6",
+          "payload": {
+            "hanzi": "描绘",
+            "traditional": "描繪",
+            "pinyin": "miáohuì",
+            "meaning": "to describe",
+            "partOfSpeech": "V"
+          }
+        }
+      ]
+    },
+    {
+      "id": "meaning",
+      "words": [
+        {
+          "id": "hsk2025.word.l6.3891.v1",
+          "levelBand": "6",
+          "payload": {
+            "hanzi": "地道",
+            "traditional": "地道",
+            "pinyin": "dìdao",
+            "meaning": "authentic",
+            "partOfSpeech": "Adj"
+          }
+        },
+        {
+          "id": "hsk2025.word.l6.4124.v1",
+          "levelBand": "6",
+          "payload": {
+            "hanzi": "含义",
+            "traditional": "含義",
+            "pinyin": "hányì",
+            "meaning": "meaning (implicit in a phrase)",
+            "partOfSpeech": "N"
+          }
+        },
+        {
+          "id": "hsk2025.word.l6.3781.v1",
+          "levelBand": "6",
+          "payload": {
+            "hanzi": "抽象",
+            "traditional": "抽象",
+            "pinyin": "chōuxiàng",
+            "meaning": "abstract",
+            "partOfSpeech": "Adj"
+          }
+        }
+      ]
+    }
+  ]
+}
