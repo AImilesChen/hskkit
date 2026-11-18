@@ -1,4 +1,4 @@
-// Package only the immutable public word caches with the exact build's assets.
+// Package only immutable public word/character caches with the exact build's assets.
 // This script has no Cloudflare credentials, network calls or R2 writes.
 const fs = require('node:fs');
 const path = require('node:path');
@@ -9,6 +9,7 @@ const CACHE_DIR = 'cdn-cgi/_next_cache';
 const MAX_ASSET_FILES = 90000;
 const MAX_FILE_BYTES = 25 * 1024 * 1024;
 const MAX_WORD_BYTES = 6 * 1024 * 1024 * 1024;
+const MAX_CHARACTER_BYTES = 1024 * 1024 * 1024;
 const sha = bytes => crypto.createHash('sha256').update(bytes).digest('hex');
 function filesUnder(root) {
   const files = [];
@@ -26,6 +27,9 @@ function prepare(root, { verify = false } = {}) {
   const slugs = JSON.parse(fs.readFileSync(path.join(root, 'src/lib/dictionary/word-prebuild-slugs.json'), 'utf8'));
   assert.ok(slugs.length > 0 && slugs.length <= 15000);
   assert.equal(new Set(slugs).size, slugs.length, 'Duplicate public word');
+  const characters = JSON.parse(fs.readFileSync(path.join(root, 'src/lib/dictionary/character-prebuild-slugs.json'), 'utf8'));
+  assert.ok(characters.length > 0 && characters.length <= 4000);
+  assert.equal(new Set(characters).size, characters.length, 'Duplicate public character');
   const proof = path.join(root, '.next/cache/public-word-prerender.json');
   const snapshot = fs.existsSync(proof) ? JSON.parse(fs.readFileSync(proof, 'utf8')) : null;
   if (snapshot) assert.equal(snapshot.build, build, 'Stale full word-route proof');
@@ -33,13 +37,17 @@ function prepare(root, { verify = false } = {}) {
   const assets = path.join(root, '.open-next/assets');
   const cache = path.join(root, '.open-next/cache', build);
   let totalBytes = 0;
+  let characterBytes = 0;
   const digest = crypto.createHash('sha256');
   const entries = [];
   for (const slug of slugs) {
     assert.match(slug, /^(?:[a-z]+(?:-[a-z]+)*|(?:hsk3|hsk2025)\.word\.l[1-7]\.\d{4,5}\.v\d+)$/);
-    for (const suffix of ['', '/practice']) {
-      const route = `/word/${slug}${suffix}`;
-      assert.equal(manifest.routes[route]?.initialRevalidateSeconds, false, `Word is missing or not immutable: ${route}`);
+  }
+  for (const hanzi of characters) assert.match(hanzi, /^[\u3400-\u9fff]$/);
+  const routes = [...slugs.flatMap(slug => [`/word/${slug}`, `/word/${slug}/practice`]),
+    ...characters.map(hanzi => `/character/${hanzi}`)];
+  for (const route of routes) {
+      assert.equal(manifest.routes[route]?.initialRevalidateSeconds, false, `Public page is missing or not immutable: ${route}`);
       const relative = `${route.slice(1)}.cache`;
       const source = path.join(cache, relative);
       const bytes = fs.readFileSync(source);
@@ -48,8 +56,10 @@ function prepare(root, { verify = false } = {}) {
       assert.equal(value.type, 'app', `Unexpected cache type: ${route}`);
       assert.ok(typeof value.html === 'string' && value.html.includes('HSKKit'), `Missing HTML: ${route}`);
       assert.ok(typeof value.rsc === 'string' && value.rsc.length > 0, `Missing Flight data: ${route}`);
-      totalBytes += bytes.length;
+      if (route.startsWith('/character/')) characterBytes += bytes.length;
+      else totalBytes += bytes.length;
       assert.ok(totalBytes <= MAX_WORD_BYTES, 'Public word asset byte budget exceeded');
+      assert.ok(characterBytes <= MAX_CHARACTER_BYTES, 'Public character asset byte budget exceeded');
       const target = path.join(assets, CACHE_DIR, build, relative);
       const hash = sha(bytes);
       entries.push({ route, bytes: bytes.length, sha256: hash });
@@ -59,18 +69,18 @@ function prepare(root, { verify = false } = {}) {
         fs.mkdirSync(path.dirname(target), { recursive: true });
         fs.copyFileSync(source, target);
       }
-    }
   }
   // Prevent old BUILD_IDs, private caches and other route caches being included.
   const bundled = filesUnder(path.join(assets, CACHE_DIR));
   assert.equal(bundled.length, entries.length, 'Unexpected or obsolete public word assets');
   const totalFiles = filesUnder(assets).length;
   assert.ok(totalFiles <= MAX_ASSET_FILES, `Static asset file budget exceeded: ${totalFiles}`);
-  const report = { schemaVersion: 1, build, publicWords: slugs.length, wordAssets: entries.length,
-    wordBytes: totalBytes, totalAssetFiles: totalFiles, manifestSha256: digest.digest('hex'),
-    plannedWordR2Objects: 0, plannedWordR2Bytes: 0, verified: true };
+  const report = { schemaVersion: 1, build, publicWords: slugs.length, wordAssets: slugs.length * 2,
+    wordBytes: totalBytes, publicCharacters: characters.length, characterAssets: characters.length,
+    characterBytes, totalPublicAssets: entries.length, totalAssetFiles: totalFiles, manifestSha256: digest.digest('hex'),
+    plannedWordR2Objects: 0, plannedWordR2Bytes: 0, plannedCharacterR2Objects: 0, plannedCharacterR2Bytes: 0, verified: true };
   fs.writeFileSync(path.join(root, '.open-next/public-word-assets.json'), JSON.stringify(report, null, 2));
   return report;
 }
-module.exports = { prepare, filesUnder, MAX_ASSET_FILES, MAX_WORD_BYTES };
+module.exports = { prepare, filesUnder, MAX_ASSET_FILES, MAX_WORD_BYTES, MAX_CHARACTER_BYTES };
 if (require.main === module) console.log(JSON.stringify(prepare(path.resolve(__dirname, '..'), { verify: process.argv.includes('--verify') })));

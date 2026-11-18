@@ -11,10 +11,12 @@ function fixture(t, revalidate = false, fallback = null) {
   for (const dir of ['.next/standalone/.next', '.next/server/app/word', 'src/lib/dictionary', '.open-next'])
     fs.mkdirSync(path.join(root, dir), { recursive: true });
   const routes = { '/dictionary': { initialRevalidateSeconds: 86400 } };
+  routes['/character/学'] = { initialRevalidateSeconds: false, srcRoute: '/character/[hanzi]' };
   for (const tail of ['', '/practice']) routes['/word/xue-xi' + tail] = {
     initialRevalidateSeconds: revalidate, srcRoute: '/word/[slug]' + tail,
   };
   const manifest = { routes, dynamicRoutes: {
+    '/character/[hanzi]': { fallback, routeRegex: '^/character/([^/]+?)(?:/)?$' },
     '/word/[slug]': { fallback, routeRegex: '^/word/([^/]+?)(?:/)?$' },
     '/word/[slug]/practice': { fallback, routeRegex: '^/word/([^/]+?)/practice(?:/)?$' },
   } };
@@ -22,12 +24,14 @@ function fixture(t, revalidate = false, fallback = null) {
     fs.writeFileSync(path.join(root, f), JSON.stringify(manifest));
   fs.writeFileSync(path.join(root, '.next/BUILD_ID'), 'TestBuild0123456789ab');
   fs.writeFileSync(path.join(root, 'src/lib/dictionary/word-prebuild-slugs.json'), '["xue-xi"]');
+  fs.writeFileSync(path.join(root, 'src/lib/dictionary/character-prebuild-slugs.json'), '["学"]');
   fs.writeFileSync(path.join(root, '.next/server/app/word/xue-xi.html'), 'EXACT ORIGINAL PAGE');
   return { root, manifest };
 }
 test('compaction preserves both dynamic fallbacks, full publication proof and every page byte', t => {
   const { root, manifest } = fixture(t), report = compact(root);
   assert.equal(report.publicWordEntriesRemoved, 2);
+  assert.equal(report.publicCharacterEntriesRemoved, 1);
   const runtime = JSON.parse(fs.readFileSync(path.join(root, '.next/prerender-manifest.json')));
   assert.deepEqual(runtime.routes, { '/dictionary': manifest.routes['/dictionary'] });
   assert.deepEqual(runtime.dynamicRoutes, manifest.dynamicRoutes);

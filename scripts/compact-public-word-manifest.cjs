@@ -9,6 +9,7 @@ function compact(root) {
   assert.deepEqual(JSON.parse(fs.readFileSync(standalone, 'utf8')), manifest, 'Standalone/source manifests differ');
   for (const route of ['/word/[slug]', '/word/[slug]/practice'])
     assert.equal(manifest.dynamicRoutes[route]?.fallback, null, 'Word runtime must retain blocking dynamic fallback');
+  assert.equal(manifest.dynamicRoutes['/character/[hanzi]']?.fallback, null, 'Character runtime must retain blocking dynamic fallback');
   const slugs = JSON.parse(fs.readFileSync(path.join(root, 'src/lib/dictionary/word-prebuild-slugs.json'), 'utf8'));
   assert.ok(slugs.length > 0 && slugs.length <= 15000);
   const full = JSON.parse(raw);
@@ -18,6 +19,15 @@ function compact(root) {
     assert.equal(manifest.routes[route].srcRoute, tail ? '/word/[slug]/practice' : '/word/[slug]');
     delete manifest.routes[route];
   }
+  const characters = JSON.parse(fs.readFileSync(path.join(root, 'src/lib/dictionary/character-prebuild-slugs.json'), 'utf8'));
+  assert.ok(characters.length > 0 && characters.length <= 4000);
+  for (const hanzi of characters) {
+    assert.match(hanzi, /^[\u3400-\u9fff]$/);
+    const route = `/character/${hanzi}`;
+    assert.equal(manifest.routes[route]?.initialRevalidateSeconds, false, `Character is not immutable: ${route}`);
+    assert.equal(manifest.routes[route].srcRoute, '/character/[hanzi]');
+    delete manifest.routes[route];
+  }
   // Keep the full build proof outside standalone and outside *-manifest.json
   // globs, so it is used for publication checks but never inlined in the Worker.
   const backup = path.join(next, 'cache/public-word-prerender.json');
@@ -25,9 +35,9 @@ function compact(root) {
   fs.writeFileSync(backup, JSON.stringify({ build: fs.readFileSync(path.join(next, 'BUILD_ID'), 'utf8').trim(), manifest: full }));
   const bytes = JSON.stringify(manifest);
   fs.writeFileSync(file, bytes); fs.writeFileSync(standalone, bytes);
-  const report = { publicWordEntriesRemoved: slugs.length * 2, retainedRoutes: Object.keys(manifest.routes).length,
+  const report = { publicWordEntriesRemoved: slugs.length * 2, publicCharacterEntriesRemoved: characters.length, retainedRoutes: Object.keys(manifest.routes).length,
     originalManifestBytes: Buffer.byteLength(raw), runtimeManifestBytes: Buffer.byteLength(bytes),
-    dynamicWordFallbacksPreserved: true, pageFilesModified: false };
+    dynamicWordFallbacksPreserved: true, dynamicCharacterFallbackPreserved: true, pageFilesModified: false };
   fs.writeFileSync(path.join(root, '.open-next/public-word-manifest-compact.json'), JSON.stringify(report, null, 2));
   return report;
 }

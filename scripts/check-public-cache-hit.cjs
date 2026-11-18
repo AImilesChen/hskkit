@@ -9,6 +9,8 @@ const {unstable_startWorker}=require('wrangler');
 const common={compatibilityDate:'2026-05-24',compatibilityFlags:['nodejs_compat','global_fetch_strictly_public'],sendMetrics:false,envFiles:[],dev:{remote:false,persist:path.join(T,'state'),server:{port:0},inspector:{hostname:'127.0.0.1',port:0},watch:false,liveReload:false,logLevel:'info'}};
 const checkStarted=Date.now();
 const wordRoutes=['/word/hsk2025.word.l1.0102.v1','/word/hsk2025.word.l1.0102.v1/practice','/word/hsk2025.word.l4.1763.v1','/word/hsk2025.word.l6.3727.v1','/word/hsk2025.word.l7.09094.v1/practice','/word/xue-xi'];
+const characterRoutes=['/character/学','/character/半','/character/爱','/character/餐'];
+const assetRoutes=[...wordRoutes,...characterRoutes];
 const progress=message=>console.log(`cache-check (${Math.round((Date.now()-checkStarted)/1000)}s): ${message}`);
 async function bounded(label,promise,ms=30000){let timer;try{return await Promise.race([promise,new Promise((_,reject)=>{timer=setTimeout(()=>reject(Error(`Local verification timed out: ${label}`)),ms);})]);}finally{clearTimeout(timer);}}
 const workerAddresses=new WeakMap();
@@ -44,13 +46,13 @@ async function discard(response){if(response.body)await bounded('drain response 
  const requestAnchor='async fetch(request, env, ctx) {';
  assert.ok(src.includes(requestAnchor));
  const observedSource=src.replace(requestAnchor,requestAnchor+' console.error("local-probe: request received",new URL(request.url).pathname,Boolean(request.headers.get("cookie")));').replace(importAnchor,'console.error("local-probe: Next import starting"); '+importAnchor+' console.error("local-probe: Next import ready");').replace(contextAnchor,
-  'if (new URL(request.url).pathname.startsWith("/word/")) { const deny = () => { throw Error("Public word request touched R2"); }; env = { ...env, NEXT_INC_CACHE_R2_BUCKET: { get: deny, put: deny, head: deny, delete: deny, list: deny } }; } '+contextAnchor);
+  'if (/^\\/(word|character)\\//.test(new URL(request.url).pathname)) { const deny = () => { throw Error("Public immutable request touched R2"); }; env = { ...env, NEXT_INC_CACHE_R2_BUCKET: { get: deny, put: deny, head: deny, delete: deny, list: deny } }; } '+contextAnchor);
  const probe=path.join(root,'worker.cache-probe.js');fs.writeFileSync(probe,observedSource.replace('return reqOrResp;','reqOrResp.headers.set("x-local-next-dispatched","0"); return reqOrResp;').replace('if (anonymousResponse) return anonymousResponse;','if (anonymousResponse) { anonymousResponse.headers.set("x-local-next-dispatched","0"); return anonymousResponse; }').replace('if (missingWord) return missingWord;', 'if (missingWord) { missingWord.headers.set("x-local-next-dispatched","0"); return missingWord; }').replace('return handler(reqOrResp, env, ctx, request.signal);','console.error("local-probe: Next handler starting"); const result=await handler(reqOrResp, env, ctx, request.signal); console.error("local-probe: Next handler ready"); result.headers.set("x-local-next-dispatched","1"); return result;'));
  // Full coverage, byte integrity and the asset limit are checked separately by
  // prepare-public-word-assets --verify. The runtime probe needs only the exact
  // selected built entries, avoiding a second hash of the entire media library.
  const probeAssets=path.join(T,'assets'),fixtureBuild=fs.readFileSync(path.join(S,'.next/BUILD_ID'),'utf8').trim();
- for(const route of wordRoutes){const relative=`cdn-cgi/_next_cache/${fixtureBuild}${route}.cache`,target=path.join(probeAssets,relative);fs.mkdirSync(path.dirname(target),{recursive:true});fs.copyFileSync(path.join(root,'assets',relative),target);}
+ for(const route of assetRoutes){const relative=`cdn-cgi/_next_cache/${fixtureBuild}${route}.cache`,target=path.join(probeAssets,relative);fs.mkdirSync(path.dirname(target),{recursive:true});fs.copyFileSync(path.join(root,'assets',relative),target);}
  for(const relative of ['formal-media/course-chinese-1-b-v1/index.coursedoc','formal-media/course-chinese-2-b-v1/index.coursedoc','formal-media/course-chinese-2-c-v1/paper-data.json']){const file=path.join(probeAssets,relative);fs.mkdirSync(path.dirname(file),{recursive:true});fs.writeFileSync(file,'LOCAL PRIVATE GUARD FIXTURE');}
  const localConfig=path.join(T,'wrangler.json');fs.writeFileSync(localConfig,JSON.stringify({name:'hskkit-local-cache-check',main:probe,minify:true,compatibility_date:'2026-05-24',compatibility_flags:common.compatibilityFlags,assets:{directory:probeAssets,binding:'ASSETS',run_worker_first:['/formal-media/*']},vars:{NEXT_INC_CACHE_R2_PREFIX:'system/opennext-cache'},r2_buckets:[{binding:'NEXT_INC_CACHE_R2_BUCKET',bucket_name:'hskkit-page-cache'}]}));
  const out=spawnSync(process.execPath,[path.join(S,'node_modules/wrangler/bin/wrangler.js'),'deploy',probe,'--config',localConfig,'--dry-run','--outdir',path.join(T,'bundle')],{cwd:S,encoding:'utf8',env:process.env,timeout:120000});assert.equal(out.status,0,((out.stdout||'')+(out.stderr||'')).slice(-4000));
@@ -72,20 +74,24 @@ async function discard(response){if(response.body)await bounded('drain response 
  const checks=[];
  try{
   for(const file of files){const route='/'+file.slice(0,-6);progress(route);const r=await checkedFetch(worker,'http://localhost'+route),body=await bounded('read '+route,r.text());assert.equal(r.status,200,route);assert.equal(r.headers.get('x-local-next-dispatched'),'0',route);assert.ok(body.includes('HSKKit'));checks.push({route,status:200,nextServerDispatch:0});}
-  for(const route of wordRoutes){
+  for(const route of assetRoutes){
    const cache=JSON.parse(fs.readFileSync(path.join(cacheRoot,build,route.slice(1)+'.cache'),'utf8'));
    for(const flight of [false,true]){
     const r=await checkedFetch(worker,'http://localhost'+route+(flight?'?_rsc=fixture':'?source=local'),flight?{headers:{rsc:'1','next-router-prefetch':'1'}}:undefined);
     assert.equal(r.status,200,route);assert.equal(r.headers.get('x-local-next-dispatched'),'0',route);
     assert.equal(await bounded('read word '+route,r.text()),flight?cache.rsc:cache.html,route+' exact '+(flight?'Flight':'HTML'));
     if(flight)assert.ok(r.headers.get('content-type')?.includes('text/x-component'));
-    checks.push({route,status:200,nextServerDispatch:0,flight,wordR2Access:'blocked',exactBuiltBytes:true});
+    checks.push({route,status:200,nextServerDispatch:0,flight,publicAssetR2Access:'blocked',exactBuiltBytes:true});
    }
   }
   const preview=await checkedFetch(worker,'http://localhost/word/hsk2025.word.l1.0102.v1',{headers:{cookie:'__prerender_bypass=fixture'}});
   assert.equal(preview.status,200,'Word full-server fallback remains readable');
   assert.equal(preview.headers.get('x-local-next-dispatched'),'1');
   assert.equal(await preview.text(),JSON.parse(fs.readFileSync(path.join(cacheRoot,build,'word/hsk2025.word.l1.0102.v1.cache'),'utf8')).html,'Word full-server fallback preserves exact HTML');
+  const characterPreview=await checkedFetch(worker,'http://localhost/character/'+encodeURIComponent('学'),{headers:{cookie:'__prerender_bypass=fixture'}});
+  assert.equal(characterPreview.status,200,'Character full-server fallback remains readable');
+  assert.equal(characterPreview.headers.get('x-local-next-dispatched'),'1');
+  assert.equal(await characterPreview.text(),JSON.parse(fs.readFileSync(path.join(cacheRoot,build,'character/学.cache'),'utf8')).html,'Character full-server fallback preserves exact HTML');
   for(const route of ['/formal-media/course-chinese-1-b-v1/index.coursedoc','/%66ormal-media/course-chinese-1-b-v1/index.coursedoc','/api/v1/course-tests/chinese-1/b/file/paper-data.json','/api/v1/course-tests/chinese-1/c/file/teacher.pdf','/formal-media/course-chinese-2-b-v1/index.coursedoc','/%66ormal-media/course-chinese-2-c-v1/paper-data.json','/api/v1/course-tests/chinese-2/b/file/paper-data.json','/api/v1/course-tests/chinese-2/c/file/teacher.pdf']){progress('guard '+route);const expected=route.startsWith('/api/')?401:404,r=await checkedFetch(worker,'http://localhost'+route);assert.equal(r.status,expected,route);await discard(r);checks.push({route,status:expected});}
   for(const query of ['?x=1','?_rsc=fixture']){const r=await checkedFetch(worker,'http://localhost/chinese-course-tests'+query);assert.equal(r.status,200);await discard(r);}
   progress('RSC response');const flight=await checkedFetch(worker,'http://localhost/chinese-course-tests?_rsc=fixture',{headers:{rsc:'1','next-router-prefetch':'1'}});assert.equal(flight.status,200);assert.ok(flight.headers.get('content-type')?.includes('text/x-component'));await discard(flight);
@@ -98,10 +104,12 @@ async function discard(response){if(response.body)await bounded('drain response 
    checks.push({route,status:404,nextServerDispatch:0});
   }
   progress('stateless account');const anon=await checkedFetch(worker,'http://localhost/api/v1/account');assert.equal(anon.headers.get('x-local-next-dispatched'),'0');assert.equal(anon.headers.get('cache-control'),'private, no-store');assert.equal((await anon.json()).account,null);
+  const session=await checkedFetch(worker,'http://localhost/api/v1/account/session');assert.equal(session.status,200);assert.equal(session.headers.get('x-local-next-dispatched'),'0');assert.equal(session.headers.get('cache-control'),'private, no-store');assert.deepEqual(await session.json(),{account:null});
+  const cookieSession=await checkedFetch(worker,'http://localhost/api/v1/account/session',{headers:{cookie:'consent=fixture'}});assert.equal(cookieSession.status,200);assert.equal(cookieSession.headers.get('x-local-next-dispatched'),'1');assert.deepEqual(await cookieSession.json(),{account:null});
   // These are independent assertions. Run the cookie-bearing request before
   // the early body-rejecting POST, which can leave the local emulator draining.
   const cookie=await checkedFetch(worker,'http://localhost/api/v1/account',{headers:{cookie:'consent=fixture'}});assert.equal(cookie.status,200);assert.equal(cookie.headers.get('x-local-next-dispatched'),'1');await discard(cookie);
   const reward=await checkedFetch(worker,'http://localhost/api/v1/account/learning-rewards',{method:'POST',body:'invalid-json'});assert.equal(reward.status,401);assert.equal(reward.headers.get('x-local-next-dispatched'),'0');await discard(reward);
  }finally{await worker.dispose();}
- console.log(JSON.stringify({environment:'local workerd',checks,queryChecks:2,flightResponse:true,statelessAccountChecks:3,productionProbeHeaders:false}));
+ console.log(JSON.stringify({environment:'local workerd',checks,queryChecks:2,flightResponse:true,statelessAccountChecks:5,productionProbeHeaders:false}));
 })().catch(error=>{console.error(error);process.exitCode=1});

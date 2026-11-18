@@ -1,5 +1,6 @@
 import { getCloudflareContext } from "@opennextjs/cloudflare";
 import { displayStatus, normalizeBlogInput, normalizePublishAt, type BlogDisplayStatus, type BlogInput, type BlogStatus, type PublicBlogQuery } from "./domain";
+import { getPublicGuideSummaries } from "./public-guide-summaries";
 
 type BlogRow = {
   id: string; slug: string; title: string; excerpt: string; content_markdown: string;
@@ -164,6 +165,10 @@ export async function listPublishedBlogPosts(query: PublicBlogQuery): Promise<{ 
 export async function getPublishedBlogPostBySlug(slug: string): Promise<PublicBlogPost | undefined> {
   const row = await db().prepare(`${publicColumns}${PUBLIC_JOIN}WHERE ${PUBLIC_WHERE} AND p.slug=? LIMIT 1`).bind(new Date().toISOString(), slug).first<PublishedVersionRow>();
   return row ? mapPublishedVersion(row) : undefined;
+}
+
+export async function getPublishedGuideSummaries(slugs: readonly string[]) {
+  return getPublicGuideSummaries(db(), slugs);
 }
 
 export async function listRelatedBlogPosts(post: PublicBlogPost, limit = 3): Promise<PublicBlogPostSummary[]> {

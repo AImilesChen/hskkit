@@ -246,6 +246,12 @@ def main() -> None:
         "characters": characters,
     }
     OUTPUT.write_text(json.dumps(payload, ensure_ascii=False, separators=(",", ":")) + "\n", encoding="utf-8")
+    # Small allowlist shared by SSG and the Worker; never load the full character
+    # index into the lightweight cache interceptor.
+    (OUTPUT.parent / "character-prebuild-slugs.json").write_text(
+        json.dumps([item["hanzi"] for item in characters], ensure_ascii=False, separators=(",", ":")) + "\n",
+        encoding="utf-8",
+    )
     print(json.dumps({"output": str(OUTPUT), "releaseId": release_id, "characters": len(characters)}, ensure_ascii=False))
 
 

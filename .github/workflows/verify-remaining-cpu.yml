@@ -1,0 +1,78 @@
+name: Verify remaining CPU optimization without deployment
+on:
+  push:
+    branches: [verify/remaining-cpu-20261118]
+permissions:
+  contents: read
+concurrency:
+  group: verify-remaining-cpu-20261118
+  cancel-in-progress: false
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    env:
+      WRANGLER_SEND_METRICS: "false"
+      NODE_OPTIONS: --max-old-space-size=6144
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          cache: npm
+      - run: npm ci
+      - name: Verify unchanged page renderers, styles, fonts and learning source
+        run: |
+          git fetch --no-tags --depth=1 origin eafffd55105111ac24715cedb8c9f02be14199f0
+          node scripts/check-remaining-cpu-ui.cjs
+      - name: Verify authentication, public caches and publication freshness
+        run: >-
+          node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --test
+          tests/anonymous-account-fast-path.test.mts tests/google-start-fast-path.test.mts
+          tests/public-guide-summaries.test.mts tests/public-word-assets.test.mts
+          tests/prepare-public-word-assets.test.cjs tests/compact-public-word-manifest.test.cjs
+          tests/public-character-interception.test.mts tests/learning-guides.test.mts
+          tests/account-authentication.test.mts tests/google-sign-in-flow.test.mts
+          tests/account-sync.test.mts tests/account-loading-resilience.test.mts
+          tests/d1-overload-hardening.test.mts tests/p1-user-d1-protection.test.mts
+          tests/p0-3-unified-account-contract.test.mts tests/cache-gate-runner.test.cjs
+          tests/word-cache-upload.test.cjs tests/publish-word-cache.test.cjs
+          tests/word-cache-release.test.mts tests/word-detail-lightweight-data.test.mts
+          tests/dictionary-p2-learning-loop.test.mts tests/hsk1-vocabulary-landing.test.mts
+          tests/hsk2-vocabulary-landing.test.mts tests/hsk3-vocabulary-landing.test.mts
+          tests/hsk4-vocabulary-landing.test.mts tests/hsk5-vocabulary-landing.test.mts
+          tests/hsk6-vocabulary-landing.test.mts tests/hsk789-vocabulary-landing.test.mts
+      - run: node node_modules/typescript/bin/tsc --noEmit --incremental false
+      - name: Build complete production Worker without credentials or deployment
+        run: |
+          npx opennextjs-cloudflare build --dangerouslyUseUnsupportedNextVersion
+          node scripts/patch-open-next-email.mjs
+          node scripts/prepare-public-word-assets.cjs
+          node scripts/check-remaining-cpu-ui.cjs
+      - name: Verify full built Worker cache bypass and private resource guards
+        timeout-minutes: 7
+        run: |
+          set -o pipefail
+          node scripts/run-cache-gate.cjs | tee .open-next/remaining-cpu-runtime.log
+          node scripts/prepare-public-word-assets.cjs --verify
+      - name: Package local browser preview
+        run: node scripts/package-cpu-validation-preview.cjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: remaining-cpu-verification-${{ github.sha }}
+          path: |
+            .open-next/remaining-cpu-ui.json
+            .open-next/remaining-cpu-runtime.log
+            .open-next/public-word-assets.json
+            .open-next/public-word-manifest-compact.json
+            .open-next/worker-size-check.json
+          retention-days: 2
+      - uses: actions/upload-artifact@v4
+        with:
+          name: remaining-cpu-local-preview-${{ github.sha }}
+          path: .open-next/cpu-validation-preview
+          if-no-files-found: error
+          retention-days: 1

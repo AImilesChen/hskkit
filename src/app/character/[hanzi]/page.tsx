@@ -6,13 +6,15 @@ import { AudioButton } from "../../components/audio-button";
 import { StudyPage } from "../../components/study-shell";
 import { getIndexedCharacter } from "@/lib/dictionary/character-index";
 import { getPublishedCharacterByHanzi } from "@/lib/dictionary/runtime-character";
+import characterSlugs from "@/lib/dictionary/character-prebuild-slugs.json";
 
 type Props = { params: Promise<{ hanzi: string }> };
 function clean(value: string) { try { return decodeURIComponent(value); } catch { return value; } }
-export const revalidate = 86_400;
+// All displayed character data comes from the versioned, build-time catalog.
+export const revalidate = false;
 
 export function generateStaticParams() {
-  return [];
+  return characterSlugs.map(hanzi => ({ hanzi }));
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
@@ -84,3 +86,4 @@ export default async function CharacterPage({ params }: Props) {
     </div>
   </main></StudyPage>;
 }
+

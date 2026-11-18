@@ -156,13 +156,17 @@ test('the real build patch bypasses Next initialization after middleware and pre
   const request = (tail='',headers={})=>new Request('https://hskkit.test'+googleSignInHref('/today#task')+tail,{headers});
   assert.equal((await worker.fetch(request(),env,{})).status,307);
   assert.deepEqual(count,{initialized:0,calls:0},'no Next initialization for ordinary anonymous login');
+  const session = await worker.fetch(new Request('https://hskkit.test/api/v1/account/session'),env,{});
+  assert.deepEqual(await session.json(),{account:null});
+  assert.equal(session.headers.get('cache-control'),'private, no-store');
+  assert.deepEqual(count,{initialized:0,calls:0},'anonymous session also avoids Next initialization');
   assert.equal((await worker.fetch(request('',{'user-agent':'MJ12bot/1.4'}),env,{})).status,403);
   assert.equal(await (await worker.fetch(new Request('https://hskkit.test/word/xue-xi'),env,{})).text(),'unchanged public cache');
   assert.deepEqual(count,{initialized:0,calls:0});
-  for(const r of [request('',{cookie:'hskkit_session=existing'}),request('&unknown=value'),new Request('https://hskkit.test/today')]) {
+  for(const r of [request('',{cookie:'hskkit_session=existing'}),request('&unknown=value'),new Request('https://hskkit.test/today'),new Request('https://hskkit.test/api/v1/account/session',{headers:{cookie:'hskkit_session=existing'}})]) {
     assert.equal(await (await worker.fetch(r,env,{})).text(),'original Next route');
   }
-  assert.deepEqual(count,{initialized:1,calls:3});
+  assert.deepEqual(count,{initialized:1,calls:4});
   } finally {
     await rm(fixture, { recursive: true, force: true });
   }

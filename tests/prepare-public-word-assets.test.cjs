@@ -13,7 +13,12 @@ function fixture(t) {
     fs.mkdirSync(path.join(root, dir), { recursive: true });
   fs.writeFileSync(path.join(root, '.next/BUILD_ID'), build);
   fs.writeFileSync(path.join(root, 'src/lib/dictionary/word-prebuild-slugs.json'), JSON.stringify([slug]));
+  fs.writeFileSync(path.join(root, 'src/lib/dictionary/character-prebuild-slugs.json'), '["学"]');
   const routes = {};
+  routes['/character/学'] = { initialRevalidateSeconds: false };
+  fs.mkdirSync(path.join(root, `.open-next/cache/${build}/character`), { recursive: true });
+  fs.writeFileSync(path.join(root, `.open-next/cache/${build}/character/学.cache`),
+    JSON.stringify({ type: 'app', html: '<html>HSKKit original character</html>', rsc: 'original character Flight' }));
   for (const tail of ['', '/practice']) {
     routes[`/word/${slug}${tail}`] = { initialRevalidateSeconds: false };
     fs.writeFileSync(path.join(root, `.open-next/cache/${build}/word/${slug}${tail}.cache`),
@@ -26,10 +31,20 @@ test('packages exact HTML/Flight bytes for both routes with zero planned R2 grow
   const { root, build, slug } = fixture(t);
   const report = prepare(root);
   assert.equal(report.wordAssets, 2); assert.equal(report.plannedWordR2Bytes, 0);
+  assert.equal(report.characterAssets, 1); assert.equal(report.totalPublicAssets, 3);
+  assert.equal(report.plannedCharacterR2Bytes, 0);
+  assert.deepEqual(fs.readFileSync(path.join(root, `.open-next/assets/cdn-cgi/_next_cache/${build}/character/学.cache`)),
+    fs.readFileSync(path.join(root, `.open-next/cache/${build}/character/学.cache`)));
   assert.deepEqual(prepare(root, { verify: true }), report);
   const target = path.join(root, `.open-next/assets/cdn-cgi/_next_cache/${build}/word/${slug}.cache`);
   fs.writeFileSync(target, 'corrupt');
   assert.throws(() => prepare(root, { verify: true }), /Stale or corrupt/);
+});
+
+test('a missing character cache cannot silently fall back to expensive runtime generation', t => {
+  const { root, build } = fixture(t);
+  fs.unlinkSync(path.join(root, `.open-next/cache/${build}/character/学.cache`));
+  assert.throws(() => prepare(root), /ENOENT/);
 });
 test('missing or periodically revalidating public pages stop publication', t => {
   const { root, build, slug } = fixture(t);

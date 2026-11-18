@@ -1,7 +1,9 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import type { IncrementalCache } from '@opennextjs/aws/types/overrides.js';
-import { publicWordAssetKey, publicWordCache } from '../src/lib/runtime/public-word-cache.ts';
+import { publicWordAssetKey, publicCharacterAssetKey, publicWordCache } from '../src/lib/runtime/public-word-cache.ts';
+import characters from '../src/lib/dictionary/character-prebuild-slugs.json' with { type: 'json' };
+import characterIndex from '../src/lib/dictionary/character-index.json' with { type: 'json' };
 import slugs from '../src/lib/dictionary/word-prebuild-slugs.json' with { type: 'json' };
 import validity from '../src/lib/runtime/word-route-validity.json' with { type: 'json' };
 
@@ -50,4 +52,30 @@ test('immutable asset hits carry their revalidation policy without expanded rout
   const hit = await publicWordCache(assets, unused).get('/word/xue-xi');
   assert.equal(hit?.value?.revalidate, false);
   assert.equal(hit?.value?.type === 'app' && hit.value.html, 'same HTML');
+});
+
+test('every published character has a small exact allowlist; encoded/private/unknown keys retain fallback', () => {
+  assert.deepEqual(characters, characterIndex.characters.map(item => item.hanzi));
+  assert.equal(characters.length, 3088);
+  for (const hanzi of characters) assert.equal(publicCharacterAssetKey('/character/' + hanzi), true);
+  for (const key of ['/character/学/extra', '/character/%E5%AD%A6', '/character/学习', '/character/not-found',
+    '/character/学?private=1', '//character/学', '/api/v1/account/session']) assert.equal(publicCharacterAssetKey(key), false, key);
+  assert.equal(publicCharacterAssetKey('/character/学', 'fetch'), false);
+  assert.equal(publicCharacterAssetKey('/character/学', 'composable'), false);
+});
+
+test('character HTML and Flight use assets with zero R2 reads/writes; invalid characters keep original fallback', async () => {
+  const calls: string[] = [];
+  const assets = { name: 'assets', async get() { calls.push('assets'); return { value: { type:'app', html:'unchanged character HTML', rsc:'unchanged Flight' } }; } } as IncrementalCache;
+  const fallback = { name: 'fallback', async get() { calls.push('r2.get'); return null; },
+    async set() { calls.push('r2.set'); }, async delete() { calls.push('r2.delete'); } } as IncrementalCache;
+  const cache = publicWordCache(assets, fallback);
+  const hit = await cache.get('/character/学');
+  assert.equal(hit?.value?.revalidate, false);
+  assert.equal(hit?.value?.type === 'app' && hit.value.html, 'unchanged character HTML');
+  await cache.set('/character/学', {type:'app',html:'x',rsc:'x'});
+  await cache.delete('/character/学');
+  assert.deepEqual(calls, ['assets']);
+  await cache.get('/character/unknown');
+  assert.equal(calls.at(-1), 'r2.get');
 });

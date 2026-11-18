@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { StudyPage } from "@/app/components/study-shell";
-import { getPublishedBlogPostBySlug } from "@/lib/blog/repository";
+import { getPublishedGuideSummaries } from "@/lib/blog/repository";
 import { guideSections } from "@/lib/guides/catalog";
 import "./learn.css";
 import GuideArt from "./guide-art";
@@ -10,7 +10,9 @@ export const metadata: Metadata = { title: "Chinese Learning Guides: Pinyin, Cha
 const steps = [ { title: "Learn the sounds", text: "Start with pinyin and Mandarin tones.", href: "/blog/chinese-pinyin-guide", label: "Explore pinyin" }, { title: "Build your vocabulary", text: "Learn words with pronunciation and examples.", href: "/vocabulary/1", label: "Explore HSK 1 words" }, { title: "Make it a habit", text: "Plan a manageable learning routine.", href: "/planner", label: "Open Study Planner" } ];
 const tools = [ { title: "Tone Trainer", text: "Listen, identify tones and revisit confusing sounds.", href: "/tools/chinese-tone-trainer", label: "Practise tones" }, { title: "Flashcards", text: "Build recall with a short vocabulary round.", href: "/vocabulary/1?mode=flashcards#vocabulary-activities", label: "Practise vocabulary" }, { title: "HSK Practice Tests", text: "Choose a level and check grammar, reading and listening.", href: "/hsk-test-prep", label: "Choose a test" } ];
 export default async function LearningGuidesPage() {
- const sections = await Promise.all(guideSections.map(async section => ({ ...section, posts: (await Promise.all(section.slugs.map(slug => getPublishedBlogPostBySlug(slug)))).filter(post => post !== undefined && post !== null) })));
+ const posts = await getPublishedGuideSummaries(guideSections.flatMap(section => section.slugs));
+ const bySlug = new Map(posts.map(post => [post.lookupSlug, post]));
+ const sections = guideSections.map(section => ({ ...section, posts: section.slugs.flatMap(slug => { const post = bySlug.get(slug); return post ? [post] : []; }) }));
  return <StudyPage><main className="guides-page">
  <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({ "@context": "https://schema.org", "@type": "BreadcrumbList", itemListElement: [{ "@type": "ListItem", position: 1, name: "Home", item: "https://hskkit.com/" }, { "@type": "ListItem", position: 2, name: "Learning Guides", item: "https://hskkit.com/learn" }] }).replace(/</g, "\\u003c") }}/>
  <nav className="guides-breadcrumb" aria-label="Breadcrumb"><Link href="/">Home</Link><span>/</span><span>Learning Guides</span></nav>
