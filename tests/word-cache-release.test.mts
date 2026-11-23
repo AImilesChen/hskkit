@@ -8,8 +8,9 @@ import legacy23 from '../src/lib/content/legacy-hsk23-words.json' with { type: '
 import legacy4 from '../src/lib/content/legacy-hsk4-words.json' with { type: 'json' };
 import legacy5 from '../src/lib/content/legacy-hsk5-words.json' with { type: 'json' };
 import validity from '../src/lib/runtime/word-route-validity.json' with { type: 'json' };
-import { knownStructuredWordId, missingWordResponse } from '../src/lib/runtime/word-not-found.ts';
+import { knownStructuredWordId, knownStructuredWordPracticeId, missingWordResponse } from '../src/lib/runtime/word-not-found.ts';
 import { getPublishedWordBySlug } from '../src/lib/dictionary/runtime-word.ts';
+import { findPublicCatalogWordLearningContext } from '../src/lib/content/public-catalog-index.ts';
 import { wordPrebuildParams } from '../src/lib/dictionary/word-prebuild.ts';
 
 test('compact validity preserves all published and retained IDs and every gap', async () => {
@@ -37,6 +38,42 @@ test('missing document keeps exact built HTML, 404 semantics and HEAD behavior',
     assert.match(response.headers.get('x-robots-tag')!, /noindex/);
     const head = missingWordResponse(new Request(url, { method: 'HEAD' }), html)!;
     assert.equal(head.status, 404); assert.equal(await head.text(), '');
+  }
+});
+
+test('practice validity matches the real page context for every current and retained ID', async () => {
+  const ids = new Set([...catalog.words.map(r => r[0]),
+    ...[...legacy1.words, ...legacy23.words, ...legacy4.words, ...legacy5.words].map(r => r[0]),
+    ...runtime.dictionaryAssets.map(r => r.id), ...Object.values(runtime.runtimeWords).flat().map(r => r.id)]);
+  for (const id of ids) {
+    const result = await getPublishedWordBySlug(id);
+    const supported = result.status === 'published' && Boolean(findPublicCatalogWordLearningContext(result.item.id));
+    assert.equal(knownStructuredWordPracticeId(id), supported, id);
+    if (supported) assert.equal(missingWordResponse(new Request(`https://hskkit.com/word/${id}/practice`), 'unused'), undefined, id);
+  }
+  for (const id of ['hsk2025.word.l1.0000.v1', 'hsk2025.word.l7.11001.v1', 'hsk2025.word.l1.0102.v2']) {
+    assert.equal(knownStructuredWordPracticeId(id), false, id);
+  }
+});
+
+test('retained detail pages stay readable while unavailable practices reuse the same 404 HTML', async () => {
+  const html = '<!doctype html><title>Study item not found</title>';
+  for (const id of ['hsk3.word.l5.0860.v1', 'hsk3.word.l1.0421.v1']) {
+    assert.equal((await getPublishedWordBySlug(id)).status, 'published');
+    assert.equal(missingWordResponse(new Request(`https://hskkit.com/word/${id}`), html), undefined);
+    for (const method of ['GET', 'HEAD']) {
+      const response = missingWordResponse(new Request(`https://hskkit.com/word/${id}/practice`, { method }), html)!;
+      assert.equal(response.status, 404);
+      assert.equal(await response.text(), method === 'HEAD' ? '' : html);
+    }
+    const url = `https://hskkit.com/word/${id}/practice`;
+    for (const header of ['rsc', 'next-action', 'next-router-prefetch', 'next-router-segment-prefetch', 'x-prerender-revalidate'])
+      assert.equal(missingWordResponse(new Request(url, { headers: { [header]: '1' } }), html), undefined);
+    for (const cookie of ['__prerender_bypass=fixture', '__next_preview_data=fixture'])
+      assert.equal(missingWordResponse(new Request(url, { headers: { cookie } }), html), undefined);
+    assert.equal(missingWordResponse(new Request(url + '?_rsc=fixture'), html), undefined);
+    assert.equal(missingWordResponse(new Request(url, { method: 'POST' }), html), undefined);
+    assert.equal(missingWordResponse(new Request(`https://hskkit.com/word/%68${id.slice(1)}/practice`), html), undefined);
   }
 });
 

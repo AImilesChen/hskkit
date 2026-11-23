@@ -8,6 +8,7 @@ import legacy5 from '../../src/lib/content/legacy-hsk5-words.json' with { type: 
 import priority from '../../src/lib/dictionary/word-prebuild-priority.json' with { type: 'json' };
 import { getPublishedWordBySlug } from '../../src/lib/dictionary/runtime-word.ts';
 import { listPublishedWords } from '../../src/lib/dictionary/catalog.ts';
+import { findPublicCatalogWordLearningContext } from '../../src/lib/content/public-catalog-index.ts';
 
 // Derive from the same lookup used by the page, including retained learning IDs.
 const candidates = new Set([
@@ -18,25 +19,35 @@ const candidates = new Set([
 ]);
 const valid = new Set<string>();
 const grouped = new Map<string, number[]>();
+const practiceGrouped = new Map<string, number[]>();
 for (const id of candidates) {
-  if ((await getPublishedWordBySlug(id)).status !== 'published') continue;
+  const result = await getPublishedWordBySlug(id);
+  if (result.status !== 'published') continue;
   valid.add(id);
   const match = /^(.*)\.(\d+)(\.v\d+)$/.exec(id);
   if (!match) throw new Error(`Unexpected word ID: ${id}`);
   const key = `${match[1]}${match[3]}:${match[2].length}`;
   const list = grouped.get(key) ?? [];
   list.push(Number(match[2])); grouped.set(key, list);
-}
-const ranges: Record<string, number[][]> = {};
-for (const [key, numbers] of [...grouped].sort(([a], [b]) => a.localeCompare(b))) {
-  const output: number[][] = [];
-  for (const n of [...new Set(numbers)].sort((a, b) => a - b)) {
-    const last = output.at(-1);
-    if (last && last[1] + 1 === n) last[1] = n;
-    else output.push([n, n]);
+  if (findPublicCatalogWordLearningContext(result.item.id)) {
+    const practiceList = practiceGrouped.get(key) ?? [];
+    practiceList.push(Number(match[2])); practiceGrouped.set(key, practiceList);
   }
-  ranges[key] = output;
 }
+function compactRanges(groups: Map<string, number[]>) {
+  const ranges: Record<string, number[][]> = {};
+  for (const [key, numbers] of [...groups].sort(([a], [b]) => a.localeCompare(b))) {
+    const output: number[][] = [];
+    for (const n of [...new Set(numbers)].sort((a, b) => a - b)) {
+      const last = output.at(-1);
+      if (last && last[1] + 1 === n) last[1] = n;
+      else output.push([n, n]);
+    }
+    ranges[key] = output;
+  }
+  return ranges;
+}
+const ranges = compactRanges(grouped);
 const foundation = catalog.words.filter(row => ['1', '2', '3'].includes(row[3])).map(row => row[0]);
 // Every active public word is generated in CI, including the long-tail HSK 4–9
 // requests that dominated production CPU. Retained learning IDs stay readable.
@@ -63,6 +74,7 @@ for (const [key, values] of [...assetGroups].sort(([a], [b]) => a.localeCompare(
   assetRanges[key] = intervals;
 }
 await writeFile(new URL('../../src/lib/runtime/word-route-validity.json', import.meta.url), JSON.stringify(ranges) + '\n');
+await writeFile(new URL('../../src/lib/runtime/word-practice-route-validity.json', import.meta.url), JSON.stringify(compactRanges(practiceGrouped)) + '\n');
 await writeFile(new URL('../../src/lib/dictionary/word-prebuild-slugs.json', import.meta.url), JSON.stringify(selected) + '\n');
 await writeFile(new URL('../../src/lib/runtime/public-word-asset-policy.json', import.meta.url), JSON.stringify({ aliases, ranges: assetRanges }) + '\n');
 console.log(`Word routing: ${valid.size} valid IDs in ${Object.keys(ranges).length} groups; ${selected.length} prebuilt detail/practice pairs`);

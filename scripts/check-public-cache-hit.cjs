@@ -96,7 +96,8 @@ async function discard(response){if(response.body)await bounded('drain response 
   for(const query of ['?x=1','?_rsc=fixture']){const r=await checkedFetch(worker,'http://localhost/chinese-course-tests'+query);assert.equal(r.status,200);await discard(r);}
   progress('RSC response');const flight=await checkedFetch(worker,'http://localhost/chinese-course-tests?_rsc=fixture',{headers:{rsc:'1','next-router-prefetch':'1'}});assert.equal(flight.status,200);assert.ok(flight.headers.get('content-type')?.includes('text/x-component'));await discard(flight);
   progress('missing word document bypasses Next');
-  for(const route of ['/word/hsk3.word.l7.1831.v1','/word/hsk3.word.l7.1831.v1/practice']){
+  for(const route of ['/word/hsk3.word.l7.1831.v1','/word/hsk3.word.l7.1831.v1/practice',
+   '/word/hsk3.word.l5.0860.v1/practice','/word/hsk3.word.l1.0421.v1/practice']){
    const response=await checkedFetch(worker,'http://localhost'+route);
    assert.equal(response.status,404);assert.equal(response.headers.get('x-local-next-dispatched'),'0');
    assert.match(response.headers.get('x-robots-tag'),/noindex/);
