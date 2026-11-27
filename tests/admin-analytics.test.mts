@@ -4,7 +4,7 @@ import { DatabaseSync } from "node:sqlite";
 import { readFileSync } from "node:fs";
 import { parseReportDays, percentChange, reportWindow } from "../src/lib/admin/analytics-model.ts";
 import { collectGa4, collectSearchConsole, providerConfigured } from "../src/lib/admin/analytics-providers.ts";
-import { readAnalytics, syncAnalytics } from "../src/lib/admin/analytics-storage.ts";
+import { ANALYTICS_SCHEMA, readAnalytics, syncAnalytics } from "../src/lib/admin/analytics-storage.ts";
 
 test("bounded ranges, finalized date windows and zero baselines are handled honestly", () => {
   assert.equal(parseReportDays("90"), 90);
@@ -79,10 +79,10 @@ test("GET only reads snapshots and marks old data stale without clearing it", as
   assert.equal(data.sources[1].report, null);
 });
 
-test("unmigrated storage gives an explicit setup state, while other DB failures propagate", async () => {
+test("non-schema DB failures propagate without attempting cache initialization", async () => {
   const env = (message: string) => ({ LEARNING_DB: { prepare() { return { bind() { return this; }, async all() { throw new Error(message); } }; } } });
-  assert.equal((await readAnalytics(env("no such table: admin_analytics_snapshots") as never, 28)).storageReady, false);
   await assert.rejects(readAnalytics(env("D1 overloaded") as never, 28), /overloaded/);
+  await assert.rejects(readAnalytics(env("no such table: accounts") as never, 28), /accounts/);
 });
 
 test("no reporting credentials means no network requests or database writes", async () => {
@@ -139,5 +139,31 @@ test("real SQLite migration and failed sync preserve last-good snapshots and rel
     assert.deepEqual(await syncAnalytics(env as never, 7, now), { state: "updated" });
     assert.deepEqual(await syncAnalytics(env as never, 90, now), { state: "updated" });
     assert.equal(sqlite.prepare("SELECT COUNT(*) n FROM admin_analytics_snapshots").get()?.n, 3);
+  } finally { sqlite.close(); }
+});
+
+test("first authorized read initializes only analytics tables through the existing binding", async () => {
+  const sqlite = new DatabaseSync(":memory:");
+  try {
+    sqlite.exec("CREATE TABLE accounts(user_id TEXT PRIMARY KEY,display_name TEXT); INSERT INTO accounts VALUES('existing','Keep unchanged');");
+    let writes = 0;
+    const db = { prepare(sql: string) {
+      let values: unknown[] = [];
+      return { bind(...args: unknown[]) { values = args; return this; }, async all() { return { results: sqlite.prepare(sql).all(...values as never[]) }; }, async run() { writes++; return sqlite.prepare(sql).run(); } };
+    }, async batch(statements: { run(): Promise<unknown> }[]) {
+      sqlite.exec("BEGIN");
+      try { const results = []; for (const statement of statements) results.push(await statement.run()); sqlite.exec("COMMIT"); return results; }
+      catch (error) { sqlite.exec("ROLLBACK"); throw error; }
+    } };
+    const first = await readAnalytics({ LEARNING_DB: db } as never, 28);
+    assert.equal(first.storageReady, true);
+    assert.equal(first.sources[0].report, null);
+    assert.equal(writes, 3);
+    await readAnalytics({ LEARNING_DB: db } as never, 7);
+    assert.equal(writes, 3, "normal reads must not repeat schema writes");
+    assert.equal(sqlite.prepare("SELECT display_name FROM accounts").get()?.display_name, "Keep unchanged");
+    assert.ok(ANALYTICS_SCHEMA.every(sql => /admin_analytics_/.test(sql) && !/DROP|ALTER|DELETE/i.test(sql)));
+    sqlite.exec(readFileSync(new URL("../migrations/0060_admin_analytics_snapshots.sql", import.meta.url), "utf8"));
+    assert.equal(sqlite.prepare("SELECT COUNT(*) n FROM admin_analytics_sync_lock").get()?.n, 1);
   } finally { sqlite.close(); }
 });

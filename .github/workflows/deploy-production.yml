@@ -127,11 +127,6 @@ jobs:
           node scripts/check-hsk789-vocabulary-landing.cjs
           node scripts/run-cache-gate.cjs
           node scripts/prepare-public-word-assets.cjs --verify
-      - name: Record recovery bookmark and add bounded admin snapshot storage
-        if: contains(github.event.head_commit.message, '[admin-dashboard]')
-        run: |
-          npx wrangler d1 time-travel info hskkit-learning --json > "$RUNNER_TEMP/admin-dashboard-d1-bookmark.json"
-          npx wrangler d1 execute LEARNING_DB --remote --file migrations/0060_admin_analytics_snapshots.sql --yes
       - name: Upload and deploy Worker version
         run: |
           node scripts/prepare-public-word-assets.cjs --verify

@@ -42,7 +42,12 @@ Plausible and Ahrefs retain links; no unsupported API access or paid plan is ass
 
 ## Storage, sync and release
 
-Migration `0060_admin_analytics_snapshots.sql` creates two bounded internal tables.
+Migration `0060_admin_analytics_snapshots.sql` defines two bounded internal tables.
+On first authorized use, the application initializes these cache tables through
+its existing D1 binding if absent. A fixed atomic batch uses CREATE IF NOT EXISTS
+and INSERT OR IGNORE, never arbitrary SQL or updates to business tables. Normal
+reads do not repeat schema writes. Deployment credentials need no new D1 management
+permission. The checked-in migration remains compatible and idempotent.
 There are at most six snapshot rows (two providers × three ranges), with payloads
 limited to 64,000 bytes each, plus one lock row. Updates replace the current snapshot;
 failures update status while retaining the last good payload. No R2 objects are
@@ -51,8 +56,9 @@ created. Concurrent syncs share a DB lease; each provider/range is throttled for
 without retry loops; errors are sanitized before being stored or sent to the UI.
 
 - GET `/api/v1/admin/analytics?days=7|28|90`: allowlisted session; reads snapshots
-  only, never invokes third-party APIs. `private, no-store` and `noindex` inherited
-  from the existing admin response helper. Missing migration gives a setup state.
+  only (initializing its fixed cache schema on first authorized use if absent),
+  never invokes third-party APIs. `private, no-store` and `noindex` are inherited
+  from the existing admin response helper. Storage failures show a retryable error.
 - POST same URL: allowlisted session **and** same-origin Origin required. Manually
   refreshes the selected window. Concurrent collection returns 409; recent attempt
   returns `recent`. Other API failures keep previously shown good data.
@@ -60,8 +66,7 @@ without retry loops; errors are sanitized before being stored or sent to the UI.
   dedicated scheduler, daily 09:15 UTC. Its HTTP handler always returns 404. It
   refreshes all three windows and uses only `LEARNING_DB`, not R2 or learning writes.
 
-Before production: verify the exact current production source, apply the migration
-to the existing learning DB under release authorization, configure already-authorized
+Before production: verify the exact current production source, configure already-authorized
 reporting credentials/property IDs, deploy the main app and scheduler, and validate
 one authenticated sync plus anonymous denial. Verify successful snapshots for both
 providers and all ranges. Merely building or deploying a scheduler is **not** proof
