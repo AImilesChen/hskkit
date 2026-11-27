@@ -4,8 +4,8 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useCallback, useEffect, useRef, useState, type AnchorHTMLAttributes } from "react";
 import { loadAccountSessionSnapshot } from "@/lib/account/browser";
-import { googleSignInHref } from "@/lib/account/sign-in";
-import GoogleSignInLink from "./login/google-sign-in-link";
+import { encodeSignInReturnTo, signInReturnFromPage } from "@/lib/account/sign-in";
+import SignInDialog from "./login/sign-in-dialog";
 import SignInProgressNotice from "./components/sign-in-progress-notice";
 import {
   isNavigationEntryActive,
@@ -18,9 +18,16 @@ import "./site-header.css";
 
 export const legacyRoutePattern = /^\/(?:hsk-[1-6]-(?:vocabulary|practice-test)|hsk-1-reading-practice)(?:\/|$)/;
 
-function HeaderDestinationLink({ signedIn, returnTo, href, ...props }: AnchorHTMLAttributes<HTMLAnchorElement> & { href: string; signedIn: boolean; returnTo: string }) {
-  if (href === "/account" && !signedIn) return <GoogleSignInLink {...props} href={googleSignInHref(returnTo)} currentPage aria-label="Sign in with Google"/>;
-  return <Link {...props} prefetch={false} href={href}/>;
+function HeaderDestinationLink({ signedIn, returnTo, href, onSignIn, onClick, ...props }: AnchorHTMLAttributes<HTMLAnchorElement> & { href: string; signedIn: boolean; returnTo: string; onSignIn(trigger: HTMLAnchorElement): void }) {
+  if (href === "/account" && !signedIn) return <a {...props} href={`/login?returnTo=${encodeSignInReturnTo(returnTo)}`} aria-label="Sign in" aria-haspopup="dialog" aria-controls="site-sign-in-dialog" onClick={event => {
+    event.currentTarget.href = `/login?returnTo=${encodeSignInReturnTo(signInReturnFromPage(`${window.location.pathname}${window.location.search}${window.location.hash}`))}`;
+    if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || props.target === "_blank") return;
+    onClick?.(event);
+    if (event.defaultPrevented) return;
+    event.preventDefault();
+    onSignIn(event.currentTarget);
+  }}/>;
+  return <Link {...props} onClick={onClick} prefetch={false} href={href}/>;
 }
 
 export default function SiteHeader() {
@@ -30,6 +37,8 @@ export default function SiteHeader() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [mobileGroup, setMobileGroup] = useState<string | null>(null);
   const [mobileSection, setMobileSection] = useState<string | null>(null);
+  const [signInOpen, setSignInOpen] = useState(false);
+  const signInTrigger = useRef<HTMLAnchorElement | null>(null);
   const headerRef = useRef<HTMLElement | null>(null);
   const drawerRef = useRef<HTMLDivElement | null>(null);
   const menuTimers = useRef<{ open?: ReturnType<typeof setTimeout>; close?: ReturnType<typeof setTimeout> }>({});
@@ -56,6 +65,20 @@ export default function SiteHeader() {
     setMobileOpen(false);
   }, [clearMenuTimers]);
 
+  function openSignIn(trigger: HTMLAnchorElement) {
+    signInTrigger.current = trigger;
+    setSignInOpen(true);
+  }
+
+  function closeSignIn() {
+    setSignInOpen(false);
+    requestAnimationFrame(() => {
+      const trigger = signInTrigger.current;
+      if (trigger?.getClientRects().length) trigger.focus();
+      else mobileTriggerRef.current?.focus();
+    });
+  }
+
   function enterDesktopGroup(label: string) {
     clearMenuTimers();
     menuTimers.current.open = setTimeout(() => setDesktopGroup(label), 100);
@@ -81,6 +104,7 @@ export default function SiteHeader() {
 
   useEffect(() => {
     closeNavigation();
+    setSignInOpen(false);
   }, [pathname, closeNavigation]);
 
   useEffect(() => {
@@ -189,7 +213,7 @@ export default function SiteHeader() {
               )}
             </div>
           ) : (
-            <HeaderDestinationLink signedIn={signedIn} returnTo={pathname} key={entry.href} href={entry.href} aria-label={`${entry.href === "/account" && signedIn ? "Account" : entry.label} — ${navigationDescription(entry)}`} aria-current={isNavigationEntryActive(pathname, entry) ? "page" : undefined} className={entry.href === "/account" ? "ml-5 inline-flex h-[40px] min-h-[40px] items-center rounded-lg border border-blue-200 bg-white px-4 text-sm font-semibold text-blue-700 hover:border-blue-300 hover:bg-blue-50 hover:text-blue-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 aria-[current=page]:border-blue-400 aria-[current=page]:bg-blue-50" : "inline-flex min-h-11 items-center border-b-2 border-transparent px-3 text-sm font-semibold text-slate-600 hover:border-blue-200 hover:text-blue-700 aria-[current=page]:border-blue-600 aria-[current=page]:text-blue-700"} onClick={closeNavigation}>
+            <HeaderDestinationLink onSignIn={openSignIn} signedIn={signedIn} returnTo={pathname} key={entry.href} href={entry.href} aria-label={`${entry.href === "/account" && signedIn ? "Account" : entry.label} — ${navigationDescription(entry)}`} aria-current={isNavigationEntryActive(pathname, entry) ? "page" : undefined} className={entry.href === "/account" ? "ml-5 inline-flex h-[40px] min-h-[40px] items-center rounded-lg border border-blue-200 bg-white px-4 text-sm font-semibold text-blue-700 hover:border-blue-300 hover:bg-blue-50 hover:text-blue-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 aria-[current=page]:border-blue-400 aria-[current=page]:bg-blue-50" : "inline-flex min-h-11 items-center border-b-2 border-transparent px-3 text-sm font-semibold text-slate-600 hover:border-blue-200 hover:text-blue-700 aria-[current=page]:border-blue-600 aria-[current=page]:text-blue-700"} onClick={closeNavigation}>
               {entry.href === "/account" ? (signedIn ? "Account" : "Sign in") : entry.label}
             </HeaderDestinationLink>
           ))}
@@ -229,7 +253,7 @@ export default function SiteHeader() {
                 )}
               </div>
             ) : (
-              <HeaderDestinationLink signedIn={signedIn} returnTo={pathname} key={entry.href} href={entry.href} aria-label={`${entry.href === "/account" && signedIn ? "Account" : entry.label} — ${navigationDescription(entry)}`} aria-current={isNavigationEntryActive(pathname, entry) ? "page" : undefined} className={entry.href === "/account" ? "flex min-h-12 items-center rounded-xl border border-blue-200 bg-blue-50 px-4 py-3 text-blue-700 hover:border-blue-300 hover:bg-blue-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2" : "flex min-h-12 items-center rounded-xl border border-slate-200 px-4 py-2 hover:bg-blue-50 aria-[current=page]:border-blue-300 aria-[current=page]:bg-blue-50"} onClick={closeNavigation}>
+              <HeaderDestinationLink onSignIn={openSignIn} signedIn={signedIn} returnTo={pathname} key={entry.href} href={entry.href} aria-label={`${entry.href === "/account" && signedIn ? "Account" : entry.label} — ${navigationDescription(entry)}`} aria-current={isNavigationEntryActive(pathname, entry) ? "page" : undefined} className={entry.href === "/account" ? "flex min-h-12 items-center rounded-xl border border-blue-200 bg-blue-50 px-4 py-3 text-blue-700 hover:border-blue-300 hover:bg-blue-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2" : "flex min-h-12 items-center rounded-xl border border-slate-200 px-4 py-2 hover:bg-blue-50 aria-[current=page]:border-blue-300 aria-[current=page]:bg-blue-50"} onClick={closeNavigation}>
                 <span className={entry.href === "/account" ? "font-bold text-blue-700" : "font-bold text-slate-900"}>{entry.href === "/account" ? (signedIn ? "Account" : "Sign in") : entry.label}</span>
               </HeaderDestinationLink>
             ))}
@@ -237,6 +261,7 @@ export default function SiteHeader() {
         </div>
       )}
       <SignInProgressNotice/>
+      <SignInDialog open={signInOpen} returnTo={pathname} onClose={closeSignIn}/>
     </>
   );
 }

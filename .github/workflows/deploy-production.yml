@@ -102,7 +102,7 @@ jobs:
       - name: Verify pinned character cache interception and preview fallbacks
         run: node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --test tests/public-character-interception.test.mts
       - name: Verify lightweight authentication, session security and OAuth behavior
-        run: node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --test tests/account-authentication.test.mts tests/google-sign-in-flow.test.mts tests/google-start-fast-path.test.mts tests/account-sync.test.mts tests/account-loading-resilience.test.mts tests/d1-overload-hardening.test.mts tests/p1-user-d1-protection.test.mts tests/p0-3-unified-account-contract.test.mts
+        run: node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --test tests/account-authentication.test.mts tests/google-sign-in-flow.test.mts tests/sign-in-dialog.test.mts tests/header-brand-account-visual.test.mts tests/google-start-fast-path.test.mts tests/account-sync.test.mts tests/account-loading-resilience.test.mts tests/d1-overload-hardening.test.mts tests/p1-user-d1-protection.test.mts tests/p0-3-unified-account-contract.test.mts
       - name: Preserve current pages and login callbacks for the login-only release
         if: contains(github.event.head_commit.message, '[login-fast-path]')
         run: |

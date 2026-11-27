@@ -1,0 +1,23 @@
+.dialog{position:fixed;inset:0;width:min(440px,calc(100vw - 32px));max-width:440px;max-height:calc(100dvh - 32px);margin:auto;overflow-y:auto;overscroll-behavior:contain;border:1px solid #dce4f0;border-radius:24px;background:#fff;padding:38px 32px 24px;color:#142137;text-align:center;box-shadow:0 24px 80px rgb(15 23 42 / .2)}
+.dialog::backdrop{background:rgb(15 23 42 / .56)}
+:global(body):has(.dialog[open]){overflow:hidden}
+.close{position:absolute;top:12px;right:12px;display:grid;width:40px;height:40px;place-items:center;border:0;border-radius:10px;background:transparent;color:#52627a;font:inherit;font-size:28px;line-height:1;cursor:pointer}
+.close:hover{background:#f0f4fa;color:#172033}
+.brand{display:grid;width:48px;height:48px;margin:0 auto 22px;place-items:center;border-radius:13px;background:#2563eb;color:#fff;font-size:28px;font-weight:800;line-height:1}
+.kicker{margin:0 0 10px;color:#2563eb;font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase}
+.dialog h2{margin:0;font-size:30px;font-weight:750;line-height:1.2;letter-spacing:-.035em}
+.description{margin:16px 0 28px;color:#52627a;font-size:15px;line-height:1.7}
+.google{display:flex;min-height:50px;width:100%;align-items:center;justify-content:center;gap:12px;border:1px solid #cad5e5;border-radius:11px;background:#fff;padding:12px 14px;color:#172033;font-size:15px;font-weight:650;line-height:1.5;text-decoration:none;transition:background .15s,border-color .15s}
+.google:hover{border-color:#2563eb;background:#f5f8ff}
+.google[aria-disabled=true]{background:#f4f7fb;color:#52627a;cursor:wait}
+.google svg{flex:none}
+.status{min-height:38px;margin:12px 0 18px;color:#64748b;font-size:12px;line-height:1.6}
+.guest{border-top:1px solid #e7edf5;padding-top:20px}
+.guest p{margin:0;color:#52627a;font-size:13px;line-height:1.65}
+.guest button{min-height:44px;margin-top:10px;border:0;border-radius:8px;background:transparent;padding:8px 14px;color:#2459dc;font:inherit;font-size:14px;font-weight:650;cursor:pointer}
+.guest button:hover{background:#f0f5ff}
+.legal{display:flex;align-items:center;justify-content:center;gap:12px;margin:14px 0 0;color:#64748b;font-size:11px;line-height:1.6}
+.legal a{color:inherit;text-decoration:underline;text-underline-offset:3px}
+.close:focus-visible,.google:focus-visible,.guest button:focus-visible,.legal a:focus-visible{outline:2px solid #2563eb;outline-offset:3px}
+@media(max-width:480px){.dialog{padding:32px 22px 20px;border-radius:20px}.dialog h2{font-size:27px}.description{font-size:14px}.brand{margin-bottom:20px}}
+@media(prefers-reduced-motion:reduce){.google{transition:none}}
