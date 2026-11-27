@@ -15,7 +15,7 @@ export type SourceState = {
   report: Report | null; syncedAt: string | null; attemptedAt: string | null;
   error: string | null; stale: boolean;
 };
-export type DashboardAnalytics = { days: ReportDays; storageReady: boolean; sources: SourceState[] };
+export type DashboardAnalytics = { days: ReportDays; storageReady: boolean; sources: SourceState[]; connection?: { canConnect: boolean; connected: boolean; updatedAt: string | null } };
 
 export function parseReportDays(value: string | null): ReportDays {
   return REPORT_DAYS.find(day => String(day) === value) ?? 28;

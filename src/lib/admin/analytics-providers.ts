@@ -4,6 +4,7 @@ export type AnalyticsCredentials = {
   ADMIN_ANALYTICS_GOOGLE_SERVICE_ACCOUNT?: string;
   ADMIN_ANALYTICS_GOOGLE_REFRESH_TOKEN?: string;
   GOOGLE_CLIENT_ID?: string; GOOGLE_CLIENT_SECRET?: string;
+  GOOGLE_REDIRECT_URI?: string;
   ADMIN_ANALYTICS_GSC_SITE?: string; ADMIN_ANALYTICS_GA4_PROPERTY_ID?: string;
 };
 export type JsonFetch = (url: string, init?: RequestInit) => Promise<Response>;
@@ -17,7 +18,13 @@ export function providerConfigured(provider: Provider, env: AnalyticsCredentials
 async function jsonRequest(url: string, init: RequestInit, fetcher: JsonFetch) {
   const response = await fetcher(url, { ...init, signal: AbortSignal.timeout(8_000), redirect: "error" });
   // Never expose provider error bodies, tokens or personal identifiers in errors/logs.
-  if (!response.ok) throw new Error(response.status === 401 || response.status === 403 ? "REPORT_ACCESS_DENIED" : "REPORT_PROVIDER_UNAVAILABLE");
+  if (!response.ok) {
+    if (response.status === 403) {
+      const details = await response.json().catch(() => null) as { error?: { details?: { reason?: string }[] } } | null;
+      if (details?.error?.details?.some(detail => detail.reason === "SERVICE_DISABLED")) throw new Error("REPORT_API_DISABLED");
+    }
+    throw new Error(response.status === 401 || response.status === 403 ? "REPORT_ACCESS_DENIED" : "REPORT_PROVIDER_UNAVAILABLE");
+  }
   return response.json();
 }
 

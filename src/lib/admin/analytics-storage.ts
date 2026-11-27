@@ -1,5 +1,6 @@
 import { collectGa4, collectSearchConsole, googleReportingToken, providerConfigured, type AnalyticsCredentials } from "./analytics-providers.ts";
 import { type DashboardAnalytics, type Provider, type Report, type ReportDays } from "./analytics-model.ts";
+import { resolveReportingCredentials, resolveReportingConnection } from "./analytics-connection.ts";
 
 interface AnalyticsStatement {
   bind(...values: unknown[]): AnalyticsStatement;
@@ -11,7 +12,7 @@ export type AnalyticsDb = { prepare(sql: string): AnalyticsStatement; batch(stat
 export type AnalyticsEnv = AnalyticsCredentials & { LEARNING_DB: AnalyticsDb };
 const providers: Provider[] = ["gsc", "ga4"];
 type Stored = { provider: Provider; payload_json: string | null; synced_at: string | null; attempted_at: string; last_error: string | null };
-const safeError = (error: unknown) => error instanceof Error && ["REPORT_ACCESS_DENIED", "REPORT_CREDENTIALS_INVALID", "INVALID_REPORT_DATA", "REPORT_NOT_CONFIGURED"].includes(error.message) ? error.message : "REPORT_PROVIDER_UNAVAILABLE";
+const safeError = (error: unknown) => error instanceof Error && ["REPORT_API_DISABLED", "REPORT_ACCESS_DENIED", "REPORT_CREDENTIALS_INVALID", "INVALID_REPORT_DATA", "REPORT_NOT_CONFIGURED"].includes(error.message) ? error.message : "REPORT_PROVIDER_UNAVAILABLE";
 
 // Only the fixed, additive analytics-cache schema. Called after admin authorization,
 // or by the private scheduler; no deployment-token D1 permission is required.
@@ -26,6 +27,7 @@ async function initializeAnalyticsStorage(env: AnalyticsEnv) {
 const missingAnalyticsTable = (error: unknown) => /no such table:\s*admin_analytics_(?:snapshots|sync_lock)/i.test(String(error));
 
 export async function readAnalytics(env: AnalyticsEnv, days: ReportDays, now = new Date()): Promise<DashboardAnalytics> {
+  const resolved = await resolveReportingConnection(env);
   let rows: Stored[] = [];
   const storageReady = true;
   const query = () => env.LEARNING_DB.prepare("SELECT provider,payload_json,synced_at,attempted_at,last_error FROM admin_analytics_snapshots WHERE days=?").bind(days).all<Stored>();
@@ -37,15 +39,16 @@ export async function readAnalytics(env: AnalyticsEnv, days: ReportDays, now = n
     await initializeAnalyticsStorage(env);
     rows = (await query()).results;
   }
-  return { days, storageReady, sources: providers.map(provider => {
+  return { days, storageReady, connection: resolved.status, sources: providers.map(provider => {
     const row = rows.find(value => value.provider === provider);
     const report = row?.payload_json ? JSON.parse(row.payload_json) as Report : null;
-    return { provider, configured: providerConfigured(provider, env), report, syncedAt: row?.synced_at || null, attemptedAt: row?.attempted_at || null, error: row?.last_error || null,
+    return { provider, configured: providerConfigured(provider, resolved.credentials), report, syncedAt: row?.synced_at || null, attemptedAt: row?.attempted_at || null, error: row?.last_error || null,
       stale: Boolean(row?.synced_at && now.getTime() - Date.parse(row.synced_at) > 36 * 3_600_000) };
   }) };
 }
 
-export async function syncAnalytics(env: AnalyticsEnv, days: ReportDays, now = new Date()) {
+export async function syncAnalytics(env: AnalyticsEnv, days: ReportDays, now = new Date(), newAuthorization = false) {
+  env = await resolveReportingCredentials(env);
   const configured = providers.filter(provider => providerConfigured(provider, env));
   if (!configured.length) return { state: "not_configured" as const };
   const token = crypto.randomUUID();
@@ -64,7 +67,7 @@ export async function syncAnalytics(env: AnalyticsEnv, days: ReportDays, now = n
     const existing = await readAnalytics(env, days, now);
     const pending = configured.filter(provider => {
       const source = existing.sources.find(source => source.provider === provider)!;
-      return !source.attemptedAt || now.getTime() - Date.parse(source.attemptedAt) >= 15 * 60_000;
+      return newAuthorization || !source.attemptedAt || now.getTime() - Date.parse(source.attemptedAt) >= 15 * 60_000;
     });
     if (!pending.length) return { state: "recent" as const };
     let accessToken: string | null = null;

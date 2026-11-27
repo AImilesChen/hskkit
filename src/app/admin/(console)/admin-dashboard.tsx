@@ -45,6 +45,7 @@ function Ranking({ title, rows, primary, secondary, ready }: { title: string; ro
 function sourceMessage(source: SourceState | undefined, storageReady: boolean) {
   if (!storageReady) return "汇总存储尚未启用";
   if (source?.error === "REPORT_ACCESS_DENIED") return "报表读取权限待确认";
+  if (source?.error === "REPORT_API_DISABLED") return "Google 报表 API 尚未启用";
   if (source?.error) return source.report ? "同步失败，保留上次数据" : "同步失败，请稍后重试";
   if (source?.stale) return "数据待更新";
   if (source?.report) return "已同步";
@@ -64,6 +65,7 @@ export function AdminDashboardView({ days, setDays, analytics, operations, refre
   const syncable = storageReady && analytics.data?.sources.some(source => source.configured);
   return <section className="admin-board" aria-label="运营数据看板"><div className="admin-board-title"><div><span className="admin-kicker">OPERATIONS OVERVIEW</span><h2>运营数据看板</h2><p>从搜索曝光到访问，再到注册与订阅。</p></div><div className="admin-board-controls"><label><span className="sr-only">报表周期</span><select value={days} disabled={refreshing} onChange={event => setDays(Number(event.target.value) as ReportDays)}>{REPORT_DAYS.map(day => <option key={day} value={day}>最近 {day} 天</option>)}</select></label><button onClick={refresh} disabled={refreshing || !syncable} type="button">{refreshing ? "正在同步…" : "同步报表"}</button></div></div>
     <p className="admin-board-note">报表按各自时区统计，使用已结束日期；本站运营总览为当前状态。同步不会重新安装统计代码。</p>
+    {analytics.data?.connection?.canConnect && (!analytics.data.connection.connected || analytics.data.sources.some(source => source.error === "REPORT_ACCESS_DENIED" || source.error === "REPORT_CREDENTIALS_INVALID")) && <div className="admin-reporting-connect"><div><strong>{analytics.data.connection.connected ? "管理 Google 报表授权" : "连接现有 Google 报表"}</strong><p>仅请求 Search Console 和 Analytics 的只读权限。授权凭据加密保存在服务端，之后自动同步。</p></div><form method="post" action="/api/v1/admin/analytics/connect"><button type="submit">{analytics.data.connection.connected ? "重新授权 Google" : "连接 Google 报表"}</button></form></div>}
     {(analytics.error || operations.error) && <div className="admin-dashboard-alert" role="alert">{analytics.error || operations.error} <button type="button" onClick={reload}>重新读取</button></div>}
     <p className="admin-sync-notice" role="status" aria-live="polite">{notice || (analytics.loading ? "正在读取已保存的报表…" : refreshing ? "正在读取平台数据，现有汇总保持可见。" : "")}</p>
     <div className="admin-kpi-grid" aria-busy={analytics.loading}>
@@ -108,12 +110,32 @@ export default function AdminDashboard() {
     const timeout = setTimeout(() => controller.abort(), 8_000);
     setAnalytics(previous => ({ data: previous.data?.days === days ? previous.data : null, error: null, loading: true }));
     setNotice("");
-    request<DashboardAnalytics>(`/api/v1/admin/analytics?days=${days}`, controller.signal).then(data => { if (!controller.signal.aborted) setAnalytics({ data, error: null, loading: false }); }).catch(error => {
+    const result = new URL(window.location.href).searchParams.get("reporting");
+    const notices: Record<string, string> = { connected: "Google 报表已连接，首次汇总已完成。", partial: "Google 授权已保存，部分报表暂未同步。请查看下方连接状态。", cancelled: "已取消报表授权，现有数据保持不变。", invalid_state: "授权流程已失效，请从后台重新连接。", scopes_missing: "需要同时勾选 Search Console 与 Analytics 的只读权限。", refresh_missing: "Google 未返回自动更新凭据，请重新授权。", failed: "报表授权未完成，请从后台重新连接。" };
+    if (result && notices[result] && result !== "connected" && result !== "partial") setNotice(notices[result]);
+    let firstSyncTimer: ReturnType<typeof setTimeout> | undefined;
+    request<DashboardAnalytics>(`/api/v1/admin/analytics?days=${days}`, controller.signal).then(async data => {
+      clearTimeout(timeout);
+      if (controller.signal.aborted) return;
+      setAnalytics({ data, error: null, loading: false });
+      if (result === "connected" && data.connection?.connected) setNotice(data.sources.every(source => source.report && !source.error) ? notices.connected : notices.partial);
+      if (result === "partial" && data.connection?.connected) setNotice(notices.partial);
+      if (data.sources.some(source => source.configured && !source.report && !source.attemptedAt)) {
+        setRefreshing(true);
+        setNotice("正在首次同步这个周期的真实报表…");
+        firstSyncTimer = setTimeout(() => controller.abort(), 30_000);
+        const synced = await request<DashboardAnalytics>(`/api/v1/admin/analytics?days=${days}`, controller.signal, "POST");
+        if (!controller.signal.aborted) {
+          setAnalytics({ data: synced, error: null, loading: false });
+          setNotice(synced.sources.some(source => source.error) ? "部分报表同步失败，请查看连接状态。" : "首次报表同步完成。");
+        }
+      }
+    }).catch(error => {
       if (!controller.signal.aborted) setAnalytics(previous => ({ ...previous, error: error.message, loading: false }));
-    }).finally(() => clearTimeout(timeout));
+    }).finally(() => { clearTimeout(timeout); clearTimeout(firstSyncTimer); if (firstSyncTimer) setRefreshing(false); });
     const onAbort = () => setAnalytics(previous => ({ ...previous, error: "报表读取超时，可重新读取。", loading: false }));
     controller.signal.addEventListener("abort", onAbort, { once: true });
-    return () => { controller.signal.removeEventListener("abort", onAbort); controller.abort(); clearTimeout(timeout); };
+    return () => { controller.signal.removeEventListener("abort", onAbort); controller.abort(); clearTimeout(timeout); clearTimeout(firstSyncTimer); };
   }, [days, reload]);
   useEffect(() => {
     const controller = new AbortController();

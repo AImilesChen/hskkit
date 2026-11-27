@@ -30,6 +30,13 @@ export function middleware(request: NextRequest) {
     });
   }
   const consolidated = consolidatedRoutes[path] ?? legacyWordRedirect(path);
+  // The existing registered Google redirect is reused only for the dedicated
+  // admin reporting state. Normal learner sign-in remains on its original route.
+  if (path === "/api/v1/auth/google/callback" && request.nextUrl.searchParams.get("state")?.startsWith("hskkit_analytics_")) {
+    const target = request.nextUrl.clone();
+    target.pathname = "/api/v1/admin/analytics/google/callback";
+    return NextResponse.rewrite(target, { headers: { "cache-control": "private, no-store", "referrer-policy": "no-referrer" } });
+  }
   if (consolidated) {
     const target = request.nextUrl.clone();
     target.pathname = consolidated;

@@ -22,6 +22,22 @@ invented percentage. Missing data uses a dash and connection state, not fake zer
 
 ## Read-only provider access
 
+Administrators can now use the protected **Connect Google reports** form on the
+dashboard. This POST requires the existing admin session and a same-origin request.
+The flow uses the existing Google OAuth client and registered callback, PKCE, and
+an encrypted `__Host-` state cookie bound to the initiating admin for ten minutes.
+Only reporting-prefixed callbacks are internally rewritten to the dedicated admin
+handler; ordinary login callbacks, scopes, sessions and learning state are unchanged.
+
+The Google consent screen asks for `webmasters.readonly` and `analytics.readonly`
+with offline access. A successful grant is stored as one encrypted D1 row. AES-GCM
+uses an HKDF-derived, purpose-separated key from the existing Google client secret;
+the raw refresh token and client secret are never returned to the dashboard or logs.
+The existing domain property and numeric GA4 property `538727924` are reused unless
+explicit operator configuration overrides them. The callback collects the first
+28-day report; other windows are filled on first explicit selection or daily.
+Failed/cancelled grants keep the last successful connection and existing reports.
+
 The project already has GA4 collection and GSC verification; do not reinstall them.
 Reporting needs server-side read access to those **existing** properties. The
 following secrets/configuration are supported on both the main Worker and the
@@ -62,9 +78,12 @@ without retry loops; errors are sanitized before being stored or sent to the UI.
 - POST same URL: allowlisted session **and** same-origin Origin required. Manually
   refreshes the selected window. Concurrent collection returns 409; recent attempt
   returns `recent`. Other API failures keep previously shown good data.
-- `workers/admin-analytics-worker.ts` and `wrangler-admin-analytics.jsonc`: optional
-  dedicated scheduler, daily 09:15 UTC. Its HTTP handler always returns 404. It
-  refreshes all three windows and uses only `LEARNING_DB`, not R2 or learning writes.
+- `workers/admin-analytics-worker.ts` and `wrangler-admin-analytics.jsonc`: daily
+  scheduler at 09:15 UTC. Its HTTP handler always returns 404; its only binding is
+  the main Worker's named `AdminAnalyticsSync` service entrypoint. It has no Google
+  credentials or D1/R2 binding. The entrypoint only accepts the three fixed windows
+  and uses the main Worker's existing database binding and encrypted connection.
+  Deployment verification checks the actual service target, entrypoint and schedule.
 
 Before production: verify the exact current production source, configure already-authorized
 reporting credentials/property IDs, deploy the main app and scheduler, and validate

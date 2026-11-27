@@ -8,11 +8,16 @@ const middlewareManifestLookup = "getMiddlewareManifest(){return this.minimalMod
 const middlewareManifestDisabled = "getMiddlewareManifest(){return null}";
 
 const source = await readFile(workerPath, "utf8");
+const analyticsMarker = "/* hskkit-admin-analytics-rpc */";
+if (!source.includes(analyticsMarker)) {
+  const rpc = `${analyticsMarker}\nimport { WorkerEntrypoint as HskkitAnalyticsEntrypoint } from "cloudflare:workers";\nimport { refreshBoundAnalytics } from "../src/lib/admin/analytics-runtime.ts";\nexport class AdminAnalyticsSync extends HskkitAnalyticsEntrypoint { async refresh(days) { return refreshBoundAnalytics(this.env, days); } }\n`;
+  await writeFile(workerPath, rpc + source);
+}
 if (!source.includes(marker)) {
   if (!source.includes("export default")) {
     throw new Error("Unexpected OpenNext worker output: default export not found.");
   }
-  await writeFile(workerPath, `${injection}${source}`);
+  await writeFile(workerPath, `${injection}${await readFile(workerPath, "utf8")}`);
 }
 
 const costMarker = "/* hskkit-stateless-account-runtime */";

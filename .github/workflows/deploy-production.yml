@@ -70,7 +70,7 @@ jobs:
         run: node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --test tests/compact-public-word-manifest.test.cjs tests/public-word-assets.test.mts tests/prepare-public-word-assets.test.cjs tests/word-cache-release.test.mts tests/word-detail-lightweight-data.test.mts tests/dictionary-p2-learning-loop.test.mts tests/hsk1-vocabulary-landing.test.mts tests/hsk2-vocabulary-landing.test.mts tests/hsk3-vocabulary-landing.test.mts tests/hsk4-vocabulary-landing.test.mts tests/hsk5-vocabulary-landing.test.mts tests/hsk6-vocabulary-landing.test.mts tests/hsk789-vocabulary-landing.test.mts
       - name: Verify admin dashboard, private access and reporting snapshots
         run: |
-          node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --test tests/admin-console.test.mts tests/admin-analytics.test.mts
+          node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --test tests/admin-console.test.mts tests/admin-analytics.test.mts tests/admin-analytics-connection.test.mts
           node node_modules/typescript/bin/tsc --noEmit --incremental false
           node --input-type=module -e "import {build} from 'esbuild'; await build({entryPoints:['workers/admin-analytics-worker.ts'],bundle:true,write:false,format:'esm',platform:'browser',target:'es2022'});"
       - name: Ensure dedicated private page-cache bucket
@@ -150,6 +150,30 @@ jobs:
               if error.code != 401:
                   raise SystemExit('Unexpected private dashboard status: ' + str(error.code))
           print('Dashboard analytics denies anonymous access (401).')
+          PY
+      - name: Activate and verify private daily analytics synchronization
+        run: |
+          npx wrangler deploy --config wrangler-admin-analytics.jsonc
+          node scripts/check-admin-analytics-schedule.mjs
+          python3 - <<'PY'
+          import urllib.request, urllib.error
+          class NoRedirect(urllib.request.HTTPRedirectHandler):
+              def redirect_request(self, request, fp, code, message, headers, url):
+                  return None
+          opener = urllib.request.build_opener(NoRedirect)
+          checks = [
+              ('https://hskkit.com/api/v1/admin/analytics/connect', 'POST', 401),
+              ('https://hskkit.com/api/v1/auth/google/callback?state=hskkit_analytics_invalid&code=invalid', 'GET', 303),
+          ]
+          for url, method, expected in checks:
+              request = urllib.request.Request(url, method=method, headers={'User-Agent':'HSKKit-release-check'})
+              try:
+                  response = opener.open(request, timeout=30)
+              except urllib.error.HTTPError as error:
+                  response = error
+              if response.code != expected:
+                  raise SystemExit('Reporting authorization boundary check failed: ' + str(response.code))
+          print('Private reporting authorization routes verified.')
           PY
       - name: Deploy export-only maintenance without changing queue or cron settings
         run: |

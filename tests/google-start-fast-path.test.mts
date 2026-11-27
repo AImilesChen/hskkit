@@ -140,9 +140,11 @@ test('the real build patch bypasses Next initialization after middleware and pre
     entryPoints:[path.join(openNext,'worker.js')],bundle:true,write:false,platform:'browser',format:'esm',target:'es2022',
     plugins:[{name:'worker-platform-fixture',setup(builder){
       builder.onResolve({filter:/src\/lib\/runtime\//},args=>({path:path.join(root,'src/lib/runtime',path.basename(args.path))}));
-      builder.onResolve({filter:/^(cloudflare:email|\.\/cloudflare\/|\.\/middleware\/|\.\/\.build\/|\.\/server-functions\/)/},args=>({path:args.path,namespace:'platform'}));
+      builder.onResolve({filter:/src\/lib\/admin\/analytics-runtime\.ts$/},()=>({path:path.join(root,'src/lib/admin/analytics-runtime.ts')}));
+      builder.onResolve({filter:/^(cloudflare:(email|workers)|\.\/cloudflare\/|\.\/middleware\/|\.\/\.build\/|\.\/server-functions\/)/},args=>({path:args.path,namespace:'platform'}));
       builder.onLoad({filter:/.*/,namespace:'platform'},args=>({loader:'js',contents:
         args.path==='cloudflare:email' ? 'export class EmailMessage {}' :
+        args.path==='cloudflare:workers' ? 'export class WorkerEntrypoint {}' :
         args.path.includes('/cloudflare/init') ? 'export const runWithCloudflareRequestContext=(r,e,c,run)=>run();' :
         args.path.includes('/cloudflare/images') ? 'export const handleCdnCgiImageRequest=()=>new Response("image");export const handleImageRequest=()=>new Response("image");' :
         args.path.includes('/cloudflare/skew-protection') ? 'export const maybeGetSkewProtectionResponse=()=>undefined;' :
