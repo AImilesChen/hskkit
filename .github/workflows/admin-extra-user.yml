@@ -1,0 +1,68 @@
+name: Apply approved HSKKit additional administrator
+on:
+  push:
+    branches: [ops/admin-extra-20261127]
+    paths: [.github/workflows/admin-extra-user.yml]
+permissions:
+  contents: read
+concurrency:
+  group: hskkit-production-deploy
+  cancel-in-progress: false
+jobs:
+  configure:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    env:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      CLOUDFLARE_ACCOUNT_ID: 77bc392d46985cd3425691358f5e8a77
+      WRANGLER_SEND_METRICS: "false"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          cache: npm
+      - run: npm ci
+      - name: Verify existing production worker and retain binding fingerprint
+        run: |
+          python3 - <<'PY'
+          import hashlib,json,os,pathlib,urllib.request
+          base='https://api.cloudflare.com/client/v4/accounts/'+os.environ['CLOUDFLARE_ACCOUNT_ID']+'/workers/scripts/hskkit'
+          def get(path):
+              req=urllib.request.Request(base+path,headers={'Authorization':'Bearer '+os.environ['CLOUDFLARE_API_TOKEN']})
+              with urllib.request.urlopen(req,timeout=60) as response: result=json.load(response)
+              if not result.get('success'): raise SystemExit('Cloudflare operation failed')
+              return result['result']
+          versions=get('/deployments')['deployments'][0]['versions']
+          if len(versions)!=1 or versions[0]['percentage']!=100 or versions[0]['version_id']!='c671da46-d4a9-4855-914c-6b3139a35c61':
+              raise SystemExit('Production changed; administrator configuration stopped')
+          bindings=get('/settings')['bindings']
+          if not any(b['name']=='ADMIN_USER_IDS' and b['type']=='secret_text' for b in bindings): raise SystemExit('Original administrator secret missing')
+          if any(b['name']=='ADMIN_EXTRA_USER_IDS' for b in bindings): raise SystemExit('Extra administrator setting already exists; inspect before replacing')
+          fingerprint=hashlib.sha256(json.dumps(sorted(bindings,key=lambda b:b['name']),sort_keys=True).encode()).hexdigest()
+          pathlib.Path(os.environ['RUNNER_TEMP'],'admin-bindings.sha256').write_text(fingerprint)
+          print('Expected live worker and original administrator secret verified.')
+          PY
+      - name: Write only the approved additional administrator ID
+        run: |
+          printf '%s' '11eeb429-06e7-40e9-8bf0-550ec95feece' | npx wrangler secret put ADMIN_EXTRA_USER_IDS --config wrangler.jsonc
+      - name: Verify administrator binding and unchanged existing bindings
+        run: |
+          python3 - <<'PY'
+          import hashlib,json,os,pathlib,urllib.request
+          base='https://api.cloudflare.com/client/v4/accounts/'+os.environ['CLOUDFLARE_ACCOUNT_ID']+'/workers/scripts/hskkit'
+          def get(path):
+              req=urllib.request.Request(base+path,headers={'Authorization':'Bearer '+os.environ['CLOUDFLARE_API_TOKEN']})
+              with urllib.request.urlopen(req,timeout=60) as response: result=json.load(response)
+              if not result.get('success'): raise SystemExit('Cloudflare verification failed')
+              return result['result']
+          bindings=get('/settings')['bindings']
+          assert any(b['name']=='ADMIN_EXTRA_USER_IDS' and b['type']=='secret_text' for b in bindings),'New administrator setting missing'
+          original=[b for b in bindings if b['name']!='ADMIN_EXTRA_USER_IDS']
+          fingerprint=hashlib.sha256(json.dumps(sorted(original,key=lambda b:b['name']),sort_keys=True).encode()).hexdigest()
+          assert fingerprint==pathlib.Path(os.environ['RUNNER_TEMP'],'admin-bindings.sha256').read_text(),'Existing bindings unexpectedly changed'
+          versions=get('/deployments')['deployments'][0]['versions']
+          assert len(versions)==1 and versions[0]['percentage']==100
+          print(json.dumps({'worker':'hskkit','additionalAdminConfigured':True,'existingBindingsUnchanged':True,'activeVersion':versions[0]['version_id']}))
+          PY
+
