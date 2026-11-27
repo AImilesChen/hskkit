@@ -2,12 +2,13 @@ import { processCommercialExport } from "../src/lib/commercial/processor";
 import { retryDelaySeconds } from "../src/lib/commercial/queue-retry";
 import { clearExportObjectKey, commerceDb, expireReadyExports, getExportJob } from "../src/lib/commercial/storage";
 import { cleanupExpiredExportObjects } from "../src/lib/storage/export-cleanup";
+import reportingScheduler from "./admin-analytics-worker";
 
 interface CommercialExportMessage {
   jobId: string;
 }
 
-type CommercialExportEnv = CloudflareEnv;
+type CommercialExportEnv = CloudflareEnv & { DASHBOARD?: { refresh(days: number): Promise<unknown> } };
 
 const commercialExportWorker = {
   async queue(batch: { messages: Array<{ body: CommercialExportMessage; ack(): void; retry(options?:{delaySeconds?:number}):void }> }, env: CommercialExportEnv) {
@@ -22,7 +23,7 @@ const commercialExportWorker = {
       }
     }
   },
-  async scheduled(_controller: unknown, env: CommercialExportEnv) {
+  async scheduled(controller: { scheduledTime: number }, env: CommercialExportEnv) {
     try {
       const expired = await expireReadyExports(100, env);
       const exports = await cleanupExpiredExportObjects(expired, {
@@ -34,7 +35,9 @@ const commercialExportWorker = {
     } catch {
       console.error("storage_export_cleanup_blocked");
     }
+    await reportingScheduler.scheduled(controller, env);
   },
 };
 
 export default commercialExportWorker;
+

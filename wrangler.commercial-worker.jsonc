@@ -5,6 +5,7 @@
   "compatibility_date": "2026-05-24",
   "compatibility_flags": ["nodejs_compat", "global_fetch_strictly_public"],
   "workers_dev": false,
+  "services": [{ "binding": "DASHBOARD", "service": "hskkit", "entrypoint": "AdminAnalyticsSync" }],
   "vars": {"STORAGE_CACHE_CLEANUP_MODE": "disabled"},
   "d1_databases": [{
     "binding": "LEARNING_DB",

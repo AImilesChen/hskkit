@@ -40,8 +40,8 @@ Failed/cancelled grants keep the last successful connection and existing reports
 
 The project already has GA4 collection and GSC verification; do not reinstall them.
 Reporting needs server-side read access to those **existing** properties. The
-following secrets/configuration are supported on both the main Worker and the
-scheduled analytics Worker (never `NEXT_PUBLIC_`):
+following secrets/configuration are supported on the main Worker only
+(never `NEXT_PUBLIC_`):
 
 - `ADMIN_ANALYTICS_GSC_SITE`: exact existing property, e.g. `sc-domain:hskkit.com`.
 - `ADMIN_ANALYTICS_GA4_PROPERTY_ID`: existing numeric property ID; **not** `G-...`.
@@ -78,12 +78,15 @@ without retry loops; errors are sanitized before being stored or sent to the UI.
 - POST same URL: allowlisted session **and** same-origin Origin required. Manually
   refreshes the selected window. Concurrent collection returns 409; recent attempt
   returns `recent`. Other API failures keep previously shown good data.
-- `workers/admin-analytics-worker.ts` and `wrangler-admin-analytics.jsonc`: daily
-  scheduler at 09:15 UTC. Its HTTP handler always returns 404; its only binding is
-  the main Worker's named `AdminAnalyticsSync` service entrypoint. It has no Google
-  credentials or D1/R2 binding. The entrypoint only accepts the three fixed windows
-  and uses the main Worker's existing database binding and encrypted connection.
-  Deployment verification checks the actual service target, entrypoint and schedule.
+- `workers/admin-analytics-worker.ts` runs from the existing commercial maintenance
+  Worker's unchanged `*/15 * * * *` schedule, only at 09:15 UTC. Its private service
+  binding targets the main Worker's named `AdminAnalyticsSync` entrypoint. No new
+  Worker, cron trigger, Google secret or R2 binding is created. Existing export queue
+  processing and export cleanup run unchanged; either task can fail independently.
+  The reporting entrypoint only accepts the three fixed windows and uses the main
+  Worker's existing database binding and encrypted connection. Deployment verification
+  checks the actual service target, entrypoint and existing schedule.
+  The standalone `wrangler-admin-analytics.jsonc` is not deployed by production CI.
 
 Before production: verify the exact current production source, configure already-authorized
 reporting credentials/property IDs, deploy the main app and scheduler, and validate

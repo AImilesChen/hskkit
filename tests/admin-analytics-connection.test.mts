@@ -108,7 +108,12 @@ test("reporting callback middleware does not reroute normal learner logins", asy
 test("scheduled synchronization has no public HTTP trigger and bounds all windows", async () => {
   assert.equal((await scheduler.fetch()).status, 404);
   const windows: number[] = [];
-  await scheduler.scheduled(undefined, { DASHBOARD: { async refresh(days) { windows.push(days); } } });
+  const env = { DASHBOARD: { async refresh(days: number) { windows.push(days); } } };
+  await scheduler.scheduled({ scheduledTime: Date.parse("2026-11-27T09:00:00Z") }, env);
+  await scheduler.scheduled({ scheduledTime: Date.parse("2026-11-27T10:15:00Z") }, env);
+  assert.deepEqual(windows, []);
+  await scheduler.scheduled({ scheduledTime: Date.parse("2026-11-27T09:15:00Z") }, env);
   assert.deepEqual(windows, [7, 28, 90]);
+  await scheduler.scheduled({ scheduledTime: Date.parse("2026-11-27T09:15:00Z") }, {});
   await assert.rejects(refreshBoundAnalytics({} as never, 100_000), /INVALID_REPORT_WINDOW/);
 });

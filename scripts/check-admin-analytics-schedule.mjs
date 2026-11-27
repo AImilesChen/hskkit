@@ -9,8 +9,8 @@ async function get(path) {
   if (!result.success) throw new Error("Analytics schedule verification failed");
   return result.result;
 }
-const [settings, result] = await Promise.all([get("/workers/scripts/hskkit-admin-analytics/settings"), get("/workers/scripts/hskkit-admin-analytics/schedules")]);
+const [settings, result] = await Promise.all([get("/workers/scripts/hskkit-commercial-export-worker/settings"), get("/workers/scripts/hskkit-commercial-export-worker/schedules")]);
 assert.ok(settings.bindings.some(binding => binding.type === "service" && binding.name === "DASHBOARD" && binding.service === "hskkit" && binding.entrypoint === "AdminAnalyticsSync"));
 const schedules = Array.isArray(result) ? result : result.schedules;
-assert.ok(schedules.some(schedule => schedule.cron === "15 9 * * *"));
-console.log(JSON.stringify({ worker: "hskkit-admin-analytics", cron: "15 9 * * *", service: "hskkit", entrypoint: "AdminAnalyticsSync", verified: true }));
+assert.ok(schedules.some(schedule => schedule.cron === "*/15 * * * *"));
+console.log(JSON.stringify({ worker: "hskkit-commercial-export-worker", existingCron: "*/15 * * * *", reportingUtcTime: "09:15", service: "hskkit", entrypoint: "AdminAnalyticsSync", verified: true }));
