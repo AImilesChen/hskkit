@@ -68,6 +68,11 @@ jobs:
           node node_modules/typescript/bin/tsc --noEmit --incremental false
       - name: Verify complete public word assets and retained word routing
         run: node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --test tests/compact-public-word-manifest.test.cjs tests/public-word-assets.test.mts tests/prepare-public-word-assets.test.cjs tests/word-cache-release.test.mts tests/word-detail-lightweight-data.test.mts tests/dictionary-p2-learning-loop.test.mts tests/hsk1-vocabulary-landing.test.mts tests/hsk2-vocabulary-landing.test.mts tests/hsk3-vocabulary-landing.test.mts tests/hsk4-vocabulary-landing.test.mts tests/hsk5-vocabulary-landing.test.mts tests/hsk6-vocabulary-landing.test.mts tests/hsk789-vocabulary-landing.test.mts
+      - name: Verify admin dashboard, private access and reporting snapshots
+        run: |
+          node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --test tests/admin-console.test.mts tests/admin-analytics.test.mts
+          node node_modules/typescript/bin/tsc --noEmit --incremental false
+          node --input-type=module -e "import {build} from 'esbuild'; await build({entryPoints:['workers/admin-analytics-worker.ts'],bundle:true,write:false,format:'esm',platform:'browser',target:'es2022'});"
       - name: Ensure dedicated private page-cache bucket
         run: node scripts/storage-release.mjs ensure-bucket
       - name: Check whether assessment delivery changed
@@ -122,6 +127,11 @@ jobs:
           node scripts/check-hsk789-vocabulary-landing.cjs
           node scripts/run-cache-gate.cjs
           node scripts/prepare-public-word-assets.cjs --verify
+      - name: Record recovery bookmark and add bounded admin snapshot storage
+        if: contains(github.event.head_commit.message, '[admin-dashboard]')
+        run: |
+          npx wrangler d1 time-travel info hskkit-learning --json > "$RUNNER_TEMP/admin-dashboard-d1-bookmark.json"
+          npx wrangler d1 execute LEARNING_DB --remote --file migrations/0060_admin_analytics_snapshots.sql --yes
       - name: Upload and deploy Worker version
         run: |
           node scripts/prepare-public-word-assets.cjs --verify
@@ -133,6 +143,19 @@ jobs:
           fi
           npx wrangler versions deploy "$version_id@100%" --yes
           echo "STORAGE_WORKER_VERSION=$version_id" >> "$GITHUB_ENV"
+      - name: Verify dashboard API remains private after deployment
+        run: |
+          python3 - <<'PY'
+          import urllib.request, urllib.error
+          request = urllib.request.Request('https://hskkit.com/api/v1/admin/analytics?days=28', headers={'User-Agent':'HSKKit-release-check'})
+          try:
+              urllib.request.urlopen(request, timeout=30)
+              raise SystemExit('Anonymous dashboard access was unexpectedly accepted')
+          except urllib.error.HTTPError as error:
+              if error.code != 401:
+                  raise SystemExit('Unexpected private dashboard status: ' + str(error.code))
+          print('Dashboard analytics denies anonymous access (401).')
+          PY
       - name: Deploy export-only maintenance without changing queue or cron settings
         run: |
           npx wrangler versions upload --config wrangler.commercial-worker.jsonc --keep-vars --var "STORAGE_CACHE_CLEANUP_MODE:disabled" | tee "$RUNNER_TEMP/storage-worker-upload.log"

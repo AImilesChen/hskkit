@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 
 const sections = [
-  { href: "/admin", label: "Overview" },
+  { href: "/admin", label: "数据看板" },
   { href: "/admin/users", label: "Users" },
   { href: "/admin/subscriptions", label: "Subscriptions" },
   { href: "/admin/feedback", label: "Feedback" },
