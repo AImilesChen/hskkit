@@ -33,6 +33,17 @@ test("admin data is minimized and list input is bounded", async () => {
   });
 });
 
+test("additional immutable admin IDs preserve existing admins and still require Google authentication", async () => {
+  const [{ authorizeAdminIdentity }] = await adminModules();
+  for (const userId of ["original-admin", "additional-admin"]) {
+    assert.deepEqual(authorizeAdminIdentity({ userId, connection: "google" }, "original-admin", "additional-admin"), { userId });
+  }
+  assert.throws(() => authorizeAdminIdentity({ userId: "additional-admin", connection: "google" }, "original-admin"), /ADMIN_FORBIDDEN/);
+  assert.throws(() => authorizeAdminIdentity({ userId: "additional-admin", connection: "sync_key" }, "original-admin", "additional-admin"), /AUTHENTICATION_REQUIRED/);
+  assert.throws(() => authorizeAdminIdentity({ userId: "unlisted", connection: "google" }, "original-admin", "additional-admin"), /ADMIN_FORBIDDEN/);
+  assert.throws(() => authorizeAdminIdentity({ userId: "unlisted", connection: "google" }, undefined, undefined), /ADMIN_FORBIDDEN/);
+});
+
 test("feedback review validates workflow and preserves original submission", async () => {
   const [{ validateFeedbackReview }, { reviewFeedback }] = await adminModules();
   assert.deepEqual(validateFeedbackReview({ reviewStatus: "resolved", adminNote: "  Fixed  " }), {

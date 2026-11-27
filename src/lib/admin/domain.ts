@@ -36,9 +36,10 @@ export function parseAdminUserIds(value: string | undefined) {
 export function authorizeAdminIdentity(
   identity: { userId: string; connection: AdminConnection } | undefined,
   allowlist: string | undefined,
+  extraAllowlist?: string,
 ) {
   if (!identity || identity.connection !== "google") throw new AdminDomainError(401, "AUTHENTICATION_REQUIRED");
-  const allowed = parseAdminUserIds(allowlist);
+  const allowed = new Set([...parseAdminUserIds(allowlist), ...parseAdminUserIds(extraAllowlist)]);
   if (!allowed.size || !allowed.has(identity.userId)) throw new AdminDomainError(403, "ADMIN_FORBIDDEN");
   return { userId: identity.userId };
 }

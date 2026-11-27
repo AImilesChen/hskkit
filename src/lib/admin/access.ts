@@ -13,7 +13,8 @@ export const ADMIN_PRIVATE_HEADERS = {
 export const requireAdmin = cache(async function requireAdmin() {
   const identity = await withAdminD1Retry(() => requestIdentity({ touchSession: false }));
   const env = getCloudflareContext().env;
-  const admin = authorizeAdminIdentity(identity.account ? { userId: identity.account.userId, connection: identity.connection } : undefined, env.ADMIN_USER_IDS);
+  const extraUserIds = (env as CloudflareEnv & { ADMIN_EXTRA_USER_IDS?: string }).ADMIN_EXTRA_USER_IDS;
+  const admin = authorizeAdminIdentity(identity.account ? { userId: identity.account.userId, connection: identity.connection } : undefined, env.ADMIN_USER_IDS, extraUserIds);
   return { ...admin, env };
 });
 
