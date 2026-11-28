@@ -14,8 +14,10 @@ export function canRecordPublicPage(href: string) {
 
 type ClarityCall = ((...args: unknown[]) => void) & { q?: unknown[][] };
 type ClarityWindow = Window & { clarity?: ClarityCall };
+let recordingAllowed = false;
 
 export function stopClarity() {
+  recordingAllowed = false;
   const target = window as ClarityWindow;
   target.clarity?.("consentv2", { analytics_Storage: "denied", ad_Storage: "denied" });
   target.clarity?.("stop");
@@ -23,6 +25,7 @@ export function stopClarity() {
 
 export function startClarity() {
   if (!canRecordPublicPage(window.location.href)) return;
+  recordingAllowed = true;
   const target = window as ClarityWindow;
   if (!target.clarity) {
     const queued: ClarityCall = (...args: unknown[]) => { (queued.q ||= []).push(args); };
@@ -40,9 +43,7 @@ export function startClarity() {
   script.setAttribute("data-hskkit-clarity", "");
   script.onload = () => {
     script.dataset.loaded = "true";
-    let accepted = false;
-    try { accepted = localStorage.getItem(CLARITY_CONSENT_KEY) === "accepted"; } catch { /* deny by default */ }
-    if (!accepted || !canRecordPublicPage(window.location.href)) stopClarity();
+    if (!recordingAllowed || !canRecordPublicPage(window.location.href)) stopClarity();
   };
   document.head.appendChild(script);
 }

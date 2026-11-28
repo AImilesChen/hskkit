@@ -30,6 +30,7 @@ test("Clarity uses the existing project, one async tag and a separate non-advert
     startClarity(); assert.equal(tags.length, 1);
     fixtureWindow.location.href = "https://hskkit.com/dictionary";
     store.delete(CLARITY_CONSENT_KEY);
+    stopClarity();
     tags[0].onload?.();
     stopClarity();
     assert.equal(fixtureWindow.clarity?.q?.at(-1)?.[0], "stop");

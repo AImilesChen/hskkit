@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { CookieSettingsButton } from "./components/cookie-consent";
 import "./site-footer.css";
 
 const footerGroups = [
@@ -254,7 +255,7 @@ export default function SiteFooter() {
  <img src="https://saastool.site/badges/saastool-light.svg" alt="Featured on SaaSTool.site" width={210} height={54} loading="lazy" style={{ display: "block", maxWidth: "100%", height: "auto" }} />
  </a>
  </nav>
- <div className="resource-footer-bottom"><nav aria-label="Legal links">{legalLinks.map(item => <Link prefetch={false} key={item.href} href={item.href}>{item.label}</Link>)}</nav><p>© 2026 HSKKit</p><p>{disclaimer}</p></div>
+ <div className="resource-footer-bottom"><nav aria-label="Legal links">{legalLinks.map(item => <Link prefetch={false} key={item.href} href={item.href}>{item.label}</Link>)}<CookieSettingsButton className="border-0 bg-transparent p-0 text-inherit hover:underline"/></nav><p>© 2026 HSKKit</p><p>{disclaimer}</p></div>
  </div></footer>;
 }
 
