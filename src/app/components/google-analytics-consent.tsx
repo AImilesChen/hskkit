@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { ANALYTICS_CHOICE_EVENT } from "@/lib/clarity";
 
 const MEASUREMENT_ID = "G-W19896DKRJ";
 const CONSENT_KEY = "hskkit-google-analytics-consent";
@@ -58,6 +59,7 @@ export function GoogleAnalyticsConsent() {
       // The choice still applies to the current page.
     }
     setChoice(nextChoice);
+    window.dispatchEvent(new Event(ANALYTICS_CHOICE_EVENT));
     if (nextChoice === "accepted") enableGoogleAnalytics();
   }
 
