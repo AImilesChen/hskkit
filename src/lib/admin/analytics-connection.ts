@@ -93,7 +93,17 @@ export async function exchangeReportingCode(env: ReportingOAuthConfig, code: str
   if (!code || code.length > 2_048 || !env.GOOGLE_CLIENT_ID || !env.GOOGLE_CLIENT_SECRET || !env.GOOGLE_REDIRECT_URI) throw new Error("REPORT_CREDENTIALS_INVALID");
   const response = await request("https://oauth2.googleapis.com/token", { method: "POST", redirect: "error", signal: AbortSignal.timeout(8_000),
     headers: { "Content-Type": "application/x-www-form-urlencoded" }, body: new URLSearchParams({ code, code_verifier: verifier, client_id: env.GOOGLE_CLIENT_ID, client_secret: env.GOOGLE_CLIENT_SECRET, redirect_uri: env.GOOGLE_REDIRECT_URI, grant_type: "authorization_code" }) });
-  if (!response.ok) throw new Error("REPORT_ACCESS_DENIED");
+  if (!response.ok) {
+    // Keep only a fixed OAuth error category, never error_description or raw data.
+    const details = await response.json().catch(() => null) as { error?: string } | null;
+    const codes: Record<string, string> = {
+      invalid_client: "REPORT_TOKEN_INVALID_CLIENT",
+      invalid_grant: "REPORT_TOKEN_INVALID_GRANT",
+      invalid_request: "REPORT_TOKEN_INVALID_REQUEST",
+    };
+    const category = details?.error;
+    throw new Error(category && Object.hasOwn(codes, category) ? codes[category] : "REPORT_ACCESS_DENIED");
+  }
   const body = await response.json() as { refresh_token?: string; scope?: string };
   if (!body.refresh_token) throw new Error("REPORT_REFRESH_MISSING");
   if (!hasReportingScopes(body.scope || "")) throw new Error("REPORT_SCOPES_MISSING");
