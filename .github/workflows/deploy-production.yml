@@ -112,7 +112,7 @@ jobs:
         run: node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --test tests/compact-public-word-manifest.test.cjs tests/public-word-assets.test.mts tests/prepare-public-word-assets.test.cjs tests/word-cache-release.test.mts tests/word-detail-lightweight-data.test.mts tests/dictionary-p2-learning-loop.test.mts tests/hsk1-vocabulary-landing.test.mts tests/hsk2-vocabulary-landing.test.mts tests/hsk3-vocabulary-landing.test.mts tests/hsk4-vocabulary-landing.test.mts tests/hsk5-vocabulary-landing.test.mts tests/hsk6-vocabulary-landing.test.mts tests/hsk789-vocabulary-landing.test.mts
       - name: Verify admin dashboard, private access and reporting snapshots
         run: |
-          node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --test tests/admin-console.test.mts tests/admin-analytics.test.mts tests/admin-analytics-connection.test.mts tests/admin-analytics-maintenance.test.mts tests/admin-analytics-oauth-diagnostic.test.mts
+          node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --test tests/admin-console.test.mts tests/admin-analytics.test.mts tests/admin-analytics-connection.test.mts tests/admin-analytics-maintenance.test.mts tests/admin-analytics-oauth-diagnostic.test.mts tests/admin-analytics-workerd.test.mts
           node node_modules/typescript/bin/tsc --noEmit --incremental false
           node --input-type=module -e "import {build} from 'esbuild'; await build({entryPoints:['workers/admin-analytics-worker.ts'],bundle:true,write:false,format:'esm',platform:'browser',target:'es2022'});"
       - name: Ensure dedicated private page-cache bucket

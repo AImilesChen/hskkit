@@ -91,8 +91,10 @@ export function reportingAuthorizationUrl(env: ReportingOAuthConfig, state: stri
 
 export async function exchangeReportingCode(env: ReportingOAuthConfig, code: string, verifier: string, request: typeof fetch = fetch) {
   if (!code || code.length > 2_048 || !env.GOOGLE_CLIENT_ID || !env.GOOGLE_CLIENT_SECRET || !env.GOOGLE_REDIRECT_URI) throw new Error("REPORT_CREDENTIALS_INVALID");
-  const response = await request("https://oauth2.googleapis.com/token", { method: "POST", redirect: "error", signal: AbortSignal.timeout(8_000),
+  // Workers supports manual/follow only. Never forward OAuth credentials to redirects.
+  const response = await request("https://oauth2.googleapis.com/token", { method: "POST", redirect: "manual", signal: AbortSignal.timeout(8_000),
     headers: { "Content-Type": "application/x-www-form-urlencoded" }, body: new URLSearchParams({ code, code_verifier: verifier, client_id: env.GOOGLE_CLIENT_ID, client_secret: env.GOOGLE_CLIENT_SECRET, redirect_uri: env.GOOGLE_REDIRECT_URI, grant_type: "authorization_code" }) });
+  if (response.status >= 300 && response.status < 400) throw new Error("REPORT_ACCESS_DENIED");
   if (!response.ok) {
     // Keep only a fixed OAuth error category, never error_description or raw data.
     const details = await response.json().catch(() => null) as { error?: string } | null;

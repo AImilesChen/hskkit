@@ -16,7 +16,9 @@ export function providerConfigured(provider: Provider, env: AnalyticsCredentials
 }
 
 async function jsonRequest(url: string, init: RequestInit, fetcher: JsonFetch) {
-  const response = await fetcher(url, { ...init, signal: AbortSignal.timeout(8_000), redirect: "error" });
+  // Manual preserves the no-follow policy on the Workers runtime.
+  const response = await fetcher(url, { ...init, signal: AbortSignal.timeout(8_000), redirect: "manual" });
+  if (response.status >= 300 && response.status < 400) throw new Error("REPORT_PROVIDER_UNAVAILABLE");
   // Never expose provider error bodies, tokens or personal identifiers in errors/logs.
   if (!response.ok) {
     if (response.status === 403) {
